@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("multiplatform") version "1.4.10" apply false
+	kotlin("multiplatform") version "1.4.21" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 

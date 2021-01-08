@@ -70,7 +70,7 @@ class LibraryPersistencePanel(
 		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
-					openAction.execute(ActionWrapperSwing.toJabbaActionEvent(e))
+					openAction.execute(ActionWrapperSwing.toJabbahActionEvent(e))
 				}
 			}
 		})

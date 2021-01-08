@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui.graphpanel
+package ch.scorpion.jabbah.graph.app
 
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
@@ -10,11 +10,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
-/** An [Action] for toggling the [ApplicationMode] of a [GraphPanelView]. */
+/** An [Action] for toggling the [ApplicationMode] of the [ApplicationModeHolder]. */
 class ToggleApplicationModeAction(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.execute") {

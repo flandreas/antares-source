@@ -9,12 +9,9 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 abstract class AbstractGraphViewExecutionHandler(
 	protected val view: DrawingView<GraphView>,

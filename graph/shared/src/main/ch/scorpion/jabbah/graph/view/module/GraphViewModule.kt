@@ -25,9 +25,9 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.GraphAuthorizations
-import ch.scorpion.jabbah.graph.UndefinedApplicationModeHolder
+import ch.scorpion.jabbah.graph.app.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule

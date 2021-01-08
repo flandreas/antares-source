@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph
+package ch.scorpion.jabbah.graph.app
 
 import ch.scorpion.jabbah.base.event.EventBus
 
@@ -19,6 +19,13 @@ enum class ApplicationMode(val nameKey: String) {
 	}
 }
 
+/**
+ * Gets posted on [EventBus] when the current [ApplicationMode] is about to change.
+ * The change is not guaranteed to happen, because entering the new mode might be aborted by
+ * application logic.
+ */
+data class ApplicationModeBeginEvent(val applicationMode: ApplicationMode)
+
 /** Gets posted on [EventBus] when the current [ApplicationMode] has changed.*/
 data class ApplicationModeEvent(val applicationMode: ApplicationMode)
 
@@ -31,6 +38,8 @@ interface ApplicationModeHolder {
 	 * @param after the code to be executed after the [ApplicationMode] has been toggled
 	 */
 	fun setMode(mode: ApplicationMode, after: () -> Unit = {})
+
+	fun updateEditorEditability()
 }
 
 class UndefinedApplicationModeHolder : ApplicationModeHolder {
@@ -40,4 +49,8 @@ class UndefinedApplicationModeHolder : ApplicationModeHolder {
 
 	override fun setMode(mode: ApplicationMode, after: () -> Unit): Unit =
 		throw UnsupportedOperationException("not implemented")
+
+	override fun updateEditorEditability() {
+		throw UnsupportedOperationException("not implemented")
+	}
 }

@@ -9,7 +9,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color

@@ -22,7 +22,7 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 				action = e.actionCommand ?: "",
 				time = e.`when`)
 
-		fun toJabbaActionEvent(e: MouseEvent): ch.scorpion.jabbah.base.event.ActionEvent =
+		fun toJabbahActionEvent(e: MouseEvent): ch.scorpion.jabbah.base.event.ActionEvent =
 			ch.scorpion.jabbah.base.event.ActionEvent(
 				event = e,
 				source = e.source,

@@ -15,10 +15,9 @@ import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
-import ch.scorpion.jabbah.graph.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
-import ch.scorpion.jabbah.graph.ui.graphpanel.ToggleApplicationModeAction
+import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction

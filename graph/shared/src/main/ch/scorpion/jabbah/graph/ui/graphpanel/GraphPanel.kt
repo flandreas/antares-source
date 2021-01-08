@@ -40,10 +40,8 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
@@ -88,12 +86,9 @@ class GraphPanelViewController(
 	val editor: Editor,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler =ExecutionModule.scheduler,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder {
-
-	companion object {
-		private val LOG by logger(GraphPanelViewController::class)
-	}
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus)
+) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
 
 	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
 	val desktopController = GraphDesktopViewController(eventBus = eventBus)
@@ -104,8 +99,7 @@ class GraphPanelViewController(
 	 * Captures whether the [Savable] designated the current [GraphView] as 'editable'.
 	 * Only updated when received [ApplicationDataEvent]'s are processed.
 	 */
-	var isSavableEditable: Boolean = true
-		private set
+	private var isSavableEditable: Boolean = true
 
 	val gridSnapAction = GridSnapAction(editor)
 	val componentSnapAction = ComponentSnapAction(editor)
@@ -117,6 +111,7 @@ class GraphPanelViewController(
 	val quadCurveTool: Tool = QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) })
 	val textTool: Tool = TextTool(editor, factory = { EditModelTextModule.textComponentFactory.create(TranslatableText("Text"))}, adder = { GraphElementViewWrapper(it) })
 
+	private val applicationModeBeginHandler: EventHandler<ApplicationModeBeginEvent> = { handle(it) }
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
@@ -129,6 +124,7 @@ class GraphPanelViewController(
 
 	init {
 		editor.view.addPropertyChangeListener(editorViewListener)
+		eventBus.register(ApplicationModeBeginEvent::class, applicationModeBeginHandler)
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
@@ -143,6 +139,7 @@ class GraphPanelViewController(
 		super.dispose()
 
 		editor.view.removePropertyChangeListener(editorViewListener)
+		eventBus.unregister(applicationModeBeginHandler)
 		eventBus.unregister(applicationDataHandler)
 		eventBus.unregister(applicationDataContentHandler)
 		eventBus.unregister(schedulerActivationStateHandler)
@@ -156,54 +153,6 @@ class GraphPanelViewController(
 		logViewController.dispose()
 	}
 
-	/** ---- [ApplicationModeHolder] */
-
-	override var currentMode: ApplicationMode = ApplicationMode.EDIT
-		private set
-
-	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
-		setMode(mode, init = false, after)
-	}
-
-	private fun setMode(mode: ApplicationMode, init: Boolean, after: () -> Unit = {}) {
-		if (mode == currentMode) {
-			return
-		}
-		LOG.debug("Entering mode $mode")
-		when (mode) {
-			ApplicationMode.EDIT -> enterEditMode(init)
-			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> enterExecMode(mode, after)
-		}
-	}
-
-	private fun enterEditMode(init: Boolean) {
-		currentMode = ApplicationMode.EDIT
-		if (!init) {
-			scheduler.isActive = false
-		}
-		updateEditorEditability()
-		eventBus.post(ApplicationModeEvent(currentMode))
-		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
-	}
-
-	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
-		issuesViewController.clearIssues()
-
-		if (rootGraphView!!.checkDesign()) {
-			currentMode = mode
-			System.invokeLater {
-				scheduler.isActive = true
-				updateEditorEditability()
-				eventBus.post(ApplicationModeEvent(currentMode))
-				Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
-				after.invoke()
-			}
-		} else {
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
-			LOG.debug("execution not started due to design errors")
-		}
-	}
-
 	/** ---- [GraphPanelViewController] */
 
 	private fun handle(event: SchedulerActivationStateEvent) {
@@ -214,6 +163,10 @@ class GraphPanelViewController(
 
 	private fun handle(event: IssueCollectorEvent) {
 		view.maxIssueSeverity = event.issueCollector.maximumSeverity
+	}
+
+	private fun handle(event: ApplicationModeBeginEvent) {
+		issuesViewController.clearIssues()
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: ExecutionStoppedOnIssueEvent) {
@@ -263,15 +216,6 @@ class GraphPanelViewController(
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
 		updateEditorEditability()
-	}
-
-	private fun updateEditorEditability() {
-		val editable =
-			viewManager.activeView === editor.view
-				&& !scheduler.isActive
-				&& rootGraphView != null
-
-		editor.active = editable
 	}
 
 	private inner class EditorViewListener : PropertyChangeListener<Any> {
