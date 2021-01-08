@@ -12,8 +12,8 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
  */
 object BaseModuleJvm : AbstractModule() {
 
-	const val PREF_TREE_ROOT = "base.preferences.group.root"
-	const val PREF_TREE_GENERAL = "base.preferences.group.general"
+	private const val PREF_TREE_ROOT = "base.preferences.group.root"
+	private const val PREF_TREE_GENERAL = "base.preferences.group.general"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
