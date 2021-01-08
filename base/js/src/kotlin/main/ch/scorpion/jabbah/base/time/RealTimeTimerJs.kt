@@ -29,8 +29,8 @@ class RealTimeTimerJs : Timer {
         if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
-        id = kotlin.browser.window.setInterval({
-            handler!!(ActionEvent(null, kotlin.browser.window, 0, "timer", Date().getTime().toLong()))
+        id = kotlinx.browser.window.setInterval({
+            handler!!(ActionEvent(null, kotlinx.browser.window, 0, "timer", Date().getTime().toLong()))
         }, interval)
     }
 
@@ -38,7 +38,7 @@ class RealTimeTimerJs : Timer {
         if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
-        kotlin.browser.window.clearInterval(id!!)
+        kotlinx.browser.window.clearInterval(id!!)
         id = null
     }
 

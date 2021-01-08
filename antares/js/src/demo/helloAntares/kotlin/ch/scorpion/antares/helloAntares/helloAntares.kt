@@ -27,7 +27,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
-import kotlin.browser.document
+import kotlinx.browser.document
 import kotlin.properties.Delegates
 
 var editor by Delegates.notNull<Editor>()

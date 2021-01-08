@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.io.XmlWriter
 import org.w3c.dom.Element
 import org.w3c.dom.XMLDocument
 import org.w3c.dom.parsing.XMLSerializer
-import kotlin.browser.document
+import kotlinx.browser.document
 
 /**
  * An [XmlWriter] for writing W3C XML DOM documents.

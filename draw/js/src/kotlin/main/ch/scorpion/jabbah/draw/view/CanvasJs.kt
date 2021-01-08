@@ -17,7 +17,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
-import kotlin.browser.document
+import kotlinx.browser.document
 
 /**
  * Maps a HTML canvas to the [Canvas] interface.
@@ -202,12 +202,12 @@ class CanvasJs(
 
 	/** TODO Make part of the [Canvas] interface.*/
 	fun startTimerInterval(function: () -> Unit, interval: Int): Int {
-		return kotlin.browser.window.setInterval(function, interval)
+		return kotlinx.browser.window.setInterval(function, interval)
 	}
 
 	/** TODO Make part of the [Canvas] interface.*/
 	fun stopTimerInterval(id: Int) {
-		kotlin.browser.window.clearInterval(id)
+		kotlinx.browser.window.clearInterval(id)
 	}
 
 	private fun mouseEventBridgeOf(l: MouseListener): MouseEventBridge? {

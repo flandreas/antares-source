@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.module.DrawModule
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.browser.document
+import kotlinx.browser.document
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw] package for the JavaScript target.

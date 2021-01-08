@@ -1,14 +1,11 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.logger
+import kotlinx.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.browser.document
 
 actual object TextRenderInfoFactory : TextMeasurer {
-
-	private val LOG by logger(TextRenderInfoFactory::class)
 
 	private val canvas = document.createElement("canvas") as HTMLCanvasElement
 
@@ -33,7 +30,7 @@ actual object TextRenderInfoFactory : TextMeasurer {
 	}
 
 	override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
-		LOG.error("TextRenderInfoFactoryJS.measureHtmlText not yet implemented")
-		throw UnsupportedOperationException("not implemented")
+		// TODO Implement properly
+		return measureSingleLineText(text, font)
 	}
 }
