@@ -34,13 +34,14 @@ class DrawingViewImpl<T: Drawing<Component>>(
     drawing: T,
     canvas: Canvas,
     transformFactory: () -> AffineTransform = { System.createAffineTransform() },
+    applicationContextHolder: ApplicationContextHolder? = null,
     displayGlobalMessages: Boolean = false,
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
     animator: Animator = AnimationModule.animator,
     viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) }
-) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus, viewPainterFactory), DrawingView<T> {
+) : ViewImpl<EditInputEventContext>(canvas, transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
 
 	companion object {
 		private val LOG by logger(DrawingViewImpl::class)

@@ -42,7 +42,6 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
 	override fun componentDidMount() {
 		val jabbahCanvas = CanvasJs(props.canvasId, props.viewFactory, StyleRepository.INSTANCE)
 		val editor = EditEditorModule.createEditor(jabbahCanvas.view as DrawingView<Drawing<Component>>)
-		editor.view.applicationContext = GraphApplicationContext()
 
 		applicationModeHolder = ApplicationModeHolderImpl(editor)
 		GraphViewModule.applicationModeHolder = applicationModeHolder

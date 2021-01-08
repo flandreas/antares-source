@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.draw.style.ThemeEvent
 open class ViewImpl<C : InputEventContext>(
 	override val canvas: Canvas,
 	private val transformFactory: () -> AffineTransform,
+	private val applicationContextHolder: ApplicationContextHolder?,
 	protected val eventBus: EventBus = BaseModule.eventBus,
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
@@ -49,16 +50,13 @@ open class ViewImpl<C : InputEventContext>(
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
+		applicationContextHolder?.viewUpdateCallback = {
+			initialize()
+			repaint()
+		}
 	}
 
 	/** ---- Life cycle */
-
-	override var applicationContext: Any? = null
-		set(value) {
-			invalidate()
-			field = value
-			repaint()
-		}
 
 	override fun initialize() {
 		applyDefaultZoomStrategy()
@@ -68,6 +66,8 @@ open class ViewImpl<C : InputEventContext>(
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
 	}
+
+	override val applicationContext: Any? get() = applicationContextHolder?.applicationContext
 
 	/** ---- Content management */
 

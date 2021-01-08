@@ -4,15 +4,14 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.style.Themes
@@ -24,12 +23,10 @@ import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -100,10 +97,7 @@ class GraphNavigationViewController(
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
 	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
-	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
-	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { handle(it) }
 	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
-	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
@@ -127,14 +121,10 @@ class GraphNavigationViewController(
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
-		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
-		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
-		propagateApplicationContext()
 		updateDetachedUI()
 	}
 
@@ -154,10 +144,7 @@ class GraphNavigationViewController(
 		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
-		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
-		eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
 		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
 
@@ -183,7 +170,6 @@ class GraphNavigationViewController(
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
 
-		propagateApplicationContext()
 		updateDetachedUI()
 	}
 
@@ -199,13 +185,8 @@ class GraphNavigationViewController(
 	private fun handle(event: ApplicationModeEvent) {
 		currentMode = event.applicationMode
 		deselectAll()
-		propagateApplicationContext()
 		updateDrawingViewEditability()
 		updateDetachedUI()
-	}
-
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerRunningStateEvent) {
-		propagateApplicationContext()
 	}
 
 	private fun handle(event: SchedulerActivationStateEvent) {
@@ -218,14 +199,6 @@ class GraphNavigationViewController(
 		} else {
 			rootEntry.content.drawing.graph!!.executionStopped(event.scheduler)
 		}
-	}
-
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
-		propagateApplicationContext()
-	}
-
-	private fun propagateApplicationContext() {
-		drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory, scheduler.isPaused)
 	}
 
 	private fun handle(event: ScenarioEvent) {

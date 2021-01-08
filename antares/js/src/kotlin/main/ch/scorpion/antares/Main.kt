@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -48,7 +48,7 @@ class App() : RComponent<RProps, RState>() {
 			attrs.canvasId = "kotlinCanvas"
 			attrs.width = 800
 			attrs.height = 600
-			attrs.viewFactory = { DrawingViewImpl(loadLevel2LibraryDrawing(), it) }
+			attrs.viewFactory = { EditModule.drawingViewFactory.invoke(loadLevel2LibraryDrawing(), it) }
 		}
 	}
 

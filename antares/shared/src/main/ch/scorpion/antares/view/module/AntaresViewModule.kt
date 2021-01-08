@@ -36,7 +36,6 @@ import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
@@ -44,6 +43,7 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
@@ -107,7 +107,7 @@ object AntaresViewModule : AbstractModule() {
 
 		// Overwritten in order to change the [DrawableDrawer]
 		EditModule.drawingViewFactory = { d, c ->
-			val drawingView = DrawingViewImpl(d, c)
+			val drawingView = DrawingViewImpl(d, c, applicationContextHolder = GraphApplicationContextHolder())
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}

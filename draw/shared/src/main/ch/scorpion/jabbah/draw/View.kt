@@ -16,6 +16,15 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 data class CloseViewRequest(val view: View<*>)
 
 /**
+ * Holds the application context to be added to the [DrawContext] of a [View].
+ * The [View] is supposed to revalidated whenever the application context changes.
+ */
+interface ApplicationContextHolder {
+	var viewUpdateCallback: () -> Unit
+	val applicationContext: Any?
+}
+
+/**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
  * [DrawableContainer]s that represent entire diagrams, of that contain selection or highlight graphics.
  */
@@ -44,8 +53,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	/** ---- Life cycle */
 
-	/** Sets the application context to be added to the [DrawContext] being used by this [View].*/
-	var applicationContext: Any?
+	val applicationContext: Any?
 
 	@Suppress("UNCHECKED_CAST")
 	fun <T> castedAppContext(): T? = applicationContext as T
