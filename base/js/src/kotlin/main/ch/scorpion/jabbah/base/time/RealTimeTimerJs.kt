@@ -38,8 +38,10 @@ class RealTimeTimerJs : Timer {
         if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
-        kotlinx.browser.window.clearInterval(id!!)
-        id = null
+	    id?.let {
+		    kotlinx.browser.window.clearInterval(it)
+            id = null
+	    }
     }
 
     override fun isRunning(): Boolean {
