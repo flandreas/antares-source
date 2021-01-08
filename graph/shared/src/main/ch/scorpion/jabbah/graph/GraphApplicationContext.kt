@@ -42,7 +42,7 @@ class GraphApplicationContextHolder(
 		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
 	}
 
-	fun dispose() {
+	override fun dispose() {
 		eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)

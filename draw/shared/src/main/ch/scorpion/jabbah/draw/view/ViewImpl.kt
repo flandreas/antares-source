@@ -65,6 +65,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
+		applicationContextHolder?.dispose()
 	}
 
 	override val applicationContext: Any? get() = applicationContextHolder?.applicationContext

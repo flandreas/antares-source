@@ -20,8 +20,15 @@ data class CloseViewRequest(val view: View<*>)
  * The [View] is supposed to revalidated whenever the application context changes.
  */
 interface ApplicationContextHolder {
+
+	/** Set by the using [View] to get updated it when the [DrawContext] has changed*/
 	var viewUpdateCallback: () -> Unit
+
+	/** Holds the current (immutable) application context object.*/
 	val applicationContext: Any?
+
+	/** Called by the using [View] when it is not used any more.*/
+	fun dispose()
 }
 
 /**

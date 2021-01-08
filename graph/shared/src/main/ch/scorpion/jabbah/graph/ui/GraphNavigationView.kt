@@ -94,6 +94,7 @@ class GraphNavigationViewController(
 	private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 	private var scenarioDetector: ScenarioDetector? = null
 
+	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
 	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
@@ -118,6 +119,7 @@ class GraphNavigationViewController(
 	private val extension = extensionFactory.invoke(this)
 
 	init {
+		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
@@ -141,6 +143,7 @@ class GraphNavigationViewController(
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()
 
+		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
