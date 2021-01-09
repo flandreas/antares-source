@@ -30,7 +30,6 @@ import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
-import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -95,15 +94,6 @@ class GraphNavigationViewController(
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
-	/** Forwards input events to the [GraphView] while executing.*/
-	private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus, currentMode)
-
-	/** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
-	private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
-
-	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
-	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, scheduler, eventBus, currentMode)
-
 	private val rootEntry: NavigationStackEntry<GraphView> get() = navigationStackViewController.navigationStack.rootEntry!!
 
 	private val globalMessageDisplayer: ComponentMessageDisplayer<Drawing<Component>>? =
@@ -112,6 +102,7 @@ class GraphNavigationViewController(
 	private val extension = extensionFactory.invoke(this)
 
 	private val graphViewExecutionController = GraphViewExecutionController(
+		drawingView,
 		isRoot,
 		rootGraphProvider = { rootEntry.content.drawing.graph!! },
 		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() }
@@ -137,9 +128,6 @@ class GraphNavigationViewController(
 		scenarioDetector?.dispose()
 		globalMessageDisplayer?.dispose()
 
-		graphViewExecutionHandler.dispose()
-		graphViewDisplayHandler.dispose()
-		graphViewUsecaseExecutionHandler.dispose()
 		graphViewExecutionController.dispose()
 
 		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)

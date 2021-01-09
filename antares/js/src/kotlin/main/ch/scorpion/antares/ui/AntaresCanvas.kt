@@ -49,6 +49,7 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
 		GraphViewModule.applicationModeHolder = applicationModeHolder
 
 		executionController = GraphViewExecutionController(
+			editor.view as DrawingView<GraphView>,
 			isRoot = true,
 			rootGraphProvider = { (editor.drawing as GraphView).graph!! },
 			graphViewsProvider = { listOf(editor.drawing as GraphView) }
