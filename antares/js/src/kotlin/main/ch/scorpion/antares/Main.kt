@@ -37,11 +37,11 @@ class App() : RComponent<RProps, RState>() {
 
 	override fun RBuilder.render() {
 		h1 {
-			+"Antares Web: Level 2"
+			+"Antares Web: Level 3"
 		}
 
 		p {
-			+"Use the mouse wheel to zoom the circuit."
+			+"Click the button to start the simulation."
 		}
 
 		child(AntaresCanvas::class) {

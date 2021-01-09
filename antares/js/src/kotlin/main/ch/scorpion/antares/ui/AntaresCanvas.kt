@@ -10,10 +10,11 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import com.ccfraser.muirwik.components.MColor
 import com.ccfraser.muirwik.components.button.MButtonVariant
@@ -38,6 +39,7 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
 
 	private val toggleModeAction = ToggleApplicationModeAction()
 	private lateinit var applicationModeHolder: ApplicationModeHolder
+	private lateinit var executionController: GraphViewExecutionController
 
 	override fun componentDidMount() {
 		val jabbahCanvas = CanvasJs(props.canvasId, props.viewFactory, StyleRepository.INSTANCE)
@@ -45,6 +47,12 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
 
 		applicationModeHolder = ApplicationModeHolderImpl(editor)
 		GraphViewModule.applicationModeHolder = applicationModeHolder
+
+		executionController = GraphViewExecutionController(
+			isRoot = true,
+			rootGraphProvider = { (editor.drawing as GraphView).graph!! },
+			graphViewsProvider = { listOf(editor.drawing as GraphView) }
+		)
 	}
 
 	override fun RBuilder.render() {

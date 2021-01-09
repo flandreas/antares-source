@@ -22,15 +22,13 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -38,8 +36,6 @@ import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
@@ -62,8 +58,6 @@ class GraphNavigationViewController(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
 ) : AbstractUIController<GraphNavigationView>() {
 
@@ -98,7 +92,6 @@ class GraphNavigationViewController(
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
 	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
-	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
@@ -118,12 +111,17 @@ class GraphNavigationViewController(
 
 	private val extension = extensionFactory.invoke(this)
 
+	private val graphViewExecutionController = GraphViewExecutionController(
+		isRoot,
+		rootGraphProvider = { rootEntry.content.drawing.graph!! },
+		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() }
+	)
+
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
-		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
@@ -142,12 +140,12 @@ class GraphNavigationViewController(
 		graphViewExecutionHandler.dispose()
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()
+		graphViewExecutionController.dispose()
 
 		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
-		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
 
@@ -190,18 +188,6 @@ class GraphNavigationViewController(
 		deselectAll()
 		updateDrawingViewEditability()
 		updateDetachedUI()
-	}
-
-	private fun handle(event: SchedulerActivationStateEvent) {
-		if (event.scheduler.isActive) {
-			if (isRoot) {
-				rootEntry.content.drawing.graph!!.bind(repository, storableCreator)
-			}
-			navigationStack.iterator().forEach { it.content.drawing.bind() }
-			rootEntry.content.drawing.graph!!.executionStarted(event.scheduler)
-		} else {
-			rootEntry.content.drawing.graph!!.executionStopped(event.scheduler)
-		}
 	}
 
 	private fun handle(event: ScenarioEvent) {
