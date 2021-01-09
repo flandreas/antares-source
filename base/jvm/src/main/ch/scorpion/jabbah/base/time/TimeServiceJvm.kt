@@ -8,12 +8,8 @@ import java.util.*
  */
 class RealTimeServiceJvm : TimeService {
 
-    override fun nowMillis(): Long {
-        return Date().time
-    }
+    override fun nowMillis(): Long = Date().time
 
-    override fun nowNanos(): Long {
-        return 1000000 * nowMillis()
-    }
+    override fun nowNanos(): Long = 1_000_000 * nowMillis()
 }
 

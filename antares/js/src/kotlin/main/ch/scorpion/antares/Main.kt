@@ -3,6 +3,8 @@ package ch.scorpion.antares
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.ui.AntaresCanvas
 import ch.scorpion.antares.view.theme.AntaresThemes
+import ch.scorpion.jabbah.base.LogLevel
+import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -25,6 +27,8 @@ import react.dom.render
 fun main() {
 	AntaresModuleJs.require()
 	AntaresThemes.install()
+
+	LogSystem.level = LogLevel.Info
 
 	EditAuthModule.userHolder.u = User.anybody
 
