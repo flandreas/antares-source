@@ -3,7 +3,10 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.DrawTestRule
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import io.mockk.every
 import io.mockk.mockk
@@ -27,8 +30,8 @@ class ViewImplTest {
 		view = ViewImpl(
 			canvas = canvas,
 			transformFactory = { System.createAffineTransform() },
-			viewPainterFactory = { SimpleViewPainter(it) }
-		)
+			viewPainterFactory = { SimpleViewPainter(it) },
+			applicationContextHolder = null)
 		view.addDrawable(container)
 	}
 

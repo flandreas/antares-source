@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -47,7 +48,11 @@ class GraphNavigationViewControllerTest {
 	private val scheduler = mockk<Scheduler>(relaxed = true)
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, mockk(relaxed = true), eventBus = eventBus)
+	private val drawingView = DrawingViewImpl(
+		drawing = graphViewBuilder.graphView as Drawing<Component>,
+		canvas = mockk(relaxed = true),
+		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus),
+		eventBus = eventBus)
 	private val vv = createSubGraphVerticeView()
 	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus, scheduler = scheduler)
 
@@ -92,6 +97,7 @@ class GraphNavigationViewControllerTest {
 
 	@Test
 	fun shouldPropagateContextWithApplicationMode() {
+		every { scheduler.isActive } returns true
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		eventBus.post(ApplicationModeEvent(ApplicationMode.EXECUTE))
 

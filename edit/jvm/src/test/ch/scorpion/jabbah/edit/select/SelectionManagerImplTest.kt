@@ -1,18 +1,17 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.event.EventBusImpl
-import ch.scorpion.jabbah.base.geom.AffineTransformJvm
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import kotlin.test.*
+import ch.scorpion.jabbah.edit.module.EditModule
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [SelectionManagerImpl].
@@ -25,21 +24,10 @@ class SelectionManagerImplTest {
 		}
 	}
 
-	val drawing = DrawingImpl<Component>()
-	val canvas = CanvasJvm({
-		DrawingViewImpl<Drawing<Component>>(
-			drawing,
-			it,
-			{ AffineTransformJvm() },
-			true,
-			EditSelectModule.selectionManagerFactory,
-			EditHighlightModule.highlighterFactory,
-			BaseModule.eventBus,
-			AnimationModule.animator)
-	}, StyleRepository.INSTANCE)
-
-	var selectionManager: SelectionManagerImpl
-	val rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
+	private val drawing = DrawingImpl<Component>()
+	private val canvas = CanvasJvm { EditModule.drawingViewFactory.invoke(drawing, it)}
+	private var selectionManager: SelectionManagerImpl
+	private val rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
 
 	init {
 		rect.preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW

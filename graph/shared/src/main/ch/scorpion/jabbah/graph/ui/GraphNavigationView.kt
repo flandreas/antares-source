@@ -105,7 +105,9 @@ class GraphNavigationViewController(
 		drawingView,
 		isRoot,
 		rootGraphProvider = { rootEntry.content.drawing.graph!! },
-		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() }
+		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
+		scheduler,
+		eventBus = eventBus
 	)
 
 	init {

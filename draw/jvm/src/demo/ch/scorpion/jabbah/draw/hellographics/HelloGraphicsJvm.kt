@@ -42,7 +42,7 @@ class HelloGraphicsJvm : JFrame() {
 
     init {
         model = Model()
-        canvas = CanvasJvm({ ViewImpl(it, { AffineTransformJvm() }) }, StyleRepository.INSTANCE)
+        canvas = CanvasJvm({ ViewImpl(it, { AffineTransformJvm() }, null) }, StyleRepository.INSTANCE)
         canvas.view.addDrawable(model.container)
         canvas.view.navigator.setZoomFactor(1.0)
 
