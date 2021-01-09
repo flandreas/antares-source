@@ -52,6 +52,12 @@ class TooltipHandler(
 	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
 ) {
 
+	companion object {
+
+		/** The name of the [Boolean] property in [Properties] that decides if textual HTML tooltips are to be displayed.*/
+		const val PROP_TOOLTIPS_ENABLED = "draw.view.tooltipsEnabled"
+	}
+
 	/**
 	 * The [Drawable] for which a [TooltipEvent] has been posted by this [TooltipHandler] recently.
 	 * This reference is kept in order to avoid duplicate consecutive event posts.
@@ -67,6 +73,8 @@ class TooltipHandler(
 	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
 	private var lastTooltipLocation: Point2D? = null
+
+	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
 
 	/**
 	 * Handles mouse move events in the client of the tooltip system and requests tooltip displaying
@@ -84,7 +92,7 @@ class TooltipHandler(
 			return
 		}
 
-		val tooltip = tooltipAccessor.invoke(drawable, x, y)
+		val tooltip = createTooltip(drawable, x, y)
 		val explanation = explanationAccessor.invoke(drawable, x, y)
 		if (StringUtils.isEmpty(tooltip?.text) && explanation == null) {
 			if (lastTooltipDrawable != null || lastExplanation != null) {
@@ -99,6 +107,9 @@ class TooltipHandler(
 			eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
 		}
 	}
+
+	private fun createTooltip(drawable: Drawable, x: Double, y: Double): Tooltip? =
+		if (tooltipsEnabled) tooltipAccessor.invoke(drawable, x, y) else null
 
 	fun clear(view: View<*>) {
 		eventBus.post(TooltipEvent(null, view, null, null))
