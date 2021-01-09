@@ -118,4 +118,8 @@ actual object System {
 	actual fun printStackTrace() {
 		RuntimeException().printStackTrace()
 	}
+
+	actual fun nop() {
+		print("nop")
+	}
 }

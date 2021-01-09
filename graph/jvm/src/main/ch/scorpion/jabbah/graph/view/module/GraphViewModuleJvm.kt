@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
@@ -14,6 +15,10 @@ import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.draw.view.CanvasJvm
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
@@ -29,6 +34,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -49,6 +55,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		DrawModuleJvm.require()
 
 		EditModule.copyPasteService = GraphViewCopyPasteService()
+		GraphViewModule.graphEditorFactory = { _,eventBus -> createGraphEditor(eventBus) }
 
 		GraphViewModule.require()
 
@@ -113,5 +120,11 @@ object GraphViewModuleJvm : AbstractModule() {
 			nameKey = "graph.preferences.Oscilloscope.useRefColors",
 			needsRestart = true
 		))
+	}
+
+	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
+		val graphView = GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+		val graphCanvas = CanvasJvm { EditModule.drawingViewFactory.invoke(graphView, it) }
+		return GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 }

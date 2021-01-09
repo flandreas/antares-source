@@ -33,6 +33,8 @@ interface ApplicationModeHolder {
 
 	val currentMode: ApplicationMode
 
+	fun dispose()
+
 	/**
 	 * Toggles [ApplicationMode].
 	 * @param after the code to be executed after the [ApplicationMode] has been toggled
@@ -46,6 +48,10 @@ class UndefinedApplicationModeHolder : ApplicationModeHolder {
 
 	override val currentMode: ApplicationMode
 		get() = throw UnsupportedOperationException("not implemented")
+
+	override fun dispose() {
+		throw UnsupportedOperationException("not implemented")
+	}
 
 	override fun setMode(mode: ApplicationMode, after: () -> Unit): Unit =
 		throw UnsupportedOperationException("not implemented")

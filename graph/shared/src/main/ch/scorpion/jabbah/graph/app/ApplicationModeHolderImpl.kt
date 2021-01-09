@@ -2,9 +2,12 @@ package ch.scorpion.jabbah.graph.app
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -25,6 +28,16 @@ class ApplicationModeHolderImpl(
 	}
 
 	private val rootGraphView: GraphView get() = editor.drawing as GraphView
+
+	private val editorViewListener = EditorViewListener()
+
+	init {
+		editor.view.addPropertyChangeListener(editorViewListener)
+	}
+
+	override fun dispose() {
+		editor.view.removePropertyChangeListener(editorViewListener)
+	}
 
 	override var currentMode: ApplicationMode  = ApplicationMode.EDIT
 		private set
@@ -78,6 +91,14 @@ class ApplicationModeHolderImpl(
 		} else {
 			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
 			LOG.debug("execution not started due to design errors")
+		}
+	}
+
+	private inner class EditorViewListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == DrawingView.PROP_EDITABLE) {
+				updateEditorEditability()
+			}
 		}
 	}
 }

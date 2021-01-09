@@ -51,7 +51,7 @@ open class ViewImpl<C : InputEventContext>(
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
 		applicationContextHolder?.viewUpdateCallback = {
-			initialize()
+			invalidate()
 			repaint()
 		}
 	}
@@ -239,12 +239,10 @@ open class ViewImpl<C : InputEventContext>(
 	 */
 	inner class OverlayListener : DrawableListener {
 		override fun drawableInvalidated(event: DrawableEvent) {
-			LOG.debug("drawableInvalidated")
 			painter.invalidateRegion(null, false)
 		}
 
 		override fun drawableRequestRedraw(event: DrawableEvent) {
-			LOG.debug("drawableRequestRedraw")
 			painter.repaintView()
 		}
 

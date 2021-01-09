@@ -98,4 +98,8 @@ actual object System {
 	actual fun printStackTrace() {
 		// empty
 	}
+
+	actual fun nop() {
+		// empty
+	}
 }

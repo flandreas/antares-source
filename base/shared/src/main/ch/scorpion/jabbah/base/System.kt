@@ -58,4 +58,9 @@ expect object System {
 	fun browse(url: String, actionName: String)
 
 	fun printStackTrace()
+
+	/**
+	 * Used for setting breakpoints in the JVM implementation as workaround for IntelliJ's
+	 * multiplatform bug with setting breakpoints in common code.*/
+	fun nop()
 }

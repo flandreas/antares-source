@@ -1,18 +1,17 @@
 package ch.scorpion.antares.ui
 
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
+import ch.scorpion.jabbah.graph.ui.GraphViewUI
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -31,28 +30,29 @@ external interface AntaresCanvasProps : RProps {
 	var canvasId: String
 	var width: Int
 	var height: Int
-	var viewFactory: (Canvas) -> View<out InputEventContext>
+	var drawing: Drawing<Component>
 }
 
 /** Displays a [View] in a [CanvasJs]. */
-class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
+class AntaresCanvas : RComponent<AntaresCanvasProps, RState>(), GraphViewUI {
 
 	private val toggleModeAction = ToggleApplicationModeAction()
+	private lateinit var editor: Editor
 	private lateinit var applicationModeHolder: ApplicationModeHolder
 	private lateinit var executionController: GraphViewExecutionController
 
 	override fun componentDidMount() {
-		val jabbahCanvas = CanvasJs(props.canvasId, props.viewFactory, StyleRepository.INSTANCE)
-		val editor = EditEditorModule.createEditor(jabbahCanvas.view as DrawingView<Drawing<Component>>)
+		editor = GraphViewModule.graphEditorFactory.invoke(props.canvasId, BaseModule.eventBus)
+		editor.view.drawing = props.drawing
 
 		applicationModeHolder = ApplicationModeHolderImpl(editor)
 		GraphViewModule.applicationModeHolder = applicationModeHolder
 
 		executionController = GraphViewExecutionController(
-			editor.view as DrawingView<GraphView>,
+			this,
 			isRoot = true,
-			rootGraphProvider = { (editor.drawing as GraphView).graph!! },
-			graphViewsProvider = { listOf(editor.drawing as GraphView) }
+			rootGraphProvider = { drawingView.drawing.graph!! },
+			graphViewsProvider = { listOf(drawingView.drawing) }
 		)
 	}
 
@@ -67,5 +67,15 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>() {
 			attrs.width = props.width.toString()
 			attrs.height = props.height.toString()
 		}
+	}
+
+	override val drawingView: DrawingView<GraphView> get() = editor.view as DrawingView<GraphView>
+
+	override val isEditable: Boolean get() = true
+
+	override val isDetached: Boolean get() = false
+
+	override fun deselectAll() {
+		drawingView.content.selectionManager.deselectAll()
 	}
 }

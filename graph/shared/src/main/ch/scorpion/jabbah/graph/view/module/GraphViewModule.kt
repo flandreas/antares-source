@@ -74,7 +74,7 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var graphEditorFactory: (EventBus) -> GraphEditor = { throw UnsupportedOperationException("GraphEditor factory not configured") }
+	var graphEditorFactory: (canvasId:String,EventBus) -> GraphEditor = { _,_ -> throw UnsupportedOperationException("GraphEditor factory not configured") }
 
 	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
 

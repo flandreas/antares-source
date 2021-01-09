@@ -28,7 +28,9 @@ class CanvasJs(
 	styleProvider: StyleProvider
 ) : Canvas {
 
-	private val LOG by logger(CanvasJs::class)
+	companion object {
+		private val LOG by logger(CanvasJs::class)
+	}
 
 	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf<MouseEventBridge>() }
 	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf<MouseMotionEventBridge>() }
@@ -86,7 +88,7 @@ class CanvasJs(
 	}
 
 	override fun repaint(x: Int, y: Int, width: Int, height: Int) {
-		LOG.debug("CanvasJs.repaint $x,$y,$width,$height")
+		LOG.trace("CanvasJs.repaint $x,$y,$width,$height")
 
 		// TODO Trying to redraw minimal areas leads to strange alpha channel artefacts
 		// As a workaround, redraw entire canvas
@@ -116,6 +118,7 @@ class CanvasJs(
 			canvas.addEventListener("mouseup", bridge)
 			canvas.addEventListener("click", bridge)
 			canvas.addEventListener("dblclick", bridge)
+			mouseListeners.add(bridge)
 		}
 	}
 
@@ -137,6 +140,7 @@ class CanvasJs(
 			canvas.addEventListener("mousedown", bridge)
 			canvas.addEventListener("mouseup", bridge)
 			canvas.addEventListener("mousemove", bridge)
+			mouseMotionListeners.add(bridge)
 		}
 	}
 
@@ -155,6 +159,7 @@ class CanvasJs(
 		if (bridge == null) {
 			bridge = MouseWheelEventBridge(l, canvas)
 			canvas.addEventListener("mousewheel", bridge)
+			mouseWheelListeners.add(bridge)
 		}
 	}
 

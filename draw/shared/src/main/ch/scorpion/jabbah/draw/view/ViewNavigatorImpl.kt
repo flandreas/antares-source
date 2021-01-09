@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -62,6 +63,7 @@ class ViewNavigatorImpl(
 
 	override fun setZoomPan(zoomPan: ZoomPan) {
 		view.zoomPan = zoomPan
+		System.nop()
 	}
 
 	override fun panCenter() {

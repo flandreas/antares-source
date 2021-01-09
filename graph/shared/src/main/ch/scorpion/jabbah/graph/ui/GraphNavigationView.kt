@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.ZoomStrategy
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -23,8 +22,6 @@ import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -32,7 +29,6 @@ import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -50,7 +46,7 @@ interface GraphNavigationView : UIView {
  */
 class GraphNavigationViewController(
 	private val isRoot: Boolean,
-	val drawingView: DrawingView<GraphView>,
+	override val drawingView: DrawingView<GraphView>,
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.animator,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
@@ -58,7 +54,7 @@ class GraphNavigationViewController(
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
-) : AbstractUIController<GraphNavigationView>() {
+) : AbstractUIController<GraphNavigationView>(), GraphViewUI {
 
 	companion object {
 
@@ -71,23 +67,12 @@ class GraphNavigationViewController(
 		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
 	}
 
-	/**
-	 * Being 'detached' designates that the displayed [GraphView] isn't explicitly simulated
-	 * because its graph logic is shadowed by an execution script, or it is a child of a detached parent.
-	 */
-	val isDetached: Boolean get() =
-		isParentDetached ||
-			(!isRoot || navigationStackViewController.navigationStack.size > 1)
-			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
-
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
 	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
 
 	private var currentSavable: Savable? = null
-	private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 	private var scenarioDetector: ScenarioDetector? = null
 
-	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
 	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
@@ -102,7 +87,7 @@ class GraphNavigationViewController(
 	private val extension = extensionFactory.invoke(this)
 
 	private val graphViewExecutionController = GraphViewExecutionController(
-		drawingView,
+		this,
 		isRoot,
 		rootGraphProvider = { rootEntry.content.drawing.graph!! },
 		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
@@ -111,14 +96,13 @@ class GraphNavigationViewController(
 	)
 
 	init {
-		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
-		updateDetachedUI()
+		graphViewExecutionController.updateDetachedUI()
 	}
 
 	override fun dispose() {
@@ -132,7 +116,6 @@ class GraphNavigationViewController(
 
 		graphViewExecutionController.dispose()
 
-		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
@@ -141,6 +124,28 @@ class GraphNavigationViewController(
 
 		extension.dispose(this)
 	}
+
+	/** ---- [GraphViewUI] interface */
+
+	/**
+	 * Being 'detached' designates that the displayed [GraphView] isn't explicitly simulated
+	 * because its graph logic is shadowed by an execution script, or it is a child of a detached parent.
+	 */
+	override val isDetached: Boolean get() =
+		isParentDetached ||
+			(!isRoot || navigationStackViewController.navigationStack.size > 1)
+			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
+
+	override val isEditable: Boolean
+		get() = navigationStackViewController.navigationStack.size == 1
+			&& (currentSavable?.editable ?: false)
+
+	override fun deselectAll() {
+		navigationStackViewController.navigationStack.rootEntry?.content?.selectionManager?.deselectAll()
+		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
+	}
+
+	/** ---- [GraphNavigationView] */
 
 	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		val oldZoomStrategy = drawingView.defaultZoomStrategy
@@ -161,7 +166,7 @@ class GraphNavigationViewController(
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
 
-		updateDetachedUI()
+		graphViewExecutionController.updateDetachedUI()
 	}
 
 	private fun handle(request: CloseViewRequest) {
@@ -173,13 +178,6 @@ class GraphNavigationViewController(
 		}
 	}
 
-	private fun handle(event: ApplicationModeEvent) {
-		currentMode = event.applicationMode
-		deselectAll()
-		updateDrawingViewEditability()
-		updateDetachedUI()
-	}
-
 	private fun handle(event: ScenarioEvent) {
 		if (event.graphView === drawingView.drawing) {
 			drawingView.drawing.invalidate()
@@ -189,7 +187,7 @@ class GraphNavigationViewController(
 
 	private fun handle(event: CurrentSavableEvent) {
 		currentSavable = event.savable
-		updateDrawingViewEditability()
+		graphViewExecutionController.updateDrawingViewEditability()
 	}
 
 	private fun handle(request: OpenSubGraphRequest) {
@@ -260,8 +258,8 @@ class GraphNavigationViewController(
 			ascendFrom(event.entries)
 		} else {
 			drawingView.content = navigationStackViewController.navigationStack.peek().content
-			updateDrawingViewEditability()
-			updateDetachedUI()
+			graphViewExecutionController.updateDrawingViewEditability()
+			graphViewExecutionController.updateDetachedUI()
 
 			view.refresh()
 		}
@@ -283,8 +281,8 @@ class GraphNavigationViewController(
 			},
 			terminator = if (entries.size == 1) {
 				{
-					updateDrawingViewEditability()
-					updateDetachedUI()
+					graphViewExecutionController.updateDrawingViewEditability()
+					graphViewExecutionController.updateDetachedUI()
 
 					navigationStackViewController.view.active = true
 					drawingView.userZoomEnabled = true
@@ -295,30 +293,5 @@ class GraphNavigationViewController(
 				}
 			}
 		)
-	}
-
-	private fun updateDrawingViewEditability() {
-		drawingView.editable =
-			isRoot
-				&& navigationStackViewController.navigationStack.size == 1
-				&& !scheduler.isActive
-				&& (currentSavable?.editable ?: false)
-	}
-
-	/**
-	 * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
-	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
-	 */
-	private fun updateDetachedUI() {
-		drawingView.overlayColor = if (isDetached && scheduler.isActive && !scheduler.isDeepExecution) {
-			Themes.get<GraphTheme>().overlay
-		} else {
-			null
-		}
-	}
-
-	private fun deselectAll() {
-		navigationStackViewController.navigationStack.rootEntry?.content?.selectionManager?.deselectAll()
-		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
 	}
 }

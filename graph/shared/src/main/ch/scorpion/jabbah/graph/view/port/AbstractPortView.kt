@@ -34,10 +34,6 @@ abstract class AbstractPortView<T : Any>(
 	override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
 
-	companion object {
-		private val LOG by logger(AbstractPortView::class)
-	}
-
 	override var location: Point2D = Point2D(x, y)
 		set(value) {
 			invalidate()
@@ -47,10 +43,6 @@ abstract class AbstractPortView<T : Any>(
 		}
 
 	override var length: Int = length
-		set(value) {
-			field = value
-			LOG.debug("AbstractPortView: setting length to '$value'")
-		}
 
 	override var unconnectedLength: Int = unconnectedLength
 		set(value) {

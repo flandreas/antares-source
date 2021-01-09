@@ -118,12 +118,10 @@ class GraphPanelViewController(
 	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
-	private val editorViewListener = EditorViewListener()
 
 	private val rootGraphView: GraphView? get() = editViewController.drawingView.drawing
 
 	init {
-		editor.view.addPropertyChangeListener(editorViewListener)
 		eventBus.register(ApplicationModeBeginEvent::class, applicationModeBeginHandler)
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
@@ -138,7 +136,8 @@ class GraphPanelViewController(
 	override fun dispose() {
 		super.dispose()
 
-		editor.view.removePropertyChangeListener(editorViewListener)
+		applicationModeHolder.dispose()
+
 		eventBus.unregister(applicationModeBeginHandler)
 		eventBus.unregister(applicationDataHandler)
 		eventBus.unregister(applicationDataContentHandler)
@@ -216,13 +215,5 @@ class GraphPanelViewController(
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
 		updateEditorEditability()
-	}
-
-	private inner class EditorViewListener : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == DrawingView.PROP_EDITABLE) {
-				updateEditorEditability()
-			}
-		}
 	}
 }

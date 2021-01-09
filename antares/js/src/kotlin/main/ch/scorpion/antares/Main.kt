@@ -28,7 +28,7 @@ fun main() {
 	AntaresModuleJs.require()
 	AntaresThemes.install()
 
-	LogSystem.level = LogLevel.Info
+	LogSystem.level = LogLevel.Debug
 
 	EditAuthModule.userHolder.u = User.anybody
 
@@ -52,7 +52,7 @@ class App() : RComponent<RProps, RState>() {
 			attrs.canvasId = "kotlinCanvas"
 			attrs.width = 800
 			attrs.height = 600
-			attrs.viewFactory = { EditModule.drawingViewFactory.invoke(loadLevel2LibraryDrawing(), it) }
+			attrs.drawing = loadLevel2LibraryDrawing()
 		}
 	}
 

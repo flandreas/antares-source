@@ -236,7 +236,6 @@ object TooltipManager {
 
 	/** Called by the [timer] in order to effectively display the textTooltip, if still needed. */
 	private fun displayImpl() {
-		LOG.debug("displayImpl")
 		request?.let {
 			disposeTooltip()
 			if (it.tooltip != null) {
@@ -259,7 +258,6 @@ object TooltipManager {
 	}
 
 	private fun disposeTooltip() {
-		LOG.debug("disposeTooltip")
 		textTooltip?.let {
 			it.view.overlayContainer.remove(it.arrowBubble)
 			it.view.overlayContainer.validate()

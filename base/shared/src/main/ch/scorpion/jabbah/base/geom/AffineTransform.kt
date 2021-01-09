@@ -22,13 +22,13 @@ interface AffineTransform {
     /** Returns the X coordinate of the translation element (m02) of the 3x3 affine transformation matrix. */
     val translateX: Double
 
-    /* Returns the Y coordinate of the translation element (m12) of the 3x3 affine transformation matrix. */
+    /** Returns the Y coordinate of the translation element (m12) of the 3x3 affine transformation matrix. */
     val translateY: Double
 
     /** Returns the X coordinate shearing element (m01) of the 3x3 affine transformation matrix. */
     val shearX: Double
 
-    /* Returns the Y coordinate shearing element (m10) of the 3x3 affine transformation matrix. */
+    /** Returns the Y coordinate shearing element (m10) of the 3x3 affine transformation matrix. */
     val shearY: Double
 
     /** Returns the determinant of the matrix representation of this [AffineTransform].*/
