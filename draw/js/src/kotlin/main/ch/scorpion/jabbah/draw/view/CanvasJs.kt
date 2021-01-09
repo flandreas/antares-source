@@ -69,7 +69,8 @@ class CanvasJs(
 		when (cursor) {
 			Cursor.DEFAULT -> canvas.style.cursor = "default"
 			Cursor.WAIT -> canvas.style.cursor = "wait"
-			Cursor.HAND -> canvas.style.cursor = "move"
+			Cursor.CLICK -> canvas.style.cursor = "pointer"
+			Cursor.MOVE -> canvas.style.cursor = "move"
 			Cursor.CROSSHAIR -> canvas.style.cursor = "crosshair"
 			Cursor.NW_RESIZE -> canvas.style.cursor = "nw-resize"
 			Cursor.N_RESIZE -> canvas.style.cursor = "n-resize"

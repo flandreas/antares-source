@@ -6,7 +6,8 @@ package ch.scorpion.jabbah.draw.graphics
 enum class Cursor {
     DEFAULT,
     WAIT,
-    HAND,
+    CLICK,
+	MOVE,
     CROSSHAIR,
     NW_RESIZE,
     N_RESIZE,

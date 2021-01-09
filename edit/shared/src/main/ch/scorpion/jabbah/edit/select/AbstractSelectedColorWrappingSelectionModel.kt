@@ -84,13 +84,13 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 			if (handlesDisplayed && handleSelectionModel.contains(context.x, context.y)) {
 				val handler = handleSelectionModel.getInputEventHandler(context).mouseMoved(context)
 				if (handler == null) {
-					context.view.setCursor(Cursor.HAND)
+					context.view.setCursor(Cursor.MOVE)
 				}
 				return this
 			}
 			if (component.contains(context.x, context.y)) {
 				displayHandles(context.drawingView())
-				context.view.setCursor(Cursor.HAND)
+				context.view.setCursor(Cursor.MOVE)
 				return this
 			}
 			hideHandles(context.drawingView())

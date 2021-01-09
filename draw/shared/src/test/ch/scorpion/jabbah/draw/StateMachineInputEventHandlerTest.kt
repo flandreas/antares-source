@@ -37,7 +37,7 @@ class StateMachineInputEventHandlerTest {
 				}
 
 				state("inside") {
-					onEntry { view.setCursor(Cursor.HAND) }
+					onEntry { view.setCursor(Cursor.MOVE) }
 					transitTo("sense") {
 						given {  it.mouseEvent?.type == MouseEventType.MOVED && !rectangle.contains(it.location) }
 					}

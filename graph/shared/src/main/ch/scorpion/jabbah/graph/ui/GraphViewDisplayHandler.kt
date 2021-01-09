@@ -84,7 +84,7 @@ class GraphViewDisplayHandler(
 			tooltipHandler.handle(view, view.drawing, x, y)
 
 			if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
-				view.setCursor(Cursor.HAND)
+				view.setCursor(Cursor.CLICK)
 			} else {
 				view.setCursor(Cursor.DEFAULT)
 			}

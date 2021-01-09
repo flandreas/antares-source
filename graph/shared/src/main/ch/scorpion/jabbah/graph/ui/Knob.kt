@@ -106,7 +106,7 @@ object KnobLauncher {
 		LOG.debug("show KnobView")
 		view.content.animationContainer.add(knobView)
 		view.content.animationContainer.validate()
-		view.setCursor(Cursor.HAND)
+		view.setCursor(Cursor.CLICK)
 
 		displayHandler?.invoke()
 	}

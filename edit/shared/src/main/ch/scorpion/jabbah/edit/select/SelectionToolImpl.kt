@@ -290,7 +290,7 @@ class SelectionToolImpl(
 		if (component == null) {
 			editor.view.setCursor(Cursor.DEFAULT)
 		} else {
-			editor.view.setCursor(Cursor.HAND)
+			editor.view.setCursor(Cursor.MOVE)
 		}
 	}
 

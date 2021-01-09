@@ -57,11 +57,11 @@ open class ActorInteractionContext(
 
 typealias ActorInteractionHandler = InputEventHandler<ActorInteractionContext>
 
-/** An [InputEventHandler] that displays [Cursor.HAND] in [mouseMoved].*/
+/** An [InputEventHandler] that displays [Cursor.CLICK] in [mouseMoved].*/
 open class ClickableActorInteractionHandlerAdapter : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 	override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-		context.view.setCursor(Cursor.HAND)
+		context.view.setCursor(Cursor.CLICK)
 		return null
 	}
 }
