@@ -1,7 +1,7 @@
 package ch.scorpion.antares.ui
 
-import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.mreact.jmButton
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import com.ccfraser.muirwik.components.MColor
 import com.ccfraser.muirwik.components.button.MButtonVariant
-import com.ccfraser.muirwik.components.button.mButton
 import kotlinx.html.id
 import react.RBuilder
 import react.RComponent
@@ -58,9 +57,13 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>(), GraphViewUI {
 
 	override fun RBuilder.render() {
 		styledDiv {
+			/*
 			mButton("Simulate", color = MColor.primary, variant = MButtonVariant.contained, onClick = {
 				toggleModeAction.execute(ActionEvent("Click", this@AntaresCanvas, 0, "click", 0))
 			})
+			*/
+
+			jmButton(toggleModeAction, color = MColor.primary, variant = MButtonVariant.contained)
 		}
 		canvas {
 			attrs.id = props.canvasId

@@ -5,6 +5,8 @@ package ch.scorpion.jabbah.base
  */
 actual object Translations {
 
+	private val map = mutableMapOf<String,String>()
+
 	actual var language: Language
 		get() = System.currentLanguage()
 		set(@Suppress("UNUSED_PARAMETER") value) {
@@ -20,11 +22,11 @@ actual object Translations {
         // empty
     }
 
-	actual fun getString(key: String, vararg params: Any): String {
-        return key
-    }
+	actual fun addKey(key: String, value: String) {
+		map[key] = value
+	}
 
-	actual fun getOptionalString(key: String): String? {
-        return key
-    }
+	actual fun getString(key: String, vararg params: Any): String = map.getOrElse(key, { key } )
+
+	actual fun getOptionalString(key: String): String? = map[key]
 }

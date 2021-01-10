@@ -19,6 +19,8 @@ expect object Translations {
 	 */
 	fun addBundle(name: String)
 
+	fun addKey(key: String, value: String)
+
 	/**
 	 * Retrieves the translation with the specified key and substitutes variables with the provided parameters.
 	 * @throws MissingResourceException if no translation for [key] was found

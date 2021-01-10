@@ -206,11 +206,11 @@ class GraphPanelViewSwing(
 		modeToggleButton.icon = UiUtil.themedIcon("/img/play24.png")
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
-		val executionAction = PauseExecutionAction(scheduler, eventBus)
-		val pauseToggleButton = JToggleButton(ActionWrapperSwing(executionAction))
+		val pauseAction = PauseExecutionAction(scheduler, eventBus)
+		val pauseToggleButton = JToggleButton(ActionWrapperSwing(pauseAction))
 		pauseToggleButton.text = null
 		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
-		pauseToggleButton.toolTipText = executionAction.name
+		pauseToggleButton.toolTipText = pauseAction.name
 
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)

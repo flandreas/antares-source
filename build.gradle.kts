@@ -113,6 +113,24 @@ subprojects {
 			}
 			val jsMain by getting {
 				kotlin.srcDir("js/src/kotlin/main")
+				resources.srcDir("js/rsc")
+
+				dependencies {
+
+					//React, React DOM + Wrappers (chapter 3)
+					implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0")
+					implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.0")
+					implementation(npm("react", "16.13.1"))
+					implementation(npm("react-dom", "16.13.1"))
+
+					//Kotlin Styled (chapter 3)
+					implementation("org.jetbrains:kotlin-styled:5.2.0-pre.136-kotlin-1.4.10")
+					//implementation(npm("styled-components", "4.4.0"))
+					implementation(npm("inline-style-prefixer", "~6.0.0"))
+
+					implementation(npm("react-hot-loader", "^4.12.20"))
+					implementation("com.ccfraser.muirwik:muirwik-components:0.6.3")
+				}
 			}
 			val jsTest by getting {
 				kotlin.srcDir("js/src/kotlin/test")

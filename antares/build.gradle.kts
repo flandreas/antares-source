@@ -67,17 +67,7 @@ kotlin {
 		}
 
 		val jsMain by getting {
-			kotlin.srcDir("js/src/kotlin/main")
-			resources.srcDir("js/rsc")
 			dependencies {
-				implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
-				implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0")
-				implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.0")
-
-				implementation("org.jetbrains:kotlin-styled:1.0.0-pre.110-kotlin-1.4.0")
-				implementation(npm("react-hot-loader", "^4.12.20"))
-				implementation("com.ccfraser.muirwik:muirwik-components:0.6.3")
-
 				implementation(project(":base"))
 				implementation(project(":animation"))
 				implementation(project(":draw"))

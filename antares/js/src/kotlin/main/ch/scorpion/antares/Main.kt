@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -37,7 +36,7 @@ fun main() {
 	}
 }
 
-class App() : RComponent<RProps, RState>() {
+class App : RComponent<RProps, RState>() {
 
 	override fun RBuilder.render() {
 		h1 {

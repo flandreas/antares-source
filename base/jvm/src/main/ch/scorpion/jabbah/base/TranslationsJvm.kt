@@ -34,6 +34,8 @@ actual object Translations {
         addBundle(ResourceBundle.getBundle(name))
     }
 
+	actual fun addKey(key: String, value: String) { }
+
     /** ---- [Translations] */
 
     private val bundleNames: MutableList<String> = mutableListOf()
