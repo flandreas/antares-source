@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import kotlinx.browser.document
@@ -30,6 +31,7 @@ fun main() {
 	LogSystem.level = LogLevel.Debug
 
 	EditAuthModule.userHolder.u = User.anybody
+	LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 
 	render(document.getElementById("root")) {
 		child(App::class) {}
@@ -56,10 +58,11 @@ class App : RComponent<RProps, RState>() {
 	}
 
 	private fun loadLevel2LibraryDrawing(): Drawing<Component> {
-		return loadMetaGraph(UUID("9eb38fe7-5844-4be6-9192-25104a077b0c"))
+		return loadMetaGraph(UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300"))
 			.graph.graphView as Drawing<Component>
 	}
 
+	// TODO Replace by service call
 	private fun loadMetaGraph(uuid: UUID): MetaGraph {
 		val baseUrl = ".."
 		val libraryUuid = "6707f981-110d-4629-a0bf-c35a4688025c"
@@ -68,7 +71,6 @@ class App : RComponent<RProps, RState>() {
 		request.open("GET", url, async = false)
 		request.overrideMimeType("text/xml")
 		request.send()
-		console.info(request.responseXML?.toString())
 		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
 	}
 }

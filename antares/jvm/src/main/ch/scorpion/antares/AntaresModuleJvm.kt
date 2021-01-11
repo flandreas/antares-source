@@ -51,7 +51,7 @@ import ch.scorpion.jabbah.io.TypeMap
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
  */
-class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
+class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	companion object {
 		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
@@ -70,7 +70,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		LibraryModule.systemLibraryPersisterService = if (app.systemLibraryDirectoryPath != null) {
+		LibraryModule.systemLibraryPersistenceService = if (app.systemLibraryDirectoryPath != null) {
 			FileLibraryPersistenceService(
 				directoryPath = app.systemLibraryDirectoryPath!!,
 				metaGraphFileExtension = app.fileExtension,

@@ -64,7 +64,7 @@ data class LibraryDirectoryRenamedEvent(
 class LibraryService(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
-	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersisterService,
+	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val userHolder: UserHolder = EditAuthModule.userHolder

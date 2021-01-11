@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
@@ -49,14 +50,13 @@ class AntaresSwing(
 ) : AbstractDesktopApplicationSwing(
 	commandLine,
 	GraphDataViewController()
-), Antares {
+), AntaresDesktop {
 
 	companion object {
 
 		private val LOG by lazy { logger(AntaresSwing::class) }
 
 		private const val PROP_APPLICATION_PROJECT = "application.project"
-		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 
 		private const val SYSTEM_LIB_OPTION = "l"
 		private const val PROJECTS_OPTION = "p"
@@ -82,7 +82,7 @@ class AntaresSwing(
 		}
 
 		private fun prefetchPreferences(userDataDirectoryPath: Path): java.util.Properties {
-			val filePath = Paths.get(userDataDirectoryPath.toString(), "${Antares.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
+			val filePath = Paths.get(userDataDirectoryPath.toString(), "${AntaresApplication.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
 			FileInputStream(filePath.toString()).use {
 				val settings = java.util.Properties()
 				settings.load(it)
@@ -127,10 +127,10 @@ class AntaresSwing(
 
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", Antares.SYSTEM_NAME)
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", AntaresApplication.SYSTEM_NAME)
 
-			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
-			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, Antares.SYSTEM_NAME)
+			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
+			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
 
 			val preferences = prefetchPreferences(userDataDirectoryPath)
 			establishUserLanguage(preferences)
@@ -150,7 +150,7 @@ class AntaresSwing(
 		}
 	}
 
-	/** ---- [Antares] */
+	/** ---- [AntaresDesktop] */
 
 	private var customProjectsDirectoryPath: String? = null
 

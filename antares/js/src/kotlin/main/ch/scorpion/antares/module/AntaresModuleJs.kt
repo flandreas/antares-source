@@ -1,11 +1,13 @@
 package ch.scorpion.antares.module
 
+import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.module.EditModuleJs
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.RestLibraryPersistenceService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJs
 
@@ -16,11 +18,18 @@ object AntaresModuleJs : AbstractModule() {
 
 	override fun initialize() {
 		EditModuleJs.require()
+
+		LibraryModule.systemLibraryPersistenceService = RestLibraryPersistenceService(
+			baseUrl = "..",
+			libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
+			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
+		)
+		LibraryModule.libraryFactory = AntaresLibraryFactory()
+		LibraryModule.libraryService = LibraryService()
+
 		GraphViewModuleJs.require()
 		AntaresViewModule.require()
 
-		LibraryModule.userLibraryPersistenceService = RestLibraryPersistenceService()
-		LibraryModule.libraryFactory = AntaresLibraryFactory()
 
 		loadTranslations()
 	}

@@ -1,35 +1,24 @@
 package ch.scorpion.antares
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_DIRECTORY
+import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_FILENAME
+import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_PROJECT_DIRECTORY
+import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL
+import ch.scorpion.antares.AntaresApplication.Companion.FILE_EXTENSION_NAME
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.graph.library.Library
 import java.nio.file.FileSystems
 
-interface Antares : DesktopApplication {
-
-	companion object {
-		const val SYSTEM_NAME = "Antares"
-		private const val DISPLAY_NAME = "Antares"
-		private const val FILE_EXTENSION_NAME = "cir"
-		private const val DEFAULT_LIB_DIRECTORY = "libraries"
-		private const val DEFAULT_PROJECT_DIRECTORY = "projects"
-		private const val DEFAULT_LIB_FILENAME = "library.xml"
-		private const val DOC_URL = "https://www.antarescircuit.io/user-manual/english/usermanual/"
-	}
+interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
 	override val documentationUrl: String? get() = DOC_URL
 
-	/** ---- [Application] */
-
 	/** ---- [DesktopApplication] */
 
-	override val displayName: String get() = DISPLAY_NAME
-
-	override val systemName: String get() = SYSTEM_NAME
 
 	override val fileExtension: String get() = FILE_EXTENSION_NAME
 
-	/** ---- [Antares] */
+	/** ---- [AntaresDesktop] */
 
 	val projectsDirectoryPath: String get() = FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), DEFAULT_PROJECT_DIRECTORY).toString()
 

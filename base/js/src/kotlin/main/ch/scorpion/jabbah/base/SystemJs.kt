@@ -79,8 +79,8 @@ actual object System {
 
 	actual fun createUUID(uuid: String?): UUID {
 		// TODO Create an UUID with the same format as the one created by the JVM platform.
-		// We don't need this before editing functionality in the brower is required.
-		return UUID(Random.nextInt(10_000, 99_000).toString() + "-TEMP-UUID")
+		// We don't need this before editing functionality in the browser is required.
+		return uuid?.let { UUID(uuid) } ?: UUID(Random.nextInt(10_000, 99_000).toString() + "-TEMP-UUID")
 	}
 
 	actual fun invokeLater(invocable: () -> Unit) {

@@ -11,11 +11,13 @@ import org.w3c.xhr.XMLHttpRequest
  * An implementation of [LibraryPersistenceService] that calls the REST services of [ch.scorpion.jabbah.graph].
  */
 class RestLibraryPersistenceService(
-	private val baseUrl: String = BASE_URL
+	private val baseUrl: String = BASE_URL,
+	private val libraryDirectoryName: String,
+	private val libraryFileName: String
 ) : LibraryPersistenceService {
 
     companion object {
-        private const val BASE_URL = "http://localhost:4567/jabbah-graph"
+        private const val BASE_URL = ".."
     }
 
     /** ---- [LibraryPersistenceService] */
@@ -29,6 +31,12 @@ class RestLibraryPersistenceService(
         return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
     }
 
+	private fun buildLibraryFilePath(libraryUuid: UUID): String =
+		"${buildLibraryDirectoryPath(libraryUuid)}/$libraryFileName"
+
+	private fun buildLibraryDirectoryPath(libraryUuid: UUID): String =
+		"$baseUrl/$libraryDirectoryName/${libraryUuid}"
+
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
         throw UnsupportedOperationException("not implemented")
     }
@@ -38,17 +46,11 @@ class RestLibraryPersistenceService(
     }
 
     override fun loadLibrary(uuid: UUID): Library {
-	    throw UnsupportedOperationException("not implemented")
-	    /*
-        val request = XMLHttpRequest()
-        request.open("GET", "$BASE_URL/library/contents", async = false)
-        //request.responseType = XMLHttpRequestResponseType.DOCUMENT
-        request.overrideMimeType("text/xml")
-        request.onload = {
-            handleLibraryResponse(library, request.responseXML!!)
-        }
-        request.send()
-	    */
+	    val request = XMLHttpRequest()
+	    request.open("GET", buildLibraryFilePath(uuid), async = false)
+	    request.overrideMimeType("text/xml")
+	    request.send()
+	    return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library
     }
 
     override fun storeLibrary(library: Library) {
