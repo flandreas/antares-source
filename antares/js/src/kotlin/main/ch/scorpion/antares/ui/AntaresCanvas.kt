@@ -1,7 +1,10 @@
 package ch.scorpion.antares.ui
 
+import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.mreact.jmButton
+import ch.scorpion.jabbah.base.mreact.jrButton
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -17,6 +20,8 @@ import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import com.ccfraser.muirwik.components.MColor
 import com.ccfraser.muirwik.components.button.MButtonVariant
+import com.ccfraser.muirwik.components.button.color
+import com.ccfraser.muirwik.components.button.variant
 import kotlinx.html.id
 import react.RBuilder
 import react.RComponent
@@ -33,7 +38,7 @@ external interface AntaresCanvasProps : RProps {
 }
 
 /** Displays a [View] in a [CanvasJs]. */
-class AntaresCanvas : RComponent<AntaresCanvasProps, RState>(), GraphViewUI {
+class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, RState>(props), GraphViewUI {
 
 	private val toggleModeAction = ToggleApplicationModeAction()
 	private lateinit var editor: Editor
@@ -53,17 +58,20 @@ class AntaresCanvas : RComponent<AntaresCanvasProps, RState>(), GraphViewUI {
 			rootGraphProvider = { drawingView.drawing.graph!! },
 			graphViewsProvider = { listOf(drawingView.drawing) }
 		)
+
+		toggleModeAction.enabled = true
+
+		// In absence of a real application controller. Used to enable ToggleApplicationModeAction
+		BaseModule.eventBus.post(ApplicationDataEvent(null, ApplicationData(props.drawing, DefaultSavable("Web"))))
 	}
 
 	override fun RBuilder.render() {
 		styledDiv {
-			/*
-			mButton("Simulate", color = MColor.primary, variant = MButtonVariant.contained, onClick = {
-				toggleModeAction.execute(ActionEvent("Click", this@AntaresCanvas, 0, "click", 0))
-			})
-			*/
-
-			jmButton(toggleModeAction, color = MColor.primary, variant = MButtonVariant.contained)
+			jrButton {
+				action = toggleModeAction
+				color = MColor.primary
+				variant = MButtonVariant.contained
+			}
 		}
 		canvas {
 			attrs.id = props.canvasId

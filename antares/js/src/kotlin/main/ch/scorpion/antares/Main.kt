@@ -28,7 +28,7 @@ fun main() {
 	AntaresModuleJs.require()
 	AntaresThemes.install()
 
-	LogSystem.level = LogLevel.Debug
+	LogSystem.level = LogLevel.Info
 
 	EditAuthModule.userHolder.u = User.anybody
 	LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
@@ -42,11 +42,11 @@ class App : RComponent<RProps, RState>() {
 
 	override fun RBuilder.render() {
 		h1 {
-			+"Antares Web: Level 3"
+			+"Antares Web: Level 5"
 		}
 
 		p {
-			+"Click the button to start the simulation."
+			+"Click the button to start/stop the simulation."
 		}
 
 		child(AntaresCanvas::class) {
