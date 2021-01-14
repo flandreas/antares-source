@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.mreact.jrButton
+import ch.scorpion.jabbah.base.mreact.jrToggleButton
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -18,10 +18,6 @@ import ch.scorpion.jabbah.graph.ui.GraphViewUI
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import com.ccfraser.muirwik.components.MColor
-import com.ccfraser.muirwik.components.button.MButtonVariant
-import com.ccfraser.muirwik.components.button.color
-import com.ccfraser.muirwik.components.button.variant
 import kotlinx.html.id
 import react.RBuilder
 import react.RComponent
@@ -67,10 +63,9 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 
 	override fun RBuilder.render() {
 		styledDiv {
-			jrButton {
+			jrToggleButton {
 				action = toggleModeAction
-				color = MColor.primary
-				variant = MButtonVariant.contained
+				iconName = "play_arrow"
 			}
 		}
 		canvas {

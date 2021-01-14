@@ -31,7 +31,7 @@ fun RBuilder.jrButton(handler: JMButtonProps.() -> Unit): ReactElement {
 	}
 }
 
-/** Wraps a Jabbah [Action] in a React Material button.*/
+/** Wraps a Jabbah [Action] in a React Material Button.*/
 class JabbahReactButton : RComponent<JMButtonProps, RState>() {
 
 	override fun componentDidMount() {
