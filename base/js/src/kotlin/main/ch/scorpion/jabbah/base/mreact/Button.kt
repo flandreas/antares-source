@@ -25,14 +25,14 @@ interface JMButtonProps : MButtonProps {
 	var action: Action
 }
 
-fun RBuilder.jrButton(handler: JMButtonProps.() -> Unit): ReactElement {
-	return child(JabbahReactButton::class) {
+fun RBuilder.jmButton(handler: JMButtonProps.() -> Unit): ReactElement {
+	return child(JabbahMaterialButton::class) {
 		this.attrs(handler)
 	}
 }
 
 /** Wraps a Jabbah [Action] in a React Material Button.*/
-class JabbahReactButton : RComponent<JMButtonProps, RState>() {
+class JabbahMaterialButton : RComponent<JMButtonProps, RState>() {
 
 	override fun componentDidMount() {
 		props.action.addPropertyChangeListener(object : PropertyChangeListener<Any> {

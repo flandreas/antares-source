@@ -39,5 +39,9 @@ object AntaresModuleJs : AbstractModule() {
 		Translations.addKey("execution.action.execute.name", "Simulate")
 		Translations.addKey("execution.action.start.desc", "Start simulation")
 		Translations.addKey("execution.action.stop.desc", "Stop simulation")
+		Translations.addKey("execution.action.speed.name", "Simulation Speed")
+		Translations.addKey("execution.systemSpeedCategory.use", "Use")
+		Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
+		Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
 	}
 }

@@ -36,15 +36,15 @@ enum class SystemSpeedCategory(val customName: String, val speedRange: IntRange)
 
 	companion object {
 		fun withName(customName: String): SystemSpeedCategory {
-			return SystemSpeedCategory.values().firstOrNull { it.customName == customName } ?: throw IllegalArgumentException("Unknown SystemSpeedCategory")
+			return values().firstOrNull { it.customName == customName } ?: throw IllegalArgumentException("Unknown SystemSpeedCategory")
 		}
 	}
 
     override fun toString(): String {
         return when(this) {
-            SystemSpeedCategory.Use -> Translations.getString("execution.systemSpeedCategory.use")
-            SystemSpeedCategory.Observe -> Translations.getString("execution.systemSpeedCategory.observe")
-            SystemSpeedCategory.Explore -> Translations.getString("execution.systemSpeedCategory.explore")
+            Use -> Translations.getString("execution.systemSpeedCategory.use")
+            Observe -> Translations.getString("execution.systemSpeedCategory.observe")
+            Explore -> Translations.getString("execution.systemSpeedCategory.explore")
         }
     }
 }

@@ -26,15 +26,14 @@ interface JMToggleButtonProps : MButtonProps {
 	var value: Any
 }
 
-fun RBuilder.jrToggleButton(handler: JMToggleButtonProps.() -> Unit): ReactElement {
-	return child(JabbahReactToggleButton::class) {
+fun RBuilder.jmToggleButton(handler: JMToggleButtonProps.() -> Unit): ReactElement {
+	return child(JabbahMaterialToggleButton::class) {
 		this.attrs(handler)
 	}
 }
 
 /** Wraps a Jabbah [Action] in a React Material ToggleButton.*/
-class JabbahReactToggleButton(
-) : RComponent<JMToggleButtonProps, RState>() {
+class JabbahMaterialToggleButton : RComponent<JMToggleButtonProps, RState>() {
 
 	private val actionListener = object : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) { forceUpdate() }

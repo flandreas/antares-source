@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.mreact.jrToggleButton
+import ch.scorpion.jabbah.base.mreact.jmToggleButton
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.systemSpeedSlider
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewActorListener
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import com.ccfraser.muirwik.components.*
 import kotlinx.html.id
 import react.RBuilder
 import react.RComponent
@@ -75,17 +77,24 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 
 	override fun RBuilder.render() {
 		styledDiv {
-			jrToggleButton {
-				action = toggleModeAction
-				iconName = "play_arrow"
-			}
-			jrToggleButton {
-				action = pauseAction
-				iconName = "pause"
-			}
-			jrToggleButton {
-				action = resumeAction
-				iconName = "skip_next"
+			mGridContainer(alignItems = MGridAlignItems.center) {
+				mGridItem {
+					jmToggleButton {
+						action = toggleModeAction
+						iconName = "play_arrow"
+					}
+					jmToggleButton {
+						action = pauseAction
+						iconName = "pause"
+					}
+					jmToggleButton {
+						action = resumeAction
+						iconName = "skip_next"
+					}
+				}
+				mGridItem(xs = MGridSize.cells1) {
+					systemSpeedSlider {  }
+				}
 			}
 		}
 		canvas {

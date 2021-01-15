@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
-import ch.scorpion.jabbah.execution.SystemSpeedSlider
+import ch.scorpion.jabbah.execution.SystemSpeedSliderSwing
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -212,7 +212,7 @@ class GraphPanelViewSwing(
 		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
 		pauseToggleButton.toolTipText = pauseAction.name
 
-		val speedSlider = SystemSpeedSlider()
+		val speedSlider = SystemSpeedSliderSwing()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
 		val usecaseSelector = UsecaseSelector()

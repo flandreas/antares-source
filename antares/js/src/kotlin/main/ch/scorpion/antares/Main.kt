@@ -20,9 +20,7 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.h1
-import react.dom.p
-import react.dom.render
+import react.dom.*
 
 fun main() {
 	AntaresModuleJs.require()
@@ -45,8 +43,19 @@ class App : RComponent<RProps, RState>() {
 			+"Antares Web: Level 5"
 		}
 
+		ul {
+			li { +"Use the mouse wheel to zoom" }
+			li { +"Click/drag with middle mouse button to pan" }
+			li { +"Click/drag with left mouse button to move components" }
+			li { +"Click 'Play' button to start simulation" }
+			li { +"Click on input components to change input values" }
+			li { +"Click 'Pause' button to activate single step mode" }
+			li { +"Click 'Resume' button to resume after breakpoint "}
+			li { +"Drag slider knob to change simulation speed" }
+		}
+
 		p {
-			+"Click the button to start/stop the simulation."
+			+"Note that signal flow animation is activated below 33% system speed."
 		}
 
 		child(AntaresCanvas::class) {
