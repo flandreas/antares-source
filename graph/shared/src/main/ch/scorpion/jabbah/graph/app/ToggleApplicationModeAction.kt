@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
@@ -17,10 +16,6 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 class ToggleApplicationModeAction(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.execute") {
-
-	companion object {
-		private val LOG by logger(ToggleApplicationModeAction::class)
-	}
 
 	private var applicationData: ApplicationData? = null
 
@@ -35,7 +30,6 @@ class ToggleApplicationModeAction(
 	}
 
 	init {
-		LOG.info("Create ToggleApplicationModeAction")
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		selected = false

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -7,7 +8,6 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
-import javax.swing.Action
 
 /**
  * Base class for implementing [Action]s for controlling the [Scheduler].

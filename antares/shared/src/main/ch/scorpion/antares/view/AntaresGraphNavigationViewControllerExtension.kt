@@ -19,7 +19,7 @@ class AntaresGraphNavigationViewControllerExtension(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : GraphNavigationViewControllerExtension {
 
-	private val graphAnimator = GraphViewActorListener(controller.drawingView, eventBus = eventBus)
+	private val actorListener = GraphViewActorListener(controller.drawingView, eventBus = eventBus)
 
 	private val currentGraphAnimationTypeHandler: EventHandler<CurrentGraphAnimationTypeEvent> = { controller.drawingView.repaint() }
 
@@ -34,7 +34,7 @@ class AntaresGraphNavigationViewControllerExtension(
 	}
 
 	override fun dispose(controller: GraphNavigationViewController) {
-		graphAnimator.dispose()
+		actorListener.dispose()
 		eventBus.unregister(currentGraphAnimationTypeHandler)
 		eventBus.unregister(currentSymbolStyleHandler)
 		eventBus.unregister(gateMnemonicHandler)
