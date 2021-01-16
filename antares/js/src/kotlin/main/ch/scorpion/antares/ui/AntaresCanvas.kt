@@ -5,31 +5,23 @@ import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.mreact.jmToggleButton
-import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.systemSpeedSlider
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import ch.scorpion.jabbah.graph.ui.GraphViewUI
+import ch.scorpion.jabbah.graph.ui.graphNavigationView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphViewActorListener
-import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import com.ccfraser.muirwik.components.*
-import kotlinx.html.id
+import com.ccfraser.muirwik.components.MGridAlignItems
+import com.ccfraser.muirwik.components.MGridSize
+import com.ccfraser.muirwik.components.mGridContainer
+import com.ccfraser.muirwik.components.mGridItem
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.canvas
 import styled.styledDiv
 
 external interface AntaresCanvasProps : RProps {
@@ -39,33 +31,14 @@ external interface AntaresCanvasProps : RProps {
 	var drawing: Drawing<Component>
 }
 
-/** Displays a [View] in a [CanvasJs]. */
-class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, RState>(props), GraphViewUI {
+/** Displays simulation controls and a [graphNavigationView]. */
+class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, RState>(props) {
 
 	private val toggleModeAction = ToggleApplicationModeAction()
 	private val pauseAction = PauseExecutionAction()
 	private val resumeAction = ResumeExecutionAction()
-	private lateinit var editor: Editor
-	private lateinit var applicationModeHolder: ApplicationModeHolder
-	private lateinit var executionController: GraphViewExecutionController
-	private lateinit var actorListener: GraphViewActorListener
 
 	override fun componentDidMount() {
-		editor = GraphViewModule.graphEditorFactory.invoke(props.canvasId, BaseModule.eventBus)
-		editor.view.drawing = props.drawing
-
-		applicationModeHolder = ApplicationModeHolderImpl(editor)
-		GraphViewModule.applicationModeHolder = applicationModeHolder
-
-		executionController = GraphViewExecutionController(
-			this,
-			isRoot = true,
-			rootGraphProvider = { drawingView.drawing.graph!! },
-			graphViewsProvider = { listOf(drawingView.drawing) }
-		)
-
-		actorListener = GraphViewActorListener(editor.view as DrawingView<GraphView>)
-
 		ExecutionModule.scheduler.isSoftBreakpointsEnabled = true
 		toggleModeAction.enabled = true
 
@@ -97,20 +70,11 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 				}
 			}
 		}
-		canvas {
-			attrs.id = props.canvasId
-			attrs.width = props.width.toString()
-			attrs.height = props.height.toString()
+		graphNavigationView {
+			canvasId = props.canvasId
+			drawing = props.drawing as GraphView
+			width = props.width
+			height = props.height
 		}
-	}
-
-	override val drawingView: DrawingView<GraphView> get() = editor.view as DrawingView<GraphView>
-
-	override val isEditable: Boolean get() = true
-
-	override val isDetached: Boolean get() = false
-
-	override fun deselectAll() {
-		drawingView.content.selectionManager.deselectAll()
 	}
 }

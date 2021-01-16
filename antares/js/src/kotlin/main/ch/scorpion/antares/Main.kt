@@ -43,6 +43,7 @@ class App : RComponent<RProps, RState>() {
 			+"Antares Web: Level 5"
 		}
 
+		/*
 		ul {
 			li { +"Use the mouse wheel to zoom" }
 			li { +"Click/drag with middle mouse button to pan" }
@@ -57,6 +58,7 @@ class App : RComponent<RProps, RState>() {
 		p {
 			+"Note that signal flow animation is activated below 33% system speed."
 		}
+		*/
 
 		child(AntaresCanvas::class) {
 			attrs.canvasId = "kotlinCanvas"
