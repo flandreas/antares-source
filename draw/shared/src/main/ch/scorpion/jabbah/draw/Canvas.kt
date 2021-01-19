@@ -11,7 +11,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface Canvas {
 
-    /** Contains the [View] that effectively displays the [Drawable]s.*/
+    /**
+     * Contains the [View] that effectively displays the [Drawable]s.
+     * Instances of [Canvas] typically set [View.canvas] when being constructed.
+     */
     val view: View<*>
 
     /** Contains the dimension of the target canvas.*/

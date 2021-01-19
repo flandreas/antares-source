@@ -118,7 +118,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
-		val containerCanvas = CanvasJvm { EditModule.drawingViewFactory.invoke(ContainerDrawing(), it) }
+		val containerCanvas = CanvasJvm(EditModule.drawingViewFactory.invoke(ContainerDrawing()))
 		return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 

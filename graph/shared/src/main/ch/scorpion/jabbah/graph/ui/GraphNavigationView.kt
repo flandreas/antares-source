@@ -8,11 +8,14 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -95,6 +98,15 @@ class GraphNavigationViewController(
 		eventBus = eventBus
 	)
 
+	private val viewCanvasListener: PropertyChangeListener<Any> = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_CANVAS) {
+				graphViewExecutionController.updateDetachedUI()
+				drawingView.removePropertyChangeListener(this)
+			}
+		}
+	}
+
 	init {
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
@@ -102,7 +114,7 @@ class GraphNavigationViewController(
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
-		graphViewExecutionController.updateDetachedUI()
+		drawingView.addPropertyChangeListener(viewCanvasListener)
 	}
 
 	override fun dispose() {

@@ -90,13 +90,13 @@ class GraphViewActorListener(
 	}
 
 	private fun registerActorListener(graph: Graph) {
-		LOG.debug("adding as ActorListener on all GraphElements")
+		LOG.trace("adding as ActorListener on all GraphElements")
 		graph.elements.forEach { it.addActorListener(this) }
 	}
 
 
 	private fun unregisterActorListener(graph: Graph) {
-		LOG.debug("removing as ActorListener from all GraphElements")
+		LOG.trace("removing as ActorListener from all GraphElements")
 		graph.elements.forEach { it.removeActorListener(this) }
 	}
 

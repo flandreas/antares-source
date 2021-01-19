@@ -26,7 +26,7 @@ class VirtualCanvas(
 
 	/** ---- [Canvas] interface */
 
-	override val view: View<*> by lazy { viewFactory.invoke(this) }
+	override val view: View<*> by lazy { viewFactory.invoke(this).also { it.canvas = this } }
 
 	override val dimension: Dimension2D = Dimension2D(1000, 1000)
 

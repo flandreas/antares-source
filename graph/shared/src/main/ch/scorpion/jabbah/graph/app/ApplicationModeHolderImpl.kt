@@ -52,6 +52,7 @@ class ApplicationModeHolderImpl(
 				&& !scheduler.isActive
 				&& rootGraphView != null
 
+		LOG.debug("Setting editor active=$editable")
 		editor.active = editable
 	}
 

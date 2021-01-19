@@ -5,10 +5,8 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -185,15 +183,13 @@ class GraphDesktopViewSwing(
 		viewManager: ViewManager
 	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
-		val graphCanvas = CanvasJvm {
-			val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
-			drawingView
-		}
-		val drawingView = graphCanvas.view as DrawingView<GraphView>
+		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>) as DrawingView<GraphView>
+
 		val controller = GraphNavigationViewController(
 			isRoot = false,
 			isParentDetached = isParentDetached,
 			drawingView = drawingView)
+
 		val graphNavigationView = GraphNavigationViewSwing(
 			controller = controller,
 			drawingView = drawingView,

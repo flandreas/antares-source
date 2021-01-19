@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -30,7 +29,6 @@ class SubGraphVerticeImpl(
 ) : AbstractVertice(name), SubGraphVertice {
 
 	companion object {
-		private val LOG by logger(SubGraphVerticeImpl::class)
 		private const val baseResourceKey = "graph.element.container"
 		private val type = Translations.getString("$baseResourceKey.name")
 	}
@@ -92,7 +90,6 @@ class SubGraphVerticeImpl(
 		}
 
 		for (port in reader.readStorables<SubGraphPort<Any>>("ports")) {
-			LOG.debug("SubGraphVerticeImpl: reading and adding SubCircuitPort $port")
 			// Legacy file support. In new files, portId has always to be there!
 			if (port.portId > 0) {
 				addPort(port, port.portId)

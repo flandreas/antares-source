@@ -3,26 +3,25 @@ package ch.scorpion.jabbah.edit.view
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.AffineTransform
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
+import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_EDITABLE
 import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_SHOW_GRID
-import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.GridImpl
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 
 /**
  * An implementation of a [View] for displaying and editing [Drawing]s.
@@ -32,7 +31,6 @@ import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
  */
 class DrawingViewImpl<T: Drawing<Component>>(
     drawing: T,
-    canvas: Canvas,
     transformFactory: () -> AffineTransform = { System.createAffineTransform() },
     applicationContextHolder: ApplicationContextHolder? = null,
     displayGlobalMessages: Boolean = false,
@@ -41,11 +39,20 @@ class DrawingViewImpl<T: Drawing<Component>>(
     eventBus: EventBus = BaseModule.eventBus,
     animator: Animator = AnimationModule.animator,
     viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) }
-) : ViewImpl<EditInputEventContext>(canvas, transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
+) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
 
 	companion object {
 		private val LOG by logger(DrawingViewImpl::class)
 	}
+
+	override var canvas: Canvas
+		get() = super.canvas
+		set(value) {
+			super.canvas = value
+			setupContent()
+			grid.view = this
+			showGrid = true
+		}
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
@@ -125,9 +132,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
     init {
 	    eventBus.register(PreferencesChangedEvent::class, preferenceChangeHandler)
 	    eventBus.register(CommandEvent::class, commandEventHandler)
-        setupContent()
-        grid.view = this
-        showGrid = true
     }
 
 	override fun dispose() {

@@ -6,12 +6,11 @@ import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import kotlinx.browser.document
@@ -20,13 +19,14 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.*
+import react.dom.h1
+import react.dom.render
 
 fun main() {
 	AntaresModuleJs.require()
 	AntaresThemes.install()
 
-	LogSystem.level = LogLevel.Info
+	LogSystem.level = LogLevel.Debug
 
 	EditAuthModule.userHolder.u = User.anybody
 	LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
@@ -68,9 +68,9 @@ class App : RComponent<RProps, RState>() {
 		}
 	}
 
-	private fun loadLevel2LibraryDrawing(): Drawing<Component> {
+	private fun loadLevel2LibraryDrawing(): GraphView {
 		return loadMetaGraph(UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300"))
-			.graph.graphView as Drawing<Component>
+			.graph.graphView
 	}
 
 	// TODO Replace by service call

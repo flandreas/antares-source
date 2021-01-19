@@ -102,7 +102,6 @@ class GridImpl(
 
 	override var zoomPan: ZoomPan? = null
 		set(value) {
-			LOG.debug("Set Grid ZoomPan to $value")
 			field = value
 			invalidate()
 			updateGridPainterProperties()

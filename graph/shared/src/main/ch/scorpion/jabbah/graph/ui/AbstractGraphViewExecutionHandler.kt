@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.event.KeyAdapter
-import ch.scorpion.jabbah.base.event.MouseAdapter
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -31,9 +29,18 @@ abstract class AbstractGraphViewExecutionHandler(
 		updateActivationState()
 	}
 
+	private val viewCanvasListener: PropertyChangeListener<Any> = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_CANVAS) {
+				updateActivationState()
+				view.removePropertyChangeListener(this)
+			}
+		}
+	}
+
 	init {
 		eventBus.register(ApplicationModeEvent::class, modeEventHandler)
-		updateActivationState()
+		view.addPropertyChangeListener(viewCanvasListener)
 	}
 
 	protected abstract fun createMouseHandler(): MouseAdapter
@@ -44,6 +51,7 @@ abstract class AbstractGraphViewExecutionHandler(
 
 	open fun dispose() {
 		eventBus.unregister(ApplicationModeEvent::class, modeEventHandler)
+		view.removePropertyChangeListener(viewCanvasListener)
 		passivate()
 	}
 

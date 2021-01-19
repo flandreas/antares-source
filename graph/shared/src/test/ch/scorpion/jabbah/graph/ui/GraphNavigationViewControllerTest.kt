@@ -50,13 +50,13 @@ class GraphNavigationViewControllerTest {
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(
 		drawing = graphViewBuilder.graphView as Drawing<Component>,
-		canvas = mockk(relaxed = true),
 		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus),
 		eventBus = eventBus)
 	private val vv = createSubGraphVerticeView()
 	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus, scheduler = scheduler)
 
 	init {
+		drawingView.canvas = mockk(relaxed = true)
 		graphViewBuilder.addVerticeView(vv)
 		GraphNavigationViewMockBuilder(controller)
 	}

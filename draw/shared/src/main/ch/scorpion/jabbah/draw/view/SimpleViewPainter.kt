@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewPainter
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
@@ -12,7 +11,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  * by painting the entire [View] each time a repaint is requested.
  *
  * This class only exists for testing and demonstration purposes. For real applications, use more efficient painting
- * strategies like [BufferedViewPainter].
+ * strategies like [InvalidatableViewPainter].
  */
 class SimpleViewPainter(val view: View<out InputEventContext>) : ViewPainter {
 

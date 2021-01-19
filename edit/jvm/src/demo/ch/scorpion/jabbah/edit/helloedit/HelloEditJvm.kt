@@ -35,7 +35,7 @@ class HelloEditJvm : JFrame() {
         }
     }
 
-	private val canvas = CanvasJvm { EditModule.drawingViewFactory.invoke(buildDrawing(), it) }
+	private val canvas = CanvasJvm(EditModule.drawingViewFactory.invoke(buildDrawing()))
 
 	init {
 

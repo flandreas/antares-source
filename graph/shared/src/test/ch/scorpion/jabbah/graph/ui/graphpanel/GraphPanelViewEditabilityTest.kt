@@ -49,7 +49,7 @@ class GraphPanelViewEditabilityTest {
 	private val application = TestGraphApplication({ mockk() }, eventBus = eventBus)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val vv = createSubGraphVerticeView()
-	private val canvas = VirtualCanvas { DrawingViewImpl(GraphViewImpl() as Drawing<Component>, canvas = it, eventBus = eventBus) }
+	private val canvas = VirtualCanvas { DrawingViewImpl(GraphViewImpl() as Drawing<Component>, eventBus = eventBus) }
 	private val editor = GraphEditor(canvas.view as DrawingView<Drawing<Component>>, eventBus)
 	private val controller = GraphPanelViewController(editor, eventBus = eventBus)
 

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
@@ -107,6 +108,8 @@ class GraphNavigationViewSwing(
 		navigationStack.find(condition)
 
 	private fun buildUI(contextColor: CompositeColor?) {
+		CanvasJvm(drawingView)
+
 		layeredPane.layout = LayerLayoutManager()
 		layeredPane.add(drawingView.canvas as JComponent, JLayeredPane.DEFAULT_LAYER)
 

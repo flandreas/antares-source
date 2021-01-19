@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.SelectionToolFactory
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.snap.SnapManagerImpl
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.View
 
 /**
  * Standard implementation of the [Editor] interface.
@@ -217,6 +218,19 @@ open class EditorImpl(
     private inner class DrawingViewListener : PropertyChangeListener<Any> {
         @Suppress("UNCHECKED_CAST")
         override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+	        when (e.name) {
+		        DrawingView.PROP_DRAWING -> {
+			        (e.oldValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+			        (e.newValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+		        }
+		        View.PROP_CANVAS -> {
+			        active = true
+			        System.invokeLater {
+				        // Invoked later when UI already exists and is able to set its state accordingly
+				        currentTool = selectionTool
+			        }
+		        }
+	        }
             if (e.name == DrawingView.PROP_DRAWING) {
                 (e.oldValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
                 (e.newValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
@@ -253,12 +267,5 @@ open class EditorImpl(
 
         view.drawing.addDrawableContainerListener(drawingListener)
         view.addPropertyChangeListener(drawingViewListener)
-
-	    active = true
-
-	    System.invokeLater {
-		    // Invoked later when UI already exists and is able to set its state accordingly
-		    currentTool = selectionTool
-	    }
     }
 }

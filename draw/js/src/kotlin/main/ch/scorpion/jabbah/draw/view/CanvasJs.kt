@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJs
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import org.w3c.dom.CanvasRenderingContext2D
@@ -24,8 +25,8 @@ import kotlinx.browser.document
  */
 class CanvasJs(
 	id: String,
-	viewFactory: (Canvas) -> View<out InputEventContext>,
-	styleProvider: StyleProvider
+	override val view: View<out InputEventContext>,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : Canvas {
 
 	companion object {
@@ -42,8 +43,6 @@ class CanvasJs(
 	override val mouseLocation: Point2D
 		get() = throw UnsupportedOperationException("getting mouseLocation not yet implemented")
 
-	override val view: View<out InputEventContext>
-
 	private val canvas = document.getElementById(id) as HTMLCanvasElement
 
 	private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
@@ -56,7 +55,7 @@ class CanvasJs(
 		get() = Dimension2D(canvas.width.toDouble(), ctx.canvas.height.toDouble())
 
 	init {
-		view = viewFactory.invoke(this)
+		view.canvas = this
 		view.initialize()
 		initalizing = false
 	}

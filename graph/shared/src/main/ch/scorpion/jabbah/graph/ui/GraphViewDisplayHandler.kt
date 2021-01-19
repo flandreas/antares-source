@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -42,12 +43,11 @@ class GraphViewDisplayHandler(
 		eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
 		view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE) {
+				if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE || e.name == View.PROP_CANVAS) {
 					updateActivationState()
 				}
 			}
 		})
-		updateActivationState()
 	}
 
 	fun dispose() {

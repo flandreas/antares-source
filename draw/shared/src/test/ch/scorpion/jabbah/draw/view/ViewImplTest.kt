@@ -28,10 +28,10 @@ class ViewImplTest {
 		DrawTestRule.configure()
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
 		view = ViewImpl(
-			canvas = canvas,
 			transformFactory = { System.createAffineTransform() },
 			viewPainterFactory = { SimpleViewPainter(it) },
 			applicationContextHolder = null)
+		view.canvas = canvas
 		view.addDrawable(container)
 	}
 

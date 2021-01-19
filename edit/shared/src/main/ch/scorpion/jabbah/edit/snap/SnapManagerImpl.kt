@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.DropEvent
@@ -37,15 +36,25 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 	/** The [Drawable] that highlights the currently snapped y coordinate, if any.*/
 	private var highlightY: Unzoomable? = null
 
-	init {
-		// Listens for mouse releases in order to remove highlighters from the [View]
-		editor.view.addMouseListener(object : MouseAdapter() {
-			override fun mouseReleased(e: MouseEvent) {
-				removeAllHighights()
-			}
-		})
+	// Listens for mouse releases in order to remove highlighters from the [View]
+	private val mouseListener: MouseListener = object : MouseAdapter() {
+		override fun mouseReleased(e: MouseEvent) {
+			removeAllHighlights()
+		}
+	}
 
-		eventBus.register(DropEvent::class) { removeAllHighights() }
+	// Add MouseListener not before Canvas is bound
+	private val viewCanvasListener: PropertyChangeListener<Any> = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_CANVAS) {
+				editor.view.addMouseListener(mouseListener)
+			}
+		}
+	}
+
+	init {
+		editor.view.addPropertyChangeListener(viewCanvasListener)
+		eventBus.register(DropEvent::class) { removeAllHighlights() }
 	}
 
 	/** ---- [SnapManager] interface */
@@ -289,7 +298,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 		highlightY = newHighlightY
 	}
 
-	private fun removeAllHighights() {
+	private fun removeAllHighlights() {
 		highlightX?.let {
 			LOG.debug("removing highlightX from view")
 			editor.view.ghostContainer.remove(highlightX!!)

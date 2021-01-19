@@ -90,10 +90,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 		view = DrawingViewImpl(
 			drawing = circuitView as Drawing<Component>,
-			canvas = canvas,
 			transformFactory = { AffineTransformImpl() },
-			viewPainterFactory = { SimpleViewPainter(it) }
 		) as DrawingView<GraphView>
+		view.canvas = canvas
 
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)

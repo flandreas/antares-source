@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.draw.style.BasicStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
@@ -74,7 +77,11 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var graphEditorFactory: (canvasId:String,EventBus) -> GraphEditor = { _,_ -> throw UnsupportedOperationException("GraphEditor factory not configured") }
+	var graphEditorFactory: (EventBus) -> GraphEditor = { eventBus ->
+		val graphView = graphViewFactory.invoke(null) as Drawing<Component>
+		val drawingView = EditModule.drawingViewFactory.invoke(graphView)
+		GraphEditor(drawingView, eventBus)
+	}
 
 	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
 

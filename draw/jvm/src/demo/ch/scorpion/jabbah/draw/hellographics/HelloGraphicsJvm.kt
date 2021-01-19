@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.base.geom.AffineTransformJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.draw.InputEventContext
 import kotlin.system.exitProcess
 
 /**
@@ -42,7 +43,9 @@ class HelloGraphicsJvm : JFrame() {
 
     init {
         model = Model()
-        canvas = CanvasJvm({ ViewImpl(it, { AffineTransformJvm() }, null) }, StyleRepository.INSTANCE)
+        canvas = CanvasJvm(
+	        ViewImpl<InputEventContext>({ AffineTransformJvm() }, null),
+	        StyleRepository.INSTANCE)
         canvas.view.addDrawable(model.container)
         canvas.view.navigator.setZoomFactor(1.0)
 

@@ -29,9 +29,13 @@ class DrawingViewImplTest {
 
 	private val view = DrawingViewImpl<Drawing<Component>>(
 		drawing = drawing,
-		canvas = canvas,
 		transformFactory = { AffineTransformImpl() },
-		viewPainterFactory = { SimpleViewPainter(it) })
+		viewPainterFactory = { SimpleViewPainter(it) }
+	)
+
+	init {
+		view.canvas = canvas
+	}
 
 	@Test
 	fun shouldRepaintCanvasWhenValidatingDrawing() {

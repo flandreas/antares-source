@@ -25,7 +25,6 @@ class DomXmlReader(document: Document) : XmlReader {
     /** ---- [XmlReader] interface */
 
     override fun getName(): String {
-        LOG.debug("getName '${stack.peek().tagName}'")
         return stack.peek().tagName
     }
 
@@ -46,17 +45,14 @@ class DomXmlReader(document: Document) : XmlReader {
     }
 
     override fun descend(name: String) {
-        LOG.debug("descend to '$name'")
         stack.push(stack.peek().getElementsByTagName(name)[0]!!)
     }
 
     override fun descend(index: Int) {
-        LOG.debug("descend to index $index of '${stack.peek().tagName}'")
         stack.push(stack.peek().children.get(index - 1)!!)
     }
 
     override fun ascend() {
-        LOG.debug("ascend from '${stack.peek().tagName}'")
         stack.pop()
     }
 }

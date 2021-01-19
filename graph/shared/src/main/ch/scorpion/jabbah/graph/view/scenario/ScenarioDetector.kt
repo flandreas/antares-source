@@ -120,7 +120,6 @@ class ScenarioDetector(
 			val detectedScenario = view.drawing.scenarios.getScenarios().firstOrNull {
 				it.condition.invoke(view, scriptGateway)
 			}
-			LOG.debug("ScenarioDetector: detected Scenario '${detectedScenario?.name}'")
 			view.drawing.currentScenario = detectedScenario
 		}
 
@@ -141,7 +140,7 @@ class ScenarioDetector(
 		val oldValue = isActive
 		isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
 		if (isActive != oldValue) {
-			LOG.debug("ScenarioDetector: active = '$isActive'")
+			LOG.trace("active = '$isActive'")
 			view.drawing.currentScenario = null
 			view.drawing.currentScenarioStep = null
 		}
@@ -150,9 +149,9 @@ class ScenarioDetector(
 	private fun setCurrentScenarioStep(scenarioStep: ScenarioStep?) {
 		if (isActive) {
 			if (scenarioStep == null) {
-				LOG.debug("ScenarioDetector: no current ScenarioStep")
+				LOG.trace("no current ScenarioStep")
 			} else {
-				LOG.debug("ScenarioDetector: detected ScenarioStep '${scenarioStep.name}'")
+				LOG.trace("detected ScenarioStep '${scenarioStep.name}'")
 			}
 			view.drawing.currentScenarioStep = scenarioStep
 		}

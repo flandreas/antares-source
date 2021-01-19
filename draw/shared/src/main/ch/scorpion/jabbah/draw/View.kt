@@ -34,6 +34,8 @@ interface ApplicationContextHolder {
 /**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
  * [DrawableContainer]s that represent entire diagrams, of that contain selection or highlight graphics.
+
+ * [View]s are platform independent. Adoption to platform-specifics is provided by [Canvas].
  */
 interface View<C : InputEventContext> : ViewToModelTransform {
 
@@ -53,10 +55,16 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 		/** The name of the [userZoomEnabled] property in [PropertyChangeEvent]s.*/
 		const val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
+
+		/** The name of the [canvas] property in [PropertyChangeEvent]s.*/
+		const val PROP_CANVAS = "PROP_CANVAS"
 	}
 
-	/** The [Canvas] that renders this [View].*/
-	val canvas: Canvas
+	/**
+	 * The [Canvas] that renders this [View]. Late binding with this [View].
+	 * Clients that need to perform logic NOT BEFORE the [Canvas] is bound can listen to the [PropertyChangeEvent].
+	 */
+	var canvas: Canvas
 
 	/** ---- Life cycle */
 

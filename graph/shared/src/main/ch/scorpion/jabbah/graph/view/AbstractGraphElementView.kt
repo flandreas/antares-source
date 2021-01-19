@@ -86,7 +86,6 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 			val storable: Storable? = referenceResolver.getStorable(reference.referenceId)
 			if (storable is GraphElement) {
 				model = storable as T
-				LOG.debug("resolve ${model.id}")
 			}
 		}
 		isResolving = false

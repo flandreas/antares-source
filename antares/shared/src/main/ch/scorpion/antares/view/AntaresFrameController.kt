@@ -28,7 +28,7 @@ interface AntaresFrame : GraphFrame {
 
 class AntaresFrameController(
 	private val eventBus: EventBus = BaseModule.eventBus,
-	editor: Editor = GraphViewModule.graphEditorFactory.invoke("", eventBus),
+	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	scheduler: Scheduler = ExecutionModule.scheduler,
 	properties: Properties = BaseModule.properties

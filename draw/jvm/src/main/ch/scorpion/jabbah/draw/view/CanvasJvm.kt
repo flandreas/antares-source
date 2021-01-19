@@ -2,15 +2,14 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.*
@@ -18,45 +17,41 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.MouseInfo
 import java.awt.event.MouseWheelEvent
-import javax.swing.JPanel
 import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 import javax.swing.event.PopupMenuEvent
 import javax.swing.event.PopupMenuListener
+import java.awt.event.KeyEvent as AwtKeyEvent
 import java.awt.event.MouseEvent as AwtMouseEvent
 import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
-import java.awt.event.KeyEvent as AwtKeyEvent
 
 /**
  * Implements the [Canvas] interface on the JVM platform as a [JPanel].
  *
- * @param viewFactory the factory that provides the [View] to be displayed by this [Canvas]
+ * @param view the [View] to be displayed by this [Canvas]
  * @param styleProvider provides the [Style] that yields the background color of this [Canvas]
  */
 class CanvasJvm(
-	viewFactory: (Canvas) -> View<out InputEventContext>,
-	private val styleProvider: StyleProvider,
+	override val view: View<*>,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel(), Canvas {
 
-	constructor(viewFactory: (Canvas) -> View<out InputEventContext>) : this(viewFactory, DrawStyleModule.styleProvider)
-
-	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf<MouseEventBridge>() }
-	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf<MouseMotionEventBridge>() }
-	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf<MouseWheelEventBridge>() }
-	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf<KeyEventBridge>() }
+	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }
+	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf() }
+	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf() }
+	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf() }
 
 	private val contextMenu = JPopupMenu()
-
-	override val view: View<*>
 
 	init {
 		eventBus.register(ThemeEvent::class) { installBackgroundColor() }
 		installBackgroundColor()
 
 		layout = null
-		view = viewFactory.invoke(this)
+		view.canvas = this
 		view.initialize()
 
 		componentPopupMenu = contextMenu

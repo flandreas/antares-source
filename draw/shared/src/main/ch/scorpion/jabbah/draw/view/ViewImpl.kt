@@ -2,30 +2,27 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 
 
 /**
  * A standard implementation of the [View] interface.
- *
- * @param canvas the target-specific [Canvas] in which this [View] draws its contents
  * @param transformFactory a factory for creating new [AffineTransform]s
  */
 open class ViewImpl<C : InputEventContext>(
-	override val canvas: Canvas,
 	private val transformFactory: () -> AffineTransform,
 	private val applicationContextHolder: ApplicationContextHolder?,
 	protected val eventBus: EventBus = BaseModule.eventBus,
@@ -38,7 +35,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	private val controller: ZoomPanController = ZoomPanController(this)
 
-	/** Contains the [Drawable]s drawn by this [View]. The topmost [Drawable] is stored at index 0.*/
+	// Contains the [Drawable]s drawn by this [View]. The topmost [Drawable] is stored at index 0.
 	private val drawables: MutableList<Drawable> = mutableListOf()
 
 	private val changeSupport = PropertyChangeSupport<Any>(this)
@@ -47,6 +44,19 @@ open class ViewImpl<C : InputEventContext>(
 		invalidate()
 		repaint()
 	}
+
+	// Backing property as alternative to 'lateinit' with custom setter.
+	private var _canvas: Canvas? = null
+
+	override var canvas: Canvas
+		get() = _canvas!!
+		set(value) {
+			if (_canvas != null) {
+				throw IllegalStateException("Recurring attempt to bind Canvas in View")
+			}
+			_canvas = value
+			firePropertyChange(View.PROP_CANVAS, null, _canvas)
+		}
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
@@ -204,9 +214,11 @@ open class ViewImpl<C : InputEventContext>(
 
 	override var overlayColor: Color? = null
 		set(value) {
-			invalidate()
-			field = value
-			repaint()
+			if (field != value) {
+				invalidate()
+				field = value
+				repaint()
+			}
 		}
 
 	final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
@@ -327,7 +339,6 @@ open class ViewImpl<C : InputEventContext>(
 	override var zoomPan: ZoomPan
 		get() = _zoomPan
 		set(newValue) {
-			LOG.debug("Setting ZoomPan $newValue")
 			val panOffset = Point2D(
 				newValue.panOrigin.x - _zoomPan.panOrigin.x,
 				newValue.panOrigin.y - _zoomPan.panOrigin.y)

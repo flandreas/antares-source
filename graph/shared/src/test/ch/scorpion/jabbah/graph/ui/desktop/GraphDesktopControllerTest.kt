@@ -37,7 +37,7 @@ class GraphDesktopControllerTest {
 
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, mockk(relaxed = true), eventBus = eventBus)
+	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
 	private val controller = GraphDesktopViewController(eventBus = eventBus)
 	private val vv = createSubGraphVerticeView()
 	private val viewItemMock = GraphDesktopViewItemMockBuilder()
@@ -46,6 +46,7 @@ class GraphDesktopControllerTest {
 		.withMainViewItem(viewItemMock.build())
 
 	init {
+		drawingView.canvas = mockk(relaxed = true)
 		graphViewBuilder.addVerticeView(vv)
 	}
 

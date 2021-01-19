@@ -55,7 +55,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		DrawModuleJvm.require()
 
 		EditModule.copyPasteService = GraphViewCopyPasteService()
-		GraphViewModule.graphEditorFactory = { _,eventBus -> createGraphEditor(eventBus) }
 
 		GraphViewModule.require()
 
@@ -120,11 +119,5 @@ object GraphViewModuleJvm : AbstractModule() {
 			nameKey = "graph.preferences.Oscilloscope.useRefColors",
 			needsRestart = true
 		))
-	}
-
-	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
-		val graphView = GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
-		val graphCanvas = CanvasJvm { EditModule.drawingViewFactory.invoke(graphView, it) }
-		return GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 }
