@@ -43,7 +43,7 @@ class NavigationStackViewJs(
 
 	private fun onClick(event: MouseEvent, entry: NavigationStackEntry<GraphView>) {
 		event.preventDefault()
-		props.controller.navigationStack.navigateBackTo(entry, quickMode = false)
+		props.controller.navigationStack.navigateBackTo(entry, quickMode = event.metaKey)
 	}
 
 	override var editable: Boolean = true

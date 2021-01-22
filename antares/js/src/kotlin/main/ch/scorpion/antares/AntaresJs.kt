@@ -19,8 +19,7 @@ import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import kotlinx.browser.document
 import org.w3c.xhr.XMLHttpRequest
-import react.dom.h1
-import react.dom.render
+import react.dom.*
 
 class AntaresJs(
 	private val initialCircuitUuid: UUID
@@ -53,15 +52,25 @@ class AntaresJs(
 		val metaGraph = loadMetaGraph(initialCircuitUuid)
 
 		render(document.getElementById("root")) {
-			h1 {
-				+"Antares Web: Level 5"
-			}
+			h2 { +"Antares Web: Level 6" }
 
-			/*
+			h3 { +"View control" }
+
 			ul {
 				li { +"Use the mouse wheel to zoom" }
 				li { +"Click/drag with middle mouse button to pan" }
+			}
+
+			h3 { +"Editing (saving not yet supported)" }
+
+			ul {
+				li { +"Click on component to select" }
 				li { +"Click/drag with left mouse button to move components" }
+			}
+
+			h3 { +"Simulation" }
+
+			ul {
 				li { +"Click 'Play' button to start simulation" }
 				li { +"Click on input components to change input values" }
 				li { +"Click 'Pause' button to activate single step mode" }
@@ -72,7 +81,14 @@ class AntaresJs(
 			p {
 				+"Note that signal flow animation is activated below 33% system speed."
 			}
-		*/
+
+			h3 { +"Navigation" }
+
+			ul {
+				li { +"Double click on sub circuit symbol to dive into with animation" }
+				li { +"Cmd/Double click on subcircuit symbol to dive into without animation" }
+				li { +"Click on breadcrumb to surface from subcircuit" }
+			}
 
 			child(AntaresCanvas::class) {
 				attrs.canvasId = "kotlinCanvas"
