@@ -6,8 +6,6 @@ import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.mreact.jmToggleButton
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -17,7 +15,8 @@ import ch.scorpion.jabbah.execution.systemSpeedSlider
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
+import ch.scorpion.jabbah.graph.ui.GraphEditViewController
+import ch.scorpion.jabbah.graph.ui.graphEditView
 import ch.scorpion.jabbah.graph.ui.graphNavigationView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -43,7 +42,7 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 
 	private val editor: Editor
 	private val applicationModeHolder: ApplicationModeHolder
-	private val controller: GraphNavigationViewController
+	private val controller: GraphEditViewController
 
 	private val toggleModeAction = ToggleApplicationModeAction()
 	private val pauseAction = PauseExecutionAction()
@@ -56,12 +55,12 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 		applicationModeHolder = ApplicationModeHolderImpl(editor)
 		GraphViewModule.applicationModeHolder = applicationModeHolder
 
-		controller = GraphNavigationViewController(isRoot = true, drawingView)
+		controller = GraphEditViewController(drawingView)
 	}
 
 	override fun componentDidMount() {
 		DrawViewModule.viewManager.activeView = editor.view
-		controller.setRootGraphView(props.drawing, editable = true)
+		controller.graphNavigationViewController.setRootGraphView(props.drawing, editable = true)
 
 		ExecutionModule.scheduler.isSoftBreakpointsEnabled = true
 		toggleModeAction.enabled = true
@@ -96,7 +95,7 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 				}
 			}
 		}
-		graphNavigationView {
+		graphEditView {
 			canvasId = props.canvasId
 			controller = this@AntaresCanvas.controller
 			width = props.width

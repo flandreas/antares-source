@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import com.ccfraser.muirwik.components.mPaper
 import kotlinx.html.id
 import react.*
 import react.dom.canvas
@@ -20,8 +21,6 @@ fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit)
 
 /**
  * A React Material implementation of [GraphNavigationView].
- * A lot of the inner objects in this class will have to be moved out if various instances
- * of this class are used. Most of these inner object are only relevant for the "root editor".
  */
 private class GraphNavigationViewJs(
 	props: GraphNavigationViewJsProps
@@ -40,13 +39,15 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun RBuilder.render() {
-		navigationStackView {
-			controller = props.controller.navigationStackViewController
-		}
-		canvas {
-			attrs.id = props.canvasId
-			attrs.width = props.width.toString()
-			attrs.height = props.height.toString()
+		mPaper {
+			navigationStackView {
+				controller = props.controller.navigationStackViewController
+			}
+			canvas {
+				attrs.id = props.canvasId
+				attrs.width = props.width.toString()
+				attrs.height = props.height.toString()
+			}
 		}
 	}
 
