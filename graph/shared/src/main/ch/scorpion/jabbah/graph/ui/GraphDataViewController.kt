@@ -59,7 +59,10 @@ class GraphDataViewController(
 		eventBus.unregister(closeRequestHandler)
 	}
 
-	/** Implements [ApplicationDataViewController.open] by interpreting the [Savable]'s identification as a [Project] [UUID].*/
+	/**
+	 * Implements [ApplicationDataViewController.open] by interpreting the [Savable]'s identification as a [Project] [UUID],
+	 * whose opening results in opening the default [LibraryElement] of the [Project].
+	 * */
 	override fun open(savable: Savable) {
 		if (savable is DefaultSavable) {
 			openProject(UUID(savable.identification!!))

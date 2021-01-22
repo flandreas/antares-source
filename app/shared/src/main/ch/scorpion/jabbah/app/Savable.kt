@@ -14,7 +14,7 @@ interface Savable {
     /**
      * Determines whether this [Savable] is completely defined, i.e. it can be saved without further interaction
      * with the user, such as asking for a file name.
-     * @return `true` if this [Savable]] is completely defined.
+     * @return `true` if this [Savable] is completely defined.
      */
     val defined: Boolean
 

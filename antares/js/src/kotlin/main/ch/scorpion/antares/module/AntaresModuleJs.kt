@@ -34,7 +34,7 @@ object AntaresModuleJs : AbstractModule() {
 		loadTranslations()
 	}
 
-	/** Work around for missing implementation of [Translations] mechanism for texts used for demo application.*/
+	/** TODO Work around for missing implementation of [Translations] mechanism for texts used for demo application.*/
 	private fun loadTranslations() {
 		Translations.addKey("execution.action.execute.name", "Simulate")
 		Translations.addKey("execution.action.start.desc", "Start simulation")
@@ -43,5 +43,6 @@ object AntaresModuleJs : AbstractModule() {
 		Translations.addKey("execution.systemSpeedCategory.use", "Use")
 		Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
 		Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
+		Translations.addKey("library.savable.prefix", "Library Element")
 	}
 }
