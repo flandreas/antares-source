@@ -5,15 +5,13 @@ import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
-import ch.scorpion.jabbah.graph.ui.GraphEditViewController
-import ch.scorpion.jabbah.graph.ui.graphEditView
 import ch.scorpion.jabbah.graph.ui.graphExecutionToolbar
 import ch.scorpion.jabbah.graph.ui.graphNavigationView
+import ch.scorpion.jabbah.graph.ui.graphPanelView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import react.RBuilder
@@ -33,21 +31,15 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 
 	private val editor: Editor
 	private val applicationModeHolder: ApplicationModeHolder
-	private val controller: GraphEditViewController
-
-	private val drawingView: DrawingView<GraphView> get() = editor.view as DrawingView<GraphView>
 
 	init {
 		editor = GraphViewModule.graphEditorFactory.invoke(BaseModule.eventBus)
 		applicationModeHolder = ApplicationModeHolderImpl(editor)
 		GraphViewModule.applicationModeHolder = applicationModeHolder
-
-		controller = GraphEditViewController(drawingView)
 	}
 
 	override fun componentDidMount() {
 		DrawViewModule.viewManager.activeView = editor.view
-		controller.graphNavigationViewController.setRootGraphView(props.drawing, editable = true)
 
 		ExecutionModule.scheduler.isSoftBreakpointsEnabled = true
 
@@ -57,18 +49,21 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 		editor.active = true
 	}
 
-	// TODO Unmount
+	override fun componentWillUnmount() {
+		applicationModeHolder.dispose()
+	}
 
 	override fun RBuilder.render() {
 		graphExecutionToolbar {
 			scheduler = ExecutionModule.scheduler
 			eventBus = BaseModule.eventBus
 		}
-		graphEditView {
+		graphPanelView {
 			canvasId = props.canvasId
-			controller = this@AntaresCanvas.controller
 			width = props.width
 			height = props.height
+			drawing = props.drawing
+			editor = this@AntaresCanvas.editor
 		}
 	}
 }
