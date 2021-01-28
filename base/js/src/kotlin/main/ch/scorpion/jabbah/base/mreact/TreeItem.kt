@@ -2,10 +2,12 @@ package ch.scorpion.jabbah.base.mreact
 
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
+import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
 import react.RBuilder
 import react.RComponent
 import react.RState
 import react.ReactElement
+import styled.StyledHandler
 
 @JsModule("@material-ui/lab/TreeItem")
 @JsNonModule
@@ -15,22 +17,18 @@ private external val treeItemModule: dynamic
 private val treeItemComponent: RComponent<JMTreeItemProps, RState> = treeItemModule.default
 
 interface JMTreeItemProps : StyledPropsWithCommonAttributes {
-	var label: String
+	var label: ReactElement
 	var nodeId: String?
 }
 
-fun RBuilder.jmTreeItem(handler: JMTreeItemProps.() -> Unit): ReactElement {
-	return child(JabbahMaterialTreeItem::class) {
-		this.attrs(handler)
-	}
-}
-
-class JabbahMaterialTreeItem(props: JMTreeItemProps) : RComponent<JMTreeItemProps, RState>(props) {
-
-	override fun RBuilder.render() {
-		createStyled(treeItemComponent) {
-			attrs.label = props.label
-			attrs.nodeId = props.nodeId
-		}
-	}
+fun RBuilder.jmTreeItem(
+	label: ReactElement,
+	nodeId: String,
+	addAsChild: Boolean = true,
+	className: String? = null,
+	handler: StyledHandler<JMTreeItemProps>? = null
+) = createStyled(treeItemComponent, addAsChild) {
+	attrs.label = label
+	attrs.nodeId = nodeId
+	setStyledPropsAndRunHandler(className, handler)
 }

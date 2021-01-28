@@ -129,7 +129,7 @@ subprojects {
 					implementation(npm("inline-style-prefixer", "~6.0.0"))
 
 					implementation(npm("react-hot-loader", "^4.12.20"))
-					implementation("com.ccfraser.muirwik:muirwik-components:0.6.3")
+					implementation("com.ccfraser.muirwik:muirwik-components:0.6.5")
 				}
 			}
 			val jsTest by getting {

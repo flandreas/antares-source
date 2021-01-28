@@ -2,10 +2,9 @@ package ch.scorpion.jabbah.base.mreact
 
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
-import react.RBuilder
-import react.RComponent
-import react.RState
-import react.ReactElement
+import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
+import react.*
+import styled.StyledHandler
 
 @JsModule("@material-ui/lab/TreeView")
 @JsNonModule
@@ -19,18 +18,14 @@ interface JMTreeViewProps : StyledPropsWithCommonAttributes {
 	var defaultCollapseIcon: ReactElement?
 }
 
-fun RBuilder.jmTreeView(handler: JMTreeViewProps.() -> Unit): ReactElement {
-	return child(JabbahMaterialTreeView::class) {
-		this.attrs(handler)
-	}
-}
-
-class JabbahMaterialTreeView(props: JMTreeViewProps) : RComponent<JMTreeViewProps, RState>(props) {
-
-	override fun RBuilder.render() {
-		createStyled(treeViewComponent) {
-			attrs.defaultExpandIcon = props.defaultExpandIcon
-			attrs.defaultCollapseIcon = props.defaultCollapseIcon
-		}
-	}
+fun RBuilder.jmTreeView(
+	defaultExpandIcon: ReactElement,
+	defaultCollapseIcon: ReactElement,
+	addAsChild: Boolean = true,
+	className: String? = null,
+	handler: StyledHandler<JMTreeViewProps>? = null
+) = createStyled(treeViewComponent, addAsChild) {
+	attrs.defaultExpandIcon = defaultExpandIcon
+	attrs.defaultCollapseIcon = defaultCollapseIcon
+	setStyledPropsAndRunHandler(className, handler)
 }

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
 import com.ccfraser.muirwik.components.mIcon
+import com.ccfraser.muirwik.components.mTypography
 import react.*
 
 @JsModule("@material-ui/icons/ExpandMore")
@@ -19,7 +20,7 @@ private val collapseIcon = collapseIconModule.default
 
 
 external interface LibraryTreeViewJsProps : RProps {
-
+	// empty so far
 }
 
 fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactElement {
@@ -29,41 +30,32 @@ fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactE
 }
 
 class LibraryTreeViewJs(
-	props: LibraryTreeViewJsProps) : RComponent<LibraryTreeViewJsProps, RState>(props
-) {
+	props: LibraryTreeViewJsProps
+) : RComponent<LibraryTreeViewJsProps, RState>(props) {
+
 	override fun RBuilder.render() {
-		jmTreeView {
-			defaultExpandIcon = mIcon("expand_more")
-			defaultCollapseIcon = mIcon("chevron_right")
 
-			jmTreeItem {
-				nodeId = "1"
-				label = "Library 'Standard'"
-
-				jmTreeItem {
-					nodeId = "2"
-					label = "Logical Gates"
-
-					jmTreeItem {
-						nodeId = "3"
-						label = "AND"
-					}
-					jmTreeItem {
-						nodeId = "4"
-						label = "OR"
-					}
+		jmTreeView(defaultExpandIcon = createExpandIcon(), defaultCollapseIcon = createCollapseIcon()) {
+			jmTreeItem(label = createLabel("Library 'Standard'"), nodeId = "1") {
+				jmTreeItem(label = createLabel("Logical Gates"), nodeId = "2") {
+					jmTreeItem(label = createLabel("AND"), nodeId = "3")
+					jmTreeItem(label = createLabel("OR"), nodeId = "4")
 				}
-
-				jmTreeItem {
-					nodeId = "5"
-					label = "Input"
+				jmTreeItem(label = createLabel("Input"), nodeId = "5") {
+					jmTreeItem(label = createLabel("Switch"), nodeId = "6")
+					jmTreeItem(label = createLabel("Input Port"), nodeId = "7")
 				}
-
-				jmTreeItem {
-					nodeId = "6"
-					label = "Output"
+				jmTreeItem(label = createLabel("Output"), nodeId = "8") {
+					jmTreeItem(label = createLabel("LED"), nodeId = "9")
+					jmTreeItem(label = createLabel("Output Port"), nodeId = "10")
 				}
 			}
 		}
 	}
+
+	private fun createExpandIcon(): ReactElement = RBuilder().mIcon("chevron_right")
+
+	private fun createCollapseIcon(): ReactElement = RBuilder().mIcon("expand_more")
+
+	private fun createLabel(text: String): ReactElement = RBuilder().mTypography(text)
 }
