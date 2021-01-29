@@ -18,16 +18,19 @@ class ZoomPanController(val view: View<*>) {
 
 	companion object {
 
-		/** The name of the wheel zoom step [Float] property in [Properties].*/
+		/** The name of the 'wheel zoom step' [Float] property in [Properties].*/
 		const val PROP_WHEEL_ZOOM_STEP = "view.ZoomPanController.wheelZoomStep"
 
-		/** The name of the wheel pan step [Float] property in [Properties].*/
+		/** The name of the 'wheel zoom requires meta' [Boolean] property in [Properties]*/
+		const val PROP_WHEEL_ZOOM_REQUIRES_META = "view.ZoomPanController.wheelZoomRequiredMeta"
+
+		/** The name of the 'wheel pan step' [Float] property in [Properties].*/
 		const val PROP_WHEEL_PAN_STEP = "view.ZoomPanController.wheelPanStep"
 
 		private val LOG by logger(ZoomPanController::class)
-		private const val AUTOPAN_TIMER_DELAY = 50
-		private const val AUTOPAN_SIZE = 10
-		private const val AUTOPAN_REGION = 50
+		private const val AUTO_PAN_TIMER_DELAY = 50
+		private const val AUTO_PAN_SIZE = 10
+		private const val AUTO_PAN_REGION = 50
 		private const val MOUSE_WHEEL_PAN_FACTOR = 5
 	}
 
@@ -61,14 +64,18 @@ class ZoomPanController(val view: View<*>) {
 
 	private val wheelPanStep: Int get() = BaseModule.properties.getInt(PROP_WHEEL_PAN_STEP)
 
+	private val wheelZoomRequiresMeta: Boolean get() = BaseModule.properties.getBoolean(PROP_WHEEL_ZOOM_REQUIRES_META)
+
 	var startPos: Point2D = Point2D.ZERO
 
 	inner class Controller : MouseAdapter() {
 
 		private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
 
+		private fun isZoomWithMetaIfRequired(e: MouseEvent) = e.isMetaDown || !wheelZoomRequiresMeta
+
 		private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
-			if (e.wheelRotation != 0 && e.modifiers == 0) {
+			if (e.wheelRotation != 0) {
 				return if (isZoomOutWheelRotation(e)) 1 / wheelZoomStep else wheelZoomStep
 			}
 			return 1.0
@@ -113,17 +120,22 @@ class ZoomPanController(val view: View<*>) {
 		}
 
 		override fun mouseWheelRotated(e: MouseEvent) {
-			LOG.trace("ZoomPanController: mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
+			LOG.info("mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
 			if (isMousePressed) {
 				// Don't zoom if a mouse button (especially the middle mouse button used for panning) is down
 				return
 			}
-			if (e.modifiers == 0) {
-				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
-			} else if (e.isAltDown) {
+			if (!isZoomWithMetaIfRequired(e)) {
+				return
+			}
+
+			if (e.isAltDown) {
 				startPos = Point2D.ZERO
 				pan(panVectorFromWheelRotation(e))
+			} else {
+				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
 			}
+
 			e.consume()
 		}
 
@@ -148,7 +160,7 @@ class ZoomPanController(val view: View<*>) {
 		var enabled: Boolean = true
 
 		init {
-			timer.initialize(AUTOPAN_TIMER_DELAY) { pan() }
+			timer.initialize(AUTO_PAN_TIMER_DELAY) { pan() }
 		}
 
 		override fun mouseDragged(e: MouseEvent) {
@@ -185,14 +197,14 @@ class ZoomPanController(val view: View<*>) {
 
 		private fun pan() {
 			val dir = if (event.isLeftButtonDown) 1 else -1
-			val panDirection = panDirection(event.location).multiply(dir * AUTOPAN_SIZE.toDouble())
+			val panDirection = panDirection(event.location).multiply(dir * AUTO_PAN_SIZE.toDouble())
 			view.navigator.panBy(panDirection.x.toInt(), panDirection.y.toInt())
 			view.dispatchEvent(event)
 		}
 
 		private fun isInsideSensitiveRegion(p: Point2D): Boolean {
-			return p.x <= AUTOPAN_REGION || p.x > view.width - AUTOPAN_REGION
-				|| p.y <= AUTOPAN_REGION || p.y > view.height - AUTOPAN_REGION
+			return p.x <= AUTO_PAN_REGION || p.x > view.width - AUTO_PAN_REGION
+				|| p.y <= AUTO_PAN_REGION || p.y > view.height - AUTO_PAN_REGION
 		}
 
 		private fun panDirection(p: Point2D): Vector2D {

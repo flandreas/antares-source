@@ -281,18 +281,18 @@ private class MouseEventJs(
 	}
 
 	private fun convertModifiers(): Int {
-		var modifiers: Int = 0
+		var modifiers = 0
 		if (event.shiftKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
+			modifiers = modifiers or SHIFT_MASK
 		}
 		if (event.ctrlKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.CTRL_MASK
+			modifiers = modifiers or CTRL_MASK
 		}
 		if (event.metaKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.META_MASK
+			modifiers = modifiers or META_MASK
 		}
 		if (event.altKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.ALT_MASK
+			modifiers = modifiers or ALT_MASK
 		}
 
 		return modifiers
@@ -382,16 +382,16 @@ private class KeyEventJs(
 	private fun convertModifiers(): Int {
 		var modifiers: Int = 0
 		if (event.shiftKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
+			modifiers = modifiers or SHIFT_MASK
 		}
 		if (event.ctrlKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.CTRL_MASK
+			modifiers = modifiers or CTRL_MASK
 		}
 		if (event.metaKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.META_MASK
+			modifiers = modifiers or META_MASK
 		}
 		if (event.altKey) {
-			modifiers = modifiers or ch.scorpion.jabbah.base.event.ALT_MASK
+			modifiers = modifiers or ALT_MASK
 		}
 
 		return modifiers

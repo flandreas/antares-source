@@ -5,8 +5,8 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.module.DrawModule
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.TooltipHandler
+import ch.scorpion.jabbah.draw.view.ZoomPanController
 import org.w3c.dom.HTMLCanvasElement
 import kotlinx.browser.document
 
@@ -27,5 +27,8 @@ object DrawModuleJs : AbstractModule() {
 	private fun fillProperties(properties: Properties) {
 		// Disable textual HTML tooltips in JS until HTML text boxed can be rendered
 		properties.set(TooltipHandler.PROP_TOOLTIPS_ENABLED, false)
+
+		// Zooming with mouse wheel requires META key in order not to interfere with scrolling on web page
+		properties.set(ZoomPanController.PROP_WHEEL_ZOOM_REQUIRES_META, true)
 	}
 }
