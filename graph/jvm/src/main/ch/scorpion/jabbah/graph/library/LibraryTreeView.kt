@@ -37,7 +37,7 @@ class LibraryTreeView(
 	project: Project? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	showWorkspaceNode: Boolean = true
-) : JTree(LibraryTreeModelBuilder(library, project).build()) {
+) : JTree(LibraryTreeModelBuilderSwing(library, project).build()) {
 
 	companion object {
 		private val LOG by logger(LibraryTreeView::class)
@@ -229,7 +229,7 @@ class LibraryTreeView(
 		val root = model.root as DefaultMutableTreeNode
 		val oldLibraryNode = getLibraryNode()
 		val newLibraryNode = DefaultMutableTreeNode(library)
-		LibraryTreeModelBuilder.addItems(newLibraryNode, library)
+		LibraryTreeModelBuilderSwing.addLibrary(newLibraryNode, library)
 		val libraryNodeIndex = if (getProjectNode() == null) 0 else 1
 
 		root.remove(libraryNodeIndex)
@@ -245,7 +245,7 @@ class LibraryTreeView(
 		val root = model.root as DefaultMutableTreeNode
 		val oldProjectNode = getProjectNode()
 		val newProjectNode = DefaultMutableTreeNode(project)
-		LibraryTreeModelBuilder.addItems(newProjectNode, project)
+		LibraryTreeModelBuilderSwing.addLibrary(newProjectNode, project)
 
 		if (oldProjectNode == null) {
 			root.insert(newProjectNode, 0)

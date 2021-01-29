@@ -13,9 +13,9 @@ interface LibraryDirectory : LibraryItem {
 
 	fun isEmpty(): Boolean
 
-	fun add(item: LibraryItem)
+	fun add(item: LibraryItem): LibraryDirectory
 
-	fun add(index: Int, item: LibraryItem)
+	fun add(index: Int, item: LibraryItem): LibraryDirectory
 
 	/**
 	 * Removed a [LibraryItem] from this [LibraryDirectory].

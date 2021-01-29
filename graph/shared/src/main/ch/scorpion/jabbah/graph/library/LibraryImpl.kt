@@ -77,13 +77,9 @@ open class LibraryImpl(
 
 	override fun isEmpty(): Boolean = libraryFolder.isEmpty()
 
-	override fun add(item: LibraryItem) {
-		libraryFolder.add(item)
-	}
+	override fun add(item: LibraryItem): LibraryDirectory = libraryFolder.add(item)
 
-	override fun add(index: Int, item: LibraryItem) {
-		libraryFolder.add(index, item)
-	}
+	override fun add(index: Int, item: LibraryItem): LibraryDirectory = libraryFolder.add(index, item)
 
 	override fun remove(item: LibraryItem): Boolean = libraryFolder.remove(item)
 

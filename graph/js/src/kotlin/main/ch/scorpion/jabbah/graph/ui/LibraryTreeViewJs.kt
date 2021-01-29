@@ -6,19 +6,6 @@ import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
 import react.*
 
-@JsModule("@material-ui/icons/ExpandMore")
-@JsNonModule
-external val expandIconModule: dynamic
-
-private val expandIcon = expandIconModule.default
-
-@JsModule("@material-ui/icons/ChevronRight")
-@JsNonModule
-external val collapseIconModule: dynamic
-
-private val collapseIcon = collapseIconModule.default
-
-
 external interface LibraryTreeViewJsProps : RProps {
 	// empty so far
 }

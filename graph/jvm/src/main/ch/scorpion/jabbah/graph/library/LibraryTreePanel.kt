@@ -40,8 +40,13 @@ class LibraryTreePanel(
 	}
 
 	private fun search() {
-		val filter: ((LibraryItem) -> Boolean)? = if (StringUtils.isBlank(searchField.text)) null else { item -> item.toString().contains(searchField.text, true) }
-		libraryTreeView.model = LibraryTreeModelBuilder(
+		val filter: LibraryFilter? = if (StringUtils.isBlank(searchField.text)) {
+			null
+		} else {
+			item -> item.toString().contains(searchField.text, true)
+		}
+
+		libraryTreeView.model = LibraryTreeModelBuilderSwing(
 			libraryTreeView.library,
 			libraryTreeView.project,
 			filter
