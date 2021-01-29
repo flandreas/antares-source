@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import com.ccfraser.muirwik.components.*
@@ -35,8 +36,6 @@ class GraphPanelViewJs(props: GraphPanelViewJsProps) : RComponent<GraphPanelView
 	private val controller: GraphEditViewController
 	private val drawingView: DrawingView<GraphView> get() = props.editor.view as DrawingView<GraphView>
 
-
-
 	init {
 		controller = GraphEditViewController(drawingView)
 	}
@@ -56,15 +55,15 @@ class GraphPanelViewJs(props: GraphPanelViewJsProps) : RComponent<GraphPanelView
 				overflow = Overflow.hidden
 				position = Position.relative
 				display = Display.flex
-
 			}
 
 			// According to "testapp" of github:cfnz/muirwik
 			val pp: MPaperProps = jsObject {  }
 			pp.asDynamic().style = js { position = "relative" }
 			mDrawer(open = true, MDrawerAnchor.left, MDrawerVariant.permanent, paperProps = pp) {
-				//mTypography("Future Tree")
-				libraryTreeView {  }
+				libraryTreeView {
+					library = LibraryModule.libraryHolder.library
+				}
 			}
 
 			styledDiv {
