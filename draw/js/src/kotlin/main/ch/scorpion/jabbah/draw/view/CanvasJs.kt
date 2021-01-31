@@ -60,6 +60,9 @@ class CanvasJs(
 		initalizing = false
 	}
 
+	// TODO: Use window.devicePixelRatio once the view system can support it
+	override val devicePixelRatio: Int = 1
+
 	override fun requestViewFocus() {
 		canvas.focus()
 	}

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
 import io.mockk.verify
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -81,5 +82,20 @@ class ViewImplTest {
 		view.draw(context)
 
 		assertEquals(Rectangle2D(495, 495, 10, 10), graphics2D.drawnRectangle)
+	}
+
+	@Test
+	@Ignore
+	fun shouldUseHigherDevicePixelRatio() {
+		canvas.withDevicePixelRatio(2)
+
+		view.addDrawable(DrawableMockBuilder()
+			.withBoundingBox(Rectangle2D(0, 0, 10, 10))
+			.build())
+
+		view.initialize()
+		view.draw(context)
+
+		assertEquals(Rectangle2D(990, 990, 20, 20), graphics2D.drawnRectangle)
 	}
 }

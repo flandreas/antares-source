@@ -8,6 +8,15 @@ class CanvasMockBuilder {
 
 	private val canvas: Canvas = mockk(relaxed = true)
 
+	init {
+		withDevicePixelRatio(1)
+	}
+
+	fun withDevicePixelRatio(devicePixelRatio: Int): CanvasMockBuilder {
+		every { canvas.devicePixelRatio } returns devicePixelRatio
+		return this
+	}
+
 	fun withView(view: View<*>): CanvasMockBuilder {
 		every { canvas.view } returns view
 		view.canvas = canvas

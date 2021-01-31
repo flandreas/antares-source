@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface Canvas {
 
+	/** The number of actual physical pixels used per view pixel. */
+	val devicePixelRatio: Int
+
     /**
      * Contains the [View] that effectively displays the [Drawable]s.
      * Instances of [Canvas] typically set [View.canvas] when being constructed.
