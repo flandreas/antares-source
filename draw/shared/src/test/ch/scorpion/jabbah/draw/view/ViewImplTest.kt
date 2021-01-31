@@ -3,13 +3,11 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.DrawTestRule
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
-import io.mockk.every
-import io.mockk.mockk
+import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
+import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
 import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -18,20 +16,25 @@ import kotlin.test.assertEquals
 /** Unit tests for [ViewImpl].*/
 class ViewImplTest {
 
-	private val canvas: Canvas = mockk(relaxed = true)
+	private val graphics2D = Graphics2DMockBuilder()
 
-	private lateinit var view: ViewImpl<InputEventContext>
+	private val context = DrawContext(graphics2D.build(), null)
+
+	private val view = ViewImpl<InputEventContext>(
+		transformFactory = { System.createAffineTransform() },
+		viewPainterFactory = { SimpleViewPainter(it) },
+		applicationContextHolder = null
+	)
+
+	private val canvas = CanvasMockBuilder()
+		.withView(view)
+		.withDimension(Dimension2D(1000, 1000))
+
 	private val container = DrawableContainerImpl<Drawable>()
 
 	@BeforeTest
 	fun before() {
 		DrawTestRule.configure()
-		every { canvas.dimension } returns Dimension2D(1000, 1000)
-		view = ViewImpl(
-			transformFactory = { System.createAffineTransform() },
-			viewPainterFactory = { SimpleViewPainter(it) },
-			applicationContextHolder = null)
-		view.canvas = canvas
 		view.addDrawable(container)
 	}
 
@@ -39,7 +42,7 @@ class ViewImplTest {
 	fun shouldRepaintCanvasWhenValidatingDrawable() {
 		container.invalidate()
 		container.validate()
-		verify { canvas.repaint() }
+		verify { canvas.build().repaint() }
 	}
 
 	@Test
@@ -68,4 +71,15 @@ class ViewImplTest {
 		assertEquals(modelLoc, view.viewToModel(viewLoc))
 	}
 
+	@Test
+	fun shouldCenterDrawableByDefault() {
+		view.addDrawable(DrawableMockBuilder()
+			.withBoundingBox(Rectangle2D(0, 0, 10, 10))
+			.build())
+
+		view.initialize()
+		view.draw(context)
+
+		assertEquals(Rectangle2D(495, 495, 10, 10), graphics2D.drawnRectangle)
+	}
 }

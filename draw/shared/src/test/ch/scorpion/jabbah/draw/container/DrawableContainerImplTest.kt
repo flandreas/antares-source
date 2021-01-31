@@ -250,15 +250,15 @@ class DrawableContainerImplTest {
 
 	@Test
 	fun shouldUpdateBoundingBox() {
-		container.add(DrawableMockBuilder().boundingBox(Rectangle2D(0, 0, 10, 10)).build())
-		container.add(DrawableMockBuilder().boundingBox(Rectangle2D(10, 10, 10, 10)).build())
+		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(0, 0, 10, 10)).build())
+		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(10, 10, 10, 10)).build())
 		assertEquals(Rectangle2D(0, 0, 20, 20), container.boundingBox)
 	}
 
 	@Test
 	fun shouldNotAddInvisibleToBoundingBox() {
-		container.add(DrawableMockBuilder().boundingBox(Rectangle2D(0, 0, 10, 10)).invisible().build())
-		container.add(DrawableMockBuilder().boundingBox(Rectangle2D(10, 10, 10, 10)).build())
+		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(0, 0, 10, 10)).invisible().build())
+		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(10, 10, 10, 10)).build())
 		assertEquals(Rectangle2D(10, 10, 10, 10), container.boundingBox)
 	}
 

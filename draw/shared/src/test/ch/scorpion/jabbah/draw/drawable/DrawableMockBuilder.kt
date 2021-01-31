@@ -3,10 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.draw.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -18,8 +15,16 @@ class DrawableMockBuilder {
 
     private val drawable: Drawable = mockk(relaxed = true)
 
+	private val boundingBoxDrawer: (DrawContext) -> Unit = { it.g.drawRect(
+		drawable.boundingBox.x.toInt(),
+		drawable.boundingBox.y.toInt(),
+		drawable.boundingBox.width.toInt(),
+		drawable.boundingBox.height.toInt())
+	}
+
     init {
 	    withBoundingBox(Rectangle2D())
+	    withDrawLogic(boundingBoxDrawer)
 	    withInteractionHandler(InputEventHandlerAdapter())
 	    visible()
     }
@@ -55,13 +60,14 @@ class DrawableMockBuilder {
         return this
     }
 
-	fun boundingBox(rect: Rectangle2D): DrawableMockBuilder {
-		every { drawable.boundingBox } returns rect
+	fun withInteractionHandler(handler: InputEventHandler<InputEventContext>): DrawableMockBuilder {
+		every { drawable.getInputEventHandler(any()) } returns handler
 		return this
 	}
 
-	fun withInteractionHandler(handler: InputEventHandler<InputEventContext>): DrawableMockBuilder {
-		every { drawable.getInputEventHandler(any()) } returns handler
+	fun withDrawLogic(logic: (context: DrawContext) -> Unit): DrawableMockBuilder {
+		val slot = slot<DrawContext>()
+		every { drawable.draw(capture(slot)) } answers { logic.invoke(slot.captured) }
 		return this
 	}
 
