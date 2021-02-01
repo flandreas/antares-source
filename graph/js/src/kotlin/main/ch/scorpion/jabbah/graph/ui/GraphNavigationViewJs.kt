@@ -31,7 +31,7 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun componentDidMount() {
-		CanvasJs(props.canvasId, props.controller.drawingView)
+		CanvasJs(props.canvasId, props.controller.drawingView, props.width, props.height)
 	}
 
 	override fun componentWillUnmount() {
@@ -45,8 +45,7 @@ private class GraphNavigationViewJs(
 			}
 			canvas {
 				attrs.id = props.canvasId
-				attrs.width = props.width.toString()
-				attrs.height = props.height.toString()
+				// width and height are set by CanvasJs
 			}
 		}
 	}

@@ -120,7 +120,6 @@ class ZoomPanController(val view: View<*>) {
 		}
 
 		override fun mouseWheelRotated(e: MouseEvent) {
-			LOG.info("mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
 			if (isMousePressed) {
 				// Don't zoom if a mouse button (especially the middle mouse button used for panning) is down
 				return

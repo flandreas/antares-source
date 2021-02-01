@@ -28,6 +28,8 @@ class VirtualCanvas(
 
 	override val view: View<*> by lazy { viewFactory.invoke(this).also { it.canvas = this } }
 
+	override val devicePixelRatio: Int = 1
+
 	override val dimension: Dimension2D = Dimension2D(1000, 1000)
 
 	override var backgroundColor: Color = Color.WHITE
