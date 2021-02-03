@@ -39,14 +39,12 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun RBuilder.render() {
-		mPaper {
-			navigationStackView {
-				controller = props.controller.navigationStackViewController
-			}
-			canvas {
-				attrs.id = props.canvasId
-				// width and height are set by CanvasJs
-			}
+		navigationStackView {
+			controller = props.controller.navigationStackViewController
+		}
+		canvas {
+			attrs.id = props.canvasId
+			// width and height are set by CanvasJs
 		}
 	}
 

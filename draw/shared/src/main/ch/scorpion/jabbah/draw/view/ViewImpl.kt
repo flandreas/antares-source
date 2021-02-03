@@ -311,15 +311,17 @@ open class ViewImpl<C : InputEventContext>(
 	}
 
 	override fun repaint() {
-		canvas.repaint()
+		_canvas?.repaint()
 	}
 
 	override fun repaint(x: Int, y: Int, w: Int, h: Int) {
-		canvas.repaint(x, y, w, h)
+		_canvas?.repaint(x, y, w, h)
 	}
 
 	protected fun invalidate(region: RectangularShape? = null) {
-		painter.invalidateRegion(region, false)
+		_canvas?.let {
+			painter.invalidateRegion(region, false)
+		}
 	}
 
 	/** ---- Zooming, panning and navigating */

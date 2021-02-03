@@ -4,7 +4,9 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.TranslationServiceImpl
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.module.EditModuleJs
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
@@ -18,6 +20,10 @@ object AntaresModuleJs : AbstractModule() {
 
 	override fun initialize() {
 		EditModuleJs.require()
+
+		BaseModuleJs.translationService = TranslationServiceImpl(
+			baseUrl = ".."
+		)
 
 		LibraryModule.systemLibraryPersistenceService = RestLibraryPersistenceService(
 			baseUrl = "..",

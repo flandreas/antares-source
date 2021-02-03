@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.MissingResourceException
 
@@ -16,8 +17,18 @@ expect object Translations {
 
 	/**
 	 * Adds the resource bundle with the specified name.
+	 * Posts [TranslationBundleAdded] when the translations of the added bundle
+	 * have become available.
 	 */
 	fun addBundle(name: String)
+
+	/**
+	 * Reports whether translations of the bundle with the given name
+	 * are available. For implementations that load translations
+	 * asynchronously, the result is not `true` before the asynchronous
+	 * result was received.
+	 */
+	fun hasBundle(name: String): Boolean
 
 	fun addKey(key: String, value: String)
 
@@ -32,6 +43,12 @@ expect object Translations {
 	 */
 	fun getOptionalString(key: String): String?
 }
+
+/**
+ * Posted on the system's [EventBus] after the translations of a bundle
+ * have become available.
+ */
+data class TranslationBundleAdded(val name: String)
 
 /**
  * Defines all languages supported by the Jabbah framework for translation of dynamic (i.e. user provided) text.

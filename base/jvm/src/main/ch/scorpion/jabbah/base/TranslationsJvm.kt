@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.module.BaseModule
 import java.text.MessageFormat
 import java.util.*
 
@@ -32,7 +33,11 @@ actual object Translations {
 	actual fun addBundle(name: String) {
 		bundleNames.add(name)
         addBundle(ResourceBundle.getBundle(name))
+		BaseModule.eventBus.post(TranslationBundleAdded(name))
     }
+
+	actual fun hasBundle(name: String): Boolean =
+		bundleNames.contains(name)
 
 	actual fun addKey(key: String, value: String) { }
 
@@ -41,7 +46,7 @@ actual object Translations {
     private val bundleNames: MutableList<String> = mutableListOf()
     private val bundles: MutableList<ResourceBundle> = mutableListOf()
 
-    fun addBundle(bundle: ResourceBundle) {
+    private fun addBundle(bundle: ResourceBundle) {
         if (!bundles.contains(bundle)) {
             bundles.add(0, bundle)}
     }

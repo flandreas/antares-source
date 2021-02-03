@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJs
  */
 object BaseModuleJs : AbstractModule() {
 
+	var translationService: TranslationService = TranslationServiceImpl()
+
     override fun initialize() {
         BaseModule.require()
 

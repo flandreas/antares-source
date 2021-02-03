@@ -42,6 +42,7 @@ class GraphPanelViewJs(props: GraphPanelViewJsProps) : RComponent<GraphPanelView
 
 	override fun componentDidMount() {
 		controller.graphNavigationViewController.setRootGraphView(props.drawing, editable = true)
+		props.editor.active = true
 	}
 
 	override fun componentWillUnmount() {
