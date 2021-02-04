@@ -172,8 +172,16 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
+		stopSimulationWhenClosingApplicationData(event.newData)
+
 		isSavableEditable = event.newData?.savable?.editable ?: false
 		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView)
+	}
+
+	private fun stopSimulationWhenClosingApplicationData(data: ApplicationData?) {
+		if (data == null && currentMode.isExecute()) {
+			setMode(ApplicationMode.EDIT)
+		}
 	}
 
 	private fun setApplicationData(graphView: GraphView?) {

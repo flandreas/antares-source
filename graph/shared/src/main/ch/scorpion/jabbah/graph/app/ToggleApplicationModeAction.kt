@@ -19,13 +19,7 @@ class ToggleApplicationModeAction(
 ) : AbstractAction("execution.action.execute") {
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateState() }
-	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = {
-		if (it.newData == null) {
-			// Stop simulation if application data has been closed during simulation
-			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EDIT)
-		}
-		updateState()
-	}
+	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { updateState() }
 
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)

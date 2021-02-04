@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -19,6 +20,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class GraphPanelViewControllerTest {
@@ -68,9 +70,22 @@ class GraphPanelViewControllerTest {
 		assertSame(content, event.newGraphView)
 	}
 
+	@Test
+	fun shouldStopSimulationIfApplicationDataIsClosed() {
+		val content = GraphViewBuilder<Boolean>().build()
+		val savable = mockk<Savable>(relaxed = true)
+		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
+		GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
+
+		eventBus.post(ApplicationDataEvent(null, null))
+
+		assertEquals(ApplicationMode.EDIT, controller.currentMode)
+	}
+
 	private fun editor(): Editor {
 		val editor = mockk<Editor>(relaxed = true)
 		every { editor.view } returns drawingView
+		every { editor.drawing } returns graphViewBuilder.graphView as Drawing<Component>
 		return editor
 	}
 
