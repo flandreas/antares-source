@@ -222,7 +222,7 @@ class AntaresSwing(
 	}
 
 	override fun createMainFrame(): AbstractApplicationFrame {
-		val graphFrameController = AntaresFrameController(controller.eventBus)
+		val graphFrameController = AntaresFrameController(controller, controller.eventBus)
 		val frame = AntaresFrameSwing(graphFrameController, this, controller.eventBus, viewManager, graphFrameController)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())

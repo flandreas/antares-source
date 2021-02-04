@@ -2,6 +2,7 @@ package ch.scorpion.antares.ui
 
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
@@ -24,6 +25,7 @@ import react.*
 import styled.styledDiv
 
 external interface AntaresCanvasProps : RProps {
+	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String
 	var width: Int
 	var height: Int
@@ -82,6 +84,7 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 			}
 			else {
 				graphExecutionToolbar {
+					applicationDataHolder = props.applicationDataHolder
 					scheduler = ExecutionModule.scheduler
 					eventBus = BaseModule.eventBus
 				}

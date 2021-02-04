@@ -43,7 +43,7 @@ open class ApplicationDataViewController(
 	private val newStorableProvider: () -> Storable,
 	private val repository: ApplicationDataRepository<Savable>,
 	val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<ApplicationDataView>(), UndoableDataHolder {
+) : AbstractUIController<ApplicationDataView>(), ApplicationDataHolder, UndoableDataHolder {
 
 	companion object {
 		private val LOG by logger(ApplicationDataViewController::class)
@@ -61,9 +61,9 @@ open class ApplicationDataViewController(
 		data!!.content = state
 	}
 
-	/** ---- [ApplicationDataViewController] */
+	/** ---- [ApplicationDataHolder] interface */
 
-	var data: ApplicationData? = null
+	override var data: ApplicationData? = null
 		set(value) {
 			val oldField = field
 			field = value
@@ -75,6 +75,7 @@ open class ApplicationDataViewController(
 				mostRecentSavables.register(value.savable)
 			}
 		}
+	/** ---- [ApplicationDataViewController] */
 
 	val mostRecentSavables = SavableHistory(eventBus = eventBus)
 

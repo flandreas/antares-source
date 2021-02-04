@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -27,13 +28,14 @@ interface AntaresFrame : GraphFrame {
 }
 
 class AntaresFrameController(
+	applicationDataHolder: ApplicationDataHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	scheduler: Scheduler = ExecutionModule.scheduler,
 	properties: Properties = BaseModule.properties
 ) : GraphFrameController<AntaresFrame>(
-	eventBus, editor, viewManager, scheduler, properties
+	applicationDataHolder, eventBus, editor, viewManager, scheduler, properties
 ) {
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }

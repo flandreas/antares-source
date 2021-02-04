@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.AbstractAction
@@ -64,6 +65,7 @@ interface GraphFrameActions {
 }
 
 open class GraphFrameController<T: GraphFrame>(
+	applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
 	viewManager: ViewManager = DrawViewModule.viewManager,
@@ -86,7 +88,7 @@ open class GraphFrameController<T: GraphFrame>(
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	val graphPanelViewController = GraphPanelViewController(editor, viewManager, scheduler, eventBus)
+	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, viewManager, scheduler, eventBus)
 
 	private val zoomEventHandler = ZoomEventHandler()
 

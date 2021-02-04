@@ -28,6 +28,15 @@ class ApplicationData(
 }
 
 /**
+ * The object holding the current [ApplicationData].
+ * Posts an [ApplicationDataEvent] and a [CurrentSavableEvent] on [EventBus] when it has changed.
+ */
+interface ApplicationDataHolder {
+
+	var data: ApplicationData?
+}
+
+/**
  * Posted on an [EventBus] when the current application data in an [Application] has changed.
  */
 data class ApplicationDataEvent(

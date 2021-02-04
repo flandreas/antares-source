@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.mreact.jmToggleButton
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -15,6 +16,7 @@ import react.*
 import styled.styledDiv
 
 external interface GraphExecutionToolbarJsProps : RProps {
+	var applicationDataHolder: ApplicationDataHolder
 	var scheduler: Scheduler
 	var eventBus: EventBus
 }
@@ -33,7 +35,7 @@ class GraphExecutionToolbarJs(
 	props: GraphExecutionToolbarJsProps
 ) : RComponent<GraphExecutionToolbarJsProps, RState>(props) {
 
-	private val toggleModeAction = ToggleApplicationModeAction(props.eventBus)
+	private val toggleModeAction = ToggleApplicationModeAction(props.applicationDataHolder, props.eventBus)
 	private val pauseAction = PauseExecutionAction(props.scheduler, props.eventBus)
 	private val resumeAction = ResumeExecutionAction(props.scheduler, props.eventBus)
 

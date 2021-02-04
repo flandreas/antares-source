@@ -32,7 +32,7 @@ class GraphPanelViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
-	private val controller = GraphPanelViewController(editor(), eventBus = eventBus)
+	private val controller = GraphPanelViewController(editor(), mockk(relaxed = true), eventBus = eventBus)
 
 	init {
 		drawingView.canvas = mockk(relaxed = true)

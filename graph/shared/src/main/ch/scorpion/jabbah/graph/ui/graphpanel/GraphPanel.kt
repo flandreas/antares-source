@@ -1,14 +1,9 @@
 package ch.scorpion.jabbah.graph.ui.graphpanel
 
-import ch.scorpion.jabbah.app.ApplicationData
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
-import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -84,6 +79,7 @@ interface GraphPanelView : UIView {
  */
 class GraphPanelViewController(
 	val editor: Editor,
+	applicationDataHolder: ApplicationDataHolder,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler =ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -103,7 +99,7 @@ class GraphPanelViewController(
 
 	val gridSnapAction = GridSnapAction(editor)
 	val componentSnapAction = ComponentSnapAction(editor)
-	val toggleApplicationModeAction = ToggleApplicationModeAction(eventBus)
+	val toggleApplicationModeAction = ToggleApplicationModeAction(applicationDataHolder, eventBus)
 
 	val rectangleTool: Tool = RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) })
 	val ellipseTool: Tool = RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) })

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.app
 
-import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
@@ -14,15 +14,13 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** An [Action] for toggling the [ApplicationMode] of the [ApplicationModeHolder]. */
 class ToggleApplicationModeAction(
+	private val applicationDataHolder: ApplicationDataHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.execute") {
 
-	private var applicationData: ApplicationData? = null
-
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateState() }
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = {
-		applicationData = it.newData
-		if (applicationData == null) {
+		if (it.newData == null) {
 			// Stop simulation if application data has been closed during simulation
 			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EDIT)
 		}
@@ -55,7 +53,7 @@ class ToggleApplicationModeAction(
 	}
 
 	private fun updateState() {
-		enabled = applicationData != null
+		enabled = applicationDataHolder.data != null
 
 		when (GraphViewModule.applicationModeHolder.currentMode) {
 			ApplicationMode.EDIT -> {
