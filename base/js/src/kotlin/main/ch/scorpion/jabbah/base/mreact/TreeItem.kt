@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.mreact
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
 import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
+import org.w3c.dom.events.MouseEvent
 import react.RBuilder
 import react.RComponent
 import react.RState
@@ -19,16 +20,19 @@ private val treeItemComponent: RComponent<JMTreeItemProps, RState> = treeItemMod
 interface JMTreeItemProps : StyledPropsWithCommonAttributes {
 	var label: ReactElement
 	var nodeId: String?
+	var onLabelClick: ((MouseEvent) -> Unit)?
 }
 
 fun RBuilder.jmTreeItem(
 	label: ReactElement,
 	nodeId: String,
+	onLabelClick: ((MouseEvent) -> Unit)? = null,
 	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<JMTreeItemProps>? = null
 ) = createStyled(treeItemComponent, addAsChild) {
 	attrs.label = label
 	attrs.nodeId = nodeId
+	attrs.onLabelClick = onLabelClick
 	setStyledPropsAndRunHandler(className, handler)
 }

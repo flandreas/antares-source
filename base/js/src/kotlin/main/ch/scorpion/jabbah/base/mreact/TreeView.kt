@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.mreact
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
 import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
+import org.w3c.dom.events.MouseEvent
 import react.*
 import styled.StyledHandler
 

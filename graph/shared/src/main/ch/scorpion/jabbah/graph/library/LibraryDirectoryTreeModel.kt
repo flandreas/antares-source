@@ -1,18 +1,18 @@
 package ch.scorpion.jabbah.graph.library
 
-/** Determines whether a [LibraryItem] should be contained in a [LibraryDirectoryTreeNode]. */
+/** Determines whether a [LibraryItem] should be contained in a [LibraryTreeNode]. */
 typealias LibraryFilter = (LibraryItem) -> Boolean
 
-class LibraryDirectoryTreeNode(
+class LibraryTreeNode(
 	val item: LibraryItem,
-	val children: MutableList<LibraryDirectoryTreeNode> = mutableListOf()
+	val children: MutableList<LibraryTreeNode> = mutableListOf()
 )
 
 /**
  * Builds a platform-independent tree representation of a [LibraryDirectory].
  *
  * @param directory the [LibraryDirectory] to be represented
- * @param filter allows to filter [LibraryDirectoryTreeNode]s of interest. The resulting tree contains only
+ * @param filter allows to filter [LibraryTreeNode]s of interest. The resulting tree contains only
  * [LibraryItem]s that pass this filter, including all parents needed to maintain the tree structure of
  * the filtered [LibraryItem]s
  */
@@ -22,16 +22,16 @@ class LibraryDirectoryTreeModelBuilder(
 ) {
 
 	/** Builds the tree for [directory] and returns the root node of the built tree.*/
-	fun build(): LibraryDirectoryTreeNode {
-		val node = LibraryDirectoryTreeNode(directory)
+	fun build(): LibraryTreeNode {
+		val node = LibraryTreeNode(directory)
 		addItems(node, directory)
 		return node
 	}
 
-	private fun addItems(parent: LibraryDirectoryTreeNode, directory: LibraryDirectory) {
+	private fun addItems(parent: LibraryTreeNode, directory: LibraryDirectory) {
 		for (item in directory.getItems()) {
 			if ((item is LibraryFolder) || filter == null || filter.invoke(item)) {
-				val node = LibraryDirectoryTreeNode(item)
+				val node = LibraryTreeNode(item)
 				if (item is LibraryDirectory) {
 					addItems(node, item)
 				}

@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.app.AbstractApplicationJs
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.UnimplementedApplicationDataRepository
+import ch.scorpion.jabbah.base.LogLevel
+import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
@@ -42,6 +44,8 @@ class AntaresJs(
 		AntaresThemes.install()
 
 		super.init()
+
+		LogSystem.level = LogLevel.Debug
 	}
 
 	override fun start() {

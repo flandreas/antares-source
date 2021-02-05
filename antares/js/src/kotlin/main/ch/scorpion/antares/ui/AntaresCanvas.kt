@@ -94,6 +94,7 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 					height = props.height
 					drawing = props.drawing
 					editor = this@AntaresCanvas.editor
+					applicationModeHolder = this@AntaresCanvas.applicationModeHolder
 				}
 			}
 		}

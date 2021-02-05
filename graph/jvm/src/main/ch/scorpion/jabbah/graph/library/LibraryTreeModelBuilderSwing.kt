@@ -16,7 +16,7 @@ class LibraryTreeModelBuilderSwing(
 
 		private fun addItems(
 			parentSwingNode: DefaultMutableTreeNode,
-			parentNode: LibraryDirectoryTreeNode
+			parentNode: LibraryTreeNode
 		) {
 			for (node in parentNode.children) {
 				val swingNode = DefaultMutableTreeNode(node.item)

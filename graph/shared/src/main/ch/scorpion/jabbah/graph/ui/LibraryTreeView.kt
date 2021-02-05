@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -71,6 +72,11 @@ class LibraryTreeViewController (
 	private val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryTreeView>() {
+
+	companion object {
+		private val LOG by logger(LibraryTreeViewController::class)
+	}
+
 
 	private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = {
 		if (displaysLibrary(it.item.library)) { view.handle(it) }
@@ -150,6 +156,7 @@ class LibraryTreeViewController (
 			if (field !== value) {
 				field = value
 				eventBus.post(LibrarySelectionChangedEvent(this))
+				LOG.debug("Selected TreeNode '${field.toString()}'")
 			}
 		}
 
