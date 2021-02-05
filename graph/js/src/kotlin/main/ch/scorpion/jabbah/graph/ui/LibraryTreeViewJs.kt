@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryDirectoryTreeModelBuilder
 import ch.scorpion.jabbah.graph.library.LibraryTreeNode
@@ -48,7 +49,8 @@ class LibraryTreeViewJs(
 		jmTreeItem(
 			label = createLabel(node.item.name.value),
 			nodeId = nextNodeId(),
-			onLabelClick = { event -> onLabelClick(event, node) }
+			onLabelClick = { onLabelClick(it, node) },
+			onDoubleClick = { onDoubleClick(it, node) }
 		) {
 			for (node in node.children) {
 				addItems(node)
@@ -65,6 +67,13 @@ class LibraryTreeViewJs(
 	private fun onLabelClick(event: MouseEvent, node: LibraryTreeNode) {
 		props.controller.selectedItem = node.item
 		if (node.item !is LibraryDirectory) {
+			event.preventDefault()
+		}
+	}
+
+	private fun onDoubleClick(event: MouseEvent, node: LibraryTreeNode) {
+		if (node.item is ContainerLibraryElement) {
+			console.info("DoubleClick on '${node.item.name}'")
 			event.preventDefault()
 		}
 	}

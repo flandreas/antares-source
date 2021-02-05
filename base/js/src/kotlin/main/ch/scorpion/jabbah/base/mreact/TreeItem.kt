@@ -27,6 +27,7 @@ fun RBuilder.jmTreeItem(
 	label: ReactElement,
 	nodeId: String,
 	onLabelClick: ((MouseEvent) -> Unit)? = null,
+	onDoubleClick: ((MouseEvent) -> Unit)? = null,
 	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<JMTreeItemProps>? = null
@@ -34,5 +35,6 @@ fun RBuilder.jmTreeItem(
 	attrs.label = label
 	attrs.nodeId = nodeId
 	attrs.onLabelClick = onLabelClick
+	attrs.onDoubleClick = onDoubleClick
 	setStyledPropsAndRunHandler(className, handler)
 }
