@@ -16,7 +16,7 @@ import javax.swing.SwingUtilities
  * the currently selected [LibraryDirectory].
  */
 class AddLibraryFolderAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(

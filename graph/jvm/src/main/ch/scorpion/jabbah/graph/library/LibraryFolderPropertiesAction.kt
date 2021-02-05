@@ -16,7 +16,7 @@ import javax.swing.*
 
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(

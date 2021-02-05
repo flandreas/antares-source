@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
  * An [Action] for deleting the currently selected [LibraryElement].
  */
 class DeleteLibraryElementAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(

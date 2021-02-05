@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities
 
 /** An [Action] for deleting the currently selected [LibraryDirectory].*/
 class DeleteLibraryFolderAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(

@@ -21,7 +21,7 @@ import javax.swing.event.TreeSelectionListener
 
 /** An [Action] for editing a [Library] by using [LibraryCompositionPanel].*/
 class EditLibraryAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val application: Application,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
@@ -61,9 +61,9 @@ class LibraryCompositionPanel(
 		}
 	}
 
-	private val sourceLibraryTree: LibraryTreeView
+	private val sourceLibraryTree: LibraryTreeViewSwing
 
-	private val destinationLibraryTree = LibraryTreeView(
+	private val destinationLibraryTree = LibraryTreeViewSwing(
 		type = LibraryTreeViewType.CompositionDestination,
 		application = application,
 		library = destinationLibrary,
@@ -91,7 +91,7 @@ class LibraryCompositionPanel(
 		fillSourceLibraries()
 
 		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
-		sourceLibraryTree = LibraryTreeView(
+		sourceLibraryTree = LibraryTreeViewSwing(
 			type = LibraryTreeViewType.CompositionSource,
 			application = application,
 			library = getSelectedSourceLibrary(),
@@ -159,11 +159,11 @@ class LibraryCompositionPanel(
 		copyButton.text = null
 		copyButton.icon = UiUtil.themedIcon("/img/right-18.png")
 
-		val addButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.addLibraryFolderAction))
+		val addButton = JButton(ActionWrapperSwing(destinationLibraryTree.actions.addLibraryFolderAction))
 		addButton.text = null
 		addButton.icon = UiUtil.themedIcon("/img/plus-18.png")
 
-		val removeButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.deleteLibraryFolderAction))
+		val removeButton = JButton(ActionWrapperSwing(destinationLibraryTree.actions.deleteLibraryFolderAction))
 		removeButton.text = null
 		removeButton.icon = UiUtil.themedIcon("/img/minus-18.png")
 

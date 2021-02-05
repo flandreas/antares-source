@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 /** Expands all child nodes (recursively) of the selected [LibraryDirectory].*/
 class ExpandAllAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	actionBaseName = "library.action.expandAll",
@@ -32,7 +32,7 @@ class ExpandAllAction(
 
 /** Collapses all child nodes (recursively) of the selected [LibraryDirectory].*/
 class CollapseAllAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	"library.action.collapseAll",

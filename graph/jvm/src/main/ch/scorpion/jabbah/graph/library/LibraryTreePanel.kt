@@ -11,9 +11,9 @@ import javax.swing.SwingUtilities
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-/** Contains a [LibraryTreeView] and a search field for filtering the displayed nodes.*/
+/** Contains a [LibraryTreeViewSwing] and a search field for filtering the displayed nodes.*/
 class LibraryTreePanel(
-	val libraryTreeView: LibraryTreeView
+	val libraryTreeView: LibraryTreeViewSwing
 ) : JPanel() {
 
 	private val searchField = PlaceholderTextField(

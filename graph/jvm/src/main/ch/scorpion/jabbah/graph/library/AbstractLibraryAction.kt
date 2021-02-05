@@ -13,13 +13,13 @@ import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import javax.swing.tree.DefaultMutableTreeNode
 
 /**
- * A base class for implementing [Action]s that operate on items of [LibraryTreeView].
- * Listens for [LibrarySelectionChangedEvent]s and remembers the source [LibraryTreeView].
+ * A base class for implementing [Action]s that operate on items of [LibraryTreeViewSwing].
+ * Listens for [LibrarySelectionChangedEvent]s and remembers the source [LibraryTreeViewSwing].
  */
 abstract class AbstractLibraryAction(
 	actionBaseName: String,
 	protected val operation: Operation,
-	protected val libraryTreeView: LibraryTreeView,
+	protected val libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractApplicationModeEditAction(actionBaseName, eventBus = eventBus) {
@@ -64,7 +64,7 @@ abstract class AbstractLibraryAction(
 		operation != Change || !commandManager.canUndo()
 
 	/**
-	 * Called by [AbstractLibraryAction] when the selection in [LibraryTreeView] has changed.
+	 * Called by [AbstractLibraryAction] when the selection in [LibraryTreeViewSwing] has changed.
 	 * Subclasses can overwrite this method in order to update their state, such as their selection state.
 	 * This implementation is empty.
 	 */
@@ -77,7 +77,7 @@ abstract class AbstractLibraryAction(
 abstract class AbstractLibraryFolderAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
 
@@ -90,7 +90,7 @@ abstract class AbstractLibraryFolderAction(
 abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
 
@@ -101,7 +101,7 @@ abstract class AbstractContainerLibraryElementAction(
 abstract class AbstractBaseLibraryElementAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
 

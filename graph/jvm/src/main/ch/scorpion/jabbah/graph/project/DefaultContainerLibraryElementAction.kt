@@ -8,14 +8,14 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryTreeView
+import ch.scorpion.jabbah.graph.library.LibraryTreeViewSwing
 
 /**
  * An [Action] for marking a [ContainerLibraryElement] as the default one, i.e. the one to be
  * opened when the [Project] is loaded.
  */
 class DefaultContainerLibraryElementAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(

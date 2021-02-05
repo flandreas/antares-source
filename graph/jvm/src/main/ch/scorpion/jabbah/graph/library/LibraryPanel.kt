@@ -17,7 +17,7 @@ import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
 /**
- * A combination of a [LibraryTreeView] and a [LibraryPreviewPanel] for the currently open
+ * A combination of a [LibraryTreeViewSwing] and a [LibraryPreviewPanel] for the currently open
  * [Library] and [Project] (if any).
  *
  * Posts a [OpenContainerLibraryElementRequest] on [EventBus] when the user double clicks on a [ContainerLibraryElement].
@@ -29,7 +29,7 @@ class LibraryPanel(
     projectHolder: ProjectHolder = ProjectModule.projectHolder
 ): JPanel() {
 
-    val libraryTreeView = LibraryTreeView(LibraryTreeViewType.Main, application, libraryHolder.library, projectHolder.project, eventBus)
+    val libraryTreeView = LibraryTreeViewSwing(LibraryTreeViewType.Main, application, libraryHolder.library, projectHolder.project, eventBus)
 	private val libraryTreePanel = LibraryTreePanel(libraryTreeView)
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreePanel.libraryTreeView)
 

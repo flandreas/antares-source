@@ -21,8 +21,8 @@ import javax.swing.*
 import javax.swing.tree.*
 
 
-/** Posted on a [LibraryTreeView]'s [EventBus] if the current selection in that [LibraryTreeView] has changed.*/
-data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
+/** Posted on a [LibraryTreeViewSwing]'s [EventBus] if the current selection in that [LibraryTreeViewSwing] has changed.*/
+data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeViewSwing)
 
 /**
  * Displays the current [Project] and the current [Library] as a tree.
@@ -30,7 +30,7 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
  * Instances of this class post the following events on the [EventBus]:
  * - A [LibrarySelectionChangedEvent] when the user selects a tree item
  */
-class LibraryTreeView(
+class LibraryTreeViewSwing(
 	type: LibraryTreeViewType,
 	application: Application,
 	library: Library,
@@ -40,7 +40,7 @@ class LibraryTreeView(
 ) : JTree(LibraryTreeModelBuilderSwing(library, project).build()) {
 
 	companion object {
-		private val LOG by logger(LibraryTreeView::class)
+		private val LOG by logger(LibraryTreeViewSwing::class)
 	}
 
 	/** Holds the [Library] to display.*/
@@ -65,7 +65,7 @@ class LibraryTreeView(
 			}
 		}
 
-	val controller = LibraryTreeViewController(this, type, application)
+	val actions = LibraryTreeViewActionsSwing(this, type, application)
 
 	private var currentSavable: Savable? = null
 		set(value) {
@@ -131,7 +131,7 @@ class LibraryTreeView(
 		eventBus.unregister(openContainerLibraryElementRequestHandler)
 	}
 
-	/** ---- [LibraryTreeView] */
+	/** ---- [LibraryTreeViewSwing] */
 
 	fun getSelectedItem(): LibraryItem? {
 		val path = selectionPath ?: return null
@@ -147,7 +147,7 @@ class LibraryTreeView(
 			componentPopupMenu = null
 			return
 		}
-		componentPopupMenu = controller.getPopupMenu(newSelectionPath.lastPathComponent as DefaultMutableTreeNode)
+		componentPopupMenu = actions.getPopupMenu(newSelectionPath.lastPathComponent as DefaultMutableTreeNode)
 	}
 
 	private fun handle(event: CurrentSavableEvent) {
@@ -302,7 +302,7 @@ class LibraryTreeView(
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
 		private val containerLibElemIcon = ContainerLibraryElementIcon()
 		private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
-		private val defaultElemFont = this@LibraryTreeView.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
+		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
 		private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
@@ -312,7 +312,7 @@ class LibraryTreeView(
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath
-				component.font = this@LibraryTreeView.font
+				component.font = this@LibraryTreeViewSwing.font
 				if (StringUtils.isNotEmpty(iconPath)) {
 					component.icon = getIcon(iconPath!!)
 				} else if (value.userObject is ContainerLibraryElement) {

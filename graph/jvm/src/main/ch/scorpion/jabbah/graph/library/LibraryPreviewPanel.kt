@@ -25,11 +25,11 @@ import kotlin.math.min
 
 
 /**
- * A [JPanel] that provides a preview of the [LibraryElement] that is currently selected in a [LibraryTreeView].
+ * A [JPanel] that provides a preview of the [LibraryElement] that is currently selected in a [LibraryTreeViewSwing].
  */
 class LibraryPreviewPanel(
 	eventBus: EventBus,
-	private val libraryTreeView: LibraryTreeView
+	private val libraryTreeView: LibraryTreeViewSwing
 ) : JPanel() {
 
 	companion object {
@@ -42,7 +42,7 @@ class LibraryPreviewPanel(
 	}
 
 	@Suppress("unused")
-	constructor(libraryTreeView: LibraryTreeView) : this(BaseModule.eventBus, libraryTreeView)
+	constructor(libraryTreeView: LibraryTreeViewSwing) : this(BaseModule.eventBus, libraryTreeView)
 
 	/** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
 	private val map: MutableMap<LibraryElement, Component> = mutableMapOf()

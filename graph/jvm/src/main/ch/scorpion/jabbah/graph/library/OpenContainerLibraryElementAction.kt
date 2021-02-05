@@ -16,11 +16,11 @@ import javax.swing.JOptionPane
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
- * [LibraryTreeView] for viewing. Whether it can be edited is decided by the view that displays it.
+ * [LibraryTreeViewSwing] for viewing. Whether it can be edited is decided by the view that displays it.
  */
 class OpenContainerLibraryElementAction(
 	private val application: Application,
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "graph.action.openContainerLibraryElement",

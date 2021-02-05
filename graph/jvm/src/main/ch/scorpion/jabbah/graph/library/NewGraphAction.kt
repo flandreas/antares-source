@@ -14,9 +14,9 @@ import javax.swing.SwingUtilities
  * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the currently selected [LibraryDirectory].
  */
 class NewGraphAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
-    eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.newGraph",
 	operation = Operation.Change,

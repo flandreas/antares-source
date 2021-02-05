@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities
  * that contains the source [MetaGraph].
  */
 class DuplicateGraphAction(
-	libraryTreeView: LibraryTreeView,
+	libraryTreeView: LibraryTreeViewSwing,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(

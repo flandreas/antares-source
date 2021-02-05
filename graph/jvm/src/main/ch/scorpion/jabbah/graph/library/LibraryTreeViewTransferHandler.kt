@@ -19,10 +19,10 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 
 /**
- * Handles drag&drop of a [LibraryElement] in [LibraryTreeView].
+ * Handles drag&drop of a [LibraryElement] in [LibraryTreeViewSwing].
  */
 class LibraryTreeViewTransferHandler(
-	private val treeView: LibraryTreeView,
+	private val treeView: LibraryTreeViewSwing,
 	private val repositoryService: RepositoryService = RepositoryModule.repositoryService.invoke()
 ) : TransferHandler() {
 

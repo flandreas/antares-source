@@ -13,8 +13,8 @@ enum class LibraryTreeViewType {
 	CompositionDestination
 }
 
-class LibraryTreeViewController(
-	private val view: LibraryTreeView,
+class LibraryTreeViewActionsSwing(
+	private val view: LibraryTreeViewSwing,
 	type: LibraryTreeViewType,
 	application: Application
 ) {
