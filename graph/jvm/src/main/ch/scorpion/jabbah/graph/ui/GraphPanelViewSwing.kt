@@ -26,9 +26,7 @@ import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryPanel
+import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
@@ -47,7 +45,6 @@ class GraphPanelViewSwing(
 	controller: GraphPanelViewController,
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	viewManager: ViewManager,
 	private var scheduler: Scheduler = ExecutionModule.scheduler,
 	application: Application,
@@ -68,7 +65,7 @@ class GraphPanelViewSwing(
 	private val propertyPanel: ComponentPropertyPanel
 
 	/** Contains UI for selecting components from the current library or the current project.*/
-	val libraryPanel = LibraryPanel(controller, application, eventBus, libraryHolder)
+	val libraryPanel = LibraryPanelSwing(controller.libraryPanelController, application, eventBus)
 
 	private val drawingToolBar = createDrawingToolBar(controller)
 
@@ -135,7 +132,6 @@ class GraphPanelViewSwing(
 	}
 
 	override fun dispose() {
-		libraryPanel.dispose()
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()

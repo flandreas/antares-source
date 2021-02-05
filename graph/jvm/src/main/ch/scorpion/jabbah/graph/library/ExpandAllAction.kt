@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.auth.Operation.View
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /** Expands all child nodes (recursively) of the selected [LibraryDirectory].*/
 class ExpandAllAction(

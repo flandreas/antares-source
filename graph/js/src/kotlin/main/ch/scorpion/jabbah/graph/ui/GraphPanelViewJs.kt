@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
 import com.ccfraser.muirwik.components.*
 import kotlinext.js.js
 import kotlinext.js.jsObject

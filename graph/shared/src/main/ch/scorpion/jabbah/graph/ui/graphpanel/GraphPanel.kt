@@ -37,7 +37,12 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.*
+import ch.scorpion.jabbah.graph.library.LibraryHolder
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectHolder
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -83,9 +88,12 @@ class GraphPanelViewController(
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler =ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus)
+	private val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus),
+	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
 
+	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
 	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
 	val desktopController = GraphDesktopViewController(eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
@@ -142,6 +150,7 @@ class GraphPanelViewController(
 		eventBus.unregister(issuesCollectorHandler)
 		eventBus.unregister(executionStoppedOnIssueHandler)
 
+		libraryPanelController.dispose()
 		editViewController.dispose()
 		desktopController.dispose()
 		issuesViewController.dispose()

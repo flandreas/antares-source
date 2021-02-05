@@ -10,8 +10,8 @@ import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
-import ch.scorpion.jabbah.graph.ui.LibrarySelectionChangedEvent
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibrarySelectionChangedEvent
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /**
  * A base class for implementing [Action]s that operate on items of [LibraryTreeViewSwing].

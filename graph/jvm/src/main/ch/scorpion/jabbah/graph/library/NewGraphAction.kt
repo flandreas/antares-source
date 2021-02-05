@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities

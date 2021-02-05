@@ -3,8 +3,8 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.project.*
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewType
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode

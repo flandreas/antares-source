@@ -15,8 +15,8 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ConstantApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewType
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame

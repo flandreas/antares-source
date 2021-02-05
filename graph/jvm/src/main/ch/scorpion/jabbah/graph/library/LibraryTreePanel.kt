@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JPanel

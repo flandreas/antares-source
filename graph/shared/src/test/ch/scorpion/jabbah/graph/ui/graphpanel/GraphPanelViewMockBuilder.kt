@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.graph.ui.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.GraphEditView
 import ch.scorpion.jabbah.graph.ui.GraphEditViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewMockBuilder
+import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView
+import ch.scorpion.jabbah.graph.ui.library.LibraryPanelViewMockBuilder
 import io.mockk.mockk
 
 class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController) {
@@ -12,8 +14,14 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 
 	init {
 		controller.view = view
+		withLibraryPanel(LibraryPanelViewMockBuilder(controller.libraryPanelController).build())
 		withGraphEditView(GraphEditViewMockBuilder(controller.editViewController).build())
 		withGraphDesktopView(GraphDesktopViewMockBuilder(controller.desktopController).build())
+	}
+
+	fun withLibraryPanel(view: LibraryPanelView): GraphPanelViewMockBuilder {
+		controller.libraryPanelController.view = view
+		return this
 	}
 
 	fun withGraphEditView(view: GraphEditView): GraphPanelViewMockBuilder {

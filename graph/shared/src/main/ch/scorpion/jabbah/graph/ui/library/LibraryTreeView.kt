@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable

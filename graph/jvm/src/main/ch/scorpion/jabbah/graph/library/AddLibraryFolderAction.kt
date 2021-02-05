@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities

@@ -9,8 +9,8 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
-import ch.scorpion.jabbah.graph.ui.LibraryTreeView
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import java.awt.font.TextAttribute
 import javax.swing.*

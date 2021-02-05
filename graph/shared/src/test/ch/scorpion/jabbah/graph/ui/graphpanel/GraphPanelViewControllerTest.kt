@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -34,10 +36,14 @@ class GraphPanelViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
-	private val controller = GraphPanelViewController(editor(), mockk(relaxed = true), eventBus = eventBus)
+	private val controller: GraphPanelViewController
 
 	init {
 		drawingView.canvas = mockk(relaxed = true)
+		LibraryModule.libraryHolder.l = mockk(relaxed = true)
+		ProjectModule.projectHolder.p = mockk(relaxed = true)
+
+		controller = GraphPanelViewController(editor(), mockk(relaxed = true), eventBus = eventBus)
 		GraphViewModule.applicationModeHolder = controller
 		GraphPanelViewMockBuilder(controller)
 	}

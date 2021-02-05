@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.ui.LibrarySelectionChangedEvent
-import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibrarySelectionChangedEvent
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent

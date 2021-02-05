@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryDirectoryTreeModelBuilder
 import ch.scorpion.jabbah.graph.library.LibraryTreeNode
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
 import org.w3c.dom.events.MouseEvent
