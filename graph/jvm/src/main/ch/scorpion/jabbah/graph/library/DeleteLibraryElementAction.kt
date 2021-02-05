@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -13,13 +15,13 @@ import javax.swing.SwingUtilities
  * An [Action] for deleting the currently selected [LibraryElement].
  */
 class DeleteLibraryElementAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	BASE_RESOURCE_NAME,
 	operation = Operation.Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -41,10 +43,10 @@ class DeleteLibraryElementAction(
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		val libraryItem = libraryTreeView.getSelectedItem()
+		val libraryItem = controller.selectedItem
 		if (JOptionPane.showConfirmDialog(
-				SwingUtilities.getWindowAncestor(libraryTreeView),
-				Translations.getString("$baseName.question", libraryTreeView.getSelectedItem()!!),
+				SwingUtilities.getWindowAncestor(controller.view as Component),
+				Translations.getString("$baseName.question", controller.selectedItem!!),
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!

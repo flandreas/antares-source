@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -18,13 +20,13 @@ import javax.swing.SwingUtilities
  * that contains the source [MetaGraph].
  */
 class DuplicateGraphAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.duplicateGraph",
 	operation = Operation.Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -35,7 +37,7 @@ class DuplicateGraphAction(
 		val element = selectedItem as ContainerLibraryElement
 
 		val newGraphName = JOptionPane.showInputDialog(
-			SwingUtilities.getWindowAncestor(libraryTreeView),
+			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("library.action.newGraph.question"),
 			name,
 			JOptionPane.QUESTION_MESSAGE,

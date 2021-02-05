@@ -3,18 +3,14 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewType
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode
 
-enum class LibraryTreeViewType {
-	Main,
-	CompositionSource,
-	CompositionDestination
-}
-
 class LibraryTreeViewActionsSwing(
-	private val view: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	type: LibraryTreeViewType,
 	application: Application
 ) {
@@ -23,26 +19,26 @@ class LibraryTreeViewActionsSwing(
 	private val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
 	private val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
 
-	private val expandAllAction = ExpandAllAction(view)
-	private val collapseAllAction = CollapseAllAction(view)
+	private val expandAllAction = ExpandAllAction(controller)
+	private val collapseAllAction = CollapseAllAction(controller)
 
-	val addLibraryFolderAction = AddLibraryFolderAction(view, libraryOperationTarget)
-	val deleteLibraryFolderAction = DeleteLibraryFolderAction(view, libraryOperationTarget)
-	private val newLibraryGraphAction = NewGraphAction(view, libraryOperationTarget)
-	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(view, libraryOperationTarget)
-	private val deleteLibraryElementAction = DeleteLibraryElementAction(view, libraryOperationTarget)
-	private val duplicateLibraryGraphAction = DuplicateGraphAction(view, libraryOperationTarget)
+	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
+	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
+	private val newLibraryGraphAction = NewGraphAction(controller, libraryOperationTarget)
+	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(controller, libraryOperationTarget)
+	private val deleteLibraryElementAction = DeleteLibraryElementAction(controller, libraryOperationTarget)
+	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
 
-	private val addProjectFolderAction = AddLibraryFolderAction(view, projectOperationTarget)
-	private val deleteProjectFolderAction = DeleteLibraryFolderAction(view, projectOperationTarget)
-	private val newProjectGraphAction = NewGraphAction(view, operationTarget = projectOperationTarget)
-	private val projectFolderPropertiesAction = LibraryFolderPropertiesAction(view, projectOperationTarget)
-	private val deleteProjectElementAction = DeleteLibraryElementAction(view, projectOperationTarget)
-	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(view, projectOperationTarget)
-	private val duplicateProjectGraphAction = DuplicateGraphAction(view, projectOperationTarget)
+	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
+	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
+	private val newProjectGraphAction = NewGraphAction(controller, operationTarget = projectOperationTarget)
+	private val projectFolderPropertiesAction = LibraryFolderPropertiesAction(controller, projectOperationTarget)
+	private val deleteProjectElementAction = DeleteLibraryElementAction(controller, projectOperationTarget)
+	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)
+	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 
-	private val openContainerLibraryElementAction = OpenContainerLibraryElementAction(application, view)
-	private val editLibraryAction = EditLibraryAction(view, application)
+	private val openContainerLibraryElementAction = OpenContainerLibraryElementAction(application, controller)
+	private val editLibraryAction = EditLibraryAction(controller, application)
 
 	private val desktopPopupMenu = JPopupMenu()
 	private val projectDirectoryPopupMenu = JPopupMenu()

@@ -4,7 +4,9 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 import java.awt.BorderLayout
+import java.awt.Component
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.SwingUtilities
@@ -13,7 +15,7 @@ import javax.swing.event.DocumentListener
 
 /** Contains a [LibraryTreeViewSwing] and a search field for filtering the displayed nodes.*/
 class LibraryTreePanel(
-	val libraryTreeView: LibraryTreeViewSwing
+	val controller: LibraryTreeViewController
 ) : JPanel() {
 
 	private val searchField = PlaceholderTextField(
@@ -31,7 +33,7 @@ class LibraryTreePanel(
 		searchField.columns = 30
 
 		val treeViewScrollPane = JScrollPane(
-			libraryTreeView,
+			controller.view as Component,
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 
@@ -46,13 +48,13 @@ class LibraryTreePanel(
 			item -> item.toString().contains(searchField.text, true)
 		}
 
-		libraryTreeView.model = LibraryTreeModelBuilderSwing(
-			libraryTreeView.library,
-			libraryTreeView.project,
+		(controller.view as LibraryTreeViewSwing).model = LibraryTreeModelBuilderSwing(
+			controller.library,
+			controller.project,
 			filter
 		).build()
 		SwingUtilities.invokeLater {
-			JTreeUtil.expandAll(libraryTreeView)
+			JTreeUtil.expandAll(controller.view as LibraryTreeViewSwing)
 		}
 	}
 

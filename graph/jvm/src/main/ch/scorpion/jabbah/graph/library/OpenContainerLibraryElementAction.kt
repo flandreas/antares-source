@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 
@@ -20,12 +21,12 @@ import javax.swing.JOptionPane
  */
 class OpenContainerLibraryElementAction(
 	private val application: Application,
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "graph.action.openContainerLibraryElement",
 	operation = Operation.View,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -51,7 +52,7 @@ class OpenContainerLibraryElementAction(
 	 * Opens the currently selected [ContainerLibraryElement] as the current [Savable] in the application.
 	 */
 	private fun openAsSavable() {
-		openAsSavable(libraryTreeView.getSelectedItem() as ContainerLibraryElement)
+		openAsSavable(controller.selectedItem as ContainerLibraryElement)
 	}
 
 	private fun openAsSavable(element: ContainerLibraryElement) {

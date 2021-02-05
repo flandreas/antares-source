@@ -3,51 +3,50 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.auth.Operation.View
-import javax.swing.tree.DefaultMutableTreeNode
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 
 /** Expands all child nodes (recursively) of the selected [LibraryDirectory].*/
 class ExpandAllAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	actionBaseName = "library.action.expandAll",
 	operation = View,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() &&
-			libraryTreeView.selectionPath != null &&
-			(libraryTreeView.selectionPath?.lastPathComponent as DefaultMutableTreeNode).childCount > 0
+			controller.selectedItem is LibraryDirectory &&
+			!(controller.selectedItem as LibraryDirectory).isEmpty()
 	}
 
 	override fun execute(event: ActionEvent) {
-		JTreeUtil.expandAll(libraryTreeView, libraryTreeView.selectionPath)
+		controller.view.expandAllFromSelection()
 	}
 }
 
 /** Collapses all child nodes (recursively) of the selected [LibraryDirectory].*/
 class CollapseAllAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	"library.action.collapseAll",
 	operation = Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() &&
-			libraryTreeView.selectionPath != null &&
-			(libraryTreeView.selectionPath?.lastPathComponent as DefaultMutableTreeNode).childCount > 0
+			controller.selectedItem is LibraryDirectory &&
+			!(controller.selectedItem as LibraryDirectory).isEmpty()
 	}
 
 	override fun execute(event: ActionEvent) {
-		JTreeUtil.collapseAll(libraryTreeView, libraryTreeView.selectionPath)
+		controller.view.collapseAtSelection()
 	}
 }

@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -14,19 +16,19 @@ import javax.swing.SwingUtilities
  * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the currently selected [LibraryDirectory].
  */
 class NewGraphAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.newGraph",
 	operation = Operation.Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    val name = JOptionPane.showInputDialog(
-		    SwingUtilities.getWindowAncestor(libraryTreeView),
+		    SwingUtilities.getWindowAncestor(controller.view as Component),
 		    Translations.getString("library.action.newGraph.question"),
 		    name,
 		    JOptionPane.QUESTION_MESSAGE
@@ -34,7 +36,7 @@ class NewGraphAction(
 	    if (StringUtils.isEmpty(name)) {
 		    return
 	    }
-        val directory = libraryTreeView.getSelectedItem() as LibraryDirectory
+        val directory = controller.selectedItem as LibraryDirectory
 	    val library = directory.library!!
 	    val metaGraph = MetaGraph.withName(name)
 

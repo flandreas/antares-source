@@ -4,10 +4,13 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.draw.style.ThemeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.project.ProjectHolder
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewType
 import java.awt.BorderLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -23,21 +26,23 @@ import javax.swing.SwingUtilities
  * Posts a [OpenContainerLibraryElementRequest] on [EventBus] when the user double clicks on a [ContainerLibraryElement].
  */
 class LibraryPanel(
+	applicationModeHolder: ApplicationModeHolder,
 	application: Application,
     private val eventBus: EventBus,
     libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
     projectHolder: ProjectHolder = ProjectModule.projectHolder
 ): JPanel() {
 
-    val libraryTreeView = LibraryTreeViewSwing(LibraryTreeViewType.Main, application, libraryHolder.library, projectHolder.project, eventBus)
-	private val libraryTreePanel = LibraryTreePanel(libraryTreeView)
-    val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreePanel.libraryTreeView)
+	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, applicationModeHolder, eventBus)
+    val libraryTreeView = LibraryTreeViewSwing(libraryTreeViewController, application)
+	private val libraryTreePanel = LibraryTreePanel(libraryTreeViewController)
+    val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreeViewController)
 
 	private val doubleClickListener = DoubleClickListener()
 	private val enterKeyListener = EnterKeyListener()
 	private val themeHandler: EventHandler<ThemeEvent> = { repaint() }
-	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeView.library = it.library }
-	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { libraryTreeView.project = it.project }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
+	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { libraryTreeViewController.project = it.project }
 
     init {
 	    eventBus.register(ThemeEvent::class, themeHandler)
@@ -67,16 +72,16 @@ class LibraryPanel(
 
 	private inner class DoubleClickListener : MouseAdapter() {
 		override fun mousePressed(e: MouseEvent) {
-			if (e.clickCount == 2 && libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
-				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeView.getSelectedItem() as ContainerLibraryElement))
+			if (e.clickCount == 2 && libraryTreeViewController.selectedItem is ContainerLibraryElement) {
+				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeViewController.selectedItem as ContainerLibraryElement))
 			}
 		}
 	}
 
 	private inner class EnterKeyListener : KeyAdapter() {
 		override fun keyPressed(e: KeyEvent) {
-			if (e.keyCode == KeyEvent.VK_ENTER && libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
-				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeView.getSelectedItem() as ContainerLibraryElement))
+			if (e.keyCode == KeyEvent.VK_ENTER && libraryTreeViewController.selectedItem is ContainerLibraryElement) {
+				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeViewController.selectedItem as ContainerLibraryElement))
 				SwingUtilities.invokeLater { libraryTreeView.requestFocusInWindow() }
 			}
 		}

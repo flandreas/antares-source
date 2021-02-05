@@ -44,6 +44,19 @@ interface ApplicationModeHolder {
 	fun updateEditorEditability()
 }
 
+class ConstantApplicationModeHolder(private val applicationMode: ApplicationMode) : ApplicationModeHolder {
+
+	override val currentMode: ApplicationMode = applicationMode
+
+	override fun dispose() { }
+
+	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+		throw UnsupportedOperationException("not supported")
+	}
+
+	override fun updateEditorEditability() { }
+}
+
 class UndefinedApplicationModeHolder : ApplicationModeHolder {
 
 	override val currentMode: ApplicationMode

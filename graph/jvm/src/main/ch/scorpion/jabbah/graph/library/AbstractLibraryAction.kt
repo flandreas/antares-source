@@ -10,7 +10,8 @@ import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
-import javax.swing.tree.DefaultMutableTreeNode
+import ch.scorpion.jabbah.graph.ui.LibrarySelectionChangedEvent
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 
 /**
  * A base class for implementing [Action]s that operate on items of [LibraryTreeViewSwing].
@@ -19,13 +20,13 @@ import javax.swing.tree.DefaultMutableTreeNode
 abstract class AbstractLibraryAction(
 	actionBaseName: String,
 	protected val operation: Operation,
-	protected val libraryTreeView: LibraryTreeViewSwing,
+	protected val controller: LibraryTreeViewController,
 	eventBus: EventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractApplicationModeEditAction(actionBaseName, eventBus = eventBus) {
 
 	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
-		if (it.libraryTreeView === libraryTreeView) {
+		if (it.controller === controller) {
 			updateEnabledness()
 			handleSelectionChanged()
 		}
@@ -35,11 +36,9 @@ abstract class AbstractLibraryAction(
 
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
 
-	protected val selectedItem: LibraryItem? get() =
-		libraryTreeView.getSelectedItem()
+	protected val selectedItem: LibraryItem? get() = controller.selectedItem
 
-	protected val folderOfSelectedItem: LibraryDirectory? get() =
-		(libraryTreeView.selectionPath?.parentPath?.lastPathComponent as DefaultMutableTreeNode?)?.userObject as LibraryDirectory?
+	protected val folderOfSelectedItem: LibraryDirectory? get() = controller.view.folderOfSelectedItem
 
 	init {
 		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
@@ -77,9 +76,9 @@ abstract class AbstractLibraryAction(
 abstract class AbstractLibraryFolderAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
+) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
 
 	val selectedFolder: LibraryDirectory get() = selectedItem as LibraryDirectory
 
@@ -90,9 +89,9 @@ abstract class AbstractLibraryFolderAction(
 abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
+) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is ContainerLibraryElement
 }
@@ -101,9 +100,9 @@ abstract class AbstractContainerLibraryElementAction(
 abstract class AbstractBaseLibraryElementAction(
 	actionBaseName: String,
 	operation: Operation,
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, libraryTreeView, eventBus) {
+) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is BaseLibraryElement
 }

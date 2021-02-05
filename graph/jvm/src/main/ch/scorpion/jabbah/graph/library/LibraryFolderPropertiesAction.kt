@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
@@ -16,13 +17,13 @@ import javax.swing.*
 
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.editFolderProperties",
 	operation = Operation.View,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -34,7 +35,7 @@ class LibraryFolderPropertiesAction(
 		var text: TranslatableText?
 		while (true) {
 			text = LibraryFolderPropertiesPanel.showAsDialog(
-				parent = SwingUtilities.getWindowAncestor(libraryTreeView),
+				parent = SwingUtilities.getWindowAncestor(controller.view as Component),
 				title = title,
 				name = selectedFolder.name.translation)
 			if (text == null) {
@@ -42,11 +43,11 @@ class LibraryFolderPropertiesAction(
 			}
 			if (!text.hasDefaultOrSystemLanguage()) {
 				if (JOptionPane.showConfirmDialog(
-						SwingUtilities.getWindowAncestor(libraryTreeView),
-						Translations.getString("base.translation.incomplete.msg"),
-						title,
-						JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
+					SwingUtilities.getWindowAncestor(controller.view as Component),
+					Translations.getString("base.translation.incomplete.msg"),
+					title,
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
 				) {
 					return
 				}

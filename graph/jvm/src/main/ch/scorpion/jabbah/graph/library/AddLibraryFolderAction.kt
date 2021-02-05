@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -16,13 +18,13 @@ import javax.swing.SwingUtilities
  * the currently selected [LibraryDirectory].
  */
 class AddLibraryFolderAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.addFolder",
 	operation = Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -31,7 +33,7 @@ class AddLibraryFolderAction(
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
-			SwingUtilities.getWindowAncestor(libraryTreeView),
+			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("library.action.addFolder.question"),
 			name,
 			JOptionPane.QUESTION_MESSAGE
@@ -41,7 +43,7 @@ class AddLibraryFolderAction(
 			return
 		}
 
-		val directory = libraryTreeView.getSelectedItem() as LibraryDirectory
+		val directory = controller.selectedItem as LibraryDirectory
 		directory.library!!.libraryService.addFolder(directory.library!!, TranslatableText(name), directory)
 	}
 }

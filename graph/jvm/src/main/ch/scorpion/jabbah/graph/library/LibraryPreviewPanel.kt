@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.ui.LibrarySelectionChangedEvent
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -29,7 +31,7 @@ import kotlin.math.min
  */
 class LibraryPreviewPanel(
 	eventBus: EventBus,
-	private val libraryTreeView: LibraryTreeViewSwing
+	private val controller: LibraryTreeViewController
 ) : JPanel() {
 
 	companion object {
@@ -42,7 +44,7 @@ class LibraryPreviewPanel(
 	}
 
 	@Suppress("unused")
-	constructor(libraryTreeView: LibraryTreeViewSwing) : this(BaseModule.eventBus, libraryTreeView)
+	constructor(controller: LibraryTreeViewController) : this(BaseModule.eventBus, controller)
 
 	/** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
 	private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
@@ -88,14 +90,14 @@ class LibraryPreviewPanel(
 	}
 
 	private fun handleLibrarySelectionChanged(e: LibrarySelectionChangedEvent) {
-		if (e.libraryTreeView !== this.libraryTreeView) {
+		if (e.controller !== controller) {
 			return
 		}
 		updateWithSelectedItem()
 	}
 
 	private fun updateWithSelectedItem() {
-		val selectedItem = libraryTreeView.getSelectedItem()
+		val selectedItem = controller.selectedItem
 		if (selectedItem !is LibraryElement) {
 			updateSelection(null)
 		} else {

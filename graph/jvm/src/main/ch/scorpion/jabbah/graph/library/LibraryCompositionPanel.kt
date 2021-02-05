@@ -12,7 +12,11 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ConstantApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewType
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -21,18 +25,18 @@ import javax.swing.event.TreeSelectionListener
 
 /** An [Action] for editing a [Library] by using [LibraryCompositionPanel].*/
 class EditLibraryAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val application: Application,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	actionBaseName = "library.composition.action",
 	operation = Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(libraryTreeView.library, Frame.getFrames()[0], application, eventBus)
+		LibraryCompositionPanel.showAsDialog(controller.library, Frame.getFrames()[0], application, eventBus)
 	}
 }
 
@@ -61,23 +65,29 @@ class LibraryCompositionPanel(
 		}
 	}
 
-	private val sourceLibraryTree: LibraryTreeViewSwing
+	private val sourceTreeController: LibraryTreeViewController
+	private val sourceTreeView: LibraryTreeViewSwing
 
-	private val destinationLibraryTree = LibraryTreeViewSwing(
+	private val destinationTreeController = LibraryTreeViewController(
 		type = LibraryTreeViewType.CompositionDestination,
-		application = application,
 		library = destinationLibrary,
 		project = null,
-		eventBus = eventBus,
+		applicationModeHolder = ConstantApplicationModeHolder(ApplicationMode.EDIT),
+		eventBus = eventBus
+	)
+
+	private val destinationTreeView = LibraryTreeViewSwing(
+		destinationTreeController,
+		application = application,
 		showWorkspaceNode = false)
 
 	private val copyAction = CopyAction()
 
 	private val sourceLibraries = JComboBox<LibraryDictionaryEntry>()
 
-	private val isSourceElementSelected: Boolean get() = sourceLibraryTree.getSelectedItem() is LibraryElement
+	private val isSourceElementSelected: Boolean get() = sourceTreeController.selectedItem is LibraryElement
 
-	private val isDestinationFolderSelected: Boolean get() = destinationLibraryTree.getSelectedItem() is LibraryDirectory
+	private val isDestinationFolderSelected: Boolean get() = destinationTreeController.selectedItem is LibraryDirectory
 
 	private val selectedSourceLibraryUuid: UUID get() = (sourceLibraries.selectedItem as LibraryDictionaryEntry).uuid
 
@@ -90,21 +100,26 @@ class LibraryCompositionPanel(
 	init {
 		fillSourceLibraries()
 
-		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
-		sourceLibraryTree = LibraryTreeViewSwing(
+		sourceTreeController = LibraryTreeViewController(
 			type = LibraryTreeViewType.CompositionSource,
-			application = application,
+			applicationModeHolder = ConstantApplicationModeHolder(ApplicationMode.EDIT),
 			library = getSelectedSourceLibrary(),
 			project = null,
-			eventBus = eventBus,
+			eventBus = eventBus
+		)
+
+		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
+		sourceTreeView = LibraryTreeViewSwing(
+			sourceTreeController,
+			application = application,
 			showWorkspaceNode = true)
 
 		sourceLibraries.addActionListener {
-			sourceLibraryTree.library = getSelectedSourceLibrary()
+			sourceTreeController.library = getSelectedSourceLibrary()
 		}
 
-		sourceLibraryTree.addTreeSelectionListener(librarySelectionListener)
-		destinationLibraryTree.addTreeSelectionListener(librarySelectionListener)
+		sourceTreeView.addTreeSelectionListener(librarySelectionListener)
+		destinationTreeView.addTreeSelectionListener(librarySelectionListener)
 
 		copyAction.enabled = false
 
@@ -112,8 +127,8 @@ class LibraryCompositionPanel(
 	}
 
 	fun dispose() {
-		sourceLibraryTree.dispose()
-		destinationLibraryTree.dispose()
+		sourceTreeController.dispose()
+		destinationTreeController.dispose()
 	}
 
 	private fun getSelectedSourceLibrary(): Library {
@@ -150,8 +165,8 @@ class LibraryCompositionPanel(
 		layout.autoCreateGaps = true
 		layout.autoCreateContainerGaps = true
 
-		val sourceScrollPane = JScrollPane(sourceLibraryTree)
-		val destinationScrollPane = JScrollPane(destinationLibraryTree)
+		val sourceScrollPane = JScrollPane(sourceTreeView)
+		val destinationScrollPane = JScrollPane(destinationTreeView)
 		val originLabel = JLabel(Translations.getString("library.composition.source.text"))
 		val destinationLabel = JLabel(Translations.getString("library.composition.destination.text"))
 
@@ -159,11 +174,11 @@ class LibraryCompositionPanel(
 		copyButton.text = null
 		copyButton.icon = UiUtil.themedIcon("/img/right-18.png")
 
-		val addButton = JButton(ActionWrapperSwing(destinationLibraryTree.actions.addLibraryFolderAction))
+		val addButton = JButton(ActionWrapperSwing(destinationTreeView.actions.addLibraryFolderAction))
 		addButton.text = null
 		addButton.icon = UiUtil.themedIcon("/img/plus-18.png")
 
-		val removeButton = JButton(ActionWrapperSwing(destinationLibraryTree.actions.deleteLibraryFolderAction))
+		val removeButton = JButton(ActionWrapperSwing(destinationTreeView.actions.deleteLibraryFolderAction))
 		removeButton.text = null
 		removeButton.icon = UiUtil.themedIcon("/img/minus-18.png")
 
@@ -215,7 +230,7 @@ class LibraryCompositionPanel(
 	/** Copies the currently selected source [LibraryElement] to the currently selected destination [LibraryDirectory].*/
 	private inner class CopyAction : AbstractAction("library.composition.copy.action") {
 		override fun execute(event: ActionEvent) {
-			val sourceElement = sourceLibraryTree.getSelectedItem() as LibraryElement
+			val sourceElement = sourceTreeController.selectedItem as LibraryElement
 			if (sourceElement is ContainerLibraryElement && !libraryManagementService.canCopyContainerLibraryElement(sourceElement, destinationLibrary)) {
 				if (JOptionPane.showConfirmDialog(
 						this@LibraryCompositionPanel,
@@ -230,7 +245,7 @@ class LibraryCompositionPanel(
 
 			libraryManagementService.copyLibraryElement(
 				sourceElement,
-				destinationLibraryTree.getSelectedItem() as LibraryDirectory)
+				destinationTreeController.selectedItem as LibraryDirectory)
 		}
 	}
 

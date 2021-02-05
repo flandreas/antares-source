@@ -8,20 +8,20 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryTreeViewSwing
+import ch.scorpion.jabbah.graph.ui.LibraryTreeViewController
 
 /**
  * An [Action] for marking a [ContainerLibraryElement] as the default one, i.e. the one to be
  * opened when the [Project] is loaded.
  */
 class DefaultContainerLibraryElementAction(
-	libraryTreeView: LibraryTreeViewSwing,
+	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.setDefaultElement",
 	operation = Operation.Change,
-	libraryTreeView,
+	controller,
 	eventBus
 ) {
 
@@ -29,7 +29,7 @@ class DefaultContainerLibraryElementAction(
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
-		val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement
+		val elem = controller.selectedItem as ContainerLibraryElement
 		val library = elem.library!!
 		if (selected) {
 			library.libraryService.setDefaultElement(library, elem.uuid)
@@ -39,8 +39,8 @@ class DefaultContainerLibraryElementAction(
 	}
 
 	override fun handleSelectionChanged() {
-		selected = if (libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
-			val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement
+		selected = if (controller.selectedItem is ContainerLibraryElement) {
+			val elem = controller.selectedItem as ContainerLibraryElement
 			elem.library?.defaultElementUUID == elem.uuid
 		} else {
 			false
