@@ -135,6 +135,7 @@ class GraphPanelViewSwing(
 	}
 
 	override fun dispose() {
+		libraryPanel.dispose()
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()

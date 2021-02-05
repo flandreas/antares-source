@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
@@ -32,16 +33,31 @@ class LibraryPanel(
 	private val libraryTreePanel = LibraryTreePanel(libraryTreeView)
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreePanel.libraryTreeView)
 
-    init {
-        eventBus.register(ThemeEvent::class) { repaint() }
-	    eventBus.register(CurrentLibraryEvent::class) { libraryTreeView.library = it.library }
-	    eventBus.register(CurrentProjectEvent::class) { libraryTreeView.project = it.project }
+	private val doubleClickListener = DoubleClickListener()
+	private val enterKeyListener = EnterKeyListener()
+	private val themeHandler: EventHandler<ThemeEvent> = { repaint() }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeView.library = it.library }
+	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { libraryTreeView.project = it.project }
 
-	    libraryTreeView.addMouseListener(DoubleClickListener())
-	    libraryTreeView.addKeyListener(EnterKey())
+    init {
+	    eventBus.register(ThemeEvent::class, themeHandler)
+	    eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+	    eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
+
+	    libraryTreeView.addMouseListener(doubleClickListener)
+	    libraryTreeView.addKeyListener(enterKeyListener)
 
 		buildUI()
     }
+
+	fun dispose() {
+		eventBus.unregister(themeHandler)
+		eventBus.unregister(currentLibraryHandler)
+		eventBus.unregister(currentProjectHandler)
+
+		libraryTreeView.removeMouseListener(doubleClickListener)
+		libraryTreeView.removeKeyListener(enterKeyListener)
+	}
 
 	private fun buildUI() {
 		layout = BorderLayout(0, 8)
@@ -57,7 +73,7 @@ class LibraryPanel(
 		}
 	}
 
-	private inner class EnterKey : KeyAdapter() {
+	private inner class EnterKeyListener : KeyAdapter() {
 		override fun keyPressed(e: KeyEvent) {
 			if (e.keyCode == KeyEvent.VK_ENTER && libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
 				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeView.getSelectedItem() as ContainerLibraryElement))
