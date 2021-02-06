@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
- * [LibraryTreeViewSwing] for viewing. Whether it can be edited is decided by the view that displays it.
+ * [LibraryTreeViewController] for viewing. Whether it can be edited is decided by the view that displays it.
  */
 class OpenContainerLibraryElementAction(
 	private val application: Application,

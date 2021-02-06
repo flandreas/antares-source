@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
-import javax.swing.Action
 
 /** A base class for action implementations that are only enabled in [ApplicationMode.EDIT].*/
 abstract class AbstractApplicationModeEditAction(
