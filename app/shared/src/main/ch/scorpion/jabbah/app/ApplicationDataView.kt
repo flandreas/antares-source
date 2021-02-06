@@ -19,6 +19,12 @@ enum class SaveUnchangedDataDecision {
 	Cancel
 }
 
+enum class ModalMessageType {
+	Info,
+	Warning,
+	Error
+}
+
 /**
  * Defines operations of the UI of an [Application] that is required for loading and
  * storing [ApplicationData].
@@ -30,6 +36,8 @@ interface ApplicationDataView : UIView {
 	fun defineSavableForStoring(storable: Storable, currentSavable: Savable?): Savable?
 
 	fun defineSavableForLoading(): Savable?
+
+	fun showModalMessage(type: ModalMessageType, title: String, message: String)
 }
 
 /**

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.io.Storable
 import java.awt.Frame
 import java.io.File
 import javax.swing.JFileChooser
+import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.filechooser.FileFilter
@@ -73,7 +74,24 @@ class ApplicationDataViewSwing(
 		return null
 	}
 
+	override fun showModalMessage(type: ModalMessageType, title: String, message: String) {
+		JOptionPane.showConfirmDialog(
+			JFrame.getFrames()[0],
+			message,
+			title,
+			JOptionPane.DEFAULT_OPTION,
+			mapMessageType(type)
+		)
+	}
+
 	private fun createFileFilter(): FileFilter {
 		return FileExtensionFilter(fileExtension, displayName)
 	}
+
+	private fun mapMessageType(type: ModalMessageType): Int =
+		when(type) {
+			ModalMessageType.Info -> JOptionPane.INFORMATION_MESSAGE
+			ModalMessageType.Warning -> JOptionPane.WARNING_MESSAGE
+			ModalMessageType.Error -> JOptionPane.ERROR_MESSAGE
+		}
 }

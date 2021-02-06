@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.ModalMessageType
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
@@ -12,8 +13,6 @@ import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
-import javax.swing.JFrame
-import javax.swing.JOptionPane
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
@@ -64,12 +63,10 @@ class OpenContainerLibraryElementAction(
 			}
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")
-			JOptionPane.showConfirmDialog(
-				JFrame.getFrames()[0],
-				Translations.getString("graph.action.load.error.general.desc"),
+			application.controller.view.showModalMessage(
+				ModalMessageType.Error,
 				name,
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.ERROR_MESSAGE)
+				Translations.getString("graph.action.load.error.general.desc"))
 		}
 	}
 }
