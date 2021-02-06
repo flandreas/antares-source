@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryTreeNode
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView
@@ -37,6 +38,9 @@ class LibraryPanelViewJs(
 	}
 
 	private fun onDoubleClick(node: LibraryTreeNode) {
-		console.info("DoubleClick on '${node.item.name}'")
+		if (node.item is ContainerLibraryElement) {
+			console.info("DoubleClick on '${node.item.name}'")
+			props.controller.requestOpenSelectedContainerLibraryElement()
+		}
 	}
 }

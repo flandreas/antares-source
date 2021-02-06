@@ -155,7 +155,7 @@ class ApplicationDataViewControllerTest {
 		commandManagerMock.cannotUndo()
 		val data = ApplicationData(content = mockk(), savable = mockk(relaxed = true), eventBus)
 
-		controller.open(data)
+		controller.open { data }
 
 		assertSame(data, controller.data)
 		assertNull(applicationDataEvent!!.oldData)
@@ -170,7 +170,7 @@ class ApplicationDataViewControllerTest {
 		val changedStorable = storableProvider.providedStorable!!
 		val data = ApplicationData(content = mockk(), savable = mockk(), eventBus)
 
-		controller.open(data)
+		controller.open { data }
 
 		assertSame(changedStorable, controller.data!!.content)
 	}

@@ -98,10 +98,10 @@ open class ApplicationDataViewController(
 	 * If the old current [ApplicationData] has been changed, the user is asked if he wants to
 	 * save the old data first, or if he wants to cancel the operation.
 	 */
-	fun open(data: ApplicationData) {
+	fun open(provider: () -> ApplicationData) {
 		if (canReplaceSavable("file.action.open.name")) {
 			LOG.debug("Open application data")
-			this.data = data
+			this.data = provider.invoke()
 		}
 	}
 

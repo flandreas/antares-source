@@ -57,9 +57,11 @@ class OpenContainerLibraryElementAction(
 
 	private fun openAsSavable(element: ContainerLibraryElement) {
 		try {
-			val library = element.library!!
-			library.libraryService.loadMetaGraph(library, element)
-			application.controller.open(ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus))
+			application.controller.open {
+				val library = element.library!!
+				library.libraryService.loadMetaGraph(library, element)
+				ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus)
+			}
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")
 			JOptionPane.showConfirmDialog(

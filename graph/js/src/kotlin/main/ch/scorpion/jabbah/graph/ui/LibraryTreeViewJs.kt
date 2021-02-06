@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
 import ch.scorpion.jabbah.graph.library.*
@@ -25,6 +26,10 @@ fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactE
 class LibraryTreeViewJs(
 	props: LibraryTreeViewJsProps
 ) : RComponent<LibraryTreeViewJsProps, RState>(props), LibraryTreeView {
+
+	companion object {
+		private val LOG by logger(LibraryTreeViewJs::class)
+	}
 
 	private var nodeId: Int = 0
 
@@ -59,15 +64,19 @@ class LibraryTreeViewJs(
 	}
 
 	override fun expandTo(element: ContainerLibraryElement) {
-		throw UnsupportedOperationException("not implemented")
+		// TODO
+		LOG.debug("expandTo not yet implemented")
 	}
 
 	override fun expandAllFromSelection() {
-		throw UnsupportedOperationException("not implemented")
+		// TODO
+		LOG.debug("expandAllFromSelection not yet implemented")
 	}
 
 	override fun collapseAtSelection() {
-		throw UnsupportedOperationException("not implemented")
+		// TODO
+		LOG.debug("collapseAtSelection not yet implemented")
+
 	}
 
 	override fun openLibrary(library: Library) {
@@ -117,7 +126,7 @@ class LibraryTreeViewJs(
 			nodeId = nextNodeId(),
 			onLabelClick = { onLabelClick(it, node) },
 			onDoubleClick = props.onDoubleClick?.let {
-				handler-> {
+				handler -> {
 					handler.invoke(node)
 					it.preventDefault()
 				}
