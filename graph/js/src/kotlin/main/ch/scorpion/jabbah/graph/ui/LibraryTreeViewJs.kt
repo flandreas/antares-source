@@ -2,10 +2,9 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryDirectory
-import ch.scorpion.jabbah.graph.library.LibraryDirectoryTreeModelBuilder
-import ch.scorpion.jabbah.graph.library.LibraryTreeNode
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
@@ -14,6 +13,7 @@ import react.*
 
 external interface LibraryTreeViewJsProps : RProps {
 	var controller: LibraryTreeViewController
+	var onDoubleClick: (node: LibraryTreeNode) -> Unit
 }
 
 fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactElement {
@@ -24,9 +24,11 @@ fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactE
 
 class LibraryTreeViewJs(
 	props: LibraryTreeViewJsProps
-) : RComponent<LibraryTreeViewJsProps, RState>(props) {
+) : RComponent<LibraryTreeViewJsProps, RState>(props), LibraryTreeView {
 
 	private var nodeId: Int = 0
+
+	/** ---- [RComponent] */
 
 	override fun RBuilder.render() {
 		nodeId = 0
@@ -41,8 +43,71 @@ class LibraryTreeViewJs(
 	}
 
 	override fun componentDidMount() {
+		props.controller.view = this
 		props.controller.selectedItem = null
 	}
+
+	/** ---- [LibraryTreeView] */
+
+	override fun dispose() { }
+
+	// TODO
+	override val folderOfSelectedItem: LibraryDirectory? get() = null
+
+	override fun refresh() {
+		forceUpdate()
+	}
+
+	override fun expandTo(element: ContainerLibraryElement) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun expandAllFromSelection() {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun collapseAtSelection() {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun openLibrary(library: Library) {
+		refresh()
+	}
+
+	override fun openProject(project: Project) {
+		refresh()
+	}
+
+	override fun closeProject() {
+		refresh()
+	}
+
+	// TODO?
+	override fun handle(event: LibraryItemAddedEvent) {
+		refresh()
+	}
+
+	// TODO?
+	override fun handle(event: LibraryItemRemovedEvent) {
+		refresh()
+	}
+
+	// TODO?
+	override fun handle(event: LibraryItemUpdatedEvent) {
+		refresh()
+	}
+
+	// TODO?
+	override fun handle(event: LibraryItemMovedEvent) {
+		refresh()
+	}
+
+	// TODO?
+	override fun handle(event: LibraryDirectoryRenamedEvent) {
+		refresh()
+	}
+
+	/** ---- [LibraryTreeViewJs] */
 
 	private fun nextNodeId(): String = (nodeId++).toString()
 
@@ -51,7 +116,12 @@ class LibraryTreeViewJs(
 			label = createLabel(node.item.name.value),
 			nodeId = nextNodeId(),
 			onLabelClick = { onLabelClick(it, node) },
-			onDoubleClick = { onDoubleClick(it, node) }
+			onDoubleClick = props.onDoubleClick?.let {
+				handler-> {
+					handler.invoke(node)
+					it.preventDefault()
+				}
+			}
 		) {
 			for (node in node.children) {
 				addItems(node)
@@ -68,13 +138,6 @@ class LibraryTreeViewJs(
 	private fun onLabelClick(event: MouseEvent, node: LibraryTreeNode) {
 		props.controller.selectedItem = node.item
 		if (node.item !is LibraryDirectory) {
-			event.preventDefault()
-		}
-	}
-
-	private fun onDoubleClick(event: MouseEvent, node: LibraryTreeNode) {
-		if (node.item is ContainerLibraryElement) {
-			console.info("DoubleClick on '${node.item.name}'")
 			event.preventDefault()
 		}
 	}

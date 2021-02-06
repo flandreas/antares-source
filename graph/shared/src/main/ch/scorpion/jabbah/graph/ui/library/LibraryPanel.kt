@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.style.ThemeEvent
@@ -27,7 +28,7 @@ class LibraryPanelController(
 	applicationModeHolder: ApplicationModeHolder,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val eventBus: EventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
 	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, applicationModeHolder, eventBus)

@@ -4,10 +4,10 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
+import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
+import ch.scorpion.jabbah.graph.view.GraphView
 import com.ccfraser.muirwik.components.*
 import kotlinext.js.js
 import kotlinext.js.jsObject
@@ -35,12 +35,17 @@ fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit): ReactEle
  * A preliminary version of a JavaScript [GraphPanelView] that doesn't use the
  * corresponding controller object yet, but displays a library next to a [GraphEditViewJs].
  */
-class GraphPanelViewJs(props: GraphPanelViewJsProps) : RComponent<GraphPanelViewJsProps, RState>(props) {
+class GraphPanelViewJs(
+	props: GraphPanelViewJsProps
+) : RComponent<GraphPanelViewJsProps, RState>(props) {
 
 	private val drawingView: DrawingView<GraphView> get() = props.editor.view as DrawingView<GraphView>
 
-	private val treeViewController: LibraryTreeViewController =
-		LibraryTreeViewController(LibraryTreeViewType.Main, LibraryModule.libraryHolder.library, null, props.applicationModeHolder)
+	private val libraryPanelController: LibraryPanelController = LibraryPanelController(
+		props.applicationModeHolder,
+		LibraryModule.libraryHolder,
+		ProjectModule.projectHolder,
+	)
 
 	private val editViewController: GraphEditViewController = GraphEditViewController(drawingView)
 
@@ -66,8 +71,8 @@ class GraphPanelViewJs(props: GraphPanelViewJsProps) : RComponent<GraphPanelView
 			val pp: MPaperProps = jsObject {  }
 			pp.asDynamic().style = js { position = "relative" }
 			mDrawer(open = true, MDrawerAnchor.left, MDrawerVariant.permanent, paperProps = pp) {
-				libraryTreeView {
-					controller = this@GraphPanelViewJs.treeViewController
+				libraryPanelView {
+					controller = this@GraphPanelViewJs.libraryPanelController
 				}
 			}
 
