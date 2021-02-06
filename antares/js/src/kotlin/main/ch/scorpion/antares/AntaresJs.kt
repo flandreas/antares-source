@@ -95,6 +95,7 @@ class AntaresJs(
 			}
 
 			child(AntaresCanvas::class) {
+				attrs.application = this@AntaresJs
 				attrs.applicationDataHolder = controller
 				attrs.canvasId = "kotlinCanvas"
 				attrs.width = 800

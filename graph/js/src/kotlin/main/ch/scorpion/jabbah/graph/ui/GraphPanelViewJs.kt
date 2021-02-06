@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -22,6 +23,7 @@ external interface GraphPanelViewJsProps : RProps {
 	var height: Int
 	var drawing: GraphView
 	var editor: Editor
+	var application: Application
 	var applicationModeHolder: ApplicationModeHolder
 }
 
@@ -72,6 +74,7 @@ class GraphPanelViewJs(
 			pp.asDynamic().style = js { position = "relative" }
 			mDrawer(open = true, MDrawerAnchor.left, MDrawerVariant.permanent, paperProps = pp) {
 				libraryPanelView {
+					application = this@GraphPanelViewJs.props.application
 					controller = this@GraphPanelViewJs.libraryPanelController
 				}
 			}

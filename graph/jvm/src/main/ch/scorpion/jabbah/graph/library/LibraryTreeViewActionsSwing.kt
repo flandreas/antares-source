@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
 import javax.swing.JCheckBoxMenuItem
@@ -13,8 +14,7 @@ class LibraryTreeViewActionsSwing(
 	controller: LibraryTreeViewController,
 	type: LibraryTreeViewType,
 	application: Application
-) {
-
+) : LibraryTreeViewActions(controller, application) {
 
 	private val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
 	private val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
@@ -37,7 +37,6 @@ class LibraryTreeViewActionsSwing(
 	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 
-	private val openContainerLibraryElementAction = OpenContainerLibraryElementAction(application, controller)
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
 	private val desktopPopupMenu = JPopupMenu()

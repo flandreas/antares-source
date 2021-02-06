@@ -1,9 +1,6 @@
 package ch.scorpion.antares.ui
 
-import ch.scorpion.jabbah.app.ApplicationData
-import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.ApplicationDataHolder
-import ch.scorpion.jabbah.app.DefaultSavable
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -25,6 +22,7 @@ import react.*
 import styled.styledDiv
 
 external interface AntaresCanvasProps : RProps {
+	var application: Application
 	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String
 	var width: Int
@@ -94,6 +92,7 @@ class AntaresCanvas(props: AntaresCanvasProps) : RComponent<AntaresCanvasProps, 
 					height = props.height
 					drawing = props.drawing
 					editor = this@AntaresCanvas.editor
+					application = this@AntaresCanvas.props.application
 					applicationModeHolder = this@AntaresCanvas.applicationModeHolder
 				}
 			}

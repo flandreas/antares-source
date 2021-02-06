@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.library
+package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the

@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
@@ -13,6 +15,7 @@ import org.w3c.dom.events.MouseEvent
 import react.*
 
 external interface LibraryTreeViewJsProps : RProps {
+	var application: Application
 	var controller: LibraryTreeViewController
 	var onDoubleClick: (node: LibraryTreeNode) -> Unit
 }
@@ -31,6 +34,7 @@ class LibraryTreeViewJs(
 		private val LOG by logger(LibraryTreeViewJs::class)
 	}
 
+	private val actions = LibraryTreeViewActions(props.controller, props.application)
 	private var nodeId: Int = 0
 
 	/** ---- [RComponent] */

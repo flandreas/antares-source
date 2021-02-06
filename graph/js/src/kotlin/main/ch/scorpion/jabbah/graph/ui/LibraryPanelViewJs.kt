@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryTreeNode
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView
 import react.*
 
 external interface LibraryPanelViewJsProps : RProps {
+	var application: Application
 	var controller: LibraryPanelController
 }
 
@@ -32,6 +34,7 @@ class LibraryPanelViewJs(
 
 	override fun RBuilder.render() {
 		libraryTreeView {
+			application = this@LibraryPanelViewJs.props.application
 			controller = this@LibraryPanelViewJs.props.controller.libraryTreeViewController
 			onDoubleClick = ::onDoubleClick
 		}
