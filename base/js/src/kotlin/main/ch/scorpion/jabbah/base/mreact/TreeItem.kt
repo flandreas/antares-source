@@ -20,12 +20,14 @@ private val treeItemComponent: RComponent<JMTreeItemProps, RState> = treeItemMod
 interface JMTreeItemProps : StyledPropsWithCommonAttributes {
 	var label: ReactElement
 	var nodeId: String?
+	var icon: ReactElement?
 	var onLabelClick: ((MouseEvent) -> Unit)?
 }
 
 fun RBuilder.jmTreeItem(
 	label: ReactElement,
 	nodeId: String,
+	icon: ReactElement? = null,
 	onLabelClick: ((MouseEvent) -> Unit)? = null,
 	onDoubleClick: ((MouseEvent) -> Unit)? = null,
 	addAsChild: Boolean = true,
@@ -34,6 +36,7 @@ fun RBuilder.jmTreeItem(
 ) = createStyled(treeItemComponent, addAsChild) {
 	attrs.label = label
 	attrs.nodeId = nodeId
+	attrs.icon = icon
 	attrs.onLabelClick = onLabelClick
 	attrs.onDoubleClick = onDoubleClick
 	setStyledPropsAndRunHandler(className, handler)

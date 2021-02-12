@@ -132,6 +132,7 @@ class LibraryTreeViewJs(
 		jmTreeItem(
 			label = createLabel(node.item.name.value),
 			nodeId = nextNodeId(),
+			icon = if (node.item === props.controller.library) createLibraryIcon() else null,
 			onLabelClick = { onLabelClick(it, node) },
 			onDoubleClick = props.onDoubleClick?.let {
 				handler -> {
@@ -149,6 +150,10 @@ class LibraryTreeViewJs(
 	private fun createExpandIcon(): ReactElement = RBuilder().mIcon("chevron_right")
 
 	private fun createCollapseIcon(): ReactElement = RBuilder().mIcon("expand_more")
+
+	private fun createFolderIcon(): ReactElement = RBuilder().mIcon("folder", className = "material-icons-outlined")
+
+	private fun createLibraryIcon(): ReactElement = RBuilder().mIcon("local_library", className = "material-icons-outlined")
 
 	private fun createLabel(text: String): ReactElement = RBuilder().mTypography(text)
 
