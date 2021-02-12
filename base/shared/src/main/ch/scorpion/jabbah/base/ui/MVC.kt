@@ -72,7 +72,7 @@ abstract class AbstractUIController<T : UIView> : UIController<T> {
 		}
 
 	override fun dispose() {
-		view.dispose()
+		_view?.dispose()
 	}
 
 	/** Called by this class after [view] has been set.*/

@@ -131,7 +131,7 @@ class LibraryService(
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int? = null) {
-		LOG.debug("LibraryServiceImpl: Adding LibraryItem ${item.name}'")
+		LOG.debug("Adding LibraryItem ${item.name}'")
 		item.bindTo(library)
 		if (index != null) {
 			directory.add(index, item)
@@ -157,7 +157,7 @@ class LibraryService(
 				}
 			} else if (item is LibraryFolder) {
 				if (!item.isEmpty()) {
-					LOG.debug("LibraryServiceImpl: Refusing to delete non-empty LibraryFolder")
+					LOG.debug("Refusing to delete non-empty LibraryFolder")
 					throw IllegalStateException("can't delete non-empty LibraryFolder")
 				}
 			}
@@ -327,7 +327,7 @@ class LibraryService(
 	}
 
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
-		LOG.debug("LibraryServiceImpl: Storing MetaGraph")
+		LOG.debug("Storing MetaGraph")
 		if (doClone) {
 			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
 			element.updateMetaGraph(clone)
@@ -347,8 +347,9 @@ class LibraryService(
 
 	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
 		if (loadAlways || element.metaGraph == null) {
+			val ref = "'${element.metaGraph?.name}' ${element.uuid}"
+			LOG.debug("Loading MetaGraph $ref")
 			element.updateMetaGraph(persister(library.isSystem).loadMetaGraph(library, element.uuid))
-			LOG.debug("LibraryServiceImpl: Loaded MetaGraph '${element.metaGraph!!.name}' ${element.uuid}")
 		}
 	}
 

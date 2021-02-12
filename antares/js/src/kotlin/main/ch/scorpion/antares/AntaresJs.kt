@@ -2,10 +2,9 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.module.AntaresModuleJs
-import ch.scorpion.antares.ui.AntaresCanvas
+import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.AbstractApplicationJs
-import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.UnimplementedApplicationDataRepository
 import ch.scorpion.jabbah.base.LogLevel
@@ -14,9 +13,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibrarySavable
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import kotlinx.browser.document
@@ -94,22 +91,15 @@ class AntaresJs(
 				li { +"Click on breadcrumb to surface from subcircuit" }
 			}
 
-			child(AntaresCanvas::class) {
+			child(AntaresViewJs::class) {
 				attrs.application = this@AntaresJs
 				attrs.applicationDataHolder = controller
 				attrs.canvasId = "kotlinCanvas"
 				attrs.width = 800
 				attrs.height = 600
-				attrs.drawing = metaGraph.graph.graphView
+				attrs.metaGraph = metaGraph
 			}
 		}
-
-		val savable = LibrarySavable(ContainerLibraryElement(
-			initialCircuitUuid,
-			initialName = metaGraph.graph.model!!.name.translation
-		))
-
-		controller.data = ApplicationData(metaGraph, savable)
 	}
 
 	// TODO Replace by service call

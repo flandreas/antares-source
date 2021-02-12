@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -88,7 +89,7 @@ class GraphPanelViewController(
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler =ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus),
+	val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus),
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
@@ -183,8 +184,8 @@ class GraphPanelViewController(
 	private fun handle(event: ApplicationDataEvent) {
 		stopSimulationWhenClosingApplicationData(event.newData)
 
-		isSavableEditable = event.newData?.savable?.editable ?: false
-		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView)
+		val editable = event.newData?.savable?.editable ?: false
+		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
 	}
 
 	private fun stopSimulationWhenClosingApplicationData(data: ApplicationData?) {
@@ -193,7 +194,8 @@ class GraphPanelViewController(
 		}
 	}
 
-	private fun setApplicationData(graphView: GraphView?) {
+	fun setApplicationData(graphView: GraphView?, editable: Boolean) {
+		isSavableEditable = editable
 		if (graphView == null) {
 			desktopController.closeAll()
 		} else if (rootGraphView != graphView) {

@@ -1,14 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.execution.issue.IssuesViewController
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
-import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
+import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import com.ccfraser.muirwik.components.*
 import kotlinext.js.js
 import kotlinext.js.jsObject
@@ -18,13 +17,12 @@ import styled.css
 import styled.styledDiv
 
 external interface GraphPanelViewJsProps : RProps {
+	var controller: GraphPanelViewController
+	var application: Application
 	var canvasId: String
 	var width: Int
 	var height: Int
-	var drawing: GraphView
-	var editor: Editor
-	var application: Application
-	var applicationModeHolder: ApplicationModeHolder
+	var metaGraph: MetaGraph
 }
 
 fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit): ReactElement {
@@ -39,29 +37,43 @@ fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit): ReactEle
  */
 class GraphPanelViewJs(
 	props: GraphPanelViewJsProps
-) : RComponent<GraphPanelViewJsProps, RState>(props) {
+) : RComponent<GraphPanelViewJsProps, RState>(props), GraphPanelView {
 
-	private val drawingView: DrawingView<GraphView> get() = props.editor.view as DrawingView<GraphView>
-
-	private val libraryPanelController: LibraryPanelController = LibraryPanelController(
-		props.applicationModeHolder,
-		LibraryModule.libraryHolder,
-		ProjectModule.projectHolder,
-	)
-
-	private val editViewController: GraphEditViewController = GraphEditViewController(drawingView)
-
-	override fun componentDidMount() {
-		editViewController.graphNavigationViewController.setRootGraphView(props.drawing, editable = true)
-		props.editor.active = true
+	init {
+		props.controller.view = this
 	}
 
-	override fun componentWillUnmount() {
-		editViewController.dispose()
+	private val graphEditView = RBuilder().apply { graphEditView {
+		canvasId = props.canvasId
+		controller = props.controller.editViewController
+		width = props.width
+		height = props.height
+	} }.childList[0] as ReactElement
+
+	// Not used so for, but needed to satisfy controllers
+	private val issuesView = IssuesViewJs(object : IssuesViewJsProps {
+		override var controller: IssuesViewController = props.controller.issuesViewController
+	})
+
+	// Not used so for, but needed to satisfy controllers
+	private val logView = LogViewJs(object : LogViewJsProps{
+		override var controller: LogViewController = props.controller.logViewController
+	})
+
+	/** ---- [GraphPanelView] */
+
+	override var maxIssueSeverity: IssueSeverity? = null
+
+	override fun dispose() { }
+
+	/** ---- [RComponent] */
+
+	override fun componentDidMount() {
+		props.controller.setApplicationData(props.metaGraph.graph.graphView, editable = true)
+		DrawViewModule.viewManager.activeView = props.controller.editor.view
 	}
 
 	override fun RBuilder.render() {
-
 		styledDiv {
 			css {
 				overflow = Overflow.hidden
@@ -75,17 +87,15 @@ class GraphPanelViewJs(
 			mDrawer(open = true, MDrawerAnchor.left, MDrawerVariant.permanent, paperProps = pp) {
 				libraryPanelView {
 					application = this@GraphPanelViewJs.props.application
-					controller = this@GraphPanelViewJs.libraryPanelController
+					controller = this@GraphPanelViewJs.props.controller.libraryPanelController
 				}
 			}
 
 			styledDiv {
 				css { flexGrow = 1.0 }
-				graphEditView {
-					canvasId = props.canvasId
-					controller = this@GraphPanelViewJs.editViewController
-					width = props.width
-					height = props.height
+				graphDesktopView {
+					controller = props.controller.desktopController
+					graphEditView = this@GraphPanelViewJs.graphEditView
 				}
 			}
 		}

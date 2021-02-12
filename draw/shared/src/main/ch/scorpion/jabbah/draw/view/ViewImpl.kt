@@ -149,49 +149,49 @@ open class ViewImpl<C : InputEventContext>(
 	private val handler: InputEventHandler<C> = EventHandler()
 
 	override fun dispatchEvent(e: InputEvent) {
-		canvas.dispatchEvent(e)
+		_canvas?.dispatchEvent(e)
 	}
 
 	override fun requestFocus() {
-		canvas.requestViewFocus()
+		_canvas?.requestViewFocus()
 	}
 
 	override fun setToolTipText(text: String?) {
-		canvas.setToolTipText(text)
+		_canvas?.setToolTipText(text)
 	}
 
 	override fun getInputEventHandler(e: InputEvent): InputEventHandler<C> = handler
 
 	override fun addMouseListener(l: MouseListener) {
-		canvas.addMouseListener(l)
+		_canvas?.addMouseListener(l)
 	}
 
 	override fun removeMouseListener(l: MouseListener) {
-		canvas.removeMouseListener(l)
+		_canvas?.removeMouseListener(l)
 	}
 
 	override fun addMouseMotionListener(l: MouseMotionListener) {
-		canvas.addMouseMotionListener(l)
+		_canvas?.addMouseMotionListener(l)
 	}
 
 	override fun removeMouseMotionListener(l: MouseMotionListener) {
-		canvas.removeMouseMotionListener(l)
+		_canvas?.removeMouseMotionListener(l)
 	}
 
 	override fun addMouseWheelListener(l: MouseWheelListener) {
-		canvas.addMouseWheelListener(l)
+		_canvas?.addMouseWheelListener(l)
 	}
 
 	override fun removeMouseWheelListener(l: MouseWheelListener) {
-		canvas.removeMouseWheelListener(l)
+		_canvas?.removeMouseWheelListener(l)
 	}
 
 	override fun addKeyListener(l: KeyListener) {
-		canvas.addKeyListener(l)
+		_canvas?.addKeyListener(l)
 	}
 
 	override fun removeKeyListener(l: KeyListener) {
-		canvas.removeKeyListener(l)
+		_canvas?.removeKeyListener(l)
 	}
 
 	override fun addPropertyChangeListener(l: PropertyChangeListener<Any>) {

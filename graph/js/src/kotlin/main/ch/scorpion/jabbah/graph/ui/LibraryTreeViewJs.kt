@@ -37,6 +37,10 @@ class LibraryTreeViewJs(
 	private val actions = LibraryTreeViewActions(props.controller, props.application)
 	private var nodeId: Int = 0
 
+	init {
+		props.controller.view = this
+	}
+
 	/** ---- [RComponent] */
 
 	override fun RBuilder.render() {

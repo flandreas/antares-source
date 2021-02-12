@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -17,6 +18,7 @@ class RestLibraryPersistenceService(
 ) : LibraryPersistenceService {
 
     companion object {
+	    private val LOG by logger(RestLibraryPersistenceService::class)
         private const val BASE_URL = ".."
     }
 
@@ -25,10 +27,12 @@ class RestLibraryPersistenceService(
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         val request = XMLHttpRequest()
 	    val url = "$baseUrl/libraries/${library.uuid.id}/${uuid.id}.cir"
+	    LOG.debug("Calling GET $url")
         request.open("GET", url, async = false)
         request.overrideMimeType("text/xml")
         request.send()
-        return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
+	    val doc = request.responseXML!!
+        return StoreXmlReader(DomXmlReader(doc)).readStorable() as MetaGraph
     }
 
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =
