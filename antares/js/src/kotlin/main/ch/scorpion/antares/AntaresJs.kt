@@ -4,9 +4,7 @@ import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
-import ch.scorpion.jabbah.app.AbstractApplicationJs
-import ch.scorpion.jabbah.app.ApplicationDataViewController
-import ch.scorpion.jabbah.app.UnimplementedApplicationDataRepository
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
@@ -47,11 +45,15 @@ class AntaresJs(
 
 	override fun start() {
 		init()
+		display()
 	}
 
 	override fun openInitialSavable() {
 		val metaGraph = loadMetaGraph(initialCircuitUuid)
+		controller.data = ApplicationData(metaGraph, DefaultSavable("Web"))
+	}
 
+	private fun display() {
 		render(document.getElementById("root")) {
 			h2 { +"Antares Web: Level 6" }
 
@@ -75,7 +77,7 @@ class AntaresJs(
 				li { +"Click 'Play' button to start simulation" }
 				li { +"Click on input components to change input values" }
 				li { +"Click 'Pause' button to activate single step mode" }
-				li { +"Click 'Resume' button to resume after breakpoint "}
+				li { +"Click 'Resume' button to resume after breakpoint " }
 				li { +"Drag slider knob to change simulation speed" }
 			}
 
@@ -97,7 +99,7 @@ class AntaresJs(
 				attrs.canvasId = "kotlinCanvas"
 				attrs.width = 800
 				attrs.height = 600
-				attrs.metaGraph = metaGraph
+				attrs.metaGraph = controller.data!!.content as MetaGraph
 			}
 		}
 	}
