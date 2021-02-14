@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
 import java.awt.EventQueue
+import java.awt.image.BaseMultiResolutionImage
 import java.lang.reflect.InvocationTargetException
 import javax.swing.*
 import javax.swing.plaf.FontUIResource
@@ -18,6 +19,8 @@ import kotlin.math.min
 object UiUtil {
 
 	private const val DIVERT = 24
+	private val VARIANT_QUALIFIERS = listOf("", "@2x")
+
 
 	/**
 	 * Invokes the specified invokable on the [EventQueue] an returns immediately.
@@ -91,15 +94,15 @@ object UiUtil {
 		return scroll
 	}
 
-	fun getBackgroundDivertColor(parent: JComponent): Color = getBackgroundDivertColor(parent.background)
+	fun getBackgroundDivertColor(parent: JComponent): Color =
+		getBackgroundDivertColor(parent.background)
 
-	fun getBackgroundDivertColor(bg: Color): Color {
-		return if (isDark(bg)) {
+	fun getBackgroundDivertColor(bg: Color): Color =
+		if (isDark(bg)) {
 			Color(min(255, bg.red + DIVERT), min(255, bg.green + DIVERT), min(255, bg.blue + DIVERT))
 		} else {
 			Color(max(0, bg.red - DIVERT), max(0, bg.green - DIVERT), max(0, bg.blue - DIVERT))
 		}
-	}
 
 	fun getButtonPressColor(parent: JComponent): Color {
 		val bg = parent.background
@@ -120,20 +123,41 @@ object UiUtil {
 
 	/**
 	 * Creates an [ImageIcon] from the specified base path, depending on whether the current UI
-	 * has a dark or a light theme. For dark themes, the image file base name is expanded by `-dark`.
+	 * has a dark or a light theme.
+	 *
+	 * For dark themes, the image file base name is expanded by `-dark`.
 	 * For example, a file name `example.png` is expanded to `example-dark.png` for dark themes.
 	 * If no dark file version is found, the normal version is used (without `-dark` expansion).
+	 *
+	 * Also tries to load multiple resolution variants whose file names contain a resolution variant
+	 * like `@2x`, e.g. `example@2x.png` or `example-dark@2x.png`.
 	 */
 	fun themedIcon(path: String): ImageIcon {
-		if (UI.isDark) {
-			try {
-				return ImageIcon(UiUtil::class.java.getResource(darkImagePath(path)))
-			} catch (t: Throwable) {}
+		return if (UI.isDark) {
+			getMultiResolutionIcon(path, ::getDarkVariantPath)
+		} else {
+			getMultiResolutionIcon(path, ::getVariantPath)
 		}
-		return ImageIcon(UiUtil::class.java.getResource(path))
 	}
 
-	private fun isDark(color: Color): Boolean {
-		return (color.red + color.green + color.blue) / 3 < 128
+	private fun isDark(color: Color): Boolean =
+		(color.red + color.green + color.blue) / 3 < 128
+
+	private fun getVariantPath(path: String, variant: String): String = path.replace(".", "$variant.")
+
+	private fun getDarkVariantPath(path: String, variant: String): String = path.replace(".", "-dark$variant.")
+
+	private fun getMultiResolutionIcon(path: String, pathResolver: (path: String, variant: String) -> String): ImageIcon {
+		val variants = mutableListOf<ImageIcon>()
+		VARIANT_QUALIFIERS.forEach { variant ->
+			try {
+				variants.add(ImageIcon(UiUtil::class.java.getResource(pathResolver(path, variant))))
+			} catch (t: Throwable) {}
+		}
+		return when(variants.size) {
+			0 -> throw IllegalArgumentException("Icon '$path' not found")
+			1 -> variants[0]
+			else -> ImageIcon(BaseMultiResolutionImage(*(variants.map { it.image }).toTypedArray()))
+		}
 	}
 }

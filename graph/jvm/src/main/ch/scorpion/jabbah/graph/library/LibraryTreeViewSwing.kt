@@ -36,7 +36,7 @@ class LibraryTreeViewSwing(
 
 		transferHandler = LibraryTreeViewTransferHandler(this)
 
-		setRowHeight(24)
+		setRowHeight(26)
 		isRootVisible = showWorkspaceNode
 		setCellRenderer(Renderer())
 		addTreeSelectionListener { controller.selectedItem = getSelectedItem() }
