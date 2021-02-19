@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.mreact.IconProviderRegistry
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
 import ch.scorpion.jabbah.graph.library.*
@@ -132,7 +133,7 @@ class LibraryTreeViewJs(
 		jmTreeItem(
 			label = createLabel(node.item.name.value),
 			nodeId = nextNodeId(),
-			icon = if (node.item === props.controller.library) createLibraryIcon() else null,
+			icon = getIcon(node.item),
 			onLabelClick = { onLabelClick(it, node) },
 			onDoubleClick = props.onDoubleClick?.let {
 				handler -> {
@@ -144,6 +145,14 @@ class LibraryTreeViewJs(
 			for (node in node.children) {
 				addItems(node)
 			}
+		}
+	}
+
+	private fun getIcon(item: LibraryItem): ReactElement? {
+		return if (item === props.controller.library) {
+			createLibraryIcon()
+		} else {
+			item.iconPath?.let { IconProviderRegistry.getIcon(it) }
 		}
 	}
 
