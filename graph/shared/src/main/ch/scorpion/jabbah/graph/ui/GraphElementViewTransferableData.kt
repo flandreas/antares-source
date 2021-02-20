@@ -1,0 +1,17 @@
+package ch.scorpion.jabbah.graph.ui
+
+import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.view.GraphElementView
+
+/**
+ * The data being transferred when dragging a [LibraryElement] from a library tree view
+ * into a drawing canvas.
+ *
+ * @param graphElementView the [GraphElementView] being dragged
+ * @param libraryElement the [LibraryElement] where dragging originated
+ */
+data class GraphElementViewTransferableData(
+	val graphElementView: GraphElementView<GraphElement>,
+	val libraryElement: LibraryElement
+)

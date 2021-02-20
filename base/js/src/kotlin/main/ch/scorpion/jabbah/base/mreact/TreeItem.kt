@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.mreact
 
+import ch.scorpion.jabbah.base.event.DragEventHandler
+import ch.scorpion.jabbah.base.event.MouseEventHandler
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
 import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
@@ -28,8 +30,10 @@ fun RBuilder.jmTreeItem(
 	label: ReactElement,
 	nodeId: String,
 	icon: ReactElement? = null,
-	onLabelClick: ((MouseEvent) -> Unit)? = null,
-	onDoubleClick: ((MouseEvent) -> Unit)? = null,
+	onLabelClick: MouseEventHandler? = null,
+	onDoubleClick: MouseEventHandler? = null,
+	onDragStart: DragEventHandler? = null,
+	onDragEnd: DragEventHandler? = null,
 	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<JMTreeItemProps>? = null
@@ -39,5 +43,8 @@ fun RBuilder.jmTreeItem(
 	attrs.icon = icon
 	attrs.onLabelClick = onLabelClick
 	attrs.onDoubleClick = onDoubleClick
+	attrs.draggable = onDragStart != null
+	attrs.onDragStart = onDragStart
+	attrs.onDragEnd = onDragEnd
 	setStyledPropsAndRunHandler(className, handler)
 }

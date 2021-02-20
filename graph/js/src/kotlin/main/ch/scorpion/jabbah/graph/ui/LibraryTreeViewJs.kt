@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.mreact.IconProviderRegistry
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
 import ch.scorpion.jabbah.base.mreact.jmTreeView
+import ch.scorpion.jabbah.edit.ui.DragAndDropDepo
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
+import org.w3c.dom.DragEvent
 import org.w3c.dom.events.MouseEvent
 import react.*
 
@@ -140,7 +142,9 @@ class LibraryTreeViewJs(
 					handler.invoke(node)
 					it.preventDefault()
 				}
-			}
+			},
+			onDragStart = if (node.item is LibraryElement) { { onDragStart(it, node.item) } } else null,
+			onDragEnd = if (node.item is LibraryElement) { ::onDragEnd } else null
 		) {
 			for (node in node.children) {
 				addItems(node)
@@ -171,5 +175,15 @@ class LibraryTreeViewJs(
 		if (node.item !is LibraryDirectory) {
 			event.preventDefault()
 		}
+	}
+
+	private fun onDragStart(event: DragEvent, item: LibraryElement) {
+		DragAndDropDepo.set(GraphElementViewTransferableData(item.getNewInstance(), item))
+		event.dataTransfer?.setData("text/plain", DragAndDropDepo.ID)
+		event.dataTransfer?.dropEffect = "copy"
+	}
+
+	private fun onDragEnd(event: DragEvent) {
+		DragAndDropDepo.clear()
 	}
 }

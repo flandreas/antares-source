@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
@@ -71,6 +72,9 @@ class GraphPanelViewJs(
 	override fun componentDidMount() {
 		props.controller.setApplicationData(props.metaGraph.graph.graphView, editable = true)
 		DrawViewModule.viewManager.activeView = props.controller.editor.view
+
+		(props.controller.editor.view.canvas as CanvasJs).dragTargetHandler =
+			GraphPanelDragTargetHandler(props.controller.editor)
 	}
 
 	override fun RBuilder.render() {

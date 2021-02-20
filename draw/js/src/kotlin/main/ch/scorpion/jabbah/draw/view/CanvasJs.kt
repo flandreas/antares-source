@@ -36,10 +36,10 @@ class CanvasJs(
 		private val LOG by logger(CanvasJs::class)
 	}
 
-	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf<MouseEventBridge>() }
-	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf<MouseMotionEventBridge>() }
-	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf<MouseWheelEventBridge>() }
-	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf<KeyEventBridge>() }
+	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }
+	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf() }
+	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf() }
+	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf() }
 
 	override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
@@ -57,6 +57,22 @@ class CanvasJs(
 	override val devicePixelRatio: Int = window.devicePixelRatio.toInt()
 
 	override val dimension = Dimension2D(width * devicePixelRatio, height * devicePixelRatio)
+
+	var dragTargetHandler: DragTargetHandler? = null
+		set(value) {
+			// Using canvas.addEventListener() seems not to work
+			field?.let {
+				canvas.ondragenter = null
+				canvas.ondragover = null
+				canvas.ondrop = null
+			}
+			value?.let { handler ->
+				canvas.ondragenter = { event -> handler.onDragEnter(event, windowToCanvas(event)) }
+				canvas.ondragover = { event -> handler.onDragOver(event, windowToCanvas(event)) }
+				canvas.ondrop = { event -> handler.onDrop(event, windowToCanvas(event)) }
+			}
+			field = value
+		}
 
 	init {
 		view.canvas = this
@@ -126,7 +142,7 @@ class CanvasJs(
 	override fun addMouseListener(l: MouseListener) {
 		var bridge: MouseEventBridge? = mouseEventBridgeOf(l)
 		if (bridge == null) {
-			bridge = MouseEventBridge(devicePixelRatio, l, canvas)
+			bridge = MouseEventBridge(::windowToCanvas, l, canvas)
 			canvas.addEventListener("mousedown", bridge)
 			canvas.addEventListener("mouseup", bridge)
 			canvas.addEventListener("click", bridge)
@@ -149,7 +165,7 @@ class CanvasJs(
 	override fun addMouseMotionListener(l: MouseMotionListener) {
 		var bridge: MouseMotionEventBridge? = mouseMotionEventBridgeOf(l)
 		if (bridge == null) {
-			bridge = MouseMotionEventBridge(devicePixelRatio, l, canvas)
+			bridge = MouseMotionEventBridge(::windowToCanvas, l, canvas)
 			canvas.addEventListener("mousedown", bridge)
 			canvas.addEventListener("mouseup", bridge)
 			canvas.addEventListener("mousemove", bridge)
@@ -170,7 +186,7 @@ class CanvasJs(
 	override fun addMouseWheelListener(l: MouseWheelListener) {
 		var bridge: MouseWheelEventBridge? = mouseWheelEventBridgeOf(l)
 		if (bridge == null) {
-			bridge = MouseWheelEventBridge(devicePixelRatio, l, canvas)
+			bridge = MouseWheelEventBridge(::windowToCanvas, l, canvas)
 			canvas.addEventListener("mousewheel", bridge)
 			mouseWheelListeners.add(bridge)
 		}
@@ -228,6 +244,14 @@ class CanvasJs(
 		kotlinx.browser.window.clearInterval(id)
 	}
 
+	private fun windowToCanvas(event: org.w3c.dom.events.MouseEvent): Point2D {
+		val rect = canvas.getBoundingClientRect()
+		return Point2D(
+			((event.clientX - rect.left) * devicePixelRatio).toInt(),
+			((event.clientY - rect.top) * devicePixelRatio).toInt()
+		)
+	}
+
 	private fun mouseEventBridgeOf(l: MouseListener): MouseEventBridge? =
 		mouseListeners.firstOrNull { it.listener === l }
 
@@ -242,7 +266,7 @@ class CanvasJs(
 }
 
 private class MouseEventJs(
-	private val devicePixelRatio: Int,
+	override val location: Point2D,
 	private val canvas: HTMLCanvasElement,
 	override val event: org.w3c.dom.events.MouseEvent
 ) : MouseEvent {
@@ -260,9 +284,9 @@ private class MouseEventJs(
 	override val wheelRotation: Int
 		get() = if (event is org.w3c.dom.events.WheelEvent) event.deltaY.toInt() else 0
 
-	override val x: Int get() = windowToCanvasX(event.clientX)
+	override val x: Int get() = location.xInt
 
-	override val y: Int get() = windowToCanvasY(event.clientY)
+	override val y: Int get() = location.yInt
 
 	override fun consume() {
 		event.preventDefault()
@@ -307,26 +331,16 @@ private class MouseEventJs(
 
 		return modifiers
 	}
-
-	fun windowToCanvasX(x: Int): Int {
-		val rect = canvas.getBoundingClientRect()
-		return ((x - rect.left) * devicePixelRatio).toInt()
-	}
-
-	fun windowToCanvasY(y: Int): Int {
-		val rect = canvas.getBoundingClientRect()
-		return ((y - rect.top) * devicePixelRatio).toInt()
-	}
 }
 
 private class MouseEventBridge(
-	private val devicePixelRatio: Int,
+	private val windowToCanvas: (org.w3c.dom.events.MouseEvent) -> Point2D,
 	val listener: MouseListener,
 	private val canvas: HTMLCanvasElement
 ) : EventListener {
 
 	override fun handleEvent(event: Event) {
-		val e = MouseEventJs(devicePixelRatio, canvas, event as org.w3c.dom.events.MouseEvent)
+		val e = MouseEventJs(windowToCanvas.invoke(event as org.w3c.dom.events.MouseEvent), canvas, event)
 		when (event.type) {
 			"mousedown" -> listener.mousePressed(e)
 			"mouseup" -> listener.mouseReleased(e)
@@ -337,7 +351,7 @@ private class MouseEventBridge(
 }
 
 private class MouseMotionEventBridge(
-	private val devicePixelRatio: Int,
+	private val windowToCanvas: (org.w3c.dom.events.MouseEvent) -> Point2D,
 	val listener: MouseMotionListener,
 	private val canvas: HTMLCanvasElement
 ) : EventListener {
@@ -345,7 +359,7 @@ private class MouseMotionEventBridge(
 	private var pressed: Boolean = false
 
 	override fun handleEvent(event: Event) {
-		val e = MouseEventJs(devicePixelRatio, canvas, event as org.w3c.dom.events.MouseEvent)
+		val e = MouseEventJs(windowToCanvas.invoke(event as org.w3c.dom.events.MouseEvent), canvas, event)
 		when (event.type) {
 			"mousedown" -> {
 				pressed = true
@@ -365,14 +379,14 @@ private class MouseMotionEventBridge(
 }
 
 private class MouseWheelEventBridge(
-	private val devicePixelRatio: Int,
+	private val windowToCanvas: (org.w3c.dom.events.MouseEvent) -> Point2D,
 	val listener: MouseWheelListener,
 	private val canvas: HTMLCanvasElement
 ) : EventListener {
 
 	override fun handleEvent(event: Event) {
 		val w3cEvent = event as org.w3c.dom.events.WheelEvent
-		val e = MouseEventJs(devicePixelRatio, canvas, w3cEvent)
+		val e = MouseEventJs(windowToCanvas.invoke(w3cEvent), canvas, w3cEvent)
 		listener.mouseWheelRotated(e)
 	}
 }

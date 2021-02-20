@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.view.CanvasJs
-import com.ccfraser.muirwik.components.mPaper
 import kotlinx.html.id
 import react.*
 import react.dom.canvas

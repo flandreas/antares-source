@@ -38,8 +38,3 @@ class GraphElementViewTransferable(
         return data
     }
 }
-
-data class GraphElementViewTransferableData(
-	val graphElementView: GraphElementView<GraphElement>,
-	val libraryElement: LibraryElement
-)

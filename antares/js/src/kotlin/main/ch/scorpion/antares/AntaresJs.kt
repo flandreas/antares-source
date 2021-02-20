@@ -40,7 +40,7 @@ class AntaresJs(
 
 		super.init()
 
-		LogSystem.level = LogLevel.Debug
+		LogSystem.level = LogLevel.Info
 	}
 
 	override fun start() {
