@@ -50,4 +50,11 @@ interface SelectionModel<out T : Component> : Drawable {
      */
     fun notifyRemoved(view: DrawingView<*>)
 
+	/**
+	 * This method is automatically called whenever the underlying [Component] geometry has been changed.
+	 *
+	 * Inheriting classes implement this method to update the shape of this [SelectionModel] according to the new
+	 * geometry of the [Component].
+	 */
+	fun componentUpdated()
 }

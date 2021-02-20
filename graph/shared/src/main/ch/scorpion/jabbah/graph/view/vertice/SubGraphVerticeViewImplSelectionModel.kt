@@ -15,9 +15,9 @@ import ch.scorpion.jabbah.graph.view.ControlView
  * A [SelectionModel] for [SubGraphVerticeViewImpl] that draws its [ControlView]s using their [SelectionModel]s.
  */
 class SubGraphVerticeViewImplSelectionModel(
-	model: SubGraphVerticeViewImpl,
+	component: SubGraphVerticeViewImpl,
 	private val provider: SelectionModelProvider
-) : AbstractSelectionModel<SubGraphVerticeViewImpl>(model) {
+) : AbstractSelectionModel<SubGraphVerticeViewImpl>(component) {
 
 	private val selectionModels = mutableMapOf<ControlViewComponent, SelectionModel<Component>>()
 
@@ -52,9 +52,12 @@ class SubGraphVerticeViewImplSelectionModel(
 	/** ---- [AbstractSelectionModel] */
 
 	override fun componentUpdated() {
-		clearSelectionModels()
-		component.getControlViewComponents().forEach {
-			selectionModels[it] = provider.provideFor(it.controlView, SelectionDrawingStrategy.REPLACE)!!
+		if (component.getControlViewComponents().isNotEmpty() && selectionModels.isEmpty()) {
+			component.getControlViewComponents().forEach {
+				selectionModels[it] = provider.provideFor(it.controlView, SelectionDrawingStrategy.REPLACE)!!
+			}
+		} else {
+			selectionModels.values.forEach { it.componentUpdated() }
 		}
 	}
 
