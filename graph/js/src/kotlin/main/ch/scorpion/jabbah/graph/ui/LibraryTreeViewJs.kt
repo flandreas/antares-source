@@ -204,8 +204,8 @@ class LibraryTreeViewJs(
 			emptyDragImage = (document.createElement("canvas") as HTMLCanvasElement).apply {
 				width = 1
 				height = 1
-				document.body?.appendChild(this)
 			}
 		}
+		document.body?.appendChild(emptyDragImage!!)
 	}
 }
