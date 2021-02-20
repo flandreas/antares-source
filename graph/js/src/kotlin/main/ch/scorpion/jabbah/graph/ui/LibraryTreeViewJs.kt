@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
+import kotlinx.browser.document
 import org.w3c.dom.DragEvent
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 import react.*
 
@@ -39,6 +41,9 @@ class LibraryTreeViewJs(
 
 	private val actions = LibraryTreeViewActions(props.controller, props.application)
 	private var nodeId: Int = 0
+
+	// Used for suppressing the default DnD image
+	private var emptyDragImage: HTMLCanvasElement? = null
 
 	init {
 		props.controller.view = this
@@ -181,9 +186,26 @@ class LibraryTreeViewJs(
 		DragAndDropDepo.set(GraphElementViewTransferableData(item.getNewInstance(), item))
 		event.dataTransfer?.setData("text/plain", DragAndDropDepo.ID)
 		event.dataTransfer?.dropEffect = "copy"
+
+		ensureEmptyDndImage()
+
+		event.dataTransfer?.setDragImage(emptyDragImage!!, 0, 0)
 	}
 
 	private fun onDragEnd(event: DragEvent) {
 		DragAndDropDepo.clear()
+		emptyDragImage?.let {
+			document.body?.removeChild(it)
+		}
+	}
+
+	private fun ensureEmptyDndImage() {
+		if (emptyDragImage == null) {
+			emptyDragImage = (document.createElement("canvas") as HTMLCanvasElement).apply {
+				width = 1
+				height = 1
+				document.body?.appendChild(this)
+			}
+		}
 	}
 }

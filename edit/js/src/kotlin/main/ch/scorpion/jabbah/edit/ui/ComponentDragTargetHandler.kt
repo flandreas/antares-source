@@ -36,26 +36,25 @@ open class ComponentDragTargetHandler(
 	override fun onDragEnter(event: DragEvent, viewLocation: Point2D) {
 		val transferData = extractTransferData()
 		if (transferData is Component) {
-			event.preventDefault()
 			setComponent(transferData, viewLocation)
+			event.preventDefault()
 		}
 	}
 
 	override fun onDragOver(event: DragEvent, viewLocation: Point2D) {
 		val transferData = extractTransferData()
 		if (transferData is Component) {
-			event.preventDefault()
 			setComponent(transferData, viewLocation)
 			transferData.dragged(editor)
+			event.preventDefault()
 		}
 	}
 
 	override fun onDrop(event: DragEvent, viewLocation: Point2D) {
-		super.onDrop(event, viewLocation)
-
 		val dropComponent = editor.view.dropComponent
 		if (dropComponent != null) {
 			importElement(dropComponent)
+			event.preventDefault()
 		}
 		editor.view.setDropComponent(null, null)
 	}
