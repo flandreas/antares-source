@@ -1,21 +1,16 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
  * Supports dragging individual orthogonal segments of an [EdgeView].
  */
 class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
-
-	companion object {
-		private val LOG by logger(DragEdgeSegmentHandler::class)
-	}
 
 	private var lastX: Double = 0.0
 	private var lastY: Double = 0.0
@@ -25,8 +20,6 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	/** ---- [InputEventHandler] */
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.debug("mouseMoved")
-
 		val segment = edgeView!!.polyline.findSegment(context.x, context.y)
 		if (segment != null) {
 			updateCursor(segment, context)
@@ -38,9 +31,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
 	private fun updateCursor(segmentIndex: Int?, context: EditInputEventContext) {
 		if (segmentIndex != null) {
-			val direction = edgeView!!.getSegmentDirection(segmentIndex)
-			LOG.debug("direction is $direction")
-			when (direction) {
+			when (edgeView!!.getSegmentDirection(segmentIndex)) {
 				Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
 				Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
 				else -> context.view.setCursor(Cursor.DEFAULT)
@@ -48,8 +39,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 		}
 	}
 
-	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mousePressed at (${context.x},${context.y})")
+	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 		lastX = context.x + context.editor.snapManager.snapX(context.x, context.y)
 		lastY = context.y + context.editor.snapManager.snapY(context.x, context.y)
 		segmentIndex = edgeView!!.polyline.findSegment(context.x, context.y)
@@ -58,8 +48,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 		return this
 	}
 
-	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mouseDragged to (${context.x},${context.y})")
+	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 		val newX = context.x + context.editor.snapManager.snapX(context.x, context.y)
 		val newY = context.y + context.editor.snapManager.snapY(context.x, context.y)
 
@@ -74,13 +63,14 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 			segmentIndex = segmentIndex1
 			totalOffset += offset
 
+			updateCursor(segmentIndex, context)
+
 			edgeView?.validate()
 		}
 		return this
 	}
 
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mouseReleased at " + Point2D(context.x, context.y))
 		if (totalOffset != 0.0) {
 			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, segmentIndex!!, totalOffset))
 		}

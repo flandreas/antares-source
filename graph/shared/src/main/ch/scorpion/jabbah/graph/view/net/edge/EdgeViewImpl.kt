@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
+import kotlin.math.min
 
 /**
  * A standard implementation of the [EdgeView] interface
@@ -468,7 +469,9 @@ open class EdgeViewImpl<T : Any>(
 		layout.suspendOriginLayout = false
 		layout.suspendDestinationLayout = false
 
-		return MoveEdgeSegmentInfo(polyline.findSegment(center.x, center.y)!!, offset)
+		return polyline.findSegment(center.x, center.y)?.let {
+			MoveEdgeSegmentInfo(it, offset)
+		} ?: MoveEdgeSegmentInfo(min(index, segmentPointCount - 2), offset)
 	}
 
 	override fun getSegmentDirection(segmentIndex: Int): Direction? {

@@ -74,4 +74,18 @@ class DragEdgeSegmentHandlerTest : AbstractInputEventHandlerTest(DragEdgeSegment
 
 		assertSegmentMoved()
 	}
+
+	/** Test for fix of bug GitHub#48.*/
+	@Test
+	fun shouldAnnihilateUShapedSegments() {
+		val ev = builder.graphView.getEdgeViews().first()
+		ev.moveSegment(2, Point2D(150, 200), Point2D(150, 300))
+
+		mouseMoveTo(190, 250)
+		pressMouseAt(190, 250)
+		dragMouseTo(160, 250)
+		releaseMouseAt(160, 250)
+
+		assertEquals(4, ev.segmentPointCount)
+	}
 }
