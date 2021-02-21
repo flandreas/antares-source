@@ -157,9 +157,8 @@ class Settings {
 
     private val values: MutableMap<String, String> by lazy { mutableMapOf<String,String>() }
 
-    fun getString(name: String, defaultValue: String): String {
-        return getOptional(name) ?: defaultValue
-    }
+    fun getString(name: String, defaultValue: String): String =
+    	getOptional(name) ?: defaultValue
 
     fun getBoolean(name: String, defaultValue: Boolean): Boolean {
         val setting: String? = getOptional(name)
@@ -169,29 +168,22 @@ class Settings {
         return setting?.toUpperCase() == "TRUE"
     }
 
-    fun getInt(name: String, defaultValue: Int): Int {
-        return getOptional(name)?.toInt() ?: defaultValue
-    }
+    fun getInt(name: String, defaultValue: Int): Int =
+    	getOptional(name)?.toInt() ?: defaultValue
 
-    fun getFloat(name: String, defaultValue: Float): Float {
-        return getOptional(name)?.toFloat() ?: defaultValue
-    }
+    fun getFloat(name: String, defaultValue: Float): Float =
+    	getOptional(name)?.toFloat() ?: defaultValue
 
-	fun getIntegers(name: String): List<Int> {
-		return getOptional(name)
+	fun getIntegers(name: String): List<Int> =
+		getOptional(name)
 			?.split(",")
 			?.filter { it.isNotBlank() }
 			?.map { it.toInt() }
 			?: listOf()
-	}
 
-    fun getKeys(): Iterator<String> {
-        return values.keys.iterator()
-    }
+    fun getKeys(): Iterator<String> = values.keys.iterator()
 
-    fun get(name: String): String {
-        return values[name]!!
-    }
+    fun get(name: String): String = values[name]!!
 
     /** Adds a user-defined property.*/
     fun set(name: String, value: Any) {
@@ -206,9 +198,7 @@ class Settings {
         values.remove(name)
     }
 
-    private fun getOptional(name: String): String? {
-        return values[name]
-    }
+    private fun getOptional(name: String): String? = values[name]
 }
 
 /** Posted on the system [EventBus] when the [Preference]s in the system [Properties] have changed.*/
