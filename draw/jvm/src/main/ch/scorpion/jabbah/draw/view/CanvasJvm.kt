@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.View
@@ -243,18 +242,17 @@ private class MouseEventJvm(
 
 	override fun toString(): String = "MouseEvent $type"
 
-	private fun convertButton(jvmButton: Int): Button {
-		return when (jvmButton) {
+	private fun convertButton(jvmButton: Int): Button =
+		when (jvmButton) {
 			AwtMouseEvent.NOBUTTON -> Button.NONE
 			AwtMouseEvent.BUTTON1 -> Button.BUTTON1
 			AwtMouseEvent.BUTTON2 -> Button.BUTTON2
 			AwtMouseEvent.BUTTON3 -> Button.BUTTON3
 			else -> throw IllegalArgumentException("unknown button $jvmButton")
 		}
-	}
 
-	private fun convertEventType(id: Int): MouseEventType {
-		return when(id) {
+	private fun convertEventType(id: Int): MouseEventType =
+		when (id) {
 			AwtMouseEvent.MOUSE_CLICKED -> MouseEventType.CLICKED
 			AwtMouseEvent.MOUSE_PRESSED -> MouseEventType.PRESSED
 			AwtMouseEvent.MOUSE_RELEASED -> MouseEventType.RELEASED
@@ -265,7 +263,6 @@ private class MouseEventJvm(
 			AwtMouseEvent.MOUSE_WHEEL -> MouseEventType.WHEEL_ROTATED
 			else -> throw IllegalArgumentException("unknown AWT mouse event id $id")
 		}
-	}
 }
 
 private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
@@ -281,25 +278,20 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 
 	override fun isConsumed(): Boolean = event.isConsumed
 
-	override fun toString(): String {
-		return "KeyEvent $type $key"
-	}
+	override fun toString(): String = "KeyEvent $type $key"
 
-	private fun convertEventType(id: Int): KeyEventType {
-		return when (id) {
+	private fun convertEventType(id: Int): KeyEventType =
+		when (id) {
 			AwtKeyEvent.KEY_TYPED -> KeyEventType.TYPED
 			AwtKeyEvent.KEY_PRESSED -> KeyEventType.PRESSED
 			AwtKeyEvent.KEY_RELEASED -> KeyEventType.RELEASED
 			else -> throw IllegalArgumentException("unknown AWT key event id $id")
 		}
-	}
 }
 
 private class KeyEventBridge(val listener: KeyListener) : java.awt.event.KeyListener {
 
-	override fun keyTyped(e: AwtKeyEvent) {
-		// empty
-	}
+	override fun keyTyped(e: AwtKeyEvent) { }
 
 	override fun keyPressed(e: AwtKeyEvent) = listener.keyPressed(KeyEventJvm(e))
 
@@ -319,19 +311,15 @@ private class MouseWheelEventBridge(val listener: MouseWheelListener) : java.awt
 
 private class MouseEventBridge(val listener: MouseListener) : java.awt.event.MouseListener {
 
-	companion object {
-		private val LOG by logger(MouseEventBridge::class)
-	}
-
 	override fun mouseEntered(e: AwtMouseEvent) = listener.mouseEntered(MouseEventJvm(e))
+
 	override fun mouseClicked(e: AwtMouseEvent) {
-		LOG.debug("clicked")
 		listener.mouseClicked(MouseEventJvm(e))
 	}
 	override fun mouseReleased(e: AwtMouseEvent) {
-		LOG.debug("released")
 		listener.mouseReleased(MouseEventJvm(e))
 	}
 	override fun mouseExited(e: AwtMouseEvent) = listener.mouseExited(MouseEventJvm(e))
+
 	override fun mousePressed(e: AwtMouseEvent) = listener.mousePressed(MouseEventJvm(e))
 }

@@ -36,14 +36,14 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		createSolutions(solutions, begin, end) { a, b -> createB(a, b) }
 		createSolutions(solutions, begin, end) { a, b -> createA(a, b) }
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("solutions:")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("solutions:")
 			solutions.forEach { LOG.debug("- ${it.polyline}") }
 		}
 
 		if (solutions.size == 0) {
 			// begin and end must both be collinear and counter-directive
-			LOG.debug("using fallback solution")
+			LOG.trace("using fallback solution")
 			return createFallbackSolution(begin.point, end.point)
 		}
 		if (solutions.size == 1) {
@@ -53,7 +53,9 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		solutions.sortWith(SolutionEvaluator(edgeView))
 		val minIndex = 0
 
-		LOG.debug("Choosing solution with ${solutions[minIndex].polyline.size} points")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Choosing solution with ${solutions[minIndex].polyline.size} points")
+		}
 
 		return solutions[minIndex].polyline.points
 	}

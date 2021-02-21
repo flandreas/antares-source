@@ -37,7 +37,7 @@ class EdgeViewLayoutImpl(
 			// No need to do any layouts while EdgeView is being loaded from persistent storage
 			return
 		}
-		LOG.debug("VerticeView updated")
+		LOG.trace("VerticeView updated")
 		if (event.source == edgeView.origin?.connectableView && !suspendOriginLayout) {
 			layoutOrigin()
 		}
@@ -78,7 +78,7 @@ class EdgeViewLayoutImpl(
 	}
 
 	override fun layoutOrigin(direction: Direction?) {
-		LOG.debug("layoutOrigin")
+		LOG.trace("layoutOrigin")
 		if (!isAdjusted) {
 			layoutAll(direction, null)
 			return
@@ -124,7 +124,7 @@ class EdgeViewLayoutImpl(
 	}
 
 	override fun layoutDestination(direction: Direction?) {
-		LOG.debug("layoutDestination")
+		LOG.trace("layoutDestination")
 		if (!isAdjusted) {
 			layoutAll(null, direction)
 			return

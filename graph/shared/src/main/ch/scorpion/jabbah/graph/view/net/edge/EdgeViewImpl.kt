@@ -523,7 +523,9 @@ open class EdgeViewImpl<T : Any>(
 	}
 
 	override fun moveBy(dx: Double, dy: Double) {
-		LOG.debug("moveBy")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("moveBy")
+		}
 
 		// An EdgeView does only move if all ConnectableView it is connected to are moved as well
 		if (origin != null && !layout.suspendOriginLayout || destination != null && !layout.suspendDestinationLayout) {

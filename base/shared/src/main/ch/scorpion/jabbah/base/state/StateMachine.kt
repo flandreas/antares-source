@@ -92,11 +92,12 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	 * by the current [State]
 	 */
 	fun handle(event: T): Boolean {
-		LOG.debug("Handle event $event")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Handle event $event")
+		}
 
 		val transition = currentState.match(event)
 		if (transition != null) {
-			LOG.debug("Transferring to state '${transition.destinationStateName}'")
 			transferAlong(transition, event)
 			return true
 		}
@@ -106,11 +107,12 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 		}
 
 		if (ignoreEventConditions.any { it.invoke(event) }) {
-			LOG.debug("Explicitly ignored event $event")
+			LOG.trace("Explicitly ignored event $event")
 			return true
 		}
 
-		LOG.debug("Unhandled event $event")
+		LOG.trace("Unhandled event $event")
+
 		return behaviour.behave(event as Any)
 	}
 
@@ -125,9 +127,12 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 		transition.transit(event)
 
 		if (destinationState !== currentState) {
+			LOG.debug("Transferring to state '${destinationState.name}'")
 			enter(destinationState, event)
 		} else {
-			LOG.debug("Stay in state '${destinationState.name}' with event $event")
+			if (LOG.isTraceEnabled()) {
+				LOG.trace("Stay in state '${destinationState.name}' with event $event")
+			}
 		}
 	}
 

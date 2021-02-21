@@ -268,10 +268,11 @@ class CanvasJs(
 private class MouseEventJs(
 	override val location: Point2D,
 	private val canvas: HTMLCanvasElement,
-	override val event: org.w3c.dom.events.MouseEvent
+	override val event: org.w3c.dom.events.MouseEvent,
+	private val pressed: Boolean = false
 ) : MouseEvent {
 
-	override val type: MouseEventType get() = convertEventType()
+	override val type: MouseEventType = convertEventType()
 
 	override val source: Any get() = canvas
 
@@ -300,9 +301,19 @@ private class MouseEventJs(
 
 	override val isRightButtonDown: Boolean get() = button == Button.BUTTON3
 
+	override fun toString(): String = "MouseEvent $type"
+
 	private fun convertEventType(): MouseEventType {
-		// TODO Implement properly
-		return MouseEventType.MOVED
+		return when (event.type) {
+			"click" -> MouseEventType.CLICKED
+			"mousedown" -> MouseEventType.PRESSED
+			"mouseup" -> MouseEventType.RELEASED
+			"mouseenter" -> MouseEventType.ENTERED
+			"mouseleave" -> MouseEventType.EXITED
+			"mousemove" -> if (pressed) MouseEventType.DRAGGED else MouseEventType.MOVED
+			"wheel" -> MouseEventType.WHEEL_ROTATED
+			else -> MouseEventType.MOVED // TODO what to do else?
+		}
 	}
 
 	private fun convertButton(): Button {
@@ -359,14 +370,10 @@ private class MouseMotionEventBridge(
 	private var pressed: Boolean = false
 
 	override fun handleEvent(event: Event) {
-		val e = MouseEventJs(windowToCanvas.invoke(event as org.w3c.dom.events.MouseEvent), canvas, event)
+		val e = MouseEventJs(windowToCanvas.invoke(event as org.w3c.dom.events.MouseEvent), canvas, event, pressed)
 		when (event.type) {
-			"mousedown" -> {
-				pressed = true
-			}
-			"mouseup" -> {
-				pressed = false
-			}
+			"mousedown" -> pressed = true
+			"mouseup" -> pressed = false
 			"mousemove" -> {
 				if (pressed) {
 					listener.mouseDragged(e)
