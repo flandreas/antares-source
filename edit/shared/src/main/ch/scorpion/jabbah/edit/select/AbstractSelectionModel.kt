@@ -20,11 +20,13 @@ abstract class AbstractSelectionModel<T : Component>(
 	override val component: T
 ) : AbstractDrawable(), SelectionModel<T> {
 
-	private val geometryUpdateListener = object : DrawableAdapter() {
-        override fun drawableUpdated(event: DrawableEvent) {
-            componentUpdated()
-        }
-    }
+	// Kotlin bug KT-14888 forces this property to be non-private
+	val geometryUpdateListener = object : DrawableAdapter() {
+		// private val geometryUpdateListener = object : DrawableAdapter() {
+		override fun drawableUpdated(event: DrawableEvent) {
+			componentUpdated()
+		}
+	}
 
     override fun setup() {
         component.addDrawableListener(geometryUpdateListener)
