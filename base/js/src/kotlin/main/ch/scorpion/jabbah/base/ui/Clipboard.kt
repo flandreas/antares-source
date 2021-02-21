@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.app
+package ch.scorpion.jabbah.base.ui
 
 actual object Clipboard {
 

@@ -3,10 +3,12 @@ package ch.scorpion.jabbah.base.invocation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import java.awt.Dimension
-import java.awt.Rectangle
-import java.io.PrintStream
 import java.io.ByteArrayOutputStream
-import javax.swing.*
+import java.io.PrintStream
+import javax.swing.JFrame
+import javax.swing.JOptionPane
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
 
 
 object InteractiveErrorHandler : ErrorHandler() {
@@ -30,19 +32,22 @@ object InteractiveErrorHandler : ErrorHandler() {
             if (isDeveloper) {
 	            showDeveloperDialog(x)
             } else {
-                showUserDialog()
+                showUserDialog(x)
             }
 	        isHandling = false
         }
     }
 
-	private fun showDeveloperDialog(x: Throwable) {
-		val os = ByteArrayOutputStream()
-		x.printStackTrace(PrintStream(os))
+	private fun renderStackTrace(x: Throwable): String =
+		ByteArrayOutputStream().use {
+			x.printStackTrace(PrintStream(it))
+			it.toString()
+		}
 
+	private fun showDeveloperDialog(x: Throwable) {
 		val ta = JTextArea()
 		ta.isEditable = false
-		ta.text = os.toString()
+		ta.text = renderStackTrace(x)
 
 		val sp = JScrollPane(ta)
 		sp.preferredSize = Dimension(400, 300)
@@ -55,11 +60,7 @@ object InteractiveErrorHandler : ErrorHandler() {
 			JOptionPane.ERROR_MESSAGE)
 	}
 
-	private fun showUserDialog() {
-		JOptionPane.showMessageDialog(
-			parentFrame,
-			Translations.getString("base.unexpectedError.text"),
-			Translations.getString("base.unexpectedError.title"),
-			JOptionPane.ERROR_MESSAGE)
+	private fun showUserDialog(x: Throwable) {
+		UnexpectedErrorPanel.showAsDialog(parentFrame!!, renderStackTrace(x))
 	}
 }

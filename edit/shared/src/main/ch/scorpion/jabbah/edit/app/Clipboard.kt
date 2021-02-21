@@ -15,13 +15,6 @@ import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.edit.module.EditModule
 
-expect object Clipboard {
-
-	fun getStringContents(): String?
-
-	fun setStringContents(contents: String)
-}
-
 class CutAction(
 	private val service: DrawingAppService = EditModule.drawingAppService,
 	eventBus: EventBus = BaseModule.eventBus,
