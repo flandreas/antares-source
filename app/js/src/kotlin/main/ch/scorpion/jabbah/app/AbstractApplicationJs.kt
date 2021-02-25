@@ -7,9 +7,11 @@ abstract class AbstractApplicationJs(
 	controller: ApplicationDataViewController
 ) : AbstractApplication(controller) {
 
+	protected open val logLevel get() = LogLevel.Info
+
 	override fun init() {
 		super.init()
-		LogSystem.level = LogLevel.Info
+		LogSystem.level = logLevel
 
 		openInitialSavable()
 	}

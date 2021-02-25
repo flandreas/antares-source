@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -95,7 +94,7 @@ class GraphPanelViewController(
 ) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
 
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
-	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
+	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(eventBus)

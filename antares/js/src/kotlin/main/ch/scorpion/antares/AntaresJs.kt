@@ -28,6 +28,8 @@ class AntaresJs(
 		AntaresApplication
 {
 
+	override val logLevel get() = LogLevel.Info
+
 	override fun init() {
 		console.info("Initializing AntaresJs")
 
@@ -39,8 +41,6 @@ class AntaresJs(
 		AntaresThemes.install()
 
 		super.init()
-
-		LogSystem.level = LogLevel.Info
 	}
 
 	override fun start() {

@@ -13,6 +13,8 @@ class ApplicationData(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
+	override fun toString(): String = savable.description
+
 	var content: Storable = content
 		set(value) {
 			if (field !== value) {

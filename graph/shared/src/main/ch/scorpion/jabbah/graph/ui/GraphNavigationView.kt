@@ -50,6 +50,7 @@ interface GraphNavigationView : UIView {
 class GraphNavigationViewController(
 	private val isRoot: Boolean,
 	override val drawingView: DrawingView<GraphView>,
+	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.animator,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
@@ -73,7 +74,7 @@ class GraphNavigationViewController(
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
 	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
 
-	private var currentSavable: Savable? = null
+	private var currentSavable: Savable? = initialSavable
 	private var scenarioDetector: ScenarioDetector? = null
 
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }

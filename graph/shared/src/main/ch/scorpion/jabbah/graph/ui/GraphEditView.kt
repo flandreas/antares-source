@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.event.EventBus
@@ -21,10 +22,11 @@ interface GraphEditView : UIView
 
 class GraphEditViewController(
 	val drawingView: DrawingView<GraphView>,
+	initialSavable: Savable? = null,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphEditView>() {
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView, eventBus = eventBus)
+	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView, initialSavable, eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(eventBus)
 	val usecaseViewController = UsecaseViewController()
 

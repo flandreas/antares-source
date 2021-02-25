@@ -23,7 +23,7 @@ class GraphEditViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
-	private val controller = GraphEditViewController(drawingView as DrawingView<GraphView>, eventBus)
+	private val controller = GraphEditViewController(drawingView as DrawingView<GraphView>, null, eventBus)
 
 	init {
 		drawingView.canvas = mockk(relaxed = true)
