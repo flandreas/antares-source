@@ -82,8 +82,9 @@ class CanvasJs(
 
 		canvas.style.width = "${width}px"
 		canvas.style.height = "${height}px"
-
 		canvas.style.border = "1px solid gray"
+
+		canvas.tabIndex = 1
 
 		view.initialize()
 		initalizing = false
@@ -117,7 +118,9 @@ class CanvasJs(
 	}
 
 	override fun repaint(x: Int, y: Int, width: Int, height: Int) {
-		LOG.trace("CanvasJs.repaint $x,$y,$width,$height")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("CanvasJs.repaint $x,$y,$width,$height")
+		}
 
 		// TODO Trying to redraw minimal areas leads to strange alpha channel artefacts
 		// As a workaround, redraw entire canvas
@@ -205,6 +208,7 @@ class CanvasJs(
 		if (bridge == null) {
 			bridge = KeyEventBridge(l, canvas)
 			canvas.addEventListener("keydown", bridge)
+			canvas.addEventListener("keypress", bridge)
 			canvas.addEventListener("keyup", bridge)
 		}
 	}
@@ -213,6 +217,7 @@ class CanvasJs(
 		val bridge = keyEventBridgeOf(l)
 		if (bridge != null) {
 			canvas.removeEventListener("keydown", bridge)
+			canvas.removeEventListener("keypress", bridge)
 			canvas.removeEventListener("keyup", bridge)
 			keyListeners.remove(bridge)
 		}
@@ -438,18 +443,23 @@ private class KeyEventJs(
 	}
 
 	private fun convertEventType(): KeyEventType {
-		// TODO Implement properly
-		return KeyEventType.PRESSED
+		return when(event.type) {
+			"keydown", "keypress" -> KeyEventType.PRESSED
+			"keyup" -> KeyEventType.RELEASED
+			else -> KeyEventType.TYPED
+		}
 	}
 }
 
 private class KeyEventBridge(val listener: KeyListener, val canvas: HTMLCanvasElement) : EventListener {
 
 	override fun handleEvent(event: Event) {
+		console.info("Handle key event: ${event.type}")
 		val e = KeyEventJs(canvas, event as org.w3c.dom.events.KeyboardEvent)
-		when (event.type) {
-			"keydown" -> listener.keyPressed(e)
-			"keyup" -> listener.keyReleased(e)
+		when (e.type) {
+			KeyEventType.TYPED -> listener.keyTyped(e)
+			KeyEventType.PRESSED -> listener.keyPressed(e)
+			KeyEventType.RELEASED -> listener.keyReleased(e)
 		}
 	}
 }
