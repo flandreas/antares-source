@@ -55,7 +55,7 @@ class AntaresJs(
 
 	private fun display() {
 		render(document.getElementById("root")) {
-			h2 { +"Antares Web: Level 6" }
+			h2 { +"Antares Web: Level 7" }
 
 			h3 { +"View control" }
 
@@ -69,6 +69,7 @@ class AntaresJs(
 			ul {
 				li { +"Click on component to select" }
 				li { +"Click/drag with left mouse button to move components" }
+				li { +"Click/drag a component from the library tree into the circuit" }
 			}
 
 			h3 { +"Simulation" }
@@ -88,6 +89,7 @@ class AntaresJs(
 			h3 { +"Navigation" }
 
 			ul {
+				li { +"Double click on circuit in library tree to open the circuit" }
 				li { +"Double click on sub circuit symbol to dive into with animation" }
 				li { +"Cmd/Double click on subcircuit symbol to dive into without animation" }
 				li { +"Click on breadcrumb to surface from subcircuit" }
