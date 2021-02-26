@@ -52,5 +52,6 @@ object AntaresModuleJs : AbstractModule() {
 		Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
 		Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
 		Translations.addKey("library.savable.prefix", "Library Element")
+		Translations.addKey("graph.desktop.name", "Desktop")
 	}
 }

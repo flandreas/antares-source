@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.mreact.IconProviderRegistry
 import ch.scorpion.jabbah.base.mreact.jmTreeItem
@@ -53,13 +54,22 @@ class LibraryTreeViewJs(
 
 	override fun RBuilder.render() {
 		nodeId = 0
-		val model = LibraryDirectoryTreeModelBuilder(props.controller.library).build()
 
 		jmTreeView(
 			defaultExpandIcon = createExpandIcon(),
 			defaultCollapseIcon = createCollapseIcon(),
 		) {
-			addItems(model)
+			jmTreeItem(
+				label = createLabel(Translations.getString("graph.desktop.name")),
+				nodeId = nextNodeId(),
+				icon = createDesktopIcon(),
+				onLabelClick = { props.controller.selectedItem = null }
+			) {
+				props.controller.project?.let {
+					addItems(LibraryDirectoryTreeModelBuilder(it).build())
+				}
+				addItems(LibraryDirectoryTreeModelBuilder(props.controller.library).build())
+			}
 		}
 	}
 
@@ -169,7 +179,11 @@ class LibraryTreeViewJs(
 
 	private fun createCollapseIcon(): ReactElement = RBuilder().mIcon("expand_more")
 
+	private fun createDesktopIcon(): ReactElement = RBuilder().mIcon("chrome_reader_mode", className = "material-icons-outlined")
+
 	private fun createFolderIcon(): ReactElement = RBuilder().mIcon("folder", className = "material-icons-outlined")
+
+	private fun createProjectIcon(): ReactElement = RBuilder().mIcon("assignment", className = "material-icons-outlined")
 
 	private fun createLibraryIcon(): ReactElement = RBuilder().mIcon("local_library", className = "material-icons-outlined")
 
