@@ -6,27 +6,17 @@ import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.LogLevel
-import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.io.DomXmlReader
-import ch.scorpion.jabbah.io.StoreXmlReader
+import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import kotlinx.browser.document
-import org.w3c.xhr.XMLHttpRequest
 import react.dom.*
 
-class AntaresJs(
-	private val initialCircuitUuid: UUID
-) : AbstractApplicationJs(
-		ApplicationDataViewController(
-			newStorableProvider = { MetaGraph() },
-			repository = UnimplementedApplicationDataRepository())
-		),
-		AntaresApplication
-{
+class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresApplication {
 
 	override val logLevel get() = LogLevel.Info
 
@@ -49,8 +39,19 @@ class AntaresJs(
 	}
 
 	override fun openInitialSavable() {
-		val metaGraph = loadMetaGraph(initialCircuitUuid)
-		controller.data = ApplicationData(metaGraph, DefaultSavable("Web"))
+		val initialProjectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
+		(controller as GraphDataViewController).openProject(initialProjectUuid)
+
+		// The above would normally result in triggering OpenContainerLibraryElementAction,
+		// which is part of LibraryTreeView. In JS, LibraryTreeView has not yet been created at this point,
+		// therefore we have to load the default circuit below
+
+		ProjectModule.projectHolder.project!!.run {
+			defaultElementUUID?.let { uuid ->
+				val element = getContainerLibraryElement(uuid)
+				controller.openAsSavable(element!!, "Initial circuit")
+			}
+		}
 	}
 
 	private fun display() {
@@ -104,17 +105,5 @@ class AntaresJs(
 				attrs.metaGraph = controller.data!!.content as MetaGraph
 			}
 		}
-	}
-
-	// TODO Replace by service call
-	private fun loadMetaGraph(uuid: UUID): MetaGraph {
-		val baseUrl = ".."
-		val libraryUuid = DEF_LIBRARY_UUID
-		val request = XMLHttpRequest()
-		val url = "$baseUrl/libraries/${libraryUuid}/${uuid.id}.cir"
-		request.open("GET", url, async = false)
-		request.overrideMimeType("text/xml")
-		request.send()
-		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
 	}
 }

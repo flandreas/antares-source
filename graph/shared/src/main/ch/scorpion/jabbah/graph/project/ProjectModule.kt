@@ -19,7 +19,7 @@ object ProjectModule : AbstractModule() {
 
 	var projectLibraryService: () -> LibraryService = {
 		LibraryService(
-			libraryAccessor = { ProjectModule.projectHolder.project },
+			libraryAccessor = { projectHolder.project },
 			userLibraryPersister = projectLibraryPersistenceService)
 	}
 

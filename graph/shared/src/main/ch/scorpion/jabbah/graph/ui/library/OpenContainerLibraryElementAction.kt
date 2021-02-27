@@ -1,13 +1,9 @@
 package ch.scorpion.jabbah.graph.ui.library
 
-import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationData
-import ch.scorpion.jabbah.app.ModalMessageType
-import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -15,13 +11,14 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
+import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
  * [LibraryTreeViewController] for viewing. Whether it can be edited is decided by the view that displays it.
  */
 class OpenContainerLibraryElementAction(
-	private val application: Application,
+	private val graphDataViewController: GraphDataViewController,
 	controller: LibraryTreeViewController,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
@@ -30,10 +27,6 @@ class OpenContainerLibraryElementAction(
 	controller,
 	eventBus
 ) {
-
-	companion object {
-		private val LOG by logger(OpenContainerLibraryElementAction::class)
-	}
 
 	init {
 		eventBus.register(OpenContainerLibraryElementRequest::class) {
@@ -57,18 +50,6 @@ class OpenContainerLibraryElementAction(
 	}
 
 	private fun openAsSavable(element: ContainerLibraryElement) {
-		try {
-			application.controller.open {
-				val library = element.library!!
-				library.libraryService.loadMetaGraph(library, element)
-				ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus)
-			}
-		} catch (e: Throwable) {
-			LOG.error("Error while loading ${element.uuid}: ${e.message}")
-			application.controller.view.showModalMessage(
-				ModalMessageType.Error,
-				name,
-				Translations.getString("graph.action.load.error.general.desc"))
-		}
+		graphDataViewController.openAsSavable(element, Translations.getString("graph.action.load.error.general.desc"))
 	}
 }

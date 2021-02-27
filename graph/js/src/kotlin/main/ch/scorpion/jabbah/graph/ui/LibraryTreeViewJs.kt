@@ -148,7 +148,7 @@ class LibraryTreeViewJs(
 
 	private fun RBuilder.addItems(node: LibraryTreeNode) {
 		jmTreeItem(
-			label = createLabel(node.item.name.value),
+			label = createLabel(node.item.toString()),
 			nodeId = nextNodeId(),
 			icon = getIcon(node.item),
 			onLabelClick = { onLabelClick(it, node) },

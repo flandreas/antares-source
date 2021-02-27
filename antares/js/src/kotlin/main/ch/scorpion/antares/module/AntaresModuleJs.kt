@@ -9,9 +9,12 @@ import ch.scorpion.jabbah.base.TranslationServiceImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.graph.library.LibraryManagementService
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.RestLibraryPersistenceService
+import ch.scorpion.jabbah.graph.project.ProjectManagementService
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJs
 
 /**
@@ -26,6 +29,9 @@ object AntaresModuleJs : AbstractModule() {
 			baseUrl = ".."
 		)
 
+		GraphViewModuleJs.require()
+		AntaresViewModule.require()
+
 		LibraryModule.systemLibraryPersistenceService = RestLibraryPersistenceService(
 			baseUrl = "..",
 			libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
@@ -34,8 +40,18 @@ object AntaresModuleJs : AbstractModule() {
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 		LibraryModule.libraryService = LibraryService()
 
-		GraphViewModuleJs.require()
-		AntaresViewModule.require()
+		LibraryModule.libraryManagementService = LibraryManagementService()
+
+		ProjectModule.projectLibraryPersistenceService = RestLibraryPersistenceService(
+			baseUrl = "..",
+			//libraryDirectoryName = AntaresApplication.DEFAULT_PROJECT_DIRECTORY,
+			libraryDirectoryName = "web-projects",
+			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
+		)
+
+		ProjectModule.projectManagementService = ProjectManagementService(
+			newMetaGraphNameTranslationKey = "graph.name.unknown")
+
 
 		registerAntaresIconsInProvider()
 
@@ -51,7 +67,9 @@ object AntaresModuleJs : AbstractModule() {
 		Translations.addKey("execution.systemSpeedCategory.use", "Use")
 		Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
 		Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
-		Translations.addKey("library.savable.prefix", "Library Element")
 		Translations.addKey("graph.desktop.name", "Desktop")
+		Translations.addKey("library.savable.prefix", "Library Element")
+		Translations.addKey("library.library.name", "Library")
+		Translations.addKey("project.project.name", "Project")
 	}
 }

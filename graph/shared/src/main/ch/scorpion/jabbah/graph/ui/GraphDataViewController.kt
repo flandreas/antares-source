@@ -1,21 +1,20 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.ApplicationDataViewController
-import ch.scorpion.jabbah.app.DefaultSavable
-import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.app.UnimplementedApplicationDataRepository
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.library.OpenContainerLibraryElementAction
 
 class GraphDataViewController(
 	commandManager: CommandManager = EditModule.commandManager,
@@ -26,6 +25,9 @@ class GraphDataViewController(
 	repository = UnimplementedApplicationDataRepository(),
 	eventBus = eventBus
 ) {
+	companion object {
+		private val LOG by logger(GraphDataViewController::class)
+	}
 
 	private val openProjectRequestHandler: EventHandler<OpenProjectRequest> = { handle(it) }
 	private val closeProjectRequestHandler: EventHandler<CloseProjectRequest> = { handle(it) }
@@ -72,6 +74,22 @@ class GraphDataViewController(
 
 	fun openProject(uuid: UUID) {
 		System.invokeLater { ProjectModule.projectManagementService.open(uuid) }
+	}
+
+	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
+		try {
+			open {
+				val library = element.library!!
+				library.libraryService.loadMetaGraph(library, element)
+				ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus)
+			}
+		} catch (e: Throwable) {
+			LOG.error("Error while loading ${element.uuid}: ${e.message}")
+			view.showModalMessage(
+				ModalMessageType.Error,
+				actionName,
+				Translations.getString("graph.action.load.error.general.desc"))
+		}
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenProjectRequest) {

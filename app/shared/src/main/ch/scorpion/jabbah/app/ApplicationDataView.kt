@@ -154,8 +154,10 @@ open class ApplicationDataViewController(
 	}
 
 	protected fun closeDataAfterConfirmation() {
-		LOG.debug("Close application data")
-		data = null
+		if (data != null) {
+			LOG.debug("Close application data")
+			data = null
+		}
 	}
 
 	/**

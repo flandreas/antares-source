@@ -142,8 +142,8 @@ class ProjectManagementService(
 	}
 
 	/**
-	 * Loads and opens the [Project] with the specified name, and opens its default [ContainerLibraryElement].
-	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
+	 * Loads and opens the [Project] with the specified [UUID], and opens its default [ContainerLibraryElement].
+	 * @throws IllegalArgumentException if a project with [uuid] doesn't exist
 	 */
 	fun open(uuid: UUID): Project = load(uuid).also { open(it) }
 
@@ -171,7 +171,7 @@ class ProjectManagementService(
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
-		LOG.debug("open project ${project.uuid}")
+		LOG.debug("open project ${project.uuid} with default element $elementUUID")
 		openLibraryForProjectIfNecessary(project)
 		projectHolder.p = project
 		if (elementUUID != null) {

@@ -26,7 +26,7 @@ class RestLibraryPersistenceService(
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         val request = XMLHttpRequest()
-	    val url = "$baseUrl/libraries/${library.uuid.id}/${uuid.id}.cir"
+	    val url = "$baseUrl/$libraryDirectoryName/${library.uuid.id}/${uuid.id}.cir"
 	    LOG.debug("Calling GET $url")
         request.open("GET", url, async = false)
         request.overrideMimeType("text/xml")
