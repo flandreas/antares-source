@@ -61,7 +61,7 @@ class TranslatablePropertyEditor(
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
-	private lateinit var text: Translatable
+	private var text: Translatable = TranslatableText()
 
 	init {
 		if (multiline.invoke(TranslatableText())) {
