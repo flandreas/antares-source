@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
@@ -23,5 +24,8 @@ object AntaresProperties {
 
 	fun lightColor(name: String = "lightColor", baseKey: String = "element.property.LEDColor"): PropertyImpl<LightColor> =
 		PropertyImpl(name, baseKey, LightColor::class.java, componentBeanProvider)
+
+	fun pullDirection(name: String = "pullDirection", baseKey: String = "element.property.PullDirection"): PropertyImpl<PullDirection> =
+		PropertyImpl(name, baseKey, PullDirection::class.java, componentBeanProvider)
 
 }

@@ -6,14 +6,14 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.*
+import ch.scorpion.antares.view.addressable.RAMView
+import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
-import ch.scorpion.antares.view.addressable.RAMView
-import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
@@ -70,6 +70,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val PROBE = "Probe"
 	private const val TUNNEL = "Tunnel"
 	private const val BREAK = "Break"
+	private const val PULL_RESISTOR = "PullResistor"
 
 	private const val AND = "AND"
 	private const val OR = "OR"
@@ -240,6 +241,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("keyboardView", KeyboardView::class)
 		typeMap.register("terminalView", TerminalView::class)
 		typeMap.register("breakView", BreakView::class)
+		typeMap.register("pullResistorView", PullResistorView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 	}
@@ -258,6 +260,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BreakView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, PullResistorView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
@@ -313,6 +316,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(PROBE, "library.element.Probe", "/img/probe.png", ProbeView::class)
 		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
 		repository.register(BREAK, "library.element.Break", "/img/break.png", BreakView::class)
+		repository.register(PULL_RESISTOR, "library.element.PullResistor", "/img/pull-resistor.png", PullResistorView::class)
 
 		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
 		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)
@@ -366,6 +370,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(PROBE), net)
 		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
 		addLibraryItem(library, BaseLibraryElement(BREAK), net)
+		addLibraryItem(library, BaseLibraryElement(PULL_RESISTOR), net)
 		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
