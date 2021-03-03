@@ -2,8 +2,8 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -15,8 +15,8 @@ enum class EdgeViewEndpointType {
 
     ORIGIN {
 
-        override fun canConnectTo(portType: PortType): Boolean {
-            return portType.isOutput
+        override fun canConnectTo(port: Port<out Any>): Boolean {
+        	return port.portType.isOutput
         }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
@@ -54,8 +54,8 @@ enum class EdgeViewEndpointType {
 
     DESTINATION {
 
-        override fun canConnectTo(portType: PortType): Boolean {
-            return portType.isInput
+        override fun canConnectTo(port: Port<out Any>): Boolean {
+        	return port.portType.isInput || (port is OutputPort && port.canBeUndefined)
         }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
@@ -91,8 +91,8 @@ enum class EdgeViewEndpointType {
 	    }
     };
 
-    /** Determines whether and endpoint of this type can connect to a [Port] of the specified [PortType].*/
-    abstract fun canConnectTo(portType: PortType): Boolean
+    /** Determines whether and endpoint of this type can connect to the specified [Port].*/
+    abstract fun canConnectTo(port: Port<out Any>): Boolean
 
     /** Moves this endpoint of an [EdgeView] to the specified location. */
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)

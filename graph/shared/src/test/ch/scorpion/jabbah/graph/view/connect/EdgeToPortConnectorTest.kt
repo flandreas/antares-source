@@ -5,10 +5,13 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.verify
 import kotlin.test.*
 
@@ -45,22 +48,42 @@ class EdgeToPortConnectorTest
 
 		releaseMouseAt(190, 200)
 
-		assertEdgeToPortConnected()
+		assertEdgeToPortConnected(builder.graphView.getVerticeView("v3")!!.model.getInput())
 	}
 
-	private fun assertEdgeToPortConnected() {
+	@Test
+	fun shouldConnectToUndefinedOutputPort() {
+		val v4 = TestVertice(name = "v4", canBeUndefined = true)
+		val vv4 = TestVerticeView(
+			vertice = v4,
+			loc = Point2D(200, 300),
+			inputDirection = Direction.WEST,
+			outputDirection = Direction.EAST,
+			width = WIDTH
+		)
+		builder.addVerticeView(vv4)
+
+		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		pressMouseAt(150, 100)
+		dragMouseTo(230, 300)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		releaseMouseAt(230, 300)
+
+		assertEdgeToPortConnected(builder.graphView.getVerticeView("v4")!!.model.getOutput(),8)
+	}
+
+	// 3 VerticeViews, 1 NodeView, 3 EdgeViews
+	private fun assertEdgeToPortConnected(destPort: Port<out Boolean>, drawablesCount: Int = 7) {
 		// Instances have been recreated while replaying from undo snapshot
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val v1 = builder.graphView.getVerticeView("v1")!!
 		val v2 = builder.graphView.getVerticeView("v2")!!
-		val v3 = builder.graphView.getVerticeView("v3")!!
 
 		assertTrue(nodeView.model.isConnectedWith(v1.model.getOutput()))
 		assertTrue(nodeView.model.isConnectedWith(v2.model.getInput()))
-		assertTrue(nodeView.model.isConnectedWith(v3.model.getInput()))
+		assertTrue(nodeView.model.isConnectedWith(destPort))
 
-		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
-		assertEquals(7, builder.graphView.drawablesCount)
+		assertEquals(drawablesCount, builder.graphView.drawablesCount)
 	}
 
 	/**
@@ -134,7 +157,7 @@ class EdgeToPortConnectorTest
 		editor.commandManager.undo()
 		editor.commandManager.redo()
 
-		assertEdgeToPortConnected()
+		assertEdgeToPortConnected(builder.graphView.getVerticeView("v3")!!.model.getInput())
 	}
 
 	@Test

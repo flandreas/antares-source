@@ -27,8 +27,9 @@ open class DigitalPortImpl(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	signalRepresentation: DigitalSignalRepresentation =
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
-	description: TranslatableText = TranslatableText()
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description), DigitalPort {
+	description: TranslatableText = TranslatableText(),
+	canBeUndefined: Boolean = false
+) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined), DigitalPort {
 
 	companion object {
 
@@ -69,7 +70,7 @@ open class DigitalPortImpl(
 		}
 
 		fun createTriStateOutput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-			val port = DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth)
+			val port = DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth, canBeUndefined = true)
 			port.defaultBit = Bit.Undefined
 			return port
 		}

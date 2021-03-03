@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.ExecutionError
 import kotlin.NoSuchElementException
 
 /**
@@ -123,6 +124,15 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		_signal = null
 		signalBuffer = null
 	}
+
+	override var executionError: ExecutionError?
+		get() = super.executionError
+		set(value) {
+			if (value != super.executionError) {
+				super.executionError = value
+				stateChanged()
+			}
+		}
 
 	override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
 		super.actingDone(signalHandler, data)

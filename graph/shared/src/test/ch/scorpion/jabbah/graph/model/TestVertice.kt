@@ -13,7 +13,8 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class TestVertice(
 	inOut: Boolean = false,
-	name: String? = null
+	name: String? = null,
+	canBeUndefined: Boolean = false
 ) : CalculatingVertice(CALCULATOR, name) {
 
     companion object {
@@ -32,6 +33,6 @@ class TestVertice(
 
     init {
         addPort(PortImpl.createInput(Boolean::class))
-        addPort(if (inOut) PortImpl.createInOut(Boolean::class) else PortImpl.createOutput(Boolean::class))
+        addPort(if (inOut) PortImpl.createInOut(Boolean::class) else PortImpl.createOutput(Boolean::class, canBeUndefined = canBeUndefined))
     }
 }

@@ -99,6 +99,12 @@ interface InputPort<T : Any> : Port<T> {
  */
 interface OutputPort<T : Any> : Port<T> {
 
+	/**
+	 * Multiple [OutputPort]s can only be connected to the same [Net] if at most
+	 * one of them cannot be undefined.
+	 */
+	val canBeUndefined: Boolean
+
 	/** Determines whether the current output signal of this [OutputPort] is undefined */
 	val isOutputUndefined: Boolean
 
