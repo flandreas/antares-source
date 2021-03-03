@@ -25,7 +25,8 @@ open class PortImpl<T : Any>(
 	portType: PortType,
 	override val signalClass: KClass<T>? = null,
 	name: String?,
-	description: TranslatableText = TranslatableText()
+	description: TranslatableText = TranslatableText(),
+	override val canBeUndefined: Boolean = false
 ) : BidirectionalPort<T>, Describable {
 
 	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
@@ -37,12 +38,12 @@ open class PortImpl<T : Any>(
 		fun <T : Any> createInput(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> =
 			PortImpl(PortType.INPUT, signalClass, name)
 
-		fun <T : Any> createOutput(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> =
-			PortImpl(PortType.OUTPUT, signalClass, name)
+		fun <T : Any> createOutput(signalClass: KClass<T>? = null, name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
+			PortImpl(PortType.OUTPUT, signalClass, name, canBeUndefined = canBeUndefined)
 
 		@Suppress("unused")
-		fun <T : Any> createInOut(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> =
-			PortImpl(PortType.INOUT, signalClass, name)
+		fun <T : Any> createInOut(signalClass: KClass<T>? = null, name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
+			PortImpl(PortType.INOUT, signalClass, name, canBeUndefined = canBeUndefined)
 	}
 
 	protected val changeSupport = PropertyChangeSupport<Any>(this)
