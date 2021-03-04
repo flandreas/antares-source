@@ -1,9 +1,12 @@
 package ch.scorpion.antares.view.symbolstyle
 
+import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
+import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -28,56 +31,70 @@ enum class SymbolStyle(val customName: String) {
 		override val orShapeConnectedPortViewLength: Int get() = 0
 
 		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			context.g.drawRect(
+				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
+				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+		}
+
+		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke)
 		}
 	},
 
 	AMERICAN("ANSI") {
 		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
+			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
+			drawAmericanGate(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
+			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
 		}
 
 		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
+			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
 		}
 
 		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
+			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
+			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override val orShapeConnectedPortViewLength: Int get() = (2 * Look.SCALE * 0.35).toInt()
+		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			context.g.draw(RESISTOR_PATH)
+		}
+
+		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
 	};
 
 	companion object {
@@ -97,51 +114,59 @@ enum class SymbolStyle(val customName: String) {
 		}
 
 		val AND_PATH = System.createPath()
-			.moveTo(0, Look.SCALE)
-			.lineTo(3 * Look.SCALE, Look.SCALE)
-			.quadTo(6 * Look.SCALE, Look.SCALE, 6 * Look.SCALE, 4 * Look.SCALE)
-			.quadTo(6 * Look.SCALE, 7 * Look.SCALE, 3 * Look.SCALE, 7 * Look.SCALE)
-			.lineTo(0, 7 * Look.SCALE)
+			.moveTo(0, SCALE)
+			.lineTo(3 * SCALE, SCALE)
+			.quadTo(6 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
+			.quadTo(6 * SCALE, 7 * SCALE, 3 * SCALE, 7 * SCALE)
+			.lineTo(0, 7 * SCALE)
 			.close()
 
 		val OR_PATH = System.createPath()
-			.moveTo(-Look.SCALE, Look.SCALE)
-			.lineTo(Look.SCALE, Look.SCALE)
-			.quadTo(4 * Look.SCALE, Look.SCALE, 6 * Look.SCALE, 4 * Look.SCALE)
-			.quadTo(4 * Look.SCALE, 7 * Look.SCALE, Look.SCALE, 7 * Look.SCALE)
-			.lineTo(-Look.SCALE, 7 * Look.SCALE)
-			.quadTo(0.5 * Look.SCALE, 4.0 * Look.SCALE, -Look.SCALE.toDouble(), Look.SCALE.toDouble())
+			.moveTo(-SCALE, SCALE)
+			.lineTo(SCALE, SCALE)
+			.quadTo(4 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
+			.quadTo(4 * SCALE, 7 * SCALE, SCALE, 7 * SCALE)
+			.lineTo(-SCALE, 7 * SCALE)
+			.quadTo(0.5 * SCALE, 4.0 * SCALE, -SCALE.toDouble(), SCALE.toDouble())
 			.close()
 
 		private val EXCLUSIVE_PATH = System.createPath()
-			.moveTo(-Look.SCALE - EXCLUSIVE_OFFSET, 7 * Look.SCALE.toDouble())
-			.quadTo(0.5 * Look.SCALE - EXCLUSIVE_OFFSET, 4.0 * Look.SCALE, -Look.SCALE - EXCLUSIVE_OFFSET, Look.SCALE.toDouble())
+			.moveTo(-SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
+			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, SCALE.toDouble())
 
 		val NOT_PATH = System.createPath()
-			.moveTo(0, Look.SCALE)
-			.lineTo(6 * Look.SCALE, 4 * Look.SCALE)
-			.lineTo(0, 7 * Look.SCALE)
-			.lineTo(0, Look.SCALE)
+			.moveTo(0, SCALE)
+			.lineTo(6 * SCALE, 4 * SCALE)
+			.lineTo(0, 7 * SCALE)
+			.lineTo(0, SCALE)
 			.close()
 
-		private fun drawEuropean(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke)
+		const val RESISTOR_WIDTH_HALF = SCALE.toDouble()
+		const val RESISTER_HEIGHT = 6 * SCALE
+		private val RESISTOR_PATH= System.createPath()
+			.moveTo(0, DigitalPortView.LENGTH)
+			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 0.5 * SCALE)
+			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 1.5 * SCALE)
+			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 2.5 * SCALE)
+			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 3.5 * SCALE)
+			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 4.5 * SCALE)
+			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 5.5 * SCALE)
+			.lineTo(0, DigitalPortView.LENGTH + 6 * SCALE)
+
+		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
 		}
 
-		fun drawAmerican(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmerican(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
-		}
+		fun drawAmericanGate(comp: Component, x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
+		                     backgroundColor: Color, stroke: Stroke, exclusive: Boolean, transparency: Int) {
 
-		fun drawAmerican(comp: Component, x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
-		                 backgroundColor: Color, stroke: Stroke, exclusive: Boolean, transparency: Int) {
-
-			val vOffset = (height - 2 * Look.SCALE - path.boundingBox.height) / 2
+			val vOffset = (height - 2 * SCALE - path.boundingBox.height) / 2
 
 			if (vOffset > 0) {
 				context.g.color = foregroundColor
 				context.g.drawLine(
-					x.toInt(), (y + Look.SCALE).toInt(),
-					x.toInt(), (y + height - Look.SCALE).toInt())
+					x.toInt(), (y + SCALE).toInt(),
+					x.toInt(), (y + height - SCALE).toInt())
 			}
 
 			context.g.translate(x, y + vOffset)
@@ -190,5 +215,7 @@ enum class SymbolStyle(val customName: String) {
 	abstract fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+
+	abstract fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 }

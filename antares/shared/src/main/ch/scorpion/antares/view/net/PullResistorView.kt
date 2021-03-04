@@ -5,8 +5,10 @@ import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.System
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.RESISTER_HEIGHT
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.RESISTOR_WIDTH_HALF
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -29,25 +31,14 @@ class PullResistorView(
 			cap = LineCap.BUTT,
 			join = LineJoin.MITER
 		)
-		private const val WIDTH_HALF = SCALE.toDouble()
-		private const val WIDTH = 2 * SCALE
-		private const val BOX_HEIGHT = 6 * SCALE
 		private const val PULL_DIRECTION_HEIGHT = 2 * SCALE
-
-		private val PATH = System.createPath()
-			.moveTo(0, DigitalPortView.LENGTH)
-			.lineTo(WIDTH_HALF, DigitalPortView.LENGTH + 0.5 * SCALE)
-			.lineTo(-WIDTH_HALF, DigitalPortView.LENGTH + 1.5 * SCALE)
-			.lineTo(WIDTH_HALF, DigitalPortView.LENGTH + 2.5 * SCALE)
-			.lineTo(-WIDTH_HALF, DigitalPortView.LENGTH + 3.5 * SCALE)
-			.lineTo(WIDTH_HALF, DigitalPortView.LENGTH + 4.5 * SCALE)
-			.lineTo(-WIDTH_HALF, DigitalPortView.LENGTH + 5.5 * SCALE)
-			.lineTo(0, DigitalPortView.LENGTH + 6 * SCALE)
 	}
 
 	init {
 		modelExchanged(null)
-		setBounds(-WIDTH_HALF.toInt(), getInput().unconnectedLength, WIDTH, BOX_HEIGHT + PULL_DIRECTION_HEIGHT)
+		setBounds(
+			-RESISTOR_WIDTH_HALF, getInput().unconnectedLength.toDouble(),
+			2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble() + PULL_DIRECTION_HEIGHT)
 	}
 
 	override fun modelExchanged(oldModel: PullResistor?) {
@@ -81,7 +72,13 @@ class PullResistorView(
 		super.drawImpl(context)
 		context.g.stroke = STROKE
 		context.g.color = context.choose(color).foregroundColor
-		context.g.draw(PATH)
+		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
+			this,
+			context,
+			getApplicableForegroundColor(context),
+			getApplicableBackgroudColor(context),
+			STROKE)
+
 		drawPullDirection(context)
 	}
 
