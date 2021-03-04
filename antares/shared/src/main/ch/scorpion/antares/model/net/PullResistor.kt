@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.net
 
+import ch.scorpion.antares.model.net.PullDirection.HIGH
+import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
@@ -17,14 +19,15 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class PullResistor(
-	pullDirection: PullDirection = PullDirection.LOW
+	pullDirection: PullDirection = LOW
 ) : CalculatingVertice(CALCULATOR) {
 
 	companion object{
 
 		private const val BASE_RESOURCE_KEY = "library.element.PullResistor"
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE_LOW_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
+		private val TYPE_HIGH_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<PullResistor> {
@@ -32,8 +35,8 @@ class PullResistor(
 				val input = data.getSignal<Word>(1)
 				val output = if (input?.isAllOf(Bit.Undefined) != false) {
 					when(vertice.pullDirection) {
-						PullDirection.LOW -> Word.allOf(vertice.bitWidth, Bit.False)
-						PullDirection.HIGH -> Word.allOf(vertice.bitWidth, Bit.True)
+						LOW -> Word.allOf(vertice.bitWidth, Bit.False)
+						HIGH -> Word.allOf(vertice.bitWidth, Bit.True)
 					}
 				} else {
 					input
@@ -49,7 +52,10 @@ class PullResistor(
 
 	override val type: String get() = TYPE
 
-	override val typeDesc: String? get() = TYPE_DESC
+	override val typeDesc: String? get() = when (pullDirection) {
+		LOW -> TYPE_LOW_DESC
+		HIGH -> TYPE_HIGH_DESC
+	}
 
 	var bitWidth: BitWidth
 		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
