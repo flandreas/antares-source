@@ -39,8 +39,6 @@ class TriStateBufferGateView(
 		}
 
 	init {
-		//width = SymbolStyle.NOT_PATH.boundingBox.width
-		//height = SymbolStyle.NOT_PATH.boundingBox.height
 		modelExchanged(null)
 	}
 
