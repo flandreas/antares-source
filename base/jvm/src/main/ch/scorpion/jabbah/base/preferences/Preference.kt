@@ -99,7 +99,7 @@ class BooleanPreference(
 	needsRestart: Boolean = false
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
-	private val editor = JCheckBox(name)
+	private val editor = JCheckBox()
 
 	private val value: Boolean get() = panel!!.preferences.getBoolean(id)
 
@@ -113,6 +113,7 @@ class BooleanPreference(
 
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel
+		editor.text = name
 		panel.addRow(editor)
 	}
 
