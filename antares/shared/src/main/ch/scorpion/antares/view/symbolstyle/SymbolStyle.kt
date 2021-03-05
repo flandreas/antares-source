@@ -55,6 +55,20 @@ enum class SymbolStyle(val customName: String) {
 		}
 
 		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			if (resistor.shadow) {
+				DropShadow.draw(context, transparency = resistor.transparency) {
+					context.g.fillRect(
+						-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
+						2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+				}
+			}
+
+			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+			context.g.fillRect(
+				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
+				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+
+			context.g.color = foregroundColor
 			context.g.drawRect(
 				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
 				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
@@ -91,6 +105,8 @@ enum class SymbolStyle(val customName: String) {
 		}
 
 		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			context.g.color = foregroundColor
+			context.g.stroke = stroke
 			context.g.draw(RESISTOR_PATH)
 		}
 
