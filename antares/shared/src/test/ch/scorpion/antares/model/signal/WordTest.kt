@@ -156,4 +156,13 @@ class WordTest {
 		assertEquals(Word.of(BitWidth.BW_8, 4L), Word.of(BitWidth.BW_8, 8L).shiftRight())
 		assertEquals(Word.of(BitWidth.BW_4, 0L), Word.of(BitWidth.BW_4, 1L).shiftRight())
 	}
+
+	@Test
+	fun shouldReplaceBits() {
+		val word = Word(listOf(Bit.True, Bit.False, Bit.Undefined, Bit.Error))
+
+		val result = word.replaceBy(Bit.False) { it == Bit.Undefined }
+
+		assertEquals(result, Word(listOf(Bit.True, Bit.False, Bit.False, Bit.Error)))
+	}
 }

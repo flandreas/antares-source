@@ -27,7 +27,7 @@ open class PortImpl<T : Any>(
 	name: String?,
 	description: TranslatableText = TranslatableText(),
 	override val canBeUndefined: Boolean = false,
-	override var weakSignal: T? = null
+	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null
 ) : BidirectionalPort<T>, Describable {
 
 	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
@@ -158,14 +158,6 @@ open class PortImpl<T : Any>(
 		forwardSignal(getOutgoingSignal(), signalHandler, withDelay = true)
 	}
 
-	override fun withdrawWeakOutput() {
-		weakSignal?.let { _outgoingSignal = null }
-	}
-
-	override fun activateWeakOutput() {
-		weakSignal?.let { _outgoingSignal = it }
-	}
-
 	/** ---- [PortImpl] */
 
 	/**
@@ -199,7 +191,7 @@ open class PortImpl<T : Any>(
 
 			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
 			if (!isOutputUndefined) {
-				withdrawWeakSignals()
+				withdrawWeakSignals(signalHandler)
 			}
 
 			if (net!!.inconsistent) {
@@ -248,8 +240,8 @@ open class PortImpl<T : Any>(
 			val weakPortToActivate = net!!.weakOutputPorts.firstOrNull()
 			if (weakPortToActivate != null) {
 				signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
-				weakPortToActivate.activateWeakOutput()
-				net!!.setSignal(weakPortToActivate.weakSignal, this, signalHandler, withDelay)
+				val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(signal, weakPortToActivate, signalHandler)
+				net!!.setSignal(weakSignal, this, signalHandler, withDelay)
 			} else {
 				signalHandler.logTrace(System.getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
 				net!!.executionError = null
@@ -258,8 +250,10 @@ open class PortImpl<T : Any>(
 		}
 	}
 
-	private fun withdrawWeakSignals() {
-		net?.weakOutputPorts?.forEach { it.withdrawWeakOutput() }
+	private fun withdrawWeakSignals(signalHandler: SignalHandler) {
+		net?.weakOutputPorts?.forEach { port ->
+			port.weakBehaviour!!.withdrawWeakOutput(port, signalHandler)
+		}
 	}
 }
 

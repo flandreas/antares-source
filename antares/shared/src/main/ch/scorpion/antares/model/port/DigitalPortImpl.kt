@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
@@ -29,8 +30,8 @@ open class DigitalPortImpl(
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
 	description: TranslatableText = TranslatableText(),
 	canBeUndefined: Boolean = false,
-	weakSignal: DigitalSignal? = null
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakSignal), DigitalPort {
+	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null
+) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
 	companion object {
 
@@ -107,7 +108,7 @@ open class DigitalPortImpl(
 	}
 
 	init {
-		weakSignal?.let { defaultBit = Bit.Undefined }
+		weakBehaviour?.let { defaultBit = Bit.Undefined }
 	}
 
 	/** ---- [DigitalPort] interface */
@@ -196,5 +197,5 @@ open class DigitalPortImpl(
 	/** ---- [OutputPort] */
 
 	override val isOutputUndefined: Boolean
-		get() = getOutgoingSignal() == null || (getOutgoingSignal() as Word).isAllOf(Bit.Undefined)
+		get() = getOutgoingSignal() == null || (getOutgoingSignal() as Word).containsUndefinedBit()
 }

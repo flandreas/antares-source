@@ -91,6 +91,22 @@ interface InputPort<T : Any> : Port<T> {
 	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
 }
 
+interface WeakOutputPortBehaviour<T : Any> {
+
+	/** Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".*/
+	fun withdrawWeakOutput(port: OutputPort<T>, signalHandler: SignalHandler)
+
+	/**
+	 * Activates the defined value of a weak [OutputPort]. This is used when all other [OutputPort]s assert
+	 * "undefined" to the [Net].
+	 *
+	 * @param netSignal the signal about to become active on the net. If a signal in the using application
+	 * support multi-part signals, this method sets only those parts of [netSignal] that are "undefined",
+	 * and returns the adopted signal.
+	 */
+	fun activateWeakOutput(netSignal: T?, port: OutputPort<T>, signalHandler: SignalHandler): T
+}
+
 /**
  * An [OutputPort] is a [Port] in a [Vertice] that forwards signal produced by its [Vertice] to a
  * connected [Net].
@@ -114,11 +130,11 @@ interface OutputPort<T : Any> : Port<T> {
 	val isOutputUndefined: Boolean
 
 	/**
-	 * The value that a weak [OutputPort] uses as its output value if the [Net] allows so.
+	 * Set with the desired behaviour if this [OutputPort] supports "weak signals".
 	 * A weak [OutputPort] asserts its output signal to the [Net] it is connected to
 	 * only if the [Net]'s signal is undefined. Otherwise, it asserts "undefined" to the [Net].
 	 */
-	var weakSignal: T?
+	val weakBehaviour: WeakOutputPortBehaviour<T>?
 
 	fun getOutgoingSignal(): T?
 
@@ -134,15 +150,6 @@ interface OutputPort<T : Any> : Port<T> {
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler)
 
 	fun flush(signalHandler: SignalHandler)
-
-	/** Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".*/
-	fun withdrawWeakOutput()
-
-	/**
-	 * Activates the defined value of a weak [OutputPort]. This is used when all other [OutputPort]s assert
-	 * "undefined" to the [Net].
-	 * */
-	fun activateWeakOutput()
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/

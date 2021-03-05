@@ -11,7 +11,9 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -20,7 +22,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class PullResistor(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	pullDirection: PullDirection = LOW
-) : AbstractVertice() {
+) : AbstractVertice(), WeakOutputPortBehaviour<DigitalSignal> {
 
 	companion object{
 
@@ -33,6 +35,12 @@ class PullResistor(
 			when(pullDirection) {
 				LOW -> Word.allOf(bitWidth, Bit.False)
 				HIGH -> Word.allOf(bitWidth, Bit.True)
+			}
+
+		fun getPreferredBit(pullDirection: PullDirection): Bit =
+			when (pullDirection) {
+				LOW -> Bit.False
+				HIGH -> Bit.True
 			}
 	}
 
@@ -48,7 +56,6 @@ class PullResistor(
 		set(value) {
 			if (value != bitWidth) {
 				getOutputPort().bitWidth = value
-				getOutputPort().weakSignal = getPreferredSignal(value, pullDirection)
 				stateChanged()
 			}
 		}
@@ -57,7 +64,6 @@ class PullResistor(
 		set(value) {
 			if (field != value) {
 				field = value
-				getOutputPort().weakSignal = getPreferredSignal(bitWidth, value)
 				stateChanged()
 			}
 		}
@@ -70,11 +76,24 @@ class PullResistor(
 			portType = PortType.OUTPUT,
 			bitWidth = bitWidth,
 			canBeUndefined = true,
-			weakSignal = getPreferredSignal(bitWidth, pullDirection)
+			weakBehaviour = this
 		))
 	}
 
 	fun getOutputPort(): DigitalPort = getOutput<DigitalSignal>() as DigitalPort
+
+	/** ---- [WeakOutputPortBehaviour] interface */
+
+	override fun withdrawWeakOutput(port: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
+		port.setOutgoingSignalBuffered(null, signalHandler)
+	}
+
+	override fun activateWeakOutput(netSignal: DigitalSignal?, port: OutputPort<DigitalSignal>, signalHandler: SignalHandler): DigitalSignal {
+		val weakSignal = netSignal?.replaceBy(getPreferredBit(pullDirection)) { it == Bit.Undefined }
+			?: getPreferredSignal(bitWidth, pullDirection)
+		port.setOutgoingSignalBuffered(weakSignal, signalHandler)
+		return weakSignal
+	}
 
 	/** ---- [Storable] interface */
 

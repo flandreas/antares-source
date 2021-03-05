@@ -279,4 +279,16 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	fun shiftRight(bitCount: Int = 1): Word {
 		return of(bitWidth, getValue().shr(bitCount))
 	}
+
+	override fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word {
+		val resultBits = mutableListOf<Bit>()
+		bits.forEach {
+			if (filter.invoke(it)) {
+				resultBits.add(replacement)
+			} else {
+				resultBits.add(it)
+			}
+		}
+		return Word(resultBits)
+	}
 }

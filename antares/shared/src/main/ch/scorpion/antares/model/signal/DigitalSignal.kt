@@ -28,4 +28,6 @@ interface DigitalSignal {
      * undefined.
      */
     fun toInt(): Int?
+
+	fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word
 }

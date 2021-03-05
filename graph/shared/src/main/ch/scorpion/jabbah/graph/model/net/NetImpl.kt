@@ -70,7 +70,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		get() = ImmutableList(_ports)
 
 	override val weakOutputPorts: Collection<OutputPort<T>>
-		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakSignal != null }
+		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakBehaviour != null }
 
 	override fun connect(port: Port<T>) {
 		checkState(!_ports.contains(port), "Net already connected to specified Port")
@@ -95,7 +95,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun getConsistentSignalPort(): OutputPort<T>? {
 		var consistentPort: OutputPort<T>? = null
 		for (port in getOutputPorts()) {
-			if (!port.isOutputUndefined) {
+			if (port.weakBehaviour == null && !port.isOutputUndefined) {
 				if (consistentPort == null) {
 					consistentPort = port
 				} else {
