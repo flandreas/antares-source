@@ -26,7 +26,8 @@ open class PortImpl<T : Any>(
 	override val signalClass: KClass<T>? = null,
 	name: String?,
 	description: TranslatableText = TranslatableText(),
-	override val canBeUndefined: Boolean = false
+	override val canBeUndefined: Boolean = false,
+	override var weakSignal: T? = null
 ) : BidirectionalPort<T>, Describable {
 
 	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
@@ -157,6 +158,14 @@ open class PortImpl<T : Any>(
 		forwardSignal(getOutgoingSignal(), signalHandler, withDelay = true)
 	}
 
+	override fun withdrawWeakOutput() {
+		weakSignal?.let { _outgoingSignal = null }
+	}
+
+	override fun activateWeakOutput() {
+		weakSignal?.let { _outgoingSignal = it }
+	}
+
 	/** ---- [PortImpl] */
 
 	/**
@@ -180,16 +189,25 @@ open class PortImpl<T : Any>(
 		_outgoingSignal = null
 	}
 
+	// TODO: Shouldn't this logic be part of NetImpl?
 	private fun forwardSignal(signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
 		if (net == null) {
 			return
 		}
 
 		if (net!!.inconsistent) {
-			signalHandler.logTrace(System.getClass(this), portId) { "inconsistent net signal $signal" }
-			LOG.debug("Inconsistent net signal $signal from port $portId in ${owner?.id}")
-			net!!.executionError = InconsistentNetError()
-			return
+
+			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
+			if (!isOutputUndefined) {
+				withdrawWeakSignals()
+			}
+
+			if (net!!.inconsistent) {
+				signalHandler.logTrace(System.getClass(this), portId) { "inconsistent net signal $signal" }
+				LOG.debug("Inconsistent net signal $signal from port $portId in ${owner?.id}")
+				net!!.executionError = InconsistentNetError()
+				return
+			}
 		}
 
 		// Net is consistent
@@ -221,12 +239,27 @@ open class PortImpl<T : Any>(
 		if (consistentPort != null) {
 			signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }
 			net!!.executionError = null
+			// TODO Set Net signal directly instead of executing forwarding logic again
 			consistentPort.flush(signalHandler)
 		} else {
-			signalHandler.logTrace(System.getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
-			net!!.executionError = null
-			net!!.setSignal(signal, this, signalHandler, withDelay)
+			// TODO We only regard the first weak OutputPort, but what is if there are multiple weak
+			// OutputPorts at the same Net, possibly with conflicting weak values? Should that be
+			// considered a design error?
+			val weakPortToActivate = net!!.weakOutputPorts.firstOrNull()
+			if (weakPortToActivate != null) {
+				signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
+				weakPortToActivate.activateWeakOutput()
+				net!!.setSignal(weakPortToActivate.weakSignal, this, signalHandler, withDelay)
+			} else {
+				signalHandler.logTrace(System.getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
+				net!!.executionError = null
+				net!!.setSignal(signal, this, signalHandler, withDelay)
+			}
 		}
+	}
+
+	private fun withdrawWeakSignals() {
+		net?.weakOutputPorts?.forEach { it.withdrawWeakOutput() }
 	}
 }
 

@@ -105,8 +105,20 @@ interface OutputPort<T : Any> : Port<T> {
 	 */
 	val canBeUndefined: Boolean
 
-	/** Determines whether the current output signal of this [OutputPort] is undefined */
+	/**
+	 * Determines whether the current output signal of this [OutputPort] is undefined.
+	 * This is usually the case if the output signal is `null`. Subclasses might have
+	 * a broader definition of "undefined", which can be implemented by overriding this
+	 * property.
+	 */
 	val isOutputUndefined: Boolean
+
+	/**
+	 * The value that a weak [OutputPort] uses as its output value if the [Net] allows so.
+	 * A weak [OutputPort] asserts its output signal to the [Net] it is connected to
+	 * only if the [Net]'s signal is undefined. Otherwise, it asserts "undefined" to the [Net].
+	 */
+	var weakSignal: T?
 
 	fun getOutgoingSignal(): T?
 
@@ -122,6 +134,15 @@ interface OutputPort<T : Any> : Port<T> {
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler)
 
 	fun flush(signalHandler: SignalHandler)
+
+	/** Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".*/
+	fun withdrawWeakOutput()
+
+	/**
+	 * Activates the defined value of a weak [OutputPort]. This is used when all other [OutputPort]s assert
+	 * "undefined" to the [Net].
+	 * */
+	fun activateWeakOutput()
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/

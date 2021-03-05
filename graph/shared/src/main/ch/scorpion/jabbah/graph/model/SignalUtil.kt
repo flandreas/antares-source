@@ -13,10 +13,10 @@ object SignalUtil {
      */
     fun equals(a: Any?, b: Any?): Boolean {
         if (a == null && b == null) {
-            return true;
+            return true
         }
         return b == a
     }
 
-	fun differ(a: Any?, b: Any?): Boolean = !SignalUtil.equals(a, b)
+	fun differ(a: Any?, b: Any?): Boolean = !equals(a, b)
 }

@@ -11,16 +11,16 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class PullResistor(
+	bitWidth: BitWidth = BitWidth.BW_1,
 	pullDirection: PullDirection = LOW
-) : CalculatingVertice(CALCULATOR) {
+) : AbstractVertice() {
 
 	companion object{
 
@@ -28,26 +28,12 @@ class PullResistor(
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_LOW_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
 		private val TYPE_HIGH_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
-		private val CALCULATOR = Calculator()
 
-		private class Calculator : VerticeCalculator<PullResistor> {
-			override fun calculate(vertice: PullResistor, data: GraphActorData, signalHandler: SignalHandler) {
-				val input = data.getSignal<Word>(1)
-				val output = if (input?.isAllOf(Bit.Undefined) != false) {
-					when(vertice.pullDirection) {
-						LOW -> Word.allOf(vertice.bitWidth, Bit.False)
-						HIGH -> Word.allOf(vertice.bitWidth, Bit.True)
-					}
-				} else {
-					input
-				}
-				vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(output, signalHandler)
+		fun getPreferredSignal(bitWidth: BitWidth, pullDirection: PullDirection): DigitalSignal =
+			when(pullDirection) {
+				LOW -> Word.allOf(bitWidth, Bit.False)
+				HIGH -> Word.allOf(bitWidth, Bit.True)
 			}
-		}
-	}
-
-	init {
-		addPort(DigitalPortImpl.createInOut())
 	}
 
 	override val type: String get() = TYPE
@@ -58,10 +44,11 @@ class PullResistor(
 	}
 
 	var bitWidth: BitWidth
-		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
+		get() = getOutputPort().bitWidth
 		set(value) {
 			if (value != bitWidth) {
-				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+				getOutputPort().bitWidth = value
+				getOutputPort().weakSignal = getPreferredSignal(value, pullDirection)
 				stateChanged()
 			}
 		}
@@ -70,9 +57,24 @@ class PullResistor(
 		set(value) {
 			if (field != value) {
 				field = value
+				getOutputPort().weakSignal = getPreferredSignal(bitWidth, value)
 				stateChanged()
 			}
 		}
+
+	private val preferredOutputSignal: DigitalSignal get() =
+		getPreferredSignal(bitWidth, pullDirection)
+
+	init {
+		addPort(DigitalPortImpl(
+			portType = PortType.OUTPUT,
+			bitWidth = bitWidth,
+			canBeUndefined = true,
+			weakSignal = getPreferredSignal(bitWidth, pullDirection)
+		))
+	}
+
+	fun getOutputPort(): DigitalPort = getOutput<DigitalSignal>() as DigitalPort
 
 	/** ---- [Storable] interface */
 
@@ -92,6 +94,6 @@ class PullResistor(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
-		getOutput<DigitalSignal>().setOutgoingSignal(Word.allOf(bitWidth, Bit.Undefined), signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignal(preferredOutputSignal, signalHandler)
 	}
 }

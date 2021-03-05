@@ -69,6 +69,9 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override val ports: ImmutableList<Port<T>>
 		get() = ImmutableList(_ports)
 
+	override val weakOutputPorts: Collection<OutputPort<T>>
+		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakSignal != null }
+
 	override fun connect(port: Port<T>) {
 		checkState(!_ports.contains(port), "Net already connected to specified Port")
 		LOG.trace("connect ${port.portId}")

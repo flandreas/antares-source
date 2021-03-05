@@ -28,8 +28,9 @@ open class DigitalPortImpl(
 	signalRepresentation: DigitalSignalRepresentation =
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
 	description: TranslatableText = TranslatableText(),
-	canBeUndefined: Boolean = false
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined), DigitalPort {
+	canBeUndefined: Boolean = false,
+	weakSignal: DigitalSignal? = null
+) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakSignal), DigitalPort {
 
 	companion object {
 
@@ -71,6 +72,7 @@ open class DigitalPortImpl(
 
 		fun createTriStateOutput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
 			val port = DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth, canBeUndefined = true)
+			// TODO Configure in init() instead of in factory method
 			port.defaultBit = Bit.Undefined
 			return port
 		}
@@ -81,12 +83,14 @@ open class DigitalPortImpl(
 
 		fun createInOut(): DigitalPort {
 			val port = DigitalPortImpl(PortType.INOUT)
+			// TODO Configure in init() instead of in factory method
 			port.defaultBit = Bit.Undefined
 			return port
 		}
 
 		fun createInOut(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
 			val port = DigitalPortImpl(PortType.INOUT, name, logic, bitWidth = bitWidth)
+			// TODO Configure in init() instead of in factory method
 			port.defaultBit = Bit.Undefined
 			return port
 		}
@@ -100,6 +104,10 @@ open class DigitalPortImpl(
 
 	override fun toString(): String {
 		return super.toString() + " BitWidth=$bitWidth"
+	}
+
+	init {
+		weakSignal?.let { defaultBit = Bit.Undefined }
 	}
 
 	/** ---- [DigitalPort] interface */

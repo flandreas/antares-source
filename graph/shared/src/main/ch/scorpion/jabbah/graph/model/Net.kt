@@ -13,7 +13,7 @@ interface Net<T: Any> : GraphElement {
     val signal: T?
 
 	/** Returns a displayable description of the [Net]'s current signal.*/
-	val signalDescription: String? get() = signal.toString() ?: ""
+	val signalDescription: String? get() = signal?.toString() ?: ""
 
     /** Buffers the signal during an execution step.*/
     val signalBuffer: T?
@@ -30,6 +30,8 @@ interface Net<T: Any> : GraphElement {
 
     /** Returns the [Port]s to which this [Net] is connected as an immutable list.*/
     val ports: ImmutableList<Port<T>>
+
+    val weakOutputPorts: Collection<OutputPort<T>>
 
     /** Connects the specified [Port] with this [Net].*/
     fun connect(port: Port<T>)

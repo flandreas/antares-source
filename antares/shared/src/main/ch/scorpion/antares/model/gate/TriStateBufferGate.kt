@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -43,8 +42,6 @@ class TriStateBufferGate(
 ) : CalculatingVertice(CALCULATOR) {
 
     companion object {
-        private val LOG by logger(TriStateBufferGate::class)
-
 	    private const val BASE_RESOURCE_KEY = "library.element.TriStateBuffer"
 	    private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 	    private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
@@ -106,15 +103,9 @@ class TriStateBufferGate(
 
     /** ---- [TriStateBufferGate] */
 
-    fun getInputPort(): DigitalPort {
-        return getInput<DigitalSignal>(1) as DigitalPort
-    }
+    fun getInputPort(): DigitalPort = getInput<DigitalSignal>(1) as DigitalPort
 
-    fun getEnablePort(): DigitalPort {
-        return getInput<DigitalSignal>(2) as DigitalPort
-    }
+    fun getEnablePort(): DigitalPort = getInput<DigitalSignal>(2) as DigitalPort
 
-    fun getOutputPort(): DigitalPort {
-        return getOutput<DigitalSignal>() as DigitalPort
-    }
+    fun getOutputPort(): DigitalPort = getOutput<DigitalSignal>() as DigitalPort
 }

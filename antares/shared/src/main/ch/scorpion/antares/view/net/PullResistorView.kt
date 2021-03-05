@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.PullDirection
+import ch.scorpion.antares.model.net.PullDirection.*
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
@@ -21,8 +22,9 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class PullResistorView(
+	pullDirection: PullDirection = LOW,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: PullResistor = PullResistor()
+	model: PullResistor = PullResistor(pullDirection = pullDirection)
 ) : DigitalComponentView<PullResistor>(styleProvider, model) {
 
 	companion object {
@@ -37,7 +39,7 @@ class PullResistorView(
 	init {
 		modelExchanged(null)
 		setBounds(
-			-RESISTOR_WIDTH_HALF, getInput().unconnectedLength.toDouble(),
+			-RESISTOR_WIDTH_HALF, getOutput().unconnectedLength.toDouble(),
 			2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble() + PULL_DIRECTION_HEIGHT)
 	}
 
@@ -84,8 +86,8 @@ class PullResistorView(
 
 	private fun drawPullDirection(context: DrawContext) {
 		when(pullDirection) {
-			PullDirection.LOW -> drawLowPullDirection(context)
-			PullDirection.HIGH -> drawHighPullDirection(context)
+			LOW -> drawLowPullDirection(context)
+			HIGH -> drawHighPullDirection(context)
 		}
 	}
 
