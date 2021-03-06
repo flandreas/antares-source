@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.net.PullDirection
+import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
@@ -28,4 +29,6 @@ object AntaresProperties {
 	fun pullDirection(name: String = "pullDirection", baseKey: String = "element.property.PullDirection"): PropertyImpl<PullDirection> =
 		PropertyImpl(name, baseKey, PullDirection::class.java, componentBeanProvider)
 
+	fun transistorType(name: String = "transistorType", baseKey: String = "element.property.transistorType"): PropertyImpl<TransistorType> =
+		PropertyImpl(name, baseKey, TransistorType::class.java, componentBeanProvider)
 }

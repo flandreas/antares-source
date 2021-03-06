@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
+import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -12,6 +13,7 @@ import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.net.TransistorView
 import ch.scorpion.antares.view.net.TunnelViewFacePreference
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
@@ -140,6 +142,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PullDirection::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(TransistorType::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -155,6 +158,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 		registry.registerEditor(PullDirection::class.java, PullDirectionEditor::class.java)
+		registry.registerEditor(TransistorType::class.java, TransistorTypeEditor::class.java)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
@@ -173,6 +177,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
+			id = TransistorView.PROP_TRANSISTOR_CIRCLE,
+			nameKey = "antares.preference.TransistorCircle"
+		))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(
 			id = Switch.PROP_DEFAULT_DELAY,

@@ -52,7 +52,8 @@ class DigitalPortView(
 	length: Int? = null,
 	unconnectedLength: Int = length ?: LENGTH,
 	var predefinedConnectedLength: Int? = null,
-	showBitWidthAnnotation: Boolean = true
+	showBitWidthAnnotation: Boolean = true,
+	showLogicAnnotation: Boolean = true
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, unconnectedLength, length ?: LENGTH) {
 
 	companion object {
@@ -90,6 +91,16 @@ class DigitalPortView(
 			}
 		}
 
+	var showLogicAnnotation: Boolean = showLogicAnnotation
+		set(value) {
+			if (value != field) {
+				invalidate()
+				field = value
+				invalidate()
+				validate()
+			}
+		}
+
 	private var portLabel: Label? = null
 
 	private var bitWidthAnnotation: BitWidthAnnotation? = null
@@ -102,7 +113,8 @@ class DigitalPortView(
 	private val hasInternalOutputAnnotation: Boolean
 		get() = (port as DigitalPort).outputAnnotation != OutputAnnotation.NONE
 
-	private val hasExternalAnnotation: Boolean get() = (port as DigitalPort).logic == Logic.NEGATIVE
+	private val hasExternalAnnotation: Boolean get() =
+		showLogicAnnotation && (port as DigitalPort).logic == Logic.NEGATIVE
 
 	init {
 		buildPortLabel()
@@ -435,7 +447,7 @@ class DigitalPortView(
 	}
 
 	private fun drawLogic(context: DrawContext) {
-		if (getDigitalPort().logic == Logic.NEGATIVE) {
+		if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
 			val x1 = 0
 			val x2 = LOGIC_SIZE * direction.dx + LOGIC_SIZE * direction.next().dx
 			val y1 = 0

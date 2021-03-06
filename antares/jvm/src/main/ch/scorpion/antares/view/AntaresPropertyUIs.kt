@@ -3,6 +3,7 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
+import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -120,6 +121,13 @@ class PullDirectionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(PullDirection.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<PullDirection>()
+	}
+}
+
+class TransistorTypeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(TransistorType.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<TransistorType>()
 	}
 }
 

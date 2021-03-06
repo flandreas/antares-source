@@ -36,7 +36,7 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 	}
 }
 
-class TriStateBufferGate(
+open class TriStateBufferGate(
     bitWidth: BitWidth = BitWidth.BW_1,
     enableLogic: Logic = Logic.POSITIVE
 ) : CalculatingVertice(CALCULATOR) {
