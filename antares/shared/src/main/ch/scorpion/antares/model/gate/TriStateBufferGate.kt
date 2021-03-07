@@ -50,12 +50,18 @@ open class TriStateBufferGate(
         val CALCULATOR = TriStateBufferCalculator()
     }
 
+	val isOn: Boolean get() {
+		val controlBit = getEnablePort().getIncomingSignal()?.bitAt(0)
+		return controlBit?.let { enableLogic.evaluate(it.isSet) } ?: false
+	}
+
     init {
         propagationDelay = 20
 
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, bitWidth))
         addPort(DigitalPortImpl.createInput(enableLogic, ENABLE_PORT_NAME, BitWidth.BW_1))
-        addPort(DigitalPortImpl.createTriStateOutput(Logic.POSITIVE, null, bitWidth))
+	    // Use InOut instead of Output to support visualization in FET Transistor view
+	    addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, null, bitWidth))
     }
 
 	override val type: String get() = TYPE

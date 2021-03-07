@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Transistor
 import ch.scorpion.antares.model.net.TransistorType
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.LEFT
@@ -15,10 +16,13 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -89,11 +93,12 @@ class TransistorView(
 			WEST,
 			showLogicAnnotation = false
 		)
-		gate.setPortName("")
+		gate.setPortName("G")
+		gate.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(gate)
 
 		// Source
-		addPortView(DigitalPortView(
+		val source = DigitalPortView(
 			styleProvider,
 			model.getSourcePort(),
 			DigitalPortView.LENGTH + 4 * SCALE,
@@ -105,10 +110,13 @@ class TransistorView(
 				RIGHT -> SOUTH
 				LEFT -> NORTH
 			}
-		))
+		)
+		source.setPortName("S")
+		source.portLabelPosition = PortLabelPosition.HIDE
+		addPortView(source)
 
 		// Drain
-		addPortView(DigitalPortView(
+		val drain = DigitalPortView(
 			styleProvider,
 			model.getDrainPort(),
 			DigitalPortView.LENGTH + 4 * SCALE,
@@ -116,11 +124,14 @@ class TransistorView(
 				RIGHT -> -5 * SCALE
 				LEFT -> SCALE
 			},
-			when(handedness) {
+			when (handedness) {
 				RIGHT -> NORTH
 				LEFT -> SOUTH
 			}
-		))
+		)
+		drain.setPortName("D")
+		drain.portLabelPosition = PortLabelPosition.HIDE
+		addPortView(drain)
 	}
 
 	/** ---- UI properties */
@@ -156,9 +167,47 @@ class TransistorView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		context.g.stroke = stroke
+		val isOn = model.isOn
+		val gateColor = portColor(model.getGatePort().getIncomingSignal(), context)
+		val sourceColor = portColor(model.getSourcePort().getIncomingSignal(), context)
+		val drainColor = if (isOn) {
+			portColor(model.getDrainPort().getOutgoingSignal(), context)
+		} else {
+			portColor(model.getDrainPort().getIncomingSignal(), context)
+		}
+		val bulkColor = if (isOn) {
+			drainColor
+		} else {
+			portColor(null, context)
+		}
 
+		drawBody(context)
+		drawGate(context, gateColor)
+		drawBulk(context, bulkColor)
+
+		when (handedness) {
+			RIGHT -> {
+				drawSouthSignalPort(context, sourceColor)
+				drawNorthSignalPort(context, drainColor)
+			}
+			LEFT -> {
+				drawSouthSignalPort(context, drainColor)
+				drawNorthSignalPort(context, sourceColor)
+			}
+		}
+	}
+
+	private fun portColor(signal: DigitalSignal?, context: DrawContext): Color {
+		return if (signal != null && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			signal.getColor().foregroundColor
+		} else {
+			context.choose(color).foregroundColor
+		}
+	}
+
+	private fun drawBody(context: DrawContext) {
 		if (hasCircle) {
+			context.g.stroke = stroke
 			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 			context.g.fillOval(
 				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
@@ -169,32 +218,17 @@ class TransistorView(
 				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 		}
+	}
 
-		context.g.color = context.choose(color).foregroundColor
-
-		// Gate
+	private fun drawGate(context: DrawContext, color: Color) {
+		context.g.stroke = stroke
+		context.g.color = color
 		context.g.drawLine(
 			GATE_LINE_X, -4.0 * SCALE,
 			GATE_LINE_X, 0.0)
 
-		// Source
-		context.g.drawLine(
-			SIGNAL_LINE_X, -1.0 * SCALE,
-			SIGNAL_LINE_X, 0.0)
-
-		// Bulk
-		context.g.drawLine(
-			SIGNAL_LINE_X, -2.5 * SCALE,
-			SIGNAL_LINE_X, -1.5 * SCALE)
-
-		// Drain
-		context.g.drawLine(
-			SIGNAL_LINE_X, -4.0 * SCALE,
-			SIGNAL_LINE_X, -3.0 * SCALE)
-
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-
 		// Gate connection
+		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		val gateConnectionY = when(handedness) {
 			RIGHT -> 0.0
 			LEFT -> - 4.0 * SCALE
@@ -202,23 +236,49 @@ class TransistorView(
 		context.g.drawLine(
 			DigitalPortView.LENGTH.toDouble(), gateConnectionY,
 			GATE_LINE_X, gateConnectionY)
+	}
 
-		// Source connection
+	private fun drawSouthSignalPort(context: DrawContext, color: Color) {
+		context.g.stroke = stroke
+		context.g.color = color
+		context.g.drawLine(
+			SIGNAL_LINE_X, -1.0 * SCALE,
+			SIGNAL_LINE_X, 0.0)
+
+		// connection
+		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		context.g.drawLine(
 			SIGNAL_LINE_X, -0.5 * SCALE,
 			SIGNAL_PORT_X, -0.5 * SCALE)
 		context.g.drawLine(
 			SIGNAL_PORT_X, -0.5 * SCALE,
 			SIGNAL_PORT_X, 1.0 * SCALE)
+	}
 
-		// Drain connection
+	private fun drawNorthSignalPort(context: DrawContext, color: Color) {
+		context.g.stroke = stroke
+		context.g.color = color
+		context.g.drawLine(
+			SIGNAL_LINE_X, -4.0 * SCALE,
+			SIGNAL_LINE_X, -3.0 * SCALE)
+
+		// connection
+		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		context.g.drawLine(
 			SIGNAL_LINE_X, -3.5 * SCALE,
 			SIGNAL_PORT_X, -3.5 * SCALE)
 		context.g.drawLine(
 			SIGNAL_PORT_X, -3.5 * SCALE,
 			SIGNAL_PORT_X, -5.0 * SCALE)
+	}
 
+	private fun drawBulk(context: DrawContext, color: Color) {
+		context.g.stroke = stroke
+		context.g.color = color
+		context.g.drawLine(
+			SIGNAL_LINE_X, -2.5 * SCALE,
+			SIGNAL_LINE_X, -1.5 * SCALE)
+		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		drawBulkArrow(context)
 	}
 
