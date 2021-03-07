@@ -167,15 +167,14 @@ class TransistorView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		val isOn = model.isOn
 		val gateColor = portColor(model.getGatePort().getIncomingSignal(), context)
 		val sourceColor = portColor(model.getSourcePort().getIncomingSignal(), context)
-		val drainColor = if (isOn) {
+		val drainColor = if (model.isOn) {
 			portColor(model.getDrainPort().getOutgoingSignal(), context)
 		} else {
 			portColor(model.getDrainPort().getIncomingSignal(), context)
 		}
-		val bulkColor = if (isOn) {
+		val bulkColor = if (model.isOn) {
 			drainColor
 		} else {
 			portColor(null, context)
@@ -273,13 +272,24 @@ class TransistorView(
 	}
 
 	private fun drawBulk(context: DrawContext, color: Color) {
+		val dx = if (model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			0.0
+		} else {
+			0.5 * SCALE
+		}
+
+		context.g.translate(dx, 0.0)
+
 		context.g.stroke = stroke
 		context.g.color = color
 		context.g.drawLine(
 			SIGNAL_LINE_X, -2.5 * SCALE,
 			SIGNAL_LINE_X, -1.5 * SCALE)
 		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
+
 		drawBulkArrow(context)
+
+		context.g.translate(-dx, 0.0)
 	}
 
 	private fun drawBulkArrow(context: DrawContext) {
