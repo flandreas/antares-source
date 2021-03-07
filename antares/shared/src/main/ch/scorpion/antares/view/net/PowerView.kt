@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.net
 
-import ch.scorpion.antares.model.net.Ground
+import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
@@ -14,15 +14,16 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
-class GroundView(
+class PowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: Ground = Ground()
-) : DigitalComponentView<Ground>(styleProvider, model) {
+	model: Power = Power()
+) : DigitalComponentView<Power>(styleProvider, model) {
 
 	companion object {
 		private const val WIDTH = 2.0 * SCALE
 		private const val HEIGHT = 2.0 * SCALE
-		private const val BAR_WIDTH = 0.5 * SCALE
+		private const val ARROW_WIDTH = 0.75 * SCALE
+		private const val ARROW_HEIGHT = 1.0 * SCALE
 	}
 
 	init {
@@ -31,10 +32,10 @@ class GroundView(
 			-DigitalPortView.LENGTH - WIDTH, -HEIGHT / 2,
 			WIDTH, HEIGHT
 		)
-		orientation = Direction.NORTH
+		orientation = Direction.SOUTH
 	}
 
-	override fun modelExchanged(oldModel: Ground?) {
+	override fun modelExchanged(oldModel: Power?) {
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
@@ -54,7 +55,7 @@ class GroundView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		val barLeftX = bounds.minX + BAR_WIDTH
+		val b = bounds
 
 		// TODO Use same stroke as DigitalPortView (support Bus width)
 		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
@@ -65,13 +66,10 @@ class GroundView(
 		} else {
 			context.choose(color).foregroundColor
 		}
+		context.g.drawLine(b.minX, 0.0, b.maxX,0.0)
 
-		context.g.drawLine(
-			-DigitalPortView.LENGTH.toDouble(), 0.0,
-			barLeftX, 0.0
-		)
-		context.g.fillRect(
-			bounds.x, bounds.y, BAR_WIDTH, HEIGHT
-		)
+		context.g.stroke = stroke
+		context.g.drawLine(b.minX, 0.0, b.minX + ARROW_WIDTH, -ARROW_HEIGHT / 2)
+		context.g.drawLine(b.minX, 0.0, b.minX + ARROW_WIDTH, +ARROW_HEIGHT / 2)
 	}
 }

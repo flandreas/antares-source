@@ -73,6 +73,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val PULL_RESISTOR = "PullResistor"
 	private const val TRANSISTOR = "Transistor"
 	private const val GROUND = "Ground"
+	private const val POWER = "Power"
 
 	private const val AND = "AND"
 	private const val OR = "OR"
@@ -247,6 +248,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("pullResistorView", PullResistorView::class)
 		typeMap.register("transistorView", TransistorView::class)
 		typeMap.register("groundView", GroundView::class)
+		typeMap.register("powerView", PowerView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 	}
@@ -268,6 +270,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, PullResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, GroundView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, PowerView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
@@ -326,6 +329,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(PULL_RESISTOR, "library.element.PullResistor", "/img/pull-resistor.png", PullResistorView::class)
 		repository.register(TRANSISTOR, "library.element.Transistor", "/img/pull-resistor.png", TransistorView::class)
 		repository.register(GROUND, "library.element.Ground", "/img/pull-resistor.png", GroundView::class)
+		repository.register(POWER, "library.element.Power", "/img/pull-resistor.png", PowerView::class)
 
 		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
 		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)

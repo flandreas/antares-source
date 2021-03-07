@@ -272,10 +272,10 @@ class TransistorView(
 	}
 
 	private fun drawBulk(context: DrawContext, color: Color) {
-		val dx = if (model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			0.0
-		} else {
+		val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			0.5 * SCALE
+		} else {
+			0.0
 		}
 
 		context.g.translate(dx, 0.0)
