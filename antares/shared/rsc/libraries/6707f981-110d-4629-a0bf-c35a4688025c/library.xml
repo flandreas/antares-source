@@ -35,6 +35,7 @@
             <baseLibraryElement _id='16' id='Break'/>
             <baseLibraryElement _id='97' id='PullResistor'/>
             <baseLibraryElement _id='98' id='Transistor'/>
+            <baseLibraryElement _id='99' id='Ground'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='17'>
