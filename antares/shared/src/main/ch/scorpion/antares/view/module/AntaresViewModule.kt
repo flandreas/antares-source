@@ -327,9 +327,9 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
 		repository.register(BREAK, "library.element.Break", "/img/break.png", BreakView::class)
 		repository.register(PULL_RESISTOR, "library.element.PullResistor", "/img/pull-resistor.png", PullResistorView::class)
-		repository.register(TRANSISTOR, "library.element.Transistor", "/img/pull-resistor.png", TransistorView::class)
-		repository.register(GROUND, "library.element.Ground", "/img/pull-resistor.png", GroundView::class)
-		repository.register(POWER, "library.element.Power", "/img/pull-resistor.png", PowerView::class)
+		repository.register(TRANSISTOR, "library.element.Transistor", "/img/transistor.png", TransistorView::class)
+		repository.register(GROUND, "library.element.Ground", "/img/ground.png", GroundView::class)
+		repository.register(POWER, "library.element.Power", "/img/power.png", PowerView::class)
 
 		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
 		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)

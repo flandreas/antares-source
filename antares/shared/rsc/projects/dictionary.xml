@@ -1,6 +1,6 @@
 <libraryDictionary _id='0'>
   <entries>
-    <libraryDictionaryEntry _id='2' uuid='d10cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='1' uuid='d10cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
       <name>
         <translation lang='en' text='Microcomputer (Tannenbaum)'/>
         <translation lang='de' text='Mikrocomputer (Tannenbaum)'/>
@@ -10,7 +10,7 @@
         <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tannenbaum'/>
       </desc>
     </libraryDictionaryEntry>
-    <libraryDictionaryEntry _id='6' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='2' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
       <name>
         <translation lang='de' text='Hexadezimale Tastatur'/>
         <translation lang='en' text='Hexadecimal Keyboard'/>
@@ -19,6 +19,11 @@
         <translation lang='de' text='Beispielprojekt, das zeigt, wie &quot;Controls&quot; in Symbolen von Teilschaltungen eingesetzt werden können'/>
         <translation lang='en' text='Sample project featuring &quot;controls&quot; in symbols of subcircuits'/>
       </desc>
+    </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='3' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+      <name>
+        <translation lang='en' text='Logic Gates from transistors'/>
+      </name>
     </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>

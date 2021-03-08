@@ -1,0 +1,36 @@
+<project _id='0' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='Logic Gates from transistors'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='a6d1e8b0-9cca-4d1e-9774-ff9d6b261d22'>
+          <name>
+            <translation lang='en' text='NOT'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='a44cafd6-9cd6-4912-8e7d-67242100df0c'>
+          <name>
+            <translation lang='en' text='NAND'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='c84adb55-24a2-48df-8edd-a898a0a20538'>
+          <name>
+            <translation lang='en' text='NOR'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='18a65d09-b078-4a1e-9f05-adcf11f02eef'>
+          <name>
+            <translation lang='en' text='RS Latch'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='1eb5a473-3bde-42f8-9ee3-ad51259d0645'>
+          <name>
+            <translation lang='en' text='AND'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>
