@@ -41,24 +41,16 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		}
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s undefined. */
-		fun undefined(bitWidth: BitWidth): Word {
-			return UNDEFINED[bitWidth]!!
-		}
+		fun undefined(bitWidth: BitWidth): Word = UNDEFINED[bitWidth]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in error state. */
-		fun error(bitWidth: BitWidth): Word {
-			return ERROR[bitWidth]!!
-		}
+		fun error(bitWidth: BitWidth): Word = ERROR[bitWidth]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `false` state. */
-		fun falseValue(bitWidth: BitWidth): Word {
-			return FALSE[bitWidth]!!
-		}
+		fun falseValue(bitWidth: BitWidth): Word = FALSE[bitWidth]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `true` state. */
-		fun trueValue(bitWidth: BitWidth): Word {
-			return TRUE[bitWidth]!!
-		}
+		fun trueValue(bitWidth: BitWidth): Word = TRUE[bitWidth]!!
 
 		/** Returns a [Word] of the specified width with all the same [Bit]s.*/
 		fun allOf(bitWidth: BitWidth, bit: Bit): Word {
@@ -71,18 +63,14 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		}
 
 		/** Returns a [Word] consisting of a single [Bit] with the specified value.*/
-		fun of(bitValue: Boolean): Word {
-			return if (bitValue) ONE_WIDTH_1 else ZERO_WIDTH_1
-		}
+		fun of(bitValue: Boolean): Word = if (bitValue) ONE_WIDTH_1 else ZERO_WIDTH_1
 
 		/** Returns a [Word] consisting of a single [Bit] with the specified value.*/
-		fun of(bit: Bit): Word {
-			return when (bit) {
-				Bit.Undefined -> undefined(BitWidth.BW_1)
-				Bit.Error -> error(BitWidth.BW_1)
-				Bit.False -> falseValue(BitWidth.BW_1)
-				Bit.True -> trueValue(BitWidth.BW_1)
-			}
+		fun of(bit: Bit): Word = when (bit) {
+			Bit.Undefined -> undefined(BitWidth.BW_1)
+			Bit.Error -> error(BitWidth.BW_1)
+			Bit.False -> falseValue(BitWidth.BW_1)
+			Bit.True -> trueValue(BitWidth.BW_1)
 		}
 
 		/** Returns a [Word] that represents the specified value as a binary word of the specified width.*/
@@ -122,23 +110,14 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	/** ---- [Any] */
 
-	override fun toString(): String {
-		return toHexString()
-	}
+	override fun toString(): String = toHexString()
 
 	/** ---- [DigitalSignal] interface */
 
 	override fun toHexString(): String {
 		val sb = StringBuilder()
 		for (i in max(0, bits.size / 4 - 1) downTo 0) {
-			val nibble: Long? = getSubwordValue(BitWidth.BW_4, i)
-			if (nibble == null) {
-				sb.append("?")
-			} else {
-				// Long.toString(radix:Int) is only supported on JVM
-				// sb.append(nibble!!.toString(16).toUpperCase())
-				sb.append(BitOperation.hexDigit(nibble))
-			}
+			sb.append(nibbleToHexChar(i))
 		}
 		return sb.toString().padStart(bitWidth.width / 4, '0')
 	}
@@ -164,27 +143,18 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		return Themes.get<AntaresTheme>().word
 	}
 
-	override fun getBitWidth(): BitWidth {
-		return bitWidth
-	}
+	override fun getBitWidth(): BitWidth = bitWidth
 
 	override fun not(): DigitalSignal = Word((0 until getBitWidth().width).map { bitAt(it).not() })
 
-	override fun flip(index: Int): DigitalSignal {
-		return Word((0 until getBitWidth().width).map {
+	override fun flip(index: Int): DigitalSignal =
+		Word((0 until getBitWidth().width).map {
 			if (it == index) bitAt(it).not() else bitAt(it)
 		})
-	}
 
 	override fun and(signal: DigitalSignal): DigitalSignal = Word((0 until getBitWidth().width).map { bitAt(it).and(signal.bitAt(it)) })
 
-	override fun bitAt(index: Int): Bit {
-		return bits[index]
-	}
-
-	override fun getSubword(subwordWidth: BitWidth, index: Int): Word {
-		return of(subwordWidth, getSubwordValue(subwordWidth, index))
-	}
+	override fun bitAt(index: Int): Bit = bits[index]
 
 	override fun toInt(): Int? {
 		var value = 0
@@ -203,13 +173,9 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	/** ---- [Word] */
 
-	fun getValue(): Long {
-		return getSubwordValue(bitWidth, 0)!!
-	}
+	fun getValue(): Long = getSubwordValue(bitWidth, 0)!!
 
-	fun isAllOf(bit: Bit): Boolean {
-		return bits.all { it == bit }
-	}
+	fun isAllOf(bit: Bit): Boolean = bits.all { it == bit }
 
 	/**
 	 * Creates a copy of this [Word] and sets the specified [Bit] in the copy.
@@ -222,6 +188,16 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		bits.addAll(this.bits)
 		bits[index] = bit
 		return Word(bits)
+	}
+
+	override fun getSubword(subwordWidth: BitWidth, index: Int): Word {
+		// Use the same loop structure as in getSubWordValue
+		val subword = mutableListOf<Bit>()
+		var digit = min(bitWidth.width, subwordWidth.width) - 1
+		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
+			subword.add(0, bits[i])
+		}
+		return Word(subword)
 	}
 
 	fun getSubwordValue(subwordWidth: BitWidth, index: Int): Long? {
@@ -237,6 +213,16 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 			digit--
 		}
 		return sum
+	}
+
+	fun nibbleToHexChar(index: Int): Char {
+		val subword = getSubword(BitWidth.BW_4, index)
+		return when {
+			subword.containsErrorBit() -> Bit.ERROR_CHAR
+			subword.containsUndefinedBit() -> Bit.UNDEFINED_CHAR
+			// Long.toString(radix:Int) is only supported on JVM
+			else -> BitOperation.hexDigit(subword.toInt()!!.toLong())
+		}
 	}
 
 	/**
@@ -260,25 +246,19 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		return Word(resultBits)
 	}
 
-	fun containsUndefinedBit(): Boolean {
-		return bits.any { it == Bit.Undefined }
-	}
+	fun containsUndefinedBit(): Boolean = bits.any { it == Bit.Undefined }
+
+	fun containsErrorBit(): Boolean = bits.any { it == Bit.Error }
 
 	/**
 	 * Creates a copy of this [Word]'s value and expands or reduces it to the specified [BitWidth].
 	 * Expanding is done by adding zeros to the left, while reducing is done by truncating high order numbers.
 	 */
-	fun ofWidth(bitWidth: BitWidth): Word {
-		return of(bitWidth, getValue())
-	}
+	fun ofWidth(bitWidth: BitWidth): Word = of(bitWidth, getValue())
 
-	fun shiftLeft(bitCount: Int = 1): Word {
-		return of(bitWidth, getValue().shl(bitCount))
-	}
+	fun shiftLeft(bitCount: Int = 1): Word = of(bitWidth, getValue().shl(bitCount))
 
-	fun shiftRight(bitCount: Int = 1): Word {
-		return of(bitWidth, getValue().shr(bitCount))
-	}
+	fun shiftRight(bitCount: Int = 1): Word = of(bitWidth, getValue().shr(bitCount))
 
 	override fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word {
 		val resultBits = mutableListOf<Bit>()
