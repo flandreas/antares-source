@@ -153,7 +153,7 @@ class DigitalPortView(
 		if (predefinedConnectedLength != null) {
 			return predefinedConnectedLength!!
 		}
-		if (getDigitalPort().logic == Logic.NEGATIVE) {
+		if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
 			return LOGIC_SIZE
 		}
 		return 0
