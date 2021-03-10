@@ -188,6 +188,19 @@ open class DigitalPortImpl(
 			return Word.allOf(bitWidth, Bit.False)
 		}
 
+	override fun executionStarted(signalHandler: SignalHandler) {
+		if (portType.isInput && net != null) {
+			if (net == null) {
+				storeIncomingSignal(defaultDigitalSignal)
+			} else {
+				// DigitalNet doesn't forward signals if the one coming from an OutputPort
+				// is already present on the DigitalNet. Therefore,
+				storeIncomingSignal(net!!.signal)
+			}
+		}
+		storeOutgoingSignal(defaultDigitalSignal)
+	}
+
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		storeIncomingSignal(defaultDigitalSignal)
