@@ -57,15 +57,7 @@ class PowerView(
 
 		val b = bounds
 
-		// TODO Use same stroke as DigitalPortView (support Bus width)
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-
-		// TODO Don't use signal color if not required with current SystemSpeed
-		context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			model.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
-		} else {
-			context.choose(color).foregroundColor
-		}
+		getPortViews().first().prepareConnectionDrawContext(context)
 		context.g.drawLine(b.minX, 0.0, b.maxX,0.0)
 
 		context.g.stroke = stroke

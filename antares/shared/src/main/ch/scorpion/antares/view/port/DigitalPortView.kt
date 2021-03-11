@@ -191,10 +191,18 @@ class DigitalPortView(
 				})
 			}
 		} else {
-			if (context.useContextColors) {
-				context.g.color = context.color!!.foregroundColor
+			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		}
+	}
+
+	private fun setupStroke(context: DrawContext) {
+		if (getDigitalPort().bitWidth.width > 1) {
+			context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
+		} else {
+			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				Themes.get<GraphTheme>().edge.executionStroke
 			} else {
-				context.g.color = styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+				Themes.get<GraphTheme>().edge.stroke
 			}
 		}
 	}
@@ -293,15 +301,7 @@ class DigitalPortView(
 
 	override fun prepareConnectionDrawContext(context: DrawContext) {
 		setupColor(context)
-		if (getDigitalPort().bitWidth.width > 1) {
-			context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
-		} else {
-			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				Themes.get<GraphTheme>().edge.executionStroke
-			} else {
-				Themes.get<GraphTheme>().edge.stroke
-			}
-		}
+		setupStroke(context)
 	}
 
 	/** ---- [AbstractPortView] */

@@ -72,16 +72,15 @@ class PullResistorView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-		context.g.stroke = STROKE
-		context.g.color = context.choose(color).foregroundColor
+		getPortViews().first().prepareConnectionDrawContext(context)
+		drawPullDirection(context)
+
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
 			context,
-			getApplicableForegroundColor(context),
+			context.g.color,
 			getApplicableBackgroudColor(context),
 			STROKE)
-
-		drawPullDirection(context)
 	}
 
 	private fun drawPullDirection(context: DrawContext) {

@@ -69,6 +69,7 @@ enum class SymbolStyle(val customName: String) {
 				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
 
 			context.g.color = foregroundColor
+			context.g.stroke = stroke
 			context.g.drawRect(
 				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
 				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
