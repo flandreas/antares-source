@@ -1,15 +1,15 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.PullDirection
-import ch.scorpion.antares.model.net.PullDirection.*
+import ch.scorpion.antares.model.net.PullDirection.HIGH
+import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.RESISTER_HEIGHT
-import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.RESISTOR_WIDTH_HALF
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -33,14 +33,19 @@ class PullResistorView(
 			cap = LineCap.BUTT,
 			join = LineJoin.MITER
 		)
-		private const val PULL_DIRECTION_HEIGHT = 2 * SCALE
+		private const val PULL_DIRECTION_WIDTH = 2 * SCALE
 	}
 
 	init {
 		modelExchanged(null)
 		setBounds(
-			-RESISTOR_WIDTH_HALF, getOutput().unconnectedLength.toDouble(),
-			2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble() + PULL_DIRECTION_HEIGHT)
+			-DigitalPortView.LENGTH.toDouble() - SymbolStyle.RESISTOR_WIDTH - PULL_DIRECTION_WIDTH, -SymbolStyle.RESISTER_HEIGHT_HALF,
+			SymbolStyle.RESISTOR_WIDTH + PULL_DIRECTION_WIDTH, 2 * SymbolStyle.RESISTER_HEIGHT_HALF
+		)
+		orientation = when (pullDirection) {
+			LOW -> Direction.NORTH
+			HIGH -> Direction.SOUTH
+		}
 	}
 
 	override fun modelExchanged(oldModel: PullResistor?) {
@@ -48,9 +53,9 @@ class PullResistorView(
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getPort(),
-			direction = Direction.NORTH
+			direction = Direction.EAST
 		)
-		portView.setLocation(0, DigitalPortView.LENGTH)
+		portView.setLocation(-DigitalPortView.LENGTH, 0)
 		addPortView(portView)
 	}
 
@@ -91,21 +96,10 @@ class PullResistorView(
 	}
 
 	private fun drawLowPullDirection(context: DrawContext) {
-		val yBegin = DigitalPortView.LENGTH + 6 * SCALE
-		val yEnd = yBegin + PULL_DIRECTION_HEIGHT
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-		context.g.drawLine(0, yBegin, 0, yEnd)
-		context.g.stroke = stroke
-		context.g.drawLine(-0.75 * SCALE, yEnd.toDouble(), 0.75 * SCALE, yEnd.toDouble())
+		GroundView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
 	}
 
 	private fun drawHighPullDirection(context: DrawContext) {
-		val yBegin = DigitalPortView.LENGTH + 6 * SCALE
-		val yEnd = yBegin + PULL_DIRECTION_HEIGHT
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-		context.g.drawLine(0, yBegin, 0, yEnd)
-		context.g.stroke = stroke
-		context.g.drawLine(0.0, yEnd.toDouble(), -0.75 * SCALE, yEnd - 0.75 * SCALE)
-		context.g.drawLine(0.0, yEnd.toDouble(), 0.75 * SCALE, yEnd - 0.75 * SCALE)
+		PowerView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
 	}
 }

@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Ground
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -10,9 +9,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class GroundView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -23,6 +19,12 @@ class GroundView(
 		private const val WIDTH = 2.0 * SCALE
 		private const val HEIGHT = 2.0 * SCALE
 		private const val BAR_WIDTH = 0.5 * SCALE
+
+		fun drawBodyAt(x: Double, y: Double, context: DrawContext) {
+			val barRightX = x - WIDTH + BAR_WIDTH
+			context.g.drawLine(x, y, barRightX, y)
+			context.g.fillRect(x - WIDTH, y - HEIGHT / 2, BAR_WIDTH, HEIGHT)
+		}
 	}
 
 	init {
@@ -53,16 +55,7 @@ class GroundView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-
-		val barLeftX = bounds.minX + BAR_WIDTH
-
 		getPortViews().first().prepareConnectionDrawContext(context)
-		context.g.drawLine(
-			-DigitalPortView.LENGTH.toDouble(), 0.0,
-			barLeftX, 0.0
-		)
-		context.g.fillRect(
-			bounds.x, bounds.y, BAR_WIDTH, HEIGHT
-		)
+		drawBodyAt(-DigitalPortView.LENGTH.toDouble(), 0.0, context)
 	}
 }

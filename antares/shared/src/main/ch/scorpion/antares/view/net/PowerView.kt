@@ -2,17 +2,14 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class PowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -22,8 +19,17 @@ class PowerView(
 	companion object {
 		private const val WIDTH = 2.0 * SCALE
 		private const val HEIGHT = 2.0 * SCALE
-		private const val ARROW_WIDTH = 0.75 * SCALE
-		private const val ARROW_HEIGHT = 1.0 * SCALE
+		private const val ARROW_WIDTH = 1.0 * SCALE
+		private const val ARROW_HEIGHT = 1.25 * SCALE
+
+		fun drawBodyAt(x: Double, y: Double, context: DrawContext, arrowHeadStroke: Stroke) {
+			context.g.drawLine(x, y, x - WIDTH,0.0)
+
+			val minX = x - WIDTH
+			context.g.stroke = arrowHeadStroke
+			context.g.drawLine(minX, y, minX + ARROW_WIDTH, -ARROW_HEIGHT / 2)
+			context.g.drawLine(minX, y, minX + ARROW_WIDTH, +ARROW_HEIGHT / 2)
+		}
 	}
 
 	init {
@@ -54,14 +60,7 @@ class PowerView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-
-		val b = bounds
-
 		getPortViews().first().prepareConnectionDrawContext(context)
-		context.g.drawLine(b.minX, 0.0, b.maxX,0.0)
-
-		context.g.stroke = stroke
-		context.g.drawLine(b.minX, 0.0, b.minX + ARROW_WIDTH, -ARROW_HEIGHT / 2)
-		context.g.drawLine(b.minX, 0.0, b.minX + ARROW_WIDTH, +ARROW_HEIGHT / 2)
+		drawBodyAt(-DigitalPortView.LENGTH.toDouble(), 0.0, context, stroke)
 	}
 }

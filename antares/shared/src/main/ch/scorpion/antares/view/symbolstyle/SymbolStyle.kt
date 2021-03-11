@@ -58,21 +58,24 @@ enum class SymbolStyle(val customName: String) {
 			if (resistor.shadow) {
 				DropShadow.draw(context, transparency = resistor.transparency) {
 					context.g.fillRect(
-						-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
-						2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+						-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+						RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
+					)
 				}
 			}
 
 			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 			context.g.fillRect(
-				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
-				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
+			)
 
 			context.g.color = foregroundColor
 			context.g.stroke = stroke
 			context.g.drawRect(
-				-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH.toDouble(),
-				2 * RESISTOR_WIDTH_HALF, RESISTER_HEIGHT.toDouble())
+				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
+			)
 		}
 
 		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -158,17 +161,17 @@ enum class SymbolStyle(val customName: String) {
 			.lineTo(0, SCALE)
 			.close()
 
-		const val RESISTOR_WIDTH_HALF = SCALE.toDouble()
-		const val RESISTER_HEIGHT = 6 * SCALE
+		const val RESISTOR_WIDTH = 6.0 * SCALE.toDouble()
+		const val RESISTER_HEIGHT_HALF = SCALE.toDouble()
 		private val RESISTOR_PATH= System.createPath()
-			.moveTo(0, DigitalPortView.LENGTH)
-			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 0.5 * SCALE)
-			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 1.5 * SCALE)
-			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 2.5 * SCALE)
-			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 3.5 * SCALE)
-			.lineTo(RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 4.5 * SCALE)
-			.lineTo(-RESISTOR_WIDTH_HALF, DigitalPortView.LENGTH + 5.5 * SCALE)
-			.lineTo(0, DigitalPortView.LENGTH + 6 * SCALE)
+			.moveTo(-DigitalPortView.LENGTH, 0)
+			.lineTo(-DigitalPortView.LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 2.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 3.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-DigitalPortView.LENGTH - 6.0 * SCALE, 0.0)
 
 		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
