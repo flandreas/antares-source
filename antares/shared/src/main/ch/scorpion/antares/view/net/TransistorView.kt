@@ -221,7 +221,6 @@ class TransistorView(
 		(getPortView(model.getGatePort()) as DigitalPortView).prepareConnectionDrawContext(context)
 
 		// Gate connection
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		val gateConnectionY = when(handedness) {
 			RIGHT -> 0.0
 			LEFT -> - 4.0 * SCALE
