@@ -32,7 +32,7 @@ abstract class AbstractAntaresThemeBuilder(protected val name: String) {
 
 		val EDGE_EXECUTION_STROKE = Stroke(1.3f)
 
-		val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.ROUND)
+		val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.MITER)
 
 		val SUBSYSTEM_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * Look.SCALE).toInt())
 

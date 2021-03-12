@@ -8,9 +8,9 @@ import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
 class EdgeStyle(
-        color: CompositeColor = CompositeColor(),
-        stroke: Stroke = Stroke(),
-        font: Font = FontImpl(),
-        val busStroke: Stroke = Stroke(),
-        val executionStroke: Stroke = stroke
+	color: CompositeColor = CompositeColor(),
+	stroke: Stroke = Stroke(),
+	font: Font = FontImpl(),
+	val busStroke: Stroke = Stroke(),
+	val executionStroke: Stroke = stroke
 ) : BasicStyle(color, stroke, font), Style

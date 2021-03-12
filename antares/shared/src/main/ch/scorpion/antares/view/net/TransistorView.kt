@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Transistor
 import ch.scorpion.antares.model.net.TransistorType
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.LEFT
@@ -16,7 +16,9 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.LineCap
+import ch.scorpion.jabbah.draw.graphics.LineJoin
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -39,6 +41,7 @@ class TransistorView(
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
 
+		private val BAR_STROKE = Stroke(1.5f, LineCap.BUTT, LineJoin.ROUND)
 		private val DEFAULT_HANDEDNESS = RIGHT
 		private const val WIDTH = 6 * SCALE
 		private const val HEIGHT = 6 * SCALE
@@ -58,6 +61,16 @@ class TransistorView(
 			.lineTo(SIGNAL_PORT_X, -1.6 * SCALE)
 			.close()
 
+		private val SOUTH_SIGNAL_PATH = System.createPath()
+			.moveTo(SIGNAL_LINE_X, -0.5 * SCALE)
+			.lineTo(SIGNAL_PORT_X, -0.5 * SCALE)
+			.lineTo(SIGNAL_PORT_X, 1.0 * SCALE)
+
+		private val NORTH_SIGNAL_PATH = System.createPath()
+			.moveTo(SIGNAL_LINE_X, -3.5 * SCALE)
+			.lineTo(SIGNAL_PORT_X, -3.5 * SCALE)
+			.lineTo(SIGNAL_PORT_X, -5.0 * SCALE)
+
 		private val hasCircle: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_CIRCLE)
 	}
 
@@ -71,6 +84,12 @@ class TransistorView(
 				invalidate()
 				update()
 			}
+		}
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			model.bitWidth = value
 		}
 
 	init {
@@ -212,7 +231,7 @@ class TransistorView(
 			GATE_LINE_X, gateConnectionY)
 
 		// Gate bar
-		context.g.stroke = stroke
+		context.g.stroke = BAR_STROKE
 		context.g.drawLine(
 			GATE_LINE_X, -4.0 * SCALE,
 			GATE_LINE_X, 0.0)
@@ -222,15 +241,10 @@ class TransistorView(
 		portView.prepareConnectionDrawContext(context)
 
 		// connection
-		context.g.drawLine(
-			SIGNAL_LINE_X, -0.5 * SCALE,
-			SIGNAL_PORT_X, -0.5 * SCALE)
-		context.g.drawLine(
-			SIGNAL_PORT_X, -0.5 * SCALE,
-			SIGNAL_PORT_X, 1.0 * SCALE)
+		context.g.draw(SOUTH_SIGNAL_PATH)
 
 		// bar
-		context.g.stroke = stroke
+		context.g.stroke = BAR_STROKE
 		context.g.drawLine(
 			SIGNAL_LINE_X, -1.0 * SCALE,
 			SIGNAL_LINE_X, 0.0)
@@ -240,15 +254,10 @@ class TransistorView(
 		portView.prepareConnectionDrawContext(context)
 
 		// connection
-		context.g.drawLine(
-			SIGNAL_LINE_X, -3.5 * SCALE,
-			SIGNAL_PORT_X, -3.5 * SCALE)
-		context.g.drawLine(
-			SIGNAL_PORT_X, -3.5 * SCALE,
-			SIGNAL_PORT_X, -5.0 * SCALE)
+		context.g.draw(NORTH_SIGNAL_PATH)
 
 		// bar
-		context.g.stroke = stroke
+		context.g.stroke = BAR_STROKE
 		context.g.drawLine(
 			SIGNAL_LINE_X, -4.0 * SCALE,
 			SIGNAL_LINE_X, -3.0 * SCALE)
@@ -269,7 +278,7 @@ class TransistorView(
 		drawBulkArrow(context)
 
 		// bar
-		context.g.stroke = stroke
+		context.g.stroke = BAR_STROKE
 		context.g.drawLine(
 			SIGNAL_LINE_X, -2.5 * SCALE,
 			SIGNAL_LINE_X, -1.5 * SCALE)

@@ -3,14 +3,16 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class Transistor(
-	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE
-) : TriStateBufferGate(enableLogic = typeToLogic(transistorType)) {
+	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
+	bitWidth: BitWidth = BitWidth.BW_1
+) : TriStateBufferGate(bitWidth, typeToLogic(transistorType)) {
 
 	companion object {
 		private val DEFAULT_TRANSISTOR_TYPE = TransistorType.N
