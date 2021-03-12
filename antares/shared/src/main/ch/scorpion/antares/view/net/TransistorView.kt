@@ -167,40 +167,19 @@ class TransistorView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		val gateColor = portColor(model.getGatePort().getIncomingSignal(), context)
-		val sourceColor = portColor(model.getSourcePort().getIncomingSignal(), context)
-		val drainColor = if (model.isOn) {
-			portColor(model.getDrainPort().getOutgoingSignal(), context)
-		} else {
-			portColor(model.getDrainPort().getIncomingSignal(), context)
-		}
-		val bulkColor = if (model.isOn) {
-			drainColor
-		} else {
-			portColor(null, context)
-		}
-
 		drawBody(context)
-		drawGate(context, gateColor)
-		drawBulk(context, bulkColor)
+		drawGate(context)
+		drawBulk(context)
 
 		when (handedness) {
 			RIGHT -> {
-				drawSouthSignalPort(context, sourceColor)
-				drawNorthSignalPort(context, drainColor)
+				drawSouthSignalPort(context, getPortView(model.getSourcePort()) as DigitalPortView)
+				drawNorthSignalPort(context, getPortView(model.getDrainPort()) as DigitalPortView)
 			}
 			LEFT -> {
-				drawSouthSignalPort(context, drainColor)
-				drawNorthSignalPort(context, sourceColor)
+				drawSouthSignalPort(context, getPortView(model.getDrainPort()) as DigitalPortView)
+				drawNorthSignalPort(context, getPortView(model.getSourcePort()) as DigitalPortView)
 			}
-		}
-	}
-
-	private fun portColor(signal: DigitalSignal?, context: DrawContext): Color {
-		return if (signal != null && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			signal.getColor().foregroundColor
-		} else {
-			context.choose(color).foregroundColor
 		}
 	}
 
@@ -219,12 +198,8 @@ class TransistorView(
 		}
 	}
 
-	private fun drawGate(context: DrawContext, color: Color) {
-		context.g.stroke = stroke
-		context.g.color = color
-		context.g.drawLine(
-			GATE_LINE_X, -4.0 * SCALE,
-			GATE_LINE_X, 0.0)
+	private fun drawGate(context: DrawContext) {
+		(getPortView(model.getGatePort()) as DigitalPortView).prepareConnectionDrawContext(context)
 
 		// Gate connection
 		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
@@ -235,59 +210,69 @@ class TransistorView(
 		context.g.drawLine(
 			DigitalPortView.LENGTH.toDouble(), gateConnectionY,
 			GATE_LINE_X, gateConnectionY)
+
+		// Gate bar
+		context.g.stroke = stroke
+		context.g.drawLine(
+			GATE_LINE_X, -4.0 * SCALE,
+			GATE_LINE_X, 0.0)
 	}
 
-	private fun drawSouthSignalPort(context: DrawContext, color: Color) {
-		context.g.stroke = stroke
-		context.g.color = color
-		context.g.drawLine(
-			SIGNAL_LINE_X, -1.0 * SCALE,
-			SIGNAL_LINE_X, 0.0)
+	private fun drawSouthSignalPort(context: DrawContext, portView: DigitalPortView) {
+		portView.prepareConnectionDrawContext(context)
 
 		// connection
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		context.g.drawLine(
 			SIGNAL_LINE_X, -0.5 * SCALE,
 			SIGNAL_PORT_X, -0.5 * SCALE)
 		context.g.drawLine(
 			SIGNAL_PORT_X, -0.5 * SCALE,
 			SIGNAL_PORT_X, 1.0 * SCALE)
+
+		// bar
+		context.g.stroke = stroke
+		context.g.drawLine(
+			SIGNAL_LINE_X, -1.0 * SCALE,
+			SIGNAL_LINE_X, 0.0)
 	}
 
-	private fun drawNorthSignalPort(context: DrawContext, color: Color) {
-		context.g.stroke = stroke
-		context.g.color = color
-		context.g.drawLine(
-			SIGNAL_LINE_X, -4.0 * SCALE,
-			SIGNAL_LINE_X, -3.0 * SCALE)
+	private fun drawNorthSignalPort(context: DrawContext, portView: DigitalPortView) {
+		portView.prepareConnectionDrawContext(context)
 
 		// connection
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
 		context.g.drawLine(
 			SIGNAL_LINE_X, -3.5 * SCALE,
 			SIGNAL_PORT_X, -3.5 * SCALE)
 		context.g.drawLine(
 			SIGNAL_PORT_X, -3.5 * SCALE,
 			SIGNAL_PORT_X, -5.0 * SCALE)
+
+		// bar
+		context.g.stroke = stroke
+		context.g.drawLine(
+			SIGNAL_LINE_X, -4.0 * SCALE,
+			SIGNAL_LINE_X, -3.0 * SCALE)
 	}
 
-	private fun drawBulk(context: DrawContext, color: Color) {
+	private fun drawBulk(context: DrawContext) {
 		val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			0.5 * SCALE
 		} else {
 			0.0
 		}
 
+		(getPortView(model.getDrainPort()) as DigitalPortView).prepareConnectionDrawContext(context)
+
 		context.g.translate(dx, 0.0)
 
+		// arrow
+		drawBulkArrow(context)
+
+		// bar
 		context.g.stroke = stroke
-		context.g.color = color
 		context.g.drawLine(
 			SIGNAL_LINE_X, -2.5 * SCALE,
 			SIGNAL_LINE_X, -1.5 * SCALE)
-		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-
-		drawBulkArrow(context)
 
 		context.g.translate(-dx, 0.0)
 	}
