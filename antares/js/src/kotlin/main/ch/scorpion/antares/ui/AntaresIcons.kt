@@ -38,6 +38,10 @@ fun RBuilder.tristateBuffer(): ReactElement = img(src="img/tristate-buffer.svg")
 fun RBuilder.tunnel(): ReactElement = img(src="img/tunnel.svg") { attrs.width = size }
 fun RBuilder.xnorGate(): ReactElement = img(src="img/xnor.svg") { attrs.width = size }
 fun RBuilder.xorGate(): ReactElement = img(src="img/xor.svg") { attrs.width = size }
+fun RBuilder.pullResistor(): ReactElement = img(src="img/pull-resistor.svg") { attrs.width = size }
+fun RBuilder.transistor(): ReactElement = img(src="img/transistor.svg") { attrs.width = size }
+fun RBuilder.ground(): ReactElement = img(src="img/ground.svg") { attrs.width = size }
+fun RBuilder.power(): ReactElement = img(src="img/power.svg") { attrs.width = size }
 
 fun registerAntaresIconsInProvider() {
 	IconProviderRegistry.register("/img/7segment.png") { RBuilder().sevenSegment() }
@@ -71,4 +75,8 @@ fun registerAntaresIconsInProvider() {
 	IconProviderRegistry.register("/img/tunnel.png") { RBuilder().tunnel() }
 	IconProviderRegistry.register("/img/xnor.png") { RBuilder().xnorGate() }
 	IconProviderRegistry.register("/img/xor.png") { RBuilder().xorGate() }
+	IconProviderRegistry.register("/img/pull-resistor.png") { RBuilder().pullResistor() }
+	IconProviderRegistry.register("/img/transistor.png") { RBuilder().transistor() }
+	IconProviderRegistry.register("/img/ground.png") { RBuilder().ground() }
+	IconProviderRegistry.register("/img/power.png") { RBuilder().power() }
 }
