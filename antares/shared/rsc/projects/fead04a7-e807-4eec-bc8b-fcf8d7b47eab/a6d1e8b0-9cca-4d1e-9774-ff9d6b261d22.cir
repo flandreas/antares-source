@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='elem.setOutputWord(elem.inputWord().not());'>
+        <graph _id='2' script='elem.setOutputBit(!elem.inputBit());'>
           <elements>
             <circuitInOut _id='3' id='1' name='I' type='input' bitWidth='1'/>
             <transistor _id='4' id='2' delay='20' bitWidth='1' logic='positive'/>

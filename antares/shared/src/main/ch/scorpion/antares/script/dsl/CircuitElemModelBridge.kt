@@ -53,6 +53,10 @@ open class CircuitElemModelBridge(
 	@Suppress("unused")
 	fun inputBit(name: String): Boolean = vertice.getInput<DigitalSignal>(name).getIncomingSignal()!!.bitAt(0).isSet
 
+	fun inputBit(id: Int): Boolean = vertice.getInput<DigitalSignal>(id).getIncomingSignal()!!.bitAt(0).isSet
+
+	fun inputBit(): Boolean = inputBit(1)
+
 	/** Returns the output signal at the first (or one and only) [OutputPort] of this circuit element as a [String].*/
 	fun output(): String = vertice.getOutput<DigitalSignal>().getOutgoingSignal().toString()
 
@@ -113,6 +117,11 @@ open class CircuitElemModelBridge(
 	@Suppress("unused")
 	fun setOutputBit(name: String, bit: Boolean) {
 		val outputPort = vertice.getOutput<DigitalSignal>(name) as DigitalPort
+		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!)
+	}
+
+	fun setOutputBit(id: Int, bit: Boolean) {
+		val outputPort = vertice.getOutput<DigitalSignal>(id) as DigitalPort
 		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!)
 	}
 
