@@ -31,6 +31,9 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 * image:user-manual/base-library/constant.png[Constant] link:{{site.basedir}}/user-manual/english/base-library/constant[Constant]
 * image:user-manual/base-library/break.png[Breakpoint] link:{{site.basedir}}/user-manual/english/base-library/breakpoint[Breakpoint]
 * image:user-manual/base-library/pull-resistor.png[Pull Resistor] link:{{site.basedir}}/user-manual/english/base-library/pull-resistor[Pull Resistor]
+* image:user-manual/base-library/transistor.png[Transistor] link:{{site.basedir}}/user-manual/english/base-library/transistor[Transistor]
+* image:user-manual/base-library/ground.png[Ground] link:{{site.basedir}}/user-manual/english/base-library/ground[Ground]
+* image:user-manual/base-library/power.png[Power] link:{{site.basedir}}/user-manual/english/base-library/power[Power]
 
 === Logical Gates
 
