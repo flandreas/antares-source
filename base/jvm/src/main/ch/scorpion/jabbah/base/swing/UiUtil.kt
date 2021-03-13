@@ -134,7 +134,11 @@ object UiUtil {
 	 */
 	fun themedIcon(path: String): ImageIcon {
 		return if (UI.isDark) {
-			getMultiResolutionIcon(path, ::getDarkVariantPath)
+			try {
+				getMultiResolutionIcon(path, ::getDarkVariantPath)
+			} catch (e: IllegalArgumentException) {
+				getMultiResolutionIcon(path, ::getVariantPath)
+			}
 		} else {
 			getMultiResolutionIcon(path, ::getVariantPath)
 		}
