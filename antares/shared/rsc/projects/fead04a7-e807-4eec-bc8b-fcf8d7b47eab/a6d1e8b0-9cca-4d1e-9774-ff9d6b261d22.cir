@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' script='elem.setOutputWord(elem.inputWord().not());'>
           <elements>
             <circuitInOut _id='3' id='1' name='I' type='input' bitWidth='1'/>
             <transistor _id='4' id='2' delay='20' bitWidth='1' logic='positive'/>
@@ -54,17 +54,17 @@
               </location>
             </circuitInOutView>
             <transistorView _id='28' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-105.0' y='14.0'/>
-            <transistorView _id='27' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-105.0' y='-119.0' handedness='left'/>
+            <transistorView _id='27' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-105.0' y='-112.0' handedness='left'/>
             <groundView _id='26' id='4' rot='90' filled='true' stroked='true' modelId='6' x='-63.0' y='42.0'/>
             <digitalEdgeView _id='25' id='5' filled='true' stroked='true' modelId='7' layout='ortho' orig='26' origPort='1' origPortOutput='true' dest='28' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-63.0,56.0 -63.0,21.0'/>
               </shape>
             </digitalEdgeView>
-            <powerView _id='24' id='6' rot='270' filled='true' stroked='true' modelId='8' x='-63.0' y='-168.0'/>
+            <powerView _id='24' id='6' rot='270' filled='true' stroked='true' modelId='8' x='-63.0' y='-161.0'/>
             <digitalEdgeView _id='23' id='7' filled='true' stroked='true' modelId='9' layout='ortho' orig='24' origPort='1' origPortOutput='true' dest='27' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='-63.0,-182.0 -63.0,-154.0'/>
+                <polylineShape points='-63.0,-175.0 -63.0,-147.0'/>
               </shape>
             </digitalEdgeView>
             <circuitInOutView _id='22' id='8' rot='0' filled='true' stroked='true' modelId='10' representation='binary' orientation='east'>
@@ -89,7 +89,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='18' id='12' filled='true' stroked='true' modelId='11' layout='ortho' orig='20' dest='27' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='-126.0,-63.0 -126.0,-147.0 -99.0,-147.0'/>
+                <polylineShape points='-126.0,-63.0 -126.0,-140.0 -91.0,-140.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='17' id='13' filled='true' stroked='true' modelId='12' layout='ortho' orig='28' origPort='3' origPortOutput='true' dest='16' adjusted='false'>
@@ -109,7 +109,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='14' id='16' filled='true' stroked='true' modelId='12' layout='ortho' orig='16' dest='27' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-63.0,-63.0 -63.0,-112.0'/>
+                <polylineShape points='-63.0,-63.0 -63.0,-105.0'/>
               </shape>
             </digitalEdgeView>
           </components>
@@ -147,6 +147,10 @@
       </components>
       <model>
         <subGraphVertice _id='44' id='0' delay='0' uuid='a6d1e8b0-9cca-4d1e-9774-ff9d6b261d22'>
+          <desc>
+            <translation lang='en' text='Inverts the input. The output is 1 if the input is 0, and vice versa'/>
+            <translation lang='de' text='Kehrt den Eingang um. Der Ausgang ist 1, wenn der Eingang 0 ist, und umgekehrt'/>
+          </desc>
           <name>
             <translation lang='en' text='NOT'/>
           </name>

@@ -1,4 +1,4 @@
-<project _id='0' defaultElement='a44cafd6-9cd6-4912-8e7d-67242100df0c' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='c3d2b358-ae00-4843-94f4-d274949df561' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -23,11 +23,32 @@
         <containerLibraryElement _id='5' uuid='18a65d09-b078-4a1e-9f05-adcf11f02eef'>
           <name>
             <translation lang='en' text='RS Latch'/>
+            <translation lang='de' text='SR Latch'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='6' uuid='1eb5a473-3bde-42f8-9ee3-ad51259d0645'>
+        <containerLibraryElement _id='6' uuid='a3b448c6-7748-4595-8f4f-28eeba33394e'>
           <name>
             <translation lang='en' text='AND'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='42ba567f-f86f-4d91-bea2-336b35309d3c'>
+          <name>
+            <translation lang='en' text='OR'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='4b2bc58e-0da2-4f12-af42-08ff79823a48'>
+          <name>
+            <translation lang='en' text='XOR'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='9' uuid='0a1a074b-7257-4661-803f-552a68833f24'>
+          <name>
+            <translation lang='en' text='XNOR'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='10' uuid='c3d2b358-ae00-4843-94f4-d274949df561'>
+          <name>
+            <translation lang='de' text='Test'/>
           </name>
         </containerLibraryElement>
       </items>
