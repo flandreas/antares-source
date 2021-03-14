@@ -83,7 +83,7 @@ class LibraryTreeViewController (
 	}
 
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = {
-		if (displaysLibrary(it.item.library)) { view.handle(it) }
+		if (displaysLibrary(it.parent.library)) { view.handle(it) }
 	}
 
 	private val libraryItemUpdatedHandler: EventHandler<LibraryItemUpdatedEvent> = {

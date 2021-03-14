@@ -65,7 +65,6 @@ class ViewNavigatorImpl(
 
 	override fun setZoomPan(zoomPan: ZoomPan) {
 		view.zoomPan = zoomPan
-		System.nop()
 	}
 
 	override fun panCenter() {
