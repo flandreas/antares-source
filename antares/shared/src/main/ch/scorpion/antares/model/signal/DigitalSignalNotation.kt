@@ -6,24 +6,39 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
 enum class DigitalSignalNotation(
 	val customName: String,
-	val translationKey: String
+	private val translationKey: String
 ) {
 
 	PREFIX("prefix", "element.signal.notation.prefix") {
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
-			return "${representation.prefix}${representation.represent(signal)}"
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"${representation.prefix}$r"
+			} else {
+				r
+			}
 		}
 	},
 
 	BASE_SUBSCRIPT("baseSubscript", "element.signal.notation.baseSubscript") {
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
-			return "${representation.represent(signal)}${createBaseSubscript(representation.base)}"
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${createBaseSubscript(representation.base)}"
+			} else {
+				r
+			}
 		}
 	},
 
 	SUFFIX("suffix", "element.signal.notation.suffix") {
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
-			return "${representation.represent(signal)}${representation.suffix}"
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${representation.suffix}"
+			} else {
+				r
+			}
 		}
 	};
 

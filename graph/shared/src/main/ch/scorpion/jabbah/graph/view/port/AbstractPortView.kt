@@ -135,11 +135,11 @@ abstract class AbstractPortView<T : Any>(
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
 		val valueText = when (port.portType) {
-			PortType.INPUT -> (port as InputPort<*>).getIncomingSignal().toString()
-			PortType.OUTPUT -> (port as OutputPort<*>).getOutgoingSignal().toString()
+			PortType.INPUT -> (port as InputPort<*>).incomingSignalDescription
+			PortType.OUTPUT -> (port as OutputPort<*>).outgoingSignalDescription
 			PortType.INOUT -> {
 				val p = port as BidirectionalPort<*>
-				"${Translations.getString("graph.property.portType.input")}:${p.getIncomingSignal()}, ${Translations.getString("graph.property.portType.output")}:${p.getOutgoingSignal()}"
+				"${Translations.getString("graph.property.portType.input")}:${p.incomingSignalDescription ?: ""}, ${Translations.getString("graph.property.portType.output")}:${p.outgoingSignalDescription ?: ""}"
 			}
 		}
 		val content = StringBuilder(buildToolTipContent())

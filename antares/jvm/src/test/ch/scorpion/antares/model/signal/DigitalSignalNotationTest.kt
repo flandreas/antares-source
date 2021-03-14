@@ -6,23 +6,42 @@ import kotlin.test.Test
 
 class DigitalSignalNotationTest {
 
-	private val value = Word.of(BitWidth.BW_4, 15)
+	private val value = Word.of(BitWidth.BW_8, 17)
+	private val singleDigitValue = Word.of(BitWidth.BW_1, 1)
 
 	@Test
 	fun shouldNotateWithPrefix() {
-		assertEquals("0b1111", DigitalSignalNotation.PREFIX.notate(value, BINARY))
-		assertEquals("0xF", DigitalSignalNotation.PREFIX.notate(value, HEXADECIMAL))
+		assertEquals("0b00010001", DigitalSignalNotation.PREFIX.notate(value, BINARY))
+		assertEquals("0x11", DigitalSignalNotation.PREFIX.notate(value, HEXADECIMAL))
+	}
+
+	@Test
+	fun shouldOmitPrefixForSingleDigit() {
+		assertEquals("1", DigitalSignalNotation.PREFIX.notate(Word.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.PREFIX.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 
 	@Test
 	fun shouldNotateWithBaseSubscript() {
-		assertEquals("1111\u2082", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, BINARY))
-		assertEquals("F\u2081\u2086", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, HEXADECIMAL))
+		assertEquals("00010001\u2082", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, BINARY))
+		assertEquals("11\u2081\u2086", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, HEXADECIMAL))
+	}
+
+	@Test
+	fun shouldOmitSubscriptForSingleDigit() {
+		assertEquals("1", DigitalSignalNotation.BASE_SUBSCRIPT.notate(Word.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.BASE_SUBSCRIPT.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 
 	@Test
 	fun shouldNotateWithSuffix() {
-		assertEquals("1111b", DigitalSignalNotation.SUFFIX.notate(value, BINARY))
-		assertEquals("Fh", DigitalSignalNotation.SUFFIX.notate(value, HEXADECIMAL))
+		assertEquals("00010001b", DigitalSignalNotation.SUFFIX.notate(value, BINARY))
+		assertEquals("11h", DigitalSignalNotation.SUFFIX.notate(value, HEXADECIMAL))
+	}
+
+	@Test
+	fun shouldOmitSuffixForSingleDigit() {
+		assertEquals("1", DigitalSignalNotation.SUFFIX.notate(Word.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.SUFFIX.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 }

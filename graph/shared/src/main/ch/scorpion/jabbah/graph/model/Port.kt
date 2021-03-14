@@ -78,6 +78,8 @@ interface Port<T : Any> : Describable {
  */
 interface InputPort<T : Any> : Port<T> {
 
+	val incomingSignalDescription: String? get() = getIncomingSignal()?.toString()
+
 	fun getIncomingSignal(): T?
 
 	/**
@@ -135,6 +137,8 @@ interface OutputPort<T : Any> : Port<T> {
 	 * only if the [Net]'s signal is undefined. Otherwise, it asserts "undefined" to the [Net].
 	 */
 	val weakBehaviour: WeakOutputPortBehaviour<T>?
+
+	val outgoingSignalDescription: String? get() = getOutgoingSignal()?.toString()
 
 	fun getOutgoingSignal(): T?
 
