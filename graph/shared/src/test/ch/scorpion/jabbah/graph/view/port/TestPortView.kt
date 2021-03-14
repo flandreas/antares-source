@@ -17,7 +17,7 @@ class TestPortView<T: Any>(
 ) : AbstractPortView<T>(port, position.x.toInt(), position.y.toInt(), direction, portLabelPosition, length ?: LENGTH) {
 
 	companion object {
-		private const val LENGTH = 10
+		const val LENGTH = 10
 	}
 	override var transparency: Int = 0
 

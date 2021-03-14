@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.draw.DrawableListener
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.Polyline
@@ -64,6 +65,9 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	companion object {
 
+		/** The name of the [Int] property in [Properties] containing the minimum length of interactively created [EdgeView]s*/
+		const val PROP_MIN_EDGE_VIEW_LENGTH = "ch.scorpion.jabbah.graph.view.EdgeView.minLength"
+
 		/** The size of the rectangular area defining whether a point is "inside" this [EdgeView]. Used for snapping.*/
 		const val containsSize: Int = 4
 
@@ -95,6 +99,15 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      * at the same location.
      */
     val isDegenerated: Boolean
+
+	/**
+	 * An [EdgeView] is sufficiently defined if its geometry contributes to a [GraphView] such that it
+	 * absence would be recognized by the user. Used while interactive composition of an [EdgeView]
+	 * to determine if the created [EdgeView] can be thrown away because its end points are not
+	 * sufficiently separated, e.g. if the user creates an [EdgeView] with begin and end points
+	 * nearly at the same location.
+	 */
+	val isSufficientlyLarge: Boolean
 
     /** Encapsulates all aspects of an [EdgeView] that is related with its layout.*/
 	val layout: EdgeViewLayout

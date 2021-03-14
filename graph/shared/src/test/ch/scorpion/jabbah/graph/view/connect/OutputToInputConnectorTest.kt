@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -44,6 +46,19 @@ class OutputToInputConnectorTest
 
 		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
 		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
+	}
+
+	/**
+	 * Consider unconnected [TestPortView.LENGTH] that gets completely replaced by [EdgeView].
+	 */
+	@Test
+	fun shouldCancelWhenReleasingNearbyStart() {
+		mouseMoveTo(130, 100)
+		pressMouseAt(130, 100)
+		dragMouseTo(130 - TestPortView.LENGTH, 100)
+		releaseMouseAt(130 - TestPortView.LENGTH, 100)
+
+		assertTrue(builder.graphView.getEdgeViews().isEmpty())
 	}
 
 	@Test
@@ -120,7 +135,7 @@ class OutputToInputConnectorTest
 	}
 
 	@Test
-	fun shouldCancelOutsideTarget() {
+	fun shouldCancelWithEscapeOutsideTarget() {
 		mouseMoveTo(130, 100)
 		pressMouseAt(130, 100)
 		dragMouseTo(150, 100)
@@ -133,7 +148,7 @@ class OutputToInputConnectorTest
 	}
 
 	@Test
-	fun shouldCancelInsideTarget() {
+	fun shouldCancelWithEscapeInsideTarget() {
 		mouseMoveTo(130, 100)
 		pressMouseAt(130, 100)
 		dragMouseTo(190, 100)

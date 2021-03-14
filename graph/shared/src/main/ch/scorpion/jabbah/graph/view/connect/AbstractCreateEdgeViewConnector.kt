@@ -16,7 +16,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	draggedEndpointType: EdgeViewEndpointType
 ) : AbstractConnector(draggedEndpointType) {
 
-	protected val isValidEdgeView: Boolean get() = edgeView != null && edgeView!!.polyline.length > 0.0
+	protected val isValidEdgeView: Boolean get() = edgeView != null && edgeView!!.isSufficientlyLarge
 
 	/**
 	 * Creates the [EdgeView] to be used for connecting and adds it to the [Drawing].

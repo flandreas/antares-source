@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -23,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.EdgeView.Companion.PROP_MIN_EDGE_VIEW_LENGTH
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
@@ -49,8 +51,11 @@ open class EdgeViewImpl<T : Any>(
 
 	private companion object {
 		private val LOG by logger(EdgeViewImpl::class)
+
 		private val TYPE = Translations.getString("graph.component.edge")
 		private val NO_OP_ACTOR_HANDLER = InputEventHandlerAdapter<ActorInteractionContext>()
+
+		private val MIN_LENGTH = BaseModule.properties.getInt(PROP_MIN_EDGE_VIEW_LENGTH)
 	}
 
 	constructor(
@@ -480,6 +485,8 @@ open class EdgeViewImpl<T : Any>(
 
 	override val isDegenerated: Boolean
 		get() = segmentPointCount < 2 || isOriginDegenerated() || isDestinationDegenerated()
+
+	override val isSufficientlyLarge: Boolean get() = polyline.length > MIN_LENGTH
 
 	private fun isOriginDegenerated(): Boolean {
 		return polyline.getPointAt(0) == polyline.getPointAt(1)

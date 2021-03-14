@@ -186,6 +186,7 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, 5)
 		properties.set(PortView.PROP_SENSITIVE_AREA, 10)
 		properties.set(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)

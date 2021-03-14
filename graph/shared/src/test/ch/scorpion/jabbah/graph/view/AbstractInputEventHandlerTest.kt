@@ -37,7 +37,7 @@ abstract class AbstractInputEventHandlerTest(
 		// The GraphView in the GraphViewBuilder might have changed by CommandManager
 		viewMock.withDrawing(builder.graphView)
 		return super.editor
-		}
+	}
 
 	protected val view get() = viewMock.build<Component>()
 
