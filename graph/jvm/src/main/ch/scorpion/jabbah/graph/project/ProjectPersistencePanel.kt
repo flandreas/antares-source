@@ -82,6 +82,21 @@ class ProjectPersistencePanel(
 		})
 		buildUI()
 		updateActions()
+
+		projectsList.requestFocusInWindow()
+		currentProjectIndex()?.let { projectsList.selectedIndex = it }
+	}
+
+	private fun currentProjectIndex(): Int? {
+		if (projectsList.model.size == 0) {
+			return null
+		}
+		for (index in 0 until projectsList.model.size) {
+			if (projectsList.model.getElementAt(index).uuid == projectHolder.project?.uuid) {
+				return index
+			}
+		}
+		return null
 	}
 
 	private fun updateActions() {

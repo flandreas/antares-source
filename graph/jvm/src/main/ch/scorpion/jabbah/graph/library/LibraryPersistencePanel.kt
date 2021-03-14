@@ -76,6 +76,21 @@ class LibraryPersistencePanel(
 		})
 		buildUI()
 		updateActions()
+
+		libraryDictionaryEntries.requestFocusInWindow()
+		currentLibraryIndex()?.let { libraryDictionaryEntries.selectedIndex = it }
+	}
+
+	private fun currentLibraryIndex(): Int? {
+		if (libraryDictionaryEntries.model.size == 0) {
+			return null
+		}
+		for (index in 0 until libraryDictionaryEntries.model.size) {
+			if (libraryDictionaryEntries.model.getElementAt(index).uuid == libraryHolder.library.uuid) {
+				return index
+			}
+		}
+		return null
 	}
 
 	private fun buildUI() {
