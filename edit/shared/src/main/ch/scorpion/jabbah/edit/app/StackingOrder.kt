@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.app
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
@@ -76,20 +75,21 @@ class ToFrontCommand(
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toFront.name", drawingView, componentIds), Undoable {
 
-	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
-	private val oldPositions = mutableMapOf<Drawable, Int>()
+	private val origStackingOrderPositions = drawing.getStackingOrderPositions(componentIds)
+	// Maps Component ID to the position index
+	private val oldPositions = mutableMapOf<Int, Int>()
 
 	override fun execute() {
 		oldPositions.clear()
 		for ((i, pos) in origStackingOrderPositions.withIndex()) {
-			oldPositions[pos.drawable] = drawing.getStackingOrderPosition(pos.drawable)
-			drawing.setStackingOrderPosition(i, pos.drawable)
+			oldPositions[pos.componentId] = drawing.getStackingOrderPosition(pos.componentId)
+			drawing.setStackingOrderPosition(i, pos.componentId)
 		}
 	}
 
 	override fun undo() {
 		for (pos in origStackingOrderPositions.asReversed()) {
-			drawing.setStackingOrderPosition(oldPositions[pos.drawable]!!, pos.drawable)
+			drawing.setStackingOrderPosition(oldPositions[pos.componentId]!!, pos.componentId)
 		}
 	}
 }
@@ -103,14 +103,14 @@ class OneUpCommand(
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneUp.name", drawingView, componentIds), Undoable {
 
-	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
+	private val origStackingOrderPositions = drawing.getStackingOrderPositions(componentIds)
 
 	override fun execute() {
 		for ((i, pos) in origStackingOrderPositions.withIndex()) {
 			if (pos.position > 0) {
 				val newPos = pos.position - 1
-				if (i == 0 || newPos > drawing.getStackingOrderPosition(origStackingOrderPositions[i - 1].drawable)) {
-					drawing.setStackingOrderPosition(newPos, pos.drawable)
+				if (i == 0 || newPos > drawing.getStackingOrderPosition(origStackingOrderPositions[i - 1].componentId)) {
+					drawing.setStackingOrderPosition(newPos, pos.componentId)
 				}
 			}
 		}
@@ -118,7 +118,7 @@ class OneUpCommand(
 
 	override fun undo() {
 		for (pos in origStackingOrderPositions.asReversed()) {
-			drawing.setStackingOrderPosition(pos.position, pos.drawable)
+			drawing.setStackingOrderPosition(pos.position, pos.componentId)
 		}
 	}
 }
@@ -132,15 +132,15 @@ class OneDownCommand(
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneDown.name", drawingView, componentIds), Undoable {
 
-	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
+	private val origStackingOrderPositions = drawing.getStackingOrderPositions(componentIds)
 
 	override fun execute() {
 		var i = origStackingOrderPositions.size - 1
 		for (pos in origStackingOrderPositions.asReversed()) {
 			if (pos.position < drawing.drawablesCount - 1) {
 				val newPos = pos.position + 1
-				if (i == origStackingOrderPositions.size - 1 || newPos < drawing.getStackingOrderPosition(origStackingOrderPositions[i + 1].drawable)) {
-					drawing.setStackingOrderPosition(newPos, pos.drawable)
+				if (i == origStackingOrderPositions.size - 1 || newPos < drawing.getStackingOrderPosition(origStackingOrderPositions[i + 1].componentId)) {
+					drawing.setStackingOrderPosition(newPos, pos.componentId)
 				}
 			}
 			i--
@@ -149,7 +149,7 @@ class OneDownCommand(
 
 	override fun undo() {
 		for (pos in origStackingOrderPositions.asReversed()) {
-			drawing.setStackingOrderPosition(pos.position, pos.drawable)
+			drawing.setStackingOrderPosition(pos.position, pos.componentId)
 		}
 	}
 }
@@ -162,20 +162,21 @@ class ToBackCommand(
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toBack.name", drawingView, componentIds), Undoable {
 
-	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
-	private val oldPositions = mutableMapOf<Drawable, Int>()
+	private val origStackingOrderPositions = drawing.getStackingOrderPositions(componentIds)
+	// Maps Component ID to the position index
+	private val oldPositions = mutableMapOf<Int, Int>()
 
 	override fun execute() {
 		oldPositions.clear()
 		for (pos in origStackingOrderPositions) {
-			oldPositions[pos.drawable] = drawing.getStackingOrderPosition(pos.drawable)
-			drawing.setStackingOrderPosition(drawing.drawablesCount - 1, pos.drawable)
+			oldPositions[pos.componentId] = drawing.getStackingOrderPosition(pos.componentId)
+			drawing.setStackingOrderPosition(drawing.drawablesCount - 1, pos.componentId)
 		}
 	}
 
 	override fun undo() {
 		for (pos in origStackingOrderPositions.asReversed()) {
-			drawing.setStackingOrderPosition(oldPositions[pos.drawable]!!, pos.drawable)
+			drawing.setStackingOrderPosition(oldPositions[pos.componentId]!!, pos.componentId)
 		}
 	}
 }

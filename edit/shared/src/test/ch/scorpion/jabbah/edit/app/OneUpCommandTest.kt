@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test
@@ -37,42 +38,65 @@ class OneUpCommandTest {
     @Test
     fun shouldExecuteOneUp() {
         val command = OneUpCommand(drawingView, setOf(c2.id, c4.id))
+
         command.execute()
-        assertEquals(0, drawing.getStackingOrderPosition(c2))
-        assertEquals(1, drawing.getStackingOrderPosition(c1))
-        assertEquals(2, drawing.getStackingOrderPosition(c4))
-        assertEquals(3, drawing.getStackingOrderPosition(c3))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c4.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c3.id))
     }
 
     @Test
     fun shouldMaintainRelativeOrderWhenExecuting() {
         val command = OneUpCommand(drawingView, setOf(c1.id, c2.id, c4.id))
+
         command.execute()
-        assertEquals(0, drawing.getStackingOrderPosition(c1))
-        assertEquals(1, drawing.getStackingOrderPosition(c2))
-        assertEquals(2, drawing.getStackingOrderPosition(c4))
-        assertEquals(3, drawing.getStackingOrderPosition(c3))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c4.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c3.id))
     }
 
     @Test
     fun shouldUndoOneUp() {
         val command = OneUpCommand(drawingView, setOf(c2.id, c4.id))
         command.execute()
+
         command.undo()
-        assertEquals(0, drawing.getStackingOrderPosition(c1))
-        assertEquals(1, drawing.getStackingOrderPosition(c2))
-        assertEquals(2, drawing.getStackingOrderPosition(c3))
-        assertEquals(3, drawing.getStackingOrderPosition(c4))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c3.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c4.id))
     }
+
+	@Test
+	fun shouldUndoOneUpWithDrawingSnapshot() {
+		val command = OneUpCommand(drawingView, setOf(c2.id, c4.id))
+		command.execute()
+		val clone = StorableCloner.clone(drawing)
+		every { drawingView.drawing } returns clone
+
+		command.undo()
+
+		assertEquals(0, drawingView.drawing.getStackingOrderPosition(c1.id))
+		assertEquals(1, drawingView.drawing.getStackingOrderPosition(c2.id))
+		assertEquals(2, drawingView.drawing.getStackingOrderPosition(c3.id))
+		assertEquals(3, drawingView.drawing.getStackingOrderPosition(c4.id))
+	}
 
     @Test
     fun shouldUndoMaintainRelativeOrderWhenExecuting() {
         val command = OneUpCommand(drawingView, setOf(c1.id, c2.id, c4.id))
         command.execute()
+
         command.undo()
-        assertEquals(0, drawing.getStackingOrderPosition(c1))
-        assertEquals(1, drawing.getStackingOrderPosition(c2))
-        assertEquals(2, drawing.getStackingOrderPosition(c3))
-        assertEquals(3, drawing.getStackingOrderPosition(c4))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c3.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c4.id))
     }
 }

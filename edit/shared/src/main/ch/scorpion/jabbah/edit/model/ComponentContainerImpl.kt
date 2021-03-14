@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.edit.model
 
+import ch.scorpion.jabbah.base.exception.IndexOutOfBoundsException
+import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentContainer
+import ch.scorpion.jabbah.edit.StackingOrderPosition
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -29,8 +32,43 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
     /** ---- [ComponentContainer] interface */
 
     override fun getWithId(id: Int): T? {
-        return getDrawables().filter { it.id == id }.firstOrNull()
+        return getDrawables().firstOrNull { it.id == id }
     }
+
+	override fun getStackingOrderPosition(componentId: Int): Int {
+		val component = getWithId(componentId)
+		val position = children.indexOf(component)
+		if (position < 0) {
+			throw NoSuchElementException("component not contained")
+		}
+		return position
+	}
+
+	override fun setStackingOrderPosition(position: Int, componentId: Int) {
+		val component = getWithId(componentId)!!
+		val currentPosition = children.indexOf(component)
+		if (currentPosition < 0) {
+			throw NoSuchElementException("component not contained")
+		}
+		if (position < 0 || position >= drawablesCount) {
+			throw IndexOutOfBoundsException("position $position out of bounds")
+		}
+		if (position == currentPosition) {
+			return
+		}
+
+		children.remove(component)
+		children.add(position, component)
+
+		component.invalidate()
+	}
+
+	override fun getStackingOrderPositions(componentIds: Collection<Int>): List<StackingOrderPosition> {
+		val positions = mutableListOf<StackingOrderPosition>()
+		componentIds.forEach { componentId -> positions.add(StackingOrderPosition(getStackingOrderPosition(componentId), componentId)) }
+		positions.sort()
+		return positions
+	}
 
     /** ---- [Storable] interface */
 
@@ -63,9 +101,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 		updateBoundingBox()
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-        return frontToBackIterator()
-    }
+	override fun getStorableChildren(): Iterator<Storable> = frontToBackIterator()
 
     /** ---- [ComponentContainerImpl] */
 

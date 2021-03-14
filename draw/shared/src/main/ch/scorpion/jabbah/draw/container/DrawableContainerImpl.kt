@@ -4,15 +4,13 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.exception.IndexOutOfBoundsException
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.module.DrawModule
 
@@ -32,7 +30,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * Holds the child [Drawable]s that this [DrawableContainer] contains. The topmost [Drawable] is stored
 	 * at the first position of the list.
 	 */
-	private val children: MutableList<T> by lazy { mutableListOf() }
+	protected val children: MutableList<T> by lazy { mutableListOf() }
 
 	private val containerListeners: MutableList<DrawableContainerListener<T>>
 		by lazy { mutableListOf() }
@@ -201,52 +199,6 @@ open class DrawableContainerImpl<T : Drawable>(
 		updateBoundingBox()
 		if (!boundingBox.contains(drawable.boundingBox)) {
 			update()
-		}
-	}
-
-	override fun getStackingOrderPosition(drawable: Drawable): Int {
-		val position = children.indexOf(drawable)
-		if (position < 0) {
-			throw NoSuchElementException("drawable not contained")
-		}
-		return position
-	}
-
-	override fun setStackingOrderPosition(position: Int, drawable: Drawable) {
-		val currentPosition = children.indexOf(drawable)
-		if (currentPosition < 0) {
-			throw NoSuchElementException("drawable not contained")
-		}
-		if (position < 0 || position >= drawablesCount) {
-			throw IndexOutOfBoundsException("position $position out of bounds")
-		}
-		if (position == currentPosition) {
-			return
-		}
-
-		val typedDrawable = children[children.indexOf(drawable)]
-		children.remove(typedDrawable)
-		children.add(position, typedDrawable)
-
-		drawable.invalidate()
-	}
-
-	override fun getStackingOrderPositions(drawables: Collection<Drawable>): List<StackingOrderPosition> {
-		val positions = mutableListOf<StackingOrderPosition>()
-		drawables.forEach { drawable -> positions.add(StackingOrderPosition(getStackingOrderPosition(drawable), drawable)) }
-		positions.sort()
-		return positions
-	}
-
-	override fun toFront(drawables: Collection<T>) {
-		for ((i, pos) in getStackingOrderPositions(drawables).withIndex()) {
-			setStackingOrderPosition(i, pos.drawable)
-		}
-	}
-
-	override fun toBack(drawables: Collection<T>) {
-		for (pos in getStackingOrderPositions(drawables)) {
-			setStackingOrderPosition(drawablesCount - 1, pos.drawable)
 		}
 	}
 

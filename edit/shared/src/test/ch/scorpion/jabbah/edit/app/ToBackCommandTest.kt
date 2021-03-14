@@ -1,11 +1,14 @@
 package ch.scorpion.jabbah.edit.app
 
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -35,21 +38,40 @@ class ToBackCommandTest {
     @Test
     fun shouldExecute() {
         val command = ToBackCommand(drawingView, setOf(c1.id, c3.id))
+
         command.execute()
-        assertEquals(0, drawing.getStackingOrderPosition(c2))
-        assertEquals(1, drawing.getStackingOrderPosition(c4))
-        assertEquals(2, drawing.getStackingOrderPosition(c1))
-        assertEquals(3, drawing.getStackingOrderPosition(c3))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c4.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c3.id))
     }
 
     @Test
     fun shouldUndo() {
         val command = ToBackCommand(drawingView, setOf(c1.id, c3.id))
         command.execute()
+
         command.undo()
-        assertEquals(0, drawing.getStackingOrderPosition(c1))
-        assertEquals(1, drawing.getStackingOrderPosition(c2))
-        assertEquals(2, drawing.getStackingOrderPosition(c3))
-        assertEquals(3, drawing.getStackingOrderPosition(c4))
+
+        assertEquals(0, drawing.getStackingOrderPosition(c1.id))
+        assertEquals(1, drawing.getStackingOrderPosition(c2.id))
+        assertEquals(2, drawing.getStackingOrderPosition(c3.id))
+        assertEquals(3, drawing.getStackingOrderPosition(c4.id))
     }
+
+	@Test
+	fun shouldUndoWithDrawingSnapshot() {
+		val command = ToBackCommand(drawingView, setOf(c1.id, c3.id))
+		command.execute()
+		val clone = StorableCloner.clone(drawing)
+		every { drawingView.drawing } returns clone
+
+		command.undo()
+
+		assertEquals(0, drawingView.drawing.getStackingOrderPosition(c1.id))
+		assertEquals(1, drawingView.drawing.getStackingOrderPosition(c2.id))
+		assertEquals(2, drawingView.drawing.getStackingOrderPosition(c3.id))
+		assertEquals(3, drawingView.drawing.getStackingOrderPosition(c4.id))
+	}
 }

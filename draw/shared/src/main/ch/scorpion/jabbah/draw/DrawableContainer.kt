@@ -123,43 +123,4 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
 
     /** Notifies this [DrawableContainer] that one of its child [Drawable]s has updated its geometry.*/
     fun handleDrawableUpdated(drawable: Drawable)
-
-    /**
-     * Returns the position of a [Drawable] in the stacking order of this [DrawableContainer],
-     * where 0 represents the topmost position.
-     * @throws NoSuchElementException if this [DrawableContainer] doesn't contain `drawable`
-     */
-    fun getStackingOrderPosition(drawable: Drawable): Int
-
-    /**
-     * Sets the stacking order position of the specified [Drawable], where 0 represents the topmost position.
-     * @throws NoSuchElementException if `drawable`
-     * @throws IndexOutOfBoundsException if `position` is not a valid stacking order position
-     */
-    fun setStackingOrderPosition(position: Int, drawable: Drawable)
-
-    /**
-     * Converts a [Collection] of [Drawable]s into a [List] of [StackingOrderPosition]
-     * that is ascending sorted by stacking order positions, i.e. starting with the topmost [Drawable] at
-     * stacking order position 0.
-     */
-    fun getStackingOrderPositions(drawables: Collection<Drawable>): List<StackingOrderPosition>
-
-    /**
-     * Brings the specified [Drawable]s to the front of the stacking order while maintaining their relative
-     * stacking order positions.
-     */
-    fun toFront(drawables: Collection<T>)
-
-    /**
-     * Brings the specified [Drawable]s to the back of the stacking order while maintaining their relative
-     * stacking order positions.
-     */
-    fun toBack(drawables: Collection<T>)
-}
-
-data class StackingOrderPosition(val position: Int, val drawable: Drawable) : Comparable<StackingOrderPosition> {
-    override fun compareTo(other: StackingOrderPosition): Int {
-        return this.position.compareTo(other.position)
-    }
 }

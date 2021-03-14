@@ -117,7 +117,7 @@ class SelectionManagerImpl(
 			return null
 		}
 
-		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it) }
+		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it.id) }
 		var nextIndex = currentIndex
 		while (true) {
 			nextIndex = nextIndex?.let { (it + 1).rem(content.drawing.drawablesCount) } ?: 0
@@ -144,7 +144,7 @@ class SelectionManagerImpl(
 			return null
 		}
 
-		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it) }
+		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it.id) }
 		var prevIndex = currentIndex ?: content.drawing.drawablesCount - 1
 		while (true) {
 			prevIndex = if (prevIndex > 0) {
