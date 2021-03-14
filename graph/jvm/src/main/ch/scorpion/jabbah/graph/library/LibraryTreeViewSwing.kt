@@ -63,9 +63,11 @@ class LibraryTreeViewSwing(
 
 	override fun handle(event: LibraryItemAddedEvent) {
 		findOptionalTreeNode(event.parent)?.let {
-			it.add(DefaultMutableTreeNode(event.item))
+			val newNode = DefaultMutableTreeNode(event.item)
+			it.add(newNode)
 			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
 			expandPath(getPath(it))
+			scrollPathToVisible(getPath(newNode))
 		}
 	}
 
