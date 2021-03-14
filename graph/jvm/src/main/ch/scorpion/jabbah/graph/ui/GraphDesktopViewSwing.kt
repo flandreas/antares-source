@@ -118,8 +118,6 @@ class GraphDesktopViewSwing(
 		sidePanel.layout = GridLayout(0, 1)
 		layout = BorderLayout()
 		background = UIManager.getColor("Panel.background").darker()
-
-		add(graphEditView)
 	}
 
 	override fun dispose() {
