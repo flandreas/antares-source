@@ -37,6 +37,6 @@ data class AboutInfo(
 	val iconPath: String?,
 	val name: String,
 	val claim: String,
-	val version: String,
+	val version: ApplicationVersion,
 	val disclaimer: String = Translations.getString("application.disclaimer.allRightsReserved")
 )

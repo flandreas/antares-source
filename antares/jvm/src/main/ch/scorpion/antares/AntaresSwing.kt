@@ -163,14 +163,14 @@ class AntaresSwing(
 
 	/** ---- [AbstractApplication] */
 
-	override val aboutInfo: AboutInfo
-		get() = AboutInfo(
-			iconPath = "/$iconPath",
-			name = displayName,
-			claim = Translations.getString("antares.claim"),
-			version = readVersion())
+	override val aboutInfo: AboutInfo get() = AboutInfo(
+		iconPath = "/$iconPath",
+		name = displayName,
+		claim = Translations.getString("antares.claim"),
+		version = readVersion())
 
-	private fun readVersion(): String = IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8")
+	override fun readVersion(): ApplicationVersion = ApplicationVersion.parse(
+		IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8"))
 
 	/** ---- [AbstractDesktopApplication] */
 

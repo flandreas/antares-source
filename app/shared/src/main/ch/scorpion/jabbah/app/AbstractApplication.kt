@@ -23,7 +23,7 @@ abstract class AbstractApplication(
 		iconPath = null,
 		name = displayName,
 		claim = "A cool application",
-		version = "1.0",
+		version = ApplicationVersion("0.1.0"),
 		disclaimer = "All rights reserved."
 	)
 

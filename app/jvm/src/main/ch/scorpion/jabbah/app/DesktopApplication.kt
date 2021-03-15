@@ -18,6 +18,8 @@ interface DesktopApplication : Application {
 	/** The [Path] to the user's data directory, i.e. the directory where the user's data is stored.*/
 	val userDataDirectoryPath: Path
 
+	fun readVersion(): ApplicationVersion
+
 	fun exportLogfile(destinationPath: String)
 
 	fun quit()

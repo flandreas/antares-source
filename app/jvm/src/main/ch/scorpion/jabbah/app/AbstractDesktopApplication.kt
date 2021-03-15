@@ -99,6 +99,7 @@ abstract class AbstractDesktopApplication(
 	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
+	@Suppress("PrivatePropertyName")
 	private val LOG by logger(AbstractDesktopApplication::class)
 
 	private val logfileName: String get() = calculateLogfileName(systemName)
@@ -106,6 +107,7 @@ abstract class AbstractDesktopApplication(
 	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
 	init {
+		LOG.info("Starting $displayName version ${readVersion()}")
 		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
 		consumeCommandLine(commandLine)
 		loadSettings()
@@ -258,7 +260,7 @@ abstract class AbstractDesktopApplication(
 			try {
 				val preferences = java.util.Properties()
 				for (key in BaseModule.properties.getCustomizedKeys()) {
-					preferences.set(key, BaseModule.properties.getEntry(key).stringValue)
+					preferences[key] = BaseModule.properties.getEntry(key).stringValue
 				}
 				preferences.store(it, null)
 			} catch (x: Throwable) {
