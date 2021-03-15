@@ -125,6 +125,7 @@ class DipSwitchView(
 				clear()
 				model.bitWidth = value
 				updateView()
+				postControlViewSourceChangeEvent(BaseModule.eventBus)
 				invalidate()
 				validate()
 			}
