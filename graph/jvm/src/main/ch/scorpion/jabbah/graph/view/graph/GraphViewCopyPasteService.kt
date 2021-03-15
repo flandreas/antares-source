@@ -106,7 +106,7 @@ class GraphViewCopyPasteService(
 						strip(cv, (copy as GraphStorable).graphView)
 					}
 					components.add(cv)
-					if (pastedAnchorComponentId == null && origAnchorComponentId != null && view.drawing.getWithId(origAnchorComponentId!!)!!.location == cv.location) {
+					if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == cv.location) {
 						pastedAnchorComponent = cv
 					}
 				}
@@ -124,6 +124,9 @@ class GraphViewCopyPasteService(
 			}
 		}
 	}
+
+	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
+		origAnchorComponentId?.let { view.drawing.getWithId(it) }
 
 	override fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
 		val origAnchorComponent = origAnchorComponentId?.let { view.drawing.getWithId(it) }
