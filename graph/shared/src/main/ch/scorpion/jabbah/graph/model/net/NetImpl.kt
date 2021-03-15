@@ -128,6 +128,12 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		signalBuffer = null
 	}
 
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		_signal = null
+		signalBuffer = null
+	}
+
 	override var executionError: ExecutionError?
 		get() = super.executionError
 		set(value) {
