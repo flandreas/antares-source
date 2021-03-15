@@ -18,9 +18,12 @@ data class ApplicationVersion(
 		private const val NORMAL_DELIMITER = '.'
 		private const val ADDITIONAL_DELIMITER = '-'
 
+		val DUMMY_VERSION = ApplicationVersion(0, 0, 0)
+
 		fun parse(version: String): ApplicationVersion {
-			val normalVersion = version.substringBefore(ADDITIONAL_DELIMITER)
-			val additionalLabel = version.substringAfter(ADDITIONAL_DELIMITER, "")
+			val trimmedVersion = version.trim()
+			val normalVersion = trimmedVersion.substringBefore(ADDITIONAL_DELIMITER)
+			val additionalLabel = trimmedVersion.substringAfter(ADDITIONAL_DELIMITER, "")
 
 			val normalParts = normalVersion.split(NORMAL_DELIMITER)
 

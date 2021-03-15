@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
@@ -60,6 +61,7 @@ abstract class AbstractDesktopApplicationSwing(
 
 		SwingUtilities.invokeLater {
 			openInitialSavable()
+			checkForNewestVersion()
 		}
 	}
 
@@ -87,6 +89,13 @@ abstract class AbstractDesktopApplicationSwing(
 					JOptionPane.ERROR_MESSAGE)
 				controller.newData()
 			}
+		}
+	}
+
+	private fun checkForNewestVersion() {
+		val offeredVersion = AppModuleJvm.applicationVersionService.checkForNewerVersion(aboutInfo.version)
+		if (offeredVersion != null) {
+			NewVersionPanel.showAsDialog(mainFrame, offeredVersion)
 		}
 	}
 

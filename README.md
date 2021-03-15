@@ -70,6 +70,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 
 #### Releases page
 
+* Update file "version.txt" used by check for newest version
 * Add new release page and list all closed issues
 * Add the new release page in `_data/navigation.yml`
 * Reference the new release packages in `quick-start.md`

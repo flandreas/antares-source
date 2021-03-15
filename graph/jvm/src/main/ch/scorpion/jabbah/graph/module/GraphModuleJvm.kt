@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.module
 
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
@@ -30,7 +30,7 @@ object GraphModuleJvm : AbstractModule() {
 		ScriptModule.require()
 		ExecutionModule.require()
 
-		EditModuleJvm.require()
+		AppModuleJvm.require()
 
 		GraphViewModuleJvm.require()
 		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider()

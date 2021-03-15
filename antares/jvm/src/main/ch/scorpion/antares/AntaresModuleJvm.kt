@@ -19,8 +19,11 @@ import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
+import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
@@ -113,6 +116,9 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		ProjectModule.projectManagementService = ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown")
 
+
+		customizeProperties(BaseModule.properties)
+
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
@@ -123,6 +129,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
 		val containerCanvas = CanvasJvm(EditModule.drawingViewFactory.invoke(ContainerDrawing()))
 		return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
+	}
+
+	private fun customizeProperties(properties: Properties) {
+		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
