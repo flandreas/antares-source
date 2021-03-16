@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -123,6 +124,17 @@ class RAMCalculatorTest {
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
 
 		assertEquals(Word.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal() as Word)
+	}
+
+	@Test
+	fun shouldUndefineDataWithUndefinedAddress() {
+		val ram = createRam(false)
+		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+
+		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
 
 	/** ---- [RAMCalculatorTest] */

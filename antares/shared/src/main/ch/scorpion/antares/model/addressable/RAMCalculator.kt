@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -35,7 +36,12 @@ class RAMCalculator : VerticeCalculator<RAM> {
                 undefinedOutput(ram, signalHandler)
                 return
             }
-	        ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
+	        val addressInt: Int? = ram.getAddressInput().getIncomingSignal()!!.toInt()
+	        if (addressInt == null) {
+		        undefinedOutput(ram, signalHandler)
+		        return
+	        }
+	        ram.currentSelectedAddress = addressInt
             if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
                 read(ram, signalHandler)
             }
@@ -80,7 +86,12 @@ class RAMCalculator : VerticeCalculator<RAM> {
             return
         }
 
-	    ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
+	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()!!.toInt()
+	    if (addressInt == null) {
+		    undefinedOutput(ram, signalHandler)
+		    return
+	    }
+	    ram.currentSelectedAddress = addressInt
 
         if (data.changedPort === ram.getAddressInput()) {
             readOrWrite(ram, signalHandler)
