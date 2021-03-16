@@ -37,6 +37,7 @@
             <baseLibraryElement _id='18' id='Transistor'/>
             <baseLibraryElement _id='19' id='Ground'/>
             <baseLibraryElement _id='20' id='Power'/>
+            <baseLibraryElement _id='101' id='BidirectionalSplitter'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='21'>
