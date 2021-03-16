@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -132,13 +131,16 @@ class RAMCalculator : VerticeCalculator<RAM> {
         ram.getDataPort().setOutgoingSignalBuffered(Word.of(ram.dataWidth, value), signalHandler)
     }
 
-
     private fun write(ram: RAM, signalHandler: SignalHandler) {
         val address = ram.getAddressInput().getIncomingSignal()
-        val signal = ram.getDataPort().getIncomingSignal()!!.toInt()
+        val data = ram.getDataPort().getIncomingSignal()
 
-        LOG.debug("Writing into RAM: address=$address, value=$signal")
+	    val addressInt = address!!.toInt()
+	    val dataInt = data!!.toInt()
 
-        ram.write(address!!.toInt()!!, signal!!.toLong(), signalHandler)
+	    if (addressInt != null && dataInt != null) {
+		    LOG.debug("Writing into RAM: address=$addressInt, value=$dataInt")
+		    ram.write(addressInt, dataInt.toLong(), signalHandler)
+	    }
     }
 }

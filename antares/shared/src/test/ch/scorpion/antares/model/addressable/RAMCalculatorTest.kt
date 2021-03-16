@@ -137,6 +137,19 @@ class RAMCalculatorTest {
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
 
+	@Test
+	fun shouldNotWriteWithUndefinedData() {
+		val ram = createRam(false)
+		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.False), signalHandler)
+		ram.getDataPort().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
+
+		calculator.calculate(ram, ram.createActorData(ram.getDataPort()) as GraphActorData, signalHandler)
+
+		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+	}
+
 	/** ---- [RAMCalculatorTest] */
 
 	private fun createRam(clocked: Boolean): RAM {
