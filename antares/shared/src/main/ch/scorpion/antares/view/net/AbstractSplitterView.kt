@@ -35,8 +35,8 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 		const val WIDTH = 2 * Look.GRID
 		const val PORT_INSET = Look.SCALE
 		const val PORT_DISTANCE = 2 * Look.SCALE
-		private const val DIR_PATH_WIDTH = Look.SCALE
-		private const val DIR_PATH_HEIGHT_HALF = Look.SCALE / 2
+		const val DIR_PATH_WIDTH = Look.SCALE
+		const val DIR_PATH_HEIGHT_HALF = Look.SCALE / 2
 
 		private val DIR_PATH = System.createPath()
 			.moveTo(0,0)
@@ -166,7 +166,7 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 		context.g.color = oldColor
 	}
 
-	private fun drawDirectionAnnotation(context: DrawContext) {
+	protected open fun drawDirectionAnnotation(context: DrawContext) {
 		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 		context.g.translate(bounds.minX + 0.75 * bounds.width, 0.0)
 		context.g.draw(DIR_PATH)

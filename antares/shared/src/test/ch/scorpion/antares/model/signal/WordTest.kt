@@ -98,6 +98,7 @@ class WordTest {
 
 	@Test
 	fun shouldRepresentAsBinary() {
+		assertEquals("0001", Word.of(BW_4, 1L).toBinaryString())
 		assertEquals("0110", Word.of(BW_4, 6L).toBinaryString())
 		assertEquals("00000000", Word.of(BW_8, 0L).toBinaryString())
 	}

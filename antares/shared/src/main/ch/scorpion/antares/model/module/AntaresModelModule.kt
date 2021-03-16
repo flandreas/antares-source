@@ -60,6 +60,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("led", LED::class)
 		typeMap.register("rgbLed", RgbLED::class)
 		typeMap.register("sevenSegmentDisplay", SevenSegmentDisplay::class)
+		typeMap.register("bidirectionalSplitter", BidirectionalSplitter::class)
 		typeMap.register("splitter", Splitter::class)
 		typeMap.register("concentrator", Concentrator::class)
 		typeMap.register("constant", Constant::class)

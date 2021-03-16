@@ -65,6 +65,7 @@ import ch.scorpion.jabbah.io.TypeMap
 object AntaresViewModule : AbstractModule() {
 
 	private const val CONSTANT = "Constant"
+	private const val BIDIRECTIONAL_SPLITTER = "BidirectionalSplitter"
 	private const val SPLITTER = "Splitter"
 	private const val CONCENTRATOR = "Concentrator"
 	private const val PROBE = "Probe"
@@ -234,6 +235,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("ledView", LEDView::class)
 		typeMap.register("RgbLedView", RgbLEDView::class)
 		typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
+		typeMap.register("bidirectionalSplitterView", BidirectionalSplitterView::class)
 		typeMap.register("splitterView", SplitterView::class)
 		typeMap.register("concentratorView", ConcentratorView::class)
 		typeMap.register("constantView", ConstantView::class)
@@ -263,6 +265,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 
+		factory.register(SelectionDrawingStrategy.REPLACE, BidirectionalSplitterView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class) { SelectedColorSelectionModel(it) }
@@ -332,6 +335,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TRANSISTOR, "library.element.Transistor", "/img/transistor.png", TransistorView::class)
 		repository.register(GROUND, "library.element.Ground", "/img/ground.png", GroundView::class)
 		repository.register(POWER, "library.element.Power", "/img/power.png", PowerView::class)
+		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", "/img/splitter.png", BidirectionalSplitterView::class)
 
 		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
 		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)
