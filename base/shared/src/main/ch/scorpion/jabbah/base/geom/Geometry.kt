@@ -10,7 +10,7 @@ import kotlin.math.*
  */
 object Geometry {
 
-	/** Considers two values as being equal if their differnce is not larger than [SIGMA]. */
+	/** Considers two values as being equal if their difference is not larger than [SIGMA]. */
 	fun equal(a: Double, b: Double): Boolean = abs(a - b) <= SIGMA
 
 	/** Enhances [kotlin.math.sign] by considering a value as zero if its absolute value is not larger thatn [SIGMA].*/

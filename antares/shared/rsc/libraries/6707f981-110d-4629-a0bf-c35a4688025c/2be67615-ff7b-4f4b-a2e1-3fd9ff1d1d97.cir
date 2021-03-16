@@ -73,7 +73,7 @@
           <components>
             <subGraphVerticeViewRef _id='57' id='1' rot='0' modelId='3' x='-252.0' y='-154.0'/>
             <subGraphVerticeViewRef _id='56' id='2' rot='0' modelId='4' x='-56.0' y='-154.0'/>
-            <subGraphVerticeViewRef _id='55' id='3' rot='0' modelId='5' x='154.00000000000006' y='-154.0'/>
+            <subGraphVerticeViewRef _id='55' id='3' rot='0' modelId='5' x='154.0' y='-154.0'/>
             <circuitInOutView _id='54' id='4' modelId='6' representation='binary' orientation='east'>
               <location>
                 <point x='-364.0' y='-42.0'/>
@@ -143,7 +143,7 @@
             </digitalEdgeView>
             <circuitInOutView _id='39' id='19' modelId='12' representation='binary' orientation='north'>
               <location>
-                <point x='42.00000000000003' y='-294.0'/>
+                <point x='42.0' y='-294.0'/>
               </location>
             </circuitInOutView>
             <digitalEdgeView _id='38' id='20' modelId='13' layout='ortho' orig='56' origPort='4' origPortOutput='true' dest='27' adjusted='false'>
@@ -158,7 +158,7 @@
             </circuitInOutView>
             <digitalEdgeView _id='36' id='22' modelId='15' layout='ortho' orig='55' origPort='4' origPortOutput='true' dest='37' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='224.00000000000006,-154.0 252.0,-154.0 252.0,-308.0'/>
+                <polylineShape points='224.0,-154.0 252.0,-154.0 252.0,-308.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='35' id='23' modelId='16' layout='ortho' orig='48' origPort='3' origPortOutput='true' dest='33' adjusted='true'>
@@ -168,7 +168,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='34' id='24' modelId='16' layout='ortho' orig='33' dest='55' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='140.0,-154.0 140.0,-98.0 168.00000000000006,-98.0'/>
+                <polylineShape points='140.0,-154.0 140.0,-98.0 168.0,-98.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='33' id='25' modelId='16'>
@@ -178,7 +178,7 @@
             </digitalNodeView>
             <digitalEdgeView _id='32' id='26' modelId='16' layout='ortho' orig='33' dest='55' destPort='1' adjusted='true'>
               <shape>
-                <polylineShape points='140.0,-154.0 168.00000000000006,-154.0'/>
+                <polylineShape points='140.0,-154.0 168.0,-154.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='31' id='27' modelId='10' layout='ortho' orig='30' dest='48' destPort='1' adjusted='false'>
@@ -208,7 +208,7 @@
             </digitalNodeView>
             <digitalEdgeView _id='26' id='32' modelId='13' layout='ortho' orig='27' dest='39' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='42.0,-196.0 42.00000000000003,-308.0'/>
+                <polylineShape points='42.0,-196.0 42.0,-308.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='25' id='33' modelId='17' layout='ortho' orig='54' origPort='1' origPortOutput='true' dest='23' adjusted='false'>
@@ -233,7 +233,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='21' id='37' modelId='17' layout='ortho' orig='20' dest='55' destPort='3' adjusted='true'>
               <shape>
-                <polylineShape points='-98.0,-42.0 112.0,-42.0 112.0,-126.0 160.00000000000006,-126.0'/>
+                <polylineShape points='-98.0,-42.0 112.0,-42.0 112.0,-126.0 160.0,-126.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='20' id='38' modelId='17'>

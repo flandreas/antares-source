@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.abs
-import kotlin.test.Test
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Unit tests for [Point2DTest].
@@ -15,6 +12,16 @@ class Point2DTest {
 	@BeforeTest
 	fun init() {
 		BaseModule.require()
+	}
+
+	@Test
+	fun shouldBeEqualOutsideSigma() {
+		assertEquals(Point2D(0.0, 0.0), Point2D(0.000000001, 0.000000001))
+	}
+
+	@Test
+	fun shouldBeDifferentInsideSigma() {
+		assertNotEquals(Point2D(0.0, 0.0), Point2D(0.1, 0.0))
 	}
 
 	@Test
@@ -48,6 +55,7 @@ class Point2DTest {
 		assertEquals(Point2D(-10, 20), Point2D(10, 20).mirrorHorizontally(0.0))
 	}
 
+	@Test
 	fun shouldMirrorVertically() {
 		assertEquals(Point2D(10, -20), Point2D(10, 20).mirrorVertically(0.0))
 	}

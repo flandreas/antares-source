@@ -112,7 +112,7 @@ elem.setOutputBit(a || b);'>
             </circuitInOutView>
             <circuitInOutView _id='65' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
               <location>
-                <point x='-154.0' y='-98.00000000000001'/>
+                <point x='-154.0' y='-98.0'/>
               </location>
             </circuitInOutView>
             <groundView _id='64' id='7' rot='90' filled='true' stroked='true' modelId='7' x='42.0' y='112.0'/>
@@ -150,7 +150,7 @@ elem.setOutputBit(a || b);'>
             </digitalEdgeView>
             <digitalEdgeView _id='55' id='21' filled='true' stroked='true' modelId='13' layout='ortho' orig='65' origPort='1' origPortOutput='true' dest='54' adjusted='false'>
               <shape>
-                <polylineShape points='-168.0,-98.00000000000001 -14.0,-98.0'/>
+                <polylineShape points='-168.0,-98.0 -14.0,-98.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='54' id='22' filled='true' stroked='true' modelId='13'>

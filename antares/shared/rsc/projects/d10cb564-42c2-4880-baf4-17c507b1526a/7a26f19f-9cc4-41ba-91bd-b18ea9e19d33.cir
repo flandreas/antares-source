@@ -288,7 +288,7 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
                 <point x='980.0' y='224.0'/>
               </location>
             </circuitInOutView>
-            <orGateView _id='80' id='16' rot='0' modelId='18' x='972.9999999999999' y='357.0'/>
+            <orGateView _id='80' id='16' rot='0' modelId='18' x='973.0' y='357.0'/>
             <digitalEdgeView _id='79' id='17' modelId='19' layout='ortho' orig='95' origPort='1' origPortOutput='true' dest='76' adjusted='false'>
               <shape>
                 <polylineShape points='266.0,154.0 406.0,154.0'/>
@@ -396,39 +396,39 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
             </digitalEdgeView>
             <digitalEdgeView _id='58' id='41' modelId='29' layout='ortho' orig='88' origPort='3' origPortOutput='true' dest='80' destPort='1' adjusted='true'>
               <shape>
-                <polylineShape points='791.0,168.0 854.0,168.0 854.0,336.0 909.9999999999999,336.0'/>
+                <polylineShape points='791.0,168.0 854.0,168.0 854.0,336.0 910.0,336.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='57' id='42' modelId='30' layout='ortho' orig='87' origPort='3' origPortOutput='true' dest='80' destPort='2' adjusted='true'>
               <shape>
-                <polylineShape points='791.0,294.0 840.0,294.0 840.0,350.0 914.9999999999999,350.0'/>
+                <polylineShape points='791.0,294.0 840.0,294.0 840.0,350.0 915.0,350.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='56' id='43' modelId='31' layout='ortho' orig='86' origPort='3' origPortOutput='true' dest='80' destPort='3' adjusted='true'>
               <shape>
-                <polylineShape points='791.0,420.0 840.0,420.0 840.0,364.0 914.9999999999999,364.0'/>
+                <polylineShape points='791.0,420.0 840.0,420.0 840.0,364.0 915.0,364.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='55' id='44' modelId='32' layout='ortho' orig='85' origPort='3' origPortOutput='true' dest='80' destPort='4' adjusted='true'>
               <shape>
-                <polylineShape points='791.0,546.0 854.0,546.0 854.0,378.0 909.9999999999999,378.0'/>
+                <polylineShape points='791.0,546.0 854.0,546.0 854.0,378.0 910.0,378.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='54' id='45' modelId='33' layout='ortho' orig='80' origPort='5' origPortOutput='true' dest='82' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='958.9999999999999,357.0 994.0,357.0'/>
+                <polylineShape points='959.0,357.0 994.0,357.0'/>
               </shape>
             </digitalEdgeView>
             <constantView _id='53' id='47' modelId='34' x='616.0' y='714.0' representation='binary' orientation='north'/>
-            <andGateView _id='52' id='49' rot='0' modelId='35' x='972.9999999999999' y='224.0'/>
+            <andGateView _id='52' id='49' rot='0' modelId='35' x='973.0' y='224.0'/>
             <digitalEdgeView _id='51' id='50' modelId='36' layout='ortho' orig='52' origPort='3' origPortOutput='true' dest='81' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='958.9999999999999,224.0 994.0,224.0'/>
+                <polylineShape points='959.0,224.0 994.0,224.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='50' id='51' modelId='37' layout='ortho' orig='93' origPort='5' origPortOutput='true' dest='52' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='490.0,210.0 916.9999999999999,210.0'/>
+                <polylineShape points='490.0,210.0 917.0,210.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='49' id='54' modelId='38' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='89' destPort='1' adjusted='false'>
@@ -453,7 +453,7 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
             </digitalEdgeView>
             <digitalEdgeView _id='45' id='60' modelId='25' layout='ortho' orig='44' dest='52' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='679.0,238.0 916.9999999999999,238.0'/>
+                <polylineShape points='679.0,238.0 917.0,238.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='44' id='61' modelId='25'>

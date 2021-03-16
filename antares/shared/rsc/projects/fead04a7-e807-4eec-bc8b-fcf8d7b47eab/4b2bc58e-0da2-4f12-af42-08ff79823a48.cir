@@ -291,16 +291,16 @@ elem.setOutputBit(a &amp;&amp; !b || !a &amp;&amp; b);'>
               </shape>
             </digitalEdgeView>
             <transistorView _id='95' id='30' rot='0' filled='true' stroked='true' modelId='26' x='-21.0' y='-126.0' handedness='left'/>
-            <transistorView _id='94' id='31' rot='0' filled='true' stroked='true' modelId='27' x='-21.000000000000025' y='-231.0' handedness='left'/>
+            <transistorView _id='94' id='31' rot='0' filled='true' stroked='true' modelId='27' x='-21.0' y='-231.0' handedness='left'/>
             <powerView _id='93' id='32' rot='270' filled='true' stroked='true' modelId='28' x='21.0' y='-266.0'/>
             <digitalEdgeView _id='92' id='33' filled='true' stroked='true' modelId='29' layout='ortho' orig='93' origPort='1' origPortOutput='true' dest='94' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='21.0,-280.0 21.0,-273.0 20.999999999999975,-273.0 20.999999999999975,-266.0'/>
+                <polylineShape points='21.0,-280.0 21.0,-273.0 21.0,-273.0 21.0,-266.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='91' id='34' filled='true' stroked='true' modelId='30' layout='ortho' orig='94' origPort='3' origPortOutput='true' dest='95' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='20.999999999999975,-224.0 20.999999999999975,-210.0 21.0,-210.0 21.0,-161.0'/>
+                <polylineShape points='21.0,-224.0 21.0,-210.0 21.0,-210.0 21.0,-161.0'/>
               </shape>
             </digitalEdgeView>
             <transistorView _id='90' id='35' rot='0' filled='true' stroked='true' modelId='31' x='-154.0' y='70.0'/>
@@ -391,7 +391,7 @@ elem.setOutputBit(a &amp;&amp; !b || !a &amp;&amp; b);'>
             </digitalEdgeView>
             <digitalEdgeView _id='68' id='57' filled='true' stroked='true' modelId='11' layout='ortho' orig='70' dest='94' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='-28.0,98.0 -28.0,-259.0 -7.000000000000025,-259.0'/>
+                <polylineShape points='-28.0,98.0 -28.0,-259.0 -7.0,-259.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='67' id='58' filled='true' stroked='true' modelId='8'>

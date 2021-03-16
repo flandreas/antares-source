@@ -85,7 +85,7 @@
             </circuitInOutView>
             <circuitInOutView _id='22' id='8' rot='0' filled='true' stroked='true' modelId='10' representation='binary' orientation='east'>
               <location>
-                <point x='56.0' y='13.999999999999996'/>
+                <point x='56.0' y='14.0'/>
               </location>
             </circuitInOutView>
             <digitalEdgeView _id='21' id='9' filled='true' stroked='true' modelId='11' layout='none' orig='29' origPort='3' origPortOutput='true' dest='19' adjusted='false'>
@@ -110,7 +110,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='17' id='13' filled='true' stroked='true' modelId='11' layout='none' orig='19' dest='22' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='-35.0,-112.0 -7.0,-112.0 42.0,14.0 70.0,13.999999999999996'/>
+                <polylineShape points='-35.0,-112.0 -7.0,-112.0 42.0,14.0 70.0,14.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='16' id='14' filled='true' stroked='true' modelId='12'>

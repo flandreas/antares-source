@@ -274,7 +274,7 @@
               </shape>
             </digitalEdgeView>
             <romView _id='62' id='14' rot='0' filled='true' stroked='true' modelId='16' x='140.0' y='63.0' contentRowsCount='4' contentColumnsCount='1' showDisassembler='false'/>
-            <splitterView _id='61' id='16' rot='0' filled='true' stroked='true' modelId='18' x='384.99999999999994' y='63.0' handedness='left'/>
+            <splitterView _id='61' id='16' rot='0' filled='true' stroked='true' modelId='18' x='385.0' y='63.0' handedness='left'/>
             <subGraphVerticeViewRef _id='60' id='18' rot='0' filled='true' stroked='true' modelId='19' x='525.0' y='-98.0'>
               <label>
                 <translation lang='de' text='BCD-7Seg hex'/>
@@ -282,30 +282,30 @@
             </subGraphVerticeViewRef>
             <digitalEdgeView _id='59' id='19' filled='true' stroked='true' modelId='20' layout='ortho' orig='62' origPort='3' origPortOutput='true' dest='61' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='322.0,63.0 398.99999999999994,63.0'/>
+                <polylineShape points='322.0,63.0 399.0,63.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='58' id='20' filled='true' stroked='true' modelId='21' layout='ortho' orig='61' origPort='2' origPortOutput='true' dest='60' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='412.99999999999994,14.0 482.99999999999994,14.0 482.99999999999994,-14.0'/>
+                <polylineShape points='413.0,14.0 483.0,14.0 483.0,-14.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='57' id='21' filled='true' stroked='true' modelId='22' layout='ortho' orig='61' origPort='3' origPortOutput='true' dest='60' destPort='3' adjusted='false'>
               <shape>
-                <polylineShape points='412.99999999999994,28.0 510.99999999999994,28.0 510.99999999999994,-14.0'/>
+                <polylineShape points='413.0,28.0 511.0,28.0 511.0,-14.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='56' id='22' filled='true' stroked='true' modelId='23' layout='ortho' orig='61' origPort='4' origPortOutput='true' dest='60' destPort='4' adjusted='false'>
               <shape>
-                <polylineShape points='412.99999999999994,42.0 539.0,42.0 539.0,-14.0'/>
+                <polylineShape points='413.0,42.0 539.0,42.0 539.0,-14.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='55' id='23' filled='true' stroked='true' modelId='24' layout='ortho' orig='61' origPort='5' origPortOutput='true' dest='60' destPort='5' adjusted='false'>
               <shape>
-                <polylineShape points='412.99999999999994,56.0 567.0,56.0 567.0,-14.0'/>
+                <polylineShape points='413.0,56.0 567.0,56.0 567.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <sevenSegmentDisplayView _id='54' id='24' rot='0' filled='true' stroked='true' modelId='25' x='510.99999999999994' y='-252.0' lightColor='red' size='large'/>
+            <sevenSegmentDisplayView _id='54' id='24' rot='0' filled='true' stroked='true' modelId='25' x='511.0' y='-252.0' lightColor='red' size='large'/>
             <digitalEdgeView _id='53' id='25' filled='true' stroked='true' modelId='26' layout='ortho' orig='60' origPort='1' origPortOutput='true' dest='54' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='525.0,-84.0 525.0,-140.0'/>

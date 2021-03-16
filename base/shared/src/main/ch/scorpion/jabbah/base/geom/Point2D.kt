@@ -74,4 +74,22 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 	fun toRect(halfSize: Double): Rectangle2D {
 		return Rectangle2D(x - halfSize, y - halfSize, 2 * halfSize, 2 * halfSize)
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || this::class != other::class) return false
+
+		other as Point2D
+
+		if (!Geometry.equal(x, other.x)) return false
+		if (!Geometry.equal(y, other.y)) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = x.hashCode()
+		result = 31 * result + y.hashCode()
+		return result
+	}
 }

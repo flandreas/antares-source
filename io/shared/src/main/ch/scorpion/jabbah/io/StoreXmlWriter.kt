@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.io
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.formatRounded
 
 /**
  * An implementation of a [StoreReader] that writes a hierarchical [Storable] object tree to an XML document (DOM).
@@ -76,7 +77,7 @@ class StoreXmlWriter(
 	}
 
 	override fun writeDouble(name: String, value: Double) {
-		xmlWriter.setAttributeValue(name, value.toString())
+		xmlWriter.setAttributeValue(name, value.formatRounded())
 	}
 
 	override fun writeString(name: String, value: String) {
@@ -100,7 +101,7 @@ class StoreXmlWriter(
 	override fun writePoints(name: String, points: List<Point2D>) {
 		val list = StringBuilder()
 		for (i in 0 until points.size) {
-			list.append("${points[i].x},${points[i].y} ")
+			list.append("${points[i].x.formatRounded()},${points[i].y.formatRounded()} ")
 		}
 		writeString(name, list.toString().trim())
 	}

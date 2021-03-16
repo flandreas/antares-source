@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
+import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
@@ -59,22 +60,17 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			return bbox
 		}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return intersects(
+	override fun contains(x: Double, y: Double): Boolean =
+		intersects(
 			x - CONTAINS_SENSITIVITY,
 			y - CONTAINS_SENSITIVITY,
 			2 * CONTAINS_SENSITIVITY,
-			2 * CONTAINS_SENSITIVITY
-		)
-	}
+			2 * CONTAINS_SENSITIVITY)
 
-	override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean {
-		return false
-	}
+	override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean = false
 
-	override fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean {
-		return intersects(Rectangle2D(x, y, w, h))
-	}
+	override fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean =
+		intersects(Rectangle2D(x, y, w, h))
 
 	/** ---- [Polyline] interface */
 
@@ -126,9 +122,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		return this
 	}
 
-	override fun getPointAt(index: Int): Point2D {
-		return points[index]
-	}
+	override fun getPointAt(index: Int): Point2D = points[index]
 
 	override fun setPointAt(index: Int, x: Double, y: Double): Polyline {
 		points[index] = Point2D(x, y)
@@ -157,25 +151,20 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	}
 
 	/** Returns always 0, because [PolylineShape] is pure geometry and doesn't have a notion of a stroke width.*/
-	override fun getLineWidth(): Double {
-		return 0.0
-	}
+	override fun getLineWidth(): Double = 0.0
 
 	override fun findSegment(x: Double, y: Double, area: Int): Int? {
 		val rect = Rectangle2D(x - area, y - area, 2 * area.toDouble(), 2 * area.toDouble())
 		return (0..pointsCount - 2).firstOrNull { intersectsSegment(it, rect) }
 	}
 
-	override fun findPoint(x: Double, y: Double, area: Int): Int? {
-		return points.indexOfFirstOrNull { it.isNear(x, y, area) }
-	}
+	override fun findPoint(x: Double, y: Double, area: Int): Int? =
+		points.indexOfFirstOrNull { it.isNear(x, y, area) }
 
-	override fun getCenterOfSegment(index: Int): Point2D {
-		return Point2D(
+	override fun getCenterOfSegment(index: Int): Point2D =
+		Point2D(
 			points[index].x + (points[index + 1].x - points[index].x) / 2,
-			points[index].y + (points[index + 1].y - points[index].y) / 2
-		)
-	}
+			points[index].y + (points[index + 1].y - points[index].y) / 2)
 
 	override fun compact(): Boolean {
 		if (pointsCount <= 2) {
@@ -194,21 +183,17 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		return changed
 	}
 
-	override fun getSegmentLength(index: Int): Double {
-		return points[index].distance(points[index + 1])
-	}
+	override fun getSegmentLength(index: Int): Double =
+		points[index].distance(points[index + 1])
 
-	override fun getPoints(startIndex: Int, endIndex: Int): List<Point2D> {
-		return points.subList(startIndex, endIndex)
-	}
+	override fun getPoints(startIndex: Int, endIndex: Int): List<Point2D> =
+		points.subList(startIndex, endIndex)
 
-	override fun isSegmentHorizontal(index: Int): Boolean {
-		return points[index].y == points[index + 1].y
-	}
+	override fun isSegmentHorizontal(index: Int): Boolean =
+		Geometry.equal(points[index].y, points[index + 1].y)
 
-	override fun isSegmentVertical(index: Int): Boolean {
-		return points[index].x == points[index + 1].x
-	}
+	override fun isSegmentVertical(index: Int): Boolean =
+		Geometry.equal(points[index].x, points[index + 1].x)
 
 	override fun mirrorHorizontally(x: Double) {
 		setPoints(points.map { it.mirrorHorizontally(x) })
@@ -236,9 +221,8 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		}
 	}
 
-	private fun intersects(r: Rectangle2D): Boolean {
-		return (0..pointsCount - 2).any { intersectsSegment(it, r) }
-	}
+	private fun intersects(r: Rectangle2D): Boolean =
+		(0..pointsCount - 2).any { intersectsSegment(it, r) }
 
 	/**
 	 * Determines whether a segment of this [PolylineShape] intersects a given [Rectangle2D].
@@ -272,12 +256,10 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	}
 
 	/** Checks whether the point at the specified index has the same x coordinate as its two neighbours.*/
-	private fun isCoparallelX(index: Int): Boolean {
-		return points[index].x == points[index - 1].x && points[index].x == points[index + 1].x
-	}
+	private fun isCoparallelX(index: Int): Boolean =
+		Geometry.equal(points[index].x, points[index - 1].x) && Geometry.equal(points[index].x, points[index + 1].x)
 
 	/** Checks whether the point at the specified index has the same y coordinate as its two neighbours.*/
-	private fun isCoparallelY(index: Int): Boolean {
-		return points[index].y == points[index - 1].y && points[index].y == points[index + 1].y
-	}
+	private fun isCoparallelY(index: Int): Boolean =
+		Geometry.equal(points[index].y, points[index - 1].y) && Geometry.equal(points[index].y, points[index + 1].y)
 }

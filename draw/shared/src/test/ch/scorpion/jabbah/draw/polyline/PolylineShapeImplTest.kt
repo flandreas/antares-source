@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawTestRule
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.*
 
 /**
  * Unit tests for [PolylineShape].
@@ -50,5 +47,56 @@ class PolylineShapeImplTest {
 		assertEquals(Point2D(100, 100), polyline.getPointAt(0))
 		assertEquals(Point2D(100, 0), polyline.getPointAt(1))
 		assertEquals(Point2D(0, 0), polyline.getPointAt(2))
+	}
+
+	@Test
+	fun shouldRoundWhenCheckingHorizontal() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0.0, 0.0), Point2D(10.0, 0.0000001)))
+
+		assertTrue(polyline.isSegmentHorizontal(0))
+	}
+
+	@Test
+	fun shouldRoundWhenCheckingVertical() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0.0, 0.0), Point2D(0.0000001, 10.0)))
+
+		assertTrue(polyline.isSegmentVertical(0))
+	}
+
+	@Test
+	fun shouldCompactHorizontally() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0, 0), Point2D(100, 0), Point2D(200, 0)))
+
+		polyline.compact()
+
+		assertEquals(2, polyline.pointsCount)
+	}
+
+	@Test
+	fun shouldCompactHorizontallyWithRounding() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0, 0), Point2D(100.0, 0.00000001), Point2D(200, 0)))
+
+		polyline.compact()
+
+		assertEquals(2, polyline.pointsCount)
+	}
+
+
+	@Test
+	fun shouldCompactVertically() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0, 0), Point2D(0, 100), Point2D(0, 200)))
+
+		polyline.compact()
+
+		assertEquals(2, polyline.pointsCount)
+	}
+
+	@Test
+	fun shouldCompactVerticallyWithRounding() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0, 0), Point2D(0.00000001, 100.0), Point2D(0, 200)))
+
+		polyline.compact()
+
+		assertEquals(2, polyline.pointsCount)
 	}
 }
