@@ -30,7 +30,7 @@ class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
 	    properties.add(clock.bind(editor, bean.id))
 	    properties.add(showContents.bind(editor, bean.id))
 	    if (bean.showContents) {
-		    properties.add(contentsColumnsCount.bind(editor, bean.id))
+		    properties.add(contentsRowCount.bind(editor, bean.id))
 		    properties.add(contentsColumnsCount.bind(editor, bean.id))
 	    }
     }
