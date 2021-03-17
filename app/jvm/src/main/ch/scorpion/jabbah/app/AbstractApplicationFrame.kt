@@ -33,7 +33,11 @@ abstract class AbstractApplicationFrame(
     }
 
     init {
-	    ErrorHandler.initialize(this, EditAuthModule.userHolder.user.isDeveloper)
+	    ErrorHandler.initialize(
+		    this,
+		    application.aboutInfo.version.toString(),
+		    EditAuthModule.userHolder.user.isDeveloper)
+
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         title = application.displayName
 

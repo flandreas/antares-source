@@ -20,6 +20,6 @@ object AppModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(ApplicationVersionServiceImpl.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION)
+		properties.set(ApplicationVersionServiceImpl.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION_ID)
 	}
 }

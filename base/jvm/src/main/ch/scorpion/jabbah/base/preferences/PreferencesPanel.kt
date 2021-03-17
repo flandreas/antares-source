@@ -14,7 +14,7 @@ class PreferencesPanel(
 
 	companion object {
 		private const val INSET = 7
-		private const val ROW_GAP = 3
+		private const val ROW_GAP = 5
 		private const val LABEL_GAP = 5
 	}
 

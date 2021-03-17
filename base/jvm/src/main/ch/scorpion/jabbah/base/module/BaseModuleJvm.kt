@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
+import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 
@@ -24,7 +26,13 @@ object BaseModuleJvm : AbstractModule() {
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
 
+		fillProperties(BaseModule.properties)
+
 		buildPreferencesTree(preferencesTree)
+	}
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR, true)
 	}
 
 	private fun defineKeyCodes() {
@@ -49,5 +57,9 @@ object BaseModuleJvm : AbstractModule() {
 
 		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
+
+		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
+			id = InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR,
+			nameKey = "base.preferences.showUnexpectedErrors"))
 	}
 }

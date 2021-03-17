@@ -18,7 +18,7 @@ data class ApplicationVersion(
 		private const val NORMAL_DELIMITER = '.'
 		private const val ADDITIONAL_DELIMITER = '-'
 
-		val DUMMY_VERSION = ApplicationVersion(0, 0, 0)
+		val DUMMY_VERSION_ID = "0.0.0"
 
 		fun parse(version: String): ApplicationVersion {
 			val trimmedVersion = version.trim()

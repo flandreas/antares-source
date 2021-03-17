@@ -53,9 +53,6 @@ class NewVersionPanel(
 		iconPanel.add(Box.createVerticalGlue())
 		add(iconPanel, BorderLayout.WEST)
 
-		val contentPanel = JPanel()
-		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
-
 		textField.isEditable = false
 		textField.contentType = "text/html"
 		textField.text = Translations.getString("application.newVersion.text", newVersion.toString())
@@ -65,13 +62,7 @@ class NewVersionPanel(
 			}
 		}
 		textField.alignmentX = Component.LEFT_ALIGNMENT
-
-		contentPanel.add(textField)
-		contentPanel.add(Box.createVerticalStrut(10))
-		contentPanel.add(ignoreCheckbox)
-		contentPanel.add(Box.createVerticalStrut(10))
-
-		add(contentPanel, BorderLayout.CENTER)
+		add(textField, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)

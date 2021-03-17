@@ -54,10 +54,7 @@ class ApplicationVersionServiceImpl(
 		properties.customize(PROP_IGNORED_VERSION, newVersion)
 	}
 
-	private fun readIgnoredVersion(): ApplicationVersion {
-		val versionText = properties.getString(PROP_IGNORED_VERSION)
-		return ApplicationVersion(versionText)
-	}
+	private fun readIgnoredVersion(): ApplicationVersion = ApplicationVersion(properties.getString(PROP_IGNORED_VERSION))
 
 	private fun retrieveNewestVersion(): ApplicationVersion? {
 		val urlParam: String? = properties.getOptional(PROP_VERSION_FILE_URL)

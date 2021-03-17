@@ -19,8 +19,8 @@ open class Properties {
 	/**
 	 * Represents an individual entry of [Properties] by distinguishing between different states.
 	 * @property stringValue the persistent [String] representation of the property's value
-	 * @property objValue the typed representation of the property's value. Not available until the property
-	 * is accesses for the first time using a typed getter method.
+	 * @property objValue the typed representation of the property's value. Not available before the property
+	 * is accessed for the first time using a typed getter method.
 	 */
 	data class Entry(val stringValue: String, val objValue: Any?, val customized: Boolean)
 

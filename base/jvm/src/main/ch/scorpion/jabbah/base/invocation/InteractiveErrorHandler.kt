@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.invocation
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.Dimension
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -10,17 +12,21 @@ import javax.swing.JOptionPane
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
-
 object InteractiveErrorHandler : ErrorHandler() {
 
 	private val LOG by logger(InteractiveErrorHandler::class)
 
+	/** The name of the [Boolean] property in [Properties] determining whether to show a dialog. */
+	const val PROP_SHOW_UNEXPECTED_ERROR = "ch.scorpion.jabbah.base.invocation.showUnexpectedError"
+
     private var parentFrame: JFrame? = null
+	private var versionId: String = ""
 	private var isDeveloper = false
 	private var isHandling = false
 
-    override fun initializeImpl(parentFrame: JFrame, isDeveloper: Boolean) {
+    override fun initializeImpl(parentFrame: JFrame, versionId: String, isDeveloper: Boolean) {
         this.parentFrame = parentFrame
+	    this.versionId = versionId
 	    this.isDeveloper = isDeveloper
     }
 
@@ -61,6 +67,8 @@ object InteractiveErrorHandler : ErrorHandler() {
 	}
 
 	private fun showUserDialog(x: Throwable) {
-		UnexpectedErrorPanel.showAsDialog(parentFrame!!, renderStackTrace(x))
+		if (BaseModule.properties.getBoolean(PROP_SHOW_UNEXPECTED_ERROR)) {
+			UnexpectedErrorPanel.showAsDialog(parentFrame!!, versionId, renderStackTrace(x))
+		}
 	}
 }
