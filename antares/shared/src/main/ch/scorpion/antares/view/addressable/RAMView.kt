@@ -161,12 +161,15 @@ class RAMView(
 			invalidate()
 			validate()
 		}
+
+	@Suppress("unused")
 	var hasClock: Boolean
 		get() = model.hasClock
 		set(value) {
 			invalidate()
 			model.hasClock = value
 			modelExchanged(model)
+			updateGeometry()
 			invalidate()
 			validate()
 		}
