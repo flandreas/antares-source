@@ -10,8 +10,7 @@ import kotlin.math.pow
  */
 object BitOperation {
 
-    val BINARY = listOf('0', '1')
-    val HEX = listOf('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F')
+    private val HEX = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
 	private val POWER = Array(32 + 1) { 2.0.pow(it).toLong() }
 
 	fun getBitAt(value: Long, index: Int): Boolean {
@@ -81,9 +80,16 @@ object BitOperation {
      * contains a non-hexadecimal character.
      */
     fun hexDigitToWord(bitWidth: BitWidth, hex: Char): Word? {
-        if (!HEX.contains(hex.toUpperCase())) {
+	    val uppercaseHex = hex.toUpperCase()
+        if (!HEX.contains(uppercaseHex)) {
             return null
         }
+	    if (uppercaseHex == Bit.UNDEFINED_CHAR) {
+	    	return Word.allOf(bitWidth, Bit.Undefined)
+	    }
+	    if (uppercaseHex == Bit.ERROR_CHAR) {
+	    	return Word.allOf(bitWidth, Bit.Error)
+	    }
         val value = hexToLong(hex.toString())
         if (value >= bitWidth.power()) {
             // Overflow
@@ -97,10 +103,13 @@ object BitOperation {
      * contains a non-binary character (0, 1).
      */
     fun binaryDigitToWord(binary: Char): Word? {
-        if (!BINARY.contains(binary)) {
-            return null
-        }
-        return Word.of(binary == '1')
+	    return when (binary.toUpperCase()) {
+	    	'0' -> Word.of(false)
+		    '1' -> Word.of(true)
+		    Bit.UNDEFINED_CHAR -> Word.of(Bit.Undefined)
+		    Bit.ERROR_CHAR -> Word.of(Bit.Error)
+		    else -> null
+	    }
     }
 
     /**

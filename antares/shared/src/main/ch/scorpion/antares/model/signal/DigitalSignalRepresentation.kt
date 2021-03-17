@@ -28,7 +28,7 @@ enum class DigitalSignalRepresentation(val customName: String) {
 
     companion object {
         fun withName(customName: String): DigitalSignalRepresentation {
-            for (r in DigitalSignalRepresentation.values()) {
+            for (r in values()) {
                 if (r.customName == customName) {
                     return r
                 }

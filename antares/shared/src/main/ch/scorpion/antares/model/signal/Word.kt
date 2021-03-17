@@ -20,7 +20,9 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	private val zero: Boolean = bits.all { it == Bit.False }
 
 	/** Is automatically set to ´true´ if all [Bit]s are [Bit.Undefined]. */
-	private val undefined: Boolean = bits.all { it == Bit.Undefined }
+	private val undefined: Boolean = bits.any { it == Bit.Undefined }
+
+	private val error: Boolean = bits.any { it == Bit.Error }
 
 	companion object {
 
@@ -136,6 +138,9 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		}
 		if (zero) {
 			return Themes.get<AntaresTheme>().wordZero
+		}
+		if (error) {
+			return Themes.get<AntaresTheme>().error
 		}
 		if (undefined) {
 			return Themes.get<AntaresTheme>().undefined

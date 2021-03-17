@@ -520,7 +520,7 @@ class CircuitInOutView(
 					messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return null
 			}
-			toggle(context.signalHandler, context.x, context.y)
+			toggle(context.mouseEvent?.isAltDown ?: false, context.signalHandler, context.x, context.y)
 			context.mouseEvent?.consume()
 			return this
 		}
@@ -531,17 +531,17 @@ class CircuitInOutView(
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
-				toggle(context.signalHandler, context.x, context.y)
+				toggle(false, context.signalHandler, context.x, context.y)
 				context.mouseEvent?.consume()
 			}
 			return null
 		}
 
-		private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
+		private fun toggle(undefine: Boolean, signalHandler: SignalHandler, x: Double, y: Double) {
 			val digitIndex = getDigitIndexAt(x, y)
 			if (digitIndex != null) {
 				if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-					model.toggleBit(digitIndex, signalHandler)
+					model.toggleBit(digitIndex, undefine, signalHandler)
 				} else if (numberView!!.focusIndex == digitIndex) {
 					eventBus.post(ComponentMessage(
 						type = ComponentMessageType.Info,
@@ -603,7 +603,7 @@ class CircuitInOutView(
 		}
 
 		private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
-			model.toggleBit(numberView!!.focusIndex!!, signalHandler)
+			model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
 		}
 
 		private fun checkTopLevelKey(): Boolean {

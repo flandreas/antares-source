@@ -196,14 +196,18 @@ class CircuitInOutImpl(
 			}
 		}
 
-	override fun toggleBit(index: Int, signalHandler: SignalHandler) {
+	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler) {
 		var s = signal as Word?
 		if (s == null) {
 			s = Word.allOf(bitWidth, Bit.Undefined)
 		}
 		var bit = s.bitAt(index)
-		if (!bit.isDefined) {
-			bit = Bit.False
+		if (undefine) {
+			bit = Bit.Undefined
+		} else {
+			if (!bit.isDefined) {
+				bit = Bit.False
+			}
 		}
 		setIncomingSignal(s.withBit(index, bit.not()), signalHandler, Switch.DEF_PROP_DELAY)
 	}

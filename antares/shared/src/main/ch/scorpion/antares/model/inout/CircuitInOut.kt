@@ -34,7 +34,7 @@ interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSign
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].
 	 */
-	fun toggleBit(index: Int, signalHandler: SignalHandler)
+	fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler)
 }
 
 /** Notifies the change of the [BitWidth] of a [CircuitInOut].*/
