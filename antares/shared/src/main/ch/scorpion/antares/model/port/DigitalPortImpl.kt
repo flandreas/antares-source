@@ -199,15 +199,7 @@ open class DigitalPortImpl(
 		}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
-		if (portType.isInput && net != null) {
-			if (net == null) {
-				storeIncomingSignal(defaultDigitalSignal)
-			} else {
-				// DigitalNet doesn't forward signals if the one coming from an OutputPort
-				// is already present on the DigitalNet. Therefore,
-				storeIncomingSignal(net!!.signal)
-			}
-		}
+		storeIncomingSignal(defaultDigitalSignal)
 		storeOutgoingSignal(defaultDigitalSignal)
 	}
 

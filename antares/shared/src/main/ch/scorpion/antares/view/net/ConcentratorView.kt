@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -10,25 +9,24 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.DropShadow
-
 
 /**
  * A view of a [Concentrator].
  */
 class ConcentratorView(
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        model: Concentrator = Concentrator()
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Concentrator = Concentrator()
 ) : DigitalComponentView<Concentrator>(styleProvider, model) {
 
     companion object {
@@ -88,12 +86,12 @@ class ConcentratorView(
         val height = 2 * PORT_INSET + PORT_DISTANCE * (model.inputCount - 1)
 
         val outputPortView = DigitalPortView(
-                styleProvider = styleProvider,
-                port = model.getOutput(),
-                direction = Direction.EAST,
-                portLabelPosition = PortLabelPosition.EXTERNAL,
-                x = 0,
-                y = (height / 2))
+            styleProvider = styleProvider,
+            port = model.getOutput(),
+            direction = Direction.EAST,
+            portLabelPosition = PortLabelPosition.EXTERNAL,
+            x = 0,
+            y = (height / 2))
         outputPortView.setLocation(-outputPortView.length.toDouble(), 0.0)
         addPortView(outputPortView)
 
@@ -104,10 +102,10 @@ class ConcentratorView(
 
         for (input in model.getInputs()) {
             val ipv = DigitalPortView(
-                    styleProvider = styleProvider,
-                    port = input as Port<DigitalSignal>,
-                    direction = Direction.WEST,
-                    portLabelPosition = PortLabelPosition.EXTERNAL)
+                styleProvider = styleProvider,
+                port = input as Port<DigitalSignal>,
+                direction = Direction.WEST,
+                portLabelPosition = PortLabelPosition.EXTERNAL)
             ipv.setLocation(-outputPortView.length - WIDTH, y)
             ipv.showBitWidthAnnotation = false
             addPortView(ipv)

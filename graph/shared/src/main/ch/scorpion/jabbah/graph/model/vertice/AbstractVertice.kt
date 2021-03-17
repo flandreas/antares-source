@@ -48,12 +48,7 @@ abstract class AbstractVertice(
 		get() = ports.any { it.isConnected }
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
-		if (LOG.isTraceEnabled()) {
-			signalHandler.logTrace(
-				System.getClass(this), id) {
-				"input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns"
-			}
-		}
+		signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" }
 
 		requestActingAfter(signalHandler, propagationDelay, createActorData(input))
 		stateChanged(signalHandler)

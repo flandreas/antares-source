@@ -178,7 +178,7 @@
             <netView _id='103' modelId='36' style='line'/>
           </netViews>
           <components>
-            <graphElement _id='78' id='42'>
+            <graphElement _id='78' modelId='-1' id='42'>
               <component>
                 <rectangle id='42' style='subsystem' filled='true' stroked='true' x='371.0' y='-308.0' w='259.0' h='539.0' vAlign='top'>
                   <text>
@@ -192,12 +192,12 @@
                 </rectangle>
               </component>
             </graphElement>
-            <graphElement _id='77' id='41'>
+            <graphElement _id='77' modelId='-1' id='41'>
               <component>
                 <rectangle id='41' style='subsystem' filled='true' stroked='true' x='38.5' y='-308.0' w='311.5' h='539.0' vAlign='top'>
                   <text>
                     <translation lang='de' text='Dekodierung'/>
-                    <translation lang='en' text='Deccoding Unit'/>
+                    <translation lang='en' text='Decoding Unit'/>
                   </text>
                   <desc>
                     <translation lang='de' text='Dekodiert die Position der gedrückten Taste in die anzuzeigende Hexadezimal-Ziffer, die in der entsprechenden Speicherzelle des ROM-Bausteins gespeichert ist.'/>
@@ -206,7 +206,7 @@
                 </rectangle>
               </component>
             </graphElement>
-            <graphElement _id='76' id='40'>
+            <graphElement _id='76' modelId='-1' id='40'>
               <component>
                 <rectangle id='40' style='subsystem' filled='true' stroked='true' x='-336.0' y='-308.0' w='357.0' h='539.0' vAlign='top'>
                   <text>
@@ -277,7 +277,7 @@
             <splitterView _id='61' id='16' rot='0' filled='true' stroked='true' modelId='18' x='385.0' y='63.0' handedness='left'/>
             <subGraphVerticeViewRef _id='60' id='18' rot='0' filled='true' stroked='true' modelId='19' x='525.0' y='-98.0'>
               <label>
-                <translation lang='de' text='BCD-7Seg hex'/>
+                <translation lang='en' text='BCD-7Seg hex'/>
               </label>
             </subGraphVerticeViewRef>
             <digitalEdgeView _id='59' id='19' filled='true' stroked='true' modelId='20' layout='ortho' orig='62' origPort='3' origPortOutput='true' dest='61' destPort='1' adjusted='false'>
@@ -305,7 +305,7 @@
                 <polylineShape points='413.0,56.0 567.0,56.0 567.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <sevenSegmentDisplayView _id='54' id='24' rot='0' filled='true' stroked='true' modelId='25' x='511.0' y='-252.0' lightColor='red' size='large'/>
+            <sevenSegmentDisplayView _id='54' id='24' rot='0' filled='true' stroked='true' modelId='25' x='511.0' y='-252.0' lightColor='red' size='large' hasBorder='false'/>
             <digitalEdgeView _id='53' id='25' filled='true' stroked='true' modelId='26' layout='ortho' orig='60' origPort='1' origPortOutput='true' dest='54' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='525.0,-84.0 525.0,-140.0'/>
@@ -407,10 +407,6 @@
             <translation lang='de' text='Tastatur-Anwendung'/>
             <translation lang='en' text='Keyboard Usage'/>
           </name>
-          <desc>
-            <translation lang='de' text='Wandelt die Position einer Taste in der Tastatur in die Hex-Ziffer um, die die Taste anzeigt, und stellt dei Ziffer in einer 7-Segment-Anzeige dar.'/>
-            <translation lang='en' text='Converts the position of a key on the keyboard into the hex digit that the key displays, and outputs the digit using a 7-segment display.'/>
-          </desc>
           <ports/>
         </subGraphVertice>
       </model>

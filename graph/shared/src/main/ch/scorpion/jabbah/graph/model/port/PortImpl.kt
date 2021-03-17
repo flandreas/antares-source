@@ -130,6 +130,8 @@ open class PortImpl<T : Any>(
 		if (signal != _incomingSignal) {
 			storeIncomingSignal(signal)
 			owner?.inputChanged(this, signalHandler)
+		} else {
+			signalHandler.logActorTrace(owner!!) { "Ignoring incoming signal $signal, already present"}
 		}
 	}
 

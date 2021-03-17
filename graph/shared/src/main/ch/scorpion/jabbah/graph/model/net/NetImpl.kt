@@ -109,14 +109,12 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	}
 
 	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean) {
-		if (!SignalUtil.equals(signalBuffer, signal)) {
-			signalBuffer = signal
-			val data = NetActorData(signal, origin, true)
-			if (withDelay) {
-				requestActingTimeFreeze(signalHandler, data)
-			} else {
-				actingDone(signalHandler, data)
-			}
+		signalBuffer = signal
+		val data = NetActorData(signal, origin, true)
+		if (withDelay) {
+			requestActingTimeFreeze(signalHandler, data)
+		} else {
+			actingDone(signalHandler, data)
 		}
 	}
 
@@ -151,7 +149,10 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		ports
 			.filter { it.portType.isInput && it != data.changedPort }
 			.map { it as InputPort }
-			.forEach { it.setIncomingSignal(signal, signalHandler) }
+			.forEach {
+				signalHandler.logActorTrace(this) { "Set incoming signal $signal on InputPort ${it.portId} of vertice ${it.owner?.id}" }
+				it.setIncomingSignal(signal, signalHandler)
+			}
 	}
 
 	/** ---- [Storable] interface */
