@@ -4,15 +4,17 @@ import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableCellChange
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.FlowLayout
+import java.awt.Font
 import javax.swing.*
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
@@ -104,7 +106,7 @@ class AddressableDisplayPanel(
 			val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
 			if (scheduler.isActive && addressable.isSelected && addressableDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
-				component.background = Graphics2DJvm.toAwtColor(Themes.get<EditTheme>().selection.color.foregroundColor)
+				component.background = Graphics2DJvm.toAwtColor(Look.highlightWithSelectionColor)
 			} else {
 				if (isSelected) {
 					component.background = table!!.selectionBackground

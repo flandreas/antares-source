@@ -4,11 +4,13 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.style.EditTheme
 import kotlin.math.ceil
 
 object Look {
@@ -57,4 +59,14 @@ object Look {
 	 * i.e. while they are displayed during flat simulation as a ControlView in a [SubGraphVerticeView] with a script.
 	 */
 	val inactiveColor: Color get() = disabledColor()
+
+	/**
+	 * Returns the color to be used for highlighting areas using the selection color.
+	 */
+	val highlightWithSelectionColor: Color get() =
+		if (UI.isDark) {
+			Themes.get<EditTheme>().selection.color.foregroundColor.withAlpha(64)
+		} else {
+			Themes.get<EditTheme>().selection.color.foregroundColor
+		}
 }
