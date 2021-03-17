@@ -337,9 +337,11 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		val text = buildToolTipText(type, typeDesc, description.value)
+		val text = buildToolTipText(type, typeDesc, executionTooltipSubtext)
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
 	}
+
+	protected open val executionTooltipSubtext: String? get() = description.value
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this

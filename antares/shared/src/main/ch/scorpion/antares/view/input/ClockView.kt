@@ -3,7 +3,9 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Rotation.*
 import ch.scorpion.jabbah.draw.DrawContext
@@ -11,6 +13,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
@@ -19,6 +22,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.max
 
 /**
  * A view representation of a [Clock].
@@ -122,6 +126,19 @@ class ClockView(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return actorInteractionHandler
+	}
+
+	/** ---- [ActorView] */
+
+	override val executionTooltipSubtext: String? get() {
+		val durationMillis = System.currentTimeMillis() - model.realStartTime
+		val frequency = model.cycleCount / max(1, durationMillis / 1_000) / 2
+		val frequencyText = Translations.getString("antares.clock.frequency.text", StringUtils.formatLong(frequency, '\'')) + " Hz"
+		val subtext = super.executionTooltipSubtext
+		if (subtext != null) {
+			return "$subtext<br>$frequencyText"
+		}
+		return frequencyText
 	}
 
 	/** ---- [ClockView] */

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -37,6 +38,14 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
+
+	/** The real system time (ms) when execution has been started.*/
+	var realStartTime: Long = 0
+		private set
+
+	/** The number of cycles since execution start. Can be used to calculate effective frequency.*/
+	var cycleCount: Long = 0
+		private set
 
 	var isOn: Boolean = false
 		private set
@@ -81,12 +90,16 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 	/** ---- [Actor] interface */
 
 	override fun executionStarted(signalHandler: SignalHandler) {
+		realStartTime = System.currentTimeMillis()
+		cycleCount = 0
 		propagationDelayBuffer = propagationDelay
 		super.executionStarted(signalHandler)
 		setOn(signalHandler, false)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
+		realStartTime = 0
+		cycleCount = 0
 		super.executionStopped(signalHandler)
 		propagationDelay = propagationDelayBuffer
 	}
@@ -94,11 +107,14 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 	/** ---- [Clock] */
 
 	fun setOn(signalHandler: SignalHandler, on: Boolean) {
-		this.isOn = on
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
-		stateChanged()
-		if (isEnabled) {
-			requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		if (this.isOn != on) {
+			cycleCount++
+			this.isOn = on
+			getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
+			stateChanged()
+			if (isEnabled) {
+				requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+			}
 		}
 	}
 }

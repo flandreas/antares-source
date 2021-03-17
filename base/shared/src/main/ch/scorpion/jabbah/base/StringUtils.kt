@@ -79,7 +79,7 @@ object StringUtils {
 	 * Formats a [Long] using underscores to separate groups of 3 digits.
 	 * Example: 12345678L is formatted as "12_345_678"
 	 * */
-	fun formatLong(l: Long): String {
+	fun formatLong(l: Long, separator: Char = '_'): String {
 		val s = l.toString()
 		val result = StringBuilder()
 		var i = 0
@@ -87,7 +87,7 @@ object StringUtils {
 			result.append(c)
 			i++
 			if (i.rem(3) == 0 && i < s.length) {
-				result.append('_')
+				result.append(separator)
 			}
 		}
 		return result.toString().reversed()
