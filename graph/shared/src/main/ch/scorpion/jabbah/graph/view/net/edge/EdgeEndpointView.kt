@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Movable
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -59,10 +58,13 @@ class EdgeEndpointView(
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
+		val oldStroke = context.g.stroke
 		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 		context.g.fillOval(bounds.x.toInt(), bounds.y.toInt(), bounds.width.toInt(), bounds.height.toInt())
 		context.g.color = oldColor
+		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 		context.g.drawOval(bounds.x.toInt(), bounds.y.toInt(), bounds.width.toInt(), bounds.height.toInt())
+		context.g.stroke = oldStroke
 		context.g.color = oldColor
 	}
 
