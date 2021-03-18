@@ -54,15 +54,21 @@ The asciidoc source files are copied to the website source and processed there b
 
 * Create a ZIP file of `doc/usermanual/english`: english.zip
 * Create a ZIP file of `doc/images/user-manual`: user-manual.zip
+
+### Build examples
+
+* Export all sample projects from the project dialog in Antares.
  
 ## Deploying
  
 Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.git.
 
-### Installers
+### Assets (Installers and examples)
 
 * Create a new release in the github project, e.g. "Release 0.3.0"
 * Upload the two installers as attachments to the release
+* Upload the example projects (zip) as attachments to the release
+    * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
 
 ### Web site
@@ -81,10 +87,14 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 * Reference the new release page in `index.md`
 * New blog page with release announcement
 
-#### Examples
+Commit, push and tag the website repo with release version (e.g. "v0.4.0"). After that, the "Release
+" on the
+ GitHub project can be released using the committed tag.
+ 
+### Deployment test
 
-* Export all sample projects from the project dialog in Antares.
-* Copy the zip-files to the corresponding directories in `assets/examples`
+Delete your local release, download the new release from the website, download a sample project
+, import it, and do some smoke testing.
 
 ## Support
 

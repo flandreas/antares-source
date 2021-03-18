@@ -1,6 +1,6 @@
 = Transistor
 include::../../page-variables.txt[]
-:page-permalink: /user-manual/english/base-library/transitor
+:page-permalink: /user-manual/english/base-library/transistor
 
 Transistor is a digitalized version of a FET transistor. It has two inputs, called _gate_ and _source_, and one output, called _drain_. In standard orientation, the gate input is located on the left side and connected to a large plate, while source and gate are located on the right side and connected to small plates. The source input is always opposite to the gate input.
 
