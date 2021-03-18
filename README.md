@@ -18,6 +18,8 @@ TODO
  
 ### Preparation
   
+Clean and build the release.
+
 Increment the current release number and update it at the following
    locations:
   
@@ -43,6 +45,8 @@ Tag the release and push it to the remote repository:
 * On a windows machine (after pulling changes from remote repository)
   * `gradlew clean :antares:distributeWindows`
   * Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
+  
+Install the releases and do some some testing.
 
 ### Build User Manual
 
