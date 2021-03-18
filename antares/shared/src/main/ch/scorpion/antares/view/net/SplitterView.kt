@@ -7,20 +7,23 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.GRID
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.DropShadow
-
 
 /**
  * A view of a [Splitter].
@@ -31,9 +34,17 @@ class SplitterView(
 ) : DigitalComponentView<Splitter>(styleProvider, model) {
 
     companion object {
-        const val WIDTH = 2 * Look.GRID
-        const val PORT_INSET = Look.SCALE
-        const val PORT_DISTANCE = 2 * Look.SCALE
+        const val WIDTH = 2 * GRID
+        const val PORT_INSET = SCALE
+        const val PORT_DISTANCE = 2 * SCALE
+	    private const val DIR_PATH_WIDTH = SCALE
+	    private const val DIR_PATH_HEIGHT_HALF = SCALE / 2
+
+	    private val DIR_PATH = System.createPath()
+		    .moveTo(0,0)
+		    .lineTo(-DIR_PATH_WIDTH, -DIR_PATH_HEIGHT_HALF)
+		    .lineTo(-DIR_PATH_WIDTH, DIR_PATH_HEIGHT_HALF)
+		    .close()
     }
 
     var handedness: Handedness = Handedness.RIGHT
@@ -151,6 +162,12 @@ class SplitterView(
         context.g.fillRect(xInt, yInt, width.toInt(), height.toInt())
         context.g.color = lineColor
         context.g.drawRect(xInt, yInt, width.toInt(), height.toInt())
+
+	    // Direction annotation
+	    context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+	    context.g.translate(bounds.minX + 0.75 * bounds.width, 0.0)
+	    context.g.draw(DIR_PATH)
+	    context.g.translate(-(bounds.minX + 0.75 * bounds.width), 0.0)
 
         context.g.color = oldColor
     }

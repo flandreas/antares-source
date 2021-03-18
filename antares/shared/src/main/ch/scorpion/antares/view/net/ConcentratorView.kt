@@ -9,12 +9,15 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.Storable
@@ -33,6 +36,14 @@ class ConcentratorView(
         const val WIDTH = 2 * Look.GRID
         const val PORT_INSET = Look.SCALE
         const val PORT_DISTANCE = 2 * Look.SCALE
+	    private const val DIR_PATH_WIDTH = Look.SCALE
+	    private const val DIR_PATH_HEIGHT_HALF = Look.SCALE / 2
+
+	    private val DIR_PATH = System.createPath()
+		    .moveTo(0,0)
+		    .lineTo(-DIR_PATH_WIDTH, -DIR_PATH_HEIGHT_HALF)
+		    .lineTo(-DIR_PATH_WIDTH, DIR_PATH_HEIGHT_HALF)
+		    .close()
     }
 
     var handedness: Handedness = Handedness.LEFT
@@ -151,6 +162,12 @@ class ConcentratorView(
         context.g.color = lineColor
         context.g.drawRect(xInt, yInt, width.toInt(), height.toInt())
 
-        context.g.color = oldColor
+	    // Direction annotation
+	    context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+	    context.g.translate(bounds.maxX - 0.25 * bounds.width, 0.0)
+		context.g.draw(DIR_PATH)
+	    context.g.translate(-(bounds.maxX - 0.25 * bounds.width), 0.0)
+
+	    context.g.color = oldColor
     }
 }
