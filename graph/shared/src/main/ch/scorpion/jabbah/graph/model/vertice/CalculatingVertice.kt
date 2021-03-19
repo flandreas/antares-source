@@ -32,9 +32,13 @@ abstract class CalculatingVertice(
 ) : AbstractVertice(name) {
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
+		actImpl(signalHandler, data)
+		super.act(signalHandler, data)
+	}
+
+	protected open fun actImpl(signalHandler: SignalHandler, data: ActorData) {
 		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
 		getOutputs().forEach { it.flush(signalHandler) }
 		stateChanged(signalHandler)
-		super.act(signalHandler, data)
 	}
 }

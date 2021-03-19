@@ -41,14 +41,6 @@ interface SignalHandler {
     fun requestActingAfter(actor: Actor, delay: Long, data: ActorData)
 
     /**
-     * Asks this [SignalHandler] to recalculate the specified [Actor] as soon as it will call
-     * [actingDone], and to avoid to increase the relative execution time in the meantime.
-     * @param actor the [Actor] to be recalculated
-     * @param data the [ActorData] to be returned in [Actor.act]
-     */
-    fun requestActingTimeFreeze(actor: Actor, data: ActorData)
-
-    /**
      * Informs this [SignalHandler] that the acting of the specified [Actor] is done.
      *
      * @param actor the [Actor] that has done acting

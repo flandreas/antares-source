@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import io.mockk.mockk
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -28,12 +27,5 @@ class CircuitInOutImplTest {
 
 		inout.act(signalHandler, GraphActorDataImpl(null, Word.of(true)))
 		assertTrue(inout.enabled)
-	}
-
-	@Test
-	fun shouldNotSetSignalWhileWaiting() {
-		inout.setIncomingSignal(Word.of(true), signalHandler)
-		inout.setIncomingSignal(Word.of(false), signalHandler)
-		assertEquals(Word.of(true), inout.signal)
 	}
 }

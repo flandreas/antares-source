@@ -31,7 +31,7 @@ abstract class AbstractGraphPort<T : Any>(
 	}
 
 	init {
-		propagationDelay = 1
+		propagationDelay = 0
 		addPort(port)
 	}
 

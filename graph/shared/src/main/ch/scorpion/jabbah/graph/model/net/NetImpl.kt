@@ -112,7 +112,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		signalBuffer = signal
 		val data = NetActorData(signal, origin, true)
 		if (withDelay) {
-			requestActingTimeFreeze(signalHandler, data)
+			requestActingAfter(signalHandler, 0, data)
 		} else {
 			actingDone(signalHandler, data)
 		}

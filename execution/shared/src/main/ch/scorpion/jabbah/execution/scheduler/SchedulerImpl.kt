@@ -177,7 +177,7 @@ class SchedulerImpl(
 	}
 
 	override fun proceedTo(time: Long) {
-		LOG.trace("Proceed to ${StringUtils.formatLong(time)}")
+		LOG.trace("Proceed to ${StringUtils.formatLong(time)} ns")
 		while (!queue.isEmpty && executionTime < time) {
 			execute()
 		}
@@ -217,11 +217,7 @@ class SchedulerImpl(
 	}
 
 	override fun requestActingAfter(actor: Actor, delay: Long, data: ActorData) {
-		requestActingImpl(actor, delay, false, data)
-	}
-
-	override fun requestActingTimeFreeze(actor: Actor, data: ActorData) {
-		requestActingImpl(actor, 1, true, data)
+		requestActingImpl(actor, delay, data)
 	}
 
 	override fun actingDone(actor: Actor, data: ActorData?) {
@@ -242,28 +238,24 @@ class SchedulerImpl(
 		}
 	}
 
-	private fun requestActingImpl(actor: Actor, delay: Long, timeFreeze: Boolean, data: ActorData) {
+	private fun requestActingImpl(actor: Actor, delay: Long, data: ActorData) {
 		if (!isActive) {
 			return
 		}
 		if (LOG.isTraceEnabled()) {
 			logActorTrace(actor) { "Request to act after ${StringUtils.formatLong(delay)} ns" }
 		}
-		if (delay == 0L) {
-			actor.act(this, data)
+		// TODO Implement adaptive Task scheduling (i.e. vary the time between ticks)
+		val schedulingTime = executionTime + delay + noiseGeneratorHolder.current.noise(10)
+		val slot = getSlotAt(schedulingTime)
+		if (slot != null) {
+			slot.addActor(actor, data)
 		} else {
-			// TODO Implement adaptive Task scheduling (i.e. vary the time between ticks)
-			val schedulingTime = executionTime + delay + noiseGeneratorHolder.current.noise(10)
-			val slot = getSlotAt(schedulingTime)
-			if (slot != null) {
-				slot.timeFreeze = slot.timeFreeze || timeFreeze
-				slot.addActor(actor, data)
-			} else {
-				addSlot(Slot(schedulingTime, timeFreeze, actor, data))
-				postSchedulerStateEvent()
-			}
-			task.startIfNeeded()
+			addSlot(Slot(schedulingTime, actor, data))
+			postSchedulerStateEvent()
 		}
+		task.startIfNeeded()
+
 		postSchedulerEvent(actor, SchedulerEvent.Type.REQUESTED)
 	}
 
@@ -392,9 +384,7 @@ class SchedulerImpl(
 		LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
 
 		// Resynchronize relative time with real time
-		if (!slot.timeFreeze) {
-			updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
-		}
+		updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
 
 		var recalculated = false
 
@@ -443,16 +433,11 @@ class SchedulerImpl(
 	 * The primary constructor creates a new [Slot] with the specified [Actor] as its first [Request].
 	 *
 	 * @property relativeTime the relative execution time (in ns) at which `actor` is to be scheduled
-	 * @property timeFreeze If this flag is `true`, the [Scheduler] should not increase the simulation time when processing
-	 * this [Slot]. This is used for supporting animated [Actor]s, which might take a
-	 * long time until their acting is done, but this time should not be accounted as execution time, because
-	 * if it would, other (faster) [Actor]s would pass by, which is not desired.
 	 * @param actor the [Actor] for which the first [Request] is added to this [Slot]
 	 * @paran data the [ActorData] of the first [Request] to be added to this [Slot]
 	 */
 	private inner class Slot(
 		val relativeTime: Long,
-		var timeFreeze: Boolean,
 		actor: Actor,
 		data: ActorData
 	) : Comparable<Slot> {
@@ -497,7 +482,7 @@ class SchedulerImpl(
 
 		/** Prints this [Slot] to the DEBUG log.*/
 		fun print() {
-			LOG.debug("\tSlot at ${StringUtils.formatLong(relativeTime)} ns with ${requests.size} requests, timeFreeze=$timeFreeze")
+			LOG.debug("\tSlot at ${StringUtils.formatLong(relativeTime)} ns with ${requests.size} requests")
 			requests.forEach { it.print() }
 		}
 

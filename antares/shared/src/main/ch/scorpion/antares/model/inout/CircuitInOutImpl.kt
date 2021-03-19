@@ -100,7 +100,9 @@ class CircuitInOutImpl(
 	}
 
 	private fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, delay: Long) {
-		if (enabled && differ(this.signal, signal)) {
+		val differs = differ(this.signal, signal)
+		signalHandler.logActorTrace(this) { "GraphInput.setIncomingSignal: enabled=$enabled, differs=$differs" }
+		if (differs) {
 			this.signal = signal
 			enabled = false
 			requestActingAfter(signalHandler, delay, GraphActorDataImpl(null, this.signal))
