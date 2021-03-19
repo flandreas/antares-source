@@ -9,9 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -66,14 +64,20 @@ class TestCircuitBuilder(
         return graphView
     }
 
-	fun addInput(name: String? = null): CircuitInOutView {
-		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, PortType.INPUT), eventBus)
-		graphView.add(inout)
-		return inout
+	/** Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a [CircuitInOutImpl] with [PortType.OUTPUT]*/
+	fun buildInOutToOut(): GraphView {
+		connect(addInOut("IO"), addOutput("O"))
+		return graphView
 	}
 
-	private fun addOutput(name: String? = null): CircuitInOutView {
-		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, PortType.OUTPUT), eventBus)
+	fun addInput(name: String? = null): CircuitInOutView = addInOut(name, PortType.INPUT)
+
+	fun addOutput(name: String? = null): CircuitInOutView = addInOut(name, PortType.OUTPUT)
+
+	fun addInOut(name: String? = null): CircuitInOutView = addInOut(name, PortType.INOUT)
+
+	private fun addInOut(name: String? = null, portType: PortType): CircuitInOutView {
+		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, portType), eventBus)
 		graphView.add(inout)
 		return inout
 	}

@@ -23,10 +23,11 @@ class TestLibraryBuilder(
 ) {
 
 	companion object {
-		val NOP = "NOP"
-		val OUTER_NOP = "OuterNOP"
+		const val NOP = "NOP"
+		const val OUTER_NOP = "OuterNOP"
 		const val CUSTOM_NOT = "CustomNOT"
 		const val CUSTOM_NAND = "CustomNAND"
+		const val INOUT_TO_OUT = "InOutToOut"
 	}
 
 	/** Builds (as of [TestCircuitBuilder.buildCustomNot] a custom NOP and adds it to [libraryDirectory].*/
@@ -64,6 +65,13 @@ class TestLibraryBuilder(
 		return metaGraph
 	}
 
+	fun addInOutToOut(library: Library): MetaGraph {
+		val inOutToOut = TestCircuitBuilder(INOUT_TO_OUT).buildInOutToOut()
+		val metaGraph = MetaGraph(GraphStorable(inOutToOut), createContainerDrawing(inOutToOut))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
 	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl {
 		return (libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
 	}
@@ -80,6 +88,10 @@ class TestLibraryBuilder(
 		for (circuitOutput in circuitView.graph!!.graphOutputs) {
 			containerDrawing.add(
 				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+		}
+		for (circuitInOut in circuitView.graph!!.graphInOuts) {
+			containerDrawing.add(
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInOut))))
 		}
 
 		return containerDrawing

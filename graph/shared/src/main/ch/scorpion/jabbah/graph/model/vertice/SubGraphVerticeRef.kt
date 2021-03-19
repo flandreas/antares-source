@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.Library
@@ -59,6 +60,17 @@ class SubGraphVerticeRef(
 			verticeRef.fillFrom(subGraphVertice)
 			return verticeRef
 		}
+	}
+
+	override fun actImpl(signalHandler: SignalHandler, data: ActorData) {
+		if ((data as GraphActorData).isInput && !isDeepExecution(signalHandler)) {
+			super.actImpl(signalHandler, data)
+		}
+		// With deep execution, no execution logic by the [SubGraphVerticeRef] has to take place.
+		// In particular, the OutputPort must NOT be flushed, because that would lead to outgoing signal animations
+		// even before the inner Graph has been executed.
+		// Note however that acting MUST have been requested by inputChanged() even if it supposed to do nothing, because
+		// only this triggers execution animations of the [SubGraphVerticeRef] on the view level.
 	}
 
 	private var graph: Graph? = null
@@ -160,10 +172,11 @@ class SubGraphVerticeRef(
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		if (isDeepExecution(signalHandler)) {
 			val graphInput = (input as SubGraphInputPort<Any>).graphInput
+			signalHandler.logActorTrace(this) { "input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}" }
 			graphInput!!.setIncomingSignal(input.getIncomingSignal(), signalHandler)
 		}
 		// This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
-		// Event if deeply executing, we need to request acting, because only that will initiate
+		// Even if deeply executing, we need to request acting, because only that will initiate
 		// calculation animations for this [SubGraphVerticeRef] on the view layer.
 		super.inputChanged(input, signalHandler)
 	}

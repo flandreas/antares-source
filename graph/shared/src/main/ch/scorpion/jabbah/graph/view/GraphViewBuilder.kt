@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -60,6 +61,11 @@ open class GraphViewBuilder<T : Any>(
 	fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
 		return GraphViewModule.graphViewConnectService.addConnection(
 			graphView, from.getPortView(from.vertice.getOutput())!!, to.getPortView(toPort)!!)
+	}
+
+	fun connect(from: VerticeView<out Vertice>, fromPort: OutputPort<T>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
+		return GraphViewModule.graphViewConnectService.addConnection(
+			graphView, from.getPortView(fromPort)!!, to.getPortView(toPort)!!)
 	}
 
 	fun connectOutputOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {

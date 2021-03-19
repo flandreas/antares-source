@@ -14,7 +14,7 @@ class ActorSupport(private val actor: Actor) {
     private var entries: MutableMap<ActorListener, Entry>? = null
 
     val hasListeners: Boolean
-        get() = entries != null && !entries!!.isEmpty()
+        get() = entries != null && entries!!.isNotEmpty()
 
     fun addListener(l: ActorListener) {
         ensureEntry(l)
@@ -26,11 +26,6 @@ class ActorSupport(private val actor: Actor) {
 
     fun requestActingAfter(signalHandler: SignalHandler, delay: Long, data: ActorData) {
         signalHandler.requestActingAfter(actor, delay, data)
-        notifyActingRequested(signalHandler, data)
-    }
-
-    fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
-        signalHandler.requestActingTimeFreeze(actor, data)
         notifyActingRequested(signalHandler, data)
     }
 

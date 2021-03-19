@@ -161,11 +161,6 @@ open class ActorImpl(
 		actorSupport.requestActingAfter(signalHandler, delay, data)
 	}
 
-	fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
-		_state = ActorState.Waiting
-		actorSupport.requestActingTimeFreeze(signalHandler, data)
-	}
-
 	fun notifyActed(signalHandler: SignalHandler, data: ActorData) {
 		actorSupport.notifyActed(signalHandler, data)
 	}

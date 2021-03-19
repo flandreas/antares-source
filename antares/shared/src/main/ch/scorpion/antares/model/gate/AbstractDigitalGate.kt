@@ -28,13 +28,14 @@ abstract class AbstractDigitalGate(
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)
+	    const val DEFAULT_PROPAGATION_DELAY = 20L
         val DEF_MIN_INPUT_COUNT = InputCount.TWO
         val DEF_MAX_INPUT_COUNT = InputCount.EIGHT
     }
 
     var chosenInputCount: InputCount = inputCount
         set(value) {
-            checkArgument(value.count >= minInputCount.count, "InputCount must not be smaller than mininum ${minInputCount.count}")
+            checkArgument(value.count >= minInputCount.count, "InputCount must not be smaller than minimum ${minInputCount.count}")
             checkArgument(value.count <= maxInputCount.count, "InputCount must not be larger than maximum ${maxInputCount.count}")
             field = value
             clearPorts()
@@ -45,7 +46,7 @@ abstract class AbstractDigitalGate(
         }
 
     init {
-        propagationDelay = 20
+        propagationDelay = DEFAULT_PROPAGATION_DELAY
         chosenInputCount = inputCount
     }
 
