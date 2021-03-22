@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -58,6 +59,7 @@ abstract class AbstractSplitter(
 	val narrowSideBitWidth: BitWidth get() = BitWidth.of(bitWidth.width / branchCount.count)
 
 	init {
+		propagationDelay = 0
 		if (isSplittingSupported(bitWidth, branchCount)) {
 			setSplitting(bitWidth, branchCount)
 		} else {
@@ -81,6 +83,11 @@ abstract class AbstractSplitter(
 			// Legacy file support: in new files, 'representation' is always there
 			signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
 		}
+	}
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		getOutputs().forEach { it.flush(signalHandler) }
 	}
 
 	/** ---- [AbstractSplitter] */

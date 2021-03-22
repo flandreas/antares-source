@@ -23,7 +23,5 @@ class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
 	    properties.add(knobEnabled.bind(editor, bean.id))
     }
 
-    override var isShowPropagationDelay: Boolean
-        get() = false
-        set(value) { super.isShowPropagationDelay = value}
+    override val isShowPropagationDelay: Boolean get() = false
 }

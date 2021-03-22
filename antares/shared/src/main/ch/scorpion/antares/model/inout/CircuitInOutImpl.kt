@@ -26,9 +26,10 @@ import ch.scorpion.jabbah.io.StoreWriter
 class CircuitInOutImpl(
 	val eventBus: EventBus = BaseModule.eventBus,
 	name: String? = null,
-	portType: PortType = PortType.INPUT
+	portType: PortType = PortType.INPUT,
+	bitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractGraphPort<DigitalSignal>(
-	port = DigitalPortImpl(portType.reverse()),
+	port = DigitalPortImpl(portType.reverse(), bitWidth = bitWidth),
 	name = name,
 	calculator = CALCULATOR
 ), CircuitInOut {

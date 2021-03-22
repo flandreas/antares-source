@@ -40,9 +40,7 @@ class InOutSubGraphTest : AbstractJvmCircuitTest() {
 
 	private val ledView = LEDView()
 
-	override fun getCircuitView(): GraphView {
-		return circuitView
-	}
+	override fun getCircuitView(): GraphView = circuitView
 
 	@BeforeTest
 	fun setupCircuit() {
