@@ -18,6 +18,8 @@ class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
 	    private val signalRep = AntaresProperties.signalRepresentation()
     }
 
+	override val isShowPropagationDelay: Boolean get() = false
+
     override fun addProperties(bean: SplitterView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 

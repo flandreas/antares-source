@@ -18,7 +18,7 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 		private val shadow = EditProperties.shadow()
 	}
 
-	protected open var isShowPropagationDelay: Boolean = true
+	protected open val isShowPropagationDelay: Boolean = true
 	protected open var isShowColor: Boolean = true
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {

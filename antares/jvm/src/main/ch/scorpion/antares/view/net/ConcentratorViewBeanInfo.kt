@@ -18,7 +18,9 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 	    private val signalRep = AntaresProperties.signalRepresentation()
     }
 
-    override fun addProperties(bean: ConcentratorView, editor: Editor, properties: MutableList<Property>) {
+	override val isShowPropagationDelay: Boolean get() = false
+
+	override fun addProperties(bean: ConcentratorView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
         val connected = bean.model.isConnected

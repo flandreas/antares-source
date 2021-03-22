@@ -63,7 +63,12 @@ open class GraphViewBuilder<T : Any>(
 			graphView, from.getPortView(from.vertice.getOutput())!!, to.getPortView(toPort)!!)
 	}
 
-	fun connect(from: VerticeView<out Vertice>, fromPort: OutputPort<T>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
+	fun connect(
+		from: VerticeView<out Vertice>,
+		fromPort: OutputPort<T> = from.model.getOutput(),
+		to: VerticeView<out Vertice>,
+		toPort: InputPort<T> = to.model.getInput()
+	): EdgeView<T> {
 		return GraphViewModule.graphViewConnectService.addConnection(
 			graphView, from.getPortView(fromPort)!!, to.getPortView(toPort)!!)
 	}
