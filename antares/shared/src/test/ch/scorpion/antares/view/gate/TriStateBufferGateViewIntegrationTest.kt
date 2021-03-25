@@ -92,19 +92,4 @@ class TriStateBufferGateViewIntegrationTest : AbstractCircuitTest() {
 		assertEquals(Word.of(Bit.True), net.signal)
 		assertFalse(net.isError)
 	}
-
-	@Test
-	fun shouldRecoverFromErrorBySameOutput() {
-		startSimulation(1000L)
-
-		produceError()
-		assertTrue(net.isError)
-
-		triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV2.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		proceedToNanos(4000)
-
-		assertEquals(Word.of(Bit.True), net.signal)
-		assertFalse(net.isError)
-	}
 }

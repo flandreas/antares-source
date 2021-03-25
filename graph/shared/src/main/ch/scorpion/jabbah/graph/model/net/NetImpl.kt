@@ -92,22 +92,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		return _ports.contains(port)
 	}
 
-	override fun getConsistentSignalPort(): OutputPort<T>? {
-		var consistentPort: OutputPort<T>? = null
-		for (port in getOutputPorts()) {
-			if (port.weakBehaviour == null && !port.isOutputUndefined) {
-				if (consistentPort == null) {
-					consistentPort = port
-				} else {
-					if (!SignalUtil.equals(consistentPort.getOutgoingSignal(), port.getOutgoingSignal())) {
-						return null
-					}
-				}
-			}
-		}
-		return consistentPort
-	}
-
 	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean) {
 		signalBuffer = signal
 		val data = NetActorData(signal, origin, true)

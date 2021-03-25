@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -29,7 +30,7 @@ class CircuitInOutImpl(
 	portType: PortType = PortType.INPUT,
 	bitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractGraphPort<DigitalSignal>(
-	port = DigitalPortImpl(portType.reverse(), bitWidth = bitWidth),
+	port = DigitalPortImpl(portType.reverse(), bitWidth = bitWidth, canBeUndefined = portType == PortType.INOUT),
 	name = name,
 	calculator = CALCULATOR
 ), CircuitInOut {
@@ -89,6 +90,7 @@ class CircuitInOutImpl(
 		set(value) {
 			if (portType != value) {
 				getDigitalPort().portType = value.reverse()
+				getDigitalPort().canBeUndefined = value == PortType.INOUT
 			}
 		}
 
@@ -122,9 +124,10 @@ class CircuitInOutImpl(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
+		enabled = true
 		signal = getDigitalPort().defaultDigitalSignal
 		if (portType.isInput) {
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), signal))
+			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 		}
 		stateChanged(signalHandler)
 	}
@@ -137,7 +140,10 @@ class CircuitInOutImpl(
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		super.act(signalHandler, data)
 		if (portType.isOutput && _subGraphOutputPort != null) {
-			_subGraphOutputPort?.flush(signalHandler)
+			if ((data as GraphActorData).changedPort != null) {
+				// Send signal to outside only if it came from inside
+				_subGraphOutputPort?.flush(signalHandler)
+			}
 		}
 	}
 
@@ -147,6 +153,16 @@ class CircuitInOutImpl(
 			getOutput<DigitalSignal>().setOutgoingSignal(signal, signalHandler)
 		}
 		stateChanged()
+	}
+
+	/** ---- [CalculatingVertice] interface */
+
+	override fun flushImpl(signalHandler: SignalHandler, data: ActorData) {
+		if (portType == PortType.INOUT && getPort<DigitalSignal>() === (data as GraphActorData).changedPort) {
+			// Don't flush OutputPorts that triggered execution to avoid shooting back signals
+			return
+		}
+		super.flushImpl(signalHandler, data)
 	}
 
 	/** ---- [Storable] interface */

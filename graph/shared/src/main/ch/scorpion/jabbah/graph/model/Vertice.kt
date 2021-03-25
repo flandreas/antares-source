@@ -127,4 +127,11 @@ interface Vertice : GraphElement, Describable {
      * @throws NoSuchElementException if no [OutputPort] with the specified ID was found
      */
     fun <T: Any> getOutput(id: Int): OutputPort<T>
+
+	/**
+	 * Returns all [OutputPort]s of this [Vertice] whose [Net]s form a combined bigger [Net]
+	 * with the specified [OutputPort], which is used for negotiation of conflicting
+	 * signals asserted by [outputPort]. The default is an empty [Collection].
+	 */
+	fun getCombinedNetOutputPorts(outputPort: OutputPort<*>): Collection<OutputPort<*>>
 }

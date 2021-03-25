@@ -29,7 +29,7 @@ open class DigitalPortImpl(
 	signalRepresentation: DigitalSignalRepresentation =
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
 	description: TranslatableText = TranslatableText(),
-	canBeUndefined: Boolean = false,
+	canBeUndefined: Boolean = portType == PortType.INOUT,
 	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null
 ) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
@@ -83,14 +83,14 @@ open class DigitalPortImpl(
 		}
 
 		fun createInOut(): DigitalPort {
-			val port = DigitalPortImpl(PortType.INOUT)
+			val port = DigitalPortImpl(PortType.INOUT, canBeUndefined = true)
 			// TODO Configure in init() instead of in factory method
 			port.defaultBit = Bit.Undefined
 			return port
 		}
 
 		fun createInOut(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-			val port = DigitalPortImpl(PortType.INOUT, name, logic, bitWidth = bitWidth)
+			val port = DigitalPortImpl(PortType.INOUT, name, logic, bitWidth = bitWidth, canBeUndefined = true)
 			// TODO Configure in init() instead of in factory method
 			port.defaultBit = Bit.Undefined
 			return port

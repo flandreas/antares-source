@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 class BidirectionalSplitter(
@@ -73,13 +75,24 @@ class BidirectionalSplitter(
 	override val typeDesc: String? get() = TYPE_DESC
 
 	override fun createWideSidePort(): DigitalPort =
-		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = bitWidth, signalRepresentation = signalRepresentation)
+		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = bitWidth, canBeUndefined = true, signalRepresentation = signalRepresentation)
 
 	override fun createNarrowSidePort(index: Int): DigitalPort =
-		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = narrowSideBitWidth, signalRepresentation = signalRepresentation)
+		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = narrowSideBitWidth, canBeUndefined = true, signalRepresentation = signalRepresentation)
 
 	override val wideSidePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 
 	override val narrowSidePorts: List<DigitalPort> get() = getPorts().filterIndexed { index, _ -> index > 0 }.map { it as DigitalPort }
 
+	override fun getCombinedNetOutputPorts(outputPort: OutputPort<*>): Collection<OutputPort<*>> {
+		return if (outputPort === wideSidePort) {
+			var result = mutableListOf<OutputPort<*>>()
+			narrowSidePorts.forEach {
+				CombinedNet.fromNet(it.net, excluding = it).outputPorts.forEach { result.add(it) }
+			}
+			result
+		} else {
+			CombinedNet.fromOutputPort(wideSidePort).outputPorts
+		}
+	}
 }
