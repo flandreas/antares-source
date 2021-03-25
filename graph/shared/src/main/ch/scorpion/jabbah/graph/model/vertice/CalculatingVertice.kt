@@ -38,7 +38,11 @@ abstract class CalculatingVertice(
 
 	protected open fun actImpl(signalHandler: SignalHandler, data: ActorData) {
 		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
-		getOutputs().forEach { it.flush(signalHandler) }
+		flushImpl(signalHandler, data)
 		stateChanged(signalHandler)
+	}
+
+	protected open fun flushImpl(signalHandler: SignalHandler, data: ActorData) {
+		getOutputs().forEach { it.flush(signalHandler) }
 	}
 }

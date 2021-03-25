@@ -28,9 +28,10 @@ class TestLibraryBuilder(
 		const val CUSTOM_NOT = "CustomNOT"
 		const val CUSTOM_NAND = "CustomNAND"
 		const val INOUT_TO_OUT = "InOutToOut"
+		const val INOUT_TO_INOUT = "InOutToInOut"
 	}
 
-	/** Builds (as of [TestCircuitBuilder.buildCustomNot] a custom NOP and adds it to [libraryDirectory].*/
+	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
 	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
 		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
 		val metaGraph = MetaGraph(GraphStorable(nop), createContainerDrawing(nop))
@@ -68,6 +69,13 @@ class TestLibraryBuilder(
 	fun addInOutToOut(library: Library): MetaGraph {
 		val inOutToOut = TestCircuitBuilder(INOUT_TO_OUT).buildInOutToOut()
 		val metaGraph = MetaGraph(GraphStorable(inOutToOut), createContainerDrawing(inOutToOut))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
+	fun addInOutToInOut(library: Library): MetaGraph {
+		val inOutToInOut = TestCircuitBuilder(INOUT_TO_INOUT).buildInOutToInOut()
+		val metaGraph = MetaGraph(GraphStorable(inOutToInOut), createContainerDrawing(inOutToInOut))
 		libraryService.addContainerLibraryElement(library, metaGraph, library)
 		return metaGraph
 	}

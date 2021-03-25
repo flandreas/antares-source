@@ -64,9 +64,21 @@ class TestCircuitBuilder(
         return graphView
     }
 
-	/** Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a [CircuitInOutImpl] with [PortType.OUTPUT]*/
+	/**
+	 * Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a
+	 * [CircuitInOutImpl] with [PortType.OUTPUT].
+	 */
 	fun buildInOutToOut(): GraphView {
 		connect(addInOut("IO"), addOutput("O"))
+		return graphView
+	}
+
+	/**
+	 * Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a
+	 * [CircuitInOutImpl] with [PortType.INOUT].
+	 */
+	fun buildInOutToInOut(): GraphView {
+		connect(addInOut("IO1"), addInOut("IO2"))
 		return graphView
 	}
 

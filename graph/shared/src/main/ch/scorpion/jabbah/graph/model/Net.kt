@@ -42,9 +42,6 @@ interface Net<T: Any> : GraphElement {
     /** Checks whether the specified [Port] is connected with this [Net].*/
     fun isConnectedWith(port: Port<out T>): Boolean
 
-    /** Returns the [OutputPort] (if any) that asserts a consistent, defined signal to this [Net]. */
-    fun getConsistentSignalPort(): OutputPort<T>?
-
     /**
      * Sets the current signal of this [Net] and forwards it to all connected [Port]s.
      * @param signal the signal to set.

@@ -120,8 +120,9 @@ interface OutputPort<T : Any> : Port<T> {
 	/**
 	 * Multiple [OutputPort]s can only be connected to the same [Net] if at most
 	 * one of them cannot be undefined.
+	 * Writable only to be set after deserialization depending on [PortType].
 	 */
-	val canBeUndefined: Boolean
+	var canBeUndefined: Boolean
 
 	/**
 	 * Determines whether the current output signal of this [OutputPort] is undefined.
