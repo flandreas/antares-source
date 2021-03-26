@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.io.ResourcesUtil
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -54,16 +55,48 @@ class FileLibraryPersistenceService(
 	}
 
 	override fun duplicateLibrary(library: Library, newUuid: UUID) {
-		LOG.debug("duplicateLibrary ${library.uuid}")
-		val sourceDirectory = if (library.isSystem) {
-			File(FileLibraryPersistenceService::class.java.getResource(buildResourceLibraryDirectoryPath(library.uuid)).toURI()).absolutePath
-		} else {
-			buildLibraryDirectoryPath(library.uuid)
-		}
+		val destinationDirectory = buildLibraryDirectoryPath(newUuid)
 
+		if (library.isSystem) {
+			try {
+				copySystemLibraryFromJarFile(library.uuid, destinationDirectory)
+			} catch (e: Throwable) {
+				LOG.debug("Could not copy library from JAR file, trying resources in file system")
+				copySystemLibraryFromFileSystem(library.uuid, destinationDirectory)
+			}
+		} else {
+			copyUserLibrary(library.uuid, destinationDirectory)
+		}
+	}
+
+	// This only works in the development environment, where resource files lie in the file system
+	private fun copySystemLibraryFromFileSystem(uuid: UUID, destinationDirectory: String) {
+		val resourcePath = buildResourceLibraryDirectoryPath(uuid)
+		LOG.debug("duplicate system library $uuid from file system resource path $resourcePath")
+		val absolutePath = File(FileLibraryPersistenceService::class.java.getResource(resourcePath).toURI()).absolutePath
+		LOG.debug("=> absolute path $absolutePath")
+
+		copyLibrary(absolutePath, destinationDirectory)
+	}
+
+	// This only works with installed applications, where resource files are packages in a JAR file
+	private fun copySystemLibraryFromJarFile(uuid: UUID, destinationDirectory: String) {
+		val resourcePath = buildResourceLibraryDirectoryPath(uuid)
+		LOG.debug("copy system library $uuid from JAR resource path $resourcePath")
+		val absolutePath = FileLibraryPersistenceService::class.java.getResource(resourcePath).toExternalForm()
+		LOG.debug("=> absolute path $absolutePath")
+		ResourcesUtil.copyFromJar(absolutePath, Paths.get(destinationDirectory))
+	}
+
+	private fun copyUserLibrary(uuid: UUID, destinationDirectory: String) {
+		val sourceDirectory = buildLibraryDirectoryPath(uuid)
+		copyLibrary(sourceDirectory, destinationDirectory)
+	}
+
+	private fun copyLibrary(sourceDirectory: String, destinationDirectory: String) {
 		FileUtils.copyDirectory(
 			File(sourceDirectory),
-			File(buildLibraryDirectoryPath(newUuid))
+			File(destinationDirectory)
 		)
 	}
 

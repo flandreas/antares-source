@@ -185,8 +185,7 @@ class LibraryPersistencePanel(
 			while(true) {
 				info = CreateLibraryPanel.showAsDialog(parent = parent, service = service) ?: return
 
-
-				if (StringUtils.isBlank(info.name.getTranslation())) {
+				if (info.name.isEmpty) {
 					if (JOptionPane.showConfirmDialog(
 						parent,
 						Translations.getString("library.emptyName.msg"),
