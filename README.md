@@ -26,7 +26,7 @@ Increment the current release number and update it at the following
 > **_TODO:_** The release number should exist at only one single place.
   
 * `gradle.properties`
-* `antares/shared/src/version.txt`
+* `antares/shared/rsc/version.txt`
  
 Commit and push to remote repository.
 
