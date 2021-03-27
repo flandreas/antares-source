@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
@@ -92,6 +93,8 @@ class MetaGraph(
 ) : Storable {
 
 	companion object {
+		private val LOG by logger(MetaGraph::class)
+
 		fun withName(name: String): MetaGraph {
 			val metaGraph = MetaGraph()
 			metaGraph.graph.model!!.name = Name(name)
@@ -135,6 +138,7 @@ class MetaGraph(
 	}
 
 	init {
+		LOG.debug("Instantiated new MetaGraph with ID ${hashCode()}")
 		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
