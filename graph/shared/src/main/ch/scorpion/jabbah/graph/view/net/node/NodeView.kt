@@ -25,7 +25,7 @@ interface NodeView<T: Any> : NetViewElement<T>, ConnectableView {
     /**
      * Returns the [EdgeView] (if any) that leaves this [NodeView] at the specified [Direction],
      * independent of whether the [EdgeView] is an incoming or an outgoing [EdgeView] (in terms of
-     * [EdgeView.getOrigin] and [EdgeView.getDestination]).
+     * [EdgeView.origin] and [EdgeView.description]).
      */
     fun getEdgeView(direction: Direction): EdgeView<T>?
 
@@ -36,7 +36,7 @@ interface NodeView<T: Any> : NetViewElement<T>, ConnectableView {
      * @param x the x-coordinate of the specific point.
      * @param y the y-coordinate of the specific point.
      * @param excludedEdgeView an optional [EdgeView] to exclude from consideration.
-     * @return `true` if any of the incoming or outgoing [EdgeView] exluding `excludedEdgeView`
+     * @return `true` if any of the incoming or outgoing [EdgeView] excluding `excludedEdgeView`
      *      contains the point `(x,y)`.
      */
     fun anyEdgeViewContainsPoint(x: Double, y: Double, excludedEdgeView: EdgeView<*>?): Boolean
