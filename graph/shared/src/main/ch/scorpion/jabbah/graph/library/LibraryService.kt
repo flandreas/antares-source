@@ -271,12 +271,12 @@ class LibraryService(
 		if (finder.result != null) {
 			return finder.result!!
 		}
-		LOG.debug("could't find owning LibraryDirectory of LibraryItem")
+		LOG.debug("couldn't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
 	}
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
-		LOG.debug("Duplicate ContainerLibraryElement")
+		LOG.info("Duplicate ContainerLibraryElement ${element.metaGraph?.uuid} with name '${element.metaGraph?.name}'")
 		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}

@@ -63,6 +63,7 @@ class LibraryServiceTest {
 		val duplicate = service.duplicateContainerLibraryElement(library, orig, TranslatableText("NewName"))
 
 		assertNotEquals(orig.uuid, duplicate.uuid)
+		assertEquals("Element", orig.metaGraph!!.name)
 		assertEquals("NewName", duplicate.name.value)
 	}
 }

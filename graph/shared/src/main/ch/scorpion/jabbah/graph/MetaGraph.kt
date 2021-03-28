@@ -101,6 +101,12 @@ class MetaGraph(
 			metaGraph.containerDrawing.model.name = name
 			return metaGraph
 		}
+
+		private fun copyGraphDataFromContainerModel(graph: Graph, containerDrawing: ContainerDrawing) {
+			graph.uuid = containerDrawing.model.graphUUID!!
+			graph.name = containerDrawing.model.graphName
+			graph.description = containerDrawing.model.description
+		}
 	}
 
 	var graph: GraphStorable = graph
@@ -203,10 +209,10 @@ class MetaGraph(
 	fun duplicate(newName: TranslatableText): MetaGraph {
 		val duplicate = StorableCloner.clone(this)
 
-		copyGraphDataFromContainerModel(duplicate.graph.model!!)
-
 		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
 		duplicate.containerDrawing.model.graphName = Name(newName)
+
+		copyGraphDataFromContainerModel(duplicate.graph.model!!, duplicate.containerDrawing)
 
 		return duplicate
 	}
@@ -248,8 +254,6 @@ class MetaGraph(
 	}
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
-		graph.uuid = containerDrawing.model.graphUUID!!
-		graph.name = containerDrawing.model.graphName
-		graph.description = containerDrawing.model.description
+		copyGraphDataFromContainerModel(graph, containerDrawing)
 	}
 }

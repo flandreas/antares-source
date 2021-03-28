@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
@@ -14,6 +15,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
 
 class MetaGraphTest {
 
@@ -75,6 +78,19 @@ class MetaGraphTest {
 
 		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
 		assertEquals("A", metaGraph2.containerDrawing.model.getPort<Boolean>().name)
+	}
+
+	@Test
+	fun shouldDuplicate() {
+		val orig = MetaGraph.withName("Original")
+		val duplicate = orig.duplicate(TranslatableText("Duplicate"))
+
+		assertNotSame(orig, duplicate)
+		assertNotSame(orig.graph, duplicate.graph)
+		assertNotSame(orig.containerDrawing, duplicate.containerDrawing)
+		assertNotEquals(orig.uuid, duplicate.uuid)
+		assertEquals("Duplicate", duplicate.name)
+		assertEquals("Original", orig.name)
 	}
 
 	private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
