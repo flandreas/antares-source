@@ -172,7 +172,7 @@ open class ApplicationDataViewController(
 	 */
 	fun save() {
 		data?.let {
-			LOG.debug("Save application data")
+			LOG.info("Save application data")
 			if (it.savable.save(this)) {
 				commandManager.reset()
 				eventBus.post(CurrentSavableEvent(it.savable))
@@ -193,7 +193,7 @@ open class ApplicationDataViewController(
 			if (it.savable.notDefined) {
 				throw IllegalStateException("Savable is not defined")
 			}
-			LOG.debug("Store application data")
+			LOG.info("Save application data")
 			repository.store(it.savable, it.content)
 		} ?: throw IllegalStateException("Request to save without present data")
 	}

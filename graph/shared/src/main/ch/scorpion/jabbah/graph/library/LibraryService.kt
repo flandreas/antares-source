@@ -13,7 +13,10 @@ import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCloner
+import ch.scorpion.jabbah.io.StorableCreator
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
 data class LibraryItemAddedEvent(
@@ -63,6 +66,7 @@ class LibraryService(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
+	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val userHolder: UserHolder = EditAuthModule.userHolder
 ) {
@@ -211,7 +215,7 @@ class LibraryService(
 	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int? = null): ContainerLibraryElement {
 		LOG.debug("Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
-		storeContainerLibraryElement(library, metaGraph, element)
+		storeContainerLibraryElement(library, metaGraph, element, doClone = true)
 		addLibraryItem(library, element, directory, index)
 		return element
 	}
@@ -225,7 +229,7 @@ class LibraryService(
 		LOG.debug("Updating ContainerLibraryElement")
 		element.metaGraph?.let {
 			val nameChanged = it.translatableName != element.name.translation
-			storeContainerLibraryElement(library, it, element)
+			storeContainerLibraryElement(library, it, element, doClone = false)
 			if (nameChanged) {
 				element.name = Name(it.translatableName)
 				storeLibrary(library)
@@ -324,16 +328,17 @@ class LibraryService(
 	}
 
 	/**
-	 * Stores a [MetaGraph] in a [Library] and updates the instance it in the specified [ContainerLibraryElement].
-	 * [MetaGraph]s must be cloneable while preserving their persistent [Storable.storableId]s, which is only possible
-	 * if these IDs already exist. Since these IDs are assigned when reading [Storable], storing a [ContainerLibraryElement]
-	 * must involve reading it back from persistent store after storing.
+	 * Stores a [MetaGraph] in a [Library] and updates the instance in the specified [ContainerLibraryElement].
 	 */
-	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
-		LOG.debug("Storing MetaGraph with ID ${metaGraph.hashCode()} in Library with ID ${library.hashCode()}")
-		persister(library.isSystem).storeMetaGraph(library, metaGraph)
-		val clone = persister(library.isSystem).loadMetaGraph(library, metaGraph.uuid)
-		element.updateMetaGraph(clone)
+	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
+		LOG.debug("Storing MetaGraph")
+		if (doClone) {
+			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
+			element.updateMetaGraph(clone)
+			persister(library.isSystem).storeMetaGraph(library, clone)
+		} else {
+			persister(library.isSystem).storeMetaGraph(library, metaGraph)
+		}
 	}
 
 	private fun createContainerLibraryElement(metaGraph: MetaGraph): ContainerLibraryElement {
