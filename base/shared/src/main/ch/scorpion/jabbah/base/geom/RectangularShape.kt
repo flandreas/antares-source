@@ -135,12 +135,16 @@ interface RectangularShape : Shape {
         return this
     }
 
-
     /** Expands this [RectangularShape] by adding the delta to each side of this [RectangularShape].*/
     fun expandBy(delta: Double): RectangularShape = expandBy(delta, delta)
 
 	fun expandBy(topY: Double, leftX: Double, bottomY: Double, rightX: Double): RectangularShape {
 		setFrame(x - leftX, y - topY, width + leftX + rightX, height + topY + bottomY)
+		return this
+	}
+
+	fun expandLeftBy(deltaX: Double): RectangularShape {
+		setFrame(x - deltaX, y, width + deltaX, height)
 		return this
 	}
 
