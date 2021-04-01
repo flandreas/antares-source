@@ -72,6 +72,11 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	 */
 	var currentSelectedAddress: Int = 0
 
+	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(true)
+	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(false)
+	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != Word.of(true)
+	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(false)
+
 	init {
 		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
@@ -86,6 +91,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	/** ---- [Addressable] interface */
 
 	override val memory = Memory()
+
+	override val storesCells: Boolean get() = false
 
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
 
@@ -119,9 +126,12 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override fun dataAt(address: Int): Long = memory.read(address)
 
-	override fun setDataAt(address: Int, value: Long) {
+	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
+		signalHandler?.let {
+			it.requestActingAfter(this, propagationDelay, createActorData(null))
+		}
 	}
 
 	override fun disassemblyAt(address: Int): String = ""
@@ -196,7 +206,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
 	}
 
-	fun read(address: Int): Long? = memory.read(address)
+	fun read(address: Int): Long = memory.read(address)
 
 	fun write(address: Int, value: Long, signalHandler: SignalHandler? = null) {
 		memory.write(address, value)

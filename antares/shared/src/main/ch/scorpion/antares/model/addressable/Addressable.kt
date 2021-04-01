@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
@@ -34,6 +35,9 @@ interface Addressable : Vertice {
 	/** Typically corresponds with the value of a "chip select (CS)" input.*/
 	val isSelected: Boolean
 
+	/** Determines whether this [Addressable] stores the cell values in [Vertice.write].*/
+	val storesCells: Boolean
+
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 
@@ -43,7 +47,7 @@ interface Addressable : Vertice {
     /** Returns the data at the specified address.*/
     fun dataAt(address: Int): Long
 
-	fun setDataAt(address: Int, value: Long)
+	fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?)
 
 	/** Returns the comment at the specified address.*/
 	fun commentAt(address: Int): String?

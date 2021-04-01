@@ -35,32 +35,32 @@ class RAMCalculator : VerticeCalculator<RAM> {
                 undefinedOutput(ram, signalHandler)
                 return
             }
-	        val addressInt: Int? = ram.getAddressInput().getIncomingSignal()!!.toInt()
+	        val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
 	        if (addressInt == null) {
 		        undefinedOutput(ram, signalHandler)
 		        return
 	        }
 	        ram.currentSelectedAddress = addressInt
-            if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
+            if (ram.isRead) {
                 read(ram, signalHandler)
             }
         }
 
-        if (ram.getChipSelectInput().getIncomingSignal() == Word.of(false)) {
+        if (ram.isChipNotSelected) {
             return
         }
 
 	    ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
 
         if (data.changedPort === ram.getAddressInput()) {
-            if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
+            if (ram.isRead) {
                 // Read address changed
                 read(ram, signalHandler)
             }
         }
 
         if (data.changedPort === ram.getWriteInput()) {
-            if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
+            if (ram.isRead) {
                 read(ram, signalHandler)
             } else {
                 undefinedOutput(ram, signalHandler)
@@ -68,7 +68,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         }
 
         if (data.changedPort === ram.getClockInput()!!) {
-            if (ram.getClockInput()!!.getIncomingSignal() == Word.of(true) && ram.getWriteInput().getIncomingSignal() == Word.of(true)) {
+            if (ram.getClockInput()!!.getIncomingSignal() == Word.of(true) && ram.isWrite) {
                 write(ram, signalHandler)
             }
         }
@@ -80,41 +80,39 @@ class RAMCalculator : VerticeCalculator<RAM> {
             read(ram, signalHandler)
         }
 
-        if (ram.getChipSelectInput().getIncomingSignal() != Word.of(true)) {
+        if (ram.isChipSelected) {
             undefinedOutput(ram, signalHandler)
             return
         }
 
-	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()!!.toInt()
+	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
 	    if (addressInt == null) {
 		    undefinedOutput(ram, signalHandler)
 		    return
 	    }
 	    ram.currentSelectedAddress = addressInt
 
-        if (data.changedPort === ram.getAddressInput()) {
-            readOrWrite(ram, signalHandler)
-        }
-
-        if (data.changedPort === ram.getDataPort()) {
-            readOrWrite(ram, signalHandler)
-        }
-
-        if (data.changedPort === ram.getChipSelectInput()) {
-            readOrWrite(ram, signalHandler)
-        }
-
-        if (data.changedPort === ram.getWriteInput()) {
-            if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
-                readOrWrite(ram, signalHandler)
-            } else {
-                undefinedOutput(ram, signalHandler)
-            }
-        }
+	    if (data.changedPort === ram.getAddressInput()) {
+		    readOrWrite(ram, signalHandler)
+	    } else if (data.changedPort === ram.getDataPort()) {
+		    readOrWrite(ram, signalHandler)
+	    } else if (data.changedPort === ram.getChipSelectInput()) {
+		    readOrWrite(ram, signalHandler)
+	    } else if (data.changedPort === ram.getWriteInput()) {
+		    if (ram.isRead) {
+			    readOrWrite(ram, signalHandler)
+		    } else {
+			    undefinedOutput(ram, signalHandler)
+		    }
+	    } else if (data.changedPort === null) {
+	    	if (ram.isRead) {
+	    		read(ram, signalHandler)
+		    }
+	    }
     }
 
     private fun readOrWrite(ram: RAM, signalHandler: SignalHandler) {
-        if (ram.getWriteInput().getIncomingSignal() == Word.of(true)) {
+        if (ram.isWrite) {
             write(ram, signalHandler)
         } else {
             read(ram, signalHandler)

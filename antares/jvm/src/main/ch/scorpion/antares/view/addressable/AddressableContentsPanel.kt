@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -163,12 +164,26 @@ class AddressableContentsPanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
+	private fun registerCommand(command: Command) {
+		if (addressable.storesCells) {
+			cmdManager.register(command)
+		}
+	}
+
+	private fun executeCommand(command: Command) {
+		if (addressable.storesCells) {
+			cmdManager.execute(command)
+		} else {
+			command.execute()
+		}
+	}
+
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
 			val changes = memoryDisplayPanel.changes
 			if (changes.isNotEmpty()) {
 				LOG.debug("User has changed ${changes.size} memory cells")
-				cmdManager.register(AddressableCellChangeCommand(controller, addressable.id, changes))
+				registerCommand(AddressableCellChangeCommand(controller, addressable.id, changes))
 			}
 			closeHandler?.invoke(this@AddressableContentsPanel)
 		}
@@ -179,7 +194,7 @@ class AddressableContentsPanel(
 			val fileChooser = JFileChooser()
 			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					cmdManager.execute(AddressableContentsCommand(controller, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					executeCommand(AddressableContentsCommand(controller, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					LOG.error("Invalid data in memory file: ${e.message}")
@@ -204,7 +219,7 @@ class AddressableContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			cmdManager.execute(AddressableClearCommand(controller, addressable.id, addressable.dataWidth))
+			executeCommand(AddressableClearCommand(controller, addressable.id, addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}

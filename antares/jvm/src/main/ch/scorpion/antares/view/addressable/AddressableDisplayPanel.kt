@@ -35,10 +35,10 @@ class AddressableDisplayPanel(
 	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
-		FixedWidthLayout(1, addressable, editable),
-		FixedWidthLayout(4, addressable, editable),
-		FixedWidthLayout(8, addressable, editable),
-		FixedWidthLayout(16, addressable, editable)
+		FixedWidthLayout(1, addressable, editable, scheduler),
+		FixedWidthLayout(4, addressable, editable, scheduler),
+		FixedWidthLayout(8, addressable, editable, scheduler),
+		FixedWidthLayout(16, addressable, editable, scheduler)
 	)
 
     private val table = JTable(layouts[1].createTableModel())

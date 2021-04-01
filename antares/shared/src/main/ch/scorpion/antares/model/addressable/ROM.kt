@@ -97,6 +97,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override val memory = Memory()
 
+	override val storesCells: Boolean get() = true
+
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
@@ -131,7 +133,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override fun dataAt(address: Int): Long = memory.read(address)
 
-	override fun setDataAt(address: Int, value: Long) {
+	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
 	}
