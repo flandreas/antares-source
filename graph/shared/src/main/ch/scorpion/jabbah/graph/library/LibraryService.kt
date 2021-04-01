@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -286,19 +285,25 @@ class LibraryService(
 	}
 
 	/**
-	 * Duplicates the specified user [Library] and stores the duplicate with the given new name.
-	 * @return the created duplicate user [Library]
+	 * Duplicates the specified [Library] (either user or system [Library]) and store the duplicate with
+	 * the given new name as user [Library].
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
-		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}'")
 		val newUuid = System.createUUID()
-		userLibraryPersister.duplicateLibrary(library, newUuid)
-		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
+		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}' and UUID $newUuid")
+
+		val path = persister(library.isSystem).exportLibraryTemporarily(library.uuid)
+
+		userLibraryPersister.importTemporaryLibrary(newUuid, path)
+		val newLibrary = loadLibrary(newUuid, isSystem = false)
+
 		newLibrary.uuid = newUuid
 		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
 		newLibrary.author = userHolder.user.uuid
+
 		storeLibrary(newLibrary)
+
 		return newLibrary
 	}
 

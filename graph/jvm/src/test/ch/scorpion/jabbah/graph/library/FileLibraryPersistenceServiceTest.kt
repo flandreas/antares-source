@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -9,7 +8,9 @@ import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
-import java.nio.file.*
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.test.*
 
 class FileLibraryPersistenceServiceTest {
@@ -87,24 +88,6 @@ class FileLibraryPersistenceServiceTest {
 
 		assertFalse(Files.exists(libraryDirPath()))
 		assertFalse(Files.exists(metaGraphPath(origMetaGraph)))
-	}
-
-	@Test
-	fun shouldDuplicateLibrary() {
-		val metaGraph = MetaGraph()
-		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)
-		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
-		val newUUID = System.createUUID()
-
-		persistenceService.duplicateLibrary(LibraryModule.libraryHolder.library, newUUID)
-
-		// original files
-		assertTrue(Files.exists(libraryFilePath()))
-		assertTrue(Files.exists(metaGraphPath(metaGraph)))
-
-		// new files
-		assertTrue(Files.exists(libraryFilePath(newUUID)))
-		assertTrue(Files.exists(metaGraphPath(metaGraph, newUUID)))
 	}
 
 	@Test
