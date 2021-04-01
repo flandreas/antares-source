@@ -95,6 +95,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override val memory = Memory()
 
+	override val storesCells: Boolean get() = true
+
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress

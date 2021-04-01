@@ -34,6 +34,9 @@ interface Addressable : Vertice {
 	/** Typically corresponds with the value of a "chip select (CS)" input.*/
 	val isSelected: Boolean
 
+	/** Determines whether this [Addressable] stores the cell values in [Vertice.write].*/
+	val storesCells: Boolean
+
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 

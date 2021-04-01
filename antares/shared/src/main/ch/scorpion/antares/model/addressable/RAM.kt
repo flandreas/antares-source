@@ -85,6 +85,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override val memory = Memory()
 
+	override val storesCells: Boolean get() = false
+
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
