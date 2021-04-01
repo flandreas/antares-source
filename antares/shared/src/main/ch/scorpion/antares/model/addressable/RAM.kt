@@ -71,6 +71,11 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	 */
 	var currentSelectedAddress: Int = 0
 
+	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(true)
+	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(false)
+	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != Word.of(true)
+	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(false)
+
 	init {
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
@@ -119,9 +124,12 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override fun dataAt(address: Int): Long = memory.read(address)
 
-	override fun setDataAt(address: Int, value: Long) {
+	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
+		signalHandler?.let {
+			it.requestActingAfter(this, propagationDelay, createActorData(null))
+		}
 	}
 
 	override fun disassemblyAt(address: Int): String = ""
@@ -196,7 +204,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
 	}
 
-	fun read(address: Int): Long? = memory.read(address)
+	fun read(address: Int): Long = memory.read(address)
 
 	fun write(address: Int, value: Long, signalHandler: SignalHandler? = null) {
 		memory.write(address, value)

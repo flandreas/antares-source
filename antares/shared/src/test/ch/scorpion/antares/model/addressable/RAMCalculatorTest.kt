@@ -150,6 +150,19 @@ class RAMCalculatorTest {
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
 
+	@Test
+	fun shouldOutputDataWhenChangingManuallyUnclocked() {
+		val ram = createRam(false)
+		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.False), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
+
+		ram.setDataAt(0, 255, signalHandler)
+		calculator.calculate(ram, ram.createActorData(null) as GraphActorData, signalHandler)
+
+		assertEquals(Word.of(BitWidth.BW_8, 255), ram.getDataPort().getOutgoingSignal() as Word)
+	}
+
 	/** ---- [RAMCalculatorTest] */
 
 	private fun createRam(clocked: Boolean): RAM {

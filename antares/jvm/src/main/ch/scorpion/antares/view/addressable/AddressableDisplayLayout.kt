@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.execution.SignalHandler
 import javax.swing.JLabel
 import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
@@ -43,7 +44,8 @@ abstract class AbstractAddressableDisplayLayout(
 class FixedWidthLayout(
 	override val cellsPerRow: Int,
 	addressable: Addressable,
-	private val editable: Boolean
+	private val editable: Boolean,
+	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableDisplayLayout(addressable) {
 
 	private val rowCount: Int = ceil((addressable.addressWidth.power() / cellsPerRow).toDouble()).toInt()
@@ -61,8 +63,8 @@ class FixedWidthLayout(
 
 	override fun createTableModel(): TableModel {
 		return when (cellsPerRow) {
-			1 -> SingleColumnTableModel(addressable, rowCount, editable)
-			else -> AddressableTableModel(cellsPerRow, addressable, rowCount, editable)
+			1 -> SingleColumnTableModel(addressable, rowCount, editable, signalHandler)
+			else -> AddressableTableModel(cellsPerRow, addressable, rowCount, editable, signalHandler)
 		}
 	}
 
@@ -124,7 +126,8 @@ private open class AddressableTableModel(
 	cellsPerRow: Int,
 	addressable: Addressable,
 	rowCount: Int,
-	private val editable: Boolean
+	private val editable: Boolean,
+	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableTableModel(cellsPerRow, addressable, rowCount) {
 
 	/** ---- [AbstractTableModel] */
@@ -145,7 +148,7 @@ private open class AddressableTableModel(
 
 	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
 		try {
-			addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(value.trim()))
+			addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(value.trim()), signalHandler)
 		} catch (e: IllegalArgumentException) {
 			// empty
 		}
@@ -155,8 +158,9 @@ private open class AddressableTableModel(
 private class SingleColumnTableModel(
 	addressable: Addressable,
 	rowCount: Int,
-	editable: Boolean
-) : AddressableTableModel(1, addressable, rowCount, editable) {
+	editable: Boolean,
+	signalHandler: SignalHandler? = null
+) : AddressableTableModel(1, addressable, rowCount, editable, signalHandler) {
 
 	private val showDisassembly: Boolean = addressable.disassemblyWidth > 0
 	private val valueColumnName = Translations.getString("antares.memory.layout.value")
