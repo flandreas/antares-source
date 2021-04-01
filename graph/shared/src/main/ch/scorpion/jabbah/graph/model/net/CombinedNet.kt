@@ -1,11 +1,7 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.execution.ExecutionError
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.SignalUtil
-import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
+import ch.scorpion.jabbah.graph.model.*
 
 /**
  * A [CombinedNet] is a collection of all [OutputPort]s whose outgoing signals might be in conflict
@@ -90,11 +86,11 @@ class CombinedNet private constructor(net: Net<*>?, excluding: OutputPort<*>? = 
 			return
 		}
 		net.ports
-			.filter { it !== excluding && it.portType.isOutput }
+			.filter { it !== excluding && it.portType.isOutput && it.owner is NetCombiner }
 			.map { it as OutputPort<*> }
 			.forEach {
 				outputPorts.add(it)
-				outputPorts.addAll(it.owner!!.getCombinedNetOutputPorts(it))
+				outputPorts.addAll((it.owner as NetCombiner).getCombinedNetOutputPorts(it))
 			}
 	}
 }

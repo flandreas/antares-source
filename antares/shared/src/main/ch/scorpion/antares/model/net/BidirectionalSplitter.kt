@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.NetCombiner
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 class BidirectionalSplitter(
 	bitWidth: BitWidth = BitWidth.BW_8,
 	branchCount: BranchCount = BranchCount.BC_4
-) : AbstractSplitter(bitWidth, branchCount, CALCULATOR) {
+) : AbstractSplitter(bitWidth, branchCount, CALCULATOR), NetCombiner {
 
 	companion object {
 
@@ -83,6 +84,8 @@ class BidirectionalSplitter(
 	override val wideSidePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 
 	override val narrowSidePorts: List<DigitalPort> get() = getPorts().filterIndexed { index, _ -> index > 0 }.map { it as DigitalPort }
+
+	/** ---- [NetCombiner] interface */
 
 	override fun getCombinedNetOutputPorts(outputPort: OutputPort<*>): Collection<OutputPort<*>> {
 		return if (outputPort === wideSidePort) {

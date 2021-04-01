@@ -133,8 +133,6 @@ abstract class AbstractVertice(
 		return getOutputs().first { it.portId == id } as OutputPort<T>
 	}
 
-	override fun getCombinedNetOutputPorts(outputPort: OutputPort<*>): Collection<OutputPort<*>> = emptyList()
-
 	/** ---- [Storable] interface */
 
 	/**
