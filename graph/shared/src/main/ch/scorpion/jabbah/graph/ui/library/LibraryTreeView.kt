@@ -11,7 +11,9 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.view.GraphElementView
 
 enum class LibraryTreeViewType {
 	Main,
@@ -155,8 +157,8 @@ class LibraryTreeViewController (
 		set(value) {
 			if (field !== value) {
 				field = value
-				eventBus.post(LibrarySelectionChangedEvent(this))
 				LOG.debug("Selected TreeNode '${field.toString()}'")
+				eventBus.post(LibrarySelectionChangedEvent(this))
 			}
 		}
 
@@ -198,6 +200,18 @@ class LibraryTreeViewController (
 
 	fun isDefaultElement(element: ContainerLibraryElement): Boolean =
 		element.library?.defaultElementUUID == element.uuid
+
+	/**
+	 * Creates a new [GraphElementView] instance from the currently selected [LibraryElement]
+	 * to be dragged and dropped
+	 * @return `null` if nothing is selected, or the selected [LibraryItem] isn't a [LibraryElement]
+	 */
+	fun createTransferableGraphElementView(): GraphElementView<GraphElement>? {
+		if (selectedItem == null || selectedItem !is LibraryElement) {
+			return null
+		}
+		return (selectedItem as LibraryElement).getNewInstance()
+	}
 
 	private fun displaysLibrary(library: Library?): Boolean = library === this.library || library === project
 }

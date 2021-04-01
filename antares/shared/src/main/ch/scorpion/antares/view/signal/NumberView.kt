@@ -156,6 +156,7 @@ class NumberView(
 		val bounds = Rectangle2D(0, 0, 0, 0)
 		var x = 0.0
 		var y = 0.0
+		var byteLabelColumnWidth = 0.0
 
 		val digitViewCount = bitWidth.width / representation.bits()
 		if (digitViewCount > 8 && bitWidth.width % 8 != 0) {
@@ -169,13 +170,15 @@ class NumberView(
 			x += digitView.width.toInt()
 
 			if (max > 8 && i % 8 == 0) {
-				byteIndexLabels.add(Label(
+				val label = Label(
 					text = i.toString(),
 					location = Point2D(x + BYTE_LABEL_HOR_GAP, y + digitView.height),
 					font = Look.EXT_PIN_FONT,
 					color = Themes.get<AntaresTheme>().vertice.color.textColor,
 					horizontalAlignment = HorizontalAlignment.LEFT,
-					verticalAlignment = VerticalAlignment.BOTTOM))
+					verticalAlignment = VerticalAlignment.BOTTOM)
+				byteIndexLabels.add(label)
+				byteLabelColumnWidth = max(byteLabelColumnWidth, label.boundingBox.width)
 				x = 0.0
 				y += digitView.height.toInt()
 			} else if (i % 4 == 0 && i > 0) {
@@ -184,6 +187,7 @@ class NumberView(
 
 			bounds.add(digitView.bounds)
 		}
+		bounds.expandLeftBy(byteLabelColumnWidth)
 		setBounds(bounds)
 	}
 }

@@ -2,12 +2,12 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.repository.RepositoryService
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferable
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferableData
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 import java.awt.datatransfer.Transferable
 import java.awt.image.BufferedImage
@@ -22,7 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode
  * Handles drag&drop of a [LibraryElement] in [LibraryTreeViewSwing].
  */
 class LibraryTreeViewTransferHandler(
-	private val treeView: LibraryTreeViewSwing,
+	private val controller: LibraryTreeViewController,
 	private val repositoryService: RepositoryService = RepositoryModule.repositoryService.invoke()
 ) : TransferHandler() {
 
@@ -38,7 +38,7 @@ class LibraryTreeViewTransferHandler(
 		if (!support.isDataFlavorSupported(GraphElementViewTransferable.FLAVOR)) {
 			return false
 		}
-		if (support.dropLocation !is JTree.DropLocation || support.component != treeView) {
+		if (support.dropLocation !is JTree.DropLocation || support.component != controller.view) {
 			return false
 		}
 		if (extractTransferElement(support) !is ContainerLibraryElement) {
@@ -49,20 +49,13 @@ class LibraryTreeViewTransferHandler(
 	}
 
 	override fun createTransferable(c: JComponent): Transferable? {
-		val tree = c as JTree
-		val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
-		if (treeNode.userObject !is LibraryElement) {
-			return null
+		return controller.createTransferableGraphElementView()?.let {
+			// Didn't find a better way to hide the default cursor rectangle in the size of the TreeNode's bounding box
+			dragImage = DUMMY_IMAGE
+			dragImageOffset = java.awt.Point(0, 0)
+
+			GraphElementViewTransferable.of(it, controller.selectedItem as LibraryElement)
 		}
-
-		val libraryElement = treeNode.userObject as LibraryElement
-		val newInstance = libraryElement.getNewInstance<GraphElement>()
-
-		// Didn't find a better way to hide the default cursor rectangle in the size of the TreeNode's bounding box
-		dragImage = DUMMY_IMAGE
-		dragImageOffset = java.awt.Point(0, 0)
-
-		return GraphElementViewTransferable.of(newInstance, libraryElement)
 	}
 
 	override fun importData(support: TransferSupport): Boolean {

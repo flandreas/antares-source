@@ -76,7 +76,7 @@ class LibraryManagementService(
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.debug("creating new library '${properties.name.getTranslation()}' with template $templateLibraryUuid")
+		LOG.info("Create new library '${properties.name.getTranslation()}' with template $templateLibraryUuid")
 
 		val library = if (templateLibraryUuid == null) {
 			val library = libraryFactory.createEmptyLibrary(properties)

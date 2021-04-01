@@ -111,15 +111,15 @@ class GraphViewConnectServiceImpl(
 	override fun unconnectEdgeViewOrigin(edgeView: EdgeView<*>) {
 		if (edgeView.origin?.port != null) {
 			edgeView.model.unconnect(edgeView.origin!!.port!!)
-			edgeView.unconnectFromOrigin()
 		}
+		edgeView.unconnectFromOrigin()
 	}
 
 	override fun unconnectEdgeViewDestination(edgeView: EdgeView<*>) {
 		if (edgeView.destination?.port != null) {
 			edgeView.model.unconnect(edgeView.destination!!.port!!)
-			edgeView.unconnectFromDestination()
 		}
+		edgeView.unconnectFromDestination()
 	}
 
 	override fun unconnect(graphView: GraphView, verticeView: VerticeView<*>) {

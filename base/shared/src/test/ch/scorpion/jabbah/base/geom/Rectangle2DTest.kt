@@ -138,4 +138,11 @@ class Rectangle2DTest {
 		rect.add(100, 100)
 		assertEquals(Rectangle2D(100, 100, 0, 0), rect.boundingBox as Rectangle2D)
 	}
+
+	@Test
+	fun shouldExpandLeft() {
+		val rect = Rectangle2D(100, 100, 100, 100)
+		rect.expandLeftBy(10.0)
+		assertEquals(Rectangle2D(90, 100, 110, 100), rect)
+	}
 }

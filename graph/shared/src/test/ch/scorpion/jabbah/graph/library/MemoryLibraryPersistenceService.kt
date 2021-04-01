@@ -38,15 +38,19 @@ class MemoryLibraryPersistenceService(
 		// empty
 	}
 
-	override fun duplicateLibrary(library: Library, newUuid: UUID) {
-		// empty
-	}
-
 	override fun importLibrary(inputPath: String): UUID {
 		throw UnsupportedOperationException("not implemented")
 	}
 
+	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
 	override fun exportLibrary(uuid: UUID, outputPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun exportLibraryTemporarily(uuid: UUID): String {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

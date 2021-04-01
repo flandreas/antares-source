@@ -92,7 +92,7 @@ class LibraryService(
 
 	/** Stores the specified [Library] in persistent store.*/
 	fun storeLibrary(library: Library) {
-		LOG.debug("Storing Library ${library.uuid}")
+		LOG.debug("Storing Library ${library.uuid} with ID ${library.hashCode()}")
 		persister(library.isSystem).storeLibrary(library)
 	}
 
@@ -274,30 +274,36 @@ class LibraryService(
 		if (finder.result != null) {
 			return finder.result!!
 		}
-		LOG.debug("could't find owning LibraryDirectory of LibraryItem")
+		LOG.debug("couldn't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
 	}
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
-		LOG.debug("Duplicate ContainerLibraryElement")
+		LOG.info("Duplicate ContainerLibraryElement ${element.metaGraph?.uuid} with name '${element.metaGraph?.name}'")
 		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
 
 	/**
-	 * Duplicates the specified user [Library] and stores the duplicate with the given new name.
-	 * @return the created duplicate user [Library]
+	 * Duplicates the specified [Library] (either user or system [Library]) and store the duplicate with
+	 * the given new name as user [Library].
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
-		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}'")
 		val newUuid = System.createUUID()
-		userLibraryPersister.duplicateLibrary(library, newUuid)
-		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
+		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}' and UUID $newUuid")
+
+		val path = persister(library.isSystem).exportLibraryTemporarily(library.uuid)
+
+		userLibraryPersister.importTemporaryLibrary(newUuid, path)
+		val newLibrary = loadLibrary(newUuid, isSystem = false)
+
 		newLibrary.uuid = newUuid
 		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
 		newLibrary.author = userHolder.user.uuid
+
 		storeLibrary(newLibrary)
+
 		return newLibrary
 	}
 
@@ -326,6 +332,9 @@ class LibraryService(
 		}
 	}
 
+	/**
+	 * Stores a [MetaGraph] in a [Library] and updates the instance in the specified [ContainerLibraryElement].
+	 */
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
 		LOG.debug("Storing MetaGraph")
 		if (doClone) {
@@ -348,8 +357,9 @@ class LibraryService(
 	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
 		if (loadAlways || element.metaGraph == null) {
 			val ref = "'${element.metaGraph?.name}' ${element.uuid}"
-			LOG.debug("Loading MetaGraph $ref")
-			element.updateMetaGraph(persister(library.isSystem).loadMetaGraph(library, element.uuid))
+			val metaGraph = persister(library.isSystem).loadMetaGraph(library, element.uuid)
+			LOG.debug("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
+			element.updateMetaGraph(metaGraph)
 		}
 	}
 

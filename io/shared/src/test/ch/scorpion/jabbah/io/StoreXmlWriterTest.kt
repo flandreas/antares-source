@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,6 +13,7 @@ class StoreXmlWriterTest {
 	@BeforeTest
 	fun setup() {
 		IOModule.require()
+		IOModule.typeMap.register("testStorable", TestStorable::class)
 	}
 
 	@Test
@@ -31,6 +29,16 @@ class StoreXmlWriterTest {
 
 		assertEquals("8.25", xmlWriter.attributes["x"])
 		assertEquals("0.0", xmlWriter.attributes["y"])
+	}
+
+	@Test
+	fun shouldSetStorableId() {
+		val storable = TestStorable()
+		storable.storableId = -42
+
+		storeXmlWriter.writeStorable(storable)
+
+		assertEquals(0, storable.storableId)
 	}
 
 	@Test

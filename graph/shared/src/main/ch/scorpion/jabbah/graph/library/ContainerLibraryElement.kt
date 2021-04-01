@@ -87,9 +87,9 @@ class ContainerLibraryElement(
 	}
 
 	override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
-		LOG.debug("Create new instance of '$name'")
 		library!!.libraryService.getMetaGraph(library!!, this)
 
+		LOG.debug("Create new GraphElementView of '$name' MetaGraph with ID ${metaGraph!!.hashCode()} in Library with ID ${library.hashCode()}")
 		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
 		if (metaGraph!!.graph.model!!.propagationDelay != null) {
 			instance.model.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!

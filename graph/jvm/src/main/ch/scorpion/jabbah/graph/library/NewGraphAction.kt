@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
@@ -26,19 +27,26 @@ class NewGraphAction(
 	eventBus
 ) {
 
+	companion object {
+		private val LOG by logger(NewGraphAction::class)
+	}
+
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-	    val name = JOptionPane.showInputDialog(
+	    val newName = JOptionPane.showInputDialog(
 		    SwingUtilities.getWindowAncestor(controller.view as Component),
 		    Translations.getString("library.action.newGraph.question"),
 		    name,
 		    JOptionPane.QUESTION_MESSAGE
 	    )
-	    if (StringUtils.isEmpty(name)) {
+	    if (StringUtils.isEmpty(newName)) {
 		    return
 	    }
+
+	    LOG.info("$name '$newName'")
+
         val directory = controller.selectedItem as LibraryDirectory
 	    val library = directory.library!!
-	    val metaGraph = MetaGraph.withName(name)
+	    val metaGraph = MetaGraph.withName(newName)
 
 	    val element = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
 		eventBus.post(OpenContainerLibraryElementRequest(element))

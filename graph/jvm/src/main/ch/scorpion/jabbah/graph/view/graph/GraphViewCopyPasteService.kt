@@ -12,10 +12,10 @@ import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.*
 import java.io.ByteArrayInputStream
@@ -24,7 +24,8 @@ import kotlin.math.max
 
 class GraphViewCopyPasteService(
 	private val typeMap: TypeMap = IOModule.typeMap,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	private val storableCreator: StorableCreator = IOModule.storableCreator,
+	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : CopyPasteService() {
 
 	companion object {
@@ -101,15 +102,19 @@ class GraphViewCopyPasteService(
 				}
 
 				var pastedAnchorComponent: Component? = null
-				for (cv in componentsIter) {
-					if (cv is VerticeView<*>) {
-						strip(cv, (copy as GraphStorable).graphView)
-					}
-					components.add(cv)
-					if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == cv.location) {
-						pastedAnchorComponent = cv
+				for (c in componentsIter) {
+					if (keepAfterStripping(c, copy)) {
+						components.add(c)
+						if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
+							pastedAnchorComponent = c
+						}
 					}
 				}
+
+				if (copy is GraphStorable) {
+					cleanupNets(components, copy.graphView)
+				}
+
 				Movable.moveBy(components, dislocation)
 				components.forEach { c -> view.drawing.add(c) }
 
@@ -145,11 +150,41 @@ class GraphViewCopyPasteService(
 		return PasteInfo(components, dislocation)
 	}
 
+	private fun keepAfterStripping(component: Component, copy: Storable): Boolean {
+		if (copy !is GraphStorable) {
+			// No stripping
+			return true
+		}
+		val graphView = (copy as GraphStorable).graphView
+		return when (component) {
+			is VerticeView<*> -> keepAfterDisconnectingFromNetsWithoutEdgeView(component, graphView)
+			is NodeView<*> -> keepAfterRemovingDanglingNodeView(component, graphView)
+			else -> true
+		}
+	}
+
+	/**
+	 * Unconnects the [Port]s of all [VerticeView]s not contained in the [GraphView] from
+	 * the [Net]s they are connected with.
+	 */
+	private fun cleanupNets(components: List<Component>, graphView: GraphView) {
+		components
+			.filter { it is NetViewElement<*> }
+			.forEach { netViewElem ->
+				val ports = ((netViewElem as NetViewElement<*>).net!!.ports).toList()
+				ports.forEach { port ->
+					if (port.owner != null && graphView.getElementViews(port.owner!!).isEmpty()) {
+						netViewElem.net!!.unconnect(port)
+					}
+				}
+			}
+	}
+
 	/**
 	 * Disconnects all [Port]s of a [Vertice] from [Net]s that don't have a
 	 * corresponding [EdgeView] in the specified [GraphView].
 	 */
-	private fun strip(verticeView: VerticeView<*>, graphView: GraphView) {
+	private fun keepAfterDisconnectingFromNetsWithoutEdgeView(verticeView: VerticeView<*>, graphView: GraphView): Boolean {
 		for (pv in verticeView.getPortViews()) {
 			if (pv.port.net != null) {
 				val edgeViews = graphView.getElementViews(pv.port.net!!)
@@ -159,5 +194,25 @@ class GraphViewCopyPasteService(
 				}
 			}
 		}
+		return true
+	}
+
+	private fun keepAfterRemovingDanglingNodeView(nodeView: NodeView<*>, graphView: GraphView): Boolean {
+		when (nodeView.getEdgeViews().size) {
+			0 -> {
+				connectService.removeNodeView(graphView, nodeView)
+				return false
+			}
+			1 -> {
+				val edgeView = nodeView.getEdgeViews()[0]
+				if (edgeView.origin?.connectableView === nodeView) {
+					connectService.unconnectEdgeViewOrigin(edgeView)
+				} else if (edgeView.destination?.connectableView === nodeView) {
+					connectService.unconnectEdgeViewDestination(edgeView)
+				}
+				return false
+			}
+		}
+		return true
 	}
 }

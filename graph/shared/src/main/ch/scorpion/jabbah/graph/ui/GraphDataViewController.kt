@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
-import ch.scorpion.jabbah.graph.ui.library.OpenContainerLibraryElementAction
 
 class GraphDataViewController(
 	commandManager: CommandManager = EditModule.commandManager,
@@ -78,6 +77,7 @@ class GraphDataViewController(
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
 		try {
+			LOG.info("Open '${element.name.value}'")
 			open {
 				val library = element.library!!
 				library.libraryService.loadMetaGraph(library, element)

@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.module.BaseModule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.BeforeTest
 
 /**
  * Unit tests for [ReferenceResolverImpl].
@@ -22,10 +21,10 @@ class ReferenceResolverImplTest {
     fun shouldSortResolutionRequestsTopologicly() {
         val rr = ReferenceResolverImpl()
 
-        val s1 = TestStorable()
-        val s2 = TestStorable()
-        val s3 = TestStorable()
-        val s4 = TestStorable()
+        val s1 = testStorable()
+        val s2 = testStorable()
+        val s3 = testStorable()
+        val s4 = testStorable()
 
         rr.addStorable(1, s1)
         rr.addStorable(2, s2)
@@ -52,10 +51,10 @@ class ReferenceResolverImplTest {
     fun shouldSortResolutionRequestsTopologiclyWithDanglingStorables() {
         val rr = ReferenceResolverImpl()
 
-        val s1 = TestStorable()
-        val s2 = TestStorable()
-        val s3 = TestStorable()
-        val s4 = TestStorable()
+        val s1 = testStorable()
+        val s2 = testStorable()
+        val s3 = testStorable()
+        val s4 = testStorable()
 
         rr.addStorable(1, s1)
         rr.addStorable(2, s2)
@@ -76,24 +75,5 @@ class ReferenceResolverImplTest {
         assertEquals(1, result[2])
     }
 
-    private inner class TestStorable : Storable {
-
-        override var storableId: Int = 0
-
-        override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-            result.add(storableId)
-        }
-
-        override fun write(writer: StoreWriter) {
-            // empty
-        }
-
-        override fun read(reader: StoreReader) {
-            // empty
-        }
-
-        override fun getStorableChildren(): Iterator<Storable> {
-            return EmptyIterator()
-        }
-    }
+	private fun testStorable(): Storable = TestStorable { result.add(it) }
 }

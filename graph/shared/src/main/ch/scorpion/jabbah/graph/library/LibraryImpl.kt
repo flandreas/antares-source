@@ -142,8 +142,9 @@ open class LibraryImpl(
 	}
 
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
-		LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
-		return libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
+		val metaGraph = libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
+		LOG.debug("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
+		return metaGraph
 	}
 
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {

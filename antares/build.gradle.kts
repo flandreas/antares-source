@@ -136,6 +136,11 @@ tasks {
 		// Main Application entry
 		keep("class ch.scorpion.antares.AntaresSwing { void main(java.lang.String[]); }")
 
+		// Required by ResourceLibraryPersistenceService to copy standard library from JAR
+		keep("class ch.scorpion.jabbah.graph.library.ResourceLibraryPersistenceService { *; }")
+		keeppackagenames("ch.scorpion.jabbah.graph.library,ch.scorpion.jabbah.graph.library.ResourceLibraryPersistenceService")
+		keepdirectories("libraries/**,ch/scorpion/jabbah/graph/library,ch/scorpion/jabbah/graph/library/ResourceLibraryPersistenceService")
+
 		printmapping("$buildDir/libs/antares-${version_project}-proguard.map")
 		renamesourcefileattribute("SourceFile")
 		keepattributes("SourceFile,LineNumberTable")

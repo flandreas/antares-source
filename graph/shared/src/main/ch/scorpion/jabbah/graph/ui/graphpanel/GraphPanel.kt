@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -92,6 +93,10 @@ class GraphPanelViewController(
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
+
+	companion object {
+		private val LOG by logger(GraphPanelViewController::class)
+	}
 
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
 	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, applicationDataHolder.data?.savable, eventBus)
@@ -184,6 +189,7 @@ class GraphPanelViewController(
 		stopSimulationWhenClosingApplicationData(event.newData)
 
 		val editable = event.newData?.savable?.editable ?: false
+		LOG.debug("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
 		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
 	}
 

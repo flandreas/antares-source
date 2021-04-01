@@ -45,6 +45,12 @@ class StoreXmlWriter(
 
 		val globalId = provideIdentity(storable)
 		if (globalId != -1) {
+			if (storable.storableId <= 0) {
+				// Setting storableId not only when reading Storables, but already when writing them,
+				// allows to duplicate Storables using GlobalIdentityReflector without the need to
+				// first write and read them back.
+				storable.storableId = globalId
+			}
 			xmlWriter.setAttributeValue("_id", globalId.toString())
 		}
 

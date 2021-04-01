@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
 import kotlin.test.*
 
 
@@ -15,7 +14,7 @@ class LibraryServiceTest {
 		}
 	}
 
-	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	private val libraryPersistenceService = MemoryLibraryPersistenceService()
 	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
@@ -64,6 +63,7 @@ class LibraryServiceTest {
 		val duplicate = service.duplicateContainerLibraryElement(library, orig, TranslatableText("NewName"))
 
 		assertNotEquals(orig.uuid, duplicate.uuid)
+		assertEquals("Element", orig.metaGraph!!.name)
 		assertEquals("NewName", duplicate.name.value)
 	}
 }

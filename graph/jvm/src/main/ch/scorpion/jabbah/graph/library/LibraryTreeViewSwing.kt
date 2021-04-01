@@ -34,7 +34,7 @@ class LibraryTreeViewSwing(
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 		selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
 
-		transferHandler = LibraryTreeViewTransferHandler(this)
+		transferHandler = LibraryTreeViewTransferHandler(controller)
 
 		setRowHeight(26)
 		isRootVisible = showWorkspaceNode

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
@@ -92,11 +93,19 @@ class MetaGraph(
 ) : Storable {
 
 	companion object {
+		private val LOG by logger(MetaGraph::class)
+
 		fun withName(name: String): MetaGraph {
 			val metaGraph = MetaGraph()
 			metaGraph.graph.model!!.name = Name(name)
 			metaGraph.containerDrawing.model.name = name
 			return metaGraph
+		}
+
+		private fun copyGraphDataFromContainerModel(graph: Graph, containerDrawing: ContainerDrawing) {
+			graph.uuid = containerDrawing.model.graphUUID!!
+			graph.name = containerDrawing.model.graphName
+			graph.description = containerDrawing.model.description
 		}
 	}
 
@@ -135,6 +144,7 @@ class MetaGraph(
 	}
 
 	init {
+		LOG.debug("Instantiated new MetaGraph with ID ${hashCode()}")
 		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
@@ -199,10 +209,10 @@ class MetaGraph(
 	fun duplicate(newName: TranslatableText): MetaGraph {
 		val duplicate = StorableCloner.clone(this)
 
-		copyGraphDataFromContainerModel(duplicate.graph.model!!)
-
 		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
 		duplicate.containerDrawing.model.graphName = Name(newName)
+
+		copyGraphDataFromContainerModel(duplicate.graph.model!!, duplicate.containerDrawing)
 
 		return duplicate
 	}
@@ -244,8 +254,6 @@ class MetaGraph(
 	}
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
-		graph.uuid = containerDrawing.model.graphUUID!!
-		graph.name = containerDrawing.model.graphName
-		graph.description = containerDrawing.model.description
+		copyGraphDataFromContainerModel(graph, containerDrawing)
 	}
 }

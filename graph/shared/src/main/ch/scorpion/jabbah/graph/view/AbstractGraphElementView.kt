@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.io.*
@@ -22,8 +21,6 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	companion object {
 		const val STORABLE_MODEL_ID = "modelId"
 	}
-
-	private val LOG by logger(AbstractGraphElementView::class)
 
 	/** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
 	private val modelListener = ModelListener()

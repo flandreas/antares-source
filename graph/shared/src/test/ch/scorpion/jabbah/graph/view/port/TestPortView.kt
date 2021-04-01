@@ -29,9 +29,7 @@ class TestPortView<T: Any>(
             return bbox
         }
 
-    override var storableId: Int
-        get() = throw UnsupportedOperationException()
-        set(@Suppress("UNUSED_PARAMETER") value) { }
+    override var storableId: Int = 0
 
     override fun draw(context: DrawContext) { }
 

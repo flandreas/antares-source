@@ -6,12 +6,10 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Drawing] that consists of [GraphElementView]s.

@@ -21,9 +21,6 @@ interface LibraryPersistenceService {
 
 	fun deleteLibrary(uuid: UUID)
 
-	/** Duplicates the specified [Library] and stores the duplicate with the given new [UUID].*/
-	fun duplicateLibrary(library: Library, newUuid: UUID)
-
 	/**
 	 * Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the [UUID] contained in the file.
 	 * @return the [UUID] of the imported [Library]
@@ -31,8 +28,15 @@ interface LibraryPersistenceService {
 	 * */
 	fun importLibrary(inputPath: String): UUID
 
+	fun importTemporaryLibrary(uuid: UUID, temporaryPath: String)
+
 	/** Exports the [Library] with the specified [UUID] into a ZIP file and stores it at `outputPath'. */
 	fun exportLibrary(uuid: UUID, outputPath: String)
+
+	/**
+	 * Exports the [Library] with the specified [UUID]  and return the path of the temporary directory.
+	 */
+	fun exportLibraryTemporarily(uuid: UUID): String
 }
 
 /** Null pattern.*/
@@ -56,15 +60,20 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun deleteLibrary(uuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun duplicateLibrary(library: Library, newUuid: UUID): Unit =
-		throw UnsupportedOperationException("not implemented")
-
 	override fun importLibrary(inputPath: String):UUID {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
 	override fun exportLibrary(uuid: UUID, outputPath: String): Unit =
 		throw UnsupportedOperationException("not implemented")
+
+	override fun exportLibraryTemporarily(uuid: UUID): String {
+		throw UnsupportedOperationException("not implemented")
+	}
 }
 
 class LibraryPersistenceServiceException(msg: String? = null) : Throwable(msg)

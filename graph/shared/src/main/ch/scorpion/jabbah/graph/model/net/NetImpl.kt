@@ -179,7 +179,11 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "portRef") {
-			val vertice: Vertice = referenceResolver.getStorable(reference.referenceId)!!
+			val vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
+			if (vertice == null) {
+				LOG.error("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
+				return
+			}
 			val portId = (reference.additionalInfo as PortRef<T>).portId
 			try {
 				val port = vertice.getPort<T>(portId)
