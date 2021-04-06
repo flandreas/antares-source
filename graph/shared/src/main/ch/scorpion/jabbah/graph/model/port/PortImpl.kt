@@ -113,6 +113,9 @@ open class PortImpl<T : Any>(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		storeIncomingSignal(null)
 		storeOutgoingSignal(null)
+		if (portType.isOutput) {
+			combinedNet = CombinedNet.fromOutputPort(this)
+		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -140,6 +143,9 @@ open class PortImpl<T : Any>(
 
 	private var _outgoingSignal: T? = null
 
+	/** Used by [OutputPort]. Initialized in [executionStarted]. */
+	private lateinit var combinedNet: CombinedNet<T>
+
 	override fun getOutgoingSignal(): T? {
 		return _outgoingSignal ?: getDefaultSignal()
 	}
@@ -164,7 +170,6 @@ open class PortImpl<T : Any>(
 
 	override fun flush(signalHandler: SignalHandler) {
 		forwardSignal(getOutgoingSignal(), signalHandler, withDelay = true)
-		//syncIncomingSignalWithNegotiatedOutgoingSignal()
 	}
 
 	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
@@ -179,9 +184,7 @@ open class PortImpl<T : Any>(
 	 * Returns the default signal value to be used as input or output value if they are `null`.
 	 * Returns `null` by default. Can be overwritten by subclasses if they can define more meaningful defaults.
 	 */
-	protected open fun getDefaultSignal(): T? {
-		return null
-	}
+	protected open fun getDefaultSignal(): T? = null
 
 	protected fun storeIncomingSignal(signal: T?) {
 		LOG.trace("Storing incoming signal $signal in port $portId")
@@ -202,9 +205,6 @@ open class PortImpl<T : Any>(
 		if (net == null) {
 			return
 		}
-
-		// TODO Consider caching this
-		val combinedNet = CombinedNet.fromOutputPort(this)
 
 		if (!combinedNet.isConsistentWith(this)) {
 

@@ -199,6 +199,7 @@ open class DigitalPortImpl(
 		}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
 		storeIncomingSignal(defaultDigitalSignal)
 		storeOutgoingSignal(defaultDigitalSignal)
 	}

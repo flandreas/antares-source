@@ -150,7 +150,7 @@ class CircuitInOutImpl(
 	private fun resetExecutionState(signalHandler: SignalHandler) {
 		signal = getDigitalPort().defaultDigitalSignal
 		if (portType.isInput) {
-			getOutput<DigitalSignal>().setOutgoingSignal(signal, signalHandler)
+			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
 		}
 		stateChanged()
 	}

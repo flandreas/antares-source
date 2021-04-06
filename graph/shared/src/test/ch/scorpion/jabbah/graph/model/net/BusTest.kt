@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import ch.scorpion.jabbah.graph.model.GraphModelTestRule
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 import kotlin.test.*
 
 /**
@@ -19,13 +17,16 @@ class BusTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val net = NetImpl<Boolean>()
+	private var net: Net<Boolean>
 	private val output1 = TestVertice(canBeUndefined = true)
 	private val output2 = TestVertice(canBeUndefined = true)
 
     init {
-        net.connect(output1.getOutput())
-        net.connect(output2.getOutput())
+    	val builder = TestGraphBuilder<Boolean>()
+	    builder.addVertice(output1)
+	    builder.addVertice(output2)
+	    net = builder.connect(output1, output1.getOutput(), output2, output2.getOutput<Boolean>(2) as PortImpl<Boolean>)
+	    builder.graph.executionStarted(signalHandler)
     }
 
     @Test

@@ -160,7 +160,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		super.executionStarted(signalHandler)
 		currentSelectedAddress = 0
 		clear()
-		getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
+		getDataPort().setOutgoingSignalBuffered(Word.undefined(dataWidth), signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
