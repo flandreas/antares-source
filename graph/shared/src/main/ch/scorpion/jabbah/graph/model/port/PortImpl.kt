@@ -144,9 +144,14 @@ open class PortImpl<T : Any>(
 		return _outgoingSignal ?: getDefaultSignal()
 	}
 
-	override val isOutputUndefined: Boolean
+	override val isOutputFullyUndefined: Boolean
 		get() = _outgoingSignal == null
 
+	override val isOutputPartiallyUndefined: Boolean
+		get() = _outgoingSignal == null
+
+	override fun isOutgoingSignalConsistentWith(signal: T?): Boolean =
+		isOutputFullyUndefined || SignalUtil.equals(_outgoingSignal, signal)
 
 	override fun setOutgoingSignalBuffered(signal: T?, signalHandler: SignalHandler) {
 		storeOutgoingSignal(signal)
@@ -159,6 +164,13 @@ open class PortImpl<T : Any>(
 
 	override fun flush(signalHandler: SignalHandler) {
 		forwardSignal(getOutgoingSignal(), signalHandler, withDelay = true)
+		//syncIncomingSignalWithNegotiatedOutgoingSignal()
+	}
+
+	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
+		// Don't synchronize with Net signal, as that one is not available before the
+		// next simulation cycle
+		storeIncomingSignal(_outgoingSignal)
 	}
 
 	/** ---- [PortImpl] */
@@ -172,6 +184,7 @@ open class PortImpl<T : Any>(
 	}
 
 	protected fun storeIncomingSignal(signal: T?) {
+		LOG.trace("Storing incoming signal $signal in port $portId")
 		_incomingSignal = signal
 	}
 
@@ -180,8 +193,8 @@ open class PortImpl<T : Any>(
 	}
 
 	protected fun clear() {
-		_incomingSignal = null
-		_outgoingSignal = null
+		storeIncomingSignal(null)
+		storeOutgoingSignal(null)
 	}
 
 	// TODO: Shouldn't this logic be part of NetImpl?
@@ -196,7 +209,7 @@ open class PortImpl<T : Any>(
 		if (!combinedNet.isConsistentWith(this)) {
 
 			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
-			if (!isOutputUndefined) {
+			if (!isOutputFullyUndefined) {
 				withdrawWeakSignals(signalHandler)
 			}
 
@@ -210,7 +223,7 @@ open class PortImpl<T : Any>(
 
 		// Net is consistent
 		if (net!!.executionError == null) {
-			if (isOutputUndefined) {
+			if (isOutputPartiallyUndefined) {
 				withdrawSignal(combinedNet, signal, signalHandler, withDelay)
 			} else {
 				signalHandler.logActorTrace(net!!) { "forwarding signal $signal into net" }
@@ -220,19 +233,19 @@ open class PortImpl<T : Any>(
 		}
 
 		// Net has become consistent and has to recover from execution error
-		if (!isOutputUndefined) {
+		if (!isOutputFullyUndefined) {
 			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $signal into net '${net!!.id}'" }
 			combinedNet.setExecutionError(null)
 			net!!.setSignal(signal, this, signalHandler, withDelay)
 			return
 		}
 
-		// Net has become consistent by withdrawing an inconsistent signal and asserting an undefined signal
+		// Net has become consistent by withdrawing an inconsistent signal and asserting a fully undefined signal
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		withdrawSignal(combinedNet, signal, signalHandler, withDelay)
 	}
 
-	private fun withdrawSignal(combinedNet: CombinedNet, signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
+	private fun withdrawSignal(combinedNet: CombinedNet<T>, signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
 		val consistentPort = combinedNet.consistentSignalPort
 		if (consistentPort != null) {
 			signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }

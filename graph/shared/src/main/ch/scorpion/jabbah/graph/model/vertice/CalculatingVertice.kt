@@ -2,10 +2,8 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
  * Can be plugged into a [CalculatingVertice] to calculate new signals on the [Vertice]' [OutputPort]
@@ -38,11 +36,20 @@ abstract class CalculatingVertice(
 
 	protected open fun actImpl(signalHandler: SignalHandler, data: ActorData) {
 		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
-		flushImpl(signalHandler, data)
+		flush(signalHandler, data)
 		stateChanged(signalHandler)
 	}
 
-	protected open fun flushImpl(signalHandler: SignalHandler, data: ActorData) {
-		getOutputs().forEach { it.flush(signalHandler) }
+	private fun flush(signalHandler: SignalHandler, data: ActorData) {
+		getOutputs().forEach { port ->
+			if (port !== (data as GraphActorData).changedPort) {
+				// Don't flush OutputPorts that triggered execution to avoid shooting back signals
+				port.flush(signalHandler)
+
+				if (port.portType.isInput && port is PortImpl) {
+					port.syncIncomingSignalWithNegotiatedOutgoingSignal()
+				}
+			}
+		}
 	}
 }

@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.model.net
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.TestGraphBuilder
-import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.model.TestVerticeString
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import io.mockk.mockk
@@ -17,86 +17,96 @@ class CombinedNetTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
-
 	private data class Structure(
-		val input: Vertice,
-		val output: Vertice,
-		val output2: Vertice? = null,
-		val transmitter: Vertice? = null
+		val a: Vertice,
+		val b: Vertice,
+		val transmitter: Vertice? = null,
+		val b2: Vertice? = null
 	)
 
-	@Test
-	fun shouldNotContainInputPorts() {
-		val graph = buildInputToOutput()
+	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+	@Test
+	fun shouldBeEmptyWhenConnectedOnlyToInput() {
+		val graph = buildOutputToInput()
+
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
 		assertEquals(0, combinedNet.outputPorts.size)
 	}
 
 	@Test
-	fun shouldContainOutputPortsFromSameNet() {
-		val graph = buildInputToOutput(outputInOut = true)
+	fun shouldContainImmediateOutputPort() {
+		val graph = buildOutputToInput(bIsInOut = true)
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
 		assertEquals(1, combinedNet.outputPorts.size)
-		assertSame(graph.output.getOutput<Boolean>(2), combinedNet.outputPorts[0])
+		assertSame(graph.b.getOutput(2), combinedNet.outputPorts.first())
 	}
 
 	@Test
 	fun shouldContainOutputPortsFromCombinedNet() {
-		val graph = buildInputToOutputViaTransmitter()
+		val graph = buildOutputToOutputViaTransmitter()
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
-		assertEquals(2, combinedNet.outputPorts.size)
-		assertTrue(combinedNet.outputPorts.contains(graph.transmitter!!.getOutput<Boolean>(2)))
-		assertTrue(combinedNet.outputPorts.contains(graph.output.getOutput<Boolean>(2)))
+		assertEquals(1, combinedNet.outputPorts.size)
+		assertTrue(combinedNet.outputPorts.contains(graph.b.getOutput()))
+	}
+
+	@Test
+	fun shouldBeConsistentWithTransformedSignal() {
+		val graph = buildOutputToOutputViaTransmitter(object : SignalConverter<String> {
+			override fun convert(signal: String?): String = "${signal}T"
+		})
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+
+		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
+		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("AT", signalHandler)
+
+		assertTrue(combinedNet.isConsistentWith(graph.a.getOutput(2)))
 	}
 
 	@Test
 	fun shouldBeConsistentWithAllOthersUndefined() {
-		val graph = buildInputToOutput(outputInOut = true)
+		val graph = buildOutputToOutputViaTransmitter()
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
-		graph.input.getOutput<Boolean>().setOutgoingSignalBuffered(true, signalHandler)
-		graph.output.getOutput<Boolean>().setOutgoingSignalBuffered(null, signalHandler)
+		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
+		graph.b.getOutput<String>(2).setOutgoingSignalBuffered(null, signalHandler)
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
-
-		assertTrue(combinedNet.isConsistentWith((graph.input.getOutput<Boolean>())))
+		assertTrue(combinedNet.isConsistentWith(graph.a.getOutput(2)))
 	}
 
 	@Test
-	fun shouldNotBeConsistentWithOtherDefinedDifferently() {
-		val graph = buildInputToOutput(outputInOut = true)
+	fun shouldNotBeConsistentWithDifferentOutput() {
+		val graph = buildOutputToOutputViaTransmitter()
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
-		graph.input.getOutput<Boolean>().setOutgoingSignalBuffered(true, signalHandler)
-		graph.output.getOutput<Boolean>().setOutgoingSignalBuffered(false, signalHandler)
+		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
+		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("Bla", signalHandler)
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
-
-		assertFalse(combinedNet.isConsistentWith((graph.input.getOutput<Boolean>())))
+		assertFalse(combinedNet.isConsistentWith(graph.a.getOutput(2)))
 	}
 
 	@Test
-	fun shouldOnlyDefinedPortBeConsistent() {
-		val graph = buildInputToOutput(outputInOut = true)
-		graph.output.getOutput<Boolean>().setOutgoingSignalBuffered(false, signalHandler)
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+	fun shouldOnlyDefinedPortsBeConsistent() {
+		val graph = buildOutputToInput(bIsInOut = true)
+		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("B", signalHandler)
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
 		val consistentPort = combinedNet.consistentSignalPort
 
-		assertSame(graph.output.getOutput<Boolean>(), consistentPort)
+		assertSame(graph.b.getOutput<String>(2), consistentPort)
 	}
 
 	@Test
 	fun shouldNotFindConsistentPortWithDifferentSignals() {
-		val graph = buildInputToOutput(outputInOut = true, secondOutput = true)
-		graph.output.getOutput<Boolean>().setOutgoingSignalBuffered(false, signalHandler)
-		graph.output2!!.getOutput<Boolean>().setOutgoingSignalBuffered(true, signalHandler)
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+		val graph = buildOutputToInput(bIsInOut = true, secondB = true)
+		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("B", signalHandler)
+		graph.b2!!.getOutput<String>(2).setOutgoingSignalBuffered("B2", signalHandler)
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 
 		val consistentPort = combinedNet.consistentSignalPort
 
@@ -105,44 +115,44 @@ class CombinedNetTest {
 
 	@Test
 	fun shouldSetExecutionError() {
-		val graph = buildInputToOutputViaTransmitter()
-		val combinedNet = CombinedNet.fromOutputPort(graph.input.getOutput<Boolean>())
+		val graph = buildOutputToOutputViaTransmitter()
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
 		val error = InconsistentNetError()
 
 		combinedNet.setExecutionError(error)
 
-		assertSame(error, graph.input.getOutput<Boolean>().net!!.executionError)
-		assertSame(error, graph.output.getOutput<Boolean>().net!!.executionError)
+		assertSame(error, graph.a.getOutput<String>().net!!.executionError)
+		assertSame(error, graph.b.getOutput<String>().net!!.executionError)
 	}
 
-	private fun buildInputToOutput(outputInOut: Boolean = false, secondOutput: Boolean = false): Structure {
-		val builder = TestGraphBuilder<Boolean>()
-		val input = builder.addVertice(TestVertice())
-		val output = builder.addVertice(TestVertice(inOut = outputInOut))
-		val output2 = if (secondOutput) builder.addVertice(TestVertice(inOut = outputInOut)) else null
-		if (outputInOut) {
-			val net =builder.connect(input, to = output, toPort = output.getInput(2))
-			output2?.let {
+	private fun buildOutputToInput(bIsInOut: Boolean = false, secondB: Boolean = false): Structure {
+		val builder = TestGraphBuilder<String>()
+		val a = builder.addVertice(TestVerticeString())
+		val b = builder.addVertice(TestVerticeString(outputIsInOut = bIsInOut))
+		val b2 = if (secondB) builder.addVertice(TestVerticeString(outputIsInOut = bIsInOut)) else null
+		if (bIsInOut) {
+			val net = builder.connect(a, a.getOutput(), b, b.getInput(2))
+			b2?.let {
 				net.connect(it.getInput(2))
 			}
 		} else {
-			val net = builder.connect(input, to = output)
-			output2?.let {
+			val net = builder.connect(a, a.getOutput(), b, b.getInput())
+			b2?.let {
 				net.connect(it.getOutput())
 			}
 		}
 
-		return Structure(input, output, output2)
+		return Structure(a, b, b2 = b2)
 	}
 
-	private fun buildInputToOutputViaTransmitter(): Structure {
-		val builder = TestGraphBuilder<Boolean>()
-		val input = builder.addVertice(TestVertice())
-		val transmitter = builder.addVertice(TestVertice(inOut = true))
-		val output = builder.addVertice(TestVertice(inOut = true))
-		builder.connect(input, to = transmitter, toPort = transmitter.getInput(2))
-		builder.connect(output, fromPort = output.getOutput(2), transmitter, transmitter.getInput(1))
+	private fun buildOutputToOutputViaTransmitter(converter: SignalConverter<String>? = null): Structure {
+		val builder = TestGraphBuilder<String>()
+		val a = builder.addVertice(TestVerticeString())
+		val transmitter = builder.addVertice(TestVerticeString(outputIsInOut = true, converter = converter))
+		val b = builder.addVertice(TestVerticeString())
+		builder.connect(a, to = transmitter, toPort = transmitter.getInput(1))
+		builder.connect(b, fromPort = b.getOutput(2), to = transmitter, toPort = transmitter.getInput(2))
 
-		return Structure(input, output, null, transmitter)
+		return Structure(a, b, transmitter)
 	}
 }

@@ -30,4 +30,9 @@ interface DigitalSignal {
     fun toInt(): Int?
 
 	fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word
+
+	/**
+	 * Two [DigitalSignal]s are consistent they have the same [BitWidth] and every non-undefined [Bit] is equal.
+	 */
+	fun isConsistentWith(other: DigitalSignal?): Boolean
 }

@@ -67,38 +67,33 @@ enum class Bit(private val value: Int?) {
 		}
 
 	/** Returns the inverse of this [Bit].*/
-	fun not(): Bit {
-		return when (this) {
+	fun not(): Bit =
+		when (this) {
 			Undefined -> Undefined
 			Error -> Error
 			False -> True
 			True -> False
 		}
-	}
 
 	fun and(bit: Bit): Bit = Bit.of(this.isSet && bit.isSet)
 
 	/** Returns the inverse of this [Bit], if requested by the parameter.*/
-	fun invert(invert: Boolean = true): Bit {
-		return if (invert) not() else this
-	}
+	fun invert(invert: Boolean = true): Bit = if (invert) not() else this
 
-	fun toHexString(): String {
-		return toString()
-	}
+	fun toHexString(): String = toString()
 
-	fun toBinaryString(): String {
-		return toString()
-	}
+	fun toBinaryString(): String = toString()
+
+	fun isConsistentWith(other: Bit): Boolean =
+		this == Undefined || other == Undefined || this == other
 
 	/** ---- [Any] */
 
-	override fun toString(): String {
-		return when (this) {
+	override fun toString(): String =
+		when (this) {
 			Undefined -> UNDEFINED_CHAR.toString()
 			Error -> ERROR_CHAR.toString()
 			False -> "0"
 			True -> "1"
 		}
-	}
 }

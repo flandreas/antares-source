@@ -211,6 +211,16 @@ open class DigitalPortImpl(
 
 	/** ---- [OutputPort] */
 
-	override val isOutputUndefined: Boolean
-		get() = getOutgoingSignal() == null || (getOutgoingSignal() as Word).containsUndefinedBit()
+	override val isOutputFullyUndefined: Boolean get() {
+		val outgoingSignal = getOutgoingSignal()
+		return outgoingSignal == null || (outgoingSignal as Word).isAllOf(Bit.Undefined)
+	}
+
+	override val isOutputPartiallyUndefined: Boolean get() {
+		val outgoingSignal = getOutgoingSignal()
+		return outgoingSignal == null || (outgoingSignal as Word).containsUndefinedBit()
+	}
+
+	override fun isOutgoingSignalConsistentWith(signal: DigitalSignal?): Boolean =
+		isOutputFullyUndefined || (getOutgoingSignal()?.isConsistentWith(signal) ?: false)
 }

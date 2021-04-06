@@ -155,16 +155,6 @@ class CircuitInOutImpl(
 		stateChanged()
 	}
 
-	/** ---- [CalculatingVertice] interface */
-
-	override fun flushImpl(signalHandler: SignalHandler, data: ActorData) {
-		if (portType == PortType.INOUT && getPort<DigitalSignal>() === (data as GraphActorData).changedPort) {
-			// Don't flush OutputPorts that triggered execution to avoid shooting back signals
-			return
-		}
-		super.flushImpl(signalHandler, data)
-	}
-
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

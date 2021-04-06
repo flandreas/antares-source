@@ -9,17 +9,17 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.NetCombiner
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.net.SignalConverter
+import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 class BidirectionalSplitter(
 	bitWidth: BitWidth = BitWidth.BW_8,
 	branchCount: BranchCount = BranchCount.BC_4
-) : AbstractSplitter(bitWidth, branchCount, CALCULATOR), NetCombiner {
+) : AbstractSplitter(bitWidth, branchCount, CALCULATOR), NetCombiner<DigitalSignal> {
 
 	companion object {
 
@@ -29,12 +29,13 @@ class BidirectionalSplitter(
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
+		private val SIGNAL_SPLITTING_CACHE = mutableMapOf<SignalSplitterKey, SignalSplitter>()
+
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<AbstractSplitter> {
 			override fun calculate(vertice: AbstractSplitter, data: GraphActorData, signalHandler: SignalHandler) {
 				val changedPortId = data.changedPort!!.portId
-				LOG.info("changedPortId=$changedPortId")
 				if (changedPortId == 1) {
 					split(data.getSignal(1)!!, vertice, signalHandler)
 				} else {
@@ -42,33 +43,39 @@ class BidirectionalSplitter(
 				}
 			}
 
-			private fun split(signal: DigitalSignal?, vertice: AbstractSplitter, signalHandler: SignalHandler) {
-				LOG.info("split")
+			private fun split(signal: DigitalSignal, vertice: AbstractSplitter, signalHandler: SignalHandler) {
 				for (portId in 2..vertice.portsCount) {
 					val outputPort = vertice.getPort<DigitalSignal>(portId) as DigitalPort
-					if (signal == null) {
-						LOG.info("-> port $portId: undefined")
-						outputPort.setOutgoingSignalBuffered(Word.undefined(vertice.narrowSideBitWidth), signalHandler)
-					} else {
-						val outSignal = signal.getSubword(vertice.narrowSideBitWidth, portId - 2)
-						LOG.info("-> port $portId: ${outSignal.toBinaryString()}")
-						outputPort.setOutgoingSignalBuffered(outSignal, signalHandler)
-					}
+					val outSignal = getSignalSplitter(vertice.narrowSideBitWidth, portId - 2).convert(signal)
+					outputPort.setOutgoingSignalBuffered(outSignal, signalHandler)
 				}
 			}
 
 			private fun combine(vertice: AbstractSplitter, signalHandler: SignalHandler) {
-				LOG.info("combine")
 				val words = mutableListOf<Word>()
 				for (portId in 2..vertice.portsCount) {
 					val signal = (vertice.getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as Word
-					LOG.info("-> port $portId: ${signal.toBinaryString()}")
 					words.add(signal)
 				}
 				val output = Word.of(words)
-				LOG.info("=> combination: ${output.toBinaryString()}")
 				(vertice.getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(output, signalHandler)
 			}
+		}
+
+		private fun getSignalSplitter(narrowSideBitWidth: BitWidth, index: Int): SignalSplitter {
+			return SIGNAL_SPLITTING_CACHE.getOrPut(SignalSplitterKey(narrowSideBitWidth, index)) {
+				SignalSplitter(SignalSplitterKey(narrowSideBitWidth, index))
+			}
+		}
+
+		private data class SignalSplitterKey(
+			val narrowSideBitWidth: BitWidth,
+			val index: Int
+		)
+
+		private data class SignalSplitter(private val key: SignalSplitterKey) : SignalConverter<DigitalSignal> {
+			override fun convert(signal: DigitalSignal?): DigitalSignal? =
+				signal?.getSubword(key.narrowSideBitWidth, key.index) ?: null
 		}
 	}
 
@@ -87,15 +94,47 @@ class BidirectionalSplitter(
 
 	/** ---- [NetCombiner] interface */
 
-	override fun getCombinedNetOutputPorts(outputPort: OutputPort<*>): Collection<OutputPort<*>> {
-		return if (outputPort === wideSidePort) {
-			var result = mutableListOf<OutputPort<*>>()
-			narrowSidePorts.forEach {
-				CombinedNet.fromNet(it.net, excluding = it).outputPorts.forEach { result.add(it) }
-			}
-			result
+	override fun getSignalPropagationChains(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
+		return if (inputPort === wideSidePort) {
+			getNarrowSignalPropagationChains()
 		} else {
-			CombinedNet.fromOutputPort(wideSidePort).outputPorts
+			getWideSignalPropagationChain(inputPort)
+		}
+	}
+
+	private fun getWideSignalPropagationChain(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
+		val chains = CombinedNet.fromOutputPort(wideSidePort).chains
+		val converter = SignalCombiner(inputPort.portId)
+		chains.forEach { it.extendHead(converter, inputPort, wideSidePort) }
+		return chains
+	}
+
+	private fun getNarrowSignalPropagationChains(): Collection<SignalPropagationChain<DigitalSignal>> {
+		val result = mutableListOf<SignalPropagationChain<DigitalSignal>>()
+		for (portId in 2..portsCount) {
+			val port = getOutput<DigitalSignal>(portId)
+			val chains = CombinedNet.fromOutputPort(port).chains
+			val splitter = getSignalSplitter(narrowSideBitWidth, portId - 2)
+			chains.forEach { it.extendHead(splitter, wideSidePort, port) }
+			result.addAll(chains)
+		}
+		return result
+	}
+
+	private inner class SignalCombiner(
+		private val signalPortId: Int
+	) : SignalConverter<DigitalSignal> {
+		override fun convert(signal: DigitalSignal?): DigitalSignal {
+			val words = mutableListOf<Word>()
+			for (portId in 2..portsCount) {
+				if (portId == signalPortId) {
+					words.add(signal as Word)
+				} else {
+					val s = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as Word
+					words.add(s)
+				}
+			}
+			return Word.of(words)
 		}
 	}
 }

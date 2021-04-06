@@ -45,24 +45,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	override var signalBuffer: T? = null
 
-	override val inconsistent: Boolean
-		get() {
-			var definedSignal: T? = null
-			getOutputPorts()
-				.asSequence()
-				.filterNot { it.isOutputUndefined }
-				.forEach {
-					if (definedSignal == null) {
-						definedSignal = it.getOutgoingSignal()
-					} else {
-						if (!SignalUtil.equals(definedSignal, it.getOutgoingSignal())) {
-							return true
-						}
-					}
-				}
-			return false
-		}
-
 	override val portsCount: Int
 		get() = _ports.size
 

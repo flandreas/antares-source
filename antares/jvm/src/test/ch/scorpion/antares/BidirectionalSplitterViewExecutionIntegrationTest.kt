@@ -27,9 +27,9 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	private lateinit var circuitView: GraphView
 	private val actorListener = mockk<ActorListener>(relaxed = true)
 	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val circuitInOutViewWide = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
-	private val circuitInOutViewNarrow1 = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val circuitInOutViewNarrow2 = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val circuitInOutViewWide = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
+	private val circuitInOutViewNarrow1 = CircuitInOutView(model = CircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val circuitInOutViewNarrow2 = CircuitInOutView(model = CircuitInOutImpl(name = "B2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 
@@ -111,7 +111,7 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		// This is useless, as the signal is already present on the Net and therefore doesn't get propagated
-		// to the narrow CircuitInOutViews. Is that generally the case for consistent Nets
+		// to the narrow CircuitInOutViews. Is that generally the case for consistent Nets?
 		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.True, Bit.False)), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
@@ -121,7 +121,7 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	}
 
 	@Test
-	fun shouldPropagateConflictErrorBeyondSplitter() {
+	fun shouldPropagateConflictErrorBeyondConcentrator() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 		circuitInOutViewWide.model.setIncomingSignal(Word.of(BitWidth.BW_2, 2), scheduler)
@@ -132,5 +132,41 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 
 		assertNotNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+	}
+
+	@Test
+	fun shouldPropagateConflictErrorBeyondSplitter() {
+		startSimulation()
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		circuitInOutViewNarrow1.model.setIncomingSignal(Word.of(Bit.True), scheduler)
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+
+		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.False, Bit.Undefined)), scheduler)
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+
+		assertNotNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+	}
+
+	@Test
+	fun shouldBeBidirectionalAtTheSameTime() {
+		startSimulation()
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+
+		// Send 1 on channel 0 through Splitter
+		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.True, Bit.Undefined)), scheduler)
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		assertEquals(Word.of(true), bidiSplitterView.model.getOutput<DigitalSignal>(2).getOutgoingSignal())
+		assertEquals(Word.of(Bit.Undefined), bidiSplitterView.model.getOutput<DigitalSignal>(3).getOutgoingSignal())
+		// Must have been synchronized
+		assertEquals(Word.of(true), bidiSplitterView.model.getInput<DigitalSignal>(2).getIncomingSignal())
+
+		// Send 0 on channel 1 through Concentrator
+		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+
+		assertNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 }

@@ -124,13 +124,19 @@ interface OutputPort<T : Any> : Port<T> {
 	 */
 	var canBeUndefined: Boolean
 
+	/** Determines whether all parts of the currently outgoing signal are undefined.*/
+	val isOutputFullyUndefined: Boolean
+
+	/** Determines whether at least some parts of the outgoing signal are undefined.*/
+	val isOutputPartiallyUndefined: Boolean
+
 	/**
-	 * Determines whether the current output signal of this [OutputPort] is undefined.
-	 * This is usually the case if the output signal is `null`. Subclasses might have
-	 * a broader definition of "undefined", which can be implemented by overriding this
-	 * property.
+	 * The specified [signal] is considered consistent with the current outgoing signal
+	 * of this [OutputPort] if they don't conflict, which generally requires that they
+	 * are equal, but depending on the application, this can also be fulfilled if parts
+	 * of the signals are undefined.
 	 */
-	val isOutputUndefined: Boolean
+	fun isOutgoingSignalConsistentWith(signal: T?): Boolean
 
 	/**
 	 * Set with the desired behaviour if this [OutputPort] supports "weak signals".

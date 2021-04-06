@@ -21,13 +21,6 @@ interface Net<T: Any> : GraphElement {
     /** Returns the number of connected [Port]s of this [Net].*/
     val portsCount: Int
 
-    /**
-     * Determines whether this [Net] has an inconsistent execution state. This can occur if a [Net] connects
-     * multiple [OutputPort]s (which is allowed in order to support "tri-state behaviour"), and not all of these
-     * [OutputPort]s assert the same signal to this [Net].
-     */
-    val inconsistent: Boolean
-
     /** Returns the [Port]s to which this [Net] is connected as an immutable list.*/
     val ports: ImmutableList<Port<T>>
 

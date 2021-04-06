@@ -198,7 +198,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	override fun getSubword(subwordWidth: BitWidth, index: Int): Word {
 		// Use the same loop structure as in getSubWordValue
 		val subword = mutableListOf<Bit>()
-		var digit = min(bitWidth.width, subwordWidth.width) - 1
+		val digit = min(bitWidth.width, subwordWidth.width) - 1
 		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
 			subword.add(0, bits[i])
 		}
@@ -275,5 +275,17 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 			}
 		}
 		return Word(resultBits)
+	}
+
+	override fun isConsistentWith(other: DigitalSignal?): Boolean {
+		if (this.bitWidth != other?.getBitWidth()) {
+			return false
+		}
+		bits.forEachIndexed { index, bit ->
+			if (!bit.isConsistentWith(other.bitAt(index))) {
+				return false
+			}
+		}
+		return true
 	}
 }

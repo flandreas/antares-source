@@ -1,9 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 /**
  * Unit tests for [Bit].
@@ -78,5 +76,20 @@ class BitTest {
 		assertEquals(Bit.True, list[0])
 		assertEquals(Bit.False, list[1])
 		assertEquals(Bit.True, list[2])
+	}
+
+	@Test
+	fun shouldBeConsistent() {
+		assertTrue(Bit.True.isConsistentWith(Bit.True))
+		assertTrue(Bit.False.isConsistentWith(Bit.False))
+		assertTrue(Bit.True.isConsistentWith(Bit.Undefined))
+		assertTrue(Bit.Undefined.isConsistentWith(Bit.True))
+		assertTrue(Bit.Undefined.isConsistentWith(Bit.Undefined))
+	}
+
+	@Test
+	fun shouldNotBeConsistent() {
+		assertFalse(Bit.True.isConsistentWith(Bit.False))
+		assertFalse(Bit.False.isConsistentWith(Bit.True))
 	}
 }

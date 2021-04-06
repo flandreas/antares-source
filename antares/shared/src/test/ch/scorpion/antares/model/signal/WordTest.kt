@@ -6,9 +6,7 @@ import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 /**
  * Unit tests for [Word].
@@ -188,5 +186,27 @@ class WordTest {
 		val result = word.replaceBy(False) { it == Undefined }
 
 		assertEquals(result, Word(listOf(True, False, False, Error)))
+	}
+
+	@Test
+	fun shouldBeConsistentWithEqualSignal() {
+		assertTrue(Word.of(True).isConsistentWith(Word.of(True)))
+	}
+
+	@Test
+	fun shouldBeConsistentWithUndefinedBits() {
+		assertTrue(Word.of(True).isConsistentWith(Word.of(Undefined)))
+		assertTrue(Word.of(Undefined).isConsistentWith(Word.of(True)))
+		assertTrue(Word(listOf(Undefined, True)).isConsistentWith(Word(listOf(False, True))))
+	}
+
+	@Test
+	fun shouldNotBeConsistentWithDifferentDefinedBits() {
+		assertFalse(Word.of(True).isConsistentWith(Word.of(False)))
+	}
+
+	@Test
+	fun shouldNotBeConsistentWithDifferentBitWidth() {
+		assertFalse(Word(listOf(True, True)).isConsistentWith(Word(listOf(True))))
 	}
 }
