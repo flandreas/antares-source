@@ -93,6 +93,7 @@ class GraphViewExecutionController(
 				rootGraph.bind(repository, storableCreator)
 			}
 			graphViewsProvider.invoke().forEach { it.bind() }
+			rootGraph.formNet(event.scheduler)
 			rootGraph.executionStarted(event.scheduler)
 		} else {
 			rootGraph.executionStopped(event.scheduler)

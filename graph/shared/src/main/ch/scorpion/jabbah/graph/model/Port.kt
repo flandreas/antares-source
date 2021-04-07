@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import kotlin.reflect.KClass
 
 /**
@@ -129,6 +130,9 @@ interface OutputPort<T : Any> : Port<T> {
 
 	/** Determines whether at least some parts of the outgoing signal are undefined.*/
 	val isOutputPartiallyUndefined: Boolean
+
+	/** Forms the [CombinedNet] used by this [OutputPort]. */
+	fun formNet(signalHandler: SignalHandler)
 
 	/**
 	 * The specified [signal] is considered consistent with the current outgoing signal

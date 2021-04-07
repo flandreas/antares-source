@@ -58,6 +58,10 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 		// empty
 	}
 
+	override fun formNet(signalHandler: SignalHandler) {
+		// empty
+	}
+
 	/** ---- [Storable] interface */
 
 	override var storableId: Int = 0

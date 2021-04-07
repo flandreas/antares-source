@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -86,14 +87,20 @@ interface Graph : Namable, Describable, Storable {
     /** Returns the [GraphElement] with the specified [Storable] ID.*/
     fun <T: GraphElement> withStorableId(storableId: Int): T?
 
-    /** Called by the execution environment after the execution has been started.*/
+	/** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
+	fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
+
+	/**
+	 * Forms the [CombinedNet]s to be used during execution.
+	 * Must be called before [executionStarted] to avoid race conditions for the established [CombinedNet]s.
+	 */
+	fun formNet(signalHandler: SignalHandler)
+
+	/** Called by the execution environment after the execution has been started.*/
     fun executionStarted(signalHandler: SignalHandler)
 
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)
-
-    /** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
-    fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
 
     /** Returns the [GraphPort] with the specified name.*/
     fun <T: Any> getGraphPort(name: String): GraphPort<T>?

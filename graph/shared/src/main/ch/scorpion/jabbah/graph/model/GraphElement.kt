@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -66,6 +67,9 @@ interface GraphElement : Storable, Actor, Describable {
      * @param storableCreator the [StorableCreator] to be used when cloning [Graph]s from the [MetaGraphRepository].
      */
     fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
+
+	/** Forms the necessary [CombinedNet]s used for execution.*/
+	fun formNet(signalHandler: SignalHandler)
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

@@ -168,6 +168,11 @@ abstract class AbstractVertice(
 		ports.forEach { it.executionStopped(signalHandler) }
 	}
 
+	override fun formNet(signalHandler: SignalHandler) {
+		super.formNet(signalHandler)
+		getOutputs().forEach { it.formNet(signalHandler) }
+	}
+
 	/** ---- [AbstractVertice] */
 
 	/**

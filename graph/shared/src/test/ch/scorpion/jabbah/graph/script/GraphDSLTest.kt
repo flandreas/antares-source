@@ -39,6 +39,7 @@ class GraphDSLTest {
 		Translations.withAnyKey()
 		graphView = TestGraphView()
 		every { view.drawing } returns graphView.graphView
+		graphView.graph.formNet(signalHandler)
 		graphView.graph.executionStarted(signalHandler)
 	}
 

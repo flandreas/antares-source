@@ -144,16 +144,20 @@ open class GraphImpl(
 		return _elements.firstOrNull { it.storableId == storableId } as T?
 	}
 
+	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
+		_elements.forEach { it.bind(repository, storableCreator) }
+	}
+
+	override fun formNet(signalHandler: SignalHandler) {
+		_elements.forEach { it.formNet(signalHandler) }
+	}
+
 	override fun executionStarted(signalHandler: SignalHandler) {
 		_elements.forEach { it.executionStarted(signalHandler) }
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		_elements.forEach { it.executionStopped(signalHandler) }
-	}
-
-	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
-		_elements.forEach { it.bind(repository, storableCreator) }
 	}
 
 	override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {

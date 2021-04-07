@@ -167,6 +167,15 @@ class SubGraphVerticeRef(
 		graph?.executionStopped(signalHandler)
 	}
 
+	override fun formNet(signalHandler: SignalHandler) {
+		super.formNet(signalHandler)
+		if (!hasDesignError) {
+			if (isDeepExecution(signalHandler)) {
+				graph?.formNet(signalHandler)
+			}
+		}
+	}
+
 	/** ---- [AbstractVertice] */
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {

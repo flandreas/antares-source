@@ -122,6 +122,12 @@ open class PortImpl<T : Any>(
 		// empty
 	}
 
+	override fun formNet(signalHandler: SignalHandler) {
+		if (portType.isOutput) {
+			combinedNet = CombinedNet.fromOutputPort(this)
+		}
+	}
+
 	/** ---- [InputPort] interface */
 
 	private var _incomingSignal: T? = null
