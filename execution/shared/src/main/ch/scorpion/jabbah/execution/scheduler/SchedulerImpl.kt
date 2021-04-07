@@ -468,7 +468,7 @@ class SchedulerImpl(
 		fun addActor(actor: Actor, data: ActorData) {
 			val request = findRequest(actor)
 			if (request != null) {
-				request.actorData = data
+				request.reuse(data)
 			} else {
 				addRequest(Request(actor, data))
 			}
@@ -494,20 +494,29 @@ class SchedulerImpl(
 
 	private inner class Request(
 		val actor: Actor,
-		var actorData: ActorData
+		actorData: ActorData
 	) {
 
 		private var _isActing: Boolean = false
 
 		private var _isDone: Boolean = false
 
-		/** `true` if [actor] has already been asked to execute*/
+		var actorData: ActorData = actorData
+			private set
+
+		/** `true` if [actor] has already been asked to execute.*/
 		val isActing: Boolean get() = _isActing
 
 		/** `true` if [actor] has already answered with `done`.*/
 		val isDone: Boolean get() = _isDone
 
 		val isActable: Boolean get() = !isActing && !isDone
+
+		fun reuse(actorData: ActorData) {
+			this.actorData = actorData
+			_isDone = false
+			_isActing = false
+		}
 
 		fun act() {
 			if (!_isActing) {

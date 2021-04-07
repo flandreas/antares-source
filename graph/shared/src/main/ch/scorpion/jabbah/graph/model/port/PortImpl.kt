@@ -232,7 +232,7 @@ open class PortImpl<T : Any>(
 			if (isOutputPartiallyUndefined) {
 				withdrawSignal(combinedNet, signal, signalHandler, withDelay)
 			} else {
-				signalHandler.logActorTrace(net!!) { "forwarding signal $signal into net" }
+				signalHandler.logActorTrace(net!!) { "forwarding signal $signal into net ${net!!.id}" }
 				net!!.setSignal(signal, this, signalHandler, withDelay)
 			}
 			return

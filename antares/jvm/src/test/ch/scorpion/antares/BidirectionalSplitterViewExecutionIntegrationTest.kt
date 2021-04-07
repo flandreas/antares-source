@@ -102,25 +102,6 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	}
 
 	@Test
-	fun combinedNetsShouldBeConsistent() {
-		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-
-		circuitInOutViewNarrow1.model.setIncomingSignal(Word.of(true), scheduler)
-		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(false), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-
-		// This is useless, as the signal is already present on the Net and therefore doesn't get propagated
-		// to the narrow CircuitInOutViews. Is that generally the case for consistent Nets?
-		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.True, Bit.False)), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-
-		assertNull(circuitInOutViewWide.model.getPort<DigitalSignal>().net!!.executionError)
-		assertNull(circuitInOutViewNarrow1.model.getPort<DigitalSignal>().net!!.executionError)
-		assertNull(circuitInOutViewNarrow2.model.getPort<DigitalSignal>().net!!.executionError)
-	}
-
-	@Test
 	fun shouldPropagateConflictErrorBeyondConcentrator() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
