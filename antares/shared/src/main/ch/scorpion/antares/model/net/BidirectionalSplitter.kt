@@ -9,12 +9,15 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.net.SignalConverter
 import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 
 class BidirectionalSplitter(
 	bitWidth: BitWidth = BitWidth.BW_8,
@@ -95,6 +98,28 @@ class BidirectionalSplitter(
 	override val wideSidePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 
 	override val narrowSidePorts: List<DigitalPort> get() = getPorts().filterIndexed { index, _ -> index > 0 }.map { it as DigitalPort }
+
+	/** ---- [CalculatingVertice] */
+
+	override fun flush(signalHandler: SignalHandler, data: ActorData) {
+		if ((data as GraphActorData).changedPort === wideSidePort) {
+			flushNarrowSide(signalHandler, data)
+		} else {
+			flushWideSide(signalHandler, data)
+		}
+	}
+
+	private fun flushNarrowSide(signalHandler: SignalHandler, data: ActorData) {
+		narrowSidePorts.forEach {
+			it.flush(signalHandler)
+			(it as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+		}
+	}
+
+	private fun flushWideSide(signalHandler: SignalHandler, data: ActorData) {
+		wideSidePort.flush(signalHandler)
+		(wideSidePort as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+	}
 
 	/** ---- [NetCombiner] interface */
 

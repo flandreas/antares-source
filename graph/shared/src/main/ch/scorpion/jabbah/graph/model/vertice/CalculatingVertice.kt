@@ -40,7 +40,7 @@ abstract class CalculatingVertice(
 		stateChanged(signalHandler)
 	}
 
-	private fun flush(signalHandler: SignalHandler, data: ActorData) {
+	protected open fun flush(signalHandler: SignalHandler, data: ActorData) {
 		getOutputs().forEach { port ->
 			if (port !== (data as GraphActorData).changedPort) {
 				// Don't flush OutputPorts that triggered execution to avoid shooting back signals

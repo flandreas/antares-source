@@ -193,7 +193,7 @@ open class PortImpl<T : Any>(
 	protected open fun getDefaultSignal(): T? = null
 
 	protected fun storeIncomingSignal(signal: T?) {
-		LOG.trace("Storing incoming signal $signal in port $portId")
+		LOG.trace("Storing incoming signal $signal in port $portId of ${owner?.id}")
 		_incomingSignal = signal
 	}
 
@@ -212,6 +212,8 @@ open class PortImpl<T : Any>(
 			return
 		}
 
+		signalHandler.logTrace(System.getClass(this), portId) { "forwarding signal $signal from port $portId in ${owner?.id}" }
+
 		if (!combinedNet.isConsistentWith(this)) {
 
 			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
@@ -220,8 +222,7 @@ open class PortImpl<T : Any>(
 			}
 
 			if (!combinedNet.isConsistentWith(this)) {
-				signalHandler.logTrace(System.getClass(this), portId) { "inconsistent net signal $signal" }
-				LOG.debug("Inconsistent net signal $signal from port $portId in ${owner?.id}")
+				signalHandler.logTrace(System.getClass(this), portId) { "Inconsistent net signal $signal from port $portId in ${owner?.id}" }
 				combinedNet.setExecutionError(InconsistentNetError())
 				return
 			}
@@ -232,7 +233,7 @@ open class PortImpl<T : Any>(
 			if (isOutputPartiallyUndefined) {
 				withdrawSignal(combinedNet, signal, signalHandler, withDelay)
 			} else {
-				signalHandler.logActorTrace(net!!) { "forwarding signal $signal into net ${net!!.id}" }
+				signalHandler.logActorTrace(net!!) { "setting signal $signal on net ${net!!.id}" }
 				net!!.setSignal(signal, this, signalHandler, withDelay)
 			}
 			return

@@ -15,6 +15,14 @@ import javax.swing.JComboBox
 
 object GraphProperties {
 
+	fun modelId(
+		name: String = "modelId",
+		baseKey: String = "graph.property.modelId",
+		beanProvider: BeanProvider = componentBeanProvider
+	): PropertyImpl<Int> {
+		return PropertyImpl(name, baseKey, Int::class.java, beanProvider)
+	}
+
 	fun propagationDelay(beanProperty: BeanProvider = componentBeanProvider): PropertyImpl<Long> {
 		return PropertyImpl("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProperty)
 	}
