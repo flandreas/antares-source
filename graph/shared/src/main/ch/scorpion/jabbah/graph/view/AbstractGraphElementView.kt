@@ -48,6 +48,9 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 
 	/** ---- UI related properties */
 
+	val modelId: Int
+		get() = model.id
+
 	var propagationDelay: Long
 		get() = model.propagationDelay
 		set(value) {

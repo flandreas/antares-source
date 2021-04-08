@@ -93,7 +93,7 @@ class BidirectionalSplitter(
 		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = bitWidth, canBeUndefined = true, signalRepresentation = signalRepresentation)
 
 	override fun createNarrowSidePort(index: Int): DigitalPort =
-		DigitalPortImpl(PortType.INOUT, null, Logic.POSITIVE, bitWidth = narrowSideBitWidth, canBeUndefined = true, signalRepresentation = signalRepresentation)
+		DigitalPortImpl(PortType.INOUT, index.toString(), Logic.POSITIVE, bitWidth = narrowSideBitWidth, canBeUndefined = true, signalRepresentation = signalRepresentation)
 
 	override val wideSidePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 
