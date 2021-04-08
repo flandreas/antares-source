@@ -17,9 +17,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Integration test for combining two [BidirectionalSplitterView] as splitter and concentrator in series
+ * Integration test for combining two [BidirectionalSplitterView] as splitter and concentrator in series.
  */
-class BidirectionSplitterConcentratorTest : AbstractJvmCircuitTest() {
+class BidirectionalSplitterConcentratorTest : AbstractJvmCircuitTest() {
 
 	companion object {
 		init {
