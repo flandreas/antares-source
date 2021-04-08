@@ -4,8 +4,6 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -30,9 +28,7 @@ class Concentrator(
 
 		private class Calculator : VerticeCalculator<AbstractSplitter> {
 			override fun calculate(vertice: AbstractSplitter, data: GraphActorData, signalHandler: SignalHandler) {
-				val words = mutableListOf<Word>()
-				vertice.getInputs().forEach { words.add(data.getSignal(it.portId)!!) }
-				vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(words), signalHandler)
+				vertice.concentrate(signalHandler)
 			}
 		}
 	}

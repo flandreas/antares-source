@@ -2,9 +2,19 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.net.SignalConverter
+import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -23,7 +33,31 @@ abstract class AbstractSplitter(
 	bitWidth: BitWidth,
 	branchCount: BranchCount,
 	calculator: VerticeCalculator<AbstractSplitter>
-) : CalculatingVertice(calculator) {
+) : CalculatingVertice(calculator), NetCombiner<DigitalSignal> {
+
+	companion object {
+
+		private val SIGNAL_SPLITTING_CACHE = mutableMapOf<SignalSplitterKey, SignalSplitter>()
+
+		private fun getSignalSplitter(key: SignalSplitterKey): SignalSplitter =
+			SIGNAL_SPLITTING_CACHE.getOrPut(key) { SignalSplitter(key) }
+
+		private data class SignalSplitterKey(
+			val wideSideBitWidth: BitWidth,
+			val narrowSideBitWidth: BitWidth,
+			val index: Int
+		) {
+			override fun toString(): String =
+				"wide=${wideSideBitWidth.width},narrow=${narrowSideBitWidth.width},index=$index"
+		}
+
+		private data class SignalSplitter(private val key: SignalSplitterKey) : SignalConverter<DigitalSignal> {
+			override fun convert(signal: DigitalSignal?): DigitalSignal? =
+				signal?.getSubword(key.narrowSideBitWidth, key.index)
+
+			override fun toString(): String = "SignalSplitter $key"
+		}
+	}
 
 	var bitWidth: BitWidth = bitWidth
 		set(value) {
@@ -90,6 +124,81 @@ abstract class AbstractSplitter(
 		getOutputs().forEach { it.flush(signalHandler) }
 	}
 
+	/** ---- [NetCombiner] interface */
+
+	override fun getSignalPropagationChains(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
+		return if (inputPort === wideSidePort) {
+			getNarrowSignalPropagationChains()
+		} else {
+			getWideSignalPropagationChain(inputPort)
+		}
+	}
+
+	private fun getWideSignalPropagationChain(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
+		val chains = CombinedNet.fromOutputPort(wideSidePort).chains
+		val converter = SignalCombiner(inputPort.portId)
+		chains.forEach { it.extendHead(converter, inputPort, wideSidePort) }
+		return chains
+	}
+
+	private fun getNarrowSignalPropagationChains(): Collection<SignalPropagationChain<DigitalSignal>> {
+		val result = mutableListOf<SignalPropagationChain<DigitalSignal>>()
+		for (portId in 2..portsCount) {
+			val port = getOutput<DigitalSignal>(portId)
+			val chains = CombinedNet.fromOutputPort(port).chains
+			val key = SignalSplitterKey(bitWidth, narrowSideBitWidth, portId - 2)
+			val splitter = getSignalSplitter(key)
+			chains.forEach {
+				it.extendHead(splitter, wideSidePort, port)
+			}
+			result.addAll(chains)
+		}
+		return result
+	}
+
+	private inner class SignalCombiner(
+		private val signalPortId: Int
+	) : SignalConverter<DigitalSignal> {
+
+		override fun convert(signal: DigitalSignal?): DigitalSignal {
+			val words = mutableListOf<Word>()
+			for (portId in 2..portsCount) {
+				if (portId == signalPortId) {
+					words.add(signal as Word)
+				} else {
+					val s = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as Word
+					words.add(s)
+				}
+			}
+			return Word.of(words)
+		}
+
+		override fun toString(): String =
+			"SignalCombiner for port $signalPortId in ${this@AbstractSplitter.id}"
+	}
+
+	/** ---- [CalculatingVertice] */
+
+	override fun flush(signalHandler: SignalHandler, data: ActorData) {
+		if ((data as GraphActorData).changedPort === wideSidePort) {
+			flushNarrowSide(signalHandler)
+		} else {
+			flushWideSide(signalHandler)
+		}
+	}
+
+	private fun flushNarrowSide(signalHandler: SignalHandler) {
+		narrowSidePorts.forEach {
+			it.flush(signalHandler)
+			(it as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+		}
+	}
+
+	private fun flushWideSide(signalHandler: SignalHandler) {
+		wideSidePort.flush(signalHandler)
+		(wideSidePort as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+	}
+
 	/** ---- [AbstractSplitter] */
 
 	protected abstract fun createWideSidePort(): DigitalPort
@@ -99,6 +208,26 @@ abstract class AbstractSplitter(
 	abstract val wideSidePort: DigitalPort
 
 	abstract val narrowSidePorts: List<DigitalPort>
+
+	fun split(signal: DigitalSignal, signalHandler: SignalHandler) {
+		for (portId in 2..portsCount) {
+			val outputPort = getPort<DigitalSignal>(portId) as DigitalPort
+			val key = SignalSplitterKey(bitWidth, narrowSideBitWidth, portId - 2)
+			val outSignal = getSignalSplitter(key).convert(signal)
+			outputPort.setOutgoingSignalBuffered(outSignal, signalHandler)
+		}
+	}
+
+	fun concentrate(signalHandler: SignalHandler) {
+		val words = mutableListOf<Word>()
+		for (portId in 2..portsCount) {
+			val signal = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as Word
+			words.add(signal)
+		}
+		val output = Word.of(words)
+		(getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(output, signalHandler)
+	}
+
 
 	private fun isSplittingSupported(bitWidth: BitWidth, branchCount: BranchCount): Boolean {
 		if (branchCount < BranchCount.BC_2 || branchCount.count > bitWidth.width) {
