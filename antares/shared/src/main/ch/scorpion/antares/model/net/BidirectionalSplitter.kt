@@ -46,7 +46,8 @@ class BidirectionalSplitter(
 			private fun split(signal: DigitalSignal, vertice: AbstractSplitter, signalHandler: SignalHandler) {
 				for (portId in 2..vertice.portsCount) {
 					val outputPort = vertice.getPort<DigitalSignal>(portId) as DigitalPort
-					val outSignal = getSignalSplitter(vertice.narrowSideBitWidth, portId - 2).convert(signal)
+					val key = SignalSplitterKey(vertice.bitWidth, vertice.narrowSideBitWidth, portId - 2)
+					val outSignal = getSignalSplitter(key).convert(signal)
 					outputPort.setOutgoingSignalBuffered(outSignal, signalHandler)
 				}
 			}
@@ -62,20 +63,23 @@ class BidirectionalSplitter(
 			}
 		}
 
-		private fun getSignalSplitter(narrowSideBitWidth: BitWidth, index: Int): SignalSplitter {
-			return SIGNAL_SPLITTING_CACHE.getOrPut(SignalSplitterKey(narrowSideBitWidth, index)) {
-				SignalSplitter(SignalSplitterKey(narrowSideBitWidth, index))
-			}
-		}
+		private fun getSignalSplitter(key: SignalSplitterKey): SignalSplitter =
+			SIGNAL_SPLITTING_CACHE.getOrPut(key) { SignalSplitter(key) }
 
 		private data class SignalSplitterKey(
+			val wideSideBitWidth: BitWidth,
 			val narrowSideBitWidth: BitWidth,
 			val index: Int
-		)
+		) {
+			override fun toString(): String =
+				"wide=${wideSideBitWidth.width},narrow=${narrowSideBitWidth.width},index=$index"
+		}
 
 		private data class SignalSplitter(private val key: SignalSplitterKey) : SignalConverter<DigitalSignal> {
 			override fun convert(signal: DigitalSignal?): DigitalSignal? =
-				signal?.getSubword(key.narrowSideBitWidth, key.index) ?: null
+				signal?.getSubword(key.narrowSideBitWidth, key.index)
+
+			override fun toString(): String = "SignalSplitter $key"
 		}
 	}
 
@@ -114,8 +118,11 @@ class BidirectionalSplitter(
 		for (portId in 2..portsCount) {
 			val port = getOutput<DigitalSignal>(portId)
 			val chains = CombinedNet.fromOutputPort(port).chains
-			val splitter = getSignalSplitter(narrowSideBitWidth, portId - 2)
-			chains.forEach { it.extendHead(splitter, wideSidePort, port) }
+			val key = SignalSplitterKey(bitWidth, narrowSideBitWidth, portId - 2)
+			val splitter = getSignalSplitter(key)
+			chains.forEach {
+				it.extendHead(splitter, wideSidePort, port)
+			}
 			result.addAll(chains)
 		}
 		return result
@@ -124,6 +131,7 @@ class BidirectionalSplitter(
 	private inner class SignalCombiner(
 		private val signalPortId: Int
 	) : SignalConverter<DigitalSignal> {
+
 		override fun convert(signal: DigitalSignal?): DigitalSignal {
 			val words = mutableListOf<Word>()
 			for (portId in 2..portsCount) {
@@ -136,5 +144,8 @@ class BidirectionalSplitter(
 			}
 			return Word.of(words)
 		}
+
+		override fun toString(): String =
+			"SignalCombiner for port $signalPortId in ${this@BidirectionalSplitter.id}"
 	}
 }

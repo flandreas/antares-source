@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Net
@@ -12,6 +13,11 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 class SignalPropagationChain<T : Any>(
 	val destinationOutputPort: OutputPort<T>
 ) {
+
+	companion object {
+		private val LOG by logger(SignalPropagationChain::class)
+	}
+
 	/** If empty, no signal conversion takes place.*/
 	val converters = mutableListOf<SignalConverter<T>>()
 
@@ -27,7 +33,7 @@ class SignalPropagationChain<T : Any>(
 	 * of the existing chain and registering the [Net]s of the specified [InputPort] and [OutputPort].
 	 */
 	fun extendHead(converter: SignalConverter<T>?, inputPort: InputPort<T>, outputPort: OutputPort<T>) {
-		converter?.let { converters.add(it) }
+		converter?.let { converters.add(0, it) }
 		inputPort.net?.let { nets.add(it) }
 		outputPort.net?.let { nets.add(it) }
 	}
@@ -36,11 +42,25 @@ class SignalPropagationChain<T : Any>(
 	 * Checks if converting [signal] by all [SignalConverter]s results in a value
 	 * that is consistent with the value currently outgoing at [destinationOutputPort].
 	 */
-	fun isConsistentWith(signal: T?): Boolean =
-		destinationOutputPort.isOutgoingSignalConsistentWith(convertSignal(signal))
+	fun isConsistentWith(signal: T?): Boolean {
+		try {
+			val convertedSignal = convertSignal(signal)
+			return destinationOutputPort.isOutgoingSignalConsistentWith(convertedSignal)
+		} catch (e: Throwable) {
+			logError()
+			throw e
+		}
+	}
 
 	fun setExecutionError(error: ExecutionError?) {
 		nets.forEach { it.executionError = error }
+	}
+
+	private fun logError() {
+		LOG.error("SignalPropagationChain for port ${destinationOutputPort.portId} in ${destinationOutputPort.owner?.id}")
+		converters.reversed().forEach {
+			LOG.error("-> $it")
+		}
 	}
 
 	private fun convertSignal(signal: T?): T? {
