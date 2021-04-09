@@ -25,8 +25,6 @@ class GraphOutputImpl<T : Any>(
 
 	}
 
-	private var subGraphOutputPort: SubGraphOutputPort<T>? = null
-
 	override val type: String get() = GraphOutputImpl.type
 	override val typeDesc: String? get() = GraphOutputImpl.typeDesc
 
@@ -43,9 +41,7 @@ class GraphOutputImpl<T : Any>(
 
 	/** ---- [GraphOutput] interface */
 
-	override fun setSubGraphOutputPort(port: SubGraphOutputPort<T>) {
-		subGraphOutputPort = port
-	}
+	override var subGraphOutputPort: SubGraphOutputPort<T>? = null
 
 	/** ---- [CalculatingVertice] */
 

@@ -222,7 +222,7 @@ class SubGraphVerticeRef(
 		for (output in getSubGraphOutputPorts()) {
 			val graphOutput = graph!!.getGraphOutput<Any>(output.name!!)
 			if (graphOutput != null) {
-				graphOutput.setSubGraphOutputPort(output)
+				graphOutput.subGraphOutputPort = output
 			} else {
 				LOG.error("SubGraphVerticeRef: Cannot find GraphOutput '${output.name}' in '${graph!!.name}' (${graph!!.uuid})")
 				// TODO Throw exception for global error display

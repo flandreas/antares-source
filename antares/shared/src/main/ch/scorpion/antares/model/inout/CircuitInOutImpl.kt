@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -114,11 +113,7 @@ class CircuitInOutImpl(
 
 	/** ---- [GraphOutput] */
 
-	private var _subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
-
-	override fun setSubGraphOutputPort(port: SubGraphOutputPort<DigitalSignal>) {
-		_subGraphOutputPort = port
-	}
+	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
 
 	/** ---- [Actor] interface */
 
@@ -139,10 +134,10 @@ class CircuitInOutImpl(
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		super.act(signalHandler, data)
-		if (portType.isOutput && _subGraphOutputPort != null) {
+		if (portType.isOutput && subGraphOutputPort != null) {
 			if ((data as GraphActorData).changedPort != null) {
 				// Send signal to outside only if it came from inside
-				_subGraphOutputPort?.flush(signalHandler)
+				subGraphOutputPort?.flush(signalHandler)
 			}
 		}
 	}
@@ -241,6 +236,6 @@ class CircuitInOutImpl(
 	}
 
 	private fun propagateToSubGraphOutputPort(signal: DigitalSignal, signalHandler: SignalHandler) {
-		_subGraphOutputPort?.propagateSignal(signal, signalHandler)
+		subGraphOutputPort?.propagateSignal(signal, signalHandler)
 	}
 }

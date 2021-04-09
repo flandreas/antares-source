@@ -76,10 +76,10 @@ interface GraphInput<T : Any> : GraphPort<T> {
 interface GraphOutput<T : Any> : GraphPort<T> {
 
 	/**
-	 * Sets the [SubGraphOutputPort] to which this [GraphOutput] forwards signals while execution.
-	 * Not set before binding.
+	 * Holds the [SubGraphOutputPort] to which this [GraphOutput] forwards signals while execution.
+	 * `null` for top-level [Graph]s. Not set before binding.
 	 */
-	fun setSubGraphOutputPort(port: SubGraphOutputPort<T>)
+	var subGraphOutputPort: SubGraphOutputPort<T>?
 }
 
 interface SubGraphPort<T : Any> : Port<T>, Storable
