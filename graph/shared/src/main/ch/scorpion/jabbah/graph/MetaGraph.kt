@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
+import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
@@ -143,11 +144,16 @@ class MetaGraph(
 		handle(it)
 	}
 
+	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = {
+		handle(it)
+	}
+
 	init {
 		LOG.debug("Instantiated new MetaGraph with ID ${hashCode()}")
 		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
 		containerDrawing.model.graphUUID = uuid
 		containerDrawing.initialize()
 	}
@@ -156,6 +162,7 @@ class MetaGraph(
 		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
 		eventBus.unregister(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.unregister(graphDescHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -249,7 +256,16 @@ class MetaGraph(
 
 	private fun handle(event: GraphPortNameChanged<*>) {
 		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.oldName!!)?.let { it.portView!!.setPortName(event.newName!!) }
+			containerDrawing.getPortViewComponent(event.oldName!!)?.let {
+				it.portView!!.setPortName(event.newName!!) }
+		}
+	}
+
+	private fun handle(event: GraphPortTypeChanged<*>) {
+		if (graph.graphView.graph!!.contains(event.graphPort)) {
+			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
+				it.portView!!.port.portType = event.newPortType
+			}
 		}
 	}
 

@@ -38,11 +38,18 @@ interface GraphPort<out T : Any> : Vertice {
 		}
 }
 
-/** Gets posted on [EventBus] when the name of a [GraphPort] changes.*/
+/** Gets posted on [EventBus] when the name of a [GraphPort] has changed.*/
 data class GraphPortNameChanged<out T : Any>(
 	val graphPort: GraphPort<T>,
 	val oldName: String?,
 	val newName: String?
+)
+
+/** Gets posted on [EventBus] when the [PortType] of a [GraphPort] has changed.*/
+data class GraphPortTypeChanged<out T : Any>(
+	val graphPort: GraphPort<T>,
+	val oldPortType: PortType,
+	val newPortType: PortType
 )
 
 /**

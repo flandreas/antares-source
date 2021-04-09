@@ -87,7 +87,9 @@ class CircuitInOutImpl(
 		get() = getDigitalPort().portType.reverse()
 		set(value) {
 			if (portType != value) {
+				val oldValue = portType
 				getDigitalPort().portType = value.reverse()
+				eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
 			}
 		}
 

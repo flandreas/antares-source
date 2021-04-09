@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -78,6 +79,20 @@ class MetaGraphTest {
 
 		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
 		assertEquals("A", metaGraph2.containerDrawing.model.getPort<Boolean>().name)
+	}
+
+	@Test
+	fun shouldUpdateContainerGraphPortType() {
+		val graphView = GraphViewImpl()
+		val graphPortBuilder = GraphPortMockBuilder<Boolean>().withPortType(PortType.INOUT)
+		val graphPortView = TestGraphPortView(model = graphPortBuilder.build())
+		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
+		graphView.add(graphPortView)
+		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
+
+		graphPortBuilder.graphPort.portType = PortType.OUTPUT
+
+		assertEquals(PortType.OUTPUT, metaGraph.containerDrawing.model.getPort<Boolean>().portType)
 	}
 
 	@Test
