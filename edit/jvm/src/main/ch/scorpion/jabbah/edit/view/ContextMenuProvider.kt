@@ -14,14 +14,14 @@ import javax.swing.JPopupMenu
 open class EditContextMenuProvider : ContextMenuProvider {
 
 	companion object {
-		private val cutAction = CutAction()
-		private val copyAction = CopyAction()
-		private val deleteAction = DeleteAction()
-		private val rotateAction = RotateAction()
-		private val toFrontAction = ToFrontAction()
-		private val toBackAction = ToBackAction()
-		private val oneDownAction = OneDownAction()
-		private val oneUpAction = OneUpAction()
+		private val cutAction by lazy { CutAction() }
+		private val copyAction by lazy { CopyAction() }
+		private val deleteAction by lazy { DeleteAction() }
+		private val rotateAction by lazy { RotateAction() }
+		private val toFrontAction by lazy { ToFrontAction() }
+		private val toBackAction by lazy { ToBackAction() }
+		private val oneDownAction by lazy { OneDownAction() }
+		private val oneUpAction by lazy { OneUpAction() }
 	}
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {

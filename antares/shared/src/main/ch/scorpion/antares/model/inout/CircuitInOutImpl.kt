@@ -88,8 +88,10 @@ class CircuitInOutImpl(
 		get() = getDigitalPort().portType.reverse()
 		set(value) {
 			if (portType != value) {
+				val oldValue = portType
 				getDigitalPort().portType = value.reverse()
 				getDigitalPort().canBeUndefined = value == PortType.INOUT
+				eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
 			}
 		}
 
