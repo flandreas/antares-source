@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import kotlin.reflect.KClass
 
 /**
@@ -130,6 +131,12 @@ interface OutputPort<T : Any> : Port<T> {
 
 	/** Determines whether at least some parts of the outgoing signal are undefined.*/
 	val isOutputPartiallyUndefined: Boolean
+
+	/**
+	 * The [CombinedNet] that is the result of [formNet]. Made publicly accessible to support
+	 * [CombinedNet]s spanning through [SubGraphVerticeRef]s
+	 */
+	fun getCombinedNet(signalHandler: SignalHandler): CombinedNet<T>
 
 	/** Forms the [CombinedNet] used by this [OutputPort]. */
 	fun formNet(signalHandler: SignalHandler)

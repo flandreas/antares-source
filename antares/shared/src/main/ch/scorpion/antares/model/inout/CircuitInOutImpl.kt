@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
+import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -116,6 +117,14 @@ class CircuitInOutImpl(
 	/** ---- [GraphOutput] */
 
 	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
+
+	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
+		val chains = subGraphOutputPort?.getCombinedNet(signalHandler)?.chains as List<SignalPropagationChain<T>>? ?: emptyList()
+		chains.forEach {
+			it.extendHead(null, inputPort, subGraphOutputPort as OutputPort<T>)
+		}
+		return chains
+	}
 
 	/** ---- [Actor] interface */
 

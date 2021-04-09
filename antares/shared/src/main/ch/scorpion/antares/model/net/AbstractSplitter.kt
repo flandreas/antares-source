@@ -33,7 +33,7 @@ abstract class AbstractSplitter(
 	bitWidth: BitWidth,
 	branchCount: BranchCount,
 	calculator: VerticeCalculator<AbstractSplitter>
-) : CalculatingVertice(calculator), NetCombiner<DigitalSignal> {
+) : CalculatingVertice(calculator), NetCombiner {
 
 	companion object {
 
@@ -126,26 +126,26 @@ abstract class AbstractSplitter(
 
 	/** ---- [NetCombiner] interface */
 
-	override fun getSignalPropagationChains(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
+	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
 		return if (inputPort === wideSidePort) {
-			getNarrowSignalPropagationChains()
+			getNarrowSignalPropagationChains(signalHandler)
 		} else {
-			getWideSignalPropagationChain(inputPort)
-		}
+			getWideSignalPropagationChain(inputPort as InputPort<DigitalSignal>, signalHandler)
+		} as Collection<SignalPropagationChain<T>>
 	}
 
-	private fun getWideSignalPropagationChain(inputPort: InputPort<DigitalSignal>): Collection<SignalPropagationChain<DigitalSignal>> {
-		val chains = CombinedNet.fromOutputPort(wideSidePort).chains
+	private fun getWideSignalPropagationChain(inputPort: InputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<SignalPropagationChain<DigitalSignal>> {
+		val chains = CombinedNet.fromOutputPort(wideSidePort, signalHandler).chains
 		val converter = SignalCombiner(inputPort.portId)
 		chains.forEach { it.extendHead(converter, inputPort, wideSidePort) }
 		return chains
 	}
 
-	private fun getNarrowSignalPropagationChains(): Collection<SignalPropagationChain<DigitalSignal>> {
+	private fun getNarrowSignalPropagationChains(signalHandler: SignalHandler): Collection<SignalPropagationChain<DigitalSignal>> {
 		val result = mutableListOf<SignalPropagationChain<DigitalSignal>>()
 		for (portId in 2..portsCount) {
 			val port = getOutput<DigitalSignal>(portId)
-			val chains = CombinedNet.fromOutputPort(port).chains
+			val chains = CombinedNet.fromOutputPort(port, signalHandler).chains
 			val key = SignalSplitterKey(bitWidth, narrowSideBitWidth, portId - 2)
 			val splitter = getSignalSplitter(key)
 			chains.forEach {

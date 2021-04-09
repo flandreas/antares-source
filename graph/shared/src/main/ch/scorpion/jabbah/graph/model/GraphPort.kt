@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 
@@ -80,10 +81,12 @@ interface GraphInput<T : Any> : GraphPort<T> {
  * [OutputPort]s from outside to this [GraphOutput]
  * @param T the type of signal that this [GraphOutput] forwards.
  */
-interface GraphOutput<T : Any> : GraphPort<T> {
+interface GraphOutput<T : Any> : GraphPort<T>, NetCombiner {
 
 	/**
 	 * Holds the [SubGraphOutputPort] to which this [GraphOutput] forwards signals while execution.
+	 * That [SubGraphOutputPort] belongs to the surrounding [Graph] of this [GraphOutput].
+	 * During execution, this [GraphOutput] forwards signals to that [SubGraphOutputPort].
 	 * `null` for top-level [Graph]s. Not set before binding.
 	 */
 	var subGraphOutputPort: SubGraphOutputPort<T>?

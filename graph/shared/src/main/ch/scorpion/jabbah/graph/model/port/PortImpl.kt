@@ -113,19 +113,24 @@ open class PortImpl<T : Any>(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		storeIncomingSignal(null)
 		storeOutgoingSignal(null)
-		if (portType.isOutput) {
-			combinedNet = CombinedNet.fromOutputPort(this)
-		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
-		// empty
+		// Reset CombinedNet because the structure might be changed before the next start of execution
+		_combinedNet = null
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {
 		if (portType.isOutput) {
-			combinedNet = CombinedNet.fromOutputPort(this)
+			ensureCombinedNet(signalHandler)
 		}
+	}
+
+	private fun ensureCombinedNet(signalHandler: SignalHandler): CombinedNet<T> {
+		if (_combinedNet == null) {
+			_combinedNet = CombinedNet.fromOutputPort(this, signalHandler)
+		}
+		return _combinedNet!!
 	}
 
 	/** ---- [InputPort] interface */
@@ -149,8 +154,10 @@ open class PortImpl<T : Any>(
 
 	private var _outgoingSignal: T? = null
 
-	/** Used by [OutputPort]. Initialized in [executionStarted]. */
-	private lateinit var combinedNet: CombinedNet<T>
+	private var _combinedNet: CombinedNet<T>? = null
+
+	override fun getCombinedNet(signalHandler: SignalHandler): CombinedNet<T> =
+		ensureCombinedNet(signalHandler)
 
 	override fun getOutgoingSignal(): T? {
 		return _outgoingSignal ?: getDefaultSignal()
@@ -213,6 +220,8 @@ open class PortImpl<T : Any>(
 		}
 
 		signalHandler.logTrace(System.getClass(this), portId) { "forwarding signal $signal from port $portId in ${owner?.id}" }
+
+		val combinedNet = ensureCombinedNet(signalHandler)
 
 		if (!combinedNet.isConsistentWith(this)) {
 

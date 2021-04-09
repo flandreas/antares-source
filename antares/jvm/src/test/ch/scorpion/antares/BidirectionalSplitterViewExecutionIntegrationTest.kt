@@ -51,14 +51,14 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 
 	@Test
 	fun shouldCombineNetsFromWideSide() {
-		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewWide.model.getOutput<DigitalSignal>())
+		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewWide.model.getOutput<DigitalSignal>(), scheduler)
 
 		assertEquals(3, combinedNet.outputPorts.size)
 	}
 
 	@Test
 	fun shouldCombineNetsFromNarrowSide() {
-		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>())
+		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>(), scheduler)
 
 		assertEquals(2, combinedNet.outputPorts.size)
 	}

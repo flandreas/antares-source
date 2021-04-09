@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 
 /**
@@ -8,13 +9,13 @@ import ch.scorpion.jabbah.graph.model.*
  * the [Net]s connected to its [OutputPort], thus forming a [CombinedNet] in terms of
  * signal propagation conflict resolution.
  */
-interface NetCombiner<T : Any>: Vertice {
+interface NetCombiner: Vertice {
 
 	/**
 	 * Returns all [SignalPropagationChain]s that connect [inputPort] with the destination [OutputPort]s
 	 * of the returned [SignalPropagationChain]s.
 	 */
-	fun getSignalPropagationChains(inputPort: InputPort<T>): Collection<SignalPropagationChain<T>>
+	fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>>
 }
 
 /**
@@ -35,12 +36,12 @@ interface NetCombiner<T : Any>: Vertice {
  * these transformations.
  */
 class CombinedNet<T : Any>
-	private constructor(net: Net<T>?, excluding: OutputPort<T>? = null)
+	private constructor(net: Net<T>?, excluding: OutputPort<T>? = null, signalHandler: SignalHandler)
 {
 
 	companion object {
-		fun <T: Any> fromOutputPort(originOutputPort: OutputPort<T>): CombinedNet<T> {
-			return CombinedNet(originOutputPort.net, originOutputPort)
+		fun <T: Any> fromOutputPort(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): CombinedNet<T> {
+			return CombinedNet(originOutputPort.net, originOutputPort, signalHandler)
 		}
 	}
 
@@ -52,7 +53,7 @@ class CombinedNet<T : Any>
 	val outputPorts: Collection<OutputPort<T>> get() = chains.map { it.destinationOutputPort }
 
 	init {
-		build(net, excluding)
+		build(net, excluding, signalHandler)
 	}
 
 	/**
@@ -93,7 +94,7 @@ class CombinedNet<T : Any>
 		_chains.forEach { it.setExecutionError(error) }
 	}
 
-	private fun build(net: Net<T>?, excluding: OutputPort<T>?) {
+	private fun build(net: Net<T>?, excluding: OutputPort<T>?, signalHandler: SignalHandler) {
 		if (net == null) {
 			return
 		}
@@ -103,8 +104,8 @@ class CombinedNet<T : Any>
 				if (it.portType.isOutput) {
 					_chains.add(SignalPropagationChain(it as OutputPort<T>))
 				}
-				if (it.portType.isInput && it.owner is NetCombiner<*>) {
-					_chains.addAll((it.owner as NetCombiner<T>).getSignalPropagationChains(it as InputPort<T>))
+				if (it.portType.isInput && it.owner is NetCombiner) {
+					_chains.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
 				}
 			}
 	}
