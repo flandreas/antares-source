@@ -30,7 +30,7 @@ class CombinedNetTest {
 	fun shouldBeEmptyWhenConnectedOnlyToInput() {
 		val graph = buildOutputToInput()
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		assertEquals(0, combinedNet.outputPorts.size)
 	}
@@ -39,7 +39,7 @@ class CombinedNetTest {
 	fun shouldContainImmediateOutputPort() {
 		val graph = buildOutputToInput(bIsInOut = true)
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		assertEquals(1, combinedNet.outputPorts.size)
 		assertSame(graph.b.getOutput(2), combinedNet.outputPorts.first())
@@ -49,7 +49,7 @@ class CombinedNetTest {
 	fun shouldContainOutputPortsFromCombinedNet() {
 		val graph = buildOutputToOutputViaTransmitter()
 
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		assertEquals(1, combinedNet.outputPorts.size)
 		assertTrue(combinedNet.outputPorts.contains(graph.b.getOutput()))
@@ -60,7 +60,7 @@ class CombinedNetTest {
 		val graph = buildOutputToOutputViaTransmitter(object : SignalConverter<String> {
 			override fun convert(signal: String?): String = "${signal}T"
 		})
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("AT", signalHandler)
@@ -71,7 +71,7 @@ class CombinedNetTest {
 	@Test
 	fun shouldBeConsistentWithAllOthersUndefined() {
 		val graph = buildOutputToOutputViaTransmitter()
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered(null, signalHandler)
@@ -82,7 +82,7 @@ class CombinedNetTest {
 	@Test
 	fun shouldNotBeConsistentWithDifferentOutput() {
 		val graph = buildOutputToOutputViaTransmitter()
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("Bla", signalHandler)
@@ -94,7 +94,7 @@ class CombinedNetTest {
 	fun shouldOnlyDefinedPortsBeConsistent() {
 		val graph = buildOutputToInput(bIsInOut = true)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("B", signalHandler)
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		val consistentPort = combinedNet.consistentSignalPort
 
@@ -106,7 +106,7 @@ class CombinedNetTest {
 		val graph = buildOutputToInput(bIsInOut = true, secondB = true)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("B", signalHandler)
 		graph.b2!!.getOutput<String>(2).setOutgoingSignalBuffered("B2", signalHandler)
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 
 		val consistentPort = combinedNet.consistentSignalPort
 
@@ -116,7 +116,7 @@ class CombinedNetTest {
 	@Test
 	fun shouldSetExecutionError() {
 		val graph = buildOutputToOutputViaTransmitter()
-		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>())
+		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
 		val error = InconsistentNetError()
 
 		combinedNet.setExecutionError(error)

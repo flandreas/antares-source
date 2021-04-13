@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.port.PortImpl
@@ -55,7 +56,7 @@ class GraphOutputImpl<T : Any>(
 	/** ---- [NetCombiner] */
 
 	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): List<SignalPropagationChain<T>> =
-		subGraphOutputPort?.getCombinedNet(signalHandler)?.chains as List<SignalPropagationChain<T>>? ?: emptyList()
+		subGraphOutputPort?.let { CombinedNet.createChains(it, signalHandler) as List<SignalPropagationChain<T>>? } ?: emptyList()
 
 	/** ---- [GraphOutputImpl] */
 

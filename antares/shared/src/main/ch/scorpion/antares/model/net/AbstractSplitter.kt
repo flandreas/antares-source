@@ -135,7 +135,7 @@ abstract class AbstractSplitter(
 	}
 
 	private fun getWideSignalPropagationChain(inputPort: InputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<SignalPropagationChain<DigitalSignal>> {
-		val chains = CombinedNet.fromOutputPort(wideSidePort, signalHandler).chains
+		val chains = CombinedNet.createChains(wideSidePort, signalHandler)
 		val converter = SignalCombiner(inputPort.portId)
 		chains.forEach { it.extendHead(converter, inputPort, wideSidePort) }
 		return chains
@@ -145,7 +145,7 @@ abstract class AbstractSplitter(
 		val result = mutableListOf<SignalPropagationChain<DigitalSignal>>()
 		for (portId in 2..portsCount) {
 			val port = getOutput<DigitalSignal>(portId)
-			val chains = CombinedNet.fromOutputPort(port, signalHandler).chains
+			val chains = CombinedNet.createChains(port, signalHandler)
 			val key = SignalSplitterKey(bitWidth, narrowSideBitWidth, portId - 2)
 			val splitter = getSignalSplitter(key)
 			chains.forEach {

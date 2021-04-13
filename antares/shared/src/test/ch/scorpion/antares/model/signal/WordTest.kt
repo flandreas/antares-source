@@ -69,6 +69,12 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldExtractSubwordFromBitWidth2() {
+		assertEquals(0, Word.of(BW_2, 2).getSubwordValue(BW_1, 0))
+		assertEquals(1, Word.of(BW_2, 2).getSubwordValue(BW_1, 1))
+	}
+
+	@Test
 	fun shouldExtractUndefinedSubwords() {
 		assertEquals(
 			Word(listOf(True, Undefined)),

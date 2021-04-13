@@ -18,7 +18,7 @@ class TestVertice(
 	private val inOut: Boolean = false,
 	name: String? = null,
 	canBeUndefined: Boolean = false
-) : CalculatingVertice(CALCULATOR, name), NetCombiner<Boolean> {
+) : CalculatingVertice(CALCULATOR, name), NetCombiner {
 
     companion object {
 	    const val TYPE = "Test"
@@ -39,12 +39,12 @@ class TestVertice(
         addPort(if (inOut) PortImpl.createInOut(Boolean::class, canBeUndefined = true) else PortImpl.createOutput(Boolean::class, canBeUndefined = canBeUndefined))
     }
 
-	override fun getSignalPropagationChains(inputPort: InputPort<Boolean>): Collection<SignalPropagationChain<Boolean>> {
+	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
 		return if (inputPort === getInput<Boolean>(1)) {
 			val outputPort = getOutput<Boolean>(2)
-			val chains = CombinedNet.fromOutputPort(outputPort).chains
+			val chains = CombinedNet.fromOutputPort(outputPort, signalHandler).chains
 			chains.forEach { it.extendHead(null, inputPort, outputPort) }
-			chains
+			chains as Collection<SignalPropagationChain<T>>
 		} else {
 			emptyList()
 		}

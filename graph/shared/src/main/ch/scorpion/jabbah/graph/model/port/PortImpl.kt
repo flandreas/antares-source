@@ -156,8 +156,7 @@ open class PortImpl<T : Any>(
 
 	private var _combinedNet: CombinedNet<T>? = null
 
-	override fun getCombinedNet(signalHandler: SignalHandler): CombinedNet<T> =
-		ensureCombinedNet(signalHandler)
+	override val combinedNet: CombinedNet<T>? get() = _combinedNet
 
 	override fun getOutgoingSignal(): T? {
 		return _outgoingSignal ?: getDefaultSignal()

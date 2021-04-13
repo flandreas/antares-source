@@ -133,10 +133,9 @@ interface OutputPort<T : Any> : Port<T> {
 	val isOutputPartiallyUndefined: Boolean
 
 	/**
-	 * The [CombinedNet] that is the result of [formNet]. Made publicly accessible to support
-	 * [CombinedNet]s spanning through [SubGraphVerticeRef]s
+	 * The [CombinedNet] that is the result of [formNet]. Mainly used for testing.
 	 */
-	fun getCombinedNet(signalHandler: SignalHandler): CombinedNet<T>
+	val combinedNet: CombinedNet<T>?
 
 	/** Forms the [CombinedNet] used by this [OutputPort]. */
 	fun formNet(signalHandler: SignalHandler)

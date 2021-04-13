@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
 import ch.scorpion.jabbah.graph.script.Script
@@ -237,13 +238,12 @@ class SubGraphVerticeRef(
 	/** ---- [NetCombiner] */
 
 	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
-		System.nop()
 		if (!isDeepExecution(signalHandler)) {
 			return emptyList()
 		}
 		val graphInput = graph!!.getGraphInput<T>(inputPort.name!!)
 		val outputPort = graphInput!!.getOutput<T>()
-		val chains = outputPort.getCombinedNet(signalHandler).chains
+		val chains = CombinedNet.createChains(outputPort, signalHandler)
 		chains.forEach {
 			it.extendHead(null, inputPort, outputPort)
 		}

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -19,10 +20,12 @@ class SignalPropagationChain<T : Any>(
 	}
 
 	/** If empty, no signal conversion takes place.*/
-	val converters = mutableListOf<SignalConverter<T>>()
+	private val converters = mutableListOf<SignalConverter<T>>()
 
 	/** The [Net]s visited by propagating signals. Uses for setting [ExecutionError]s. */
 	private val nets = mutableSetOf<Net<T>>()
+
+	val convertersCount: Int get() = converters.size
 
 	init {
 		destinationOutputPort.net?.let { nets.add(it) }
@@ -47,6 +50,7 @@ class SignalPropagationChain<T : Any>(
 			val convertedSignal = convertSignal(signal)
 			return destinationOutputPort.isOutgoingSignalConsistentWith(convertedSignal)
 		} catch (e: Throwable) {
+			LOG.error("Error in converting signal $signal:", e)
 			logError()
 			throw e
 		}
@@ -57,8 +61,8 @@ class SignalPropagationChain<T : Any>(
 	}
 
 	private fun logError() {
-		LOG.error("SignalPropagationChain for port ${destinationOutputPort.portId} in ${destinationOutputPort.owner?.id}")
-		converters.reversed().forEach {
+		LOG.error("SignalPropagationChain for port ${destinationOutputPort.portId} in ${destinationOutputPort.owner!!::class.simpleName} ${destinationOutputPort.owner?.id}")
+		converters.forEach {
 			LOG.error("-> $it")
 		}
 	}

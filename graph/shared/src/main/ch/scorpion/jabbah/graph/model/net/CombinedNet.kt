@@ -36,25 +36,42 @@ interface NetCombiner: Vertice {
  * these transformations.
  */
 class CombinedNet<T : Any>
-	private constructor(net: Net<T>?, excluding: OutputPort<T>? = null, signalHandler: SignalHandler)
+	private constructor(originOutputPort: OutputPort<T>, signalHandler: SignalHandler)
 {
 
 	companion object {
+
 		fun <T: Any> fromOutputPort(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): CombinedNet<T> {
-			return CombinedNet(originOutputPort.net, originOutputPort, signalHandler)
+			return CombinedNet(originOutputPort, signalHandler)
+		}
+
+		fun <T : Any> createChains(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
+			val createdChains = mutableListOf<SignalPropagationChain<T>>()
+			if (originOutputPort.net == null) {
+				return createdChains
+			}
+			originOutputPort.net!!.ports
+				.filter { it !== originOutputPort }
+				.forEach {
+					if (it.portType.isOutput) {
+						createdChains.add(SignalPropagationChain(it as OutputPort<T>))
+					}
+					if (it.portType.isInput && it.owner is NetCombiner) {
+						createdChains.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
+					}
+				}
+
+			return createdChains
 		}
 	}
 
 	/** There might lead multiple different [SignalPropagationChain]s to the same [OutputPort].*/
-	private val _chains: MutableList<SignalPropagationChain<T>> = mutableListOf()
-
-	val chains: List<SignalPropagationChain<T>> get() = _chains
+	val chains: Collection<SignalPropagationChain<T>> = createChains(originOutputPort, signalHandler)
 
 	val outputPorts: Collection<OutputPort<T>> get() = chains.map { it.destinationOutputPort }
 
-	init {
-		build(net, excluding, signalHandler)
-	}
+	fun getChainTo(outputPort: OutputPort<T>): SignalPropagationChain<T>?
+		= chains.find { it.destinationOutputPort === outputPort }
 
 	/**
 	 * Returns the single [OutputPort] of this [CombinedNet] that produces a defined, non-weak signal, if any.
@@ -63,13 +80,12 @@ class CombinedNet<T : Any>
 	val consistentSignalPort: OutputPort<*>? get() {
 		var consistentPort: OutputPort<*>? = null
 		chains
-			.map { it.destinationOutputPort }
-			.forEach { port ->
-				if (port.weakBehaviour == null && !port.isOutputFullyUndefined) {
+			.forEach {
+				if (it.destinationOutputPort.weakBehaviour == null && !it.destinationOutputPort.isOutputFullyUndefined) {
 					if (consistentPort == null) {
-						consistentPort = port
+						consistentPort = it.destinationOutputPort
 					} else {
-						if (SignalUtil.differ(consistentPort!!.getOutgoingSignal(), port.getOutgoingSignal())) {
+						if (!it.isConsistentWith(consistentPort!!.getOutgoingSignal() as T?)) {
 							return null
 						}
 					}
@@ -91,22 +107,6 @@ class CombinedNet<T : Any>
 	}
 
 	fun setExecutionError(error: ExecutionError?) {
-		_chains.forEach { it.setExecutionError(error) }
-	}
-
-	private fun build(net: Net<T>?, excluding: OutputPort<T>?, signalHandler: SignalHandler) {
-		if (net == null) {
-			return
-		}
-		net.ports
-			.filter { it !== excluding }
-			.forEach {
-				if (it.portType.isOutput) {
-					_chains.add(SignalPropagationChain(it as OutputPort<T>))
-				}
-				if (it.portType.isInput && it.owner is NetCombiner) {
-					_chains.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
-				}
-			}
+		chains.forEach { it.setExecutionError(error) }
 	}
 }

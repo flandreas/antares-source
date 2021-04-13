@@ -1,0 +1,22 @@
+<project _id='0' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='de' text='Unit tests'/>
+        <translation lang='en' text='Unit tests'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='0d31bc57-ee7c-409b-9f65-e523bdd35f09'>
+          <name>
+            <translation lang='en' text='Bus Driver'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='4e24ce93-6521-4911-a8be-bce39ce6147a'>
+          <name>
+            <translation lang='en' text='Bidirectional Splitter with Bus Driver'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>
