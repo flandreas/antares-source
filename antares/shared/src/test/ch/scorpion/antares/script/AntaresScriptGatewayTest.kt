@@ -42,11 +42,6 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	companion object {
 		init {
 			AntaresTestRule.configure()
-			BaseModule.eventBus.register(IssueImpl::class) {
-				if (it.severity == IssueSeverity.Error) {
-					throw RuntimeException("Issue")
-				}
-			}
 		}
 	}
 

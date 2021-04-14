@@ -85,7 +85,7 @@ class CombinedNet<T : Any>
 					if (consistentPort == null) {
 						consistentPort = it.destinationOutputPort
 					} else {
-						if (!it.isConsistentWith(consistentPort!!.getOutgoingSignal() as T?)) {
+						if (it.checkForConflict(consistentPort!!.getOutgoingSignal() as T?) != null) {
 							return null
 						}
 					}
@@ -97,16 +97,22 @@ class CombinedNet<T : Any>
 	/**
 	 * Determines whether all [OutputPort]s of this [CombinedNet] are consistent with the current
 	 * output value of the specified [originOutputPort].
+	 * @return [SignalConflict] if a conflict is detected, `null` otherwise
 	 */
-	fun isConsistentWith(originOutputPort: OutputPort<T>): Boolean {
+	fun checkForConflict(originOutputPort: OutputPort<T>): SignalConflict<T>? {
 		if (originOutputPort.isOutputFullyUndefined) {
-			return true
+			return null
 		}
 		val signal = originOutputPort.getOutgoingSignal()
-		return chains.none { !it.isConsistentWith(signal) }
+
+		return chains
+			.mapNotNull { it.checkForConflict(signal) }
+			.firstOrNull()
 	}
 
 	fun setExecutionError(error: ExecutionError?) {
 		chains.forEach { it.setExecutionError(error) }
 	}
+
+	val hasExecutionError: Boolean get() = chains.any { it.hasExecutionError }
 }

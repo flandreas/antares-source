@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.net
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -44,11 +43,16 @@ class SignalPropagationChain<T : Any>(
 	/**
 	 * Checks if converting [signal] by all [SignalConverter]s results in a value
 	 * that is consistent with the value currently outgoing at [destinationOutputPort].
+	 * @return [SignalConflict] if a conflict is detected, `null` otherwise
 	 */
-	fun isConsistentWith(signal: T?): Boolean {
+	fun checkForConflict(signal: T?): SignalConflict<T>? {
 		try {
 			val convertedSignal = convertSignal(signal)
-			return destinationOutputPort.isOutgoingSignalConsistentWith(convertedSignal)
+			return if (destinationOutputPort.isOutgoingSignalConsistentWith(convertedSignal)) {
+				null
+			} else {
+				SignalConflict(convertedSignal, destinationOutputPort)
+			}
 		} catch (e: Throwable) {
 			LOG.error("Error in converting signal $signal:", e)
 			logError()
@@ -59,6 +63,8 @@ class SignalPropagationChain<T : Any>(
 	fun setExecutionError(error: ExecutionError?) {
 		nets.forEach { it.executionError = error }
 	}
+
+	val hasExecutionError: Boolean get() = nets.any { it.executionError != null }
 
 	private fun logError() {
 		LOG.error("SignalPropagationChain for port ${destinationOutputPort.portId} in ${destinationOutputPort.owner!!::class.simpleName} ${destinationOutputPort.owner?.id}")

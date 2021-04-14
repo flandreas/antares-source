@@ -35,4 +35,8 @@ class ForwardSignalHandler : SignalHandler {
 	override fun actingDone(actor: Actor, data: ActorData?) {
 		// empty
 	}
+
+	override fun deferExecutionError(error: ExecutionError) {
+		// empty
+	}
 }

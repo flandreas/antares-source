@@ -49,4 +49,16 @@ interface SignalHandler {
      */
     fun actingDone(actor: Actor, data: ActorData?)
 
+	/**
+	 * Registers and defers handling of the specified [ExecutionError] until the end of the current
+	 * execution cycle.
+	 *
+	 * Some [ExecutionError] can occur during the quasi-parallel execution of [Actor] within the same
+	 * execution cycle, which can lead to race conditions and dependencies on the order in which [Actor]s
+	 * are execution during that same execution cycle. Therefore, defer such [ExecutionError] until
+	 * the execution cycle has ended, and then check whether their cause is still present, or whether is has
+	 * solved by the execution of other [Actor]s.
+	 */
+	fun deferExecutionError(error: ExecutionError)
+
 }

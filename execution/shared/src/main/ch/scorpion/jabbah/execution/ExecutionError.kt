@@ -1,3 +1,5 @@
 package ch.scorpion.jabbah.execution
 
-interface ExecutionError
+interface ExecutionError {
+	fun reevaluate(signalHandler: SignalHandler)
+}

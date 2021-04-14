@@ -1,21 +1,22 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.checkState
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.SignalConflict
 import kotlin.reflect.KClass
 
 /**
@@ -212,6 +213,25 @@ open class PortImpl<T : Any>(
 		storeOutgoingSignal(null)
 	}
 
+	private fun raiseInconsistentNetError(
+		combinedNet: CombinedNet<T>,
+		conflict: SignalConflict<T>,
+		signalHandler: SignalHandler
+	) {
+		val error = InconsistentNetError(this, combinedNet, conflict)
+
+		val logMsg = "Inconsistent net signal ${conflict.convertedSignal} from port $portId in ${owner?.id}. Conflict with " +
+			"${conflict.destinationOutputPort.getOutgoingSignal()} from ${conflict.destinationOutputPort.portId} " +
+			"in ${conflict.destinationOutputPort.owner!!.id}"
+
+		LOG.debug(logMsg)
+		signalHandler.logTrace(System.getClass(this), portId) { logMsg }
+
+		combinedNet.setExecutionError(error)
+
+		signalHandler.deferExecutionError(error)
+	}
+
 	// TODO: Shouldn't this logic be part of NetImpl?
 	private fun forwardSignal(signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
 		if (net == null) {
@@ -222,16 +242,15 @@ open class PortImpl<T : Any>(
 
 		val combinedNet = ensureCombinedNet(signalHandler)
 
-		if (!combinedNet.isConsistentWith(this)) {
+		if (combinedNet.checkForConflict(this) != null) {
 
 			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
 			if (!isOutputFullyUndefined) {
 				withdrawWeakSignals(signalHandler)
 			}
 
-			if (!combinedNet.isConsistentWith(this)) {
-				signalHandler.logTrace(System.getClass(this), portId) { "Inconsistent net signal $signal from port $portId in ${owner?.id}" }
-				combinedNet.setExecutionError(InconsistentNetError())
+			combinedNet.checkForConflict(this)?.let {
+				raiseInconsistentNetError(combinedNet, it, signalHandler)
 				return
 			}
 		}
@@ -292,4 +311,33 @@ open class PortImpl<T : Any>(
 }
 
 /** Signals that a [PortImpl] tried to assign a signal to its [Net] that turns the [Net] inconsistent.*/
-class InconsistentNetError : ExecutionError
+class InconsistentNetError(
+	private val originPort: OutputPort<*>,
+	private val combinedNet: CombinedNet<*>,
+	private val conflict: SignalConflict<*>
+) : ExecutionError {
+
+	override fun reevaluate(signalHandler: SignalHandler) {
+		if (combinedNet.hasExecutionError) {
+			post()
+		}
+	}
+
+	private fun post() {
+		val description = Translations.getString(
+			"graph.inconsistentNetError.description",
+			"${conflict.convertedSignal}, ${conflict.destinationOutputPort.getOutgoingSignal()}")
+		val originDesc = Translations.getString(
+			"graph.inconsistentNetError.origin",
+			"${originPort.owner!!.type} (${originPort.owner!!.id})",
+			"${conflict.destinationOutputPort.owner!!.type} (${conflict.destinationOutputPort.owner!!.id})")
+
+		BaseModule.eventBus.post(IssueImpl(
+			IssueSeverity.Error,
+			Translations.getString("graph.inconsistentNetError.name"),
+			description = description,
+			origin = originDesc,
+			context = null
+		))
+	}
+}

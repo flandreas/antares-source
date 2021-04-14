@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
+import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -66,13 +67,19 @@ class SchedulerImpl(
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
 
+	/**
+	 * Collects [ExecutionError] received by [deferExecutionError] for reevaluation once the current
+	 * execution cycle has ended.
+	 */
+	private val executionErrors = mutableListOf<ExecutionError>()
+
 	init {
 		task.bind(this)
 
 		eventBus.register(IssueCollectorEvent::class) {
 			if (isActive && isStopOnIssue && it.issue != null) {
+				isPaused = true
 				System.invokeLater {
-					isActive = false
 					LOG.debug("execution stopped due to Issue '${it.issue.name}'")
 					eventBus.post(ExecutionStoppedOnIssueEvent(this))
 				}
@@ -231,11 +238,21 @@ class SchedulerImpl(
 			slot.actingDone(actor)
 			if (slot.isDone) {
 				removeSlot(slot)
+				reevaluateExecutionErrors()
 				postSchedulerStateEvent()
 			}
 		} else {
 			actor.actingDone(this, data)
 		}
+	}
+
+	override fun deferExecutionError(error: ExecutionError) {
+		executionErrors.add(error)
+	}
+
+	private fun reevaluateExecutionErrors() {
+		executionErrors.forEach { it.reevaluate(this) }
+		executionErrors.clear()
 	}
 
 	private fun requestActingImpl(actor: Actor, delay: Long, data: ActorData) {
@@ -329,6 +346,7 @@ class SchedulerImpl(
 	private fun reset() {
 		relativeTime = 0
 		queue.clear()
+		executionErrors.clear()
 	}
 
 	private fun start() {
@@ -413,6 +431,7 @@ class SchedulerImpl(
 
 			if (slot.isDone) {
 				removeSlot(slot)
+				reevaluateExecutionErrors()
 			}
 			recalculated = true
 		} else {

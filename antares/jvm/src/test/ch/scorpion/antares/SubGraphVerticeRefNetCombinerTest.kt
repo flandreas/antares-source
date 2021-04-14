@@ -9,14 +9,13 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.mockk.mockk
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 

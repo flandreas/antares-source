@@ -65,7 +65,7 @@ class CombinedNetTest {
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("AT", signalHandler)
 
-		assertTrue(combinedNet.isConsistentWith(graph.a.getOutput(2)))
+		assertNull(combinedNet.checkForConflict(graph.a.getOutput(2)))
 	}
 
 	@Test
@@ -76,7 +76,7 @@ class CombinedNetTest {
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered(null, signalHandler)
 
-		assertTrue(combinedNet.isConsistentWith(graph.a.getOutput(2)))
+		assertNull(combinedNet.checkForConflict(graph.a.getOutput(2)))
 	}
 
 	@Test
@@ -87,7 +87,7 @@ class CombinedNetTest {
 		graph.a.getOutput<String>(2).setOutgoingSignalBuffered("A", signalHandler)
 		graph.b.getOutput<String>(2).setOutgoingSignalBuffered("Bla", signalHandler)
 
-		assertFalse(combinedNet.isConsistentWith(graph.a.getOutput(2)))
+		assertNotNull(combinedNet.checkForConflict(graph.a.getOutput(2)))
 	}
 
 	@Test
@@ -117,7 +117,7 @@ class CombinedNetTest {
 	fun shouldSetExecutionError() {
 		val graph = buildOutputToOutputViaTransmitter()
 		val combinedNet = CombinedNet.fromOutputPort(graph.a.getOutput<String>(), signalHandler)
-		val error = InconsistentNetError()
+		val error = InconsistentNetError(graph.a.getOutput<String>(), combinedNet, SignalConflict(true, graph.b.getOutput()))
 
 		combinedNet.setExecutionError(error)
 

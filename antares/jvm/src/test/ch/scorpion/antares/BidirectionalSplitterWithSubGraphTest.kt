@@ -3,8 +3,6 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.input.Switch
-import ch.scorpion.antares.model.net.AbstractSplitter
-import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -60,10 +58,6 @@ class BidirectionalSplitterWithSubGraphTest : AbstractCircuitTest() {
 		ProjectModule.projectManagementService.open(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"))
 		val metaGraph = ProjectModule.projectHolder.p!!.getMetaGraph(UUID("4e24ce93-6521-4911-a8be-bce39ce6147a"))
 		circuitView = metaGraph.graph.graphView
-
-		// DEBUG BEGIN
-		AbstractSplitter.splitterPort3 = (circuitView.graph!!.withId(2) as BidirectionalSplitter).getOutput(3)
-		// DEBUG END
 
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)

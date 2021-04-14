@@ -2,11 +2,10 @@ package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
-import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.TestVerticeString
 import io.mockk.mockk
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertNull
 
 class SignalPropagationChainTest {
 
@@ -27,7 +26,7 @@ class SignalPropagationChainTest {
 		chain.extendHead(TestConverter("C"), dummyTransmitter.getInput(), dummyTransmitter.getOutput())
 		chain.extendHead(TestConverter("B"), dummyTransmitter.getInput(), dummyTransmitter.getOutput())
 
-		assertTrue(chain.isConsistentWith("A"))
+		assertNull(chain.checkForConflict("A"))
 	}
 
 	private class TestConverter(private val appendix: String) : SignalConverter<String> {
