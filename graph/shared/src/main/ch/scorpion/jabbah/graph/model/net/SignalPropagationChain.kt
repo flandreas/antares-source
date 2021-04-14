@@ -51,7 +51,7 @@ class SignalPropagationChain<T : Any>(
 			return if (destinationOutputPort.isOutgoingSignalConsistentWith(convertedSignal)) {
 				null
 			} else {
-				SignalConflict(convertedSignal, destinationOutputPort)
+				SignalConflict(convertedSignal, this)
 			}
 		} catch (e: Throwable) {
 			LOG.error("Error in converting signal $signal:", e)

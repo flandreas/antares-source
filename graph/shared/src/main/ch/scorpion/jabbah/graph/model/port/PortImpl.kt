@@ -214,20 +214,19 @@ open class PortImpl<T : Any>(
 	}
 
 	private fun raiseInconsistentNetError(
-		combinedNet: CombinedNet<T>,
 		conflict: SignalConflict<T>,
 		signalHandler: SignalHandler
 	) {
-		val error = InconsistentNetError(this, combinedNet, conflict)
+		val error = InconsistentNetError(this, conflict)
 
 		val logMsg = "Inconsistent net signal ${conflict.convertedSignal} from port $portId in ${owner?.id}. Conflict with " +
-			"${conflict.destinationOutputPort.getOutgoingSignal()} from ${conflict.destinationOutputPort.portId} " +
-			"in ${conflict.destinationOutputPort.owner!!.id}"
+			"${conflict.chain.destinationOutputPort.getOutgoingSignal()} from ${conflict.chain.destinationOutputPort.portId} " +
+			"in ${conflict.chain.destinationOutputPort.owner!!.id}"
 
 		LOG.debug(logMsg)
 		signalHandler.logTrace(System.getClass(this), portId) { logMsg }
 
-		combinedNet.setExecutionError(error)
+		conflict.chain.setExecutionError(error)
 
 		signalHandler.deferExecutionError(error)
 	}
@@ -250,7 +249,7 @@ open class PortImpl<T : Any>(
 			}
 
 			combinedNet.checkForConflict(this)?.let {
-				raiseInconsistentNetError(combinedNet, it, signalHandler)
+				raiseInconsistentNetError(it, signalHandler)
 				return
 			}
 		}
@@ -313,12 +312,11 @@ open class PortImpl<T : Any>(
 /** Signals that a [PortImpl] tried to assign a signal to its [Net] that turns the [Net] inconsistent.*/
 class InconsistentNetError(
 	private val originPort: OutputPort<*>,
-	private val combinedNet: CombinedNet<*>,
 	private val conflict: SignalConflict<*>
 ) : ExecutionError {
 
 	override fun reevaluate(signalHandler: SignalHandler) {
-		if (combinedNet.hasExecutionError) {
+		if (conflict.chain.hasExecutionError) {
 			post()
 		}
 	}
@@ -326,11 +324,11 @@ class InconsistentNetError(
 	private fun post() {
 		val description = Translations.getString(
 			"graph.inconsistentNetError.description",
-			"${conflict.convertedSignal}, ${conflict.destinationOutputPort.getOutgoingSignal()}")
+			"${conflict.convertedSignal}, ${conflict.chain.destinationOutputPort.getOutgoingSignal()}")
 		val originDesc = Translations.getString(
 			"graph.inconsistentNetError.origin",
 			"${originPort.owner!!.type} (${originPort.owner!!.id})",
-			"${conflict.destinationOutputPort.owner!!.type} (${conflict.destinationOutputPort.owner!!.id})")
+			"${conflict.chain.destinationOutputPort.owner!!.type} (${conflict.chain.destinationOutputPort.owner!!.id})")
 
 		BaseModule.eventBus.post(IssueImpl(
 			IssueSeverity.Error,

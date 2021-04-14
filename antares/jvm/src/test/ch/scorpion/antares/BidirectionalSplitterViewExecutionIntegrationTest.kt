@@ -53,14 +53,14 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	fun shouldCombineNetsFromWideSide() {
 		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewWide.model.getOutput<DigitalSignal>(), scheduler)
 
-		assertEquals(3, combinedNet.outputPorts.size)
+		assertEquals(2, combinedNet.outputPorts.size)
 	}
 
 	@Test
 	fun shouldCombineNetsFromNarrowSide() {
 		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>(), scheduler)
 
-		assertEquals(2, combinedNet.outputPorts.size)
+		assertEquals(1, combinedNet.outputPorts.size)
 	}
 
 	@Test
@@ -111,6 +111,7 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
+		assertNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNotNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
 	}
@@ -126,6 +127,7 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		assertNotNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 

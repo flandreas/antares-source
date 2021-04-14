@@ -53,12 +53,14 @@ class CombinedNet<T : Any>
 			originOutputPort.net!!.ports
 				.filter { it !== originOutputPort }
 				.forEach {
-					if (it.portType.isOutput) {
-						createdChains.add(SignalPropagationChain(it as OutputPort<T>))
-					}
+					val chainsOfPort = mutableListOf<SignalPropagationChain<T>>()
 					if (it.portType.isInput && it.owner is NetCombiner) {
-						createdChains.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
+						chainsOfPort.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
 					}
+					if (it.portType.isOutput && (it.owner !is NetCombiner || chainsOfPort.isEmpty())) {
+						chainsOfPort.add(SignalPropagationChain(it as OutputPort<T>))
+					}
+					createdChains.addAll(chainsOfPort)
 				}
 
 			return createdChains
