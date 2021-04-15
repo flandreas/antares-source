@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
@@ -20,16 +19,13 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 		private val shadow = EditProperties.shadow()
 	}
 
-	private val isShowModelId: Boolean get() = EditAuthModule.userHolder.user.isDeveloper
 	protected open val isShowPropagationDelay: Boolean = true
 	protected open var isShowColor: Boolean = true
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		if (isShowModelId) {
-			properties.add(modelId.bind(editor, bean.id, editable = false))
-		}
+		properties.add(modelId.bind(editor, bean.id, editable = false))
 		if (isShowPropagationDelay) {
 			properties.add(propDelay.bind(editor, bean.id))
 		}

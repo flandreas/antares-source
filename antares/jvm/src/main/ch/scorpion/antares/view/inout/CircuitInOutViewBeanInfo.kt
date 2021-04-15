@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
@@ -25,14 +24,10 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val description = EditProperties.description()
     }
 
-	private val isShowModelId: Boolean get() = EditAuthModule.userHolder.user.isDeveloper
-
     override fun addProperties(bean: CircuitInOutView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    if (isShowModelId) {
-		    properties.add(modelId.bind(editor, bean.id, editable = false))
-	    }
+	    properties.add(modelId.bind(editor, bean.id, editable = false))
 	    properties.add(name.bind(editor, bean.id))
 	    properties.add(portType.bind(editor, bean.id))
 	    properties.add(bitWidth.bind(editor, bean.id))
