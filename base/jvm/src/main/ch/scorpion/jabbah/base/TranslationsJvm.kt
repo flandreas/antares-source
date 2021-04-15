@@ -71,7 +71,7 @@ actual object Translations {
 	    }
 
         LOG.debug("Missing translation '$key'")
-        throw MissingResourceException("Missing translation", Translations::class.java.name, key)
+        throw MissingResourceException("Missing translation '$key'", Translations::class.java.name, key)
     }
 
 	private fun handleLanguageChanged(languageCode: String) {

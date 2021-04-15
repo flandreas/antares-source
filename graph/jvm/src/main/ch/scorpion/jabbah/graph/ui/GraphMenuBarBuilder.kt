@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
+import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
@@ -91,6 +92,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction())))
+		menu.add(SignalConflictBehaviourMenu())
 		return menu
 	}
 

@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
+import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
+import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.port.PortFactory
@@ -35,6 +37,8 @@ object GraphModelModule : AbstractModule() {
 
 	val metaGraphRepository: MetaGraphRepository = CombinedMetaGraphRepository()
 
+	val signalConflictBehaviourHolder by lazy { SignalConflictBehaviourHolder() }
+
 	override fun initialize() {
 		BaseModule.require()
 		IOModule.require()
@@ -42,10 +46,10 @@ object GraphModelModule : AbstractModule() {
 		RepositoryModule.require()
 		ScriptModule.require()
 
+		Translations.addBundle("jabbah-graph")
+
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
-
-		Translations.addBundle("jabbah-graph")
 	}
 
 	/** Must be specified by higher application layers.*/
@@ -73,6 +77,7 @@ object GraphModelModule : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(SignalConflictBehaviour.PROP_SIGNAL_CONFLICT_BEHAVIOUR, SignalConflictBehaviour.IGNORE.customName)
 		properties.set(Oscilloscope.PROP_BUFFER_SIZE, 50)
 	}
 }

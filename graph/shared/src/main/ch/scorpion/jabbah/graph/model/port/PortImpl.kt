@@ -15,8 +15,10 @@ import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.SignalConflict
+import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import kotlin.reflect.KClass
 
 /**
@@ -322,6 +324,12 @@ class InconsistentNetError(
 	}
 
 	private fun post() {
+		val severity = when (GraphModelModule.signalConflictBehaviourHolder.current) {
+			SignalConflictBehaviour.IGNORE -> return
+			SignalConflictBehaviour.ISSUE_WARNING -> IssueSeverity.Warning
+			SignalConflictBehaviour.ISSUE_ERROR -> IssueSeverity.Error
+		}
+
 		val description = Translations.getString(
 			"graph.inconsistentNetError.description",
 			"${conflict.convertedSignal}, ${conflict.chain.destinationOutputPort.getOutgoingSignal()}")
@@ -331,7 +339,7 @@ class InconsistentNetError(
 			"${conflict.chain.destinationOutputPort.owner!!.type} (${conflict.chain.destinationOutputPort.owner!!.id})")
 
 		BaseModule.eventBus.post(IssueImpl(
-			IssueSeverity.Error,
+			severity,
 			Translations.getString("graph.inconsistentNetError.name"),
 			description = description,
 			origin = originDesc,
