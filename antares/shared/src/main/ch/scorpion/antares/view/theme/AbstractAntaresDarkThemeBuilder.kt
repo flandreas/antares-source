@@ -39,6 +39,8 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW_ON_DARK)
 		)
 
+		val DARK_BUS_FILL_COLOR = Color(48, 48, 48)
+
 		val DARK_SELECTION_COLOR = SELECTION_FOREGROUND_COLOR
 
 		val BACKGROUND_BACKGROUND = Color(24, 24, 24)
@@ -55,5 +57,11 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val OVERLAY_COLOR = Color(32, 32, 32, 192)
 
 		val DARK_ZERO_COLOR = ZERO_COLOR.withBackground(ZERO_COLOR.foregroundColor.darker())
+
+		val DARK_ERROR_COLOR = CompositeColor(
+			foregroundColor = Color.RED,
+			backgroundColor = DARK_BUS_FILL_COLOR,
+			textColor = Color.WHITE)
+
 	}
 }
