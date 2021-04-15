@@ -43,5 +43,6 @@ object ExecutionModule : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
+		properties.set(IssueCollector.PROP_MAX_ISSUES_COUNT, 100)
 	}
 }

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.issue
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -71,6 +72,12 @@ class IssueCollector(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
+	companion object {
+
+		/** The name of the [Int] property in [Properties] representing the maximum number of [Issue]s collected.*/
+		const val PROP_MAX_ISSUES_COUNT = "execution.issues.maxCount"
+	}
+
 	init {
 		if (clearOnExecutionStart) {
 			eventBus.register(SchedulerActivationStateEvent::class) {
@@ -84,6 +91,8 @@ class IssueCollector(
 
 	/** Holds all collected [Issue]s. */
 	private val _issues = mutableListOf<Issue>()
+
+	private val maxIssuesCount: Int get() = BaseModule.properties.getInt(PROP_MAX_ISSUES_COUNT)
 
 	/** Returns the number of collected [Issue]s. */
 	val size: Int get() = _issues.size
@@ -104,13 +113,13 @@ class IssueCollector(
 	/** Returns the [Issue] at the specified index.*/
 	fun getIssue(index: Int): Issue = _issues.get(index)
 
-	fun hasIssueWithSeverity(severity: IssueSeverity): Boolean {
-		return issues.any { it.severity == severity }
-	}
+	private fun hasIssueWithSeverity(severity: IssueSeverity): Boolean = issues.any { it.severity == severity }
 
 	private fun handleNewIssue(issue: Issue) {
-		_issues.add(issue)
-		updateMaximumSeverity()
+		if (size < maxIssuesCount) {
+			_issues.add(issue)
+			updateMaximumSeverity()
+		}
 		eventBus.post(IssueCollectorEvent(this, issue))
 	}
 
@@ -124,7 +133,8 @@ class IssueCollector(
 }
 
 /**
- * Posted by [IssueCollector] on its [EventBus] whenever a new [Issue] had been collected,
+ * Posted by [IssueCollector] on its [EventBus] whenever a new [Issue] had been received,
  * or when the collected [Issue]s had been cleared (in which case [issue] is `null`.
+ * Gets posted even if the configured maximum [Issue] count has already been reached.
  */
 data class IssueCollectorEvent(val issueCollector: IssueCollector, val issue: Issue?)
