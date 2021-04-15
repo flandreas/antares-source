@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
+import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import com.ccfraser.muirwik.components.*
 import kotlinext.js.js
@@ -61,9 +61,7 @@ class GraphPanelViewJs(
 		override var controller: LogViewController = props.controller.logViewController
 	})
 
-	/** ---- [GraphPanelView] */
-
-	override var maxIssueSeverity: IssueSeverity? = null
+	override var issuesSummary: IssuesSummary? = null
 
 	override fun dispose() { }
 

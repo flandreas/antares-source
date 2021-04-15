@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
+import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
@@ -141,14 +142,21 @@ class GraphPanelViewSwing(
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
 
-	override var maxIssueSeverity: IssueSeverity? = null
+	override var issuesSummary: IssuesSummary? = null
 		set(value) {
 			field = value
-			val iconPath = when (value) {
+			val iconPath = when (value?.maxIssueSeverity) {
 				null -> "/img/issue-16.png"
 				IssueSeverity.Warning -> "/img/warning-16.png"
 				IssueSeverity.Error -> "/img/error-16.png"
 			}
+			val baseTitle = Translations.getString("graph.issues.title")
+			val title = when (value?.issuesCount) {
+				null, 0 -> baseTitle
+				else -> "$baseTitle (${value.issuesCount})"
+			}
+
+			issuesContent.name = title
 			issuesContent.icon = UiUtil.themedIcon(iconPath)
 		}
 

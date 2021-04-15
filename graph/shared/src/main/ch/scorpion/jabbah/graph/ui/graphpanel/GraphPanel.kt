@@ -56,6 +56,11 @@ class EditedGraphViewEvent(
 	val newGraphView: GraphView?
 )
 
+data class IssuesSummary(
+	val maxIssueSeverity: IssueSeverity?,
+	val issuesCount: Int
+)
+
 /**
  * A [UIView] for editing and executing a root [GraphView].
  *
@@ -66,7 +71,7 @@ class EditedGraphViewEvent(
  * - Bottom: A side bar with a [LogView] and an [IssuesView]
  */
 interface GraphPanelView : UIView {
-	var maxIssueSeverity: IssueSeverity?
+	var issuesSummary: IssuesSummary?
 }
 
 /**
@@ -171,7 +176,9 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(event: IssueCollectorEvent) {
-		view.maxIssueSeverity = event.issueCollector.maximumSeverity
+		view.issuesSummary = IssuesSummary(
+			event.issueCollector.maximumSeverity,
+			event.issueCollector.size)
 	}
 
 	private fun handle(event: ApplicationModeBeginEvent) {
