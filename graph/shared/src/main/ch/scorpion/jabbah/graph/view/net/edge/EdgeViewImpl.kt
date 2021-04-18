@@ -106,7 +106,11 @@ open class EdgeViewImpl<T : Any>(
 		if (content.isNotEmpty()) {
 			content.append("<p/>")
 		}
-		content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: ${model.signalDescription}")
+
+		net?.executionError?.tooltipText?.let {
+			content.append(it)
+		} ?: content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: ${model.signalDescription}")
+
 		return Tooltip(content.toString(), x, y)
 	}
 
