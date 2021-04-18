@@ -263,6 +263,8 @@ class TransistorView(
 	}
 
 	private fun drawBulk(context: DrawContext) {
+		(getPortView(model.getDrainPort()) as DigitalPortView).prepareConnectionDrawContext(context)
+
 		val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			0.5 * SCALE
 		} else {

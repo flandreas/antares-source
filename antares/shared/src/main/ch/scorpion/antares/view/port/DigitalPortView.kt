@@ -183,13 +183,11 @@ class DigitalPortView(
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
 		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-			if (port.net == null || !port.net!!.isError) {
-				context.g.color = transparent.applyTo(when (port.portType) {
-					PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
-					PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
-					PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
-				})
-			}
+			context.g.color = transparent.applyTo(when (port.portType) {
+				PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
+				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
+				PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
+			})
 		} else {
 			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
 		}
