@@ -203,14 +203,14 @@ class TransistorView(
 	private fun drawBody(context: DrawContext) {
 		if (hasCircle) {
 			context.g.stroke = stroke
-			context.g.color = context.choose(
+			context.g.color = transparent.applyTo(context.choose(
 				if (Look.FILL_BASIC_COMPONENTS) color else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color
-			).backgroundColor
+			).backgroundColor)
 			context.g.fillOval(
 				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 
-			context.g.color = context.choose(color).foregroundColor
+			context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
 			context.g.drawOval(
 				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
