@@ -1,24 +1,21 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
-import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.SignalConflict
-import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import kotlin.reflect.KClass
 
 /**
@@ -219,7 +216,7 @@ open class PortImpl<T : Any>(
 		conflict: SignalConflict<T>,
 		signalHandler: SignalHandler
 	) {
-		val error = InconsistentNetError(this, conflict)
+		val error = InconsistentNetError(this, conflict, signalHandler.executionTime)
 
 		val logMsg = "Inconsistent net signal ${conflict.convertedSignal} from port $portId in ${owner?.id}. Conflict with " +
 			"${conflict.chain.destinationOutputPort.getOutgoingSignal()} from ${conflict.chain.destinationOutputPort.portId} " +

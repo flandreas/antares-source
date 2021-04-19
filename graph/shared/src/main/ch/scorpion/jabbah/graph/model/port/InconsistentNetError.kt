@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.port
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -15,14 +17,34 @@ import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 /** Signals that a [PortImpl] tried to assign a signal to its [Net] that turns the [Net] inconsistent.*/
 class InconsistentNetError(
 	originPort: OutputPort<*>,
-	private val conflict: SignalConflict<*>
+	private val conflict: SignalConflict<*>,
+	override val creationTime: Long
 ) : ExecutionError {
 
-	override fun reevaluate(signalHandler: SignalHandler) {
-		if (conflict.chain.hasExecutionError) {
-			post()
-		}
+	companion object {
+
+		/** The name of the [Int] property in [Properties] representing the allowed duration (in ns) for inconsistent net states.*/
+		const val PROP_ALLOWED_DURATION = "graph.model.allowedInconsistentNetDuration"
 	}
+
+	private val gracePeriod: Int = BaseModule.properties.getInt(PROP_ALLOWED_DURATION)
+
+	override fun reevaluated(signalHandler: SignalHandler): Boolean {
+		val executionTime = signalHandler.executionTime
+		if (conflict.chain.hasExecutionError) {
+			return if (isGracePeriodOver(executionTime)) {
+				post()
+				true
+			} else {
+				false
+			}
+		}
+		return true
+	}
+
+	private fun getAge(executionTime: Long): Long = executionTime - creationTime
+
+	private fun isGracePeriodOver(executionTime: Long): Boolean = getAge(executionTime) > gracePeriod
 
 	override val tooltipText: String get() {
 		val text = StringBuilder()

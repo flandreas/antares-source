@@ -251,8 +251,16 @@ class SchedulerImpl(
 	}
 
 	private fun reevaluateExecutionErrors() {
-		executionErrors.forEach { it.reevaluate(this) }
-		executionErrors.clear()
+		if (executionErrors.isEmpty()) {
+			return
+		}
+		val toRemove = mutableListOf<ExecutionError>()
+		executionErrors.forEach {
+			if (it.reevaluated(this)) {
+				toRemove.add(it)
+			}
+		}
+		executionErrors.removeAll(toRemove)
 	}
 
 	private fun requestActingImpl(actor: Actor, delay: Long, data: ActorData) {
@@ -375,6 +383,7 @@ class SchedulerImpl(
 		if (relativeTime > this.relativeTime) {
 			this.relativeTime = relativeTime
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
+			reevaluateExecutionErrors()
 		}
 	}
 

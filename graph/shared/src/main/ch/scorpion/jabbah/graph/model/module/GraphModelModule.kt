@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
@@ -78,6 +79,7 @@ object GraphModelModule : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(SignalConflictBehaviour.PROP_SIGNAL_CONFLICT_BEHAVIOUR, SignalConflictBehaviour.IGNORE.customName)
+		properties.set(InconsistentNetError.PROP_ALLOWED_DURATION, 20)
 		properties.set(Oscilloscope.PROP_BUFFER_SIZE, 50)
 	}
 }

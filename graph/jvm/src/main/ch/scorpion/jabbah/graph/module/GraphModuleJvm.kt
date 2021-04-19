@@ -5,9 +5,12 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.IntPreference
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -36,10 +39,19 @@ object GraphModuleJvm : AbstractModule() {
 		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider()
 
 		fillProperties(BaseModule.properties)
+
+		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
 	@Suppress("UNUSED_PARAMETER")
 	private fun fillProperties(properties: Properties) {
 		// empty so far
+	}
+
+	private fun buildPreferencesTree(root: PreferenceGroup) {
+		root.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).add(IntPreference(
+			id = InconsistentNetError.PROP_ALLOWED_DURATION,
+			nameKey = "graph.preferences.InconsistentNetError.allowedDuration"
+		))
 	}
 }

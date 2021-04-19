@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 
 object ExecutionModuleJvm : AbstractModule() {
 
-	private const val PREF_TREE_EXECUTION = "execution.preferences.group.execution"
+	const val PREF_TREE_EXECUTION = "execution.preferences.group.execution"
 
 	override fun initialize() {
 		BaseModuleJvm.require()
