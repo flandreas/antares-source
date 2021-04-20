@@ -99,7 +99,7 @@ actual object System {
 		// empty
 	}
 
-	actual fun nop() {
+	actual fun breakpoint(condition: () -> Boolean) {
 		// empty
 	}
 }

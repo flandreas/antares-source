@@ -256,6 +256,7 @@ open class PortImpl<T : Any>(
 		// Net is consistent
 		if (net!!.executionError == null) {
 			if (isOutputPartiallyUndefined) {
+				signalHandler.logTrace(System.getClass(this), portId) { "Output is partially undefined, withdrawing signal.."}
 				withdrawSignal(combinedNet, signal, signalHandler, withDelay)
 			} else {
 				signalHandler.logActorTrace(net!!) { "setting signal $signal on net ${net!!.id}" }
@@ -278,7 +279,7 @@ open class PortImpl<T : Any>(
 	}
 
 	private fun withdrawSignal(combinedNet: CombinedNet<T>, signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
-		val consistentPort = combinedNet.consistentSignalPort
+		val consistentPort = combinedNet.consistentSignalPort(signal)
 		if (consistentPort != null) {
 			signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }
 			combinedNet.setExecutionError(null)

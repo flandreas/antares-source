@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -76,10 +77,11 @@ class CombinedNet<T : Any>
 		= chains.find { it.destinationOutputPort === outputPort }
 
 	/**
-	 * Returns the single [OutputPort] of this [CombinedNet] that produces a defined, non-weak signal, if any.
+	 * Returns the single [OutputPort] of this [CombinedNet] that produces a defined, non-weak signal
+	 * when sending [sourceSignal] over this [CombinedNet].
 	 * Returns `null` if there are no or multiple such [OutputPort]s.
 	 */
-	val consistentSignalPort: OutputPort<*>? get() {
+	fun consistentSignalPort(sourceSignal: T?): OutputPort<*>? {
 		var consistentPort: OutputPort<*>? = null
 		chains
 			.forEach {
@@ -87,7 +89,7 @@ class CombinedNet<T : Any>
 					if (consistentPort == null) {
 						consistentPort = it.destinationOutputPort
 					} else {
-						if (it.checkForConflict(consistentPort!!.getOutgoingSignal() as T?) != null) {
+						if (it.checkForConflict(sourceSignal) != null) {
 							return null
 						}
 					}

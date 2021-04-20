@@ -19,7 +19,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	/** Is automatically set to ´true´ if all [Bit]s are [Bit.False]. */
 	private val zero: Boolean = bits.all { it == Bit.False }
 
-	/** Is automatically set to ´true´ if all [Bit]s are [Bit.Undefined]. */
+	/** Is automatically set to ´true´ if any [Bit]s is [Bit.Undefined]. */
 	private val undefined: Boolean = bits.any { it == Bit.Undefined }
 
 	private val error: Boolean = bits.any { it == Bit.Error }
@@ -112,7 +112,13 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	/** ---- [Any] */
 
-	override fun toString(): String = toHexString()
+	override fun toString(): String {
+		return if (containsUndefinedBit()) {
+			toBinaryString()
+		} else {
+			toHexString()
+		}
+	}
 
 	/** ---- [DigitalSignal] interface */
 

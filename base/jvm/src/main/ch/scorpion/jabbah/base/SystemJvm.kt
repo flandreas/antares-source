@@ -119,7 +119,9 @@ actual object System {
 		RuntimeException().printStackTrace()
 	}
 
-	actual fun nop() {
-		//print("nop")
- 	}
+	actual fun breakpoint(condition: () -> Boolean) {
+		if (condition()) {
+			println("break")
+		}
+	}
 }
