@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.net.CombinedNet
-import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
+import ch.scorpion.jabbah.graph.model.net.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -39,12 +37,9 @@ class TestVertice(
         addPort(if (inOut) PortImpl.createInOut(Boolean::class, canBeUndefined = true) else PortImpl.createOutput(Boolean::class, canBeUndefined = canBeUndefined))
     }
 
-	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		return if (inputPort === getInput<Boolean>(1)) {
-			val outputPort = getOutput<Boolean>(2)
-			val chains = CombinedNet.fromOutputPort(outputPort, signalHandler).chains
-			chains.forEach { it.extendHead(null, inputPort, outputPort) }
-			chains as Collection<SignalPropagationChain<T>>
+			CombinedNet.createFor(getOutput(2), signalHandler)
 		} else {
 			emptyList()
 		}

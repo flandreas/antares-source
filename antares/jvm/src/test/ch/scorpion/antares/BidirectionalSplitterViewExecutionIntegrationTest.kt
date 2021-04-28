@@ -9,11 +9,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
-import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
 import kotlin.test.*
 
 class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
@@ -25,11 +22,10 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
-	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val circuitInOutViewWide = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
-	private val circuitInOutViewNarrow1 = CircuitInOutView(model = CircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val circuitInOutViewNarrow2 = CircuitInOutView(model = CircuitInOutImpl(name = "B2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
+	private val b1 = CircuitInOutView(model = CircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b2 = CircuitInOutView(model = CircuitInOutImpl(name = "B2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 
@@ -37,119 +33,123 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
-		builder.addVerticeView(circuitInOutViewWide)
-		builder.addVerticeView(bidiSplitterView)
-		builder.addVerticeView(circuitInOutViewNarrow1)
-		builder.addVerticeView(circuitInOutViewNarrow2)
+		builder.addVerticeView(a)
+		builder.addVerticeView(splitterView)
+		builder.addVerticeView(b1)
+		builder.addVerticeView(b2)
 
-		builder.connect(circuitInOutViewWide, bidiSplitterView, bidiSplitterView.model.getInput(1))
-		builder.connect(bidiSplitterView, bidiSplitterView.model.getOutput(2), circuitInOutViewNarrow1)
-		builder.connect(bidiSplitterView, bidiSplitterView.model.getOutput(3), circuitInOutViewNarrow2)
+		builder.connect(a, splitterView, splitterView.model.getInput(1))
+		builder.connect(splitterView, splitterView.model.getOutput(2), b1)
+		builder.connect(splitterView, splitterView.model.getOutput(3), b2)
 
 		circuitView = builder.build()
 	}
 
 	@Test
 	fun shouldCombineNetsFromWideSide() {
-		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewWide.model.getOutput<DigitalSignal>(), scheduler)
+		startSimulation()
+		proceedUntilQueueIsEmpty()
 
-		assertEquals(2, combinedNet.outputPorts.size)
+		assertEquals(2, a.model.getOutput<DigitalSignal>().combinedNets.size)
 	}
 
 	@Test
 	fun shouldCombineNetsFromNarrowSide() {
-		val combinedNet = CombinedNet.fromOutputPort(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>(), scheduler)
+		startSimulation()
+		proceedUntilQueueIsEmpty()
 
-		assertEquals(1, combinedNet.outputPorts.size)
+		assertEquals(1, b1.model.getOutput<DigitalSignal>().combinedNets.size)
 	}
 
 	@Test
 	fun shouldNetsBeUndefinedAtStartup() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.allOf(BitWidth.BW_2, Bit.Undefined), circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.signal)
-		assertEquals(Word.of(Bit.Undefined), circuitInOutViewNarrow1.model.getInput<DigitalSignal>(1).net?.signal)
-		assertEquals(Word.of(Bit.Undefined), circuitInOutViewNarrow2.model.getInput<DigitalSignal>(1).net?.signal)
+		assertEquals(Word.allOf(BitWidth.BW_2, Bit.Undefined), a.model.getOutput<DigitalSignal>().net?.signal)
+		assertEquals(Word.of(Bit.Undefined), b1.model.getInput<DigitalSignal>(1).net?.signal)
+		assertEquals(Word.of(Bit.Undefined), b2.model.getInput<DigitalSignal>(1).net?.signal)
 	}
 
 	@Test
 	fun shouldForwardSignalFromWideToNarrow() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
-		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.Undefined, Bit.True)), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		a.model.setIncomingSignal(Word(listOf(Bit.Undefined, Bit.True)), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(Bit.Undefined), circuitInOutViewNarrow1.model.signal)
-		assertEquals(Word.of(Bit.True), circuitInOutViewNarrow2.model.signal)
-		assertNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+		assertEquals(Word.of(Bit.Undefined), b1.model.signal)
+		assertEquals(Word.of(Bit.True), b2.model.signal)
+		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test
 	fun shouldForwardSignalFromNarrowToWide() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
-		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(Bit.True), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		b2.model.setIncomingSignal(Word.of(Bit.True), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word(listOf(Bit.Undefined, Bit.True)), circuitInOutViewWide.model.signal)
-		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+		assertEquals(Word(listOf(Bit.Undefined, Bit.True)), a.model.signal)
+		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test
 	fun shouldPropagateConflictErrorBeyondConcentrator() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-		circuitInOutViewWide.model.setIncomingSignal(Word.of(BitWidth.BW_2, 2), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
+		a.model.setIncomingSignal(Word.of(BitWidth.BW_2, 2), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		b2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNotNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNotNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test
 	fun shouldPropagateConflictErrorBeyondSplitter() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-		circuitInOutViewNarrow1.model.setIncomingSignal(Word.of(Bit.True), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
-		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.False, Bit.Undefined)), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		b1.model.setIncomingSignal(Word.of(Bit.True), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertNotNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+		a.model.setIncomingSignal(Word(listOf(Bit.False, Bit.Undefined)), scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertNotNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNotNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test
 	fun shouldBeBidirectionalAtTheSameTime() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
 		// Send 1 on channel 0 through Splitter
-		circuitInOutViewWide.model.setIncomingSignal(Word(listOf(Bit.True, Bit.Undefined)), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-		assertEquals(Word.of(true), bidiSplitterView.model.getOutput<DigitalSignal>(2).getOutgoingSignal())
-		assertEquals(Word.of(Bit.Undefined), bidiSplitterView.model.getOutput<DigitalSignal>(3).getOutgoingSignal())
+		a.model.setIncomingSignal(Word(listOf(Bit.True, Bit.Undefined)), scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(Word.of(true), splitterView.model.getOutput<DigitalSignal>(2).getOutgoingSignal())
+		assertEquals(Word.of(Bit.Undefined), splitterView.model.getOutput<DigitalSignal>(3).getOutgoingSignal())
 		// Must have been synchronized
-		assertEquals(Word.of(true), bidiSplitterView.model.getInput<DigitalSignal>(2).getIncomingSignal())
+		assertEquals(Word.of(true), splitterView.model.getInput<DigitalSignal>(2).getIncomingSignal())
 
 		// Send 0 on channel 1 through Concentrator
-		circuitInOutViewNarrow2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		b2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertNull(circuitInOutViewNarrow1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewNarrow2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(circuitInOutViewWide.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
+		assertNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
 }

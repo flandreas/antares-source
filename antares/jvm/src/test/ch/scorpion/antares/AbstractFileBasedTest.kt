@@ -45,8 +45,4 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 		val metaGraph = ProjectModule.projectHolder.p!!.getMetaGraph(uuid)
 		openedCircuitView = metaGraph.graph.graphView
 	}
-
-	protected fun proceedUntilQueueIsEmpty() {
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-	}
 }

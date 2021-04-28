@@ -84,16 +84,18 @@ class PullResistor(
 
 	/** ---- [WeakOutputPortBehaviour] interface */
 
-	override fun withdrawWeakOutput(port: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
-		port.setOutgoingSignalBuffered(null, signalHandler)
+	override fun withdrawWeakOutput(netSignal: DigitalSignal?, port: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
+		val weakSignal = preferredOutputSignal.replaceBy(Bit.Undefined) { index, _ -> netSignal?.bitAt(index)?.isDefined ?: true }
+		port.setOutgoingSignalBuffered(weakSignal, signalHandler)
 		stateChanged(signalHandler)
 	}
 
 	override fun activateWeakOutput(netSignal: DigitalSignal?, port: OutputPort<DigitalSignal>, signalHandler: SignalHandler): DigitalSignal {
-		val weakSignal = netSignal?.replaceBy(getPreferredBit(pullDirection)) { it == Bit.Undefined }
+		val weakSignal = netSignal?.replaceBy(getPreferredBit(pullDirection)) { _, bit -> bit == Bit.Undefined }
 			?: getPreferredSignal(bitWidth, pullDirection)
-		port.setOutgoingSignalBuffered(weakSignal, signalHandler)
-		stateChanged(signalHandler)
+
+		withdrawWeakOutput(netSignal, port, signalHandler)
+
 		return weakSignal
 	}
 

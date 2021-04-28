@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.port
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.model.net.DigitalCombinedNetAccess
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_BIT_WIDTH
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_LOGIC
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATION
@@ -15,6 +16,7 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
+import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
@@ -116,7 +118,6 @@ open class DigitalPortImpl(
 	override var bitWidth: BitWidth = bitWidth
 		set(value) {
 			if (field != value) {
-				clear()
 				val oldValue = field
 				field = value
 				changeSupport.fire(PROP_BIT_WIDTH, oldValue, field)
@@ -214,7 +215,7 @@ open class DigitalPortImpl(
 
 	override val isOutputFullyUndefined: Boolean get() {
 		val outgoingSignal = getOutgoingSignal()
-		return outgoingSignal == null || (outgoingSignal as Word).isAllOf(Bit.Undefined)
+		return outgoingSignal == null || (outgoingSignal as Word).isFullyUndefined
 	}
 
 	override val isOutputPartiallyUndefined: Boolean get() {
@@ -224,4 +225,7 @@ open class DigitalPortImpl(
 
 	override fun isOutgoingSignalConsistentWith(signal: DigitalSignal?): Boolean =
 		isOutputFullyUndefined || (getOutgoingSignal()?.isConsistentWith(signal) ?: false)
+
+	override fun createAccess(): CombinedNetAccess<DigitalSignal> =
+		DigitalCombinedNetAccess(this, bitWidth, 0)
 }

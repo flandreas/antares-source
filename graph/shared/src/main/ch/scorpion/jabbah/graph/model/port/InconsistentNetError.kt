@@ -1,8 +1,7 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -31,7 +30,7 @@ class InconsistentNetError(
 
 	override fun reevaluated(signalHandler: SignalHandler): Boolean {
 		val executionTime = signalHandler.executionTime
-		if (conflict.chain.hasExecutionError) {
+		if (conflict.combinedNet.hasExecutionError) {
 			return if (isGracePeriodOver(executionTime)) {
 				post()
 				true
@@ -60,12 +59,12 @@ class InconsistentNetError(
 
 	private val description = Translations.getString(
 		"graph.inconsistentNetError.description",
-		"${conflict.convertedSignal}, ${conflict.chain.destinationOutputPort.getOutgoingSignal()}")
+		"${conflict.signal}, ${conflict.destinationPort.getOutgoingSignal()}")
 
 	private val originDesc = Translations.getString(
 		"graph.inconsistentNetError.origin",
 		"${originPort.owner!!.type} (${originPort.owner!!.id})",
-		"${conflict.chain.destinationOutputPort.owner!!.type} (${conflict.chain.destinationOutputPort.owner!!.id})")
+		"${conflict.destinationPort.owner!!.type} (${conflict.destinationPort.owner!!.id})")
 
 	private fun post() {
 		val severity = when (GraphModelModule.signalConflictBehaviourHolder.current) {

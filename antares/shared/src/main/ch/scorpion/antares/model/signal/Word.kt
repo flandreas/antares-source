@@ -130,6 +130,10 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		return sb.toString().padStart(bitWidth.width / 4, '0')
 	}
 
+	override val isFullyUndefined: Boolean get() = isAllOf(Bit.Undefined)
+
+	override val isPartiallyUndefined: Boolean get() = undefined
+
 	override fun toBinaryString(): String {
 		val sb = StringBuilder()
 		for (i in bits.size - 1 downTo 0) {
@@ -246,14 +250,31 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	fun withSubwordValue(subword: Word, index: Int): Word {
 		val resultBits = mutableListOf<Bit>()
 		resultBits.addAll(this.bits)
+		replaceFromSubword(resultBits, subword, index)
+		return Word(resultBits)
+	}
 
+	private fun replaceFromSubword(resultBits: MutableList<Bit>, subword: Word, index: Int, condition: (Int) -> Boolean = { true }) {
 		val minBitIndex = index * subword.bitWidth.width
 		var subwordIndex = 0
 		if (minBitIndex < this.bitWidth.width) {
 			for (resultIndex in minBitIndex..min(bitWidth.width - 1, minBitIndex + subword.bitWidth.width - 1)) {
-				resultBits[resultIndex] = subword.bitAt(subwordIndex++)
+				if (condition(resultIndex)) {
+					resultBits[resultIndex] = subword.bitAt(subwordIndex)
+				}
+				subwordIndex++
 			}
 		}
+	}
+
+	/**
+	 * Creates a copy of this [Word] and used all [Bit]s of [subword] where the corresponding
+	 * [Bit] in this [Word] is [Bit.Undefined].
+	 */
+	override fun defineSubword(subword: DigitalSignal, index: Int): Word {
+		val resultBits = mutableListOf<Bit>()
+		resultBits.addAll(this.bits)
+		replaceFromSubword(resultBits, subword as Word, index) { resultBits[it] == Bit.Undefined }
 		return Word(resultBits)
 	}
 
@@ -271,13 +292,13 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	fun shiftRight(bitCount: Int = 1): Word = of(bitWidth, getValue().shr(bitCount))
 
-	override fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word {
+	override fun replaceBy(replacement: Bit, filter: (Int, Bit) -> Boolean): Word {
 		val resultBits = mutableListOf<Bit>()
-		bits.forEach {
-			if (filter.invoke(it)) {
+		bits.forEachIndexed { index, bit ->
+			if (filter.invoke(index, bit)) {
 				resultBits.add(replacement)
 			} else {
-				resultBits.add(it)
+				resultBits.add(bit)
 			}
 		}
 		return Word(resultBits)

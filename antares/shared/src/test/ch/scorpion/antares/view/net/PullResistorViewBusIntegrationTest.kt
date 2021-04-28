@@ -41,10 +41,12 @@ class PullResistorViewBusIntegrationTest : AbstractCircuitTest() {
 	@Test
 	fun shouldPullPartiallyUndefinedToLow() {
 		val signal = Word(listOf(Bit.False, Bit.Undefined, Bit.True, Bit.Undefined))
-		startSimulation(1000L)
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
 		triStateBGV.model.getInputPort().setIncomingSignal(signal, scheduler)
 		triStateBGV.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		proceedToNanos(2000)
+		proceedUntilQueueIsEmpty()
 
 		assertFalse(net.isError)
 		assertEquals(

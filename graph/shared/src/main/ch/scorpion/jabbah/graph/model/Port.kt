@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -8,8 +7,9 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
 import kotlin.reflect.KClass
 
 /**
@@ -97,8 +97,14 @@ interface InputPort<T : Any> : Port<T> {
 
 interface WeakOutputPortBehaviour<T : Any> {
 
-	/** Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".*/
-	fun withdrawWeakOutput(port: OutputPort<T>, signalHandler: SignalHandler)
+	/**
+	 * Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".
+	 *
+	 * @param netSignal the signal about to become active on the net. If a signal in the using application
+	 * support multi-part signals, this method withdraws only those parts [port]'s outgoing signal that
+	 * correspond with parts of [netSignal] that are not "undefined".
+	 */
+	fun withdrawWeakOutput(netSignal: T?, port: OutputPort<T>, signalHandler: SignalHandler)
 
 	/**
 	 * Activates the defined value of a weak [OutputPort]. This is used when all other [OutputPort]s assert
@@ -133,12 +139,14 @@ interface OutputPort<T : Any> : Port<T> {
 	val isOutputPartiallyUndefined: Boolean
 
 	/**
-	 * The [CombinedNet] that is the result of [formNet]. Mainly used for testing.
+	 * The [CombinedNet] that is the result of [formNet]. Accessible mainly used for testing.
 	 */
-	val combinedNet: CombinedNet<T>?
+	val combinedNets: Collection<CombinedNet<T>>
 
 	/** Forms the [CombinedNet] used by this [OutputPort]. */
 	fun formNet(signalHandler: SignalHandler)
+
+	fun createAccess(): CombinedNetAccess<T>
 
 	/**
 	 * The specified [signal] is considered consistent with the current outgoing signal
@@ -186,12 +194,12 @@ enum class PortType(val customName: String) {
 		private val LOG by logger(PortType::class)
 
 		fun withName(customName: String): PortType {
-			for (type in PortType.values()) {
+			for (type in values()) {
 				if (type.customName == customName) {
 					return type
 				}
 			}
-			PortType.LOG.error("unknown PortType '$customName'")
+			LOG.error("unknown PortType '$customName'")
 			throw IllegalArgumentException("unknown PortType '$customName'")
 		}
 	}

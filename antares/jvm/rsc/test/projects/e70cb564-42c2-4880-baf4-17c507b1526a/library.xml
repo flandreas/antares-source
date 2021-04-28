@@ -16,6 +16,16 @@
             <translation lang='en' text='Bidirectional Splitter with Bus Driver'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='37f1ed5f-b729-49a8-9650-51ee785d82c3'>
+          <name>
+            <translation lang='en' text='Cascaded Bidirectional Splitters'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='c49c71d6-ba22-49ee-89e5-f59102d0bdba'>
+          <name>
+            <translation lang='en' text='Cascaded Transceivers'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

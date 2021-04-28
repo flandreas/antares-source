@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 /**
  * An abstract base implementation of the [Vertice] interface.
@@ -17,10 +17,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 abstract class AbstractVertice(
 	name: String? = null
 ) : AbstractGraphElement(), Vertice {
-
-	companion object {
-		private val LOG by logger(AbstractVertice::class)
-	}
 
 	/** Contains all [Port]s of this [Vertice].*/
 	private val ports = mutableListOf<Port<*>>()
@@ -170,7 +166,9 @@ abstract class AbstractVertice(
 
 	override fun formNet(signalHandler: SignalHandler) {
 		super.formNet(signalHandler)
-		getOutputs().forEach { it.formNet(signalHandler) }
+		getOutputs().forEach {
+			it.formNet(signalHandler)
+		}
 	}
 
 	/** ---- [AbstractVertice] */
@@ -213,12 +211,9 @@ abstract class AbstractVertice(
 	/** A "virtual" [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port].*/
 	inner class VerticeActorData(override val changedPort: Port<*>?, override val isInput: Boolean = true) : GraphActorData {
 
-		override fun <T : Any> getSignal(portId: Int): T {
-			return getInput<T>(portId).getIncomingSignal() as T
-		}
+		override fun <T : Any> getSignal(portId: Int): T? =
+			getInput<T>(portId).getIncomingSignal()
 
-		override fun dataToString(): String {
-			return this@AbstractVertice.dataToString()
-		}
+		override fun dataToString(): String = this@AbstractVertice.dataToString()
 	}
 }

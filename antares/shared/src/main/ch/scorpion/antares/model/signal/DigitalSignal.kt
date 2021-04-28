@@ -4,6 +4,10 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 interface DigitalSignal {
 
+	val isFullyUndefined: Boolean
+
+	val isPartiallyUndefined: Boolean
+
     fun toHexString(): String
 
     fun toBinaryString(): String
@@ -29,10 +33,22 @@ interface DigitalSignal {
      */
     fun toInt(): Int?
 
-	fun replaceBy(replacement: Bit, filter: (Bit) -> Boolean): Word
+	/**
+	 * Creates a copy of this [DigitalSignal] by replacing all [Bit]s with [replacement]
+	 * that fulfill condition [filter].
+	 *
+	 * @param filter receives [Bit]s of this [DigitalSignal] as input
+	 */
+	fun replaceBy(replacement: Bit, filter: (Int, Bit) -> Boolean): Word
 
 	/**
 	 * Two [DigitalSignal]s are consistent they have the same [BitWidth] and every non-undefined [Bit] is equal.
 	 */
 	fun isConsistentWith(other: DigitalSignal?): Boolean
+
+	/**
+	 * Creates a copy of this [DigitalSignal] and used all [Bit]s of [subword] where the corresponding
+	 * [Bit] in this [DigitalSignal] is [Bit.Undefined].
+	 */
+	fun defineSubword(subword: DigitalSignal, index: Int): DigitalSignal
 }

@@ -1,101 +1,134 @@
 package ch.scorpion.jabbah.graph.model.net
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 
 /**
- * Represents a [Vertice] that combines the [Net]s connected to its [InputPort]s with
- * the [Net]s connected to its [OutputPort], thus forming a [CombinedNet] in terms of
- * signal propagation conflict resolution.
+ * Implemented by [Vertice]s whose input [Net]s are to be combined with its output [Net]
+ * to form larger [CombinedNet]s. These [Vertice] are typically pure net components, i.e.
+ * they act without a propagation delay and don't perform any particular logic besides
+ * signal forwarding or splitting.
  */
-interface NetCombiner: Vertice {
+interface NetCombiner : Vertice {
 
-	/**
-	 * Returns all [SignalPropagationChain]s that connect [inputPort] with the destination [OutputPort]s
-	 * of the returned [SignalPropagationChain]s.
-	 */
-	fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>>
+	fun <T : Any> createCombinedNetsFor(
+		outputPort: OutputPort<T>,
+		inputPort: InputPort<T>,
+		signalHandler: SignalHandler
+	): Collection<CombinedNet<T>>
 }
 
 /**
- * A collection of all [OutputPort]s whose outgoing signals might be in conflict with the signal
- * that an origin [OutputPort] is about to assert to the [Net] it is connected to.
- * The [Net]s these [OutputPort]s are connected to form a "combined [Net]" in which new signals
- * are negotiated, including [WeakOutputPortBehaviour] and recovering from [Net] error states.
+ * Defines how an [OutputPort] sends and receives signals to and from a [CombinedNet].
+ * Can be overridden by subclasses if a [CombinedNet] transports only a part of
+ * the signal produces by an [OutputPort], which is e.g. the case when using bus splitting.
  *
- * Evaluation of [CombinedNet]s only considers [OutputPort]s that can produce undefined signals
- * as defined by [OutputPort.canBeUndefined]. Other [OutputPort]s cannot be connected to the same [Net],
- * which is a restriction that must be enforced by other parts of the system.
+ * [CombinedNetAccess]s are maintained and owned by [CombinedNet].
  *
- * [CombinedNet]s can span multiple [NetCombiner]s that have propagation delay 0 and are therefore
- * executed within the same simulation slot.
- *
- * Signals might be transformed while traveling along the stages of a [CombinedNet], which is why
- * a destination [OutputPort] is associated with a chain of [SignalConverter]s that represent
- * these transformations.
+ * @param T the type of signal
+ * @param port the [OutputPort] that accesses the [CombinedNet] that owns this [CombinedNetAccess].
  */
-class CombinedNet<T : Any>
-	private constructor(originOutputPort: OutputPort<T>, signalHandler: SignalHandler)
-{
+open class CombinedNetAccess<T : Any>(
+	val port: OutputPort<T>
+) {
+	/** Returns the signal that the [OutputPort] currently asserts to the [CombinedNet].*/
+	open val assertedSignal: T? get() = port.getOutgoingSignal()
 
-	companion object {
+	open fun isConsistentWith(signal: T?): Boolean =
+		port.isOutputFullyUndefined || SignalUtil.equals(port.getOutgoingSignal(), signal)
 
-		fun <T: Any> fromOutputPort(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): CombinedNet<T> {
-			return CombinedNet(originOutputPort, signalHandler)
-		}
+	open val isFullyUndefined: Boolean get() = port.isOutputFullyUndefined
 
-		fun <T : Any> createChains(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
-			val createdChains = mutableListOf<SignalPropagationChain<T>>()
-			if (originOutputPort.net == null) {
-				return createdChains
-			}
-			originOutputPort.net!!.ports
-				.filter { it !== originOutputPort }
-				.forEach {
-					val chainsOfPort = mutableListOf<SignalPropagationChain<T>>()
-					if (it.portType.isInput && it.owner is NetCombiner) {
-						chainsOfPort.addAll((it.owner as NetCombiner).getSignalPropagationChains(it as InputPort<T>, signalHandler))
-					}
-					if (it.portType.isOutput && (it.owner !is NetCombiner || chainsOfPort.isEmpty())) {
-						chainsOfPort.add(SignalPropagationChain(it as OutputPort<T>))
-					}
-					createdChains.addAll(chainsOfPort)
-				}
+	open val isPartiallyUndefined: Boolean get() = port.isOutputPartiallyUndefined
 
-			return createdChains
+	/**
+	 * Returns the signal that results when replacing all undefined parts of [origin] with [replacement].
+	 */
+	open fun replaceUndefinedFrom(origin: T?, replacement: T?, signalHandler: SignalHandler): T? {
+		return if (isFullyUndefined) {
+			replacement
+		} else {
+			origin
 		}
 	}
 
-	/** There might lead multiple different [SignalPropagationChain]s to the same [OutputPort].*/
-	val chains: Collection<SignalPropagationChain<T>> = createChains(originOutputPort, signalHandler)
+	/** Copy constructor for exchanging the [OutputPort], using during net formation.*/
+	open fun withOutputPort(newPort: OutputPort<T>): CombinedNetAccess<T> = CombinedNetAccess(newPort)
+}
 
-	val outputPorts: Collection<OutputPort<T>> get() = chains.map { it.destinationOutputPort }
+/**
+ * Combines all [Net]s from an origin [OutputPort] to all destination [OutputPort] reachable by the origin.
+ * Created during net formation by origin [OutputPort] and used for checking for conflicts when the origin
+ * [OutputPort] is about to send a signal into the [Net] it is attached to.
+ *
+ * @param T the type of signal
+ */
+class CombinedNet<T : Any> {
 
-	fun getChainTo(outputPort: OutputPort<T>): SignalPropagationChain<T>?
-		= chains.find { it.destinationOutputPort === outputPort }
+	companion object {
 
-	/**
-	 * Returns the single [OutputPort] of this [CombinedNet] that produces a defined, non-weak signal
-	 * when sending [sourceSignal] over this [CombinedNet].
-	 * Returns `null` if there are no or multiple such [OutputPort]s.
-	 */
-	fun consistentSignalPort(sourceSignal: T?): OutputPort<*>? {
-		var consistentPort: OutputPort<*>? = null
-		chains
-			.forEach {
-				if (it.destinationOutputPort.weakBehaviour == null && !it.destinationOutputPort.isOutputFullyUndefined) {
-					if (consistentPort == null) {
-						consistentPort = it.destinationOutputPort
-					} else {
-						if (it.checkForConflict(sourceSignal) != null) {
-							return null
-						}
+		/**
+		 * Creates all [CombinedNet]s of an [OutputPort]. Can by called recursively by [NetCombiner]s.
+		 */
+		fun <T: Any> createFor(
+			outputPort: OutputPort<T>,
+			signalHandler: SignalHandler
+		): Collection<CombinedNet<T>> {
+			val combinedNets = mutableListOf<CombinedNet<T>>()
+			outputPort.net?.ports
+				?.filter { it !== outputPort}
+				?.forEach {
+					val combinedNetsOfPort = mutableListOf<CombinedNet<T>>()
+					if (it.portType.isInput && it.owner is NetCombiner) {
+						combinedNetsOfPort.addAll((it.owner as NetCombiner).createCombinedNetsFor(outputPort, it as InputPort<T>, signalHandler))
 					}
+					if (it.portType.isOutput && (it.owner !is NetCombiner || combinedNetsOfPort.isEmpty())) {
+						val combinedNet = CombinedNet<T>()
+						combinedNet.addAccess((it as OutputPort<T>).createAccess())
+						combinedNet.addAccess(outputPort.createAccess())
+						combinedNetsOfPort.add(combinedNet)
+					}
+					combinedNets.addAll(combinedNetsOfPort)
 				}
+
+			outputPort.net?.let { net ->
+				combinedNets.forEach { it.addNet(net) }
 			}
-		return consistentPort
+
+			return combinedNets
+		}
+	}
+
+	private val _nets = mutableSetOf<Net<T>>()
+
+	private val _accesses = mutableListOf<CombinedNetAccess<T>>()
+
+	val accesses: Collection<CombinedNetAccess<T>> get() = _accesses
+
+	val nets: Collection<Net<T>> get() = _nets
+
+	val weakOutputPorts: Collection<OutputPort<T>> get() = _nets.flatMap { it.weakOutputPorts }
+
+	fun accessOf(outputPort: OutputPort<T>): CombinedNetAccess<T>? = _accesses.firstOrNull { it.port === outputPort }
+
+	fun addAccess(access: CombinedNetAccess<T>) {
+		_accesses.add(access)
+	}
+
+	fun replaceAccess(port: OutputPort<*>, access: CombinedNetAccess<T>) {
+		_accesses
+			.find { it.port === port }
+			.let { _accesses.remove(it) }
+		_accesses.add(access)
+	}
+
+	fun replaceAccessPort(port: OutputPort<T>, newPort: OutputPort<T>) {
+		accessOf(port)?.let { replaceAccess(port, it.withOutputPort(newPort)) }
+	}
+
+	fun addNet(net: Net<T>) {
+		_nets.add(net)
 	}
 
 	/**
@@ -103,20 +136,52 @@ class CombinedNet<T : Any>
 	 * output value of the specified [originOutputPort].
 	 * @return [SignalConflict] if a conflict is detected, `null` otherwise
 	 */
-	fun checkForConflict(originOutputPort: OutputPort<T>): SignalConflict<T>? {
-		if (originOutputPort.isOutputFullyUndefined) {
+	fun checkAllForConflict(originOutputPort: OutputPort<T>): SignalConflict<T>? {
+		if (accessOf(originOutputPort)!!.isFullyUndefined) {
 			return null
 		}
-		val signal = originOutputPort.getOutgoingSignal()
 
-		return chains
-			.mapNotNull { it.checkForConflict(signal) }
+		val signal = accessOf(originOutputPort)!!.assertedSignal
+
+		return _accesses
+			.filterNot { it.port === originOutputPort }
+			.mapNotNull { checkForConflict(signal, it) }
 			.firstOrNull()
 	}
 
-	fun setExecutionError(error: ExecutionError?) {
-		chains.forEach { it.setExecutionError(error) }
+	private fun checkForConflict(signal: T?, access: CombinedNetAccess<T>): SignalConflict<T>? {
+		return if (access.isConsistentWith(signal)) {
+			null
+		} else {
+			SignalConflict(signal, this, access.port)
+		}
 	}
 
-	val hasExecutionError: Boolean get() = chains.any { it.hasExecutionError }
+	fun setExecutionError(error: ExecutionError?) {
+		_nets.forEach { it.executionError = error }
+	}
+
+	val hasExecutionError: Boolean get() = _nets.any { it.executionError != null }
+
+	/**
+	 * Returns the single [CombinedNetAccess] of this [CombinedNet] that produces a defined, non-weak signal
+	 * that doesn't conflict with any other [OutputPort]s.
+	 * Returns `null` if there are no or multiple such [CombinedNetAccess]es.
+	 */
+	val consistentAccess: CombinedNetAccess<T>? get() {
+		var result: CombinedNetAccess<T>? = null
+		accesses
+			.forEach {
+				if (it.port.weakBehaviour == null && !it.isFullyUndefined) {
+					if (result == null) {
+						result = it
+					} else {
+						if (checkAllForConflict(result!!.port) != null) {
+							return null
+						}
+					}
+				}
+			}
+		return result
+	}
 }

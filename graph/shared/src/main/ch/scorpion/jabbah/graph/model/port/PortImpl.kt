@@ -14,8 +14,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
-import ch.scorpion.jabbah.graph.model.net.CombinedNet
-import ch.scorpion.jabbah.graph.model.net.SignalConflict
+import ch.scorpion.jabbah.graph.model.net.*
 import kotlin.reflect.KClass
 
 /**
@@ -117,20 +116,20 @@ open class PortImpl<T : Any>(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		// Reset CombinedNet because the structure might be changed before the next start of execution
-		_combinedNet = null
+		_combinedNets.clear()
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {
 		if (portType.isOutput) {
-			ensureCombinedNet(signalHandler)
+			_combinedNets.clear()
+			CombinedNet
+				.createFor(this, signalHandler)
+				.forEach {
+					if (it.accessOf(this) != null) {
+						_combinedNets.add(it)
+					}
+				}
 		}
-	}
-
-	private fun ensureCombinedNet(signalHandler: SignalHandler): CombinedNet<T> {
-		if (_combinedNet == null) {
-			_combinedNet = CombinedNet.fromOutputPort(this, signalHandler)
-		}
-		return _combinedNet!!
 	}
 
 	/** ---- [InputPort] interface */
@@ -154,9 +153,9 @@ open class PortImpl<T : Any>(
 
 	private var _outgoingSignal: T? = null
 
-	private var _combinedNet: CombinedNet<T>? = null
+	private val _combinedNets = mutableListOf<CombinedNet<T>>()
 
-	override val combinedNet: CombinedNet<T>? get() = _combinedNet
+	override val combinedNets: Collection<CombinedNet<T>> get() = _combinedNets
 
 	override fun getOutgoingSignal(): T? {
 		return _outgoingSignal ?: getDefaultSignal()
@@ -168,6 +167,9 @@ open class PortImpl<T : Any>(
 	override val isOutputPartiallyUndefined: Boolean
 		get() = _outgoingSignal == null
 
+	override fun createAccess(): CombinedNetAccess<T> =
+		CombinedNetAccess(this)
+
 	override fun isOutgoingSignalConsistentWith(signal: T?): Boolean =
 		isOutputFullyUndefined || SignalUtil.equals(_outgoingSignal, signal)
 
@@ -177,11 +179,11 @@ open class PortImpl<T : Any>(
 
 	override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
 		storeOutgoingSignal(signal)
-		forwardSignal(signal, signalHandler, withDelay = false)
+		forwardSignal(signalHandler, withDelay = false)
 	}
 
 	override fun flush(signalHandler: SignalHandler) {
-		forwardSignal(getOutgoingSignal(), signalHandler, withDelay = true)
+		forwardSignal(signalHandler, withDelay = true)
 	}
 
 	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
@@ -199,7 +201,6 @@ open class PortImpl<T : Any>(
 	protected open fun getDefaultSignal(): T? = null
 
 	protected fun storeIncomingSignal(signal: T?) {
-		LOG.trace("Storing incoming signal $signal in port $portId of ${owner?.id}")
 		_incomingSignal = signal
 	}
 
@@ -216,95 +217,97 @@ open class PortImpl<T : Any>(
 		conflict: SignalConflict<T>,
 		signalHandler: SignalHandler
 	) {
+
 		val error = InconsistentNetError(this, conflict, signalHandler.executionTime)
 
-		val logMsg = "Inconsistent net signal ${conflict.convertedSignal} from port $portId in ${owner?.id}. Conflict with " +
-			"${conflict.chain.destinationOutputPort.getOutgoingSignal()} from ${conflict.chain.destinationOutputPort.portId} " +
-			"in ${conflict.chain.destinationOutputPort.owner!!.id}"
-
+		val logMsg = "Inconsistent net signal ${conflict.signal} from port $portId in ${owner?.id}. Conflict with " +
+			"${conflict.destinationPort.getOutgoingSignal()} from ${conflict.destinationPort.portId} " +
+			"in ${conflict.destinationPort.owner!!.id}"
 		LOG.debug(logMsg)
 		signalHandler.logTrace(System.getClass(this), portId) { logMsg }
 
-		conflict.chain.setExecutionError(error)
+		conflict.combinedNet.setExecutionError(error)
 
 		signalHandler.deferExecutionError(error)
 	}
 
-	// TODO: Shouldn't this logic be part of NetImpl?
-	private fun forwardSignal(signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
+	private fun forwardSignal(signalHandler: SignalHandler, withDelay: Boolean) {
 		if (net == null) {
 			return
 		}
 
-		signalHandler.logTrace(System.getClass(this), portId) { "forwarding signal $signal from port $portId in ${owner?.id}" }
+		var anyConflict = false
+		combinedNets.forEach {
+			try {
+				if (it.checkAllForConflict(this) != null) {
+					// Try to withdraw all weak signal in the net that might be the cause of inconsistency
+					withdrawWeakSignals(it, signalHandler)
 
-		val combinedNet = ensureCombinedNet(signalHandler)
-
-		if (combinedNet.checkForConflict(this) != null) {
-
-			// Try to withdraw all weak signal in the net that might be the cause of inconsistency
-			if (!isOutputFullyUndefined) {
-				withdrawWeakSignals(signalHandler)
-			}
-
-			combinedNet.checkForConflict(this)?.let {
-				raiseInconsistentNetError(it, signalHandler)
-				return
+					it.checkAllForConflict(this)?.let { conflict ->
+						anyConflict = true
+						raiseInconsistentNetError(conflict, signalHandler)
+					}
+				}
+			} catch (e: Throwable) {
+				System.breakpoint()
 			}
 		}
 
-		// Net is consistent
+		if (anyConflict) {
+			return
+		}
+
+		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
-			if (isOutputPartiallyUndefined) {
-				signalHandler.logTrace(System.getClass(this), portId) { "Output is partially undefined, withdrawing signal.."}
-				withdrawSignal(combinedNet, signal, signalHandler, withDelay)
-			} else {
-				signalHandler.logActorTrace(net!!) { "setting signal $signal on net ${net!!.id}" }
-				net!!.setSignal(signal, this, signalHandler, withDelay)
-			}
+			val signal = replaceOwnUndefinedSignals(signalHandler)
+			net!!.setSignal(signal, this, signalHandler, withDelay)
 			return
 		}
 
 		// Net has become consistent and has to recover from execution error
 		if (!isOutputFullyUndefined) {
-			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $signal into net '${net!!.id}'" }
-			combinedNet.setExecutionError(null)
-			net!!.setSignal(signal, this, signalHandler, withDelay)
+			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
+			combinedNets.forEach { it.setExecutionError(null) }
+			net!!.setSignal(_outgoingSignal, this, signalHandler, withDelay)
 			return
 		}
 
 		// Net has become consistent by withdrawing an inconsistent signal and asserting a fully undefined signal
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
-		withdrawSignal(combinedNet, signal, signalHandler, withDelay)
+		val signal = replaceOwnUndefinedSignals(signalHandler)
+		combinedNets.forEach { it.setExecutionError(null) }
+		net!!.setSignal(signal, this, signalHandler, withDelay)
 	}
 
-	private fun withdrawSignal(combinedNet: CombinedNet<T>, signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
-		val consistentPort = combinedNet.consistentSignalPort(signal)
-		if (consistentPort != null) {
-			signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }
-			combinedNet.setExecutionError(null)
-			// TODO Set Net signal directly instead of executing forwarding logic again
-			consistentPort.flush(signalHandler)
-		} else {
-			// TODO We only regard the first weak OutputPort, but what is if there are multiple weak
-			// OutputPorts at the same Net, possibly with conflicting weak values? Should that be
-			// considered a design error?
-			val weakPortToActivate = net!!.weakOutputPorts.firstOrNull()
-			if (weakPortToActivate != null) {
-				signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
-				val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(signal, weakPortToActivate, signalHandler)
-				net!!.setSignal(weakSignal, this, signalHandler, withDelay)
-			} else {
-				signalHandler.logTrace(System.getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
-				combinedNet.setExecutionError(null)
-				net!!.setSignal(signal, this, signalHandler, withDelay)
+	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {
+		val signal = combinedNet.accessOf(this)!!.assertedSignal
+		combinedNet.nets.forEach { net ->
+			net.weakOutputPorts.forEach { port ->
+				port.weakBehaviour!!.withdrawWeakOutput(signal, port, signalHandler)
 			}
 		}
 	}
 
-	private fun withdrawWeakSignals(signalHandler: SignalHandler) {
-		net?.weakOutputPorts?.forEach { port ->
-			port.weakBehaviour!!.withdrawWeakOutput(port, signalHandler)
+	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): T? {
+		var signal = _outgoingSignal
+		combinedNets.forEach { combinedNet ->
+			val thisAccess = combinedNet.accessOf(this)!!
+			if (thisAccess.isPartiallyUndefined) {
+				val consistentAccess = combinedNet.consistentAccess
+
+				if (consistentAccess != null && consistentAccess.port !== this) {
+					signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal and using signal of consistent Port" }
+					signal = thisAccess.replaceUndefinedFrom(signal, consistentAccess.assertedSignal, signalHandler)
+				} else {
+					val weakPortToActivate = combinedNet.weakOutputPorts.firstOrNull()
+					if (weakPortToActivate != null) {
+						signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
+						val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(thisAccess.assertedSignal, weakPortToActivate, signalHandler)
+						signal = thisAccess.replaceUndefinedFrom(signal, weakSignal, signalHandler)
+					}
+				}
+			}
 		}
+		return signal
 	}
 }

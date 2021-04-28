@@ -94,6 +94,11 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldReplaceAllAsSubword() {
+		assertEquals(Word(listOf(False, True, Undefined, False)), Word(listOf(False, True, Undefined, Undefined)).withSubwordValue(Word(listOf(False, True, Undefined, False)), 0))
+	}
+
+	@Test
 	fun shouldSetSubwordWiderThanOrigWord() {
 		// Use case: We have a two-bit word of value 0, and we want to enter the value 1 at the left-most position.
 		// The value has been entered as a hex number, which is 4 bits wide. We expect the value to be truncated.
@@ -189,7 +194,7 @@ class WordTest {
 	fun shouldReplaceBits() {
 		val word = Word(listOf(True, False, Undefined, Error))
 
-		val result = word.replaceBy(False) { it == Undefined }
+		val result = word.replaceBy(False) { _, bit -> bit == Undefined }
 
 		assertEquals(result, Word(listOf(True, False, False, Error)))
 	}
@@ -214,5 +219,12 @@ class WordTest {
 	@Test
 	fun shouldNotBeConsistentWithDifferentBitWidth() {
 		assertFalse(Word(listOf(True, True)).isConsistentWith(Word(listOf(True))))
+	}
+
+	@Test
+	fun shouldDefineSubword() {
+		assertEquals(Word(listOf(True, False)), Word(listOf(True, Undefined)).defineSubword(Word.of(False), 1))
+		assertEquals(Word(listOf(True, True)), Word(listOf(True, True)).defineSubword(Word.of(False), 1))
+		assertEquals(Word(listOf(False, True, Undefined, Undefined)), Word(listOf(False, True, Undefined, Undefined)).defineSubword(Word(listOf(False, Undefined, Undefined, Undefined)), 0))
 	}
 }

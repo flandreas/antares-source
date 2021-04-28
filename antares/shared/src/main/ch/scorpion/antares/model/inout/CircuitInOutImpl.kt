@@ -14,9 +14,9 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
-import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -105,6 +105,11 @@ class CircuitInOutImpl(
 		setIncomingSignal(signal, signalHandler, propagationDelay)
 	}
 
+	override fun outputChanged(output: OutputPort<*>, signalHandler: SignalHandler) {
+		signal = getDigitalPort().getOutgoingSignal()
+		super.outputChanged(output, signalHandler)
+	}
+
 	private fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, delay: Long) {
 		val differs = differ(this.signal, signal)
 		signalHandler.logActorTrace(this) { "GraphInput.setIncomingSignal: enabled=$enabled, differs=$differs" }
@@ -119,21 +124,32 @@ class CircuitInOutImpl(
 
 	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
 
-	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
-		val chains = subGraphOutputPort?.let { CombinedNet.createChains(it, signalHandler) } as Collection<SignalPropagationChain<T>>? ?: emptyList()
-		chains.forEach {
-			it.extendHead(null, inputPort, subGraphOutputPort as OutputPort<T>)
+	private fun createCombinedNetsForOutput(outputPort: OutputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<CombinedNet<DigitalSignal>> {
+		val result = if (subGraphOutputPort == null) {
+			emptyList()
+		} else {
+			CombinedNet.createFor(subGraphOutputPort!!, signalHandler)
 		}
-		return chains
+
+		result.forEach { it.replaceAccessPort(subGraphOutputPort as OutputPort<DigitalSignal>, outputPort) }
+
+		return result
 	}
+
+	/** ---- [NetCombiner] interface */
+
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
+		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
 
 	/** ---- [Actor] interface */
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		enabled = true
-		signal = getDigitalPort().defaultDigitalSignal
-		if (portType.isInput) {
+		signal = getDigitalPort().dominantSignal
+
+		if (portType.isInput && subGraphInputPort == null) {
+			// A GraphInput at the top level acts like a Switch and actively establishes it default value
 			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 		}
 		stateChanged(signalHandler)

@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [GraphPort] is a [Vertice] whose purpose is to connect a [Graph] (of which the [GraphPort] is a part)

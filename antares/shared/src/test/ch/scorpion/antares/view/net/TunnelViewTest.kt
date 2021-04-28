@@ -5,9 +5,9 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -45,7 +45,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		startSimulation(1100L)
 
 		switchView.model.toggle(scheduler)
-		proceedToMillis(2200L)
+		proceedUntilQueueIsEmpty()
 
 		assertEquals(Word.of(true), sender.model.getInOrOutSignal() as Word)
 		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)

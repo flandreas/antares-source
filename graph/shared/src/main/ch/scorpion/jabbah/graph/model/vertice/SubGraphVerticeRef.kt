@@ -13,9 +13,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.model.net.CombinedNet
-import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.net.SignalPropagationChain
+import ch.scorpion.jabbah.graph.model.net.*
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -237,17 +235,17 @@ class SubGraphVerticeRef(
 
 	/** ---- [NetCombiner] */
 
-	override fun <T : Any> getSignalPropagationChains(inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<SignalPropagationChain<T>> {
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		if (!isDeepExecution(signalHandler)) {
 			return emptyList()
 		}
 		val graphInput = graph!!.getGraphInput<T>(inputPort.name!!)
-		val outputPort = graphInput!!.getOutput<T>()
-		val chains = CombinedNet.createChains(outputPort, signalHandler)
-		chains.forEach {
-			it.extendHead(null, inputPort, outputPort)
-		}
-		return chains
+		val innerOutputPort = graphInput!!.getOutput<T>()
+		val result = CombinedNet.createFor(innerOutputPort, signalHandler)
+
+		result.forEach { it.replaceAccessPort(innerOutputPort, outputPort) }
+
+		return result
 	}
 
 	/** ---- [SubGraphVerticeRef] */

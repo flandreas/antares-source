@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
-import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.PortType
@@ -14,9 +13,9 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 
@@ -32,12 +31,11 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
 	private val library get() = LibraryModule.libraryHolder.library
 
 	private lateinit var subGraphVV: SubGraphVerticeView<out SubGraphVertice>
-	private val io1 = CircuitInOutView(model = CircuitInOutImpl(name = "IO1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val io2 = CircuitInOutView(model = CircuitInOutImpl(name = "IO2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b = CircuitInOutView(model = CircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 
@@ -45,34 +43,56 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 	fun setupCircuit() {
 		setupLibrary()
 
-		TestLibraryBuilder().addInOutToOut(library)
-		subGraphVV = (library.get(TestLibraryBuilder.INOUT_TO_OUT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		TestLibraryBuilder().addInOutToInOut(library)
+		subGraphVV = (library.get(TestLibraryBuilder.INOUT_TO_INOUT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 			as SubGraphVerticeView<out SubGraphVertice>
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
-		builder.addVerticeView(io1)
+		builder.addVerticeView(a)
 		builder.addVerticeView(subGraphVV)
-		builder.addVerticeView(io2)
+		builder.addVerticeView(b)
 
-		builder.connect(io1, subGraphVV, subGraphVV.model.getInput("IO"))
-		builder.connect(subGraphVV, subGraphVV.model.getOutput("O"), io2)
+		builder.connect(a, subGraphVV, subGraphVV.model.getInput("IO1"))
+		builder.connect(subGraphVV, subGraphVV.model.getOutput("IO2"), b)
 
 		circuitView = builder.build()
 	}
 
 	@Test
+	fun shouldForwardAtoB() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		a.model.setIncomingSignal(Word.of(true), scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(Word.of(true), b.model.signal)
+	}
+
+	@Test
+	fun shouldForwardBToA() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		b.model.setIncomingSignal(Word.of(true), scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(Word.of(true), a.model.signal)
+	}
+
+	@Test
 	fun shouldSetErrorOnCombinedNet() {
 		startSimulation()
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		proceedUntilQueueIsEmpty()
 
-		io2.model.setIncomingSignal(Word.of(true), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		b.model.setIncomingSignal(Word.of(true), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		io1.model.setIncomingSignal(Word.of(false), scheduler)
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+		a.model.setIncomingSignal(Word.of(false), scheduler)
+		proceedUntilQueueIsEmpty()
 
-		assertNotNull(io2.model.getPort<DigitalSignal>().net?.executionError)
-		assertNotNull(io1.model.getPort<DigitalSignal>().net?.executionError)
+		assertNotNull(b.model.getPort<DigitalSignal>().net?.executionError)
+		assertNotNull(a.model.getPort<DigitalSignal>().net?.executionError)
 		assertNotNull(subGraphVV.model.getGraphIfPresent()!!.graphInOuts.first().getOutput<Boolean>().net?.executionError)
 	}
 }

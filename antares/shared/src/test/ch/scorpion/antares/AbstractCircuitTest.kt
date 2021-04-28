@@ -8,15 +8,16 @@ import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
+import io.mockk.mockk
 import kotlin.test.BeforeTest
 
 /**
@@ -62,6 +63,10 @@ abstract class AbstractCircuitTest {
 	protected fun stopSimulation() {
 		scheduler.isActive = false
 		getCircuitView().graph!!.executionStopped(scheduler)
+	}
+
+	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk()) {
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 	}
 
 	protected fun proceedToMillis(timeMillis: Long) {

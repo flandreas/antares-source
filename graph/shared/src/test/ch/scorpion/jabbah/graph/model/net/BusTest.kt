@@ -18,8 +18,8 @@ class BusTest {
 
     private val signalHandler = ForwardSignalHandler()
 	private var net: Net<Boolean>
-	private val output1 = TestVertice(canBeUndefined = true)
-	private val output2 = TestVertice(canBeUndefined = true)
+	private val output1 = TestVertice(name = "V1", canBeUndefined = true)
+	private val output2 = TestVertice(name = "V2", canBeUndefined = true)
 
     init {
     	val builder = TestGraphBuilder<Boolean>()
@@ -57,7 +57,7 @@ class BusTest {
         output2.getOutput<Boolean>().setOutgoingSignal(false, signalHandler)
         output1.getOutput<Boolean>().setOutgoingSignal(null, signalHandler)
 
-        assertFalse(net.signalBuffer!!)
+        assertFalse(net.signalBuffer ?: true)
         assertNull(net.executionError)
     }
 

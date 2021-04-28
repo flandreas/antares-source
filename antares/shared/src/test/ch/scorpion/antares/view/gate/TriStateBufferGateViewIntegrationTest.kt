@@ -85,9 +85,9 @@ class TriStateBufferGateViewIntegrationTest : AbstractCircuitTest() {
 		produceError()
 		assertTrue(net.isError)
 
-		triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.False), scheduler)
+		//triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.False), scheduler)
 		triStateBGV2.model.getEnablePort().setIncomingSignal(Word.of(Bit.False), scheduler)
-		proceedToNanos(4000)
+		proceedUntilQueueIsEmpty()
 
 		assertEquals(Word.of(Bit.True), net.signal)
 		assertFalse(net.isError)

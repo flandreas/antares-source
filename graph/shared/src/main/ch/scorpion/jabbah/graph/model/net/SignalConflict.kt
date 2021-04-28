@@ -1,22 +1,33 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.AbstractSchedulerAction
+import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.Net
 
 /**
- * Represents a conflict of signals clashing while trying to forward a signal
- * along a [SignalPropagationChain].
+ * Represents a conflict of signals clashing when an [OutputPort] forwards its outgoing
+ * signal to a [Net].
+ *
+ * @param signal the signal being asserted by the current [Actor]
+ * @param combinedNet the [CombinedNet] [signal] is about to be sent into. Used for setting [ExecutionError]
+ * @param destinationPort the [OutputPort] that is in conflict with [signal]. Used for error description generation.
  */
-data class SignalConflict<T: Any>(
-	val convertedSignal: T?,
-	val chain: SignalPropagationChain<T>
+data class SignalConflict<T : Any>(
+	val signal: T?,
+	val combinedNet: CombinedNet<T>,
+	val destinationPort: OutputPort<T>
 )
 
+/** Defined what to do when a [SignalConflict] occurs during execution. */
 enum class SignalConflictBehaviour(
 	val customName: String,
 	val actionBaseName: String
