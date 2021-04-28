@@ -106,7 +106,7 @@ class SubGraphVerticeRef(
 	override var graphName: Name = Name(TranslatableText())
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
-		LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")
+		LOG.trace("propagateOutput for Output '${outputPort.name}'")
 		// Invoke SignalHandler in order to enable breakpoint on the SubGraphOutputPort
 		signalHandler.requestActingAfter(this, 1, VerticeActorData(outputPort, isInput = false))
 		outputPort.setOutgoingSignalBuffered(signal, signalHandler)
@@ -138,8 +138,9 @@ class SubGraphVerticeRef(
 			}
 		} else {
 			// Broken reference to library component
-			LOG.warn("SubGraphVerticeRef: broken reference $graphUUID")
+			LOG.warn("broken reference $graphUUID")
 			graphName = Name(BrokenReferenceView.NAME)
+			type = graphName.value
 			super.read(reader)
 			_designError = DesignError("Broken reference")
 
@@ -225,7 +226,7 @@ class SubGraphVerticeRef(
 			if (graphOutput != null) {
 				graphOutput.subGraphOutputPort = output
 			} else {
-				LOG.error("SubGraphVerticeRef: Cannot find GraphOutput '${output.name}' in '${graph!!.name}' (${graph!!.uuid})")
+				LOG.error("Cannot find GraphOutput '${output.name}' in '${graph!!.name}' (${graph!!.uuid})")
 				// TODO Throw exception for global error display
 			}
 		}
@@ -261,15 +262,12 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	private fun isDeepExecution(signalHandler: SignalHandler): Boolean {
-		return signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
-	}
+	private fun isDeepExecution(signalHandler: SignalHandler): Boolean =
+		signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
 
-	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> {
-		return getInputs().map { it as SubGraphInputPort<Any> }.toImmutableList()
-	}
+	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =
+		getInputs().map { it as SubGraphInputPort<Any> }.toImmutableList()
 
-	private fun getSubGraphOutputPorts(): ImmutableList<SubGraphOutputPort<Any>> {
-		return getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
-	}
+	private fun getSubGraphOutputPorts(): ImmutableList<SubGraphOutputPort<Any>> =
+		getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
 }
