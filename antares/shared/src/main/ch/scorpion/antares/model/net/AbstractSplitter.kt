@@ -100,6 +100,8 @@ abstract class AbstractSplitter(
 
 	/** ---- [NetCombiner] interface */
 
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
+
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		return if (inputPort === wideSidePort) {
 			createNarrowCombinedNets(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>

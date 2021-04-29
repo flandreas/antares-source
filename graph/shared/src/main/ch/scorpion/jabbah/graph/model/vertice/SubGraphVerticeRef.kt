@@ -249,6 +249,9 @@ class SubGraphVerticeRef(
 		return result
 	}
 
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
+		!isDeepExecution(signalHandler)
+
 	/** ---- [SubGraphVerticeRef] */
 
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {

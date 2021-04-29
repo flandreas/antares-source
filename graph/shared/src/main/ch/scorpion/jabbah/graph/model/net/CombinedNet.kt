@@ -12,6 +12,16 @@ import ch.scorpion.jabbah.graph.model.*
  */
 interface NetCombiner : Vertice {
 
+	/**
+	 * Determines whether this [NetCombiner] as a [Vertice] requires [CombinedNet]s that start
+	 * at its [OutputPort]s. This property is typically `false`.
+	 */
+	fun requiresCombinedNets(signalHandler: SignalHandler): Boolean
+
+	/**
+	 * Creates the [CombinedNet]s of [outputPort] given that a signal is coming from [inputPort].
+	 * Can recursively create [CombinedNet] even if [requiresCombinedNets] is `true`.
+	 */
 	fun <T : Any> createCombinedNetsFor(
 		outputPort: OutputPort<T>,
 		inputPort: InputPort<T>,

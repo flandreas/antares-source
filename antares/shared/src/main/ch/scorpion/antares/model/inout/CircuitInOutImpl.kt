@@ -124,6 +124,9 @@ class CircuitInOutImpl(
 
 	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
 
+	/** Only required for toplevel [CircuitInOutImpl] that can produce a signal when the user clicks on it. */
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = portType.isInput && subGraphInputPort == null
+
 	private fun createCombinedNetsForOutput(outputPort: OutputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<CombinedNet<DigitalSignal>> {
 		val result = if (subGraphOutputPort == null) {
 			emptyList()

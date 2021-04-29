@@ -65,6 +65,8 @@ class GraphOutputImpl<T : Any>(
 		return result
 	}
 
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
+
 	/** ---- [GraphOutputImpl] */
 
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {

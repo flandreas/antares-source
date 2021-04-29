@@ -44,4 +44,6 @@ class TestVertice(
 			emptyList()
 		}
 	}
+
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = true
 }

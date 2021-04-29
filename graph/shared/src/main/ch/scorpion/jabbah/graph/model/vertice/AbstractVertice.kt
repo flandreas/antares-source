@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -166,8 +167,11 @@ abstract class AbstractVertice(
 
 	override fun formNet(signalHandler: SignalHandler) {
 		super.formNet(signalHandler)
-		getOutputs().forEach {
-			it.formNet(signalHandler)
+
+		if (this !is NetCombiner || this.requiresCombinedNets(signalHandler)) {
+			getOutputs().forEach {
+				it.formNet(signalHandler)
+			}
 		}
 	}
 
