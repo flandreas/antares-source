@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
-import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.execution.ExecutionErrorHandler
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -30,8 +30,9 @@ class SchedulerImpl(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(eventBus)
-) : Scheduler {
+	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(eventBus),
+	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl()
+) : Scheduler, ExecutionErrorHandler by executionErrorHandler {
 
 	companion object {
 
@@ -66,12 +67,6 @@ class SchedulerImpl(
 
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
-
-	/**
-	 * Collects [ExecutionError] received by [deferExecutionError] for reevaluation once the current
-	 * execution cycle has ended.
-	 */
-	private val executionErrors = mutableListOf<ExecutionError>()
 
 	init {
 		task.bind(this)
@@ -238,29 +233,11 @@ class SchedulerImpl(
 			slot.actingDone(actor)
 			if (slot.isDone) {
 				removeSlot(slot)
-				reevaluateExecutionErrors()
 				postSchedulerStateEvent()
 			}
 		} else {
 			actor.actingDone(this, data)
 		}
-	}
-
-	override fun deferExecutionError(error: ExecutionError) {
-		executionErrors.add(error)
-	}
-
-	private fun reevaluateExecutionErrors() {
-		if (executionErrors.isEmpty()) {
-			return
-		}
-		val toRemove = mutableListOf<ExecutionError>()
-		executionErrors.forEach {
-			if (it.reevaluated(this)) {
-				toRemove.add(it)
-			}
-		}
-		executionErrors.removeAll(toRemove)
 	}
 
 	private fun requestActingImpl(actor: Actor, delay: Long, data: ActorData) {
@@ -343,6 +320,7 @@ class SchedulerImpl(
 				task.stop()
 			}
 		}
+		executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 	}
 
 	/** Returns the [Slot] in the queue at the specified relative execution time, if any.*/
@@ -354,7 +332,7 @@ class SchedulerImpl(
 	private fun reset() {
 		relativeTime = 0
 		queue.clear()
-		executionErrors.clear()
+		executionErrorHandler.reset()
 	}
 
 	private fun start() {
@@ -383,7 +361,7 @@ class SchedulerImpl(
 		if (relativeTime > this.relativeTime) {
 			this.relativeTime = relativeTime
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
-			reevaluateExecutionErrors()
+			executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 		}
 	}
 
@@ -440,7 +418,6 @@ class SchedulerImpl(
 
 			if (slot.isDone) {
 				removeSlot(slot)
-				reevaluateExecutionErrors()
 			}
 			recalculated = true
 		} else {

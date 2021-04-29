@@ -22,11 +22,6 @@ import kotlin.test.*
  */
 class SchedulerImplTest {
 
-	@BeforeTest
-	fun setup() {
-		ExecutionTestRule.configure()
-	}
-
 	private val timeService: ControlledTimeService
 	private val eventBus = EventBusImpl()
 	private val scheduler: SchedulerImpl

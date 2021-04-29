@@ -36,6 +36,8 @@ class ForwardSignalHandler : SignalHandler {
 		// empty
 	}
 
+	override val executionErrorCount: Int get() = 0
+
 	override fun deferExecutionError(error: ExecutionError) {
 		// empty
 	}

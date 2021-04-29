@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * The part of a [Scheduler] that is passed to [Actor]s in order to access the necessary part of the
  * scheduling functionality.
  */
-interface SignalHandler {
+interface SignalHandler : ExecutionErrorHandler {
 
     /**
      * Determines whether the current execution environment performs deep execution of [Actor],
@@ -48,17 +48,4 @@ interface SignalHandler {
      * in testing scenarios. In all other scenarios, the [ActorData] is known by the system itself.
      */
     fun actingDone(actor: Actor, data: ActorData?)
-
-	/**
-	 * Registers and defers handling of the specified [ExecutionError] until the end of the current
-	 * execution cycle.
-	 *
-	 * Some [ExecutionError] can occur during the quasi-parallel execution of [Actor] within the same
-	 * execution cycle, which can lead to race conditions and dependencies on the order in which [Actor]s
-	 * are execution during that same execution cycle. Therefore, defer such [ExecutionError] until
-	 * the execution cycle has ended, and then check whether their cause is still present, or whether is has
-	 * solved by the execution of other [Actor]s.
-	 */
-	fun deferExecutionError(error: ExecutionError)
-
 }
