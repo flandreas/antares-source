@@ -90,7 +90,7 @@ data class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean
 data class SimulationTimeStatusEnabledEvent(val scheduler: Scheduler)
 
 /** Posted by a [Scheduler] if execution had been stopped due to an [Issue]. */
-data class ExecutionStoppedOnIssueEvent(val scheduler: Scheduler)
+data class ExecutionStoppedOnIssueEvent(val issue: Issue, val scheduler: Scheduler)
 
 /** Posted by a [Scheduler] when its property [Scheduler.isSoftBreakpointsEnabled] has changed.*/
 data class EnableSoftBreakpointsEvent(val scheduler: Scheduler)

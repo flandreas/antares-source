@@ -189,7 +189,7 @@ class GraphPanelViewController(
 		eventBus.post(ComponentMessage(
 			type = ComponentMessageType.Error,
 			source = null,
-			messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
+			messageKey = "execution.scheduler.pausedDueToIssue.msg"))
 	}
 
 	private fun handle(event: ApplicationDataEvent) {

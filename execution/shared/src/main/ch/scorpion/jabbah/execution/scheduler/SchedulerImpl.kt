@@ -76,7 +76,7 @@ class SchedulerImpl(
 				isPaused = true
 				System.invokeLater {
 					LOG.debug("execution stopped due to Issue '${it.issue.name}'")
-					eventBus.post(ExecutionStoppedOnIssueEvent(this))
+					eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
 				}
 			}
 		}
