@@ -1,4 +1,4 @@
-package ch.scorpion.antares
+package ch.scorpion.antares.filebased
 
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest

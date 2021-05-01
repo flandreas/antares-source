@@ -11,7 +11,8 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.net.*
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -117,15 +118,15 @@ abstract class AbstractSplitter(
 			val port = getOutput<DigitalSignal>(portId)
 			val combinedNetsForPort = CombinedNet.createFor(port, signalHandler)
 
-			val splitWidth = narrowSideBitWidth
 			val splitIndex = portId - 2
 
 			combinedNetsForPort.forEach { combinedNet ->
 				combinedNet.accessOf(port)?.let {
+					val thisAccess = it as DigitalCombinedNetAccess
+					val baseBitIndex = splitIndex * narrowSideBitWidth.width + thisAccess.index * thisAccess.width.width
 					combinedNet.replaceAccess(
 						port,
-						DigitalCombinedNetAccess(port, splitWidth, splitIndex)
-							.attach(originOutputPort, it as DigitalCombinedNetAccess)
+						DigitalCombinedNetAccess(originOutputPort, it.width, baseBitIndex / it.width.width)
 					)
 				}
 			}
@@ -142,29 +143,36 @@ abstract class AbstractSplitter(
 		val splitWidth = narrowSideBitWidth
 		val splitIndex = inputPort.portId - 2
 
+		val narrowSideAccess = DigitalCombinedNetAccess(originOutputPort, splitWidth, splitIndex)
+
 		combinedNetsForPort.forEach { combinedNet ->
-			combinedNet.accessOf(wideSidePort)?.let {
-				val access = it as DigitalCombinedNetAccess
-				if (access.width == splitWidth && access.index == splitIndex) {
-					combinedNet.replaceAccess(wideSidePort, originOutputPort.createAccess())
+			val wideSideAccess = combinedNet.accessOf(wideSidePort) as DigitalCombinedNetAccess?
+
+			if (wideSideAccess != null) {
+				if (narrowSideAccess.contains(wideSideAccess)) {
+					val index = wideSideAccess.index * wideSideAccess.width.width - narrowSideAccess.index * narrowSideAccess.width.width
+					combinedNet.replaceAccess(
+						wideSidePort,
+						DigitalCombinedNetAccess(originOutputPort, wideSideAccess.width, index))
 					result.add(combinedNet)
-				} else if (access.width == bitWidth) {
+				} else if (wideSideAccess.width == bitWidth) {
+					// Reduce BitWith
 					combinedNet.accesses
-						.filter { it.port !== access.port }
+						.filter { it.port !== wideSidePort }
 						.forEach { otherAccess ->
 							combinedNet.replaceAccess(
 								otherAccess.port,
-								(otherAccess as DigitalCombinedNetAccess).attach(otherAccess.port, DigitalCombinedNetAccess(otherAccess.port, splitWidth, splitIndex))
+								DigitalCombinedNetAccess(otherAccess.port, splitWidth, splitIndex)
 							)
 						}
 
 					combinedNet.replaceAccess(
 						wideSidePort,
-						access.attach(originOutputPort, DigitalCombinedNetAccess(access.port, splitWidth, 0))
+						DigitalCombinedNetAccess(originOutputPort, splitWidth, 0)
 					)
-
 					result.add(combinedNet)
 				}
+				// TODO: Is there an else case?
 			}
 		}
 

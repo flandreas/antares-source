@@ -1,16 +1,14 @@
-package ch.scorpion.antares
+package ch.scorpion.antares.filebased
 
+import ch.scorpion.antares.checkCombinedNetAccess
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.net.BidirectionalSplitter
-import ch.scorpion.antares.model.net.DigitalCombinedNetAccess
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import org.junit.Test
 import kotlin.test.*
 
@@ -39,7 +37,11 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 		splitter = openedCircuitView.graph!!.withId(3) as BidirectionalSplitter
 
 		startSimulation()
-		proceedUntilQueueIsEmpty()
+	}
+
+	@AfterTest
+	fun cleanup() {
+		stopSimulation()
 	}
 
 	@Test
@@ -91,24 +93,10 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 		)
 	}
 
-	private fun checkCombinedNetAccess(
-		combinedNet: CombinedNet<DigitalSignal>,
-		port1: OutputPort<DigitalSignal>,
-		width1: BitWidth,
-		index1: Int,
-		port2: OutputPort<DigitalSignal>,
-		width2: BitWidth,
-		index2: Int,
-	) {
-		assertEquals(width1, (combinedNet.accessOf(port1) as DigitalCombinedNetAccess).width)
-		assertEquals(index1, (combinedNet.accessOf(port1) as DigitalCombinedNetAccess).index)
-
-		assertEquals(width2, (combinedNet.accessOf(port2) as DigitalCombinedNetAccess).width)
-		assertEquals(index2, (combinedNet.accessOf(port2) as DigitalCombinedNetAccess).index)
-	}
-
 	@Test
 	fun shouldForwardSignalFromWideToNarrow() {
+		proceedUntilQueueIsEmpty()
+
 		inoutA.setIncomingSignal(Word(listOf(False, False, True, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -118,6 +106,8 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldForwardSignalFromNarrowToWide() {
+		proceedUntilQueueIsEmpty()
+
 		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -126,6 +116,8 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldNotSetExecutionErrorForDefinedButEqualSignals() {
+		proceedUntilQueueIsEmpty()
+
 		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -138,6 +130,8 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldSetExecutionErrorForConflictingSignals() {
+		proceedUntilQueueIsEmpty()
+
 		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -149,6 +143,8 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldWithdrawOtherWeakSignal() {
+		proceedUntilQueueIsEmpty()
+
 		inoutA.setIncomingSignal(Word(listOf(True, Undefined, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -158,6 +154,8 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldWithdrawOwnUndefinedSignal() {
+		proceedUntilQueueIsEmpty()
+
 		inoutA.setIncomingSignal(Word(listOf(True, Undefined, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
@@ -170,11 +168,7 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldApplyWeakSignalAtStartup() {
+		proceedUntilQueueIsEmpty()
 		assertEquals(Word(listOf(False, Undefined, Undefined, Undefined)), inoutA.signal)
-	}
-
-	@AfterTest
-	fun cleanup() {
-		stopSimulation()
 	}
 }

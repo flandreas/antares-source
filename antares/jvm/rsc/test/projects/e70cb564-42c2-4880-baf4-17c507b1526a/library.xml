@@ -26,6 +26,16 @@
             <translation lang='en' text='Cascaded Transceivers'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='3dafc474-8fcb-4440-8dbc-70b947fcd2be'>
+          <name>
+            <translation lang='en' text='Transceiver 8 Bit'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='90132379-7ec1-48bb-bfe3-ece4d86b6ee9'>
+          <name>
+            <translation lang='en' text='Combiner/Splitter'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

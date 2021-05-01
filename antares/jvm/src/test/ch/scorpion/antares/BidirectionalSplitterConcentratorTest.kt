@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
@@ -48,6 +49,15 @@ class BidirectionalSplitterConcentratorTest : AbstractJvmCircuitTest() {
 		builder.connect(concentratorView, concentratorView.model.getOutput(1), b)
 
 		circuitView = builder.build()
+	}
+
+	@Test
+	fun shouldBuildCombinedNets() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(2, a.model.getOutput<DigitalSignal>().combinedNets.size)
+		assertEquals(2, b.model.getOutput<DigitalSignal>().combinedNets.size)
 	}
 
 	@Test

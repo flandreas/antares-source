@@ -1,5 +1,8 @@
-package ch.scorpion.antares
+package ch.scorpion.antares.filebased
 
+import ch.scorpion.antares.AbstractCircuitTest
+import ch.scorpion.antares.AntaresApplication
+import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.library.*

@@ -94,7 +94,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 		/** Returns the [Word] representing the specified hexadecimal value.*/
 		fun of(bitWidth: BitWidth, hexValue: String): Word {
-			if (hexValue.all { it == Bit.UNDEFINED_CHAR }) {
+			if (hexValue.all { it == Bit.ALL_UNDEFINED_CHAR }) {
 				return undefined(bitWidth)
 			}
 			return of(bitWidth, BitOperation.hexToLong(hexValue))
@@ -233,8 +233,9 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	fun nibbleToHexChar(index: Int): Char {
 		val subword = getSubword(BitWidth.BW_4, index)
 		return when {
+			subword.isAllOf(Bit.Undefined) -> Bit.ALL_UNDEFINED_CHAR
 			subword.containsErrorBit() -> Bit.ERROR_CHAR
-			subword.containsUndefinedBit() -> Bit.UNDEFINED_CHAR
+			subword.containsUndefinedBit() -> Bit.SOME_UNDEFINED_CHAR
 			// Long.toString(radix:Int) is only supported on JVM
 			else -> BitOperation.hexDigit(subword.toInt()!!.toLong())
 		}

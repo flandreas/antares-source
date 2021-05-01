@@ -1,4 +1,4 @@
-package ch.scorpion.antares
+package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.input.Switch

@@ -52,7 +52,7 @@ class WordTest {
 		assertEquals('F', Word.of(BW_8, 127L).nibbleToHexChar(0))
 		assertEquals('7', Word.of(BW_8, 127L).nibbleToHexChar(1))
 		assertEquals('X', Word(listOf(True, Error, Undefined, False, True, True, True, True)).nibbleToHexChar(0))
-		assertEquals('Z', Word(listOf(True, True, True, True, True, True, Undefined, False)).nibbleToHexChar(1))
+		assertEquals('z', Word(listOf(True, True, True, True, True, True, Undefined, False)).nibbleToHexChar(1))
 	}
 
 	@Test
@@ -115,6 +115,7 @@ class WordTest {
 	@Test
 	fun shouldRepresentAsHex() {
 		assertEquals("Z", Word.of(Undefined).toHexString())
+		assertEquals("z", Word(listOf(False, Undefined)).toHexString())
 		assertEquals("0", Word.of(BW_1, 0L).toHexString())
 		assertEquals("3", Word.of(BW_2, 3L).toHexString())
 		assertEquals("F", Word.of(BW_4, 15L).toHexString())

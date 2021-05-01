@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
@@ -53,6 +54,40 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 		builder.connect(b1, splitterView, splitterView.model.getInput(3))
 
 		circuitView = builder.build()
+	}
+
+	@Test
+	fun shouldBuildCombinedNets() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(1, a0.model.getOutput<DigitalSignal>().combinedNets.size)
+		assertEquals(
+			b0.model.getOutput(),
+			a0.model.getOutput<DigitalSignal>().combinedNets.iterator().next().accesses
+				.first { it.port !== a0.model.getOutput<DigitalSignal>() }
+				.port)
+
+		assertEquals(1, a1.model.getOutput<DigitalSignal>().combinedNets.size)
+		assertEquals(
+			b1.model.getOutput(),
+			a1.model.getOutput<DigitalSignal>().combinedNets.iterator().next().accesses
+				.first { it.port !== a1.model.getOutput<DigitalSignal>() }
+				.port)
+
+		assertEquals(1, b0.model.getOutput<DigitalSignal>().combinedNets.size)
+		assertEquals(
+			a0.model.getOutput(),
+			b0.model.getOutput<DigitalSignal>().combinedNets.iterator().next().accesses
+				.first { it.port !== b0.model.getOutput<DigitalSignal>() }
+				.port)
+
+		assertEquals(1, b1.model.getOutput<DigitalSignal>().combinedNets.size)
+		assertEquals(
+			a1.model.getOutput(),
+			b1.model.getOutput<DigitalSignal>().combinedNets.iterator().next().accesses
+				.first { it.port !== b1.model.getOutput<DigitalSignal>() }
+				.port)
 	}
 
 	@Test

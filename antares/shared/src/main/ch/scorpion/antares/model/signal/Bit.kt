@@ -17,7 +17,8 @@ enum class Bit(private val value: Int?) {
 	True(1);
 
 	companion object {
-		const val UNDEFINED_CHAR = 'Z'
+		const val ALL_UNDEFINED_CHAR = 'Z'
+		const val SOME_UNDEFINED_CHAR = 'z'
 		const val ERROR_CHAR = 'X'
 
 		fun of(value: Int): Bit {
@@ -91,7 +92,7 @@ enum class Bit(private val value: Int?) {
 
 	override fun toString(): String =
 		when (this) {
-			Undefined -> UNDEFINED_CHAR.toString()
+			Undefined -> ALL_UNDEFINED_CHAR.toString()
 			Error -> ERROR_CHAR.toString()
 			False -> "0"
 			True -> "1"

@@ -238,18 +238,14 @@ open class PortImpl<T : Any>(
 
 		var anyConflict = false
 		combinedNets.forEach {
-			try {
-				if (it.checkAllForConflict(this) != null) {
-					// Try to withdraw all weak signal in the net that might be the cause of inconsistency
-					withdrawWeakSignals(it, signalHandler)
+			if (it.checkAllForConflict(this) != null) {
+				// Try to withdraw all weak signal in the net that might be the cause of inconsistency
+				withdrawWeakSignals(it, signalHandler)
 
-					it.checkAllForConflict(this)?.let { conflict ->
-						anyConflict = true
-						raiseInconsistentNetError(conflict, signalHandler)
-					}
+				it.checkAllForConflict(this)?.let { conflict ->
+					anyConflict = true
+					raiseInconsistentNetError(conflict, signalHandler)
 				}
-			} catch (e: Throwable) {
-				System.breakpoint()
 			}
 		}
 

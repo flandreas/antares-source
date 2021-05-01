@@ -84,7 +84,7 @@ object BitOperation {
         if (!HEX.contains(uppercaseHex)) {
             return null
         }
-	    if (uppercaseHex == Bit.UNDEFINED_CHAR) {
+	    if (uppercaseHex == Bit.ALL_UNDEFINED_CHAR) {
 	    	return Word.allOf(bitWidth, Bit.Undefined)
 	    }
 	    if (uppercaseHex == Bit.ERROR_CHAR) {
@@ -106,7 +106,7 @@ object BitOperation {
 	    return when (binary.toUpperCase()) {
 	    	'0' -> Word.of(false)
 		    '1' -> Word.of(true)
-		    Bit.UNDEFINED_CHAR -> Word.of(Bit.Undefined)
+		    Bit.ALL_UNDEFINED_CHAR -> Word.of(Bit.Undefined)
 		    Bit.ERROR_CHAR -> Word.of(Bit.Error)
 		    else -> null
 	    }

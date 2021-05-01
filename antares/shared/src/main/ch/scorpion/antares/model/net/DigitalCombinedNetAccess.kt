@@ -39,15 +39,9 @@ class DigitalCombinedNetAccess(
 	override fun withOutputPort(newPort: OutputPort<DigitalSignal>): DigitalCombinedNetAccess =
 		DigitalCombinedNetAccess(newPort, width, index)
 
-	/**
-	 * Creates a new [DigitalCombinedNetAccess] that attaches [other] (with smaller [BitWidth])
-	 * to the specified [OutputPort]. Used by splitters for repetitive reduction of the size of the
-	 * accessed signal.
-	 */
-	fun attach(newPort: OutputPort<DigitalSignal>, other: DigitalCombinedNetAccess): DigitalCombinedNetAccess {
-		val factor = width.width / other.width.width
-		val attachIndex = index * factor + other.index
-		return DigitalCombinedNetAccess(newPort, other.width, attachIndex)
+	fun contains(other: DigitalCombinedNetAccess): Boolean {
+		return index * width.width <= other.index * other.width.width
+			&& (index + 1) * width.width >= (other.index + 1) * other.width.width
 	}
 
 	override fun equals(other: Any?): Boolean {
