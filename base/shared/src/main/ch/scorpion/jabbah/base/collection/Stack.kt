@@ -5,7 +5,7 @@ package ch.scorpion.jabbah.base.collection
  */
 class Stack<T> {
 
-    val items: MutableList<T> by lazy { mutableListOf<T>()}
+    val items: MutableList<T> by lazy { mutableListOf()}
 
     val size: Int get() = items.size
 
@@ -31,13 +31,13 @@ class Stack<T> {
         return items.last()
     }
 
-	fun optionalPeek(): T? {
-		return if (empty) null else items.last()
-	}
+	fun optionalPeek(): T? = if (empty) null else items.last()
 
     fun clear() {
         items.clear()
     }
+
+	fun contains(item: T): Boolean = items.contains(item)
 }
 
 class EmptyStackException : Throwable("empty stack")

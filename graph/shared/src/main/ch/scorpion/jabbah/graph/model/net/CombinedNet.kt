@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -78,6 +79,9 @@ class CombinedNet<T : Any> {
 
 	companion object {
 
+		/** Used for preventing endless loops.*/
+		private val visitStack = Stack<OutputPort<*>>()
+
 		/**
 		 * Creates all [CombinedNet]s of an [OutputPort]. Can by called recursively by [NetCombiner]s.
 		 */
@@ -86,6 +90,12 @@ class CombinedNet<T : Any> {
 			signalHandler: SignalHandler
 		): Collection<CombinedNet<T>> {
 			val combinedNets = mutableListOf<CombinedNet<T>>()
+
+			if (visitStack.contains(outputPort)) {
+				return combinedNets
+			}
+			visitStack.push(outputPort)
+
 			outputPort.net?.ports
 				?.filter { it !== outputPort}
 				?.forEach {
@@ -105,6 +115,8 @@ class CombinedNet<T : Any> {
 			outputPort.net?.let { net ->
 				combinedNets.forEach { it.addNet(net) }
 			}
+
+			visitStack.pop()
 
 			return combinedNets
 		}

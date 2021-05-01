@@ -36,6 +36,11 @@
             <translation lang='en' text='Combiner/Splitter'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='cf4af97f-9053-4805-a7d2-9b5f923019bf'>
+          <name>
+            <translation lang='en' text='CombinedNet Loop'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
