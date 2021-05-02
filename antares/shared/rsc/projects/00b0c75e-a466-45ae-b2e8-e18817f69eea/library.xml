@@ -1,0 +1,18 @@
+<project _id='0' defaultElement='4f8606c9-54ec-44e7-a26e-d11f5579ab7a' uuid='00b0c75e-a466-45ae-b2e8-e18817f69eea' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='de' text='Bidirektionale Splitter'/>
+        <translation lang='en' text='Bidirectional Splitter'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='4f8606c9-54ec-44e7-a26e-d11f5579ab7a'>
+          <name>
+            <translation lang='de' text='Beispiel &quot;Transceiver 8-Bit&quot;'/>
+            <translation lang='en' text='Example &quot;Transceiver 8 Bit&quot;'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>

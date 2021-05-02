@@ -6,10 +6,30 @@
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577'/>
-            <circuitInOut _id='5' id='3' name='DIR' type='input' bitWidth='1'/>
-            <circuitInOut _id='6' id='4' name='!(EN)' type='input' bitWidth='1'/>
-            <circuitInOut _id='7' id='5' name='A' type='inout' bitWidth='8'/>
-            <circuitInOut _id='8' id='6' name='B' type='inout' bitWidth='8'/>
+            <circuitInOut _id='5' id='3' name='DIR' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenfluss-Richtung: 0 = B nach A, 1 = A nach B.'/>
+                <translation lang='en' text='Data flow direction: 0 = B to A, 1 = A to B.'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='6' id='4' name='!(EN)' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Freigabe-Eingang: 0 = freigegeben.'/>
+                <translation lang='en' text='Enable Input: 0 = enabled.'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='7' id='5' name='A' type='inout' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Datenanschluss A'/>
+                <translation lang='en' text='Data port A'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='8' id='6' name='B' type='inout' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Datenanschluss B'/>
+                <translation lang='en' text='Data port B'/>
+              </desc>
+            </circuitInOut>
             <bidirectionalSplitter _id='9' id='7' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
             <bidirectionalSplitter _id='10' id='9' delay='0' bitWidth='8' branchCount='2' representation='hex'/>
             <digitalNet _id='11' id='10' delay='0'>
@@ -225,6 +245,10 @@
       </components>
       <model>
         <subGraphVertice _id='64' id='0' delay='0' uuid='8c584d65-c513-45bf-9332-3e6211e95a5a'>
+          <desc>
+            <translation lang='de' text='Verwendet Tri-State Puffer, um Komponenten an einen 8-Bit-Bus anzuschliessen, der Signale in beiden Richtungen sendet.'/>
+            <translation lang='en' text='Uses tri-state buffers to connect components to a 8 bit  bus that sends signals in both directions.'/>
+          </desc>
           <name>
             <translation lang='en' text='Bus Transceiver 8 Bit'/>
           </name>

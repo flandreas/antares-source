@@ -25,5 +25,11 @@
         <translation lang='en' text='Logic Gates from transistors'/>
       </name>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='4' uuid='00b0c75e-a466-45ae-b2e8-e18817f69eea' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+      <name>
+        <translation lang='de' text='Bidirektionaler Splitter'/>
+        <translation lang='en' text='Bidirectional Splitter'/>
+      </name>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>
