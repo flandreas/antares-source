@@ -155,24 +155,27 @@ abstract class AbstractSplitter(
 						wideSidePort,
 						DigitalCombinedNetAccess(originOutputPort, wideSideAccess.width, index))
 					result.add(combinedNet)
-				} else if (wideSideAccess.width == bitWidth) {
-					// Reduce BitWith
+				} else if (wideSideAccess.contains(narrowSideAccess)) {
 					combinedNet.accesses
 						.filter { it.port !== wideSidePort }
 						.forEach { otherAccess ->
+
+							// Split otherAccess and reduce its BitWidth to that of narrowSideAccess
+							otherAccess as DigitalCombinedNetAccess
+							val factor = otherAccess.width.width / narrowSideBitWidth.width
+							val index = narrowSideAccess.index - wideSideAccess.index * factor
 							combinedNet.replaceAccess(
 								otherAccess.port,
-								DigitalCombinedNetAccess(otherAccess.port, splitWidth, splitIndex)
+								DigitalCombinedNetAccess(otherAccess.port, narrowSideAccess.width, index)
+							)
+
+							combinedNet.replaceAccess(
+								wideSidePort,
+								DigitalCombinedNetAccess(originOutputPort, splitWidth, 0)
 							)
 						}
-
-					combinedNet.replaceAccess(
-						wideSidePort,
-						DigitalCombinedNetAccess(originOutputPort, splitWidth, 0)
-					)
 					result.add(combinedNet)
 				}
-				// TODO: Is there an else case?
 			}
 		}
 

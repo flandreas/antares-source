@@ -41,6 +41,11 @@
             <translation lang='en' text='CombinedNet Loop'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='9' uuid='d06b4df8-ed84-4af2-8b39-1252c7c4ca14'>
+          <name>
+            <translation lang='en' text='4/8/2 Combiner'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
