@@ -152,7 +152,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		if (error) {
 			return Themes.get<AntaresTheme>().error
 		}
-		if (undefined) {
+		if (isFullyUndefined) {
 			return Themes.get<AntaresTheme>().undefined
 		}
 		return Themes.get<AntaresTheme>().word
