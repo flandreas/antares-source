@@ -106,7 +106,7 @@ class ExecutionDepthAction(
 class StopOnIssueAction(
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("execution.action.stopOnIssue", eventBus) {
+) : AbstractSchedulerAction("execution.action.pauseOnIssue", eventBus) {
 
 	private val stopOnIssueHandler: EventHandler<StopOnIssueEvent> = { updateState() }
 

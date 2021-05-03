@@ -24,11 +24,12 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 
 === Net
 
+* image:user-manual/base-library/constant.svg[Constant] link:{{site.basedir}}/user-manual/english/base-library/constant[Constant]
 * image:user-manual/base-library/splitter.svg[Splitter] link:{{site.basedir}}/user-manual/english/base-library/splitter[Splitter]
 * image:user-manual/base-library/concentrator.svg[Combiner] link:{{site.basedir}}/user-manual/english/base-library/combiner[Combiner]
+* image:user-manual/base-library/splitter.svg[Bi-directional Splitter] link:{{site.basedir}}/user-manual/english/base-library/bidi-splitter[Bi-directional Splitter]
 * image:user-manual/base-library/probe.svg[Probe] link:{{site.basedir}}/user-manual/english/base-library/probe[Probe]
 * image:user-manual/base-library/tunnel.svg[Tunnel] link:{{site.basedir}}/user-manual/english/base-library/tunnel[Tunnel]
-* image:user-manual/base-library/constant.svg[Constant] link:{{site.basedir}}/user-manual/english/base-library/constant[Constant]
 * image:user-manual/base-library/break.svg[Breakpoint] link:{{site.basedir}}/user-manual/english/base-library/breakpoint[Breakpoint]
 * image:user-manual/base-library/pull-resistor.svg[Pull Resistor] link:{{site.basedir}}/user-manual/english/base-library/pull-resistor[Pull Resistor]
 * image:user-manual/base-library/transistor.svg[Transistor] link:{{site.basedir}}/user-manual/english/base-library/transistor[Transistor]
