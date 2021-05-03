@@ -184,12 +184,20 @@ class DigitalPortView(
 
 		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
 			context.g.color = transparent.applyTo(when (port.portType) {
-				PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
+				PortType.INOUT -> drawableInOutSignal.getColor().foregroundColor
 				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
 				PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
 			})
 		} else {
 			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		}
+	}
+
+	private val drawableInOutSignal: DigitalSignal get() {
+		return if (getDigitalPort().net != null) {
+			getDigitalPort().net!!.signal!!
+		} else {
+			getDigitalPort().dominantSignal
 		}
 	}
 
