@@ -24,11 +24,11 @@ For technical reasons, the current version of Antares has the restriction that t
 
 Output:: The combiner has a single output whose bit width is determined by the attribute "Bit Width".
 
-Inputs:: The number of inputs of the combiner is determined by the attribute "Fanning". Each input has the bit width "Bit Width" / "Fan Out" and carries during simulation those bits of the input signal which correspond to the index of the input. For a combiner with 8-bit output and a fanning of 2, input 0 carries the bits 0..3 and input 1 carries the bits 4..7.
+Inputs:: The number of inputs of the combiner is determined by the attribute "Fan Out". Each input has the bit width "Bit Width" / "Fan Out" and carries during simulation those bits of the input signal which correspond to the index of the input. For a combiner with 8-bit output and a fan out of 2, input 0 carries bits 0..3 and input 1 carries bits 4..7.
 
 == Attributes
 
-Orientation:: The direction in which the output points.
+Orientation:: The direction in which the output pin points.
 
 Bit Width:: Determines the bit width of the output.
 

@@ -26,6 +26,7 @@ Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibli
 Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
 Input (Eingang):: Typ von Anschluss, der Daten entgegennehmen kann.
 Immerge (Eintauchen):: Innerhalb derselben View in eine Teilschaltung eintauchen. Die Tiefe wird in der Navigationsleiste angezeigt.
+Junction (Abzweigung):: Ein Punkt, an dem sich eine Leitung in zwei weiterführende Leitungen aufteilt
 Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren
 Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für welche die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
 Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
