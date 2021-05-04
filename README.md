@@ -18,6 +18,8 @@ TODO
  
 ### Preparation
   
+Make sure that all changes from older release branches have been merged to the master.
+
 Clean and build the release.
 
 Increment the current release number and update it at the following
