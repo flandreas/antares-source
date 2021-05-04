@@ -44,7 +44,7 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 
 * image:user-manual/base-library/and.svg[AND] link:{{site.basedir}}/user-manual/english/base-library/and[AND]
 * image:user-manual/base-library/or.svg[OR] link:{{site.basedir}}/user-manual/english/base-library/or[OR]
-* image:user-manual/base-library/nor.svg[NOT] link:{{site.basedir}}/user-manual/english/base-library/not[NOT]
+* image:user-manual/base-library/not.svg[NOT] link:{{site.basedir}}/user-manual/english/base-library/not[NOT]
 * image:user-manual/base-library/nand.svg[NAND] link:{{site.basedir}}/user-manual/english/base-library/nand[NAND]
 * image:user-manual/base-library/nor.svg[NOR] link:{{site.basedir}}/user-manual/english/base-library/nor[NOR]
 * image:user-manual/base-library/xor.svg[Exculsive OR (XOR)] link:{{site.basedir}}/user-manual/english/base-library/xor[XOR]
