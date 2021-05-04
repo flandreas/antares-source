@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("multiplatform") version "1.4.21" apply false
+	kotlin("multiplatform") version "1.4.32" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
@@ -118,13 +118,13 @@ subprojects {
 				dependencies {
 
 					//React, React DOM + Wrappers (chapter 3)
-					implementation("org.jetbrains:kotlin-react:17.0.1-pre.136-kotlin-1.4.10")
-					implementation("org.jetbrains:kotlin-react-dom:17.0.1-pre.136-kotlin-1.4.10")
+					implementation("org.jetbrains:kotlin-react:17.0.1-pre.148-kotlin-1.4.30")
+					implementation("org.jetbrains:kotlin-react-dom:17.0.1-pre.148-kotlin-1.4.30")
 					implementation(npm("react", "17.0.1"))
 					implementation(npm("react-dom", "17.0.1"))
 
 					//Kotlin Styled (chapter 3)
-					implementation("org.jetbrains:kotlin-styled:5.2.0-pre.136-kotlin-1.4.10")
+					implementation("org.jetbrains:kotlin-styled:5.2.1-pre.146-kotlin-1.4.30")
 					//implementation(npm("styled-components", "4.4.0"))
 					implementation(npm("inline-style-prefixer", "~6.0.0"))
 
