@@ -38,7 +38,6 @@ class LibraryFolderTest {
 	fun shouldGetDirectly() {
 		val folder = LibraryFolder("test")
 		val item = LibraryFolder("item")
-		val item2 = LibraryFolder("item2")
 
 		folder.add(item)
 		assertSame(item, folder.get("item") as LibraryFolder)

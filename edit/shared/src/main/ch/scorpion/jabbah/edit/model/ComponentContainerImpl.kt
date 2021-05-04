@@ -110,6 +110,6 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
         if (drawablesCount == 0) {
             return 0
         }
-        return getDrawables().maxBy { it.id }!!.id
+        return getDrawables().maxByOrNull { it.id }!!.id
     }
 }

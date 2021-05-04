@@ -242,7 +242,7 @@ open class GraphImpl(
 		if (elementsCount == 0) {
 			return 0
 		}
-		return _elements.maxBy { it.id }!!.id
+		return _elements.maxByOrNull { it.id }!!.id
 	}
 
 	private fun getGraphInputOutput(name: String): BidirectionalGraphPort<*>? {

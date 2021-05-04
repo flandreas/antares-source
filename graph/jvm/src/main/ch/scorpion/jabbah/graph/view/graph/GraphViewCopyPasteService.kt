@@ -155,7 +155,7 @@ class GraphViewCopyPasteService(
 			// No stripping
 			return true
 		}
-		val graphView = (copy as GraphStorable).graphView
+		val graphView = copy.graphView
 		return when (component) {
 			is VerticeView<*> -> keepAfterDisconnectingFromNetsWithoutEdgeView(component, graphView)
 			is NodeView<*> -> keepAfterRemovingDanglingNodeView(component, graphView)

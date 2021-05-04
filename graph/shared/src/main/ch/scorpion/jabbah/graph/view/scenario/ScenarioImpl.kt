@@ -27,6 +27,7 @@ class ScenarioImpl(
 
 	private var isLoading: Boolean = false
 
+	@Suppress("unused")
 	var conditionProperty: ScriptProperty
 		get() = ScriptProperty(conditionScript)
 		set(value) {
@@ -137,6 +138,6 @@ class ScenarioImpl(
 		if (steps.size == 0) {
 			return 0
 		}
-		return steps.maxBy { it.id }!!.id
+		return steps.maxByOrNull { it.id }!!.id
 	}
 }

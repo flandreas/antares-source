@@ -144,7 +144,7 @@ class ScenarioStepImpl(
 				highlightIntIdsCache = mutableListOf()
 				if (StringUtils.isNotEmpty(highlightIds)) {
 					highlightIds!!
-						.split(delimiters = *charArrayOf(','))
+						.split(delimiters = charArrayOf(','))
 						.map { it.trim().toInt() }
 						.forEach { (highlightIntIdsCache as MutableList<Int>).add(it) }
 				}

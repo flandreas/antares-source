@@ -137,7 +137,7 @@ class GraphViewActorListener(
 
 		override fun actingRequested(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
 			if (animationRequired) {
-				animator.actingRequested(actor, signalHandler, data)
+				animator.actingRequested(actor, data)
 			}
 		}
 

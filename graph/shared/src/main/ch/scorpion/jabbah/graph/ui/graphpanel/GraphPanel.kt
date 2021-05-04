@@ -181,7 +181,7 @@ class GraphPanelViewController(
 			event.issueCollector.size)
 	}
 
-	private fun handle(event: ApplicationModeBeginEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationModeBeginEvent) {
 		issuesViewController.clearIssues()
 	}
 

@@ -136,7 +136,7 @@ class ContainerTreeTest {
 		val portView = setup.graphView.getGraphPortView("I1")!!
 
 		// The following event is normally posted by GraphEditor
-		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
+		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView))
 
 		assertPortViewNotNull(setup.containerTree)
 	}
@@ -222,7 +222,7 @@ class ContainerTreeTest {
 		val setup = Setup().build().addGraphInputPortViewToGraphView().expandAll()
 		val portView = setup.graphView.getGraphPortView("I1")!!
 		// The following event is normally posted by GraphEditor
-		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
+		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView))
 
 		portView.model.name = "newName"
 

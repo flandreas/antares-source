@@ -127,6 +127,6 @@ class ScenariosImpl(
 		if (scenarios.size == 0) {
 			return 0
 		}
-		return scenarios.maxBy { it.id }!!.id
+		return scenarios.maxByOrNull { it.id }!!.id
 	}
 }

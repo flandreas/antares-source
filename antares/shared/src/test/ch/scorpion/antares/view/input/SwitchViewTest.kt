@@ -22,7 +22,7 @@ class SwitchViewTest {
 		val keyEvent = keyEvent('A'.toInt())
 		val context = contextFor(keyEvent)
 		switchView.name = "A"
-		switchView.getActorInteractionHandler(context)?.keyPressed(context)
+		switchView.getActorInteractionHandler(context).keyPressed(context)
 
 		verify { keyEvent.consume() }
 	}
@@ -33,7 +33,7 @@ class SwitchViewTest {
 		val keyEvent = keyEvent('B'.toInt())
 		val context = contextFor(keyEvent)
 		switchView.name = "A"
-		switchView.getActorInteractionHandler(context)?.keyPressed(context)
+		switchView.getActorInteractionHandler(context).keyPressed(context)
 
 		verify(exactly = 0) { keyEvent.consume() }
 	}

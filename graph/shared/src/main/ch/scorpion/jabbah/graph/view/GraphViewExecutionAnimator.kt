@@ -76,7 +76,7 @@ class GraphViewExecutionAnimator(
 		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 	}
 
-	fun actingRequested(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
+	fun actingRequested(actor: Actor, data: ActorData) {
 		if (actor is Net<*>) {
 			handleNetActingRequested(actor, data as GraphActorData)
 		} else if ((data as GraphActorData).isInput) {

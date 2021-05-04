@@ -174,9 +174,11 @@ class SelectionToolImpl(
 			if (!e.isShiftDown) {
 				editor.view.selectionManager.deselectAll()
 			}
-			LOG.debug("delegating to rubberband")
-			target = rubberBandHandler
-			target?.mousePressed(mouseEventContext(e, x, y))
+			if (allowRubberband) {
+				LOG.debug("delegating to rubberband")
+				target = rubberBandHandler
+				target?.mousePressed(mouseEventContext(e, x, y))
+			}
 		}
 	}
 

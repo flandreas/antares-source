@@ -50,7 +50,6 @@ class ApplicationModeHolderImpl(
 		val editable =
 			viewManager.activeView === editor.view
 				&& !scheduler.isActive
-				&& rootGraphView != null
 
 		LOG.debug("Setting editor active=$editable")
 		editor.active = editable

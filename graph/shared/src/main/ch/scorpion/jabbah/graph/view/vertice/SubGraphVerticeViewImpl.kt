@@ -277,7 +277,7 @@ class SubGraphVerticeViewImpl(
 		// in the ContainerDrawings have resolved their model SubCircuitPort. We cannot make more sure than doing
 		// it after all resolutions have been done.
 		if (customizedContainerDrawing != null && model.designError == null) {
-			val graph = repository.getMetaGraph(model.graphUUID!!)
+			repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
 		}
 	}

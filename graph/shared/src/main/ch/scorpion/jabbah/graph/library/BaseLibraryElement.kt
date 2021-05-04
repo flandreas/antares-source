@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.Storable
@@ -31,7 +32,7 @@ class BaseLibraryElement(
 
 	override var name: Name
 		get() = Name(TranslatableText(Translations.getString("${repository.getTranslationKey(id)!!}.name")))
-		set(value) {
+		set(@Suppress("UNUSED_PARAMETER") value) {
 			throw UnsupportedOperationException()
 		}
 

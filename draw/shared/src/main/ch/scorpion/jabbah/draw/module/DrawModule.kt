@@ -60,6 +60,7 @@ object DrawModule : AbstractModule() {
 
 	fun drawDebugBoundingBoxLocation(location: Point2D, context: DrawContext, color: Color = DEBUG_BBOX_COLOR) {
 		if (debugGfx) {
+			context.g.color = color
 			context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
 		}
 	}

@@ -100,6 +100,6 @@ class UsecasesImpl(
 		if (usecases.size == 0) {
 			return 0
 		}
-		return usecases.maxBy { it.id }!!.id
+		return usecases.maxByOrNull { it.id }!!.id
 	}
 }
