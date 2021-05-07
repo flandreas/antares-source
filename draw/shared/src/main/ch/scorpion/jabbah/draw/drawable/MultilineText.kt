@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 /**
  * Breaks text into multiple lines according to a box with a fix width.
  *
- * Designed to be immutable. Can be aggregated into a [Drawable].
+ * Can be aggregated into a [Drawable].
  * Used primarily for rendering multi-line text of the JavaScript platform, but could also
  * be useful on the JVM platform, and therefore contained in the 'shared' module.
  *
@@ -73,6 +73,7 @@ class MultilineText(
 		if (asHtml) {
 			context.g.drawText(text, xInt, yInt, widthInt)
 		} else {
+			context.g.font = font
 			var yy = location.y + ascent
 			for (line in lines) {
 				context.g.drawString(line, location.x.toInt(), yy.toInt())
@@ -83,7 +84,6 @@ class MultilineText(
 		DrawModule.drawDebugBoundingBox(this, context.g)
 	}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return boundingBox.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean =
+		boundingBox.contains(x, y)
 }

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.ViewPainter
 import ch.scorpion.jabbah.draw.DrawableContainer
 
@@ -35,7 +36,8 @@ import ch.scorpion.jabbah.draw.DrawableContainer
  * to view coordinates as usual. The unzoomable circle must therefore report the bounding box of (-10, -10, 20, 20),
  * just like the zoomable version of a circle.
  *
- * In order to draw itself in the correct size, every [Unzoomable] needs to know the current zoom and pan factors.
+ * In order to draw itself in the correct size, every [Unzoomable] needs to know the current zoom and pan factors,
+ * as well as the "device pixel ratio" of the [Canvas] on which they are rendered.
  * An unzoomable [DrawableContainer] that contains [Unzoomable]s gets informed by a [View] upon changes of zoom and pan factors,
  * and forwards this information to every [Unzoomable] it contains. These [Unzoomable] store this information and
  * use it the time they draw themselves.

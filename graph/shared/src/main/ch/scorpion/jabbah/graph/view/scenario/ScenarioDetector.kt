@@ -165,6 +165,7 @@ class ScenarioDetector(
 				Direction.NORTH,
 				SCENARIO_STEP_DESC_WIDTH,
 				DESC_UNZOOMABLE,
+				view.canvas.devicePixelRatio,
 				GraphStyleType.EXPLANATION)
 			if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioDesc!!) else view.animationContainer.add(scenarioDesc!!)
 			scenarioDesc!!.validate()
@@ -179,6 +180,7 @@ class ScenarioDetector(
 				Direction.SOUTH,
 				SCENARIO_STEP_DESC_WIDTH,
 				DESC_UNZOOMABLE,
+				view.canvas.devicePixelRatio,
 				GraphStyleType.EXPLANATION)
 			if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioStepDesc!!) else view.animationContainer.add(scenarioStepDesc!!)
 			scenarioStepDesc!!.validate()

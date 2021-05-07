@@ -43,6 +43,7 @@ interface Font {
 	fun deriveFont(style: FontStyle): Font
 	fun deriveFont(size: Int): Font
 	fun deriveFont(family: FontFamily): Font
+	fun scale(factor: Int): Font
 }
 
 data class FontImpl(
@@ -54,15 +55,19 @@ data class FontImpl(
 	override fun isBold(): Boolean = style and FontStyle.BOLD.value != 0
 	override fun isItalic(): Boolean = style and FontStyle.ITALIC.value != 0
 
-	override fun deriveFont(style: FontStyle): Font {
-		return copy(style = style.value)
-	}
+	override fun deriveFont(style: FontStyle): Font =
+		copy(style = style.value)
 
-	override fun deriveFont(size: Int): Font {
-		return copy(size = size)
-	}
+	override fun deriveFont(size: Int): Font =
+		copy(size = size)
 
-	override fun deriveFont(family: FontFamily): Font {
-		return copy(family = family)
-	}
+	override fun deriveFont(family: FontFamily): Font =
+		copy(family = family)
+
+	override fun scale(factor: Int): Font =
+		if (factor == 1) {
+			this
+		} else {
+			deriveFont(size * factor)
+		}
 }

@@ -26,6 +26,7 @@ class FlexibleTextView(
 	private val direction: Direction,
 	private val width: Int = DEFAULT_WIDTH,
 	private val isUnzoomable: Boolean = true,
+	devicePixelRatio: Int = 1,
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Transparent, Unzoomable, Locatable {
@@ -44,7 +45,15 @@ class FlexibleTextView(
 		private const val INSET_Y = 10
 	}
 
-	private val multilineText = MultilineText(text, font, width.toDouble())
+	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
+
+	private val multilineText = if (isUnzoomable) {
+		LOG.info("FlexibleTextView/unzoomable: devicePixelRation=$devicePixelRatio")
+		MultilineText(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
+	} else {
+		LOG.info("FlexibleTextView: devicePixelRation=$devicePixelRatio")
+		MultilineText(text, font, width.toDouble())
+	}
 
 	/** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/
 	private val shape = Rectangle2D()
@@ -133,7 +142,7 @@ class FlexibleTextView(
 
 	/** Calculates the geometry of this [FlexibleTextView] in model coordinates and stores it in [shape]. */
 	private fun updateGeometry() {
-		val boxCorner = calculateBoxCorner(location, 1.0)
+		val boxCorner = calculateBoxCorner(location, factor)
 		shape.setFrame(boxCorner.x, boxCorner.y, boxWidth, boxHeight)
 	}
 
@@ -158,8 +167,8 @@ class FlexibleTextView(
 	/** Transform [shape] to view coordinates using the current [zoomPan]. */
 	private fun getViewRectangle(): Rectangle2D {
 		val anchorView = zoomPan!!.transform.modelToView(location)
-		val p = calculateBoxCorner(anchorView, 1.0)
-		return Rectangle2D(p.x, p.y, shape.width, shape.height)
+		val p = calculateBoxCorner(anchorView, factor)
+		return Rectangle2D(p.x, p.y, shape.width * factor, shape.height)
 	}
 
 	private val boxWidth: Double get() = width + 2.0 * INSET_X

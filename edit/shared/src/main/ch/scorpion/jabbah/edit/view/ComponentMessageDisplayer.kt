@@ -59,6 +59,7 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 			text = text,
 			anchor = calculateAnchorPoint(msg),
 			direction = Direction.SOUTH,
+			devicePixelRatio = drawingView.canvas.devicePixelRatio,
 			styleType = determineStyleType(msg.type))
 
 		if (msg.source != null) {
