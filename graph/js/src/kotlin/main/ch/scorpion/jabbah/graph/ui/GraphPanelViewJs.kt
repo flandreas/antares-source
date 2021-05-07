@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.mreact.splitPane
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
@@ -10,13 +11,7 @@ import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
-import com.ccfraser.muirwik.components.*
-import kotlinext.js.js
-import kotlinext.js.jsObject
-import kotlinx.css.*
 import react.*
-import styled.css
-import styled.styledDiv
 
 external interface GraphPanelViewJsProps : RProps {
 	var controller: GraphPanelViewController
@@ -75,29 +70,14 @@ class GraphPanelViewJs(
 	}
 
 	override fun RBuilder.render() {
-		styledDiv {
-			css {
-				overflow = Overflow.hidden
-				position = Position.relative
-				display = Display.flex
+		splitPane(split = "vertical", minSize = 200) {
+			libraryPanelView {
+				application = this@GraphPanelViewJs.props.application
+				controller = this@GraphPanelViewJs.props.controller.libraryPanelController
 			}
-
-			// According to "testapp" of github:cfnz/muirwik
-			val pp: MPaperProps = jsObject {  }
-			pp.asDynamic().style = js { position = "relative" }
-			mDrawer(open = true, MDrawerAnchor.left, MDrawerVariant.permanent, paperProps = pp) {
-				libraryPanelView {
-					application = this@GraphPanelViewJs.props.application
-					controller = this@GraphPanelViewJs.props.controller.libraryPanelController
-				}
-			}
-
-			styledDiv {
-				css { flexGrow = 1.0 }
-				graphDesktopView {
-					controller = props.controller.desktopController
-					graphEditView = this@GraphPanelViewJs.graphEditView
-				}
+			graphDesktopView {
+				controller = props.controller.desktopController
+				graphEditView = this@GraphPanelViewJs.graphEditView
 			}
 		}
 	}

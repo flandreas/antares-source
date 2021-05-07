@@ -131,6 +131,7 @@ subprojects {
 					implementation(npm("react-hot-loader", "^4.12.20"))
 					implementation("com.ccfraser.muirwik:muirwik-components:0.6.5")
 					implementation(npm("react-resize-detector", "6.7.0"))
+					implementation(npm("react-split-pane", "0.1.92"))
 				}
 			}
 			val jsTest by getting {
