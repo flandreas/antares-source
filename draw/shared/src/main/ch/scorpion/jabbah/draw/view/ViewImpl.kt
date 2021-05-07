@@ -45,6 +45,8 @@ open class ViewImpl<C : InputEventContext>(
 		repaint()
 	}
 
+	private val propertyChangeHandler = PropertyChangeHandler()
+
 	// Backing property as alternative to 'lateinit' with custom setter.
 	private var _canvas: Canvas? = null
 
@@ -55,8 +57,10 @@ open class ViewImpl<C : InputEventContext>(
 				throw IllegalStateException("Recurring attempt to bind Canvas in View")
 			}
 			_canvas = value
+			canvas.addPropertyChangeListener(propertyChangeHandler)
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
 		}
+
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
@@ -75,6 +79,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
+		_canvas?.removePropertyChangeListener(propertyChangeHandler)
 		applicationContextHolder?.dispose()
 	}
 
@@ -437,6 +442,14 @@ open class ViewImpl<C : InputEventContext>(
 
 	init {
 		overlayContainer.addDrawableListener(overlayListener)
+	}
+
+	private inner class PropertyChangeHandler : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == Canvas.PROP_DIMENSION) {
+				applyDefaultZoomStrategy()
+			}
+		}
 	}
 
 	private inner class EventHandler<in T : InputEventContext> : InputEventHandlerAdapter<T>() {

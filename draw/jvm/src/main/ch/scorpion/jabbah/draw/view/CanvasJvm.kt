@@ -35,8 +35,9 @@ import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
 class CanvasJvm(
 	override val view: View<*>,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	eventBus: EventBus = BaseModule.eventBus
-) : JPanel(), Canvas {
+	eventBus: EventBus = BaseModule.eventBus,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+) : JPanel(), Canvas, PropertyOwner<Any> by propertyOwner {
 
 	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }
 	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf() }
@@ -46,6 +47,7 @@ class CanvasJvm(
 	private val contextMenu = JPopupMenu()
 
 	init {
+		propertyOwner.source = this
 		eventBus.register(ThemeEvent::class) { installBackgroundColor() }
 		installBackgroundColor()
 

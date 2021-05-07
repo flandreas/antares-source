@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -9,8 +10,7 @@ import react.*
 external interface GraphEditViewJsProps : RProps {
 	var canvasId: String
 	var controller: GraphEditViewController
-	var width: Int
-	var height: Int
+	var size: Dimension2D?
 }
 
 fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit): ReactElement {
@@ -45,8 +45,7 @@ class GraphEditViewJs(
 		graphNavigationView {
 			canvasId = props.canvasId
 			controller = props.controller.graphNavigationViewController
-			width = props.width
-			height = props.height
+			size = props.size
 		}
 	}
 

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
@@ -21,8 +22,7 @@ external interface GraphPanelViewJsProps : RProps {
 	var controller: GraphPanelViewController
 	var application: Application
 	var canvasId: String
-	var width: Int
-	var height: Int
+	var size: Dimension2D?
 	var metaGraph: MetaGraph
 }
 
@@ -47,8 +47,7 @@ class GraphPanelViewJs(
 	private val graphEditView = RBuilder().apply { graphEditView {
 		canvasId = props.canvasId
 		controller = props.controller.editViewController
-		width = props.width
-		height = props.height
+		size = props.size
 	} }.childList[0] as ReactElement
 
 	// Not used so for, but needed to satisfy controllers

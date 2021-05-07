@@ -125,11 +125,12 @@ subprojects {
 
 					//Kotlin Styled (chapter 3)
 					implementation("org.jetbrains:kotlin-styled:5.2.1-pre.146-kotlin-1.4.30")
-					//implementation(npm("styled-components", "4.4.0"))
-					implementation(npm("inline-style-prefixer", "~6.0.0"))
+					implementation(npm("styled-components", "5.2.1"))
+					//implementation(npm("inline-style-prefixer", "~6.0.0"))
 
 					implementation(npm("react-hot-loader", "^4.12.20"))
 					implementation("com.ccfraser.muirwik:muirwik-components:0.6.5")
+					implementation(npm("react-resize-detector", "6.7.0"))
 				}
 			}
 			val jsTest by getting {

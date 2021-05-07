@@ -19,9 +19,9 @@ interface PropertyChangeListener<in T: Any> {
 /**
  * Utility class for managing [PropertyChangeListener]s and firing [PropertyChangeEvent]s.
  */
-class PropertyChangeSupport<T: Any>(val source: Any) {
+class PropertyChangeSupport<T: Any>(var source: Any) {
 
-    private val listeners: MutableList<PropertyChangeListener<T>> by lazy { mutableListOf<PropertyChangeListener<T>>() }
+    private val listeners: MutableList<PropertyChangeListener<T>> by lazy { mutableListOf() }
 
     /** Adds the specified [PropertyChangeListener] to listen for [PropertyChangeEvent]s from [source].*/
     fun add(l: PropertyChangeListener<T>) {
@@ -50,16 +50,33 @@ class PropertyChangeSupport<T: Any>(val source: Any) {
     fun fire(name: String, oldValue: T?, newValue: T?) = fire(PropertyChangeEvent(source, name, oldValue, newValue))
 }
 
-abstract class PropertyOwner<T: Any> {
+interface PropertyOwner<T : Any> {
+	var source: Any
+	fun addPropertyChangeListener(l: PropertyChangeListener<T>)
+	fun removePropertyChangeListener(l: PropertyChangeListener<T>)
+	fun fire(name: String, oldValue: T?, newValue: T?)
+}
 
-	protected val pcSupport = PropertyChangeSupport<T>(this)
+class PropertyOwnerImpl<T: Any>() : PropertyOwner<T> {
 
-	fun addPropertyChangeListener(l: PropertyChangeListener<T>) {
+	private lateinit var pcSupport: PropertyChangeSupport<T>
+
+	override var source: Any
+		get() = pcSupport.source
+		set(value)  {
+			pcSupport = PropertyChangeSupport(value)
+		}
+
+	override fun addPropertyChangeListener(l: PropertyChangeListener<T>) {
 		pcSupport.add(l)
 	}
 
-	fun removePropertyChangeListener(l: PropertyChangeListener<T>) {
+	override fun removePropertyChangeListener(l: PropertyChangeListener<T>) {
 		pcSupport.remove(l)
+	}
+
+	override fun fire(name: String, oldValue: T?, newValue: T?) {
+		pcSupport.fire(name, oldValue, newValue)
 	}
 }
 

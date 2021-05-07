@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.draw
 
 /**
- * Combines a [ZoomStrategyType] with a particular zoom factor to encapsulate a predefines zoom strategy
+ * Combines a [ZoomStrategyType] with a particular zoom factor to encapsulate a predefined zoom strategy
  * used by a [View].
  */
 data class ZoomStrategy(val type: ZoomStrategyType, val zoomFactor: Double? = null) {

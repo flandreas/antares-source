@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -326,10 +323,17 @@ class KnobView(
  *
  * @param initialValue the initial value of this [KnobModel], defaults to zero.
  */
-class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
+class KnobModel(
+	initialValue: Long = 0,
+	private val propertyOwner: PropertyOwner<Long> = PropertyOwnerImpl()
+) : PropertyOwner<Long> by propertyOwner {
 
 	companion object {
 		const val PROP_VALUE = "value"
+	}
+
+	init {
+		propertyOwner.source = this
 	}
 
 	/** Returns the current value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
@@ -345,7 +349,7 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 			if (field != effectiveNewValue) {
 				val oldValue = field
 				field = effectiveNewValue
-				pcSupport.fire(PROP_VALUE, oldValue, field)
+				propertyOwner.fire(PROP_VALUE, oldValue, field)
 			}
 		}
 

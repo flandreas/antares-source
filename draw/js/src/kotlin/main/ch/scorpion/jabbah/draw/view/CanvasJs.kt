@@ -14,12 +14,12 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJs
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import kotlinx.browser.document
+import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
-import kotlinx.browser.document
-import kotlinx.browser.window
 
 /**
  * Maps a HTML canvas to the [Canvas] interface.
@@ -27,10 +27,10 @@ import kotlinx.browser.window
 class CanvasJs(
 	id: String,
 	override val view: View<out InputEventContext>,
-	width: Int,
-	height:Int,
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : Canvas {
+	size: Dimension2D?,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+) : Canvas, PropertyOwner<Any> by propertyOwner {
 
 	companion object {
 		private val LOG by logger(CanvasJs::class)
@@ -56,7 +56,8 @@ class CanvasJs(
 
 	override val devicePixelRatio: Int = window.devicePixelRatio.toInt()
 
-	override val dimension = Dimension2D(width * devicePixelRatio, height * devicePixelRatio)
+	private var _dimension = Dimension2D(0, 0)
+	override val dimension: Dimension2D get() = _dimension
 
 	var dragTargetHandler: DragTargetHandler? = null
 		set(value) {
@@ -75,19 +76,41 @@ class CanvasJs(
 		}
 
 	init {
+		propertyOwner.source = this
+
+		if (size != null) {
+			resize(size.width.toInt(), size.height.toInt())
+		} else {
+			resize(canvas.width, canvas.height)
+		}
+
 		view.canvas = this
 
-		canvas.width = dimension.width.toInt()
-		canvas.height = dimension.height.toInt()
-
-		canvas.style.width = "${width}px"
-		canvas.style.height = "${height}px"
 		canvas.style.border = "1px solid gray"
 
 		canvas.tabIndex = 1
 
 		view.initialize()
 		initalizing = false
+	}
+
+	fun resize(width: Int, height: Int) {
+		val scaledWidth = width * devicePixelRatio
+		val scaledHeight = height * devicePixelRatio
+
+		val oldDimension = _dimension
+
+		_dimension = Dimension2D(scaledWidth, scaledHeight)
+
+		canvas.width = scaledWidth
+		canvas.height = scaledHeight
+
+		canvas.style.width = "100%"
+		canvas.style.height = "100%"
+
+		fire(Canvas.PROP_DIMENSION, oldDimension, _dimension)
+
+		repaint()
 	}
 
 	override fun requestViewFocus() {

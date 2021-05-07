@@ -1,15 +1,14 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.view.CanvasJs
-import kotlinx.html.id
+import ch.scorpion.jabbah.draw.view.responsiveCanvas
 import react.*
-import react.dom.canvas
 
 external interface GraphNavigationViewJsProps : RProps {
 	var canvasId: String
 	var controller: GraphNavigationViewController
-	var width: Int
-	var height: Int
+	var size: Dimension2D?
 }
 
 fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit): ReactElement {
@@ -25,12 +24,14 @@ private class GraphNavigationViewJs(
 	props: GraphNavigationViewJsProps
 ) : RComponent<GraphNavigationViewJsProps, RState>(props), GraphNavigationView {
 
+	private var canvasJs: CanvasJs? = null
+
 	init {
 		props.controller.view = this
 	}
 
 	override fun componentDidMount() {
-		CanvasJs(props.canvasId, props.controller.drawingView, props.width, props.height)
+		canvasJs = CanvasJs(props.canvasId, props.controller.drawingView, props.size)
 	}
 
 	override fun componentWillUnmount() {
@@ -41,9 +42,9 @@ private class GraphNavigationViewJs(
 		navigationStackView {
 			controller = props.controller.navigationStackViewController
 		}
-		canvas {
-			attrs.id = props.canvasId
-			// width and height are set by CanvasJs
+		child(responsiveCanvas) {
+			attrs.canvasId = props.canvasId
+			attrs.canvasJsProvider = { canvasJs }
 		}
 	}
 

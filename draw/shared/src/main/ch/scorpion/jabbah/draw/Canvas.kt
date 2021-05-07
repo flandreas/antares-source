@@ -9,7 +9,13 @@ import ch.scorpion.jabbah.base.geom.Point2D
 /**
  * Represents a target-specific rectangular drawing area.
  */
-interface Canvas {
+interface Canvas : PropertyOwner<Any> {
+
+	companion object {
+
+		/** The name of the [dimension] property in [PropertyChangeEvent]s. */
+		const val PROP_DIMENSION = "PROP_DIMENSION"
+	}
 
 	/** The number of actual physical pixels used per view pixel. */
 	val devicePixelRatio: Int

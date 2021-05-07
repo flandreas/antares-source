@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -23,8 +24,7 @@ external interface AntaresViewJsProps : RProps {
 	var application: Application
 	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String
-	var width: Int
-	var height: Int
+	var size: Dimension2D?
 	var metaGraph: MetaGraph
 }
 
@@ -101,8 +101,7 @@ class AntaresViewJs(
 					controller = this@AntaresViewJs.controller
 					application = this@AntaresViewJs.props.application
 					canvasId = props.canvasId
-					width = props.width
-					height = props.height
+					size = props.size
 					metaGraph = props.metaGraph
 				}
 			}

@@ -56,6 +56,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 	private fun display() {
 		render(document.getElementById("root")) {
+			/*
 			h2 { +"Antares Web: Level 7" }
 
 			h3 { +"View control" }
@@ -95,13 +96,12 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 				li { +"Cmd/Double click on subcircuit symbol to dive into without animation" }
 				li { +"Click on breadcrumb to surface from subcircuit" }
 			}
-
+			*/
 			child(AntaresViewJs::class) {
 				attrs.application = this@AntaresJs
 				attrs.applicationDataHolder = controller
 				attrs.canvasId = "kotlinCanvas"
-				attrs.width = 800
-				attrs.height = 600
+				attrs.size = null
 				attrs.metaGraph = controller.data!!.content as MetaGraph
 			}
 		}
