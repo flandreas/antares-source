@@ -25,7 +25,7 @@ class UsecaseViewSwing(
 
 	private val treeView = UsecaseTreeView(application, eventBus)
 
-	private val propertyPanel = UsecasePropertyPanel(editor, sheetFactory, eventBus)
+	private val propertyPanel = UsecasePropertyPanelSwing(editor, sheetFactory, eventBus)
 
 	override var graphView: GraphView? = null
 		set(value) {

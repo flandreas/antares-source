@@ -31,7 +31,7 @@ class ScenarioViewSwing(
 
 	private val treeView = ScenarioTreeView(application)
 
-	private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
+	private val propertyPanel = ScenarioPropertyPanelSwing(editor, sheetFactory, eventBus)
 
 	override var graphView: GraphView? = null
 		set(value) {

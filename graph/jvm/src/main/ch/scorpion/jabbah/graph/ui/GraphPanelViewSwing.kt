@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -64,7 +64,7 @@ class GraphPanelViewSwing(
 	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController, graphEditView)
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
-	private val propertyPanel: ComponentPropertyPanel
+	private val propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, propertySheetFactory)
 
 	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanelSwing(controller.libraryPanelController, application, eventBus)
@@ -127,7 +127,6 @@ class GraphPanelViewSwing(
 		controller.view = this
 
 		(controller.editor.view.canvas as JComponent).transferHandler = createTransferHandler(controller.editor, eventBus)
-		propertyPanel = ComponentPropertyPanel(controller.editor, propertySheetFactory, eventBus)
 
 		buildUI()
 		controller.editViewController.setGraphView(controller.editor.drawing as GraphView, true)

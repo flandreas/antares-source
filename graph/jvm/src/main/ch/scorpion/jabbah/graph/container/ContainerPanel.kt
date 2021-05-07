@@ -26,8 +26,9 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.LabelTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -53,10 +54,12 @@ class ContainerPanel(
 		viewManager: ViewManager
 	) : this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
+	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
+
 	/** The [ContainerTreeView] containing all objects of the underlying [GraphView] that have not yet been added to the [ContainerDrawing].*/
 	private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
 
-	private val propertyPanel: ComponentPropertyPanel
+	private val propertyPanel: ComponentPropertyPanelSwing
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
@@ -84,7 +87,7 @@ class ContainerPanel(
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
 
-		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
+		propertyPanel = ComponentPropertyPanelSwing(propertyPanelController, propertySheetFactory)
 
 		treeView.transferHandler = ContainerTransferHandler()
 		(editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(editor, eventBus, ComponentTransferable.FLAVOR)
@@ -95,6 +98,7 @@ class ContainerPanel(
 	fun dispose() {
 		eventBus.unregister(applicationDataEventHandler)
 		eventBus.unregister(applicationDataEventHandler)
+		propertyPanelController.dispose()
 	}
 
 	fun initialize() {

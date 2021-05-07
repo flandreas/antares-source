@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.issue.IssuesView
@@ -103,6 +104,7 @@ class GraphPanelViewController(
 		private val LOG by logger(GraphPanelViewController::class)
 	}
 
+	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
 	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(eventBus = eventBus)
@@ -160,6 +162,7 @@ class GraphPanelViewController(
 		eventBus.unregister(issuesCollectorHandler)
 		eventBus.unregister(executionStoppedOnIssueHandler)
 
+		propertyPanelController.dispose()
 		libraryPanelController.dispose()
 		editViewController.dispose()
 		desktopController.dispose()

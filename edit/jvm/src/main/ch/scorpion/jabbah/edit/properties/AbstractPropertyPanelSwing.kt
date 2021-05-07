@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
 import java.awt.Color
@@ -20,13 +21,13 @@ import kotlin.math.max
 /**
  * A [JPanel] for editing the properties of a bean.
  */
-abstract class AbstractPropertyPanel(
+abstract class AbstractPropertyPanelSwing(
 	protected val editor: Editor,
 	sheetFactory: PropertySheetPanelFactory
-) : JPanel() {
+) : JPanel(), PropertyPanel {
 
 	companion object {
-		private val LOG by logger(AbstractPropertyPanel::class)
+		private val LOG by logger(AbstractPropertyPanelSwing::class)
 	}
 
 	/** Displays the properties of the selected [Component].*/
@@ -80,7 +81,7 @@ abstract class AbstractPropertyPanel(
 		add(sheet, BorderLayout.CENTER)
 	}
 
-	open fun dispose() {
+	override fun dispose() {
 		editor.removePropertyChangeListener(activeEditorListener)
 		editor.removePropertyChangeListener(drawingListener)
 	}
@@ -101,7 +102,21 @@ abstract class AbstractPropertyPanel(
 		}
 	}
 
-	/** ---- [AbstractPropertyPanel] */
+	/** ---- [PropertyPanel] interface */
+
+	override fun clearProperties() {
+		sheet.table?.cellEditor?.stopCellEditing()
+		sheet.setProperties(arrayOf<PropertyDescriptor>())
+		propertyObject = null
+		hideMessage()
+		updateLabel()
+	}
+
+	override fun loadProperties(bean: Any) {
+		loadProperties(bean, bean.javaClass.name + "BeanInfo")
+	}
+
+	/** ---- [AbstractPropertyPanelSwing] */
 
 	/**
 	 * Fill with properties of the object to be displayed per default, for example when the [Editor]
@@ -111,14 +126,6 @@ abstract class AbstractPropertyPanel(
 
 	/** Returns a displayable description of the selected bean object.*/
 	protected abstract fun getDescription(bean: Any): String?
-
-	protected fun clearProperties() {
-		sheet.table?.cellEditor?.stopCellEditing()
-		sheet.setProperties(arrayOf<PropertyDescriptor>())
-		propertyObject = null
-		hideMessage()
-		updateLabel()
-	}
 
 	protected fun showMessage(message: String) {
 		messageTextArea.text = message
@@ -153,10 +160,6 @@ abstract class AbstractPropertyPanel(
 		sheet.removePropertySheetChangeListener(propertyStorer)
 		sheet.readFromObject(propertyObject)
 		sheet.addPropertySheetChangeListener(propertyStorer)
-	}
-
-	protected fun loadProperties(bean: Any) {
-		loadProperties(bean, bean.javaClass.name + "BeanInfo")
 	}
 
 	protected fun loadProperties(bean: Any, classPath: String) {
