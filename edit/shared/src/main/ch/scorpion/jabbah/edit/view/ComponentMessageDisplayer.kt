@@ -1,19 +1,14 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.animation.AnimationTask
-import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
-import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -36,8 +31,6 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 ) {
 
 	companion object {
-
-		private val LOG by logger(ComponentMessageDisplayer::class)
 
 		private const val INSET = 10.0
 
@@ -79,7 +72,7 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		container.add(messageView)
 		container.validate()
 
-		FadeInOut(messageView, container, animator)
+		TransparentAnimation.fadeInOut(messageView, container, 300, 2_000, 600, animator)
 	}
 
 	private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
@@ -122,44 +115,6 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		return when (msgType) {
 			ComponentMessageType.Info -> EditStyleType.MESSAGE_INFO
 			ComponentMessageType.Error -> EditStyleType.MESSAGE_ERROR
-		}
-	}
-
-	private inner class FadeInOut(
-		messageView: Transparent,
-		container: DrawableContainer<in Drawable>,
-		animator: Animator
-	) {
-
-		init {
-			messageView.transparency = Transparent.FULLY_TRANSPARENT
-
-			val fadeOutAnimation = TransparentAnimation.fadeOut(messageView, 600.0)
-			fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
-				override fun ended(task: AnimationTask) {
-					LOG.debug("remove MessageView")
-					container.remove(messageView)
-				}
-			})
-			animator.schedule(fadeOutAnimation)
-
-			val timer = System.createTimer()
-			timer.initialize(2000) {
-				LOG.debug("start fade out animation")
-				fadeOutAnimation.start()
-				timer.stop()
-			}
-
-			val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
-			fadeInAnimation.addListener(object : AnimationTaskAdapter() {
-				override fun ended(task: AnimationTask) {
-					LOG.debug("start timer")
-					timer.start()
-				}
-			})
-			animator.schedule(fadeInAnimation)
-			LOG.debug("start fade in animation")
-			fadeInAnimation.start()
 		}
 	}
 }

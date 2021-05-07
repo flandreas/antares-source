@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.animation.AbstractAnimationTask
-import ch.scorpion.jabbah.animation.Sequence
-import ch.scorpion.jabbah.animation.DoubleRange
-import ch.scorpion.jabbah.animation.SequenceType
+import ch.scorpion.jabbah.animation.*
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 
 /**
- * Creates a glow effect by oscillating the transparency value of a [Transparent].
+ * Provides various [AnimationTask]s on [Transparent] objects.
  */
 class TransparentAnimation(
 	transparent: Transparent,
@@ -23,6 +24,8 @@ class TransparentAnimation(
 ) {
 
 	companion object {
+
+		private val LOG by logger(TransparentAnimation::class)
 
 		/** The time in milliseconds for a single color period when glowing.*/
 		private const val DEF_GLOW_PERIOD = 300.0
@@ -51,6 +54,47 @@ class TransparentAnimation(
 		 */
 		fun fadeOut(transparent: Transparent, duration: Double): TransparentAnimation {
 			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), Transparent.FULLY_TRANSPARENT.toDouble()), duration)
+		}
+
+		/**
+		 * Combines various [AnimationTask]s to fade-in a [Transparent], hold it for a certain time, and fade-out it again.
+		 */
+		fun fadeInOut(
+			transparent: Transparent,
+			container: DrawableContainer<in Drawable>,
+			fadeInTimeMs: Int = 300,
+			holdTimeMs: Int = 2_000,
+			fadeOutTimeMs: Int = 600,
+			animator: Animator = AnimationModule.animator
+		) {
+			transparent.transparency = Transparent.FULLY_TRANSPARENT
+
+			val fadeOutAnimation = fadeOut(transparent, fadeOutTimeMs.toDouble())
+			fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
+				override fun ended(task: AnimationTask) {
+					LOG.debug("remove transparent")
+					container.remove(transparent)
+				}
+			})
+			animator.schedule(fadeOutAnimation)
+
+			val timer = System.createTimer()
+			timer.initialize(holdTimeMs) {
+				LOG.debug("start fade-out animation")
+				fadeOutAnimation.start()
+				timer.stop()
+			}
+
+			val fadeInAnimation = fadeIn(transparent, fadeInTimeMs.toDouble())
+			fadeInAnimation.addListener(object : AnimationTaskAdapter() {
+				override fun ended(task: AnimationTask) {
+					LOG.debug("start timer")
+					timer.start()
+				}
+			})
+			animator.schedule(fadeInAnimation)
+			LOG.debug("start fade-in animation")
+			fadeInAnimation.start()
 		}
 	}
 }
