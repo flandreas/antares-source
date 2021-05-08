@@ -23,8 +23,8 @@ class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 	override fun addProperties(bean: UsecaseImpl, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, bean.id, filter = { false }))
-		properties.add(description.bind(editor, bean.id, filter = { true }))
+		properties.add(name.bind(editor, bean.id))
+		properties.add(description.bind(editor, bean.id))
 		properties.add(execScript.bind(editor, bean.id))
 		properties.add(testScript.bind(editor, bean.id))
 	}
