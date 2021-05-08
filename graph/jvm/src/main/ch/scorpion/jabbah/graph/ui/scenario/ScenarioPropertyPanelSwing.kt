@@ -1,10 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import ch.scorpion.jabbah.app.CurrentSavableEvent
-import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.properties.AbstractPropertyPanelSwing
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -14,26 +10,12 @@ import ch.scorpion.jabbah.graph.view.ScenarioStep
  * [Scenario] or [ScenarioStep].
  */
 class ScenarioPropertyPanelSwing(
-	editor: Editor,
-	sheetPanelFactory: PropertySheetPanelFactory,
-	eventBus: EventBus
-) : AbstractPropertyPanelSwing(editor, sheetPanelFactory) {
-
-	private var currentSavable: Savable? = null
+	controller: ScenarioPropertyPanelController,
+	sheetPanelFactory: PropertySheetPanelFactory
+) : AbstractPropertyPanelSwing(controller.editor, sheetPanelFactory), ScenarioPropertyPanel {
 
 	init {
-		eventBus.register(ScenarioSelectionEvent::class) {
-			clearProperties()
-			if (it.scenarioStep != null) {
-				loadProperties(it.scenarioStep)
-			} else if (it.scenario != null) {
-				loadProperties(it.scenario)
-			}
-		}
-
-		eventBus.register(CurrentSavableEvent::class) {
-			this.currentSavable = it.savable
-		}
+		controller.view = this
 	}
 
 	override fun setupDefaultProperties() {

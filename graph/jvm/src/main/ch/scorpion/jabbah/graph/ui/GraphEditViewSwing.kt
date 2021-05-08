@@ -9,10 +9,11 @@ import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewSwing
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewSwing
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -23,7 +24,6 @@ import javax.swing.JPanel
 class GraphEditViewSwing(
 	controller: GraphEditViewController,
 	application: Application,
-	editor: Editor,
 	viewManager: ViewManager,
 	propertySheetFactory: PropertySheetPanelFactory,
 	eventBus: EventBus = BaseModule.eventBus
@@ -31,13 +31,13 @@ class GraphEditViewSwing(
 
 	val graphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
-		drawingView = controller.drawingView,
+		drawingView = controller.editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
 		contextBorderColor = null)
 
-	private val scenarioView = ScenarioViewSwing(controller.scenarioViewController, application, editor, eventBus, propertySheetFactory)
+	private val scenarioView = ScenarioViewSwing(controller.scenarioViewController, application, eventBus, propertySheetFactory)
 
-	private val usecaseView = UsecaseViewSwing(controller.usecaseViewController, application, editor, eventBus, propertySheetFactory)
+	private val usecaseView = UsecaseViewSwing(controller.usecaseViewController, application, eventBus, propertySheetFactory)
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,

@@ -58,7 +58,7 @@ class GraphPanelViewSwing(
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, application, controller.editor, viewManager, propertySheetFactory, eventBus)
+	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, application, viewManager, propertySheetFactory, eventBus)
 
 	/** Allows opening multiple Graphs.*/
 	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController, graphEditView)

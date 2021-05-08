@@ -7,10 +7,11 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -19,7 +20,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,6 +36,7 @@ class GraphPanelViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
+	private val editor = TestEditorBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
 	private val controller: GraphPanelViewController
 
 	init {
@@ -43,7 +44,7 @@ class GraphPanelViewControllerTest {
 		LibraryModule.libraryHolder.l = mockk(relaxed = true)
 		ProjectModule.projectHolder.p = mockk(relaxed = true)
 
-		controller = GraphPanelViewController(editor(), mockk(relaxed = true), eventBus = eventBus)
+		controller = GraphPanelViewController(editor, mockk(relaxed = true), eventBus = eventBus)
 		GraphViewModule.applicationModeHolder = controller
 		GraphPanelViewMockBuilder(controller)
 	}
@@ -57,7 +58,7 @@ class GraphPanelViewControllerTest {
 
 		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
 
-		assertSame(content, controller.editViewController.drawingView.drawing)
+		assertSame(content, controller.editViewController.editor.view.drawing)
 		assertSame(content, event.newGraphView)
 	}
 
@@ -72,7 +73,7 @@ class GraphPanelViewControllerTest {
 			applicationDataFor(content, savable),
 			graphViewBuilder.graphView))
 
-		assertSame(content, controller.editViewController.drawingView.drawing)
+		assertSame(content, controller.editViewController.editor.view.drawing)
 		assertSame(content, event.newGraphView)
 	}
 
@@ -86,13 +87,6 @@ class GraphPanelViewControllerTest {
 		eventBus.post(ApplicationDataEvent(null, null))
 
 		assertEquals(ApplicationMode.EDIT, controller.currentMode)
-	}
-
-	private fun editor(): Editor {
-		val editor = mockk<Editor>(relaxed = true)
-		every { editor.view } returns drawingView
-		every { editor.drawing } returns graphViewBuilder.graphView as Drawing<Component>
-		return editor
 	}
 
 	private fun applicationDataFor(content: GraphView, savable: Savable): ApplicationData =

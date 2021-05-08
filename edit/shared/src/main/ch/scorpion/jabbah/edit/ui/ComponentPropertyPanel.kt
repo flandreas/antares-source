@@ -16,9 +16,9 @@ interface ComponentPropertyPanel : PropertyPanel {
  * Displays the properties of the currently selected [Component] and allows the user to edit them.
  */
 class ComponentPropertyPanelController(
-	val editor: Editor,
+	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : PropertyPanelController<ComponentPropertyPanel>() {
+) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor) {
 
 	private val selectionChangeHandler: EventHandler<SelectionChangeEvent> = { handle(it) }
 

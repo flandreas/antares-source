@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui.usecase
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -16,7 +15,6 @@ import javax.swing.JSplitPane
 class UsecaseViewSwing(
 	controller: UsecaseViewController,
 	application: Application,
-	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), UsecaseView {
@@ -25,7 +23,7 @@ class UsecaseViewSwing(
 
 	private val treeView = UsecaseTreeView(application, eventBus)
 
-	private val propertyPanel = UsecasePropertyPanelSwing(editor, sheetFactory, eventBus)
+	private val propertyPanel = UsecasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 
 	override var graphView: GraphView? = null
 		set(value) {

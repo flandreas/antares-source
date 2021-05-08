@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 
@@ -24,7 +26,12 @@ interface UsecaseView : UIView {
 	var graphView: GraphView?
 }
 
-class UsecaseViewController : AbstractUIController<UsecaseView>() {
+class UsecaseViewController(
+	editor: Editor,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractUIController<UsecaseView>() {
+
+	val propertyPanelController = UsecasePropertyPanelController(editor, eventBus)
 
 	/** The [GraphView] whose [Usecase]s. */
 	var graphView: GraphView? = null
@@ -34,4 +41,9 @@ class UsecaseViewController : AbstractUIController<UsecaseView>() {
 				view.graphView = value
 			}
 		}
+
+	override fun dispose() {
+		super.dispose()
+		propertyPanelController.dispose()
+	}
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.Scenario
@@ -20,7 +21,8 @@ class ScenarioViewControllerTest {
 
 	private val eventBus = EventBusImpl()
 	private val graphView = GraphViewBuilder<Boolean>().build()
-	private val controller = ScenarioViewController(eventBus)
+	private val editor = TestEditorBuilder().withDrawing(graphView).build()
+	private val controller = ScenarioViewController(editor, eventBus)
 
 	init {
 		ScenarioViewMockBuilder(controller)
@@ -39,7 +41,7 @@ class ScenarioViewControllerTest {
 	fun shouldSetCurrentScenarioStepInGraphView() {
 		val scenario = mockk<Scenario>(relaxed = true)
 		val scenarioStep = mockk<ScenarioStep>(relaxed = true)
-		eventBus.post(ScenarioSelectionEvent(graphView,scenario, scenarioStep))
+		eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
 		assertSame(scenario, graphView.currentScenario)
 		assertSame(scenarioStep, graphView.currentScenarioStep)
 	}

@@ -16,13 +16,18 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
  * TODO: Move to draw package once test utility classes can be shared between Kotlin MPP gradle modules (KT-35073).
  */
 class VirtualCanvas(
-	viewFactory: (Canvas) -> View<out InputEventContext>,
-) : Canvas {
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl(),
+	viewFactory: (Canvas) -> View<out InputEventContext>
+) : Canvas, PropertyOwner<Any> by propertyOwner {
 
 	private val mouseListeners = mutableListOf<MouseListener>()
 	private val mouseMotionListeners = mutableListOf<MouseMotionListener>()
 	private val mouseWheelListeners = mutableListOf<MouseWheelListener>()
 	private val keyListeners = mutableListOf<KeyListener>()
+
+	init {
+		propertyOwner.source = this
+	}
 
 	/** ---- [Canvas] interface */
 

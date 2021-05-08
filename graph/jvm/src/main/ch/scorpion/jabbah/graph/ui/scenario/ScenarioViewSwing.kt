@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui.scenario
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -22,7 +21,6 @@ import javax.swing.JSplitPane
 class ScenarioViewSwing(
 	controller: ScenarioViewController,
 	application: Application,
-	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ScenarioView {
@@ -31,7 +29,7 @@ class ScenarioViewSwing(
 
 	private val treeView = ScenarioTreeView(application)
 
-	private val propertyPanel = ScenarioPropertyPanelSwing(editor, sheetFactory, eventBus)
+	private val propertyPanel = ScenarioPropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 
 	override var graphView: GraphView? = null
 		set(value) {

@@ -20,6 +20,11 @@ class TestEditorBuilder {
 		every { editor.view } returns view as DrawingView<Drawing<Component>>
 	}
 
+	fun withDrawingView(view: DrawingView<GraphView>): TestEditorBuilder {
+		every { editor.view } returns (view as DrawingView<Drawing<Component>>)
+		return this
+	}
+
 	fun withDrawing(graphView: GraphView): TestEditorBuilder {
 		every { editor.drawing } returns (graphView as Drawing<Component>)
 		every { view.drawing } returns graphView
@@ -42,4 +47,6 @@ class TestEditorBuilder {
 		every { view.selectionManager } returns mockk()
 		return this
 	}
+
+	fun build(): Editor = editor
 }

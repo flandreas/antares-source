@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -40,8 +41,11 @@ interface ScenarioView : UIView {
  * for displaying scenario information while editing or simulating.
  */
 class ScenarioViewController(
+	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ScenarioView>() {
+
+	val propertyPanelController = ScenarioPropertyPanelController(editor, eventBus)
 
 	/** The [GraphView] whose [Scenario]s and [ScenarioStep]s are displayed. */
 	var graphView: GraphView? = null
@@ -68,6 +72,7 @@ class ScenarioViewController(
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(scenarioSelectionEventHandler)
+		propertyPanelController.dispose()
 	}
 }
 

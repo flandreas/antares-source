@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
@@ -106,7 +105,7 @@ class GraphPanelViewController(
 
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
-	val editViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, applicationDataHolder.data?.savable, eventBus)
+	val editViewController = GraphEditViewController(editor, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(eventBus)
@@ -135,7 +134,7 @@ class GraphPanelViewController(
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
 
-	private val rootGraphView: GraphView? get() = editViewController.drawingView.drawing
+	private val rootGraphView: GraphView? get() = editViewController.editor.view.drawing as GraphView?
 
 	init {
 		eventBus.register(ApplicationModeBeginEvent::class, applicationModeBeginHandler)
