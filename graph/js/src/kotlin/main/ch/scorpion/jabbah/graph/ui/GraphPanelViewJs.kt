@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.mreact.splitPane
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.ui.componentPropertyPanel
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
@@ -71,9 +72,14 @@ class GraphPanelViewJs(
 
 	override fun RBuilder.render() {
 		splitPane(split = "vertical", minSize = 200) {
-			libraryPanelView {
-				application = this@GraphPanelViewJs.props.application
-				controller = this@GraphPanelViewJs.props.controller.libraryPanelController
+			splitPane(split = "horizontal", minSize = 400) {
+				libraryPanelView {
+					application = this@GraphPanelViewJs.props.application
+					controller = this@GraphPanelViewJs.props.controller.libraryPanelController
+				}
+				componentPropertyPanel {
+					controller = this@GraphPanelViewJs.props.controller.propertyPanelController
+				}
 			}
 			graphDesktopView {
 				controller = props.controller.desktopController

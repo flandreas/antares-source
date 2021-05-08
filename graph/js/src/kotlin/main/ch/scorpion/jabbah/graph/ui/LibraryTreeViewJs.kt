@@ -15,10 +15,12 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
 import kotlinx.browser.document
+import kotlinx.css.*
 import org.w3c.dom.DragEvent
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.MouseEvent
 import react.*
+import styled.css
 
 external interface LibraryTreeViewJsProps : RProps {
 	var application: Application
@@ -59,6 +61,12 @@ class LibraryTreeViewJs(
 			defaultExpandIcon = createExpandIcon(),
 			defaultCollapseIcon = createCollapseIcon(),
 		) {
+			css {
+				maxHeight = LinearDimension.fillAvailable
+				maxWidth = LinearDimension.fillAvailable
+				flexGrow = 1.0
+				overflow = Overflow.auto
+			}
 			jmTreeItem(
 				label = createLabel(Translations.getString("graph.desktop.name")),
 				nodeId = nextNodeId(),
