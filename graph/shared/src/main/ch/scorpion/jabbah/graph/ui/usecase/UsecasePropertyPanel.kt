@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
 import ch.scorpion.jabbah.edit.ui.PropertyPanel
+import ch.scorpion.jabbah.graph.view.Usecase
 
 interface UsecasePropertyPanel : PropertyPanel
 
@@ -14,19 +15,20 @@ class UsecasePropertyPanelController(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractPropertyPanelController<UsecasePropertyPanel>(editor) {
 
-	private val usecaseSelectionHandler: EventHandler<UsecaseSelectionEvent> = { handle(it) }
+	private val usecaseSelectionHandler: EventHandler<UsecaseSelectionEvent> = { bean = it.usecase }
 
 	init {
 		eventBus.register(UsecaseSelectionEvent::class, usecaseSelectionHandler)
 	}
 
+	override val description: String?
+		get() = when (bean) {
+			is Usecase -> (bean as Usecase).name.value
+			else -> null
+		}
+
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(usecaseSelectionHandler)
-	}
-
-	private fun handle(event: UsecaseSelectionEvent) {
-		view.clearProperties()
-		event.usecase?.let { view.loadProperties(it) }
 	}
 }

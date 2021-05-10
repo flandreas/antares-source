@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioStep
 class ScenarioPropertyPanelSwing(
 	controller: ScenarioPropertyPanelController,
 	sheetPanelFactory: PropertySheetPanelFactory
-) : AbstractPropertyPanelSwing(controller.editor, sheetPanelFactory), ScenarioPropertyPanel {
+) : AbstractPropertyPanelSwing(controller, sheetPanelFactory), ScenarioPropertyPanel {
 
 	init {
 		controller.view = this
@@ -20,15 +20,5 @@ class ScenarioPropertyPanelSwing(
 
 	override fun setupDefaultProperties() {
 		// empty
-	}
-
-	override fun getDescription(bean: Any): String? {
-		if (bean is Scenario) {
-			return bean.name.value
-		}
-		if (bean is ScenarioStep) {
-			return bean.name.value
-		}
-		return null
 	}
 }

@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.view.Usecase
 class UsecasePropertyPanelSwing(
 	controller: UsecasePropertyPanelController,
 	sheetPanelFactory: PropertySheetPanelFactory,
-) : AbstractPropertyPanelSwing(controller.editor, sheetPanelFactory), UsecasePropertyPanel {
+) : AbstractPropertyPanelSwing(controller, sheetPanelFactory), UsecasePropertyPanel {
 
 	init {
 		controller.view = this
@@ -16,12 +16,5 @@ class UsecasePropertyPanelSwing(
 
 	override fun setupDefaultProperties() {
 		// empty
-	}
-
-	override fun getDescription(bean: Any): String? {
-		if (bean is Usecase) {
-			return bean.name.value
-		}
-		return null
 	}
 }

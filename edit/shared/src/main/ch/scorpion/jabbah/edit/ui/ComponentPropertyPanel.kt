@@ -8,9 +8,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SelectionChangeEvent
 
-interface ComponentPropertyPanel : PropertyPanel {
-	fun loadComponentProperties(component: Component)
-}
+interface ComponentPropertyPanel : PropertyPanel
 
 /**
  * Displays the properties of the currently selected [Component] and allows the user to edit them.
@@ -33,6 +31,15 @@ class ComponentPropertyPanelController(
 		eventBus.unregister(selectionChangeHandler)
 	}
 
+	/** ---- [AbstractPropertyPanelController] */
+
+	override val description: String?
+		get() = when (bean) {
+			null -> ""
+			is Component -> (bean as Component).type
+			else -> bean.toString()
+		}
+
 	/** ---- [ComponentPropertyPanelController] */
 
 	private fun handle(event: SelectionChangeEvent) {
@@ -40,14 +47,10 @@ class ComponentPropertyPanelController(
 			return
 		}
 
-		view.clearProperties()
-
-		if (event.type !== SelectionChangeEvent.Type.SELECTED) {
-			view.loadProperties(editor.view.drawing)
+		bean = if (event.type !== SelectionChangeEvent.Type.SELECTED) {
+			editor.view.drawing
 		} else {
-			getSelectedComponent(event)?.let {
-				view.loadComponentProperties(it)
-			}
+			getSelectedComponent(event)
 		}
 	}
 

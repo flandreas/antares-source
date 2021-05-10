@@ -38,4 +38,6 @@ class TestEditorBuilder {
 	    every { view.selectionManager } returns mockk()
         return this
     }
+
+	fun build(): Editor = editor
 }

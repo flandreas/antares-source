@@ -19,12 +19,18 @@ class ComponentMockBuilder {
 	    withBoundingBox(Rectangle2D())
         visible()
 	    withInteractionHandler(InputEventHandlerAdapter())
+	    withSelectionDrawingStrategy(SelectionDrawingStrategy.REPLACE)
     }
 
     fun withId(id: Int): ComponentMockBuilder {
         every { component.id } returns id
         return this
     }
+
+	fun withType(type: String): ComponentMockBuilder {
+		every { component.type } returns type
+		return this
+	}
 
 	fun withBoundingBox(bbox: Rectangle2D): ComponentMockBuilder {
 		every { component.boundingBox } returns bbox
@@ -46,6 +52,11 @@ class ComponentMockBuilder {
 
 	fun withInteractionHandler(handler: InputEventHandler<EditInputEventContext>): ComponentMockBuilder {
 		every { component.getInputEventHandler<EditInputEventContext>(any()) } returns handler
+		return this
+	}
+
+	fun withSelectionDrawingStrategy(strategy: SelectionDrawingStrategy): ComponentMockBuilder {
+		every { component.preferredSelectionDrawingStrategy } returns strategy
 		return this
 	}
 

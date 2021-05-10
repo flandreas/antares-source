@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.edit.ui
 
-import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.module.EditModuleJs
 import com.ccfraser.muirwik.components.mTypography
 import react.*
+import react.dom.div
+import react.dom.form
 import react.dom.p
 
 external interface ComponentPropertyPanelJsProps : RProps {
@@ -25,7 +27,18 @@ class ComponentPropertyPanelJs(
 
 	override fun RBuilder.render() {
 		p {
-			mTypography("Component properties")
+			div {
+				mTypography(props.controller.title)
+			}
+			form {
+				attrs {
+					novalidate = true
+					autoComplete = false
+				}
+				props.controller.bean?.let {
+					EditModuleJs.propertyPageRendererRegistry.render(it, this)
+				}
+			}
 		}
 	}
 
@@ -35,15 +48,7 @@ class ComponentPropertyPanelJs(
 		// TODO
 	}
 
-	override fun loadComponentProperties(component: Component) {
-		// TODO
-	}
-
-	override fun clearProperties() {
-		// TODO
-	}
-
-	override fun loadProperties(bean: Any) {
-		// TODO
+	override fun handleBeanReplaced() {
+		forceUpdate()
 	}
 }

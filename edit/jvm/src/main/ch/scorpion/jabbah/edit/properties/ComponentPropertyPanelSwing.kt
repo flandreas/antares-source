@@ -11,32 +11,35 @@ import javax.swing.JPanel
 class ComponentPropertyPanelSwing(
 	controller: ComponentPropertyPanelController,
 	sheetFactory: PropertySheetPanelFactory
-) : AbstractPropertyPanelSwing(controller.editor, sheetFactory), ComponentPropertyPanel {
+) : AbstractPropertyPanelSwing(controller, sheetFactory), ComponentPropertyPanel {
 
 	init {
 		controller.view = this
 	}
 
-    /** ---- [AbstractPropertyPanelSwing] */
-
-    override fun getDescription(bean: Any): String {
-        if (bean is Component) {
-            return bean.type
-        }
-        return bean.toString()
-    }
-
     /** ---- [ComponentPropertyPanelSwing] */
 
     override fun setupDefaultProperties() {
-	    loadProperties(editor.drawing)
+	    loadProperties(controller.editor.drawing)
     }
 
-    override fun loadComponentProperties(component: Component) {
-        if (component.beanInfoClassName != null) {
-	        loadProperties(component.propertyOwner, component.beanInfoClassName!!)
-        } else {
-	        loadProperties(component.propertyOwner)
-        }
-    }
+	override fun handleBeanReplaced() {
+		clearProperties()
+
+		controller.bean?.let {
+			if (it is Component) {
+				loadComponentProperties(it)
+			} else {
+				loadProperties(it)
+			}
+		}
+	}
+
+	private fun loadComponentProperties(component: Component) {
+		if (component.beanInfoClassName != null) {
+			loadProperties(component.propertyOwner, component.beanInfoClassName!!)
+		} else {
+			loadProperties(component.propertyOwner)
+		}
+	}
 }

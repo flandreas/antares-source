@@ -20,7 +20,9 @@ class ScenarioPropertyPanelController(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractPropertyPanelController<ScenarioPropertyPanel>(editor) {
 
-	private val scenarioSelectionHandler: EventHandler<ScenarioSelectionEvent> = { handle(it) }
+	private val scenarioSelectionHandler: EventHandler<ScenarioSelectionEvent> = {
+		bean = it.scenarioStep ?: it.scenario
+	}
 
 	init {
 		eventBus.register(ScenarioSelectionEvent::class, scenarioSelectionHandler)
@@ -31,12 +33,16 @@ class ScenarioPropertyPanelController(
 		eventBus.unregister(scenarioSelectionHandler)
 	}
 
-	private fun handle(event: ScenarioSelectionEvent) {
-		view.clearProperties()
-		if (event.scenarioStep != null) {
-			view.loadProperties(event.scenarioStep)
-		} else if (event.scenario != null) {
-			view.loadProperties(event.scenario)
+	override val description: String?
+		get() = when (bean) {
+			is Scenario -> {
+				(bean as Scenario).name.value
+			}
+			is ScenarioStep -> {
+				(bean as ScenarioStep).name.value
+			}
+			else -> {
+				null
+			}
 		}
-	}
 }

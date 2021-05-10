@@ -1,14 +1,18 @@
 package ch.scorpion.antares.module
 
 import ch.scorpion.antares.AntaresApplication
+import ch.scorpion.antares.property.AndGateViewPropertyPage
 import ch.scorpion.antares.ui.registerAntaresIconsInProvider
 import ch.scorpion.antares.view.AntaresLibraryFactory
+import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.TranslationServiceImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.edit.properties.PropertyPageRendererRegistry
 import ch.scorpion.jabbah.graph.library.LibraryManagementService
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
@@ -56,6 +60,8 @@ object AntaresModuleJs : AbstractModule() {
 		registerAntaresIconsInProvider()
 
 		loadTranslations()
+
+		registerPropertyPageRenderers(EditModuleJs.propertyPageRendererRegistry)
 	}
 
 	/** TODO Work around for missing implementation of [Translations] mechanism for texts used for demo application.*/
@@ -71,5 +77,10 @@ object AntaresModuleJs : AbstractModule() {
 		Translations.addKey("library.savable.prefix", "Library Element")
 		Translations.addKey("library.library.name", "Library")
 		Translations.addKey("project.project.name", "Project")
+	}
+
+	private fun registerPropertyPageRenderers(registry: PropertyPageRendererRegistry) {
+		registry.register(LEDView::class, AndGateViewPropertyPage())
+		registry.register(AndGateView::class, AndGateViewPropertyPage())
 	}
 }

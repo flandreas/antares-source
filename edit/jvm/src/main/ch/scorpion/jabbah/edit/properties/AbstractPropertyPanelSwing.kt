@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.edit.properties
 
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
 import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
@@ -22,7 +21,7 @@ import kotlin.math.max
  * A [JPanel] for editing the properties of a bean.
  */
 abstract class AbstractPropertyPanelSwing(
-	protected val editor: Editor,
+	protected val controller: AbstractPropertyPanelController<*>,
 	sheetFactory: PropertySheetPanelFactory
 ) : JPanel(), PropertyPanel {
 
@@ -55,7 +54,6 @@ abstract class AbstractPropertyPanelSwing(
 	private val drawingListener = setupDrawingListener()
 
 	init {
-
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		getTable().setShowGrid(true)
@@ -82,13 +80,13 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	override fun dispose() {
-		editor.removePropertyChangeListener(activeEditorListener)
-		editor.removePropertyChangeListener(drawingListener)
+		controller.editor.removePropertyChangeListener(activeEditorListener)
+		controller.editor.removePropertyChangeListener(drawingListener)
 	}
 
-	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
+	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = controller.editor.addPropertyChangeListener { event ->
 		if (event.name == Editor.PROP_ACTIVE) {
-			if (editor.active) {
+			if (controller.editor.active) {
 				setupDefaultProperties()
 			} else {
 				clearProperties()
@@ -96,7 +94,7 @@ abstract class AbstractPropertyPanelSwing(
 		}
 	}
 
-	private fun setupDrawingListener(): PropertyChangeListener<Any> = editor.view.addPropertyChangeListener { event ->
+	private fun setupDrawingListener(): PropertyChangeListener<Any> = controller.editor.view.addPropertyChangeListener { event ->
 		if (event.name == DrawingView.PROP_DRAWING) {
 			setupDefaultProperties()
 		}
@@ -104,7 +102,12 @@ abstract class AbstractPropertyPanelSwing(
 
 	/** ---- [PropertyPanel] interface */
 
-	override fun clearProperties() {
+	override fun handleBeanReplaced() {
+		clearProperties()
+		controller.bean?.let { loadProperties(it) }
+	}
+
+	protected fun clearProperties() {
 		sheet.table?.cellEditor?.stopCellEditing()
 		sheet.setProperties(arrayOf<PropertyDescriptor>())
 		propertyObject = null
@@ -112,7 +115,7 @@ abstract class AbstractPropertyPanelSwing(
 		updateLabel()
 	}
 
-	override fun loadProperties(bean: Any) {
+	protected fun loadProperties(bean: Any) {
 		loadProperties(bean, bean.javaClass.name + "BeanInfo")
 	}
 
@@ -124,10 +127,7 @@ abstract class AbstractPropertyPanelSwing(
 	 */
 	protected abstract fun setupDefaultProperties()
 
-	/** Returns a displayable description of the selected bean object.*/
-	protected abstract fun getDescription(bean: Any): String?
-
-	protected fun showMessage(message: String) {
+	private fun showMessage(message: String) {
 		messageTextArea.text = message
 		add(messageTextScroll, BorderLayout.SOUTH)
 		invalidate()
@@ -147,7 +147,7 @@ abstract class AbstractPropertyPanelSwing(
 			try {
 				LOG.trace("storeProperties")
 				sheet.writeToObject(propertyObject)
-				editor.view.drawing.validate()
+				controller.editor.view.drawing.validate()
 				hideMessage()
 			} catch (e: Throwable) {
 				e.message?.let { showMessage(it) }
@@ -170,7 +170,7 @@ abstract class AbstractPropertyPanelSwing(
 
 			LOG.debug("updating properties for $beanInfoClass")
 
-			sheet.properties = beanInfo.getProperties(bean, editor)
+			sheet.properties = beanInfo.getProperties(bean, controller.editor)
 
 			// Avoid triggering property change login while bean properties are loaded
 			propertyObject = null
@@ -212,16 +212,6 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	private fun updateLabel() {
-		if (propertyObject == null) {
-			title.text = ""
-		} else {
-			val description = getDescription(propertyObject!!)
-			val beanDescription = if (StringUtils.isEmpty(description)) {
-				Translations.getString("edit.property.bean.undefined")
-			} else {
-				StringUtils.replaceNegation(description!!)
-			}
-			title.text = Translations.getString("edit.property.bean", beanDescription)
-		}
+		title.text = controller.title
 	}
 }
