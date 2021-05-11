@@ -2,9 +2,12 @@ package ch.scorpion.jabbah.edit.ui
 
 import ch.scorpion.jabbah.edit.module.EditModuleJs
 import com.ccfraser.muirwik.components.mTypography
+import com.ccfraser.muirwik.components.spacingUnits
+import kotlinx.css.*
 import react.*
 import react.dom.div
-import react.dom.form
+import styled.css
+import styled.styledForm
 
 external interface ComponentPropertyPanelJsProps : RProps {
 	var controller: ComponentPropertyPanelController
@@ -28,11 +31,14 @@ class ComponentPropertyPanelJs(
 		div {
 			mTypography(props.controller.title)
 		}
-		form {
+		styledForm {
+			css { display = Display.flex; flexWrap = FlexWrap.wrap; paddingBottom = 4.spacingUnits }
+			/*
 			attrs {
 				novalidate = true
 				autoComplete = false
 			}
+			*/
 			props.controller.bean?.let {
 				EditModuleJs.propertyPageRendererRegistry.render(it, props.controller.editor, this)
 			}
