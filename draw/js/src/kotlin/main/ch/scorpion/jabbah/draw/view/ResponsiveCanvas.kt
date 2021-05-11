@@ -17,11 +17,10 @@ external interface ResponsiveCanvasProps : RProps {
 /**
  * A React component that observes the size of a <div> in which a [CanvasJs] is wrapped,
  * and calls [CanvasJs.resize] whenever that size changes.
- *
  */
 val responsiveCanvas = functionalComponent<ResponsiveCanvasProps> { props ->
 	val resizeDetectionResult = useResizeDetector<Any>()
-	props.canvasJsProvider?.invoke()?.let {
+	props.canvasJsProvider.invoke()?.let {
 		it.resize(resizeDetectionResult.width, resizeDetectionResult.height)
 	}
 

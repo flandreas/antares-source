@@ -9,7 +9,7 @@ import com.l2fprod.common.propertysheet.Property
 import org.apache.commons.beanutils.PropertyUtils
 import java.lang.reflect.InvocationTargetException
 
-/** An implementation of a [Property] that created a [PropertyCommand] for every changed property. */
+/** An implementation of a [Property] that created a [PropertyCommandSwing] for every changed property. */
 class PropertyImpl<V>(
 	propertyName: String,
 	private val baseKey: String,
@@ -90,6 +90,7 @@ class PropertyImpl<V>(
 		writeToBean()
 	}
 
+	/** Primarily used for testing. */
 	fun forceWriteToObject() {
 		writeToBean(force = true)
 	}
@@ -98,7 +99,8 @@ class PropertyImpl<V>(
 		@Suppress("UNCHECKED_CAST")
 		val newValue = value as V?
 
-		val command = PropertyCommand(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
+		val command = PropertyCommandSwing(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
+		command.establishOldValue()
 
 		LOG.trace("writeToBean '$name', oldValue=${command.oldValue}, newValue=$newValue")
 

@@ -5,7 +5,6 @@ import com.ccfraser.muirwik.components.mTypography
 import react.*
 import react.dom.div
 import react.dom.form
-import react.dom.p
 
 external interface ComponentPropertyPanelJsProps : RProps {
 	var controller: ComponentPropertyPanelController
@@ -26,18 +25,16 @@ class ComponentPropertyPanelJs(
 	}
 
 	override fun RBuilder.render() {
-		p {
-			div {
-				mTypography(props.controller.title)
+		div {
+			mTypography(props.controller.title)
+		}
+		form {
+			attrs {
+				novalidate = true
+				autoComplete = false
 			}
-			form {
-				attrs {
-					novalidate = true
-					autoComplete = false
-				}
-				props.controller.bean?.let {
-					EditModuleJs.propertyPageRendererRegistry.render(it, this)
-				}
+			props.controller.bean?.let {
+				EditModuleJs.propertyPageRendererRegistry.render(it, props.controller.editor, this)
 			}
 		}
 	}

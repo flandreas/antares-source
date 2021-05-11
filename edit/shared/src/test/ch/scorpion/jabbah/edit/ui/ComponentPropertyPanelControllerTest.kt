@@ -30,10 +30,10 @@ class ComponentPropertyPanelControllerTest {
 	private val view = DrawingViewImpl(drawing, selectionManagerFactory = selectionManagerFactory)
 	private val editor = EditorImpl(view as DrawingView<Drawing<Component>>)
 	private val controller = ComponentPropertyPanelController(editor)
-	private val panelMockBuilder = ComponentPropertyPanelMockBuilder(controller)
 	private val component = ComponentMockBuilder().withType("TestType").build()
 
 	init {
+		ComponentPropertyPanelMockBuilder(controller)
 		drawing.add(component)
 	}
 
@@ -41,7 +41,7 @@ class ComponentPropertyPanelControllerTest {
 	fun shouldDisplaySelectedComponentProperties() {
 		view.selectionManager.select(component)
 
-		assertSame(component, panelMockBuilder.componentSlot.captured)
+		assertSame(component, controller.bean)
 		assertEquals(Translations.getString("edit.property.bean", "TestType"), controller.title)
 	}
 
@@ -49,6 +49,6 @@ class ComponentPropertyPanelControllerTest {
 	fun shouldDisplayDrawingProperties() {
 		view.selectionManager.select(component)
 		view.selectionManager.deselectAll()
-		assertSame(drawing, panelMockBuilder.beanSlot.captured)
+		assertSame(drawing, controller.bean)
 	}
 }

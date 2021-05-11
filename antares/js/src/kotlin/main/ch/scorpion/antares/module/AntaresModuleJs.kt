@@ -2,9 +2,11 @@ package ch.scorpion.antares.module
 
 import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.property.AndGateViewPropertyPage
+import ch.scorpion.antares.property.CircuitInOutViewPropertyPage
 import ch.scorpion.antares.ui.registerAntaresIconsInProvider
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.gate.AndGateView
+import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.AbstractModule
@@ -82,5 +84,6 @@ object AntaresModuleJs : AbstractModule() {
 	private fun registerPropertyPageRenderers(registry: PropertyPageRendererRegistry) {
 		registry.register(LEDView::class, AndGateViewPropertyPage())
 		registry.register(AndGateView::class, AndGateViewPropertyPage())
+		registry.register(CircuitInOutView::class, CircuitInOutViewPropertyPage())
 	}
 }

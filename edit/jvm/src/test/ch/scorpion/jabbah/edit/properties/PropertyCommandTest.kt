@@ -77,8 +77,8 @@ class PropertyCommandTest {
 		assertEquals("oldName", component.property.value)
 	}
 
-	private fun createCommand(name: String, baseKey: String, id: Int, newValue: Any): PropertyCommand<Any> {
-		return PropertyCommand.forComponent(
+	private fun createCommand(name: String, baseKey: String, id: Int, newValue: Any): PropertyCommandSwing<Any> {
+		return PropertyCommandSwing.forComponent(
 			editor = editor,
 			propertyBaseKey = baseKey,
 			beanIds = listOf(id),
