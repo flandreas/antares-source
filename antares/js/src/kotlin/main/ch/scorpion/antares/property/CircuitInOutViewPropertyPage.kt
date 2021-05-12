@@ -1,19 +1,21 @@
 package ch.scorpion.antares.property
 
-import ch.scorpion.antares.property.CircuitInOutViewPropertyPage.ComponentStyles.formControl
 import ch.scorpion.antares.view.inout.CircuitInOutView
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.PropertyPageRenderer
 import ch.scorpion.jabbah.edit.properties.jmTextField
-import com.ccfraser.muirwik.components.form.mFormControl
-import com.ccfraser.muirwik.components.mTextField
+import ch.scorpion.jabbah.edit.properties.propertyRow
+import com.ccfraser.muirwik.components.MGridAlignItems
+import com.ccfraser.muirwik.components.MGridSpacing
+import com.ccfraser.muirwik.components.mGridContainer
 import com.ccfraser.muirwik.components.spacingUnits
-import kotlinx.css.*
+import kotlinx.css.margin
+import kotlinx.css.maxWidth
+import kotlinx.css.minWidth
+import kotlinx.css.px
 import react.RBuilder
 import styled.StyleSheet
-import styled.css
 
 @Suppress("unused")
 class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
@@ -28,28 +30,36 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 
 	override fun render(bean: CircuitInOutView, editor: Editor, builder: RBuilder) {
 		builder.run {
-			mFormControl {
-				css(formControl)
-				mTextField(Translations.getString("edit.property.id.name"), value = bean.id.toString(), disabled = true)
-			}
-			mFormControl {
-				css(formControl)
-				jmTextField {
-					this.editor = editor
-					beanProvider = componentBeanProvider
-					beanIds = listOf(bean.id)
-					getter = { bean.name }
-					setter = { _, value -> bean.name = value }
+			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
+
+				propertyRow("edit.property.id.name") {
+					it.jmTextField {
+						this.editor = editor
+						beanProvider = componentBeanProvider
+						beanIds = listOf(bean.id)
+						getter = { bean.id.toString() }
+						disabled = true
+					}
 				}
-			}
-			mFormControl {
-				css(formControl)
-				jmBitWidthField {
-					this.editor = editor
-					beanProvider = componentBeanProvider
-					beanIds = listOf(bean.id)
-					getter = { bean.bitWidth }
-					setter = { _, value -> bean.bitWidth = value!! }
+
+				propertyRow("edit.property.name.name") {
+					it.jmTextField {
+						this.editor = editor
+						beanProvider = componentBeanProvider
+						beanIds = listOf(bean.id)
+						getter = { bean.name }
+						setter = { _, value -> bean.name = value }
+					}
+				}
+
+				propertyRow("element.property.bitWidth.name") {
+					it.jmBitWidthField {
+						this.editor = editor
+						beanProvider = componentBeanProvider
+						beanIds = listOf(bean.id)
+						getter = { bean.bitWidth }
+						setter = { _, value -> bean.bitWidth = value!! }
+					}
 				}
 			}
 		}

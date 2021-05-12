@@ -13,4 +13,5 @@ external interface PropertyProps<T> : RProps {
 	var beanIds: List<Int>
 	var getter: PropertyGetter<T>
 	var setter: PropertySetter<T>
+	var disabled: Boolean
 }
