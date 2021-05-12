@@ -14,9 +14,7 @@ import ch.scorpion.jabbah.graph.ui.graphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
-import com.ccfraser.muirwik.components.MCircularProgressColor
-import com.ccfraser.muirwik.components.mBackdrop
-import com.ccfraser.muirwik.components.mCircularProgress
+import com.ccfraser.muirwik.components.*
 import react.*
 import styled.styledDiv
 
@@ -94,6 +92,11 @@ class AntaresViewJs(
 	}
 
 	override fun RBuilder.render() {
+		mAppBar {
+			mToolbar {
+				mToolbarTitle("Antares")
+			}
+		}
 		styledDiv {
 			if (state.isLoading) {
 				mBackdrop(open = true) {

@@ -15,6 +15,7 @@ private val splitPane: RComponent<SplitPaneProps, RState> = splitPaneModule.defa
 
 interface SplitPaneProps : StyledPropsWithCommonAttributes {
 	var split: String
+	var defaultSize: Int?
 	var minSize: Int?
 }
 
@@ -24,12 +25,14 @@ interface SplitPaneProps : StyledPropsWithCommonAttributes {
  */
 fun RBuilder.splitPane(
 	split: String,
+	defaultSize: Int? = null,
 	minSize: Int? = null,
 	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<SplitPaneProps>? = null
 ) = createStyled(splitPane, addAsChild) {
 	attrs.split = split
+	attrs.defaultSize = defaultSize
 	attrs.minSize = minSize
 	setStyledPropsAndRunHandler(className, handler)
 }

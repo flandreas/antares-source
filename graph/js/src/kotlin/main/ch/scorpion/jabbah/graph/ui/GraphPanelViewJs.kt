@@ -71,8 +71,8 @@ class GraphPanelViewJs(
 	}
 
 	override fun RBuilder.render() {
-		splitPane(split = "vertical", minSize = 200) {
-			splitPane(split = "horizontal", minSize = 400) {
+		splitPane(split = "vertical", defaultSize = 300, minSize = 200) {
+			splitPane(split = "horizontal", defaultSize = 600, minSize = 400) {
 				libraryPanelView {
 					application = this@GraphPanelViewJs.props.application
 					controller = this@GraphPanelViewJs.props.controller.libraryPanelController
