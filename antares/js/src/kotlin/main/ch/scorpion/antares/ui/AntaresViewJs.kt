@@ -61,8 +61,7 @@ class AntaresViewJs(
 	}
 
 	private fun handle(event: TranslationBundleAdded) {
-		// TODO Check for all bundles once they all get loaded
-		if (Translations.hasBundle("antares")) {
+		if (hasAllBundles()) {
 			setState {
 				isLoading = false
 
@@ -70,6 +69,16 @@ class AntaresViewJs(
 				//DrawViewModule.viewManager.activeView = controller.editor.view
 			}
 		}
+	}
+
+	private fun hasAllBundles(): Boolean {
+		return Translations.hasBundle("antares")
+			&& Translations.hasBundle("jabbah-base")
+			&& Translations.hasBundle("jabbah-execution")
+			&& Translations.hasBundle("jabbah-draw")
+			&& Translations.hasBundle("jabbah-edit")
+			&& Translations.hasBundle("jabbah-app")
+			&& Translations.hasBundle("jabbah-graph")
 	}
 
 	/** ---- [RComponent] */

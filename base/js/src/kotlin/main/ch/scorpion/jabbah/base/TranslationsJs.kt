@@ -41,8 +41,11 @@ actual object Translations {
 	}
 
 	actual fun getString(key: String, vararg params: Any): String {
-		// TODO Replace variables
-		return map.getOrElse(key) { key }
+		var value = map.getOrElse(key) { key }
+		params?.forEachIndexed { index, param ->
+			value = value.replace("{$index}", "$param")
+		}
+		return value
 	}
 
 	actual fun getOptionalString(key: String): String? = map[key]
