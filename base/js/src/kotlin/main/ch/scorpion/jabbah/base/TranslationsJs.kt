@@ -24,12 +24,7 @@ actual object Translations {
 	actual fun withAnyKey() { }
 
 	actual fun addBundle(name: String) {
-		// TODO Currently not all resource files deployed
-		if (name != "antares") {
-			return
-		}
-
-		LOG.debug("Adding translation bundle '$name'")
+		LOG.info("Adding translation bundle '$name'")
 		BaseModuleJs.translationService.load(name)
 			.then {
 				translation -> translation.forEach { addKey(it.key, it.value) }
@@ -47,7 +42,7 @@ actual object Translations {
 
 	actual fun getString(key: String, vararg params: Any): String {
 		// TODO Replace variables
-		return map.getOrElse(key, { key } )
+		return map.getOrElse(key) { key }
 	}
 
 	actual fun getOptionalString(key: String): String? = map[key]

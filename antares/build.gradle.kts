@@ -79,6 +79,17 @@ kotlin {
 
 tasks {
 
+	val deployTranslations by register<Copy>("deployTranslations") {
+		from(
+			file("$projectDir/../base/shared/rsc/jabbah-base_en.properties"),
+			file("$projectDir/../draw/shared/rsc/jabbah-draw_en.properties"),
+			file("$projectDir/../execution/shared/rsc/jabbah-execution_en.properties"),
+			file("$projectDir/../edit/shared/rsc/jabbah-edit_en.properties"),
+			file("$projectDir/../app/shared/rsc/jabbah-app_en.properties"),
+			file("$projectDir/../graph/shared/rsc/jabbah-graph_en.properties")
+		)
+		into(file("$buildDir/processedResources/js/main"))
+	}
 	val shadowCreate by creating(ShadowJar::class) {
 		dependsOn(assemble)
 		manifest {
@@ -198,4 +209,3 @@ tasks {
 		)
 	}
 }
-

@@ -30,7 +30,7 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 		builder.run {
 			mFormControl {
 				css(formControl)
-				mTextField(Translations.getString("edit.property.id"), value = bean.id.toString(), disabled = true)
+				mTextField(Translations.getString("edit.property.id.name"), value = bean.id.toString(), disabled = true)
 			}
 			mFormControl {
 				css(formControl)

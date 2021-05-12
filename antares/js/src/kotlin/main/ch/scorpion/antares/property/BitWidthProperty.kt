@@ -16,7 +16,7 @@ val jmBitWidthField = functionalComponent<PropertyProps<BitWidth>>("BitWidth") {
 	val oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
 	var (value, setValue) = useState(oldValue)
 	mFormControl {
-		mInputLabel(Translations.getString("element.property.bitWidth"), htmlFor = "bitWidth")
+		mInputLabel(Translations.getString("element.property.bitWidth.name"), htmlFor = "bitWidth")
 
 		val inputProps: RProps = jsObject { }
 		inputProps.asDynamic().name = "bitWidth"
