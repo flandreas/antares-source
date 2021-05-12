@@ -39,8 +39,8 @@ class LEDMatrix(
 		private val LOG by logger(LEDMatrix::class)
 
 		private const val BASE_RESOURCE_KEY = "library.element.LEDMatrix"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		const val COLUMN_PORT_NAME = "C"
 		const val ROW_PORT_NAME = "R"
@@ -48,8 +48,8 @@ class LEDMatrix(
 		private val DEF_ROW_WIDTH = BitWidth.BW_8
 		private const val DEF_AFTERGLOW = 10L
 
-		private val COLUMNS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
-		private val ROWS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
+		private val COLUMNS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
+		private val ROWS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
 
 		private val CALCULATOR = Calculator()
 

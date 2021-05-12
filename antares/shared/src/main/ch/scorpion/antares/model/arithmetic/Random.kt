@@ -29,11 +29,11 @@ class Random(
 	companion object {
 
 		private const val BASE_RESOURCE_KEY = "library.element.Random"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.random.clockPort.desc"))
-		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.random.dataPort.desc"))
+		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.random.clockPort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.random.dataPort.desc"))
 
 		private val CALCULATOR = Calculator()
 

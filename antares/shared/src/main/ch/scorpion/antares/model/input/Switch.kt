@@ -22,8 +22,8 @@ class Switch : AbstractInteractableVertice(CALCULATOR) {
 		const val PROP_DEFAULT_DELAY = "ch.scorpion.antares.model.input.Switch.defaultPropDelay"
 		val DEF_PROP_DELAY get() = BaseModule.properties.getInt(PROP_DEFAULT_DELAY).toLong()
 		private const val BASE_RESOURCE_KEY = "library.element.Toggle"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 

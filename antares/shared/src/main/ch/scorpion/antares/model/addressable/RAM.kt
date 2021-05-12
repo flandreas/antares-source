@@ -30,8 +30,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	companion object {
 
 		private const val BASE_RESOURCE_KEY = "library.element.RAM"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private const val ADDRESS_PORT_NAME = "A"
 		private const val CHIP_SELECT_PORT_NAME = "CS"
@@ -40,12 +40,12 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		private const val CLEAR_PORT_NAME = "CLR"
 		private const val CLOCK_PORT_NAME = "CLK"
 
-		private val ADDRESS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.addressPort.desc"))
-		private val CHIP_SELECT_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
-		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.dataPort.desc"))
-		private val WRITE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.writePort.desc"))
-		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.clearPort.desc"))
-		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.clockPort.desc"))
+		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.dataPort.desc"))
+		private val WRITE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.writePort.desc"))
+		private val CLEAR_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clearPort.desc"))
+		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clockPort.desc"))
 	}
 
 	override val type: String get() = TYPE

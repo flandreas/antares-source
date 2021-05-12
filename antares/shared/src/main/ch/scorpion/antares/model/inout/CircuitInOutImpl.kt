@@ -39,16 +39,16 @@ class CircuitInOutImpl(
 	companion object {
 
 		private const val INPUT_BASE_RESOURCE_KEY = "library.element.CircuitInput"
-		private val INPUT_TYPE = Translations.getString("$INPUT_BASE_RESOURCE_KEY.name")
-		private val INPUT_TYPE_DESC = Translations.getOptionalString("$INPUT_BASE_RESOURCE_KEY.desc")
+		private val INPUT_TYPE get() = Translations.getString("$INPUT_BASE_RESOURCE_KEY.name")
+		private val INPUT_TYPE_DESC get() = Translations.getOptionalString("$INPUT_BASE_RESOURCE_KEY.desc")
 
 		private const val OUTPUT_BASE_RESOURCE_KEY = "library.element.CircuitOutput"
-		private val OUTPUT_TYPE = Translations.getString("$OUTPUT_BASE_RESOURCE_KEY.name")
-		private val OUTPUT_TYPE_DESC = Translations.getOptionalString("$OUTPUT_BASE_RESOURCE_KEY.desc")
+		private val OUTPUT_TYPE get() = Translations.getString("$OUTPUT_BASE_RESOURCE_KEY.name")
+		private val OUTPUT_TYPE_DESC get() = Translations.getOptionalString("$OUTPUT_BASE_RESOURCE_KEY.desc")
 
 		private const val INOUT_BASE_RESOURCE_KEY = "library.element.CircuitInOut"
-		private val INOUT_TYPE = Translations.getString("$INOUT_BASE_RESOURCE_KEY.name")
-		private val INOUT_TYPE_DESC = Translations.getOptionalString("$INOUT_BASE_RESOURCE_KEY.desc")
+		private val INOUT_TYPE get() = Translations.getString("$INOUT_BASE_RESOURCE_KEY.name")
+		private val INOUT_TYPE_DESC get() = Translations.getOptionalString("$INOUT_BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 

@@ -30,8 +30,8 @@ class Break(
 
 		private val CALCULATOR = Calculator()
 		private const val BASE_RESOURCE_KEY = "library.element.Break"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private class Calculator : VerticeCalculator<Break> {
 			override fun calculate(vertice: Break, data: GraphActorData, signalHandler: SignalHandler) {

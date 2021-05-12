@@ -27,16 +27,16 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 	companion object {
 
 		private const val BASE_RESOURCE_KEY = "library.element.ROM"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		const val ADDRESS_PORT_NAME = "A"
 		const val CHIP_SELECT_PORT_NAME = "CS"
 		const val DATA_PORT_NAME = "D"
 
-		private val ADDRESS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.rom.addressPort.desc"))
-		private val CHIP_SELECT_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
-		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.rom.dataPort.desc"))
+		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.dataPort.desc"))
 
 		val CALCULATOR = Calculator()
 

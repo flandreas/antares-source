@@ -20,8 +20,8 @@ class LED() : CalculatingVertice(CALCULATOR) {
 	companion object {
 
 		private const val BASE_RESOURCE_KEY = "library.element.LED"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 

@@ -30,8 +30,8 @@ class Terminal(
 	companion object {
 
 		private const val BASE_RESOURCE_KEY = "library.element.Terminal"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private const val DEFAULT_ROWS_COUNT = 24
 		private const val DEFAULT_COLUMNS_COUNT = 40
@@ -48,10 +48,10 @@ class Terminal(
 		private const val MIN_PRINTABLE_CHAR = 0x20
 		private const val MAX_PRINTABLE_CHAR = 0x7E
 
-		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
-		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
-		private val ENABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
-		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
+		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
+		private val CLEAR_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
+		private val ENABLE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
 	}
 
 	override val type: String get() = TYPE

@@ -32,7 +32,7 @@ class Oscilloscope(
 
 	companion object {
 		private val LOG by logger(Oscilloscope::class)
-		private val TYPE = Translations.getString("graph.component.oscilloscope.name")
+		private val TYPE get() = Translations.getString("graph.component.oscilloscope.name")
 
 		/** The name of the [Int] property in [Properties] */
 		const val PROP_BUFFER_SIZE = "Oscilloscope.bufferSize"

@@ -36,8 +36,8 @@ class NotGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
 
     companion object {
 	    private const val BASE_RESOURCE_KEY = "library.element.NotGate"
-	    private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-	    private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+	    private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+	    private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 	    val CALCULATOR = NotCalculator<NotGate>()
 

@@ -17,10 +17,10 @@ class Transistor(
 	companion object {
 		private val DEFAULT_TRANSISTOR_TYPE = TransistorType.N
 		private const val BASE_RESOURCE_KEY = "library.element.Transistor"
-		private val TYPE_N = Translations.getString("$BASE_RESOURCE_KEY.nType.name")
-		private val TYPE_N_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.nType.desc")
-		private val TYPE_P = Translations.getString("$BASE_RESOURCE_KEY.pType.name")
-		private val TYPE_P_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.pType.desc")
+		private val TYPE_N get() = Translations.getString("$BASE_RESOURCE_KEY.nType.name")
+		private val TYPE_N_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.nType.desc")
+		private val TYPE_P get() = Translations.getString("$BASE_RESOURCE_KEY.pType.name")
+		private val TYPE_P_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.pType.desc")
 
 		private fun typeToLogic(type: TransistorType): Logic =
 			when(type) {

@@ -36,8 +36,8 @@ class Keyboard(
 		private val LOG by logger(Keyboard::class)
 
 		private const val BASE_RESOURCE_KEY = "library.element.Keyboard"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private const val DEFAULT_BUFFER_SIZE = 8
 
@@ -47,11 +47,11 @@ class Keyboard(
 		private const val DATA_PORT_NAME = "D"
 		private const val AVAILABLE_PORT_NAME = "AV"
 
-		private val AVAILABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
-		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
-		private val ENABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
-		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
-		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
+		private val AVAILABLE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
+		private val CLEAR_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
+		private val ENABLE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
+		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
 	}
 
 	override val type: String get() = TYPE

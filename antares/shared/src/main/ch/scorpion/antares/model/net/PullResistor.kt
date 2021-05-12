@@ -27,9 +27,9 @@ class PullResistor(
 	companion object{
 
 		private const val BASE_RESOURCE_KEY = "library.element.PullResistor"
-		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_LOW_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
-		private val TYPE_HIGH_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_LOW_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
+		private val TYPE_HIGH_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
 
 		fun getPreferredSignal(bitWidth: BitWidth, pullDirection: PullDirection): DigitalSignal =
 			when(pullDirection) {
