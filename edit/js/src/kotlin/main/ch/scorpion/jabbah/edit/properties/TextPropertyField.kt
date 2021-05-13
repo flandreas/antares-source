@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.edit.*
 import com.ccfraser.muirwik.components.input.MInputMargin
 import com.ccfraser.muirwik.components.input.mInput
 import com.ccfraser.muirwik.components.input.margin
@@ -18,8 +19,30 @@ val jmTextField = functionalComponent<PropertyProps<String>>("TextField") { prop
 	}
 }
 
-fun RBuilder.jmTextField(handler: PropertyProps<String>.() -> Unit) = child(jmTextField) {
+fun RBuilder.jmTextField(
+	editor: Editor,
+	getter: PropertyGetter<String>,
+	setter: PropertySetter<String>,
+	beanId: Int,
+	disabled: Boolean = false,
+	beanProvider: BeanProvider = componentBeanProvider,
+	handler: PropertyProps<String>.() -> Unit = {}
+) = child(jmTextField) {
 	attrs {
+		this.editor = editor
+		this.getter = getter
+		this.setter = setter
+		this.beanIds = listOf(beanId)
+		this.disabled = disabled
+		this.beanProvider = beanProvider
 		handler()
 	}
 }
+
+fun RBuilder.jmReadOnlyTextField(
+	editor: Editor,
+	getter: PropertyGetter<String>,
+	beanId: Int,
+	beanProvider: BeanProvider = componentBeanProvider,
+	handler: PropertyProps<String>.() -> Unit = {}
+) = jmTextField(editor, getter, { _, _ -> } , beanId, disabled = true, beanProvider, handler)
