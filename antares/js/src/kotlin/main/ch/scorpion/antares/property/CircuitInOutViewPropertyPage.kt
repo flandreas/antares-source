@@ -57,6 +57,10 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 				propertyRow("element.property.DigitalSignalRepresentation.name") {
 					it.jmDigitalSignalRepresentation(editor, { bean.signalRepresentation }, { _, value -> bean.signalRepresentation = value!! }, bean.id )
 				}
+
+				propertyRow("element.property.Switch.toggle.name") {
+					it.jmCheckboxField(editor, { bean.toggle }, { _, value -> bean.toggle = value!! }, bean.id)
+				}
 			}
 		}
 	}
