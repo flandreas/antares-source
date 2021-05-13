@@ -92,7 +92,7 @@ class AntaresViewJs(
 	}
 
 	override fun RBuilder.render() {
-		mAppBar {
+		mAppBar(position = MAppBarPosition.static) {
 			mToolbar {
 				mToolbarTitle("Antares")
 			}

@@ -42,6 +42,16 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 					}
 				}
 
+				propertyRow("graph.property.modelId.name") {
+					it.jmTextField {
+						this.editor = editor
+						beanProvider = componentBeanProvider
+						beanIds = listOf(bean.id)
+						getter = { bean.modelId.toString() }
+						disabled = true
+					}
+				}
+
 				propertyRow("edit.property.name.name") {
 					it.jmTextField {
 						this.editor = editor
@@ -52,14 +62,12 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 					}
 				}
 
+				propertyRow("graph.property.portType.name") {
+					it.jmPortTypeField(editor, { bean.portType }, { _, value -> bean.portType = value!! }, bean.id)
+				}
+
 				propertyRow("element.property.bitWidth.name") {
-					it.jmBitWidthField {
-						this.editor = editor
-						beanProvider = componentBeanProvider
-						beanIds = listOf(bean.id)
-						getter = { bean.bitWidth }
-						setter = { _, value -> bean.bitWidth = value!! }
-					}
+					it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 				}
 			}
 		}

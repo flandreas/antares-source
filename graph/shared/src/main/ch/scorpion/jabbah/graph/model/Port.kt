@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.ui.EnumProperty
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
@@ -185,7 +186,7 @@ interface OutputPort<T : Any> : Port<T> {
 interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T>
 
 /** Enumerates the type of a [Port] regarding signal flow direction.*/
-enum class PortType(val customName: String) {
+enum class PortType(override val customName: String) : EnumProperty<PortType> {
 	INPUT("input"),
 	OUTPUT("output"),
 	INOUT("inout");

@@ -1,11 +1,12 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.edit.ui.EnumProperty
 
 /**
  * Defines the supported [DigitalSignal] widths.
  */
-enum class BitWidth(val width: Int, val size: String) {
+enum class BitWidth(val width: Int, val size: String) : EnumProperty<BitWidth> {
     BW_1(1, "1"),
     BW_2(2, "4"),
     BW_4(4, "16"),
@@ -20,7 +21,7 @@ enum class BitWidth(val width: Int, val size: String) {
     companion object {
 
         fun of(width: Int): BitWidth {
-            for (bw in BitWidth.values()) {
+            for (bw in values()) {
                 if (bw.width == width) {
                     return bw
                 }
@@ -29,7 +30,7 @@ enum class BitWidth(val width: Int, val size: String) {
         }
 
         fun withName(customName: String): BitWidth {
-            for (bw in BitWidth.values()) {
+            for (bw in values()) {
                 if (bw.customName == customName) {
                     return bw
                 }
@@ -38,7 +39,7 @@ enum class BitWidth(val width: Int, val size: String) {
         }
     }
 
-    val customName: String get() = width.toString()
+    override val customName: String get() = width.toString()
 
     fun power(): Long {
         return BitOperation.power(width.toByte())
