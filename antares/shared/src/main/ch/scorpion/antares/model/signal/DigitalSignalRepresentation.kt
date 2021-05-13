@@ -1,10 +1,11 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
 
-enum class DigitalSignalRepresentation(val customName: String) {
+enum class DigitalSignalRepresentation(override val customName: String) : EnumProperty<DigitalSignalRepresentation> {
 
     BINARY("binary") {
 	    override val prefix: String get() = "0b"

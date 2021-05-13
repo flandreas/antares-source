@@ -53,6 +53,10 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 				propertyRow("edit.property.color.name") {
 					it.jmPredefinedColorField(editor, { bean.customColor }, { _, value -> bean.customColor = value }, bean.id )
 				}
+
+				propertyRow("element.property.DigitalSignalRepresentation.name") {
+					it.jmDigitalSignalRepresentation(editor, { bean.signalRepresentation }, { _, value -> bean.signalRepresentation = value!! }, bean.id )
+				}
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.edit.ui.EnumProperty
+import ch.scorpion.jabbah.base.EnumProperty
 
 /**
  * Defines the supported [DigitalSignal] widths.
