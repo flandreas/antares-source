@@ -4,7 +4,11 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.logger
 
-enum class PredefinedColorIdentity(val idName: String, val descriptionKey: String) {
+enum class PredefinedColorIdentity(
+	val idName: String,
+	private val descriptionKey: String
+) {
+
 	White("white", "graphics.color.white.name"),
 	Black("black", "graphics.color.black.name"),
 	Gray("gray", "graphics.color.gray.name"),
@@ -14,8 +18,8 @@ enum class PredefinedColorIdentity(val idName: String, val descriptionKey: Strin
 	Yellow("yellow", "graphics.color.yellow.name");
 
 	companion object {
-
-		fun withIdName(idName: String): PredefinedColorIdentity = PredefinedColorIdentity.values().first { it.idName == idName }
+		fun containsIdName(idName: String): Boolean = values().map { it.idName }.contains(idName)
+		fun withIdName(idName: String): PredefinedColorIdentity = values().first { it.idName == idName }
 	}
 
 	/** Returns the description of the color in the user's language.*/
@@ -58,9 +62,9 @@ object PredefinedColorRepository : PredefinedColorProvider {
     val LOG by logger(PredefinedColorRepository::class)
 
     /** Contains the registered [PredefinedColor]s.*/
-    private val colorsList: MutableList<PredefinedColor> by lazy { mutableListOf<PredefinedColor>()}
+    private val colorsList: MutableList<PredefinedColor> by lazy { mutableListOf()}
 
-	private val colors: MutableMap<PredefinedColorIdentity,PredefinedColor> by lazy { mutableMapOf<PredefinedColorIdentity, PredefinedColor>() }
+	private val colors: MutableMap<PredefinedColorIdentity,PredefinedColor> by lazy { mutableMapOf() }
 
     /** ---- [PredefinedColorProvider] interface */
 
@@ -68,7 +72,13 @@ object PredefinedColorRepository : PredefinedColorProvider {
         return colorsList.toImmutableList()
     }
 
-    override fun withIdName(idName: String): PredefinedColor?= colors[PredefinedColorIdentity.withIdName(idName)]
+    override fun withIdName(idName: String): PredefinedColor? {
+	    return if (PredefinedColorIdentity.containsIdName(idName)) {
+		    colors[PredefinedColorIdentity.withIdName(idName)]
+	    } else {
+		    null
+	    }
+    }
 
 	override fun withIdentity(identity: PredefinedColorIdentity): PredefinedColor? = colors[identity]
 

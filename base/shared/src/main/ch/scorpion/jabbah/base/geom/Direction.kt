@@ -1,19 +1,23 @@
 package ch.scorpion.jabbah.base.geom
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.logger
 import kotlin.math.abs
 
-enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotation: Rotation) {
+enum class Direction(
+	override val customName: String,
+	val dx: Int,
+	val dy: Int,
+	val rotation: Rotation
+) : EnumProperty<Direction> {
+
     EAST("east", 1, 0, Rotation.R0),
     NORTH("north", 0, -1, Rotation.R90),
     WEST("west", -1, 0, Rotation.R180),
     SOUTH("south", 0, 1, Rotation.R270);
 
     companion object {
-
-        private val LOG by logger(Direction::class)
 
         val ALL: Set<Direction> = setOf(EAST, NORTH, WEST, SOUTH)
 

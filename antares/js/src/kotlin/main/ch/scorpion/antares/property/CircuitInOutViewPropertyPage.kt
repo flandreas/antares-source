@@ -2,14 +2,8 @@ package ch.scorpion.antares.property
 
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.properties.PropertyPageRenderer
-import ch.scorpion.jabbah.edit.properties.jmTextField
-import ch.scorpion.jabbah.edit.properties.propertyRow
-import com.ccfraser.muirwik.components.MGridAlignItems
-import com.ccfraser.muirwik.components.MGridSpacing
-import com.ccfraser.muirwik.components.mGridContainer
-import com.ccfraser.muirwik.components.spacingUnits
+import ch.scorpion.jabbah.edit.properties.*
+import com.ccfraser.muirwik.components.*
 import kotlinx.css.margin
 import kotlinx.css.maxWidth
 import kotlinx.css.minWidth
@@ -33,33 +27,15 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
 
 				propertyRow("edit.property.id.name") {
-					it.jmTextField {
-						this.editor = editor
-						beanProvider = componentBeanProvider
-						beanIds = listOf(bean.id)
-						getter = { bean.id.toString() }
-						disabled = true
-					}
+					it.jmReadOnlyTextField(editor, { bean.id.toString() }, bean.id)
 				}
 
 				propertyRow("graph.property.modelId.name") {
-					it.jmTextField {
-						this.editor = editor
-						beanProvider = componentBeanProvider
-						beanIds = listOf(bean.id)
-						getter = { bean.modelId.toString() }
-						disabled = true
-					}
+					it.jmReadOnlyTextField(editor, { bean.modelId.toString() }, bean.id)
 				}
 
 				propertyRow("edit.property.name.name") {
-					it.jmTextField {
-						this.editor = editor
-						beanProvider = componentBeanProvider
-						beanIds = listOf(bean.id)
-						getter = { bean.name }
-						setter = { _, value -> bean.name = value }
-					}
+					it.jmTextField(editor, { bean.name }, { _, value -> bean.name = value }, bean.id)
 				}
 
 				propertyRow("graph.property.portType.name") {
@@ -68,6 +44,14 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 
 				propertyRow("element.property.bitWidth.name") {
 					it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
+				}
+
+				propertyRow("edit.property.Component.orientation.name") {
+					it.jmDirectionField(editor, { bean.orientation }, { _, value -> bean.orientation = value!! }, bean.id )
+				}
+
+				propertyRow("edit.property.color.name") {
+					it.jmPredefinedColorField(editor, { bean.customColor }, { _, value -> bean.customColor = value }, bean.id )
 				}
 			}
 		}
