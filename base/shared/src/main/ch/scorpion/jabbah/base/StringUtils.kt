@@ -53,8 +53,21 @@ object StringUtils {
 	    for (c in s) {
 		    when (c) {
 			    NEGATION_SIGN -> negating = true
-			    '(' -> inBlock = true
-			    ')' -> inBlock = false
+			    '(' -> {
+			    	if (negating) {
+					    inBlock = true
+				    } else {
+				    	result.append(c)
+				    }
+			    }
+			    ')' -> {
+			    	if (negating) {
+			    		inBlock = false
+					    negating = false
+				    } else {
+				    	result.append(c)
+				    }
+			    }
 			    else -> {
 				    result.append(c)
 				    if (negating) {
