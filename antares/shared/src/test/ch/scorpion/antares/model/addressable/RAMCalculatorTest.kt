@@ -69,6 +69,17 @@ class RAMCalculatorTest {
 	}
 
 	@Test
+	fun shouldUndefineDataWithUndefinedAddressClocked() {
+		val ram = createRam(true)
+		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+
+		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+	}
+
+	@Test
 	fun shouldRead() {
 		val ram = createRam(true)
 		ram.write(1, 99)
