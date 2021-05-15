@@ -38,7 +38,10 @@ interface PortView<T : Any> : Drawable, Storable, SnappableX, SnappableY, Transp
 		 * The name of the property in [Properties] that designates the object to be used for highlighting the
 		 * connection point of a [PortView] while interactively connecting.
 		 */
-		const val PROP_HIGHLIGHT = "graph.view.portView.hightlight"
+		const val PROP_HIGHLIGHT = "graph.view.portView.highlight"
+
+		/** The name of the property in [Properties] of the object to be used for highlighting reconnection points.*/
+		const val PROP_HIGHLIGHT_RECONNECT = "graph.view.portView.highlightReconnect"
 	}
 
 	/** The [Port] that this [PortView] displays. Must be one of the [Port]s of the [owner]'s [Vertice].*/

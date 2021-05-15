@@ -52,6 +52,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { StateMachineInputEventHandler.mousePressed(it) }
 					onTransit { beginDragging(it!!) }
 				}
+				transitTo("sense") {
+					given { StateMachineInputEventHandler.altReleased(it) }
+				}
 			}
 
 			state("drag") {
@@ -67,6 +70,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
+				}
+				transitTo("drag") {
+					given { StateMachineInputEventHandler.altReleased(it) }
 				}
 			}
 
@@ -130,7 +136,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		return draggedEndpointType.getEndpoint(edgeView!!)
 	}
 
-	protected fun displayPortViewHighlight(context: EditInputEventContext) {
+	protected open fun displayPortViewHighlight(context: EditInputEventContext) {
 		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), getEndpointView().location)
 	}
 

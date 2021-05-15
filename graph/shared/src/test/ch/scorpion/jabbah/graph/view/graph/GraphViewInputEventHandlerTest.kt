@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.graph
 
+import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
@@ -25,27 +26,27 @@ class GraphViewInputEventHandlerTest : AbstractInputEventHandlerTest(InputEventH
 
 	@Test
 	fun shouldForwardMouseMoveToInputToOutputConnector() {
-		mouseMoveTo(300, 100)
+		mouseMoveTo(300, 100, modifiers = ALT_MASK)
 		assertSame(verticeView, GraphViewModule.outputToInputConnector.usedFor)
 	}
 
 	@Test
 	fun shouldForwardMouseMoveToOutputToInputConnector() {
-		mouseMoveTo(100, 100)
+		mouseMoveTo(100, 100, modifiers = ALT_MASK)
 		assertSame(verticeView, GraphViewModule.inputToOutputOrEdgeConnector.usedFor)
 	}
 
 	@Test
 	fun shouldForwardMouseMoveToReconnectOriginConnector() {
 		val ev = builder.connectOutputOpen(verticeView, Point2D(500, 100))
-		mouseMoveTo(295, 100)
+		mouseMoveTo(295, 100, modifiers = ALT_MASK)
 		assertSame(ev, GraphViewModule.reconnectOriginConnector.usedFor)
 	}
 
 	@Test
-	fun shouldForwardMouseMoveToReconnectDestinationConnetor() {
+	fun shouldForwardMouseMoveToReconnectDestinationConnector() {
 		val ev = builder.connectInputOpen(verticeView, Point2D(0, 100))
-		mouseMoveTo(105, 100)
+		mouseMoveTo(105, 100, modifiers = ALT_MASK)
 		assertSame(ev, GraphViewModule.reconnectDestinationConnector.usedFor)
 	}
 }

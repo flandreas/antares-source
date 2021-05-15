@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -28,4 +30,11 @@ abstract class AbstractReconnectConnector(
 	 */
 	protected var pressLocation: Point2D = Point2D.ZERO
 
+	override fun displayPortViewHighlight(context: EditInputEventContext) {
+		ConnectionPointHighlighter.displayPortViewHighlight(
+			context.drawingView(),
+			getEndpointView().location,
+			highlight = DrawModule.properties.get(PortView.PROP_HIGHLIGHT_RECONNECT)
+		)
+	}
 }

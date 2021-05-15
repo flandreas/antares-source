@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.verify
@@ -21,8 +21,10 @@ class ReconnectOriginConnectorTest
 		}
 	}
 
-	private val ev: EdgeView<Boolean> = GraphViewModule.graphViewConnectService.addConnection(builder.graphView, v1, v2)
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v3", 100, 200))
+	init {
+		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		builder.addVerticeView(createEastOutputVerticeView("v3", 100, 200))
+	}
 
 	@Test
 	fun shouldReconnect() {
@@ -32,7 +34,7 @@ class ReconnectOriginConnectorTest
 	}
 
 	private fun reconnect() {
-		mouseMoveTo(115, 100)
+		mouseMoveTo(115, 100, modifiers = ALT_MASK)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
@@ -96,7 +98,7 @@ class ReconnectOriginConnectorTest
 	}
 
 	private fun reconnectOpenEnded() {
-		mouseMoveTo(115, 100)
+		mouseMoveTo(115, 100, modifiers = ALT_MASK)
 		pressMouseAt(115, 100)
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)

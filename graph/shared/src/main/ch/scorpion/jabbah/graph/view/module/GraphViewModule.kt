@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
@@ -28,8 +27,8 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.GraphAuthorizations
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
@@ -189,9 +188,10 @@ object GraphViewModule : AbstractModule() {
 		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, 5)
 		properties.set(PortView.PROP_SENSITIVE_AREA, 10)
 		properties.set(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
+		properties.set(PortView.PROP_HIGHLIGHT_RECONNECT, ConnectionPointReconnect())
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
 		properties.set(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
-		properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.color.foregroundColor)
+		properties.set(ConnectionPointHighlight.PROP_COLOR, Themes.get<EditTheme>().selection.color.foregroundColor)
 		properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 		properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.Animation.customName)

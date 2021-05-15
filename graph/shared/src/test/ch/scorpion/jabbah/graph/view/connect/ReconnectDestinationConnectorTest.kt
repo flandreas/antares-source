@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
@@ -33,7 +35,7 @@ class ReconnectDestinationConnectorTest
 	}
 
 	private fun reconnect() {
-		mouseMoveTo(205, 100)
+		mouseMoveTo(205, 100, modifiers = ALT_MASK)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
@@ -56,6 +58,15 @@ class ReconnectDestinationConnectorTest
 		assertFalse(newEv.model.isConnectedWith(newV2.model.getInput()))
 		assertTrue(newEv.model.isConnectedWith(newV3.model.getInput()))
 		assertEquals(newV3.getPortConnectionPoint(newV3.model.getInput<Boolean>()), newEv.destinationEndpointView.location)
+	}
+
+	@Test
+	fun shouldLeaveWhenReleasingAltKey() {
+		mouseMoveTo(205, 100, modifiers = ALT_MASK)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+
+		releaseKey(KeyEvent.VK_ALT)
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
 	}
 
 	@Test
@@ -97,7 +108,7 @@ class ReconnectDestinationConnectorTest
 	}
 
 	private fun reconnectOpenEnded() {
-		mouseMoveTo(205, 100)
+		mouseMoveTo(205, 100, modifiers = ALT_MASK)
 		pressMouseAt(205, 100)
 		dragMouseTo(150, 100)
 		releaseMouseAt(150, 100)
