@@ -32,9 +32,10 @@ open class GraphViewBuilder<T : Any>(
 		private val LOG by logger(GraphViewBuilder::class)
 	}
 
-	private var graphStorable: GraphStorable = GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
-	val graphView: GraphView get() = graphStorable.graphView
-	val graph: Graph get() = graphView.graph!!
+	/** ---- [UndoableDataHolder] */
+
+	private var graphStorable: GraphStorable =
+		GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
 
 	override fun getUndoableState(): Storable? {
 		return graphStorable
@@ -44,6 +45,11 @@ open class GraphViewBuilder<T : Any>(
 		graphStorable = state as GraphStorable
 		LOG.debug("Set undoable state $state with GraphView ${graphView.hashCode().toString(16)}")
 	}
+
+	/** ---- [GraphViewBuilder] */
+
+	val graphView: GraphView get() = graphStorable.graphView
+	val graph: Graph get() = graphView.graph!!
 
 	fun build(): GraphView {
 		return graphView

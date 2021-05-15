@@ -41,8 +41,8 @@ interface UndoableDataHolder {
  * a warning that he will loose his changes), the application want the [CommandManager] to delete all registered
  * [Command]s back to the point where the modal dialog was opened. This can be done by opening a checkpoint when
  * the dialog is opened, and closing the checkpoint when the dialog is closed. It is up to the client code to
- * execute or register a special [Command] that represents the since opening the checkpoint, or to resign to do so
- * if these changes should be abandoned.
+ * execute or register a special [Command] that represents the changes performed since opening the checkpoint,
+ * or to resign to do so if these changes should be abandoned.
  */
 interface CommandManager {
 

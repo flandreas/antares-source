@@ -22,9 +22,8 @@ class ReconnectDestinationConnectorTest
 
 	init {
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
 	}
-
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
 
 	@Test
 	fun shouldReconnect() {
@@ -142,5 +141,19 @@ class ReconnectDestinationConnectorTest
 		pressEscape()
 
 		assertOriginal()
+	}
+
+	@Test
+	fun shouldAbortReconnectWhenReleasingOnOrigin() {
+		editor.commandManager.reset()
+		beginDragAndAbort()
+
+		assertOriginal()
+	}
+
+	private fun beginDragAndAbort() {
+		mouseMoveTo(205, 100)
+		pressMouseAt(205, 100)
+		releaseMouseAt(205, 100)
 	}
 }

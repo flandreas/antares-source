@@ -14,15 +14,22 @@ import ch.scorpion.jabbah.io.StorableCloner
 /**
  * A [CommandManager] implementation that uses "command sourcing".
  *
- * Instead of relying on "undo" logic in [Command], [SourcingCommandManager] stores snapshots of the
- * [Storable] application data. When a [Command] has to be undone, [SourcingCommandManager] takes the most recent
- * snapshot and replays all [Command]s registered since then, except the one to be undone.
+ * Simple [Command]s implement [Undoable], which allows this [SourcingCommandManager] to simpy call
+ * [Undoable.undo] when the [Command] has to be undone.
+ *
+ * In addition to relying on "undo" logic in [Command], [SourcingCommandManager] stores snapshots of the
+ * [Storable] application data. When a [Command] has to be undone that doesn't implement [Undoable],
+ * [SourcingCommandManager] takes the most recent [Snapshot] and replays all [Command]s registered since then,
+ * except the one to be undone.
  *
  * When the application resets it undoable state, it is required to communicate this to this [SourcingCommandManager]
  * by calling [SourcingCommandManager.reset], which will then clean its undo and redo stacks and create a new
  * snapshot.
  *
- * Note that is is not sufficient to create new snapshots in [execute], because clients can change the application
+ * When this [SourcingCommandManager] creates a new [Snapshot], it is set on [UndoableDataHolder]
+ * as the new current undoable state.
+ *
+ * Note that is is not sufficient to create new [Snapshot]s in [execute], because clients can change the application
  * state during complex editing operations, and [register] a corresponding [Command] afterwards.
  */
 class SourcingCommandManager(
@@ -36,6 +43,7 @@ class SourcingCommandManager(
 		private const val DEFAULT_STATE_NAME = "default"
 	}
 
+	/** Used to implement checkpoints.*/
 	private class State(val name: String) {
 		val snapshots = Stack<Snapshot>()
 		val redoSnapshots = Stack<Snapshot>()
