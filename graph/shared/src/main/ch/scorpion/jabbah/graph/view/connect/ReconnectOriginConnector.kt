@@ -46,6 +46,8 @@ class ReconnectOriginConnector(
 			connectService.connectToOrigin(edgeView!!, newConnection)
 		}
 
+		val originComponentId = (oldOrigin!!.connectableView as Component).id
+
 		context.editor.commandManager.beginTransaction(
 			command = ReconnectOriginCommand(
 				editor = context.editor,
@@ -58,7 +60,10 @@ class ReconnectOriginConnector(
 
 		if (pressLocation.distance(context.x, context.y) < MIN_DRAG_DISTANCE) {
 			context.editor.commandManager.rollbackTransaction()
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = oldOrigin!!.connectableView as Component, messageKey = "graph.reconnect.abort.msg"))
+			eventBus.post(ComponentMessage(
+				type = ComponentMessageType.Info,
+				source = context.editor.drawing.getWithId(originComponentId),
+				messageKey = "graph.reconnect.abort.msg"))
 		} else {
 			context.editor.commandManager.commitTransaction()
 		}
