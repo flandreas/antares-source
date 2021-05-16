@@ -163,7 +163,10 @@ abstract class AbstractSplitter(
 							// Split otherAccess and reduce its BitWidth to that of narrowSideAccess
 							otherAccess as DigitalCombinedNetAccess
 							val factor = otherAccess.width.width / narrowSideBitWidth.width
-							val index = narrowSideAccess.index - wideSideAccess.index * factor
+
+							val narrowInWideIndex = narrowSideAccess.index - wideSideAccess.index * factor
+							val index = otherAccess.index * factor + narrowInWideIndex
+
 							combinedNet.replaceAccess(
 								otherAccess.port,
 								DigitalCombinedNetAccess(otherAccess.port, narrowSideAccess.width, index)
