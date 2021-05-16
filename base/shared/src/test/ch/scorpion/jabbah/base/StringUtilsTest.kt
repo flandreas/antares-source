@@ -45,7 +45,14 @@ class StringUtilsTest {
 	@Test
     fun shouldReplaceBlockNegation() {
         assertEquals("A\u0305B\u0305", replaceNegation("!(AB)"))
+		assertEquals("CA\u0305B\u0305", replaceNegation("C!(AB)"))
+		assertEquals("A\u0305B\u0305C", replaceNegation("!(AB)C"))
     }
+
+	@Test
+	fun shouldNotReplaceBlockWithoutNegation() {
+		assertEquals("Bla (Blu)", replaceNegation("Bla (Blu)"))
+	}
 
 	@Test
 	fun shouldCreateStringList() {

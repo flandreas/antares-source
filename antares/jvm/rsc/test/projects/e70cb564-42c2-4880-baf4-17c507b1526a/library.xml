@@ -46,6 +46,11 @@
             <translation lang='en' text='4/8/2 Combiner'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='10' uuid='1edd94d0-0f5c-467d-aace-b5e80638e431'>
+          <name>
+            <translation lang='en' text='Bug 84'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

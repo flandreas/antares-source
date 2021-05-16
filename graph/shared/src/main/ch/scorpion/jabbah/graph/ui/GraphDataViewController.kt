@@ -14,7 +14,12 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.io.Storable
 
+/**
+ * An [ApplicationDataViewController] that treats [ApplicationData.content] as [MetaGraph]
+ * and [ApplicationData.savable] as [AbstractLibrarySavable].
+ */
 class GraphDataViewController(
 	commandManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus
@@ -58,6 +63,13 @@ class GraphDataViewController(
 		eventBus.unregister(libraryItemRemovedHandler)
 		eventBus.unregister(closeQuestionHandler)
 		eventBus.unregister(closeRequestHandler)
+	}
+
+	override fun setUndoableState(state: Storable) {
+		if (data?.savable is AbstractLibrarySavable && state is MetaGraph) {
+			(data?.savable as AbstractLibrarySavable).element.updateMetaGraph(state)
+		}
+		super.setUndoableState(state)
 	}
 
 	/**
@@ -111,7 +123,7 @@ class GraphDataViewController(
 	}
 
 	private fun handle(event: LibraryItemRemovedEvent) {
-		if (event.item is ContainerLibraryElement && event.item == (data!!.savable as AbstractLibrarySavable).element) {
+		if (event.item is ContainerLibraryElement && event.item == (data?.savable as AbstractLibrarySavable?)?.element) {
 			System.invokeLater { closeData() }
 		}
 	}

@@ -75,7 +75,6 @@ open class ApplicationDataViewController(
 		set(value) {
 			val oldField = field
 			field = value
-			LOG.debug("set application data to '$value'")
 			commandManager.reset()
 			eventBus.post(ApplicationDataEvent(oldField, field))
 			eventBus.post(CurrentSavableEvent(field?.savable))

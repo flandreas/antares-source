@@ -52,6 +52,11 @@ open class InputEventDriver(
 		return this
 	}
 
+	protected fun releaseKey(keyCode: Int): InputEventDriver {
+		handler.keyReleased(context(KeyEventType.RELEASED, keyCode))
+		return this
+	}
+
 	protected fun pressEscape(): InputEventDriver {
 		pressKey(KeyEvent.VK_ESCAPE)
 		return this

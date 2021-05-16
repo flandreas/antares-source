@@ -37,7 +37,7 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 			val portView = drawable.getPortViewAtConnectionPoint(context.x, context.y)
 			if (portView != null && portView.connectable) {
 				if (portView.port.portType.isOutput) {
-					return if (portView.port.isConnected) {
+					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
 						LOG.debug("delegating mouseMoved to ReconnectOriginConnector")
 						reconnectOriginConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
 						reconnectOriginConnector.handler
@@ -47,7 +47,7 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 						dslOutputToInputConnector.handler
 					}
 				} else if (portView.port.portType.isInput) {
-					return if (portView.port.isConnected) {
+					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
 						LOG.debug("delegating mouseMoved to ReconnectDestinationConnector")
 						reconnectDestinationConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
 						reconnectDestinationConnector.handler

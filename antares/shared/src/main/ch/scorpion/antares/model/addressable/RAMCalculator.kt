@@ -50,7 +50,12 @@ class RAMCalculator : VerticeCalculator<RAM> {
             return
         }
 
-	    ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
+	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
+	    if (addressInt == null) {
+		    undefinedOutput(ram, signalHandler)
+		    return
+	    }
+	    ram.currentSelectedAddress = addressInt
 
         if (data.changedPort === ram.getAddressInput()) {
             if (ram.isRead) {

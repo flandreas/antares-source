@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
@@ -15,6 +16,8 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlight.Companion.PROP_COLOR
+import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlight.Companion.SIZE_HALF
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
@@ -23,6 +26,13 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * is being moved or dragged.
  */
 interface ConnectionPointHighlight : Unzoomable {
+
+	companion object {
+		/** The name of the [Color] property in [DrawProperties] */
+		const val PROP_COLOR = "graph.view.isPort.highlight.color"
+		const val SIZE_HALF = 6.0
+	}
+
 	var location: Point2D
 	var alternativeView: Boolean
 }
@@ -37,11 +47,16 @@ object ConnectionPointHighlighter {
 
 	val hasPortViewHighlight: Boolean get() = portViewHighlight != null
 
-	fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D, alternativeView: Boolean = false) {
+	fun displayPortViewHighlight(
+		view: DrawingView<*>,
+		location: Point2D,
+		alternativeView: Boolean = false,
+		highlight: ConnectionPointHighlight = DrawModule.properties.get(PortView.PROP_HIGHLIGHT)
+	) {
 		LOG.trace("displayPortViewHighlight at $location")
 		if (portViewHighlight == null) {
 			view.setCursor(Cursor.CROSSHAIR)
-			portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
+			portViewHighlight = highlight
 			portViewHighlight!!.location = location
 			portViewHighlight!!.alternativeView = alternativeView
 			getHighlightContainer(view).add(portViewHighlight!!)
@@ -70,9 +85,7 @@ object ConnectionPointHighlighter {
 class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF), ConnectionPointHighlight {
 
 	companion object {
-		/** The name of the [Color] property in [DrawProperties] */
-		const val PROP_COLOR = "graph.view.isPort.highlight.color"
-		const val SIZE_HALF = 6.0
+
 		private const val INSET = 2
 
 		val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width)
@@ -111,5 +124,56 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 		context.g.fillRect(rect.x.toInt() + INSET, rect.y.toInt() + INSET, rect.width.toInt() - 2*INSET, rect.height.toInt() - 2*INSET)
 		context.g.stroke = stroke
 		context.g.drawRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+	}
+}
+
+class ConnectionPointReconnect : AbstractRectangularUnzoomable(SIZE_HALF), ConnectionPointHighlight {
+
+	companion object {
+		private const val SIZE_HALF = 6.0
+		private const val INSET = 3
+		private val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width)
+
+		private val NORTH = System.createPath()
+			.moveTo(0.0, -SIZE_HALF)
+			.lineTo(2.0, -SIZE_HALF + 2)
+			.lineTo(-2.0, -SIZE_HALF + 2)
+			.close()
+
+		private val SOUTH = System.createPath()
+			.moveTo(0.0, SIZE_HALF)
+			.lineTo(2.0, SIZE_HALF - 2)
+			.lineTo(-2.0, SIZE_HALF - 2)
+			.close()
+
+		private val EAST = System.createPath()
+			.moveTo(SIZE_HALF, 0.0)
+			.lineTo(SIZE_HALF - 2, -2.0)
+			.lineTo(SIZE_HALF - 2, 2.0)
+			.close()
+
+		private val WEST = System.createPath()
+			.moveTo(-SIZE_HALF, 0.0)
+			.lineTo(-SIZE_HALF + 2, -2.0)
+			.lineTo(-SIZE_HALF + 2, 2.0)
+			.close()
+	}
+
+	override val lineWidth: Double get() = stroke.width.toDouble()
+	override var alternativeView: Boolean = false
+
+	override fun draw(context: DrawContext) {
+		context.g.color = DrawModule.properties.getColor(PROP_COLOR)
+		context.g.stroke = stroke
+
+		val rect = getViewRectangle()
+		context.g.fillOval(rect.x.toInt() + INSET, rect.y.toInt() + INSET, rect.width.toInt() - 2* INSET, rect.height.toInt() - 2* INSET)
+
+		context.g.translate(rect.centerX, rect.centerY)
+		context.g.fill(NORTH)
+		context.g.fill(SOUTH)
+		context.g.fill(EAST)
+		context.g.fill(WEST)
+		context.g.translate(-rect.centerX, -rect.centerY)
 	}
 }
