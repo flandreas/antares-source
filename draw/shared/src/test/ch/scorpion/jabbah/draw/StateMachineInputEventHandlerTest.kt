@@ -68,7 +68,7 @@ class StateMachineInputEventHandlerTest {
 	}
 
 	init {
-		test.handler.sm.start()
+		test.handler.sm.start(context(MouseEventType.MOVED, 0, 0))
 	}
 
 	@Test

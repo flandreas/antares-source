@@ -53,7 +53,6 @@ class ReconnectDestinationConnector(
 				editor = context.editor,
 				service = connectService,
 				edgeViewId = edgeView!!.id,
-				oldConnection = oldDestination!!,
 				newPoint = context.location,
 				newConnectionRef = newConnection?.asReference
 			),
@@ -79,7 +78,6 @@ private class ReconnectDestinationCommand(
 	editor: Editor,
 	private val service: GraphViewConnectService,
 	private val edgeViewId: Int,
-	private val oldConnection: Connection<Any>,
 	private val newPoint: Point2D,
 	private val newConnectionRef: ConnectionReference?
 ) : AbstractCommand("graph.command.reconnect", editor) {

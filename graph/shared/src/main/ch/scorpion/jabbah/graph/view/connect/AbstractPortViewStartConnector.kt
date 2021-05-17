@@ -63,7 +63,7 @@ abstract class AbstractPortViewStartConnector(
 			ignoreEvent { it.keyEvent != null }
 
 			state("sense") {
-				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
+				onEntry { it.view.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStartDrag") {
 					given { it.mouseEvent?.isAltDown != true && mouseMoved(it) && insideStartPortView(it.location) }
 				}
@@ -73,8 +73,8 @@ abstract class AbstractPortViewStartConnector(
 			}
 
 			state("insideStartDrag") {
-				onEntry { displayPortViewHighlight(it!!) }
-				onExit { removePortViewHighlight(it!!) }
+				onEntry { displayPortViewHighlight(it) }
+				onExit { removePortViewHighlight(it) }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -85,17 +85,17 @@ abstract class AbstractPortViewStartConnector(
 				stayIf { mouseReleased(it) && it.mouseEvent?.isAltDown == true }
 				transitTo("adjust") {
 					given { mouseClicked(it) && it.mouseEvent?.isAltDown == true }
-					onTransit { beginConnecting(it!!) }
+					onTransit { beginConnecting(it) }
 				}
 				transitTo("drag") {
 					given { mousePressed(it) && it.mouseEvent?.isAltDown != true }
-					onTransit { beginConnecting(it!!) }
+					onTransit { beginConnecting(it) }
 				}
 			}
 
 			state("insideStartAdjust") {
-				onEntry { displayAlternativePortViewHighlight(it!!) }
-				onExit { removePortViewHighlight(it!!) }
+				onEntry { displayAlternativePortViewHighlight(it) }
+				onExit { removePortViewHighlight(it) }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -105,7 +105,7 @@ abstract class AbstractPortViewStartConnector(
 				}
 				transitTo("adjust") {
 					given { mouseClicked(it) }
-					onTransit { beginConnecting(it!!) }
+					onTransit { beginConnecting(it) }
 				}
 				// The following is necessary to properly support "mouseClicked". Couldn't that be automatically
 				// supported by the framework?
@@ -118,7 +118,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("drag") {
 						stayIf({ mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) && (!allowEdgeViewAsTarget || !insideTargetEdgeView(it)) }) {
-							onTransit { moveEdgeViewEndpoint(it!!) }
+							onTransit { moveEdgeViewEndpoint(it) }
 						}
 						transitTo("insideTargetPortView") {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
@@ -138,8 +138,8 @@ abstract class AbstractPortViewStartConnector(
 					}
 
 					state("insideTargetPortView") {
-						onEntry { snapToTargetPortView(it!!) }
-						onExit { removePortViewHighlight(it!!) }
+						onEntry { snapToTargetPortView(it) }
+						onExit { removePortViewHighlight(it) }
 						stayIf { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo("drag") {
 							given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -153,10 +153,10 @@ abstract class AbstractPortViewStartConnector(
 					}
 
 					state("insideTargetEdgeView") {
-						onEntry { snapToTargetEdgeView(it!!) }
-						onExit { removePortViewHighlight(it!!) }
+						onEntry { snapToTargetEdgeView(it) }
+						onExit { removePortViewHighlight(it) }
 						stayIf({ mouseDragged(it) && insideTargetEdgeView(it) }) {
-							onTransit { snapToTargetEdgeView(it!!) }
+							onTransit { snapToTargetEdgeView(it) }
 						}
 						transitTo("drag") {
 							given { mouseDragged(it) && !insideTargetEdgeView(it) }
@@ -171,30 +171,30 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connected") {
 						onEntry {
-							completeConnectingToEndPortOrOpen(it!!)
+							completeConnectingToEndPortOrOpen(it)
 							reset()
 						}
 					}
 
 					state("connectedToEdge") {
 						onEntry {
-							completeConnectingToEdge(it!!)
+							completeConnectingToEdge(it)
 							reset()
 						}
 					}
 
 					state("cancelled") {
-						onEntry { cancel(it!!.editor) }
+						onEntry { cancel(it.editor) }
 					}
 				}
 			}
 
 			superstate("adjust") {
-				onEntry { beginAdjustment(it!!) }
+				onEntry { beginAdjustment(it) }
 				stateMachine(Unhandled) {
 
 					state("move") {
-						onEntry { it?.view?.setCursor(Cursor.CROSSHAIR) }
+						onEntry { it.view.setCursor(Cursor.CROSSHAIR) }
 						stayIf { mousePressed(it) }
 						stayIf { mouseReleased(it) }
 						stayIf { keyReleased(it) }
@@ -205,10 +205,10 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseMoved(it) && insideTargetEdgeView(it) }
 						}
 						stayIf({ mouseMoved(it) }) {
-							onTransit { moveAdjustedPoint(it!!) }
+							onTransit { moveAdjustedPoint(it) }
 						}
 						stayIf({ mouseSingleClicked(it) }) {
-							onTransit { addAdjustedPoint(it!!) }
+							onTransit { addAdjustedPoint(it) }
 						}
 						transitTo("connected") {
 							given { mouseDoubleClicked(it) }
@@ -219,8 +219,8 @@ abstract class AbstractPortViewStartConnector(
 					}
 
 					state("insideTargetPortView") {
-						onEntry { adjustToTargetPortView(it!!) }
-						onExit { removePortViewHighlight(it!!) }
+						onEntry { adjustToTargetPortView(it) }
+						onExit { removePortViewHighlight(it) }
 						stayIf { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -236,10 +236,10 @@ abstract class AbstractPortViewStartConnector(
 					}
 
 					state("insideTargetEdgeView") {
-						onEntry { snapToTargetEdgeView(it!!) }
-						onExit { removePortViewHighlight(it!!) }
+						onEntry { snapToTargetEdgeView(it) }
+						onExit { removePortViewHighlight(it) }
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(it) }) {
-							onTransit { snapToTargetEdgeView(it!!) }
+							onTransit { snapToTargetEdgeView(it) }
 						}
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetEdgeView(it) }
@@ -256,7 +256,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connected") {
 						onEntry {
-							completeConnectingToEndPortOrOpen(it!!)
+							completeConnectingToEndPortOrOpen(it)
 							endAdjustment(it)
 							reset()
 						}
@@ -264,7 +264,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connectedToEdge") {
 						onEntry {
-							completeConnectingToEdge(it!!)
+							completeConnectingToEdge(it)
 							endAdjustment(it)
 							reset()
 						}
@@ -272,7 +272,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("cancelled") {
 						onEntry {
-							endAdjustment(it!!)
+							endAdjustment(it)
 							cancel(it.editor)
 						}
 					}
@@ -291,10 +291,10 @@ abstract class AbstractPortViewStartConnector(
 	 * Prepares this [AbstractPortViewStartConnector] to be used to create [EdgeView]s that the user
 	 * starts in the specified [VerticeView].
 	 */
-	fun useFor(verticeView: VerticeView<*>) {
+	fun useFor(verticeView: VerticeView<*>, context: EditInputEventContext) {
 		reset()
 		startVerticeView = verticeView
-		handler.sm.start()
+		handler.sm.start(context)
 	}
 
 	// For testing
@@ -388,7 +388,7 @@ abstract class AbstractPortViewStartConnector(
 		edgeView!!.validate()
 	}
 
-	protected fun adjustToTargetPortView(context: EditInputEventContext) {
+	private fun adjustToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
 		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connPointAbs)

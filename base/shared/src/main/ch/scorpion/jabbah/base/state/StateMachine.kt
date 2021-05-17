@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Strict
 
-typealias Action<T> = (T?) -> Unit
+typealias Action<T> = (T) -> Unit
 
 typealias Condition<T> = (T) -> Boolean
 
@@ -67,16 +67,16 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	lateinit var currentState: State<T>
 		private set
 
-	fun start(): StateMachine<T> {
+	fun start(event: T): StateMachine<T> {
 		if (states.isEmpty()) {
 			throw IllegalStateException("StateMachine must have at least 1 state")
 		}
 		LOG.debug("Start in state '${states.first().name}'")
-		enter(states.first(), event = null)
+		enter(states.first(), event)
 		return this
 	}
 
-	private fun enter(state: State<T>, event: T?) {
+	private fun enter(state: State<T>, event: T) {
 		LOG.debug("Enter state '${state.name}'")
 		currentState = state
 		state.enter(event)
@@ -185,7 +185,7 @@ open class State<T>(val name: String) {
 	private var exitAction: Action<T> = {}
 
 	/** Called by the [StateMachine] when this [State] is entered.*/
-	open fun enter(event: T?) {
+	open fun enter(event: T) {
 		entryAction.invoke(event)
 	}
 
@@ -257,9 +257,9 @@ class SuperState<T>(name: String) : State<T>(name) {
 	lateinit var stateMachine: StateMachine<T>
 		private set
 
-	override fun enter(event: T?) {
+	override fun enter(event: T) {
 		super.enter(event)
-		stateMachine.start()
+		stateMachine.start(event)
 	}
 
 	override fun handle(event: T): Boolean {

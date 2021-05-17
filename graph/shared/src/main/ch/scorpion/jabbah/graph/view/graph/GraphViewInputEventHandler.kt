@@ -39,21 +39,21 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 				if (portView.port.portType.isOutput) {
 					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
 						LOG.debug("delegating mouseMoved to ReconnectOriginConnector")
-						reconnectOriginConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
+						reconnectOriginConnector.useFor((container as GraphView).getEdgeView(portView.port)!!, context)
 						reconnectOriginConnector.handler
 					} else {
 						LOG.debug("delegating mouseMoved to OutputToInputConnector")
-						dslOutputToInputConnector.useFor(drawable)
+						dslOutputToInputConnector.useFor(drawable, context)
 						dslOutputToInputConnector.handler
 					}
 				} else if (portView.port.portType.isInput) {
 					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
 						LOG.debug("delegating mouseMoved to ReconnectDestinationConnector")
-						reconnectDestinationConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
+						reconnectDestinationConnector.useFor((container as GraphView).getEdgeView(portView.port)!!, context)
 						reconnectDestinationConnector.handler
 					} else {
 						LOG.debug("delegating mouseMoved to InputToOutputOrEdgeConnector")
-						dslInputToOutputOrEdgeConnector.useFor(drawable)
+						dslInputToOutputOrEdgeConnector.useFor(drawable, context)
 						dslInputToOutputOrEdgeConnector.handler
 					}
 				}

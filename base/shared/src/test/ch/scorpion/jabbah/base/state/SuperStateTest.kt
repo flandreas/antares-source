@@ -47,7 +47,7 @@ class SuperStateTest {
 
 	@Test
 	fun shouldEnterSubStateMachine() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		val handled = sm.handle("eventSuperstate")
 
@@ -60,7 +60,7 @@ class SuperStateTest {
 
 	@Test
 	fun shouldForwardEventToSubStateMachine() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		sm.handle("eventSuperstate")
 		sm.handle("eventSubstateB")

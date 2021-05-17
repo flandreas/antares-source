@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.graph.model.InputPort

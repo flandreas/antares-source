@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -52,7 +53,7 @@ class EdgeEndpointView(
 	/** ---- [Drawable] interface */
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		connectorSupplier.invoke().useFor(edgeView)
+		connectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
 		return connectorSupplier.invoke().handler as InputEventHandler<T>
 	}
 

@@ -53,12 +53,12 @@ class StateMachineTest {
 
 	@Test
 	fun shouldRejectToStartEmptyStateMachine() {
-		assertFailsWith(IllegalStateException::class) { StateMachine<Any>().start() }
+		assertFailsWith(IllegalStateException::class) { StateMachine<Any>().start("START") }
 	}
 
 	@Test
 	fun shouldEnterStartState() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		assertEquals("A", sm.currentState.name)
 		verify(exactly = 1) { entryA.invoke(any()) }
@@ -72,7 +72,7 @@ class StateMachineTest {
 
 	@Test
 	fun shouldTransit() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		val handled = sm.handle("eventB")
 
@@ -85,7 +85,7 @@ class StateMachineTest {
 
 	@Test
 	fun shouldStay() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		val handled = sm.handle("stay")
 
@@ -95,7 +95,7 @@ class StateMachineTest {
 
 	@Test
 	fun selfTransitionShouldNotTriggerAction() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		val handled = sm.handle("eventA")
 
@@ -107,14 +107,14 @@ class StateMachineTest {
 
 	@Test
 	fun strictStateMachineShouldRejectUnsupportedEvent() {
-		val sm = buildStateMachine().start()
+		val sm = buildStateMachine().start("START")
 
 		assertFailsWith(IllegalArgumentException::class) { sm.handle("unsupported")}
 	}
 
 	@Test
 	fun nonStrictStateMachineShouldIgnoreUnsupportedEvent() {
-		val sm = buildStateMachine(Unhandled).start()
+		val sm = buildStateMachine(Unhandled).start("START")
 
 		val handled = sm.handle("unsupported")
 
@@ -124,7 +124,7 @@ class StateMachineTest {
 
 	@Test
 	fun shouldStayInStateWithIgnoredEvent() {
-		val sm = buildStateMachine(Unhandled).start()
+		val sm = buildStateMachine(Unhandled).start("START")
 
 		val handled = sm.handle("ignored")
 

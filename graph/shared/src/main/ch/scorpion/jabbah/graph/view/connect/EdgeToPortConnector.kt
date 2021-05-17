@@ -9,9 +9,12 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMove
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mousePressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseReleased
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
@@ -39,26 +42,26 @@ class EdgeToPortConnector(
 			ignoreEvent { it.keyEvent != null }
 
 			state("sense") {
-				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
+				onEntry { it.view.setCursor(Cursor.DEFAULT) }
 				transitTo("insideEdge") {
 					given { mouseMoved(it) && snap(it) != null }
 				}
 			}
 
 			state("insideEdge") {
-				onEntry { displayPortViewHighlight(it!!, snap(it)!!.location) }
+				onEntry { displayPortViewHighlight(it, snap(it)!!.location) }
 				transitTo("insideEdge") {
 					given { mouseMoved(it) && snap(it) != null }
-					onTransit { displayPortViewHighlight(it!!, snap(it)!!.location) }
+					onTransit { displayPortViewHighlight(it, snap(it)!!.location) }
 				}
 				transitTo("sense") {
 					given { mouseMoved(it) && snap(it) == null }
-					onTransit { removePortViewHighlight(it!!) }
+					onTransit { removePortViewHighlight(it) }
 				}
 				transitTo("drag") {
 					given { mousePressed(it) }
 					onTransit {
-						beginConnecting(it!!)
+						beginConnecting(it)
 						removePortViewHighlight(it)
 					}
 				}
@@ -70,7 +73,7 @@ class EdgeToPortConnector(
 				}
 				transitTo("drag") {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
-					onTransit { moveEdgeViewEndpoint(it!!) }
+					onTransit { moveEdgeViewEndpoint(it) }
 				}
 				transitTo("connected") {
 					given { mouseReleased(it) && isValidEdgeView }
@@ -86,8 +89,8 @@ class EdgeToPortConnector(
 			// This is exactly the same code as in AbstractPortViewStartConnector. However, if we would use
 			// a common State builder for this State, we would loose the insight in the entire StateMachine here.
 			state("insideTargetPortView") {
-				onEntry { snapToTargetPortView(it!!) }
-				onExit { removePortViewHighlight(it!!) }
+				onEntry { snapToTargetPortView(it) }
+				onExit { removePortViewHighlight(it) }
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
@@ -104,21 +107,21 @@ class EdgeToPortConnector(
 
 			state("connected") {
 				onEntry {
-					completeConnecting(it!!)
+					completeConnecting(it)
 					reset()
 				}
 			}
 
 			state("cancelled") {
-				onEntry { cancel(it!!.editor) }
+				onEntry { cancel(it.editor) }
 			}
 		}
 	)
 
-	fun useFor(edgeView: EdgeView<*>) {
+	fun useFor(edgeView: EdgeView<*>, context: EditInputEventContext) {
 		reset()
 		branchedEdgeView = edgeView
-		handler.sm.start()
+		handler.sm.start(context)
 	}
 
 	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {

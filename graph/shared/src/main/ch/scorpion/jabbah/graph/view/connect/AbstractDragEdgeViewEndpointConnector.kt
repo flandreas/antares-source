@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
@@ -21,10 +20,6 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	draggedEndpointType: EdgeViewEndpointType
 ) : AbstractConnector(draggedEndpointType) {
 
-	companion object {
-		private val LOG by logger(AbstractDragEdgeViewEndpointConnector::class)
-	}
-
 	/** The location where dragging started. */
 	protected var oldLocation = Point2D.ZERO
 
@@ -33,15 +28,15 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		stateMachine<EditInputEventContext>(Unhandled) {
 
 			state("sense") {
-				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
+				onEntry { it.view.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStart") {
 					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location)}
 				}
 			}
 
 			state("insideStart") {
-				onEntry { displayPortViewHighlight(it!!) }
-				onExit { removePortViewHighlight(it!!) }
+				onEntry { displayPortViewHighlight(it) }
+				onExit { removePortViewHighlight(it) }
 				transitTo("insideStart") {
 					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location) }
 				}
@@ -50,7 +45,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				}
 				transitTo("drag") {
 					given { StateMachineInputEventHandler.mousePressed(it) }
-					onTransit { beginDragging(it!!) }
+					onTransit { beginDragging(it) }
 				}
 				transitTo("sense") {
 					given { StateMachineInputEventHandler.altReleased(it) }
@@ -63,7 +58,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				}
 				transitTo("drag") {
 					given { StateMachineInputEventHandler.mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it)}
-					onTransit { moveEdgeViewEndpoint(it!!) }
+					onTransit { moveEdgeViewEndpoint(it) }
 				}
 				transitTo("draggedOpen") {
 					given { StateMachineInputEventHandler.mouseReleased(it) }
@@ -77,8 +72,8 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			}
 
 			state("insideTargetPortView") {
-				onEntry { snapToTargetPortView(it!!) }
-				onExit { removePortViewHighlight(it!!) }
+				onEntry { snapToTargetPortView(it) }
+				onExit { removePortViewHighlight(it) }
 				transitTo("insideTargetPortView") {
 					given { StateMachineInputEventHandler.mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
@@ -95,7 +90,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("draggedOpen") {
 				onEntry {
-					removePortViewHighlight(it!!)
+					removePortViewHighlight(it)
 					completeDragOpen(it)
 					reset()
 				}
@@ -103,7 +98,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("connected") {
 				onEntry {
-					removePortViewHighlight(it!!)
+					removePortViewHighlight(it)
 					completeDragConnecting(it)
 					reset()
 				}
@@ -111,7 +106,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("cancelled") {
 				onEntry {
-					it!!.view.setCursor(Cursor.DEFAULT)
+					it.view.setCursor(Cursor.DEFAULT)
 					cancel(it.editor)
 				}
 			}
@@ -124,9 +119,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 	abstract fun cancel(editor: Editor)
 
-	fun useFor(edgeView: EdgeView<*>) {
+	fun useFor(edgeView: EdgeView<*>, context: EditInputEventContext) {
 		this.edgeView = edgeView as EdgeView<Any>
-		handler.sm.start()
+		handler.sm.start(context)
 	}
 
 	// For testing
