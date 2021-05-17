@@ -84,7 +84,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 
         /** Adds an additional [Point2D] by double-clicking.*/
         override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            if (context.mouseEvent!!.clickCount == 2) {
+            if (context.mouseEvent?.clickCount == 2) {
                 component.findSegment(context.x, context.y, 10)?.let {
                     LOG.debug("Add handle $it")
                     val snap = context.editor.snapManager.snap(context.x, context.y)

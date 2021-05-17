@@ -135,7 +135,7 @@ class OscilloscopeProbeView(
 				it
 			}
 
-			context.mouseEvent!!.consume()
+			context.mouseEvent?.consume()
 			validate()
 
 			return vv

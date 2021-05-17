@@ -72,7 +72,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
 			var component: Component? = null
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-				if (context.mouseEvent!!.clickCount == 2) {
+				if (context.mouseEvent?.clickCount == 2) {
 					cannotOpenMsg(component!!)
 				}
 				return null

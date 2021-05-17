@@ -485,7 +485,7 @@ class SubGraphVerticeViewImpl(
 
 	private inner class EditInteractionHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-			if (context.mouseEvent!!.button == Button.BUTTON1 && context.mouseEvent!!.clickCount == 2) {
+			if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
 				requestOpenSubGraph(context.mouseEvent!!)
 				return null
 			}
@@ -514,7 +514,7 @@ class SubGraphVerticeViewImpl(
 				?.getActorInteractionHandler(context)
 				?.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
 
-			if (!context.mouseEvent!!.isConsumed() && context.mouseEvent!!.clickCount == 2) {
+			if (context.mouseEvent?.isConsumed() != true && context.mouseEvent?.clickCount == 2) {
 				requestOpenSubGraph(context.mouseEvent!!)
 			}
 
@@ -524,7 +524,7 @@ class SubGraphVerticeViewImpl(
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			getActorViews().forEach {
 				it.getActorInteractionHandler(context).keyPressed(context)
-				if (context.keyEvent!!.isConsumed()) {
+				if (context.keyEvent?.isConsumed() == true) {
 					return null
 				}
 			}
@@ -534,7 +534,7 @@ class SubGraphVerticeViewImpl(
 		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			getActorViews().forEach {
 				it.getActorInteractionHandler(context).keyReleased(context)
-				if (context.keyEvent!!.isConsumed()) {
+				if (context.keyEvent?.isConsumed() == true) {
 					return null
 				}
 			}

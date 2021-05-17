@@ -369,7 +369,7 @@ open class TextComponentJvm(
 		}
 
 		override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			if (context.mouseEvent!!.clickCount == 2) {
+			if (context.mouseEvent?.clickCount == 2) {
 				startEditing(context.editor)
 				return this
 			}

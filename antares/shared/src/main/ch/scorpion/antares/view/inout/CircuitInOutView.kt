@@ -595,7 +595,7 @@ class CircuitInOutView(
 				return null
 			}
 			if (numberView!!.focusIndex != null) {
-				if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
+				if (context.keyEvent?.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 					toggleFocusBitWithEnter(context.signalHandler)
 				}
 			}

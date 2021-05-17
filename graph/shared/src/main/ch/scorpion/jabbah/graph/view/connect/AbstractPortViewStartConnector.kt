@@ -45,9 +45,9 @@ abstract class AbstractPortViewStartConnector(
 		private set
 
 	/** The found target [EdgeView], if any. */
-	protected var targetEdgeView: EdgeView<*>? = null
+	private var targetEdgeView: EdgeView<*>? = null
 
-	protected var targetEdgeViewSegmentIndex: Int? = null
+	private var targetEdgeViewSegmentIndex: Int? = null
 
 	/**
 	 * The indices of the points in [edgeView] that have been manually set (i.e. adjusted) by the user.
@@ -65,10 +65,10 @@ abstract class AbstractPortViewStartConnector(
 			state("sense") {
 				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStartDrag") {
-					given { !it.mouseEvent!!.isAltDown && mouseMoved(it) && insideStartPortView(it.location) }
+					given { it.mouseEvent?.isAltDown != true && mouseMoved(it) && insideStartPortView(it.location) }
 				}
 				transitTo("insideStartAdjust") {
-					given { it.mouseEvent!!.isAltDown && mouseMoved(it) && insideStartPortView(it.location) }
+					given { it.mouseEvent?.isAltDown == true && mouseMoved(it) && insideStartPortView(it.location) }
 				}
 			}
 
@@ -82,13 +82,13 @@ abstract class AbstractPortViewStartConnector(
 				transitTo("insideStartAdjust") {
 					given { altPressed(it) }
 				}
-				stayIf { mouseReleased(it) && it.mouseEvent!!.isAltDown }
+				stayIf { mouseReleased(it) && it.mouseEvent?.isAltDown == true }
 				transitTo("adjust") {
-					given { mouseClicked(it) && it.mouseEvent!!.isAltDown }
+					given { mouseClicked(it) && it.mouseEvent?.isAltDown == true }
 					onTransit { beginConnecting(it!!) }
 				}
 				transitTo("drag") {
-					given { mousePressed(it) && !it.mouseEvent!!.isAltDown }
+					given { mousePressed(it) && it.mouseEvent?.isAltDown != true }
 					onTransit { beginConnecting(it!!) }
 				}
 			}

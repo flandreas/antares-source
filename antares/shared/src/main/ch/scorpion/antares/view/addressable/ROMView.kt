@@ -398,8 +398,8 @@ class ROMView(
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-			if (context.mouseEvent!!.clickCount == 2) {
-				requestOpenMemoryContents(context.readonly, context.mouseEvent!!.isAltDown)
+			if (context.mouseEvent?.clickCount == 2) {
+				requestOpenMemoryContents(context.readonly, context.mouseEvent?.isAltDown == true)
 				return null
 			}
 			return super.mouseClicked(context)
@@ -408,8 +408,8 @@ class ROMView(
 
 	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent!!.clickCount == 2) {
-				requestOpenMemoryContents(false, context.mouseEvent!!.isAltDown)
+			if (context.mouseEvent?.clickCount == 2) {
+				requestOpenMemoryContents(false, context.mouseEvent?.isAltDown == true)
 			}
 			return null
 		}
