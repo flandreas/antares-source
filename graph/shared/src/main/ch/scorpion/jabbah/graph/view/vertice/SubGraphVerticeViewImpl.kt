@@ -95,6 +95,8 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- UI properties */
 
+	// Used by reflection as bean property
+	@Suppress("MemberVisibilityCanBePrivate")
 	var isHorizontallyMirrored: Boolean = false
 		set(value) {
 			if (value == field) {
@@ -104,6 +106,8 @@ class SubGraphVerticeViewImpl(
 			mirrorHorizontally(location.x)
 		}
 
+	// Used by reflection as bean property
+	@Suppress("MemberVisibilityCanBePrivate")
 	var isVerticallyMirrored: Boolean = false
 		set(value) {
 			if (value == field) {
@@ -187,9 +191,9 @@ class SubGraphVerticeViewImpl(
 				context = Translations.getString("graph.property.ContainerDrawing.execDrawScript.name"))
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
-		draw(context) {
+		draw(context) { c ->
 			drawables.forEach { drawableDrawer.invoke(it) }
-			super.drawImpl(it)
+			super.drawImpl(c)
 		}
 	}
 
@@ -205,7 +209,7 @@ class SubGraphVerticeViewImpl(
 		if (isVerticallyMirrored) {
 			writer.writeBoolean("mirrorV", isVerticallyMirrored)
 		}
-		if (label != null) {
+		if (label != null && label!!.isNotEmpty) {
 			writer.writeStorables("label", label!!.allTranslations())
 		}
 		if (customizedContainerDrawing != null) {
@@ -233,13 +237,21 @@ class SubGraphVerticeViewImpl(
 				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
 			))
 		}
+		var tempLabel: Translatable? = null
 		if (reader.hasAttribute("label")) {
 			// Backward compatibility
-			label = TranslatableText(reader.readString("label"))
+			tempLabel = TranslatableText(reader.readString("label"))
 		}
 		if (reader.hasElement("label")) {
-			label = TranslatableText(reader.readStorables("label"))
+			tempLabel = TranslatableText(reader.readStorables("label"))
 		}
+		// The label depends on the container drawing, so resolve the label after the model has been read
+		reader.requestResolution(this, Reference(
+			name = "label",
+			additionalInfo = tempLabel,
+			resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
+		))
+
 		if (reader.hasElement("container")) {
 			customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing
 			reader.requestResolution(this, Reference(
@@ -263,6 +275,9 @@ class SubGraphVerticeViewImpl(
 			if (model.designError != null) {
 				fillDesignErrorRepresentation()
 			}
+		}
+		if ("label" == reference.name) {
+			label = reference.additionalInfo as Translatable?
 		}
 		if ("mirrorH" == reference.name) {
 			isHorizontallyMirrored = reference.additionalInfo as Boolean
@@ -331,7 +346,7 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [SubGraphVerticeView] */
 
-	override val subGraphVertice: SubGraphVertice? get() = model
+	override val subGraphVertice: SubGraphVertice get() = model
 
 	override var drawExecScript: String? = null
 
@@ -352,7 +367,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun createSubGraphView(): GraphView {
-		val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
+		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
 		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
 		graphView.bind()
 		return graphView
@@ -413,7 +428,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun getGraph(): Graph {
-		return subGraphVertice!!.getGraph(repository, storableCreator)
+		return subGraphVertice.getGraph(repository, storableCreator)
 	}
 
 	private fun getLabelComponent(): LabelComponent? {
@@ -442,7 +457,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun getLibraryContainerDrawing(): ContainerDrawing {
-		val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
+		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
 		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator)
 	}
 
