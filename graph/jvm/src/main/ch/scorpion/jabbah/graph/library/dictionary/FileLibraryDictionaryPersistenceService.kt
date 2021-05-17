@@ -27,7 +27,7 @@ abstract class AbstractFileLibraryDictionaryPersistenceService : LibraryDictiona
 	override fun load(): LibraryDictionary {
 		try {
 			createInputStream().use {
-				LOG.debug("loading entries")
+				LOG.trace("loading entries")
 				val storeReader = StoreXmlReader(ElectricXmlReader(it))
 				return storeReader.readStorable() as LibraryDictionary
 			}
@@ -76,7 +76,7 @@ class FileLibraryDictionaryPersistenceService(
 			ensureLibraryDirectory()
 			FileOutputStream(filePath).use {
 				try {
-					LOG.debug("storing entries")
+					LOG.trace("storing entries")
 					val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 					storeWriter.writeStorable(dictionary)
 				} catch (e: Throwable) {

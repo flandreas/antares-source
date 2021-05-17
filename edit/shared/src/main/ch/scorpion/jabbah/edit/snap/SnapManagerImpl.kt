@@ -65,7 +65,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
 	override fun addSnapper(snapper: Snapper) {
 		if (!snappers.contains(snapper)) {
-			LOG.debug("adding snapper '${System.getClassName(snapper)}'")
+			LOG.trace("adding snapper '${System.getClassName(snapper)}'")
 			snappers.add(snapper)
 		}
 	}
@@ -275,7 +275,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 			editor.view.ghostContainer.remove(highlightX!!)
 		}
 		if (newHighlightX != null && result.snappedX) {
-			LOG.debug("Highlight x coordinate at ${result.x}")
+			LOG.trace("Highlight x coordinate at ${result.x}")
 			editor.view.ghostContainer.add(newHighlightX)
 		}
 		highlightX = newHighlightX
@@ -292,7 +292,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 			editor.view.ghostContainer.remove(highlightY!!)
 		}
 		if (newHighlightY != null && result.snappedY) {
-			LOG.debug("Highlight y coordinate at ${result.y}")
+			LOG.trace("Highlight y coordinate at ${result.y}")
 			editor.view.ghostContainer.add(newHighlightY)
 		}
 		highlightY = newHighlightY
@@ -300,12 +300,12 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
 	private fun removeAllHighlights() {
 		highlightX?.let {
-			LOG.debug("removing highlightX from view")
+			LOG.trace("removing highlightX from view")
 			editor.view.ghostContainer.remove(highlightX!!)
 			highlightX = null
 		}
 		highlightY?.let {
-			LOG.debug("removing highlightY from view")
+			LOG.trace("removing highlightY from view")
 			editor.view.ghostContainer.remove(highlightY!!)
 			highlightY = null
 		}

@@ -152,7 +152,7 @@ class ComponentSnapper(
 	}
 
 	override fun getSnapHighlightX(x: Double, y: Double): Unzoomable? {
-		LOG.debug("getSnapHighlightX for $x")
+		LOG.trace("getSnapHighlightX for $x")
 		if (highlightX == null) {
 			highlightX = SnapHighlightX()
 		}
@@ -161,7 +161,7 @@ class ComponentSnapper(
 	}
 
 	override fun getSnapHighlightY(x: Double, y: Double): Unzoomable? {
-		LOG.debug("getSnapHighlightX for $y")
+		LOG.trace("getSnapHighlightX for $y")
 		if (highlightY == null) {
 			highlightY = SnapHighlightY()
 		}

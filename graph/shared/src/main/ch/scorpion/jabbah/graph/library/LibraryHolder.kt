@@ -20,7 +20,7 @@ class LibraryHolder(
     var l: Library? = l
         set(value) {
 	        if (field != value) {
-		        LOG.debug("LibraryHolder: setting current Library to '${value?.name}'")
+		        LOG.trace("LibraryHolder: setting current Library to '${value?.name}'")
 		        val oldValue = field
 		        field?.dispose()
 		        field = value

@@ -223,7 +223,7 @@ open class PortImpl<T : Any>(
 		val logMsg = "Inconsistent net signal ${conflict.signal} from port $portId in ${owner?.id}. Conflict with " +
 			"${conflict.destinationPort.getOutgoingSignal()} from ${conflict.destinationPort.portId} " +
 			"in ${conflict.destinationPort.owner!!.id}"
-		LOG.debug(logMsg)
+		LOG.trace(logMsg)
 		signalHandler.logTrace(System.getClass(this), portId) { logMsg }
 
 		conflict.combinedNet.setExecutionError(error)

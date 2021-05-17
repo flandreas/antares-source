@@ -105,7 +105,7 @@ class ScenarioStepImpl(
 	override fun activate(view: DrawingView<GraphView>) {
 		if (StringUtils.isNotEmpty(onEntryScript)) {
 			try {
-				LOG.debug("Activate ScenarioStep '$name'")
+				LOG.trace("Activate ScenarioStep '$name'")
 				scriptGateway.exec(wrappedOnEntryScript, view)
 			} catch (e: Throwable) {
 				LOG.error("Error in onEntry script of ScenarioStep '$name'")
@@ -123,7 +123,7 @@ class ScenarioStepImpl(
 	override fun passivate(view: DrawingView<GraphView>) {
 		if (StringUtils.isNotEmpty(onExitScript)) {
 			try {
-				LOG.debug("Passivate ScenarioStep '$name'")
+				LOG.trace("Passivate ScenarioStep '$name'")
 				scriptGateway.exec(wrappendOnExitScript, view)
 			} catch (e: Throwable) {
 				LOG.error("Error in onExit script of ScenarioStep '$name'")

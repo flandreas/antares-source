@@ -56,7 +56,7 @@ class UsecaseTestRunner(
 			val usecase = nextUsecases.first()
 			nextUsecases.removeAt(0)
 
-			LOG.debug("Running test of usecase '${usecase.name.value}'")
+			LOG.trace("Running test of usecase '${usecase.name.value}'")
 
 			_usecase = usecase
 			_script = Script(usecase.testScript!!, usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))

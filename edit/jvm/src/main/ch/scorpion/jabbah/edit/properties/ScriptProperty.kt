@@ -57,12 +57,12 @@ class ScriptPropertyEditor(private val propertyName: String, private val editabl
 	}
 
 	override fun getValue(): Any {
-		LOG.debug("get value $script")
+		LOG.trace("get value $script")
 		return script
 	}
 
 	override fun setValue(value: Any?) {
-		LOG.debug("set value $value")
+		LOG.trace("set value $value")
 		script = value as ScriptProperty
 		label.text = ScriptPropertyRenderer.getText(script)
 	}

@@ -43,7 +43,7 @@ open class GraphViewBuilder<T : Any>(
 
 	override fun setUndoableState(state: Storable) {
 		graphStorable = state as GraphStorable
-		LOG.debug("Set undoable state $state with GraphView ${graphView.hashCode().toString(16)}")
+		LOG.trace("Set undoable state $state with GraphView ${graphView.hashCode().toString(16)}")
 	}
 
 	/** ---- [GraphViewBuilder] */

@@ -142,7 +142,7 @@ class LEDMatrix(
 
 	/** Updates the internal buffer after any [InputPort] has changed.*/
 	private fun updateBuffer(portChanged: Boolean, signalHandler: SignalHandler) {
-		LOG.debug("LEDMatrix on ${signalHandler.executionTime}: updateBuffer with portChanged=$portChanged")
+		LOG.trace("LEDMatrix on ${signalHandler.executionTime}: updateBuffer with portChanged=$portChanged")
 
 		val time = signalHandler.executionTime + afterglowDuration * 1_000_000
 		val rowValue = rowPort.getIncomingSignal() as Word
@@ -159,10 +159,10 @@ class LEDMatrix(
 					anyChanged = anyChanged || isNewValue != hasOldValue
 					anySwitchedOff = anySwitchedOff || switchedOff
 					if (isNewValue) {
-						LOG.debug("LEDMatrix: switched on at $columnIndex,$rowIndex")
+						LOG.trace("switched on at $columnIndex,$rowIndex")
 						glowUntil(columnIndex, rowIndex, Long.MAX_VALUE)
 					} else if (switchedOff) {
-						LOG.debug("LEDMatrix: switched off at $columnIndex,$rowIndex, afterglowing until $time")
+						LOG.trace("switched off at $columnIndex,$rowIndex, afterglowing until $time")
 						glowUntil(columnIndex, rowIndex, time)
 					}
 				}
@@ -176,7 +176,7 @@ class LEDMatrix(
 			stateChanged(signalHandler)
 		}
 		if (anySwitchedOff) {
-			LOG.debug("LEDMatrix: Request switch-off at ${signalHandler.executionTime + afterglowDuration * 1_000_000} ns")
+			LOG.trace("Request switch-off at ${signalHandler.executionTime + afterglowDuration * 1_000_000} ns")
 			signalHandler.requestActingAfter(this, afterglowDuration * 1_000_000, createActorData(null))
 		}
 	}
@@ -184,7 +184,7 @@ class LEDMatrix(
 	private fun hasExpired(cellTime: Long?, currentTime: Long): Boolean = cellTime != null && cellTime <= currentTime
 
 	private fun fadeOut(columnIndex: Int, rowIndex: Int) {
-		LOG.debug("LEDMatrix: end afterglowing of $columnIndex,$rowIndex")
+		LOG.trace("end afterglowing of $columnIndex,$rowIndex")
 		buffer[columnIndex]!!.remove(rowIndex)
 	}
 

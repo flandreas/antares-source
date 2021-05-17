@@ -53,7 +53,7 @@ open class GraphViewAppServiceImpl(
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
-		LOG.debug("delete ${components.size} components")
+		logComponentAction("Delete", components)
 
 		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
 
@@ -84,7 +84,7 @@ open class GraphViewAppServiceImpl(
 	/** ---- [GraphViewAppService] interface */
 
 	override fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, editor: Editor): Component {
-		LOG.debug("Add Component from LibraryElement ${libraryElement.name}")
+		LOG.debug("Add Component '${libraryElement.name}' from library/project")
 
 		val command = AddGraphElementViewFromLibraryCommand(editor, libraryElement, location, componentCustomizer = ::customizeAddedComponent)
 		commandManager.execute(command)
@@ -99,7 +99,7 @@ open class GraphViewAppServiceImpl(
 	/** ---- [GraphViewAppServiceImpl] */
 
 	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, drawingView: DrawingView<GraphView>) {
-		LOG.debug("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
+		LOG.trace("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
 		drawingView.drawing.getEdgeViews()
 			.filter { ev -> ev.origin?.connectableView === verticeView }
 			.forEach { ev -> commandManager.execute(UnconnectEdgeViewOriginCommand(drawingView, connectService, ev.id)) }
@@ -109,7 +109,7 @@ open class GraphViewAppServiceImpl(
 	}
 
 	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, drawingView: DrawingView<GraphView>) {
-		LOG.debug("unconnectDeletedEdgeView for verticeView ${edgeView.id}")
+		LOG.trace("unconnectDeletedEdgeView for verticeView ${edgeView.id}")
 		commandManager.execute(UnconnectEdgeViewCommand(drawingView, connectService, edgeView.id))
 	}
 

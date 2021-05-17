@@ -160,7 +160,7 @@ class PreferencesTreePanel(
 
 		override fun customize(preference: Preference, value: Any) {
 			if (origPreferences.getOptional<Any>(preference.id) != value) {
-				LOG.debug("customizing property '${preference.id}' with '$value'")
+				LOG.trace("customizing property '${preference.id}' with '$value'")
 				changed = true
 				needsRestart = needsRestart || preference.needsRestart
 				accumulator.customize(preference.id, value)
@@ -208,7 +208,6 @@ class PreferencesDialogPanel(
 
 	private val closeAction = object : AbstractAction("base.action.close") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("closeAction")
 			closeHandler.invoke()
 		}
 	}

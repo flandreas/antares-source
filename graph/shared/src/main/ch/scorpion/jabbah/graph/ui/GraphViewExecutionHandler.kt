@@ -188,7 +188,7 @@ class GraphViewExecutionHandler(
 	private inner class KeyHandler : KeyAdapter() {
 
 		override fun keyPressed(e: KeyEvent) {
-			LOG.debug("keyPressed: ${e.key}")
+			LOG.trace("keyPressed: ${e.key}")
 
 			val context = keyEventContext(e)
 

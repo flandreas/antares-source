@@ -198,7 +198,7 @@ class GraphPanelViewController(
 		stopSimulationWhenClosingApplicationData(event.newData)
 
 		val editable = event.newData?.savable?.editable ?: false
-		LOG.debug("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
+		LOG.trace("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
 		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
 	}
 

@@ -149,7 +149,7 @@ class MetaGraph(
 	}
 
 	init {
-		LOG.debug("Instantiated new MetaGraph with ID ${hashCode()}")
+		LOG.trace("Instantiated new MetaGraph with ID ${hashCode()}")
 		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)

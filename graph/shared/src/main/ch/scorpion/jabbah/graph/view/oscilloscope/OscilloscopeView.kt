@@ -340,7 +340,7 @@ class OscilloscopeView(
 		override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
 			super.drawableRemoved(event)
 			if (event.child is OscilloscopeProbeVerticeView<*>) {
-				LOG.debug("Removed OscilloscopeProbeView from drawing")
+				LOG.trace("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
 				findRowView(comp.name)?.handleProbeViewRemovedFromDrawing()
 			}

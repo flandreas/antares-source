@@ -123,7 +123,7 @@ class AddressableDisplayPanel(
 		override fun verify(input: JComponent?): Boolean {
 			val text = (input as JTextComponent).text
 			val result = BitOperation.normalizeHex(text.trim(), bitWidth) != null
-			LOG.debug("verifying '$text': $result")
+			LOG.trace("verifying '$text': $result")
 			return result
 		}
 	}
@@ -135,7 +135,7 @@ class AddressableDisplayPanel(
 
 		override fun tableChanged(e: TableModelEvent?) {
 			if (e is AddressableTableModelEvent) {
-				LOG.debug("cell at ${e.firstRow},${e.column} changed")
+				LOG.trace("cell at ${e.firstRow},${e.column} changed")
 				val address = addressableDisplayLayout.getCellAddress(e.firstRow, e.column)
 				val newValue = getCurrentValue(e.firstRow, e.column)
 				changes[address] = AddressableCellChange(address, newValue, getOrigValue(address, e.oldValue))

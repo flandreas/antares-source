@@ -39,7 +39,7 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 			try {
 				val storeReader = StoreXmlReader(ElectricXmlReader(it))
 				val metaGraph = storeReader.readStorable() as MetaGraph
-				LOG.debug("loaded MetaGraph '$uuid' with ID ${metaGraph.hashCode()}")
+				LOG.trace("loaded MetaGraph '$uuid' with ID ${metaGraph.hashCode()}")
 				return metaGraph
 			} catch (e: Throwable) {
 				LOG.error("Error while loading MetaGraph $uuid: ${e.message}")
@@ -49,7 +49,7 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-		LOG.debug("store MetaGraph '${metaGraph.uuid} with ID ${metaGraph.hashCode()}'")
+		LOG.trace("store MetaGraph '${metaGraph.uuid} with ID ${metaGraph.hashCode()}'")
 		ensureLibraryDirectory(library.uuid)
 		createMetaGraphOutputStream(library.uuid, metaGraph.uuid).use {
 			try {

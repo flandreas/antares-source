@@ -58,7 +58,7 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 		private var pressedX: Double = 0.0
 		private var pressedY: Double = 0.0
 
-		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mousePressed(context)
 			zoomPan = context.view.zoomPan
 			pressedX = context.x
@@ -70,7 +70,7 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mouseDragged(context)
 			setBounds(
 				min(pressedX, context.x),
@@ -82,8 +82,8 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 			return this
 		}
 
-		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("RectangularRubberBand: mouseReleased")
+		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+			LOG.trace("mouseReleased")
 			super.mouseReleased(context)
 			context.drawingView().ghostContainer.remove(this@RectangularRubberBand)
 			context.drawingView().ghostContainer.validate()

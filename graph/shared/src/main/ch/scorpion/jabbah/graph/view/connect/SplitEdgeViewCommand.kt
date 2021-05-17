@@ -43,7 +43,7 @@ class SplitEdgeViewCommand(
 	lateinit var addedNewEdgeView: EdgeView<Any>
 
 	override fun execute() {
-		LOG.debug("Execute on GraphView ${graphView.hashCode().toString(16)}")
+		LOG.trace("Execute on GraphView ${graphView.hashCode().toString(16)}")
 
 		addedNewEdgeView = StorableCloner.clone(newEdgeView) as EdgeView<Any>
 

@@ -29,12 +29,12 @@ class SelectionModelFactoryImpl : SelectionModelFactory {
 				return entry.factory.invoke(component.selectableComponent)
 			}
 		}
-		LOG.debug("No suitable SelectionModel found for ${System.getClassName(component.selectableComponent)}")
+		LOG.warn("No suitable SelectionModel found for ${System.getClassName(component.selectableComponent)}")
 		return null
 	}
 
 	override fun register(strategy: SelectionDrawingStrategy, componentClass: KClass<*>, factory: (Component) -> SelectionModel<Component>) {
-		registry.getOrPut(strategy, { mutableListOf() }).add(Entry(System.getClassName(componentClass), factory))
+		registry.getOrPut(strategy) { mutableListOf() }.add(Entry(System.getClassName(componentClass), factory))
 	}
 
 	/** ----  [SelectionModelFactoryImpl] */

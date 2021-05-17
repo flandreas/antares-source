@@ -17,8 +17,8 @@ actual object StorableCloner : AbstractStorableCloner() {
 		val writer = StoreXmlWriter(xmlWriter, IOModule.typeMap, identityProvider)
 		writer.writeStorable(storable)
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug(buffer.toString())
+		if (LOG.isTraceEnabled()) {
+			LOG.trace(buffer.toString())
 		}
 
 		return buffer.toString()

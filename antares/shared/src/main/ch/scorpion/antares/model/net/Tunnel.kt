@@ -42,7 +42,7 @@ class Tunnel(
 		private class Calculator : VerticeCalculator<Tunnel> {
 			override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
 				(vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true
-				LOG.debug("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}'")
+				LOG.trace("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}'")
 				vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
 			}
 		}
@@ -100,7 +100,7 @@ class Tunnel(
 	 */
 	fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
 		if (signal != getOutput<DigitalSignal>().getOutgoingSignal()) {
-			LOG.debug("Tunnel $id: setSignal '$signal'")
+			LOG.trace("Tunnel $id: setSignal '$signal'")
 			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 		}
 	}

@@ -99,18 +99,17 @@ class LibraryTreeViewJs(
 
 	override fun expandTo(element: ContainerLibraryElement) {
 		// TODO
-		LOG.debug("expandTo not yet implemented")
+		LOG.warn("expandTo not yet implemented")
 	}
 
 	override fun expandAllFromSelection() {
 		// TODO
-		LOG.debug("expandAllFromSelection not yet implemented")
+		LOG.warn("expandAllFromSelection not yet implemented")
 	}
 
 	override fun collapseAtSelection() {
 		// TODO
-		LOG.debug("collapseAtSelection not yet implemented")
-
+		LOG.warn("collapseAtSelection not yet implemented")
 	}
 
 	override fun openLibrary(library: Library) {

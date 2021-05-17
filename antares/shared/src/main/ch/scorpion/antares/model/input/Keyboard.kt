@@ -150,7 +150,7 @@ class Keyboard(
 	private fun consume(signalHandler: SignalHandler) {
 		if (isReadEnabled && !isEmpty) {
 			val data = buffer.removeAt(0)
-			LOG.debug("consuming ${data}")
+			LOG.trace("consuming $data")
 			updateState(signalHandler)
 		}
 	}

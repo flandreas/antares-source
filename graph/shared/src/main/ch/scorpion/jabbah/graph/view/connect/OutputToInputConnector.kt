@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -26,6 +27,10 @@ class OutputToInputConnector(
 	draggedEndpointType = EdgeViewEndpointType.DESTINATION
 ) {
 
+	companion object {
+		private val LOG by logger(OutputToInputConnector::class)
+	}
+
 	override fun createAdjustment(): EdgeViewAdjustmentView {
 		return SimpleEdgeViewAdjustmentView.forDestinationAdjustmentOf(edgeView!!)
 	}
@@ -36,7 +41,17 @@ class OutputToInputConnector(
 		edgeView!!.layout.layoutOrigin()
 	}
 
+	private fun logConnect() {
+		if (targetPortView != null) {
+			LOG.debug("Connect output of ${startPortView?.owner?.type} with input of ${targetPortView?.owner?.type}")
+		} else {
+			LOG.debug("Connect output of ${startPortView?.owner?.type} open-ended")
+		}
+	}
+
 	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
+		logConnect()
+
 		connectService.unconnect(edgeView!!)
 		context.drawingView().drawing.remove(edgeView!!)
 

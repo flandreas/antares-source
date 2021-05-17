@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
@@ -26,6 +27,10 @@ class EdgeToPortConnector(
 	edgeViewFactory = edgeViewFactory,
 	draggedEndpointType = EdgeViewEndpointType.DESTINATION
 ) {
+
+	companion object {
+		private val LOG by logger(EdgeToPortConnector::class)
+	}
 
 	/** The [EdgeView] from which a new [EdgeView] is branched by this connector. */
 	private var branchedEdgeView: EdgeView<*>? = null
@@ -148,6 +153,14 @@ class EdgeToPortConnector(
 		editor.commandManager.rollbackTransaction()
 		ConnectionPointHighlighter.removePortViewHighlight(editor.view)
 		reset()
+	}
+
+	private fun logConnect() {
+		if (targetPortView != null) {
+			LOG.debug("Junction from EdgeView ${branchedEdgeView?.id} to port of ${targetPortView?.owner?.type}")
+		} else {
+			LOG.debug("Junction from EdgeView ${branchedEdgeView?.id} open-ended")
+		}
 	}
 
 	private fun completeConnecting(context: EditInputEventContext) {

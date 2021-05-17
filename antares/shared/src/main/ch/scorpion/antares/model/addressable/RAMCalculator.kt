@@ -142,7 +142,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
 	    val dataInt = data!!.toInt()
 
 	    if (addressInt != null && dataInt != null) {
-		    LOG.debug("Writing into RAM: address=$addressInt, value=$dataInt")
+		    LOG.trace("Writing into RAM: address=$addressInt, value=$dataInt")
 		    ram.write(addressInt, dataInt.toLong(), signalHandler)
 	    }
     }

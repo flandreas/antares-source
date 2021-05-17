@@ -83,8 +83,7 @@ open class GraphImpl(
 
 	override val graphPorts: ImmutableList<GraphPort<*>>
 		get() = ImmutableList(_elements
-			.filter { it is GraphPort<*> }
-			.map { it as GraphPort<*> })
+			.filterIsInstance<GraphPort<*>>())
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -217,14 +216,14 @@ open class GraphImpl(
 	/** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
 	protected open fun handleGraphElementAdded(graphElem: GraphElement) {
 		if (graphElem is OscilloscopeProbeVertice<*>) {
-			LOG.debug("added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
+			LOG.trace("added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
 			graphElem.addGraphElementListener(oscilloscopeProbeHandler)
 		}
 	}
 
 	protected open fun handleGraphElementRemoved(graphElem: GraphElement) {
 		if (graphElem is OscilloscopeProbeVertice<*>) {
-			LOG.debug("removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
+			LOG.trace("removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
 			graphElem.removeGraphElementListener(oscilloscopeProbeHandler)
 		}
 	}
@@ -284,7 +283,6 @@ open class GraphImpl(
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private inner class OscilloscopeProbeHandler : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
-			LOG.debug("stateChanged")
 			val probePort = (e.element as OscilloscopeProbeVertice<*>).getInput<Any>()
 			if (probePort.getIncomingSignal() != null && e.signalHandler != null) {
 				val oscilloscopePort = getOscilloscope()?.getPort<Any>(probePort.name!!) as InputPort<Any>

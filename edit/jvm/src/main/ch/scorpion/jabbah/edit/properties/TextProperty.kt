@@ -58,12 +58,12 @@ class TextPropertyEditor(private val propertyName: String) : AbstractPropertyEdi
 	}
 
 	override fun getValue(): Any {
-		LOG.debug("get value ${editorTextArea.text}")
+		LOG.trace("get value ${editorTextArea.text}")
 		return TextProperty(editorTextArea.text)
 	}
 
 	override fun setValue(value: Any?) {
-		LOG.debug("set value $value")
+		LOG.trace("set value $value")
 		editorTextArea.text = (value as TextProperty).text
 	}
 

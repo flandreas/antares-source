@@ -93,7 +93,7 @@ class Break(
 	}
 
 	private fun issueBreak(signalHandler: SignalHandler) {
-		LOG.debug("Break at ${signalHandler.executionTime} ns")
+		LOG.trace("Break at ${signalHandler.executionTime} ns")
 		eventBus.post(BreakEvent())
 	}
 }

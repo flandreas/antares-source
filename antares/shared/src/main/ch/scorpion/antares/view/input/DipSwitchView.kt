@@ -415,7 +415,7 @@ class DipSwitchView(
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			LOG.debug("DipSwitchView: keyPressed '${context.keyEvent!!.key.toChar()}'")
+			LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
 			if (focusIndex != null) {
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()

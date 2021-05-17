@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
@@ -10,12 +11,18 @@ class DragEdgeViewOriginConnector(
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.ORIGIN) {
 
+	companion object {
+		private val LOG by logger(DragEdgeViewOriginConnector::class)
+	}
+
 	override fun completeDragOpen(context: EditInputEventContext) {
+		LOG.debug("Move EdgeView endpoint open-ended")
 		context.editor.commandManager.beginTransaction(createMoveCommand(context))
 		context.editor.commandManager.commitTransaction()
 	}
 
 	override fun completeDragConnecting(context: EditInputEventContext) {
+		LOG.debug("Move EdgeView endpoint to connect port of ${targetPortView?.owner?.type}")
 		context.editor.commandManager.beginTransaction(createMoveCommand(context))
 		context.editor.commandManager.execute(createConnectCommand(context))
 		context.editor.commandManager.commitTransaction()

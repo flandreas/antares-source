@@ -64,7 +64,7 @@ class GraphPanelTransferHandler(
 	    val targetUUID = (editor.drawing as GraphView).graph!!.uuid
 
         if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
-            LOG.debug("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
+            LOG.trace("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
             JOptionPane.showMessageDialog(
                 null,
                 Translations.getString("graph.cycleError.msg"),
@@ -74,7 +74,7 @@ class GraphPanelTransferHandler(
         }
 
 	    if (data.libraryElement.library == ProjectModule.projectHolder.project && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
-		    LOG.debug("Prevent dropping project component into library graph")
+		    LOG.trace("Prevent dropping project component into library graph")
 		    JOptionPane.showMessageDialog(
 			    null,
 			    Translations.getString("graph.dependencyError.msg"),

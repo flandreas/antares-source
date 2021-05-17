@@ -86,7 +86,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
         override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             if (context.mouseEvent?.clickCount == 2) {
                 component.findSegment(context.x, context.y, 10)?.let {
-                    LOG.debug("Add handle $it")
+                    LOG.trace("Add handle $it")
                     val snap = context.editor.snapManager.snap(context.x, context.y)
                     context.editor.commandManager.execute(
                         AddPolylinePointCommand(context.editor, component.id, it + 1, snap.add(context.location)))

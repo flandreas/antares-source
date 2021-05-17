@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -20,6 +21,10 @@ class ReconnectDestinationConnector(
 	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractReconnectConnector(EdgeViewEndpointType.DESTINATION, connectService, eventBus) {
+
+	companion object {
+		private val LOG by logger(ReconnectDestinationConnector::class)
+	}
 
 	/** The old destination [Connection] of the [EdgeView]. */
 	private var oldDestination: Connection<Any>? = null
@@ -40,6 +45,8 @@ class ReconnectDestinationConnector(
 	}
 
 	override fun completeDragConnecting(context: EditInputEventContext) {
+		LOG.debug("Reconnect EdgeView at port of ${oldDestination?.connectableView?.id}")
+
 		val newConnection = targetPortView?.createConnection() as Connection<Any>?
 
 		if (newConnection != null) {

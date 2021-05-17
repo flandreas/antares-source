@@ -27,10 +27,6 @@ class DigitalGraph(
     /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
     private val tunnelHandler = TunnelHandler()
 
-    init {
-        LOG.debug("DigitalGraph created")
-    }
-
     override fun handleGraphElementAdded(graphElem: GraphElement) {
         super.handleGraphElementAdded(graphElem)
         if (graphElem is Tunnel) {
@@ -60,7 +56,7 @@ class DigitalGraph(
                     val isOutputDominant = (tunnel.getPort<DigitalSignal>() as DigitalPort).isOutputDominant
 	                if (!isOutputDominant) {
 		                val signal = tunnel.getInput<DigitalSignal>().getIncomingSignal()!!
-		                LOG.debug("Propagating signal '$signal' from Tunnel ${tunnel.id} through '${tunnel.name}', isOutputDominant is $isOutputDominant")
+		                LOG.trace("Propagating signal '$signal' from Tunnel ${tunnel.id} through '${tunnel.name}', isOutputDominant is $isOutputDominant")
 		                getTunnels(tunnel.name!!)
 			                .filter { e.element != it }
 			                .forEach {

@@ -232,7 +232,7 @@ class LibraryPersistencePanel(
 					return
 				}
 
-				LOG.debug("delete library ${it.uuid}")
+				LOG.trace("delete library ${it.uuid}")
 				InvocationHandler.invoke {
 					service.delete(it.uuid)
 					closeHandler.invoke()

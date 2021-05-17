@@ -25,7 +25,7 @@ object RepaintingObserver {
             checkState(!isRunning)
             if (field != value) {
                 field = value
-                LOG.debug("RepaintingObserver isEnabled=$field")
+                LOG.trace("RepaintingObserver isEnabled=$field")
                 if (!field && display != null) {
                     display?.let {
                         view!!.overlayContainer.remove(it)
@@ -42,7 +42,7 @@ object RepaintingObserver {
             checkState(isEnabled)
             if (field != value) {
                 field = value
-                LOG.debug("RepaintingObserver isRunning=$field")
+                LOG.trace("RepaintingObserver isRunning=$field")
                 if (field) {
                     logEntries.clear()
                     display?.let {
@@ -84,7 +84,7 @@ object RepaintingObserver {
         if (view == null || !isRunning) {
             return
         }
-        LOG.debug("RepaintingObserver.invalidated rect=$rect")
+        LOG.trace("RepaintingObserver.invalidated rect=$rect")
         logEntries.add(RepaintingLogEntry(modelToViewRect(rect), repaintIndex++))
     }
 
@@ -97,14 +97,14 @@ object RepaintingObserver {
     }
 
     fun previousLogEntry() {
-        LOG.debug("RepaintingObserver.previousLogEntry")
+        LOG.trace("RepaintingObserver.previousLogEntry")
         checkState(logIndex > 0)
         logIndex -= 1
         BaseModule.eventBus.post(RepaintingObserverLogEvent())
     }
 
     fun nextLogEntry() {
-        LOG.debug("RepaintingObserver.nextLogEntry")
+        LOG.trace("RepaintingObserver.nextLogEntry")
         checkState(logIndex < logSize - 1)
         logIndex += 1
         BaseModule.eventBus.post(RepaintingObserverLogEvent())

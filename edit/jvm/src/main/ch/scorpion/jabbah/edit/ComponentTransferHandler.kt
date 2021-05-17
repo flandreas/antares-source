@@ -111,7 +111,7 @@ open class ComponentTransferHandler(
     }
 
     private fun importElement(dropComponent: Component, transferable: Transferable, eventBus: EventBus) {
-        LOG.debug("importData")
+        LOG.trace("importData")
         try {
 	        val addedComponent = addComponent(dropComponent, transferable)
             eventBus.post(DropEvent(editor, addedComponent))

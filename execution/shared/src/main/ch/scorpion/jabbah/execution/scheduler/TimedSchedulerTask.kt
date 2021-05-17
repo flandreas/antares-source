@@ -88,7 +88,7 @@ class TimedSchedulerTask(
 
 	private fun calculateTimerInterval(): Int {
 		val interval = max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
-		LOG.debug("interval = $interval")
+		LOG.trace("interval = $interval")
 		return interval
 	}
 

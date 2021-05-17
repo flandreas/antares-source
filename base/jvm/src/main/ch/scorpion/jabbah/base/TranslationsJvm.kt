@@ -70,7 +70,7 @@ actual object Translations {
 			return key
 	    }
 
-        LOG.debug("Missing translation '$key'")
+        LOG.warn("Missing translation '$key'")
         throw MissingResourceException("Missing translation '$key'", Translations::class.java.name, key)
     }
 

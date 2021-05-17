@@ -260,11 +260,11 @@ class KeyboardView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			val keyChar = context.keyEvent!!.keyChar
-			LOG.debug("keyPressed '$keyChar'")
+			LOG.trace("keyPressed '$keyChar'")
 			if (KeyHandler.acceptKey(keyChar)) {
 				model.enter(keyChar.toByte(), context.signalHandler)
 			} else {
-				LOG.debug("reject character '$keyChar'")
+				LOG.trace("reject character '$keyChar'")
 			}
 			return null
 		}

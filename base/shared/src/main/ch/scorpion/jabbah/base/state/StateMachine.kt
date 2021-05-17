@@ -71,13 +71,13 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 		if (states.isEmpty()) {
 			throw IllegalStateException("StateMachine must have at least 1 state")
 		}
-		LOG.debug("Start in state '${states.first().name}'")
+		LOG.trace("Start in state '${states.first().name}'")
 		enter(states.first(), event)
 		return this
 	}
 
 	private fun enter(state: State<T>, event: T) {
-		LOG.debug("Enter state '${state.name}'")
+		LOG.trace("Enter state '${state.name}'")
 		currentState = state
 		state.enter(event)
 	}
@@ -127,7 +127,7 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 		transition.transit(event)
 
 		if (destinationState !== currentState) {
-			LOG.debug("Transferring to state '${destinationState.name}'")
+			LOG.trace("Transferring to state '${destinationState.name}'")
 			enter(destinationState, event)
 		} else {
 			if (LOG.isTraceEnabled()) {

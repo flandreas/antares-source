@@ -197,7 +197,7 @@ class CircuitInOutView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlId: String? get() = "circuitInOut:$id"
+	override val controlId: String get() = "circuitInOut:$id"
 
 	override val controlName: String get() = "$type ${model.name}"
 
@@ -525,7 +525,7 @@ class CircuitInOutView(
 			return this
 		}
 
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
+		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
 			return this
 		}
 
@@ -559,7 +559,7 @@ class CircuitInOutView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				LOG.debug("CircuitInOut: keyPressed '${context.keyEvent!!.key.toChar()}'")
+				LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
 
 				if (context.keyEvent!!.key == KeyEvent.VK_LEFT) {
 					invalidate()

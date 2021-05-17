@@ -57,7 +57,7 @@ class ControlledTimeService : TimeService {
 		_timeNanos = timeNanos
 		pcSupport.fire(PROP_TIME, oldValue, _timeNanos)
 
-		LOG.debug("Fired TimeEvent at $_timeNanos ns")
+		LOG.trace("Fired TimeEvent at $_timeNanos ns")
 	}
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Long>) = pcSupport.add(l)

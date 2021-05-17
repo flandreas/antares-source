@@ -230,14 +230,14 @@ object TooltipManager {
 		if (textTooltip != null || explanationTooltip != null) {
 			disposeTooltip()
 		}
-		LOG.debug("tooltipRequested  for text '${event.tooltip!!.text}' and explanation ${event.explanation}")
+		LOG.trace("tooltipRequested for text '${event.tooltip!!.text}' and explanation ${event.explanation}")
 		request = TooltipRequest(event.origin!!, event.view, event.tooltip, event.explanation)
 		timer.start()
 	}
 
 	private fun tooltipDismissed() {
 		if (textTooltip != null || explanationTooltip != null) {
-			LOG.debug("tooltipDismissed()")
+			LOG.trace("tooltipDismissed()")
 			disposeTooltip()
 		}
 		if (timer.isRunning()) {

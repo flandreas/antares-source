@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
@@ -36,6 +37,10 @@ abstract class AbstractPortViewStartConnector(
 	draggedEndpointType: EdgeViewEndpointType,
 	private val allowEdgeViewAsTarget: Boolean = false
 ) : AbstractCreateEdgeViewConnector(edgeViewFactory, draggedEndpointType) {
+
+	companion object {
+		private val LOG by logger(AbstractPortViewStartConnector::class)
+	}
 
 	/** The [VerticeView] from which the new connection originates. */
 	private var startVerticeView: VerticeView<*>? = null
@@ -420,6 +425,10 @@ abstract class AbstractPortViewStartConnector(
 		edgeView!!.validate()
 
 		return false
+	}
+
+	private fun logConnect() {
+		LOG.debug("Connect port of ${startPortView?.owner?.type} with existing EdgeView ${targetEdgeView?.id}")
 	}
 
 	private fun completeConnectingToEdge(context: EditInputEventContext) {

@@ -143,7 +143,7 @@ open class LibraryImpl(
 
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
 		val metaGraph = libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
-		LOG.debug("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
+		LOG.trace("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
 		return metaGraph
 	}
 

@@ -51,7 +51,7 @@ class ApplicationModeHolderImpl(
 			viewManager.activeView === editor.view
 				&& !scheduler.isActive
 
-		LOG.debug("Setting editor active=$editable")
+		LOG.trace("Setting editor active=$editable")
 		editor.active = editable
 	}
 
@@ -59,7 +59,7 @@ class ApplicationModeHolderImpl(
 		if (mode == currentMode) {
 			return
 		}
-		LOG.debug("Entering mode $mode")
+		LOG.trace("Entering mode $mode")
 		when (mode) {
 			ApplicationMode.EDIT -> enterEditMode(init)
 			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> enterExecMode(mode, after)
@@ -67,6 +67,8 @@ class ApplicationModeHolderImpl(
 	}
 
 	private fun enterEditMode(init: Boolean) {
+		LOG.debug("Enter edit mode mode")
+
 		currentMode = ApplicationMode.EDIT
 		if (!init) {
 			scheduler.isActive = false
@@ -77,6 +79,8 @@ class ApplicationModeHolderImpl(
 	}
 
 	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
+		LOG.debug("Enter execution mode")
+
 		eventBus.post(ApplicationModeBeginEvent(mode))
 
 		if (rootGraphView.checkDesign()) {

@@ -17,7 +17,7 @@ class ProjectHolder(
 	var p: Project? = p
 		set(value) {
 			if (field != value) {
-				LOG.debug("ProjectHolder: setting current Project to '${value?.name}'")
+				LOG.trace("setting current Project to '${value?.name}'")
 				field?.dispose()
 				field = value
 				eventBus.post(CurrentProjectEvent(field))

@@ -30,7 +30,7 @@ class UsecaseActionBridge(
 
 	@Suppress("unused")
 	fun pressButtonAt(time: Long, buttonId: Int) {
-		LOG.debug("pressButton $buttonId at $time")
+		LOG.trace("pressButton $buttonId at $time")
 		getButton(buttonId)?.let { button ->
 			runner.executeAt(time) {
 				button.model.toggle(scheduler)
@@ -44,7 +44,7 @@ class UsecaseActionBridge(
 
 	@Suppress("unused")
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
-		LOG.debug("setInput of $inputId to '$hexValue' at $time")
+		LOG.trace("setInput of $inputId to '$hexValue' at $time")
 		getInput(inputId)?.let {component ->
 			runner.executeAt(time) { component.model.setIncomingSignal(Word.of(component.model.bitWidth, hexValue), scheduler) }
 		}
@@ -52,7 +52,7 @@ class UsecaseActionBridge(
 
 	@Suppress("unused")
 	fun applyClock(inputId: Int, period: Long) {
-		LOG.debug("applyClock with period $period to input $inputId")
+		LOG.trace("applyClock with period $period to input $inputId")
 		if (clockApplications.contains(inputId)) {
 			postMultipleClockIssue(inputId)
 		}
@@ -68,7 +68,7 @@ class UsecaseActionBridge(
 
 	@Suppress("unused")
 	fun pauseAt(time: Long) {
-		LOG.debug("pause at $time")
+		LOG.trace("pause at $time")
 		runner.executeAt(time) { scheduler.isPaused = true }
 	}
 

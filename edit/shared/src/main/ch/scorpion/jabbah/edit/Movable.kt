@@ -27,13 +27,6 @@ interface Movable : Locatable {
 			}
 		}
 
-		/*
-		fun dragTo(editor: Editor, movable: Movable, location: Point2D) {
-			movable.location = location
-			movable.dragged(editor)
-		}
-		*/
-
 		fun dragFinished(locatables: Collection<Movable>) {
 			locatables.forEach { it.dragFinished() }
 		}

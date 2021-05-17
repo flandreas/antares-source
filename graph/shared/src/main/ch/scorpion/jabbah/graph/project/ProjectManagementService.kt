@@ -90,7 +90,7 @@ class ProjectManagementService(
 		if (exists(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.debug("creating new project '${properties.name.getTranslation()}'")
+		LOG.trace("creating new project '${properties.name.getTranslation()}'")
 
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name = Name(Translations.getString(newMetaGraphNameTranslationKey))
@@ -125,7 +125,7 @@ class ProjectManagementService(
 			throw IllegalStateException("cannot update properties, no project open")
 		}
 		val project = projectHolder.project!!
-		LOG.debug("updating project '${project.name}'")
+		LOG.trace("updating project '${project.name}'")
 
 		if (project.name.translation != properties.name) {
 			if (exists(properties.name, except = project.uuid)) {
@@ -171,7 +171,7 @@ class ProjectManagementService(
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
-		LOG.debug("open project ${project.uuid} with default element $elementUUID")
+		LOG.trace("open project ${project.uuid} with default element $elementUUID")
 		openLibraryForProjectIfNecessary(project)
 		projectHolder.p = project
 		if (elementUUID != null) {
@@ -229,13 +229,13 @@ class ProjectManagementService(
 		val library = libraryService.importLibrary(inputPath) ?: return ProjectImportResult.Invalid
 
 		if (exists(library.name.translation)) {
-			LOG.debug("Name of imported project already exists")
+			LOG.trace("Name of imported project already exists")
 			libraryService.purgeLibrary(library.uuid)
 			return ProjectImportResult.NameAlreadyExists
 		}
 
 		if (!libraryManagementService.contains((library as Project).importedLibrary!!)) {
-			LOG.debug("Library for imported project doesn't exist")
+			LOG.trace("Library for imported project doesn't exist")
 			libraryService.purgeLibrary(library.uuid)
 			return ProjectImportResult.StaleLibraryReference
 		}

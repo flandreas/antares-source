@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class AnimatorImpl(
 	private val timer: Timer,
-	private val period: Int = AnimatorImpl.DEFAULT_PERIOD,
+	private val period: Int = DEFAULT_PERIOD,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
 ) : Animator {
@@ -47,7 +47,7 @@ class AnimatorImpl(
 	override val taskCount: Int get() = jobs.size
 
 	override fun schedule(task: AnimationTask): AnimationTask {
-		LOG.debug("Scheduling AnimationTask $task")
+		LOG.trace("Scheduling AnimationTask $task")
 		task.addListener(taskListener)
 		jobs.add(AnimationJob(task, calculateDistance(task), systemSpeed))
 		task.scheduled()
@@ -121,7 +121,7 @@ class AnimatorImpl(
 	}
 
 	private fun resumeSuspendedJobs() {
-		LOG.debug("resume suspended Jobs")
+		LOG.trace("resume suspended Jobs")
 		jobs.filter { it.isSuspended }.forEach { it.resume() }
 		startTimerIfNeeded()
 	}
@@ -164,7 +164,7 @@ class AnimatorImpl(
 		}
 
 		fun suspend() {
-			LOG.debug("suspending job")
+			LOG.trace("suspending job")
 			state = State.Suspended
 		}
 
@@ -173,7 +173,7 @@ class AnimatorImpl(
 		}
 
 		fun resume() {
-			LOG.debug("resuming job")
+			LOG.trace("resuming job")
 			state = State.Running
 		}
 
@@ -207,7 +207,7 @@ class AnimatorImpl(
 			findJob(task).end()
 			task.removeListener(taskListener)
 			removeEndedJobs()
-			LOG.debug("$task started, $taskCount remaining tasks")
+			LOG.trace("$task started, $taskCount remaining tasks")
 		}
 	}
 }

@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.script
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import javax.script.Invocable
@@ -26,7 +25,7 @@ actual class ScriptEngine actual constructor(private val eventBus: EventBus) {
 		try {
 			engine.eval(script.code)
 		} catch (e: ScriptException) {
-			LOG.debug("ScriptException while defining JS function: '${e.message}'")
+			LOG.trace("ScriptException while defining JS function: '${e.message}'")
 			postIssue(script, e)
 		} catch (e: Throwable) {
 			LOG.error("General error while defining JS function: '${e.message}'")
@@ -38,13 +37,13 @@ actual class ScriptEngine actual constructor(private val eventBus: EventBus) {
 		return try {
 			(engine as Invocable).invokeFunction(name, *args)
 		} catch (e: ScriptException) {
-			LOG.debug("ScriptException while invoking JS function: '${e.message}'")
+			LOG.trace("ScriptException while invoking JS function: '${e.message}'")
 			postIssue(script ?: lastScript!!, e)
 			null
 		} catch (e: Throwable) {
 			if (errorHandler != null && !errorHandler.errorHandled) {
 				LOG.error("Error while invoking JS function '$name': ${e.message}")
-				LOG.debug("Invoked '$name' for the following script\n: ${script ?: lastScript}")
+				LOG.trace("Invoked '$name' for the following script\n: ${script ?: lastScript}")
 				throw e
 			}
 			return null

@@ -91,7 +91,6 @@ class FlexibleTextView(
 		}
 
 	override fun draw(context: DrawContext) {
-		LOG.debug("FlexibleTextView: draw")
 		val r = if (isUnzoomable) getViewRectangle() else shape
 		context.g.color = transparent.applyTo(backgroundColor)
 		context.g.fillRoundRect(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt(), 20, 20)

@@ -79,7 +79,7 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 			val id = link.first
 			val element = graph.withId(id) as SubGraphVertice?
 			if (element == null) {
-				LOG.debug("DeepVerticeLink broken: Cannot find element ${id} in graph '${graph.name}'")
+				LOG.warn("DeepVerticeLink broken: Cannot find element $id in graph '${graph.name}'")
 				throw IllegalArgumentException()
 			}
 			graph = element.getGraph(repository, storableCreator)
@@ -88,7 +88,7 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 		val id = link.first
 		val vertice = graph.withId(id) as Vertice?
 		if (vertice == null) {
-			LOG.debug("DeepVerticeLink broken: Cannot find referenced Control with model ID ${id}")
+			LOG.warn("DeepVerticeLink broken: Cannot find referenced Control with model ID $id")
 			throw IllegalArgumentException()
 		}
 		return vertice

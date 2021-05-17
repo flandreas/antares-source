@@ -63,7 +63,7 @@ open class GraphViewImpl(
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
 	init {
-		LOG.debug("Create GraphViewImpl ${hashCode().toString(16)}")
+		LOG.trace("Create GraphViewImpl ${hashCode().toString(16)}")
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationObserver)
 	}
 
@@ -120,9 +120,9 @@ open class GraphViewImpl(
 			}
 			field = value
 			if (value != null) {
-				LOG.debug("Scenario '${value.name}' set in Graph '$name'")
+				LOG.trace("Scenario '${value.name}' set in Graph '$name'")
 			} else {
-				LOG.debug("No current Scenario in Graph '$name'")
+				LOG.trace("No current Scenario in Graph '$name'")
 			}
 			eventBus.post(ScenarioEvent(this, value))
 		}
@@ -138,9 +138,9 @@ open class GraphViewImpl(
 			val oldValue = field
 			field = value
 			if (value != null) {
-				LOG.debug("ScenarioStep '${value.name}' of Scenario '${currentScenario!!.name}' set in Graph '$name'")
+				LOG.trace("ScenarioStep '${value.name}' of Scenario '${currentScenario!!.name}' set in Graph '$name'")
 			} else {
-				LOG.debug("No current ScenarioStep in Graph '$name'")
+				LOG.trace("No current ScenarioStep in Graph '$name'")
 			}
 			eventBus.post(ScenarioStepEvent(this, oldValue, value))
 		}
@@ -317,7 +317,7 @@ open class GraphViewImpl(
 	override fun drawablesInDrawingOrder(): ImmutableList<GraphElementView<*>> {
 		val drawables = mutableListOf<GraphElementView<*>>()
 		drawables.addAll(super.drawablesInDrawingOrder().filter { it !is VerticeView<*> })
-		drawables.addAll(super.drawablesInDrawingOrder().filter { it is VerticeView<*> })
+		drawables.addAll(super.drawablesInDrawingOrder().filterIsInstance<VerticeView<*>>())
 		return drawables.toImmutableList()
 	}
 

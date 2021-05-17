@@ -147,7 +147,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		LOG.debug("State of ProbeView changed")
+		LOG.trace("State of ProbeView changed")
 		super.handleStateChanged(event)
 	}
 
@@ -161,13 +161,13 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("OscilloscopeProbeVerticeView pressed ${context.x},${context.y}")
+			LOG.trace("OscilloscopeProbeVerticeView pressed ${context.x},${context.y}")
 			moveLastLocation = Point2D(context.location)
 			return this
 		}
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("OscilloscopeProbeVerticeView dragged ${context.x},${context.y}")
+			LOG.trace("OscilloscopeProbeVerticeView dragged ${context.x},${context.y}")
 
 			// Snap
 			val dx = context.x - moveLastLocation.x
@@ -194,7 +194,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		}
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
+			LOG.trace("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
 			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 
 			// TODO Create Commands

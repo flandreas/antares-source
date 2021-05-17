@@ -109,7 +109,7 @@ class BelowSmHighlighter(
 	/** ---- [BelowSmHighlighter] */
 
 	private fun highlightImpl(c: Component, color: CompositeColor? = null) {
-		LOG.debug("Highlight component '${c.id}'")
+		LOG.trace("Highlight component '${c.id}'")
 		val highlight = highlightModelProvider.provideFor(c, SelectionDrawingStrategy.BELOW)
 		if (highlight == null) {
 			LOG.error("No suitable highlight SelectionModel found for ${System.getClassName(c)}")
@@ -127,7 +127,7 @@ class BelowSmHighlighter(
 	}
 
 	private fun unhighlightImpl(c: Component) {
-		LOG.debug("Unhighlight component '${c.id}'")
+		LOG.trace("Unhighlight component '${c.id}'")
 		val highlight = highlights[c]
 		highlights.remove(c)
 		content.highlightContainer.remove(highlight!!)

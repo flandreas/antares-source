@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 open class MoveCommand(
 	editor: Editor,
-	val componentIds: Collection<Int>,
+	private val componentIds: Collection<Int>,
 	val offset: Point2D
 ) : AbstractCommand("edit.command.move", editor) {
 

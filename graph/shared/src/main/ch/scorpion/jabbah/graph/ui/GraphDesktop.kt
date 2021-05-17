@@ -217,7 +217,7 @@ class GraphDesktopViewController(
 	}
 
 	private fun handle(event: ReferenceColorEvent) {
-		LOG.debug("Update used ReferenceColors")
+		LOG.trace("Update used ReferenceColors")
 		val newAssociations = associations.map { assoc -> assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!) }
 		associations.clear()
 		associations.addAll(newAssociations)
@@ -241,7 +241,7 @@ class GraphDesktopViewController(
 	}
 
 	private fun closeItem(item: GraphDesktopViewItem) {
-		LOG.debug(("Close single GraphDesktopItem"))
+		LOG.trace("Close single GraphDesktopItem")
 		if (item === view.mainDesktopViewItem) {
 			closeAll(false)
 		} else {
@@ -254,9 +254,9 @@ class GraphDesktopViewController(
 
 	fun closeAll(establishSingleView: Boolean = false) {
 		if (establishSingleView) {
-			LOG.debug("Close all child GraphDesktopItems")
+			LOG.trace("Close all child GraphDesktopItems")
 		} else {
-			LOG.debug("Close all GraphDesktopItems")
+			LOG.trace("Close all GraphDesktopItems")
 		}
 
 		additionalDesktopItems.forEach {

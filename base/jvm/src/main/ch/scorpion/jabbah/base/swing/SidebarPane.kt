@@ -235,7 +235,7 @@ class SidebarPane(
 	private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
 	private fun activate(entry: Entry?) {
-		LOG.debug("activate entry ${entry?.name}")
+		LOG.trace("activate entry ${entry?.name}")
 		val changed = current != entry
 
 		if (current != null) {
@@ -259,7 +259,7 @@ class SidebarPane(
 	}
 
 	private fun collapse() {
-		LOG.debug("collapse")
+		LOG.trace("collapse")
 		activate(null)
 	}
 

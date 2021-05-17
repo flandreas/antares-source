@@ -101,7 +101,7 @@ class LibraryManagementService(
 	 */
 	fun update(properties: LibraryProperties) {
 		val library = libraryHolder.library
-		LOG.debug("updating library ${library.uuid}")
+		LOG.trace("updating library ${library.uuid}")
 
 		if (library.name.translation != properties.name) {
 			if (existsName(properties.name, except = library.uuid)) {
@@ -130,7 +130,7 @@ class LibraryManagementService(
 
 	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library) {
-		LOG.debug("open library ${library.uuid}")
+		LOG.trace("open library ${library.uuid}")
 		eventBus.postVetoable(
 			event = OpenLibraryRequest(library),
 			undoEvent = OpenLibraryRequest(libraryHolder.library),
@@ -162,7 +162,7 @@ class LibraryManagementService(
 	 * which can also be part of another [Library].
 	 */
 	fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory) {
-		LOG.debug("copy LibraryElement ${element.name}")
+		LOG.trace("copy LibraryElement ${element.name}")
 		when (element) {
 			is BaseLibraryElement -> copyBaseElement(element, destination)
 			is ContainerLibraryElement -> copyContainerLibraryElement(element, destination)

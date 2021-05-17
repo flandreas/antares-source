@@ -157,7 +157,7 @@ class LibraryTreeViewController (
 		set(value) {
 			if (field !== value) {
 				field = value
-				LOG.debug("Selected TreeNode '${field.toString()}'")
+				LOG.trace("Selected TreeNode '${field.toString()}'")
 				eventBus.post(LibrarySelectionChangedEvent(this))
 			}
 		}

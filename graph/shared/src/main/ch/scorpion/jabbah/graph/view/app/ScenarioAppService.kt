@@ -26,7 +26,7 @@ class ScenarioAppService(
 	 * @return the ID of the cloned [Scenario]
 	 */
 	fun addScenario(dataHolder: UndoableDataHolder, scenario: Scenario): Int {
-		LOG.debug("Add new Scenario to GraphView ${graphView(dataHolder).graph?.uuid}")
+		LOG.trace("Add new Scenario to GraphView ${graphView(dataHolder).graph?.uuid}")
 		val command = AddScenarioCommand(dataHolder, scenario)
 		commandManager.execute(command)
 		return command.addedScenarioId
@@ -34,7 +34,7 @@ class ScenarioAppService(
 
 	/** Deletes the [Scenario] with the specified ID from the [GraphView] in the [ApplicationData] of [application]. */
 	fun deleteScenario(dataHolder: UndoableDataHolder, scenarioId: Int) {
-		LOG.debug("Delete Scenario $scenarioId from GraphView ${graphView(dataHolder).graph?.uuid}")
+		LOG.trace("Delete Scenario $scenarioId from GraphView ${graphView(dataHolder).graph?.uuid}")
 		commandManager.execute(DeleteScenarioCommand(dataHolder, scenarioId))
 	}
 
@@ -43,7 +43,7 @@ class ScenarioAppService(
 	 * of [application].
 	 */
 	fun addScenarioStep(dataHolder: UndoableDataHolder, scenarioId: Int, scenarioStep: ScenarioStep): Int {
-		LOG.debug("Add new ScenarioStep to Scenario $scenarioId in GraphView ${graphView(dataHolder).graph?.uuid}")
+		LOG.trace("Add new ScenarioStep to Scenario $scenarioId in GraphView ${graphView(dataHolder).graph?.uuid}")
 		val command = AddScenarioStepCommand(dataHolder, scenarioId, scenarioStep)
 		commandManager.execute(command)
 		return command.addedScenarioStepId
@@ -54,7 +54,7 @@ class ScenarioAppService(
 	 * in the [ApplicationData] of [application].
 	 */
 	fun deleteScenarioStep(dataHolder: UndoableDataHolder, scenarioId: Int, scenarioStepId: Int) {
-		LOG.debug("Delete ScenarioStep $scenarioStepId from Scenario $scenarioId in GraphView ${graphView(dataHolder).graph?.uuid}")
+		LOG.trace("Delete ScenarioStep $scenarioStepId from Scenario $scenarioId in GraphView ${graphView(dataHolder).graph?.uuid}")
 		commandManager.execute(DeleteScenarioStepCommand(dataHolder, scenarioId, scenarioStepId))
 	}
 
@@ -62,7 +62,7 @@ class ScenarioAppService(
 	 * Moved the specified [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.
 	 */
 	fun moveScenarioStep(dataHolder: UndoableDataHolder, scenarioId: Int, scenarioStepId: Int, newIndex: Int) {
-		LOG.debug("Move ScenarioStep $scenarioStepId in Scenario $scenarioId to new index $newIndex in GraphView ${graphView(dataHolder).graph?.uuid}")
+		LOG.trace("Move ScenarioStep $scenarioStepId in Scenario $scenarioId to new index $newIndex in GraphView ${graphView(dataHolder).graph?.uuid}")
 		commandManager.execute(MoveScenarioStepCommand(dataHolder, scenarioId, scenarioStepId, newIndex))
 	}
 }

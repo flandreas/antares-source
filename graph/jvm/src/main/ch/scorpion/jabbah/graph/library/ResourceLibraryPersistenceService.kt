@@ -30,12 +30,12 @@ class ResourceLibraryPersistenceService(
 	/** ---- [LibraryPersistenceService] */
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
-		LOG.debug("delete MetaGraph $uuid in Library ${library.uuid}")
+		LOG.trace("delete MetaGraph $uuid in Library ${library.uuid}")
 		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
 	}
 
 	override fun loadLibrary(uuid: UUID): Library {
-		LOG.debug("load Library $uuid")
+		LOG.trace("load Library $uuid")
 		return createLibraryFileInputStream(uuid).use {
 			loadLibrary(uuid, it)
 		}
@@ -62,14 +62,14 @@ class ResourceLibraryPersistenceService(
 	private fun copySystemLibraryFromJarFile(uuid: UUID, destinationDirectory: String) {
 		try {
 			val resourcePath = buildResourceLibraryDirectoryPath(uuid)
-			LOG.debug("copy system library $uuid from JAR resource path $resourcePath to $destinationDirectory")
+			LOG.trace("copy system library $uuid from JAR resource path $resourcePath to $destinationDirectory")
 
 			// BUG: This doesn't work with obfuscated classes?
 			val uri = ResourceLibraryPersistenceService::class.java.getResource(resourcePath)
-			LOG.debug("=> URI = $uri")
+			LOG.trace("=> URI = $uri")
 
 			val absolutePath = uri.toExternalForm()
-			LOG.debug("=> absolute path $absolutePath")
+			LOG.trace("=> absolute path $absolutePath")
 
 			ResourcesUtil.copyFromJar(absolutePath, Paths.get(destinationDirectory))
 		} catch (e: Throwable) {
@@ -105,7 +105,7 @@ class ResourceLibraryPersistenceService(
 
 	override fun createLibraryFileInputStream(libraryUuid: UUID): InputStream {
 		val path = buildLibraryFilePath(libraryUuid)
-		LOG.debug("reading library file from resource $path")
+		LOG.trace("reading library file from resource $path")
 		return ResourceLibraryPersistenceService::class.java.getResourceAsStream(path)
 	}
 

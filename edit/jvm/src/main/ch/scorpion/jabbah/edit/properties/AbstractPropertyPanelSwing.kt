@@ -168,7 +168,7 @@ abstract class AbstractPropertyPanelSwing(
 			@Suppress("UNCHECKED_CAST")
 			val beanInfo = beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
 
-			LOG.debug("updating properties for $beanInfoClass")
+			LOG.trace("updating properties for $beanInfoClass")
 
 			sheet.properties = beanInfo.getProperties(bean, controller.editor)
 
@@ -182,7 +182,7 @@ abstract class AbstractPropertyPanelSwing(
 			propertyObject = bean
 			updateLabel()
 		} catch (e: Throwable) {
-			LOG.debug("Could not instantiate Properties for $classPath: Exception $e")
+			LOG.warn("Could not instantiate Properties for $classPath: Exception $e")
 			clearProperties()
 		}
 	}

@@ -72,7 +72,7 @@ class TransparentAnimation(
 			val fadeOutAnimation = fadeOut(transparent, fadeOutTimeMs.toDouble())
 			fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
-					LOG.debug("remove transparent")
+					LOG.trace("remove transparent")
 					container.remove(transparent)
 				}
 			})
@@ -80,7 +80,7 @@ class TransparentAnimation(
 
 			val timer = System.createTimer()
 			timer.initialize(holdTimeMs) {
-				LOG.debug("start fade-out animation")
+				LOG.trace("start fade-out animation")
 				fadeOutAnimation.start()
 				timer.stop()
 			}
@@ -93,7 +93,7 @@ class TransparentAnimation(
 				}
 			})
 			animator.schedule(fadeInAnimation)
-			LOG.debug("start fade-in animation")
+			LOG.trace("start fade-in animation")
 			fadeInAnimation.start()
 		}
 	}

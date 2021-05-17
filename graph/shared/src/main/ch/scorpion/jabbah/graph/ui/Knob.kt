@@ -64,7 +64,7 @@ object KnobLauncher {
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit = {},
 		valueChangeHandler: (Long) -> Unit
-	): ActorInteractionHandler? {
+	): ActorInteractionHandler {
 		this.initialValue = initialValue
 		this.location = location
 		this.unit = unit
@@ -100,7 +100,7 @@ object KnobLauncher {
 		knobView.defaultValue = initialValue
 		knobView.unit = unit
 
-		LOG.debug("show KnobView")
+		LOG.trace("show KnobView")
 		view.content.animationContainer.add(knobView)
 		view.content.animationContainer.validate()
 		view.setCursor(Cursor.CLICK)

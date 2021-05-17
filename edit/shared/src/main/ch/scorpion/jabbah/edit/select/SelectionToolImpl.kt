@@ -27,7 +27,7 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
 class SelectionToolImpl(
 	editor: Editor,
 	private val rubberBandHandler: RubberBandHandler,
-	private val eventBus: EventBus
+	eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
 	companion object {
@@ -62,7 +62,7 @@ class SelectionToolImpl(
 		if (!editor.view.editable) {
 			return
 		}
-		LOG.debug("keyPressed")
+		LOG.trace("keyPressed")
 		if (target != null) {
 			target = target?.keyPressed(keyEventContext(e))
 			return
@@ -76,7 +76,7 @@ class SelectionToolImpl(
 		if (!editor.view.editable) {
 			return
 		}
-		LOG.debug("keyReleased")
+		LOG.trace("keyReleased")
 		target = target?.keyReleased(keyEventContext(e))
 	}
 
@@ -85,7 +85,7 @@ class SelectionToolImpl(
 			return
 		}
 
-		LOG.debug("mouseClicked at $x,$y")
+		LOG.trace("mouseClicked at $x,$y")
 		if (target != null) {
 			target = target?.mouseClicked(mouseEventContext(e, x, y))
 			if (target != null) {
@@ -131,7 +131,7 @@ class SelectionToolImpl(
 			return
 		}
 
-		LOG.debug("mousePressed at $x,$y")
+		LOG.trace("mousePressed at $x,$y")
 
 		if (target != null) {
 			target = target?.mousePressed(mouseEventContext(e, x, y))
@@ -151,15 +151,15 @@ class SelectionToolImpl(
 		if (component != null) {
 			if (e.isShiftDown) {
 				if (editor.view.selectionManager.isSelected(component)) {
-					LOG.debug("Removing component from selection")
+					LOG.trace("Removing component from selection")
 					editor.view.selectionManager.deselect(component)
 				} else {
-					LOG.debug("Adding component to selection")
+					LOG.trace("Adding component to selection")
 					editor.view.selectionManager.select(component)
 				}
 			} else {
 				if (!editor.view.selectionManager.isSelected(component)) {
-					LOG.debug("Selecting only single component")
+					LOG.trace("Selecting only single component")
 					editor.view.selectionManager.deselectAll()
 					editor.view.selectionManager.select(component)
 				}
@@ -175,7 +175,7 @@ class SelectionToolImpl(
 				editor.view.selectionManager.deselectAll()
 			}
 			if (allowRubberband) {
-				LOG.debug("delegating to rubberband")
+				LOG.trace("delegating to rubberband")
 				target = rubberBandHandler
 				target?.mousePressed(mouseEventContext(e, x, y))
 			}
@@ -188,7 +188,7 @@ class SelectionToolImpl(
 		}
 
 		if (!e.isLeftButtonDown) {
-			LOG.debug("Drag wit other than button 1: ${e.button.name}")
+			LOG.trace("Drag wit other than button 1: ${e.button.name}")
 			return
 		}
 
@@ -235,7 +235,7 @@ class SelectionToolImpl(
 			return
 		}
 
-		LOG.debug("mouseReleased at $x,$y")
+		LOG.trace("mouseReleased at $x,$y")
 
 		if (target != null) {
 			target = target?.mouseReleased(mouseEventContext(e, x, y))
@@ -245,6 +245,7 @@ class SelectionToolImpl(
 			val selection = editor.view.selectionManager.selection
 			if (moveStartLocation != movedReferenceComponent?.location) {
 				try {
+					logMove("mouse")
 					editor.commandManager.register(Movable.getDragCommand(
 						editor,
 						selection,
@@ -314,10 +315,20 @@ class SelectionToolImpl(
 	}
 
 	private fun moveBy(event: KeyEvent) {
+		logMove("key")
 		editor.commandManager.execute(MoveCommand(
 			editor,
 			editor.view.selectionManager.selection.map { it.id }.toList(),
 			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
 		))
+	}
+
+	private fun logMove(action: String) {
+		val selection = editor.view.selectionManager.selection
+		if (selection.size == 1) {
+			LOG.debug("Move component '${selection.first().type}' with ID ${selection.first().id} by $action")
+		} else {
+			LOG.debug("Move ${selection.size} components by $action")
+		}
 	}
 }

@@ -107,7 +107,7 @@ class OscilloscopeProbeView(
 		}
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("OscilloscopeProbeView pressed ${context.x},${context.y}")
+			LOG.trace("OscilloscopeProbeView pressed ${context.x},${context.y}")
 
 			if (!verticeViewPresent) {
 				return null

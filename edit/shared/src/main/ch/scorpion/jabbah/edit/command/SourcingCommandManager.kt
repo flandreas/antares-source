@@ -81,7 +81,7 @@ class SourcingCommandManager(
 	override val isInTransaction: Boolean get() = state.transaction != null
 
 	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
-		LOG.debug("Binding to $dataHolder")
+		LOG.trace("Binding to $dataHolder")
 		undoableDataHolder = dataHolder
 		reset()
 	}
@@ -95,7 +95,7 @@ class SourcingCommandManager(
 	}
 
 	override fun reset() {
-		LOG.debug("reset, creating snapshot")
+		LOG.trace("reset, creating snapshot")
 		resetUndo()
 		resetRedo()
 		undoableDataHolder.getUndoableState()?.let { addableSnapshot() }
@@ -103,7 +103,7 @@ class SourcingCommandManager(
 	}
 
 	override fun register(command: Command) {
-		LOG.debug("Register command '${command.getDescription()}'")
+		LOG.trace("Register command '${command.getDescription()}'")
 		resetRedo()
 		if (state.transaction == null) {
 			beginTransaction(command, register = true)
@@ -115,7 +115,7 @@ class SourcingCommandManager(
 	}
 
 	override fun execute(command: Command) {
-		LOG.debug("Execute command '${command.getDescription()}'")
+		LOG.trace("Execute command '${command.getDescription()}'")
 		resetRedo()
 
 		if (state.transaction == null) {
@@ -205,7 +205,7 @@ class SourcingCommandManager(
 		}
 		state.transactionLevel--
 		if (state.transactionLevel == 0) {
-			LOG.debug("Commit transaction")
+			LOG.trace("Commit transaction")
 			resetRedo()
 			eventBus.post(CommandEvent(this))
 			state.transaction = null
@@ -238,7 +238,7 @@ class SourcingCommandManager(
 	}
 
 	override fun openCheckpoint(name: String) {
-		LOG.debug("Open checkpoint '$name'")
+		LOG.trace("Open checkpoint '$name'")
 		states.push(State(name))
 		eventBus.post(CommandEvent(this))
 	}
@@ -247,7 +247,7 @@ class SourcingCommandManager(
 		if (states.size < 2) {
 			throw IllegalStateException("no checkpoint to close")
 		}
-		LOG.debug("Close checkpoint ${states.peek().name}")
+		LOG.trace("Close checkpoint ${states.peek().name}")
 		states.pop()
 		eventBus.post(CommandEvent(this))
 	}
@@ -259,8 +259,8 @@ class SourcingCommandManager(
 		val redoStack = Stack<Transaction>()
 
 		val undoCommandCount: Int get() = undoStack.size
-		val undoDescription: String? get() = undoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
-		val redoDescription: String? get() = redoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
+		val undoDescription: String get() = undoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
+		val redoDescription: String get() = redoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
 		val canUndo: Boolean get() = !undoStack.empty
 		val canRedo: Boolean get() = !redoStack.empty
 
@@ -291,12 +291,12 @@ class SourcingCommandManager(
 
 		private fun replayFromSnapshot() {
 			val clonedData = StorableCloner.clone(data)
-			LOG.debug("Clone snapshot and set as new undoable data $clonedData")
+			LOG.trace("Clone snapshot and set as new undoable data $clonedData")
 			undoableDataHolder.setUndoableState(clonedData)
 
-			LOG.debug("Replaying")
+			LOG.trace("Replaying")
 			undoStack.items.forEach {
-				LOG.debug(".. replaying transaction ${it.headCommand.getDescription()}")
+				LOG.trace(".. replaying transaction ${it.headCommand.getDescription()}")
 				it.execute()
 			}
 		}
@@ -380,7 +380,7 @@ class SourcingCommandManager(
 	}
 
 	private fun createSnapshotData(): Storable {
-		LOG.debug("Create new snapshot")
+		LOG.trace("Create new snapshot")
 		return StorableCloner.clone(undoableDataHolder.getUndoableState()!!)
 	}
 }

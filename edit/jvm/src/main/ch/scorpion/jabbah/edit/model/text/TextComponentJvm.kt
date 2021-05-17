@@ -275,7 +275,7 @@ open class TextComponentJvm(
 	/** Adjust position and size of the currently used text editor. */
 	private fun adjustTextEditor(editor: Editor) {
 		val bounds = shape
-		LOG.debug("Adjust text editor at $bounds")
+		LOG.trace("Adjust text editor at $bounds")
 		val orig = editor.view.modelToView(Point2D(bounds.x + INSET_X, bounds.y + INSET_Y))
 		TEXT_EDITOR.setBounds(
 			orig.x.toInt(),
@@ -393,7 +393,7 @@ open class TextComponentJvm(
 		/** ---- [EventHandler] */
 
 		private fun startEditing(editor: Editor) {
-			LOG.debug("TextComponent: start editing")
+			LOG.trace("start editing")
 			this.editor = editor
 			editing = true
 
@@ -414,7 +414,7 @@ open class TextComponentJvm(
 		}
 
 		private fun stopEditing() {
-			LOG.debug("TextComponent: stop editing")
+			LOG.trace("stop editing")
 			if (text.getTranslation() != TEXT_EDITOR.text) {
 				editor!!.commandManager.execute(
 					TextChangeCommand(editor!!, this@TextComponentJvm.id, text, text.withTranslation(TEXT_EDITOR.text)))

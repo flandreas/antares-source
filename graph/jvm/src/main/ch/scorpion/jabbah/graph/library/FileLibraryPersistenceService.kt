@@ -33,19 +33,19 @@ class FileLibraryPersistenceService(
 	/** ---- [LibraryPersistenceService] */
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
-		LOG.debug("delete MetaGraph $uuid in Library ${library.uuid}")
+		LOG.trace("delete MetaGraph $uuid in Library ${library.uuid}")
 		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
 	}
 
 	override fun loadLibrary(uuid: UUID): Library {
-		LOG.debug("load Library $uuid")
+		LOG.trace("load Library $uuid")
 		return createLibraryFileInputStream(uuid).use {
 			loadLibrary(uuid, it)
 		}
 	}
 
 	override fun deleteLibrary(uuid: UUID) {
-		LOG.debug("delete Library $uuid")
+		LOG.trace("delete Library $uuid")
 		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(uuid)))
 	}
 
@@ -62,7 +62,7 @@ class FileLibraryPersistenceService(
 	}
 
 	override fun exportLibrary(uuid: UUID, outputPath: String) {
-		LOG.debug("Exporting library to $outputPath")
+		LOG.trace("Exporting library to $outputPath")
 		FileOutputStream(outputPath).use { output ->
 			ZipOutputStream(output).use {
 				val fileToZip = File(buildLibraryDirectoryPath(uuid))
@@ -84,7 +84,7 @@ class FileLibraryPersistenceService(
 	}
 
 	override fun importLibrary(inputPath: String): UUID {
-		LOG.debug("Importing library from $inputPath")
+		LOG.trace("Importing library from $inputPath")
 
 		// Import and unzip file to incubation directory
 		val incubationDirPath = Files.createTempDirectory(null)
@@ -99,7 +99,7 @@ class FileLibraryPersistenceService(
 		val incubationFiles = incubationDir.listFiles()
 		if (incubationFiles == null || incubationFiles.size != 1) {
 			val msg = "Expected 1 file in zip file, but found ${incubationFiles?.size}"
-			LOG.debug(msg)
+			LOG.trace(msg)
 			throw IllegalArgumentException(msg)
 		}
 

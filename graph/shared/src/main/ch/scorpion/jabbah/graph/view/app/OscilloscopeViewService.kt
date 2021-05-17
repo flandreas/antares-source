@@ -117,13 +117,13 @@ class OscilloscopeViewServiceImpl(
 
 	private fun displayOscilloscopeImpl(create: Boolean, graphView: GraphView) {
 		if (create) {
-			LOG.debug("OscilloscopeViewService: display Oscilloscope by creating")
+			LOG.trace("display Oscilloscope by creating")
 			val ov = OscilloscopeView()
 			positionOscilloscope(ov, graphView)
 			graphView.add(ov)
 			ov.visible = true
 		} else {
-			LOG.debug("OscilloscopeViewService: display Oscilloscope by making visible")
+			LOG.trace("display Oscilloscope by making visible")
 			findOscilloscopeView(graphView)!!.visible = true
 			findProbeViews(graphView).forEach { it.visible = true }
 		}
@@ -132,10 +132,10 @@ class OscilloscopeViewServiceImpl(
 
 	private fun hideOscilloscopeImpl(delete: Boolean, graphView: GraphView) {
 		if (delete) {
-			LOG.debug("OscilloscopeViewService: hide Oscilloscope by deleting")
+			LOG.trace("hide Oscilloscope by deleting")
 			graphView.remove(findOscilloscopeView(graphView)!!)
 		} else {
-			LOG.debug("OscilloscopeViewService: hide Oscilloscope by making invisible")
+			LOG.trace("hide Oscilloscope by making invisible")
 			findOscilloscopeView(graphView)!!.visible = false
 			findProbeViews(graphView).forEach { it.visible = false }
 		}

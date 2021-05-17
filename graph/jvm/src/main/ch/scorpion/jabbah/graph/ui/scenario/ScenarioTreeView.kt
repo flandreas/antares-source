@@ -208,7 +208,7 @@ class ScenarioTreeView(
 
 			val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
 			val dropLoc = support.dropLocation as JTree.DropLocation
-			LOG.debug("ScenarioTreeView dropLoc: $dropLoc")
+			LOG.trace("ScenarioTreeView dropLoc: $dropLoc")
 
 			// ScenarioStep can only be moved within its Scenario
 			if (dropLoc.path == null || scenarioStepNode.parent != dropLoc.path.lastPathComponent || dropLoc.childIndex < 0) {
@@ -226,7 +226,7 @@ class ScenarioTreeView(
 				return false
 			}
 
-			LOG.debug("ScenarioTreeView: importData")
+			LOG.trace("importData")
 			val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
 			val dropLoc = support.dropLocation as JTree.DropLocation
 

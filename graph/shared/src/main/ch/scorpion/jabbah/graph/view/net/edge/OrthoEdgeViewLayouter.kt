@@ -38,7 +38,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("solutions:")
-			solutions.forEach { LOG.debug("- ${it.polyline}") }
+			solutions.forEach { LOG.trace("- ${it.polyline}") }
 		}
 
 		if (solutions.size == 0) {

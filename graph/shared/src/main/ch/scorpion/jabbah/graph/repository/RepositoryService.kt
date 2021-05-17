@@ -46,7 +46,7 @@ class RepositoryServiceImpl(
 		val origService = getOwningLibraryService(elem)
 		val destService = getOwningLibraryService(destination)
 
-		LOG.debug("RepositoryServiceImpl: moving '${elem.name}' in '${origService.currentLibrary?.name}' "
+		LOG.trace("moving '${elem.name}' in '${origService.currentLibrary?.name}' "
 			+ "to '${destination.name}' at $index in '${destService.currentLibrary?.name}'")
 
 		if (isMoveFromProjectToLibrary(elem, destination)) {

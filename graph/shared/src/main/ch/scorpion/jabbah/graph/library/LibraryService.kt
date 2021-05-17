@@ -84,7 +84,7 @@ class LibraryService(
 
 	/** Loads the [Library] with the specified [UUID] from persistent store.*/
 	fun loadLibrary(uuid: UUID, isSystem: Boolean): Library {
-		LOG.debug("Loading Library $uuid")
+		LOG.trace("Loading Library $uuid")
 		val library = persister(isSystem).loadLibrary(uuid)
 		library.bindLibraryItems()
 		return library
@@ -92,7 +92,7 @@ class LibraryService(
 
 	/** Stores the specified [Library] in persistent store.*/
 	fun storeLibrary(library: Library) {
-		LOG.debug("Storing Library ${library.uuid} with ID ${library.hashCode()}")
+		LOG.trace("Storing Library ${library.uuid} with ID ${library.hashCode()}")
 		persister(library.isSystem).storeLibrary(library)
 	}
 
@@ -103,7 +103,7 @@ class LibraryService(
 	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
 	 */
 	fun deleteLibrary(uuid: UUID) {
-		LOG.debug("Deleting Library $uuid")
+		LOG.trace("Deleting Library $uuid")
 		userLibraryPersister.deleteLibrary(uuid)
 		eventBus.post(LibraryDeletedEvent(uuid))
 	}
@@ -113,13 +113,13 @@ class LibraryService(
 	 * This is primarily used by higher-level services after importing an invalid [Library].
 	 */
 	fun purgeLibrary(uuid: UUID) {
-		LOG.debug("Purging Library $uuid")
+		LOG.trace("Purging Library $uuid")
 		userLibraryPersister.deleteLibrary(uuid)
 	}
 
 	/** Renames a [Library] and makes the change persistent.*/
 	fun renameLibrary(library: Library, newName: TranslatableText) {
-		LOG.debug("Renaming Library ${library.uuid} to '$newName'")
+		LOG.trace("Renaming Library ${library.uuid} to '$newName'")
 		val oldName = library.name.translation
 		library.name = Name(newName)
 		storeLibrary(library)
@@ -131,7 +131,7 @@ class LibraryService(
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int? = null) {
-		LOG.debug("Adding LibraryItem ${item.name}'")
+		LOG.trace("Adding LibraryItem ${item.name}'")
 		item.bindTo(library)
 		if (index != null) {
 			directory.add(index, item)
@@ -148,7 +148,7 @@ class LibraryService(
 	 * @throws IllegalStateException is `item` is a non-empty [LibraryDirectory]
 	 */
 	fun removeLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
-		LOG.debug("Removing LibraryItem '${item.name}'")
+		LOG.trace("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
 				persister(library.isSystem).deleteMetaGraph(library, item.uuid)
@@ -157,7 +157,7 @@ class LibraryService(
 				}
 			} else if (item is LibraryFolder) {
 				if (!item.isEmpty()) {
-					LOG.debug("Refusing to delete non-empty LibraryFolder")
+					LOG.trace("Refusing to delete non-empty LibraryFolder")
 					throw IllegalStateException("can't delete non-empty LibraryFolder")
 				}
 			}
@@ -174,7 +174,7 @@ class LibraryService(
 	 * @return the created [LibraryDirectory]
 	 */
 	fun addFolder(library: Library, name: TranslatableText, directory: LibraryDirectory): LibraryDirectory {
-		LOG.debug("Adding new Folder '$name'")
+		LOG.trace("Adding new Folder '$name'")
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
@@ -198,7 +198,7 @@ class LibraryService(
 	 * Posts [LibraryDirectoryRenamedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
-		LOG.debug("Renaming LibraryDirectory")
+		LOG.trace("Renaming LibraryDirectory")
 		val oldName = directory.name.translation
 		directory.name = Name(newName)
 		storeLibrary(directory.library!!)
@@ -212,7 +212,7 @@ class LibraryService(
 	 * @return the created [ContainerLibraryElement]
 	 */
 	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int? = null): ContainerLibraryElement {
-		LOG.debug("Adding ContainerLibraryElement")
+		LOG.trace("Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
 		storeContainerLibraryElement(library, metaGraph, element, doClone = true)
 		addLibraryItem(library, element, directory, index)
@@ -225,7 +225,7 @@ class LibraryService(
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
-		LOG.debug("Updating ContainerLibraryElement")
+		LOG.trace("Updating ContainerLibraryElement")
 		element.metaGraph?.let {
 			val nameChanged = it.translatableName != element.name.translation
 			storeContainerLibraryElement(library, it, element, doClone = false)
@@ -258,7 +258,7 @@ class LibraryService(
 	 */
 	fun setDefaultElement(library: Library, uuid: UUID?) {
 		if (library.defaultElementUUID != uuid) {
-			LOG.debug("Setting default element to '$uuid'")
+			LOG.trace("Setting default element to '$uuid'")
 			library.defaultElementUUID = uuid
 			storeLibrary(library)
 		}
@@ -274,12 +274,12 @@ class LibraryService(
 		if (finder.result != null) {
 			return finder.result!!
 		}
-		LOG.debug("couldn't find owning LibraryDirectory of LibraryItem")
+		LOG.error("couldn't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
 	}
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
-		LOG.info("Duplicate ContainerLibraryElement ${element.metaGraph?.uuid} with name '${element.metaGraph?.name}'")
+		LOG.trace("Duplicate ContainerLibraryElement ${element.metaGraph?.uuid} with name '${element.metaGraph?.name}'")
 		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
@@ -290,7 +290,7 @@ class LibraryService(
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
 		val newUuid = System.createUUID()
-		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}' and UUID $newUuid")
+		LOG.trace("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}' and UUID $newUuid")
 
 		val path = persister(library.isSystem).exportLibraryTemporarily(library.uuid)
 
@@ -336,7 +336,7 @@ class LibraryService(
 	 * Stores a [MetaGraph] in a [Library] and updates the instance in the specified [ContainerLibraryElement].
 	 */
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
-		LOG.debug("Storing MetaGraph")
+		LOG.trace("Storing MetaGraph")
 		if (doClone) {
 			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
 			element.updateMetaGraph(clone)
@@ -358,7 +358,7 @@ class LibraryService(
 		if (loadAlways || element.metaGraph == null) {
 			val ref = "'${element.metaGraph?.name}' ${element.uuid}"
 			val metaGraph = persister(library.isSystem).loadMetaGraph(library, element.uuid)
-			LOG.debug("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
+			LOG.trace("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
 			element.updateMetaGraph(metaGraph)
 		}
 	}

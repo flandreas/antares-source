@@ -199,7 +199,7 @@ class ContainerDrawing(
 	 * [ContainerDrawing], thus providing the look that has been designed by the library designer.
 	 */
 	fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
-		LOG.debug("filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
+		LOG.trace("filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
 
 		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator)
 		val origin = clonedDrawing.getOriginIndicator().location

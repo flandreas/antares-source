@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.edit.Command
@@ -57,6 +58,10 @@ open class DrawingAppServiceImpl(
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingAppService {
 
+	companion object {
+		private val LOG by logger(DrawingAppServiceImpl::class)
+	}
+
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
 		val command = AddCommand(drawingView, component, componentCustomizer = ::customizeAddedComponent)
 		commandManager.execute(command)
@@ -77,6 +82,7 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
+		logComponentAction("Delete", components)
 		commandManager.execute(DeleteCommand(drawingView, components.map { it.id }))
 	}
 
@@ -110,6 +116,8 @@ open class DrawingAppServiceImpl(
 
 	override fun cut(drawingView: DrawingView<*>) {
 		val components = drawingView.selectionManager.selection
+		logComponentAction("Cut", components)
+
 		val componentsToDelete = components.filter { it.deletable }.toList()
 		if (componentsToDelete.isNotEmpty()) {
 			copy(drawingView)
@@ -129,12 +137,23 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun copy(drawingView: DrawingView<*>) {
+		logComponentAction("Copy", drawingView.selectionManager.selection)
 		Clipboard.setStringContents(copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing))
+	}
+
+	protected fun logComponentAction(action: String, components: Collection<Component>) {
+		if (components.size == 1) {
+			LOG.debug("$action component '${components.first().type}' with ID ${components.first().id}")
+		} else {
+			LOG.debug("$action ${components.size} components")
+		}
 	}
 
 	override fun paste(drawingView: DrawingView<Drawing<Component>>) {
 		Clipboard.getStringContents()?.let {
+			LOG.debug("Preparing paste from clipboard")
 			val pasteInfo = copyPasteService.paste(it, drawingView)
+			logComponentAction("Paste", pasteInfo.components)
 			commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
 			drawingView.selectionManager.deselectAll()
 			drawingView.selectionManager.select(pasteInfo.components)

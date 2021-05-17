@@ -28,11 +28,22 @@ expect object LogSystem {
 }
 
 expect class Logger {
-    fun info(msg: String)
+
+	/** Used for a few important information like statistics etc.*/
+	fun info(msg: String)
+
+	/** Used for warnings like configuration errors etc. */
     fun warn(msg: String)
+
+    /** Used for errors like unexpected exceptions etc. */
     fun error(msg: String, t: Throwable? = null)
+
+    /** Used as a trail of all relevant user actions. Primarily used by testers to produce test action protocols. */
     fun debug(msg: String)
+
+    /** Used for detailed information. Primarily used by the developer to investigate individual issues. */
     fun trace(msg: String)
+
     fun isDebugEnabled(): Boolean
     fun isTraceEnabled(): Boolean
 }
@@ -45,6 +56,4 @@ enum class LogLevel {
     Trace
 }
 
-fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> {
-    return LogSystem.getLogger(origin)
-}
+fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> = LogSystem.getLogger(origin)

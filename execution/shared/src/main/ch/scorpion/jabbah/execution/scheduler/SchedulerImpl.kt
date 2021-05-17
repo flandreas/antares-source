@@ -75,7 +75,7 @@ class SchedulerImpl(
 			if (isActive && isStopOnIssue && it.issue != null) {
 				isPaused = true
 				System.invokeLater {
-					LOG.debug("execution stopped due to Issue '${it.issue.name}'")
+					LOG.trace("execution stopped due to Issue '${it.issue.name}'")
 					eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
 				}
 			}
@@ -122,7 +122,7 @@ class SchedulerImpl(
 				return
 			}
 			field = value
-			LOG.debug("isInBreakpoint is $field")
+			LOG.trace("isInBreakpoint is $field")
 			eventBus.post(BreakpointEvent(this))
 		}
 
@@ -336,7 +336,7 @@ class SchedulerImpl(
 	}
 
 	private fun start() {
-		LOG.debug("Scheduler started")
+		LOG.trace("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
 		activationState = ACTIVE
@@ -346,7 +346,7 @@ class SchedulerImpl(
 	}
 
 	private fun stop() {
-		LOG.debug("Scheduler stopped")
+		LOG.trace("Scheduler stopped")
 		task.stop()
 		activationState = PASSIVE
 		isInBreakpoint = false
@@ -403,7 +403,7 @@ class SchedulerImpl(
 			// Check for a breakpoint. If any of the Actors requests a break, skip the entire
 			// slot and continue only upon the next resume.
 			if (!resume && checkForBreakpoint(slot)) {
-				LOG.debug("Stop task because breakpoint detected")
+				LOG.trace("Stop task because breakpoint detected")
 				task.stop()
 				isInBreakpoint = true
 				return ExecutionStepResult(recalculated = false, breakpoint = true)

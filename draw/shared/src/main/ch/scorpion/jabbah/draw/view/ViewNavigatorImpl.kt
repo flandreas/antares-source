@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -98,7 +97,7 @@ class ViewNavigatorImpl(
 			view.zoomPan.panOrigin.x + (newCenter.x - view.width / 2.0) / zoomFactor,
 			view.zoomPan.panOrigin.y + (newCenter.y - view.height / 2.0) / zoomFactor)
 
-		LOG.debug("center Pan for content $bounds in view ${view.canvas.dimension} is $result")
+		LOG.trace("center Pan for content $bounds in view ${view.canvas.dimension} is $result")
 
 		return result
 	}

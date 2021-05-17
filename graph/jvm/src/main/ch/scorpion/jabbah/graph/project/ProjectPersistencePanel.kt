@@ -200,7 +200,7 @@ class ProjectPersistencePanel(
 
 	private inner class NewAction : AbstractAction("project.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("new project")
+			LOG.trace("create new project")
 			var properties: LibraryProperties?
 			while (true) {
 				properties = LibraryPropertiesPanel.showAsDialog(
@@ -234,7 +234,7 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("creating new project '${properties!!.name.getTranslation()}'")
+			LOG.debug("Creating new project '${properties!!.name.getTranslation()}'")
 			managementService.open(managementService.create(properties))
 			closeHandler.invoke()
 		}
