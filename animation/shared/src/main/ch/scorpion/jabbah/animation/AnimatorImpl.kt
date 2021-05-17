@@ -198,7 +198,7 @@ class AnimatorImpl(
 	private inner class TaskListener : AnimationTaskAdapter() {
 
 		override fun started(task: AnimationTask) {
-			LOG.debug("$task started")
+			LOG.trace("$task started")
 			findJob(task).start()
 			startTimerIfNeeded()
 		}

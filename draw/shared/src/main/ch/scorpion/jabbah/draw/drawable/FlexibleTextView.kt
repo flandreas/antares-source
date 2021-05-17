@@ -4,9 +4,8 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -33,8 +32,6 @@ class FlexibleTextView(
 
 	private companion object {
 
-		private val LOG by logger(FlexibleTextView::class)
-
 		/** The default width of a [FlexibleTextView] if none is specified upon construction.*/
 		private const val DEFAULT_WIDTH = 200
 
@@ -48,10 +45,8 @@ class FlexibleTextView(
 	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
 
 	private val multilineText = if (isUnzoomable) {
-		LOG.info("FlexibleTextView/unzoomable: devicePixelRation=$devicePixelRatio")
 		MultilineText(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
 	} else {
-		LOG.info("FlexibleTextView: devicePixelRation=$devicePixelRatio")
 		MultilineText(text, font, width.toDouble())
 	}
 

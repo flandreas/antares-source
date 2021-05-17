@@ -88,7 +88,7 @@ class TransparentAnimation(
 			val fadeInAnimation = fadeIn(transparent, fadeInTimeMs.toDouble())
 			fadeInAnimation.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
-					LOG.debug("start timer")
+					LOG.trace("start timer")
 					timer.start()
 				}
 			})
