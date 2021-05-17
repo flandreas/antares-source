@@ -88,7 +88,7 @@ class TranslatablePropertyEditor(
 	}
 
 	override fun setValue(value: Any?) {
-		text = value as Translatable
+		text = value as Translatable? ?: TranslatableText()
 		textComponent.text = text.getOptionalTranslation()
 	}
 

@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -19,9 +18,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -59,18 +56,6 @@ class RAMView(
 
 	private val inputEventHandler = DoubleClickHandler()
 	private val actorInteractionHandler = DoubleClickActorHandler()
-
-	/**
-	 * The text to be used for overwriting the default [RAMView] text, if any. If `null` no overwriting
-	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
-	 */
-	var text: String? = null
-		set(value) {
-			if (value != text) {
-				field = value
-				label.text = if (StringUtils.isEmpty(value)) buildLabelText() else value!!
-			}
-		}
 
 	private val label = Label(
 		font = font,
@@ -144,6 +129,18 @@ class RAMView(
 
 	/** ---- UI properties */
 
+	/**
+	 * The text to be used for overwriting the default [RAMView] text, if any. If `null` no overwriting
+	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
+	 */
+	var text: Translatable? = null
+		set(value) {
+			if (value != text) {
+				field = value
+				label.text = if (value == null || value.isEmpty) buildLabelText() else value.getTranslation()
+			}
+		}
+
 	var addressWidth: BitWidth
 		get() = model.addressWidth
 		set(value) {
@@ -210,9 +207,7 @@ class RAMView(
 		if (showContents) {
 			writer.writeBoolean("showContents", showContents)
 		}
-		if (text != null) {
-			writer.writeString("text", text!!)
-		}
+		text?.let { writer.writeStorables("text", it.allTranslations()) }
 		writer.writeInt("contentRowsCount", contentRowsCount)
 		writer.writeInt("contentColumnsCount", contentColumnsCount)
 	}
@@ -225,7 +220,14 @@ class RAMView(
 				additionalInfo = reader.readBoolean("showContents"),
 				resolveAfter = listOf(reader.readInt("modelId"))))
 		}
-		val tempText = if (reader.hasAttribute("text")) reader.readString("text") else null
+
+		var tempText: Translatable? = null
+		if (reader.hasAttribute("text")) {
+			// Backward compatibility
+			tempText = TranslatableText(reader.readString("text"))
+		} else if (reader.hasElement("text")) {
+			tempText = TranslatableText(reader.readStorables("text"))
+		}
 		// The default text depends on model data, so resolve the text after the model has been read
 		reader.requestResolution(this, Reference(
 			name = "text",
@@ -243,7 +245,7 @@ class RAMView(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "text") {
-			text = reference.additionalInfo as String?
+			text = reference.additionalInfo as Translatable?
 		} else if (reference.name == "showContents") {
 			showContents = reference.additionalInfo as Boolean
 		}
@@ -260,7 +262,7 @@ class RAMView(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		label.text = if (text == null) buildLabelText() else text!!
+		label.text = if (text == null) buildLabelText() else text!!.getTranslation()
 		if (model.isSelected) {
 			contentsView.handleCurrentAddressChanged()
 		}

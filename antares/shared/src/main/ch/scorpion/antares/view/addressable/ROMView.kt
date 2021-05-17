@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -65,18 +64,6 @@ class ROMView(
 	private val inputEventHandler = DoubleClickHandler()
 	private val actorInteractionHandler = DoubleClickActorHandler()
 
-	/**
-	 * The text to be used for overwriting the default [ROMView] text, if any. If `null` no overwriting
-	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
-	 */
-	var text: String? = null
-		set(value) {
-			if (value != text) {
-				field = value
-				label.text = if (StringUtils.isEmpty(value)) buildLabelText() else value!!
-			}
-		}
-
 	private val label = Label(
 		font = font,
 		text = buildLabelText(),
@@ -126,6 +113,18 @@ class ROMView(
 	}
 
 	/** ---- UI properties */
+
+	/**
+	 * The text to be used for overwriting the default [ROMView] text, if any. If `null` no overwriting
+	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
+	 */
+	var text: Translatable? = null
+		set(value) {
+			if (value != text) {
+				field = value
+				label.text = if (value == null || value.isEmpty) buildLabelText() else value.getTranslation()
+			}
+		}
 
 	var addressWidth: BitWidth
 		get() = model.addressWidth
@@ -206,9 +205,7 @@ class ROMView(
 		if (showContents) {
 			writer.writeBoolean("showContents", showContents)
 		}
-		if (text != null) {
-			writer.writeString("text", text!!)
-		}
+		text?.let { writer.writeStorables("text", it.allTranslations()) }
 		writer.writeInt("contentRowsCount", contentRowsCount)
 		writer.writeInt("contentColumnsCount", contentColumnsCount)
 		writer.writeBoolean("showDisassembler", showDisassembler)
@@ -225,12 +222,20 @@ class ROMView(
 				additionalInfo = reader.readBoolean("showContents"),
 				resolveAfter = listOf(reader.readInt("modelId"))))
 		}
-		val tempText = if (reader.hasAttribute("text")) reader.readString("text") else null
+
+		var tempText: Translatable? = null
+		if (reader.hasAttribute("text")) {
+			// Backward compatibility
+			tempText = TranslatableText(reader.readString("text"))
+		} else if (reader.hasElement("text")) {
+			tempText = TranslatableText(reader.readStorables("text"))
+		}
 		// The default text depends on model data, so resolve the text after the model has been read
 		reader.requestResolution(this, Reference(
 			name = "text",
 			additionalInfo = tempText,
 			resolveAfter = listOf(reader.readInt("modelId"))))
+
 		if (reader.hasAttribute("contentRowsCount")) {
 			contentRowsCount = reader.readInt("contentRowsCount")
 		}
@@ -248,7 +253,7 @@ class ROMView(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "text") {
-			text = reference.additionalInfo as String?
+			text = reference.additionalInfo as Translatable?
 		} else if (reference.name == "showContents") {
 			showContents = reference.additionalInfo as Boolean
 		}
@@ -265,7 +270,7 @@ class ROMView(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		label.text = if (text == null) buildLabelText() else text!!
+		label.text = if (text == null) buildLabelText() else text!!.getTranslation()
 		contentsView.handleCurrentAddressChanged()
 		super.handleStateChanged(event)
 	}
