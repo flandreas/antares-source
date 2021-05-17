@@ -86,6 +86,10 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 		// Not yet implemented
 	}
 
+	override fun clip(x: Int, y: Int, w: Int, h: Int) {
+		// Not yet implemented
+	}
+
 	/**
 	 * HTML canvas doesn't provide access to the current transform yet, so keep a local
 	 * [AffineTransform] and forward all changes to the rendering context.

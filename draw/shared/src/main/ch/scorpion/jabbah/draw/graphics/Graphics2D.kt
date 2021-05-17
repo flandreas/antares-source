@@ -93,6 +93,9 @@ interface Graphics2D {
     /** Fills the specified [Shape] with the current [Color].*/
     fun fill(shape: Shape)
 
+    /** Intersects the current clip with the specified rectangle. */
+	fun clip(x: Int, y: Int, w: Int, h: Int)
+
 	/**
 	 * Sets the bounding rectangle of the current clipping area.
 	 * Does nothing if [supportClipping] returns `false`.

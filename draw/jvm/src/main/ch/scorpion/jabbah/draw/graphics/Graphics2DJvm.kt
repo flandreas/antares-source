@@ -266,7 +266,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     override fun drawText(s: String, x: Int, y: Int, w: Int) {
         val oldClip = g.clipBounds
         setupTextPainter(s, g.font, g.color, x, y, w, 1000)
-        g.setClip(x, y, w, Int.MAX_VALUE)
+	    g.clipRect(x, y, w, Int.MAX_VALUE)
         g.translate(x, y)
         TEXT_PAINTER.paint(g)
         g.translate(-x, -y)
@@ -302,6 +302,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             }
         }
     }
+
+	override fun clip(x: Int, y: Int, w: Int, h: Int) {
+		if (supportClipping) {
+			g.clipRect(x, y, w, h)
+		}
+	}
 
 	override fun setClipBounds(x: Int, y: Int, w: Int, h: Int) {
 		if (supportClipping) {

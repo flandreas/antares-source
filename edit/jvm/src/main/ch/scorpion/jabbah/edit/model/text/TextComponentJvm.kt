@@ -22,10 +22,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import java.awt.BasicStroke
-import java.awt.Component
-import java.awt.Container
-import java.awt.Graphics
+import java.awt.*
 import javax.swing.JTextPane
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
@@ -230,9 +227,10 @@ open class TextComponentJvm(
 		}
 
 		val oldClip = context.g.getClipBounds()
-		context.g.setClipBounds(x.toInt(), y.toInt(), width.toInt(), height.toInt())
+		context.g.clip(x.toInt(), y.toInt(), width.toInt(), height.toInt())
 
 		setupTextPainter(context)
+
 		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
 		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
 		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
