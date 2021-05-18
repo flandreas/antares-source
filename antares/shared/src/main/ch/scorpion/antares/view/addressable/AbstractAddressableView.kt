@@ -86,6 +86,9 @@ abstract class AbstractAddressableView<T : Addressable>(
 		set(value) {
 			invalidate()
 			model.addressWidth = value
+			if (showContents) {
+				updateGeometry()
+			}
 			invalidate()
 			validate()
 		}
@@ -95,6 +98,9 @@ abstract class AbstractAddressableView<T : Addressable>(
 		set(value) {
 			invalidate()
 			model.dataWidth = value
+			if (showContents) {
+				updateGeometry()
+			}
 			invalidate()
 			validate()
 		}

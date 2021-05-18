@@ -160,9 +160,9 @@ class AddressableContentsView(
 
 	/** ---- [AddressableContentsView] */
 
-	private val addressDigitCount = max(1, addressable.addressWidth.width / 4)
+	private val addressDigitCount get() = max(1, addressable.addressWidth.width / 4)
 
-	private val dataDigitCount = max(1, addressable.dataWidth.width / 4)
+	private val dataDigitCount get() = max(1, addressable.dataWidth.width / 4)
 
 	private val effectiveColumnCount: Int get() = if (showDisassembler) 1 else columnsCount
 
