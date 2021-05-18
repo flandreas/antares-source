@@ -178,8 +178,8 @@ class RAMCalculatorTest {
 
 	private fun createRam(clocked: Boolean): RAM {
 		val ram = RAM(clocked)
-		ram.setAddressWidth(BitWidth.BW_8)
-		ram.setDataWidth(BitWidth.BW_8)
+		ram.addressWidth = BitWidth.BW_8
+		ram.dataWidth = BitWidth.BW_8
 		return ram
 	}
 }

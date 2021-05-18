@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -44,7 +45,7 @@ class ROMTest {
 
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
-        val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
+        val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.of(BitWidth.BW_8, 99L), dataOutput.getOutgoingSignal() as Word)
     }
 
@@ -56,7 +57,7 @@ class ROMTest {
 
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
-        val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
+        val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.undefined(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
     }
 
@@ -68,7 +69,7 @@ class ROMTest {
 
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
-        val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
+        val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.error(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
     }
 

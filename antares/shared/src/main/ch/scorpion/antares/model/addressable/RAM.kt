@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
+import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
+import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -33,9 +36,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		private const val ADDRESS_PORT_NAME = "A"
-		private const val CHIP_SELECT_PORT_NAME = "CS"
-		private const val DATA_PORT_NAME = "D"
 		private const val WRITE_PORT_NAME = "WR"
 		private const val CLEAR_PORT_NAME = "CLR"
 		private const val CLOCK_PORT_NAME = "CLK"
@@ -43,6 +43,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.addressPort.desc"))
 		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.dataPort.desc"))
+
 		private val WRITE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.writePort.desc"))
 		private val CLEAR_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clearPort.desc"))
 		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clockPort.desc"))
@@ -109,9 +110,19 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 			return 0
 		}
 
-	override val addressWidth: BitWidth get() = getAddressInput().bitWidth
+	override var addressWidth: BitWidth
+		get() = getAddressInput().bitWidth
+		set(value) {
+			getAddressInput().bitWidth = value
+			stateChanged()
+		}
 
-	override val dataWidth: BitWidth get() = getDataPort().bitWidth
+	override var dataWidth: BitWidth
+		get() = getDataPort().bitWidth
+		set(value) {
+			getDataPort().bitWidth = value
+			stateChanged()
+		}
 
 	override val disassemblyWidth: Int get() = 0
 
@@ -129,9 +140,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
-		signalHandler?.let {
-			it.requestActingAfter(this, propagationDelay, createActorData(null))
-		}
+		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
 	}
 
 	override fun disassemblyAt(address: Int): String = ""
@@ -149,8 +158,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		setAddressWidth(BitWidth.withName(reader.readString("addressBitWidth")))
-		setDataWidth(BitWidth.withName(reader.readString("dataBitWidth")))
+		addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
+		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		hasClock = reader.readBoolean("clock")
 	}
 
@@ -169,28 +178,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	}
 
 	/** ---- [RAM] */
-
-	fun setAddressWidth(bitWidth: BitWidth) {
-		getAddressInput().bitWidth = bitWidth
-		stateChanged()
-	}
-
-	fun setDataWidth(bitWidth: BitWidth) {
-		getDataPort().bitWidth = bitWidth
-		stateChanged()
-	}
-
-	fun getAddressInput(): DigitalPort {
-		val addressInput = getPort<DigitalSignal>(ADDRESS_PORT_NAME)
-		return addressInput as DigitalPort
-	}
-
-	fun getChipSelectInput(): DigitalPort {
-		val addressInput = getPort<DigitalSignal>(CHIP_SELECT_PORT_NAME)
-		return addressInput as DigitalPort
-	}
-
-	fun getDataPort(): DigitalPort = getPort<DigitalSignal>(DATA_PORT_NAME) as DigitalPort
 
 	fun getWriteInput(): DigitalPort = getPort<DigitalSignal>(WRITE_PORT_NAME) as DigitalPort
 

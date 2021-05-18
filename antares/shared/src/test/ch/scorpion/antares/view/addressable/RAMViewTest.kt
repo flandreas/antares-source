@@ -1,0 +1,40 @@
+package ch.scorpion.antares.view.addressable
+
+import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class RAMViewTest {
+
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
+
+	private val ramView = RAMView()
+
+	@Test
+	fun shouldUpdateLabelWhenSettingAddressWidth() {
+		ramView.addressWidth = BitWidth.BW_16
+
+		assertEquals("RAM 64Kx8", ramView.label.text)
+	}
+
+	@Test
+	fun shouldUpdateLabelWhenSettingText() {
+		ramView.text = TranslatableText("Test")
+
+		assertEquals("Test", ramView.label.text)
+	}
+
+	@Test
+	fun shouldResetLabelWhenClearingText() {
+		ramView.text = TranslatableText("Test")
+		ramView.text = null
+
+		assertEquals("RAM 256x8", ramView.label.text)
+	}
+}

@@ -1,9 +1,14 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
+import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
+import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -30,10 +35,6 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		const val ADDRESS_PORT_NAME = "A"
-		const val CHIP_SELECT_PORT_NAME = "CS"
-		const val DATA_PORT_NAME = "D"
-
 		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.addressPort.desc"))
 		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.dataPort.desc"))
@@ -46,13 +47,13 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 					val address = vertice.getAddressInput().getIncomingSignal()
 					val addressInt = address!!.toInt()
 					if (addressInt == null) {
-						vertice.getDataOutput().setOutgoingSignalBuffered(Word.error(vertice.dataWidth), signalHandler)
+						vertice.getDataPort().setOutgoingSignalBuffered(Word.error(vertice.dataWidth), signalHandler)
 					} else {
 						vertice.currentSelectedAddress = addressInt
-						vertice.getDataOutput().setOutgoingSignalBuffered(Word.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
+						vertice.getDataPort().setOutgoingSignalBuffered(Word.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
 					}
 				} else {
-					vertice.getDataOutput().setOutgoingSignalBuffered(Word.undefined(vertice.dataWidth), signalHandler)
+					vertice.getDataPort().setOutgoingSignalBuffered(Word.undefined(vertice.dataWidth), signalHandler)
 				}
 			}
 		}
@@ -114,9 +115,19 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 			return 0
 		}
 
-	override val addressWidth: BitWidth get() = getAddressInput().bitWidth
+	override var addressWidth: BitWidth
+		get() = getAddressInput().bitWidth
+		set(value) {
+			getAddressInput().bitWidth = value
+			stateChanged()
+		}
 
-	override val dataWidth: BitWidth get() = getDataOutput().bitWidth
+	override var dataWidth: BitWidth
+		get() = getDataPort().bitWidth
+		set(value) {
+			getDataPort().bitWidth = value
+			stateChanged()
+		}
 
 	override val disassemblyWidth: Int get() = _disassemblyWidth
 
@@ -156,38 +167,13 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		setAddressWidth(BitWidth.withName(reader.readString("addressBitWidth")))
-		setDataWidth(BitWidth.withName(reader.readString("dataBitWidth")))
+		addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
+		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		CompressedMemoryDump.read(memory, reader.readString("content"))
 		disassemblerConfig = reader.readOptionalString("disassembler") ?: ""
 	}
 
 	/** ---- [ROM]  */
-
-	fun setAddressWidth(bitWidth: BitWidth) {
-		getAddressInput().bitWidth = bitWidth
-		stateChanged()
-	}
-
-	fun setDataWidth(bitWidth: BitWidth) {
-		getDataOutput().bitWidth = bitWidth
-		stateChanged()
-	}
-
-	fun getAddressInput(): DigitalPort {
-		val addressInput = getInput<DigitalSignal>(ADDRESS_PORT_NAME)
-		return addressInput as DigitalPort
-	}
-
-	fun getChipSelectInput(): DigitalPort {
-		val addressInput = getInput<DigitalSignal>(CHIP_SELECT_PORT_NAME)
-		return addressInput as DigitalPort
-	}
-
-	fun getDataOutput(): DigitalPort {
-		val dataOutput = getOutput<DigitalSignal>(DATA_PORT_NAME)
-		return dataOutput as DigitalPort
-	}
 
 	fun read(address: Int): Long = memory.read(address)
 

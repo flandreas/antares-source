@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Vertice
 
@@ -9,6 +11,12 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * of a particular [BitWidth].
  */
 interface Addressable : Vertice {
+
+	companion object {
+		const val ADDRESS_PORT_NAME = "A"
+		const val CHIP_SELECT_PORT_NAME = "CS"
+		const val DATA_PORT_NAME = "D"
+	}
 
 	val memory: Memory
 
@@ -23,11 +31,11 @@ interface Addressable : Vertice {
     /** Returns the current data at [currentAddress].*/
     val data: Long
 
-    /** Returns the width of the cell's addresses.*/
-    val addressWidth: BitWidth
+    /** Contains the width of the cell's addresses.*/
+    var addressWidth: BitWidth
 
-    /** Returns the width of the cell's data. */
-    val dataWidth: BitWidth
+    /** Contains the width of the cell's data. */
+    var dataWidth: BitWidth
 
     /** Returns the maximum number of characters of all disassembly values.*/
     val disassemblyWidth: Int
@@ -56,4 +64,13 @@ interface Addressable : Vertice {
      * [String] if this [Addressable] doesn't support disassembling.
      */
     fun disassemblyAt(address: Int): String
+
+	fun getAddressInput(): DigitalPort =
+		getPort<DigitalSignal>(ADDRESS_PORT_NAME) as DigitalPort
+
+	fun getChipSelectInput(): DigitalPort =
+		getPort<DigitalSignal>(CHIP_SELECT_PORT_NAME) as DigitalPort
+
+	fun getDataPort(): DigitalPort =
+		getPort<DigitalPort>(DATA_PORT_NAME) as DigitalPort
 }
