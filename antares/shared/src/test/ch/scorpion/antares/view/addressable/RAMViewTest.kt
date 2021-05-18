@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,5 +37,14 @@ class RAMViewTest {
 		ramView.text = null
 
 		assertEquals("RAM 256x8", ramView.label.text)
+	}
+
+	@Test
+	fun shouldPersistText() {
+		ramView.text = TranslatableText("Test")
+
+		var clone = StorableCloner.clone(ramView)
+
+		assertEquals("Test", clone.label.text)
 	}
 }

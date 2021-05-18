@@ -153,7 +153,11 @@ abstract class AbstractAddressableView<T : Addressable>(
 		if (showContents) {
 			writer.writeBoolean("showContents", showContents)
 		}
-		text?.let { writer.writeStorables("text", it.allTranslations()) }
+		text?.let {
+			if (it.isNotEmpty) {
+				writer.writeStorables("text", it.allTranslations())
+			}
+		}
 		writer.writeInt("contentRowsCount", contentRowsCount)
 		writer.writeInt("contentColumnsCount", contentColumnsCount)
 	}
