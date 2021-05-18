@@ -106,6 +106,7 @@ class PropertyImpl<V>(
 
 		if (force || newValue != command.oldValue) {
 			try {
+				LOG.debug("Change property '${command.getDescription()}' of component ${beanIds.firstOrNull()} to '$newValue'")
 				editor!!.commandManager.beginTransaction(command)
 				editor!!.commandManager.commitTransaction()
 			} catch (t: InvocationTargetException) {
