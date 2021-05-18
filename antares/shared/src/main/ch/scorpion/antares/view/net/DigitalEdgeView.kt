@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
@@ -97,8 +98,8 @@ class DigitalEdgeViewFactory(
 			destEndpointConnectorSupplier, currentSystemSpeedCategory)
 	}
 
-	override fun createEdgeView(net: Net<DigitalSignal>): EdgeView<DigitalSignal> {
+	override fun createEdgeView(netView: NetView<DigitalSignal>): EdgeView<DigitalSignal> {
 		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, currentSystemSpeedCategory, net)
+			destEndpointConnectorSupplier, currentSystemSpeedCategory, netView.net)
 	}
 }

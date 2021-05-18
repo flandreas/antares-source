@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
+import ch.scorpion.jabbah.graph.view.NetView
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 
 /**
  * Contains a [GraphImpl] consisting of two [TestVertice]s that are connected by a [NetImpl]
@@ -14,9 +16,11 @@ open class TestGraph(eventBus: EventBus) {
     val v1: TestVertice
     val v2: TestVertice
     val net: Net<Boolean>
+    val netView: NetView<Boolean>
 
     init {
-        net = NetImpl<Boolean>()
+        net = NetImpl()
+	    netView = NetViewImpl(net)
         v1 = TestVertice()
         v2 = TestVertice()
         net.connect(v1.getOutput())

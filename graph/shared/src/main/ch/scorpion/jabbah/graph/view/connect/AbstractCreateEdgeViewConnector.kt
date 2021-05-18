@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -24,10 +27,10 @@ abstract class AbstractCreateEdgeViewConnector(
 	 *
 	 * @param view the [DrawingView] to which the created [EdgeView] is added
 	 * @param startPoint the [Point2D] at which the created [EdgeView] starts.
-	 * @param net the [Net] model of the [EdgeView] to be created
+	 * @param netView the [NetView] of the [EdgeView] to be created
 	 */
-	protected fun createEdgeView(view: DrawingView<Drawing<Component>>, startPoint: Point2D, net: Net<Any>?) {
-		edgeView = if (net == null) edgeViewFactory.createEdgeView() else edgeViewFactory.createEdgeView(net)
+	protected fun createEdgeView(view: DrawingView<Drawing<Component>>, startPoint: Point2D, netView: NetView<Any>?) {
+		edgeView = if (netView == null) edgeViewFactory.createEdgeView() else edgeViewFactory.createEdgeView(netView)
 
 		// Add the connection point twice so that the second point can be dragged
 		edgeView!!.addSegmentPoint(startPoint)

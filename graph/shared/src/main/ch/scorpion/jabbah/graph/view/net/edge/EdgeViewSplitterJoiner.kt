@@ -2,9 +2,9 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.NetView
 
 /**
  * A utility object for splitting and joining [EdgeView]s.
@@ -14,10 +14,10 @@ object EdgeViewSplitterJoiner {
 	fun <T: Any> split(
 		edgeView: EdgeView<T>,
 		index: Int, splitLocation: Point2D,
-		edgeViewCreator: (Net<T>) -> EdgeView<T>
+		edgeViewCreator: (NetView<T>) -> EdgeView<T>
 	): EdgeView<T> {
 
-		val tail = edgeViewCreator.invoke(edgeView.model)
+		val tail = edgeViewCreator.invoke(edgeView.netView!!)
 		tail.clear()
 
 		if (edgeView.isArrow) {

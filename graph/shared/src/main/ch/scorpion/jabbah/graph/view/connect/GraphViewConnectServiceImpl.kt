@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
  * Standard implementation of the [GraphViewConnectService] interface.
  */
 class GraphViewConnectServiceImpl(
-	val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
-	val nodeViewFactorySupplier: () -> NodeViewFactory<Any>
+	private val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
+	private val nodeViewFactorySupplier: () -> NodeViewFactory<Any>
 ) : GraphViewConnectService {
 
 	companion object {
@@ -162,14 +162,14 @@ class GraphViewConnectServiceImpl(
 		LOG.trace("split EdgeView ${splitEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
 		val splitLocation = newEdgeViewEndpointType.getLocation(newEdgeView)
-		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.model as Net<Any>) as NodeView<T>
+		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>) as NodeView<T>
 		graphView.add(nodeView)
 
 		// Create tail part of EdgeView that is being split
 		val tail = splitEdgeView.split(
 			splitSegmentIndex,
 			splitLocation
-		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as Net<Any>) as EdgeView<T> }
+		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as NetView<Any>) as EdgeView<T> }
 
 		nodeView.location = splitLocation
 		connectToDestination(splitEdgeView, Connection(nodeView))

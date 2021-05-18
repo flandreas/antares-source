@@ -13,9 +13,9 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
+import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
@@ -136,7 +136,7 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
+		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		context.drawingView().drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
 
@@ -164,6 +164,8 @@ class EdgeToPortConnector(
 	}
 
 	private fun completeConnecting(context: EditInputEventContext) {
+		logConnect()
+
 		if (targetPortView != null) {
 			context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))
 		} else {

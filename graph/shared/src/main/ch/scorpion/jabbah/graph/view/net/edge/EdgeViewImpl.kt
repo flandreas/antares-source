@@ -46,7 +46,8 @@ open class EdgeViewImpl<T : Any>(
 	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
 	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 	currentSystemSpeedCategory: CurrentSystemSpeedCategory,
-	net: Net<T>
+	net: Net<T>,
+	netViewStyle: NetViewStyle? = null
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), EdgeView<T> {
 
 	private companion object {
@@ -81,14 +82,13 @@ open class EdgeViewImpl<T : Any>(
 		ExecutionModule.currentSystemSpeedCategory
 	)
 
-	init {
-		modelExchanged(null)
-	}
-
-	// TODO How to initialize EdgeViewStyling when new EdgeViews are created while interacting with Tools?
-	// The proper styling should be derived from adjacent EdgeViews.
 	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 		private set
+
+	init {
+		modelExchanged(null)
+		netViewStyle?.let { styling = it.createEdgeViewStyling(styleProvider, this) }
+	}
 
 	/** ---- [Any] */
 
@@ -483,34 +483,28 @@ open class EdgeViewImpl<T : Any>(
 		} ?: MoveEdgeSegmentInfo(min(index, segmentPointCount - 2), offset)
 	}
 
-	override fun getSegmentDirection(segmentIndex: Int): Direction? {
-		return layout.type.getSegmentDirection(this, segmentIndex)
-	}
+	override fun getSegmentDirection(segmentIndex: Int): Direction? =
+		layout.type.getSegmentDirection(this, segmentIndex)
 
 	override val isDegenerated: Boolean
 		get() = segmentPointCount < 2 || isOriginDegenerated() || isDestinationDegenerated()
 
 	override val isSufficientlyLarge: Boolean get() = polyline.length > MIN_LENGTH
 
-	private fun isOriginDegenerated(): Boolean {
-		return polyline.getPointAt(0) == polyline.getPointAt(1)
-	}
+	private fun isOriginDegenerated(): Boolean =
+		polyline.getPointAt(0) == polyline.getPointAt(1)
 
-	private fun isDestinationDegenerated(): Boolean {
-		return polyline.getPointAt(polyline.pointsCount - 1) == polyline.getPointAt(polyline.pointsCount - 2)
-	}
+	private fun isDestinationDegenerated(): Boolean =
+		polyline.getPointAt(polyline.pointsCount - 1) == polyline.getPointAt(polyline.pointsCount - 2)
 
-	override fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<T>) -> EdgeView<T>): EdgeView<T> {
-		return EdgeViewSplitterJoiner.split(this, index, splitLocation, edgeViewCreator)
-	}
+	override fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (NetView<T>) -> EdgeView<T>): EdgeView<T> =
+		EdgeViewSplitterJoiner.split(this, index, splitLocation, edgeViewCreator)
 
-	override fun join(edgeView: EdgeView<T>): EdgeView<*> {
-		return EdgeViewSplitterJoiner.join(this, edgeView)
-	}
+	override fun join(edgeView: EdgeView<T>): EdgeView<*> =
+		EdgeViewSplitterJoiner.join(this, edgeView)
 
-	override fun snap(x: Double, y: Double, backgroundSnapper: Snapper?): EdgeViewSnapLocatorResult? {
-		return EdgeViewSnapLocator.snap(this, x, y, backgroundSnapper)
-	}
+	override fun snap(x: Double, y: Double, backgroundSnapper: Snapper?): EdgeViewSnapLocatorResult? =
+		EdgeViewSnapLocator.snap(this, x, y, backgroundSnapper)
 
 	/** ---- [Locatable] interface */
 

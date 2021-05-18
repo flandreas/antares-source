@@ -249,7 +249,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      * @param edgeViewCreator used to create the new [EdgeView] tail instance.
      * @return the newly created [EdgeView] that represents the tail part that has been spit apart from this [EdgeView].
      */
-    fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<T>) -> EdgeView<T>): EdgeView<T>
+    fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (NetView<T>) -> EdgeView<T>): EdgeView<T>
 
     /**
      * Joins this [EdgeView] with another adjacent [EdgeView].

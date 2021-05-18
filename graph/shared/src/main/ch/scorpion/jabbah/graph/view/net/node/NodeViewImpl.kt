@@ -42,7 +42,6 @@ open class NodeViewImpl<T : Any>(
 		private const val TYPE = "Node"
 	}
 
-	/** Can be `null`during deserialization.*/
 	protected var styling: NodeViewStyling = NetViewStyle.LINE.createNodeViewStyling(styleProvider, this)
 		private set
 
@@ -111,7 +110,7 @@ open class NodeViewImpl<T : Any>(
 			return inEv
 		}
 
-		return getOutgoingEdgeViews().firstOrNull { it.getSegmentDirection(0)!! == direction }
+		return getOutgoingEdgeViews().firstOrNull { it.getSegmentDirection(0) == direction }
 	}
 
 	override fun getIncomingEdgeView(): EdgeView<T>? {

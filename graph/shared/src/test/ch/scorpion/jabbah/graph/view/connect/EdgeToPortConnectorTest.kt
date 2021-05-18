@@ -4,14 +4,19 @@ import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.StateMachine
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.*
 
@@ -34,6 +39,21 @@ class EdgeToPortConnectorTest
 
 	@Test
 	fun shouldConnectToPortView() {
+		shouldConnectToPortViewImpl()
+	}
+
+	@Test
+	fun shouldConnectToPortViewInBlockStyle() {
+		ev.netView?.style = NetViewStyle.BLOCK
+		shouldConnectToPortViewImpl()
+
+		val context = mockk<DrawContext>(relaxed = true)
+		every { context.castedAppContext<GraphApplicationContext>() } returns mockk(relaxed = true)
+
+		builder.graphView.draw(context)
+	}
+
+	private fun shouldConnectToPortViewImpl() {
 		mouseMoveTo(150, 100, modifiers = ALT_MASK)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }

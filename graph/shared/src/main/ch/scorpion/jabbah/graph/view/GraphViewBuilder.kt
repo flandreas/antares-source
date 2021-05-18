@@ -106,7 +106,7 @@ open class GraphViewBuilder<T : Any>(
 	}
 
 	fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
-		val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.net!!)
+		val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.netView!!)
 		newEdgeView.addSegmentPoint(location)
 		var portView: PortView<T>? = null
 		if (dest != null) {

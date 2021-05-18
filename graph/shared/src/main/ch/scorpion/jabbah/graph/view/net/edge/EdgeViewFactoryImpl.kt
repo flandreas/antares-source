@@ -2,8 +2,8 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
@@ -23,7 +23,7 @@ open class EdgeViewFactoryImpl<T : Any>(
 		EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
 			destinationEndpointConnectorSupplier, currentSystemSpeedCategory)
 
-	override fun createEdgeView(net: Net<T>): EdgeView<T> =
+	override fun createEdgeView(netView: NetView<T>): EdgeView<T> =
 		EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
-			destinationEndpointConnectorSupplier, currentSystemSpeedCategory, net)
+			destinationEndpointConnectorSupplier, currentSystemSpeedCategory, netView.net)
 }

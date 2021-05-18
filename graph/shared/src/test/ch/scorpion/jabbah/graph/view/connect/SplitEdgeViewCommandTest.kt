@@ -39,7 +39,7 @@ class SplitEdgeViewCommandTest {
 
 	@Test
 	fun shouldSplitEdgeView() {
-		val newEdgeView = edgeViewFactory.createEdgeView(testGraphView.net)
+		val newEdgeView = edgeViewFactory.createEdgeView(testGraphView.netView)
 		newEdgeView.addSegmentPoint(Point2D(150, 100))
 		editorBuilder.editor.drawing.add(newEdgeView)
 

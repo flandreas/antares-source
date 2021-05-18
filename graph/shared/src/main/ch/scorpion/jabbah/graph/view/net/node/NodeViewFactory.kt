@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net.node
 
-import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.NetView
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 
 /**
  * A factory for creating [NodeView] instances
@@ -8,7 +9,9 @@ import ch.scorpion.jabbah.graph.model.Net
  */
 interface NodeViewFactory<T: Any> {
 
-    fun create(): NodeView<T>
-
-    fun create(net: Net<T>): NodeView<T>
+	/**
+	 * Creates a new [NodeView] to be added to the specified [NetView], meaning that the newly
+	 * created [NodeView] should have the same [NetViewStyle] like [netView].
+	 */
+    fun create(netView: NetView<T>): NodeView<T>
 }

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
@@ -64,11 +65,6 @@ class DigitalNodeViewFactory(
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
 ) : NodeViewFactory<DigitalSignal> {
 
-	override fun create(): NodeView<DigitalSignal> {
-		return DigitalNodeView(styleProvider, currentSystemSpeedCategory)
-	}
-
-	override fun create(net: Net<DigitalSignal>): NodeView<DigitalSignal> {
-		return DigitalNodeView(styleProvider, currentSystemSpeedCategory, net)
-	}
+	override fun create(netView: NetView<DigitalSignal>): NodeView<DigitalSignal> =
+		DigitalNodeView(styleProvider, currentSystemSpeedCategory, netView.net, netView.style)
 }

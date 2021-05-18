@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.TestGraph
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -18,7 +17,7 @@ class TestGraphView(
 	val graphView = GraphViewModule.createGraphView()
 	val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
 	val vv2: TestVerticeView = TestVerticeView(vertice = v2, name = "2")
-	val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(net)
+	val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(netView)
 
 	init {
 		vv1.location = Point2D(100, 100)
