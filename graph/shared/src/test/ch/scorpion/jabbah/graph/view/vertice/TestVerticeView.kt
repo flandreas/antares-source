@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.StoreReader
@@ -25,6 +26,11 @@ class TestVerticeView(
 	width: Int = 0,
 	height: Int = 0
 ) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice, loc.x, loc.y, width.toDouble(), height.toDouble()) {
+
+	companion object {
+		fun createEastOutputVerticeView(name: String, x: Int, y: Int): TestVerticeView =
+			TestVerticeView(name = name, loc = Point2D(x, y), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = AbstractInputEventHandlerTest.WIDTH)
+	}
 
 	init {
 		location = loc

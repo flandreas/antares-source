@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgeSegmentHandler
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewInputEventHandler
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,7 +17,7 @@ class DragEdgeSegmentHandlerTest : AbstractInputEventHandlerTest(DragEdgeSegment
 		}
 	}
 
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 200))
+	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
 
 	init {
 		builder.connect(v1, v3)

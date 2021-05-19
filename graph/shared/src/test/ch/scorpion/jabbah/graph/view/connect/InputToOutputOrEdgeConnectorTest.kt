@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -133,7 +134,7 @@ class InputToOutputOrEdgeConnectorTest
 
 	private fun connectToEdgeView() {
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-		builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
 
 		editor.commandManager.reset()
 
@@ -294,7 +295,7 @@ class InputToOutputOrEdgeConnectorTest
 
 	private fun adjustToEdgeView() {
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-		builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
 
 		editor.commandManager.reset()
 

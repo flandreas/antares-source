@@ -75,7 +75,7 @@ class GraphViewConnectServiceImpl(
 
 		if (destNodeView != null && destNodeView.getEdgeViews().size == 2) {
 			val tailEdgeView = destNodeView.getEdgeViews()[1]
-			val joinedEdgeView = removeNodeView<T>((destNodeView.parent as GraphView), destNodeView)
+			val joinedEdgeView = removeNodeView((destNodeView.parent as GraphView), destNodeView)
 			val origPortView = edgeView.origin?.portView
 			return JoinEdgeViewsResult(
 				joinedEdgeView,

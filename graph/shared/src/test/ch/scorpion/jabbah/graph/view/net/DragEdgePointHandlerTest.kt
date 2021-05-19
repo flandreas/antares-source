@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHandler
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewInputEventHandler
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +20,7 @@ class DragEdgePointHandlerTest : AbstractInputEventHandlerTest(DragEdgePointHand
 		}
 	}
 
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 200))
+	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
 	private val edgeViewInputEventHandler get() = handler as EdgeViewInputEventHandler
 	private val edgeView get() = builder.graphView.getEdgeViews().first()
 

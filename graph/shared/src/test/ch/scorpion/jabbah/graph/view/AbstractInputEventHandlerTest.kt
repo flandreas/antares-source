@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
@@ -30,8 +28,8 @@ abstract class AbstractInputEventHandlerTest(
 	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
 	protected val draggedEdgeView get() = builder.graphView.getEdgeViews().first()
 
-	protected val v1 = builder.addVerticeView(createEastOutputVerticeView("v1", 100, 100))
-	protected val v2 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 100))
+	protected val v1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
+	protected val v2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 100))
 
 	override val editor: Editor get() {
 		// The GraphView in the GraphViewBuilder might have changed by CommandManager
@@ -51,16 +49,12 @@ abstract class AbstractInputEventHandlerTest(
 	override fun mouseMoveTo(x: Int, y: Int, modifiers: Int): InputEventDriver {
 		val context = context(MouseEventType.MOVED, x, y, modifiers)
 
-		if (target != null) {
-			target = target!!.mouseMoved(context)
+		target = if (target != null) {
+			target!!.mouseMoved(context)
 		} else {
-			target = builder.graphView.getInputEventHandler(context).mouseMoved(context)
+			builder.graphView.getInputEventHandler(context).mouseMoved(context)
 		}
 
 		return this
-	}
-
-	protected fun createEastOutputVerticeView(name: String, x: Int, y: Int): TestVerticeView {
-		return TestVerticeView(name = name, loc = Point2D(x, y), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = WIDTH)
 	}
 }

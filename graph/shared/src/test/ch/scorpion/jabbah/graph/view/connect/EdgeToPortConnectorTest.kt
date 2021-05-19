@@ -30,7 +30,7 @@ class EdgeToPortConnectorTest
 	}
 
 	private val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
+	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
 
 	@BeforeTest
 	fun initialize() {

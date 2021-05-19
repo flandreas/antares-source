@@ -1,12 +1,15 @@
 package ch.scorpion.jabbah.graph.view.net.node
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.NetViewElement
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
  * A graphical representation of a junction of [EdgeView]s.
+ * [NodeView]s are [ConnectableView] without [Port]s, i.e. [EdgeView]s can connect to
+ * [NodeView]s without the need to specify a connecting [Port].
  */
 interface NodeView<T: Any> : NetViewElement<T>, ConnectableView {
 
