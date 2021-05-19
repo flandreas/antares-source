@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
@@ -22,9 +21,8 @@ interface GraphViewConnectService {
 
 	/**
 	 * Unconnects an [EdgeView] from its origin [ConnectableView].
-	 * @return the information that results if unconnecting an [EdgeView] from a [NodeView]
 	 */
-	fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
+	fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>)
 
 	/**
 	 * Connects the destination of an existing [EdgeView] with a particular [Port] of a
@@ -34,9 +32,8 @@ interface GraphViewConnectService {
 
 	/**
 	 * Unconnects an [EdgeView] from its destination [ConnectableView].
-	 * @return the information that results if unconnecting an [EdgeView] from a [NodeView]
 	 */
-	fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
+	fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>)
 
 	/**
 	 * Connects the specified [EdgeView] with the first [OutputPort] of the origin [VerticeView] and
@@ -70,9 +67,8 @@ interface GraphViewConnectService {
 	 * If the [EdgeView] is connected to [NodeView]s that have only two [EdgeView]s remaining after
 	 * unconnecting, those [NodeView]s are removed as well, and the remaining [EdgeView]s get joined.
 	 * @param edgeView the [EdgeView] to unconnect
-	 * @return the information that results when unconnecting an [EdgeView] from a [NodeView]
 	 */
-	fun <T : Any> unconnect(edgeView: EdgeView<T>): Pair<JoinEdgeViewsResult<T>?>
+	fun <T : Any> unconnect(edgeView: EdgeView<T>)
 
 	/**
 	 * Unconnects all [PortView]s of a [VerticeView] from the [EdgeView]s to which it is
@@ -135,11 +131,3 @@ data class SplitEdgeViewResult<T : Any>(
 	val newEdgeView: EdgeView<T>,
 	val tailEdgeView: EdgeView<T>,
 	val nodeView: NodeView<T>)
-
-data class JoinEdgeViewsResult<T : Any>(
-	val joinedEdgeView: EdgeView<T>,
-	val segmentIndex: Int,
-	val removedEdgeView: EdgeView<T>,
-	val removedEdgeViewEndpointType: EdgeViewEndpointType,
-	val targetPortView: PortView<T>?,
-	val tailEdgeView: EdgeView<T>)

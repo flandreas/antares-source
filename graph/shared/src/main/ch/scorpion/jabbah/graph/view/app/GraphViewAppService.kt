@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.app
 
-import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
-import ch.scorpion.jabbah.graph.view.connect.JoinEdgeViewsResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.StorableCloner
 
@@ -133,11 +131,8 @@ private class UnconnectEdgeViewCommand(
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
-	lateinit var joinResults: Pair<JoinEdgeViewsResult<Any>?>
-		private set
-
 	override fun execute() {
-		joinResults = connectService.unconnect(edgeView)
+		connectService.unconnect(edgeView)
 	}
 }
 
