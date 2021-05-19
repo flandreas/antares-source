@@ -24,6 +24,10 @@ open class CopyPasteService {
 		throw NotImplementedError()
 	}
 
+	/**
+	 * Pastes [contents] into the [Drawing] of the specified [DrawingView].
+	 * @throws IllegalArgumentException if [contents] could not be parsed, probably not valid content
+	 */
 	open fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
 		throw NotImplementedError()
 	}

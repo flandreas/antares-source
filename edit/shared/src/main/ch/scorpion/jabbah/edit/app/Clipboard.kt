@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -44,7 +46,11 @@ class PasteAction(
 ) : AbstractEditAction("edit.action.paste", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		service.paste(drawingView!!)
+		try {
+			service.paste(drawingView!!)
+		} catch (e: IllegalArgumentException) {
+			eventBus.post(ComponentMessage(ComponentMessageType.Error, null, "application.paste.illegal.error"))
+		}
 	}
 }
 

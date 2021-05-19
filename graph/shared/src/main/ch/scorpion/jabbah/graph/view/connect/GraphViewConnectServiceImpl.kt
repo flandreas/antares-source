@@ -182,21 +182,19 @@ class GraphViewConnectServiceImpl(
 			nodeView = nodeView)
 	}
 
-	override fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>): EdgeView<T> {
+	override fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>) {
 		LOG.trace("removeNodeView: ${nodeView.id}")
 		if (nodeView.getEdgeViews().size != 2) {
-			throw IllegalStateException("Cannot remove NodeView with ${nodeView.getEdgeViews().size}  EdgeViews")
+			throw IllegalStateException("Cannot remove NodeView with ${nodeView.getEdgeViews().size} EdgeViews")
 		}
 
 		val nodeEdgeViews = nodeView.getEdgeViews()
 		val joinedEdgeView = nodeEdgeViews[0]
 		val otherEdgeView = nodeEdgeViews[1]
-		joinedEdgeView.join(otherEdgeView) as EdgeView<T>
+		joinedEdgeView.join(otherEdgeView)
 
 		graphView.remove(otherEdgeView)
 		graphView.remove(nodeView)
-
-		return joinedEdgeView
 	}
 
 	private fun <T : Any> connectPortToNet(port: Port<T>?, net: Net<T>) {

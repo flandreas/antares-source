@@ -120,10 +120,9 @@ interface GraphViewConnectService {
 
 	/**
 	 * Removes a [NodeView] from a [GraphView] and joins the outgoing [EdgeView]s.
-	 * @return the remaining [EdgeView]
 	 * @throws IllegalStateException if `nodeView` doesn't have exactly two outgoing [EdgeView].
 	 */
-	fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>): EdgeView<T>
+	fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>)
 }
 
 /** Represents the result of splitting an [EdgeView].*/

@@ -48,12 +48,15 @@ interface DrawingAppService {
 	/** Copies the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
 	fun copy(drawingView: DrawingView<*>)
 
-	/** Pastes the current contents of the system clipboard into the specified [DrawingView].*/
+	/**
+	 * Pastes the current contents of the system clipboard into the specified [DrawingView].
+	 * @throws IllegalArgumentException if the clipboard content could not be parsed
+	 */
 	fun paste(drawingView: DrawingView<Drawing<Component>>)
 }
 
 open class DrawingAppServiceImpl(
-	protected val copyPasteService: CopyPasteService = EditModule.copyPasteService,
+	private val copyPasteService: CopyPasteService = EditModule.copyPasteService,
 	protected val commandManager: CommandManager = EditModule.commandManager,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingAppService {

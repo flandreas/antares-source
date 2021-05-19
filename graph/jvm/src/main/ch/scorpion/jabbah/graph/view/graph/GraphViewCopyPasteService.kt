@@ -88,46 +88,49 @@ class GraphViewCopyPasteService(
 	}
 
 	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> {
-		val components = mutableListOf<Component>()
+		lateinit var copy: Storable
+		lateinit var componentsIter: Iterator<Component>
+
 		ByteArrayInputStream(contents.toByteArray()).use {
 			try {
 				val xmlReader = ElectricXmlReader(it)
 				val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
-				val copy: Storable = reader.readStorable()
 
-				val componentsIter = when (copy) {
-					is GraphStorable -> copy.graphView.backToFrontIterator()
-					is Drawing<*> -> copy.backToFrontIterator()
+				copy = reader.readStorable()
+
+				componentsIter = when (copy) {
+					is GraphStorable -> (copy as GraphStorable).graphView.backToFrontIterator()
+					is Drawing<*> -> (copy as Drawing<*>).backToFrontIterator()
 					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
 				}
-
-				var pastedAnchorComponent: Component? = null
-				for (c in componentsIter) {
-					if (keepAfterStripping(c, copy)) {
-						components.add(c)
-						if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
-							pastedAnchorComponent = c
-						}
-					}
-				}
-
-				if (copy is GraphStorable) {
-					cleanupNets(components, copy.graphView)
-				}
-
-				Movable.moveBy(components, dislocation)
-				components.forEach { c -> view.drawing.add(c) }
-
-				if (pastedAnchorComponent != null) {
-					pastedAnchorComponentId = pastedAnchorComponent.id
-				}
-
-				return components
 			} catch (e: Exception) {
-				LOG.error("Error while reading Components from clipboard: ${e.message}")
-				throw RuntimeException(e)
+				throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
 			}
 		}
+
+		val components = mutableListOf<Component>()
+		var pastedAnchorComponent: Component? = null
+		for (c in componentsIter) {
+			if (keepAfterStripping(c, copy)) {
+				components.add(c)
+				if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
+					pastedAnchorComponent = c
+				}
+			}
+		}
+
+		if (copy is GraphStorable) {
+			cleanupNets(components, (copy as GraphStorable).graphView)
+		}
+
+		Movable.moveBy(components, dislocation)
+		components.forEach { c -> view.drawing.add(c) }
+
+		if (pastedAnchorComponent != null) {
+			pastedAnchorComponentId = pastedAnchorComponent.id
+		}
+
+		return components
 	}
 
 	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
@@ -169,9 +172,9 @@ class GraphViewCopyPasteService(
 	 */
 	private fun cleanupNets(components: List<Component>, graphView: GraphView) {
 		components
-			.filter { it is NetViewElement<*> }
+			.filterIsInstance<NetViewElement<*>>()
 			.forEach { netViewElem ->
-				val ports = ((netViewElem as NetViewElement<*>).net!!.ports).toList()
+				val ports = (netViewElem.net!!.ports).toList()
 				ports.forEach { port ->
 					if (port.owner != null && graphView.getElementViews(port.owner!!).isEmpty()) {
 						netViewElem.net!!.unconnect(port)
@@ -200,10 +203,14 @@ class GraphViewCopyPasteService(
 	private fun keepAfterRemovingDanglingNodeView(nodeView: NodeView<*>, graphView: GraphView): Boolean {
 		when (nodeView.getEdgeViews().size) {
 			0 -> {
+				// TODO Bug: This will produce an exception in GraphViewConnectService (unmet precondition size==2)
+				// Is it necessary that the NodeView is removed at all?
+				// Provide a test case for this scenario!
 				connectService.removeNodeView(graphView, nodeView)
 				return false
 			}
 			1 -> {
+				// TODO Bug?: This will not remove the NodeView. Is that okay?
 				val edgeView = nodeView.getEdgeViews()[0]
 				if (edgeView.origin?.connectableView === nodeView) {
 					connectService.unconnectEdgeViewOrigin(edgeView)
