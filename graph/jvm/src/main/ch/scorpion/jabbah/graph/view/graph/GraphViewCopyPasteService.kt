@@ -11,8 +11,9 @@ import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.NetViewElement
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -87,55 +88,6 @@ class GraphViewCopyPasteService(
 		}
 	}
 
-	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> {
-		lateinit var copy: Storable
-		lateinit var componentsIter: Iterator<Component>
-
-		ByteArrayInputStream(contents.toByteArray()).use {
-			try {
-				val xmlReader = ElectricXmlReader(it)
-				val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
-
-				copy = reader.readStorable()
-
-				componentsIter = when (copy) {
-					is GraphStorable -> (copy as GraphStorable).graphView.backToFrontIterator()
-					is Drawing<*> -> (copy as Drawing<*>).backToFrontIterator()
-					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
-				}
-			} catch (e: Exception) {
-				throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
-			}
-		}
-
-		val components = mutableListOf<Component>()
-		var pastedAnchorComponent: Component? = null
-		for (c in componentsIter) {
-			if (keepAfterStripping(c, copy)) {
-				components.add(c)
-				if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
-					pastedAnchorComponent = c
-				}
-			}
-		}
-
-		if (copy is GraphStorable) {
-			cleanupNets(components, (copy as GraphStorable).graphView)
-		}
-
-		Movable.moveBy(components, dislocation)
-		components.forEach { c -> view.drawing.add(c) }
-
-		if (pastedAnchorComponent != null) {
-			pastedAnchorComponentId = pastedAnchorComponent.id
-		}
-
-		return components
-	}
-
-	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
-		origAnchorComponentId?.let { view.drawing.getWithId(it) }
-
 	override fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
 		val origAnchorComponent = origAnchorComponentId?.let { view.drawing.getWithId(it) }
 		val dislocation: Point2D = if (origAnchorComponent != null && pastedAnchorComponentId != null) {
@@ -153,25 +105,61 @@ class GraphViewCopyPasteService(
 		return PasteInfo(components, dislocation)
 	}
 
-	private fun keepAfterStripping(component: Component, copy: Storable): Boolean {
-		if (copy !is GraphStorable) {
-			// No stripping
-			return true
+	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> {
+		lateinit var copy: Storable
+		lateinit var copyDrawing: Drawing<Component>
+
+		ByteArrayInputStream(contents.toByteArray()).use {
+			try {
+				val xmlReader = ElectricXmlReader(it)
+				val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
+
+				copy = reader.readStorable()
+
+				copyDrawing = when (copy) {
+					is GraphStorable -> (copy as GraphStorable).graphView as Drawing<Component>
+					is Drawing<*> -> (copy as Drawing<Component>)
+					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
+				}
+			} catch (e: Exception) {
+				throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
+			}
 		}
-		val graphView = copy.graphView
-		return when (component) {
-			is VerticeView<*> -> keepAfterDisconnectingFromNetsWithoutEdgeView(component, graphView)
-			is NodeView<*> -> keepAfterRemovingDanglingNodeView(component, graphView)
-			else -> true
+
+		var pastedAnchorComponent: Component? = null
+		for (c in copyDrawing.getDrawables()) {
+			if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
+				pastedAnchorComponent = c
+			}
 		}
+
+		if (copy is GraphStorable) {
+			val graphView = (copy as GraphStorable).graphView
+
+			cleanupDanglingNodeViews(graphView)
+			cleanupNets(graphView)
+			disconnectVerticesFromNetsWithoutEdgeView(graphView)
+		}
+
+		Movable.moveBy(copyDrawing.getDrawables(), dislocation)
+		copyDrawing.getDrawables().forEach { c -> view.drawing.add(c) }
+
+		if (pastedAnchorComponent != null) {
+			pastedAnchorComponentId = pastedAnchorComponent.id
+		}
+
+		return copyDrawing.getDrawables()
 	}
+
+	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
+		origAnchorComponentId?.let { view.drawing.getWithId(it) }
 
 	/**
 	 * Unconnects the [Port]s of all [VerticeView]s not contained in the [GraphView] from
 	 * the [Net]s they are connected with.
 	 */
-	private fun cleanupNets(components: List<Component>, graphView: GraphView) {
-		components
+	private fun cleanupNets(graphView: GraphView) {
+		graphView.getDrawables()
 			.filterIsInstance<NetViewElement<*>>()
 			.forEach { netViewElem ->
 				val ports = (netViewElem.net!!.ports).toList()
@@ -183,43 +171,38 @@ class GraphViewCopyPasteService(
 			}
 	}
 
-	/**
-	 * Disconnects all [Port]s of a [Vertice] from [Net]s that don't have a
-	 * corresponding [EdgeView] in the specified [GraphView].
-	 */
-	private fun keepAfterDisconnectingFromNetsWithoutEdgeView(verticeView: VerticeView<*>, graphView: GraphView): Boolean {
-		for (pv in verticeView.getPortViews()) {
-			if (pv.port.net != null) {
-				val edgeViews = graphView.getElementViews(pv.port.net!!)
-				if (edgeViews.isEmpty()) {
-					pv.port.disconnect()
-					(pv as PortView<Any>).handleUnconnect(null)
+	private fun disconnectVerticesFromNetsWithoutEdgeView(graphView: GraphView) {
+		graphView.getVerticeViews().forEach { vv ->
+			vv.getPortViews().forEach { pv ->
+				if (pv.port.net != null) {
+					val edgeViews = graphView.getElementViews(pv.port.net!!)
+					if (edgeViews.isEmpty()) {
+						pv.port.disconnect()
+						(pv as PortView<Any>).handleUnconnect(null)
+					}
 				}
 			}
 		}
-		return true
 	}
 
-	private fun keepAfterRemovingDanglingNodeView(nodeView: NodeView<*>, graphView: GraphView): Boolean {
-		when (nodeView.getEdgeViews().size) {
-			0 -> {
-				// TODO Bug: This will produce an exception in GraphViewConnectService (unmet precondition size==2)
-				// Is it necessary that the NodeView is removed at all?
-				// Provide a test case for this scenario!
+	private fun cleanupDanglingNodeViews(graphView: GraphView) {
+		var done = false
+		while (!done) {
+			val nodeViews = graphView.getDrawables().filterIsInstance<NodeView<*>>().toList()
+			done = !cleanedUpDanglingNodeViews(nodeViews, graphView)
+		}
+	}
+
+	private fun cleanedUpDanglingNodeViews(nodeViews: List<NodeView<*>>, graphView: GraphView): Boolean {
+		for (nodeView in nodeViews) {
+			val edgeViewCount = nodeView.getEdgeViews().size
+			if (edgeViewCount < 3) {
 				connectService.removeNodeView(graphView, nodeView)
-				return false
 			}
-			1 -> {
-				// TODO Bug?: This will not remove the NodeView. Is that okay?
-				val edgeView = nodeView.getEdgeViews()[0]
-				if (edgeView.origin?.connectableView === nodeView) {
-					connectService.unconnectEdgeViewOrigin(edgeView)
-				} else if (edgeView.destination?.connectableView === nodeView) {
-					connectService.unconnectEdgeViewDestination(edgeView)
-				}
-				return false
+			if (edgeViewCount in 1..2) {
+				return true
 			}
 		}
-		return true
+		return false
 	}
 }

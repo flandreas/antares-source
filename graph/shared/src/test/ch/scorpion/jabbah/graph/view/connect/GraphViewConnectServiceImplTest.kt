@@ -267,16 +267,16 @@ class GraphViewConnectServiceImplTest {
 		val result = splitToInput(ev1, ev2, vv3)
 		ev2.unconnectFromOrigin()
 
-		val remainingEV = service.removeNodeView(gv, result.nodeView)
+		service.removeNodeView(gv, result.nodeView)
 
 		// Model assertions
-		assertTrue(remainingEV.model.isConnectedWith(vv1.model.getOutput()))
+		assertTrue(result.tailEdgeView.model.isConnectedWith(vv1.model.getOutput()))
 
 		// View assertions
 		assertEquals(0, result.nodeView.getOutgoingEdgeViews().size)
 		assertFalse(gv.contains(result.nodeView))
-		assertSame(vv1, remainingEV.origin!!.connectableView)
-		assertSame(vv2, remainingEV.destination!!.connectableView)
+		assertSame(vv1, result.tailEdgeView.origin?.connectableView)
+		assertSame(vv2, result.tailEdgeView.destination?.connectableView)
 	}
 
 	private fun splitToInput(
