@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

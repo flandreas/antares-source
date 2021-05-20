@@ -60,7 +60,16 @@ class NandGateViewBeanInfo : DigitalGateViewBeanInfo<NandGateView>()
 class NorGateViewBeanInfo : DigitalGateViewBeanInfo<NorGateView>()
 
 @Suppress("unused")
-class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>()
+class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>() {
+	companion object {
+		val bitWidth = AntaresProperties.bitWidth()
+	}
+
+	override fun addProperties(bean: NotGateView, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+		properties.add(bitWidth.bind(editor, bean.id))
+	}
+}
 
 @Suppress("unused")
 class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()

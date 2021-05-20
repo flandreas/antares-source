@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.NotGate
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
@@ -30,6 +31,12 @@ class NotGateView(
         modelExchanged(null)
     }
 
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			model.bitWidth = value
+		}
+
     override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
         EXPLANATION.explanation.vertice = model
         EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
@@ -41,6 +48,8 @@ class NotGateView(
     }
 
 	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
+		if (bitWidth == BitWidth.BW_1) {
+			GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
+		}
 	}
 }
