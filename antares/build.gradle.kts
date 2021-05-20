@@ -92,7 +92,8 @@ tasks {
 	}
 
 	val copySplash by register<Copy>("copySplash") {
-		from(file("$projectDir/shared/rsc/img/splash.png"))
+		from("$projectDir/shared/rsc/img")
+		include("splash*.png")
 		into(file("$buildDir/package"))
 	}
 
