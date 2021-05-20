@@ -28,7 +28,7 @@ class LibraryFolderPropertiesAction(
 ) {
 
 	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
+		get() = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.View, it) } ?: false
 
 	override fun execute(event: ActionEvent) {
 		val title = Translations.getString("library.action.editFolderProperties.name")
@@ -37,7 +37,9 @@ class LibraryFolderPropertiesAction(
 			text = LibraryFolderPropertiesPanel.showAsDialog(
 				parent = SwingUtilities.getWindowAncestor(controller.view as Component),
 				title = title,
-				name = selectedFolder.name.translation)
+				name = selectedFolder.name.translation,
+				editable = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
+			)
 			if (text == null) {
 				return
 			}
@@ -60,16 +62,18 @@ class LibraryFolderPropertiesAction(
 }
 
 private class LibraryFolderPropertiesPanel(
-	name: TranslatableText
+	name: TranslatableText,
+	editable: Boolean
 ) : JPanel() {
 
 	companion object {
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
 			title: String,
-			name: TranslatableText
+			name: TranslatableText,
+			editable: Boolean
 		): TranslatableText? {
-			val panel = LibraryFolderPropertiesPanel(name)
+			val panel = LibraryFolderPropertiesPanel(name, editable)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -85,9 +89,7 @@ private class LibraryFolderPropertiesPanel(
 	}
 
 	private val nameLabel = Translations.getString("library.property.name.name")
-	private val nameField = TranslatablePropertyEditor(
-		nameLabel,
-		editable = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, LibraryModule.libraryHolder.library))
+	private val nameField = TranslatablePropertyEditor(nameLabel, editable = editable)
 
 	init {
 		preferredSize = Dimension(300, 100)
