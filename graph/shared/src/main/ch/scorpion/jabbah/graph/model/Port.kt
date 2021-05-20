@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -20,7 +21,7 @@ import kotlin.reflect.KClass
  *
  * @param T the type of signal that this [Port] can consume or produce.
  */
-interface Port<T : Any> : Describable {
+interface Port<T : Any> : Describable, Bean {
 
 	companion object {
 		const val PROP_NAME = "name"
