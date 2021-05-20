@@ -21,7 +21,8 @@ enum class ProjectImportResult {
 	Success,
 	NameAlreadyExists,
 	Invalid,
-	StaleLibraryReference
+	StaleLibraryReference,
+	UuidAlreadyExists
 }
 
 /**
@@ -225,8 +226,25 @@ class ProjectManagementService(
 		libraryService.exportLibrary(uuid, outputPath)
 	}
 
-	fun import(inputPath: String): ProjectImportResult {
-		val library = libraryService.importLibrary(inputPath) ?: return ProjectImportResult.Invalid
+	fun import(inputPath: String, replaceIfUuidExists: Boolean): ProjectImportResult {
+		lateinit var library: Library
+
+		try {
+			library = libraryService.importLibrary(inputPath)
+		} catch (e: LibraryImportConflictException) {
+			if (replaceIfUuidExists) {
+				deleteImpl(e.uuid)
+				try {
+					library = libraryService.importLibrary(inputPath)
+				} catch (e: Throwable) {
+					return ProjectImportResult.Invalid
+				}
+			} else {
+				return ProjectImportResult.UuidAlreadyExists
+			}
+		} catch (e: Throwable) {
+			return ProjectImportResult.Invalid
+		}
 
 		if (exists(library.name.translation)) {
 			LOG.trace("Name of imported project already exists")

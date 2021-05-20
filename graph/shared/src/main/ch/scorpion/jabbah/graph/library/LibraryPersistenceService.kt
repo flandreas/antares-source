@@ -24,7 +24,8 @@ interface LibraryPersistenceService {
 	/**
 	 * Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the [UUID] contained in the file.
 	 * @return the [UUID] of the imported [Library]
-	 * @throws IllegalStateException if a [Library] with the same [UUID] already exists
+	 * @throws IllegalArgumentException if the import file could not be read successfully
+	 * @throws LibraryImportConflictException if a [Library] with the same [UUID] already exists
 	 * */
 	fun importLibrary(inputPath: String): UUID
 
@@ -38,6 +39,13 @@ interface LibraryPersistenceService {
 	 */
 	fun exportLibraryTemporarily(uuid: UUID): String
 }
+
+/**
+ * Thrown by [LibraryPersistenceService.importLibrary] if a [Library] with the same [UUID]
+ * as the one to be imported already exists.
+ * @property uuid the [UUID] of the [Library] to be imported
+ */
+data class LibraryImportConflictException(val uuid: UUID) : Throwable()
 
 /** Null pattern.*/
 class UnimplementedLibraryPersistenceService : LibraryPersistenceService {

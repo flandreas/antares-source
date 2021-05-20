@@ -109,7 +109,7 @@ class FileLibraryPersistenceService(
 			try {
 				loadLibrary(it)
 			} catch (e: Exception) {
-				LOG.debug("Could not read library file, possibly not an Graph library")
+				LOG.trace("Could not read library file, possibly not an Graph library")
 				throw IllegalArgumentException("Could not read library file", e)
 			}
 		}
@@ -118,8 +118,8 @@ class FileLibraryPersistenceService(
 		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
 		if (Files.exists(newDirectory)) {
 			val msg = "Library ${library.uuid} already exists"
-			LOG.debug(msg)
-			throw IllegalStateException(msg)
+			LOG.trace(msg)
+			throw LibraryImportConflictException(library.uuid)
 		}
 
 		// Rename directory to UUID of imported Library

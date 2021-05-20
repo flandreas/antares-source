@@ -20,7 +20,7 @@ object ZipUtil {
 		if (file.isHidden) {
 			return
 		}
-		LOG.info("zipping $fileName")
+		LOG.trace("zipping $fileName")
 		if (file.isDirectory) {
 			if (fileName.endsWith("/")) {
 				zipOut.putNextEntry(ZipEntry(fileName))
@@ -52,7 +52,7 @@ object ZipUtil {
 		while (zipEntry != null) {
 			if (zipEntry.isDirectory) {
 				val dirPath = Paths.get(destDir.toAbsolutePath().toString(), zipEntry.name)
-				LOG.info("creating directory $dirPath")
+				LOG.trace("creating directory $dirPath")
 				Files.createDirectory(dirPath).toFile()
 			} else {
 				val newFile = newFile(destDir.toFile(), zipEntry)
@@ -78,7 +78,7 @@ object ZipUtil {
 	 */
 	private fun newFile(destDir: File, zipEntry: ZipEntry): File {
 		val destFile = Files.createFile(Paths.get(destDir.absolutePath, zipEntry.name)).toFile()
-		LOG.info("unzipping to ${destFile.absolutePath}")
+		LOG.trace("unzipping to ${destFile.absolutePath}")
 		val destDirPath = destDir.canonicalPath
 		val destFilePath = destFile.canonicalPath
 

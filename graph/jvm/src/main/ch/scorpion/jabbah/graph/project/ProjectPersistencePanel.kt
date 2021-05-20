@@ -183,7 +183,7 @@ class ProjectPersistencePanel(
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			selectedProject?.let {
-				LOG.debug(" open project '${it.uuid}'")
+				LOG.debug("open project '${it.uuid}'")
 				InvocationHandler.invoke {
 					managementService.open(it.uuid)
 					closeHandler.invoke()
@@ -234,8 +234,11 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("Creating new project '${properties!!.name.getTranslation()}'")
-			managementService.open(managementService.create(properties))
+			LOG.debug("Create new project '${properties!!.name.getTranslation()}'")
+			val project = managementService.create(properties)
+			LOG.debug("Created new project ${project.uuid}")
+
+			managementService.open(project)
 			closeHandler.invoke()
 		}
 	}
@@ -250,6 +253,7 @@ class ProjectPersistencePanel(
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 				) {
+					LOG.debug("Delete project '${it.uuid}'")
 					managementService.delete(it.uuid)
 					refreshProjects()
 				}
@@ -264,6 +268,8 @@ class ProjectPersistencePanel(
 				fileChooser.dialogTitle = name
 				fileChooser.selectedFile = File("${it.name.value}.$EXPORT_FILE_EXTENSION")
 				if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
+					LOG.debug("Export project ${it.uuid}")
+
 					managementService.export(it.uuid, fileChooser.selectedFile.absolutePath)
 					JOptionPane.showConfirmDialog(
 						this@ProjectPersistencePanel,
@@ -288,17 +294,25 @@ class ProjectPersistencePanel(
 
 		private fun import(path: String) {
 			val name = FilenameUtils.getBaseName(path)
-			when (managementService.import(path)) {
-				Success -> handleSuccessfulImport(name)
-				NameAlreadyExists -> handleImportNameAlreadyExists(name)
-				Invalid -> handleInvalidImportFile(name)
-				StaleLibraryReference -> handleStaleLibraryReference(name)
-			}
+			var replaceIfUuidExists = false
+			do {
+				var repeat = false
+				LOG.debug("Import project '${name}', replace if UUID exists = $replaceIfUuidExists")
+				when (managementService.import(path, replaceIfUuidExists)) {
+					Success -> handleSuccessfulImport(name)
+					NameAlreadyExists -> handleImportNameAlreadyExists(name)
+					Invalid -> handleInvalidImportFile(name)
+					StaleLibraryReference -> handleStaleLibraryReference(name)
+					UuidAlreadyExists -> {
+						replaceIfUuidExists = handleReplaceProjectByImport()
+						repeat = replaceIfUuidExists
+					}
+				}
+			} while (repeat)
 		}
 
-		private fun createFilter(): FileFilter {
-			return FileExtensionFilter(EXPORT_FILE_EXTENSION, Translations.getString("project.dialog.import.filter.name"))
-		}
+		private fun createFilter(): FileFilter =
+			FileExtensionFilter(EXPORT_FILE_EXTENSION, Translations.getString("project.dialog.import.filter.name"))
 
 		fun handleSuccessfulImport(projectName: String) {
 			JOptionPane.showConfirmDialog(
@@ -336,6 +350,14 @@ class ProjectPersistencePanel(
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.ERROR_MESSAGE)
 		}
-	}
 
+		fun handleReplaceProjectByImport(): Boolean {
+			return JOptionPane.showConfirmDialog(
+				this@ProjectPersistencePanel,
+				Translations.getString("project.dialog.import.uuidAlreadyExists.msg"),
+				name,
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
+		}
+	}
 }
