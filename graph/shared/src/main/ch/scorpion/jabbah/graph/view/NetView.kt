@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.io.Storable
@@ -17,7 +18,7 @@ import ch.scorpion.jabbah.io.Storable
  *
  * @param T the type of signal that the [Net] of this [NetView] forwards.
  */
-interface NetView<T : Any> : Storable {
+interface NetView<T : Any> : Storable, Bean {
 
     val net: Net<T>
 
