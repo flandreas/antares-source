@@ -105,6 +105,11 @@ class Probe(
 			throw UnsupportedOperationException()
 		}
 
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		stateChanged(signalHandler)
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
