@@ -144,6 +144,11 @@ class ClockView(
 	/** ---- [ClockView] */
 
 	private inner class ClockViewActorInteractionHandler : AbstractVerticeView.Companion.CannotOpenActorClickHandler() {
+
+		init {
+			component = this@ClockView
+		}
+
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 
 			if (!isEnabled || !isKnobEnabled) {
