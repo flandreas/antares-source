@@ -151,6 +151,7 @@ class LibraryService(
 		LOG.trace("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
+				LOG.debug("Delete MetaGraph ${item.uuid}")
 				persister(library.isSystem).deleteMetaGraph(library, item.uuid)
 				if (library.defaultElementUUID == item.uuid) {
 					library.defaultElementUUID = null
