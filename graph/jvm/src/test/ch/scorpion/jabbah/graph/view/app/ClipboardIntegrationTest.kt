@@ -103,6 +103,18 @@ class ClipboardIntegrationTest {
 	}
 
 	@Test
+	fun shouldRespectDeletedFirstPasteInConsecutivePasts() {
+		_view.withSelection(v1)
+		service.copy(view)
+		service.paste(view)
+
+		service.delete(listOf(view.drawing.get(0)), view)
+		service.paste(view)
+
+		assertEquals(Point2D(100 + 3 * 10, 100 + 3 * 10), builder.graphView.get(0).location)
+	}
+
+	@Test
 	fun shouldRedoAdjustments() {
 		_view.withSelection(v1)
 		service.copy(view)
@@ -188,6 +200,5 @@ class ClipboardIntegrationTest {
 		editor.commandManager.undo()
 
 		assertEquals(3, editor.drawing.drawablesCount)
-
 	}
 }

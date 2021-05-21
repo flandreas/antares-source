@@ -90,12 +90,18 @@ class GraphViewCopyPasteService(
 
 	override fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
 		val origAnchorComponent = origAnchorComponentId?.let { view.drawing.getWithId(it) }
-		val dislocation: Point2D = if (origAnchorComponent != null && pastedAnchorComponentId != null) {
-			pasteCount++
+
+		var dislocation: Point2D? = null
+		if (origAnchorComponent != null && pastedAnchorComponentId != null) {
 			val pastedAnchorComponent = view.drawing.getWithId(pastedAnchorComponentId!!)
-			pastedAnchorComponent!!.location.subtract(origAnchorComponent.location).multiply(pasteCount.toDouble())
-		} else {
-			Point2D(
+			if (pastedAnchorComponent != null) {
+				pasteCount++
+				dislocation = pastedAnchorComponent.location.subtract(origAnchorComponent.location).multiply(pasteCount.toDouble())
+			}
+		}
+
+		if (dislocation == null) {
+			dislocation = Point2D(
 				DEFAULT_DISTANCE_FACTOR * view.grid.distance,
 				DEFAULT_DISTANCE_FACTOR * view.grid.distance)
 		}
