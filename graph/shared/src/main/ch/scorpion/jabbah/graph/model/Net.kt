@@ -26,7 +26,7 @@ interface Net<T: Any> : GraphElement {
 
     val weakOutputPorts: Collection<OutputPort<T>>
 
-    /** Connects the specified [Port] with this [Net].*/
+    /** Connects the specified [Port] with this [Net]. */
     fun connect(port: Port<T>)
 
     /** Unconnects the specified [Port] from this [Net].*/

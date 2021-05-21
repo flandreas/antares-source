@@ -35,6 +35,9 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override val type: String get() = NetImpl.type
 	override val typeDesc: String? get() = NetImpl.typeDesc
 
+	private var _designError: DesignError? = null
+	override val designError: DesignError? get() = _designError
+
 	/** ---- [Net] interface */
 
 	/** Non-property variable in order to access field while allowing to override getter of [signal] in subclasses.*/
@@ -59,6 +62,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		LOG.trace("connect ${port.portId}")
 		_ports.add(port)
 		port.connectTo(this)
+		_designError = null
 		stateChanged()
 	}
 
@@ -147,7 +151,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		if (reference.name == "portRef") {
 			val vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
 			if (vertice == null) {
-				LOG.error("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
+				LOG.warn("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
 				return
 			}
 			val portId = (reference.additionalInfo as PortRef<T>).portId
@@ -159,7 +163,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				// If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
 				// and we can't connect this Net that Vertice
 				if (vertice.designError == null) {
-					LOG.error("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)} with storableID ${vertice.storableId}")
+					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)} with storableID ${vertice.storableId}")
+					_designError = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
 				}
 			}
 		}

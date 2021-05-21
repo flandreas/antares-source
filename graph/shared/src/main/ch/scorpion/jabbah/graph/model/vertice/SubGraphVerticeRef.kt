@@ -142,8 +142,7 @@ class SubGraphVerticeRef(
 			graphName = Name(BrokenReferenceView.NAME)
 			type = graphName.value
 			super.read(reader)
-			_designError = DesignError("Broken reference")
-
+			_designError = DesignError("graph.designError.brokenSubGraphRef.text")
 		}
 	}
 

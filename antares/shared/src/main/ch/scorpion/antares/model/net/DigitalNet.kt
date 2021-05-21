@@ -35,6 +35,8 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 
 	override val designError: DesignError?
 		get() {
+			super.designError?.let { return it }
+
 			val occurringBitWidths = getOccurringBitWidths()
 			if (occurringBitWidths.size <= 1) {
 				return null

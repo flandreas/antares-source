@@ -687,12 +687,17 @@ open class EdgeViewImpl<T : Any>(
 			val ref = reference.additionalInfo as VerticeViewRef
 			val cv: ConnectableView? = referenceResolver.getStorable(ref.verticeViewId)
 			if (cv == null) {
-				LOG.error("Couldn't resolve ConnectableView ${ref.verticeViewId} to connect to EdgeView")
+				LOG.warn("Couldn't resolve ConnectableView ${ref.verticeViewId} to connect to EdgeView")
 				return
 			}
 			var port: Port<*>? = null
 			if (ref.portId != null) {
-				port = cv.getPort(ref.portId)
+				try {
+					port = cv.getPort(ref.portId)
+				} catch (e: NoSuchElementException) {
+					LOG.warn("Couldn't resolve Port ${ref.portId} to connect to EdgeView")
+					return
+				}
 			}
 
 			if (cv.isConnectable) {

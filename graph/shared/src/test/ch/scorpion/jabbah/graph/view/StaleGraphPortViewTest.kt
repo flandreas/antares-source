@@ -1,0 +1,62 @@
+package ch.scorpion.jabbah.graph.view
+
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.TestLibraryBuilder
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertNotNull
+
+/**
+ * Integration test of a [GraphView] containing a connected [SubGraphVerticeView]
+ * in which a referenced [GraphPortView] has been removed in the meantime.
+ */
+class StaleGraphPortViewTest {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	@BeforeTest
+	fun setup() {
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
+	}
+
+	@Test
+	fun shouldLoadMetaGraphWithStaleGraphPortViewReference() {
+		val builder = TestLibraryBuilder()
+		val inner = builder.addInnerCustomComponent(LibraryModule.libraryHolder.library)
+		val outer = builder.addOuterCustomComponent(LibraryModule.libraryHolder.library)
+		removeInputPortFromInner(inner)
+
+		val element = ContainerLibraryElement(outer.uuid)
+		LibraryModule.libraryService.loadMetaGraph(
+			LibraryModule.libraryHolder.library,
+			element)
+
+		assertNotNull(element.metaGraph!!.graph.graphView.getGraphPortView("O1")!!.model.getPort<Boolean>().net!!.designError)
+	}
+
+	private fun removeInputPortFromInner(inner: MetaGraph) {
+		// TODO Refactoring: Synchronization of the two sub-models of MetaGraph is currently done in
+		// ContainerEditor and ContainerTree. This should be done on the model layer. i.e. in MetaGraph itself
+
+		with(inner.graph.graphView) {
+			remove(getGraphPortView("I1")!!)
+		}
+		with(inner.containerDrawing) {
+			remove(getPortViewComponent("I1")!!)
+		}
+
+		LibraryModule.libraryService.updateContainerLibraryElement(
+			LibraryModule.libraryHolder.library,
+			ContainerLibraryElement(inner.uuid)
+		)
+	}
+}

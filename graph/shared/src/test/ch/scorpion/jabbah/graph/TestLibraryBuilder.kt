@@ -1,12 +1,10 @@
 package ch.scorpion.jabbah.graph
 
-import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.CompositeTestGraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
