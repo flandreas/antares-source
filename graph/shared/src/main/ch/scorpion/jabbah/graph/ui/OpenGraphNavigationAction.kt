@@ -9,10 +9,11 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
- * Opens the currently selected [SubGraphVerticeView] in a new [GraphNavigationViewSwing]
- * in the [GraphDesktop].
+ * Opens the currently selected [SubGraphVerticeView] in a new [GraphNavigationView]
+ * in the [GraphDesktopView].
+ * @param subGraphVerticeView set during execution, when there is no selection
  */
-class OpenGraphNavigationPanelAction(
+class OpenGraphNavigationAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus,
 	var subGraphVerticeView: SubGraphVerticeView<*>? = null
@@ -24,10 +25,7 @@ class OpenGraphNavigationPanelAction(
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && if (subGraphVerticeView != null) {
-			true
-		} else {
-			selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
-		}
+		// Don't call super.calculateEnabled(), whose restrictions regarding editability are not needed
+		return subGraphVerticeView != null || selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
 	}
 }

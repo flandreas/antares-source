@@ -73,7 +73,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(CopyAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(PasteAction())))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(OpenGraphNavigationPanelAction(DrawViewModule.viewManager, eventBus))))
+		menu.add(JMenuItem(ActionWrapperSwing(OpenGraphNavigationAction(DrawViewModule.viewManager, eventBus))))
 		menu.add(JMenuItem(ActionWrapperSwing(EditSubGraphVerticeViewAction())))
 	}
 

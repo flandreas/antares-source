@@ -21,12 +21,13 @@ open class GraphContextMenuProvider(
 	companion object {
 		private val cutAction = ActionWrapperSwing(CutAction())
 		private val copyAction = ActionWrapperSwing(CopyAction())
-		private val openGraphAction by lazy { OpenGraphNavigationPanelAction() }
+		private val openGraphAction by lazy { OpenGraphNavigationAction() }
 		private val editSubGraphAction = ActionWrapperSwing(EditSubGraphVerticeViewAction())
 		private val resetSubGraphAction = ActionWrapperSwing(ResetSubGraphVerticeViewAction())
 	}
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
+		openGraphAction.subGraphVerticeView = null
 		if (scheduler.isActive) {
 			addExecutionActions(view, x, y, menu)
 		} else {
@@ -58,6 +59,7 @@ open class GraphContextMenuProvider(
 	private fun addExecutionActions(actorView: ActorView, menu: JPopupMenu) {
 		if (actorView is SubGraphVerticeView<*>) {
 			openGraphAction.subGraphVerticeView = actorView
+			openGraphAction.enabled = true
 			menu.add(ActionWrapperSwing(openGraphAction))
 		}
 	}
