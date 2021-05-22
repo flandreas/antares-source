@@ -27,10 +27,17 @@ actual object LogSystem {
 	actual var level: LogLevel
 		get() = propertyValue
 		set(value) {
-			if (value != fromLog4jLevel(getRootLogger().level)) {
-				LOG.info("Setting log level to $value")
-				getRootLogger().level = toLog4jLevel(value)
-				BaseModule.properties.customize(PROP_LOG_LEVEL, value.name)
+			var usedLevel = value
+			if (usedLevel.ordinal < Debug.ordinal) {
+				// Temporarily forcing DEBUG level during stabilization phase
+				// TODO Remove once application is stable enough
+				LOG.info("Forcing log level to DEBUG during stabilization phase")
+				usedLevel = Debug
+			}
+			if (usedLevel != fromLog4jLevel(getRootLogger().level)) {
+				LOG.info("Setting log level to $usedLevel")
+				getRootLogger().level = toLog4jLevel(usedLevel)
+				BaseModule.properties.customize(PROP_LOG_LEVEL, usedLevel.name)
 			}
 		}
 
