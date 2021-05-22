@@ -103,6 +103,7 @@ actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 		} else {
 			slf4jLogger.debug(msg)
 		}
+		UserActionTrail.add(msg)
 	}
 
 	actual fun trace(msg: String) {

@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.base.invocation
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
@@ -28,7 +26,7 @@ class UnexpectedErrorPanel(
 				.title(Translations.getString("base.unexpectedError.title"))
 				.content { dialog -> UnexpectedErrorPanel(versionId, stackTrace, closeHandler = { dialog.dispose() }) }
 				.defaultButton { it.okButton }
-				.preferredSize(Dimension(350, 200))
+				.preferredSize(Dimension(350, 220))
 				.nonResizable()
 				.show()
 		}
@@ -97,6 +95,7 @@ class UnexpectedErrorPanel(
 		if (versionId.isNotBlank()) {
 			writer.appendLine("Version: $versionId")
 		}
+		writer.append(UserActionTrail.toString())
 		writer.append(stackTrace)
 		return writer.toString()
 	}
