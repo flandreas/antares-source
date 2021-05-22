@@ -103,12 +103,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class NorthWestHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.NW_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = min(context.x, bounds.maxX)
 			val y = min(context.y, bounds.maxY)
@@ -124,12 +124,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class NorthHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.N_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val y = min(context.y, bounds.maxY)
 			component.setFrame(
@@ -144,12 +144,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class NorthEastHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.NE_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = max(context.x, bounds.x)
 			val y = min(context.y, bounds.maxY)
@@ -165,12 +165,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class EastHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.E_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = max(context.x, bounds.x)
 			component.setFrame(
@@ -185,12 +185,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class SouthEastHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.SE_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = max(context.x, bounds.x)
 			val y = max(context.y, bounds.y)
@@ -206,12 +206,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class SouthHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.S_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val y = max(context.y, bounds.y)
 			component.setFrame(
@@ -226,12 +226,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class SouthWestHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.SW_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = min(context.x, bounds.maxX)
 			val y = max(context.y, bounds.y)
@@ -247,12 +247,12 @@ class RectangularHandleSelectionModel(
 
 	internal inner class WestHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			context.view.setCursor(Cursor.W_RESIZE)
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
 			val x = min(context.x, bounds.maxX)
 			component.setFrame(

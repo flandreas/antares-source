@@ -53,10 +53,10 @@ abstract class AbstractRectangularUnzoomable(
 		}
 
 	override fun contains(x: Double, y: Double): Boolean {
-		return x >= location.x - halfSize
-			&& x <= location.x + halfSize
-			&& y >= location.y - halfSize
-			&& y <= location.y + halfSize
+		return x >= location.x - halfSize / zoomPan!!.zoomFactor
+			&& x <= location.x + halfSize / zoomPan!!.zoomFactor
+			&& y >= location.y - halfSize / zoomPan!!.zoomFactor
+			&& y <= location.y + halfSize / zoomPan!!.zoomFactor
 	}
 
 	/** Returns the rectangle in view coordinate space.*/

@@ -40,7 +40,7 @@ import ch.scorpion.jabbah.draw.DrawableContainer
  * as well as the "device pixel ratio" of the [Canvas] on which they are rendered.
  * An unzoomable [DrawableContainer] that contains [Unzoomable]s gets informed by a [View] upon changes of zoom and pan factors,
  * and forwards this information to every [Unzoomable] it contains. These [Unzoomable] store this information and
- * use it the time they draw themselves.
+ * use it when they draw themselves.
  *
  * Examples of [Unzoomable]s are guidelines, ghost layers that are displayed above a drawing, or connection point highlighters.
  */

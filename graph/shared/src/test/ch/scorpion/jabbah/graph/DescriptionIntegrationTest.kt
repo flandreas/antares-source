@@ -71,7 +71,7 @@ class DescriptionIntegrationTest {
 	}
 
 	@Test
-	fun aubGraphVerticeViewShouldHaveCustomDescription() {
+	fun subGraphVerticeViewShouldHaveCustomDescription() {
 		val libraryElement = createMetaGraph("Graph Description")
 
 		val subGraphVerticeView = libraryElement.getNewInstance<Vertice>() as SubGraphVerticeView
@@ -95,5 +95,4 @@ class DescriptionIntegrationTest {
 		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
 		return libraryElement
 	}
-
 }
