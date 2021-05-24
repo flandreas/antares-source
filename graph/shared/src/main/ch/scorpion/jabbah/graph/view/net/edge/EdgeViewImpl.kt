@@ -25,10 +25,6 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.EdgeView.Companion.PROP_MIN_EDGE_VIEW_LENGTH
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
@@ -42,9 +38,6 @@ import kotlin.math.min
  */
 open class EdgeViewImpl<T : Any>(
 	styleProvider: StyleProvider,
-	override val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 	currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	net: Net<T>,
 	netViewStyle: NetViewStyle? = null
@@ -61,24 +54,15 @@ open class EdgeViewImpl<T : Any>(
 
 	constructor(
 		styleProvider: StyleProvider,
-		edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-		origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-		destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 		currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	) : this(
 		styleProvider,
-		edgeToPortConnectorSupplier,
-		origEndpointConnectorSupplier,
-		destEndpointConnectorSupplier,
-		currentSystemSpeedCategory, NetImpl<T>()
-	)
+		currentSystemSpeedCategory,
+		NetImpl<T>())
 
 	@Suppress("unused")
 	constructor() : this(
 		DrawStyleModule.styleProvider,
-		{ GraphViewModule.edgeToPortConnector },
-		{ GraphViewModule.dragEdgeViewOriginConnector },
-		{ GraphViewModule.dragEdgeViewDestinationConnector },
 		ExecutionModule.currentSystemSpeedCategory
 	)
 
@@ -144,9 +128,9 @@ open class EdgeViewImpl<T : Any>(
 			}
 		}
 
-	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(this, origEndpointConnectorSupplier, styleProvider)
+	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(styleProvider)
 
-	override val destinationEndpointView: EdgeEndpointView = EdgeEndpointView(this, destEndpointConnectorSupplier, styleProvider)
+	override val destinationEndpointView: EdgeEndpointView = EdgeEndpointView(styleProvider)
 
 	override val segmentPointCount: Int get() = polyline.pointsCount
 
@@ -580,7 +564,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
 		LOG.trace("getInputEventHandler at " + Point2D(context.x, context.y))
-		return layout.type.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
+		return layout.type.getInputEventHandler(this) { super.getInputEventHandler(context) }
 	}
 
 	override fun draw(context: DrawContext) {

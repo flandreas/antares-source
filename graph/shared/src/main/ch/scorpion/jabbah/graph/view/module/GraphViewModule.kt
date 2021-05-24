@@ -225,9 +225,6 @@ object GraphViewModule : AbstractModule() {
 
 	private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(
 		DrawStyleModule.styleProvider,
-		{ edgeToPortConnector },
-		{ dragEdgeViewOriginConnector },
-		{ dragEdgeViewDestinationConnector },
 		ExecutionModule.currentSystemSpeedCategory
 	)
 

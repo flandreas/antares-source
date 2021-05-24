@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -42,7 +41,7 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 		val LOG by logger(LayoutType::class)
 
 		fun withName(customName: String): LayoutType {
-			for (i in 0 until LayoutType.values().size) {
+			for (i in 0 until values().size) {
 				if (values()[i].customName == customName) {
 					return values()[i]
 				}
@@ -63,31 +62,14 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 	 * forwards events to the [EdgeView] itself. Unselected [EdgeView]s will rather return an empty [InputEventHandler],
 	 * which results in involving the selection tool to select the [EdgeView] upon a click, which will finally result
 	 * in events being handled by the [EdgeView]'s [InputEventHandler].
-	 *
-	 * TODO This is independent of layout and should therefore moved away from here
 	 */
 	fun <T : InputEventContext> getInputEventHandler(
 		edgeView: EdgeView<*>,
-		context: T,
 		alternative: () -> InputEventHandler<T> = {
 			_inputEventHandler.edgeView = edgeView
 			_inputEventHandler as InputEventHandler<T>
 		}
 	): InputEventHandler<T> {
-
-		if (context.mouseEvent != null) {
-			if (edgeView.destination == null && edgeView.destinationEndpointView.contains(context.x, context.y)) {
-				return edgeView.destinationEndpointView.getInputEventHandler(context)
-			}
-			if (edgeView.origin == null && edgeView.originEndpointView.contains(context.x, context.y)) {
-				return edgeView.originEndpointView.getInputEventHandler(context)
-			}
-			if (context.mouseEvent?.isAltDown == true) {
-				edgeView.edgeToPortConnectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
-				return edgeView.edgeToPortConnectorSupplier.invoke().handler as InputEventHandler<T>
-			}
-		}
-
 		return alternative.invoke()
 	}
 

@@ -133,9 +133,6 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.oscilloscopeProbeNameStrategy = DigitalOscilloscopeProbeNameStrategy()
 		val edgeViewFactory = DigitalEdgeViewFactory(
 			DrawStyleModule.styleProvider,
-			{ GraphViewModule.edgeToPortConnector },
-			{ GraphViewModule.dragEdgeViewOriginConnector },
-			{ GraphViewModule.dragEdgeViewDestinationConnector },
 			ExecutionModule.currentSystemSpeedCategory
 		)
 		GraphViewModule.setEdgeViewFactory(edgeViewFactory)

@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class DragEdgeViewDestinationConnectorTest
 	: AbstractInputEventHandlerTest(GraphViewModule.dragEdgeViewDestinationConnector.handler) {
@@ -124,5 +121,17 @@ class DragEdgeViewDestinationConnectorTest
 		editor.commandManager.redo()
 
 		assertMoved()
+	}
+
+	// TODO Implement logic
+	@Ignore
+	@Test
+	fun shouldDeleteHighlighterWhenEdgeViewIsDeleted() {
+		val ev = builder.graphView.getEdgeViews().first()
+		mouseMoveTo(150, 100)
+
+		GraphViewModule.graphViewAppService.delete(listOf(ev), editor.view)
+
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
 	}
 }

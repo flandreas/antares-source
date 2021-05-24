@@ -15,10 +15,6 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.NetView
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -34,16 +30,10 @@ import ch.scorpion.jabbah.graph.view.style.EdgeStyle
  */
 class DigitalEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	edgeToPortConnectorSupplier: () -> EdgeToPortConnector = { GraphViewModule.edgeToPortConnector },
-	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = { GraphViewModule.dragEdgeViewOriginConnector },
-	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = { GraphViewModule.dragEdgeViewDestinationConnector },
 	currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	net: Net<DigitalSignal> = DigitalNet()
 ) : EdgeViewImpl<DigitalSignal>(
 	styleProvider,
-	edgeToPortConnectorSupplier,
-	origEndpointConnectorSupplier,
-	destEndpointConnectorSupplier,
 	currentSystemSpeedCategory,
 	net
 ) {
@@ -87,19 +77,12 @@ class DigitalEdgeView(
 
 class DigitalEdgeViewFactory(
 	private val styleProvider: StyleProvider,
-	private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-	private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-	private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : EdgeViewFactory<DigitalSignal> {
 
-	override fun createEdgeView(): EdgeView<DigitalSignal> {
-		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, currentSystemSpeedCategory)
-	}
+	override fun createEdgeView(): EdgeView<DigitalSignal> =
+		DigitalEdgeView(styleProvider, currentSystemSpeedCategory)
 
-	override fun createEdgeView(netView: NetView<DigitalSignal>): EdgeView<DigitalSignal> {
-		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, currentSystemSpeedCategory, netView.net)
-	}
+	override fun createEdgeView(netView: NetView<DigitalSignal>): EdgeView<DigitalSignal> =
+		DigitalEdgeView(styleProvider, currentSystemSpeedCategory, netView.net)
 }
