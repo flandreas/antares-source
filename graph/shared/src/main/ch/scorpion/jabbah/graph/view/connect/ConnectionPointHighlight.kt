@@ -47,6 +47,9 @@ object ConnectionPointHighlighter {
 
 	val hasPortViewHighlight: Boolean get() = portViewHighlight != null
 
+	/** The [DrawingView] to which [portViewHighlight] has been added (if any). */
+	private var view: DrawingView<*>? = null
+
 	fun displayPortViewHighlight(
 		view: DrawingView<*>,
 		location: Point2D,
@@ -60,6 +63,7 @@ object ConnectionPointHighlighter {
 			portViewHighlight!!.location = location
 			portViewHighlight!!.alternativeView = alternativeView
 			getHighlightContainer(view).add(portViewHighlight!!)
+			this.view = view
 		} else {
 			portViewHighlight!!.location = location
 		}
@@ -67,12 +71,15 @@ object ConnectionPointHighlighter {
 	}
 
 	/** Removes the previously displayed [ConnectionPointHighlight] from the [DrawingView]. */
-	fun removePortViewHighlight(view: DrawingView<*>) {
+	fun removePortViewHighlight() {
 		if (portViewHighlight != null) {
-			LOG.trace("removePortViewHighlight")
-			getHighlightContainer(view).remove(portViewHighlight!!)
-			getHighlightContainer(view).validate()
-			portViewHighlight = null
+			view?.let {
+				LOG.trace("removePortViewHighlight")
+				getHighlightContainer(it).remove(portViewHighlight!!)
+				getHighlightContainer(it).validate()
+				portViewHighlight = null
+				view = null
+			}
 		}
 	}
 

@@ -35,8 +35,8 @@ abstract class AbstractConnector(
 		context.view.setCursor(Cursor.CROSSHAIR)
 	}
 
-	protected fun removePortViewHighlight(context: EditInputEventContext) {
-		ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
+	protected fun removePortViewHighlight() {
+		ConnectionPointHighlighter.removePortViewHighlight()
 	}
 
 	protected fun moveEdgeViewEndpoint(context: EditInputEventContext) {

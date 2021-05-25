@@ -187,7 +187,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 				LOG.debug("OscilloscopeProbeVerticeView found EdgeView at ${context.x},${context.y}")
 				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connectionPoint())
 			} else {
-				ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
+				ConnectionPointHighlighter.removePortViewHighlight()
 			}
 
 			return this
@@ -195,7 +195,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.trace("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
-			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
+			ConnectionPointHighlighter.removePortViewHighlight()
 
 			// TODO Create Commands
 

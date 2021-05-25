@@ -28,7 +28,7 @@ class DragEdgeViewOriginConnectorTest
 	@Test
 	fun shouldConnect() {
 		mouseMoveTo(150, 100)
-		kotlin.test.assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
 		pressMouseAt(150, 100)
@@ -37,7 +37,7 @@ class DragEdgeViewOriginConnectorTest
 		dragMouseTo(140, 100)
 
 		dragMouseTo(130, 100)
-		kotlin.test.assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(130, 100)
 
@@ -123,5 +123,15 @@ class DragEdgeViewOriginConnectorTest
 		editor.commandManager.redo()
 
 		assertMoved()
+	}
+
+	@Test
+	fun shouldDeleteHighlighterWhenEdgeViewIsDeleted() {
+		val ev = builder.graphView.getEdgeViews().first()
+		mouseMoveTo(150, 100)
+
+		GraphViewModule.graphViewAppService.delete(listOf(ev), editor.view)
+
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
 	}
 }

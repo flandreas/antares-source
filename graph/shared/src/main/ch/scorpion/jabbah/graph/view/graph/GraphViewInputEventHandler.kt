@@ -9,10 +9,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
-import ch.scorpion.jabbah.graph.view.connect.OutputToInputConnector
-import ch.scorpion.jabbah.graph.view.connect.ReconnectDestinationConnector
-import ch.scorpion.jabbah.graph.view.connect.ReconnectOriginConnector
+import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
@@ -30,6 +27,10 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 
 	companion object {
 		private val LOG by logger(GraphViewInputEventHandler::class)
+	}
+
+	fun graphElementViewRemoved(graphElementView: GraphElementView<*>) {
+		ConnectionPointHighlighter.removePortViewHighlight()
 	}
 
 	override fun handlerOfDrawable(drawable: Drawable, context: EditInputEventContext): InputEventHandler<EditInputEventContext> {

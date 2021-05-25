@@ -36,7 +36,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("insideStart") {
 				onEntry { displayPortViewHighlight(it) }
-				onExit { removePortViewHighlight(it) }
+				onExit { removePortViewHighlight() }
 				transitTo("insideStart") {
 					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location) }
 				}
@@ -73,7 +73,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("insideTargetPortView") {
 				onEntry { snapToTargetPortView(it) }
-				onExit { removePortViewHighlight(it) }
+				onExit { removePortViewHighlight() }
 				transitTo("insideTargetPortView") {
 					given { StateMachineInputEventHandler.mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
@@ -90,7 +90,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("draggedOpen") {
 				onEntry {
-					removePortViewHighlight(it)
+					removePortViewHighlight()
 					completeDragOpen(it)
 					reset()
 				}
@@ -98,7 +98,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("connected") {
 				onEntry {
-					removePortViewHighlight(it)
+					removePortViewHighlight()
 					completeDragConnecting(it)
 					reset()
 				}

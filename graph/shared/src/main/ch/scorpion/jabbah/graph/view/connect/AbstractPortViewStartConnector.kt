@@ -79,7 +79,7 @@ abstract class AbstractPortViewStartConnector(
 
 			state("insideStartDrag") {
 				onEntry { displayPortViewHighlight(it) }
-				onExit { removePortViewHighlight(it) }
+				onExit { removePortViewHighlight() }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -100,7 +100,7 @@ abstract class AbstractPortViewStartConnector(
 
 			state("insideStartAdjust") {
 				onEntry { displayAlternativePortViewHighlight(it) }
-				onExit { removePortViewHighlight(it) }
+				onExit { removePortViewHighlight() }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -144,7 +144,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetPortView") {
 						onEntry { snapToTargetPortView(it) }
-						onExit { removePortViewHighlight(it) }
+						onExit { removePortViewHighlight() }
 						stayIf { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo("drag") {
 							given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -159,7 +159,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetEdgeView") {
 						onEntry { snapToTargetEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onExit { removePortViewHighlight() }
 						stayIf({ mouseDragged(it) && insideTargetEdgeView(it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}
@@ -225,7 +225,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetPortView") {
 						onEntry { adjustToTargetPortView(it) }
-						onExit { removePortViewHighlight(it) }
+						onExit { removePortViewHighlight() }
 						stayIf { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -242,7 +242,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetEdgeView") {
 						onEntry { snapToTargetEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onExit { removePortViewHighlight() }
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}

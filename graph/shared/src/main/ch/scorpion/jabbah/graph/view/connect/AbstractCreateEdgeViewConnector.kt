@@ -46,7 +46,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			it.unconnectFromOrigin()
 			it.unconnectFromDestination()
 			editor.view.drawing.remove(it)
-			ConnectionPointHighlighter.removePortViewHighlight(editor.view)
+			ConnectionPointHighlighter.removePortViewHighlight()
 			reset()
 		}
 	}
