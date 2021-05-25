@@ -37,6 +37,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import javax.swing.JOptionPane
 import javax.swing.plaf.FontUIResource
 
 
@@ -99,7 +100,10 @@ class AntaresSwing(
 		 * of [AbstractDesktopApplication.loadPreferences].
 		 */
 		private fun establishUserLanguage(preferences: java.util.Properties) {
-			preferences.getProperty(Language.PROP_LANGUAGE)?.let { lang -> Locale.setDefault(Locale(lang)) }
+			val lang = preferences.getProperty(Language.PROP_LANGUAGE) ?: Language.DEFAULT.code
+			val locale = Locale(lang)
+			Locale.setDefault(locale)
+			JOptionPane.setDefaultLocale(locale)
 		}
 
 		/**

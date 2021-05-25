@@ -19,11 +19,11 @@ open class GraphContextMenuProvider(
 ) : EditContextMenuProvider() {
 
 	companion object {
-		private val cutAction = ActionWrapperSwing(CutAction())
-		private val copyAction = ActionWrapperSwing(CopyAction())
+		private val cutAction by lazy { ActionWrapperSwing(CutAction()) }
+		private val copyAction by lazy { ActionWrapperSwing(CopyAction()) }
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
-		private val editSubGraphAction = ActionWrapperSwing(EditSubGraphVerticeViewAction())
-		private val resetSubGraphAction = ActionWrapperSwing(ResetSubGraphVerticeViewAction())
+		private val editSubGraphAction by lazy { ActionWrapperSwing(EditSubGraphVerticeViewAction()) }
+		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
 	}
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
