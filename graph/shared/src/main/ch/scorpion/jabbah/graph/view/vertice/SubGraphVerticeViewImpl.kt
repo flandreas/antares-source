@@ -209,7 +209,7 @@ class SubGraphVerticeViewImpl(
 		if (isVerticallyMirrored) {
 			writer.writeBoolean("mirrorV", isVerticallyMirrored)
 		}
-		if (label != null && label!!.isNotEmpty) {
+		if (label != null && label!!.isNotEmpty && label != getLabelComponent()?.text) {
 			writer.writeStorables("label", label!!.allTranslations())
 		}
 		if (customizedContainerDrawing != null) {
@@ -245,12 +245,14 @@ class SubGraphVerticeViewImpl(
 		if (reader.hasElement("label")) {
 			tempLabel = TranslatableText(reader.readStorables("label"))
 		}
-		// The label depends on the container drawing, so resolve the label after the model has been read
-		reader.requestResolution(this, Reference(
-			name = "label",
-			additionalInfo = tempLabel,
-			resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
-		))
+		if (tempLabel != null) {
+			// The label depends on the container drawing, so resolve the label after the model has been read
+			reader.requestResolution(this, Reference(
+				name = "label",
+				additionalInfo = tempLabel,
+				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
+			))
+		}
 
 		if (reader.hasElement("container")) {
 			customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing

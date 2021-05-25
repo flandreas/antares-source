@@ -34,7 +34,7 @@ class LabelComponent(
 	companion object {
 		private val TYPE = Translations.getString("edit.component.label")
 		const val DEFAULT_TEXT = "text"
-		val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
+		private val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
 
 		private fun createLabel(text: String): Label {
 			return Label(
@@ -144,5 +144,4 @@ class LabelComponent(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
-
 }
