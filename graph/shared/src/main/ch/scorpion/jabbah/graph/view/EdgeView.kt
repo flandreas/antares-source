@@ -92,6 +92,8 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
     /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
     val polyline: PolylineShape
 
+	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
+
     /**
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].

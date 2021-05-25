@@ -4,11 +4,15 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
@@ -16,6 +20,8 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * Draws a circle at the end point location.
  */
 class EdgeEndpointView(
+	private val edgeView: EdgeView<*>,
+	private val connectorSupplier: () -> AbstractDragEdgeViewEndpointConnector,
 	styleProvider: StyleProvider
 ) : AbstractStyledDrawable(GraphStyleType.EDGE, styleProvider), Locatable {
 
@@ -45,6 +51,11 @@ class EdgeEndpointView(
 	}
 
 	/** ---- [Drawable] interface */
+
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		connectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
+		return connectorSupplier.invoke().handler as InputEventHandler<T>
+	}
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color

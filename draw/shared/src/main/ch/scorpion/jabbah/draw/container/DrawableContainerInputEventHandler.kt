@@ -21,19 +21,19 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	/** ---- [InputEventHandler] interface */
 
 	override fun mouseMoved(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context) { h, c -> h.mouseMoved(c) }
+		onTargetOrContainer(context, { h, c -> h.mouseMoved(c) } )
 
 	override fun mousePressed(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context) { h, c -> h.mousePressed(c) }
+		onTargetOrContainer(context, { h, c -> h.mousePressed(c) })
 
 	override fun mouseDragged(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context) { h, c -> h.mouseDragged(c) }
+		onTargetOrContainer(context, { h, c -> h.mouseDragged(c) })
 
 	override fun mouseReleased(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context) { h, c -> h.mouseReleased(c) }
+		onTargetOrContainer(context, { h, c -> h.mouseReleased(c) })
 
 	override fun mouseClicked(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context) { h, c -> h.mouseClicked(c) }
+		onTargetOrContainer(context, { h, c -> h.mouseClicked(c) })
 
 	/** ---- [DrawableContainerInputEventHandler] */
 
@@ -73,8 +73,9 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	 * Subclasses might choose to override this method e.g. to restrict the set of possible [Drawable]
 	 * to those of more specific types.
 	 */
-	protected open fun getDrawableAt(location: Point2D): Drawable? =
-		container.getDrawableAt(location)
+	protected open fun getDrawableAt(location: Point2D): Drawable? {
+		return container.getDrawableAt(location)
+	}
 
 	/**
 	 * Returns the [InputEventHandler] to be used for a particular target [Drawable].
@@ -82,6 +83,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	 * Subclasses might choose to return other, e.g. inner [InputEventHandlers][InputEventHandler],
 	 * inheriting the benefit of remembering the target for coordinate relocation done by this class.
 	 */
-	protected open fun handlerOfDrawable(drawable: Drawable, context: C): InputEventHandler<C> =
-		drawable.getInputEventHandler(context)
+	protected open fun handlerOfDrawable(drawable: Drawable, context: C): InputEventHandler<C> {
+		return drawable.getInputEventHandler(context)
+	}
 }
