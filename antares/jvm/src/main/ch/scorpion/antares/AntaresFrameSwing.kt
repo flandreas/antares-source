@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.ui.*
 import java.awt.Frame
+import java.awt.Toolkit
 import javax.swing.JOptionPane
 
 class AntaresFrameSwing(
@@ -21,6 +22,10 @@ class AntaresFrameSwing(
 	viewManager: ViewManager,
 	actions: GraphFrameActions
 ) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, eventBus, viewManager, actions), AntaresFrame {
+
+	init {
+		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource("img/Logo64.png"))
+	}
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem {
 		return AddressableContentGraphDesktopItem(
