@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -115,7 +116,7 @@ class DigitView(
         })
 
 	    if (isOn && inactive) {
-		    label.draw("-", context)
+		    label.draw(FormattedText("-"), context)
 	    } else {
 		    label.draw(context)
 	    }

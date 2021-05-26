@@ -1,25 +1,21 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.text.FormattedText
+
 /**
  * [String] utilities.
  */
 object StringUtils {
 
-    private const val NEGATION_SIGN = '!'
 	private const val LIST_SEPARATOR = ','
 	private const val LIST_ESCAPE = '\\'
-    const val OVERLINE = '\u0305'
 
 	private const val SPE = '\ufffe'  // unused unicode char in Specials block
 	private const val SPF = '\uffff'  // dito
 
-    fun isBlank(s: String?): Boolean {
-        return s == null || s.isBlank()
-    }
+    fun isBlank(s: String?): Boolean = s == null || s.isBlank()
 
-    fun isEmpty(s: String?): Boolean {
-        return s == null || s.isEmpty()
-    }
+    fun isEmpty(s: String?): Boolean = s == null || s.isEmpty()
 
     fun isNotEmpty(s: String?): Boolean = !isEmpty(s)
 
@@ -41,52 +37,13 @@ object StringUtils {
 	}
 
     /** Counts the number of occurrences of a particular [Char] in a [String].*/
-    fun countChar(s: String, c: Char): Int {
-        return s.length - s.replace(c.toString(), "").length
-    }
+    fun countChar(s: String, c: Char): Int = s.length - s.replace(c.toString(), "").length
 
-    fun replaceNegation(s: String): String {
-	    var negating = false
-	    var inBlock = false
-	    val result = StringBuilder()
-
-	    for (c in s) {
-		    when (c) {
-			    NEGATION_SIGN -> negating = true
-			    '(' -> {
-			    	if (negating) {
-					    inBlock = true
-				    } else {
-				    	result.append(c)
-				    }
-			    }
-			    ')' -> {
-			    	if (negating) {
-			    		inBlock = false
-					    negating = false
-				    } else {
-				    	result.append(c)
-				    }
-			    }
-			    else -> {
-				    result.append(c)
-				    if (negating) {
-					    result.append(OVERLINE)
-				    }
-				    if (!inBlock) {
-					    negating = false
-				    }
-			    }
-		    }
-	    }
-
-	    return result.toString()
-    }
+	@Deprecated("Use FormattedText class", ReplaceWith("FormattedText.replaceNegation(s)"))
+    fun replaceNegation(s: String): String = FormattedText.replaceNegation(s).text
 
 	/** Returns a [String] that adds a period to the specified [String] if if doesn't already end with a period.*/
-	fun endWithPeriod(s: String): String {
-		return if (s.endsWith(".")) s else "$s."
-	}
+	fun endWithPeriod(s: String): String = if (s.endsWith(".")) s else "$s."
 
 	/**
 	 * Formats a [Long] using underscores to separate groups of 3 digits.

@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.base
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import ch.scorpion.jabbah.base.StringUtils.countChar
 import ch.scorpion.jabbah.base.StringUtils.endWithPeriod
 import ch.scorpion.jabbah.base.StringUtils.formatLong
 import ch.scorpion.jabbah.base.StringUtils.fromList
-import ch.scorpion.jabbah.base.StringUtils.replaceNegation
 import ch.scorpion.jabbah.base.StringUtils.toList
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [StringUtils].
@@ -18,12 +17,6 @@ class StringUtilsTest {
     fun shouldCountChars() {
         assertEquals(3, countChar("This is a test", ' '))
         assertEquals(0, countChar("ThisIsATest", ' '))
-    }
-
-    @Test
-    fun shouldReplaceSingleNegation() {
-        assertEquals("Q${StringUtils.OVERLINE}", replaceNegation("!Q"))
-	    assertEquals("AQ${StringUtils.OVERLINE}B", replaceNegation("A!QB"))
     }
 
 	@Test
@@ -40,18 +33,6 @@ class StringUtilsTest {
 	fun shouldFormatLong() {
 		assertEquals("123", formatLong(123L))
 		assertEquals("123_456_789", formatLong(123456789L))
-	}
-
-	@Test
-    fun shouldReplaceBlockNegation() {
-        assertEquals("A\u0305B\u0305", replaceNegation("!(AB)"))
-		assertEquals("CA\u0305B\u0305", replaceNegation("C!(AB)"))
-		assertEquals("A\u0305B\u0305C", replaceNegation("!(AB)C"))
-    }
-
-	@Test
-	fun shouldNotReplaceBlockWithoutNegation() {
-		assertEquals("Bla (Blu)", replaceNegation("Bla (Blu)"))
 	}
 
 	@Test

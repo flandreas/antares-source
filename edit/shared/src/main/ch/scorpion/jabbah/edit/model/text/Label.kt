@@ -4,12 +4,13 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
@@ -35,10 +36,11 @@ class Label(
 ) : AbstractDrawable() {
 
 	companion object {
-		val LOG by logger(Label::class)
-		val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
-		val DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER
-		const val BOUNDS_INSET = 1
+		private val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
+		private val DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER
+		private const val BOUNDS_INSET = 1
+
+		private val OVERLINE_STROKE = Stroke()
 	}
 
 	var text: String = text ?: ""
@@ -115,7 +117,7 @@ class Label(
 	var ownerRotation: Rotation = ownerRotation
 
 	/** The displayable text after conversion of negated representation. */
-	private var displayableText: String = ""
+	private var displayableText = FormattedText("")
 
 	/** The [Rectangle2D] that contains the text entirely.*/
 	private val bounds = Rectangle2D()
@@ -216,12 +218,12 @@ class Label(
 		drawImpl(displayableText, context)
 	}
 
-	fun draw(text: String, context: DrawContext) {
+	fun draw(text: FormattedText, context: DrawContext) {
 		drawImpl(text, context)
 	}
 
-	private fun drawImpl(lText: String, context: DrawContext) {
-		if (StringUtils.isBlank(lText)) {
+	private fun drawImpl(lText: FormattedText, context: DrawContext) {
+		if (StringUtils.isBlank(lText.text)) {
 			return
 		}
 
@@ -243,7 +245,12 @@ class Label(
 		context.g.rotate(rotation.angle)
 		context.g.translate(-location.x, -location.y)
 
-		context.g.drawString(lText, baselinePoint.x.toInt(), baselinePoint.y.toInt())
+		context.g.drawString(lText.text, baselinePoint.x.toInt(), baselinePoint.y.toInt())
+
+		if (lText.allNegated) {
+			context.g.stroke = OVERLINE_STROKE
+			context.g.drawLine(bounds.minX + 1, bounds.minY + 1, bounds.maxX - 1, bounds.minY + 1)
+		}
 
 		context.g.translate(location.x, location.y)
 		context.g.rotate(-rotation.angle)
@@ -257,7 +264,7 @@ class Label(
 	/** ---- [Label] */
 
 	private fun updateGeometry() {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(displayableText, font)
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(displayableText.text, font)
 
 		bounds.setFrame(
 			location.x + horizontalAlignment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,
@@ -273,5 +280,5 @@ class Label(
 		validate()
 	}
 
-	private fun calculateDisplayableText(): String = StringUtils.replaceNegation(text)
+	private fun calculateDisplayableText() = FormattedText.replaceNegation(text)
 }
