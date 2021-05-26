@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
@@ -9,6 +10,7 @@ import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [OrthoEdgeViewLayouter].
@@ -121,5 +123,23 @@ class OrthoEdgeViewLayouterTest {
 				isPort = true))
 
 		assertEquals(4, points.size)
+	}
+
+	@Test
+	fun shouldCreateFallbackSolution() {
+		val points = OrthoEdgeViewLayouter.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.NORTH),
+				isPort = false),
+			LayoutBoundary(
+				point = Point2D(100, 100),
+				directions = setOf(Direction.SOUTH),
+				isPort = false))
+
+		assertTrue(CompactablePolyline(points).isOrthogonal)
+		assertEquals(3, points.size)
 	}
 }

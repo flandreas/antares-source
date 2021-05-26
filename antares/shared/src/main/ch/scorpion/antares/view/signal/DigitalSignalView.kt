@@ -8,7 +8,7 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.model.polyline.OrthoPolyline
+import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -53,9 +52,9 @@ class DigitalSignalView(
 	/**
 	 * Accumulates the segment [Point2D]s that this [DigitalSignalView] visits while simulation. Note that its
 	 * bounding box is NOT part of this [DigitalSignalView]'s bounding box. Clients that use the
-	 * [OrthoPolyline] must accommodate its bounding box accordingly.
+	 * [CompactablePolyline] must accommodate its bounding box accordingly.
 	 */
-	val orthoPolyline = OrthoPolyline()
+	val orthoPolyline = CompactablePolyline()
 
 	private val label = Label(
 		text = representation.represent(signal),

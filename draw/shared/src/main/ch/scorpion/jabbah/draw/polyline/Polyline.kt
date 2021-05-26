@@ -36,9 +36,7 @@ interface Polyline {
     /**
      * Adds a new point with the specified coordinates to the end of this [Polyline].
      */
-    fun addPoint(x: Int, y: Int): Polyline {
-        return addPoint(x.toDouble(), y.toDouble())
-    }
+    fun addPoint(x: Int, y: Int): Polyline = addPoint(x.toDouble(), y.toDouble())
 
     /**
      * Adds a new point the specified index.
@@ -69,17 +67,13 @@ interface Polyline {
      * Returns the first [Point2D].
      * @throws IndexOutOfBoundsException if there is no [Point2D]
      */
-    fun getFirstPoint(): Point2D {
-        return getPointAt(0)
-    }
+    fun getFirstPoint(): Point2D = getPointAt(0)
 
     /**
      * Returns the last [Point2D].
      * @throws IndexOutOfBoundsException if there is no [Point2D]
      */
-    fun getLastPoint(): Point2D {
-        return getPointAt(pointsCount - 1)
-    }
+    fun getLastPoint(): Point2D = getPointAt(pointsCount - 1)
 
     /**
      * Sets the coordinates of the point at the specified index.

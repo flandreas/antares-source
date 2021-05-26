@@ -2,14 +2,12 @@ package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.EditTestRule
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 /**
- * Unit tests for [OrthoPolyline].
+ * Unit tests for [CompactablePolyline].
  */
-class OrthoPolylineTest {
+class CompactablePolylineTest {
 
 	@BeforeTest
 	fun setup() {
@@ -18,7 +16,7 @@ class OrthoPolylineTest {
 	
     @Test
     fun shouldBuild() {
-        val polyLine = OrthoPolyline()
+        val polyLine = CompactablePolyline()
 
         polyLine.add(Point2D(0, 0))
         polyLine.add(Point2D(10, 0))
@@ -36,13 +34,13 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldBuildWithPoints() {
-        val polyline = OrthoPolyline(listOf(Point2D(0, 0), Point2D(10, 0)))
+        val polyline = CompactablePolyline(listOf(Point2D(0, 0), Point2D(10, 0)))
         assertEquals(2, polyline.size)
     }
 
     @Test
     fun shouldCompactCollinearPoint() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline
             .add(Point2D(0, 0))
             .add(Point2D(100, 0))
@@ -55,7 +53,7 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldCompactCollinearPoint2() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline
             .add(Point2D(100, 0))
             .add(Point2D(200, 0))
@@ -68,7 +66,7 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldCompactNonOrthogonalCollinearPoint() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline
             .add(Point2D(0, 0))
             .add(Point2D(100, 100))
@@ -81,7 +79,7 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldCompactNonOrthogonalCollinearPoint2() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline
             .add(Point2D(0, 0))
             .add(Point2D(100, 0))
@@ -96,7 +94,7 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldNotCompactSmallOrthogonalSegments() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline
             .add(Point2D(0, 0))
             .add(Point2D(2, 0))
@@ -109,7 +107,7 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldCompactStartPoint() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline.add(Point2D(0, 0)).add(Point2D(0, 0)).add(Point2D(200, 0))
 
         polyline.compact()
@@ -119,11 +117,39 @@ class OrthoPolylineTest {
 
     @Test
     fun shouldCompactEndPoint() {
-        val polyline = OrthoPolyline()
+        val polyline = CompactablePolyline()
         polyline.add(Point2D(0, 0)).add(Point2D(200, 0)).add(Point2D(200, 0))
 
         polyline.compact()
 
         assertEquals(2, polyline.size)
     }
+
+	@Test
+	fun shouldBeOrthogonal() {
+		val polyline = CompactablePolyline()
+		polyline
+			.add(Point2D(0, 0))
+			.add(Point2D(100, 0))
+			.add(Point2D(100, 100))
+
+		assertTrue(polyline.isOrthogonal)
+	}
+
+	@Test
+	fun shouldNotBeOrthogonal() {
+		val polyline = CompactablePolyline()
+		polyline
+			.add(Point2D(0, 0))
+			.add(Point2D(100, 100))
+
+		assertFalse(polyline.isOrthogonal)
+	}
+
+	@Test
+	fun shouldNotBeOrthogonalWhenEmpty() {
+		val polyline = CompactablePolyline()
+
+		assertFalse(polyline.isOrthogonal)
+	}
 }

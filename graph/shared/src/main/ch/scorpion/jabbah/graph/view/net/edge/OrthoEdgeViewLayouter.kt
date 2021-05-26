@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.edit.SnapResult
 import ch.scorpion.jabbah.edit.Snapper
-import ch.scorpion.jabbah.edit.model.polyline.OrthoPolyline
+import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -89,7 +89,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			return countDirectionDiff(a.polyline).compareTo(countDirectionDiff(b.polyline))
 		}
 
-		private fun countDirectionDiff(polyline: OrthoPolyline): Int {
+		private fun countDirectionDiff(polyline: CompactablePolyline): Int {
 			var directionDiff = 0
 			val origDir = edgeView!!.getSegmentDirection(0)
 			if (origDir != null) {
@@ -118,14 +118,18 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		for (pair in product) {
 			val pointList = createPointList(begin.point, pair.first, begin.isPort, end.point, pair.second, end.isPort)
 			pointList.addAll(2, layoutSupplier.invoke(pointList[1], pointList[2]))
-			val solution = Solution(OrthoPolyline(pointList), pair.first, begin.isPort, pair.second, end.isPort)
-			solution.polyline.compact()
-			solutions.add(solution)
+
+			val polyline = CompactablePolyline(pointList)
+			polyline.compact()
+
+			if (polyline.isOrthogonal) {
+				solutions.add(Solution(polyline, pair.first, begin.isPort, pair.second, end.isPort))
+			}
 		}
 	}
 
 	private data class Solution(
-		val polyline: OrthoPolyline,
+		val polyline: CompactablePolyline,
 		val beginDir: Direction,
 		val isBeginPort: Boolean,
 		val endDir: Direction,
@@ -143,10 +147,13 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			}
 	}
 
+	/** Lower left corner. */
 	private fun createA(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p1.x, p2.y))
 
+	/** Upper right corner. */
 	private fun createB(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p2.x, p1.y))
 
+	/** Horizontally in the middle of the two points. */
 	private fun createC(p1: Point2D, p2: Point2D, snapper: Snapper?): List<Point2D> {
 		val list = mutableListOf<Point2D>()
 		val dy = p2.y - p1.y
@@ -155,6 +162,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		return list
 	}
 
+	/** Vertically in the middle of the two points.*/
 	private fun createD(p1: Point2D, p2: Point2D, snapper: Snapper?): List<Point2D> {
 		val list = mutableListOf<Point2D>()
 		val dx = p2.x - p1.x

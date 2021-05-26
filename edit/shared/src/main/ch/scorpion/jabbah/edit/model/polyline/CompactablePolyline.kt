@@ -10,22 +10,27 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 /**
- * An [OrthoPolyline] is a sequence of [Point2D]s that keeps only those points that form a sequence of
- * orthogonal segments.
+ * An [CompactablePolyline] is a sequence of [Point2D]s that keeps only those points that form a sequence of
+ * collinear segments.
  */
-class OrthoPolyline(points: List<Point2D>) {
+class CompactablePolyline(points: List<Point2D>) {
 
 	constructor() : this(listOf())
 
 	companion object {
 		/** The maximal angle between two line segment that leads to compaction. */
-		val COMPACT_ANGLE = 0.1
+		const val COMPACT_ANGLE = 0.1
 	}
 
 	val points: ImmutableList<Point2D> get() = _points.toImmutableList()
+
 	val size: Int get() = _points.size
+
 	val boundingBox: Rectangle2D get() = Rectangle2D(_boundingBox)
+
 	val isDegenerated: Boolean get() = size < 2 || _points[0] == _points[1]
+
+	val isOrthogonal: Boolean get() = !isDegenerated && (0 until size - 1).all { isSegmentOrthogonal(it) }
 
 	private val _points = mutableListOf<Point2D>()
 
@@ -43,14 +48,14 @@ class OrthoPolyline(points: List<Point2D>) {
 		return s.toString()
 	}
 
-	/** ---- [OrthoPolyline] */
+	/** ---- [CompactablePolyline] */
 
-	fun add(point: Point2D): OrthoPolyline {
+	fun add(point: Point2D): CompactablePolyline {
 		add(listOf(point))
 		return this
 	}
 
-	fun add(points: List<Point2D>): OrthoPolyline {
+	fun add(points: List<Point2D>): CompactablePolyline {
 		if (points.isNotEmpty()) {
 			_points.addAll(points)
 			compact()
@@ -59,9 +64,7 @@ class OrthoPolyline(points: List<Point2D>) {
 		return this
 	}
 
-	fun get(index: Int): Point2D {
-		return _points[index]
-	}
+	fun get(index: Int): Point2D = _points[index]
 
 	fun getSegmentDirection(segmentIndex: Int): Direction? {
 		if (isDegenerated) {
@@ -85,7 +88,7 @@ class OrthoPolyline(points: List<Point2D>) {
 	/** Updates the bounding box according to the current points. */
 	private fun updateBoundingBox() {
 		if (_points.size > 0) {
-			// Height and width of zero would make the Rectangle2D 'inital', which is wrong if first point is (0,0)
+			// Height and width of zero would make the Rectangle2D 'initial', which is wrong if first point is (0,0)
 			_boundingBox.setFrame(_points[0].x, _points[0].y, 1.0, 1.0)
 		}
 		_points.forEach { _boundingBox.add(it) }
@@ -122,4 +125,13 @@ class OrthoPolyline(points: List<Point2D>) {
 
 		return abs(angle1 - angle2) <= COMPACT_ANGLE || abs(abs(angle1 - angle2) - PI) < COMPACT_ANGLE
 	}
+
+	private fun isSegmentHorizontal(index: Int): Boolean =
+		Geometry.equal(_points[index].y, _points[index + 1].y)
+
+	private fun isSegmentVertical(index: Int): Boolean =
+		Geometry.equal(_points[index].x, _points[index + 1].x)
+
+	private fun isSegmentOrthogonal(index: Int): Boolean =
+		isSegmentHorizontal(index) || isSegmentVertical(index)
 }
