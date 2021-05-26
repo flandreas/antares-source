@@ -25,8 +25,8 @@ elem.setOutputBit(&quot;Q&quot;, false);
 elem.setOutputBit(&quot;!Q&quot;, true);
 '>
           <elements>
-            <norGate _id='3' id='1' delay='11' inputCount='2'/>
-            <norGate _id='4' id='2' delay='8' inputCount='2'/>
+            <norGate _id='3' id='1' delay='8' inputCount='2'/>
+            <norGate _id='4' id='2' delay='11' inputCount='2'/>
             <circuitInOut _id='5' id='3' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='R' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='Q' type='output' bitWidth='1'/>
