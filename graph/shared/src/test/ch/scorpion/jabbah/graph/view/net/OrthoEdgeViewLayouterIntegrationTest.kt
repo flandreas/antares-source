@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Integration tests for integrating [OrthoEdgeViewLayouter] and [NodeViewImpl].
@@ -55,7 +56,7 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v2)
 
 		assertEquals(3, splitResult.tailEdgeView.segmentPointCount)
-		assertFalse(splitResult.tailEdgeView.layout.isAdjusted)
+		assertTrue(splitResult.tailEdgeView.layout.isAdjusted)
 
 		assertEquals(2, splitResult.newEdgeView.segmentPointCount)
 		assertFalse(splitResult.newEdgeView.layout.isAdjusted)
@@ -133,6 +134,21 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		assertEquals(Direction.SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
 	}
 
+	@Test
+	fun shouldNotDistortZShapedEdgeViewWhenSplitting() {
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 300, Direction.WEST))
+		val origEdgeView = builder.connect(v1, v2)
+
+		builder.split(origEdgeView, 2, Point2D(170, 200), v3)
+
+		assertEquals(4, origEdgeView.segmentPointCount)
+		assertEquals(Point2D(100, 100), origEdgeView.getSegmentPoint(0))
+		assertEquals(Point2D(150, 100), origEdgeView.getSegmentPoint(1))
+		assertEquals(Point2D(150, 200), origEdgeView.getSegmentPoint(2))
+		assertEquals(Point2D(170, 200), origEdgeView.getSegmentPoint(3))
+	}
 
 	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {
 		return TestVerticeView(loc = Point2D(x, y), inputDirection = dir, portViewLength = 20)

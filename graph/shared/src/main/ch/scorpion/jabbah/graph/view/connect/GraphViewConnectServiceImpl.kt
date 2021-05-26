@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -24,11 +25,11 @@ class GraphViewConnectServiceImpl(
 
 	/** ---- [GraphViewConnectService] interface */
 
-	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>) {
+	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?) {
 		LOG.trace("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of origin ConnectableView ${connection.connectableView.id}")
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToOrigin(connection)
-		edgeView.layout.layoutOrigin()
+		edgeView.layout.layoutOrigin(direction)
 	}
 
 	override fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>) {
@@ -45,11 +46,11 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>) {
+	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?) {
 		LOG.trace("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of destination ConnectableView ${connection.connectableView.id}")
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToDestination(connection)
-		edgeView.layout.layoutDestination()
+		edgeView.layout.layoutDestination(direction)
 	}
 
 	override fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>) {
@@ -144,6 +145,10 @@ class GraphViewConnectServiceImpl(
 		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>) as NodeView<T>
 		graphView.add(nodeView)
 
+		// Splitting an EdgeView should not change the layout of the EdgeView being split
+		splitEdgeView.layout.isAdjusted = true
+		val destinationDirection = splitEdgeView.getSegmentDirection(splitSegmentIndex)
+
 		// Create tail part of EdgeView that is being split
 		val tail = splitEdgeView.split(
 			splitSegmentIndex,
@@ -151,7 +156,8 @@ class GraphViewConnectServiceImpl(
 		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as NetView<Any>) as EdgeView<T> }
 
 		nodeView.location = splitLocation
-		connectToDestination(splitEdgeView, Connection(nodeView))
+
+		connectToDestination(splitEdgeView, Connection(nodeView), destinationDirection)
 
 		graphView.add(tail)
 		connectToOrigin(tail, Connection(nodeView))

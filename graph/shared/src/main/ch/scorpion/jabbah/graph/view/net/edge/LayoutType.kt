@@ -42,7 +42,7 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 		val LOG by logger(LayoutType::class)
 
 		fun withName(customName: String): LayoutType {
-			for (i in 0 until LayoutType.values().size) {
+			for (i in 0 until values().size) {
 				if (values()[i].customName == customName) {
 					return values()[i]
 				}
@@ -115,5 +115,5 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 	}
 }
 
-/** Represents a boundary of a region of an [EdgeView] that is to be layouted. */
+/** Represents a boundary of a region of an [EdgeView] that is to be laid out. */
 data class LayoutBoundary(val point: Point2D, val directions: Set<Direction>, val isPort: Boolean)

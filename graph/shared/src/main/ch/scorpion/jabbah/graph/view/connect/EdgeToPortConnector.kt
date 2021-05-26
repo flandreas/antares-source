@@ -157,9 +157,9 @@ class EdgeToPortConnector(
 
 	private fun logConnect() {
 		if (targetPortView != null) {
-			LOG.debug("Junction from EdgeView ${branchedEdgeView?.id} to port of ${targetPortView?.owner?.type}")
+			LOG.debug("Create junction from EdgeView ${branchedEdgeView?.id} to port of ${targetPortView?.owner?.type}")
 		} else {
-			LOG.debug("Junction from EdgeView ${branchedEdgeView?.id} open-ended")
+			LOG.debug("Create junction from EdgeView ${branchedEdgeView?.id} open-ended")
 		}
 	}
 

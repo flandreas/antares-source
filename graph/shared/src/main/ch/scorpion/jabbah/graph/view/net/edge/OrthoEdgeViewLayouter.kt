@@ -15,9 +15,10 @@ import ch.scorpion.jabbah.base.logger
  */
 object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
-	val LOG by logger(OrthoEdgeViewLayouter::class)
+	private val LOG by logger(OrthoEdgeViewLayouter::class)
+
 	// TODO Make configurable in order to align with GridImpl width
-	const val END_LENGTH = 14
+	private const val END_LENGTH = 14
 
 	/** ---- [EdgeViewLayouter] */
 

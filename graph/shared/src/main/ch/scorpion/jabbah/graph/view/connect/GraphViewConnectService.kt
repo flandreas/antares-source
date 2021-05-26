@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
@@ -16,8 +17,9 @@ interface GraphViewConnectService {
 	/**
 	 * Connects the origin of an existing [EdgeView] with a particular [Port] of a [ConnectableView]
 	 * both on the view and the model layer.
+	 * @param direction the [Direction] in which the [EdgeView]'s first segment should be laid out
 	 */
-	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>)
+	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null)
 
 	/**
 	 * Unconnects an [EdgeView] from its origin [ConnectableView].
@@ -27,8 +29,9 @@ interface GraphViewConnectService {
 	/**
 	 * Connects the destination of an existing [EdgeView] with a particular [Port] of a
 	 * [ConnectableView] both on the view and the model layer.
+	 * @param direction the [Direction] in which the [EdgeView]'s last segment should be laid out
 	 */
-	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>)
+	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null)
 
 	/**
 	 * Unconnects an [EdgeView] from its destination [ConnectableView].

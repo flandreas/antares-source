@@ -285,7 +285,7 @@ class GraphViewConnectServiceImplTest {
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val inputPort = vv.model.getInput<Boolean>()
-		return service.split(gv, splitEdgeView, 1, newEdgeView, ORIGIN, vv.getPortView(inputPort))
+		return service.split(gv, splitEdgeView, 0, newEdgeView, ORIGIN, vv.getPortView(inputPort))
 	}
 
 	private fun splitToOutput(
@@ -294,6 +294,6 @@ class GraphViewConnectServiceImplTest {
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val outputPort = vv.model.getOutput<Boolean>()
-		return service.split(gv, splitEdgeView, 1, newEdgeView, ORIGIN, vv.getPortView(outputPort))
+		return service.split(gv, splitEdgeView, 0, newEdgeView, ORIGIN, vv.getPortView(outputPort))
 	}
 }
