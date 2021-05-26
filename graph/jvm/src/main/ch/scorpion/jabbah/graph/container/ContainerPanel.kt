@@ -142,6 +142,10 @@ class ContainerPanel(
 		layout = BorderLayout()
 
 		val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		treeViewScrollPanel.border = BorderFactory.createCompoundBorder(
+			BorderFactory.createEmptyBorder(1, 2, 0, 2),
+			treeViewScrollPanel.border
+		)
 
 		val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 		leftSplitPane.border = null
