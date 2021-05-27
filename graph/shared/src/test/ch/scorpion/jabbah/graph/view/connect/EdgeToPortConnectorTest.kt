@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.TestVertice
@@ -239,9 +240,26 @@ class EdgeToPortConnectorTest
 		assertEquals(4, builder.graphView.drawablesCount)
 	}
 
-	/** TODO Regression test of GitHub issue #125.*/
+	/** Regression test of GitHub issue #125. */
 	@Test
 	fun shouldNotCreateRedoEntryWhenCancellingAtStartLocation() {
+		editor.commandManager.reset()
 
+		val offset = Point2D(100, 0)
+		v3.moveBy(offset.x, offset.y)
+		EditModule.drawingAppService.move(listOf(v3), offset, editor, register = true)
+
+		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		pressMouseAt(150, 100)
+		releaseMouseAt(150, 100)
+
+		editor.commandManager.undo()
+		assertEquals(Point2D(200, 200), builder.graphView.getWithId(v3.id)!!.location)
+
+		editor.commandManager.redo()
+		assertEquals(Point2D(300, 200), builder.graphView.getWithId(v3.id)!!.location)
+
+		assertFalse(editor.commandManager.canRedo())
+		assertEquals(0, builder.graphView.getDrawables { it is NodeView<*> }.size)
 	}
 }

@@ -139,7 +139,7 @@ class SourcingCommandManager(
 		}
 		val snapshot = state.snapshots.peek()
 		LOG.debug("Undo command '${snapshot.undoDescription}'")
-		snapshot.undo()
+		snapshot.undo(forRedo = true)
 
 		transferUndoneSnapshotIfNecessary(storeForRedo = true)
 
@@ -176,6 +176,7 @@ class SourcingCommandManager(
 	}
 
 	override fun beginTransaction(command: Command, register: Boolean) {
+		LOG.trace("Begin transaction for '${command.getDescription()}'")
 		if (state.transaction == null) {
 			state.transaction = Transaction()
 			addableSnapshot().add(state.transaction!!)
@@ -216,7 +217,8 @@ class SourcingCommandManager(
 		if (state.transaction == null) {
 			throw IllegalStateException("no transaction to rollback")
 		}
-		state.snapshots.peek().undo()
+		LOG.debug("Rollback transaction")
+		state.snapshots.peek().undo(forRedo = false)
 		transferUndoneSnapshotIfNecessary(storeForRedo = false)
 
 		state.transactionLevel = 0
@@ -268,9 +270,11 @@ class SourcingCommandManager(
 			undoStack.push(transaction)
 		}
 
-		fun undo() {
+		fun undo(forRedo: Boolean) {
 			val transaction = undoStack.pop()
-			redoStack.push(transaction)
+			if (forRedo) {
+				redoStack.push(transaction)
+			}
 
 			if (transaction.canUndo) {
 				transaction.undo()

@@ -301,6 +301,22 @@ class SourcingCommandManagerTest {
 		assertTrue(cmdManager.canUndo())
 	}
 
+	@Test
+	fun shouldNotRedoRolledBackTransaction() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.rollbackTransaction()
+		assertEquals("a", application.mandatoryData.value)
+
+		cmdManager.undo()
+		assertEquals("", application.mandatoryData.value)
+
+		cmdManager.redo()
+		assertEquals("a", application.mandatoryData.value)
+
+		assertFalse(cmdManager.canRedo())
+	}
 
 	/** ---- Checkpoint tests */
 
