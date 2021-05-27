@@ -238,4 +238,10 @@ class EdgeToPortConnectorTest
 		// 3 VerticeViews, 1 EdgeView
 		assertEquals(4, builder.graphView.drawablesCount)
 	}
+
+	/** TODO Regression test of GitHub issue #125.*/
+	@Test
+	fun shouldNotCreateRedoEntryWhenCancellingAtStartLocation() {
+
+	}
 }

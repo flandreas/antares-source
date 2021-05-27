@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
 
@@ -27,7 +29,8 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
 class SelectionToolImpl(
 	editor: Editor,
 	private val rubberBandHandler: RubberBandHandler,
-	eventBus: EventBus
+	eventBus: EventBus,
+	private val drawingAppService: DrawingAppService = EditModule.drawingAppService
 ) : ToolAdapter(editor), SelectionTool {
 
 	companion object {
@@ -68,7 +71,7 @@ class SelectionToolImpl(
 			return
 		}
 		if (isMoveKey(e) && editor.view.selectionManager.selectionCount > 0) {
-			moveBy(e)
+			moveByKeyEvent(e)
 		}
 	}
 
@@ -246,11 +249,11 @@ class SelectionToolImpl(
 			if (moveStartLocation != movedReferenceComponent?.location) {
 				try {
 					logMove("mouse")
-					editor.commandManager.register(Movable.getDragCommand(
-						editor,
+					drawingAppService.move(
 						selection,
-						movedReferenceComponent!!.location.subtract(moveStartLocation)))
-
+						movedReferenceComponent!!.location.subtract(moveStartLocation),
+						editor,
+						register = true)
 				} catch (e: Throwable) {
 					LOG.error("SelectionToolImpl.mouseReleased(): error '${e.message}'")
 					editor.commandManager.rollbackTransaction()
@@ -314,13 +317,14 @@ class SelectionToolImpl(
 		}
 	}
 
-	private fun moveBy(event: KeyEvent) {
+	private fun moveByKeyEvent(event: KeyEvent) {
 		logMove("key")
-		editor.commandManager.execute(MoveCommand(
+		drawingAppService.move(
+			movables = editor.view.selectionManager.selection,
+			offset = getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance),
 			editor,
-			editor.view.selectionManager.selection.map { it.id }.toList(),
-			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
-		))
+			register = false
+		)
 	}
 
 	private fun logMove(action: String) {

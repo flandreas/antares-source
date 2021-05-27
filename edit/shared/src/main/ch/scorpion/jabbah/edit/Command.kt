@@ -54,7 +54,7 @@ interface Command {
 
     /**
      * Called by the [CommandManager] in order to validate any [View] that displays the changed
-     * [Drawing] after [execute] or [undo] has been done.
+     * [Drawing] after [execute] or [Undoable.undo] has been done.
      */
     fun validate()
 }

@@ -30,13 +30,6 @@ interface Movable : Locatable {
 		fun dragFinished(locatables: Collection<Movable>) {
 			locatables.forEach { it.dragFinished() }
 		}
-
-		fun getDragCommand(editor: Editor, movables: Collection<Movable>, offset: Point2D): Command {
-			if (movables.size == 1) {
-				return movables.first().getDragCommand(editor, offset)
-			}
-			return MoveCommand(editor, movables.map { it.id }.toList(), offset)
-		}
 	}
 
 	/** The unique identification of this [Movable] in its containing [DrawableContainer]*/
@@ -57,9 +50,7 @@ interface Movable : Locatable {
 		// empty
 	}
 
-	fun getDragCommand(editor: Editor, offset: Point2D): Command {
-		return MoveCommand(editor, listOf(id), offset)
-	}
+	fun getMoveCommand(editor: Editor, offset: Point2D): Command = MoveCommand(editor, listOf(id), offset)
 
 	/** Informs this [Movable] that moving previously announced by [prepareMoveBy] has been completed for all [Movable]s.*/
 	fun completeMoveBy() {}

@@ -2,20 +2,18 @@ package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.Clipboard
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.edit.select.MoveCommand
 
 /**
  * An application service for [Drawing] that enhances the domain services and classes with
@@ -53,6 +51,11 @@ interface DrawingAppService {
 	 * @throws IllegalArgumentException if the clipboard content could not be parsed
 	 */
 	fun paste(drawingView: DrawingView<Drawing<Component>>)
+
+	/**
+	 * Moves the specified [Movable]s by a given offset.
+	 */
+	fun move(movables: Collection<Movable>, offset: Point2D, editor: Editor, register: Boolean)
 }
 
 open class DrawingAppServiceImpl(
@@ -160,6 +163,19 @@ open class DrawingAppServiceImpl(
 			commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
 			drawingView.selectionManager.deselectAll()
 			drawingView.selectionManager.select(pasteInfo.components)
+		}
+	}
+
+	override fun move(movables: Collection<Movable>, offset: Point2D, editor: Editor, register: Boolean) {
+		val command = if (movables.size == 1) {
+			movables.first().getMoveCommand(editor, offset)
+		} else {
+			MoveCommand(editor, movables.map { it.id }.toList(), offset)
+		}
+		if (register) {
+			commandManager.register(command)
+		} else {
+			commandManager.execute(command)
 		}
 	}
 }

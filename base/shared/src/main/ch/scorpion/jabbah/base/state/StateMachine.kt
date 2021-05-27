@@ -96,14 +96,19 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 			LOG.trace("Handle event $event")
 		}
 
-		val transition = currentState.match(event)
-		if (transition != null) {
-			transferAlong(transition, event)
-			return true
-		}
+		try {
+			val transition = currentState.match(event)
+			if (transition != null) {
+				transferAlong(transition, event)
+				return true
+			}
 
-		if (currentState.handle(event)) {
-			return true
+			if (currentState.handle(event)) {
+				return true
+			}
+		} catch (e: Throwable) {
+			LOG.error("Error when handling event $event in state ${currentState.name}")
+			throw e
 		}
 
 		if (ignoreEventConditions.any { it.invoke(event) }) {
