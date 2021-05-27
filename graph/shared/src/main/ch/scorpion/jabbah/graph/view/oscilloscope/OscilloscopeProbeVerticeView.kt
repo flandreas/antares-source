@@ -184,7 +184,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 			// Sensing EdgeView
 			if (findEdgeView(context) != null) {
-				LOG.debug("OscilloscopeProbeVerticeView found EdgeView at ${context.x},${context.y}")
+				LOG.trace("OscilloscopeProbeVerticeView found EdgeView at ${context.x},${context.y}")
 				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connectionPoint())
 			} else {
 				ConnectionPointHighlighter.removePortViewHighlight()
