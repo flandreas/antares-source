@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.GraphViewAnimationAction
+import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
 import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
@@ -62,6 +63,7 @@ class AntaresMenuBarBuilder(
     }
 
     private fun fillDevelopmentMenu(menu: JMenu): JMenu {
+	    menu.add(ActionWrapperSwing(TestAction()))
 	    menu.add(ActionWrapperSwing(DebugGraphicsAction()))
 	    menu.addSeparator()
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableRepaintingObserverAction())))

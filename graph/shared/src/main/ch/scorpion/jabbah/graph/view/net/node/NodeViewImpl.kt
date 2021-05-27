@@ -125,7 +125,7 @@ open class NodeViewImpl<T : Any>(
 
 	override val type: String get() = TYPE
 
-	override val deletable: Boolean get() = false
+	override val deletable: Boolean get() = getEdgeViews().isEmpty()
 
 	/** ---- [Drawable] interface */
 
