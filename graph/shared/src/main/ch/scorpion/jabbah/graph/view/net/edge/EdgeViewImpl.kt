@@ -116,6 +116,8 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [EdgeView] interface */
 
+	override var underConstruction: Boolean = false
+
 	override val layout: EdgeViewLayout = EdgeViewLayoutImpl(this)
 
 	override var polyline: PolylineShape = PolylineShapeFactory.create(null)
@@ -721,6 +723,8 @@ open class EdgeViewImpl<T : Any>(
 	/** ---- [Component] interface */
 
 	override val type: String get() = TYPE
+
+	override val deletable: Boolean get() = !underConstruction && super.deletable
 
 	/** ---- [EdgeViewImpl] */
 

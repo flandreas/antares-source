@@ -145,6 +145,7 @@ class EdgeToPortConnector(
 		context.editor.commandManager.beginTransaction(command)
 
 		edgeView = command.addedNewEdgeView
+		edgeView!!.underConstruction = true
 
 		context.drawingView().selectionManager.deselectAll()
 		context.drawingView().selectionManager.select(edgeView!!)
@@ -166,6 +167,8 @@ class EdgeToPortConnector(
 
 	private fun completeConnecting(context: EditInputEventContext) {
 		logConnect()
+
+		edgeView?.underConstruction = false
 
 		if (targetPortView != null) {
 			context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))

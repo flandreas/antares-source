@@ -176,6 +176,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connected") {
 						onEntry {
+							edgeView?.underConstruction = false
 							completeConnectingToEndPortOrOpen(it)
 							reset()
 						}
@@ -183,6 +184,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connectedToEdge") {
 						onEntry {
+							edgeView?.underConstruction = false
 							completeConnectingToEdge(it)
 							reset()
 						}

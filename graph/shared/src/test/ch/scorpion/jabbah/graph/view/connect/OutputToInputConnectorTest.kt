@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import io.mockk.verify
 import kotlin.test.*
 
@@ -254,5 +254,21 @@ class OutputToInputConnectorTest
 		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
 		assertNull(draggedEdgeView.destination)
 		assertTrue(editor.commandManager.canUndo())
+	}
+
+	@Test
+	fun shouldCopeWithDeletingEdgeViewWhileCreating() {
+		mouseMoveTo(130, 100)
+		pressMouseAt(130, 100)
+		dragMouseTo(160, 100)
+
+		val edgeView = builder.graphView.getEdgeViews().first()
+
+		// The design relies on the fact that EdgeViews under construction are not deletable.
+		// Restriction to "deletable" is currently made by UI Actions, so we can't call
+		// DrawingAppService.delete() here
+		assertFalse(edgeView.deletable)
+
+		dragMouseTo(170, 100)
 	}
 }

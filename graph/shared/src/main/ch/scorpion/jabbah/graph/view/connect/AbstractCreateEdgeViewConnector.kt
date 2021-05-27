@@ -30,15 +30,17 @@ abstract class AbstractCreateEdgeViewConnector(
 	 * @param netView the [NetView] of the [EdgeView] to be created
 	 */
 	protected fun createEdgeView(view: DrawingView<Drawing<Component>>, startPoint: Point2D, netView: NetView<Any>?) {
-		edgeView = if (netView == null) edgeViewFactory.createEdgeView() else edgeViewFactory.createEdgeView(netView)
+		(if (netView == null) edgeViewFactory.createEdgeView() else edgeViewFactory.createEdgeView(netView)).also { ev ->
+			this.edgeView = ev
+			ev.underConstruction = true
 
-		// Add the connection point twice so that the second point can be dragged
-		edgeView!!.addSegmentPoint(startPoint)
-		edgeView!!.addSegmentPoint(startPoint)
+			ev.addSegmentPoint(startPoint)
+			ev.addSegmentPoint(startPoint)
 
-		view.drawing.add(edgeView!!)
-		view.selectionManager.deselectAll()
-		view.selectionManager.select(edgeView!!)
+			view.drawing.add(ev)
+			view.selectionManager.deselectAll()
+			view.selectionManager.select(ev)
+		}
 	}
 
 	protected open fun cancel(editor: Editor) {

@@ -94,6 +94,13 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
 
+	/**
+	 * Can be set for [EdgeView]s during interactive creation by the user, especially to avoid
+	 * that the [EdgeView] "under construction" gets deleted while being created, which would lead to
+	 * all kind of difficult state problems. Not persistent.
+	 */
+	var underConstruction: Boolean
+
     /**
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].

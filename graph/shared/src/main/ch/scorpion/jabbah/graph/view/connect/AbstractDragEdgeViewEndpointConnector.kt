@@ -90,6 +90,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("draggedOpen") {
 				onEntry {
+					edgeView?.underConstruction = false
 					removePortViewHighlight()
 					completeDragOpen(it)
 					reset()
@@ -98,6 +99,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("connected") {
 				onEntry {
+					edgeView?.underConstruction = false
 					removePortViewHighlight()
 					completeDragConnecting(it)
 					reset()
@@ -140,6 +142,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	}
 
 	protected open fun beginDragging(context: EditInputEventContext) {
+		edgeView?.underConstruction = true
 		oldLocation = getEndpointView().location
 		context.drawingView().selectionManager.deselectAll()
 		context.drawingView().selectionManager.select(edgeView!!)
