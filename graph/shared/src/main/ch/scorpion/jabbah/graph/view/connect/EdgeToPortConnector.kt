@@ -136,6 +136,7 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
+		LOG.debug("Start creating junction of EdgeView")
 		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		context.drawingView().drawing.remove(edgeView!!)
 		removePortViewHighlight()
