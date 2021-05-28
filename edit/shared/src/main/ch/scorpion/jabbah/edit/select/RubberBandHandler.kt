@@ -32,7 +32,7 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
                 // repainting and calculation load. Check if there is a more efficient solution.
 	            context.drawingView().selectionManager.deselect(selection)
 	            selection.clear()
-                context.drawingView().drawing.getDrawables()
+                context.drawingView().drawing.drawables
                     .filter { it.visible && rubberBand.contains(it.boundingBox) }
                     .forEach { selection.add(it) }
                 context.drawingView().selectionManager.select(selection)
@@ -54,7 +54,7 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
             }
 
             override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
-                context.drawingView().drawing.getDrawables()
+                context.drawingView().drawing.drawables
                     .filter { it.visible && rubberBand.contains(it.boundingBox) }
                     .forEach { context.drawingView().selectionManager.select(it) }
             }

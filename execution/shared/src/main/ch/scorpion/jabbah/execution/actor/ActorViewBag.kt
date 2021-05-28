@@ -4,15 +4,15 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.container.DrawableBagImpl
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
 
-open class ActorViewContainer<T: Drawable>(
+open class ActorViewBag<T : Drawable>(
 	location: Point2D = Point2D.ZERO,
-	useLocation: Boolean = false
-) : DrawableContainerImpl<T>(location, useLocation), ActorView {
+	override val useLocation: Boolean = false
+) : DrawableBagImpl<T>(location, useLocation), ActorView {
 
-	private val handler = Handler()
+	private val handler = createHandler()
 
 	/** ---- [ActorView] interface */
 
@@ -29,12 +29,14 @@ open class ActorViewContainer<T: Drawable>(
 		return getActorViewAt(p)?.getExecutionTooltip(p)
 	}
 
-	/** ---- [ActorViewContainer] */
+	/** ---- [ActorViewBag] */
 
-	private fun getActorViewAt(pos: Point2D): ActorView? =
+	protected open fun createHandler(): Handler = Handler()
+
+	protected open fun getActorViewAt(pos: Point2D): ActorView? =
 		getDrawableAt(pos.x, pos.y) { it is ActorView } as ActorView?
 
-	private inner class Handler : DrawableBagInputEventHandler<T, ActorInteractionContext>() {
+	protected open inner class Handler : DrawableBagInputEventHandler<T, ActorInteractionContext>() {
 
 		override fun getDrawableAt(location: Point2D): Drawable? = getActorViewAt(location) as Drawable?
 

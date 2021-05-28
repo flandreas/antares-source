@@ -137,7 +137,7 @@ class OneDownCommand(
 	override fun execute() {
 		var i = origStackingOrderPositions.size - 1
 		for (pos in origStackingOrderPositions.asReversed()) {
-			if (pos.position < drawing.drawablesCount - 1) {
+			if (pos.position < drawing.drawables.size - 1) {
 				val newPos = pos.position + 1
 				if (i == origStackingOrderPositions.size - 1 || newPos < drawing.getStackingOrderPosition(origStackingOrderPositions[i + 1].componentId)) {
 					drawing.setStackingOrderPosition(newPos, pos.componentId)
@@ -170,7 +170,7 @@ class ToBackCommand(
 		oldPositions.clear()
 		for (pos in origStackingOrderPositions) {
 			oldPositions[pos.componentId] = drawing.getStackingOrderPosition(pos.componentId)
-			drawing.setStackingOrderPosition(drawing.drawablesCount - 1, pos.componentId)
+			drawing.setStackingOrderPosition(drawing.drawables.size - 1, pos.componentId)
 		}
 	}
 

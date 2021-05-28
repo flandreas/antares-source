@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -268,7 +269,7 @@ class TerminalView(
 
 	/** ---- [ControlView] */
 
-	override fun bindToModel(model: Terminal) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Terminal) {
 		this.model = model
 	}
 

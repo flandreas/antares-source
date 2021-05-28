@@ -13,9 +13,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Testing [DrawableContainerInputEventHandler] that is created by [DrawableContainerImpl] by default.
+ * Testing [DrawableBagInputEventHandler] that is created by [DrawableContainerImpl] by default.
  */
-class DrawableContainerInputEventHandlerTest {
+class DrawableBagInputEventHandlerTest {
 
 	companion object {
 		init {

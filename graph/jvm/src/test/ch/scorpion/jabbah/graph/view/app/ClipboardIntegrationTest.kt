@@ -64,7 +64,7 @@ class ClipboardIntegrationTest {
 		service.copy(view)
 		service.paste(view)
 
-		assertEquals(6, editor.drawing.drawablesCount)
+		assertEquals(6, editor.drawing.drawables.size)
 	}
 
 	@Test
@@ -173,7 +173,7 @@ class ClipboardIntegrationTest {
 
 		editor.commandManager.undo()
 
-		assertEquals(3, editor.drawing.drawablesCount)
+		assertEquals(3, editor.drawing.drawables.size)
 	}
 
 	@Test
@@ -185,7 +185,7 @@ class ClipboardIntegrationTest {
 		editor.commandManager.undo()
 		editor.commandManager.redo()
 
-		assertEquals(4, editor.drawing.drawablesCount)
+		assertEquals(4, editor.drawing.drawables.size)
 		assertEquals(Point2D(100 + 3 * 10, 100 + 3 * 10), builder.graphView.get(0).location)
 	}
 
@@ -199,6 +199,6 @@ class ClipboardIntegrationTest {
 		editor.commandManager.redo()
 		editor.commandManager.undo()
 
-		assertEquals(3, editor.drawing.drawablesCount)
+		assertEquals(3, editor.drawing.drawables.size)
 	}
 }

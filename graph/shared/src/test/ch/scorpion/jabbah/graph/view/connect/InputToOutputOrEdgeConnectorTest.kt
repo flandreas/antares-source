@@ -155,7 +155,7 @@ class InputToOutputOrEdgeConnectorTest
 		assertTrue(nodeView.model.isConnectedWith(newV3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
-		assertEquals(7, builder.graphView.drawablesCount)
+		assertEquals(7, builder.graphView.drawables.size)
 	}
 
 	private fun assertAutoLayoutGeometry() {
@@ -188,7 +188,7 @@ class InputToOutputOrEdgeConnectorTest
 		assertFalse(newEv.model.isConnectedWith(newV3.model.getInput()))
 
 		// 3 VerticeViews, 1 EdgeView
-		assertEquals(4, builder.graphView.drawablesCount)
+		assertEquals(4, builder.graphView.drawables.size)
 	}
 
 	@Test

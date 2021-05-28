@@ -39,7 +39,7 @@ interface ControlView<T : Vertice> : Component, Transparent, ActorView {
      * [SubGraphVerticeView] that owns this [ControlView]. Used for establishing a process to update this [ControlView]
      * whenever the corresponding [Vertice] changes.
      */
-    fun bindToModel(model: T)
+    fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T)
 
 	/**
 	 * Called by the editor environment to inform this [ControlView] that some properties of the [ControlViewSource]

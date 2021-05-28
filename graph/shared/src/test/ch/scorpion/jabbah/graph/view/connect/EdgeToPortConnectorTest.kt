@@ -104,7 +104,7 @@ class EdgeToPortConnectorTest
 		assertTrue(nodeView.model.isConnectedWith(v2.model.getInput()))
 		assertTrue(nodeView.model.isConnectedWith(destPort))
 
-		assertEquals(drawablesCount, builder.graphView.drawablesCount)
+		assertEquals(drawablesCount, builder.graphView.drawables.size)
 	}
 
 	/**
@@ -138,7 +138,7 @@ class EdgeToPortConnectorTest
 		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
-		assertEquals(7, builder.graphView.drawablesCount)
+		assertEquals(7, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -165,7 +165,7 @@ class EdgeToPortConnectorTest
 		assertFalse(anyEv.model.isConnectedWith(newV3.model.getInput()))
 
 		// 3 VerticeViews, 1 EdgeView
-		assertEquals(4, builder.graphView.drawablesCount)
+		assertEquals(4, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -208,7 +208,7 @@ class EdgeToPortConnectorTest
 		assertEquals(Point2D(150, 200), nodeView.getEdgeView(Direction.SOUTH)!!.polyline.getLastPoint())
 
 		// 3 VerticeViews, 3 EdgeView, 1 NodeView
-		assertEquals(7, builder.graphView.drawablesCount)
+		assertEquals(7, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -237,7 +237,7 @@ class EdgeToPortConnectorTest
 		releaseMouseAt(150, 100)
 
 		// 3 VerticeViews, 1 EdgeView
-		assertEquals(4, builder.graphView.drawablesCount)
+		assertEquals(4, builder.graphView.drawables.size)
 	}
 
 	/** Regression test of GitHub issue #125. */

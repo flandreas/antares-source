@@ -16,22 +16,30 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.graph.ui.KnobLauncher
+import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class ClockControlView(
 	initModel: Clock = Clock(),
 	styleType: StyleType = StyleType.FIGURE,
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	var knobLauncher: KnobLauncher = KnobLauncherImpl
 ) : AbstractRectangularComponent(styleType, styleProvider, Rectangle2D(0, 0, ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)), ControlView<Clock> {
 
 	companion object {
-		private const val ICON_BUTTON_SIZE = 20
+		const val ICON_BUTTON_SIZE = 20
 	}
 
 	private val iconButton = IconButton(Point2D())
+
+	init {
+		DrawableOwner(this, iconButton)
+	}
 
 	/** ---- [Drawable] */
 
@@ -60,6 +68,8 @@ class ClockControlView(
 
 	/** ---- [ControlView] */
 
+	private var subGraphVerticeView: SubGraphVerticeView<*>? = null
+
 	private var _model: Clock = initModel
 
 	override val model: Clock get() = _model
@@ -74,8 +84,9 @@ class ClockControlView(
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
-	override fun bindToModel(model: Clock) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Clock) {
 		_model = model
+		this.subGraphVerticeView = subGraphVerticeView
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Clock>) { }
@@ -90,21 +101,33 @@ class ClockControlView(
 		icon = KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
 		location = location
 	) {
+
 		override fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = MouseMoveHandler()
 
-		override fun handleClicked(context: ActorInteractionContext) {
-			println("ClockControlView: handleClicked")
-		}
+		override fun handleClicked(context: ActorInteractionContext) { }
 
 		private inner class MouseMoveHandler : Handler() {
-			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-				println("ClockControlView: mouseMoved")
 
+			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 				// Hover highlighting
 				if (super.mouseMoved(context) == null) {
 					return null
 				}
-				return null
+
+				return knobLauncher.launchAfterDelay(
+					initialValue = model.propagationDelay / 1_000,
+					location = knobLocation,
+					unit = "µs",
+					mouseMovedCondition = { keepMouseMoved(it.location) },
+					displayHandler = { isHovering = false },
+					valueChangeHandler = { model.propagationDelay = it * 1_000 }
+				)
+			}
+
+			private val knobLocation: Point2D get() {
+				val center = boundingBox.center
+				val rotatedCenter = subGraphVerticeView!!.rotation.rotatePointAround(Point2D.ZERO, center.x, center.y)
+				return rotatedCenter.add(subGraphVerticeView!!.location)
 			}
 		}
 	}

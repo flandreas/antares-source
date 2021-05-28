@@ -44,7 +44,7 @@ class GraphViewCopyPasteServiceImplNodeTest {
 			drawingViewBuilder.build()
 		)
 
-		assertEquals(11 + 1, builder.graphView.drawablesCount)
+		assertEquals(11 + 1, builder.graphView.drawables.size)
 		assertEquals(2, builder.graphView.getDrawables { it is NodeView<*> }.size)
 		checkReadWrite()
 	}
@@ -56,7 +56,7 @@ class GraphViewCopyPasteServiceImplNodeTest {
 			drawingViewBuilder.build()
 		)
 
-		assertEquals(11 + 1, builder.graphView.drawablesCount)
+		assertEquals(11 + 1, builder.graphView.drawables.size)
 		assertEquals(2, builder.graphView.getDrawables { it is NodeView<*> }.size)
 		checkReadWrite()
 	}
@@ -73,7 +73,7 @@ class GraphViewCopyPasteServiceImplNodeTest {
 		assertNull((result.components[0] as EdgeView<*>).origin)
 		assertNull((result.components[0] as EdgeView<*>).destination)
 
-		assertEquals(11 + 1, builder.graphView.drawablesCount)
+		assertEquals(11 + 1, builder.graphView.drawables.size)
 		assertEquals(2, builder.graphView.getDrawables { it is NodeView<*> }.size)
 		checkReadWrite()
 	}
@@ -81,11 +81,11 @@ class GraphViewCopyPasteServiceImplNodeTest {
 	@Test
 	fun shouldPasteNodeViewWithThreeEdgeViews() {
 		val result = service.paste(
-			service.copy(builder.graphView.getDrawables().map { it.id }, builder.graphView),
+			service.copy(builder.graphView.drawables.map { it.id }, builder.graphView),
 			drawingViewBuilder.build()
 		)
 
-		assertEquals(11 + 11, builder.graphView.drawablesCount)
+		assertEquals(11 + 11, builder.graphView.drawables.size)
 		assertEquals(4, builder.graphView.getDrawables { it is NodeView<*> }.size)
 		checkReadWrite()
 	}

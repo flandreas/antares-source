@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -317,7 +318,7 @@ class SwitchView(
 
 	/** ---- [ControlView] */
 
-	override fun bindToModel(model: Switch) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
 		this.model = model
 	}
 

@@ -31,6 +31,7 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -170,7 +171,7 @@ class KeyboardView(
 
 	/** ---- [ControlView] */
 
-	override fun bindToModel(model: Keyboard) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Keyboard) {
 		this.model = model
 	}
 

@@ -112,7 +112,7 @@ open class GraphViewAppServiceImpl(
 	}
 
 	private fun getWrapperOf(component: Component, drawing: Drawing<*>): GraphElementViewWrapper? {
-		return drawing.getDrawables()
+		return drawing.drawables
 			.filter { it is GraphElementViewWrapper && it.component === component }
 			.map { it as GraphElementViewWrapper }
 			.firstOrNull()

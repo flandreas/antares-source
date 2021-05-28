@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Locatable
 
 /**
@@ -26,10 +24,9 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
  *
  * @param T the type of [Drawable]s that this [DrawableContainer] contains
  */
-interface DrawableContainer<T : Drawable> : Drawable, Locatable {
+interface DrawableContainer<T : Drawable> : Drawable, DrawableBag<T>, Locatable {
 
-    /** Returns the number of [Drawable]s this [DrawableContainer] contains.*/
-    val drawablesCount: Int
+	override fun contains(x: Double, y: Double): Boolean = super<DrawableBag>.contains(x, y)
 
     /**
      * Sets the [DrawableDrawer] to be used for drawing the [Drawable]s of this [DrawableContainer] and
@@ -51,69 +48,6 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * from this [DrawableContainer].
      */
     fun removeDrawableContainerListener(listener: DrawableContainerListener<T>)
-
-    /** Returns the [Drawable] at the specified index, starting with zero.*/
-    fun get(index: Int): T
-
-    /** Determines whether this [DrawableContainer] contains the specified [Drawable].*/
-    fun contains(drawable: Drawable): Boolean
-
-    /**
-     * Adds the specified [Drawable] to this [DrawableContainer] at the front of the stacking order.
-     * Calls [DrawableContainerListener.drawableAdded] on all registered listeners.
-     * @return this [DrawableContainer] to support method chaining
-     */
-    fun add(drawable: T): DrawableContainer<T>
-
-    /**
-     * Adds the specified [Drawable] to this [DrawableContainer] at the specified stacking order index.
-     * Calls [DrawableContainerListener.drawableAdded] on all registered listeners.
-     * @return this [DrawableContainer] to support method chaining
-     */
-    fun add(drawable: T, index: Int): DrawableContainer<T>
-
-    /**
-     * Removes the specified [Drawable] from this [DrawableContainer].
-     * Calls [DrawableContainerListener.drawableRemoved] on all registered listeners.
-     * @return this [DrawableContainer] to support method chaining
-     */
-    fun remove(drawable: Drawable): DrawableContainer<T>
-
-    /**
-     * Removes all [Drawable]s from this [DrawableContainer].
-     * Calls [DrawableContainerListener.drawableRemoved] on all registered listeners for all removed [Drawable]s.
-     * @return this [DrawableContainer] to support method chaining
-     */
-    fun clear(): DrawableContainer<T>
-
-    /** Returns an [Iterator] over all [Drawable]s in stacking order, i.e. the topmost [Drawable] is returned first.*/
-    fun frontToBackIterator(): Iterator<T>
-
-    /** Returns an [Iterator] over all [Drawable]s in reverse stacking order, i.e. the bottommost [Drawable] is returned first.*/
-    fun backToFrontIterator(): Iterator<T>
-
-    /**
-     * Returns the first visible [Drawable] (in stacking order) that contains the specified location,
-     * expressed relative to the environment's coordinate system origin (either a [View] or a parent [DrawableContainer]).
-     * If the [Drawable] at the specified location is a [DrawableContainer], this method must **not** return any
-     * inner [Drawable] at that location. This method rather returns only direct children.
-     *
-     * TODO: Providing a default value for [predicate] wouldn't compile in JS due to KT-41006 (due for Kotlin 1.4.20).
-     */
-    fun getDrawableAt(x: Double, y: Double, predicate: (T) -> Boolean): T?
-
-	fun getDrawableAt(x: Double, y: Double): T? = getDrawableAt(x, y) { true }
-
-	/** Delegates to [getDrawableAt] using the individual coordinates of the specified [Point2D]. */
-	fun getDrawableAt(location: Point2D): T? = getDrawableAt(location.x, location.y) { true }
-
-	fun getDrawables(): ImmutableList<T>
-
-    /** Returns the [Drawable]s that match the specified predicate.*/
-    fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T>
-
-    /** Returns the first [Drawable] that matches the specified predicate.*/
-    fun getDrawable(predicate: (T) -> Boolean): T?
 
     /** Notifies this [DrawableContainer] that one of its child [Drawable]s has invalidated a certain region. */
     fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape)

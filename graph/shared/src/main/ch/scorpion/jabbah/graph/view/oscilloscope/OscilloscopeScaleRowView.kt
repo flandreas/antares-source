@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
-import ch.scorpion.jabbah.graph.ui.KnobLauncher
+import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_W
@@ -95,7 +95,7 @@ class OscilloscopeScaleRowView(
 					return null
 				}
 
-				return KnobLauncher.launchAfterDelay(
+				return KnobLauncherImpl.launchAfterDelay(
 					initialValue = oscilloscopeView.timelineScale.toLong(),
 					location = boundingBox.center
 						.add(oscilloscopeView.location)

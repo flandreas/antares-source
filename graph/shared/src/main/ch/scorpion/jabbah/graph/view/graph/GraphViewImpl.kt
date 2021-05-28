@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
+import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
@@ -147,7 +147,7 @@ open class GraphViewImpl(
 
 
 	override fun bind() {
-		for (graphElementView in getDrawables()) {
+		for (graphElementView in drawables) {
 			graphElementView.bind(graph!!)
 		}
 	}
@@ -297,7 +297,7 @@ open class GraphViewImpl(
 	/** ---- [Drawing] interface */
 
 	override fun dispose() {
-		for (graphElementView in getDrawables()) {
+		for (graphElementView in drawables) {
 			graphElementView.dispose()
 		}
 		scenarios.dispose()
@@ -321,11 +321,11 @@ open class GraphViewImpl(
 		return drawables.toImmutableList()
 	}
 
-	override fun provideInputEventHandler(): DrawableContainerInputEventHandler<GraphElementView<*>, InputEventContext> {
+	override fun provideInputEventHandler(): DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext> {
 		if (inputEventHandler == null) {
 			inputEventHandler = GraphViewInputEventHandler<GraphElementView<*>>()
 		}
-		return inputEventHandler as DrawableContainerInputEventHandler<GraphElementView<*>, InputEventContext>
+		return inputEventHandler as DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext>
 	}
 
 	/** Overridden in order to add the [GraphElement] to the [Graph] that this [GraphView] displays.*/

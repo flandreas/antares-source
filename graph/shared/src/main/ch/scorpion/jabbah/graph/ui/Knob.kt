@@ -21,13 +21,37 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.*
 
+interface KnobLauncher {
+	/**
+	 * Launches a new [KnobView] after the mouse pointer has stayed within the client component for the
+	 * configured delay time.
+	 *
+	 * @param initialValue the initial value to be displayed by the [KnobView]
+	 * @param location the location in global model space where the center of the [KnobView] should be located
+	 * @param unit the [String] displayed after the value in [KnobView]. Example: µs
+	 * @param mouseMovedCondition the condition that must be `true` during the entire delay time. This is
+	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
+	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
+	 * Allows the client to reset any of its state, e.g. hover highlighting over a button that initiates launching
+	 * @param valueChangeHandler called by this [KnobLauncherImpl] whenever the [KnobView]'s value has changed
+	 */
+	fun launchAfterDelay(
+		initialValue: Long,
+		location: Point2D,
+		unit: String,
+		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
+		displayHandler: () -> Unit = {},
+		valueChangeHandler: (Long) -> Unit
+	): ActorInteractionHandler
+}
+
 /**
  * Utility class for launching a [KnobView] for a client component after the mouse pointer has stayed
  * within the client component during a particular delay time, similar to tooltip delays.
  */
-object KnobLauncher {
+object KnobLauncherImpl : KnobLauncher {
 
-	private val LOG by logger(KnobLauncher::class)
+	private val LOG by logger(KnobLauncherImpl::class)
 
 	/** The factor of [TooltipManager.PROP_DELAY] for delaying displaying the [KnobView].*/
 	private const val DELAY_FACTOR = 0.7
@@ -55,14 +79,14 @@ object KnobLauncher {
 	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
 	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
 	 * Allows the client to reset any of its state, e.g. hover highlighting over a button that initiates launching
-	 * @param valueChangeHandler called by this [KnobLauncher] whenever the [KnobView]'s value has changed
+	 * @param valueChangeHandler called by this [KnobLauncherImpl] whenever the [KnobView]'s value has changed
 	 */
-	fun launchAfterDelay(
+	override fun launchAfterDelay(
 		initialValue: Long,
 		location: Point2D,
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
-		displayHandler: () -> Unit = {},
+		displayHandler: () -> Unit,
 		valueChangeHandler: (Long) -> Unit
 	): ActorInteractionHandler {
 		this.initialValue = initialValue

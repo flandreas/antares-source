@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -79,7 +80,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	override fun bindToModel(model: T) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
 		this.model = model
 	}
 

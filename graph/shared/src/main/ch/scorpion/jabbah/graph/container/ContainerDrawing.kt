@@ -206,7 +206,7 @@ class ContainerDrawing(
 
 		view.drawExecScript = execDrawScript.script
 
-		for (comp in clonedDrawing.getDrawables()) {
+		for (comp in clonedDrawing.drawables) {
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)
 			if (comp is PortViewComponent<*>) {
 				val portView = comp.portView as PortView<Any>

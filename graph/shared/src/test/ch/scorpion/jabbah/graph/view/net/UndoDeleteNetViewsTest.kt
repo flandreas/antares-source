@@ -52,7 +52,7 @@ class UndoDeleteNetViewsTest {
 
 		EditModule.commandManager.reset()
 
-		GraphViewModule.graphViewAppService.delete(builder.graphView.getDrawables().toList(), drawingView)
+		GraphViewModule.graphViewAppService.delete(builder.graphView.drawables.toList(), drawingView)
 		EditModule.commandManager.undo()
 
 		val edgeViews = builder.graphView.getEdgeViews()

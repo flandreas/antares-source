@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -79,7 +80,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 		    return "${model.type} \"${model.name}\""
 	    }
 
-	override fun bindToModel(model: T) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
         this.model = model
     }
 
@@ -125,7 +126,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
 	/** ---- [DigitalSignalSourceControlView] */
 
-	/** Used as placeholder of the mandatory [DigitalSignalSource] until it is set by [bindToModel].*/
+	/** Used as placeholder of the mandatory [DigitalSignalSource] until it is set by [bindControlView].*/
 	private class DummySignalSource : AbstractVertice(), DigitalSignalSource {
 
 		companion object {

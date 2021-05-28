@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
@@ -36,7 +37,9 @@ class ComponentMockBuilder {
 		every { component.boundingBox } returns bbox
 		val x = slot<Double>()
 		val y = slot<Double>()
+		val p = slot<Point2D>()
 		every { component.contains(capture(x), capture(y)) } answers { bbox.contains(x.captured, y.captured)}
+		every { component.contains(capture(p)) } answers { bbox.contains(p.captured) }
 		return this
 	}
 

@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.graph.ui.KnobLauncher
+import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -168,7 +168,7 @@ class ClockView(
 				return null
 			}
 
-			return KnobLauncher.launchAfterDelay(
+			return KnobLauncherImpl.launchAfterDelay(
 				initialValue = model.propagationDelay / 1_000,
 				location = boundingBox.center,
 				unit = "µs",

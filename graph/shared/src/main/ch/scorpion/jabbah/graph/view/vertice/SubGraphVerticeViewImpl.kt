@@ -26,10 +26,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -67,11 +64,9 @@ class SubGraphVerticeViewImpl(
 	}
 
 	/** Contains the [Drawable]s that make up the look of this [SubGraphVerticeView].*/
-	private val drawables = mutableListOf<Drawable>()
+	private val drawableBag = SubSymbolBag()
 
 	private val editInteractionHandler = EditInteractionHandler()
-
-	private val executionInteractionHandler = ExecutionInteractionHandler()
 
 	/** The [ContainerDrawing] that has been customized by the user for this [SubGraphVerticeView], if any.*/
 	private var customizedContainerDrawing: ContainerDrawing? = null
@@ -84,6 +79,7 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			invalidate()
 			field = value
+			drawableBag.location = value
 			updateBoxes()
 			update()
 			invalidate()
@@ -151,7 +147,7 @@ class SubGraphVerticeViewImpl(
 		get() = super.transparency
 		set(value) {
 			super.transparency = value
-			drawables.filterIsInstance<Transparent>().forEach { it.transparency = value }
+			drawableBag.drawables.filterIsInstance<Transparent>().forEach { it.transparency = value }
 		}
 
 	/** ---- [Stylable] */
@@ -161,7 +157,7 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			if (super.styleProvider != value) {
 				super.styleProvider = value
-				drawables.filterIsInstance<Stylable>().forEach { it.styleProvider = value }
+				drawableBag.drawables.filterIsInstance<Stylable>().forEach { it.styleProvider = value }
 			}
 		}
 
@@ -176,7 +172,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		drawables.forEach { it.draw(context) }
+		drawableBag.drawables.forEach { it.draw(context) }
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && StringUtils.isNotEmpty(drawExecScript)) {
 			scriptGateway.exec(wrappedDrawExecScript, this, context)
 		}
@@ -192,7 +188,7 @@ class SubGraphVerticeViewImpl(
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) { c ->
-			drawables.forEach { drawableDrawer.invoke(it) }
+			drawableBag.drawables.forEach { drawableDrawer.invoke(it) }
 			super.drawImpl(c)
 		}
 	}
@@ -308,6 +304,13 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [Component] */
 
+	override var rotation: Rotation
+		get() = super.rotation
+		set(value) {
+			super.rotation = value
+			drawableBag.rotation = value
+		}
+
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.REPLACE
 		set(value) {
@@ -316,7 +319,7 @@ class SubGraphVerticeViewImpl(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
-		drawables.forEach {
+		drawableBag.drawables.forEach {
 			when (it) {
 				is LabelComponent -> it.label.ownerRotation = newRotation
 				is BrokenReferenceView -> it.label.ownerRotation = newRotation
@@ -330,7 +333,7 @@ class SubGraphVerticeViewImpl(
 		super.bind(graph)
 		if (model.designError == null) {
 			val innerGraph = getGraph()
-			getControlViewComponents().forEach { it.bindToGraph(innerGraph, repository, storableCreator) }
+			getControlViewComponents().forEach { it.bindControlView(this, innerGraph, repository, storableCreator) }
 		}
 	}
 
@@ -363,7 +366,7 @@ class SubGraphVerticeViewImpl(
 		} else if (drawable is LabelComponent) {
 			drawable.label.ownerRotation = rotation
 		}
-		drawables.add(0, drawable)
+		drawableBag.add(drawable)
 		_boundingBox.add(drawable.boundingBox)
 		containsBox.add(drawable.boundingBox)
 	}
@@ -393,11 +396,10 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return executionInteractionHandler
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		drawableBag.getActorInteractionHandler(context)
 
-	override val canMirror: Boolean get() = drawables.all { it.canMirror }
+	override val canMirror: Boolean get() = drawableBag.drawables.all { it.canMirror }
 
 	override fun mirrorHorizontally(x: Double) {
 		if (!canMirror) {
@@ -405,7 +407,7 @@ class SubGraphVerticeViewImpl(
 			throw UnsupportedOperationException("cannot mirror horizontally")
 		}
 		invalidate()
-		drawables.forEach { it.mirrorHorizontally(x - location.x) }
+		drawableBag.drawables.forEach { it.mirrorHorizontally(x - location.x) }
 		getPortViews().forEach { it.mirrorHorizontally(x - location.x) }
 		updateBoxes()
 		invalidate()
@@ -417,7 +419,7 @@ class SubGraphVerticeViewImpl(
 			throw UnsupportedOperationException("cannot mirror vertically")
 		}
 		invalidate()
-		drawables.forEach { it.mirrorVertically(y - location.y) }
+		drawableBag.drawables.forEach { it.mirrorVertically(y - location.y) }
 		getPortViews().forEach { it.mirrorVertically(y - location.y) }
 		updateBoxes()
 		invalidate()
@@ -425,21 +427,19 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [SubGraphVerticeViewImpl] */
 
-	fun getControlViewComponents(): ImmutableList<ControlViewComponent> {
-		return drawables.filterIsInstance<ControlViewComponent>().map { it }.toImmutableList()
-	}
+	fun getControlViewComponents(): ImmutableList<ControlViewComponent> =
+		drawableBag.drawables.filterIsInstance<ControlViewComponent>().map { it }.toImmutableList()
 
-	private fun getGraph(): Graph {
-		return subGraphVertice.getGraph(repository, storableCreator)
-	}
+	private fun getGraph(): Graph =
+		subGraphVertice.getGraph(repository, storableCreator)
 
-	private fun getLabelComponent(): LabelComponent? {
-		return drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
-	}
+	private fun getLabelComponent(): LabelComponent? =
+		drawableBag.drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
 
-	private fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {
+	// Visible for testing
+	fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {
 		val reuser = PortViewReuser(this)
-		drawables.clear()
+		drawableBag.clear()
 		clearPortViews()
 
 		containerDrawing.fillSubGraphVerticeView(this)
@@ -453,8 +453,8 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun fillDesignErrorRepresentation() {
-		drawables.clear()
-		drawables.add(BrokenReferenceView(rotation, styleProvider))
+		drawableBag.clear()
+		drawableBag.add(drawable = BrokenReferenceView(rotation, styleProvider))
 		updateBoxes()
 	}
 
@@ -468,7 +468,7 @@ class SubGraphVerticeViewImpl(
 		containsBox.setFrame(_boundingBox)
 		addPortViewsTo(_boundingBox, containsBox)
 
-		drawables.forEach {
+		drawableBag.drawables.forEach {
 			val r = Rectangle2D(it.boundingBox)
 			r.setFrame(location.x + r.x, location.y + r.y, r.width, r.height)
 			_boundingBox.add(r)
@@ -491,15 +491,6 @@ class SubGraphVerticeViewImpl(
 		eventBus.post(OpenSubGraphRequest(this, newView = event.isAltDown, quickMode = event.isMetaDown))
 	}
 
-	private fun getActorViewAt(x: Double, y: Double): ActorView? {
-		val p = rotateBack(x, y).subtract(location)
-		return getActorViews { it.contains(p) }.firstOrNull()
-	}
-
-	private fun getActorViews(cond: (Drawable) -> Boolean = { true }): List<ActorView> {
-		return drawables.filter { it is ActorView && cond.invoke(it) }.map { it as ActorView }
-	}
-
 	private inner class EditInteractionHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
@@ -510,59 +501,19 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
-	private inner class ExecutionInteractionHandler : ClickableActorInteractionHandlerAdapter() {
+	private inner class SubSymbolBag : ActorViewBag<Drawable>(useLocation = true) {
 
-		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-			return getActorViewAt(context.x, context.y)
-				?.getActorInteractionHandler(context)
-				?.mouseMoved(context.withXY(context.x - location.x, context.y - location.y))
-				?: super.mouseMoved(context)
-		}
+		override fun createHandler(): Handler = SubSymbolBagHandler()
 
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			return getActorViewAt(context.x, context.y)
-				?.getActorInteractionHandler(context)
-				?.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
-				?: super.mousePressed(context)
-		}
-
-		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			return getActorViewAt(context.x, context.y)
-				?.getActorInteractionHandler(context)
-				?.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
-				?: super.mouseReleased(context)
-		}
-
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			getActorViewAt(context.x, context.y)
-				?.getActorInteractionHandler(context)
-				?.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
-
-			if (context.mouseEvent?.isConsumed() != true && context.mouseEvent?.clickCount == 2) {
-				requestOpenSubGraph(context.mouseEvent!!)
-			}
-
-			return null
-		}
-
-		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			getActorViews().forEach {
-				it.getActorInteractionHandler(context).keyPressed(context)
-				if (context.keyEvent?.isConsumed() == true) {
+		private inner class SubSymbolBagHandler : Handler() {
+			override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+				val handler = super.mouseClicked(context)
+				if (context.mouseEvent?.isConsumed() != true && context.mouseEvent?.clickCount == 2) {
+					requestOpenSubGraph(context.mouseEvent!!)
 					return null
 				}
+				return handler
 			}
-			return null
-		}
-
-		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			getActorViews().forEach {
-				it.getActorInteractionHandler(context).keyReleased(context)
-				if (context.keyEvent?.isConsumed() == true) {
-					return null
-				}
-			}
-			return null
 		}
 	}
 }

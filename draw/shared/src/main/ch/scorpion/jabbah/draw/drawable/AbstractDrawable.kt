@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  */
 abstract class AbstractDrawable : Drawable {
 
-	private val listeners: MutableList<DrawableListener> by lazy { mutableListOf<DrawableListener>() }
+	private val listeners: MutableList<DrawableListener> by lazy { mutableListOf() }
 
 	/** ---- [Drawable] interface */
 

@@ -96,7 +96,7 @@ class GraphViewAppServiceImplTest {
 		builder.split(ev, 0, Point2D(150, 100), vv3)
 		EditModule.commandManager.reset()
 
-		service.delete(builder.graphView.getDrawables().toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build<Component>())
+		service.delete(builder.graphView.drawables.toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build<Component>())
 
 		EditModule.commandManager.undo()
 
@@ -108,7 +108,7 @@ class GraphViewAppServiceImplTest {
 		service.add(RectangleComponent(), DrawingViewMockBuilder().withDrawing(builder.graphView).build())
 
 		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper)
-		assertEquals(4, builder.graphView.drawablesCount)
+		assertEquals(4, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -118,7 +118,7 @@ class GraphViewAppServiceImplTest {
 
 		EditModule.commandManager.undo()
 
-		assertEquals(3, builder.graphView.drawablesCount)
+		assertEquals(3, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -136,7 +136,7 @@ class GraphViewAppServiceImplTest {
 
 		service.delete(listOf(addedComponent), drawingView)
 
-		assertEquals(3, builder.graphView.drawablesCount)
+		assertEquals(3, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -150,7 +150,7 @@ class GraphViewAppServiceImplTest {
 		EditModule.commandManager.undo()
 
 		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper)
-		assertEquals(4, builder.graphView.drawablesCount)
+		assertEquals(4, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -165,7 +165,7 @@ class GraphViewAppServiceImplTest {
 			EditModule.commandManager.undo()
 			EditModule.commandManager.redo()
 
-			assertEquals(3, builder.graphView.drawablesCount)
+			assertEquals(3, builder.graphView.drawables.size)
 		}
 	}
 

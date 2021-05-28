@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -125,7 +126,7 @@ class LEDMatrixView(
 	override val controlId: String?
 		get() = "ledMatrix:${model.id}"
 
-	override fun bindToModel(model: LEDMatrix) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LEDMatrix) {
 		this.model = model
 	}
 

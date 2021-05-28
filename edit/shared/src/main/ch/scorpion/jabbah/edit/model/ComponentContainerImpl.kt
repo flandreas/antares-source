@@ -31,9 +31,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     /** ---- [ComponentContainer] interface */
 
-    override fun getWithId(id: Int): T? {
-        return getDrawables().firstOrNull { it.id == id }
-    }
+    override fun getWithId(id: Int): T? = drawables.firstOrNull { it.id == id }
 
 	override fun getStackingOrderPosition(componentId: Int): Int {
 		val component = getWithId(componentId)
@@ -50,7 +48,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 		if (currentPosition < 0) {
 			throw NoSuchElementException("component not contained")
 		}
-		if (position < 0 || position >= drawablesCount) {
+		if (position < 0 || position >= drawables.size) {
 			throw IndexOutOfBoundsException("position $position out of bounds")
 		}
 		if (position == currentPosition) {
@@ -107,9 +105,9 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     /** Returns the maximum of the identifications of all contained [Component]s.*/
     private fun getMaxId(): Int {
-        if (drawablesCount == 0) {
+        if (drawables.isEmpty()) {
             return 0
         }
-        return getDrawables().maxByOrNull { it.id }!!.id
+        return drawables.maxByOrNull { it.id }!!.id
     }
 }

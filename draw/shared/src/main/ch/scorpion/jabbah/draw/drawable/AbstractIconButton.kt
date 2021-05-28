@@ -60,8 +60,6 @@ abstract class AbstractIconButton(
 		} else if (!enabled) {
 			context.useContextColors = true
 			context.color = Themes.get<DrawTheme>().annotation.color.withAlpha(128)
-		} else {
-			context.useContextColors = false
 		}
 
 		context.g.stroke = STROKE

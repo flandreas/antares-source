@@ -54,7 +54,7 @@ class BelowSmHighlighterTest {
 		content.highlighter.highlight(rect, highlightColor)
 
 		assertTrue(content.highlighter.isHighlighted(rect))
-		assertEquals(1, content.highlightContainer.drawablesCount)
+		assertEquals(1, content.highlightContainer.drawables.size)
 		assertTrue(content.highlightContainer.contains(hightlight))
 	}
 
@@ -64,7 +64,7 @@ class BelowSmHighlighterTest {
 		content.highlighter.unhighlight(rect)
 
 		assertFalse(content.highlighter.isHighlighted(rect))
-		assertEquals(0, content.highlightContainer.drawablesCount)
+		assertEquals(0, content.highlightContainer.drawables.size)
 	}
 
 	@Test

@@ -133,7 +133,7 @@ class GraphViewCopyPasteService(
 		}
 
 		var pastedAnchorComponent: Component? = null
-		for (c in copyDrawing.getDrawables()) {
+		for (c in copyDrawing.drawables) {
 			if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
 				pastedAnchorComponent = c
 			}
@@ -147,14 +147,14 @@ class GraphViewCopyPasteService(
 			disconnectVerticesFromNetsWithoutEdgeView(graphView)
 		}
 
-		Movable.moveBy(copyDrawing.getDrawables(), dislocation)
-		copyDrawing.getDrawables().forEach { c -> view.drawing.add(c) }
+		Movable.moveBy(copyDrawing.drawables, dislocation)
+		copyDrawing.drawables.forEach { c -> view.drawing.add(c) }
 
 		if (pastedAnchorComponent != null) {
 			pastedAnchorComponentId = pastedAnchorComponent.id
 		}
 
-		return copyDrawing.getDrawables()
+		return copyDrawing.drawables
 	}
 
 	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
@@ -165,7 +165,7 @@ class GraphViewCopyPasteService(
 	 * the [Net]s they are connected with.
 	 */
 	private fun cleanupNets(graphView: GraphView) {
-		graphView.getDrawables()
+		graphView.drawables
 			.filterIsInstance<NetViewElement<*>>()
 			.forEach { netViewElem ->
 				val ports = (netViewElem.net!!.ports).toList()
@@ -194,7 +194,7 @@ class GraphViewCopyPasteService(
 	private fun cleanupDanglingNodeViews(graphView: GraphView) {
 		var done = false
 		while (!done) {
-			val nodeViews = graphView.getDrawables().filterIsInstance<NodeView<*>>().toList()
+			val nodeViews = graphView.drawables.filterIsInstance<NodeView<*>>().toList()
 			done = !cleanedUpDanglingNodeViews(nodeViews, graphView)
 		}
 	}

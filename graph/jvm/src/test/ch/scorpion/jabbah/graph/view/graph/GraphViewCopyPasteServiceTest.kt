@@ -34,7 +34,7 @@ class GraphViewCopyPasteServiceTest {
 		val contents = service.copy(listOf(vv2.id), builder.graphView)
 		service.paste(contents, view.build(), Point2D(10, 10))
 
-		assertEquals(3, builder.graphView.drawablesCount)
+		assertEquals(3, builder.graphView.drawables.size)
 	}
 
 	@Test
@@ -49,7 +49,7 @@ class GraphViewCopyPasteServiceTest {
 		val contents = service.copy(listOf(comp2.id), drawing)
 		service.paste(contents, view.build(), Point2D(10, 10))
 
-		assertEquals(3, drawing.drawablesCount)
+		assertEquals(3, drawing.drawables.size)
 	}
 
 	@Test
@@ -63,7 +63,7 @@ class GraphViewCopyPasteServiceTest {
 		val contents = service.copy(listOf(label.id), drawing)
 		service.paste(contents, view.build(), Point2D(10, 10))
 
-		assertEquals(3, drawing.drawablesCount)
+		assertEquals(3, drawing.drawables.size)
 		assertEquals("bla", (drawing.get(0) as LabelComponent).text.getTranslation())
 	}
 
@@ -78,6 +78,6 @@ class GraphViewCopyPasteServiceTest {
 		val contents = service.copy(listOf(rect.id, indicator.id), drawing)
 		service.paste(contents, view.build(), Point2D(10, 10))
 
-		assertEquals(3, drawing.drawablesCount)
+		assertEquals(3, drawing.drawables.size)
 	}
 }

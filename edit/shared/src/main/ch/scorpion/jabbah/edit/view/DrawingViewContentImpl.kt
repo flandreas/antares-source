@@ -77,12 +77,12 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	override fun hasSelectionModelFor(component: Component): Boolean {
 		selectionContainers.values.forEach { container ->
-			if (!container.getDrawables().none { it.component === component }) {
+			if (!container.drawables.none { it.component === component }) {
 				return true
 			}
 		}
 		unzoomableSelectionContainers.values.forEach { container ->
-			if (!container.getDrawables().none { it.component === component }) {
+			if (!container.drawables.none { it.component === component }) {
 				return true
 			}
 		}

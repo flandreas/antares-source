@@ -52,7 +52,7 @@ class ControlViewComponent(
 
 	private var drawableOwner: DrawableOwner? = null
 
-	/** Will be displayed instead of [controlView] if [controlModelLink] is broken, which isn't detected before [bindToGraph] is called.*/
+	/** Will be displayed instead of [controlView] if [controlModelLink] is broken, which isn't detected before [bindControlView] is called.*/
 	private var brokenView: BrokenDeepLinkView? = null
 
 	init {
@@ -166,10 +166,10 @@ class ControlViewComponent(
 
 	/** ---- [ControlViewComponent] */
 
-	fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
+	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		try {
 			val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
-			controlView.bindToModel(vertice)
+			controlView.bindControlView(subGraphVerticeView, vertice)
 		} catch (e: IllegalArgumentException) {
 			invalidate()
 			brokenView = BrokenDeepLinkView(styleProvider, controlView.boundingBox)

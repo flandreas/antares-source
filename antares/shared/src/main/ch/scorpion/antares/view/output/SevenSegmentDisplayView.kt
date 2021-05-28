@@ -32,6 +32,7 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.math.PI
 
 
@@ -190,7 +191,7 @@ class SevenSegmentDisplayView(
 
 	override val controlId: String? get() = "7seg:" + model.id
 
-	override fun bindToModel(model: SevenSegmentDisplay) {
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: SevenSegmentDisplay) {
 		this.model = model
 	}
 

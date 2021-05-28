@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
@@ -19,12 +20,8 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  */
 open class DrawableContainerImpl<T : Drawable>(
 	override var location: Point2D = Point2D.ZERO,
-	val useLocation: Boolean = false
+	override val useLocation: Boolean = false
 ) : AbstractDrawable(), DrawableContainer<T>, Locatable {
-
-	override val drawablesCount: Int get() = children.size
-
-	override val boundingBox: RectangularShape = Rectangle2D()
 
 	/**
 	 * Holds the child [Drawable]s that this [DrawableContainer] contains. The topmost [Drawable] is stored
@@ -32,8 +29,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	 */
 	protected val children: MutableList<T> by lazy { mutableListOf() }
 
-	private val containerListeners: MutableList<DrawableContainerListener<T>>
-		by lazy { mutableListOf() }
+	private val containerListeners: MutableList<DrawableContainerListener<T>> by lazy { mutableListOf() }
 
 	private var drawableDrawer: DrawableDrawer<T> = DefaultDrawableDrawer()
 
@@ -41,17 +37,52 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
 	 * [contains] methods returns `true` for the events location.
 	 */
-	private val inputEventHandler: DrawableContainerInputEventHandler<T, InputEventContext> by lazy { provideInputEventHandler() }
+	private val inputEventHandler: DrawableBagInputEventHandler<T, InputEventContext> by lazy { provideInputEventHandler() }
 
-	protected open fun provideInputEventHandler(): DrawableContainerInputEventHandler<T, InputEventContext> =
-		DrawableContainerInputEventHandler()
+	/** ---- [DrawableBag] interface */
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		inputEventHandler.useFor(this)
-		return inputEventHandler
+	override val drawables: List<T> get() = children
+
+	override var rotation: Rotation = Rotation.R0
+
+	override fun add(drawable: T, index: Int): DrawableContainer<T> {
+		if (children.contains(drawable)) {
+			return this
+		}
+		children.add(index, drawable)
+		drawable.handleAdded(this)
+
+		if (drawable.visible) {
+			val drawableBBox = drawable.boundingBox
+			if (drawables.size == 1) {
+				boundingBox.setFrame(drawableBBox)
+			} else {
+				boundingBox.add(drawableBBox)
+			}
+
+			invalidate(drawableBBox)
+			update()
+
+		}
+		notifyDrawableAdded(drawable)
+		return this
+	}
+
+	override fun remove(drawable: Drawable): DrawableContainer<T> {
+		removeDrawableImpl(drawable, true)
+		return this
+	}
+
+	override fun clear(): DrawableContainer<T> {
+		while (children.size > 0) {
+			removeDrawableImpl(children[0], children.size == 1)
+		}
+		return this
 	}
 
 	/** ---- [Drawable] interface */
+
+	override val boundingBox: RectangularShape = Rectangle2D()
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -82,16 +113,13 @@ open class DrawableContainerImpl<T : Drawable>(
 		}
 	}
 
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		inputEventHandler.useFor(this)
+		return inputEventHandler
+	}
+
 	/** Returns the [Drawable]s in the order they should be drawn.*/
 	protected open fun drawablesInDrawingOrder(): ImmutableList<T> = children.asReversed().toImmutableList()
-
-	override fun contains(x: Double, y: Double): Boolean {
-		if (useLocation) {
-			val location = Point2D(x, y).subtract(this.location)
-			return children.any { it.visible && it.contains(location) }
-		}
-		return children.any { it.visible && it.contains(x, y) }
-	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
 		if (useLocation) {
@@ -122,71 +150,6 @@ open class DrawableContainerImpl<T : Drawable>(
 		containerListeners.remove(listener)
 	}
 
-	override fun get(index: Int): T = children[index]
-
-	override fun contains(drawable: Drawable): Boolean = children.contains(drawable)
-
-	override fun add(drawable: T): DrawableContainer<T> = add(drawable, 0)
-
-	override fun add(drawable: T, index: Int): DrawableContainer<T> {
-		if (children.contains(drawable)) {
-			return this
-		}
-		children.add(index, drawable)
-		drawable.handleAdded(this)
-
-		if (drawable.visible) {
-			val drawableBBox = drawable.boundingBox
-			if (drawablesCount == 1) {
-				boundingBox.setFrame(drawableBBox)
-			} else {
-				boundingBox.add(drawableBBox)
-			}
-
-			invalidate(drawableBBox)
-			update()
-
-		}
-		notifyDrawableAdded(drawable)
-		return this
-	}
-
-	override fun remove(drawable: Drawable): DrawableContainer<T> {
-		removeDrawableImpl(drawable, true)
-		return this
-	}
-
-	override fun clear(): DrawableContainer<T> {
-		while (children.size > 0) {
-			removeDrawableImpl(children[0], children.size == 1)
-		}
-		return this
-	}
-
-	override fun frontToBackIterator(): Iterator<T> = children.iterator()
-
-	override fun backToFrontIterator(): Iterator<T> {
-		val iter = children.listIterator(children.size)
-		return object : Iterator<T> {
-			override fun hasNext(): Boolean = iter.hasPrevious()
-			override fun next(): T = iter.previous()
-		}
-	}
-
-	override fun getDrawableAt(x: Double, y: Double, predicate: (T) -> Boolean): T? {
-		if (useLocation) {
-			return children.firstOrNull { it.visible && predicate.invoke(it) && it.contains(Point2D(x, y).subtract(location)) }
-		}
-		return children.firstOrNull { it.visible && it.contains(x, y) }
-	}
-
-	override fun getDrawables(): ImmutableList<T> = children.toImmutableList()
-
-	override fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T> =
-		children.filter(predicate).toImmutableList()
-
-	override fun getDrawable(predicate: (T) -> Boolean): T? = children.firstOrNull(predicate)
-
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
 		invalidate(region)
 	}
@@ -203,6 +166,20 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	/** ---- [DrawableContainerImpl] */
+
+	protected open fun provideInputEventHandler(): DrawableBagInputEventHandler<T, InputEventContext> =
+		DrawableBagInputEventHandler()
+
+	/**
+	 * Updates this [DrawableContainer]'s bounding box by calculating the union of the bounding boxes of
+	 * all contained [Drawable]'s.
+	 */
+	protected fun updateBoundingBox() {
+		children.firstOrNull { it.visible }
+			?.let { boundingBox.setFrame(it.boundingBox) }
+			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
+		children.filter { it.visible }.forEach { boundingBox.add(it.boundingBox) }
+	}
 
 	private fun notifyDrawableAdded(drawable: T) {
 		val event = DrawableContainerEvent(this, drawable)
@@ -226,16 +203,5 @@ open class DrawableContainerImpl<T : Drawable>(
 		}
 		invalidate(drawable.boundingBox)
 		notifyDrawableRemoved(drawable)
-	}
-
-	/**
-	 * Updates this [DrawableContainer]'s bounding box by calculating the union of the bounding boxes of
-	 * all contained [Drawable]'s.
-	 */
-	protected fun updateBoundingBox() {
-		children.firstOrNull { it.visible }
-			?.let { boundingBox.setFrame(it.boundingBox) }
-			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		children.filter { it.visible }.forEach { boundingBox.add(it.boundingBox) }
 	}
 }

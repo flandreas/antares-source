@@ -113,14 +113,14 @@ class SelectionManagerImpl(
 	}
 
 	private fun nextSelection(): Component? {
-		if (content.drawing.drawablesCount == 0) {
+		if (content.drawing.drawables.isEmpty()) {
 			return null
 		}
 
 		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it.id) }
 		var nextIndex = currentIndex
 		while (true) {
-			nextIndex = nextIndex?.let { (it + 1).rem(content.drawing.drawablesCount) } ?: 0
+			nextIndex = nextIndex?.let { (it + 1).rem(content.drawing.drawables.size) } ?: 0
 			if (nextIndex == currentIndex) {
 				return null
 			}
@@ -140,17 +140,17 @@ class SelectionManagerImpl(
 	}
 
 	private fun previousSelection(): Component? {
-		if (content.drawing.drawablesCount == 0) {
+		if (content.drawing.drawables.isEmpty()) {
 			return null
 		}
 
 		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it.id) }
-		var prevIndex = currentIndex ?: content.drawing.drawablesCount - 1
+		var prevIndex = currentIndex ?: content.drawing.drawables.size - 1
 		while (true) {
 			prevIndex = if (prevIndex > 0) {
 				prevIndex - 1
 			} else {
-				content.drawing.drawablesCount - 1
+				content.drawing.drawables.size - 1
 			}
 			if (prevIndex == currentIndex) {
 				return null

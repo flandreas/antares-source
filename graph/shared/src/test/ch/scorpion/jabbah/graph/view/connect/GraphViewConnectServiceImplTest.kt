@@ -134,7 +134,7 @@ class GraphViewConnectServiceImplTest {
 		assertTrue(ev1.model.isConnectedWith(vv3.model.getInput()))
 
 		// View assertions
-		assertEquals(7, gv.drawablesCount)
+		assertEquals(7, gv.drawables.size)
 		assertSame(vv1, ev1.origin!!.connectableView as TestVerticeView)
 		assertSame(result.nodeView, ev1.destination!!.connectableView)
 		assertEquals(result.nodeView.location, ev1.getSegmentPoint(ev1.segmentPointCount - 1))
@@ -175,7 +175,7 @@ class GraphViewConnectServiceImplTest {
 		assertTrue(ev1.model.isConnectedWith(vv3.model.getOutput()))
 
 		// View assertions
-		assertEquals(7, gv.drawablesCount)
+		assertEquals(7, gv.drawables.size)
 
 		assertSame(result.nodeView, ev1.destination!!.connectableView)
 		assertSame(vv1, ev1.origin!!.connectableView as TestVerticeView)
@@ -210,7 +210,7 @@ class GraphViewConnectServiceImplTest {
 		assertTrue(ev.model.isConnectedWith(vv.model.getOutput()))
 
 		// View assertion
-		assertEquals(5, gv.drawablesCount)
+		assertEquals(5, gv.drawables.size)
 
 		assertSame(vv, ev.origin!!.connectableView)
 		assertSame(result.nodeView, ev.destination!!.connectableView)
