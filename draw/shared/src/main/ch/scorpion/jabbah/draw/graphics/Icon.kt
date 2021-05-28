@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.style.DrawTheme
 
 /**
  * An [Icon] is a rectangular graphical object that used methods of [Graphics2D] for drawing its representation.
- * In contrast to [Image], which represents bitmap data that doesn't zoom nice, [Icon]s are used for
+ * In contrast to [Image], which represents bitmap data that doesn't zoom nicely, [Icon]s are used for
  * displaying small graphical information within a [View].
  *
  * [Icons][Icon] usually don't have their own color property. The draw themselves in the foreground [Color]

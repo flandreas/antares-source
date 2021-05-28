@@ -1,12 +1,15 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -14,12 +17,22 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A [VerticeView] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
  * @param <T> the type of the model
  */
-interface ControlView<T : Vertice> : VerticeView<T>, Transparent {
+interface ControlView<T : Vertice> : Component, Transparent, ActorView {
 
     val controlId: String?
 
 	/** Returns a translated text that identifies this [ControlView] to the user.*/
 	val controlName: String
+
+	/** The [Vertice] displayed by this [ControlView]. */
+	val model: T
+
+	/**
+	 * Used by [ControlView] that share implementation with [VerticeView]. Called by wrapping objects
+	 * to make sure that such [ControlView]s don't show their [PortView]s. Corresponds with
+	 * [VerticeView.isShowPortViews].
+	 */
+	var isShowPortViews: Boolean
 
 	/**
      * Binds this [ControlView] to the corresponding [Vertice] of the [Graph] that is contained in the
@@ -42,7 +55,7 @@ interface ControlView<T : Vertice> : VerticeView<T>, Transparent {
 	 */
 	fun writeModelProperties(writer: StoreWriter)
 
-	/** Reads model properties that have been stored by [storeModelProperties].*/
+	/** Reads model properties that have been stored by [writeModelProperties].*/
 	fun readModelProperties(reader: StoreReader)
 
 }
