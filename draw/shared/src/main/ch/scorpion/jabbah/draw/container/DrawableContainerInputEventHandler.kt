@@ -21,19 +21,19 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	/** ---- [InputEventHandler] interface */
 
 	override fun mouseMoved(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context, { h, c -> h.mouseMoved(c) } )
+		onTargetOrContainer(context) { h, c -> h.mouseMoved(c) }
 
 	override fun mousePressed(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context, { h, c -> h.mousePressed(c) })
+		onTargetOrContainer(context) { h, c -> h.mousePressed(c) }
 
 	override fun mouseDragged(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context, { h, c -> h.mouseDragged(c) })
+		onTargetOrContainer(context) { h, c -> h.mouseDragged(c) }
 
 	override fun mouseReleased(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context, { h, c -> h.mouseReleased(c) })
+		onTargetOrContainer(context) { h, c -> h.mouseReleased(c) }
 
 	override fun mouseClicked(context: C): InputEventHandler<C>? =
-		onTargetOrContainer(context, { h, c -> h.mouseClicked(c) })
+		onTargetOrContainer(context) { h, c -> h.mouseClicked(c) }
 
 	/** ---- [DrawableContainerInputEventHandler] */
 

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Rotation.*
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -18,6 +19,8 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.ui.KnobView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -30,14 +33,17 @@ import kotlin.math.max
 class ClockView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Clock = Clock()
-) : AbstractDigitalGateView<Clock>(styleProvider, "", model) {
+) : AbstractDigitalGateView<Clock>(styleProvider, "", model), ControlViewSource<Clock> {
 
 	companion object {
+
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.ClockView.iconPath"
+
 		private const val SEG_X = Look.SCALE.toDouble()
 		private const val SEG_Y_HALF = SEG_X * 3 / 4
-		private val ICON_PATH = createIconPath()
+		private val ANNOTATION_PATH = createAnnotationPath()
 
-		private fun createIconPath(): Path {
+		private fun createAnnotationPath(): Path {
 			return System.createPath()
 				.moveTo(-SEG_X * 1.5, SEG_Y_HALF)
 				.lineTo(-SEG_X * 0.6, SEG_Y_HALF)
@@ -119,14 +125,13 @@ class ClockView(
 
 		context.g.translate(dx, dy)
 		context.g.rotate(rotation.inverse().angle)
-		context.g.draw(ICON_PATH)
+		context.g.draw(ANNOTATION_PATH)
 		context.g.rotate(-rotation.inverse().angle)
 		context.g.translate(-dx, -dy)
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return actorInteractionHandler
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		actorInteractionHandler
 
 	/** ---- [ActorView] */
 
@@ -140,6 +145,14 @@ class ClockView(
 		}
 		return frequencyText
 	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String? get() = "clock:${model.id}"
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<Clock> = ClockControlView(model)
 
 	/** ---- [ClockView] */
 

@@ -512,6 +512,13 @@ class SubGraphVerticeViewImpl(
 
 	private inner class ExecutionInteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
+		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
+			return getActorViewAt(context.x, context.y)
+				?.getActorInteractionHandler(context)
+				?.mouseMoved(context.withXY(context.x - location.x, context.y - location.y))
+				?: super.mouseMoved(context)
+		}
+
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			return getActorViewAt(context.x, context.y)
 				?.getActorInteractionHandler(context)

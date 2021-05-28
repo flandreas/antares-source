@@ -200,6 +200,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
 		properties.set(TerminalView.PROP_ICON_PATH, "/img/terminal.png")
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
+		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(TransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -232,6 +233,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("switchView", SwitchView::class)
 		typeMap.register("dipSwitchView", DipSwitchView::class)
 		typeMap.register("clockView", ClockView::class)
+		typeMap.register("clockControlView", ClockControlView::class)
 		typeMap.register("ledView", LEDView::class)
 		typeMap.register("RgbLedView", RgbLEDView::class)
 		typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
@@ -291,6 +293,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { SwitchViewSelectionModel(it as SwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
