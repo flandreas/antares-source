@@ -66,6 +66,10 @@ class ControlViewComponent(
 		}
 	}
 
+	/** ---- UI related properties */
+
+	val modelId: Int get() = if (controlModelLink.empty) 0 else controlModelLink.last
+
 	/** ---- [Transparent] interface */
 
 	override var transparency: Int

@@ -60,7 +60,7 @@ class ClockControlView(
 
 	/** ---- [Component] */
 
-	override val type: String get() = Translations.getString(Clock.BASE_RESOURCE_KEY)
+	override val type: String get() = Translations.getString("${Clock.BASE_RESOURCE_KEY}.name")
 
 	/** ---- [Transparent] */
 
