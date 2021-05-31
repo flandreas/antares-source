@@ -2,16 +2,20 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -47,16 +51,16 @@ class ClockControlView(
 		iconButton.draw(context)
 	}
 
-	override var location: Point2D
-		get() = super.location
-		set(value) {
-			super.location = value
-			iconButton.location = value
-		}
+	/** ---- [AbstractRectangularComponent] */
+
+	override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
+		super.setFrame(x, y, width, height)
+		iconButton.location = Point2D(x, y)
+	}
 
 	/** ---- [Component] */
 
-	override val type: String get() = "TODO"
+	override val type: String get() = Translations.getString(Clock.BASE_RESOURCE_KEY)
 
 	/** ---- [Transparent] */
 

@@ -101,7 +101,7 @@ object KnobLauncherImpl : KnobLauncher {
 
 	private fun startTimerIfNeeded(view: DrawingView<*>) {
 		if (timer == null) {
-			LOG.debug("starting KnobView timer")
+			LOG.trace("starting KnobView timer")
 			timer = System.createTimer()
 			timer!!.initialize(timerDelay) { display(view) }
 			timer!!.start()

@@ -21,7 +21,7 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	companion object {
 
-		private const val BASE_RESOURCE_KEY = "library.element.Clock"
+		const val BASE_RESOURCE_KEY = "library.element.Clock"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
