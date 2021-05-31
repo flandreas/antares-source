@@ -1,0 +1,21 @@
+<project _id='0' defaultElement='9836956d-dc21-46b1-b8c2-d747da1469b5' uuid='d7954ba2-2d6b-47a8-89b9-2b3a8ac7965f' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='Sine Wave'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='aa0b5590-4ca5-4c8f-90d9-8f8fc0bbada9'>
+          <name>
+            <translation lang='en' text='Circuit'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='9836956d-dc21-46b1-b8c2-d747da1469b5'>
+          <name>
+            <translation lang='en' text='Front Panel'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>

@@ -31,5 +31,10 @@
         <translation lang='en' text='Bidirectional Splitter'/>
       </name>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='5' uuid='d7954ba2-2d6b-47a8-89b9-2b3a8ac7965f' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+      <name>
+        <translation lang='en' text='Sine Wave'/>
+      </name>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>
