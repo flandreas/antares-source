@@ -34,8 +34,8 @@ open class GraphViewBuilder<T : Any>(
 
 	/** ---- [UndoableDataHolder] */
 
-	private var graphStorable: GraphStorable =
-		GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
+	var graphStorable: GraphStorable = GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
+		private set
 
 	override fun getUndoableState(): Storable? {
 		return graphStorable

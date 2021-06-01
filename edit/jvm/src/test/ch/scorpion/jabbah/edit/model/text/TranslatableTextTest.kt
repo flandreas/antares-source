@@ -147,7 +147,7 @@ class TranslatableTextTest {
 
 	@Test
 	fun shouldDetectAnyEqualTranslation() {
-		var text = TranslatableText()
+		val text = TranslatableText()
 			.withTranslation(German, "Baum")
 			.withTranslation(English, "Tree")
 
@@ -164,7 +164,7 @@ class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {
 	var attribute: TranslatableText = text ?: TranslatableText()
 		private set
 
-	override var storableId: Int = 0
+	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
 

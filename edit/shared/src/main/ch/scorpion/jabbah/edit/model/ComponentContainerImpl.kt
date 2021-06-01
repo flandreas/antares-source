@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.io.*
  */
 open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), ComponentContainer<T> {
 
-    override  var storableId: Int = 0
+    override  var storableId: Int = Storable.UNDEFINED_ID
 
     /** Determines whether this [Storable] is currently being read from persistent store */
     protected var readingFromStore: Boolean = false

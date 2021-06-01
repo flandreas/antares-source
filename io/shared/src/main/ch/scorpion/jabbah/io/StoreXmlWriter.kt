@@ -29,9 +29,8 @@ class StoreXmlWriter(
 		identityProvider.register(storable)
 	}
 
-	override fun provideIdentity(storable: Storable): Int {
-		return identityProvider.provideIdentity(storable)
-	}
+	override fun provideIdentity(storable: Storable): Int =
+		identityProvider.provideIdentity(storable)
 
 	/** ---- [StoreWriter] */
 

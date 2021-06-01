@@ -6,7 +6,7 @@ package ch.scorpion.jabbah.io
 interface GlobalIdentityProvider {
 
     /**
-     * Registers a [Storable] that is being written to persistent storage in order to be accessable
+     * Registers a [Storable] that is being written to persistent storage in order to be accessible
      * by calls of method [provideIdentity].*/
     fun register(storable: Storable)
 
@@ -38,11 +38,20 @@ class GlobalIdentityCreator : GlobalIdentityProvider {
  */
 class GlobalIdentityReflector : GlobalIdentityProvider {
 
-    override fun register(storable: Storable) {
-        // empty
-    }
+	private val registry = mutableSetOf<Int>()
 
-    override fun provideIdentity(storable: Storable): Int {
-        return storable.storableId
-    }
+	override fun register(storable: Storable) {
+		if (storable.storableId >= 0) {
+			registry.add(storable.storableId)
+		}
+	}
+
+	override fun provideIdentity(storable: Storable): Int {
+		if (storable.storableId >= 0) {
+			return storable.storableId
+		}
+		val newStorableId = (registry.maxOrNull() ?: -1) + 1
+		registry.add(newStorableId)
+		return newStorableId
+	}
 }

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
+import ch.scorpion.jabbah.io.Storable
 
 class TestPortView<T: Any>(
 	port: Port<T> = PortImpl(PortType.INPUT),
@@ -29,7 +30,7 @@ class TestPortView<T: Any>(
             return bbox
         }
 
-    override var storableId: Int = 0
+    override var storableId: Int = Storable.UNDEFINED_ID
 
     override fun draw(context: DrawContext) { }
 

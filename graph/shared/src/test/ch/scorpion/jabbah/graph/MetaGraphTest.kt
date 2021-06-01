@@ -9,10 +9,13 @@ import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -112,5 +115,20 @@ class MetaGraphTest {
 		return GraphViewModule.portViewFactory.createPortViewComponent(
 			GraphViewModule.portViewFactory.createPortView(
 				GraphModelModule.portFactory.createSubGraphPort(graphPort)))
+	}
+
+	@Test
+	fun shouldCloneGraphModel() {
+		val builder = GraphViewBuilder<Boolean>("Test")
+		val vv1 = TestVerticeView("vv1")
+		val vv2 = TestVerticeView("vv2")
+		builder.addVerticeView(vv1)
+		builder.addVerticeView(vv2)
+		builder.connect(vv1, vv2)
+		val metaGraph = MetaGraph(builder.graphStorable, ContainerDrawing())
+
+		val clonedModel = metaGraph.cloneGraphModel(IOModule.storableCreator)
+
+		assertNotSame(metaGraph.graph.model, clonedModel)
 	}
 }

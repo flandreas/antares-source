@@ -244,7 +244,7 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = 0
+	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun write(writer: StoreWriter) {
 		writer.writeDouble("x", location.x)

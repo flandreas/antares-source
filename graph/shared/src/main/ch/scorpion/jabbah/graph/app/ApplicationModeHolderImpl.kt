@@ -79,7 +79,7 @@ class ApplicationModeHolderImpl(
 	}
 
 	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
-		LOG.debug("Enter execution mode")
+		LOG.debug("Enter execution mode (deep = ${scheduler.isDeepExecution})")
 
 		eventBus.post(ApplicationModeBeginEvent(mode))
 
