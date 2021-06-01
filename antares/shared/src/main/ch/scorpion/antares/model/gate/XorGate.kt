@@ -38,7 +38,7 @@ class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 				return Bit.False
 			}
 
-			return Bit.of(trueCount == 1)
+			return Bit.of(trueCount.rem(2) == 1)
 		}
 	}
 
@@ -50,9 +50,15 @@ class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
 
 	companion object {
-		private const val BASE_RESOURCE_KEY = "library.element.XorGate"
-		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
+		private const val XOR_BASE_RESOURCE_KEY = "library.element.XorGate"
+		private val XOR_TYPE get() = Translations.getString("$XOR_BASE_RESOURCE_KEY.name")
+		private val XOR_TYPE_DESC get() = Translations.getOptionalString("$XOR_BASE_RESOURCE_KEY.desc")
+
+		private const val ODD_BASE_RESOURCE_KEY = "library.element.OddFunction"
+		private val ODD_TYPE get() = Translations.getString("$ODD_BASE_RESOURCE_KEY.name")
+		private val ODD_TYPE_DESC get() = Translations.getOptionalString("$ODD_BASE_RESOURCE_KEY.desc")
+
 
 		val CALCULATOR = XorCalculator<XorGate>()
 
@@ -63,7 +69,6 @@ class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 			.define(intArrayOf(1, 1), 0)
 	}
 
-	override val type: String get() = TYPE
-	override val typeDesc: String? get() = TYPE_DESC
-
+	override val type: String get() = if (inputCount == InputCount.TWO.count) XOR_TYPE else ODD_TYPE
+	override val typeDesc: String? get() = if (inputCount == InputCount.TWO.count) XOR_TYPE_DESC else ODD_TYPE_DESC
 }
