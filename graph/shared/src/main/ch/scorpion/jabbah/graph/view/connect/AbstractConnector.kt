@@ -55,7 +55,7 @@ abstract class AbstractConnector(
 		}
 
 		val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
-		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port)) {
+		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port, edgeView!!.net!!)) {
 			clearTargetPortView()
 			return false
 		}

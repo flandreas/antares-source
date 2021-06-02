@@ -107,6 +107,20 @@ class EdgeToPortConnectorTest
 		assertEquals(drawablesCount, builder.graphView.drawables.size)
 	}
 
+	@Test
+	fun shouldConnectToSoleOutputPort() {
+		val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 300))
+		val ev = builder.connectInputOpen(v3, Point2D(150, 200))
+
+		mouseMoveTo(170, 200, modifiers = ALT_MASK)
+		pressMouseAt(170, 200)
+		dragMouseTo(130, 300)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		releaseMouseAt(130, 300)
+
+		assertSame(ev.net, v4.model.getOutput<Boolean>().net)
+	}
+
 	/**
 	 * There are systems (Windows generally?) that generate multiple key pressed events when moving/dragging
 	 * the mouse while the key is being hold. Since [EdgeToPortConnector] is initiated by pressing the ALT key,
