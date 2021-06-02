@@ -15,7 +15,7 @@ abstract class AbstractGateCalculatorTest(
 ) {
 
 	private val gate = TestCalculatingVertice(calculator)
-	private val signalHandler = ForwardSignalHandler()
+	protected val signalHandler = ForwardSignalHandler()
 
 	init {
 		gate.addPort(DigitalPortImpl.createInput("a"))

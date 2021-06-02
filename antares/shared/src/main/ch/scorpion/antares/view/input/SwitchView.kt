@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
@@ -550,25 +551,36 @@ class SwitchView(
 		private var keyDown = false
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent?.button != Button.BUTTON1) {
+				return null
+			}
 			model.toggle(context.signalHandler)
 			context.mouseEvent?.consume()
 			requestFocus()
 			return this
 		}
 
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
+		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
 			return this
 		}
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent?.button != Button.BUTTON1) {
+				return null
+			}
 			if (!toggle) {
-				model.toggle(context.signalHandler)
-				context.mouseEvent?.consume()
+				if (model.isOn) {
+					model.off(context.signalHandler)
+					context.mouseEvent?.consume()
+				}
 			}
 			return null
 		}
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent?.button != Button.BUTTON1) {
+				return null
+			}
 			context.mouseEvent?.consume()
 			return this
 		}

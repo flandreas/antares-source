@@ -1,8 +1,13 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /** Unit tests for [XorCalculator]. */
 class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
@@ -34,5 +39,25 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 		assertTwoInput(Error, True, Error)
 		assertTwoInput(Error, Undefined, Error)
 		assertTwoInput(Error, Error, Error)
+	}
+
+	@Test
+	fun oddNumberOfInputShouldCalculateTrue() {
+		val xor = XorGate(InputCount.THREE)
+		xor.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
+		xor.getInput<DigitalSignal>(2).setIncomingSignal(Word.of(true), signalHandler)
+		xor.getInput<DigitalSignal>(3).setIncomingSignal(Word.of(true), signalHandler)
+
+		assertTrue(xor.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0).isSet)
+	}
+
+	@Test
+	fun evenNumberOfInputShouldCalculateFalse() {
+		val xor = XorGate(InputCount.THREE)
+		xor.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
+		xor.getInput<DigitalSignal>(2).setIncomingSignal(Word.of(true), signalHandler)
+		xor.getInput<DigitalSignal>(3).setIncomingSignal(Word.of(false), signalHandler)
+
+		assertFalse(xor.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0).isSet)
 	}
 }

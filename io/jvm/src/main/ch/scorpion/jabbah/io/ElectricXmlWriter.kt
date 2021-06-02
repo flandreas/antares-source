@@ -2,14 +2,13 @@ package ch.scorpion.jabbah.io
 
 import electric.xml.Document
 import electric.xml.Element
-import ch.scorpion.jabbah.base.logger
 import java.io.OutputStream
-import java.util.Stack
+import java.util.*
 
 /**
  * An [XmlWriter] for writing Electric XML [Document]s
  */
-class ElectricXmlWriter(val outputStream: OutputStream) : XmlWriter {
+class ElectricXmlWriter(private val outputStream: OutputStream) : XmlWriter {
 
     /** Holds the XML document that is to be written to [outputStream].*/
     private val document = Document()
@@ -18,9 +17,7 @@ class ElectricXmlWriter(val outputStream: OutputStream) : XmlWriter {
 
     /** ---- [XmlWriter] interface */
 
-    override fun isRoot(): Boolean {
-        return stack.isEmpty()
-    }
+    override fun isRoot(): Boolean = stack.isEmpty()
 
     override fun addElementAndDescend(name: String) {
         if (isRoot()) {

@@ -14,7 +14,7 @@ class UsecasesImpl(
 ) : Usecases {
 
 	private var isLoading: Boolean = false
-	private val usecases: MutableList<Usecase> by lazy { mutableListOf<Usecase>() }
+	private val usecases: MutableList<Usecase> by lazy { mutableListOf() }
 
 	/** ---- [Usecases] interface */
 
@@ -64,7 +64,7 @@ class UsecasesImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = 0
+	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty

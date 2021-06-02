@@ -33,9 +33,15 @@ class XnorCalculator<T : Vertice> : VerticeCalculator<T> {
 class XnorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
 
 	companion object {
-		private const val BASE_RESOURCE_KEY = "library.element.XnorGate"
-		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
+		private const val XNOR_BASE_RESOURCE_KEY = "library.element.XnorGate"
+		private val XNOR_TYPE get() = Translations.getString("$XNOR_BASE_RESOURCE_KEY.name")
+		private val XNOR_TYPE_DESC get() = Translations.getOptionalString("$XNOR_BASE_RESOURCE_KEY.desc")
+
+		private const val EVEN_BASE_RESOURCE_KEY = "library.element.EvenFunction"
+		private val EVEN_TYPE get() = Translations.getString("$EVEN_BASE_RESOURCE_KEY.name")
+		private val EVEN_TYPE_DESC get() = Translations.getOptionalString("$EVEN_BASE_RESOURCE_KEY.desc")
+
 
 		val CALCULATOR = XnorCalculator<XnorGate>()
 
@@ -46,10 +52,8 @@ class XnorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CA
 			.define(intArrayOf(1, 1), 1)
 	}
 
-	override val type: String get() = TYPE
-	override val typeDesc: String? get() = TYPE_DESC
+	override val type: String get() = if (inputCount == InputCount.TWO.count) XNOR_TYPE else EVEN_TYPE
+	override val typeDesc: String? get() = if (inputCount == InputCount.TWO.count) XNOR_TYPE_DESC else EVEN_TYPE_DESC
 
-	override fun createOutputPort(): OutputPort<DigitalSignal> {
-		return DigitalPortImpl.createOutput(Logic.NEGATIVE)
-	}
+	override fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput(Logic.NEGATIVE)
 }

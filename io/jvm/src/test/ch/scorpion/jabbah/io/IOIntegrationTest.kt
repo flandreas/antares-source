@@ -126,7 +126,7 @@ class IOIntegrationTest {
 
     class Document : Storable {
 
-        override var storableId: Int = 0
+        override var storableId: Int = Storable.UNDEFINED_ID
 
         val children = mutableListOf<Storable>()
 
@@ -158,7 +158,7 @@ class IOIntegrationTest {
 		    instancesCount++
 	    }
 
-        override var storableId: Int = 0
+        override var storableId: Int = Storable.UNDEFINED_ID
 	    var aString: String = ""
         var aInt: Int= 0
         var aDouble: Double = 0.0
@@ -205,7 +205,7 @@ class IOIntegrationTest {
     }
 
     class B(var name: String = "") : Storable {
-        override var storableId: Int = 0
+        override var storableId: Int = Storable.UNDEFINED_ID
 
         override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
             // empty

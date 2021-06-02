@@ -5,6 +5,10 @@ package ch.scorpion.jabbah.io
  */
 interface Storable {
 
+	companion object {
+		const val UNDEFINED_ID = -1
+	}
+
     /**
      * Holds the global identification of this [Storable] after it has been read from persistent store.
      * This is used to read composite [Storable]s that reference persistent object which have been read earlier,
@@ -12,7 +16,8 @@ interface Storable {
      *
      * The value of this attribute is typically set by a [ReferenceResolver] in its collection phase, before
      * the first [Storable] is written. [Storable]s that are not returned by any [getStorableChildren] method
-     * are are therefore not affected by a [ReferenceResolver] collection phase should set this attribute to -1.
+     * are therefore not affected by a [ReferenceResolver] collection phase and should set this attribute
+     * to [UNDEFINED_ID]. Valid values start at 0.
      */
     var storableId: Int
 

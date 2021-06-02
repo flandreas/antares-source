@@ -37,7 +37,7 @@ class SubCircuitPort(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = 0
+	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty

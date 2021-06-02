@@ -34,11 +34,11 @@ class GraphStorable(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = 0
+	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun write(writer: StoreWriter) {
-		writer.writeStorable("model", graphView.graph!!);
-		writer.writeStorable("view", graphView);
+		writer.writeStorable("model", graphView.graph!!)
+		writer.writeStorable("view", graphView)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -51,9 +51,8 @@ class GraphStorable(
 		graphView.graph = reference.additionalInfo as Graph
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		return listOf(graphView.graph!!, graphView).iterator()
-	}
+	override fun getStorableChildren(): Iterator<Storable> =
+		listOf(graphView.graph!!, graphView).iterator()
 
 	/** ---- [GraphStorable] */
 
