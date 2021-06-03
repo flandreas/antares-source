@@ -31,4 +31,7 @@ object AntaresProperties {
 
 	fun transistorType(name: String = "transistorType", baseKey: String = "element.property.transistorType"): PropertyImpl<TransistorType> =
 		PropertyImpl(name, baseKey, TransistorType::class.java, componentBeanProvider)
+
+	fun ledSquare(name: String = "square", baseKey: String = "element.property.LED.square"): PropertyImpl<Boolean> =
+		PropertyImpl(name, baseKey, Boolean::class.java, componentBeanProvider)
 }

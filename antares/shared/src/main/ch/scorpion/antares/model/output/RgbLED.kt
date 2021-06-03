@@ -4,8 +4,10 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -27,7 +29,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		private val DEFAULT_COLOR = Color(60, 0, 0)
+		private val DEFAULT_COLOR = Themes.get<AntaresTheme>().screen.backgroundColor
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
 
 		private val CALCULATOR = Calculator()
@@ -72,9 +74,9 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 	/** Updates [color] according to the specified value.*/
 	private fun updateColor(value: Word) {
 		color = Color(
-			value.getSubwordValue(BitWidth.BW_8, 0)!!.toInt(),
+			value.getSubwordValue(BitWidth.BW_8, 2)!!.toInt(),
 			value.getSubwordValue(BitWidth.BW_8, 1)!!.toInt(),
-			value.getSubwordValue(BitWidth.BW_8, 2)!!.toInt()
+			value.getSubwordValue(BitWidth.BW_8, 0)!!.toInt()
 		)
 	}
 }

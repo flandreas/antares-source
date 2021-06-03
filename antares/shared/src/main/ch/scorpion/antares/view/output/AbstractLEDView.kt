@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -31,6 +32,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractLEDView<T: Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
+	square: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T> {
 
@@ -55,6 +57,17 @@ abstract class AbstractLEDView<T: Vertice>(
 			}
 		}
 
+	/** Determines the shape in which the LED is drawn. Default is circular.*/
+	var square: Boolean = square
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				invalidate()
+				validate()
+			}
+		}
+
 	init {
 		modelExchanged(null)
 		setBounds(getInput().unconnectedLength, -SIZE / 2, SIZE, SIZE)
@@ -69,6 +82,22 @@ abstract class AbstractLEDView<T: Vertice>(
 		portView.setLocation(portView.unconnectedLength, 0)
 		addPortView(portView)
 		updateLabel()
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (square) {
+			writer.writeBoolean("square", square)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("square")) {
+			square = reader.readBoolean("square")
+		}
 	}
 
 	/** ---- [ControlView] */
@@ -142,15 +171,24 @@ abstract class AbstractLEDView<T: Vertice>(
 		draw(context) { c ->
 			super.drawImpl(c)
 			context.g.stroke = stroke
-			context.g.drawOval(xInt, yInt, SIZE, SIZE)
+			if (square) {
+				context.g.drawRect(xInt, yInt, SIZE, SIZE)
+			} else {
+				context.g.drawOval(xInt, yInt, SIZE, SIZE)
+			}
 			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-			context.g.drawOval(
-				xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			if (square) {
+				context.g.drawRect(
+					xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+					SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			} else {
+				context.g.drawOval(
+					xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+					SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			}
 		}
 		label.draw(context)
 	}
-
 
 	/** ---- [AbstractLEDView] */
 
@@ -165,10 +203,17 @@ abstract class AbstractLEDView<T: Vertice>(
 	/** Draws the bulb using the specified [Color].*/
 	protected fun drawBulb(context: DrawContext, color: Color) {
 		context.g.color = color
-		context.g.fillOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
-		context.g.drawOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+		if (square) {
+			context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+		} else {
+			context.g.fillOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			context.g.drawOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+		}
 	}
 
 	private fun updateLabel() {
@@ -182,17 +227,29 @@ abstract class AbstractLEDView<T: Vertice>(
 	private fun drawBody(context: DrawContext) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
-				context.g.fillOval(xInt, yInt, SIZE, SIZE)
+				if (square) {
+					context.g.fillRect(xInt, yInt, SIZE, SIZE)
+				} else {
+					context.g.fillOval(xInt, yInt, SIZE, SIZE)
+				}
 			}
 		}
 		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
 		context.g.stroke = stroke
-		context.g.fillOval(xInt, yInt, SIZE, SIZE)
+		if (square) {
+			context.g.fillRect(xInt, yInt, SIZE, SIZE)
+		} else {
+			context.g.fillOval(xInt, yInt, SIZE, SIZE)
+		}
 		drawBulb(context)
 
 		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.color = Look.inactiveColor
-			context.g.fillOval(xInt, yInt, SIZE, SIZE)
+			if (square) {
+				context.g.fillRect(xInt, yInt, SIZE, SIZE)
+			} else {
+				context.g.fillOval(xInt, yInt, SIZE, SIZE)
+			}
 		}
 	}
 }
