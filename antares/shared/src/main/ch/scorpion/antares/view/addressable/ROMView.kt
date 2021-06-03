@@ -104,7 +104,9 @@ class ROMView(
 		}
 	}
 
-	/** ---- [ROMView] */
+	/** ---- [AbstractAddressableView] */
+
+	override val canChangeContentsInEditMode: Boolean get() = true
 
 	override fun updatePortViewPositions() {
 		getPortView(model.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
