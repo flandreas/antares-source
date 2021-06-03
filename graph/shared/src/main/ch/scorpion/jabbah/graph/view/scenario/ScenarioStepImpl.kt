@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
@@ -42,9 +43,9 @@ class ScenarioStepImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = StringUtils.replaceNegation(name.value)
+	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
 
-	/** ---- [Namable] interface */
+		/** ---- [Namable] interface */
 
 	override var name: Name by observableName(Name(initialName))
 

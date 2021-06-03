@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.text.FormattedText
-
 /**
  * [String] utilities.
  */
@@ -38,9 +36,6 @@ object StringUtils {
 
     /** Counts the number of occurrences of a particular [Char] in a [String].*/
     fun countChar(s: String, c: Char): Int = s.length - s.replace(c.toString(), "").length
-
-	@Deprecated("Use FormattedText class", ReplaceWith("FormattedText.replaceNegation(s)"))
-    fun replaceNegation(s: String): String = FormattedText.replaceNegation(s).text
 
 	/** Returns a [String] that adds a period to the specified [String] if if doesn't already end with a period.*/
 	fun endWithPeriod(s: String): String = if (s.endsWith(".")) s else "$s."
