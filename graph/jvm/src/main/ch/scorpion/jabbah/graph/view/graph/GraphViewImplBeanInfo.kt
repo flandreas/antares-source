@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -13,9 +13,9 @@ import com.l2fprod.common.propertysheet.Property
 open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 
     companion object {
-	    private val name = PropertyImpl("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
+	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
-		private val description = PropertyImpl("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
+		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", beanProvider = drawingBeanProvider)
     }
 

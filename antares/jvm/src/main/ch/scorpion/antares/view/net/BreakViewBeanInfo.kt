@@ -4,13 +4,13 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class BreakViewBeanInfo : DigitalComponentBeanInfo<BreakView>() {
 	companion object {
-		val logic = PropertyImpl("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
+		val logic = CommandPropertySwing("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: BreakView, editor: Editor, properties: MutableList<Property>) {

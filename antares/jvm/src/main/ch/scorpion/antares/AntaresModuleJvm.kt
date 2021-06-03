@@ -38,7 +38,7 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
@@ -156,14 +156,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
-		registry.register(LightColor::class.java) { LightColorEditor((it as PropertyImpl<LightColor>).optional) }
-		registry.register(InputCount::class.java) { InputCountEditor((it as PropertyImpl<InputCount>).filter) }
-		registry.register(InputPortNumber::class.java) { InputPortNumberEditor((it as PropertyImpl<InputPortNumber>).filter) }
+		registry.register(LightColor::class.java) { LightColorEditor((it as CommandPropertySwing<LightColor>).optional) }
+		registry.register(InputCount::class.java) { InputCountEditor((it as CommandPropertySwing<InputCount>).filter) }
+		registry.register(InputPortNumber::class.java) { InputPortNumberEditor((it as CommandPropertySwing<InputPortNumber>).filter) }
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
 		registry.registerEditor(BitWidth::class.java, BitWidthEditor::class.java)
-		registry.register(BranchCount::class.java) { BranchCountEditor((it as PropertyImpl<BranchCount>).filter) }
+		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)

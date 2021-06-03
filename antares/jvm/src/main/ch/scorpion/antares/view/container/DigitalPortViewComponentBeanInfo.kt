@@ -3,11 +3,10 @@ package ch.scorpion.antares.view.container
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
-import ch.scorpion.antares.view.AntaresProperties
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -18,14 +17,14 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewComponent>() {
 
     companion object {
-	    private val id = PropertyImpl("portId", "graph.property.PortId", Int::class.java, componentBeanProvider)
+	    private val id = CommandPropertySwing("portId", "graph.property.PortId", Int::class.java, componentBeanProvider)
 	    private val name = EditProperties.untranslatableName("port.name")
-	    private val direction = PropertyImpl("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
-		private val portLabelPos = PropertyImpl("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
-	    private val showBitWidth = PropertyImpl("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
-	    private val logic = PropertyImpl("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
-	    private val trigger = PropertyImpl("trigger", "element.property.trigger", Trigger::class.java, componentBeanProvider)
-	    private val outputAnnotation = PropertyImpl("outputAnnotation", "element.property.outputAnnotation", OutputAnnotation::class.java, componentBeanProvider)
+	    private val direction = CommandPropertySwing("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
+		private val portLabelPos = CommandPropertySwing("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
+	    private val showBitWidth = CommandPropertySwing("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
+	    private val logic = CommandPropertySwing("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
+	    private val trigger = CommandPropertySwing("trigger", "element.property.trigger", Trigger::class.java, componentBeanProvider)
+	    private val outputAnnotation = CommandPropertySwing("outputAnnotation", "element.property.outputAnnotation", OutputAnnotation::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: DigitalPortViewComponent, editor: Editor, properties: MutableList<Property>) {

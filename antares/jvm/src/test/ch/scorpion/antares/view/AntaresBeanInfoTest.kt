@@ -19,7 +19,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import io.mockk.every
 import io.mockk.mockk
@@ -61,7 +61,7 @@ class AntaresBeanInfoTest {
 			.getProperties(component, editor)
 			.filter { it.isEditable }
 			.forEach {
-				if (it is PropertyImpl<*>) {
+				if (it is CommandPropertySwing<*>) {
 					it.forceWriteToObject()
 				} else {
 					it.writeToObject(component)

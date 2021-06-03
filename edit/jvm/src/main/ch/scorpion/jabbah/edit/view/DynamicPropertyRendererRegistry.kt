@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 import com.l2fprod.common.swing.renderer.DefaultCellRenderer
@@ -12,7 +12,7 @@ import javax.swing.table.TableCellRenderer
  */
 class DynamicPropertyRendererRegistry : PropertyRendererRegistry() {
 
-	private val factoryMap: MutableMap<Class<out Any>, (PropertyImpl<*>) -> TableCellRenderer> = mutableMapOf()
+	private val factoryMap: MutableMap<Class<out Any>, (CommandPropertySwing<*>) -> TableCellRenderer> = mutableMapOf()
 
 	init {
 		// For some reason, the method 'registerDefaults()' in the superclass doesn't register a renderer for String,
@@ -23,14 +23,14 @@ class DynamicPropertyRendererRegistry : PropertyRendererRegistry() {
 	}
 
 	@Synchronized override fun getRenderer(property: Property): TableCellRenderer {
-		return factoryMap[property.type]?.invoke(property as PropertyImpl<*>) ?: super.getRenderer(property)
+		return factoryMap[property.type]?.invoke(property as CommandPropertySwing<*>) ?: super.getRenderer(property)
 	}
 
 	override fun getRenderer(type: Class<*>?): TableCellRenderer {
 		return super.getRenderer(type)
 	}
 
-	fun register(clazz: Class<out Any>, supplier: (PropertyImpl<*>) -> TableCellRenderer) {
+	fun register(clazz: Class<out Any>, supplier: (CommandPropertySwing<*>) -> TableCellRenderer) {
 		factoryMap[clazz] = supplier
 	}
 }

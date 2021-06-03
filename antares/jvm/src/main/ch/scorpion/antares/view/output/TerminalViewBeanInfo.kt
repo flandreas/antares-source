@@ -4,7 +4,7 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
@@ -12,8 +12,8 @@ import com.l2fprod.common.propertysheet.Property
 class TerminalViewBeanInfo : VerticeViewBeanInfo<TerminalView>() {
 
 	companion object {
-		private val rowsCount = PropertyImpl("rowsCount", "element.property.Terminal.rowsCount", Int::class.java, componentBeanProvider)
-		private val columnsCount = PropertyImpl("columnsCount", "element.property.Terminal.columnsCount", Int::class.java, componentBeanProvider)
+		private val rowsCount = CommandPropertySwing("rowsCount", "element.property.Terminal.rowsCount", Int::class.java, componentBeanProvider)
+		private val columnsCount = CommandPropertySwing("columnsCount", "element.property.Terminal.columnsCount", Int::class.java, componentBeanProvider)
 		private val size = EditProperties.size()
 		private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.Terminal.textColor")
 	}

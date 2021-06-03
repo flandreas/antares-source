@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 
 object EditProperties {
 
@@ -17,130 +17,130 @@ object EditProperties {
 		name: String = "id",
 		baseKey: String = "edit.property.id",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Int> {
-		return PropertyImpl(name, baseKey, Int::class.java, beanProvider)
+	): CommandPropertySwing<Int> {
+		return CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 	}
 
 	fun filled(
 		name: String = "filled",
 		baseKey: String = "edit.property.filled",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Boolean> {
-		return PropertyImpl(name, baseKey, Boolean::class.java, beanProvider)
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 	}
 
 	fun stroked(
 		name: String = "stroked",
 		baseKey: String = "edit.property.stroked",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Boolean> {
-		return PropertyImpl(name, baseKey, Boolean::class.java, beanProvider)
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 	}
 
 	fun styleType(
 		name: String = "styleType",
 		baseKey: String = "draw.styleType",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<StyleType> {
-		return PropertyImpl(name, baseKey, StyleType::class.java, beanProvider)
+	): CommandPropertySwing<StyleType> {
+		return CommandPropertySwing(name, baseKey, StyleType::class.java, beanProvider)
 	}
 
 	fun color(
 		name: String = "customColor",
 		baseKey: String = "edit.property.color",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<PredefinedColor> {
-		return PropertyImpl(name, baseKey, PredefinedColor::class.java, beanProvider)
+	): CommandPropertySwing<PredefinedColor> {
+		return CommandPropertySwing(name, baseKey, PredefinedColor::class.java, beanProvider)
 	}
 
 	fun stroke(
 		name: String = "customStroke",
 		baseKey: String = "edit.property.stroke",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<PredefinedStroke> {
-		return PropertyImpl(name, baseKey, PredefinedStroke::class.java, beanProvider)
+	): CommandPropertySwing<PredefinedStroke> {
+		return CommandPropertySwing(name, baseKey, PredefinedStroke::class.java, beanProvider)
 	}
 
 	fun text(
 		name: String = "text",
 		baseKey: String = "edit.property.text",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<String> {
-		return PropertyImpl(name, baseKey, String::class.java, beanProvider)
+	): CommandPropertySwing<String> {
+		return CommandPropertySwing(name, baseKey, String::class.java, beanProvider)
 	}
 
 	fun translatableText(
 		name: String = "text",
 		baseKey: String = "edit.property.text",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<TranslatableText> {
-		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
+	): CommandPropertySwing<TranslatableText> {
+		return CommandPropertySwing(name, baseKey, TranslatableText::class.java, beanProvider)
 	}
 
 	fun verticalAlignment(
 		name: String = "alignment",
 		baseKey: String = "edit.property.verticalAlignment",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<VerticalAlignment> {
-		return PropertyImpl(name, baseKey, VerticalAlignment::class.java, beanProvider)
+	): CommandPropertySwing<VerticalAlignment> {
+		return CommandPropertySwing(name, baseKey, VerticalAlignment::class.java, beanProvider)
 	}
 
 	fun horizontalAlignment(
 		name: String = "alignment",
 		baseKey: String = "edit.property.horizontalAlignment",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<HorizontalAlignment> {
-		return PropertyImpl(name, baseKey, HorizontalAlignment::class.java, beanProvider)
+	): CommandPropertySwing<HorizontalAlignment> {
+		return CommandPropertySwing(name, baseKey, HorizontalAlignment::class.java, beanProvider)
 	}
 
 	fun shadow(
 		name: String = "shadow",
 		baseKey: String = "edit.property.shadow",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Boolean> {
-		return PropertyImpl(name, baseKey, Boolean::class.java, beanProvider, setterPropertyName = "customShadow")
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider, setterPropertyName = "customShadow")
 	}
 
 	fun name(
 		name: String = "name",
 		baseKey: String = "edit.property.name",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Name> {
-		return PropertyImpl(name, baseKey, Name::class.java, beanProvider)
+	): CommandPropertySwing<Name> {
+		return CommandPropertySwing(name, baseKey, Name::class.java, beanProvider)
 	}
 
-	fun untranslatableName(name: String = "name"): PropertyImpl<String> =
-		PropertyImpl(name, "edit.property.name", String::class.java, componentBeanProvider)
+	fun untranslatableName(name: String = "name"): CommandPropertySwing<String> =
+		CommandPropertySwing(name, "edit.property.name", String::class.java, componentBeanProvider)
 
 	fun description(
 		name: String = "description",
 		baseKey: String = "edit.property.description",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Description> {
-		return PropertyImpl(name, baseKey, Description::class.java, beanProvider)
+	): CommandPropertySwing<Description> {
+		return CommandPropertySwing(name, baseKey, Description::class.java, beanProvider)
 	}
 
 	fun orientation(
 		name: String = "orientation",
 		baseKey: String = "edit.property.Component.orientation",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Direction> {
-		return PropertyImpl(name, baseKey, Direction::class.java, beanProvider)
+	): CommandPropertySwing<Direction> {
+		return CommandPropertySwing(name, baseKey, Direction::class.java, beanProvider)
 	}
 
 	fun size(
 		name: String = "size",
 		baseKey: String = "edit.property.size",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Size> {
-		return PropertyImpl(name, baseKey, Size::class.java, beanProvider)
+	): CommandPropertySwing<Size> {
+		return CommandPropertySwing(name, baseKey, Size::class.java, beanProvider)
 	}
 
 	fun script(
 		name: String,
 		baseKey: String,
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<ScriptProperty> {
-		return PropertyImpl(name, baseKey, ScriptProperty::class.java, beanProvider, interactive = true)
+	): CommandPropertySwing<ScriptProperty> {
+		return CommandPropertySwing(name, baseKey, ScriptProperty::class.java, beanProvider, interactive = true)
 	}
 }

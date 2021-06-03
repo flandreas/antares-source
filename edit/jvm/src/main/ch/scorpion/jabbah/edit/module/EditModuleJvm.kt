@@ -73,9 +73,9 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerRenderer(HorizontalAlignment::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
 		registry.registerRenderer(ScriptProperty::class.java, ScriptPropertyRenderer::class.java)
-		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
+		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
 		registry.register(Name::class.java) { TranslatablePropertyRenderer() }
-		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
+		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
 	}
 
 	@Suppress("UNCHECKED_CAST")
@@ -89,26 +89,26 @@ object EditModuleJvm : AbstractModule() {
 		registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
 		registry.register(TextProperty::class.java) {
 			TextPropertyEditor(
-				propertyName = (it as PropertyImpl<TranslatableText>).displayName)
+				propertyName = (it as CommandPropertySwing<TranslatableText>).displayName)
 		}
 		registry.register(ScriptProperty::class.java) {
 			ScriptPropertyEditor(
-				propertyName = (it as PropertyImpl<String>).displayName,
+				propertyName = (it as CommandPropertySwing<String>).displayName,
 				editable = it.editable)
 		}
 		registry.register(TranslatableText::class.java) {
 			TranslatablePropertyEditor(
-				propertyName = (it as PropertyImpl<Translatable>).displayName,
+				propertyName = (it as CommandPropertySwing<Translatable>).displayName,
 				multiline = it.filter)
 		}
 		registry.register(Name::class.java) {
 			TranslatablePropertyEditor(
-				propertyName = (it as PropertyImpl<Translatable>).displayName)
+				propertyName = (it as CommandPropertySwing<Translatable>).displayName)
 		}
 
 		registry.register(Description::class.java) {
 			TranslatablePropertyEditor(
-				propertyName = (it as PropertyImpl<Translatable>).displayName,
+				propertyName = (it as CommandPropertySwing<Translatable>).displayName,
 				multiline = it.filter)
 		}
 	}

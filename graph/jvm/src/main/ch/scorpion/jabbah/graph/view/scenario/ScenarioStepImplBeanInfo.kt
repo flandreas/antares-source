@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import com.l2fprod.common.propertysheet.Property
 
@@ -19,7 +19,7 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioStepProvider)
 		private val description = EditProperties.description(beanProvider = scenarioStepProvider)
 		private val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition", beanProvider = scenarioStepProvider)
-		private val highlightIds = PropertyImpl("highlightIds", "graph.property.scenario.highlightIds", String::class.java, scenarioStepProvider)
+		private val highlightIds = CommandPropertySwing("highlightIds", "graph.property.scenario.highlightIds", String::class.java, scenarioStepProvider)
 		private val onEntry = EditProperties.script("onEntryProperty", "graph.property.scenario.onEntry", beanProvider = scenarioStepProvider)
 		private val onExit = EditProperties.script("onExitProperty", "graph.property.scenario.onExit", beanProvider = scenarioStepProvider)
 	}

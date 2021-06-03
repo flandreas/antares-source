@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -19,28 +19,28 @@ object GraphProperties {
 		name: String = "modelId",
 		baseKey: String = "graph.property.modelId",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<Int> {
-		return PropertyImpl(name, baseKey, Int::class.java, beanProvider)
+	): CommandPropertySwing<Int> {
+		return CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 	}
 
-	fun propagationDelay(beanProperty: BeanProvider = componentBeanProvider): PropertyImpl<Long> {
-		return PropertyImpl("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProperty)
+	fun propagationDelay(beanProperty: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> {
+		return CommandPropertySwing("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProperty)
 	}
 
 	fun label(
 		name: String = "label",
 		baseKey: String = "graph.property.label",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<TranslatableText> {
-		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
+	): CommandPropertySwing<TranslatableText> {
+		return CommandPropertySwing(name, baseKey, TranslatableText::class.java, beanProvider)
 	}
 
 	fun verticalLabelPosition(
 		name: String = "labelPosition",
 		baseKey: String = "graph.property.VerticeLabelPosition",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<VerticeLabelPosition> {
-		return PropertyImpl(name, baseKey, VerticeLabelPosition::class.java, beanProvider)
+	): CommandPropertySwing<VerticeLabelPosition> {
+		return CommandPropertySwing(name, baseKey, VerticeLabelPosition::class.java, beanProvider)
 	}
 }
 

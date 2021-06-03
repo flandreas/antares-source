@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -20,7 +20,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val orientation = EditProperties.orientation()
 	    private val color = EditProperties.color()
 	    private val signalRepresentation = AntaresProperties.signalRepresentation()
-	    private val toggle = PropertyImpl("toggle", "element.property.Switch.toggle", Boolean::class.java, componentBeanProvider)
+	    private val toggle = CommandPropertySwing("toggle", "element.property.Switch.toggle", Boolean::class.java, componentBeanProvider)
 	    private val description = EditProperties.description()
     }
 

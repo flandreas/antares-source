@@ -9,13 +9,13 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 	companion object {
-		val dataPort = PropertyImpl("dataPort", "element.property.AndGate.dataPort", InputPortNumber::class.java, componentBeanProvider)
+		val dataPort = CommandPropertySwing("dataPort", "element.property.AndGate.dataPort", InputPortNumber::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: AndGateView, editor: Editor, properties: MutableList<Property>) {
@@ -39,7 +39,7 @@ class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 @Suppress("unused")
 class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 	companion object {
-		private val delay = PropertyImpl("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
+		private val delay = CommandPropertySwing("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val orientation = EditProperties.orientation()
 	}
@@ -77,7 +77,7 @@ class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
 @Suppress("unused")
 class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
 	companion object {
-		val enableLogic = PropertyImpl("enableLogic", "element.property.logic", Logic::class.java, componentBeanProvider)
+		val enableLogic = CommandPropertySwing("enableLogic", "element.property.logic", Logic::class.java, componentBeanProvider)
 		val bitWidth = AntaresProperties.bitWidth()
 		val handedness = AntaresProperties.handedness(baseKey = "element.property.TriStateBuffer.handedness")
 	}

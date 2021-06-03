@@ -33,7 +33,7 @@ interface GraphViewAppService : DrawingAppService {
 open class GraphViewAppServiceImpl(
 	copyPasteService: CopyPasteService = EditModule.copyPasteService,
 	commandManager: CommandManager = EditModule.commandManager,
-	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
+	protected val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : DrawingAppServiceImpl(copyPasteService, commandManager), GraphViewAppService {
 
 	companion object {

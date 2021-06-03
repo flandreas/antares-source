@@ -66,6 +66,7 @@ abstract class AbstractVertice(
 
 	override fun removePort(port: Port<*>) {
 		port.owner = null
+		port.net?.unconnect(port)
 		ports.remove(port)
 	}
 

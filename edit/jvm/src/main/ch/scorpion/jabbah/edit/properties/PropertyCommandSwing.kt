@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.edit.*
 import org.apache.commons.beanutils.PropertyUtils
 
 /** An implementation of [AbstractPropertyCommand] for the JVM platform. */
-class PropertyCommandSwing<V>(
+open class PropertyCommandSwing<V>(
 	editor: Editor,
 	propertyBaseKey: String,
 	beanProvider: BeanProvider,

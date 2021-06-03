@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 
 /**
  * Base view implementation for [AbstractDigitalGate] views.
@@ -23,13 +24,8 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 	vertice: T
 ) : BoxGateView<T>(styleProvider, text, vertice) {
 
-	var chosenInputCount: InputCount
-		get() = model.chosenInputCount
-		set(value) {
-			invalidate()
-			model.chosenInputCount = value
-			modelExchanged(model)
-		}
+	/** Use [DigitalGraphViewService] for changing this value.*/
+	val chosenInputCount: InputCount get() = model.chosenInputCount
 
 	var outputPortName: String?
 		get() = model.getOutput<DigitalSignal>().name
@@ -44,23 +40,23 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
 
-		for ((index, inputPort) in model.getInputs().withIndex()) {
-			addPortView(createInputPortView(inputPort as Port<DigitalSignal>, index))
+		for (inputPort in model.getInputs()) {
+			addPortView(createInputPortView(inputPort as Port<DigitalSignal>))
 		}
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL))
+
 		updateLayout()
 	}
 
 	/** ---- [AbstractDigitalGateView] */
 
-	protected open fun createInputPortView(inputPort: Port<DigitalSignal>, index: Int): PortView<*> {
-		return DigitalPortView(
+	open fun createInputPortView(inputPort: Port<DigitalSignal>): PortView<*> =
+		DigitalPortView(
 			styleProvider = styleProvider,
 			port = inputPort,
 			direction = Direction.WEST)
-	}
 }

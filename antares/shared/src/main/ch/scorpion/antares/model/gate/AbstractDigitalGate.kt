@@ -4,18 +4,17 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
@@ -33,22 +32,20 @@ abstract class AbstractDigitalGate(
         val DEF_MAX_INPUT_COUNT = InputCount.EIGHT
     }
 
-    var chosenInputCount: InputCount = inputCount
-        set(value) {
-            checkArgument(value.count >= minInputCount.count, "InputCount must not be smaller than minimum ${minInputCount.count}")
-            checkArgument(value.count <= maxInputCount.count, "InputCount must not be larger than maximum ${maxInputCount.count}")
-            field = value
-            clearPorts()
-            for (i in 1..field.count) {
-                addPort(createInputPort())
-            }
-            addPort(createOutputPort())
-        }
+	val chosenInputCount: InputCount get() = InputCount.of(inputCount)
 
     init {
         propagationDelay = DEFAULT_PROPAGATION_DELAY
-        chosenInputCount = inputCount
+	    setupInputCount(inputCount)
     }
+
+	private fun setupInputCount(inputCount: InputCount) {
+		clearPorts()
+		for (i in 1..inputCount.count) {
+			addPort(createInputPort())
+		}
+		addPort(createOutputPort())
+	}
 
     /** ---- [Storable] interface */
 
@@ -62,7 +59,7 @@ abstract class AbstractDigitalGate(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        chosenInputCount = InputCount.of(reader.readInt("inputCount"))
+	    setupInputCount(InputCount.of(reader.readInt("inputCount")))
         if (reader.hasAttribute("outputName")) {
             getOutput<DigitalSignal>().name = reader.readString("outputName")
         }
@@ -81,15 +78,11 @@ abstract class AbstractDigitalGate(
 
     open val maxInputCount: InputCount get() = DEF_MAX_INPUT_COUNT
 
-	protected open fun createInputPort(): InputPort<DigitalSignal> {
-		return DigitalPortImpl.createInput()
-	}
+	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput()
 
     /**
-     * Called by setter [chosenInputCount] which establishs the required [InputPort] and a single [OutputPort],
+     * Called by setter [chosenInputCount] which establishes the required [InputPort] and a single [OutputPort],
      * which is created by this method.
      */
-    protected open fun createOutputPort(): OutputPort<DigitalSignal> {
-        return DigitalPortImpl.createOutput()
-    }
+    protected open fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput()
 }

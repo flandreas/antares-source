@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -15,8 +15,8 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
 	    private val modelId = GraphProperties.modelId()
 	    private val propDelay = GraphProperties.propagationDelay()
 	    private val orientation = EditProperties.orientation()
-	    private val mirrorH = PropertyImpl("horizontallyMirrored", "graph.property.mirrorHorizontally", Boolean::class.java, componentBeanProvider)
-	    private val mirrorV = PropertyImpl("verticallyMirrored", "graph.property.mirrorVertically", Boolean::class.java, componentBeanProvider)
+	    private val mirrorH = CommandPropertySwing("horizontallyMirrored", "graph.property.mirrorHorizontally", Boolean::class.java, componentBeanProvider)
+	    private val mirrorV = CommandPropertySwing("verticallyMirrored", "graph.property.mirrorVertically", Boolean::class.java, componentBeanProvider)
 	    private val label = GraphProperties.label()
 	    private val description = EditProperties.description()
     }

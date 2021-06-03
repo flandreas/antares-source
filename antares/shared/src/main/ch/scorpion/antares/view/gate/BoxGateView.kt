@@ -190,7 +190,7 @@ open class BoxGateView<T : Vertice>(
 	 * Updates the layout of this [BoxGateView] by calculating the required box size and by positioning all
 	 * [PortView]s around the box according to their [Direction].
 	 */
-	protected fun updateLayout() {
+	fun updateLayout() {
 		invalidate()
 
 		val eastPins = getPortViewsOfDirection(Direction.EAST)
@@ -235,8 +235,8 @@ open class BoxGateView<T : Vertice>(
 		}
 
 		// Translate the box and all PortViews relative to the first eastern PortView
-		// TODO This strategy doesn't work if there is not east pin at all
-		val origin = eastPins[0].location.add(eastPins[0].length.toDouble(), 0.0)
+		// TODO This strategy doesn't work if there is no east pin at all
+		val origin = eastPins[0].location.add(eastPins[0].unconnectedLength.toDouble(), 0.0)
 		setBounds(-origin.x, -origin.y, w(boxWidth), h(boxHeight))
 		for (portView in getPortViews()) {
 			portView.location = portView.location.subtract(origin)
@@ -246,6 +246,8 @@ open class BoxGateView<T : Vertice>(
 
 		updateBoxes()
 		invalidate()
+
+		update()
 	}
 
 	private fun portDistance(portCount: Int): Int {

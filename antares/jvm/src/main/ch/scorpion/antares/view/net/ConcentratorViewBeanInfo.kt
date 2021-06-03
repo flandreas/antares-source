@@ -5,7 +5,7 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
@@ -13,7 +13,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 
     companion object {
 	    private val bitWidth = AntaresProperties.bitWidth()
-	    private val branchCount = PropertyImpl("branchCount", "element.property.branchCount", BranchCount::class.java, componentBeanProvider)
+	    private val branchCount = CommandPropertySwing("branchCount", "element.property.branchCount", BranchCount::class.java, componentBeanProvider)
 	    private val handedness = AntaresProperties.handedness(baseKey = "element.property.Splitter.handedness")
 	    private val signalRep = AntaresProperties.signalRepresentation()
     }
