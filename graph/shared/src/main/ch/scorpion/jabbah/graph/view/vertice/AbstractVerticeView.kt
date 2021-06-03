@@ -145,7 +145,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	override fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>? {
 		val p = rotateBack(x, y).subtract(location)
 		portViews
-			.minByOrNull { it.location.distance(p) }
+			.minByOrNull { it.connectionPoint.distance(p) }
 			?.let {
 				if (it.containsConnectionPoint(p)) {
 					return it
