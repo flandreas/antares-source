@@ -63,8 +63,13 @@ class Switch : AbstractInteractableVertice(CALCULATOR) {
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		isOn = false
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		setState(signalHandler, false)
 	}
 

@@ -105,8 +105,8 @@ class Probe(
 			throw UnsupportedOperationException()
 		}
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		stateChanged(signalHandler)
 	}
 

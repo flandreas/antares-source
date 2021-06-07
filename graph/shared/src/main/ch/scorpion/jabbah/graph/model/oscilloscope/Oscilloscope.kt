@@ -76,12 +76,12 @@ class Oscilloscope(
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler) {
 		signalHistories.clear()
 		maxTime = 0
 
 		getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl(bufferSize) }
-		super.executionStarted(signalHandler)
+		super.executionInitialize(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

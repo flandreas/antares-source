@@ -94,8 +94,8 @@ abstract class AbstractSplitter(
 		}
 	}
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		getOutputs().forEach { it.flush(signalHandler) }
 	}
 

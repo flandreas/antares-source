@@ -33,7 +33,8 @@ class OscilloscopeViewTimelineTest {
 	@Test
 	fun shouldCalculateForSinglePort() {
 		createPorts(1)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
 		assertEquals(7.5, timeline.getX(0))
@@ -42,7 +43,8 @@ class OscilloscopeViewTimelineTest {
 	@Test
 	fun shouldCalculateForMultiplePorts() {
 		createPorts(2)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("2", 110, true)
 		assertEquals(5.5, timeline.getX(0))
@@ -51,7 +53,8 @@ class OscilloscopeViewTimelineTest {
 	@Test
 	fun shouldIgnoreUnconnectedPort() {
 		createPorts(2)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
 		assertEquals(7.5, timeline.getX(0))
@@ -60,7 +63,8 @@ class OscilloscopeViewTimelineTest {
 	@Test
 	fun testSwitchFollowedByInverter() {
 		createPorts(2)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("2", 11, true)
 		input("1", 1001, false)
 		input("1", 2002, true)

@@ -130,6 +130,8 @@ abstract class AbstractVertice(
 		return getOutputs().first { it.portId == id } as OutputPort<T>
 	}
 
+	override fun <T : Any> replaceUndefinedOutput(signal: T?) { }
+
 	/** ---- [Storable] interface */
 
 	/**
@@ -155,8 +157,8 @@ abstract class AbstractVertice(
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		ports.forEach { it.executionStarted(signalHandler) }
 	}
 

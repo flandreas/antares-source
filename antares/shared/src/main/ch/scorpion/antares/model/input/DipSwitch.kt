@@ -85,10 +85,13 @@ class DipSwitch(
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		value = initialValue
 		enabled = false
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
 	}
 

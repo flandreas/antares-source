@@ -40,7 +40,8 @@ class GraphDSLTest {
 		graphView = TestGraphView()
 		every { view.drawing } returns graphView.graphView
 		graphView.graph.formNet(signalHandler)
-		graphView.graph.executionStarted(signalHandler)
+		graphView.graph.executionStart1(signalHandler)
+		graphView.graph.executionStart2(signalHandler)
 	}
 
 	@Test

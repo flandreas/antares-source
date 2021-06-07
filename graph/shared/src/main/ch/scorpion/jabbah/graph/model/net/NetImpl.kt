@@ -78,20 +78,16 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		return _ports.contains(port)
 	}
 
-	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean) {
+	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler) {
 		signalBuffer = signal
 		val data = NetActorData(signal, origin, true)
-		if (withDelay) {
-			requestActingAfter(signalHandler, 0, data)
-		} else {
-			actingDone(signalHandler, data)
-		}
+		requestActingAfter(signalHandler, 0, data)
 	}
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		_signal = null
 		signalBuffer = null
 	}

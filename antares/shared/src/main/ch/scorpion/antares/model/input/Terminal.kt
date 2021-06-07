@@ -112,8 +112,8 @@ class Terminal(
 		columnsCount = reader.readInt("columnsCount")
 	}
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		clear(signalHandler)
 	}
 

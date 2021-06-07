@@ -96,8 +96,10 @@ interface Graph : Namable, Describable, Storable {
 	 */
 	fun formNet(signalHandler: SignalHandler)
 
+	fun executionStart1(signalHandler: SignalHandler)
+
 	/** Called by the execution environment after the execution has been started.*/
-    fun executionStarted(signalHandler: SignalHandler)
+    fun executionStart2(signalHandler: SignalHandler)
 
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)

@@ -89,11 +89,17 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		realStartTime = System.currentTimeMillis()
 		cycleCount = 0
 		propagationDelayBuffer = propagationDelay
-		super.executionStarted(signalHandler)
+		isOn = false
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		setOn(signalHandler, false)
 	}
 

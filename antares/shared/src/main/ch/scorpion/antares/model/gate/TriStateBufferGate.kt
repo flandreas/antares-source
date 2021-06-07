@@ -101,8 +101,8 @@ open class TriStateBufferGate(
 
     /** ---- [Actor] */
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
+    override fun executionStart(signalHandler: SignalHandler) {
+        super.executionStart(signalHandler)
         requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
     }
 

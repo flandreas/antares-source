@@ -59,8 +59,8 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		color = DEFAULT_COLOR
 	}
 

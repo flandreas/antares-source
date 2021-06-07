@@ -55,8 +55,13 @@ class Ground(
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.falseValue(bitWidth), signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), Word.falseValue(bitWidth)))
 	}
 

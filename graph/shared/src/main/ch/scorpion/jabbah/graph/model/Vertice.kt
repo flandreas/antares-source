@@ -128,4 +128,6 @@ interface Vertice : GraphElement, Describable {
      */
     fun <T: Any> getOutput(id: Int): OutputPort<T>
 
+    fun <T: Any> replaceUndefinedOutput(signal: T?)
+
 }
