@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -182,9 +182,8 @@ abstract class AbstractVertice(
 	/**
 	 * Visible for testing.
 	 */
-	fun createActorData(inputPort: InputPort<*>?): VerticeActorData {
-		return VerticeActorData(inputPort, true)
-	}
+	open fun createActorData(inputPort: InputPort<*>?): GraphActorData =
+		VerticeActorData(inputPort, true)
 
 	/**
 	 * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
