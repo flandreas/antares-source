@@ -188,7 +188,7 @@ class SevenSegmentDisplayView(
 
 	/** ---- [ControlView] */
 
-	override val controlId: String? get() = "7seg:" + model.id
+	override val controlId: String get() = "7seg:" + model.id
 
 	override fun bindToModel(model: SevenSegmentDisplay) {
 		this.model = model

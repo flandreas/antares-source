@@ -36,7 +36,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
      * Don't use [GraphElementView.id] as part of the [controlId], because that one might change
      * when [ControlView]s (even as part of a wrapping [Component]) are added to a [Drawing]
      */
-    val controlId: String?
+    val controlId: String
 
     /** Returns a translated text that identifies this [ControlViewSource] to the user.*/
     val controlName: String get() {

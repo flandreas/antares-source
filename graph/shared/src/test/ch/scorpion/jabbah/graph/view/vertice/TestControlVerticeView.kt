@@ -31,7 +31,7 @@ class TestControlVerticeView(
 
 	/** ---- [ControlView] */
 
-	override val controlId: String? get() = "$type \"${model.name}\""
+	override val controlId: String get() = "$type \"${model.name}\""
 
 	override fun bindToModel(model: TestControlVertice) {
 		this.model = model

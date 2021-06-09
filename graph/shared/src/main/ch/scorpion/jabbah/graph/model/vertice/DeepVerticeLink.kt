@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  */
 class DeepVerticeLink(verticeIds: List<Int>) {
 
-	constructor(id: Int): this(listOf(id))
+	constructor(verticeId: Int): this(listOf(verticeId))
 	constructor(): this(listOf())
 
 	companion object {
