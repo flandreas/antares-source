@@ -9,13 +9,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface EdgeViewLayouter {
 
-    /**
-     * Returns a [List] of [Point2D]s that represent an orthogonal segment layout between two points.
-     *
-     * @param edgeView the original [EdgeView] being laid out. If provided, this can be used as a minor criteria
-     * for finding the best layout solution.
-     * @return the resulting [Point2D]s
-     */
-    fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
+	fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean)
 
+	fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean)
+
+	fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary)
 }

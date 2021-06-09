@@ -9,15 +9,31 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 object NoneEdgeViewLayouter : EdgeViewLayouter {
 
-	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-		val list = mutableListOf<Point2D>()
-		edgeView?.let {
-			for (i in 0 until edgeView.segmentPointCount) {
-				list.add(edgeView.getSegmentPoint(i))
-			}
-			list[0] = begin.point
-			list[list.size - 1] = end.point
+	override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+		val points = mutableListOf<Point2D>()
+		points.add(begin.point)
+		if (edgeView.polyline.pointsCount > 1) {
+			points.addAll(edgeView.polyline.getPoints(1, edgeView.polyline.pointsCount))
 		}
-		return list
+		edgeView.setLaidOutPoints(points, compact)
+	}
+
+	override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+		val points = mutableListOf<Point2D>()
+		if (edgeView.polyline.pointsCount > 1) {
+			points.addAll(edgeView.polyline.getPoints(0, edgeView.polyline.pointsCount - 1))
+		}
+		points.add(end.point)
+		edgeView.setLaidOutPoints(points, compact)
+	}
+
+	override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+		val points = mutableListOf<Point2D>()
+		points.add(begin.point)
+		if (edgeView.polyline.pointsCount > 2) {
+			points.addAll(edgeView.polyline.getPoints(1, edgeView.polyline.pointsCount - 1))
+		}
+		points.add(end.point)
+		edgeView.setLaidOutPoints(points, true)
 	}
 }

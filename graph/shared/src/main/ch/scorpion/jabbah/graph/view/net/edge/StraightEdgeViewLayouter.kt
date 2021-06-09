@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -9,10 +8,15 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 object StraightEdgeViewLayouter : EdgeViewLayouter {
 
-	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-		val list = mutableListOf<Point2D>()
-		list.add(begin.point)
-		list.add(end.point)
-		return list
+	override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+		edgeView.setLaidOutPoints(listOf(begin.point, end.point), false)
+	}
+
+	override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+		edgeView.setLaidOutPoints(listOf(begin.point, end.point), false)
+	}
+
+	override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+		edgeView.setLaidOutPoints(listOf(begin.point, end.point), false)
 	}
 }
