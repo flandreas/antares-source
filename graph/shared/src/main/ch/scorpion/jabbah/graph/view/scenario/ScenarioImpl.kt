@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
@@ -36,7 +36,7 @@ class ScenarioImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = StringUtils.replaceNegation(name.value)
+	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
 
 	/** ---- [Namable], [Describable] interfaces */
 

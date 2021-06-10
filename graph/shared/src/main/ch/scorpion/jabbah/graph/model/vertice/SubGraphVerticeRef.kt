@@ -148,11 +148,20 @@ class SubGraphVerticeRef(
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler)) {
-				graph?.executionStarted(signalHandler)
+				graph?.executionStart1(signalHandler)
+			}
+		}
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		if (!hasDesignError) {
+			if (isDeepExecution(signalHandler)) {
+				graph?.executionStart2(signalHandler)
 			} else {
 				// This will define the same script for all SubGraphVerticeRef instances of the same Graph
 				// which is unnecessary, but so be it for the moment

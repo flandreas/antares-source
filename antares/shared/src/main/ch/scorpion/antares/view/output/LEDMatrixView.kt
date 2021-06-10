@@ -123,7 +123,7 @@ class LEDMatrixView(
 
 	/** ---- [ControlView] */
 
-	override val controlId: String?
+	override val controlId: String
 		get() = "ledMatrix:${model.id}"
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LEDMatrix) {

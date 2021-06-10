@@ -165,8 +165,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		currentSelectedAddress = 0
 		clear()
 		getDataPort().setOutgoingSignalBuffered(Word.undefined(dataWidth), signalHandler)

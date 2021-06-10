@@ -92,8 +92,10 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) { }
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		listeners?.forEach { it.executionStarted(signalHandler) }
 	}
 

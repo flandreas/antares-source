@@ -266,6 +266,8 @@ abstract class AbstractAddressableView<T : Addressable>(
 
 	protected abstract fun updatePortViewPositions()
 
+	protected abstract val canChangeContentsInEditMode: Boolean
+
 	protected fun updateGeometry() {
 		invalidate()
 		contentsView.updateGeometry()
@@ -334,7 +336,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(true, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(readonly = !canChangeContentsInEditMode, context.mouseEvent?.isAltDown == true)
 				return null
 			}
 			return super.mouseClicked(context)

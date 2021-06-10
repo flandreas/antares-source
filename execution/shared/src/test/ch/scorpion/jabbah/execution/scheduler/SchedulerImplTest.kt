@@ -299,15 +299,13 @@ class SchedulerImplTest {
 
 		override val isBreakpoint: Boolean get() = true
 
-		override fun addActorListener(l: ActorListener) {
-			// empty
-		}
+		override fun addActorListener(l: ActorListener) { }
 
-		override fun removeActorListener(l: ActorListener) {
-			// empty
-		}
+		override fun removeActorListener(l: ActorListener) { }
 
-		override fun executionStarted(signalHandler: SignalHandler) {
+		override fun executionInitialize(signalHandler: SignalHandler) { }
+
+		override fun executionStart(signalHandler: SignalHandler) {
 			state = ActorState.Idle
 		}
 
@@ -316,9 +314,7 @@ class SchedulerImplTest {
 			actingCalled = true
 		}
 
-		override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
-			// empty
-		}
+		override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) { }
 
 		override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
 			state = ActorState.Idle

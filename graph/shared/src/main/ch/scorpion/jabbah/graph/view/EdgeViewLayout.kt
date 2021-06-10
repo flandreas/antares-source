@@ -30,7 +30,7 @@ interface EdgeViewLayout : DrawableListener {
 	/** Indicates that this [EdgeViewImpl] should not perform a destination layout.  */
 	var suspendDestinationLayout: Boolean
 
-	/** Resets the [isAdjusted] property if there are not enough points in the [EdgeView] justify adjustment.*/
+	/** Resets the [isAdjusted] property if there are not enough points in the [EdgeView] to justify adjustment.*/
 	fun updateAdjusted()
 
 	fun layoutOrigin()

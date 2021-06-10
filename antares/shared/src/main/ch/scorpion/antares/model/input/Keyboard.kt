@@ -95,8 +95,8 @@ class Keyboard(
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		buffer.clear()
 		stateChanged(signalHandler)
 	}

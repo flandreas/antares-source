@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicInitializer
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicReceiver
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeNode
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -293,12 +293,12 @@ abstract class DraggableTreeItem(
 ) : AbstractContainerTreeItem(type)
 
 class ContainerTreePortItem(
-	val graphPortView: GraphPortView<*>,
+	private val graphPortView: GraphPortView<*>,
 	factory: () -> Component
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 
 	val portName: String get() = graphPortView.model.name!!
-	private val portLabel: String get() = StringUtils.replaceNegation(graphPortView.model.name!!)
+	private val portLabel: String get() = FormattedText.replaceNegation(graphPortView.model.name!!).textWithOverline
 
 	override fun getDescription(): String {
 		return "${graphPortView.model.portType} $portLabel"
@@ -313,9 +313,9 @@ private class ContainerTreeControlItem(
 
 	val controlViewId: String get() = source.controlId!!
 	val controlModelId: Int get() = source.model.id
-	val controlName: String get() = StringUtils.replaceNegation(source.controlName)
+	val controlName: String get() = FormattedText.replaceNegation(source.controlName).textWithOverline
 
-	override fun getDescription(): String = controlName
+		override fun getDescription(): String = controlName
 }
 
 private class ContainerTreeFolderItem(

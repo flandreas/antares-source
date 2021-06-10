@@ -60,6 +60,7 @@ class BidirectionalSplitterViewDefinedTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
+		assertEquals(Word(listOf(Bit.False, Bit.False)), circuitInputView.model.signal)
 		assertEquals(Word(listOf(Bit.False, Bit.False)), circuitInputView.model.getOutput<DigitalSignal>().net?.signal)
 		assertEquals(Word.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(2).net?.signal)
 		assertEquals(Word.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(3).net?.signal)

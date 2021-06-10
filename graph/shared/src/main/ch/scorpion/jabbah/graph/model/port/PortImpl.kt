@@ -179,11 +179,11 @@ open class PortImpl<T : Any>(
 
 	override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
 		storeOutgoingSignal(signal)
-		forwardSignal(signalHandler, withDelay = false)
+		forwardSignal(signalHandler)
 	}
 
 	override fun flush(signalHandler: SignalHandler) {
-		forwardSignal(signalHandler, withDelay = true)
+		forwardSignal(signalHandler)
 	}
 
 	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
@@ -231,7 +231,7 @@ open class PortImpl<T : Any>(
 		signalHandler.deferExecutionError(error)
 	}
 
-	private fun forwardSignal(signalHandler: SignalHandler, withDelay: Boolean) {
+	private fun forwardSignal(signalHandler: SignalHandler) {
 		if (net == null) {
 			return
 		}
@@ -256,7 +256,7 @@ open class PortImpl<T : Any>(
 		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
 			val signal = replaceOwnUndefinedSignals(signalHandler)
-			net!!.setSignal(signal, this, signalHandler, withDelay)
+			net!!.setSignal(signal, this, signalHandler)
 			return
 		}
 
@@ -264,7 +264,7 @@ open class PortImpl<T : Any>(
 		if (!isOutputFullyUndefined) {
 			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
 			combinedNets.forEach { it.setExecutionError(null) }
-			net!!.setSignal(_outgoingSignal, this, signalHandler, withDelay)
+			net!!.setSignal(_outgoingSignal, this, signalHandler)
 			return
 		}
 
@@ -272,7 +272,7 @@ open class PortImpl<T : Any>(
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		val signal = replaceOwnUndefinedSignals(signalHandler)
 		combinedNets.forEach { it.setExecutionError(null) }
-		net!!.setSignal(signal, this, signalHandler, withDelay)
+		net!!.setSignal(signal, this, signalHandler)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {

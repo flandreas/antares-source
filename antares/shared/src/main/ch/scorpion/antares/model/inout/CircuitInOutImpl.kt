@@ -144,18 +144,30 @@ class CircuitInOutImpl(
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
 		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
 
+	/** ---- [Vertice] */
+
+	override fun <T : Any> replaceUndefinedOutput(signal: T?) {
+		if (signal is DigitalSignal?) {
+			signal?.let { this.signal = it }
+		}
+	}
+
 	/** ---- [Actor] interface */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
 		enabled = true
 		signal = getDigitalPort().dominantSignal
+		stateChanged(signalHandler)
+	}
 
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 		if (portType.isInput && subGraphInputPort == null) {
 			// A GraphInput at the top level acts like a Switch and actively establishes it default value
 			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 		}
-		stateChanged(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -165,8 +177,9 @@ class CircuitInOutImpl(
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		super.act(signalHandler, data)
+
 		if (portType.isOutput && subGraphOutputPort != null) {
-			if ((data as GraphActorData).changedPort != null) {
+			if ((data as GraphActorData).changedPort != null || signalHandler.executionTime == propagationDelay) {
 				// Send signal to outside only if it came from inside
 				subGraphOutputPort?.flush(signalHandler)
 			}
@@ -255,14 +268,24 @@ class CircuitInOutImpl(
 		this.signal = signal
 		stateChanged()
 
-		when (portType) {
-			PortType.INOUT -> if (fromOutside) {
-				getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
-			} else {
+		if (signalHandler.executionTime == propagationDelay) {
+			// start-up
+			if (portType.isOutput) {
 				propagateToSubGraphOutputPort(signal, signalHandler)
 			}
-			PortType.INPUT -> getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
-			PortType.OUTPUT -> propagateToSubGraphOutputPort(signal, signalHandler)
+			if (portType.isInput) {
+				getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
+			}
+		} else {
+			when (portType) {
+				PortType.INOUT -> if (fromOutside) {
+					getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
+				} else {
+					propagateToSubGraphOutputPort(signal, signalHandler)
+				}
+				PortType.INPUT -> getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
+				PortType.OUTPUT -> propagateToSubGraphOutputPort(signal, signalHandler)
+			}
 		}
 	}
 

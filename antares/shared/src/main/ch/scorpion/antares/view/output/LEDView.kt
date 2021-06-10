@@ -20,8 +20,9 @@ class LEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LED = LED(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+    square: Boolean = false,
     private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLEDView<LED>(styleProvider, model), LightEmitter, ControlView<LED>, ControlViewSource<LED> {
+) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter, ControlView<LED>, ControlViewSource<LED> {
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"
@@ -59,7 +60,7 @@ class LEDView(
 	/** ---- [ControlViewSource] */
 
     override fun createControlView(): ControlView<LED> {
-        val clone = LEDView(styleProvider, model, lightColor)
+        val clone = LEDView(styleProvider, model, lightColor, square)
         clone.isShowPortViews = false
         clone.location = Point2D(0, 0)
         return clone

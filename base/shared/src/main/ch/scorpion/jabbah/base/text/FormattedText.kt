@@ -6,13 +6,16 @@ package ch.scorpion.jabbah.base.text
  */
 class FormattedText(
 	val text: String,
-	val allNegated: Boolean = false
+	val allNegated: Boolean = false,
+	val textWithOverline: String,
 ) {
 
 	companion object {
 
 		private const val NEGATION_SIGN = '!'
 		const val OVERLINE = '\u0305'
+
+		fun empty(): FormattedText = FormattedText("", false, "")
 
 		fun replaceNegation(s: String): FormattedText {
 			var negating = false
@@ -58,9 +61,9 @@ class FormattedText(
 				}
 			}
 			return if (allNegated) {
-				FormattedText(resultAllNegated.toString(), allNegated = true)
+				FormattedText(resultAllNegated.toString(), allNegated = true, result.toString())
 			} else {
-				FormattedText(result.toString(), allNegated = false)
+				FormattedText(result.toString(), allNegated = false, result.toString())
 			}
 		}
 	}

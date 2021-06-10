@@ -23,7 +23,8 @@ class OscilloscopeTest {
 	@Test
 	fun shouldUpdateMaxTime() {
 		createPorts(1)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 200, false)
 		assertEquals(200L, oscilloscope.maxTime)
@@ -33,7 +34,8 @@ class OscilloscopeTest {
 	fun shouldTruncateEntries() {
 		BaseModule.properties.customize(Oscilloscope.PROP_BUFFER_SIZE, 2)
 		createPorts(1)
-		oscilloscope.executionStarted(signalHandler.build())
+		oscilloscope.executionInitialize(signalHandler.build())
+		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 200, false)
 		input("1", 300, true)

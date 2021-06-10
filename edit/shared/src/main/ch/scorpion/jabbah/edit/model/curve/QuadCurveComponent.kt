@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractComponent(), Transparent {
 
 	companion object {
+		private const val CONTAINS_SENSITIVITY = 2.0
 		private val type = Translations.getString("edit.component.quadraticCurve")
 		private val DEFAULT_POINTS = listOf<Point2D>(
 			Point2D(0, 0),
@@ -75,7 +76,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 			}
 		}
 
-	override val boundingBox: RectangularShape get() = path.boundingBox//.moveBy(location)
+	override val boundingBox: RectangularShape get() = path.boundingBox
 
 	override fun draw(context: DrawContext) {
 		if (context.useContextColors) {
@@ -85,7 +86,12 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 		}
 	}
 
-	override fun contains(x: Double, y: Double): Boolean = path.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean =
+		path.intersects(
+			x - CONTAINS_SENSITIVITY,
+			y - CONTAINS_SENSITIVITY,
+			2 * CONTAINS_SENSITIVITY,
+			2 * CONTAINS_SENSITIVITY)
 
 	/** ---- [Transparent] interface */
 

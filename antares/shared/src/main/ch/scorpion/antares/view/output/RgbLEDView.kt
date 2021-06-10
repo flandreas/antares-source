@@ -16,8 +16,9 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 /** A view of an [RgbLED].*/
 class RgbLEDView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: RgbLED = RgbLED()
-) : AbstractLEDView<RgbLED>(styleProvider, model) {
+	model: RgbLED = RgbLED(),
+	square: Boolean = false,
+) : AbstractLEDView<RgbLED>(styleProvider, model, square) {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.RgbLEDView.iconPath"
@@ -35,7 +36,7 @@ class RgbLEDView(
 	/** ---- [ControlViewSource] */
 
 	override fun createControlView(): ControlView<RgbLED> {
-		val clone = RgbLEDView(styleProvider, model)
+		val clone = RgbLEDView(styleProvider, model, square)
 		clone.isShowPortViews = false
 		clone.location = Point2D(0, 0)
 		return clone

@@ -47,10 +47,20 @@ interface Actor {
 	fun removeActorListener(l: ActorListener)
 
 	/**
-	 * Called by the execution environment to give this [Actor] the opportunity to initialize its state
-	 * after overall execution has been started.
+	 * Phase 1 of the start-up procedure.
+	 * Called by the execution environment to give this [Actor] the opportunity to initialize its initial state,
+	 * which is primarily setting default values of this [Actor].
+	 * Called on all [Actor]s before any [executionStart] gets called.
 	 */
-	fun executionStarted(signalHandler: SignalHandler)
+	fun executionInitialize(signalHandler: SignalHandler)
+
+	/**
+	 * Phase 2 of the start-up procedure.
+	 * Called by the execution environment after [executionInitialize] on all [Actor]s has been called.
+	 * [Actor]s that depend on the state of other [Actor]s should request calculation by the [Scheduler].
+	 */
+	fun executionStart(signalHandler: SignalHandler)
+
 
 	/**
 	 * Called by execution environment} to let this [Actor] act.
@@ -130,7 +140,9 @@ open class ActorImpl(
 		actorSupport.removeListener(l)
 	}
 
-	override fun executionStarted(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler) { }
+
+	override fun executionStart(signalHandler: SignalHandler) {
 		_state = ActorState.Idle
 		executionError = null
 

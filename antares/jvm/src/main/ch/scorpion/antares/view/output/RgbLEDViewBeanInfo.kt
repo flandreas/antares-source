@@ -11,10 +11,12 @@ class RgbLEDViewBeanInfo : DigitalComponentBeanInfo<RgbLEDView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()
+		private val square = AntaresProperties.ledSquare()
 	}
 
 	override fun addProperties(bean: RgbLEDView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(name.bind(editor, bean.id))
+		properties.add(square.bind(editor, bean.id))
 	}
 }

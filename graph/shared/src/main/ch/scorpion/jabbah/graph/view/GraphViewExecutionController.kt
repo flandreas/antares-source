@@ -94,7 +94,8 @@ class GraphViewExecutionController(
 			}
 			graphViewsProvider.invoke().forEach { it.bind() }
 			rootGraph.formNet(event.scheduler)
-			rootGraph.executionStarted(event.scheduler)
+			rootGraph.executionStart1(event.scheduler)
+			rootGraph.executionStart2(event.scheduler)
 		} else {
 			rootGraph.executionStopped(event.scheduler)
 		}

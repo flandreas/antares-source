@@ -7,6 +7,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -56,6 +58,9 @@ class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
 
     override val minInputCount: InputCount get() = InputCount.ONE
     override val maxInputCount: InputCount get() = InputCount.ONE
+
+	override fun createActorData(inputPort: InputPort<*>?): GraphActorData =
+		GraphActorDataImpl(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true)
 
     override fun write(writer: StoreWriter) {
         super.write(writer)

@@ -28,11 +28,7 @@ class GraphActorDataImpl(
 	override val isInput: Boolean = true
 ) : GraphActorData {
 
-	override fun dataToString(): String? {
-		return "${changedPort?.name}:$signal"
-	}
+	override fun dataToString(): String? = "${changedPort?.name}:$signal"
 
-	override fun <T : Any> getSignal(portId: Int): T {
-		return signal as T
-	}
+	override fun <T : Any> getSignal(portId: Int): T = signal as T
 }

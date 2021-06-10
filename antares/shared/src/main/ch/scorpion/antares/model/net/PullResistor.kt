@@ -11,10 +11,9 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
-import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -22,7 +21,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class PullResistor(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	pullDirection: PullDirection = LOW
-) : AbstractVertice(), WeakOutputPortBehaviour<DigitalSignal> {
+) : CalculatingVertice(CALCULATOR), WeakOutputPortBehaviour<DigitalSignal> {
 
 	companion object{
 
@@ -30,6 +29,19 @@ class PullResistor(
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_LOW_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
 		private val TYPE_HIGH_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<PullResistor> {
+			override fun calculate(vertice: PullResistor, data: GraphActorData, signalHandler: SignalHandler) {
+				if (signalHandler.executionTime == vertice.propagationDelay) {
+					vertice.getOutput<DigitalSignal>().net?.let {
+						if (it.signal?.isFullyUndefined == true) {
+							vertice.getOutput<DigitalSignal>().setOutgoingSignal(vertice.preferredOutputSignal, signalHandler)
+						}
+					}
+				}
+			}
+		}
 
 		fun getPreferredSignal(bitWidth: BitWidth, pullDirection: PullDirection): DigitalSignal =
 			when(pullDirection) {
@@ -115,8 +127,13 @@ class PullResistor(
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
-		getOutput<DigitalSignal>().setOutgoingSignal(preferredOutputSignal, signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(preferredOutputSignal, signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, preferredOutputSignal))
 	}
 }

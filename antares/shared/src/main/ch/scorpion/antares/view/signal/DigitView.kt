@@ -116,7 +116,7 @@ class DigitView(
         })
 
 	    if (isOn && inactive) {
-		    label.draw(FormattedText("-"), context)
+		    label.draw(FormattedText("-", textWithOverline = "-"), context)
 	    } else {
 		    label.draw(context)
 	    }

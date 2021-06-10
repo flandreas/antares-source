@@ -101,8 +101,8 @@ class EdgeViewLayoutImpl(
 			val destLocation = Point2D(edgeView.polyline.getPointAt(destPointIndex))
 			val originDirs = if (origDir == null) getOriginDirections(destLocation) else setOf(origDir)
 			val destDir = type.getSegmentDirection(edgeView, destPointIndex - 1)
-			val list = mutableListOf<Point2D>()
-			list.addAll(type.layout(
+
+			type.layoutOrigin(
 				edgeView,
 				edgeView.parent as GraphView,
 				LayoutBoundary(
@@ -112,11 +112,9 @@ class EdgeViewLayoutImpl(
 				LayoutBoundary(
 					point = destLocation,
 					directions = destDir?.let { setOf(destDir) } ?: Direction.ALL,
-					isPort = edgeView.destination != null && destPointIndex == edgeView.polyline.pointsCount - 1)))
-
-			list.addAll(edgeView.polyline.getPoints(destPointIndex + 1, edgeView.polyline.pointsCount))
-
-			edgeView.setLaidOutPoints(list, compact)
+					isPort = edgeView.destination != null && destPointIndex == edgeView.polyline.pointsCount - 1),
+				destPointIndex,
+				compact)
 		}
 	}
 
@@ -145,8 +143,8 @@ class EdgeViewLayoutImpl(
 			val origLocation = Point2D(edgeView.polyline.getPointAt(origPointIndex))
 			val destDirs = if (destDir == null) getDestinationDirections(origLocation) else setOf(destDir)
 			val origDir = type.getSegmentDirection(edgeView, origPointIndex)
-			val list = mutableListOf<Point2D>()
-			list.addAll(type.layout(
+
+			type.layoutDestination(
 				edgeView,
 				edgeView.parent as GraphView,
 				LayoutBoundary(
@@ -156,10 +154,9 @@ class EdgeViewLayoutImpl(
 				LayoutBoundary(
 					point = destLocation,
 					directions = destDirs,
-					isPort = edgeView.destination != null || destDir != null)))
-			list.addAll(0, edgeView.polyline.getPoints(0, origPointIndex))
-
-			edgeView.setLaidOutPoints(list, compact)
+					isPort = edgeView.destination != null || destDir != null),
+				origPointIndex,
+				compact)
 		}
 	}
 
@@ -176,7 +173,7 @@ class EdgeViewLayoutImpl(
 			originDirs = if (originDir != null) setOf(originDir) else getOriginDirections(destPoint)
 			destDirs = if (destDir != null) setOf(destDir) else getDestinationDirections(originPoint)
 
-			val laidOutPoints = type.layout(
+			type.layoutAll(
 				edgeView,
 				edgeView.parent as GraphView,
 				LayoutBoundary(
@@ -187,9 +184,6 @@ class EdgeViewLayoutImpl(
 					point = destPoint,
 					directions = destDirs,
 					isPort = edgeView.destination != null || destDir != null))
-
-
-			edgeView.setLaidOutPoints(laidOutPoints, compact = true)
 		}
 	}
 

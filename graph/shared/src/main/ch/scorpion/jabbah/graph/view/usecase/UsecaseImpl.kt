@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
@@ -28,9 +28,9 @@ class UsecaseImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = StringUtils.replaceNegation(name.value)
+	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
 
-	/** ---- [Namable], [Describable] interfaces */
+		/** ---- [Namable], [Describable] interfaces */
 
 	override var name: Name by observableName(Name(name))
 

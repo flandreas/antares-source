@@ -16,8 +16,17 @@ import ch.scorpion.jabbah.graph.view.GraphView
 enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEventHandler) {
 
 	STRAIGHT("straight", EdgeViewInputEventHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-			return StraightEdgeViewLayouter.layout(edgeView, graphView, begin, end)
+
+		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+			StraightEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
+		}
+
+		override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+			StraightEdgeViewLayouter.layoutDestination(edgeView, graphView, begin, end, origPointIndex, compact)
+		}
+
+		override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+			StraightEdgeViewLayouter.layoutAll(edgeView, graphView, begin, end)
 		}
 
 		override fun getSegmentDirection(edgeView: EdgeView<*>, segmentIndex: Int): Direction? {
@@ -26,14 +35,32 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 	},
 
 	ORTHOGONAL("ortho", DragEdgeSegmentHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-			return OrthoEdgeViewLayouter.layout(edgeView, graphView, begin, end)
+
+		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+			OrthoEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
+		}
+
+		override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+			OrthoEdgeViewLayouter.layoutDestination(edgeView, graphView, begin, end, origPointIndex, compact)
+		}
+
+		override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+			OrthoEdgeViewLayouter.layoutAll(edgeView, graphView, begin, end)
 		}
 	},
 
 	NONE("none", DragEdgePointHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-			return NoneEdgeViewLayouter.layout(edgeView, graphView, begin, end)
+
+		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+			NoneEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
+		}
+
+		override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+			NoneEdgeViewLayouter.layoutDestination(edgeView, graphView, begin, end, origPointIndex, compact)
+		}
+
+		override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+			NoneEdgeViewLayouter.layoutAll(edgeView, graphView, begin, end)
 		}
 	};
 
@@ -91,7 +118,11 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 		return alternative.invoke()
 	}
 
-	abstract fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
+	abstract fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean)
+
+	abstract fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean)
+
+	abstract fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary)
 
 	override fun toString(): String {
 		return when (this) {

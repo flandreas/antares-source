@@ -86,8 +86,13 @@ class Tunnel(
 
 	/** ---- [Actor] */
 
-	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.allOf(bitWidth, Bit.Undefined), signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
 		val signal = Word.allOf(bitWidth, Bit.Undefined)
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
 	}

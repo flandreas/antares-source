@@ -42,10 +42,6 @@ class Combiner4To8To2 : AbstractFileBasedTest() {
 	fun shouldCreateCombinedTestsOfB0() {
 		val combinedNets = b0.getOutput<DigitalSignal>().combinedNets
 
-		// EXPERIMENT BEGIN
-		//b0.getOutput<DigitalSignal>().formNet(scheduler)
-		// EXPERIMENT END
-
 		assertEquals(1, combinedNets.size)
 
 		checkCombinedNetAccess(
@@ -69,10 +65,6 @@ class Combiner4To8To2 : AbstractFileBasedTest() {
 	@Test
 	fun shouldCreateCombinedTestsOfB2() {
 		val combinedNets = b2.getOutput<DigitalSignal>().combinedNets
-
-		// EXPERIMENT BEGIN
-		//b2.getOutput<DigitalSignal>().formNet(scheduler)
-		// EXPERIMENT END
 
 		assertEquals(1, combinedNets.size)
 

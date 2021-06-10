@@ -22,7 +22,7 @@ class RgbLEDTest {
 	@Test
 	fun shouldCovertValueToColor() {
 		val led = RgbLED()
-		led.getInput<DigitalSignal>().setIncomingSignal(Word.of(BitWidth.BW_24, (16 + 4 * 256).toLong()), signalHandler)
+		led.getInput<DigitalSignal>().setIncomingSignal(Word.of(BitWidth.BW_24, (16 * 256 * 256 + 4 * 256).toLong()), signalHandler)
 
 		assertEquals(Color(16, 4, 0), led.color)
 	}

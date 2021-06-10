@@ -1,17 +1,16 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.style.Stylable
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.polyline.Polyline
-import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
-import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.polyline.Polyline
+import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -80,15 +79,6 @@ class PolylineComponent(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
-
-	/**
-	 * [PolylineComponent] and [PolylineDrawable] are both [Stylable]s. If [PolylineComponent] wouldn't define
-	 * its [PolylineDrawable] as property owner, the properties in [PolylineComponent] would be edited by the user,
-	 * although those of [PolylineDrawable] are used for drawing.
-	 */
-	override val propertyOwner: Any get() = polyline
-
-	override val beanInfoClassName: String? get() = "ch.scorpion.jabbah.edit.model.polyline.PolylineDrawableBeanInfo"
 
 	/** ---- [Snappable] interface */
 

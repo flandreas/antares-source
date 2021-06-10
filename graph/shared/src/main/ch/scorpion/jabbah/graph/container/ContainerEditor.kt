@@ -46,14 +46,14 @@ open class ContainerEditor(
 		eventBus.register(ControlViewSourceEvent::class) {
 			when (it.type) {
 				ControlViewSourceEvent.Type.CHANGE -> {
-					LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
-					val cvc = getControlViewComponent(it.source.id)
+					val cvc = getControlViewComponent(it.source.model.id)
 					if (cvc != null && it.source !== cvc.controlView) {
+						LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
 						cvc.controlView.sourcePropertiesChanged(it.source)
 					}
 				}
 				ControlViewSourceEvent.Type.REMOVE -> {
-					getControlViewComponent(it.source.id)?.let { c -> getContainerDrawing().remove(c) }
+					getControlViewComponent(it.source.model.id)?.let { c -> getContainerDrawing().remove(c) }
 				}
 				ControlViewSourceEvent.Type.ADD -> {
 					// nothing to do for ADD
@@ -72,8 +72,8 @@ open class ContainerEditor(
 		return drawing as ContainerDrawing
 	}
 
-	private fun getControlViewComponent(id: Int): ControlViewComponent? {
-		return getContainerDrawing().getControlViewComponent(DeepVerticeLink(id))
+	private fun getControlViewComponent(verticeId: Int): ControlViewComponent? {
+		return getContainerDrawing().getControlViewComponent(DeepVerticeLink(verticeId))
 	}
 
 	/** Removes the [PortViewComponent] for the [Port] with the specified name from the [ContainerDrawing].*/

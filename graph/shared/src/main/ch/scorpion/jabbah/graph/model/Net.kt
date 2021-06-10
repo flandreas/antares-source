@@ -40,10 +40,8 @@ interface Net<T: Any> : GraphElement {
      * @param signal the signal to set.
      * @param origin the [OutputPort] that sends `signal` into this [Net].
      * @param signalHandler the runtime interface to the execution subsystem.
-     * @param withDelay `true` if `signal` should be forwarded using a asynchronous scheduling step,
-     *        `false` if `signal` should be forwarded immediately to the connected [Port]s.
      */
-    fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean)
+    fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler)
 
 }
 

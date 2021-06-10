@@ -117,7 +117,7 @@ class Label(
 	var ownerRotation: Rotation = ownerRotation
 
 	/** The displayable text after conversion of negated representation. */
-	private var displayableText = FormattedText("")
+	private var displayableText = FormattedText.empty()
 
 	/** The [Rectangle2D] that contains the text entirely.*/
 	private val bounds = Rectangle2D()

@@ -22,7 +22,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
 	/** ---- [EdgeViewLayouter] */
 
-	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+	fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 		if (begin.point == end.point) {
 			return listOf(begin.point, end.point)
 		}
@@ -59,6 +59,24 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		}
 
 		return solutions[minIndex].polyline.points
+	}
+
+	override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
+		val points = mutableListOf<Point2D>()
+		points.addAll(layout(edgeView, graphView, begin, end))
+		points.addAll(edgeView.polyline.getPoints(destPointIndex + 1, edgeView.polyline.pointsCount))
+		edgeView.setLaidOutPoints(points, compact)
+	}
+
+	override fun layoutDestination(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, origPointIndex: Int, compact: Boolean) {
+		val points = mutableListOf<Point2D>()
+		points.addAll(layout(edgeView, graphView, begin, end))
+		points.addAll(0, edgeView.polyline.getPoints(0, origPointIndex))
+		edgeView.setLaidOutPoints(points, compact)
+	}
+
+	override fun layoutAll(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary) {
+		edgeView.setLaidOutPoints(layout(edgeView, graphView, begin, end), compact = true)
 	}
 
 	/** ---- [OrthoEdgeViewLayouter] */

@@ -1,23 +1,27 @@
 package ch.scorpion.jabbah.graph.view.port
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.edit.Cloneable
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.SnappableX
-import ch.scorpion.jabbah.edit.SnappableY
-import ch.scorpion.jabbah.edit.Cloneable
 
 /**
  * A [PortView] that draws a line that points to one of the four [Direction]s.
@@ -302,9 +306,8 @@ abstract class AbstractPortView<T : Any>(
 		return if (StringUtils.isBlank(port.name)) {
 			"${port.portType}"
 		} else {
-			"${port.portType} '${StringUtils.replaceNegation(port.name!!)}'"
+			"${port.portType} '${FormattedText.replaceNegation(port.name!!).textWithOverline}'"
 		}
-
 	}
 
 	protected open fun buildToolTipContent(): String {

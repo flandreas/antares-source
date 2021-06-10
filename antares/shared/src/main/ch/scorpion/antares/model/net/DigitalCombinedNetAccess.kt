@@ -32,6 +32,7 @@ class DigitalCombinedNetAccess(
 		if (replacement != null) {
 			signal = origin?.defineSubword(replacement, index)
 				?: Word.undefined((port as DigitalPort).bitWidth).defineSubword(replacement, index)
+			port.owner?.replaceUndefinedOutput(signal)
 		}
 		return signal
 	}

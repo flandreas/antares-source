@@ -31,4 +31,7 @@ object AntaresProperties {
 
 	fun transistorType(name: String = "transistorType", baseKey: String = "element.property.transistorType"): CommandPropertySwing<TransistorType> =
 		CommandPropertySwing(name, baseKey, TransistorType::class.java, componentBeanProvider)
+
+	fun ledSquare(name: String = "square", baseKey: String = "element.property.LED.square"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
 }
