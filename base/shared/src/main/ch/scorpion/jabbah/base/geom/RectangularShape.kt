@@ -14,7 +14,7 @@ interface RectangularShape : Shape {
         x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height
 
     override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean {
-        if (isEmpty || width <= 0 || height <= 0) {
+        if (isEmpty) {
             return false
         }
         return x >= this.x

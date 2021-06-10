@@ -94,6 +94,12 @@ class Rectangle2DTest {
 	}
 
 	@Test
+	fun shouldContainFlatRectangle() {
+		val rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
+		assertTrue(rect.contains(10.0, 10.0, 40.0, 0.0))
+	}
+
+	@Test
 	fun shouldAddLocation() {
 		assertTrue(Rectangle2D(0.0, 0.0, 100.0, 100.0).add(200.0, 200.0).contains(200.0, 200.0))
 	}

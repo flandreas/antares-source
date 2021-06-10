@@ -21,7 +21,9 @@ import kotlin.math.min
  */
 class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 
-	val LOG by logger(RectangularRubberBand::class)
+	companion object {
+		val LOG by logger(RectangularRubberBand::class)
+	}
 
 	/** ---- [Unzoomable] interface */
 
