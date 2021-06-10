@@ -148,7 +148,7 @@ class ClockView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlId: String? get() = "clock:${model.id}"
+	override val controlId: String get() = "clock:${model.id}"
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
