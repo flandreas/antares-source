@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.gate
 
+import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.TestCalculatingVertice
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
@@ -11,10 +12,10 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import kotlin.test.assertEquals
 
 abstract class AbstractGateCalculatorTest(
-	calculator: VerticeCalculator<CalculatingVertice>
+	calculator: VerticeCalculator<AbstractDigitalGate>
 ) {
 
-	private val gate = TestCalculatingVertice(calculator)
+	private val gate = TestCalculatingVertice(calculator, InputCount.ZERO)
 	protected val signalHandler = ForwardSignalHandler()
 
 	init {

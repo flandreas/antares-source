@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class StoreXmlWriterTest {
 
@@ -46,6 +47,19 @@ class StoreXmlWriterTest {
 		storeXmlWriter.writePoints("test", listOf(Point2D(8.25, 0.0000001)))
 
 		assertEquals("8.25,0.0", xmlWriter.attributes["test"])
+	}
+
+	@Test
+	fun shouldWriteIntegers() {
+		storeXmlWriter.writeIntegers("test", listOf(1, 7, 0))
+
+		assertEquals("1,7,0", xmlWriter.attributes["test"])
+	}
+
+	@Test
+	fun shouldNotWriteEmptyIntegers() {
+		storeXmlWriter.writeIntegers("test", listOf())
+		assertFalse(xmlWriter.attributes.containsKey("test"))
 	}
 
 	private class XmlWriterStub : XmlWriter {

@@ -88,4 +88,7 @@ interface StoreWriter : GlobalIdentityProvider {
      * which is not desired any more due to layering constraints.
      */
     fun writePoint(name: String, point: Point2D)
+
+	/** Writes a list of [Int] as an attribute with the given name.*/
+	fun writeIntegers(name: String, integers: List<Int>)
 }

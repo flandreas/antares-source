@@ -127,4 +127,10 @@ class StoreXmlWriter(
 		xmlWriter.ascend()
 		xmlWriter.ascend()
 	}
+
+	override fun writeIntegers(name: String, integers: List<Int>) {
+		if (integers.isNotEmpty()) {
+			writeString(name, integers.joinToString(","))
+		}
+	}
 }

@@ -17,15 +17,14 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Performs a logical "NOR" function with the current input signals of a [Vertice].
  */
-class NorCalculator<T : Vertice> : VerticeCalculator<T> {
+class NorCalculator : VerticeCalculator<AbstractDigitalGate> {
 
 	companion object {
-		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
-			return OrCalculator.calculate(vertice, data).invert()
-		}
+		fun calculate(vertice: AbstractDigitalGate, data: GraphActorData): Bit =
+			OrCalculator.calculate(vertice, data).invert()
 	}
 
-	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
 		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
 	}
 }
@@ -37,7 +36,7 @@ class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		val CALCULATOR = NorCalculator<NorGate>()
+		val CALCULATOR = NorCalculator()
 
 		val TRUTH_TABLE = TruthTableModel(2, 1)
 			.define(intArrayOf(0, 0), 1)
@@ -49,8 +48,7 @@ class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	override fun createOutputPort(): OutputPort<DigitalSignal> {
-		return DigitalPortImpl.createOutput(Logic.NEGATIVE)
-	}
+	override fun createOutputPort(): OutputPort<DigitalSignal> =
+		DigitalPortImpl.createOutput(Logic.NEGATIVE)
 }
 

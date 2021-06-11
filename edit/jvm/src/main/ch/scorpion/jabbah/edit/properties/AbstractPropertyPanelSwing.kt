@@ -158,7 +158,7 @@ abstract class AbstractPropertyPanelSwing(
 
 	private fun readBackCalculatedProperties() {
 		sheet.removePropertySheetChangeListener(propertyStorer)
-		sheet.readFromObject(propertyObject)
+		propertyObject?.let { loadProperties(it) }
 		sheet.addPropertySheetChangeListener(propertyStorer)
 	}
 

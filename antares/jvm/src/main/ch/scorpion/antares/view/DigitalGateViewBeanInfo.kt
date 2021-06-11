@@ -12,6 +12,9 @@ open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalCompo
     companion object {
 	    private val inputCount = InputCountPropertySwing(componentBeanProvider)
 	    private val outputPortName = CommandPropertySwing("outputPortName", "element.property.outputPort", String::class.java, componentBeanProvider)
+	    private val negateInput = Array(8) { portId ->
+		    CommandPropertySwing("negateInput${portId}", "element.property.Gate.negateInput${portId}", Boolean::class.java, componentBeanProvider)
+	    }
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -19,5 +22,9 @@ open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalCompo
 
 	    properties.add(inputCount.bind(editor, bean.id, editable = true, filter = { it.ordinal >= 2 }))
 	    properties.add(outputPortName.bind(editor, bean.id))
+
+	    for (i in 1..bean.chosenInputCount.count) {
+		    properties.add(negateInput[i].bind(editor, bean.id))
+	    }
     }
 }

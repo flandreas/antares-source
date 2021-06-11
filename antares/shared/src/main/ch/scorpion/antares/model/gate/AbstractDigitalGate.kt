@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
@@ -55,6 +57,7 @@ abstract class AbstractDigitalGate(
         if (StringUtils.isNotEmpty(getOutput<DigitalSignal>().name)) {
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
+	    writer.writeIntegers("negatedInputs", negatedInputPortIds)
     }
 
     override fun read(reader: StoreReader) {
@@ -63,6 +66,11 @@ abstract class AbstractDigitalGate(
         if (reader.hasAttribute("outputName")) {
             getOutput<DigitalSignal>().name = reader.readString("outputName")
         }
+	    if (reader.hasAttribute("negatedInputs")) {
+	    	reader.readIntegers("negatedInputs").forEach {
+			    (getInput<DigitalSignal>(it) as DigitalPort).logic = Logic.NEGATIVE
+		    }
+	    }
     }
 
     /** ---- [Actor] interface */
@@ -85,4 +93,18 @@ abstract class AbstractDigitalGate(
      * which is created by this method.
      */
     protected open fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput()
+
+	fun getNegateInput(portId: Int): Boolean = (getInput<DigitalSignal>(portId) as DigitalPort).logic == Logic.NEGATIVE
+
+	fun setNegateInput(portId: Int, value: Boolean) {
+		if (value != getNegateInput(portId)) {
+			(getInput<DigitalSignal>(portId) as DigitalPort).logic = Logic.negated(value)
+		}
+	}
+
+	private val negatedInputPortIds: List<Int> get() =
+		getInputs()
+			.map { it as DigitalPort }
+			.filter { it.logic == Logic.NEGATIVE }
+			.map { it.portId }
 }

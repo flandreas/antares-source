@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -14,17 +15,17 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Performs a logical "XOR" function with the current input signals of a [Vertice].
  */
-class XorCalculator<T : Vertice> : VerticeCalculator<T> {
+class XorCalculator : VerticeCalculator<AbstractDigitalGate> {
 
 	companion object {
-		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
+		fun calculate(vertice: AbstractDigitalGate, data: GraphActorData): Bit {
 			var trueCount = 0
 			var error = false
 			var undefined = false
 
-			for (port in vertice.getInputs()) {
+			for (port in vertice.getInputs().map { it as DigitalPort }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0)) {
+				when (port.logic.evaluate(data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0))) {
 					Bit.True -> trueCount++
 					Bit.Error -> error = true
 					Bit.Undefined -> undefined = true
@@ -42,7 +43,7 @@ class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 		}
 	}
 
-	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
 		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
 	}
 }
@@ -60,7 +61,7 @@ class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 		private val ODD_TYPE_DESC get() = Translations.getOptionalString("$ODD_BASE_RESOURCE_KEY.desc")
 
 
-		val CALCULATOR = XorCalculator<XorGate>()
+		val CALCULATOR = XorCalculator()
 
 		val TRUTH_TABLE = TruthTableModel(2, 1)
 			.define(intArrayOf(0, 0), 0)

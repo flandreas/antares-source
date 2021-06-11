@@ -183,6 +183,9 @@ class StoreXmlReader(
 		return p
 	}
 
+	override fun readIntegers(name: String): List<Int> =
+		xmlReader.getAttributeValue(name).split(",").map { it.toInt() }
+
 	/** ---- [StoreXmlReader] */
 
 	private fun <T: Storable> readStorableImpl(): T {

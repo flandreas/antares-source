@@ -82,4 +82,7 @@ interface StoreReader {
      * which is not desired any more due to layering constraints.
      */
     fun readPoint(name: String): Point2D
+
+    /** Reads a list of [Int] with the specified attribute name.*/
+    fun readIntegers(name: String): List<Int>
 }

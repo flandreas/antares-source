@@ -17,15 +17,14 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Performs a logical "XNOR" function with the current input signals of a [Vertice].
  */
-class XnorCalculator<T : Vertice> : VerticeCalculator<T> {
+class XnorCalculator : VerticeCalculator<AbstractDigitalGate> {
 
 	companion object {
-		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
-			return XorCalculator.calculate(vertice, data).not()
-		}
+		fun calculate(vertice: AbstractDigitalGate, data: GraphActorData): Bit =
+			XorCalculator.calculate(vertice, data).not()
 	}
 
-	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
 		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
 	}
 }
@@ -43,7 +42,7 @@ class XnorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CA
 		private val EVEN_TYPE_DESC get() = Translations.getOptionalString("$EVEN_BASE_RESOURCE_KEY.desc")
 
 
-		val CALCULATOR = XnorCalculator<XnorGate>()
+		val CALCULATOR = XnorCalculator()
 
 		val TRUTH_TABLE = TruthTableModel(2, 1)
 			.define(intArrayOf(0, 0), 1)
