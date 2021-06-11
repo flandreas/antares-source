@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.gate
 
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
@@ -19,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import kotlin.math.max
@@ -185,6 +187,19 @@ open class BoxGateView<T : Vertice>(
 				validate()
 			}
 		}
+
+	open fun createInputPortView(inputPort: Port<DigitalSignal>): PortView<*> =
+		DigitalPortView(
+			styleProvider = styleProvider,
+			port = inputPort,
+			direction = Direction.WEST)
+
+	open fun createOutputPortView(outputPort: Port<DigitalSignal>): PortView<*> =
+		DigitalPortView(
+			styleProvider = styleProvider,
+			port = outputPort,
+			direction = Direction.EAST,
+			portLabelPosition = PortLabelPosition.EXTERNAL)
 
 	/**
 	 * Updates the layout of this [BoxGateView] by calculating the required box size and by positioning all

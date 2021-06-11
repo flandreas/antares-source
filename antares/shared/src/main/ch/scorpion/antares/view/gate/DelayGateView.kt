@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 class DelayGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     delayGate: DelayGate = DelayGate()
-) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), delayGate) {
+) : BoxGateView<DelayGate>(styleProvider, delayGate.delay.toString(), delayGate) {
 
     init {
         customFont = Look.ANNOTATION_FONT
@@ -45,7 +45,10 @@ class DelayGateView(
 
     override fun modelExchanged(oldModel: DelayGate?) {
         super.modelExchanged(oldModel)
-        updateText()
+	    addPortView(createInputPortView(model.getInput()))
+	    addPortView(createOutputPortView(model.getOutput()))
+	    updateText()
+	    updateLayout()
     }
 
     override fun drawImpl(context: DrawContext) {

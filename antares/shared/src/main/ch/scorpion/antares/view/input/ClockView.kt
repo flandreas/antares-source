@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
+import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -14,9 +14,9 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -33,7 +33,7 @@ import kotlin.math.max
 class ClockView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Clock = Clock()
-) : AbstractDigitalGateView<Clock>(styleProvider, "", model), ControlViewSource<Clock> {
+) : BoxGateView<Clock>(styleProvider, "", model), ControlViewSource<Clock> {
 
 	companion object {
 
@@ -58,6 +58,12 @@ class ClockView(
 
 	init {
 		modelExchanged(null)
+	}
+
+	override fun modelExchanged(oldModel: Clock?) {
+		super.modelExchanged(oldModel)
+		addPortView(createOutputPortView(model.getOutput()))
+		updateLayout()
 	}
 
 	/** ---- UI Properties */

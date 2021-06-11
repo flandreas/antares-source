@@ -3,14 +3,10 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.antares.view.app.DigitalGraphViewService
 
 /**
  * Base view implementation for [AbstractDigitalGate] views.
@@ -43,20 +39,8 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 		for (inputPort in model.getInputs()) {
 			addPortView(createInputPortView(inputPort as Port<DigitalSignal>))
 		}
-		addPortView(DigitalPortView(
-			styleProvider = styleProvider,
-			port = model.getOutput(),
-			direction = Direction.EAST,
-			portLabelPosition = PortLabelPosition.EXTERNAL))
+		addPortView(createOutputPortView(model.getOutput()))
 
 		updateLayout()
 	}
-
-	/** ---- [AbstractDigitalGateView] */
-
-	open fun createInputPortView(inputPort: Port<DigitalSignal>): PortView<*> =
-		DigitalPortView(
-			styleProvider = styleProvider,
-			port = inputPort,
-			direction = Direction.WEST)
 }

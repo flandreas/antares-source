@@ -1,13 +1,14 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -22,7 +23,7 @@ class BufferCalculator<T : Vertice> : VerticeCalculator<T> {
 	}
 }
 
-class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.Buffer"
@@ -45,8 +46,16 @@ class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate(CALCU
 			}
 		}
 
-	override val minInputCount: InputCount get() = InputCount.ONE
-	override val maxInputCount: InputCount get() = InputCount.ONE
+	init {
+		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		addPort(DigitalPortImpl.createInput())
+		addPort(DigitalPortImpl.createOutput())
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)

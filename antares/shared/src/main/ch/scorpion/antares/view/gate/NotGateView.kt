@@ -13,14 +13,12 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
-/**
- * A view of a [NotGate].
- */
+/** A view of a [NotGate].*/
 class NotGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    private val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     notGate: NotGate = NotGate()
-) : AbstractLogicGateView<NotGate>(styleProvider, currentSymbolStyle, "1", notGate) {
+) : BoxGateView<NotGate>(styleProvider, "1", notGate), CustomShapeContent {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
@@ -30,6 +28,13 @@ class NotGateView(
     init {
         modelExchanged(null)
     }
+
+	override fun modelExchanged(oldModel: NotGate?) {
+		super.modelExchanged(oldModel)
+		addPortView(createInputPortView(model.getInput()))
+		addPortView(createOutputPortView(model.getOutput()))
+		updateLayout()
+	}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
@@ -47,7 +52,11 @@ class NotGateView(
         currentSymbolStyle.symbolStyle.drawNotGate(this, context, foregroundColor, backgroundColor, stroke)
     }
 
-	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+		drawMnemonics(context, foregroundColor, backgroundColor)
+	}
+
+	private fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		if (bitWidth == BitWidth.BW_1) {
 			GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
 		}

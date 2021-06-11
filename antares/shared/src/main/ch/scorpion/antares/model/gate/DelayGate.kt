@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -22,7 +23,7 @@ class DelayGateCalculator : VerticeCalculator<DelayGate> {
     }
 }
 
-class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+class DelayGate : CalculatingVertice(CALCULATOR) {
 
     companion object {
 	    private const val BASE_RESOURCE_KEY = "library.element.Delay"
@@ -33,7 +34,9 @@ class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
     }
 
     init {
-        propagationDelay = 20
+        propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+	    addPort(DigitalPortImpl.createInput())
+	    addPort(DigitalPortImpl.createOutput())
     }
 
 	override val type: String get() = TYPE
@@ -56,8 +59,10 @@ class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
 			}
 		}
 
-    override val minInputCount: InputCount get() = InputCount.ONE
-    override val maxInputCount: InputCount get() = InputCount.ONE
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+	}
 
 	override fun createActorData(inputPort: InputPort<*>?): GraphActorData =
 		GraphActorDataImpl(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true)

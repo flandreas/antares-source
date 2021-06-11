@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.arithmetic
 
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.draw.DrawContext
@@ -14,7 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 class RandomView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Random = Random()
-) : AbstractDigitalGateView<Random>(styleProvider, "", model) {
+) : BoxGateView<Random>(styleProvider, "", model) {
 
 	companion object {
 		private const val DICE_SIZE = 18
@@ -23,6 +22,13 @@ class RandomView(
 
 	init {
 		modelExchanged(null)
+	}
+
+	override fun modelExchanged(oldModel: Random?) {
+		super.modelExchanged(oldModel)
+		addPortView(createInputPortView(model.getInput()))
+		addPortView(createOutputPortView(model.getOutput()))
+		updateLayout()
 	}
 
 	/** ---- UI properties */

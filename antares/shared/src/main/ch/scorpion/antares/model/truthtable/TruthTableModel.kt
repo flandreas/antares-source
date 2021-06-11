@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.truthtable
 
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.checkArgument
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.checkState
+import ch.scorpion.jabbah.graph.model.MultiSignalSource
 
 typealias Bits = Array<Bit>
 
@@ -14,18 +16,23 @@ typealias Bits = Array<Bit>
  * A [TruthTableModel] documents all possible combinations of input [Bit]s and the corresponding output [Bit]s
  * of a digital [Vertice].
  */
-class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames: List<String>) {
+class TruthTableModel(
+	val inputColumns: List<Column>,
+	val outputColumnNames: List<String>
+) {
 
-	constructor(inputCount: Int, outputCount: Int) : this(defaultInputColumnNames(inputCount), defaultOutputColumnNames(outputCount))
+	constructor(inputCount: Int, outputCount: Int) : this(
+		defaultInputColumns(inputCount),
+		defaultOutputColumnNames(outputCount))
 
 	companion object {
-		fun defaultInputColumnNames(inputCount: Int): List<String> = (0 until inputCount).map { ('A'.toInt() + it).toChar().toString() }
+		fun defaultInputColumns(inputCount: Int): List<Column> = (0 until inputCount).map { Column(('A'.toInt() + it).toChar().toString()) }
 		fun defaultOutputColumnNames(outputCount: Int): List<String> = if (outputCount == 1) listOf("O") else (1..outputCount).map { "O$it" }
 	}
 
 	private val _rows: MutableList<Row> = mutableListOf()
 
-	val inputCount: Int get() = inputColumnNames.size
+	val inputCount: Int get() = inputColumns.size
 
 	val outputCount: Int get() = outputColumnNames.size
 
@@ -89,6 +96,13 @@ class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames:
 		return bitsToInts(outputOf(intsToBits(input)))
 	}
 
+	fun calculate(calculator: (MultiSignalSource<Bit>) -> Bit): TruthTableModel {
+		for (row in rows) {
+			row.output[0] = calculator(row)
+		}
+		return this
+	}
+
 	/** Creates and registers a [Row] with zero outputs for every possible input combination.*/
 	private fun predefineRows() {
 		(0 until BitOperation.power(inputCount.toByte())).mapTo(_rows) {
@@ -122,5 +136,10 @@ class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames:
 		return IntArray(bits.size) { bits[it].numericalValue }
 	}
 
-	data class Row(val input: Bits, val output: Bits)
+	inner class Row(val input: Bits, val output: Bits) : MultiSignalSource<Bit> {
+		override val signalCount: Int get() = input.size
+		override fun getSignal(id: Int): Bit = inputColumns[id - 1].logic.evaluate(input[id - 1])
+	}
+
+	data class Column(val name: String, val logic: Logic = Logic.POSITIVE)
 }

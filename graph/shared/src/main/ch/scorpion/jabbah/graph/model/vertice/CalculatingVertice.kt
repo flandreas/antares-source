@@ -25,7 +25,7 @@ object EmptyVerticeCalculator : VerticeCalculator<CalculatingVertice> {
 }
 
 abstract class CalculatingVertice(
-	private val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
+	protected val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	name: String? = null
 ) : AbstractVertice(name) {
 

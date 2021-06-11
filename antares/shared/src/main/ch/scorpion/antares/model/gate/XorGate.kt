@@ -1,31 +1,26 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 /**
  * Performs a logical "XOR" function with the current input signals of a [Vertice].
  */
-class XorCalculator : VerticeCalculator<AbstractDigitalGate> {
+class XorCalculator : AbstractDigitalGateCalculator() {
 
 	companion object {
-		fun calculate(vertice: AbstractDigitalGate, data: GraphActorData): Bit {
+
+		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
 			var trueCount = 0
 			var error = false
 			var undefined = false
 
-			for (port in vertice.getInputs().map { it as DigitalPort }) {
+			for (portId in (1..source.signalCount).filter { filter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (port.logic.evaluate(data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0))) {
+				when (source.getSignal(portId)) {
 					Bit.True -> trueCount++
 					Bit.Error -> error = true
 					Bit.Undefined -> undefined = true
@@ -43,9 +38,8 @@ class XorCalculator : VerticeCalculator<AbstractDigitalGate> {
 		}
 	}
 
-	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
-	}
+	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit =
+		Companion.calculate(source, filter)
 }
 
 class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
@@ -62,12 +56,6 @@ class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 
 
 		val CALCULATOR = XorCalculator()
-
-		val TRUTH_TABLE = TruthTableModel(2, 1)
-			.define(intArrayOf(0, 0), 0)
-			.define(intArrayOf(0, 1), 1)
-			.define(intArrayOf(1, 0), 1)
-			.define(intArrayOf(1, 1), 0)
 	}
 
 	override val type: String get() = if (inputCount == InputCount.TWO.count) XOR_TYPE else ODD_TYPE

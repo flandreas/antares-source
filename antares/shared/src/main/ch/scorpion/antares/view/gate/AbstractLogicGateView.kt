@@ -2,7 +2,10 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
+import ch.scorpion.antares.view.truthtable.TruthTableView
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.StyleProvider
 
@@ -47,6 +50,12 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 
 	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		drawMnemonics(context, foregroundColor, backgroundColor)
+	}
+
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+		return if (model.inputCount == 2) {
+			DrawableExplanation(TruthTableView(model.calculateTruthTable(), model), Point2D(boundingBox.centerX, boundingBox.minY))
+		} else null
 	}
 
 	protected abstract fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color)

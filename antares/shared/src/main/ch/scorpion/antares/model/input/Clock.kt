@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.input
 
-import ch.scorpion.antares.model.InputCount
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.System
@@ -9,6 +8,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A digital component that produces a periodically changing [DigitalSignal].
  */
-class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
+class Clock : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 
@@ -63,13 +63,8 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	init {
 		propagationDelay = 1_000_000_000
+		addPort(DigitalPortImpl.createOutput())
 	}
-
-	/** ---- [AbstractDigitalGate] */
-
-	override val minInputCount: InputCount get() = InputCount.ZERO
-
-	override val maxInputCount: InputCount get() = InputCount.ZERO
 
 	/** ---- [Storable] interface */
 
@@ -100,6 +95,7 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 		setOn(signalHandler, false)
 	}
 

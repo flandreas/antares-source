@@ -5,13 +5,10 @@ import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
-import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -25,9 +22,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.min
 
-/**
- * A view of an [AndGate].
- */
+/** A view of an [AndGate]. */
 class AndGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
@@ -38,9 +33,6 @@ class AndGateView(
 
 		/** The name of the [Boolean] property in [Properties] defining whether the data flow feature is enabled.*/
 		const val PROP_DATA_FLOW_ENABLED = "antares.andGate.dataFlow"
-
-		private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-			TruthTableView(AndGate.TRUTH_TABLE, null), Point2D.ZERO)
 	}
 
 	var dataPort: InputPortNumber = InputPortNumber.NONE
@@ -60,14 +52,6 @@ class AndGateView(
 
 	init {
 		modelExchanged(null)
-	}
-
-	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-		return if (model.inputCount == 2) {
-			EXPLANATION.explanation.vertice = model
-			EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
-			EXPLANATION
-		} else null
 	}
 
 	override fun modelExchanged(oldModel: AndGate?) {
@@ -111,7 +95,7 @@ class AndGateView(
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
 		if (appContext.mode.isExecute()) {
-			val controlState = model.calculate { it.portId != dataPort.id }
+			val controlState = model.calculate { it != dataPort.id }
 			if (controlState.isSet) {
 				context.g.stroke = createClosedDataPathStroke()
 			} else {

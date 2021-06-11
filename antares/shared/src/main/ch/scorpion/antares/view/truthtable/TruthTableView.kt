@@ -42,6 +42,14 @@ class TruthTableView(
 		private const val COL_WIDTH = 25
 	}
 
+	/** Listens for state changes of [vertice] and invalidates this [TruthTableView] to react to signal changes.*/
+	private val verticeListener: GraphElementListener = object : GraphElementAdapter() {
+		override fun stateChanged(e: GraphElementEvent) {
+			invalidate()
+			validate()
+		}
+	}
+
 	var vertice: Vertice? = null
 		set(value) {
 			if (field != null) {
@@ -79,14 +87,6 @@ class TruthTableView(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER
 	)
-
-	/** Listens for state changes of [vertice] and invalidates this [TruthTableView] to react to signal changes.*/
-	private val verticeListener: GraphElementListener = object : GraphElementAdapter() {
-		override fun stateChanged(e: GraphElementEvent) {
-			invalidate()
-			validate()
-		}
-	}
 
 	/** ---- [Drawable] interface */
 
@@ -131,8 +131,8 @@ class TruthTableView(
 	private fun drawColumnHeaders(context: DrawContext) {
 		context.g.color = textColor
 		var x: Int = COL_WIDTH / 2
-		model.inputColumnNames.reversed().forEach {
-			drawColumnHeader(it, x, context)
+		model.inputColumns.reversed().forEach {
+			drawColumnHeader(it.name, x, context)
 			x += COL_WIDTH
 		}
 		model.outputColumnNames.reversed().forEach {

@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.arithmetic
 
-import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
@@ -11,9 +10,8 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -24,7 +22,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Random(
 	private val valueProvider: (Long) -> Long = { kotlin.random.Random.nextLong(0, it) }
-) : AbstractDigitalGate(CALCULATOR, InputCount.ONE), DigitalSignalSource {
+) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
 	companion object {
 
@@ -52,16 +50,10 @@ class Random(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	/** [AbstractDigitalGate] */
-
-	override val minInputCount: InputCount get() = InputCount.ONE
-
-	override fun createInputPort(): InputPort<DigitalSignal> {
-		return DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, description = CLOCK_PORT_DESC)
-	}
-
-	override fun createOutputPort(): OutputPort<DigitalSignal> {
-		return DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC)
+	init {
+		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		addPort(DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, description = CLOCK_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 	}
 
 	/** [DigitalSignalSource] interface */

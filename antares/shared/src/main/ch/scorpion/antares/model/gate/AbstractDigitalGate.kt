@@ -4,28 +4,38 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigitalGate> {
+
+	abstract fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit
+
+	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice)), signalHandler)
+	}
+}
+
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractDigitalGate(
-    calculator: VerticeCalculator<*>,
+    calculator: AbstractDigitalGateCalculator,
     inputCount: InputCount
-) : CalculatingVertice(calculator) {
+) : CalculatingVertice(calculator), MultiSignalSource<Bit> {
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)
@@ -73,6 +83,15 @@ abstract class AbstractDigitalGate(
 	    }
     }
 
+	/** ---- [MultiSignalSource] */
+
+	override val signalCount: Int get() = chosenInputCount.count
+
+	override fun getSignal(id: Int): Bit {
+		val inputPort = getInput<DigitalSignal>(id) as DigitalPort
+		return inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0))
+	}
+
     /** ---- [Actor] interface */
 
     override fun executionStart(signalHandler: SignalHandler) {
@@ -88,6 +107,8 @@ abstract class AbstractDigitalGate(
 
 	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput()
 
+	/** ---- [AbstractDigitalGate] */
+
     /**
      * Called by setter [chosenInputCount] which establishes the required [InputPort] and a single [OutputPort],
      * which is created by this method.
@@ -101,6 +122,16 @@ abstract class AbstractDigitalGate(
 			(getInput<DigitalSignal>(portId) as DigitalPort).logic = Logic.negated(value)
 		}
 	}
+
+	fun calculateTruthTable(): TruthTableModel {
+		val inputColumns = mutableListOf<TruthTableModel.Column>()
+		for (portId in 1..chosenInputCount.count) {
+			val port = getInput<DigitalSignal>(portId) as DigitalPort
+			inputColumns.add(TruthTableModel.Column("I$portId", port.logic))
+		}
+		return TruthTableModel(inputColumns, listOf("O")).calculate { (calculator as AbstractDigitalGateCalculator).calculate(it) }
+	}
+
 
 	private val negatedInputPortIds: List<Int> get() =
 		getInputs()

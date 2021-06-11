@@ -345,7 +345,7 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y2, s(3.25) - 1, y2)
 	}
 
-	private fun drawInverter(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color) {
+	private fun drawInverter(gateView: BoxGateView<*>, context: DrawContext, foreground: Color, background: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal = getInputSignal(gateView, 1)
@@ -379,7 +379,7 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y, s(3.25) - 1, y)
 	}
 
-	private fun drawBufferImpl(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color) {
+	private fun drawBufferImpl(gateView: BoxGateView<*>, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal = getInputSignal(gateView, 1)
