@@ -93,7 +93,7 @@ class DigitalGraphViewService(
 	private fun decreaseInputCount(gateView: AbstractDigitalGateView<AbstractDigitalGate>, newInputCount: InputCount, drawingView: DrawingView<GraphView>) {
 		gateView.model.apply {
 			val ports = getInputs().sortedBy { it.portId }.toMutableList()
-			for (i in chosenInputCount.count - 1 .. newInputCount.count) {
+			for (i in chosenInputCount.count - 1 downTo newInputCount.count) {
 				val port = ports.removeLast()
 				val portView = gateView.getPortView(port)!!
 				unconnectDeletedPortView(portView, drawingView)

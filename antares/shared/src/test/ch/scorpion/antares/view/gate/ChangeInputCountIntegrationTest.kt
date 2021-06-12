@@ -86,4 +86,14 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 		assertSame(andGateView.model.getInput(2), evIn2.destination!!.port)
 		assertNull(evIn3.destination?.port)
 	}
+
+	@Test
+	fun shouldDecreaseInputCountBy2() {
+		val model = AndGate(InputCount.FOUR)
+		val andGateView2 = AndGateView(andGate = model)
+
+		service.changeInputCount(andGateView2 as AbstractDigitalGateView<AbstractDigitalGate>, InputCount.TWO, drawingView)
+
+		assertEquals(2, andGateView2.model.inputCount)
+	}
 }
