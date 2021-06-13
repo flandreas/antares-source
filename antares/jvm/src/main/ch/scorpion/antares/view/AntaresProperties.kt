@@ -34,4 +34,7 @@ object AntaresProperties {
 
 	fun ledSquare(name: String = "square", baseKey: String = "element.property.LED.square"): CommandPropertySwing<Boolean> =
 		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
+
+	fun joystickDeflection(name: String = "deflection", baseKey: String = "element.property.joystickDeflection"): CommandPropertySwing<JoystickDeflection> =
+		CommandPropertySwing(name, baseKey, JoystickDeflection::class.java, componentBeanProvider)
 }

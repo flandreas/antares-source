@@ -60,6 +60,7 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 * image:user-manual/base-library/dip-switch.svg[DIP Switch] link:{{site.basedir}}/user-manual/english/base-library/dip-switch[DIP Switch]
 * image:user-manual/base-library/clock.svg[Clock] link:{{site.basedir}}/user-manual/english/base-library/clock[Clock]
 * image:user-manual/base-library/keyboard.svg[Keyboard] link:{{site.basedir}}/user-manual/english/base-library/keyboard[Keyboard]
+* image:user-manual/base-library/joystick.svg[Joystick] link:{{site.basedir}}/user-manual/english/base-library/joystick[Joystick]
 
 === Output
 

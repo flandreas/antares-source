@@ -93,6 +93,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val CLOCK = "Clock"
 	private const val KEYBOARD = "Keyboard"
 	private const val TERMINAL = "Terminal"
+	private const val JOYSTICK = "Joystick"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -201,6 +202,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(TerminalView.PROP_ICON_PATH, "/img/terminal.png")
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
+		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(TransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -255,6 +257,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("transistorView", TransistorView::class)
 		typeMap.register("groundView", GroundView::class)
 		typeMap.register("powerView", PowerView::class)
+		typeMap.register("joystickView", JoystickView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 	}
@@ -297,6 +300,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -362,6 +366,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
+		repository.register(JOYSTICK, "library.element.Joystick", "/img/joystick.png", JoystickView::class)
 
 		repository.register(LED, "library.element.LED", "/img/led.png", LEDView::class)
 		repository.register(RGB_LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
@@ -415,6 +420,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(DIP_SWITCH), input)
 		addLibraryItem(library, BaseLibraryElement(CLOCK), input)
 		addLibraryItem(library, BaseLibraryElement(KEYBOARD), input)
+		addLibraryItem(library, BaseLibraryElement(JOYSTICK), input)
 		addLibraryItem(library, input, library)
 
 		val output = LibraryFolder(Translations.getString("library.folder.output"))

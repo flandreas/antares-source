@@ -78,5 +78,6 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("transistor", Transistor::class)
 		typeMap.register("ground", Ground::class)
 		typeMap.register("power", Power::class)
+		typeMap.register("joystick", Joystick::class)
 	}
 }

@@ -17,6 +17,8 @@ open class DigitalComponentBeanInfo<T : DigitalComponentView<*>> : VerticeViewBe
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(orientation.bind(editor, bean.id))
+		if (bean.useRotation) {
+			properties.add(orientation.bind(editor, bean.id))
+		}
 	}
 }
