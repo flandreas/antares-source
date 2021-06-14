@@ -7,10 +7,9 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
@@ -19,6 +18,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 
 class GateMnemonicsEvent
 
@@ -387,7 +387,7 @@ object GateMnemonic {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val control = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val control = Bit.of(gateView.model.getEnablePort().logic.evaluate(gateView.model.getEnablePort().getIncomingSignal()!!.bitAt(0).isSet))
 		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
