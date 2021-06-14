@@ -5,10 +5,10 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalSource
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -98,16 +98,17 @@ class Probe(
 
 	/** ---- [DigitalSignalSource] interface */
 
-	@Suppress("UNUSED_PARAMETER")
-	override var signal: DigitalSignal?
-		get() = getInput<DigitalSignal>().getIncomingSignal()
-		set(value) {
-			throw UnsupportedOperationException()
-		}
+	override var signal: DigitalSignal? = Word.undefined(bitWidth)
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
+		getInput<DigitalSignal>().setIncomingSignal(Word.undefined(bitWidth), signalHandler)
 		stateChanged(signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, VerticeActorData(null))
 	}
 
 	/** ---- [Storable] interface */
@@ -133,6 +134,7 @@ class Probe(
 	/** ---- [Probe] */
 
 	private fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
+		this.signal = signal
 		stateChanged()
 		if (outputCount > 0) {
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
