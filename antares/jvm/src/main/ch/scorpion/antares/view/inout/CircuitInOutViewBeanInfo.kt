@@ -34,7 +34,9 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    properties.add(orientation.bind(editor, bean.id))
 	    properties.add(color.bind(editor, bean.id))
 	    properties.add(signalRepresentation.bind(editor, bean.id))
-	    properties.add(toggle.bind(editor, bean.id))
+	    if (bean.model.portType.isInput) {
+		    properties.add(toggle.bind(editor, bean.id))
+	    }
 	    properties.add(description.bind(editor, bean.id))
     }
 }
