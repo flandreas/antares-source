@@ -32,7 +32,8 @@ open class DigitalPortImpl(
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
 	description: TranslatableText = TranslatableText(),
 	canBeUndefined: Boolean = portType == PortType.INOUT,
-	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null
+	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null,
+	defaultBit: Bit? = null
 ) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
 	companion object {
@@ -103,14 +104,14 @@ open class DigitalPortImpl(
 	 * Explicitly set default [Bit]. If not set, [defaultDigitalSignal] calculates the default signal based
 	 * on the [PortType].
 	 */
-	private var defaultBit: Bit? = null
+	private var defaultBit: Bit? = defaultBit
 
 	override fun toString(): String {
 		return super.toString() + " BitWidth=$bitWidth"
 	}
 
 	init {
-		weakBehaviour?.let { defaultBit = Bit.Undefined }
+		weakBehaviour?.let { this.defaultBit = Bit.Undefined }
 	}
 
 	/** ---- [DigitalPort] interface */

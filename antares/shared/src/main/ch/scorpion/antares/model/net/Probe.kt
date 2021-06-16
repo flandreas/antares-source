@@ -2,18 +2,17 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalSource
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.LogEvent
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -92,13 +91,18 @@ class Probe(
 		}
 
 	init {
-		addPort(DigitalPortImpl.createInput())
+		addPort(DigitalPortImpl(PortType.INPUT, defaultBit = Bit.Undefined))
 		this.hasOutput = hasOutput
 	}
 
 	/** ---- [DigitalSignalSource] interface */
 
-	override var signal: DigitalSignal? = Word.undefined(bitWidth)
+	@Suppress("UNUSED_PARAMETER")
+	override var signal: DigitalSignal?
+		get() = getInput<DigitalSignal>().getIncomingSignal()
+		set(value) {
+			throw UnsupportedOperationException()
+		}
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
@@ -134,7 +138,6 @@ class Probe(
 	/** ---- [Probe] */
 
 	private fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
-		this.signal = signal
 		stateChanged()
 		if (outputCount > 0) {
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
