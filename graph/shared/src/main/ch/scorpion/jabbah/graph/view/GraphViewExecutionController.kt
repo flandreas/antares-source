@@ -32,7 +32,7 @@ import ch.scorpion.jabbah.io.StorableCreator
 class GraphViewExecutionController(
 	private val graphViewUI: GraphViewUI,
 	private val isRoot: Boolean,
-	private val rootGraphProvider: () -> Graph,
+	private val rootGraphProvider: () -> Graph?,
 	private val graphViewsProvider: () -> Collection<GraphView>,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
@@ -87,17 +87,18 @@ class GraphViewExecutionController(
 	}
 
 	private fun handle(event: SchedulerActivationStateEvent) {
-		val rootGraph = rootGraphProvider.invoke()
-		if (event.scheduler.isActive) {
-			if (isRoot) {
-				rootGraph.bind(repository, storableCreator)
+		rootGraphProvider.invoke()?.apply {
+			if (event.scheduler.isActive) {
+				if (isRoot) {
+					bind(repository, storableCreator)
+				}
+				graphViewsProvider.invoke().forEach { it.bind() }
+				formNet(event.scheduler)
+				executionStart1(event.scheduler)
+				executionStart2(event.scheduler)
+			} else {
+				executionStopped(event.scheduler)
 			}
-			graphViewsProvider.invoke().forEach { it.bind() }
-			rootGraph.formNet(event.scheduler)
-			rootGraph.executionStart1(event.scheduler)
-			rootGraph.executionStart2(event.scheduler)
-		} else {
-			rootGraph.executionStopped(event.scheduler)
 		}
 	}
 

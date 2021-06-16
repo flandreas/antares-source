@@ -83,7 +83,7 @@ class GraphNavigationViewController(
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
-	private val rootEntry: NavigationStackEntry<GraphView> get() = navigationStackViewController.navigationStack.rootEntry!!
+	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
 
 	private val globalMessageDisplayer: ComponentMessageDisplayer<Drawing<Component>>? =
 		if (isRoot) ComponentMessageDisplayer(drawingView as DrawingView<Drawing<Component>>, true, eventBus, animator) else null
@@ -93,7 +93,7 @@ class GraphNavigationViewController(
 	private val graphViewExecutionController = GraphViewExecutionController(
 		this,
 		isRoot,
-		rootGraphProvider = { rootEntry.content.drawing.graph!! },
+		rootGraphProvider = { rootEntry?.content?.drawing?.graph },
 		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
 		scheduler,
 		eventBus = eventBus

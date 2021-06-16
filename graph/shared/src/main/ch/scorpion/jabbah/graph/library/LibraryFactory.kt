@@ -26,3 +26,12 @@ class UnimplementedLibraryFactory : LibraryFactory {
 		throw UnsupportedOperationException("not implemented")
 	}
 }
+
+class EmptyLibraryFactory : LibraryFactory {
+
+	override fun createEmptyLibrary(properties: LibraryProperties): Library =
+		LibraryImpl(properties, libraryService = LibraryModule.libraryService)
+
+	override fun createBaseLibrary(properties: LibraryProperties): Library =
+		createEmptyLibrary(properties)
+}

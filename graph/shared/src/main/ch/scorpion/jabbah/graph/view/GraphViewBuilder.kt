@@ -25,8 +25,11 @@ import ch.scorpion.jabbah.io.Storable
  * @param T the type of signal
  */
 open class GraphViewBuilder<T : Any>(
-	name: String = Translations.getString("graph.name.unknown")
+	graphStorable: GraphStorable
 ) : UndoableDataHolder {
+
+	constructor(name: String = Translations.getString("graph.name.unknown")):
+		this(GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name))))
 
 	companion object {
 		private val LOG by logger(GraphViewBuilder::class)
@@ -34,7 +37,7 @@ open class GraphViewBuilder<T : Any>(
 
 	/** ---- [UndoableDataHolder] */
 
-	var graphStorable: GraphStorable = GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
+	var graphStorable: GraphStorable = graphStorable
 		private set
 
 	override fun getUndoableState(): Storable? {
