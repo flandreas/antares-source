@@ -1,8 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.library
 
-import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
@@ -50,6 +49,6 @@ class OpenContainerLibraryElementAction(
 	}
 
 	private fun openAsSavable(element: ContainerLibraryElement) {
-		graphDataViewController.openAsSavable(element, Translations.getString("graph.action.load.error.general.desc"))
+		graphDataViewController.openAsSavable(element, name)
 	}
 }
