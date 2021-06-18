@@ -25,32 +25,24 @@ class StoreXmlWriter(
 
 	/** ---- [GlobalIdentityProvider] */
 
-	override fun register(storable: Storable) {
-		identityProvider.register(storable)
-	}
-
 	override fun provideIdentity(storable: Storable): Int =
 		identityProvider.provideIdentity(storable)
+
+	override fun getIdentity(storable: Storable): Int =
+		identityProvider.getIdentity(storable)
+
+	override fun getStorableWithIdentity(globalId: Int): Storable? =
+		identityProvider.getStorableWithIdentity(globalId)
 
 	/** ---- [StoreWriter] */
 
 	override fun writeStorable(storable: Storable) {
 		val type = typeMap.getTypeName(System.getClass(storable))
 
-		if (xmlWriter.isRoot()) {
-			StorableHierarchy.collect(storable) { identityProvider.register(it) }
-		}
 		xmlWriter.addElementAndDescend(type)
 
-		val globalId = provideIdentity(storable)
-		if (globalId != -1) {
-			if (storable.storableId <= 0) {
-				// Setting storableId not only when reading Storables, but already when writing them,
-				// allows to duplicate Storables using GlobalIdentityReflector without the need to
-				// first write and read them back.
-				storable.storableId = globalId
-			}
-			xmlWriter.setAttributeValue("_id", globalId.toString())
+		if (storable.isReferencable) {
+			xmlWriter.setAttributeValue("_id", provideIdentity(storable).toString())
 		}
 
 		storable.write(this)

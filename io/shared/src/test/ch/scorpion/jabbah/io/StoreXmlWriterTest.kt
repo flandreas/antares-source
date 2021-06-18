@@ -32,16 +32,6 @@ class StoreXmlWriterTest {
 	}
 
 	@Test
-	fun shouldSetStorableId() {
-		val storable = TestStorable()
-		storable.storableId = -42
-
-		storeXmlWriter.writeStorable(storable)
-
-		assertEquals(0, storable.storableId)
-	}
-
-	@Test
 	fun shouldRoundPoints() {
 		storeXmlWriter.writePoints("test", listOf(Point2D(8.25, 0.0000001)))
 

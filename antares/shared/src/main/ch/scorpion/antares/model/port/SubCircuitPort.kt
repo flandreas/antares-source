@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -36,8 +35,6 @@ class SubCircuitPort(
 	}
 
 	/** ---- [Storable] interface */
-
-	override var storableId: Int = Storable.UNDEFINED_ID
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
@@ -82,6 +79,4 @@ class SubCircuitPort(
 			outputAnnotation = OutputAnnotation.withName(reader.readString("outputAnnotation"))
 		}
 	}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 }

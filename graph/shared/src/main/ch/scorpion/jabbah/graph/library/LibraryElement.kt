@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -26,17 +25,10 @@ abstract class LibraryElement(
 
     /** ---- [Storable] */
 
-    override var storableId: Int = Storable.UNDEFINED_ID
-
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        // empty
-    }
-
-    override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
     /** ---- [LibraryElement] */
 
     /** Creates a new instance of the [GraphElementView] of this [LibraryElement].*/
     abstract fun <T: GraphElement> getNewInstance(): GraphElementView<T>
-
 }

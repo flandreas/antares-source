@@ -1,19 +1,17 @@
 package ch.scorpion.jabbah.graph.model.net
 
-import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.EmptyIterator
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.execution.ExecutionError
-import kotlin.NoSuchElementException
 
 /**
  * Standard implementation of the [Net] interface.
@@ -159,7 +157,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				// If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
 				// and we can't connect this Net that Vertice
 				if (vertice.designError == null) {
-					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)} with storableID ${vertice.storableId}")
+					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)}")
 					_designError = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
 				}
 			}
@@ -177,8 +175,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	/** Used for storing references to the [Port]s of a [Net].*/
 	class PortRef<T : Any>(val port: Port<T>? = null) : Storable {
 
-		override var storableId: Int = -1
-
 		var verticeId: Int = -1
 		var portId: Int = -1
 
@@ -195,7 +191,5 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 			// empty
 		}
-
-		override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 	}
 }

@@ -139,10 +139,6 @@ open class GraphImpl(
 		return _elements.firstOrNull { it.id == id }
 	}
 
-	override fun <T: GraphElement> withStorableId(storableId: Int): T? {
-		return _elements.firstOrNull { it.storableId == storableId } as T?
-	}
-
 	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		_elements.forEach { it.bind(repository, storableCreator) }
 	}
@@ -186,8 +182,6 @@ open class GraphImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}
@@ -195,7 +189,7 @@ open class GraphImpl(
 	override fun write(writer: StoreWriter) {
 		script?.let { writer.writeString("script", it) }
 		propagationDelay?.let { writer.writeLong("propDelay", it) }
-		writer.writeStorables("elements", getStorableChildren())
+		writer.writeStorables("elements", _elements.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
@@ -210,10 +204,6 @@ open class GraphImpl(
 			_elements.add(it)
 			handleGraphElementAdded(it)
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return _elements.iterator()
 	}
 
 	/** ---- [GraphImpl] */

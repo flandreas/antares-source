@@ -16,8 +16,6 @@ class VerticeViewStorable<T: Vertice>(verticeView: VerticeView<T>? = null) : Sto
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
@@ -28,9 +26,5 @@ class VerticeViewStorable<T: Vertice>(verticeView: VerticeView<T>? = null) : Sto
 	override fun read(reader: StoreReader) {
 		verticeView = reader.readStorable("view")
 		reader.readStorable<Vertice>("model")
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return listOf(verticeView!!.model).iterator()
 	}
 }

@@ -23,6 +23,14 @@ interface ReferenceResolver {
      */
     fun <T: Storable> getStorable(globalId: Int): T?
 
+	/**
+	 * Returns the global ID of the specified [Storable]. Only available if the [Storable] has already been
+	 * deserialized and added using [addStorable], or if provided by implementations of this interface that have
+	 * otherwise access to such [Storable]s.
+	 * @throws IllegalArgumentException if an ID for [storable] is not available
+	 */
+	fun getGlobalId(storable: Storable): Int
+
     /**
      * Registers a request of a [Storable] to call him with [Storable.resolve]
      * after all [Storable]s have been instantiated.

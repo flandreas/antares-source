@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.*
-import java.util.*
 import kotlin.test.*
 
 class TranslatableTextTest {
@@ -164,13 +163,7 @@ class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {
 	var attribute: TranslatableText = text ?: TranslatableText()
 		private set
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return Collections.emptyIterator()
-	}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
 		writer.writeStorables("name", attribute.allTranslations())

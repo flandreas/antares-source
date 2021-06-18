@@ -99,12 +99,6 @@ class SubGraphVerticeImpl(
 		}
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		val list = mutableListOf<Storable>()
-		list.addAll(getSubGraphPorts())
-		return list.iterator()
-	}
-
 	/** ---- [SubGraphVerticeImpl] */
 
 	private fun getSubGraphPorts(): ImmutableList<SubGraphPort<Any>> {

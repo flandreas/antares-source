@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.base.logger
  * This implementation of [ReferenceResolver] does a topological sort of the references before resolving them,
  * so that leaf references are resolved before references which reference other references.
  */
-class ReferenceResolverImpl : ReferenceResolver {
+class ReferenceResolverImpl(
+	private val identityProvider: GlobalIdentityProvider? = null
+) : ReferenceResolver {
 
 	companion object {
 		private val LOG by logger(ReferenceResolverImpl::class)
@@ -31,7 +33,6 @@ class ReferenceResolverImpl : ReferenceResolver {
 
 	override fun addStorable(globalId: Int, storable: Storable) {
 		LOG.trace("add storable $globalId")
-		storable.storableId = globalId
 		map[globalId] = storable
 	}
 
@@ -39,7 +40,13 @@ class ReferenceResolverImpl : ReferenceResolver {
 		LOG.trace("getStorable for id $globalId")
 
 		@Suppress("UNCHECKED_CAST")
-		return map[globalId] as T?
+		return map[globalId] as T? ?: identityProvider?.getStorableWithIdentity(globalId) as T?
+	}
+
+	override fun getGlobalId(storable: Storable): Int {
+		return map.entries.firstOrNull { it.value === storable }?.key
+			?: identityProvider?.getIdentity(storable)
+			?: throw IllegalArgumentException("storable ${storable::class.simpleName} not available")
 	}
 
 	override fun requestResolution(requester: Storable, reference: Reference) {
@@ -70,7 +77,7 @@ class ReferenceResolverImpl : ReferenceResolver {
 					try {
 						storable.resolve(reference, referenceResolver)
 					} catch (e: Throwable) {
-						LOG.error("error while resolving class '${System.getClassName(storable)}' with storableID '${storable.storableId}': ${e.message}")
+						LOG.error("error while resolving class '${System.getClassName(storable)}': ${e.message}")
 						throw e
 					}
 				}

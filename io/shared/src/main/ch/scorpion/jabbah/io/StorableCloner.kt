@@ -22,4 +22,9 @@ expect object StorableCloner {
 		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): T
+
+	fun <T: Storable> newClone(
+		storable: T,
+		identityProvider: GlobalIdentityProvider = GlobalIdentityCreator()
+	): T
 }

@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
@@ -256,10 +255,11 @@ class SubGraphVerticeViewImpl(
 
 		if (reader.hasElement("container")) {
 			customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing
+			val globalId = reader.getGlobalId(customizedContainerDrawing!!)
 			reader.requestResolution(this, Reference(
 				name = "container",
-				referenceId = customizedContainerDrawing!!.storableId,
-				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID), customizedContainerDrawing!!.storableId)
+				referenceId = globalId,
+				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID), globalId)
 			))
 		}
 	}
@@ -297,13 +297,6 @@ class SubGraphVerticeViewImpl(
 			repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		if (customizedContainerDrawing == null) {
-			return super.getStorableChildren()
-		}
-		return ConcatIterator(super.getStorableChildren(), listOf(customizedContainerDrawing!!).iterator())
 	}
 
 	/** ---- [Component] */

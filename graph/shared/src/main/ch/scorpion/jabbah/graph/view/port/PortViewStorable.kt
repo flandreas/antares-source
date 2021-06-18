@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.port
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.io.*
 
@@ -12,8 +11,6 @@ import ch.scorpion.jabbah.io.*
 class PortViewStorable<T: Any>(portView: PortView<T>? = null) : Storable {
 
 	var portView: PortView<T>? = portView
-
-	override var storableId: Int = Storable.UNDEFINED_ID
 
 	/** ---- [Storable] interface */
 
@@ -32,12 +29,5 @@ class PortViewStorable<T: Any>(portView: PortView<T>? = null) : Storable {
 		if (reader.hasElement("model")) {
 			reader.readStorable<Storable>("model")
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		if (portView!!.port is Storable) {
-			return listOf(portView!!.port as Storable).iterator()
-		}
-		return EmptyIterator()
 	}
 }

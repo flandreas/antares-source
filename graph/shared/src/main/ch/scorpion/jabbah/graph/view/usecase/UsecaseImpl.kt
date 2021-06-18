@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
@@ -44,11 +43,7 @@ class UsecaseImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = -1
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)

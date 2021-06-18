@@ -84,9 +84,6 @@ interface Graph : Namable, Describable, Storable {
     /** Returns the [GraphElement] with the specified ID.*/
     fun withId(id: Int): GraphElement?
 
-    /** Returns the [GraphElement] with the specified [Storable] ID.*/
-    fun <T: GraphElement> withStorableId(storableId: Int): T?
-
 	/** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
 	fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
 

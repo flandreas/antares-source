@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.*
 
@@ -29,7 +28,7 @@ class Translation(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = -1
+	override val isReferencable: Boolean get() = false
 
 	override fun write(writer: StoreWriter) {
 		writer.writeString("lang", language.code)
@@ -42,8 +41,6 @@ class Translation(
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
 	/** ---- [Any] */
 

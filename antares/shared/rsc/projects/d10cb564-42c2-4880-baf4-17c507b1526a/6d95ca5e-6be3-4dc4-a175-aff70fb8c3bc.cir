@@ -398,7 +398,6 @@
       <view>
         <graphView _id='80'>
           <netViews>
-            <netView _id='261' modelId='-1' style='line'/>
             <netView _id='262' modelId='22' style='line'/>
             <netView _id='263' modelId='66' style='block'/>
             <netView _id='264' modelId='46' style='line'/>

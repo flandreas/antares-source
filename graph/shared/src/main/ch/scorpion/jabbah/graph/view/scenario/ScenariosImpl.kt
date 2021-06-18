@@ -98,11 +98,7 @@ class ScenariosImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		// empty
-	}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
 		writer.writeStorables("scenarios", scenarios.iterator())
@@ -115,10 +111,6 @@ class ScenariosImpl(
 	    } finally {
 	    	isLoading = false
 	    }
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return scenarios.iterator()
 	}
 
 	/** ---- [ScenariosImpl] */

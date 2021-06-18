@@ -104,10 +104,6 @@ class ControlViewComponent(
 		controlView.isShowPortViews = false
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		return listOf(controlView).iterator()
-	}
-
 	/** ---- [Drawable] */
 
 	override val boundingBox: RectangularShape get() = controlView.boundingBox

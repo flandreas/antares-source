@@ -5,21 +5,11 @@ package ch.scorpion.jabbah.io
  */
 interface Storable {
 
-	companion object {
-		const val UNDEFINED_ID = -1
-	}
-
-    /**
-     * Holds the global identification of this [Storable] after it has been read from persistent store.
-     * This is used to read composite [Storable]s that reference persistent object which have been read earlier,
-     * like when cloning view objects from the same model object.
-     *
-     * The value of this attribute is typically set by a [ReferenceResolver] in its collection phase, before
-     * the first [Storable] is written. [Storable]s that are not returned by any [getStorableChildren] method
-     * are therefore not affected by a [ReferenceResolver] collection phase and should set this attribute
-     * to [UNDEFINED_ID]. Valid values start at 0.
-     */
-    var storableId: Int
+	/**
+	 * Determines whether a global ID is generated and written when this [Storable] gets stored.
+	 * [Storable]s than can persistently be referenced by other [Storable] must return `true`.
+	 */
+	val isReferencable: Boolean get() = true
 
     /**
      * Asks this [Storable] to resolve a [Reference] to another [Storable] that it has requested to be
@@ -49,13 +39,4 @@ interface Storable {
 
     /** Reads the properties of this [Storable] from persistent store using the specified [StoreReader].*/
     fun read(reader: StoreReader)
-
-    /**
-     * Returns the children of this [Storable]s that are also persistent. Used for traversing the entire
-     * [Storable] tree in order to generate identifications.
-     *
-     * Implementing classes can use the following pattern for combining superclass and local [Storable]s:
-     * `Iterators.concat(super.getStorableChildren(), listOf(localStorable).iterator())`
-     */
-    fun getStorableChildren(): Iterator<Storable>
 }

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersiste
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -18,8 +19,8 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import java.nio.file.Files
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertSame
 
 class GrandUiIntegrationTest {
 
@@ -60,16 +61,22 @@ class GrandUiIntegrationTest {
 		application.start()
 	}
 
-	@Ignore
 	@Test
 	fun shouldUseVirginSubGraphVerticeView() {
 		createAndOpenNewProject()
-		editGraphView()
-		val componentUuid = save()
-		createAndOpenNewCircuit()
-		val subGraphVV = useComponentInNewCircuit(componentUuid)
+		val graphView = editGraphView()
+		val v1Id = graphView.getVerticeView("vv1")!!.model.id
+		val metaGraphUuid = save()
+		createAndOpenNewMetaGraph()
+		val subGraphVV = useContainerLibraryElement(metaGraphUuid)
 		application.startSimulation()
-		openSubGraphVerticeView(subGraphVV)
+		diveIntoSubGraphVerticeView(subGraphVV)
+
+		val displayedGraphView = application.editor.view.drawing as GraphView
+		assertSame(
+			subGraphVV.model.getGraphIfPresent()!!.withId(v1Id),
+			displayedGraphView.getVerticeView("vv1")!!.model
+		)
 	}
 
 	private fun createAndOpenNewProject() {
@@ -78,7 +85,7 @@ class GrandUiIntegrationTest {
 		service.open(project.uuid)
 	}
 
-	private fun editGraphView() {
+	private fun editGraphView(): GraphView {
 		val builder = GraphViewBuilder<Boolean>((application.controller.data!!.content as MetaGraph).graph)
 		val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 0, 0))
 		val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 100, 0))
@@ -87,6 +94,7 @@ class GrandUiIntegrationTest {
 		val ev1 = builder.connect(vv1, vv2)
 		val split1 = builder.split(ev1, 0, Point2D(50, 0), vv3)
 		builder.split(split1.newEdgeView, 0, Point2D(50, 100), vv4)
+		return builder.build()
 	}
 
 	private fun save(): UUID {
@@ -94,14 +102,14 @@ class GrandUiIntegrationTest {
 		return (application.controller.data!!.content as MetaGraph).uuid
 	}
 
-	private fun createAndOpenNewCircuit() {
+	private fun createAndOpenNewMetaGraph() {
 		val project = ProjectModule.projectHolder.project!!
 		val metaGraph = MetaGraph.withName("Usage")
 		val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
 		BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
 	}
 
-	private fun useComponentInNewCircuit(componentUuid: UUID): SubGraphVerticeView<*> {
+	private fun useContainerLibraryElement(componentUuid: UUID): SubGraphVerticeView<*> {
 		val service = GraphViewModule.graphViewAppService
 		val project = ProjectModule.projectHolder.project!!
 		val element = project.getContainerLibraryElement(componentUuid)!!
@@ -110,7 +118,7 @@ class GrandUiIntegrationTest {
 		return service.addGraphElementViewFromLibrary(element, Point2D.ZERO, editor) as SubGraphVerticeView<*>
 	}
 
-	private fun openSubGraphVerticeView(vv: SubGraphVerticeView<*>) {
+	private fun diveIntoSubGraphVerticeView(vv: SubGraphVerticeView<*>) {
 		BaseModule.eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
 	}
 }

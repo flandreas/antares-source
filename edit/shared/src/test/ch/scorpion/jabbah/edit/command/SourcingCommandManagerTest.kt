@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.EditTestRule
@@ -479,8 +478,6 @@ class StorableString(value: String = "") : Storable {
 		value = value.dropLast(charCount)
 	}
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
@@ -489,9 +486,5 @@ class StorableString(value: String = "") : Storable {
 
 	override fun read(reader: StoreReader) {
 		value = reader.readString("value")
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return EmptyIterator()
 	}
 }

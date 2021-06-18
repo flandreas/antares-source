@@ -18,7 +18,7 @@ class ReferenceResolverImplTest {
 	}
 
     @Test
-    fun shouldSortResolutionRequestsTopologicly() {
+    fun shouldSortResolutionRequestsTopologically() {
         val rr = ReferenceResolverImpl()
 
         val s1 = testStorable()
@@ -48,7 +48,7 @@ class ReferenceResolverImplTest {
     }
 
     @Test
-    fun shouldSortResolutionRequestsTopologiclyWithDanglingStorables() {
+    fun shouldSortResolutionRequestsTopologicallyWithDanglingStorables() {
         val rr = ReferenceResolverImpl()
 
         val s1 = testStorable()
