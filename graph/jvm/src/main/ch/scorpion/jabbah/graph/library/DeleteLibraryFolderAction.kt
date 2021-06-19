@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
@@ -24,6 +25,10 @@ class DeleteLibraryFolderAction(
 	eventBus
 ) {
 
+	companion object {
+		private val LOG by logger(DeleteLibraryElementAction::class)
+	}
+
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
@@ -39,6 +44,7 @@ class DeleteLibraryFolderAction(
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
+			LOG.debug("Delete folder '${libraryItem.name.getOptionalTranslation()}'")
 			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
 		}
 	}
