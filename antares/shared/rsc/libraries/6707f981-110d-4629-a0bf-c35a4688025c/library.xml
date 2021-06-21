@@ -38,6 +38,7 @@
             <baseLibraryElement _id='18' id='Transistor'/>
             <baseLibraryElement _id='19' id='Ground'/>
             <baseLibraryElement _id='20' id='Power'/>
+            <baseLibraryElement _id='105' id='RealSwitch'/>
             <containerLibraryElement _id='22' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577'>
               <name>
                 <translation lang='en' text='Bus Transceiver 4 Bit'/>

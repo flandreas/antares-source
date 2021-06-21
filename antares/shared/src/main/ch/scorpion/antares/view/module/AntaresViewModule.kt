@@ -94,6 +94,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val KEYBOARD = "Keyboard"
 	private const val TERMINAL = "Terminal"
 	private const val JOYSTICK = "Joystick"
+	private const val REAL_SWITCH = "RealSwitch"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -258,6 +259,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("groundView", GroundView::class)
 		typeMap.register("powerView", PowerView::class)
 		typeMap.register("joystickView", JoystickView::class)
+		typeMap.register("realSwitchView", RealSwitchView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 	}
@@ -301,6 +303,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -367,6 +370,7 @@ object AntaresViewModule : AbstractModule() {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", "/img/joystick.png", JoystickView::class)
+		repository.register(REAL_SWITCH, "library.element.RealSwitch", "/img/real-switch.png", RealSwitchView::class)
 
 		repository.register(LED, "library.element.LED", "/img/led.png", LEDView::class)
 		repository.register(RGB_LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)

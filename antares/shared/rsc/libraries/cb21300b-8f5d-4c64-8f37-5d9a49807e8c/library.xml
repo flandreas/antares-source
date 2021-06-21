@@ -42,6 +42,7 @@
             <baseLibraryElement _id='47' id='Transistor'/>
             <baseLibraryElement _id='48' id='Ground'/>
             <baseLibraryElement _id='49' id='Power'/>
+            <baseLibraryElement _id='51' id='RealSwitch'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>

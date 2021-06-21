@@ -116,20 +116,30 @@ open class PortImpl<T : Any>(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		// Reset CombinedNet because the structure might be changed before the next start of execution
-		_combinedNets.clear()
+		clearCombinedNets()
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {
 		if (portType.isOutput) {
-			_combinedNets.clear()
+			clearCombinedNets()
 			CombinedNet
 				.createFor(this, signalHandler)
-				.forEach {
-					if (it.accessOf(this) != null) {
-						_combinedNets.add(it)
+				.forEach { combinedNet ->
+					if (combinedNet.accessOf(this) != null) {
+						_combinedNets.add(combinedNet)
+						if (combinedNet.netTopologyChanger.isNotEmpty()) {
+							combinedNet.netTopologyChanger.forEach { it.addNetTopologyChangeListener(::handle) }
+						}
 					}
 				}
 		}
+	}
+
+	private fun clearCombinedNets() {
+		_combinedNets.forEach { combinedNet ->
+			combinedNet.netTopologyChanger.forEach { it.removeNetTopologyChangeListener(::handle) }
+		}
+		_combinedNets.clear()
 	}
 
 	/** ---- [InputPort] interface */
@@ -154,6 +164,9 @@ open class PortImpl<T : Any>(
 	private var _outgoingSignal: T? = null
 
 	private val _combinedNets = mutableListOf<CombinedNet<T>>()
+
+	/** Created on-demand in [formNet]. Used to redo net formation during execution after net topology has changed.*/
+	private var netTopologyChangeListener: NetTopologyChangeListener? = null
 
 	override val combinedNets: Collection<CombinedNet<T>> get() = _combinedNets
 
@@ -186,10 +199,12 @@ open class PortImpl<T : Any>(
 		forwardSignal(signalHandler)
 	}
 
-	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
+	fun syncIncomingSignalWithNegotiatedOutgoingSignal(always: Boolean = false) {
 		// Don't synchronize with Net signal, as that one is not available before the
 		// next simulation cycle
-		storeIncomingSignal(_outgoingSignal)
+		if (always || !isOutputFullyUndefined) {
+			storeIncomingSignal(_outgoingSignal)
+		}
 	}
 
 	/** ---- [PortImpl] */
@@ -255,8 +270,8 @@ open class PortImpl<T : Any>(
 
 		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
-			val signal = replaceOwnUndefinedSignals(signalHandler)
-			net!!.setSignal(signal, this, signalHandler)
+			val replacement = replaceOwnUndefinedSignals(signalHandler)
+			net!!.setSignal(replacement.signal, replacement.originPort, signalHandler)
 			return
 		}
 
@@ -270,9 +285,9 @@ open class PortImpl<T : Any>(
 
 		// Net has become consistent by withdrawing an inconsistent signal and asserting a fully undefined signal
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
-		val signal = replaceOwnUndefinedSignals(signalHandler)
+		val replacement = replaceOwnUndefinedSignals(signalHandler)
 		combinedNets.forEach { it.setExecutionError(null) }
-		net!!.setSignal(signal, this, signalHandler)
+		net!!.setSignal(replacement.signal, replacement.originPort, signalHandler)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {
@@ -284,8 +299,13 @@ open class PortImpl<T : Any>(
 		}
 	}
 
-	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): T? {
-		var signal = _outgoingSignal
+	private data class SignalReplacement<T: Any>(
+		val signal: T?,
+		val originPort: OutputPort<T>
+	)
+
+	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): SignalReplacement<T> {
+		var replacement = SignalReplacement(_outgoingSignal, this)
 		combinedNets.forEach { combinedNet ->
 			val thisAccess = combinedNet.accessOf(this)!!
 			if (thisAccess.isPartiallyUndefined) {
@@ -293,17 +313,26 @@ open class PortImpl<T : Any>(
 
 				if (consistentAccess != null && consistentAccess.port !== this) {
 					signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal and using signal of consistent Port" }
-					signal = thisAccess.replaceUndefinedFrom(signal, consistentAccess.assertedSignal, signalHandler)
+					replacement = SignalReplacement(
+						thisAccess.replaceUndefinedFrom(replacement.signal, consistentAccess.assertedSignal, signalHandler),
+						consistentAccess.port)
 				} else {
 					val weakPortToActivate = combinedNet.weakOutputPorts.firstOrNull()
 					if (weakPortToActivate != null) {
 						signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
 						val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(thisAccess.assertedSignal, weakPortToActivate, signalHandler)
-						signal = thisAccess.replaceUndefinedFrom(signal, weakSignal, signalHandler)
+						replacement = SignalReplacement(
+							thisAccess.replaceUndefinedFrom(replacement.signal, weakSignal, signalHandler),
+							weakPortToActivate
+						)
 					}
 				}
 			}
 		}
-		return signal
+		return replacement
+	}
+
+	private fun handle(event: NetTopologyChangeEvent) {
+		formNet(event.signalHandler)
 	}
 }

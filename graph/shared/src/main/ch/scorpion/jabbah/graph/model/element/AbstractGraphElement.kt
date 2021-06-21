@@ -110,7 +110,7 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 	protected fun stateChanged(signalHandler: SignalHandler? = null) {
 		if (listeners != null) {
 			val event = GraphElementEvent(this, signalHandler)
-			listeners!!.forEach { it.stateChanged(event) }
+			listeners!!.toList().forEach { it.stateChanged(event) }
 		}
 	}
 }

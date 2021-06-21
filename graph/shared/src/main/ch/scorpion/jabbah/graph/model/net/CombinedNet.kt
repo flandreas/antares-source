@@ -98,17 +98,25 @@ class CombinedNet<T : Any> {
 
 			outputPort.net?.ports
 				?.filter { it !== outputPort}
-				?.forEach {
+				?.forEach { port ->
 					val combinedNetsOfPort = mutableListOf<CombinedNet<T>>()
-					if (it.portType.isInput && it.owner is NetCombiner) {
-						combinedNetsOfPort.addAll((it.owner as NetCombiner).createCombinedNetsFor(outputPort, it as InputPort<T>, signalHandler))
+					if (port.portType.isInput && port.owner is NetCombiner) {
+						combinedNetsOfPort.addAll((port.owner as NetCombiner).createCombinedNetsFor(outputPort, port as InputPort<T>, signalHandler))
 					}
-					if (it.portType.isOutput && (it.owner !is NetCombiner || combinedNetsOfPort.isEmpty())) {
+					if (port.portType.isOutput && (port.owner !is NetCombiner || combinedNetsOfPort.isEmpty())) {
 						val combinedNet = CombinedNet<T>()
-						combinedNet.addAccess((it as OutputPort<T>).createAccess())
+						combinedNet.addAccess((port as OutputPort<T>).createAccess())
 						combinedNet.addAccess(outputPort.createAccess())
 						combinedNetsOfPort.add(combinedNet)
 					}
+
+					if (port.owner is NetTopologyChanger) {
+						if (combinedNetsOfPort.isEmpty()) {
+							combinedNetsOfPort.add(CombinedNet())
+						}
+						combinedNetsOfPort.forEach { it.addNetTopologyChanger(port.owner as NetTopologyChanger) }
+					}
+
 					combinedNets.addAll(combinedNetsOfPort)
 				}
 
@@ -126,16 +134,24 @@ class CombinedNet<T : Any> {
 
 	private val _accesses = mutableListOf<CombinedNetAccess<T>>()
 
+	private val _netTopologyChanger = mutableListOf<NetTopologyChanger>()
+
 	val accesses: Collection<CombinedNetAccess<T>> get() = _accesses
 
 	val nets: Collection<Net<T>> get() = _nets
 
 	val weakOutputPorts: Collection<OutputPort<T>> get() = _nets.flatMap { it.weakOutputPorts }
 
+	val netTopologyChanger: Collection<NetTopologyChanger> get() = _netTopologyChanger
+
 	fun accessOf(outputPort: OutputPort<T>): CombinedNetAccess<T>? = _accesses.firstOrNull { it.port === outputPort }
 
 	fun addAccess(access: CombinedNetAccess<T>) {
 		_accesses.add(access)
+	}
+
+	fun addNetTopologyChanger(netTopologyChanger: NetTopologyChanger) {
+		_netTopologyChanger.add(netTopologyChanger)
 	}
 
 	fun replaceAccess(port: OutputPort<*>, access: CombinedNetAccess<T>) {

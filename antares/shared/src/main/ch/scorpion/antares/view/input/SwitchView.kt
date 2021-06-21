@@ -2,14 +2,12 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
@@ -29,10 +27,6 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -61,8 +55,8 @@ private interface SwitchViewFace {
 class SwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Switch = Switch(),
-	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractSwitchView<Switch>(styleProvider, model, eventBus), ControlView<Switch>, ControlViewSource<Switch> {
 
 	companion object {
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
@@ -92,10 +86,21 @@ class SwitchView(
 			postControlViewSourceChangeEvent(eventBus)
 		}
 
-	private val face = AnalogFace()
+	override var name: String?
+		get() = super.name
+		set(value) {
+			super.name = value
+			postControlViewSourceChangeEvent(eventBus)
+		}
 
-	/** Handles mouse interactions during execution*/
-	private val actorInteractionHandler = InteractionHandler()
+	override var toggle: Boolean
+		get() = super.toggle
+		set(value) {
+			super.toggle = value
+			postControlViewSourceChangeEvent(eventBus)
+		}
+
+	private val face = AnalogFace()
 
 	/**
 	 * The [Label] that displays the signal for [VerticeLabelPosition.EXTERNAL], or the name of this [SwitchView]
@@ -150,32 +155,6 @@ class SwitchView(
 		updateLabels()
 	}
 
-	/** ---- UI properties */
-
-	var name: String?
-		get() = model.name
-		set(value) {
-			if (value != model.name) {
-				model.name = value
-				updateLabels()
-				validate()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
-
-	/**
-	 * Controls the interactive behaviour of this [SwitchView]. If set to `true`, the [Switch]
-	 * stays in the new state when the user releases the mouse button. If set to `false`,
-	 * the [Switch] returns to 0 state.
-	 */
-	var toggle: Boolean = true
-		set(value) {
-			if (field != value) {
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
-
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -196,12 +175,6 @@ class SwitchView(
 		if (reader.hasAttribute("toggle")) {
 			toggle = reader.readBoolean("toggle")
 		}
-	}
-
-	/** ---- [ActorView] interface */
-
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return actorInteractionHandler
 	}
 
 	/** ---- [Component] */
@@ -316,7 +289,6 @@ class SwitchView(
 		return clone
 	}
 
-
 	/** ---- [ControlView] */
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
@@ -401,7 +373,7 @@ class SwitchView(
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 	}
 
-	private fun updateLabels() {
+	override fun updateLabels() {
 		invalidate()
 		if (labelPosition == VerticeLabelPosition.INTERNAL) {
 			internalLabel.text = StringUtils.orEmpty(name)
@@ -543,104 +515,6 @@ class SwitchView(
 					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
 					-DigitalPortView.LENGTH - 2.0 * SCALE, -1.0 * SCALE)
 			}
-		}
-	}
-
-	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
-
-		private var keyDown = false
-
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.button != Button.BUTTON1) {
-				return null
-			}
-			model.toggle(context.signalHandler)
-			context.mouseEvent?.consume()
-			requestFocus()
-			return this
-		}
-
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
-			return this
-		}
-
-		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.button != Button.BUTTON1) {
-				return null
-			}
-			if (!toggle) {
-				if (model.isOn) {
-					model.off(context.signalHandler)
-					context.mouseEvent?.consume()
-				}
-			}
-			return null
-		}
-
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.button != Button.BUTTON1) {
-				return null
-			}
-			context.mouseEvent?.consume()
-			return this
-		}
-
-		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!keyDown) {
-				name?.let {
-					if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-						toggle(context)
-						keyDown = true
-						return null
-					}
-				}
-				if (isFocusOwner) {
-					when (context.keyEvent?.key) {
-						'0'.toInt() -> switchOff(context)
-						'1'.toInt() -> switchOn(context)
-						'\n'.toInt() -> toggle(context)
-					}
-				}
-				keyDown = true
-			}
-			return null
-		}
-
-		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!toggle) {
-				if (keyDown) {
-					name?.let {
-						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-							switchOff(context)
-							keyDown = false
-							return null
-						}
-					}
-					if (isFocusOwner) {
-						when (context.keyEvent?.key) {
-							'1'.toInt() -> switchOff(context)
-							'\n'.toInt() -> switchOff(context)
-						}
-					}
-				}
-			}
-			keyDown = false
-			return null
-		}
-
-		private fun switchOn(context: ActorInteractionContext) {
-			model.on(context.signalHandler)
-			context.keyEvent?.consume()
-		}
-
-		private fun switchOff(context: ActorInteractionContext) {
-			model.off(context.signalHandler)
-			context.keyEvent?.consume()
-		}
-
-		private fun toggle(context: ActorInteractionContext) {
-			model.toggle(context.signalHandler)
-			context.keyEvent?.consume()
 		}
 	}
 }
