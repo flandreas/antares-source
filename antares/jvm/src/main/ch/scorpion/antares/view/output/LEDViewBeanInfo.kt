@@ -13,6 +13,8 @@ class LEDViewBeanInfo : DigitalComponentBeanInfo<LEDView>() {
 		private val name = EditProperties.untranslatableName()
 		private val lightColor = AntaresProperties.lightColor()
 		private val square = AntaresProperties.ledSquare()
+		private val size = EditProperties.size()
+		private val hasBorder = EditProperties.border()
 	}
 
 	override fun addProperties(bean: LEDView, editor: Editor, properties: MutableList<Property>) {
@@ -21,6 +23,8 @@ class LEDViewBeanInfo : DigitalComponentBeanInfo<LEDView>() {
 		properties.add(name.bind(editor, bean.id))
 		properties.add(lightColor.bind(editor, bean.id))
 		properties.add(square.bind(editor, bean.id))
+		properties.add(size.bind(editor, bean.id))
+		properties.add(hasBorder.bind(editor, bean.id))
 	}
 
 	override var isShowColor: Boolean

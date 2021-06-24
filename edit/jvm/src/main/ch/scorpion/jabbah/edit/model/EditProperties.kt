@@ -143,4 +143,12 @@ object EditProperties {
 	): CommandPropertySwing<ScriptProperty> {
 		return CommandPropertySwing(name, baseKey, ScriptProperty::class.java, beanProvider, interactive = true)
 	}
+
+	fun border(
+		name: String = "hasBorder",
+		baseKey: String = "edit.property.hasBorder",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
+	}
 }

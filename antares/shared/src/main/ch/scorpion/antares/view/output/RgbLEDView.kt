@@ -39,6 +39,7 @@ class RgbLEDView(
 		val clone = RgbLEDView(styleProvider, model, square)
 		clone.isShowPortViews = false
 		clone.location = Point2D(0, 0)
+		copyControlViewProperties(this, clone)
 		return clone
 	}
 

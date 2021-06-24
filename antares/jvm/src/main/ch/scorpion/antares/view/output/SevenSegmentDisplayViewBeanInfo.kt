@@ -17,7 +17,7 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val portScheme = CommandPropertySwing("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()
-	    private val hasBorder = CommandPropertySwing("hasBorder", "element.property.SevenSegmentDisplayView.hasBorder", Boolean::class.java, componentBeanProvider)
+	    private val hasBorder = EditProperties.border()
     }
 
 	init {

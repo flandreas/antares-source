@@ -63,6 +63,7 @@ class LEDView(
         val clone = LEDView(styleProvider, model, lightColor, square)
         clone.isShowPortViews = false
         clone.location = Point2D(0, 0)
+		copyControlViewProperties(this, clone)
         return clone
     }
 

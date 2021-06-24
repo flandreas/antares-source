@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -38,15 +39,10 @@ abstract class AbstractLEDView<T: Vertice>(
 ) : DigitalComponentView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T> {
 
 	companion object {
-		protected const val SIZE = 4 * Look.SCALE
-		const val BORDER_WIDTH = 3
 		const val LABEL_DIST = Look.SCALE
+		private val DEFAULT_SIZE = Size.LARGE
+		private const val DEFAULT_HAS_BORDER = true
 	}
-
-	private val label = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D(SIZE + DigitalPortView.LENGTH + LABEL_DIST, 0),
-		font = font)
 
 	var name: String?
 		get() = model.name
@@ -69,9 +65,58 @@ abstract class AbstractLEDView<T: Vertice>(
 			}
 		}
 
+	var size: Size = DEFAULT_SIZE
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateGeometry()
+				validate()
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
+
+	var hasBorder: Boolean = DEFAULT_HAS_BORDER
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				invalidate()
+				validate()
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
+
+	private val widthOfSize: Int get() = when (size) {
+		Size.SMALL -> 2 * Look.SCALE
+		Size.MEDIUM -> 3 * Look.SCALE
+		Size.LARGE -> 4 * Look.SCALE
+	}
+
+	private val borderOfSize: Int get() {
+		return if (!hasBorder) {
+			0
+		} else when (size) {
+			Size.SMALL -> 2
+			Size.MEDIUM -> 2
+			Size.LARGE -> 3
+		}
+	}
+
+	private val label = HorizontalLabel(
+		owner = this,
+		relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0),
+		font = font)
+
+	private fun updateGeometry() {
+		setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
+		label.relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0)
+	}
+
 	init {
 		modelExchanged(null)
-		setBounds(getInput().unconnectedLength, -SIZE / 2, SIZE, SIZE)
+		//setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
+		updateGeometry()
 	}
 
 	override fun modelExchanged(oldModel: T?) {
@@ -92,6 +137,10 @@ abstract class AbstractLEDView<T: Vertice>(
 		if (square) {
 			writer.writeBoolean("square", square)
 		}
+		writer.writeString("size", size.customName)
+		if (!hasBorder) {
+			writer.writeBoolean("hasBorder", hasBorder)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -99,13 +148,19 @@ abstract class AbstractLEDView<T: Vertice>(
 		if (reader.hasAttribute("square")) {
 			square = reader.readBoolean("square")
 		}
+		if (reader.hasAttribute("size")) {
+			size = Size.withName(reader.readString("size"))
+		}
+		if (reader.hasAttribute("hasBorder")) {
+			hasBorder = reader.readBoolean("hasBorder")
+		}
 	}
 
 	/** ---- [ControlView] */
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractLEDView) {
-			name = source.name
+			copyControlViewProperties(source, this)
 		}
 	}
 
@@ -126,6 +181,13 @@ abstract class AbstractLEDView<T: Vertice>(
 	}
 
 	override val controlName: String get() = super.controlName
+
+	protected fun copyControlViewProperties(source: AbstractLEDView<*>, dest: AbstractLEDView<*>) {
+		dest.name = source.name
+		dest.square = source.square
+		dest.size = source.size
+		dest.hasBorder = source.hasBorder
+	}
 
 	/** ---- [AbstractComponent] */
 
@@ -173,19 +235,19 @@ abstract class AbstractLEDView<T: Vertice>(
 			super.drawImpl(c)
 			context.g.stroke = stroke
 			if (square) {
-				context.g.drawRect(xInt, yInt, SIZE, SIZE)
+				context.g.drawRect(xInt, yInt, widthOfSize, widthOfSize)
 			} else {
-				context.g.drawOval(xInt, yInt, SIZE, SIZE)
+				context.g.drawOval(xInt, yInt, widthOfSize, widthOfSize)
 			}
 			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 			if (square) {
 				context.g.drawRect(
-					xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-					SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+					xInt + borderOfSize, yInt + borderOfSize,
+					widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 			} else {
 				context.g.drawOval(
-					xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-					SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+					xInt + borderOfSize, yInt + borderOfSize,
+					widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 			}
 		}
 		label.draw(context)
@@ -205,15 +267,15 @@ abstract class AbstractLEDView<T: Vertice>(
 	protected fun drawBulb(context: DrawContext, color: Color) {
 		context.g.color = color
 		if (square) {
-			context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
-			context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			context.g.fillRect(xInt + borderOfSize, yInt + borderOfSize,
+				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
+			context.g.drawRect(xInt + borderOfSize, yInt + borderOfSize,
+				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 		} else {
-			context.g.fillOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
-			context.g.drawOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+			context.g.fillOval(xInt + borderOfSize, yInt + borderOfSize,
+				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
+			context.g.drawOval(xInt + borderOfSize, yInt + borderOfSize,
+				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 		}
 	}
 
@@ -229,27 +291,27 @@ abstract class AbstractLEDView<T: Vertice>(
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				if (square) {
-					context.g.fillRect(xInt, yInt, SIZE, SIZE)
+					context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
 				} else {
-					context.g.fillOval(xInt, yInt, SIZE, SIZE)
+					context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
 				}
 			}
 		}
 		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
 		context.g.stroke = stroke
 		if (square) {
-			context.g.fillRect(xInt, yInt, SIZE, SIZE)
+			context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
 		} else {
-			context.g.fillOval(xInt, yInt, SIZE, SIZE)
+			context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
 		}
 		drawBulb(context)
 
 		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.color = Look.inactiveColor
 			if (square) {
-				context.g.fillRect(xInt, yInt, SIZE, SIZE)
+				context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
 			} else {
-				context.g.fillOval(xInt, yInt, SIZE, SIZE)
+				context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
 			}
 		}
 	}

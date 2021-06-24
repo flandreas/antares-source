@@ -49,7 +49,7 @@ class HorizontalLabel(
 			}
 		}
 
-	private var relLocation: Point2D = relLocation
+	var relLocation: Point2D = relLocation
 		set(value) {
 			if (field != value) {
 				field = value
