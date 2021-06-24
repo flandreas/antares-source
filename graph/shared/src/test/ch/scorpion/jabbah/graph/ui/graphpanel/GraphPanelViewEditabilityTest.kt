@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.ui.graphpanel
 
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -45,8 +45,8 @@ class GraphPanelViewEditabilityTest {
 		}
 	}
 
-	private val eventBus = EventBusImpl()
-	private val application = TestGraphApplication({ mockk() }, eventBus = eventBus)
+	private val eventBus = BaseModule.eventBus
+	private val application = TestGraphApplication()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val vv = createSubGraphVerticeView()
 	private val canvas = VirtualCanvas { DrawingViewImpl(GraphViewImpl() as Drawing<Component>, eventBus = eventBus) }

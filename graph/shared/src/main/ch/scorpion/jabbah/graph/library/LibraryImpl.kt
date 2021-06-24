@@ -158,8 +158,6 @@ open class LibraryImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		if (defaultElementUUID != null) {
 			writer.writeString("defaultElement", defaultElementUUID.toString())
@@ -184,10 +182,6 @@ open class LibraryImpl(
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return mutableListOf<Storable>(libraryFolder).iterator()
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {

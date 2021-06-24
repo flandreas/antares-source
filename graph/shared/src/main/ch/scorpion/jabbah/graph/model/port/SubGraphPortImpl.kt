@@ -1,16 +1,9 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphInput
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.SubGraphInputPort
-import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.*
 import kotlin.reflect.KClass
 
@@ -58,11 +51,7 @@ class SubGraphPortImpl<T: Any>(
 
     /** ---- [Storable] interface */
 
-    override var storableId: Int = Storable.UNDEFINED_ID
-
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        // empty
-    }
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
     override fun write(writer: StoreWriter) {
         writer.writeString("name", name!!)
@@ -75,6 +64,4 @@ class SubGraphPortImpl<T: Any>(
         portType = PortType.withName(reader.readString("type"))
 	    description = Description.read("desc", reader)
     }
-
-    override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 }

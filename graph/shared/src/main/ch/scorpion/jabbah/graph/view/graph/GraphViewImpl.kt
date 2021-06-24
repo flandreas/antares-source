@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -26,7 +25,7 @@ import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.graph.model.graph.GraphReferenceResolver
+import ch.scorpion.jabbah.graph.model.graph.GraphGlobalIdentityProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
@@ -170,14 +169,9 @@ open class GraphViewImpl(
 
 	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView {
 		LOG.trace("clone '${model.name}'for existing model")
-		val clone = StorableCloner.clone(
+		val clone = StorableCloner.newClone(
 			this,
-			GlobalIdentityReflector(),
-			storableCreator,
-			ReferenceResolverProxy(
-				GraphReferenceResolver(model),
-				ReferenceResolverImpl()
-			)
+			GraphGlobalIdentityProvider(model)
 		)
 		clone.graph = model
 		return clone
@@ -226,14 +220,6 @@ open class GraphViewImpl(
 
 	/** ---- [Storable] interface */
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		val list = mutableListOf<Storable>()
-		list.add(scenarios)
-		list.add(usecases)
-		list.addAll(netViewMap.values)
-		return ConcatIterator(super.getStorableChildren(), list.iterator())
-	}
-
 	override fun write(writer: StoreWriter) {
 		writer.writeStorables("netViews", netViewMap.values.iterator())
 		if (!scenarios.isEmpty) {
@@ -251,7 +237,7 @@ open class GraphViewImpl(
 			reader.requestResolution(this, Reference(
 				name = "netView",
 				additionalInfo = netView,
-				resolveAfter = listOf(netView.storableId)
+				resolveAfter = listOf(reader.getGlobalId(netView))
 			))
 		}
 		if (reader.hasElement("scenarios")) {

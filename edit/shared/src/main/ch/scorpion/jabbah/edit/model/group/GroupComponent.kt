@@ -75,8 +75,6 @@ class GroupComponent(components: List<Component> = listOf()) : AbstractComponent
 
 	/** ---- [Storable] */
 
-	override fun getStorableChildren(): Iterator<Storable> = components.iterator()
-
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeStorables("component", components.iterator())

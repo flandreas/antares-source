@@ -1,7 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.IOModule
@@ -43,7 +41,7 @@ class SubGraphVerticeRefTest {
 		val customGraph = customNOT.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
 		for (i in 1..5) {
-			assertEquals(libraryGraph.withId(i)!!.storableId, customGraph.withId(i)!!.storableId)
+			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)
 		}
 	}
 
@@ -64,7 +62,7 @@ class SubGraphVerticeRefTest {
 		val customGraph = customNAND.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
 		for (i in 1..6) {
-			assertEquals(libraryGraph.withId(i)!!.storableId, customGraph.withId(i)!!.storableId)
+			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)
 		}
 	}
 }

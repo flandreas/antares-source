@@ -58,6 +58,9 @@ class StoreXmlReader(
 		return storable
 	}
 
+	override fun getGlobalId(storable: Storable): Int =
+		referenceResolver.getGlobalId(storable)
+
 	override fun <T: Storable> readStorable(): T {
 		val storable: T = readStorableImpl()
 		referenceResolver.resolveReferences()

@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library.dictionary
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -62,14 +61,12 @@ class LibraryDictionary : Storable {
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}
 
 	override fun write(writer: StoreWriter) {
-		writer.writeStorables("entries", getStorableChildren())
+		writer.writeStorables("entries", entries.values.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
@@ -77,11 +74,6 @@ class LibraryDictionary : Storable {
 			.readStorables<LibraryDictionaryEntry>("entries")
 			.forEach { entries[it.uuid] = it }
 	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return entries.values.iterator()
-	}
-
 }
 
 /**
@@ -118,11 +110,7 @@ class LibraryDictionaryEntry(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())

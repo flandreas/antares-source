@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
@@ -155,8 +154,6 @@ class ScenarioStepImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
 		name.write("name", writer)
@@ -180,6 +177,4 @@ class ScenarioStepImpl(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 }

@@ -15,6 +15,13 @@ interface StoreReader {
 
     fun <T: Storable> getStorable(id: Int): T
 
+	/**
+	 * Returns the global ID of a [Storable] that has already been read.
+	 * Used for determining IDs when composing request of [requestResolution].
+	 * Typically implemented by forwarding to this [StoreReader]'s [ReferenceResolver].
+	 */
+	fun getGlobalId(storable: Storable): Int
+
     /** Reads the toplevel [Storable].*/
     fun <T: Storable> readStorable(): T
 
@@ -35,7 +42,7 @@ interface StoreReader {
 	 *         <a/>
 	 *         <b/>
 	 *     </children>
-	 * </docment>
+	 * </document>
      * </pre>
 	 *
 	 * Calling readStorable(listOf("children", "b")) reads only an instance of "b", but not "a".

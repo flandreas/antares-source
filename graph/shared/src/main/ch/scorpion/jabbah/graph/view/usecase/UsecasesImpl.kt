@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -64,11 +63,7 @@ class UsecasesImpl(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		// empty
-	}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
 		writer.writeStorables("usecases", usecases.iterator())
@@ -88,10 +83,6 @@ class UsecasesImpl(
 		} finally {
 			isLoading = false
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return EmptyIterator()
 	}
 
 	/** ---- [UsecaseImpl] */

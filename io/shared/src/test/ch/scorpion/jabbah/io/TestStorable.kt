@@ -1,26 +1,14 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
-
 class TestStorable(
 	private val resolver: (Int) -> Unit = {}
 ) : Storable {
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		resolver(storableId)
+		resolver(referenceResolver.getGlobalId(this))
 	}
 
-	override fun write(writer: StoreWriter) {
-		// empty
-	}
+	override fun write(writer: StoreWriter) { }
 
-	override fun read(reader: StoreReader) {
-		// empty
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return EmptyIterator()
-	}
+	override fun read(reader: StoreReader) { }
 }

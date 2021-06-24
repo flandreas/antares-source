@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -108,10 +107,6 @@ class ContainerDrawing(
 		super.read(reader)
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		return ConcatIterator(super.getStorableChildren(), listOf(model).iterator())
-	}
-
 	/** ---- [ContainerDrawing] */
 
 	/**
@@ -199,7 +194,7 @@ class ContainerDrawing(
 	 * [ContainerDrawing], thus providing the look that has been designed by the library designer.
 	 */
 	fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
-		LOG.trace("filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
+		LOG.trace("filling SubGraphVerticeViewRef name:${model.name}, uuid:${model.graphUUID}")
 
 		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator)
 		val origin = clonedDrawing.getOriginIndicator().location

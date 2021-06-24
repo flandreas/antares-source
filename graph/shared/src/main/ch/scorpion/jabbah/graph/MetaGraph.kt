@@ -169,8 +169,6 @@ class MetaGraph(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		writer.writeStorable("graph", graph)
 		writer.writeStorable("container", containerDrawing)
@@ -178,22 +176,20 @@ class MetaGraph(
 
 	override fun read(reader: StoreReader) {
 		val aGraph = reader.readStorable("graph") as GraphStorable
+		val globalGraphId = reader.getGlobalId(aGraph)
 		reader.requestResolution(this, Reference(
 			name = "graph",
-			referenceId = aGraph.storableId,
+			referenceId = globalGraphId,
 			additionalInfo = aGraph,
-			resolveAfter = listOf(aGraph.storableId)))
+			resolveAfter = listOf(globalGraphId)))
 
 		val aContainerDrawing = reader.readStorable("container") as ContainerDrawing
+		val globalContainerId = reader.getGlobalId(aContainerDrawing)
 		reader.requestResolution(this, Reference(
 			name = "container",
-			referenceId = aContainerDrawing.storableId,
+			referenceId = globalContainerId,
 			additionalInfo = aContainerDrawing,
-			resolveAfter = listOf(aContainerDrawing.storableId, aGraph.storableId)))
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return listOf(graph, containerDrawing).iterator()
+			resolveAfter = listOf(globalContainerId, globalGraphId)))
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {

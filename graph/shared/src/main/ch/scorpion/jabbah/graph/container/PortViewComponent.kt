@@ -91,10 +91,6 @@ open class PortViewComponent<T : Any>(
 		drawableOwner = DrawableOwner(this, portView!!)
 	}
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		return listOf(portView!!).iterator()
-	}
-
 	/** ---- [Drawable] */
 
 	override val boundingBox: RectangularShape

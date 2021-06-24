@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Direction
@@ -248,8 +247,6 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		writer.writeDouble("x", location.x)
 		writer.writeDouble("y", location.y)
@@ -279,8 +276,6 @@ abstract class AbstractPortView<T : Any>(
 			port.addPropertyChangeListener(portListener)
 		}
 	}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
 	/** ---- [AbstractPortView] */
 

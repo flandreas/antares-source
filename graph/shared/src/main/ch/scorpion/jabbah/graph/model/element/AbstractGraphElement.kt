@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.graph.model.element
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.DesignError
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -64,13 +63,9 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)

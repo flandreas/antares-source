@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.net.netview
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.graph.model.Net
@@ -51,8 +50,6 @@ class NetViewImpl<T : Any>(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("modelId", writer.provideIdentity(net))
 		writer.writeString("style", style.customName)
@@ -60,21 +57,19 @@ class NetViewImpl<T : Any>(
 
 	override fun read(reader: StoreReader) {
 		style = NetViewStyle.withName(reader.readString("style"))
-		reader.requestResolution(this, Reference(
-			name = "modelId",
-			referenceId = reader.readInt("modelId"),
-			resolveAfter = listOf(reader.readInt("modelId"))))
+		val modelId = reader.readInt("modelId")
+		if (modelId >= 0) {
+			// There are files out there with "modelId=-1" due to a bug in an older version
+			reader.requestResolution(this, Reference(
+				name = "modelId",
+				referenceId = modelId,
+				resolveAfter = listOf(modelId)))
+		}
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "modelId") {
-			// TODO The resolved model should never be null. But there are files out there with "modelId=-1"??
-			// Consider insisting on net != null and fixing the files (which have probably been created by a bug in an old version)
 			referenceResolver.getStorable<Net<T>>(reference.referenceId)?.let { net = it }
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return EmptyIterator()
 	}
 }

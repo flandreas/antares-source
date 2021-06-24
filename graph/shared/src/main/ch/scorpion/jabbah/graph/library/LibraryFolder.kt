@@ -46,14 +46,12 @@ class LibraryFolder(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		name.write("name", writer)
 		if (defaultElementUUID != null) {
 			writer.writeString("defaultElement", defaultElementUUID.toString())
 		}
-		writer.writeStorables("items", getStorableChildren())
+		writer.writeStorables("items", items.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
@@ -66,13 +64,9 @@ class LibraryFolder(
 			reader.requestResolution(this, Reference(
 				name = "item",
 				additionalInfo = item,
-				resolveAfter = listOf(item.storableId)
+				resolveAfter = listOf(reader.getGlobalId(item))
 			))
 		}
-	}
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return items.iterator()
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {

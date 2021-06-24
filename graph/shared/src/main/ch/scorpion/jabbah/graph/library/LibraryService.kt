@@ -151,7 +151,7 @@ class LibraryService(
 		LOG.trace("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
-				LOG.debug("Delete MetaGraph ${item.uuid}")
+				LOG.trace("Delete MetaGraph ${item.uuid}")
 				persister(library.isSystem).deleteMetaGraph(library, item.uuid)
 				if (library.defaultElementUUID == item.uuid) {
 					library.defaultElementUUID = null
@@ -175,7 +175,7 @@ class LibraryService(
 	 * @return the created [LibraryDirectory]
 	 */
 	fun addFolder(library: Library, name: TranslatableText, directory: LibraryDirectory): LibraryDirectory {
-		LOG.trace("Adding new Folder '$name'")
+		LOG.debug("Add new folder '${name.getOptionalTranslation()}' in '${directory.name}'")
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
@@ -199,7 +199,7 @@ class LibraryService(
 	 * Posts [LibraryDirectoryRenamedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
-		LOG.trace("Renaming LibraryDirectory")
+		LOG.debug("Rename folder '${directory.name}' to '${newName.getOptionalTranslation()}'")
 		val oldName = directory.name.translation
 		directory.name = Name(newName)
 		storeLibrary(directory.library!!)
@@ -259,7 +259,7 @@ class LibraryService(
 	 */
 	fun setDefaultElement(library: Library, uuid: UUID?) {
 		if (library.defaultElementUUID != uuid) {
-			LOG.trace("Setting default element to '$uuid'")
+			LOG.debug("Set default element to $uuid")
 			library.defaultElementUUID = uuid
 			storeLibrary(library)
 		}
@@ -280,7 +280,7 @@ class LibraryService(
 	}
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
-		LOG.trace("Duplicate ContainerLibraryElement ${element.metaGraph?.uuid} with name '${element.metaGraph?.name}'")
+		LOG.debug("Duplicate '${element.metaGraph?.uuid}' with name '${element.metaGraph?.name}'")
 		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
@@ -291,7 +291,7 @@ class LibraryService(
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
 		val newUuid = System.createUUID()
-		LOG.trace("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}' and UUID $newUuid")
+		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getOptionalTranslation()}' and UUID $newUuid")
 
 		val path = persister(library.isSystem).exportLibraryTemporarily(library.uuid)
 

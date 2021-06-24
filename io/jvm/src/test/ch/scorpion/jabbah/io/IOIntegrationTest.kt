@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import kotlin.test.Test
 import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -126,25 +125,17 @@ class IOIntegrationTest {
 
     class Document : Storable {
 
-        override var storableId: Int = Storable.UNDEFINED_ID
-
         val children = mutableListOf<Storable>()
 
-        override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-            // empty
-        }
+        override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
         override fun write(writer: StoreWriter) {
-            writer.writeStorables("children", getStorableChildren())
+            writer.writeStorables("children", children.iterator())
         }
 
         override fun read(reader: StoreReader) {
             children.clear()
             children += reader.readStorables("children")
-        }
-
-        override fun getStorableChildren(): Iterator<Storable> {
-            return children.iterator()
         }
     }
 
@@ -158,7 +149,6 @@ class IOIntegrationTest {
 		    instancesCount++
 	    }
 
-        override var storableId: Int = Storable.UNDEFINED_ID
 	    var aString: String = ""
         var aInt: Int= 0
         var aDouble: Double = 0.0
@@ -200,16 +190,11 @@ class IOIntegrationTest {
                 referenceId = reader.readInt("referencedB")
             ))
         }
-
-        override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
     }
 
     class B(var name: String = "") : Storable {
-        override var storableId: Int = Storable.UNDEFINED_ID
 
-        override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-            // empty
-        }
+        override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
         override fun write(writer: StoreWriter) {
             writer.writeString("name", name)
@@ -218,7 +203,5 @@ class IOIntegrationTest {
         override fun read(reader: StoreReader) {
             name = reader.readString("name")
         }
-
-        override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
     }
 }

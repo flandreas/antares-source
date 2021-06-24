@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.edit.model
 
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.*
@@ -92,8 +91,6 @@ abstract class AbstractComponent(
 
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = Storable.UNDEFINED_ID
-
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
 		if (!fixStyleType) {
@@ -146,11 +143,6 @@ abstract class AbstractComponent(
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
-	}
-
-
-	override fun getStorableChildren(): Iterator<Storable> {
-		return EmptyIterator()
 	}
 
 	/** ---- Focus management */

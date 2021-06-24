@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.graph.view.port
 
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import ch.scorpion.jabbah.io.Storable
 
 class TestPortView<T: Any>(
 	port: Port<T> = PortImpl(PortType.INPUT),
@@ -30,13 +29,9 @@ class TestPortView<T: Any>(
             return bbox
         }
 
-    override var storableId: Int = Storable.UNDEFINED_ID
-
     override fun draw(context: DrawContext) { }
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return boundingBox.contains(x, y)
-    }
+    override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
 
     override val minSegmentLength: Int
         get() = unconnectedLength

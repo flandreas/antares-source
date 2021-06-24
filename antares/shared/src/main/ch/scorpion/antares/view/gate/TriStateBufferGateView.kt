@@ -8,6 +8,7 @@ import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -27,12 +28,16 @@ class TriStateBufferGateView(
 	model: TriStateBufferGate = TriStateBufferGate()
 ) : DigitalComponentView<TriStateBufferGate>(styleProvider, model) {
 
+	companion object {
+		private const val controlPortViewOffsetY = (DigitalPortView.LENGTH * 0.75).toInt()
+	}
+
 	var handedness: Handedness = Handedness.RIGHT
 		set(value) {
 			if (field != value) {
 				invalidate()
 				field = value
-				modelExchanged(model)
+				updateEnablePortViewForHandedness()
 				invalidate()
 				update()
 			}
@@ -63,14 +68,13 @@ class TriStateBufferGateView(
 			x = inputPortView.unconnectedLength + bounds.width.toInt(),
 			y = 0))
 
-		val controlPorViewOffset = (DigitalPortView.LENGTH * 0.75).toInt()
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(2),
 			direction = directionOfHandedness,
 			portLabelPosition = PortLabelPosition.HIDE,
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) controlPorViewOffset else -controlPorViewOffset,
+			y = if (handedness == Handedness.RIGHT) controlPortViewOffsetY else -controlPortViewOffsetY,
 			length = DigitalPortView.LENGTH - (DigitalPortView.LENGTH * 0.25).toInt()))
 
 		setBounds(
@@ -131,4 +135,14 @@ class TriStateBufferGateView(
 			Handedness.RIGHT -> Direction.SOUTH
 			Handedness.LEFT -> Direction.NORTH
 		}
+
+	private fun updateEnablePortViewForHandedness() {
+		val inputPortView = getPortView(model.getInputPort())!!
+		val enablePortView = getPortView(model.getEnablePort())!!
+		enablePortView.location = Point2D(
+			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
+			y = if (handedness == Handedness.RIGHT) controlPortViewOffsetY else -controlPortViewOffsetY
+		)
+		enablePortView.direction = directionOfHandedness
+	}
 }
