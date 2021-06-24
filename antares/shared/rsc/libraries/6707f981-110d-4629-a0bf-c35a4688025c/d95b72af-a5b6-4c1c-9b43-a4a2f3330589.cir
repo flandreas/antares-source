@@ -1219,7 +1219,7 @@
             <translation lang='de' text='BCD 7-Seg Dekodierer'/>
           </name>
           <desc>
-            <translation lang='en' text='Coverts a BCD number to the corresponding 7-segment code'/>
+            <translation lang='en' text='Converts a BCD number to the corresponding 7-segment code'/>
             <translation lang='de' text='Wandelt eine BCD-Zahl in den 7-Segment-Code für eine Dezimalziffer um'/>
           </desc>
           <ports>
