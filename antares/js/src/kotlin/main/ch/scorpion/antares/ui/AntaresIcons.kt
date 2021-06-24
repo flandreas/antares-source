@@ -42,6 +42,8 @@ fun RBuilder.pullResistor(): ReactElement = img(src="img/pull-resistor.svg") { a
 fun RBuilder.transistor(): ReactElement = img(src="img/transistor.svg") { attrs.width = size }
 fun RBuilder.ground(): ReactElement = img(src="img/ground.svg") { attrs.width = size }
 fun RBuilder.power(): ReactElement = img(src="img/power.svg") { attrs.width = size }
+fun RBuilder.realSwitch(): ReactElement = img(src="img/real-switch.svg") { attrs.width = size }
+fun RBuilder.joystick(): ReactElement = img(src="img/joystick.svg") { attrs.width = size }
 
 fun registerAntaresIconsInProvider() {
 	IconProviderRegistry.register("/img/7segment.png") { RBuilder().sevenSegment() }
@@ -79,4 +81,6 @@ fun registerAntaresIconsInProvider() {
 	IconProviderRegistry.register("/img/transistor.png") { RBuilder().transistor() }
 	IconProviderRegistry.register("/img/ground.png") { RBuilder().ground() }
 	IconProviderRegistry.register("/img/power.png") { RBuilder().power() }
+	IconProviderRegistry.register("/img/real-switch.png") { RBuilder().realSwitch() }
+	IconProviderRegistry.register("/img/joystick.png") { RBuilder().joystick() }
 }
