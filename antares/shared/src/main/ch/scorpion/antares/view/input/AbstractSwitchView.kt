@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -28,8 +30,6 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		set(value) {
 			if (value != model.name) {
 				model.name = value
-				updateLabels()
-				validate()
 			}
 		}
 
@@ -45,13 +45,21 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			}
 		}
 
-	protected abstract fun updateLabels()
-
 	/** ---- [ActorView] interface */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return actorInteractionHandler
 	}
+
+	/** ---- [AbstractGraphElementView] */
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		invalidate()
+		updateLabels()
+		super.handleStateChanged(event)
+	}
+
+	protected abstract fun updateLabels()
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 

@@ -74,6 +74,7 @@ class SwitchView(
 		private const val LABEL_INSET = 4.0
 	}
 
+	// Individually controlled by ControlView
 	var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL
 		set(value) {
 			invalidate()
@@ -83,21 +84,15 @@ class SwitchView(
 			invalidate()
 			update()
 			validate()
-			postControlViewSourceChangeEvent(eventBus)
-		}
-
-	override var name: String?
-		get() = super.name
-		set(value) {
-			super.name = value
-			postControlViewSourceChangeEvent(eventBus)
 		}
 
 	override var toggle: Boolean
 		get() = super.toggle
 		set(value) {
-			super.toggle = value
-			postControlViewSourceChangeEvent(eventBus)
+			if (value != super.toggle) {
+				super.toggle = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
 		}
 
 	private val face = AnalogFace()
@@ -285,6 +280,7 @@ class SwitchView(
 		val clone = SwitchView(styleProvider, model)
 		clone.isShowPortViews = false
 		clone.location = Point2D.ZERO
+		clone.labelPosition = labelPosition
 		copyControlViewProperties(this, clone)
 		return clone
 	}
@@ -315,7 +311,6 @@ class SwitchView(
 
 	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
 		dest.name = source.name
-		dest.labelPosition = source.labelPosition
 		dest.toggle = source.toggle
 	}
 
