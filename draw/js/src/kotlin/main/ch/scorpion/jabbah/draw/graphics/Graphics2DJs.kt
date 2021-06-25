@@ -113,6 +113,10 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 			ctx.strokeStyle = rgba
 		}
 
+	override var paint: Paint
+		get() = TODO("not implemented")
+		set(value) {}
+
 	override var stroke: Stroke
 		get() {
 			return Stroke(

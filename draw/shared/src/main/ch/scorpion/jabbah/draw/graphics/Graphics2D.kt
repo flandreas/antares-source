@@ -15,6 +15,8 @@ interface Graphics2D {
 
     var color: Color
 
+    var paint: Paint
+
     var stroke: Stroke
 
     var font: Font

@@ -4,10 +4,12 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
+interface Paint
+
 /**
  * Represents a color with RGB and alpha channel values.
  */
-data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
+data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int): Paint {
 
 	companion object {
 		private const val FACTOR = 0.7

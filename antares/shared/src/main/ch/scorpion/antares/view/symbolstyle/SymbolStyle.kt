@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.Paint
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -54,7 +55,7 @@ enum class SymbolStyle(val customName: String) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			if (resistor.shadow) {
 				DropShadow.draw(context, transparency = resistor.transparency) {
 					context.g.fillRect(
@@ -70,7 +71,7 @@ enum class SymbolStyle(val customName: String) {
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
-			context.g.color = foregroundColor
+			context.g.paint = foregroundColor
 			context.g.stroke = stroke
 			context.g.drawRect(
 				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
@@ -108,8 +109,8 @@ enum class SymbolStyle(val customName: String) {
 			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			context.g.color = foregroundColor
+		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+			context.g.paint = foregroundColor
 			context.g.stroke = stroke
 			context.g.draw(RESISTOR_PATH)
 		}
@@ -236,6 +237,6 @@ enum class SymbolStyle(val customName: String) {
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 }

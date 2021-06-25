@@ -53,7 +53,7 @@ class DigitalEdgeView(
 		val oldCompositeColor = context.color
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		context.color = if (graphAppContext.isExecute && showNetState(graphAppContext.isPausing)) {
+		context.color = if (graphAppContext.showNetState) {
 			if (model.isError) {
 				Themes.get<AntaresTheme>().error
 			} else {

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.PullDirection.HIGH
 import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.net.PullResistor
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
@@ -13,12 +14,11 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.graphics.LineCap
-import ch.scorpion.jabbah.draw.graphics.LineJoin
-import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class PullResistorView(
@@ -78,15 +78,39 @@ class PullResistorView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		getPortViews().first().prepareConnectionDrawContext(context)
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			context.g.color = pullDirectionExecutionColor.foregroundColor
+		}
 		drawPullDirection(context)
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
 			context,
-			context.g.color,
+			getColorGradient(context) ?: context.g.color,
 			getApplicableBackgroudColor(context),
 			STROKE)
 	}
+
+	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
+		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			return LinearColorGradient(
+				bounds.centerLeft,
+				pullDirectionExecutionColor.foregroundColor,
+				bounds.centerRight,
+				netExecutionColor.foregroundColor)
+		}
+		return null
+	}
+
+	private val pullDirectionExecutionColor: CompositeColor get() =
+		when (pullDirection) {
+			LOW -> Bit.False.color
+			HIGH -> Bit.True.color
+		}
+
+	private val netExecutionColor: CompositeColor get() =
+		model.getOutputPort().net?.signal?.getColor() ?: Bit.Undefined.color
 
 	private fun drawPullDirection(context: DrawContext) {
 		when(pullDirection) {

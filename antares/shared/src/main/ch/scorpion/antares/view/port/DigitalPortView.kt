@@ -182,7 +182,7 @@ class DigitalPortView(
 	private fun setupColor(context: DrawContext) {
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
+		if (appContext.showNetState) {
 			context.g.color = transparent.applyTo(when (port.portType) {
 				PortType.INOUT -> drawableInOutSignal.getColor().foregroundColor
 				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
@@ -336,11 +336,6 @@ class DigitalPortView(
 	}
 
 	/** ---- [DigitalPortView] */
-
-	// TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
-	private fun showNetState(systemSpeedCategory: SystemSpeedCategory): Boolean {
-		return systemSpeedCategory > SystemSpeedCategory.Use
-	}
 
 	private fun getDigitalPort(): DigitalPort {
 		return port as DigitalPort

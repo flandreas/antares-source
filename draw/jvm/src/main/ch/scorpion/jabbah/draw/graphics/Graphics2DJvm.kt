@@ -2,12 +2,12 @@ package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
-import java.awt.BasicStroke
-import java.awt.Rectangle
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.geom.Area
+import java.awt.geom.Point2D
 import javax.swing.BorderFactory
 import javax.swing.JTextPane
 import javax.swing.text.SimpleAttributeSet
@@ -167,6 +167,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         set(value) {
             g.color = toAwtColor(value)
         }
+
+	override var paint: Paint
+		get() = fromAwtPaint(g.paint)
+		set(value) {
+			g.paint = toAwtPaint(value)
+		}
 
     override var font: Font
         get() {
@@ -387,4 +393,28 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         area.subtract(Area(inner))
         g.fill(area)
     }
+
+	private fun toAwtPaint(paint: Paint): java.awt.Paint {
+		return when (paint) {
+			is Color -> toAwtColor(paint)
+			is LinearColorGradient -> GradientPaint(
+				Point2D.Float(paint.p1.x.toFloat(), paint.p1.y.toFloat()),
+				toAwtColor(paint.color1),
+				Point2D.Float(paint.p2.x.toFloat(), paint.p2.y.toFloat()),
+				toAwtColor(paint.color2))
+			else -> throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
+		}
+	}
+
+	private fun fromAwtPaint(paint: java.awt.Paint): Paint {
+		return when (paint) {
+			is java.awt.Color -> fromAwtColor(paint)
+			is GradientPaint -> LinearColorGradient(
+				p1 = Point2D(paint.point1.x, paint.point1.y),
+				color1 = fromAwtColor(paint.color1),
+				p2 = Point2D(paint.point2.x, paint.point2.y),
+				color2 = fromAwtColor(paint.color2))
+			else -> throw java.lang.IllegalArgumentException("unsupported AWT paint ${paint::class.simpleName}")
+		}
+	}
 }
