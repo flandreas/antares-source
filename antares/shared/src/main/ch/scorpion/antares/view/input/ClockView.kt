@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
+import ch.scorpion.antares.model.input.PeriodOrFrequencyParser
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.jabbah.base.StringUtils
@@ -68,11 +69,11 @@ class ClockView(
 
 	/** ---- UI Properties */
 
-	/** Contains the period of this [ClockView] in microseconds.*/
-	var period: Long
-		get() = model.propagationDelay / 1_000
+	@Suppress("unused") // Reflection
+	var periodOrFrequency: String
+		get() = model.periodOrFrequency.toString()
 		set(value) {
-			model.propagationDelay = value * 1_000
+			model.periodOrFrequency = PeriodOrFrequencyParser.parse(value)
 		}
 
 	var isEnabled: Boolean
@@ -141,7 +142,7 @@ class ClockView(
 
 	/** ---- [ActorView] */
 
-	override val executionTooltipSubtext: String? get() {
+	override val executionTooltipSubtext: String get() {
 		val durationMillis = System.currentTimeMillis() - model.realStartTime
 		val frequency = model.cycleCount / max(1, durationMillis / 1_000) / 2
 		val frequencyText = Translations.getString("antares.clock.frequency.text", StringUtils.formatLong(frequency, '\'')) + " Hz"

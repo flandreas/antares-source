@@ -2,10 +2,11 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
+import ch.scorpion.antares.model.input.PeriodOrFrequency
+import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.output.LEDView
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.*
 
@@ -23,7 +24,7 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		clockView = builder.addVerticeView(ClockView(styleProvider))
-		clockView.period = 100 * 1_000
+		clockView.model.periodOrFrequency = PeriodOrFrequency(100, PeriodOrFrequencyUnit.Millisecond)
 		ledView = builder.addVerticeView(LEDView(styleProvider))
 		builder.connect(clockView, ledView)
 		circuitView = builder.build()
@@ -52,11 +53,11 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	@Test
 	fun shouldResetPropagationDelayAfterSimulation() {
 		startSimulation()
-		clockView.period = 200 * 1_000
+		clockView.model.periodOrFrequency = PeriodOrFrequency(200, PeriodOrFrequencyUnit.Millisecond)
 
 		stopSimulation()
 
-		assertEquals(100 * 1_000, clockView.period)
+		assertEquals(PeriodOrFrequency(100, PeriodOrFrequencyUnit.Millisecond), clockView.model.periodOrFrequency)
 	}
 
 	@Test

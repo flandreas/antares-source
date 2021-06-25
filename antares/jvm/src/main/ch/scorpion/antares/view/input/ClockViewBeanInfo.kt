@@ -10,7 +10,7 @@ import com.l2fprod.common.propertysheet.Property
 class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
 
     companion object {
-	    private val period = CommandPropertySwing("period", "element.property.ClockView.period", Long::class.java, componentBeanProvider)
+	    private val periodOrFrequency = CommandPropertySwing("periodOrFrequency", "element.property.ClockView.periodOrFrequency", String::class.java, componentBeanProvider)
 	    private val enabled = CommandPropertySwing("enabled", "element.property.ClockView.enabled", Boolean::class.java, componentBeanProvider)
 	    private val knobEnabled = CommandPropertySwing("knobEnabled", "element.property.ClockView.knobEnabled", Boolean::class.java, componentBeanProvider)
     }
@@ -18,7 +18,7 @@ class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
     override fun addProperties(bean: ClockView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(period.bind(editor, bean.id))
+	    properties.add(periodOrFrequency.bind(editor, bean.id))
 	    properties.add(enabled.bind(editor, bean.id))
 	    properties.add(knobEnabled.bind(editor, bean.id))
     }

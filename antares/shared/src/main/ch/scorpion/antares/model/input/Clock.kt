@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.input
 
+import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -58,11 +59,20 @@ class Clock : CalculatingVertice(CALCULATOR) {
 			}
 		}
 
-	/** Used for restoring [propagationDelay] after the simulation has ended. */
-	private var propagationDelayBuffer: Long = 0
+	var periodOrFrequency: PeriodOrFrequency = PeriodOrFrequency(1_000_000_000, Nanosecond)
+		set(value) {
+			if (field != value) {
+				field = value
+				propagationDelay = value.asNanoseconds.value
+				stateChanged()
+			}
+		}
+
+	/** Used for restoring [periodOrFrequency] after the simulation has ended. */
+	private lateinit var periodOrFrequencyBuffer: PeriodOrFrequency
 
 	init {
-		propagationDelay = 1_000_000_000
+		propagationDelay = periodOrFrequency.asNanoseconds.value
 		addPort(DigitalPortImpl.createOutput())
 	}
 
@@ -73,12 +83,21 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		if (!isEnabled) {
 			writer.writeBoolean("enabled", false)
 		}
+		if (periodOrFrequency.unit != Nanosecond) {
+			writer.writeString("unit", periodOrFrequency.unit.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("enabled")) {
 			isEnabled = reader.readBoolean("enabled")
+		}
+		if (reader.hasAttribute("unit")) {
+			periodOrFrequency = PeriodOrFrequency.fromNanoseconds(
+				propagationDelay,
+				PeriodOrFrequencyUnit.withName(reader.readString("unit"))
+			)
 		}
 	}
 
@@ -88,7 +107,7 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		super.executionInitialize(signalHandler)
 		realStartTime = System.currentTimeMillis()
 		cycleCount = 0
-		propagationDelayBuffer = propagationDelay
+		periodOrFrequencyBuffer = periodOrFrequency.copy()
 		isOn = false
 		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
 	}
@@ -103,7 +122,7 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		realStartTime = 0
 		cycleCount = 0
 		super.executionStopped(signalHandler)
-		propagationDelay = propagationDelayBuffer
+		periodOrFrequency = periodOrFrequencyBuffer
 	}
 
 	/** ---- [Clock] */
