@@ -207,12 +207,9 @@ class GraphViewExecutionAnimator(
 	}
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
-	private fun requireEdgeViewAnimation(): Boolean {
-		return systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
-	}
+	private fun requireEdgeViewAnimation(): Boolean =
+		scheduler.executionTime > 0 && systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
 
 	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
-	private fun requireVerticeGlowAnimation(): Boolean {
-		return scheduler.isPaused
-	}
+	private fun requireVerticeGlowAnimation(): Boolean = scheduler.isPaused
 }
