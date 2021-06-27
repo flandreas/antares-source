@@ -168,9 +168,6 @@ class GraphViewExecutionAnimator(
 		if (!requireVerticeGlowAnimation()) {
 			return
 		}
-		if (graphElement.propagationDelay == 0L) {
-			return
-		}
 
 		val elementViews = drawingView.drawing.getElementViews(graphElement)
 
