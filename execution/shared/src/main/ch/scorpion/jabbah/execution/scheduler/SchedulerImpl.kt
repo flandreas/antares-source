@@ -231,7 +231,7 @@ class SchedulerImpl(
 				actor.actingDone(this, request.actorData)
 			}
 			slot.actingDone(actor)
-			if (slot.isDone) {
+			if (slot.empty) {
 				removeSlot(slot)
 				postSchedulerStateEvent()
 			}
@@ -416,7 +416,7 @@ class SchedulerImpl(
 				it.act()
 			}
 
-			if (slot.isDone) {
+			if (slot.empty) {
 				removeSlot(slot)
 			}
 			recalculated = true
@@ -449,7 +449,7 @@ class SchedulerImpl(
 
 		val isExecutable: Boolean get() = requests.any { it.isActable }
 
-		val isDone: Boolean get() = requests.all { it.isDone }
+		val empty: Boolean get() = requests.isEmpty()
 
 		/**
 		 * Contains the [Actor]s to the scheduled at the specified [relativeTime]. A particular [Actor]
@@ -480,7 +480,11 @@ class SchedulerImpl(
 		}
 
 		fun actingDone(actor: Actor) {
-			findRequest(actor)?.setDone()
+			findRequest(actor)?.let {
+				logActorTrace(actor) { "Actor is done " }
+				requests.remove(it)
+				postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
+			}
 		}
 
 		fun findRequest(actor: Actor): Request? = requests.find { it.actor === actor }
@@ -504,22 +508,16 @@ class SchedulerImpl(
 
 		private var _isActing: Boolean = false
 
-		private var _isDone: Boolean = false
-
 		var actorData: ActorData = actorData
 			private set
 
 		/** `true` if [actor] has already been asked to execute.*/
 		val isActing: Boolean get() = _isActing
 
-		/** `true` if [actor] has already answered with `done`.*/
-		val isDone: Boolean get() = _isDone
-
-		val isActable: Boolean get() = !isActing && !isDone
+		val isActable: Boolean get() = !isActing
 
 		fun reuse(actorData: ActorData) {
 			this.actorData = actorData
-			_isDone = false
 			_isActing = false
 		}
 
@@ -531,18 +529,9 @@ class SchedulerImpl(
 			}
 		}
 
-		fun setDone() {
-			if (_isDone) {
-				return
-			}
-			logActorTrace(actor) { "Actor is done " }
-			_isDone = true
-			postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
-		}
-
 		/** Prints this [Request] to the INFO log.*/
 		fun print() {
-			LOG.info("\t\tRequest for ${actor::class.simpleName} with ID ${actor.id}, isActing=$_isActing, isDone=$_isDone")
+			LOG.info("\t\tRequest for ${actor::class.simpleName} with ID ${actor.id}, isActing=$_isActing")
 		}
 	}
 }
