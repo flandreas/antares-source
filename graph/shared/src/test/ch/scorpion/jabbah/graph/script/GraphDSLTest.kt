@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
@@ -40,8 +39,8 @@ class GraphDSLTest {
 		graphView = TestGraphView()
 		every { view.drawing } returns graphView.graphView
 		graphView.graph.formNet(signalHandler)
-		graphView.graph.executionStart1(signalHandler)
-		graphView.graph.executionStart2(signalHandler)
+		graphView.graph.executionInitialize(signalHandler)
+		graphView.graph.executionStart(signalHandler)
 	}
 
 	@Test

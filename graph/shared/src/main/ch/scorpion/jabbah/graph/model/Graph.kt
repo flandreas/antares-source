@@ -89,14 +89,14 @@ interface Graph : Namable, Describable, Storable {
 
 	/**
 	 * Forms the [CombinedNet]s to be used during execution.
-	 * Must be called before [executionStarted] to avoid race conditions for the established [CombinedNet]s.
+	 * Must be called before [executionStart] to avoid race conditions for the established [CombinedNet]s.
 	 */
 	fun formNet(signalHandler: SignalHandler)
 
-	fun executionStart1(signalHandler: SignalHandler)
+	fun executionInitialize(signalHandler: SignalHandler)
 
 	/** Called by the execution environment after the execution has been started.*/
-    fun executionStart2(signalHandler: SignalHandler)
+    fun executionStart(signalHandler: SignalHandler)
 
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)

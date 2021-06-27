@@ -54,8 +54,8 @@ abstract class AbstractCircuitTest {
 		scheduler.isActive = true
 		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(it, IOModule.storableCreator) }
 		getCircuitView().graph!!.formNet(scheduler)
-		getCircuitView().graph!!.executionStart1(scheduler)
-		getCircuitView().graph!!.executionStart2(scheduler)
+		getCircuitView().graph!!.executionInitialize(scheduler)
+		getCircuitView().graph!!.executionStart(scheduler)
 		if (proceedTo > 0) {
 			proceedToNanos(proceedTo)
 		}

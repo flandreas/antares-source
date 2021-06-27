@@ -152,7 +152,7 @@ class SubGraphVerticeRef(
 		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler)) {
-				graph?.executionStart1(signalHandler)
+				graph?.executionInitialize(signalHandler)
 			}
 		}
 	}
@@ -161,7 +161,7 @@ class SubGraphVerticeRef(
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler)) {
-				graph?.executionStart2(signalHandler)
+				graph?.executionStart(signalHandler)
 			} else {
 				// This will define the same script for all SubGraphVerticeRef instances of the same Graph
 				// which is unnecessary, but so be it for the moment

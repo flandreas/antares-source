@@ -94,8 +94,8 @@ class GraphViewExecutionController(
 				}
 				graphViewsProvider.invoke().forEach { it.bind() }
 				formNet(event.scheduler)
-				executionStart1(event.scheduler)
-				executionStart2(event.scheduler)
+				executionInitialize(event.scheduler)
+				executionStart(event.scheduler)
 			} else {
 				executionStopped(event.scheduler)
 			}

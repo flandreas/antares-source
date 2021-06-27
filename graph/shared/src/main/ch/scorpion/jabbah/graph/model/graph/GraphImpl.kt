@@ -147,11 +147,11 @@ open class GraphImpl(
 		_elements.forEach { it.formNet(signalHandler) }
 	}
 
-	override fun executionStart1(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler) {
 		_elements.forEach { it.executionInitialize(signalHandler) }
 	}
 
-	override fun executionStart2(signalHandler: SignalHandler) {
+	override fun executionStart(signalHandler: SignalHandler) {
 		_elements.forEach { it.executionStart(signalHandler) }
 	}
 
