@@ -105,11 +105,7 @@ class ClockView(
 		val oldColor = context.g.color
 		super.drawImpl(context)
 
-		if (context.useContextColors) {
-			context.g.color = context.color!!.foregroundColor
-		} else {
-			context.g.color = foregroundColor
-		}
+		context.g.color = getApplicableForegroundColor(context)
 		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
 		drawIconPath(context)

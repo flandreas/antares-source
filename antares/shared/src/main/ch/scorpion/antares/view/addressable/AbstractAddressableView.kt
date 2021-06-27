@@ -227,10 +227,10 @@ abstract class AbstractAddressableView<T : Addressable>(
 			}
 		}
 
-		context.g.color = context.choose(color).backgroundColor
+		context.g.color = transparent.applyTo(context.choose(color).backgroundColor)
 		context.g.fill(bounds)
 
-		context.g.color = context.choose(color).foregroundColor
+		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 

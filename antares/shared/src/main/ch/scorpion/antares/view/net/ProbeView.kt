@@ -234,11 +234,11 @@ class ProbeView(
 		val oldColor = context.g.color
 
 		if (fillColor != null) {
-			context.g.color = fillColor
+			context.g.color = transparent.applyTo(fillColor)
 			context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
 		}
 		context.g.stroke = stroke
-		context.g.color = lineColor
+		context.g.color = transparent.applyTo(lineColor)
 		context.g.drawRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
 
 		if (hasOutput) {

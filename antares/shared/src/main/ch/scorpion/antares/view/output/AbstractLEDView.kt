@@ -260,7 +260,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** Draws the bulb in the color returned by [getBulbColor].*/
 	protected open fun drawBulb(context: DrawContext) {
-		drawBulb(context, getBulbColor())
+		drawBulb(context, transparent.applyTo(getBulbColor()))
 	}
 
 	/** Draws the bulb using the specified [Color].*/

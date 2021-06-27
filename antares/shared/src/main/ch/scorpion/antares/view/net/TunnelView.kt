@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -90,7 +91,7 @@ enum class TunnelViewFace(val customName: String) {
 			context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				context.g.color = view.model.getInOrOutSignal().getColor().foregroundColor
+				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().getColor().foregroundColor)
 			} else {
 				context.g.color = if (context.useContextColors) {
 					context.color!!.backgroundColor
@@ -100,9 +101,9 @@ enum class TunnelViewFace(val customName: String) {
 			}
 			context.g.fill(path)
 
-			context.g.color = context.choose(view.color).foregroundColor
+			context.g.color = Transparent.applyTo(view.transparency, context.choose(view.color).foregroundColor)
 
-			context.g.stroke = view.stroke
+				context.g.stroke = view.stroke
 			context.g.draw(path)
 
 			context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)

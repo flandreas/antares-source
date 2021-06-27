@@ -155,10 +155,10 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 		val oldColor = context.g.color
 		context.g.stroke = stroke
 		if (fillColor != null) {
-			context.g.color = fillColor
+			context.g.color = transparent.applyTo(fillColor)
 		}
 		context.g.fillRect(xInt, yInt, width.toInt(), height.toInt())
-		context.g.color = lineColor
+		context.g.color = transparent.applyTo(lineColor)
 		context.g.drawRect(xInt, yInt, width.toInt(), height.toInt())
 
 		drawDirectionAnnotation(context)

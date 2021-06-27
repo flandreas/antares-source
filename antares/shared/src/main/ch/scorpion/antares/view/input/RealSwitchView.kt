@@ -91,7 +91,7 @@ class RealSwitchView(
 			}
 		}
 
-		context.g.color = getPortColor(1, context)
+		context.g.color = transparent.applyTo(getPortColor(1, context))
 		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * SCALE, 0.0)
 
 		if (model.isOn) {
@@ -103,7 +103,7 @@ class RealSwitchView(
 		context.g.fillCircle(bounds.minX + 0.5 * SCALE, 0.0, circleRadius)
 
 
-		context.g.color = getPortColor(2, context)
+		context.g.color = transparent.applyTo(getPortColor(2, context))
 		context.g.drawLine(bounds.maxX - 0.5 * SCALE, 0.0, bounds.maxX, 0.0)
 		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, 0.0, circleRadius)
 

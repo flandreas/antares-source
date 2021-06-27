@@ -80,7 +80,7 @@ class PullResistorView(
 		getPortViews().first().prepareConnectionDrawContext(context)
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-			context.g.color = pullDirectionExecutionColor.foregroundColor
+			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
 		}
 		drawPullDirection(context)
 
@@ -96,9 +96,9 @@ class PullResistorView(
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			return LinearColorGradient(
 				bounds.centerLeft,
-				pullDirectionExecutionColor.foregroundColor,
+				transparent.applyTo(pullDirectionExecutionColor.foregroundColor),
 				bounds.centerRight,
-				netExecutionColor.foregroundColor)
+				transparent.applyTo(netExecutionColor.foregroundColor))
 		}
 		return null
 	}

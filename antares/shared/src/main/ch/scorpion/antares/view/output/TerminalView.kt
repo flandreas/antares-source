@@ -215,18 +215,18 @@ class TerminalView(
 			}
 		}
 
-		drawFill(context, rectangle, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
-		drawStroke(context, rectangle, context.choose(color).foregroundColor, stroke)
+		drawFill(context, rectangle, if (context.useContextColors) transparent.applyTo(context.choose(color).backgroundColor) else transparent.applyTo(propertiesBackgroundColor))
+		drawStroke(context, rectangle, getApplicableForegroundColor(context), stroke)
 	}
 
 	private fun drawScreen(context: DrawContext) {
 		val contentColor = Themes.get<AntaresTheme>().screen
-		context.g.color = context.choose(contentColor).backgroundColor
+		context.g.color = transparent.applyTo(context.choose(contentColor).backgroundColor)
 		context.g.fillRect(
 			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
 			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
 
-		context.g.color = context.choose(contentColor).foregroundColor
+		context.g.color = getApplicableForegroundColor(context)
 		context.g.drawRect(
 			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
 			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
@@ -235,7 +235,7 @@ class TerminalView(
 	private fun drawText(context: DrawContext) {
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.font = textFont
-			context.g.color = lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor
+			context.g.color = transparent.applyTo(lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor)
 
 			var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
 			for (row in 0 until model.displayedRowsCount) {

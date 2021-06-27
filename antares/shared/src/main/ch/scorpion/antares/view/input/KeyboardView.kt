@@ -217,16 +217,16 @@ class KeyboardView(
 			}
 		}
 
-		drawFill(context, bounds, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
-		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
+		drawFill(context, bounds, transparent.applyTo(if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor))
+		drawStroke(context, bounds, transparent.applyTo(context.choose(color).foregroundColor), stroke)
 
-		context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor
+		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
 		context.g.fillRect(x + INSET, y + INSET, width - INSET - RIGHT_INSET, height - 2 * INSET)
 
 		if (model.isFull) {
 			context.g.color = transparent.applyTo(Themes.get<GraphTheme>().error.foregroundColor)
 		} else {
-			context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).foregroundColor
+			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).foregroundColor)
 		}
 		context.g.drawRect(x + INSET, y + INSET, width - INSET - RIGHT_INSET, height - 2 * INSET)
 
@@ -247,7 +247,7 @@ class KeyboardView(
 	private fun drawBuffer(context: DrawContext) {
 		val oldClip = context.g.getClipBounds()
 		context.g.setClipBounds((x + INSET).toInt(), (y + INSET).toInt(), (width - INSET - RIGHT_INSET).toInt(), (height - 2 * INSET).toInt())
-		label.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+		label.color = transparent.applyTo(styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
 		label.draw(context)
 		context.g.setClipBounds(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 	}

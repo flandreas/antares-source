@@ -255,12 +255,12 @@ class SevenSegmentDisplayView(
 		}
 		super.drawImpl(context)
 
-		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
+		context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().screen.backgroundColor)
 		context.g.fillRect(0, 0, geom.width, geom.height)
 
 		if (hasBorder) {
 			context.g.stroke = stroke
-			context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
+			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().screen.foregroundColor)
 			context.g.drawRect(0, 0, geom.width, geom.height)
 		}
 
@@ -362,10 +362,11 @@ class SevenSegmentDisplayView(
 	}
 
 	private fun getColor(value: Boolean): Color {
-		if (value) {
-			return lightColor.onColor
-		}
-		return lightColor.offColor
+		return transparent.applyTo(if (value) {
+			lightColor.onColor
+		} else {
+			lightColor.offColor
+		})
 	}
 }
 
