@@ -61,6 +61,9 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
+	override val connectedPorts: Set<Port<T>> get() =
+		getEdgeViews().flatMap { it.connectedPorts }.toSet()
+
 	override fun handleNetViewStyleChanged() {
 		invalidate()
 		styling = netView!!.style.createNodeViewStyling(styleProvider, this)

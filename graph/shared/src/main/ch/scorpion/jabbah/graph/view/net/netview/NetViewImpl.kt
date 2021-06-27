@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.netview
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.NetViewElement
@@ -13,10 +14,11 @@ import ch.scorpion.jabbah.io.*
  * @param T the type of signal that the [Net] forwards.
  */
 class NetViewImpl<T : Any>(
-	override var net: Net<T> = NetImpl()
+	override var net: Net<T> = NetImpl(),
+	style: NetViewStyle = NetViewStyle.LINE
 ) : NetView<T> {
 
-	override var style: NetViewStyle = NetViewStyle.LINE
+	override var style: NetViewStyle = style
 		set(value) {
 			field = value
 			elements.forEach { it.handleNetViewStyleChanged() }
@@ -71,5 +73,18 @@ class NetViewImpl<T : Any>(
 		if (reference.name == "modelId") {
 			referenceResolver.getStorable<Net<T>>(reference.referenceId)?.let { net = it }
 		}
+	}
+
+	override fun splitOff(ports: Set<Port<T>>): NetView<T> {
+		val newNetView = NetViewImpl(net.splitOff(ports), style)
+		elements.toList().forEach {
+			val connectedPorts = it.connectedPorts
+			if (connectedPorts.isNotEmpty() && ports.containsAll(connectedPorts)) {
+				it.net = newNetView.net
+				it.netView?.remove(it)
+				newNetView.add(it)
+			}
+		}
+		return newNetView
 	}
 }

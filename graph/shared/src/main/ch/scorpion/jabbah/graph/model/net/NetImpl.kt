@@ -82,6 +82,19 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		requestActingAfter(signalHandler, 0, data)
 	}
 
+	override fun cloneEmpty(): Net<T> = NetImpl()
+
+	override fun splitOff(ports: Set<Port<T>>): Net<T> {
+		val newNet = cloneEmpty()
+		this.ports
+			.filter { ports.contains(it) }
+			.forEach {
+				unconnect(it)
+				newNet.connect(it)
+			}
+		return newNet
+	}
+
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {

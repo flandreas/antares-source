@@ -31,6 +31,8 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			super.signalBuffer = value
 		}
 
+	override fun cloneEmpty(): Net<DigitalSignal> = DigitalNet()
+
 	/** ---- [GraphElement] */
 
 	override val designError: DesignError?

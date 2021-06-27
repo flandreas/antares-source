@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -16,6 +17,13 @@ interface NetViewElement<T : Any> : GraphElementView<Net<T>> {
 
 	/** The [NetView] to which this [NetViewElement] belongs. Only `null` during deserialization.*/
 	var netView: NetView<T>?
+
+	/**
+	 * Returns the [Port]s that are visually connected by this [NetViewElement] and therefore belong
+	 * to the same [Net]. Used for calculating [Net] partitioning when [NetViewElement]s are removed
+	 * from a [NetView].
+	 */
+	val connectedPorts: Set<Port<T>>
 
 	/**
 	 * Informs this [NetViewElement] that the [NetViewStyle] of this [NetViewElement]'s

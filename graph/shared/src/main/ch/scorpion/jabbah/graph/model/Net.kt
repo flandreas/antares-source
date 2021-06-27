@@ -24,6 +24,7 @@ interface Net<T: Any> : GraphElement {
     /** Returns the [Port]s to which this [Net] is connected as an immutable list.*/
     val ports: ImmutableList<Port<T>>
 
+    /** Returns all [Port]s of [ports] with [WeakOutputPortBehaviour]*/
     val weakOutputPorts: Collection<OutputPort<T>>
 
     /** Connects the specified [Port] with this [Net]. */
@@ -42,6 +43,15 @@ interface Net<T: Any> : GraphElement {
      * @param signalHandler the runtime interface to the execution subsystem.
      */
     fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler)
+
+    /** Creates a new [Net] of the same type like this [Net] without copying all the [Port]s.*/
+    fun cloneEmpty(): Net<T>
+
+	/**
+	 * Creates a new [Net] of the same type as this [Net], and reconnects those [Port]s of
+	 * this [Net] that are also in [ports] to the newly created [Net].
+	 */
+	fun splitOff(ports: Set<Port<T>>): Net<T>
 
 }
 

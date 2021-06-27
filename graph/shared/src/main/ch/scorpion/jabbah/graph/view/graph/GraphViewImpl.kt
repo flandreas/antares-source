@@ -29,6 +29,8 @@ import ch.scorpion.jabbah.graph.model.graph.GraphGlobalIdentityProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewPartitioner
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecasesImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -356,6 +358,9 @@ open class GraphViewImpl(
 	/** Only needed for testing.*/
 	fun getNetViewCount(net: Net<*>): Int = netViewMap.filterKeys { it === net }.size
 
+	/** Only needed for testing.*/
+	fun getNetViewMap(): Map<Net<Any>, NetView<Any>> = netViewMap.toMap()
+
 	private fun addNetView(netView: NetView<Any>) {
 		if (!netViewMap.containsKey(netView.net)) {
 			netViewMap[netView.net] = netView
@@ -381,6 +386,19 @@ open class GraphViewImpl(
 			netView.remove(elem)
 			if (netView.isEmpty) {
 				removeNetView(netView)
+			} else {
+				if (elem is NodeView<*>) {
+					val partitionedNetViews = NetViewPartitioner(netView).partition()
+					if (partitionedNetViews.isNotEmpty()) {
+						LOG.trace("Partitioned NetView into ${partitionedNetViews.size} new NetViews")
+						removeNetView(netView)
+						graph?.remove(netView.net)
+						partitionedNetViews.forEach {
+							graph?.add(it.net)
+							addNetView(it)
+						}
+					}
+				}
 			}
 		}
 	}

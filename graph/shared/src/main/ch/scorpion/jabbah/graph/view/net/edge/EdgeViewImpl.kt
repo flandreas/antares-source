@@ -591,6 +591,13 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
+	override val connectedPorts: Set<Port<T>> get() {
+		if (origin?.port == null || destination?.port == null) {
+			return emptySet()
+		}
+		return setOf(origin!!.port!!, destination!!.port!!)
+	}
+
 	override fun handleNetViewStyleChanged() {
 		invalidate()
 		styling = netView!!.style.createEdgeViewStyling(styleProvider, this)

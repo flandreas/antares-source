@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.io.Storable
 
@@ -32,4 +33,11 @@ interface NetView<T : Any> : Storable, Bean {
     fun remove(elem: NetViewElement<T>)
 
     fun getElements(): ImmutableList<NetViewElement<T>>
+
+	/**
+	 * Creates a new [NetView] of the same type as this [NetView], creates a new underlying [Net],
+	 * and moves all [NetViewElement] of this [NetView] that are connected to any of [ports] to the
+	 * newly created [NetView], including reconnecting these [Port]s to the new [Net].
+	 */
+	fun splitOff(ports: Set<Port<T>>): NetView<T>
 }
