@@ -13,7 +13,7 @@ abstract class AbstractAnimationTask<T>(
     override val key: String? = null
 ) : AnimationTask {
 
-    private val listeners: MutableList<AnimationTaskListener> by lazy { mutableListOf<AnimationTaskListener>() }
+    private val listeners: MutableList<AnimationTaskListener> by lazy { mutableListOf() }
 
     /** ---- [AnimationTask] interface */
 

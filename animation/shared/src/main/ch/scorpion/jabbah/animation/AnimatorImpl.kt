@@ -40,7 +40,7 @@ class AnimatorImpl(
 	val taskListener: AnimationTaskListener = TaskListener()
 
 	/** Holds all scheduled [AnimationTask]s.*/
-	private val jobs: MutableList<AnimationJob> by lazy { mutableListOf<AnimationJob>() }
+	private val jobs: MutableList<AnimationJob> by lazy { mutableListOf() }
 
 	/** ---- [Animator] interface */
 

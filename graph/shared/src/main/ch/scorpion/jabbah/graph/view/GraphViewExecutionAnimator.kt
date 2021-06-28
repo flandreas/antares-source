@@ -6,7 +6,9 @@ import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.drawable.SynchronizedGlowAnimation
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -50,6 +52,10 @@ class GraphViewExecutionAnimator(
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) {
 
+	companion object {
+		private val LOG by logger(GraphViewExecutionAnimator::class)
+	}
+
 	/**
 	 * Maps a [Net] to all [EdgeViewNetAnimation]s currently running on it. Note that there can be
 	 * more than one animation for the same [Net] if multiple [OutputPort]s assert their startup values to the same bus.
@@ -61,6 +67,7 @@ class GraphViewExecutionAnimator(
 		if (!it.scheduler.isActive) {
 			// TODO Should stop only animations related to this GraphViewAnimator
 			animator.stopAllTasks()
+			stopAllVerticeViewActingAnimations()
 			netAnimationMap.clear()
 		}
 	}
@@ -186,9 +193,10 @@ class GraphViewExecutionAnimator(
 	private fun startVerticeViewActingAnimation(graphElement: GraphElement) {
 		val elementViews = drawingView.drawing.getElementViews(graphElement)
 		if (elementViews.size == 1 && elementViews[0] is VerticeView) {
-			animationFactory.createVerticeViewActingAnimation(elementViews[0] as VerticeView<*>)?.let {
-				animator.schedule(it)
-				it.start()
+			val verticeView = elementViews[0] as VerticeView<*>
+			if (verticeView is Transparent) {
+				LOG.trace("Start VerticeView acting animation on ${verticeView::class.simpleName} with ID ${verticeView.id}")
+				SynchronizedGlowAnimation.add(verticeView)
 			}
 		}
 	}
@@ -196,12 +204,15 @@ class GraphViewExecutionAnimator(
 	private fun stopVerticeViewActingAnimation(graphElement: GraphElement) {
 		val elementViews = drawingView.drawing.getElementViews(graphElement)
 		if (elementViews.size == 1 && elementViews[0] is Transparent) {
-			animator.getTasksForTarget(elementViews[0]).forEach { it.stop() }
+			val verticeView = elementViews[0] as VerticeView<*>
+			if (verticeView is Transparent) {
+				SynchronizedGlowAnimation.remove(verticeView)
+			}
 		}
 	}
 
 	private fun stopAllVerticeViewActingAnimations() {
-		animator.getTasksForKey(GraphViewExecutionAnimationFactory.VERTICE_VIEW_ACTING_KEY).forEach { it.stop() }
+		SynchronizedGlowAnimation.removeAll()
 	}
 
 	private fun registerAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
