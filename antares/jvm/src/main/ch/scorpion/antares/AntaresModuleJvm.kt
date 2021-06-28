@@ -13,6 +13,7 @@ import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.antares.view.net.TransistorView
 import ch.scorpion.antares.view.net.TunnelViewFacePreference
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
@@ -193,6 +194,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = TransistorView.PROP_TRANSISTOR_CIRCLE,
 			nameKey = "antares.preference.TransistorCircle"
+		))
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
+			id = DigitalEdgeView.PROP_WIDE_BUS_STROKE,
+			nameKey = "antares.preference.wideBusStroke"
 		))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(

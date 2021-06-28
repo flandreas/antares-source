@@ -189,6 +189,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 
 		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, DigitalPortView.LENGTH + 5)
+		properties.set(DigitalEdgeView.PROP_WIDE_BUS_STROKE, true)
 
 		properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
 		properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")

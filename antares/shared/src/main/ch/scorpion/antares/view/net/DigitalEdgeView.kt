@@ -4,6 +4,8 @@ import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -48,6 +50,12 @@ class DigitalEdgeView(
 	net
 ) {
 
+	companion object {
+
+		/** The name of the [Boolean] property in [Properties] defining whether [DigitalEdgeView] with wide [BitWidth] should use a wider stroke. */
+		const val PROP_WIDE_BUS_STROKE = "antares.DigitalEdgeView.wideBusStroke"
+	}
+
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
@@ -68,7 +76,7 @@ class DigitalEdgeView(
 			context.choose(color)
 		}
 
-		if ((model as DigitalNet).bitWidth.width > 1) {
+		if ((model as DigitalNet).bitWidth.width > 1 && BaseModule.properties.getBoolean(PROP_WIDE_BUS_STROKE)) {
 			context.g.stroke = (style as EdgeStyle).busStroke
 		} else {
 			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
