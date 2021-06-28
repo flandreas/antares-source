@@ -427,9 +427,10 @@ class SchedulerImpl(
 		return ExecutionStepResult(recalculated, false)
 	}
 
-	private fun checkForBreakpoint(slot: Slot): Boolean {
-		return isPaused && (hardBreakpointReceived || isSoftBreakpointsEnabled && slot.getRequests().any { it.isActable && it.actor.isBreakpoint })
-	}
+	private fun checkForBreakpoint(slot: Slot): Boolean =
+		isPaused
+			&& executionTime > 0
+			&&(hardBreakpointReceived || isSoftBreakpointsEnabled && slot.getRequests().any { it.isActable && it.actor.isBreakpoint })
 
 	/**
 	 * A [Slot] is an entry in the queue of the [Scheduler] and contains all [Request]s of [Actor]s
