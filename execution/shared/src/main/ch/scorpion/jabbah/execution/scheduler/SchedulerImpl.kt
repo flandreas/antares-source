@@ -222,18 +222,42 @@ class SchedulerImpl(
 		requestActingImpl(actor, delay, data)
 	}
 
+	override fun actPrematurely(actor: Actor, data: ActorData?) {
+		val slot = getSlotWithRequestForActor(actor)
+		if (slot != null) {
+			val request = slot.findRequest(actor)!!
+			if (request.isActable) {
+				logActorTrace(request.actor) { "Executing prematurely" }
+				request.act()
+			}
+		}
+	}
+
 	override fun actingDone(actor: Actor, data: ActorData?) {
 		logActorTrace(actor) { "Acting done" }
-		val slot = queue.peek()
+		var slot = queue.peek()
 		if (slot != null) {
-			val request = slot.findRequest(actor)
-			if (request != null && request.isActing) {
-				actor.actingDone(this, request.actorData)
+			var request = slot.findRequest(actor)
+
+			// Needed for processing 'actPrematurely'
+			if (request == null) {
+				slot = getSlotWithRequestForActor(actor)
+				if (slot != null) {
+					request = slot.findRequest(actor)
+				}
 			}
-			slot.actingDone(actor)
-			if (slot.empty) {
-				removeSlot(slot)
-				postSchedulerStateEvent()
+
+			if (slot != null) {
+				if (request != null && request.isActing) {
+					actor.actingDone(this, request.actorData)
+				}
+				slot.actingDone(actor)
+				if (slot.empty) {
+					removeSlot(slot)
+					postSchedulerStateEvent()
+				}
+			} else {
+				actor.actingDone(this, data)
 			}
 		} else {
 			actor.actingDone(this, data)
@@ -327,6 +351,9 @@ class SchedulerImpl(
 	private fun getSlotAt(relativeTime: Long): Slot? {
 		return queue.elements().find { it.relativeTime == relativeTime }
 	}
+
+	private fun getSlotWithRequestForActor(actor: Actor): Slot? =
+		queue.elements().firstOrNull { it.findRequest(actor) != null }
 
 	/** Resets the [Scheduler].*/
 	private fun reset() {
@@ -440,7 +467,7 @@ class SchedulerImpl(
 	 *
 	 * @property relativeTime the relative execution time (in ns) at which `actor` is to be scheduled
 	 * @param actor the [Actor] for which the first [Request] is added to this [Slot]
-	 * @paran data the [ActorData] of the first [Request] to be added to this [Slot]
+	 * @param data the [ActorData] of the first [Request] to be added to this [Slot]
 	 */
 	private inner class Slot(
 		val relativeTime: Long,

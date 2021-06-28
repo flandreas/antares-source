@@ -265,10 +265,24 @@ class SchedulerImplTest {
 		verify(exactly = 1) { actor1.act(any(), any()) }
 	}
 
+	@Test
+	fun shouldActPrematurely() {
+		val actor = createActor(propagationDelay = 100 * MILLION )
+		val actorData = createActorData()
+
+		scheduler.isActive = true
+		scheduler.signalHandler.requestActingAfter(actor, actor.propagationDelay, actorData)
+		timeService.setTimeMillis(50)
+
+		scheduler.signalHandler.actPrematurely(actor, actorData)
+		verify { actor.act(any(), any())}
+	}
+
 	/** ---- [SchedulerImplTest] */
 
-	private fun createActor(isBreakpoint: Boolean = true): Actor {
+	private fun createActor(isBreakpoint: Boolean = true, propagationDelay: Long = 0): Actor {
 		val actor = spyk<ActorImpl>()
+		actor.propagationDelay = propagationDelay
 		every { actor.isBreakpoint } returns isBreakpoint
 		return actor
 	}

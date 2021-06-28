@@ -40,6 +40,14 @@ interface SignalHandler : ExecutionErrorHandler {
      */
     fun requestActingAfter(actor: Actor, delay: Long, data: ActorData)
 
+	/**
+	 * An [Actor] can act by itself even if the propagation delay with which it requested acting
+	 * with the [Scheduler] is not yet over. A typical application of this are composed [Actor]s
+	 * that defined their "end of acting" not in terms of a propagation delay, but by producing
+	 * a changed output (at which time that ever might be).
+	 */
+	fun actPrematurely(actor: Actor, data: ActorData?)
+
     /**
      * Informs this [SignalHandler] that the acting of the specified [Actor] is done.
      *
