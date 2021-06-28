@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net.node
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
  * A [NodeViewStyling] that draws a [NodeView] as a simple dot.
@@ -9,6 +10,8 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 class NodeViewDotStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 
 	private companion object {
+		private const val STROKE_WIDTH = 0.25f
+		private val SELECTION_STROKE = Stroke(width = STROKE_WIDTH)
 		private const val HALF_SIZE = 4
 	}
 
@@ -20,8 +23,8 @@ class NodeViewDotStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 
 	override fun updateBoundingBox() {
 		boundingBox.setFrame(
-			nodeView.location.x - HALF_SIZE, nodeView.location.y - HALF_SIZE,
-			(2 * HALF_SIZE).toDouble(), (2 * HALF_SIZE).toDouble()
+			nodeView.location.x - HALF_SIZE - STROKE_WIDTH, nodeView.location.y - HALF_SIZE - STROKE_WIDTH,
+			(2 * (HALF_SIZE + STROKE_WIDTH)).toDouble(), (2 * (HALF_SIZE + STROKE_WIDTH)).toDouble()
 		)
 	}
 
@@ -33,6 +36,7 @@ class NodeViewDotStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 
 		// Completely cover [NodeView]s that lie beneath this one
 		if (context.useContextColors) {
+			context.g.stroke = SELECTION_STROKE
 			context.g.drawOval(
 				(nodeView.location.x - HALF_SIZE).toInt(), (nodeView.location.y - HALF_SIZE).toInt(),
 				2 * HALF_SIZE, 2 * HALF_SIZE)
