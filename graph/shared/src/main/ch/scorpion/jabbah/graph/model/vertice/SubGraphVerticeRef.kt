@@ -107,8 +107,6 @@ class SubGraphVerticeRef(
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
 		LOG.trace("propagateOutput for Output '${outputPort.name}'")
-		// Invoke SignalHandler in order to enable breakpoint on the SubGraphOutputPort
-		signalHandler.requestActingAfter(this, 1, VerticeActorData(outputPort, isInput = false))
 		outputPort.setOutgoingSignalBuffered(signal, signalHandler)
 		outputChanged(outputPort, signalHandler)
 	}
