@@ -27,6 +27,9 @@ interface Animator {
     /** Returns all scheduled [AnimationTask]s for the specified [target].*/
     fun getTasksForTarget(target: Any): Collection<AnimationTask>
 
+    /** Returns all scheduled [AnimationTask]s with the specified key.*/
+    fun getTasksForKey(key: String): Collection<AnimationTask>
+
     /** Stops all currently running [AnimationTask]s.*/
     fun stopAllTasks()
 

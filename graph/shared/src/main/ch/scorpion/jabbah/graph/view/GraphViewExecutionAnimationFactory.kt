@@ -30,6 +30,10 @@ interface EdgeViewNetAnimation {
  */
 interface GraphViewExecutionAnimationFactory {
 
+	companion object {
+		const val VERTICE_VIEW_ACTING_KEY = "VERTICE_VIEW_ACTING"
+	}
+
 	/** Creates an [EdgeViewNetAnimation] to visualize a signal flowing along an [EdgeView]. */
 	fun createEdgeViewNetAnimation(
 		actorListener: ActorListener,
@@ -46,7 +50,7 @@ interface GraphViewExecutionAnimationFactory {
 	 * Creates an [AnimationTask] to be played while a [VerticeView]'s [Vertice] is acting.
 	 * @return `null` if [verticeView] can't be animated
 	 */
-	fun createVerticeViewActingAnimation(verticeView: VerticeView<*>): AnimationTask?
+	fun createVerticeViewActingAnimation(verticeView: VerticeView<*>, key: String? = VERTICE_VIEW_ACTING_KEY): AnimationTask?
 }
 
 class UndefinedGraphViewExecutionAnimationFactory : GraphViewExecutionAnimationFactory {
@@ -55,7 +59,7 @@ class UndefinedGraphViewExecutionAnimationFactory : GraphViewExecutionAnimationF
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun createVerticeViewActingAnimation(verticeView: VerticeView<*>): AnimationTask? {
+	override fun createVerticeViewActingAnimation(verticeView: VerticeView<*>, key: String?): AnimationTask? {
 		throw UnsupportedOperationException("not implemented")
 	}
 }
@@ -69,9 +73,9 @@ abstract class AbstractGraphViewExecutionAnimationFactory : GraphViewExecutionAn
 	 * Creates a [TransparentAnimation] that produces a "glow" effect.
 	 * @return `null` if [verticeView] is not [Transparent]
 	 */
-	override fun createVerticeViewActingAnimation(verticeView: VerticeView<*>): AnimationTask? {
+	override fun createVerticeViewActingAnimation(verticeView: VerticeView<*>, key: String?): AnimationTask? {
 		if (verticeView is Transparent) {
-			val glowAnimation = TransparentAnimation.glow(verticeView)
+			val glowAnimation = TransparentAnimation.glow(verticeView, key = key)
 			glowAnimation.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
 					verticeView.transparency = Transparent.FULLY_OPAQUE

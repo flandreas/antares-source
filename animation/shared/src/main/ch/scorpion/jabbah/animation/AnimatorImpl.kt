@@ -74,6 +74,9 @@ class AnimatorImpl(
 		return tasks
 	}
 
+	override fun getTasksForKey(key: String): Collection<AnimationTask> =
+		jobs.filter { it.task.key == key }.map { it.task }
+
 	override fun stopAllTasks() {
 		jobs.toList().forEach { it.task.stop() }
 	}

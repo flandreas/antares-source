@@ -18,10 +18,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningState
+import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.*
@@ -68,12 +65,18 @@ class GraphViewExecutionAnimator(
 		}
 	}
 
+	private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = {
+		stopAllVerticeViewActingAnimations()
+	}
+
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
 	}
 
 	fun dispose() {
-		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.unregister(schedulerActivationStateHandler)
+		eventBus.unregister(schedulerRunningStateHandler)
 	}
 
 	fun actingRequested(actor: Actor, data: ActorData) {
@@ -164,15 +167,24 @@ class GraphViewExecutionAnimator(
 
 	private fun handleGraphElementActingRequested(graphElement: GraphElement) {
 		scheduler.logActorTrace(graphElement) { "handleGraphElementActingRequested" }
-
-		if (!requireVerticeGlowAnimation()) {
-			return
+		if (requireVerticeViewGlowAnimation()) {
+			startVerticeViewActingAnimation(graphElement)
 		}
+	}
 
+	private fun handleGraphElementActed(graphElement: GraphElement) {
+		scheduler.logActorTrace(graphElement) { "handleGraphElementActed" }
+		if (requireVerticeViewGlowAnimation()) {
+			stopVerticeViewActingAnimation(graphElement)
+		}
+	}
+
+	/**
+	 * Start an animation indicating that acting has been requested and this [Actor] waits to be scheduled
+	 * by the [Scheduler]
+	 */
+	private fun startVerticeViewActingAnimation(graphElement: GraphElement) {
 		val elementViews = drawingView.drawing.getElementViews(graphElement)
-
-		// Start an animation indicating that acting has been requested and this Actor waits to be scheduled
-		// by the Scheduler
 		if (elementViews.size == 1 && elementViews[0] is VerticeView) {
 			animationFactory.createVerticeViewActingAnimation(elementViews[0] as VerticeView<*>)?.let {
 				animator.schedule(it)
@@ -181,16 +193,15 @@ class GraphViewExecutionAnimator(
 		}
 	}
 
-	private fun handleGraphElementActed(graphElement: GraphElement) {
-		scheduler.logActorTrace(graphElement) { "handleGraphElementActed" }
-		if (!requireVerticeGlowAnimation()) {
-			return
-		}
+	private fun stopVerticeViewActingAnimation(graphElement: GraphElement) {
 		val elementViews = drawingView.drawing.getElementViews(graphElement)
-		// Stop VerticeView animation, if any
 		if (elementViews.size == 1 && elementViews[0] is Transparent) {
 			animator.getTasksForTarget(elementViews[0]).forEach { it.stop() }
 		}
+	}
+
+	private fun stopAllVerticeViewActingAnimations() {
+		animator.getTasksForKey(GraphViewExecutionAnimationFactory.VERTICE_VIEW_ACTING_KEY).forEach { it.stop() }
 	}
 
 	private fun registerAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
@@ -208,5 +219,5 @@ class GraphViewExecutionAnimator(
 		scheduler.executionTime > 0 && systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
 
 	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
-	private fun requireVerticeGlowAnimation(): Boolean = scheduler.isPaused
+	private fun requireVerticeViewGlowAnimation(): Boolean = scheduler.isPaused
 }

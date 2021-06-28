@@ -12,7 +12,8 @@ import ch.scorpion.jabbah.draw.DrawableContainer
 class TransparentAnimation(
 	transparent: Transparent,
 	sequence: Sequence<Double>,
-	duration: Double
+	duration: Double,
+	key: String? = null
 ) : AbstractAnimationTask<Double>(
 	transparent,
 	{
@@ -20,7 +21,8 @@ class TransparentAnimation(
 		transparent.validate()
 	},
 	sequence,
-	duration
+	duration,
+	key = key
 ) {
 
 	companion object {
@@ -34,8 +36,8 @@ class TransparentAnimation(
 		 * Creates a [TransparentAnimation] that produces a glow effect on the specified [Transparent]
 		 * by oscillating its transparency value by the specified frequency forever.
 		 */
-		fun glow(transparent: Transparent, frequency: Double = DEF_GLOW_PERIOD): TransparentAnimation {
-			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0, SequenceType.OSCILLATION), frequency)
+		fun glow(transparent: Transparent, frequency: Double = DEF_GLOW_PERIOD, key: String? = null): TransparentAnimation {
+			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0, SequenceType.OSCILLATION), frequency, key)
 		}
 
 		/**

@@ -9,7 +9,8 @@ abstract class AbstractAnimationTask<T>(
     private val consumer: AnimationTaskConsumer<T>,
     private val sequence: Sequence<T>,
     override val duration: Double,
-    override val dependsOnSystemSpeed: Boolean = false
+    override val dependsOnSystemSpeed: Boolean = false,
+    override val key: String? = null
 ) : AnimationTask {
 
     private val listeners: MutableList<AnimationTaskListener> by lazy { mutableListOf<AnimationTaskListener>() }

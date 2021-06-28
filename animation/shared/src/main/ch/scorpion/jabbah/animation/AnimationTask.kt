@@ -27,6 +27,9 @@ interface AnimationTask {
      */
     val dependsOnSystemSpeed: Boolean
 
+    /** An optional identifying key allowing for example to retrieve all running [AnimationTask]s of the same type.*/
+    val key: String?
+
     /** Adds [listener] to be informed about life cycle changed of this [AnimationTask].*/
     fun addListener(listener: AnimationTaskListener)
 
