@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

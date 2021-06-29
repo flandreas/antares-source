@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -33,7 +32,7 @@ enum class LightColor(val customName: String, val onColor: Color, val offColor: 
 	    const val PROP_DEFAULT_LIGHT_COLOR = "antares.view.output.defaultLightColor"
 
         fun withName(customName: String): LightColor {
-            for (c in LightColor.values()) {
+            for (c in values()) {
                 if (c.customName == customName) {
                     return c
                 }

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.*
 
 /**

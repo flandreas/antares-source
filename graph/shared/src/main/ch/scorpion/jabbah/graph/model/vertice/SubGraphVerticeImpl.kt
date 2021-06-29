@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler

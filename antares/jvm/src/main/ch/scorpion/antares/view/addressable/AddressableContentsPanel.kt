@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.addressable.AddressableClearCommand
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.graphics.Color

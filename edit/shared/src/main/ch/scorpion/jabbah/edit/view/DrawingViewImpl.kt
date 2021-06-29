@@ -183,12 +183,12 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	override fun removeDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers
-        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
+        throw UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
     }
 
     override fun addDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers
-        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot add Drawable to DrawingViewImpl")
+        throw UnsupportedOperationException("Clients cannot add Drawable to DrawingViewImpl")
     }
 
     /** ---- [DrawingViewImpl] */

@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
@@ -16,7 +15,7 @@ enum class PortLabelPosition(val customName: String) {
 	companion object {
 
 		fun withName(customName: String): PortLabelPosition {
-			for (pos in PortLabelPosition.values()) {
+			for (pos in values()) {
 				if (pos.customName == customName) {
 					return pos
 				}

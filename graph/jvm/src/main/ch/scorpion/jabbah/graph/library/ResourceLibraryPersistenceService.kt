@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.io.ResourcesUtil
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph

@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.animation
 
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**

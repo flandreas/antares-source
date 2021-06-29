@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.base.collection
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
-
 /**
  * A simple implementation of a queue whose items are sorted according to their natural ordering.
  * The head of the queue is the least element.

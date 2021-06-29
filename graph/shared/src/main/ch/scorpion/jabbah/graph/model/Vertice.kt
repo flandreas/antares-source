@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 
 /**

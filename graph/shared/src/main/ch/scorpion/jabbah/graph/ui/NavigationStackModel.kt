@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewContent

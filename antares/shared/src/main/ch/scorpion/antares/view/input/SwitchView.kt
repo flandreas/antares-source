@@ -9,7 +9,6 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext

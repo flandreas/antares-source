@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 
 /**
  * A timer abstraction to be used for implementing various types of timers for simulation processes,

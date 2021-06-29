@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.io.Storable

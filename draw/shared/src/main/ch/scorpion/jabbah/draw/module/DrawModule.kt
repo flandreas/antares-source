@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw.module
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext

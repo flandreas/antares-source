@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.execution.SignalHandler
 import javax.swing.JLabel
 import javax.swing.event.TableModelEvent

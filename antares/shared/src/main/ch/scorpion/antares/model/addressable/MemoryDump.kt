@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import kotlin.math.max
 
@@ -143,7 +142,7 @@ object MemoryDump {
 	}
 }
 
-enum class MemoryDumpVersionType(val identifier: String) {
+enum class MemoryDumpVersionType(private val identifier: String) {
 	Default("amd-df"),
 	Newline("amd-nl");
 

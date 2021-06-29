@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Locatable

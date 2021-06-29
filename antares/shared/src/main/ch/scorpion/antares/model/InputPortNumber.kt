@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.jabbah.base.Translations

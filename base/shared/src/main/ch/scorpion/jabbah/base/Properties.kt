@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base
 
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 
 /**
  * Contains system-wide available properties defined as name/value pairs.

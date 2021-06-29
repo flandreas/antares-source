@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 

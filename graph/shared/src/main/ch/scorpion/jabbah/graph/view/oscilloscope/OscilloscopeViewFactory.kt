@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
-
 /** A factory for creating various objects used by [OscilloscopeView].*/
 interface OscilloscopeViewFactory {
 

@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler

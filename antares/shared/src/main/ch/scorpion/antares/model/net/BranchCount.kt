@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
 /** Defines the supported number of branches of a [Splitter] or a [Concentrator]. */
 enum class BranchCount(val count: Int) {
@@ -39,7 +38,7 @@ enum class BranchCount(val count: Int) {
 		}
 
 		fun withCount(count: Int): BranchCount {
-			for (branchCount in BranchCount.values()) {
+			for (branchCount in values()) {
 				if (branchCount.count == count) {
 					return branchCount
 				}

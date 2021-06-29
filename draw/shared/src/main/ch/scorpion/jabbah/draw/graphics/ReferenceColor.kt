@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.Theme

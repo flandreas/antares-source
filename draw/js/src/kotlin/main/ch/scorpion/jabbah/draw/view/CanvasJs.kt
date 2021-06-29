@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -448,7 +447,7 @@ private class KeyEventJs(
 	override fun isConsumed(): Boolean = event.defaultPrevented
 
 	private fun convertModifiers(): Int {
-		var modifiers: Int = 0
+		var modifiers = 0
 		if (event.shiftKey) {
 			modifiers = modifiers or SHIFT_MASK
 		}

@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import kotlin.math.abs
 
 enum class Direction(

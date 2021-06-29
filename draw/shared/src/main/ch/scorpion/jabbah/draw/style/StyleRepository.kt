@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.style
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.base.logger

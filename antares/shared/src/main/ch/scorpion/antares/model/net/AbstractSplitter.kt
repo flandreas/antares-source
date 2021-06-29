@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.GraphActorData

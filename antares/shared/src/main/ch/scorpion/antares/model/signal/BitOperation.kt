@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import kotlin.math.max
 import kotlin.math.pow
 

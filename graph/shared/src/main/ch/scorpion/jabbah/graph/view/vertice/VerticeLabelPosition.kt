@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.VerticeView
 /**
@@ -18,7 +17,7 @@ enum class VerticeLabelPosition(val customName: String) {
     companion object {
 
         fun withName(customName: String): VerticeLabelPosition {
-            for (pos in VerticeLabelPosition.values()) {
+            for (pos in values()) {
                 if (pos.customName == customName) {
                     return pos
                 }

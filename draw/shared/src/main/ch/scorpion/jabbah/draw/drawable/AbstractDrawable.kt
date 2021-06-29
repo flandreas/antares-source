@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Shape

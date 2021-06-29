@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Describable

@@ -1,7 +1,5 @@
 package ch.scorpion.antares.model
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-
 /**
  * Enumerates the possible number of [InputPort]s of an [AbstractDigitalGate].
  */

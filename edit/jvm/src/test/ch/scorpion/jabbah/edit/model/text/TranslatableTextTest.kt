@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.base.Language.English
 import ch.scorpion.jabbah.base.Language.German
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.*
 import kotlin.test.*

@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.model
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Component

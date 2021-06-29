@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-
 enum class LineCap {
 	BUTT,
 	ROUND,

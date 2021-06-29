@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.GraphInput
@@ -28,7 +27,7 @@ class GraphInputImpl<T: Any>(
 	}
 
 	override val type: String get() = GraphInputImpl.type
-	override val typeDesc: String? get() = GraphInputImpl.typeDesc
+	override val typeDesc: String get() = GraphInputImpl.typeDesc
 
     /** ---- [GraphPort] interface */
 

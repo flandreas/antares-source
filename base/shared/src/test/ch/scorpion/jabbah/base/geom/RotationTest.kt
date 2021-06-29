@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 

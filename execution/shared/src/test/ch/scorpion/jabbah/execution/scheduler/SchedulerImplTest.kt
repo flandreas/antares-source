@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.base.event.EventBusImpl
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.execution.ExecutionError

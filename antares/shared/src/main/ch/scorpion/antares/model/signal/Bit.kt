@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
 
@@ -37,9 +36,9 @@ enum class Bit(private val value: Int?) {
 		 * Converts a [Int] to the first [length] [Bit]s of its binary representation, starting with
 		 * the least-priority bit.
 		 */
-		fun listFromInt(value: Int, length: Int): List<Bit> = (0 until length).map { Bit.of(BitOperation.getBitAt(value.toLong(), it)) }
+		fun listFromInt(value: Int, length: Int): List<Bit> = (0 until length).map { of(BitOperation.getBitAt(value.toLong(), it)) }
 
-		fun listFromLong(value: Long, length: Int): List<Bit> = (0 until length).map { Bit.of(BitOperation.getBitAt(value, it)) }
+		fun listFromLong(value: Long, length: Int): List<Bit> = (0 until length).map { of(BitOperation.getBitAt(value, it)) }
 	}
 
 	/** Checks whether this [Bit] has a defined value, i.e. whether it is not `null`.*/
@@ -76,7 +75,7 @@ enum class Bit(private val value: Int?) {
 			True -> False
 		}
 
-	fun and(bit: Bit): Bit = Bit.of(this.isSet && bit.isSet)
+	fun and(bit: Bit): Bit = of(this.isSet && bit.isSet)
 
 	/** Returns the inverse of this [Bit], if requested by the parameter.*/
 	fun invert(invert: Boolean = true): Bit = if (invert) not() else this

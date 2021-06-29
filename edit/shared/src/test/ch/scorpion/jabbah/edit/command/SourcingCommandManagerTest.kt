@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.Undoable

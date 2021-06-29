@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.model.OutputPort
 
 /**
@@ -14,7 +13,7 @@ enum class OutputAnnotation(val customName: String) {
 
     companion object {
         fun withName(customName: String): OutputAnnotation {
-            for (outputAnnotation in OutputAnnotation.values()) {
+            for (outputAnnotation in values()) {
                 if (outputAnnotation.customName == customName) {
                     return outputAnnotation
                 }

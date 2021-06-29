@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape

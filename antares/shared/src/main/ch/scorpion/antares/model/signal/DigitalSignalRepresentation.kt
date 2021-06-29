@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
 
 enum class DigitalSignalRepresentation(override val customName: String) : EnumProperty<DigitalSignalRepresentation> {

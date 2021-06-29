@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.description.Describable

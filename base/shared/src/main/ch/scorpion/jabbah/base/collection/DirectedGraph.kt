@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.base.collection
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
-
 /**
  * http://keithschwarz.com/interesting/code/?dir=topological-sort.
  * @param <T>

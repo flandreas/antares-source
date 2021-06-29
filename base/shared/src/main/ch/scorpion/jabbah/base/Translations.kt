@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.base
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.MissingResourceException
 
 /**
  * Provides I18N translations of static texts.
@@ -34,7 +32,7 @@ expect object Translations {
 
 	/**
 	 * Retrieves the translation with the specified key and substitutes variables with the provided parameters.
-	 * @throws MissingResourceException if no translation for [key] was found
+	 * Throws an exception if no translation for [key] was found
 	 */
 	fun getString(key: String, vararg params: Any): String
 

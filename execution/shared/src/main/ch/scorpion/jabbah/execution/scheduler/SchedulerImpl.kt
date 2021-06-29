@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.execution.scheduler
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService

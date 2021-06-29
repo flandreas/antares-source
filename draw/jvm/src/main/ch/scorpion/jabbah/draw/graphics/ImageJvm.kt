@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.ui.UI
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
 import javax.swing.ImageIcon

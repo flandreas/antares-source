@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 

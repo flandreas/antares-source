@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.model
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable

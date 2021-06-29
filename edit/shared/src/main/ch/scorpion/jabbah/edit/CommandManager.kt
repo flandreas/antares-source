@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.io.Storable
 
 /** Posted by a [CommandManager] on its [EventBus] whenever a [Command] has been registered, done or undone.*/

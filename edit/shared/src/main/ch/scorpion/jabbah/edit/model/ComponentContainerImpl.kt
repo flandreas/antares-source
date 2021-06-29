@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.edit.model
 
-import ch.scorpion.jabbah.base.exception.IndexOutOfBoundsException
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.edit.Component

@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.model.InputPort
 
 /**
@@ -14,7 +13,7 @@ enum class Trigger(val customName: String) {
 
 	companion object {
 		fun withName(customName: String): Trigger {
-			for (trigger in Trigger.values()) {
+			for (trigger in values()) {
 				if (trigger.customName == customName) {
 					return trigger
 				}

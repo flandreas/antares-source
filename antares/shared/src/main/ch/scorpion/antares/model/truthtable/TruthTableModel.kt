@@ -5,8 +5,6 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.graph.model.MultiSignalSource
 
@@ -130,7 +128,7 @@ class TruthTableModel(
 
 	/**
 	 * Converts an [Array] of [Bit]s to the corresponding [Int] array with 0 and 1.
-	 * @throws KotlinNullPointerException if a [Bit] is undefined
+	 * @throws NullPointerException if a [Bit] is undefined
 	 */
 	private fun bitsToInts(bits: Bits): IntArray {
 		return IntArray(bits.size) { bits[it].numericalValue }

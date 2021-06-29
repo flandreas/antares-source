@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min

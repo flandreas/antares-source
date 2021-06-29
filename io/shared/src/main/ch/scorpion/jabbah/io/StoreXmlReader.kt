@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass

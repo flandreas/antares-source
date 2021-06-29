@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.repository
 
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*

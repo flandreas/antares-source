@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.animation
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
-
 /**
  * Combines multiple [Sequence]s of the same type into a single one that executes the elements one after another.
  * @param T the type of values produced by this [CompositeSequence].

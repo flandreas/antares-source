@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.edit.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.Component
 
 /**
  * Models a three-level size property that can be used by [Component]s that support various sizes.
@@ -18,7 +18,7 @@ enum class Size(val customName: String) {
         private val LOG by logger(Size::class)
 
         fun withName(name: String): Size {
-            for (size in Size.values()) {
+            for (size in values()) {
                 if (size.customName == name) {
                     return size
                 }

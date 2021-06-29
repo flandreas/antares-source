@@ -1,8 +1,5 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-
 /**
  * Cross target versions of Kotlin's check methods to be used for ensuring preconditions.
  */

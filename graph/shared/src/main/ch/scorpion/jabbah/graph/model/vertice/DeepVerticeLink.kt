@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.StorableCreator

@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_LEFT
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_RIGHT
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_UP
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger

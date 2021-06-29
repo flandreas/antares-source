@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.base.preferences
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.PropertiesProxy
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import java.text.DecimalFormat
 import javax.swing.JCheckBox
 import javax.swing.JFormattedTextField

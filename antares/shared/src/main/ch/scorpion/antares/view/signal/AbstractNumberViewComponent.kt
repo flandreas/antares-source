@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.style.StyleProvider

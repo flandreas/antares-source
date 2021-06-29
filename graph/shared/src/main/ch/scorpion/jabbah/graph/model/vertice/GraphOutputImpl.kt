@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.*

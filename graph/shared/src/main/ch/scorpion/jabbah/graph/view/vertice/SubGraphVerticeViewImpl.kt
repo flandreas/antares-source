@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D

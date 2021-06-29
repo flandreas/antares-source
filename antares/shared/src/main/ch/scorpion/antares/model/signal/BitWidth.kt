@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.EnumProperty
 
 /**

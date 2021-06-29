@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 

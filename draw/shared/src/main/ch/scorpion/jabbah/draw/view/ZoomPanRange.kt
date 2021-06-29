@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.animation.AbstractAnimationTask
 import ch.scorpion.jabbah.animation.DoubleRange
 import ch.scorpion.jabbah.animation.Sequence
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Point2D

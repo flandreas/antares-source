@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.*

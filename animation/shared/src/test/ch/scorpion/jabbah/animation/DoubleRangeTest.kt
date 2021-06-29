@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.animation
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 

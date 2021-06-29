@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 
 /** A service that provides the current time.*/

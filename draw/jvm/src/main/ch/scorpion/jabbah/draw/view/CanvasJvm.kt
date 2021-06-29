@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule

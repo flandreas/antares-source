@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.graph.model.Port

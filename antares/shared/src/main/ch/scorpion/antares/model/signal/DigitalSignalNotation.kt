@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
 enum class DigitalSignalNotation(
 	val customName: String,

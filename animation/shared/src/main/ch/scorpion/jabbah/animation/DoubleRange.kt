@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.animation
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import kotlin.math.abs
 import kotlin.math.sign
 

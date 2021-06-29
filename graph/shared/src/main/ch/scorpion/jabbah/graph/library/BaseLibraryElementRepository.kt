@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.checkState
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView

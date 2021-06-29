@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.jabbah.base.collection.EmptyIterator
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 
 /**
  * Represents a memory object consisting of [MemoryCell]s with an [Int] address and a [Long] value.

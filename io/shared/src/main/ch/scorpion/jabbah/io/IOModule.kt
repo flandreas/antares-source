@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**

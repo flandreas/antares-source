@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 
 /**
  * Module configuration for the [ch.scorpion.jabbah.graph.script] module.

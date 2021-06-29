@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import kotlin.reflect.KClass
 
 /**

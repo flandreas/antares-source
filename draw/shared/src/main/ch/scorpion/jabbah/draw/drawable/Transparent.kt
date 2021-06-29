@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import kotlin.math.floor
