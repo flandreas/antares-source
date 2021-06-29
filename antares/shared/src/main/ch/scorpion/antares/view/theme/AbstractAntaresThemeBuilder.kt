@@ -48,20 +48,11 @@ abstract class AbstractAntaresThemeBuilder(protected val name: String) {
 
 		// Signal colors
 
-		val ZERO_COLOR = CompositeColor(
-			foregroundColor = Color(0, 115, 15),
-			backgroundColor = Color.BLACK,
-			textColor = Color.WHITE)
+		val ZERO_COLOR = AntaresTheme.DEF_ZERO
 
-		val ONE_COLOR = CompositeColor(
-			foregroundColor = Color(0, 255, 0),
-			backgroundColor = Color(0, 115, 15),
-			textColor = Color.BLACK)
+		val ONE_COLOR = AntaresTheme.DEF_ONE
 
-		val UNDEFINED_COLOR = CompositeColor(
-			foregroundColor = Color(40, 125, 249),
-			backgroundColor = Color.BLACK,
-			textColor = Color.WHITE)
+		val UNDEFINED_COLOR = AntaresTheme.DEF_UNDEFINED
 
 		val BUS_FILL_COLOR = Color(232, 232, 232)
 

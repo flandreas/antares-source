@@ -47,7 +47,6 @@ class AntaresBeanInfoTest {
 		val command = slot<Command>()
 		every { commandManager.beginTransaction(capture(command)) } answers {
 			command.captured.execute()
-			Unit
 		}
 	}
 

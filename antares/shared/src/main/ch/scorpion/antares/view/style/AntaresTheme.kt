@@ -61,9 +61,21 @@ class AntaresTheme(
 	overlay
 ) {
 	companion object {
-		val DEF_ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)
-		val DEF_ONE = CompositeColor(foregroundColor = Color(0, 255, 0), backgroundColor = Color(0, 115, 15), textColor = Color.BLACK)
-		val DEF_UNDEFINED = CompositeColor(foregroundColor = Color(40, 125, 249), backgroundColor = Color.BLACK, textColor = Color.WHITE)
+		val DEF_ZERO_FOREGROUND_COLOR = Color(0, 115, 15)
+		val DEF_ZERO_BACKGROUND_COLOR = Color.BLACK
+		val DEF_ZERO_TEXT_COLOR = Color.WHITE
+		val DEF_ZERO = CompositeColor(foregroundColor = DEF_ZERO_FOREGROUND_COLOR, backgroundColor = DEF_ZERO_BACKGROUND_COLOR, textColor = DEF_ZERO_TEXT_COLOR)
+
+		val DEF_ONE_FOREGROUND_COLOR = Color(0, 255, 0)
+		val DEF_ONE_BACKGROUND_COLOR = Color(0, 115, 15)
+		val DEF_ONE_TEXT_COLOR = Color.BLACK
+		val DEF_ONE = CompositeColor(foregroundColor = DEF_ONE_FOREGROUND_COLOR, backgroundColor = DEF_ONE_BACKGROUND_COLOR, textColor = DEF_ONE_TEXT_COLOR)
+
+		val DEF_UNDEFINED_FOREGROUND_COLOR = Color(40, 125, 249)
+		val DEF_UNDEFINED_BACKGROUND_COLOR = Color.BLACK
+		val DEF_UNDEFINED_TEXT_COLOR = Color.WHITE
+		val DEF_UNDEFINED = CompositeColor(foregroundColor = DEF_UNDEFINED_FOREGROUND_COLOR, backgroundColor = DEF_UNDEFINED_BACKGROUND_COLOR, textColor = DEF_UNDEFINED_TEXT_COLOR)
+
 		val DEF_WORD_ZERO = CompositeColor(foregroundColor = Color.BLACK, backgroundColor = Color(232, 232, 232), textColor = Color.WHITE)
 		val DEF_WORD = CompositeColor(foregroundColor = Color.GRAY, backgroundColor = Color(232, 232, 232), textColor = Color.WHITE)
 		val DEF_FOCUS = BasicStyle(

@@ -101,7 +101,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			selection = SELECTION_STYLE,
 			zero = DARK_ZERO_COLOR,
 			one = ONE_COLOR,
-			undefined = UNDEFINED_COLOR,
+			undefined = DARK_UNDEFINED_COLOR,
 			wordZero = WORD_ZERO_COLOR,
 			word = WORD_COLOR,
 			error = DARK_ERROR_COLOR,
