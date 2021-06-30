@@ -42,18 +42,18 @@ enum class TunnelViewFace(val customName: String) {
 
 		override fun draw(view: TunnelView, context: DrawContext, background: Color) {
 			context.g.color = if (context.useContextColors) {
-				context.color!!.backgroundColor
+				Transparent.applyTo(view.transparency, context.color!!.backgroundColor)
 			} else {
 				background
 			}
 			context.g.fillRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
 
-			context.g.color = context.choose(view.color).foregroundColor
+			context.g.color = Transparent.applyTo(view.transparency, context.choose(view.color).foregroundColor)
 			context.g.stroke = view.stroke
 			context.g.drawRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				context.g.color = view.model.getInOrOutSignal().getColor().foregroundColor
+				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().getColor().foregroundColor)
 			}
 
 			// Draw tunnel entry
