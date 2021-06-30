@@ -1,70 +1,51 @@
 package ch.scorpion.antares.model
 
+import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.net.Tunnel
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
-import ch.scorpion.jabbah.base.logger
 
 /**
- * A [GraphImpl] that forwards [DigitalSignal]s.
+ * Extends [GraphImpl] in order to create temporary [Net]s for [Tunnel]s during execution.
  */
 class DigitalGraph(
 	name: String = Translations.getString("graph.name.unknown"),
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphImpl(name = name, eventBus = eventBus) {
 
-    companion object {
-        private val LOG by logger(DigitalGraph::class)
-    }
+	override fun formNet(signalHandler: SignalHandler) {
+		createTunnelNets()
+		super.formNet(signalHandler)
+	}
 
-    /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
-    private val tunnelHandler = TunnelHandler()
+	override fun executionStopped(signalHandler: SignalHandler) {
+		destroyTunnelNets()
+	}
 
-    override fun handleGraphElementAdded(graphElem: GraphElement) {
-        super.handleGraphElementAdded(graphElem)
-        if (graphElem is Tunnel) {
-            graphElem.addGraphElementListener(tunnelHandler)
-        }
-    }
+	private fun createTunnelNets() {
+		val tunnelNets = mutableMapOf<String, Net<DigitalSignal>>()
+		elements
+			.filterIsInstance<Tunnel>()
+			.filter { StringUtils.isNotEmpty(it.name) }
+			.forEach { tunnel ->
+				tunnelNets
+					.getOrPut(tunnel.name!!) { DigitalNet().apply { add(this) } }
+					.also {
+						it.connect(tunnel.getPort(2))
+					}
+		}
+	}
 
-    override fun handleGraphElementRemoved(graphElem: GraphElement) {
-        super.handleGraphElementRemoved(graphElem)
-        if (graphElem is Tunnel) {
-            graphElem.removeGraphElementListener(tunnelHandler)
-        }
-    }
-
-    private fun getTunnels(name: String): ImmutableList<Tunnel> {
-        return ImmutableList(elements
-                .filter { it is Tunnel && it.name == name }
-                .map { it as Tunnel })
-    }
-
-    /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
-    private inner class TunnelHandler : GraphElementAdapter() {
-        override fun stateChanged(e: GraphElementEvent) {
-            if (e.signalHandler != null) {
-                val tunnel = e.element as Tunnel
-                if (StringUtils.isNotEmpty(tunnel.name)) {
-                    val isOutputDominant = (tunnel.getPort<DigitalSignal>() as DigitalPort).isOutputDominant
-	                if (!isOutputDominant) {
-		                val signal = tunnel.getInput<DigitalSignal>().getIncomingSignal()!!
-		                LOG.trace("Propagating signal '$signal' from Tunnel ${tunnel.id} through '${tunnel.name}', isOutputDominant is $isOutputDominant")
-		                getTunnels(tunnel.name!!)
-			                .filter { e.element != it }
-			                .forEach {
-				                it.setSignal(signal, e.signalHandler!!)
-			                }
-	                }
-                }
-            }
-        }
-    }
+	private fun destroyTunnelNets() {
+		elements.filterIsInstance<Tunnel>().forEach { tunnel ->
+			val port = tunnel.getPort<DigitalSignal>(2)
+			port.net?.unconnect(port)
+		}
+	}
 }

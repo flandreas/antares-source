@@ -7,10 +7,11 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -27,11 +28,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Tunnel(
 	name: String? = null
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), NetCombiner {
 
 	companion object {
-
-		private val LOG by logger(Tunnel::class)
 
 		private const val BASE_RESOURCE_KEY = "library.element.Tunnel"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
@@ -42,14 +41,23 @@ class Tunnel(
 		private class Calculator : VerticeCalculator<Tunnel> {
 			override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
 				(vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true
-				LOG.trace("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}'")
-				vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+				if (data.changedPort === vertice.getPort<DigitalSignal>(1)) {
+					vertice.getOutput<DigitalSignal>(2).setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+				} else if (data.changedPort === vertice.getPort<DigitalSignal>(2)) {
+					vertice.getOutput<DigitalSignal>(1).setOutgoingSignalBuffered(data.getSignal(2), signalHandler)
+				}
 			}
 		}
 	}
 
 	init {
+		propagationDelay = 0
 		this.name = name
+
+		// The Port to which the user connects visible Nets (portId 1)
+		addPort(DigitalPortImpl.createInOut())
+
+		// The Port to which DigitalGraph connects the invisible Tunnel Nets (portId 2)
 		addPort(DigitalPortImpl.createInOut())
 	}
 
@@ -64,13 +72,6 @@ class Tunnel(
 				stateChanged()
 			}
 		}
-
-	/** ---- [AbstractVertice] */
-
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
-		(getPort<DigitalSignal>() as DigitalPort).isOutputDominant = false
-		stateChanged(signalHandler)
-	}
 
 	/** ---- [Storable] interface */
 
@@ -88,35 +89,32 @@ class Tunnel(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.allOf(bitWidth, Bit.Undefined), signalHandler)
+		val undefined = Word.allOf(bitWidth, Bit.Undefined)
+		getOutput<DigitalSignal>(1).setOutgoingSignalBuffered(undefined, signalHandler)
+		getOutput<DigitalSignal>(2).setOutgoingSignalBuffered(undefined, signalHandler)
 	}
 
-	override fun executionStart(signalHandler: SignalHandler) {
-		super.executionStart(signalHandler)
-		val signal = Word.allOf(bitWidth, Bit.Undefined)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
+	/** ---- [NetCombiner] */
+
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
+
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
+		val otherPort: OutputPort<DigitalSignal> = if (inputPort === getPort<DigitalSignal>(1)) {
+			getOutput(2)
+		} else {
+			getOutput(1)
+		}
+
+		val result = CombinedNet.createFor(otherPort, signalHandler)
+		result.forEach { it.replaceAccessPort(otherPort, outputPort as OutputPort<DigitalSignal>) }
+		return result as Collection<CombinedNet<T>>
 	}
 
 	/** ---- [Tunnel] */
 
-	/**
-	 * Called by the owning [Graph] after detection of a signal change from a [Tunnel]
-	 * with the same name like this [Tunnel].
-	 */
-	fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
-		if (signal != getOutput<DigitalSignal>().getOutgoingSignal()) {
-			LOG.trace("Tunnel $id: setSignal '$signal'")
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
-		}
-	}
+	private fun getIncomingSignal(): DigitalSignal = getInput<DigitalSignal>().getIncomingSignal()!!
 
-	fun getIncomingSignal(): DigitalSignal {
-		return getInput<DigitalSignal>().getIncomingSignal()!!
-	}
-
-	fun getOutgoingSignal(): DigitalSignal {
-		return getOutput<DigitalSignal>().getOutgoingSignal()!!
-	}
+	private fun getOutgoingSignal(): DigitalSignal = getOutput<DigitalSignal>().getOutgoingSignal()!!
 
 	fun getInOrOutSignal(): DigitalSignal {
 		if ((getIncomingSignal() as Word).isAllOf(Bit.Undefined)) {

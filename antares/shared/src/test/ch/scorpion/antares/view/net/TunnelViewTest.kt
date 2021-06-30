@@ -3,11 +3,11 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -37,7 +37,8 @@ class TunnelViewTest : AbstractCircuitTest() {
 		startSimulation(1100L)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(false), sender.model.getIncomingSignal() as Word)
+		assertEquals(Word.of(false), sender.model.getInput<DigitalSignal>(1).getIncomingSignal())
+		assertEquals(Word.of(false), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
 	}
 
 	@Test
@@ -47,8 +48,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), sender.model.getInOrOutSignal() as Word)
-		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
 	}
 
 	@Test
@@ -59,8 +59,8 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
-		assertEquals(Word.of(true), receiver2.model.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
+		assertEquals(Word.of(true), receiver2.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
 	}
 
 	@Test
@@ -71,7 +71,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
-		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
+		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
 	}
 }

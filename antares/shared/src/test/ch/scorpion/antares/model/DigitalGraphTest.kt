@@ -3,15 +3,14 @@ package ch.scorpion.antares.model
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Net
 import io.mockk.mockk
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertSame
 
-/**
- * Unit tests for [DigitalGraph].
- */
 class DigitalGraphTest {
 
 	companion object {
@@ -20,18 +19,40 @@ class DigitalGraphTest {
 		}
 	}
 
+	private val signalHandler = mockk<SignalHandler>()
+	private lateinit var tunnel1: Tunnel
+	private lateinit var tunnel2: Tunnel
+
 	@Test
-	fun shouldForwardTunnelSignal() {
-		val signalHandler = ForwardSignalHandler()
-		val testGraph = DigitalGraph(eventBus = mockk(relaxed = true))
+	fun shouldCreateTunnelNetsDuringNetFormation() {
+		val graph = createGraphWithTunnels()
 
-		val tunnel1 = Tunnel("Test")
-		testGraph.add(tunnel1)
-		val tunnel2 = Tunnel("Test")
-		testGraph.add(tunnel2)
+		graph.formNet(signalHandler)
 
-		tunnel1.getInput<DigitalSignal>().setIncomingSignal(Word.of(true), signalHandler)
+		val net = graph.elements.filterIsInstance<Net<*>>().first()
+		assertNotNull(net)
+		assertSame(net, tunnel1.getPort<DigitalSignal>(2).net)
+		assertSame(net, tunnel2.getPort<DigitalSignal>(2).net)
+	}
 
-		assertEquals(Word.of(true), tunnel2.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+	@Test
+	fun shouldDestroyTunnelNetsWhenExecutionIsStopped() {
+		val graph = createGraphWithTunnels()
+
+		graph.executionStopped(signalHandler)
+
+		val net = graph.elements.filterIsInstance<Net<*>>().firstOrNull()
+		assertNull(net)
+		assertNull(tunnel1.getPort<DigitalSignal>(2).net)
+		assertNull(tunnel2.getPort<DigitalSignal>(2).net)
+	}
+
+	private fun createGraphWithTunnels(): DigitalGraph {
+		val graph = DigitalGraph()
+		tunnel1 = Tunnel("Test")
+		graph.add(tunnel1)
+		tunnel2 = Tunnel("Test")
+		graph.add(tunnel2)
+		return graph
 	}
 }
