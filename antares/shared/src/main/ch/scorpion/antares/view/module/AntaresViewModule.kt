@@ -404,6 +404,9 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(BREAK), net)
 		addLibraryItem(library, BaseLibraryElement(PULL_RESISTOR), net)
 		addLibraryItem(library, BaseLibraryElement(TRANSISTOR), net)
+		addLibraryItem(library, BaseLibraryElement(GROUND), net)
+		addLibraryItem(library, BaseLibraryElement(POWER), net)
+		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
 		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
@@ -434,6 +437,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(RGB_LED), output)
 		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAY), output)
 		addLibraryItem(library, BaseLibraryElement(LED_MATRIX), output)
+		addLibraryItem(library, BaseLibraryElement(TERMINAL), output)
 		addLibraryItem(library, output, library)
 
 		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
