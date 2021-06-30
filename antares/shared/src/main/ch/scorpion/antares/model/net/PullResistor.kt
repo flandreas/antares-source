@@ -129,7 +129,7 @@ class PullResistor(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(preferredOutputSignal, signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(null, signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
