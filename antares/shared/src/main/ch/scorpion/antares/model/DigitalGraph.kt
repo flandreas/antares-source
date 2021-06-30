@@ -25,6 +25,7 @@ class DigitalGraph(
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
 		destroyTunnelNets()
 	}
 
@@ -43,9 +44,14 @@ class DigitalGraph(
 	}
 
 	private fun destroyTunnelNets() {
+		val nets = mutableSetOf<Net<*>>()
 		elements.filterIsInstance<Tunnel>().forEach { tunnel ->
 			val port = tunnel.getPort<DigitalSignal>(2)
-			port.net?.unconnect(port)
+			port.net?.let {
+				nets.add(it)
+				it.unconnect(port)
+			}
 		}
+		nets.forEach { remove(it) }
 	}
 }
