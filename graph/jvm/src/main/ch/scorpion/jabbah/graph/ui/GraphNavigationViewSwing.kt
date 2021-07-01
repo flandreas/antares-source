@@ -25,7 +25,7 @@ import javax.swing.JPanel
  * A [javax.swing] implementation of [GraphNavigationView].
  */
 class GraphNavigationViewSwing(
-	controller: GraphNavigationViewController,
+	private val controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ViewManager,
 	contextBorderColor: CompositeColor? = null,
@@ -49,9 +49,7 @@ class GraphNavigationViewSwing(
 		buildUI(contextBorderColor)
 	}
 
-	override fun dispose() {
-		// empty
-	}
+	override fun dispose() { }
 
 	/** ---- [GraphNavigationView] interface */
 
@@ -61,6 +59,10 @@ class GraphNavigationViewSwing(
 	}
 
 	/** ---- [GraphDesktopViewItem] */
+
+	override fun disposeItem() {
+		controller.dispose()
+	}
 
 	override val isDetached: Boolean = controller.isDetached
 

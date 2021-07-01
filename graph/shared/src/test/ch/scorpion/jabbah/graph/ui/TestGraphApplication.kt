@@ -22,7 +22,7 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 	private val applicationDataViewBuilder = ApplicationDataViewMockBuilder(controller)
 	private val canvas = VirtualCanvas { DrawingViewImpl(GraphViewImpl() as Drawing<Component>)}
 	val editor = GraphEditor(canvas.view as DrawingView<Drawing<Component>>)
-	private val graphFrameController = GraphFrameController<GraphFrame>(controller, editor = editor)
+	val graphFrameController = GraphFrameController<GraphFrame>(controller, editor = editor)
 	val graphFrameBuilder = GraphFrameMockBuilder(graphFrameController)
 
 	// Used to create an instance of OpenContainerLibraryElementAction
@@ -44,6 +44,10 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 
 	fun startSimulation() {
 		graphFrameController.graphPanelViewController.setMode(ApplicationMode.EXECUTE)
+	}
+
+	fun stopSimulation() {
+		graphFrameController.graphPanelViewController.setMode(ApplicationMode.EDIT)
 	}
 
 	private fun openInitialSavable() {

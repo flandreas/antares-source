@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 
 /**
- * Uses by object that hold [GraphView]s to control starting and stopping
+ * Used by objects that hold [GraphView]s to control starting and stopping
  * execution of these [GraphView]s and their [Graph]s.
  *
  * Listens for [SchedulerActivationStateEvent] and does the necessary controlling logic
@@ -55,6 +55,8 @@ class GraphViewExecutionController(
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
 	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(graphViewUI.drawingView, scheduler, eventBus, initialMode)
 
+	private val actorListener = GraphViewActorListener(graphViewUI.drawingView, scheduler, eventBus = eventBus)
+
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
@@ -66,6 +68,7 @@ class GraphViewExecutionController(
 		graphViewExecutionHandler.dispose()
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()
+		actorListener.dispose()
 	}
 
 	/**

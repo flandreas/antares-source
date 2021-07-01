@@ -1,9 +1,13 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.graph.ui.GraphDesktopView
-import ch.scorpion.jabbah.graph.ui.GraphDesktopViewController
-import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -14,8 +18,12 @@ class GraphDesktopViewMockBuilder(controller: GraphDesktopViewController) {
 	private val referenceColorSlot = slot<CompositeColor>()
 	val referenceColor get() = referenceColorSlot.captured
 
+	private val subGraphVerticeViewSlot = slot<SubGraphVerticeView<*>>()
+
 	init {
 		controller.view = view
+		withMainViewItem(GraphDesktopViewItemMockBuilder().build())
+		withCreateGraphNavigationViewSubGraphDesktopItem(isParentDetached = false)
 	}
 
 	fun withMainViewItem(item: GraphDesktopViewItem): GraphDesktopViewMockBuilder {
@@ -26,6 +34,31 @@ class GraphDesktopViewMockBuilder(controller: GraphDesktopViewController) {
 	fun withCreatedSubGraphDesktopItem(item: GraphDesktopViewItem): GraphDesktopViewMockBuilder {
 		every { view.createSubGraphDesktopItem(any(), capture(referenceColorSlot), any(), any()) } returns item
 		return this
+	}
+
+	fun withCreateGraphNavigationViewSubGraphDesktopItem(isParentDetached: Boolean) {
+		every { view.createSubGraphDesktopItem(capture(subGraphVerticeViewSlot), any(), any(), any()) } answers {
+			createGraphNavigationViewDesktopItem(subGraphVerticeViewSlot.captured, isParentDetached)
+		}
+	}
+
+	private fun createGraphNavigationViewDesktopItem(verticeView: SubGraphVerticeView<*>, isParentDetached: Boolean): GraphDesktopViewItem {
+		val subGraphView = verticeView.createSubGraphView()
+		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>) as DrawingView<GraphView>
+
+		val controller = GraphNavigationViewController(
+			isRoot = false,
+			isParentDetached = isParentDetached,
+			drawingView = drawingView
+		)
+		GraphNavigationViewMockBuilder(controller)
+
+		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true)
+
+		return GraphDesktopViewItemMockBuilder()
+			//.withDrawingView(drawingView)
+			.withGraphNavigationView(controller)
+			.build()
 	}
 
 	fun build(): GraphDesktopView = view

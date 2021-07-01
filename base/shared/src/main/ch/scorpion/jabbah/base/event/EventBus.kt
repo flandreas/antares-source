@@ -40,6 +40,9 @@ interface EventBus {
     fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<VetoException> = {})
 
 	fun postTwoPhase(prepareEvent: Any, execEvent: Any)
+
+	/** Unregisters all [EventHandler]s. Primarily for integration testing.*/
+	fun clear()
 }
 
 abstract class AbstractEventBus : EventBus {
@@ -98,6 +101,10 @@ abstract class AbstractEventBus : EventBus {
 		} catch (e: VetoException) {
 			// do nothing, operation vetoed
 		}
+	}
+
+	override fun clear() {
+		registrations.clear()
 	}
 
     /** ---- [EventBusImpl] */

@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewActorListener
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -121,8 +122,11 @@ class GraphNavigationViewController(
 	override fun dispose() {
 		super.dispose()
 
+		val graphView = drawingView.drawing
+
 		drawingView.dispose()
 		navigationStackViewController.dispose()
+		graphView.dispose()
 
 		scenarioDetector?.dispose()
 		globalMessageDisplayer?.dispose()

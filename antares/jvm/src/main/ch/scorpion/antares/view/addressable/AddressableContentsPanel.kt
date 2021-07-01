@@ -58,7 +58,7 @@ class AddressableContentGraphDesktopItem(
 	override val drawingView: DrawingView<GraphView>?
 		get() = null
 
-	override fun dispose() {
+	override fun disposeItem() {
 		memoryContentPanel.dispose()
 	}
 

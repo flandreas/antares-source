@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -16,7 +15,6 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -51,43 +49,6 @@ interface GraphDesktopView : UIView {
 
 	fun closeAll(establishSingleView: Boolean)
 }
-
-/** Displays a [DrawingView] within a separate [GraphDesktopViewItem].*/
-interface GraphDesktopViewItem {
-
-	val drawingView: DrawingView<GraphView>?
-
-	var contextColor: CompositeColor?
-
-	val isDetached: Boolean
-
-	fun dispose()
-
-	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
-
-	fun createCloseRequest(): Any
-}
-
-/**
- * A question request to be used in [EventBus.postTwoPhase] for checking if a [GraphDesktopViewItem]
- * can safely be closed.
- */
-data class GraphDesktopViewItemCloseQuestion(
-	val item: GraphDesktopViewItem,
-	val isRoot: Boolean
-)
-
-/**
- * A request to close a [GraphDesktopViewItem] posted on an [EventBus].
- * Should always be proceeded by [GraphDesktopViewItemCloseQuestion]
- *
- * @param item the [GraphDesktopViewItem] the user has requested to close
- * @param isRoot `true` if [item] displays data associated with the main [Savable], which the user might have changed
- */
-data class GraphDesktopViewItemCloseRequest(
-	val item: GraphDesktopViewItem,
-	val isRoot: Boolean
-)
 
 /**
  * Controls a [GraphDesktopView] and manages additional [GraphDesktopViewItem] displayed when
@@ -239,13 +200,13 @@ class GraphDesktopViewController(
 		LOG.debug("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
 	}
 
-	private fun closeItem(item: GraphDesktopViewItem) {
+	fun closeItem(item: GraphDesktopViewItem) {
 		LOG.debug("Close single desktop item")
 		if (item === view.mainDesktopViewItem) {
 			closeAll(false)
 		} else {
 			deassociate(item)
-			item.dispose()
+			item.disposeItem()
 			item.drawingView?.let { viewManager.unregisterView(it) }
 			view.closeItem(item)
 		}
@@ -260,7 +221,7 @@ class GraphDesktopViewController(
 
 		additionalDesktopItems.forEach {
 			deassociate(it)
-			it.dispose()
+			it.disposeItem()
 		}
 
 		view.closeAll(establishSingleView)

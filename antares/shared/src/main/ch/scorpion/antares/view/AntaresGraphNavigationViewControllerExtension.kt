@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
 import ch.scorpion.jabbah.graph.view.CurrentGraphAnimationTypeEvent
-import ch.scorpion.jabbah.graph.view.GraphViewActorListener
 
 /**
  * Initiates repainting the [DrawingView] upon certain Antares specific events.
@@ -18,8 +17,6 @@ class AntaresGraphNavigationViewControllerExtension(
 	private val controller: GraphNavigationViewController,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : GraphNavigationViewControllerExtension {
-
-	private val actorListener = GraphViewActorListener(controller.drawingView, eventBus = eventBus)
 
 	private val currentGraphAnimationTypeHandler: EventHandler<CurrentGraphAnimationTypeEvent> = { controller.drawingView.repaint() }
 
@@ -34,7 +31,6 @@ class AntaresGraphNavigationViewControllerExtension(
 	}
 
 	override fun dispose(controller: GraphNavigationViewController) {
-		actorListener.dispose()
 		eventBus.unregister(currentGraphAnimationTypeHandler)
 		eventBus.unregister(currentSymbolStyleHandler)
 		eventBus.unregister(gateMnemonicHandler)

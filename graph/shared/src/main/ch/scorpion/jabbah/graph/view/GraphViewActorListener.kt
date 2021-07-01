@@ -58,6 +58,7 @@ class GraphViewActorListener(
 	}
 
 	fun dispose() {
+		drawingView.drawing.graph?.let { unregisterActorListener(it) }
 		eventBus.unregister(schedulerActivationStateHandler)
 		drawingView.removePropertyChangeListener(addRemoveListener)
 	}
@@ -110,7 +111,7 @@ class GraphViewActorListener(
 
 	/**
 	 * Listens for adding and removing [GraphElementView]s in the current [GraphView] and adds or removes
-	 * the this [GraphViewExecutionAnimator] as [ActorListener] accordingly.
+	 * this [GraphViewActorListener] as [ActorListener] accordingly.
 	 */
 	private inner class GraphViewListener : DrawableContainerAdapter<GraphElementView<*>>() {
 
