@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Stylable
@@ -498,6 +499,16 @@ class SubGraphVerticeViewImpl(
 		override fun createHandler(): Handler = SubSymbolBagHandler()
 
 		private inner class SubSymbolBagHandler : Handler() {
+
+			override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+				val handler = super.mouseMoved(context)
+				if (handler != null) {
+					return handler
+				}
+				context.view.setCursor(Cursor.CLICK)
+				return null
+			}
+
 			override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 				val handler = super.mouseClicked(context)
 				if (context.mouseEvent?.isConsumed() != true && context.mouseEvent?.clickCount == 2) {
