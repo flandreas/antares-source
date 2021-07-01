@@ -181,7 +181,6 @@ class GraphDesktopViewController(
 	 * between the [VerticeView] and the [GraphDesktopViewItem]
 	 */
 	fun openVerticeView(vv: VerticeView<*>, itemFactory: (CompositeColor, isParentDetached: Boolean) -> GraphDesktopViewItem) {
-		LOG.debug("Open VerticeView in new GraphDesktopItem")
 		val assoc = associations.firstOrNull { it.ref == vv }
 		if (assoc != null) {
 			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
@@ -235,13 +234,13 @@ class GraphDesktopViewController(
 	}
 
 	private fun openSubGraphVerticeView(verticeView: SubGraphVerticeView<*>) {
-		LOG.debug("Open SubGraphVerticeView in new GraphDesktopItem")
 		openVerticeView(verticeView) { color, isParentDetached ->
 			view.createSubGraphDesktopItem(verticeView, color, isParentDetached, viewManager) }
+		LOG.debug("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
 	}
 
 	private fun closeItem(item: GraphDesktopViewItem) {
-		LOG.trace("Close single GraphDesktopItem")
+		LOG.debug("Close single desktop item")
 		if (item === view.mainDesktopViewItem) {
 			closeAll(false)
 		} else {
