@@ -54,8 +54,6 @@ class DipSwitchView(
 	companion object {
 		private val LOG by logger(DipSwitchView::class)
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.DipSwitchView.iconPath"
-		private const val CASE_INSET = Look.SCALE
-		private const val BIT_LABEL_HEIGHT = 10
 		private const val LABEL_DIST = Look.SCALE
 
 		private const val KNOB_HEIGHT = 5.0 * Look.SCALE
@@ -73,10 +71,12 @@ class DipSwitchView(
 
 	/** Single instance used as flyweight to draw the index number above [BitView]s.*/
 	private val bitLabelFlyweight = Label(
-		font = styleProvider.getStyle(StyleType.ANNOTATION).font,
+		font = styleProvider.getStyle(StyleType.ANNOTATION).font.deriveFont(
+			styleProvider.getStyle(StyleType.ANNOTATION).font.size - 2
+		),
 		text = "",
 		horizontalAlignment = HorizontalAlignment.CENTER,
-		verticalAlignment = VerticalAlignment.BOTTOM)
+		verticalAlignment = VerticalAlignment.TOP)
 
 	/** The [Label] that displays the name of this [DipSwitchView].*/
 	private val label = Label(
@@ -196,16 +196,9 @@ class DipSwitchView(
 			}
 		}
 		super.drawImpl(context)
-		drawFill(context, bounds, transparent.applyTo(if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor))
-		drawStroke(context, bounds, transparent.applyTo(context.choose(color).foregroundColor), stroke)
+
 		bitViews.forEach {
 			it.draw(context)
-			with(bitLabelFlyweight) {
-				location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
-				text = it.index.toString()
-				color = transparent.applyTo(context.choose(this@DipSwitchView.color).textColor)
-				draw(context)
-			}
 		}
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
@@ -323,22 +316,21 @@ class DipSwitchView(
 
 	private val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
-			Direction.WEST -> Point2D(getOutput().length.toDouble(), -calculateHeight() / 2)
-			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - calculateHeight())
-			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -calculateHeight() / 2)
+			Direction.WEST -> Point2D(getOutput().length.toDouble(), -KNOB_HEIGHT / 2)
+			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - KNOB_HEIGHT)
+			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -KNOB_HEIGHT / 2)
 			Direction.NORTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
 		}
 
 	private fun updateView() {
 		val edge = upperLeftBoundsEdge
-		setBounds(edge.x, edge.y, calculateWidth(), calculateHeight())
+		setBounds(edge.x, edge.y, calculateWidth(), KNOB_HEIGHT)
 
 		bitViews.clear()
 		val maxIndex = model.bitWidth.width - 1
 		for (index in 0..maxIndex) {
-			val xx = x + (maxIndex - index) * KNOB_WIDTH + CASE_INSET
-			val yy = y + BIT_LABEL_HEIGHT + CASE_INSET
-			bitViews.add(BitView(index, model.value.bitAt(index), xx, yy, styleProvider))
+			val xx = x + (maxIndex - index) * KNOB_WIDTH
+			bitViews.add(BitView(index, model.value.bitAt(index), xx, y, styleProvider))
 		}
 
 		getOutput().direction = orientation
@@ -347,13 +339,7 @@ class DipSwitchView(
 		updateLabel()
 	}
 
-	private fun calculateWidth(): Double {
-		return model.bitWidth.width * KNOB_WIDTH + 2 * CASE_INSET
-	}
-
-	private fun calculateHeight(): Double {
-		return KNOB_HEIGHT + BIT_LABEL_HEIGHT + 2 * CASE_INSET
-	}
+	private fun calculateWidth(): Double = model.bitWidth.width * KNOB_WIDTH
 
 	/**
 	 * Returns the bit index of the [BitView] at the specified relative coordinates.
@@ -391,7 +377,7 @@ class DipSwitchView(
 			return null
 		}
 
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler {
 			context.mouseEvent?.consume()
 			return this
 		}
@@ -485,6 +471,24 @@ class DipSwitchView(
 				bitY,
 				width - 2 * KNOB_INSET,
 				height / 2 - 1 * KNOB_INSET)
+
+			val bitLabelColor = if (bit.isSet) {
+				if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+					bit.color.textColor
+				} else {
+					transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
+				}
+			} else {
+				transparent.applyTo(context.choose(this@DipSwitchView.color).textColor)
+			}
+
+			// Draw index label
+			with(bitLabelFlyweight) {
+				location = Point2D(bounds.centerX, bounds.minY + 4)
+				text = index.toString()
+				color = bitLabelColor
+				draw(context)
+			}
 
 			if (hasFocus && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				drawFocus(context)
