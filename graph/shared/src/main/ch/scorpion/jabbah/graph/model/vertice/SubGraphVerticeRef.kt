@@ -280,7 +280,7 @@ class SubGraphVerticeRef(
 	}
 
 	private fun isDeepExecution(signalHandler: SignalHandler): Boolean =
-		signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
+		!graph!!.purelyScripted && signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
 
 	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =
 		getInputs().map { it as SubGraphInputPort<Any> }.toImmutableList()

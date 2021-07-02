@@ -17,6 +17,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", beanProvider = drawingBeanProvider)
+	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -28,5 +29,6 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    properties.add(propDelay.bind(editor, ids))
 	    properties.add(description.bind(editor, ids, filter = { true }))
 	    properties.add(script.bind(editor, ids))
+	    properties.add(purelyScripted.bind(editor, ids, editable = bean.script.isNotEmpty()))
     }
 }

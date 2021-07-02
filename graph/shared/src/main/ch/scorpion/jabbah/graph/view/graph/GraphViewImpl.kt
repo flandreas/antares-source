@@ -105,6 +105,12 @@ open class GraphViewImpl(
 			graph!!.script = value.script
 		}
 
+	var purelyScripted: Boolean
+		get() = graph!!.purelyScripted
+		set(value) {
+			graph!!.purelyScripted = value
+		}
+
 	/** ---- [GraphView] interface */
 
 	override var snapper: Snapper? = null

@@ -19,8 +19,6 @@ import ch.scorpion.jabbah.io.StorableCreator
  *
  * Disposing a [GraphView] detaches it and all contained [GraphElementView]s from their models,
  * and releases held resources.
- *
- * @param T the type of [GraphElementView] that this [GraphView] contains and displays.
  */
 interface GraphView : Drawing<GraphElementView<*>> {
 

@@ -82,7 +82,7 @@ class GraphViewExecutionController(
 	}
 
 	fun updateDetachedUI() {
-		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached && scheduler.isActive && !scheduler.isDeepExecution) {
+		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached && scheduler.isActive && (!scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)) {
 			Themes.get<GraphTheme>().overlay
 		} else {
 			null

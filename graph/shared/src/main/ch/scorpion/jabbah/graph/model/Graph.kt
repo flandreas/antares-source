@@ -38,6 +38,9 @@ interface Graph : Namable, Describable, Storable {
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
 
+    /** If 'true', [script] is always used for execution, even if execution mode is deep.*/
+    var purelyScripted: Boolean
+
     /** Returns the number of [GraphElement]s of this [Graph].*/
     val elementsCount: Int
 

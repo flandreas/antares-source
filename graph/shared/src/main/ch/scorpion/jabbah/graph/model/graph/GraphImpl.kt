@@ -60,6 +60,8 @@ open class GraphImpl(
 
 	override var script: String? = null
 
+	override var purelyScripted: Boolean = false
+
 	override val elementsCount: Int
 		get() = _elements.size
 
@@ -188,6 +190,9 @@ open class GraphImpl(
 
 	override fun write(writer: StoreWriter) {
 		script?.let { writer.writeString("script", it) }
+		if (purelyScripted) {
+			writer.writeBoolean("purelyScripted", purelyScripted)
+		}
 		propagationDelay?.let { writer.writeLong("propDelay", it) }
 		writer.writeStorables("elements", _elements.iterator())
 	}
@@ -195,6 +200,9 @@ open class GraphImpl(
 	override fun read(reader: StoreReader) {
 		if (reader.hasAttribute("script")) {
 			script = reader.readString("script")
+		}
+		if (reader.hasAttribute("purelyScripted")) {
+			purelyScripted = reader.readBoolean("purelyScripted")
 		}
 		if (reader.hasAttribute("propDelay")) {
 			propagationDelay = reader.readLong("propDelay")

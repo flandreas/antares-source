@@ -19,29 +19,27 @@ object GraphProperties {
 		name: String = "modelId",
 		baseKey: String = "graph.property.modelId",
 		beanProvider: BeanProvider = componentBeanProvider
-	): CommandPropertySwing<Int> {
-		return CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
-	}
+	): CommandPropertySwing<Int> = CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 
-	fun propagationDelay(beanProperty: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> {
-		return CommandPropertySwing("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProperty)
-	}
+	fun propagationDelay(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> =
+		CommandPropertySwing("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProvider)
 
 	fun label(
 		name: String = "label",
 		baseKey: String = "graph.property.label",
 		beanProvider: BeanProvider = componentBeanProvider
-	): CommandPropertySwing<TranslatableText> {
-		return CommandPropertySwing(name, baseKey, TranslatableText::class.java, beanProvider)
-	}
+	): CommandPropertySwing<TranslatableText> =
+		CommandPropertySwing(name, baseKey, TranslatableText::class.java, beanProvider)
 
 	fun verticalLabelPosition(
 		name: String = "labelPosition",
 		baseKey: String = "graph.property.VerticeLabelPosition",
 		beanProvider: BeanProvider = componentBeanProvider
-	): CommandPropertySwing<VerticeLabelPosition> {
-		return CommandPropertySwing(name, baseKey, VerticeLabelPosition::class.java, beanProvider)
-	}
+	): CommandPropertySwing<VerticeLabelPosition> =
+		CommandPropertySwing(name, baseKey, VerticeLabelPosition::class.java, beanProvider)
+
+	fun purelyScripted(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Boolean> =
+		CommandPropertySwing("purelyScripted", "graph.property.GraphViewImpl.purelyScripted", Boolean::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {
