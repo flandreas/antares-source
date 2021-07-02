@@ -43,6 +43,8 @@ open class DigitalComponentView<T : Vertice>(
 
 	/** ---- Properties to be edited by the User */
 
+	open val useOrientation: Boolean get() = useRotation
+
     open var orientation: Direction
         get() = Direction.of(rotation)
         set(value) {

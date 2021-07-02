@@ -155,6 +155,8 @@ class ConstantView(
 
 	override val useRotation: Boolean get() = false
 
+	override val useOrientation: Boolean get() = true
+
 	/** ---- [ConstantView] */
 
 	private val upperLeftBoundsEdge: Point2D

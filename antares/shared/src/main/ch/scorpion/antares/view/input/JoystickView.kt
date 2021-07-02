@@ -103,6 +103,8 @@ class JoystickView(
 
 	override val useRotation: Boolean get() = false
 
+	override val useOrientation: Boolean get() = false
+
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 

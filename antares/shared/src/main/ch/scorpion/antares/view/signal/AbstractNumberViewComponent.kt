@@ -77,6 +77,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	override val useRotation: Boolean get() = false
 
+	override val useOrientation: Boolean get() = true
+
 	override fun handleStateChanged(event: GraphElementEvent) {
 		numberView.setSignal(signal)
 		super.handleStateChanged(event)
