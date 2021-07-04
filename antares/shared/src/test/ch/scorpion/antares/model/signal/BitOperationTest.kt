@@ -89,6 +89,16 @@ class BitOperationTest {
 	}
 
 	@Test
+	fun shouldConvertDecimalDigitToWord() {
+		assertEquals(Word.of(BitWidth.BW_4, 5L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '5'))
+		assertEquals(Word.of(BitWidth.BW_4, 0L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '0'))
+		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Undefined), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'Z'))
+		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Error), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'X'))
+		assertNull(BitOperation.decimalDigitToWord(BitWidth.BW_4, 'A'))
+		assertNull(BitOperation.decimalDigitToWord(BitWidth.BW_2, '4'))
+	}
+
+	@Test
 	fun shouldConvertBinaryDigitToWord() {
 		assertEquals(Word.of(false), BitOperation.binaryDigitToWord('0'))
 		assertEquals(Word.of(true), BitOperation.binaryDigitToWord('1'))

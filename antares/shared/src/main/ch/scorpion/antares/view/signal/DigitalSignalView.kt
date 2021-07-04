@@ -5,22 +5,21 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import kotlin.math.ceil
-import kotlin.math.max
 
 /**
  * A graphical, circular representation of a [DigitalSignal].
@@ -34,8 +33,8 @@ class DigitalSignalView(
 
 	companion object {
 		val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
-		const val V_INSET = 3
-		const val H_INSET = 4
+		private const val V_INSET = 3
+		private const val H_INSET = 4
 		const val ARCH_SIZE = 12.0
 
 		fun calcHeight(): Double {
@@ -43,7 +42,7 @@ class DigitalSignalView(
 		}
 
 		fun calcWidth(bitWidth: BitWidth, representation: DigitalSignalRepresentation): Double {
-			val digitCount = max(1, bitWidth.width / representation.bits())
+			val digitCount = representation.digitCount(bitWidth)
 			val textRenderInfo = TextRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
 			return ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
 		}

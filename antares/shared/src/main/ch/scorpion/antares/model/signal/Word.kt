@@ -142,6 +142,9 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		return sb.toString()
 	}
 
+	override fun toDecimalString(): String = toLong()?.toString() ?:
+		if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
+
 	override fun getColor(): CompositeColor {
 		if (bitWidth == BitWidth.BW_1) {
 			return bitAt(0).color
@@ -171,8 +174,8 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	override fun bitAt(index: Int): Bit = bits[index]
 
-	override fun toInt(): Int? {
-		var value = 0
+	override fun toLong(): Long? {
+		var value = 0L
 		var factor = 1
 		for (bit in bits) {
 			if (!bit.isDefined) {
@@ -185,6 +188,8 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		}
 		return value
 	}
+
+	override fun toInt(): Int? = toLong()?.toInt()
 
 	/** ---- [Word] */
 
@@ -243,6 +248,8 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	/**
 	 * Creates a copy of this [Word] and sets the specified sub-word in the copy.
+	 * Note that this method works only for [DigitalSignalRepresentation]s with fully aligned nibbles.
+	 * In particular, it doesn't work with [DigitalSignalRepresentation.DECIMAL].
 	 *
 	 * @param subword the [Word] to be set in the copy of this [Word]
 	 * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of

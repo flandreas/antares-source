@@ -57,6 +57,13 @@ class WordTest {
 
 	@Test
 	fun shouldExtractSubword() {
+		assertEquals(Word.of(BW_1, 1), Word.of(BW_1, 1L).getSubword(BW_4, 0))
+		assertEquals(Word.of(BW_4, 1), Word.of(BW_4, 1L).getSubword(BW_4, 0))
+		assertEquals(Word.of(BW_4, 1), Word.of(BW_8, 16L).getSubword(BW_4, 1))
+	}
+
+	@Test
+	fun shouldExtractSubwordValue() {
 		assertEquals(15L, Word.of(BW_4, 15L).getSubwordValue(BW_4, 0))
 		assertEquals(15L, Word.of(BW_8, 255L).getSubwordValue(BW_4, 0))
 		assertEquals(15L, Word.of(BW_8, 255L).getSubwordValue(BW_4, 1))
@@ -110,6 +117,12 @@ class WordTest {
 		assertEquals("0001", Word.of(BW_4, 1L).toBinaryString())
 		assertEquals("0110", Word.of(BW_4, 6L).toBinaryString())
 		assertEquals("00000000", Word.of(BW_8, 0L).toBinaryString())
+	}
+
+	@Test
+	fun shouldRepresentAsDecimal() {
+		assertEquals("6", Word.of(BW_4, 6L).toDecimalString())
+		assertEquals("6", Word.of(BW_8, 6L).toDecimalString())
 	}
 
 	@Test

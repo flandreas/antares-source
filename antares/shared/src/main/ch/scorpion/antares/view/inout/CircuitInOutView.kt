@@ -501,7 +501,8 @@ class CircuitInOutView(
 	}
 
 	/**
-	 * Allows to toggle individual [Bit]s by clicking with the mouse.
+	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
+	 * individual digits with the keyboard.
 	 */
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
@@ -525,9 +526,7 @@ class CircuitInOutView(
 			return this
 		}
 
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
-			return this
-		}
+		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler = this
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
@@ -561,31 +560,29 @@ class CircuitInOutView(
 			if (numberView!!.focusIndex != null) {
 				LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
 
+				invalidate()
 				if (context.keyEvent!!.key == KeyEvent.VK_LEFT) {
-					invalidate()
 					numberView!!.transferFocusLeft()
-					validate()
 				} else if (context.keyEvent!!.key == KeyEvent.VK_RIGHT) {
-					invalidate()
 					numberView!!.transferFocusRight()
-					validate()
 				} else if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 					if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
 						toggleFocusBitWithEnter(context.signalHandler)
 					}
 				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
-					val undefined = Word.undefined(BitWidth.of(signalRepresentation.bits()))
-					val newWord = (model.signal as Word).withSubwordValue(undefined, numberView!!.focusIndex!!)
+					val undefined = Word.undefined(BitWidth.of(signalRepresentation.bitCount))
+					val newWord = signalRepresentation.withDigit(model.signal as Word, undefined, numberView!!.focusIndex!!)
 					model.setIncomingSignal(newWord, context.signalHandler)
 					numberView!!.transferFocusRight()
 				} else {
-					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), context.keyEvent!!.key.toChar())
+					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), context.keyEvent!!.key.toChar())
 					if (digitWord != null && checkTopLevelKey()) {
-						val newWord = (model.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
+						val newWord = signalRepresentation.withDigit(model.signal as Word, digitWord, numberView!!.focusIndex!!)
 						model.setIncomingSignal(newWord, context.signalHandler)
 						numberView!!.transferFocusRight()
 					}
 				}
+				validate()
 			}
 			return null
 		}

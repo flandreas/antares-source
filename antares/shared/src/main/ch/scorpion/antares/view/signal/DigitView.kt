@@ -23,8 +23,9 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
- * Displays a single binary digit of a [DigitalSignal] as text.
+ * Displays a single digit of a [DigitalSignal] as text.
  *
+ * @param index the index of an entire signal's digit this [DigitView] display, where 0 is the least significant index
  * @param x the x coordinate of the upper-left corner
  * @param y the y coordinate of the upper-left corner
  */

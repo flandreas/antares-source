@@ -10,6 +10,8 @@ interface DigitalSignal {
 
     fun toHexString(): String
 
+    fun toDecimalString(): String
+
     fun toBinaryString(): String
 
     fun getColor(): CompositeColor
@@ -32,6 +34,8 @@ interface DigitalSignal {
      * undefined.
      */
     fun toInt(): Int?
+
+    fun toLong(): Long?
 
 	/**
 	 * Creates a copy of this [DigitalSignal] by replacing all [Bit]s with [replacement]

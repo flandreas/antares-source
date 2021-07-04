@@ -28,7 +28,7 @@ class NumberView(
 ) : AbstractRectangle(), Transparent {
 
 	companion object {
-		private const val NIBBLE_GAP = 5
+		private const val DIGIT_GROUP_GAP = 5
 		private const val BYTE_LABEL_HOR_GAP = 0
 	}
 
@@ -134,7 +134,9 @@ class NumberView(
 	}
 
 	fun setFocusTo(newFocusIndex: Int) {
-		updateFocusIndex(newFocusIndex)
+		if (newFocusIndex != focusIndex) {
+			updateFocusIndex(newFocusIndex)
+		}
 	}
 
 	private fun updateFocusIndex(newIndex: Int?) {
@@ -158,18 +160,26 @@ class NumberView(
 		var y = 0.0
 		var byteLabelColumnWidth = 0.0
 
-		val digitViewCount = bitWidth.width / representation.bits()
-		if (digitViewCount > 8 && bitWidth.width % 8 != 0) {
-			x = (4.0 / representation.bits()) * DigitView.WIDTH + NIBBLE_GAP
+		val maxDigitPerRow = 2 * representation.digitGroupSize
+		val digitViewCount = representation.digitCount(bitWidth)
+
+		// First row inset
+		if (digitViewCount > maxDigitPerRow && digitViewCount % maxDigitPerRow != 0) {
+			val insetDigitCount = maxDigitPerRow - (digitViewCount % maxDigitPerRow)
+			var inset = insetDigitCount * DigitView.WIDTH
+			if (insetDigitCount >= representation.digitGroupSize) {
+				inset += DIGIT_GROUP_GAP
+			}
+			x = inset.toDouble()
 		}
 
-		val max = max(1, digitViewCount) - 1
-		for (i in max downTo 0) {
+		for (i in digitViewCount - 1 downTo 0) {
 			val digitView = DigitView(representation, i, x, y, drawDigitBorder, drawBox)
 			digitViews.add(0, digitView)
 			x += digitView.width.toInt()
 
-			if (max > 8 && i % 8 == 0) {
+			if (digitViewCount > maxDigitPerRow && i % maxDigitPerRow == 0) {
+				// Row break
 				val label = Label(
 					text = i.toString(),
 					location = Point2D(x + BYTE_LABEL_HOR_GAP, y + digitView.height),
@@ -181,8 +191,8 @@ class NumberView(
 				byteLabelColumnWidth = max(byteLabelColumnWidth, label.boundingBox.width)
 				x = 0.0
 				y += digitView.height.toInt()
-			} else if (i % 4 == 0 && i > 0) {
-				x += NIBBLE_GAP
+			} else if (i % representation.digitGroupSize == 0 && i > 0) {
+				x += DIGIT_GROUP_GAP
 			}
 
 			bounds.add(digitView.bounds)

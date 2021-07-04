@@ -111,6 +111,20 @@ object BitOperation {
 	    }
     }
 
+	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): Word? {
+		return when (decimal.toUpperCase()) {
+			Bit.ALL_UNDEFINED_CHAR -> Word.allOf(bitWidth, Bit.Undefined)
+			Bit.ERROR_CHAR -> Word.allOf(bitWidth, Bit.Error)
+			else -> {
+				val value = decimal.toLong() - '0'.toLong()
+				if (value >= bitWidth.power()) {
+					return null
+				}
+				return Word.of(bitWidth, value)
+			}
+		}
+	}
+
     /**
      * Converts a decimal number into its hexadecimal string representation.
      * Standard Long.toString(radix) not supported on JS platform.
