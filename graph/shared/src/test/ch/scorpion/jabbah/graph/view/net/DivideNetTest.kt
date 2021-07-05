@@ -5,10 +5,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -60,31 +57,30 @@ class DivideNetTest {
 		// Net 1
 		val net1 = builder.graph.elements.filterIsInstance<Net<*>>()[0]
 		assertEquals(2, net1.portsCount)
-		assertSame(net1, vv1.model.getOutput<Boolean>().net)
-		assertSame(net1, vv2.model.getInput<Boolean>().net)
+		assertSame(net1, vv1.model.getOutput<Boolean>().net as Net<Boolean>)
+		assertSame(net1, vv2.model.getInput<Boolean>().net as Net<Boolean>)
 		assertNotSame(vv2.model.getInput<Boolean>().net, vv4.model.getInput<Boolean>().net)
 
 		// NetView 1
 		val netView1 = (builder.graphView as GraphViewImpl).getNetViewMap()[net1]!!
 		assertEquals(1, netView1.getElements().size)
 		assertSame(net1, builder.graphView.getEdgeViews()[1].model)
-		assertTrue(netView1.getElements().contains(builder.graphView.getEdgeView(vv1.model.getOutput<Boolean>())))
-		assertTrue(netView1.getElements().contains(builder.graphView.getEdgeView(vv2.model.getInput<Boolean>())))
+		assertContains(netView1.getElements() as List<NetViewElement<Boolean>>, builder.graphView.getEdgeView(vv1.model.getOutput<Boolean>()) as EdgeView<Boolean>)
+		assertContains(netView1.getElements() as List<NetViewElement<Boolean>>, builder.graphView.getEdgeView(vv2.model.getInput<Boolean>()) as EdgeView<Boolean>)
 
 		// Net 2
 		val net2 = builder.graph.elements.filterIsInstance<Net<*>>()[1]
 		assertNotSame(net1, net2)
 		assertEquals(2, net2.portsCount)
-		assertSame(net2, vv3.model.getInput<Boolean>().net)
-		assertSame(net2, vv4.model.getInput<Boolean>().net)
+		assertSame(net2, vv3.model.getInput<Boolean>().net as Net<Boolean>)
+		assertSame(net2, vv4.model.getInput<Boolean>().net as Net<Boolean>)
 
 		// NetView 2
 		val netView2 = (builder.graphView as GraphViewImpl).getNetViewMap()[net2]!!
 		assertNotSame(netView1, netView2)
 		assertSame(net2, builder.graphView.getEdgeViews()[0].model)
 		assertEquals(1, netView2.getElements().size)
-		assertTrue(netView2.getElements().contains(builder.graphView.getEdgeView(vv3.model.getInput<Boolean>())))
-		assertTrue(netView2.getElements().contains(builder.graphView.getEdgeView(vv4.model.getInput<Boolean>())))
-
+		assertContains(netView2.getElements() as List<NetViewElement<Boolean>>, builder.graphView.getEdgeView(vv3.model.getInput<Boolean>()) as EdgeView<Boolean>)
+		assertContains(netView2.getElements() as List<NetViewElement<Boolean>>, builder.graphView.getEdgeView(vv4.model.getInput<Boolean>()) as EdgeView<Boolean>)
 	}
 }

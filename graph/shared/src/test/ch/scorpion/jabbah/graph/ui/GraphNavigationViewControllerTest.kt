@@ -22,10 +22,7 @@ import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.mockk.every
@@ -73,7 +70,7 @@ class GraphNavigationViewControllerTest {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
 		assertEquals(2, controller.navigationStack.size)
-		assertSame(controller.navigationStack.peek().content.drawing, drawingView.drawing)
+		assertSame(controller.navigationStack.peek().content.drawing, drawingView.drawing as Drawing<GraphElementView<*>>)
 	}
 
 	@Test
@@ -84,7 +81,7 @@ class GraphNavigationViewControllerTest {
 		controller.navigationStack.navigateBackTo(controller.navigationStack.rootEntry!!, quickMode = true)
 
 		assertEquals(1, controller.navigationStack.size)
-		assertSame(controller.navigationStack.rootEntry!!.content.drawing, drawingView.drawing)
+		assertSame(controller.navigationStack.rootEntry!!.content.drawing, drawingView.drawing as Drawing<GraphElementView<*>>)
 	}
 
 	@Test

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -29,7 +30,7 @@ class DigitalGraphTest {
 
 		graph.formNet(signalHandler)
 
-		val net = graph.elements.filterIsInstance<Net<*>>().first()
+		val net = graph.elements.filterIsInstance<Net<*>>().first() as DigitalNet
 		assertNotNull(net)
 		assertSame(net, tunnel1.getPort<DigitalSignal>(2).net)
 		assertSame(net, tunnel2.getPort<DigitalSignal>(2).net)

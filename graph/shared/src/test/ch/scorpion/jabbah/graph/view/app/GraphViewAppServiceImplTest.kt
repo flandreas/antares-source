@@ -155,18 +155,15 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldRedoDeleteWrappedComponent() {
-		@Test
-		fun shouldUndoDeleteWrappedComponent() {
-			val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
-			val addedComponent = service.add(RectangleComponent(), drawingView)
-			EditModule.commandManager.reset()
+		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+		EditModule.commandManager.reset()
+		val addedComponent = service.add(RectangleComponent(), drawingView)
 
-			service.delete(listOf(addedComponent), drawingView)
-			EditModule.commandManager.undo()
-			EditModule.commandManager.redo()
+		service.delete(listOf(addedComponent), drawingView)
+		EditModule.commandManager.undo()
+		EditModule.commandManager.redo()
 
-			assertEquals(3, builder.graphView.drawables.size)
-		}
+		assertEquals(3, builder.graphView.drawables.size)
 	}
 
 	private fun getNodeView(): NodeView<*> {

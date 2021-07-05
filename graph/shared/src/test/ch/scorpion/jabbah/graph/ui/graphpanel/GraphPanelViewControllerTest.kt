@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -58,7 +59,7 @@ class GraphPanelViewControllerTest {
 
 		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
 
-		assertSame(content, controller.editViewController.editor.view.drawing)
+		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<GraphElementView<*>>)
 		assertSame(content, event.newGraphView)
 	}
 
@@ -73,7 +74,7 @@ class GraphPanelViewControllerTest {
 			applicationDataFor(content, savable),
 			graphViewBuilder.graphView))
 
-		assertSame(content, controller.editViewController.editor.view.drawing)
+		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<GraphElementView<*>>)
 		assertSame(content, event.newGraphView)
 	}
 
