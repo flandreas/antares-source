@@ -5,7 +5,10 @@ import ch.scorpion.jabbah.base.EnumProperty
 /**
  * Defines the supported [DigitalSignal] widths.
  */
-enum class BitWidth(val width: Int, val size: String) : EnumProperty<BitWidth> {
+enum class BitWidth(
+	val width: Int,
+	val size: String
+) : EnumProperty<BitWidth> {
     BW_1(1, "1"),
     BW_2(2, "4"),
     BW_4(4, "16"),
@@ -38,9 +41,9 @@ enum class BitWidth(val width: Int, val size: String) : EnumProperty<BitWidth> {
         }
     }
 
-    override val customName: String get() = width.toString()
+	val maxValue: ULong = BitOperation.power(this.width.toByte()) - 1UL
 
-    fun power(): ULong = BitOperation.power(width.toByte())
+    override val customName: String get() = width.toString()
 
     override fun toString(): String = customName
 }

@@ -39,8 +39,7 @@ object BitOperation {
 			if (value.length > 1) {
 				return null
 			}
-			val maxDigit = bitWidth.power() - 1UL
-			if (value[0] !in '0'..maxDigit.toInt().toChar()) {
+			if (value[0] !in '0'..bitWidth.maxValue.toInt().toChar()) {
 				return null
 			}
 			return value
@@ -90,11 +89,11 @@ object BitOperation {
 	    	return DigitalSignalFactory.allOf(bitWidth, Bit.Error)
 	    }
         val value = hexToLong(hex.toString())
-        if (value >= bitWidth.power()) {
-            // Overflow
-            return null
-        }
-        return DigitalSignalFactory.of(bitWidth, value)
+	    if (value <= bitWidth.maxValue) {
+		    return DigitalSignalFactory.of(bitWidth, value)
+	    }
+	    // Overflow
+	    return null
     }
 
     /**
@@ -117,10 +116,10 @@ object BitOperation {
 			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Error)
 			else -> {
 				val value = decimal.code.toULong() - '0'.code.toULong()
-				if (value >= bitWidth.power()) {
-					return null
+				if (value <= bitWidth.maxValue) {
+					return DigitalSignalFactory.of(bitWidth, value)
 				}
-				return DigitalSignalFactory.of(bitWidth, value)
+				return null
 			}
 		}
 	}

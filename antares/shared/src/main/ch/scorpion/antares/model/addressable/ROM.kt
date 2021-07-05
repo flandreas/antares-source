@@ -104,7 +104,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override val currentAddress: Int get() = currentSelectedAddress
 
-	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
+	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	override val data: ULong
 		get() {

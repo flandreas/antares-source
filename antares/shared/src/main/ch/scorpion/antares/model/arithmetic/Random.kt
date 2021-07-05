@@ -40,7 +40,7 @@ class Random(
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-						DigitalSignalFactory.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.power() - 1UL)),
+						DigitalSignalFactory.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.maxValue)),
 						signalHandler
 					)
 				}

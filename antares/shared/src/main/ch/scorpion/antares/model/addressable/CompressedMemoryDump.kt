@@ -27,7 +27,7 @@ object CompressedMemoryDump {
 	 */
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
-		val mask: ULong = BitOperation.power(bitWidth.width.toByte()) - 1UL
+		val mask: ULong = bitWidth.maxValue
 		val length = max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
