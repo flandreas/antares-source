@@ -49,14 +49,14 @@ class StateMachineInputEventHandlerTest {
 				state("drag") {
 					onEntry {
 						origRectangleLocation = rectangle.location
-						startDragLocation = it!!.location
+						startDragLocation = it.location
 					}
 					transitTo("sense") {
 						given { it.mouseEvent?.type == MouseEventType.RELEASED }
 					}
 					transitTo("drag") {
 						given { it.mouseEvent?.type == MouseEventType.DRAGGED }
-						onTransit { rectangle.location = origRectangleLocation.add(it!!.location.subtract(startDragLocation)) }
+						onTransit { rectangle.location = origRectangleLocation.add(it.location.subtract(startDragLocation)) }
 					}
 					transitTo("sense") {
 						given { it.keyEvent?.type == KeyEventType.PRESSED }

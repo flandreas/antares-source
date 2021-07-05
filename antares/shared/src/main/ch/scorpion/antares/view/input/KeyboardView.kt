@@ -263,7 +263,7 @@ class KeyboardView(
 			val keyChar = context.keyEvent!!.keyChar
 			LOG.trace("keyPressed '$keyChar'")
 			if (KeyHandler.acceptKey(keyChar)) {
-				model.enter(keyChar.toByte(), context.signalHandler)
+				model.enter(keyChar.code.toByte(), context.signalHandler)
 			} else {
 				LOG.trace("reject character '$keyChar'")
 			}
@@ -276,14 +276,14 @@ class KeyboardView(
 		private const val BACKSPACE = 8
 		private const val TAB = 9
 		private const val LINEFEED = 10
-		private const val MIN_CHAR = ' '.toInt()
-		private const val MAX_CHAR = '~'.toInt()
+		private const val MIN_CHAR = ' '.code
+		private const val MAX_CHAR = '~'.code
 
 		fun acceptKey(keyChar: Char): Boolean {
-			return keyChar.toInt() in MIN_CHAR..MAX_CHAR
-				|| keyChar.toInt() == BACKSPACE
-				|| keyChar.toInt() == TAB
-				|| keyChar.toInt() == LINEFEED
+			return keyChar.code in MIN_CHAR..MAX_CHAR
+				|| keyChar.code == BACKSPACE
+				|| keyChar.code == TAB
+				|| keyChar.code == LINEFEED
 		}
 
 		fun displayKey(keyChar: Int): String {

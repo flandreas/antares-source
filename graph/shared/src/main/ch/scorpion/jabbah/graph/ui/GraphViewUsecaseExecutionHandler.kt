@@ -38,7 +38,7 @@ class GraphViewUsecaseExecutionHandler(
 	private inner class KeyHandler : KeyAdapter() {
 
 		override fun keyPressed(e: KeyEvent) {
-			if (e.key == ' '.toInt()) {
+			if (e.key == ' '.code) {
 				if (scheduler.isPaused) {
 					scheduler.resume()
 				}

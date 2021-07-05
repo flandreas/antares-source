@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import java.util.*
 import javax.swing.JLabel
 import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
@@ -96,29 +97,20 @@ private abstract class AbstractAddressableTableModel(
 
 	private val format: String = "%${max(2, addressable.dataWidth.width / 4)}s"
 
-	override fun getRowCount(): Int {
-		return rowCount
-	}
+	override fun getRowCount(): Int = rowCount
 
-	override fun getColumnCount(): Int {
-		return cellsPerRow
-	}
+	override fun getColumnCount(): Int = cellsPerRow
 
-	override fun getColumnName(column: Int): String {
-		return Integer.toHexString(column).toUpperCase()
-	}
+	override fun getColumnName(column: Int): String =
+		Integer.toHexString(column).uppercase(Locale.getDefault())
 
-	protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String {
-		return BitOperation.longToHexPadded(getCellValue(rowIndex, columnIndex), addressable.dataWidth)
-	}
+	protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String =
+		BitOperation.longToHexPadded(getCellValue(rowIndex, columnIndex), addressable.dataWidth)
 
-	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int {
-		return rowIndex * cellsPerRow + columnIndex
-	}
+	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
 
-	protected fun getCellValue(rowIndex: Int, columnIndex: Int): Long {
-		return addressable.dataAt(getCellAddress(rowIndex, columnIndex))
-	}
+	protected fun getCellValue(rowIndex: Int, columnIndex: Int): Long =
+		addressable.dataAt(getCellAddress(rowIndex, columnIndex))
 }
 
 private open class AddressableTableModel(
@@ -131,9 +123,8 @@ private open class AddressableTableModel(
 
 	/** ---- [AbstractTableModel] */
 
-	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
-		return getMemoryValue(rowIndex, columnIndex)
-	}
+	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? =
+		getMemoryValue(rowIndex, columnIndex)
 
 	override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
 		val oldValue = getCellValue(rowIndex, columnIndex)
@@ -141,9 +132,7 @@ private open class AddressableTableModel(
 		fireTableChanged(AddressableTableModelEvent(this, rowIndex, columnIndex, oldValue))
 	}
 
-	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-		return editable
-	}
+	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable
 
 	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
 		try {
@@ -166,16 +155,13 @@ private class SingleColumnTableModel(
 	private val commentsColumnName = Translations.getString("antares.memory.layout.comment")
 	private val disassemblyColumnName = Translations.getString("antares.memory.layout.disassembly")
 
-	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-		return super.isCellEditable(rowIndex, columnIndex) && columnIndex == 0
-	}
+	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean =
+		super.isCellEditable(rowIndex, columnIndex) && columnIndex == 0
 
-	override fun getColumnCount(): Int {
-		return if (showDisassembly) 3 else 2
-	}
+	override fun getColumnCount(): Int = if (showDisassembly) 3 else 2
 
-	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
-		return when (columnIndex) {
+	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? =
+		when (columnIndex) {
 			0 -> getMemoryValue(rowIndex, columnIndex)
 			1 -> if (showDisassembly) {
 				addressable.disassemblyAt(rowIndex)
@@ -183,15 +169,13 @@ private class SingleColumnTableModel(
 				addressable.commentAt(rowIndex)
 			}
 			else -> addressable.commentAt(rowIndex)
-		}
 	}
 
-	override fun getColumnName(column: Int): String {
-		return when (column) {
+	override fun getColumnName(column: Int): String =
+		when (column) {
 			0 -> valueColumnName
 			1 -> if (showDisassembly) disassemblyColumnName else commentsColumnName
 			2 -> commentsColumnName
 			else -> throw IllegalArgumentException("too many columns")
-		}
 	}
 }

@@ -34,13 +34,13 @@ object BitOperation {
 	 * or `null` if the combination is invalid (e.g. hex string is too long, to big, or contains invalid characters).
 	 */
 	fun normalizeHex(hex: String, bitWidth: BitWidth): String? {
-		val value = hex.toUpperCase()
+		val value = hex.uppercase()
 		if (bitWidth < BitWidth.BW_4) {
 			if (value.length > 1) {
 				return null
 			}
 			val maxDigit = bitWidth.power() - 1
-			if (value[0] !in '0'..maxDigit.toChar()) {
+			if (value[0] !in '0'..maxDigit.toInt().toChar()) {
 				return null
 			}
 			return value
@@ -62,10 +62,10 @@ object BitOperation {
         var value = 0L
         var factor = 1L
 
-        for (c in hex.toUpperCase().reversed()) {
+        for (c in hex.uppercase().reversed()) {
 	        value += when (c) {
-		        in '0'..'9' -> factor * (c.toInt() - '0'.toInt())
-		        in 'A'..'F' -> factor * (c.toInt() - 'A'.toInt() + 10)
+		        in '0'..'9' -> factor * (c.code - '0'.code)
+		        in 'A'..'F' -> factor * (c.code - 'A'.code + 10)
 		        else -> throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
 	        }
             factor *= 16
@@ -79,7 +79,7 @@ object BitOperation {
      * contains a non-hexadecimal character.
      */
     fun hexDigitToWord(bitWidth: BitWidth, hex: Char): Word? {
-	    val uppercaseHex = hex.toUpperCase()
+	    val uppercaseHex = hex.uppercaseChar()
         if (!HEX.contains(uppercaseHex)) {
             return null
         }
@@ -102,7 +102,7 @@ object BitOperation {
      * contains a non-binary character (0, 1).
      */
     fun binaryDigitToWord(binary: Char): Word? {
-	    return when (binary.toUpperCase()) {
+	    return when (binary.uppercaseChar()) {
 	    	'0' -> Word.of(false)
 		    '1' -> Word.of(true)
 		    Bit.ALL_UNDEFINED_CHAR -> Word.of(Bit.Undefined)
@@ -112,11 +112,11 @@ object BitOperation {
     }
 
 	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): Word? {
-		return when (decimal.toUpperCase()) {
+		return when (decimal.uppercaseChar()) {
 			Bit.ALL_UNDEFINED_CHAR -> Word.allOf(bitWidth, Bit.Undefined)
 			Bit.ERROR_CHAR -> Word.allOf(bitWidth, Bit.Error)
 			else -> {
-				val value = decimal.toLong() - '0'.toLong()
+				val value = decimal.code.toLong() - '0'.code.toLong()
 				if (value >= bitWidth.power()) {
 					return null
 				}
@@ -152,10 +152,10 @@ object BitOperation {
      */
     fun hexDigit(value: Long): Char {
         if (value in 0..9) {
-            return ('0'.toInt() + value).toChar()
+            return ('0'.code + value).toInt().toChar()
         }
         if (value in 10..15) {
-            return ('A'.toInt() + (value - 10)).toChar()
+            return ('A'.code + (value - 10)).toInt().toChar()
         }
         throw IllegalArgumentException("value must be between 0 and 15")
     }

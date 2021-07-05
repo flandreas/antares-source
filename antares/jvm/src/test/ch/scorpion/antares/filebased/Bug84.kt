@@ -58,9 +58,9 @@ class Bug84 : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldPropagateFromAToB() {
-		keyboard.enter('a'.toByte(), scheduler)
+		keyboard.enter('a'.code.toByte(), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(BitWidth.BW_8, 'a'.toLong()), b.signal)
+		assertEquals(Word.of(BitWidth.BW_8, 'a'.code.toLong()), b.signal)
 	}
 }

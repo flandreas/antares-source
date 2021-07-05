@@ -43,7 +43,7 @@ class ROMTest {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
 
-        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
+        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.of(BitWidth.BW_8, 99L), dataOutput.getOutgoingSignal() as Word)
@@ -55,7 +55,7 @@ class ROMTest {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 0L), signalHandler)
 
-        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
+        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.undefined(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
@@ -67,7 +67,7 @@ class ROMTest {
         rom.getAddressInput().setIncomingSignal(Word.undefined(BitWidth.BW_8), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
 
-        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
+        calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
         assertEquals(Word.error(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
@@ -77,7 +77,7 @@ class ROMTest {
     fun shouldGetCurrentAddress() {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 16L), signalHandler)
 	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
-	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
+	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
         assertEquals(16, rom.currentAddress)
     }
 
@@ -86,7 +86,7 @@ class ROMTest {
         rom.write(1, 255)
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
-	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
+	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
         assertEquals(255L, rom.data)
     }
 }

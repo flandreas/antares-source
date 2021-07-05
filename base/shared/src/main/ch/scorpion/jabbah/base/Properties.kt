@@ -81,7 +81,7 @@ open class Properties {
 	fun getBoolean(name: String): Boolean {
 		var entry = getEntry(name)
 		if (entry.objValue == null) {
-			entry = entry.copy(objValue = entry.stringValue.toUpperCase() == "TRUE")
+			entry = entry.copy(objValue = entry.stringValue.uppercase() == "TRUE")
 			entries[name] = entry
 		}
 		return entry.objValue as Boolean
@@ -164,7 +164,7 @@ class Settings {
         if (StringUtils.isEmpty(setting)) {
             return defaultValue
         }
-        return setting?.toUpperCase() == "TRUE"
+        return setting?.uppercase() == "TRUE"
     }
 
     fun getInt(name: String, defaultValue: Int): Int =

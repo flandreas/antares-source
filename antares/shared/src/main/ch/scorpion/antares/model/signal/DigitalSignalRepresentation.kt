@@ -36,7 +36,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 					Word.error(bitWidth)
 				}
 			val s = value.toString().padStart(index + 1, '0')
-			return Word.of(bitWidth, (s[s.length - 1 - index].toInt() - '0'.toInt()).toLong())
+			return Word.of(bitWidth, (s[s.length - 1 - index].code - '0'.code).toLong())
 
 		}
 		override fun represent(signal: DigitalSignal): String = signal.toDecimalString()

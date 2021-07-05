@@ -76,7 +76,7 @@ object CompressedMemoryDump {
 	}
 
 	private fun writePaddedHex(value: Long, mask: Long, length: Int, builder: StringBuilder) {
-		builder.append(BitOperation.longToHex(value and mask).toUpperCase().padStart(length, '0'))
+		builder.append(BitOperation.longToHex(value and mask).uppercase().padStart(length, '0'))
 	}
 
 	private fun writeEscapedComment(comment: String, builder: StringBuilder) {

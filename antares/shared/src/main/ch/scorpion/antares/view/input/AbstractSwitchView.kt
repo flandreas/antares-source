@@ -103,7 +103,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!keyDown) {
 				name?.let {
-					if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+					if (it.length == 1 && it[0].code == context.keyEvent?.key) {
 						toggle(context)
 						keyDown = true
 						return null
@@ -111,9 +111,9 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				}
 				if (isFocusOwner) {
 					when (context.keyEvent?.key) {
-						'0'.toInt() -> switchOff(context)
-						'1'.toInt() -> switchOn(context)
-						'\n'.toInt() -> toggle(context)
+						'0'.code -> switchOff(context)
+						'1'.code -> switchOn(context)
+						'\n'.code -> toggle(context)
 					}
 				}
 				keyDown = true
@@ -125,7 +125,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			if (!toggle) {
 				if (keyDown) {
 					name?.let {
-						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+						if (it.length == 1 && it[0].code == context.keyEvent?.key) {
 							switchOff(context)
 							keyDown = false
 							return null
@@ -133,8 +133,8 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 					}
 					if (isFocusOwner) {
 						when (context.keyEvent?.key) {
-							'1'.toInt() -> switchOff(context)
-							'\n'.toInt() -> switchOff(context)
+							'1'.code -> switchOff(context)
+							'\n'.code -> switchOff(context)
 						}
 					}
 				}

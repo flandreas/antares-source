@@ -172,7 +172,7 @@ class Terminal(
 	}
 
 	private fun isPrintable(character: Char): Boolean =
-		character.toInt() in MIN_PRINTABLE_CHAR..MAX_PRINTABLE_CHAR
+		character.code in MIN_PRINTABLE_CHAR..MAX_PRINTABLE_CHAR
 
 	private fun clear(signalHandler: SignalHandler? = null) {
 		displayedRows.clear()

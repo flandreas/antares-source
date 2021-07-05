@@ -19,7 +19,7 @@ interface PropertyPanel : UIView {
  * Controls displaying and editing the properties of arbitrary objects.
  * @param editor the [Editor] used for creating undoable [Command]s when changing properties
  */
-open abstract class AbstractPropertyPanelController<T: PropertyPanel>(
+abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 	val editor: Editor
 ) : AbstractUIController<T>() {
 

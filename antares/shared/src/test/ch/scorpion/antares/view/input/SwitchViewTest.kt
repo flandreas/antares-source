@@ -21,7 +21,7 @@ class SwitchViewTest {
 	@Test
 	fun shouldConsumeKeyEventForName() {
 		val switchView = SwitchView()
-		val keyEvent = keyEvent('A'.toInt())
+		val keyEvent = keyEvent('A'.code)
 		val context = contextFor(keyEvent = keyEvent)
 		switchView.name = "A"
 		switchView.getActorInteractionHandler(context).keyPressed(context)
@@ -32,7 +32,7 @@ class SwitchViewTest {
 	@Test
 	fun shouldNotConsumeKeyEventForOtherName() {
 		val switchView = SwitchView()
-		val keyEvent = keyEvent('B'.toInt())
+		val keyEvent = keyEvent('B'.code)
 		val context = contextFor(keyEvent = keyEvent)
 		switchView.name = "A"
 		switchView.getActorInteractionHandler(context).keyPressed(context)

@@ -119,7 +119,7 @@ class TerminalTest {
 	}
 
 	private fun enter(terminal: Terminal, char: Char) {
-		terminal.dataInput.setIncomingSignal(Word.of(BitWidth.BW_8, char.toLong()), signalHandler)
+		terminal.dataInput.setIncomingSignal(Word.of(BitWidth.BW_8, char.code.toLong()), signalHandler)
 		terminal.clockInput.setIncomingSignal(Word.of(true), signalHandler)
 		terminal.act(signalHandler, terminal.createActorData(terminal.clockInput))
 	}

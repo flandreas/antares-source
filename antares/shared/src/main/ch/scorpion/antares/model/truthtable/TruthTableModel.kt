@@ -24,7 +24,7 @@ class TruthTableModel(
 		defaultOutputColumnNames(outputCount))
 
 	companion object {
-		fun defaultInputColumns(inputCount: Int): List<Column> = (0 until inputCount).map { Column(('A'.toInt() + it).toChar().toString()) }
+		fun defaultInputColumns(inputCount: Int): List<Column> = (0 until inputCount).map { Column(('A'.code + it).toChar().toString()) }
 		fun defaultOutputColumnNames(outputCount: Int): List<String> = if (outputCount == 1) listOf("O") else (1..outputCount).map { "O$it" }
 	}
 

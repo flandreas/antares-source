@@ -57,7 +57,7 @@ data class PeriodOrFrequency(val value: Long, val unit: PeriodOrFrequencyUnit) {
 object PeriodOrFrequencyParser {
 
 	fun parse(text: String): PeriodOrFrequency {
-		val s = text.trim().toLowerCase()
+		val s = text.trim().lowercase()
 		try {
 			val value = s.toLong()
 			if (value <= 0) {
@@ -72,16 +72,14 @@ object PeriodOrFrequencyParser {
 	}
 
 	private fun extractUnit(text: String): PeriodOrFrequencyUnit {
-		// TODO Use Char.isDigit() with Kotlin 1.5 MPP
-		val unitText = text.dropWhile { it.toInt() in ('0'.toInt()..'9'.toInt()) }.trim()
+		val unitText = text.dropWhile { it.isDigit() }.trim()
 		return PeriodOrFrequencyUnit.values().firstOrNull {
-			unitText == it.denotation.toLowerCase() || unitText == it.customName.toLowerCase()
+			unitText == it.denotation.lowercase() || unitText == it.customName.lowercase()
 		} ?: throw IllegalArgumentException(Translations.getString("element.property.periodOrFrequency.invalidUnit.text", unitText))
 	}
 
 	private fun extractValue(text: String): Long {
-		// TODO Use Char.isDigit() with Kotlin 1.5 MPP
-		val valueText = text.dropLastWhile { it.toInt() !in ('0'.toInt()..'9'.toInt()) }.trim()
+		val valueText = text.dropLastWhile { !it.isDigit() }.trim()
 		try {
 			val value = valueText.toLong()
 			if (value <= 0) {

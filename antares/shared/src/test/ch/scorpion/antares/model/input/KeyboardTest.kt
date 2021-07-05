@@ -20,7 +20,7 @@ class KeyboardTest {
 	private val signalHandler: SignalHandler = mockk(relaxed = true)
 
 	private fun enter(char: Char) {
-		keyboard.enter(char.toByte(), signalHandler)
+		keyboard.enter(char.code.toByte(), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(null))
 	}
 
@@ -29,7 +29,7 @@ class KeyboardTest {
 		enter('A')
 
 		assertEquals(1, keyboard.bufferItemsCount)
-		assertEquals('A'.toByte(), keyboard.getBytes().next())
+		assertEquals('A'.code.toByte(), keyboard.getBytes().next())
 	}
 
 	@Test
@@ -39,7 +39,7 @@ class KeyboardTest {
 		enter('B')
 
 		assertEquals(1, keyboard.bufferItemsCount)
-		assertEquals('A'.toByte(), keyboard.getBytes().next())
+		assertEquals('A'.code.toByte(), keyboard.getBytes().next())
 	}
 
 	@Test
@@ -66,7 +66,7 @@ class KeyboardTest {
 		keyboard.readEnableInput.setIncomingSignal(Word.of(false), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(null))
 
-		assertEquals(Word.of(BitWidth.BW_8, 'A'.toLong()), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(Word.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
 		assertEquals(Word.of(true), keyboard.availableData.getOutgoingSignal())
 		assertEquals(1, keyboard.bufferItemsCount)
 	}
@@ -90,7 +90,7 @@ class KeyboardTest {
 		keyboard.clockInput.setIncomingSignal(Word.of(true), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(keyboard.clockInput))
 
-		assertEquals(Word.of(BitWidth.BW_8, 'A'.toLong()), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(Word.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
 		assertEquals(Word.of(true), keyboard.availableData.getOutgoingSignal())
 		assertEquals(1, keyboard.bufferItemsCount)
 	}

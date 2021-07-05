@@ -141,7 +141,7 @@ class StoreXmlReader(
 
 	override fun readBoolean(name: String): Boolean {
 		val b = xmlReader.getAttributeValue(name)
-		return b == "1" || b.toLowerCase() == "true"
+		return b == "1" || b.lowercase() == "true"
 	}
 
 	override fun readLong(name: String): Long {

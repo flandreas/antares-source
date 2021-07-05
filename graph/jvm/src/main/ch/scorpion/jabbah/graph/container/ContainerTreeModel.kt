@@ -144,7 +144,7 @@ class ContainerTreeModel(
 	}
 
 	fun updateControlViewSource(source: ControlViewSource<Vertice>) {
-		val index = findControlViewSourceIndex(source.controlId!!)
+		val index = findControlViewSourceIndex(source.controlId)
 		if (index != null) {
 			treeModel.nodesChanged(controlsNode, intArrayOf(index))
 		}
@@ -189,7 +189,7 @@ class ContainerTreeModel(
 	 */
 	private fun fillControlViewSources(graphView: GraphView, containerDrawing: ContainerDrawing) {
 		graphView.getControlViewSources()
-			.filter { containerDrawing.getControlViewComponent(it.controlId!!) == null }
+			.filter { containerDrawing.getControlViewComponent(it.controlId) == null }
 			.forEach { addControlViewSource(it) }
 	}
 
@@ -311,7 +311,7 @@ private class ContainerTreeControlItem(
 	iconPath: String
 ) : DraggableTreeItem(ContainerTreeItemType.Control, factory, iconPath) {
 
-	val controlViewId: String get() = source.controlId!!
+	val controlViewId: String get() = source.controlId
 	val controlModelId: Int get() = source.model.id
 	val controlName: String get() = FormattedText.replaceNegation(source.controlName).textWithOverline
 

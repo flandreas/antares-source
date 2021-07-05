@@ -262,7 +262,7 @@ abstract class AbstractPortView<T : Any>(
 		direction = Direction.withName(reader.readString("dir"))
 		// There was a bug in the older version that wrote enum names "INTERNAL" to physical files.
 		// Use toLower() in order to be able to read these files as well
-		portLabelPosition = PortLabelPosition.withName(reader.readString("textPos").toLowerCase())
+		portLabelPosition = PortLabelPosition.withName(reader.readString("textPos").lowercase())
 		if (reader.hasAttribute("portId")) {
 			val portId = reader.readInt("portId")
 			reader.requestResolution(this, Reference(name = "portRef", referenceId = portId))

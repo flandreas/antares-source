@@ -36,7 +36,7 @@ class RAMCalculatorTest {
 		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
 		ram.getClockInput()!!.setIncomingSignal(Word.of(true), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getClockInput()!!) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getClockInput()!!), signalHandler)
 
 		assertEquals(99L, ram.read(1))
 	}
@@ -51,7 +51,7 @@ class RAMCalculatorTest {
 		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
 		ram.getClockInput()!!.setIncomingSignal(Word.of(true), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getClockInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getClockInput()), signalHandler)
 
 		assertEquals(0L, ram.read(1))
 	}
@@ -63,7 +63,7 @@ class RAMCalculatorTest {
 		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
 		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getClockInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getClockInput()), signalHandler)
 
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -74,7 +74,7 @@ class RAMCalculatorTest {
 		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
 		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -88,7 +88,7 @@ class RAMCalculatorTest {
 		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
 		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
 		assertEquals(Word.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -104,7 +104,7 @@ class RAMCalculatorTest {
 		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getDataPort()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
 
 		assertEquals(99L, ram.read(1))
 	}
@@ -118,7 +118,7 @@ class RAMCalculatorTest {
 		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
 		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -132,7 +132,7 @@ class RAMCalculatorTest {
 		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
 		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
 		assertEquals(Word.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -143,7 +143,7 @@ class RAMCalculatorTest {
 		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
 		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -156,7 +156,7 @@ class RAMCalculatorTest {
 		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
 		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getDataPort()) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
 
 		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
 	}
@@ -169,7 +169,7 @@ class RAMCalculatorTest {
 		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
 
 		ram.setDataAt(0, 255, signalHandler)
-		calculator.calculate(ram, ram.createActorData(null) as GraphActorData, signalHandler)
+		calculator.calculate(ram, ram.createActorData(null), signalHandler)
 
 		assertEquals(Word.of(BitWidth.BW_8, 255), ram.getDataPort().getOutgoingSignal() as Word)
 	}
