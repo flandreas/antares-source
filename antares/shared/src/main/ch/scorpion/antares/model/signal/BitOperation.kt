@@ -10,7 +10,9 @@ import kotlin.math.pow
 object BitOperation {
 
     private val HEX = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
-	private val POWER = Array(32 + 1) { 2.0.pow(it).toULong() }
+	private val POWER = Array(63 + 1) {
+		2.0.pow(it).toULong()
+	}
 
 	fun getBitAt(value: ULong, index: Int): Boolean {
         return value shr index and 1UL == 1UL
@@ -25,7 +27,7 @@ object BitOperation {
     }
 
     fun power(value: Byte): ULong {
-	    checkArgument(value <= 32, "value must not be larger than 32")
+	    checkArgument(value <= 63, "value must not be larger than 64")
 	    return POWER[value.toInt()]
     }
 

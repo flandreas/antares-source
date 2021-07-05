@@ -8,6 +8,7 @@ enum class BranchCount(val count: Int) {
 	BC_3(3),
 	BC_4(4),
 	BC_6(6),
+	BC_7(7),
 	BC_8(8),
 	BC_10(10),
 	BC_12(12),
@@ -16,7 +17,8 @@ enum class BranchCount(val count: Int) {
 	BC_20(20),
 	BC_24(24),
 	BC_28(28),
-	BC_32(32);
+	BC_32(32),
+	BC_64(64);
 
 	companion object {
 
@@ -29,8 +31,9 @@ enum class BranchCount(val count: Int) {
 			BitWidth.BW_16 to listOf(BC_2, BC_4, BC_8, BC_16),
 			BitWidth.BW_20 to listOf(BC_10, BC_20),
 			BitWidth.BW_24 to listOf(BC_2, BC_3, BC_6, BC_12, BC_24),
-			BitWidth.BW_28 to listOf(BC_4, BC_14, BC_28),
-			BitWidth.BW_32 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32)
+			BitWidth.BW_28 to listOf(BC_7, BC_14, BC_28),
+			BitWidth.BW_32 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32),
+			BitWidth.BW_64 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32, BC_64)
 		)
 
 		fun forBitWidth(bitWidth: BitWidth): List<BranchCount> {

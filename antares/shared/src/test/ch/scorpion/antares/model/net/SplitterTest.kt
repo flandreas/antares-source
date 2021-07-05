@@ -51,4 +51,11 @@ class SplitterTest {
 		assertEquals(BitWidth.BW_2, (splitter.getOutput<Any>(5).getOutgoingSignal() as DigitalSignal).bitWidth)
 		assertEquals(3UL, (splitter.getOutput<Any>(5).getOutgoingSignal() as DigitalSignal).getValue())
 	}
+
+	@Test
+	fun shouldSetBitWidth28() {
+		val splitter = Splitter(BitWidth.BW_8, BranchCount.BC_4)
+
+		splitter.bitWidth = BitWidth.BW_28
+	}
 }

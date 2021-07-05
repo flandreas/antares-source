@@ -18,7 +18,8 @@ enum class BitWidth(
 	BW_20(20, "1M"),
 	BW_24(24, "16M"),
 	BW_28(28, "256M"),
-    BW_32(32, "4G");
+    BW_32(32, "4G"),
+    BW_64(64, "16E");
 
     companion object {
 
@@ -41,7 +42,11 @@ enum class BitWidth(
         }
     }
 
-	val maxValue: ULong = BitOperation.power(this.width.toByte()) - 1UL
+	val maxValue: ULong = if (width == 64) {
+		ULong.MAX_VALUE
+	} else {
+		BitOperation.power(this.width.toByte()) - 1UL
+	}
 
     override val customName: String get() = width.toString()
 
