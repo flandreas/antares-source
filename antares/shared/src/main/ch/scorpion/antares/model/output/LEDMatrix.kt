@@ -25,8 +25,8 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A matrix of light emitting dots with a row and column addressing input, designed
  * to be used by multiplexing either rows or columns.
  *
- * The column port receives a [Word] whose [Bit]s address the matrix columns, with the least
- * significant [Bit] identifying the rightmost column. The row port receives a [Word] whose [Bit]s
+ * The column port receives a [DigitalSignal] whose [Bit]s address the matrix columns, with the least
+ * significant [Bit] identifying the rightmost column. The row port receives a [DigitalSignal] whose [Bit]s
  * address the matrix rows, with the least significant [Bit] identifying the bottom row.
  */
 class LEDMatrix(
@@ -145,11 +145,11 @@ class LEDMatrix(
 		LOG.trace("LEDMatrix on ${signalHandler.executionTime}: updateBuffer with portChanged=$portChanged")
 
 		val time = signalHandler.executionTime + afterglowDuration * 1_000_000
-		val rowValue = rowPort.getIncomingSignal() as Word
+		val rowValue = rowPort.getIncomingSignal()!!
 
 		var anyChanged = false
 		var anySwitchedOff = false
-		for ((columnIndex, columnBit) in (columnPort.getIncomingSignal() as Word).bits.withIndex()) {
+		for ((columnIndex, columnBit) in (columnPort.getIncomingSignal()!!).bits.withIndex()) {
 			for ((rowIndex, rowBit) in rowValue.bits.withIndex()) {
 				val cellTime = getCellTime(columnIndex, rowIndex)
 				val hasOldValue = cellTime == Long.MAX_VALUE

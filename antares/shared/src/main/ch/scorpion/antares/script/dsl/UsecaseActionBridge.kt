@@ -1,6 +1,6 @@
 package ch.scorpion.antares.script.dsl
 
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -46,7 +46,7 @@ class UsecaseActionBridge(
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
 		LOG.trace("setInput of $inputId to '$hexValue' at $time")
 		getInput(inputId)?.let {component ->
-			runner.executeAt(time) { component.model.setIncomingSignal(Word.of(component.model.bitWidth, hexValue), scheduler) }
+			runner.executeAt(time) { component.model.setIncomingSignal(DigitalSignalFactory.of(component.model.bitWidth, hexValue), scheduler) }
 		}
 	}
 
@@ -60,8 +60,8 @@ class UsecaseActionBridge(
 			clockApplications.add(inputId)
 			runner.applyOscillation(
 				component.model,
-				Word.falseValue(component.model.bitWidth),
-				Word.trueValue(component.model.bitWidth),
+				DigitalSignalFactory.falseValue(component.model.bitWidth),
+				DigitalSignalFactory.trueValue(component.model.bitWidth),
 				period)
 		}
 	}

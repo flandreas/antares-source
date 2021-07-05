@@ -1,9 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.DipSwitch
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -136,7 +134,7 @@ class DipSwitchView(
 		get() = model.initialValue.getValue()
 		set(value) {
 			if (value != initialValue) {
-				model.initialValue = Word.of(bitWidth, value)
+				model.initialValue = DigitalSignalFactory.of(bitWidth, value)
 				invalidate()
 				validate()
 			}
@@ -391,9 +389,9 @@ class DipSwitchView(
 		}
 
 		private fun toggleImpl(index: Int, signalHandler: SignalHandler) {
-			var signal = model.value as Word?
+			var signal = model.value as DigitalSignal?
 			if (signal == null) {
-				signal = Word.allOf(model.bitWidth, Bit.Undefined)
+				signal = DigitalSignalFactory.allOf(model.bitWidth, Bit.Undefined)
 			}
 			var bit = signal.bitAt(index)
 			if (!bit.isDefined) {
@@ -426,7 +424,7 @@ class DipSwitchView(
 
 	/**
 	 * Displays a single [Bit] as a small switch.
-	 * @property index the index (starting with 0) of the displayed [Bit] within a [Word]
+	 * @property index the index (starting with 0) of the displayed [Bit] within a [DigitalSignal]
 	 * @param bit Contains the value this [BitView] displays
 	 * @param x the x coordinate of the upper-left corner
 	 * @param y the y coordinate of the upper-left corner

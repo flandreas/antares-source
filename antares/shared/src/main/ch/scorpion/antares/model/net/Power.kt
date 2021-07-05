@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -57,12 +57,12 @@ class Power(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.trueValue(bitWidth), signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.trueValue(bitWidth), signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), Word.trueValue(bitWidth)))
+		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), DigitalSignalFactory.trueValue(bitWidth)))
 	}
 
 	/** ---- [Storable] interface */

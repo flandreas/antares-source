@@ -2,10 +2,7 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -89,7 +86,7 @@ class Tunnel(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		val undefined = Word.allOf(bitWidth, Bit.Undefined)
+		val undefined = DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
 		getOutput<DigitalSignal>(1).setOutgoingSignalBuffered(undefined, signalHandler)
 		getOutput<DigitalSignal>(2).setOutgoingSignalBuffered(undefined, signalHandler)
 	}
@@ -117,7 +114,7 @@ class Tunnel(
 	private fun getOutgoingSignal(): DigitalSignal = getOutput<DigitalSignal>().getOutgoingSignal()!!
 
 	fun getInOrOutSignal(): DigitalSignal {
-		if ((getIncomingSignal() as Word).isAllOf(Bit.Undefined)) {
+		if (getIncomingSignal().isAllOf(Bit.Undefined)) {
 			return getOutgoingSignal()
 		}
 		return getIncomingSignal()

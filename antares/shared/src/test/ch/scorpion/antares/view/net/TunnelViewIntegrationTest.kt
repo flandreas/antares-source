@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
@@ -55,7 +56,7 @@ class TunnelViewIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), inOutView.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), inOutView.model.signal)
 	}
 
 	@Test
@@ -63,12 +64,12 @@ class TunnelViewIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		inOutView.model.setIncomingSignal(Word.of(false), scheduler)
+		inOutView.model.setIncomingSignal(DigitalSignalFactory.of(false), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertFalse(edgeView1.model.isError)
-		assertEquals(Word.of(false), edgeView1.model.signal)
+		assertEquals(DigitalSignalFactory.of(false), edgeView1.model.signal)
 		assertFalse(edgeView2.model.isError)
-		assertEquals(Word.of(false), edgeView2.model.signal)
+		assertEquals(DigitalSignalFactory.of(false), edgeView2.model.signal)
 	}
 }

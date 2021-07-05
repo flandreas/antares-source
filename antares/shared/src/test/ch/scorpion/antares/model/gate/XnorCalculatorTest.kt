@@ -4,6 +4,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -44,9 +45,9 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	@Test
 	fun evenNumberOfInputShouldCalculateTrue() {
 		val xnor = XnorGate(InputCount.THREE)
-		xnor.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
-		xnor.getInput<DigitalSignal>(2).setIncomingSignal(Word.of(true), signalHandler)
-		xnor.getInput<DigitalSignal>(3).setIncomingSignal(Word.of(false), signalHandler)
+		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 
 		assertTrue(xnor.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0).isSet)
 	}
@@ -54,9 +55,9 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	@Test
 	fun oddNumberOfInputShouldCalculateFalse() {
 		val xnor = XnorGate(InputCount.THREE)
-		xnor.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
-		xnor.getInput<DigitalSignal>(2).setIncomingSignal(Word.of(true), signalHandler)
-		xnor.getInput<DigitalSignal>(3).setIncomingSignal(Word.of(true), signalHandler)
+		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		assertFalse(xnor.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0).isSet)
 	}

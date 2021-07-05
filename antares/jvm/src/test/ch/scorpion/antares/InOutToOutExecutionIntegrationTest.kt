@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
@@ -65,12 +66,12 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	fun shouldForwardToInOut() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-		assertEquals(Word.of(Bit.False), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(Bit.False), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 		val executionTime = scheduler.executionTime
 
 		switchView.model.on(scheduler)
 		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY + 1)
 
-		assertEquals(Word.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 }

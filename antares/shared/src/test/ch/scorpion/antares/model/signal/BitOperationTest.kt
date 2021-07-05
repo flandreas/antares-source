@@ -82,30 +82,30 @@ class BitOperationTest {
 
 	@Test
 	fun shouldConvertHexDigitToWord() {
-		assertEquals(Word.of(BitWidth.BW_4, 5L), BitOperation.hexDigitToWord(BitWidth.BW_4, '5'))
-		assertEquals(Word.of(BitWidth.BW_4, 10L), BitOperation.hexDigitToWord(BitWidth.BW_4, 'A'))
-		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Undefined), BitOperation.hexDigitToWord(BitWidth.BW_4, 'Z'))
-		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Error), BitOperation.hexDigitToWord(BitWidth.BW_4, 'X'))
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_4, 5L), BitOperation.hexDigitToWord(BitWidth.BW_4, '5'))
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_4, 10L), BitOperation.hexDigitToWord(BitWidth.BW_4, 'A'))
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_4, Bit.Undefined), BitOperation.hexDigitToWord(BitWidth.BW_4, 'Z'))
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_4, Bit.Error), BitOperation.hexDigitToWord(BitWidth.BW_4, 'X'))
 	}
 
 	@Test
 	fun shouldConvertDecimalDigitToWord() {
-		assertEquals(Word.of(BitWidth.BW_4, 5L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '5'))
-		assertEquals(Word.of(BitWidth.BW_4, 0L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '0'))
-		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Undefined), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'Z'))
-		assertEquals(Word.allOf(BitWidth.BW_4, Bit.Error), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'X'))
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_4, 5L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '5'))
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_4, 0L), BitOperation.decimalDigitToWord(BitWidth.BW_4, '0'))
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_4, Bit.Undefined), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'Z'))
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_4, Bit.Error), BitOperation.decimalDigitToWord(BitWidth.BW_4, 'X'))
 		assertNull(BitOperation.decimalDigitToWord(BitWidth.BW_4, 'A'))
 		assertNull(BitOperation.decimalDigitToWord(BitWidth.BW_2, '4'))
 	}
 
 	@Test
 	fun shouldConvertBinaryDigitToWord() {
-		assertEquals(Word.of(false), BitOperation.binaryDigitToWord('0'))
-		assertEquals(Word.of(true), BitOperation.binaryDigitToWord('1'))
-		assertEquals(Word.of(Bit.Undefined), BitOperation.binaryDigitToWord('z'))
-		assertEquals(Word.of(Bit.Undefined), BitOperation.binaryDigitToWord('Z'))
-		assertEquals(Word.of(Bit.Error), BitOperation.binaryDigitToWord('X'))
-		assertEquals(Word.of(Bit.Error), BitOperation.binaryDigitToWord('x'))
+		assertEquals(DigitalSignalFactory.of(false), BitOperation.binaryDigitToWord('0'))
+		assertEquals(DigitalSignalFactory.of(true), BitOperation.binaryDigitToWord('1'))
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), BitOperation.binaryDigitToWord('z'))
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), BitOperation.binaryDigitToWord('Z'))
+		assertEquals(DigitalSignalFactory.of(Bit.Error), BitOperation.binaryDigitToWord('X'))
+		assertEquals(DigitalSignalFactory.of(Bit.Error), BitOperation.binaryDigitToWord('x'))
 	}
 
 	@Test

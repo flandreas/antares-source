@@ -191,13 +191,13 @@ open class DigitalPortImpl(
 	override val defaultDigitalSignal: DigitalSignal
 		get() {
 			if (defaultBit != null) {
-				return Word.allOf(bitWidth, defaultBit!!)
+				return DigitalSignalFactory.allOf(bitWidth, defaultBit!!)
 			}
 			if (portType == PortType.INOUT) {
-				return Word.undefined(bitWidth)
+				return DigitalSignalFactory.undefined(bitWidth)
 			}
 			// Needed for power-on behaviour, especially for bistable circuits ('Undefined' would not work)
-			return Word.allOf(bitWidth, Bit.False)
+			return DigitalSignalFactory.allOf(bitWidth, Bit.False)
 		}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
@@ -216,12 +216,12 @@ open class DigitalPortImpl(
 
 	override val isOutputFullyUndefined: Boolean get() {
 		val outgoingSignal = getOutgoingSignal()
-		return outgoingSignal == null || (outgoingSignal as Word).isFullyUndefined
+		return outgoingSignal == null || outgoingSignal.isFullyUndefined
 	}
 
 	override val isOutputPartiallyUndefined: Boolean get() {
 		val outgoingSignal = getOutgoingSignal()
-		return outgoingSignal == null || (outgoingSignal as Word).containsUndefinedBit()
+		return outgoingSignal == null || outgoingSignal.containsUndefinedBit()
 	}
 
 	override fun isOutgoingSignalConsistentWith(signal: DigitalSignal?): Boolean =

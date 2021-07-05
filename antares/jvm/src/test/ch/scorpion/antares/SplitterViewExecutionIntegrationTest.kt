@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Splitter
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.SplitterView
 import ch.scorpion.antares.view.output.LEDView
@@ -54,8 +51,8 @@ class SplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(Bit.False), splitterView.model.getOutput<DigitalSignal>(2).net!!.signal)
-		assertEquals(Word.of(Bit.False), splitterView.model.getOutput<DigitalSignal>(3).net!!.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), splitterView.model.getOutput<DigitalSignal>(2).net!!.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), splitterView.model.getOutput<DigitalSignal>(3).net!!.signal)
 	}
 
 	@Test
@@ -65,7 +62,7 @@ class SplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		assertFalse(ledView1.model.isOn)
 		assertFalse(ledView2.model.isOn)
 
-		circuitInputView.model.setIncomingSignal(Word.of(BitWidth.BW_2, 2L), scheduler)
+		circuitInputView.model.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_2, 2L), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		assertFalse(ledView1.model.isOn)

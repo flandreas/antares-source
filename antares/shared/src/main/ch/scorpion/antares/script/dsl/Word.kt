@@ -3,7 +3,7 @@ package ch.scorpion.antares.script.dsl
 import ch.scorpion.antares.model.signal.BitWidth
 
 /** A DSL wrapper for [ch.scorpion.antares.model.signal.Word].*/
-class Word(val word: ch.scorpion.antares.model.signal.Word) {
+class Word(val word: ch.scorpion.antares.model.signal.DigitalSignal) {
 
 	fun bitAt(index: Int): Boolean = word.bitAt(index).isSet
 

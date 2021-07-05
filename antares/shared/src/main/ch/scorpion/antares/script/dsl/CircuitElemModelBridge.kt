@@ -40,11 +40,11 @@ open class CircuitElemModelBridge(
 
 	/** Returns the input signal at the first (or one and only) [InputPort] of this circuit element as a [Word].*/
 	@Suppress("unused")
-	fun inputWord(): Word = Word(vertice.getInput<DigitalSignal>().getIncomingSignal() as ch.scorpion.antares.model.signal.Word)
+	fun inputWord(): Word = Word(vertice.getInput<DigitalSignal>().getIncomingSignal()!!)
 
 	/** Returns the input signal at the [InputPort] with the specified name as a [Word].*/
 	@Suppress("unused")
-	fun inputWord(name: String): Word = Word(vertice.getInput<DigitalSignal>(name).getIncomingSignal() as ch.scorpion.antares.model.signal.Word)
+	fun inputWord(name: String): Word = Word(vertice.getInput<DigitalSignal>(name).getIncomingSignal()!!)
 
 	/** Returns the input signal at the [InputPort] with the specified ID as a [String].*/
 	fun input(id: Int): String = vertice.getInput<DigitalSignal>(id).getIncomingSignal().toString()
@@ -65,15 +65,15 @@ open class CircuitElemModelBridge(
 
 	/** Returns the output signal of the first (or one and only) [OutputPort] as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(): Word = Word(vertice.getOutput<DigitalSignal>().getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
+	fun outputWord(): Word = Word(vertice.getOutput<DigitalSignal>().getOutgoingSignal()!!)
 
 	/** Returns the output signal at the [OutputPort] with the specified ID as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(id: Int): Word = Word(vertice.getOutput<DigitalSignal>(id).getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
+	fun outputWord(id: Int): Word = Word(vertice.getOutput<DigitalSignal>(id).getOutgoingSignal()!!)
 
 	/** Returns the output signal at the [OutputPort] with the specified name as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(name: String): Word = Word(vertice.getOutput<DigitalSignal>(name).getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
+	fun outputWord(name: String): Word = Word(vertice.getOutput<DigitalSignal>(name).getOutgoingSignal()!!)
 
 	/** Sets the output signal of the first (or one and only) [OutputPort] to the specified hex value.*/
 	@Suppress("unused")
@@ -111,18 +111,18 @@ open class CircuitElemModelBridge(
 	/** Sets the output signal of the first (or one and only) [OutputPort] to the specified boolean value.*/
 	@Suppress("unused")
 	fun setOutputBit(bit: Boolean) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!);
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.DigitalSignalFactory.of(bit), signalHandler!!);
 	}
 
 	@Suppress("unused")
 	fun setOutputBit(name: String, bit: Boolean) {
 		val outputPort = vertice.getOutput<DigitalSignal>(name) as DigitalPort
-		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!)
+		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.DigitalSignalFactory.of(bit), signalHandler!!)
 	}
 
 	fun setOutputBit(id: Int, bit: Boolean) {
 		val outputPort = vertice.getOutput<DigitalSignal>(id) as DigitalPort
-		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!)
+		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.DigitalSignalFactory.of(bit), signalHandler!!)
 	}
 
 	/** Checks whether any [Bit] in the specified [Word] is undefined.*/
@@ -142,17 +142,17 @@ open class CircuitElemModelBridge(
 	/** Creates a new [Word] with the specified hexadecimal value.*/
 	@Suppress("unused")
 	fun hexWord(value: String, bitWidth: Int): Word {
-		return Word(ch.scorpion.antares.model.signal.Word.of(BitWidth.of(bitWidth), BitOperation.hexToLong(value)))
+		return Word(ch.scorpion.antares.model.signal.DigitalSignalFactory.of(BitWidth.of(bitWidth), BitOperation.hexToLong(value)))
 	}
 
 	@Suppress("unused")
 	fun undefinedWord(bitWidth: Int): Word {
-		return Word(ch.scorpion.antares.model.signal.Word.undefined(BitWidth.of(bitWidth)))
+		return Word(ch.scorpion.antares.model.signal.DigitalSignalFactory.undefined(BitWidth.of(bitWidth)))
 	}
 
 	private fun setOutput(port: OutputPort<DigitalSignal>, hexValue: String) {
 		val digitalPort = port as DigitalPort
-		val signal = ch.scorpion.antares.model.signal.Word.of(digitalPort.bitWidth, hexValue)
+		val signal = ch.scorpion.antares.model.signal.DigitalSignalFactory.of(digitalPort.bitWidth, hexValue)
 		digitalPort.setOutgoingSignalBuffered(signal, signalHandler!!)
 	}
 }

@@ -4,6 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
@@ -36,8 +37,8 @@ class PullResistorRaceConditionTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals((Word.of(false)), inOutView.model.getPort<DigitalSignal>().net?.signal)
-		assertEquals((Word.of(false)), inOutView.model.signal)
+		assertEquals((DigitalSignalFactory.of(false)), inOutView.model.getPort<DigitalSignal>().net?.signal)
+		assertEquals((DigitalSignalFactory.of(false)), inOutView.model.signal)
 	}
 
 	@Test
@@ -49,7 +50,7 @@ class PullResistorRaceConditionTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals((Word.of(false)), inOutView.model.getPort<DigitalSignal>().net?.signal)
-		assertEquals((Word.of(false)), inOutView.model.signal)
+		assertEquals((DigitalSignalFactory.of(false)), inOutView.model.getPort<DigitalSignal>().net?.signal)
+		assertEquals((DigitalSignalFactory.of(false)), inOutView.model.signal)
 	}
 }

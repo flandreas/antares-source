@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
@@ -65,10 +62,10 @@ class BidirectionalSplitterConcentratorTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		a.model.setIncomingSignal(Word(listOf(Bit.False, Bit.True)), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.True)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals((Word(listOf(Bit.False, Bit.True))), b.model.signal)
+		assertEquals((DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.True))), b.model.signal)
 	}
 
 	@Test
@@ -76,9 +73,9 @@ class BidirectionalSplitterConcentratorTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b.model.setIncomingSignal(Word(listOf(Bit.False, Bit.True)), scheduler)
+		b.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.True)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals((Word(listOf(Bit.False, Bit.True))), a.model.signal)
+		assertEquals((DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.True))), a.model.signal)
 	}
 }

@@ -40,7 +40,7 @@ class DigitalEdgeAnimationView(
 ) : AbstractDrawable(), Locatable {
 
 	/** The [DigitalSignalView] being drawn at the head of the signal flow animation.*/
-	private val signalView = DigitalSignalView(signal, signal.getBitWidth(), signalRepresentation)
+	private val signalView = DigitalSignalView(signal, signal.bitWidth, signalRepresentation)
 
 	/**
 	 * Determines whether [signalView] is drawn or not. Used when [DigitalEdgeAnimationView]s get split

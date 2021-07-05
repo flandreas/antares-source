@@ -5,9 +5,7 @@ import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_P
 import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
@@ -47,13 +45,13 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 					val address = vertice.getAddressInput().getIncomingSignal()
 					val addressInt = address!!.toInt()
 					if (addressInt == null) {
-						vertice.getDataPort().setOutgoingSignalBuffered(Word.error(vertice.dataWidth), signalHandler)
+						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 					} else {
 						vertice.currentSelectedAddress = addressInt
-						vertice.getDataPort().setOutgoingSignalBuffered(Word.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
+						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
 					}
 				} else {
-					vertice.getDataPort().setOutgoingSignalBuffered(Word.undefined(vertice.dataWidth), signalHandler)
+					vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.dataWidth), signalHandler)
 				}
 			}
 		}
@@ -100,7 +98,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override val storesCells: Boolean get() = true
 
-	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
+	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
 

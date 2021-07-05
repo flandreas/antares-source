@@ -75,52 +75,52 @@ object BitOperation {
     }
 
     /**
-     * Returns the specified hexadecimal character as a [Word] of the specified [BitWidth], or `null` if [hex]
+     * Returns the specified hexadecimal character as a [DigitalSignal] of the specified [BitWidth], or `null` if [hex]
      * contains a non-hexadecimal character.
      */
-    fun hexDigitToWord(bitWidth: BitWidth, hex: Char): Word? {
+    fun hexDigitToWord(bitWidth: BitWidth, hex: Char): DigitalSignal? {
 	    val uppercaseHex = hex.uppercaseChar()
         if (!HEX.contains(uppercaseHex)) {
             return null
         }
 	    if (uppercaseHex == Bit.ALL_UNDEFINED_CHAR) {
-	    	return Word.allOf(bitWidth, Bit.Undefined)
+	    	return DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
 	    }
 	    if (uppercaseHex == Bit.ERROR_CHAR) {
-	    	return Word.allOf(bitWidth, Bit.Error)
+	    	return DigitalSignalFactory.allOf(bitWidth, Bit.Error)
 	    }
         val value = hexToLong(hex.toString())
         if (value >= bitWidth.power()) {
             // Overflow
             return null
         }
-        return Word.of(bitWidth, value)
+        return DigitalSignalFactory.of(bitWidth, value)
     }
 
     /**
-     * Returns the specified binary character as a [Word] of [BitWidth.BW_1], or `null` if [binary]
+     * Returns the specified binary character as a [DigitalSignal] of [BitWidth.BW_1], or `null` if [binary]
      * contains a non-binary character (0, 1).
      */
-    fun binaryDigitToWord(binary: Char): Word? {
+    fun binaryDigitToWord(binary: Char): DigitalSignal? {
 	    return when (binary.uppercaseChar()) {
-	    	'0' -> Word.of(false)
-		    '1' -> Word.of(true)
-		    Bit.ALL_UNDEFINED_CHAR -> Word.of(Bit.Undefined)
-		    Bit.ERROR_CHAR -> Word.of(Bit.Error)
+	    	'0' -> DigitalSignalFactory.of(false)
+		    '1' -> DigitalSignalFactory.of(true)
+		    Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.of(Bit.Undefined)
+		    Bit.ERROR_CHAR -> DigitalSignalFactory.of(Bit.Error)
 		    else -> null
 	    }
     }
 
-	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): Word? {
+	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): DigitalSignal? {
 		return when (decimal.uppercaseChar()) {
-			Bit.ALL_UNDEFINED_CHAR -> Word.allOf(bitWidth, Bit.Undefined)
-			Bit.ERROR_CHAR -> Word.allOf(bitWidth, Bit.Error)
+			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
+			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Error)
 			else -> {
 				val value = decimal.code.toLong() - '0'.code.toLong()
 				if (value >= bitWidth.power()) {
 					return null
 				}
-				return Word.of(bitWidth, value)
+				return DigitalSignalFactory.of(bitWidth, value)
 			}
 		}
 	}

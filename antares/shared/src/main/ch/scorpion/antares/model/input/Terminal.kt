@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -87,7 +87,7 @@ class Terminal(
 
 	val displayedRowsCount: Int get() = displayedRows.size
 
-	private val isWriteEnabled: Boolean get() = writeEnableInput.getIncomingSignal() == Word.of(true)
+	private val isWriteEnabled: Boolean get() = writeEnableInput.getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, description = CLOCK_PORT_DESC))
@@ -183,12 +183,12 @@ class Terminal(
 		override fun calculate(vertice: Terminal, data: GraphActorData, signalHandler: SignalHandler) {
 			when (data.changedPort) {
 				vertice.clockInput -> {
-					if (vertice.clockInput.getIncomingSignal() == Word.of(true)) {
+					if (vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
 						vertice.consumeDataInput(signalHandler)
 					}
 				}
 				vertice.clearInput -> {
-					if (vertice.clearInput.getIncomingSignal() == Word.of(true)) {
+					if (vertice.clearInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
 						vertice.clear(signalHandler)
 					}
 				}

@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import io.mockk.mockk
@@ -45,53 +46,53 @@ class KeyboardTest {
 	@Test
 	fun shouldClear() {
 		enter('A')
-		keyboard.clearInput.setIncomingSignal(Word.of(true), signalHandler)
+		keyboard.clearInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(keyboard.clearInput))
 
-		assertEquals(Word.of(BitWidth.BW_8, 0), keyboard.dataOutput.getOutgoingSignal())
-		assertEquals(Word.of(false), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 0), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), keyboard.availableData.getOutgoingSignal())
 		assertEquals(0, keyboard.bufferItemsCount)
 	}
 
 	@Test
 	fun shouldUpdateAvailableOutput() {
-		assertEquals(Word.of(false), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), keyboard.availableData.getOutgoingSignal())
 		enter('A')
-		assertEquals(Word.of(true), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), keyboard.availableData.getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldOutputImmediately() {
 		enter('A')
-		keyboard.readEnableInput.setIncomingSignal(Word.of(false), signalHandler)
+		keyboard.readEnableInput.setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(null))
 
-		assertEquals(Word.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
-		assertEquals(Word.of(true), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), keyboard.availableData.getOutgoingSignal())
 		assertEquals(1, keyboard.bufferItemsCount)
 	}
 
 	@Test
 	fun shouldConsume() {
 		enter('A')
-		keyboard.readEnableInput.setIncomingSignal(Word.of(true), signalHandler)
+		keyboard.readEnableInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(keyboard.readEnableInput))
-		keyboard.clockInput.setIncomingSignal(Word.of(true), signalHandler)
+		keyboard.clockInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(keyboard.clockInput))
 
-		assertEquals(Word.of(BitWidth.BW_8, 0), keyboard.dataOutput.getOutgoingSignal())
-		assertEquals(Word.of(false), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 0), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), keyboard.availableData.getOutgoingSignal())
 		assertEquals(0, keyboard.bufferItemsCount)
 	}
 
 	@Test
 	fun shouldNotConsumeIfReadNotEnabled() {
 		enter('A')
-		keyboard.clockInput.setIncomingSignal(Word.of(true), signalHandler)
+		keyboard.clockInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		keyboard.act(signalHandler, keyboard.createActorData(keyboard.clockInput))
 
-		assertEquals(Word.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
-		assertEquals(Word.of(true), keyboard.availableData.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 'A'.code.toLong()), keyboard.dataOutput.getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), keyboard.availableData.getOutgoingSignal())
 		assertEquals(1, keyboard.bufferItemsCount)
 	}
 }

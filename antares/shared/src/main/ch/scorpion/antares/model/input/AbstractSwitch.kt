@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -86,5 +87,5 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, createSignal()))
 	}
 
-	protected open fun createSignal(): DigitalSignal = Word.of(isOn)
+	protected open fun createSignal(): DigitalSignal = DigitalSignalFactory.of(isOn)
 }

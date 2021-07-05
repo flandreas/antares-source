@@ -84,7 +84,7 @@ class CircuitInOutImpl(
 
 	/** Captures the [DigitalSignal] that has been process last, either as input or as output. */
 	override var signal: DigitalSignal? = null
-		get() = field ?: DigitalSignalUtil.undefined(bitWidth)
+		get() = field ?: DigitalSignalFactory.undefined(bitWidth)
 
 	override var portType: PortType
 		get() = getDigitalPort().portType.reverse()
@@ -245,9 +245,9 @@ class CircuitInOutImpl(
 		}
 
 	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler) {
-		var s = signal as Word?
+		var s = signal
 		if (s == null) {
-			s = Word.allOf(bitWidth, Bit.Undefined)
+			s = DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
 		}
 		var bit = s.bitAt(index)
 		if (undefine) {

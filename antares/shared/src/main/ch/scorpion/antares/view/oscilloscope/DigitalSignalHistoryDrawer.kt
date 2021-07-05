@@ -131,7 +131,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 	private val baseLineY: Double get() = bounds.maxY - 2
 
 	private fun drawCurve(context: DrawContext) {
-		val singleBit = signalHistory!!.last().signal.getBitWidth().width == 1
+		val singleBit = signalHistory!!.last().signal.bitWidth.width == 1
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
 		var effNextX: Double = rightBorder

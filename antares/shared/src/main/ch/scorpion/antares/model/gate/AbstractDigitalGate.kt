@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.StringUtils
@@ -24,7 +25,7 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 	abstract fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit
 
 	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice)), signalHandler)
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(calculate(vertice)), signalHandler)
 	}
 }
 

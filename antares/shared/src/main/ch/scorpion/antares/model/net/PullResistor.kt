@@ -7,7 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -45,8 +45,8 @@ class PullResistor(
 
 		fun getPreferredSignal(bitWidth: BitWidth, pullDirection: PullDirection): DigitalSignal =
 			when(pullDirection) {
-				LOW -> Word.allOf(bitWidth, Bit.False)
-				HIGH -> Word.allOf(bitWidth, Bit.True)
+				LOW -> DigitalSignalFactory.allOf(bitWidth, Bit.False)
+				HIGH -> DigitalSignalFactory.allOf(bitWidth, Bit.True)
 			}
 
 		fun getPreferredBit(pullDirection: PullDirection): Bit =

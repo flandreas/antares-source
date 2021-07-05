@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
@@ -26,14 +27,14 @@ class SwitchTest {
 		switch.on(signalHandler)
 		assertFalse(switch.enabled)
 
-		switch.act(signalHandler, GraphActorDataImpl(null, Word.of(Bit.True)))
+		switch.act(signalHandler, GraphActorDataImpl(null, DigitalSignalFactory.of(Bit.True)))
 		assertTrue(switch.enabled)
 	}
 
 	@Test
 	fun shouldNotSetOnWhileWaiting() {
 		switch.on(signalHandler)
-		switch.act(signalHandler, GraphActorDataImpl(null, Word.of(Bit.True)))
+		switch.act(signalHandler, GraphActorDataImpl(null, DigitalSignalFactory.of(Bit.True)))
 		switch.off(signalHandler)
 
 		switch.on(signalHandler)
@@ -48,11 +49,11 @@ class SwitchTest {
 		assertTrue(switch.isOn)
 		assertFalse(switch.enabled)
 
-		switch.act(signalHandler, GraphActorDataImpl(null, Word.of(Bit.True)))
+		switch.act(signalHandler, GraphActorDataImpl(null, DigitalSignalFactory.of(Bit.True)))
 		assertFalse(switch.isOn)
 		assertFalse(switch.enabled)
 
-		switch.act(signalHandler, GraphActorDataImpl(null, Word.of(Bit.False)))
+		switch.act(signalHandler, GraphActorDataImpl(null, DigitalSignalFactory.of(Bit.False)))
 		assertFalse(switch.isOn)
 		assertTrue(switch.enabled)
 	}

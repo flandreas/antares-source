@@ -2,9 +2,7 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -23,11 +21,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A [Vertice] that produces a configurable constant [DigitalSignal] at its single output.
  */
 class Constant(
-	value: Word = Word.of(Bit.False)
+	value: DigitalSignal = DigitalSignalFactory.of(Bit.False)
 ) : CalculatingVertice(CALCULATOR) {
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.getBitWidth()))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.bitWidth))
 		propagationDelay = 1
 	}
 
@@ -49,7 +47,7 @@ class Constant(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	var value: Word = value
+	var value: DigitalSignal = value
 		set(value) {
 			if (field != value) {
 				field = value
@@ -62,7 +60,7 @@ class Constant(
 		set(newValue) {
 			if (newValue != bitWidth) {
 				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = newValue
-				value = Word.of(bitWidth, value.getValue())
+				value = DigitalSignalFactory.of(bitWidth, value.getValue())
 				stateChanged()
 			}
 		}
@@ -85,6 +83,6 @@ class Constant(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-		value = Word.of(bitWidth, reader.readLong("value"))
+		value = DigitalSignalFactory.of(bitWidth, reader.readLong("value"))
 	}
 }

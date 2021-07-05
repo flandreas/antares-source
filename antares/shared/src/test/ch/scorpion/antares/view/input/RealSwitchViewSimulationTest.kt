@@ -5,6 +5,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.net.PowerView
 import ch.scorpion.antares.view.output.LEDView
@@ -55,8 +56,8 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), realSwitchView.model.getInput<DigitalSignal>(1).getIncomingSignal())
-		assertEquals(Word.of(Bit.Undefined), realSwitchView.model.getInput<DigitalSignal>(2).getIncomingSignal())
+		assertEquals(DigitalSignalFactory.of(true), realSwitchView.model.getInput<DigitalSignal>(1).getIncomingSignal())
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), realSwitchView.model.getInput<DigitalSignal>(2).getIncomingSignal())
 	}
 
 	@Test

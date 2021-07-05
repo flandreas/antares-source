@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.net.PullResistorView
 import ch.scorpion.antares.view.output.LEDView
@@ -52,7 +53,7 @@ class UndefinedFromSubCircuitIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(Bit.Undefined), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)
 	}
 
 	@Test
@@ -63,7 +64,7 @@ class UndefinedFromSubCircuitIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)
+		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)
 		assertTrue(ledView.model.isOn)
 	}
 }

@@ -4,10 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.net.PullResistor
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -40,17 +37,17 @@ class PullResistorViewBusIntegrationTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldPullPartiallyUndefinedToLow() {
-		val signal = Word(listOf(Bit.False, Bit.Undefined, Bit.True, Bit.Undefined))
+		val signal = DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.Undefined, Bit.True, Bit.Undefined))
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
 		triStateBGV.model.getInputPort().setIncomingSignal(signal, scheduler)
-		triStateBGV.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertFalse(net.isError)
 		assertEquals(
-			Word(listOf(Bit.False, Bit.False, Bit.True, Bit.False)),
+			DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.False, Bit.True, Bit.False)),
 			net.signal)
 	}
 }

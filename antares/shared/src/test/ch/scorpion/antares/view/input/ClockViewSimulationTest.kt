@@ -5,7 +5,7 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.input.PeriodOrFrequency
 import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.*
@@ -34,17 +34,17 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	fun shouldPeriodicallyChangeOutput() {
 		startSimulation()
 
-		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
 		assertFalse(ledView.model.isOn)
 
 		proceedToMillis(50L)
-		assertEquals(Word.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToMillis(51L)
 		assertTrue(ledView.model.isOn)
 
 		proceedToMillis(100L)
-		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToMillis(101L)
 		assertFalse(ledView.model.isOn)
@@ -67,6 +67,6 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 
 		proceedToMillis(50L)
 
-		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 }

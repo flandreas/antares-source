@@ -1,10 +1,7 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -224,12 +221,12 @@ abstract class AbstractSplitter(
 	}
 
 	fun concentrate(signalHandler: SignalHandler) {
-		val words = mutableListOf<Word>()
+		val words = mutableListOf<DigitalSignal>()
 		for (portId in 2..portsCount) {
-			val signal = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as Word
+			val signal = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as DigitalSignal
 			words.add(signal)
 		}
-		val output = Word.of(words)
+		val output = DigitalSignalFactory.of(words)
 		(getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(output, signalHandler)
 	}
 

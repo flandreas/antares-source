@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -284,7 +283,7 @@ class LEDMatrixView(
 				}
 
 				if (isDebug) {
-					if ((model.columnPort.getIncomingSignal() as Word).bitAt(column).isSet) {
+					if ((model.columnPort.getIncomingSignal()!!).bitAt(column).isSet) {
 						context.g.color = DEBUG_COLUMN_COLOR
 						context.g.drawRect(
 							x.toInt() + 1,
@@ -293,7 +292,7 @@ class LEDMatrixView(
 							(DOT_SIZE * factor).toInt() - 2)
 					}
 
-					if ((model.rowPort.getIncomingSignal() as Word).bitAt(row).isSet) {
+					if ((model.rowPort.getIncomingSignal()!!).bitAt(row).isSet) {
 						context.g.color = DEBUG_ROW_COLOR
 						context.g.drawRect(
 							x.toInt() + 1,

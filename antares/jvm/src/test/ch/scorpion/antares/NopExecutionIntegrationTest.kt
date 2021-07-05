@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
@@ -61,6 +62,6 @@ class NopExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(false), subGraphVV.model.getOutput<DigitalSignal>().net?.signal)
+		assertEquals(DigitalSignalFactory.of(false), subGraphVV.model.getOutput<DigitalSignal>().net?.signal)
 	}
 }

@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.antares.view.output.LEDView
@@ -60,9 +57,9 @@ class BidirectionalSplitterViewDefinedTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word(listOf(Bit.False, Bit.False)), circuitInputView.model.signal)
-		assertEquals(Word(listOf(Bit.False, Bit.False)), circuitInputView.model.getOutput<DigitalSignal>().net?.signal)
-		assertEquals(Word.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(2).net?.signal)
-		assertEquals(Word.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(3).net?.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.False)), circuitInputView.model.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.False)), circuitInputView.model.getOutput<DigitalSignal>().net?.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(2).net?.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), bidiSplitterView.model.getOutput<DigitalSignal>(3).net?.signal)
 	}
 }

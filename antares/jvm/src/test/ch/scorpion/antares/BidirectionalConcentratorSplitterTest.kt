@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
@@ -95,12 +92,12 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		a0.model.setIncomingSignal(Word.of(true), scheduler)
+		a0.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), b0.model.signal)
-		assertEquals(Word.of(Bit.Undefined), a1.model.signal)
-		assertEquals(Word.of(Bit.Undefined), b1.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), b0.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), a1.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b1.model.signal)
 	}
 
 	@Test
@@ -108,12 +105,12 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		a1.model.setIncomingSignal(Word.of(true), scheduler)
+		a1.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), b1.model.signal)
-		assertEquals(Word.of(Bit.Undefined), a0.model.signal)
-		assertEquals(Word.of(Bit.Undefined), b0.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), b1.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), a0.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b0.model.signal)
 	}
 
 	@Test
@@ -121,12 +118,12 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b0.model.setIncomingSignal(Word.of(true), scheduler)
+		b0.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), a0.model.signal)
-		assertEquals(Word.of(Bit.Undefined), a1.model.signal)
-		assertEquals(Word.of(Bit.Undefined), b1.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), a0.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), a1.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b1.model.signal)
 	}
 
 	@Test
@@ -134,11 +131,11 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b1.model.setIncomingSignal(Word.of(true), scheduler)
+		b1.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), a1.model.signal)
-		assertEquals(Word.of(Bit.Undefined), a0.model.signal)
-		assertEquals(Word.of(Bit.Undefined), b0.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), a1.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), a0.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b0.model.signal)
 	}
 }

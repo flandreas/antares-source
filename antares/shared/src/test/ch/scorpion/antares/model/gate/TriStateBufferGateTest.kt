@@ -2,11 +2,8 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Bit.*
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,15 +24,15 @@ class TriStateBufferGateTest {
 	private val negativeGate = TriStateBufferGate(BitWidth.BW_1, Logic.NEGATIVE)
 
 	private fun assertPositive(control: Bit, data: Bit, result: Bit) {
-		positiveGate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(control), signalHandler)
-		positiveGate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(data), signalHandler)
-		assertEquals(result, positiveGate.getOutput<Word>().getOutgoingSignal()!!.bitAt(0))
+		positiveGate.getInput<DigitalSignal>("EN").setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
+		positiveGate.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(data), signalHandler)
+		assertEquals(result, positiveGate.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0))
 	}
 
 	private fun assertNegative(control: Bit, data: Bit, result: Bit) {
-		negativeGate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(control), signalHandler)
-		negativeGate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(data), signalHandler)
-		assertEquals(result, negativeGate.getOutput<Word>().getOutgoingSignal()!!.bitAt(0))
+		negativeGate.getInput<DigitalSignal>("EN").setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
+		negativeGate.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(data), signalHandler)
+		assertEquals(result, negativeGate.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0))
 	}
 
 	@Test

@@ -16,8 +16,8 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	    override fun digitCount(bitWidth: BitWidth): Int = bitWidth.width
         override fun represent(signal: DigitalSignal): String = signal.toBinaryString()
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
-        override fun digitToWord(bitWidth: BitWidth, digit: Char): Word? = BitOperation.binaryDigitToWord(digit)
-	    override fun withDigit(word: Word, digitWord: Word, index: Int): Word = word.withSubwordValue(digitWord, index)
+        override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.binaryDigitToWord(digit)
+	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
     },
 
 	DECIMAL("decimal") {
@@ -28,26 +28,26 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		override val digitGroupSize: Int get() = 3
 		override fun digitCount(bitWidth: BitWidth): Int = bitWidth.power().toString().length
 		override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal {
-			val bitWidth = if (signal.getBitWidth() == BitWidth.BW_1) BitWidth.BW_1 else BitWidth.of(bitCount)
+			val bitWidth = if (signal.bitWidth == BitWidth.BW_1) BitWidth.BW_1 else BitWidth.of(bitCount)
 			val value = signal.toLong()
 				?: return if (signal.isPartiallyUndefined) {
-					Word.undefined(bitWidth)
+					DigitalSignalFactory.undefined(bitWidth)
 				} else {
-					Word.error(bitWidth)
+					DigitalSignalFactory.error(bitWidth)
 				}
 			val s = value.toString().padStart(index + 1, '0')
-			return Word.of(bitWidth, (s[s.length - 1 - index].code - '0'.code).toLong())
+			return DigitalSignalFactory.of(bitWidth, (s[s.length - 1 - index].code - '0'.code).toLong())
 
 		}
 		override fun represent(signal: DigitalSignal): String = signal.toDecimalString()
-		override fun digitToWord(bitWidth: BitWidth, digit: Char): Word? = BitOperation.decimalDigitToWord(bitWidth, digit)
-		override fun withDigit(word: Word, digitWord: Word, index: Int): Word {
+		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.decimalDigitToWord(bitWidth, digit)
+		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal {
 			var s = word.getValue().toString().padStart(index + 1, '0')
 			val sIndex = s.length - 1 - index
 			s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
 			val value = s.toLong()
-			if (value < word.getBitWidth().power()) {
-				return Word.of(word.getBitWidth(), value)
+			if (value < word.bitWidth.power()) {
+				return DigitalSignalFactory.of(word.bitWidth, value)
 			}
 			return word
 		}
@@ -62,8 +62,8 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	    override fun digitCount(bitWidth: BitWidth): Int = max(1, bitWidth.width / bitCount)
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
         override fun represent(signal: DigitalSignal): String = signal.toHexString()
-        override fun digitToWord(bitWidth: BitWidth, digit: Char): Word? = BitOperation.hexDigitToWord(bitWidth, digit)
-	    override fun withDigit(word: Word, digitWord: Word, index: Int): Word = word.withSubwordValue(digitWord, index)
+        override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.hexDigitToWord(bitWidth, digit)
+	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
     };
 
     companion object {
@@ -98,21 +98,21 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	abstract fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal
 
     /**
-     * Converts a single digit to the [Word] with the corresponding length, or `null` if [digit] can't be represented
+     * Converts a single digit to the [DigitalSignal] with the corresponding length, or `null` if [digit] can't be represented
      * with the number of [Bit] available with [bitWidth], or if [digit] is an illegal character.
      */
-    abstract fun digitToWord(bitWidth: BitWidth, digit: Char): Word?
+    abstract fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal?
 
 	/**
 	 * Creates a copy of [word] and sets the specified [digitWord] in the copy.
 	 * TODO: This should rather be 'withDigit(word: Word, digit: Int, index: Int): Word'
 	 *
-	 * @param word the [Word] to be changed
-	 * @param digitWord the [Word] to be set in the copy of this [Word]
+	 * @param word the [DigitalSignal] to be changed
+	 * @param digitWord the [DigitalSignal] to be set in the copy of this [DigitalSignal]
 	 * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of
 	 * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7)
 	 */
-	abstract fun withDigit(word: Word, digitWord: Word, index: Int): Word
+	abstract fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal
 
     override fun toString(): String {
         return when (this) {

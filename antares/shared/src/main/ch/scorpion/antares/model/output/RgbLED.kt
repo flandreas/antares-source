@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.output
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -36,7 +35,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 
 		private class Calculator : VerticeCalculator<RgbLED> {
 			override fun calculate(vertice: RgbLED, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.updateColor(data.getSignal<DigitalSignal>(1) as Word)
+				vertice.updateColor(data.getSignal(1)!!)
 			}
 		}
 	}
@@ -72,7 +71,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 	/** ---- [RgbLED] */
 
 	/** Updates [color] according to the specified value.*/
-	private fun updateColor(value: Word) {
+	private fun updateColor(value: DigitalSignal) {
 		color = Color(
 			value.getSubwordValue(BitWidth.BW_8, 2)!!.toInt(),
 			value.getSubwordValue(BitWidth.BW_8, 1)!!.toInt(),

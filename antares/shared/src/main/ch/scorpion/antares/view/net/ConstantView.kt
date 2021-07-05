@@ -40,7 +40,7 @@ class ConstantView(
 	}
 
 	constructor(
-		value: Word,
+		value: DigitalSignal,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider
 	) : this(styleProvider, Constant(value))
 
@@ -123,7 +123,7 @@ class ConstantView(
 		get() = model.value.getValue()
 		set(newValue) {
 			invalidate()
-			model.value = Word.of(bitWidth, newValue)
+			model.value = DigitalSignalFactory.of(bitWidth, newValue)
 			updateView()
 		}
 

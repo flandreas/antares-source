@@ -3,7 +3,7 @@ package ch.scorpion.antares.filebased
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -46,10 +46,10 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 		dirSwitch.on(scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		inOutB.setIncomingSignal(Word(listOf(Bit.True, Bit.Undefined)), scheduler)
+		inOutB.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.True, Bit.Undefined)), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(true), inOutA0.signal)
+		assertEquals(DigitalSignalFactory.of(true), inOutA0.signal)
 	}
 
 	@Test
@@ -57,9 +57,9 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 		dirSwitch.on(scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		inOutB.setIncomingSignal(Word(listOf(Bit.Undefined, Bit.True)), scheduler)
+		inOutB.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.Undefined, Bit.True)), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(true), inOutA1.signal)
+		assertEquals(DigitalSignalFactory.of(true), inOutA1.signal)
 	}
 }

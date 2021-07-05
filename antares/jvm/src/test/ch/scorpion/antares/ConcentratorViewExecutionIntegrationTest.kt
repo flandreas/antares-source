@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.net.ConcentratorView
@@ -57,18 +54,18 @@ class ConcentratorViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.allOf(BitWidth.BW_2, Bit.False), concentratorView.model.getOutput<DigitalSignal>().net!!.signal)
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_2, Bit.False), concentratorView.model.getOutput<DigitalSignal>().net!!.signal)
 	}
 
 	@Test
 	fun shouldSplit() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
-		assertEquals(Word.allOf(BitWidth.BW_2, Bit.False), circuitOutputView.model.signal)
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_2, Bit.False), circuitOutputView.model.signal)
 
 		switchView1.model.toggle(scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word(listOf(Bit.True, Bit.False)), circuitOutputView.model.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(Bit.True, Bit.False)), circuitOutputView.model.signal)
 	}
 }

@@ -7,7 +7,7 @@ import ch.scorpion.antares.model.signal.Bit.Error
 import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -24,12 +24,12 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 		val control = data.getSignal<DigitalSignal>(2)!!.bitAt(0)
 		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
 			when (control) {
-				Undefined -> Word.undefined(vertice.bitWidth)
-				Error -> Word.error(vertice.bitWidth)
+				Undefined -> DigitalSignalFactory.undefined(vertice.bitWidth)
+				Error -> DigitalSignalFactory.error(vertice.bitWidth)
 				else -> if (vertice.enableLogic.evaluate(control.isSet)) {
 					data.getSignal(1)!!
 				} else {
-					Word.undefined(vertice.bitWidth)
+					DigitalSignalFactory.undefined(vertice.bitWidth)
 				}
 			},
 			signalHandler)

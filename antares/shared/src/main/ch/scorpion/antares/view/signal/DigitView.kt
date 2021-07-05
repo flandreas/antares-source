@@ -1,9 +1,6 @@
 package ch.scorpion.antares.view.signal
 
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.DrawContext
@@ -56,7 +53,7 @@ class DigitView(
         location = Point2D(WIDTH / 2, HEIGHT / 2))
 
     /** The [DigitalSignal] whose digit at [index] is displayed by this [DigitView]. */
-    private var signalDigit: DigitalSignal = Word.of(false)
+    private var signalDigit: DigitalSignal = DigitalSignalFactory.of(false)
         set(value) {
             field = value
             label.text = representation.represent(field)
@@ -135,7 +132,7 @@ class DigitView(
     }
 
 	private val disabledColor: CompositeColor get() =
-		if (signalDigit.getBitWidth().width > 1) {
+		if (signalDigit.bitWidth.width > 1) {
 			Themes.get<AntaresTheme>().undefined
 		} else {
 			Bit.Undefined.color

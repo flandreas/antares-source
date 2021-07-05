@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.TestCalculatingVertice
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
@@ -32,7 +33,7 @@ class BufferCalculatorTest {
 	@Test
 	fun shouldBeTrueWithTrueInput() {
 		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(Word.of(true), signalHandler)
+		input.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		val output = vertice.getOutput<DigitalSignal>()
 		assertEquals(Bit.True, output.getOutgoingSignal()!!.bitAt(0))
@@ -41,7 +42,7 @@ class BufferCalculatorTest {
 	@Test
 	fun shouldBeFalseWithFalseInput() {
 		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(Word.of(false), signalHandler)
+		input.setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 
 		val output = vertice.getOutput<DigitalSignal>()
 		assertEquals(Bit.False, output.getOutgoingSignal()!!.bitAt(0))
@@ -50,7 +51,7 @@ class BufferCalculatorTest {
 	@Test
 	fun shouldBeUndefinedWithUndefinedInput() {
 		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
+		input.setIncomingSignal(DigitalSignalFactory.of(Bit.Undefined), signalHandler)
 
 		val output = vertice.getOutput<DigitalSignal>()
 		assertEquals(Bit.Undefined, output.getOutgoingSignal()!!.bitAt(0))

@@ -6,8 +6,8 @@ import kotlin.test.Test
 
 class DigitalSignalNotationTest {
 
-	private val value = Word.of(BitWidth.BW_8, 17)
-	private val singleDigitValue = Word.of(BitWidth.BW_1, 1)
+	private val value = DigitalSignalFactory.of(BitWidth.BW_8, 17)
+	private val singleDigitValue = DigitalSignalFactory.of(BitWidth.BW_1, 1)
 
 	@Test
 	fun shouldNotateWithPrefix() {
@@ -17,8 +17,8 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldOmitPrefixForSingleDigit() {
-		assertEquals("1", DigitalSignalNotation.PREFIX.notate(Word.of(BitWidth.BW_1, 1), BINARY))
-		assertEquals("F", DigitalSignalNotation.PREFIX.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
+		assertEquals("1", DigitalSignalNotation.PREFIX.notate(DigitalSignalFactory.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.PREFIX.notate(DigitalSignalFactory.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 
 	@Test
@@ -29,8 +29,8 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldOmitSubscriptForSingleDigit() {
-		assertEquals("1", DigitalSignalNotation.BASE_SUBSCRIPT.notate(Word.of(BitWidth.BW_1, 1), BINARY))
-		assertEquals("F", DigitalSignalNotation.BASE_SUBSCRIPT.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
+		assertEquals("1", DigitalSignalNotation.BASE_SUBSCRIPT.notate(DigitalSignalFactory.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.BASE_SUBSCRIPT.notate(DigitalSignalFactory.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 
 	@Test
@@ -41,7 +41,7 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldOmitSuffixForSingleDigit() {
-		assertEquals("1", DigitalSignalNotation.SUFFIX.notate(Word.of(BitWidth.BW_1, 1), BINARY))
-		assertEquals("F", DigitalSignalNotation.SUFFIX.notate(Word.of(BitWidth.BW_4, 15), HEXADECIMAL))
+		assertEquals("1", DigitalSignalNotation.SUFFIX.notate(DigitalSignalFactory.of(BitWidth.BW_1, 1), BINARY))
+		assertEquals("F", DigitalSignalNotation.SUFFIX.notate(DigitalSignalFactory.of(BitWidth.BW_4, 15), HEXADECIMAL))
 	}
 }

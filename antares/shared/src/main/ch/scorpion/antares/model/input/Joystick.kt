@@ -4,9 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -101,17 +99,17 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 
 	private val signalX: DigitalSignal get() {
 		return when {
-			knobPosition.x < -MIN_DISPLACEMENT -> Word.of(bitWidth, 1)
-			knobPosition.x > MIN_DISPLACEMENT -> Word.allOf(bitWidth, Bit.True)
-			else -> Word.of(bitWidth, 0).flip(bitWidth.width - 1)
+			knobPosition.x < -MIN_DISPLACEMENT -> DigitalSignalFactory.of(bitWidth, 1)
+			knobPosition.x > MIN_DISPLACEMENT -> DigitalSignalFactory.allOf(bitWidth, Bit.True)
+			else -> DigitalSignalFactory.of(bitWidth, 0).flip(bitWidth.width - 1)
 		}
 	}
 
 	private val signalY: DigitalSignal get() {
 		return when {
-			knobPosition.y < -MIN_DISPLACEMENT -> Word.of(bitWidth, 1)
-			knobPosition.y > MIN_DISPLACEMENT -> Word.allOf(bitWidth, Bit.True)
-			else -> Word.of(bitWidth, 0).flip(bitWidth.width - 1)
+			knobPosition.y < -MIN_DISPLACEMENT -> DigitalSignalFactory.of(bitWidth, 1)
+			knobPosition.y > MIN_DISPLACEMENT -> DigitalSignalFactory.allOf(bitWidth, Bit.True)
+			else -> DigitalSignalFactory.of(bitWidth, 0).flip(bitWidth.width - 1)
 		}
 	}
 }

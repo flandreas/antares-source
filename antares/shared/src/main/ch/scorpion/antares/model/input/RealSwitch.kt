@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -56,8 +56,8 @@ class RealSwitch(
 				LOG.trace("handleStateChanged")
 				val port1 = vertice.getPort<DigitalSignal>(1) as DigitalPort
 				val port2 = vertice.getPort<DigitalSignal>(2) as DigitalPort
-				port1.setOutgoingSignalBuffered(Word.undefined(vertice.bitWidth), signalHandler)
-				port2.setOutgoingSignalBuffered(Word.undefined(vertice.bitWidth), signalHandler)
+				port1.setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
+				port2.setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
 
 				if (vertice.isOn) {
 					// Make sure that re-propagation from origin OutputPort is not blocked at InputPort
@@ -144,5 +144,5 @@ class RealSwitch(
 		super.setState(signalHandler, on)
 	}
 
-	override fun createSignal(): DigitalSignal = Word.allOf(bitWidth, Bit.Companion.of(isOn))
+	override fun createSignal(): DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.Companion.of(isOn))
 }

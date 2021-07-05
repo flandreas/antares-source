@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import io.mockk.mockk
@@ -92,7 +93,7 @@ class TerminalTest {
 	@Test
 	fun shouldClear() {
 		enterEnabled('A')
-		terminal.clearInput.setIncomingSignal(Word.of(true), signalHandler)
+		terminal.clearInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		terminal.act(signalHandler, terminal.createActorData(terminal.clearInput))
 
 		assertEquals(0, terminal.displayedRowsCount)
@@ -114,13 +115,13 @@ class TerminalTest {
 	}
 
 	private fun enterEnabled(term: Terminal, char: Char) {
-		term.writeEnableInput.setIncomingSignal(Word.of(true), signalHandler)
+		term.writeEnableInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		enter(term, char)
 	}
 
 	private fun enter(terminal: Terminal, char: Char) {
-		terminal.dataInput.setIncomingSignal(Word.of(BitWidth.BW_8, char.code.toLong()), signalHandler)
-		terminal.clockInput.setIncomingSignal(Word.of(true), signalHandler)
+		terminal.dataInput.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, char.code.toLong()), signalHandler)
+		terminal.clockInput.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		terminal.act(signalHandler, terminal.createActorData(terminal.clockInput))
 	}
 }

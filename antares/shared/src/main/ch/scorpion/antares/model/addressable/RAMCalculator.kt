@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -73,7 +74,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         }
 
         if (data.changedPort === ram.getClockInput()!!) {
-            if (ram.getClockInput()!!.getIncomingSignal() == Word.of(true) && ram.isWrite) {
+            if (ram.getClockInput()!!.getIncomingSignal() == DigitalSignalFactory.of(true) && ram.isWrite) {
                 write(ram, signalHandler)
             }
         }
@@ -125,13 +126,13 @@ class RAMCalculator : VerticeCalculator<RAM> {
     }
 
     private fun undefinedOutput(ram: RAM, signalHandler: SignalHandler) {
-        ram.getDataPort().setOutgoingSignalBuffered(Word.undefined(ram.dataWidth), signalHandler)
+        ram.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(ram.dataWidth), signalHandler)
     }
 
     private fun read(ram: RAM, signalHandler: SignalHandler) {
         val address = ram.getAddressInput().getIncomingSignal()
         val value = ram.read(address!!.toInt()!!)
-        ram.getDataPort().setOutgoingSignalBuffered(Word.of(ram.dataWidth, value), signalHandler)
+        ram.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(ram.dataWidth, value), signalHandler)
     }
 
     private fun write(ram: RAM, signalHandler: SignalHandler) {

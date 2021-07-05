@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
@@ -81,7 +81,7 @@ class Keyboard(
 
 	val availableData: DigitalPort get() = getPort<DigitalSignal>(AVAILABLE_PORT_NAME) as DigitalPort
 
-	private val isReadEnabled: Boolean get() = readEnableInput.getIncomingSignal() == Word.of(true)
+	private val isReadEnabled: Boolean get() = readEnableInput.getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, description = CLOCK_PORT_DESC))
@@ -125,7 +125,7 @@ class Keyboard(
 
 	private fun clear(signalHandler: SignalHandler) {
 		buffer.clear()
-		dataOutput.setOutgoingSignalBuffered(Word.of(dataOutput.bitWidth, 0), signalHandler)
+		dataOutput.setOutgoingSignalBuffered(DigitalSignalFactory.of(dataOutput.bitWidth, 0), signalHandler)
 		updateState(signalHandler)
 	}
 
@@ -138,11 +138,11 @@ class Keyboard(
 	}
 
 	private fun updateState(signalHandler: SignalHandler) {
-		availableData.setOutgoingSignalBuffered(Word.of(!isEmpty), signalHandler)
+		availableData.setOutgoingSignalBuffered(DigitalSignalFactory.of(!isEmpty), signalHandler)
 		if (isEmpty) {
-			dataOutput.setOutgoingSignalBuffered(Word.allOf(dataOutput.bitWidth, Bit.False), signalHandler)
+			dataOutput.setOutgoingSignalBuffered(DigitalSignalFactory.allOf(dataOutput.bitWidth, Bit.False), signalHandler)
 		} else {
-			dataOutput.setOutgoingSignalBuffered(Word.of(dataOutput.bitWidth, buffer[0].toLong()), signalHandler)
+			dataOutput.setOutgoingSignalBuffered(DigitalSignalFactory.of(dataOutput.bitWidth, buffer[0].toLong()), signalHandler)
 		}
 		stateChanged()
 	}
@@ -156,16 +156,11 @@ class Keyboard(
 	}
 
 	private class KeyboardCalculator : VerticeCalculator<Keyboard> {
-
-		companion object {
-			private val LOG by logger(KeyboardCalculator::class)
-		}
-
 		override fun calculate(vertice: Keyboard, data: GraphActorData, signalHandler: SignalHandler) {
 			when (data.changedPort) {
 				null -> vertice.updateState(signalHandler)
 				vertice.clockInput -> {
-					if (vertice.clockInput.getIncomingSignal() == Word.of(true)) {
+					if (vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
 						vertice.consume(signalHandler)
 					}
 				}

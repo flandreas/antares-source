@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
 import org.junit.Test
@@ -97,45 +98,45 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 	fun shouldForwardSignalFromWideToNarrow() {
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(False, False, True, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(False, False, True, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(False), inoutIO1.signal)
-		assertEquals(Word(listOf(True, Undefined)), inoutIO2.signal)
+		assertEquals(DigitalSignalFactory.of(False), inoutIO1.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(True, Undefined)), inoutIO2.signal)
 	}
 
 	@Test
 	fun shouldForwardSignalFromNarrowToWide() {
 		proceedUntilQueueIsEmpty()
 
-		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
+		inoutIO1.setIncomingSignal(DigitalSignalFactory.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word(listOf(False, True, Undefined, Undefined)), inoutA.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(False, True, Undefined, Undefined)), inoutA.signal)
 	}
 
 	@Test
 	fun shouldNotSetExecutionErrorForDefinedButEqualSignals() {
 		proceedUntilQueueIsEmpty()
 
-		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
+		inoutIO1.setIncomingSignal(DigitalSignalFactory.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(Undefined, True, Undefined, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Undefined, True, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
-		assertEquals(Word.of(True), inoutIO1.signal)
+		assertEquals(DigitalSignalFactory.of(True), inoutIO1.signal)
 	}
 
 	@Test
 	fun shouldSetExecutionErrorForConflictingSignals() {
 		proceedUntilQueueIsEmpty()
 
-		inoutIO1.setIncomingSignal(Word.of(True), scheduler)
+		inoutIO1.setIncomingSignal(DigitalSignalFactory.of(True), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(Undefined, False, Undefined, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Undefined, False, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNotNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
@@ -145,10 +146,10 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 	fun shouldWithdrawOtherWeakSignal() {
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(True, Undefined, Undefined, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(True, Undefined, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), splitter.getOutput<DigitalSignal>(2).getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), splitter.getOutput<DigitalSignal>(2).getOutgoingSignal())
 		assertNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
 	}
 
@@ -156,19 +157,19 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 	fun shouldWithdrawOwnUndefinedSignal() {
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(True, Undefined, Undefined, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(True, Undefined, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		inoutA.setIncomingSignal(Word(listOf(Undefined, Undefined, Undefined, Undefined)), scheduler)
+		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Undefined, Undefined, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(false), splitter.getOutput<DigitalSignal>(2).getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), splitter.getOutput<DigitalSignal>(2).getOutgoingSignal())
 		assertNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test
 	fun shouldApplyWeakSignalAtStartup() {
 		proceedUntilQueueIsEmpty()
-		assertEquals(Word(listOf(False, Undefined, Undefined, Undefined)), inoutA.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(False, Undefined, Undefined, Undefined)), inoutA.signal)
 	}
 }

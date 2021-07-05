@@ -105,7 +105,7 @@ class Probe(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		getInput<DigitalSignal>().setIncomingSignal(Word.undefined(bitWidth), signalHandler)
+		getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.undefined(bitWidth), signalHandler)
 		stateChanged(signalHandler)
 	}
 

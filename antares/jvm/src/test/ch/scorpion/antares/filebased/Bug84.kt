@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
@@ -61,6 +62,6 @@ class Bug84 : AbstractFileBasedTest() {
 		keyboard.enter('a'.code.toByte(), scheduler)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
-		assertEquals(Word.of(BitWidth.BW_8, 'a'.code.toLong()), b.signal)
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 'a'.code.toLong()), b.signal)
 	}
 }

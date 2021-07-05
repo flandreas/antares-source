@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
@@ -39,7 +40,7 @@ class NotCalculatorTest {
 	}
 
 	private fun assertOneInput(a: Bit, result: Bit) {
-		vertice.getInput<DigitalSignal>().setIncomingSignal(Word.of(a), signalHandler)
+		vertice.getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.of(a), signalHandler)
 		assertEquals(result, vertice.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0))
 	}
 }

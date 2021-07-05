@@ -4,6 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.jabbah.graph.model.Net
@@ -35,7 +36,7 @@ class PullResistorViewIntegrationTest : AbstractCircuitTest() {
 	fun shouldBeLowOnSimulationStart() {
 		startSimulation(1000L)
 
-		assertEquals(Word.of(Bit.False), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), net.signal)
 		assertFalse(net.isError)
 	}
 
@@ -43,25 +44,25 @@ class PullResistorViewIntegrationTest : AbstractCircuitTest() {
 	fun shouldNotDisturbDefinedSignal() {
 		startSimulation(1000L)
 
-		triStateBGV.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(2000)
 
 		assertFalse(net.isError)
-		assertEquals(Word.of(Bit.True), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.True), net.signal)
 	}
 
 	@Test
 	fun shouldPullUndefinedToLow() {
 		startSimulation(1000L)
-		triStateBGV.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(2000)
 
-		triStateBGV.model.getEnablePort().setIncomingSignal(Word.of(Bit.False), scheduler)
+		triStateBGV.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
 		proceedToNanos(3000)
 
-		assertEquals(Word.of(Bit.False), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.False), net.signal)
 		assertFalse(net.isError)
 	}
 }

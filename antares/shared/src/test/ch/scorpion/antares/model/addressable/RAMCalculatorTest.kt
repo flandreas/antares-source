@@ -3,9 +3,8 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,12 +28,12 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldWrite() {
 		val ram = createRam(true)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
-		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
-		ram.getClockInput()!!.setIncomingSignal(Word.of(true), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 99L), signalHandler)
+		ram.getClockInput()!!.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getClockInput()!!), signalHandler)
 
@@ -44,12 +43,12 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldNotWriteWhenNotEnabled() {
 		val ram = createRam(true)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
-		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
-		ram.getClockInput()!!.setIncomingSignal(Word.of(true), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 99L), signalHandler)
+		ram.getClockInput()!!.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getClockInput()), signalHandler)
 
@@ -59,38 +58,38 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldUndefineDataWhenWriteEnabled() {
 		val ram = createRam(true)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getClockInput()), signalHandler)
 
-		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldUndefineDataWithUndefinedAddressClocked() {
 		val ram = createRam(true)
-		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
-		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldRead() {
 		val ram = createRam(true)
 		ram.write(1, 99)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
-		assertEquals(Word.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal())
 	}
 
 	/** ---- Unclocked tests */
@@ -98,11 +97,11 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldWriteUnclocked() {
 		val ram = createRam(false)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
-		ram.getDataPort().setIncomingSignal(Word.of(BitWidth.BW_8, 99L), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 99L), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
 
@@ -113,65 +112,65 @@ class RAMCalculatorTest {
 	fun shouldNotReadWhenNotEnabled() {
 		val ram = createRam(false)
 		ram.write(1, 99)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
-		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldReadUnclocked() {
 		val ram = createRam(false)
 		ram.write(1, 99)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getClearInput().setIncomingSignal(Word.of(false), signalHandler)
-		ram.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
-		assertEquals(Word.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 99L), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldUndefineDataWithUndefinedAddress() {
 		val ram = createRam(false)
-		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
 
-		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldNotWriteWithUndefinedData() {
 		val ram = createRam(false)
-		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.False), signalHandler)
-		ram.getDataPort().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(true), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.allOf(BitWidth.BW_8, Bit.False), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.allOf(BitWidth.BW_8, Bit.Undefined), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
 
-		assertEquals(Word.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
 	}
 
 	@Test
 	fun shouldOutputDataWhenChangingManuallyUnclocked() {
 		val ram = createRam(false)
-		ram.getAddressInput().setIncomingSignal(Word.allOf(BitWidth.BW_8, Bit.False), signalHandler)
-		ram.getChipSelectInput().setIncomingSignal(Word.of(true), signalHandler)
-		ram.getWriteInput().setIncomingSignal(Word.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.allOf(BitWidth.BW_8, Bit.False), signalHandler)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 
 		ram.setDataAt(0, 255, signalHandler)
 		calculator.calculate(ram, ram.createActorData(null), signalHandler)
 
-		assertEquals(Word.of(BitWidth.BW_8, 255), ram.getDataPort().getOutgoingSignal() as Word)
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 255), ram.getDataPort().getOutgoingSignal())
 	}
 
 	/** ---- [RAMCalculatorTest] */

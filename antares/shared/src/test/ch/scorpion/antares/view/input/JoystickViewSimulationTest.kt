@@ -4,6 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -63,8 +64,8 @@ class JoystickViewSimulationTest : AbstractCircuitTest() {
 	}
 
 	private fun assertOutput(x: Int, y: Int) {
-		assertEquals(Word.of(BitWidth.BW_2, x.toLong()), joystickView.model.getOutput<DigitalSignal>("X").getOutgoingSignal())
-		assertEquals(Word.of(BitWidth.BW_2, y.toLong()), joystickView.model.getOutput<DigitalSignal>("Y").getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_2, x.toLong()), joystickView.model.getOutput<DigitalSignal>("X").getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_2, y.toLong()), joystickView.model.getOutput<DigitalSignal>("Y").getOutgoingSignal())
 	}
 
 	private fun pressMouseAt(x: Int, y: Int) {

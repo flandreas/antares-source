@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -34,7 +34,7 @@ class ProbeViewIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.undefined(BitWidth.BW_1), probeView1.model.signal)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_1), probeView1.model.signal)
 	}
 
 	@Test
@@ -42,6 +42,6 @@ class ProbeViewIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(false), probeView2.model.signal)
+		assertEquals(DigitalSignalFactory.of(false), probeView2.model.signal)
 	}
 }

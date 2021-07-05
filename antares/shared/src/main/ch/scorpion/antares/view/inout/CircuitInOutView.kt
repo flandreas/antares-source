@@ -293,7 +293,7 @@ class CircuitInOutView(
 	}
 
 	private fun drawSimulated(context: DrawContext) {
-		if (model.signal!!.getBitWidth().width > 1) {
+		if (model.signal!!.bitWidth.width > 1) {
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.getColor().foregroundColor),
 				transparent.applyTo(propertiesBackgroundColor))
@@ -570,14 +570,14 @@ class CircuitInOutView(
 						toggleFocusBitWithEnter(context.signalHandler)
 					}
 				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
-					val undefined = Word.undefined(BitWidth.of(signalRepresentation.bitCount))
-					val newWord = signalRepresentation.withDigit(model.signal as Word, undefined, numberView!!.focusIndex!!)
+					val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
+					val newWord = signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)
 					model.setIncomingSignal(newWord, context.signalHandler)
 					numberView!!.transferFocusRight()
 				} else {
 					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), context.keyEvent!!.key.toChar())
 					if (digitWord != null && checkTopLevelKey()) {
-						val newWord = signalRepresentation.withDigit(model.signal as Word, digitWord, numberView!!.focusIndex!!)
+						val newWord = signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)
 						model.setIncomingSignal(newWord, context.signalHandler)
 						numberView!!.transferFocusRight()
 					}

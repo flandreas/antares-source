@@ -9,7 +9,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -73,10 +73,10 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	 */
 	var currentSelectedAddress: Int = 0
 
-	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(true)
-	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == Word.of(false)
-	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != Word.of(true)
-	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(false)
+	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(true)
+	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(false)
+	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != DigitalSignalFactory.of(true)
+	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(false)
 
 	init {
 		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
@@ -95,7 +95,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override val storesCells: Boolean get() = false
 
-	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
+	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
 
@@ -169,7 +169,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		super.executionInitialize(signalHandler)
 		currentSelectedAddress = 0
 		clear()
-		getDataPort().setOutgoingSignalBuffered(Word.undefined(dataWidth), signalHandler)
+		getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(dataWidth), signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

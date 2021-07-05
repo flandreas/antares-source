@@ -5,7 +5,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.OrGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
@@ -13,15 +13,11 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.AffineTransformImpl
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.view.SimpleViewPainter
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.PortType
@@ -167,7 +163,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 		proceedToNanos(10_001)
 		assertFalse(switch.model.isOn)
-		assertEquals(Word.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	@Test
@@ -177,13 +173,13 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(10_000)
-		assertEquals(Word.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToNanos(10_500)
-		assertEquals(Word.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToNanos(11_000)
-		assertEquals(Word.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	/** ---- [UsecaseTestBridge] */

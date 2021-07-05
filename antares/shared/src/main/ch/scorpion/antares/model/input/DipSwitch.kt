@@ -3,9 +3,7 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -54,7 +52,7 @@ class DipSwitch(
 	override val typeDesc: String? get() = TYPE_DESC
 
 	/** The value to be set as current value when the simulation is started. */
-	var initialValue: Word = Word.allOf(bitWidth, Bit.False)
+	var initialValue: DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 		set(value) {
 			if (field != value) {
 				field = value
@@ -64,7 +62,7 @@ class DipSwitch(
 		}
 
 	/** The current value of this [DipSwitch]. */
-	var value: Word = Word.allOf(bitWidth, Bit.False)
+	var value: DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 		private set(value) {
 			if (field != value) {
 				field = value
@@ -78,7 +76,7 @@ class DipSwitch(
 			if (value != bitWidth) {
 				getDigitalPort().bitWidth = value
 				initialValue = initialValue.ofWidth(value)
-				this.value = Word.allOf(bitWidth, Bit.False)
+				this.value = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 				stateChanged()
 			}
 		}
@@ -108,14 +106,14 @@ class DipSwitch(
 		super.read(reader)
 		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
 		if (reader.hasAttribute("initialValue")) {
-			initialValue = Word.of(bitWidth, reader.readLong("initialValue"))
+			initialValue = DigitalSignalFactory.of(bitWidth, reader.readLong("initialValue"))
 		}
 	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeInt("bitWidth", bitWidth.width)
-		if (initialValue != Word.allOf(bitWidth, Bit.False)) {
+		if (initialValue != DigitalSignalFactory.allOf(bitWidth, Bit.False)) {
 			writer.writeLong("initialValue", initialValue.getValue())
 		}
 	}

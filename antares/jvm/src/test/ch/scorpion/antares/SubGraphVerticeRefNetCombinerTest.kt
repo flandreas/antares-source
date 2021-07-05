@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -63,10 +64,10 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		a.model.setIncomingSignal(Word.of(true), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), b.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), b.model.signal)
 	}
 
 	@Test
@@ -74,10 +75,10 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b.model.setIncomingSignal(Word.of(true), scheduler)
+		b.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), a.model.signal)
+		assertEquals(DigitalSignalFactory.of(true), a.model.signal)
 	}
 
 	@Test
@@ -85,10 +86,10 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b.model.setIncomingSignal(Word.of(true), scheduler)
+		b.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		a.model.setIncomingSignal(Word.of(false), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.of(false), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNotNull(b.model.getPort<DigitalSignal>().net?.executionError)

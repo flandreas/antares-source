@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.OutputPort
@@ -31,7 +32,7 @@ class DigitalCombinedNetAccess(
 		var signal = origin
 		if (replacement != null) {
 			signal = origin?.defineSubword(replacement, index)
-				?: Word.undefined((port as DigitalPort).bitWidth).defineSubword(replacement, index)
+				?: DigitalSignalFactory.undefined((port as DigitalPort).bitWidth).defineSubword(replacement, index)
 			port.owner?.replaceUndefinedOutput(signal)
 		}
 		return signal

@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -109,7 +110,7 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		cycleCount = 0
 		periodOrFrequencyBuffer = periodOrFrequency.copy()
 		isOn = false
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
@@ -131,7 +132,7 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		if (this.isOn != on) {
 			cycleCount++
 			this.isOn = on
-			getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
+			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
 			stateChanged()
 			if (isEnabled) {
 				requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))

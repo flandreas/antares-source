@@ -3,10 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
@@ -66,9 +63,9 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.allOf(BitWidth.BW_2, Bit.Undefined), a.model.getOutput<DigitalSignal>().net?.signal)
-		assertEquals(Word.of(Bit.Undefined), b1.model.getInput<DigitalSignal>(1).net?.signal)
-		assertEquals(Word.of(Bit.Undefined), b2.model.getInput<DigitalSignal>(1).net?.signal)
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_2, Bit.Undefined), a.model.getOutput<DigitalSignal>().net?.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b1.model.getInput<DigitalSignal>(1).net?.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b2.model.getInput<DigitalSignal>(1).net?.signal)
 	}
 
 	@Test
@@ -76,11 +73,11 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		a.model.setIncomingSignal(Word(listOf(Bit.Undefined, Bit.True)), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.Undefined, Bit.True)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(Bit.Undefined), b1.model.signal)
-		assertEquals(Word.of(Bit.True), b2.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), b1.model.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.True), b2.model.signal)
 		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNull(a.model.getOutput<DigitalSignal>().net?.executionError)
@@ -91,10 +88,10 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b2.model.setIncomingSignal(Word.of(Bit.True), scheduler)
+		b2.model.setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word(listOf(Bit.Undefined, Bit.True)), a.model.signal)
+		assertEquals(DigitalSignalFactory.ofBits(listOf(Bit.Undefined, Bit.True)), a.model.signal)
 		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
 		assertNull(a.model.getOutput<DigitalSignal>().net?.executionError)
 	}
@@ -103,10 +100,10 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	fun shouldPropagateConflictErrorBeyondConcentrator() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
-		a.model.setIncomingSignal(Word.of(BitWidth.BW_2, 2), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_2, 2), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		b2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
+		b2.model.setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
@@ -119,10 +116,10 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		b1.model.setIncomingSignal(Word.of(Bit.True), scheduler)
+		b1.model.setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		a.model.setIncomingSignal(Word(listOf(Bit.False, Bit.Undefined)), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNotNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
@@ -136,16 +133,16 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 		proceedUntilQueueIsEmpty()
 
 		// Send 1 on channel 0 through Splitter
-		a.model.setIncomingSignal(Word(listOf(Bit.True, Bit.Undefined)), scheduler)
+		a.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.True, Bit.Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(true), splitterView.model.getOutput<DigitalSignal>(2).getOutgoingSignal())
-		assertEquals(Word.of(Bit.Undefined), splitterView.model.getOutput<DigitalSignal>(3).getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), splitterView.model.getOutput<DigitalSignal>(2).getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), splitterView.model.getOutput<DigitalSignal>(3).getOutgoingSignal())
 		// Must have been synchronized
-		assertEquals(Word.of(true), splitterView.model.getInput<DigitalSignal>(2).getIncomingSignal())
+		assertEquals(DigitalSignalFactory.of(true), splitterView.model.getInput<DigitalSignal>(2).getIncomingSignal())
 
 		// Send 0 on channel 1 through Concentrator
-		b2.model.setIncomingSignal(Word.of(Bit.False), scheduler)
+		b2.model.setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)

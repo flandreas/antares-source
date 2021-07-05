@@ -1,6 +1,6 @@
 package ch.scorpion.antares.script
 
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.script.dsl.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -14,7 +14,9 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.script.*
+import ch.scorpion.jabbah.graph.script.Script
+import ch.scorpion.jabbah.graph.script.ScriptEngine
+import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -40,7 +42,7 @@ class AntaresScriptGateway(
 		eventBus.register(SchedulerActivationStateEvent::class) { store.clear() }
 	}
 
-	/** Allows [Vertice]s to store [Word]s between individual script calls.*/
+	/** Allows [Vertice]s to store [DigitalSignal]s between individual script calls.*/
 	private val store = Store()
 
 	/** ---- [ScriptGateway] interface */
@@ -92,19 +94,19 @@ class AntaresScriptGateway(
 	/** ---- [AntaresScriptGateway] */
 
 	/**
-	 * Allows [Vertice]s to store [Word]s between separate script calls. The [Store] gets reset
+	 * Allows [Vertice]s to store [DigitalSignal]s between separate script calls. The [Store] gets reset
 	 * whenever the execution is restarted.
 	 */
 	class Store() {
 
-		private val entries = mutableMapOf<Vertice, MutableMap<String, Word>>()
+		private val entries = mutableMapOf<Vertice, MutableMap<String, DigitalSignal>>()
 
 		fun clear() = entries.clear()
 
-		fun put(vertice: Vertice, name: String, value: Word) {
+		fun put(vertice: Vertice, name: String, value: DigitalSignal) {
 			entries.getOrPut(vertice, { mutableMapOf() })[name] = value
 		}
 
-		fun get(vertice: Vertice, name: String): Word? = entries[vertice]?.get(name)
+		fun get(vertice: Vertice, name: String): DigitalSignal? = entries[vertice]?.get(name)
 	}
 }

@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -30,33 +31,33 @@ class TriStateBufferGateViewIntegrationTest : AbstractCircuitTest() {
 	fun shouldBeUndefinedOnSimulationStart() {
 		startSimulation(1000L)
 
-		assertEquals(Word.of(Bit.Undefined), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.Undefined), net.signal)
 		assertFalse(net.isError)
 	}
 
 	@Test
 	fun shouldAssertOutputOfSingleGate() {
 		startSimulation(1000L)
-		triStateBGV1.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV1.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV1.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV1.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(2000)
 
-		assertEquals(Word.of(Bit.True), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.True), net.signal)
 		assertFalse(net.isError)
 	}
 
 	@Test
 	fun shouldAssertEqualOutputs() {
 		startSimulation(1000L)
-		triStateBGV1.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV1.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV1.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV1.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(2000)
 
-		triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV2.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV2.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV2.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(3000)
 
-		assertEquals(Word.of(Bit.True), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.True), net.signal)
 		assertFalse(net.isError)
 	}
 
@@ -70,11 +71,11 @@ class TriStateBufferGateViewIntegrationTest : AbstractCircuitTest() {
 	}
 
 	private fun produceError() {
-		triStateBGV1.model.getInputPort().setIncomingSignal(Word.of(Bit.True), scheduler)
-		triStateBGV1.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV1.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
+		triStateBGV1.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(2000)
-		triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.False), scheduler)
-		triStateBGV2.model.getEnablePort().setIncomingSignal(Word.of(Bit.True), scheduler)
+		triStateBGV2.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
+		triStateBGV2.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
 		proceedToNanos(3000)
 	}
 
@@ -85,11 +86,11 @@ class TriStateBufferGateViewIntegrationTest : AbstractCircuitTest() {
 		produceError()
 		assertTrue(net.isError)
 
-		//triStateBGV2.model.getInputPort().setIncomingSignal(Word.of(Bit.False), scheduler)
-		triStateBGV2.model.getEnablePort().setIncomingSignal(Word.of(Bit.False), scheduler)
+		//triStateBGV2.model.getInputPort().setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
+		triStateBGV2.model.getEnablePort().setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(Word.of(Bit.True), net.signal)
+		assertEquals(DigitalSignalFactory.of(Bit.True), net.signal)
 		assertFalse(net.isError)
 	}
 }

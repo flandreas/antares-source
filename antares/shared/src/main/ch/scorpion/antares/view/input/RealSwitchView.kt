@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.input.RealSwitch
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -125,7 +125,7 @@ class RealSwitchView(
 	private fun getPortColor(portId: Int, context: DrawContext): Color {
 		return if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			val port = (model.getPort<DigitalSignal>(portId) as DigitalPort)
-			port.net?.signal?.getColor()?.foregroundColor ?: Word.undefined(BitWidth.BW_1).getColor().foregroundColor
+			port.net?.signal?.getColor()?.foregroundColor ?: DigitalSignalFactory.undefined(BitWidth.BW_1).getColor().foregroundColor
 		} else {
 			// Draw in edge color and not in vertice color
 			transparent.applyTo(context.choose(Themes.get<AntaresTheme>().edge.color).foregroundColor)
