@@ -40,15 +40,15 @@ class SplitterTest {
 		splitter.act(signalHandler, splitter.createActorData(splitter.getInput<DigitalSignal>()))
 
 		assertEquals(BitWidth.BW_2, (splitter.getOutput<Any>(2).getOutgoingSignal() as DigitalSignal).bitWidth)
-		assertEquals(3L, (splitter.getOutput<Any>(2).getOutgoingSignal() as DigitalSignal).getValue())
+		assertEquals(3UL, (splitter.getOutput<Any>(2).getOutgoingSignal() as DigitalSignal).getValue())
 
 		assertEquals(BitWidth.BW_2, (splitter.getOutput<Any>(3).getOutgoingSignal() as DigitalSignal).bitWidth)
-		assertEquals(3L, (splitter.getOutput<Any>(3).getOutgoingSignal() as DigitalSignal).getValue())
+		assertEquals(3UL, (splitter.getOutput<Any>(3).getOutgoingSignal() as DigitalSignal).getValue())
 
 		assertEquals(BitWidth.BW_2, (splitter.getOutput<Any>(4).getOutgoingSignal() as DigitalSignal).bitWidth)
-		assertEquals(3L, (splitter.getOutput<Any>(4).getOutgoingSignal() as DigitalSignal).getValue())
+		assertEquals(3UL, (splitter.getOutput<Any>(4).getOutgoingSignal() as DigitalSignal).getValue())
 
 		assertEquals(BitWidth.BW_2, (splitter.getOutput<Any>(5).getOutgoingSignal() as DigitalSignal).bitWidth)
-		assertEquals(3L, (splitter.getOutput<Any>(5).getOutgoingSignal() as DigitalSignal).getValue())
+		assertEquals(3UL, (splitter.getOutput<Any>(5).getOutgoingSignal() as DigitalSignal).getValue())
 	}
 }

@@ -1,11 +1,10 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.base.logger
 
 
 /**
@@ -144,7 +143,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
 
 	    if (addressInt != null && dataInt != null) {
 		    LOG.trace("Writing into RAM: address=$addressInt, value=$dataInt")
-		    ram.write(addressInt, dataInt.toLong(), signalHandler)
+		    ram.write(addressInt, dataInt.toULong(), signalHandler)
 	    }
     }
 }

@@ -16,7 +16,7 @@ class Memory(private val segmentSize: Int) {
 
     private val segments: MutableMap<Int, Segment> = mutableMapOf()
 
-    fun read(address: Int): Long {
+    fun read(address: Int): ULong {
         return getSegment(address).readValue(address % segmentSize)
     }
 
@@ -24,7 +24,7 @@ class Memory(private val segmentSize: Int) {
 		return getSegment(address).readComment(address % segmentSize)
 	}
 
-    fun write(address: Int, vararg values: Long) {
+    fun write(address: Int, vararg values: ULong) {
         var lAddress = address
         for (value in values) {
             writeSingleValue(lAddress++, value)
@@ -38,8 +38,8 @@ class Memory(private val segmentSize: Int) {
 		getSegment(address).writeComment(address % segmentSize, comment)
 	}
 
-	fun writeCommentedValue(address: Int, value: Long, comment: String?) {
-		if (value == 0L && comment == null && !hasSegment(address)) {
+	fun writeCommentedValue(address: Int, value: ULong, comment: String?) {
+		if (value == 0UL && comment == null && !hasSegment(address)) {
 			return
 		}
 		getSegment(address).writeCommentedValue(address % segmentSize, value, comment)
@@ -53,8 +53,8 @@ class Memory(private val segmentSize: Int) {
 		segments.clear()
 	}
 
-	private fun writeSingleValue(address: Int, value: Long) {
-		if (value == 0L && !hasSegment(address)) {
+	private fun writeSingleValue(address: Int, value: ULong) {
+		if (value == 0UL && !hasSegment(address)) {
 			return
 		}
 		getSegment(address).writeValue(address % segmentSize, value)
@@ -75,7 +75,7 @@ class Memory(private val segmentSize: Int) {
 	}
 
 	/** Holds the internal data representation of an individual cell.*/
-	private data class CellData(val value: Long, val comment: String?)
+	private data class CellData(val value: ULong, val comment: String?)
 
     /**
      * Represents the unit of space allocation of a [Memory] object. It has a base
@@ -88,8 +88,8 @@ class Memory(private val segmentSize: Int) {
         private val data: MutableMap<Int,CellData> = mutableMapOf()
 
  		/** Reads the value at a relative segment address. */
-		fun readValue(address: Int): Long {
-            return data[address]?.value ?: 0
+		fun readValue(address: Int): ULong {
+            return data[address]?.value ?: 0UL
 		}
 
 	    /** Reads the comment at a relative segment address. */
@@ -98,9 +98,9 @@ class Memory(private val segmentSize: Int) {
 	    }
 
 		/** Writes a value at a relative segment address. */
-		fun writeValue(address: Int, value: Long) {
+		fun writeValue(address: Int, value: ULong) {
 			val cell = data[address]
-			if (value == 0L) {
+			if (value == 0UL) {
 				if (cell != null && cell.comment == null) {
 					data.remove(address)
 				} else {
@@ -115,19 +115,19 @@ class Memory(private val segmentSize: Int) {
 	    fun writeComment(address: Int, comment: String?) {
 		    val cell = data[address]
 		    if (comment == null) {
-			    if (cell != null && cell.value == 0L) {
+			    if (cell != null && cell.value == 0UL) {
 				    data.remove(address)
 			    } else {
 				    data[address] = CellData(cell!!.value, comment)
 			    }
 		    } else {
-			    data[address] = CellData(cell?.value ?: 0, comment)
+			    data[address] = CellData(cell?.value ?: 0UL, comment)
 		    }
 	    }
 
-	    fun writeCommentedValue(address: Int, value: Long, comment: String?) {
+	    fun writeCommentedValue(address: Int, value: ULong, comment: String?) {
 		    val cell = data[address]
-		    if (value == 0L && comment == null) {
+		    if (value == 0UL && comment == null) {
 			    if (cell != null) {
 				    data.remove(address)
 			    } else {
@@ -180,7 +180,7 @@ class Memory(private val segmentSize: Int) {
                 return MemoryCell(baseAddress + address, currentValue, currentComment)
             }
 
-            private fun currentValue(): Long {
+            private fun currentValue(): ULong {
                 return readValue(sortedAddresses[addressIndex!!])
             }
 

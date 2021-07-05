@@ -77,12 +77,12 @@ class Constant(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeInt("bitWidth", bitWidth.width)
-		writer.writeLong("value", value.getValue())
+		writer.writeULong("value", value.getValue())
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-		value = DigitalSignalFactory.of(bitWidth, reader.readLong("value"))
+		value = DigitalSignalFactory.of(bitWidth, reader.readULong("value"))
 	}
 }

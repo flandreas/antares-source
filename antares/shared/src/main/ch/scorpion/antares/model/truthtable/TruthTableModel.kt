@@ -103,7 +103,7 @@ class TruthTableModel(
 
 	/** Creates and registers a [Row] with zero outputs for every possible input combination.*/
 	private fun predefineRows() {
-		(0 until BitOperation.power(inputCount.toByte())).mapTo(_rows) {
+		(0UL until BitOperation.power(inputCount.toByte())).mapTo(_rows) {
 			Row(
 				Bit.listFromLong(it, inputCount).toTypedArray(),
 				Bit.listFromInt(0, outputCount).toTypedArray()

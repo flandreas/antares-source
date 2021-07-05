@@ -5,8 +5,10 @@ import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_P
 import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -104,13 +106,13 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
 
-	override val data: Long
+	override val data: ULong
 		get() {
 			val address = currentAddress
 			if (address >= 0) {
 				return memory.read(address)
 			}
-			return 0
+			return 0UL
 		}
 
 	override var addressWidth: BitWidth
@@ -140,9 +142,9 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 		stateChanged()
 	}
 
-	override fun dataAt(address: Int): Long = memory.read(address)
+	override fun dataAt(address: Int): ULong = memory.read(address)
 
-	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
+	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
 	}
@@ -173,9 +175,9 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	/** ---- [ROM]  */
 
-	fun read(address: Int): Long = memory.read(address)
+	fun read(address: Int): ULong = memory.read(address)
 
-	fun write(address: Int, value: Long) {
+	fun write(address: Int, value: ULong) {
 		memory.write(address, value)
 		disassembleCell(address)
 	}

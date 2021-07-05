@@ -148,6 +148,10 @@ class StoreXmlReader(
 		return xmlReader.getAttributeValue(name).toLong()
 	}
 
+	override fun readULong(name: String): ULong {
+		return xmlReader.getAttributeValue(name).toULong()
+	}
+
 	override fun readPoints(name: String): List<Point2D> {
 		val points = mutableListOf<Point2D>()
 		var list = readString(name)

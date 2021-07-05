@@ -73,6 +73,8 @@ interface StoreReader {
     /** Reads the next [Long] attribute with the given name.*/
     fun readLong(name: String): Long
 
+    fun readULong(name: String): ULong
+
     /** Reads a list of [Point2D] from the attribute with the given name.*/
     fun readPoints(name: String): List<Point2D>
 

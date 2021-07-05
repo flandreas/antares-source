@@ -77,7 +77,7 @@ internal data class Word(
 		}
 
 		/** Returns a [Word] that represents the specified value as a binary word of the specified width.*/
-		fun of(bitWidth: BitWidth, value: Long?): Word {
+		fun of(bitWidth: BitWidth, value: ULong?): Word {
 			if (value == null) {
 				return undefined(bitWidth)
 			}
@@ -179,9 +179,9 @@ internal data class Word(
 
 	override fun bitAt(index: Int): Bit = bits[index]
 
-	private val longValue: Long? by lazy calcLong@ {
-		var value = 0L
-		var factor = 1
+	private val longValue: ULong? by lazy calcLong@ {
+		var value = 0UL
+		var factor = 1UL
 		for (bit in bits) {
 			if (!bit.isDefined) {
 				return@calcLong null
@@ -189,18 +189,18 @@ internal data class Word(
 			if (bit.isSet) {
 				value += factor
 			}
-			factor *= 2
+			factor *= 2UL
 		}
 		return@calcLong value
 	}
 
-	override fun toLong(): Long? = longValue
+	override fun toLong(): ULong? = longValue
 
 	override fun toInt(): Int? = toLong()?.toInt()
 
 	/** ---- [Word] */
 
-	override fun getValue(): Long = longValue!!
+	override fun getValue(): ULong = longValue!!
 
 	override fun isAllOf(bit: Bit): Boolean = bits.all { it == bit }
 
@@ -227,8 +227,8 @@ internal data class Word(
 		return Word(subword)
 	}
 
-	override fun getSubwordValue(subwordWidth: BitWidth, index: Int): Long? {
-		var sum: Long = 0
+	override fun getSubwordValue(subwordWidth: BitWidth, index: Int): ULong? {
+		var sum: ULong = 0UL
 		var digit = min(bitWidth.width, subwordWidth.width) - 1
 		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
 			if (!bits[i].isDefined) {

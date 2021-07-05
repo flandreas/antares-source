@@ -131,7 +131,7 @@ class DipSwitchView(
 		}
 
 	var initialValue: Long
-		get() = model.initialValue.getValue()
+		get() = model.initialValue.getValue().toLong()
 		set(value) {
 			if (value != initialValue) {
 				model.initialValue = DigitalSignalFactory.of(bitWidth, value)

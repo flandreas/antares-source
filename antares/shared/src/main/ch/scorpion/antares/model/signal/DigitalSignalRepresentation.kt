@@ -45,7 +45,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 			var s = word.getValue().toString().padStart(index + 1, '0')
 			val sIndex = s.length - 1 - index
 			s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
-			val value = s.toLong()
+			val value = s.toULong()
 			if (value < word.bitWidth.power()) {
 				return DigitalSignalFactory.of(word.bitWidth, value)
 			}

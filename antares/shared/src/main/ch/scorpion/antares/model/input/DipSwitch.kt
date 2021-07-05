@@ -3,8 +3,10 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -114,7 +116,7 @@ class DipSwitch(
 		super.write(writer)
 		writer.writeInt("bitWidth", bitWidth.width)
 		if (initialValue != DigitalSignalFactory.allOf(bitWidth, Bit.False)) {
-			writer.writeLong("initialValue", initialValue.getValue())
+			writer.writeULong("initialValue", initialValue.getValue())
 		}
 	}
 

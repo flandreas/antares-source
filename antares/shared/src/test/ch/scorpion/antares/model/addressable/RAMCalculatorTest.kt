@@ -37,7 +37,7 @@ class RAMCalculatorTest {
 
 		calculator.calculate(ram, ram.createActorData(ram.getClockInput()!!), signalHandler)
 
-		assertEquals(99L, ram.read(1))
+		assertEquals(99UL, ram.read(1))
 	}
 
 	@Test
@@ -52,7 +52,7 @@ class RAMCalculatorTest {
 
 		calculator.calculate(ram, ram.createActorData(ram.getClockInput()), signalHandler)
 
-		assertEquals(0L, ram.read(1))
+		assertEquals(0UL, ram.read(1))
 	}
 
 	@Test
@@ -81,7 +81,7 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldRead() {
 		val ram = createRam(true)
-		ram.write(1, 99)
+		ram.write(1, 99UL)
 		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -105,13 +105,13 @@ class RAMCalculatorTest {
 
 		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
 
-		assertEquals(99L, ram.read(1))
+		assertEquals(99UL, ram.read(1))
 	}
 
 	@Test
 	fun shouldNotReadWhenNotEnabled() {
 		val ram = createRam(false)
-		ram.write(1, 99)
+		ram.write(1, 99UL)
 		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -125,7 +125,7 @@ class RAMCalculatorTest {
 	@Test
 	fun shouldReadUnclocked() {
 		val ram = createRam(false)
-		ram.write(1, 99)
+		ram.write(1, 99UL)
 		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -167,7 +167,7 @@ class RAMCalculatorTest {
 		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
 
-		ram.setDataAt(0, 255, signalHandler)
+		ram.setDataAt(0, 255UL, signalHandler)
 		calculator.calculate(ram, ram.createActorData(null), signalHandler)
 
 		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 255), ram.getDataPort().getOutgoingSignal())

@@ -83,7 +83,7 @@ class AddressableDisplayPanel(
 		table.model = addressableDisplayLayout.createTableModel()
 		table.model.addTableModelListener(changeCollector)
 
-		val rowHeaderTable = RowHeaderTable(table) { BitOperation.longToHexPadded(it.toLong() * addressableDisplayLayout.cellsPerRow, addressable.addressWidth) }
+		val rowHeaderTable = RowHeaderTable(table) { BitOperation.longToHexPadded(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressable.addressWidth) }
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
@@ -142,12 +142,10 @@ class AddressableDisplayPanel(
 			}
 		}
 
-		private fun getOrigValue(address: Int, previousValue: Long): Long {
-			return changes[address]?.origValue ?: previousValue
-		}
+		private fun getOrigValue(address: Int, previousValue: ULong): ULong =
+			changes[address]?.origValue ?: previousValue
 
-		private fun getCurrentValue(rowIndex: Int, columnIndex: Int): Long {
-			return addressable.dataAt(addressableDisplayLayout.getCellAddress(rowIndex, columnIndex))
-		}
+		private fun getCurrentValue(rowIndex: Int, columnIndex: Int): ULong =
+			addressable.dataAt(addressableDisplayLayout.getCellAddress(rowIndex, columnIndex))
 	}
 }

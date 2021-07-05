@@ -16,45 +16,45 @@ class BitOperationTest {
 
 	@Test
 	fun shouldGetBit() {
-		assertFalse(BitOperation.getBitAt(0L, 0))
-		assertTrue(BitOperation.getBitAt(1L, 0))
-		assertFalse(BitOperation.getBitAt(4L, 0))
-		assertFalse(BitOperation.getBitAt(4L, 1))
-		assertTrue(BitOperation.getBitAt(4L, 2))
+		assertFalse(BitOperation.getBitAt(0UL, 0))
+		assertTrue(BitOperation.getBitAt(1UL, 0))
+		assertFalse(BitOperation.getBitAt(4UL, 0))
+		assertFalse(BitOperation.getBitAt(4UL, 1))
+		assertTrue(BitOperation.getBitAt(4UL, 2))
 	}
 
 	@Test
 	fun shouldSetBit() {
-		assertEquals(5L, BitOperation.setBitAt(4L, 0))
-		assertEquals(128L, BitOperation.setBitAt(0L, 7))
+		assertEquals(5UL, BitOperation.setBitAt(4UL, 0))
+		assertEquals(128UL, BitOperation.setBitAt(0UL, 7))
 	}
 
 	@Test
 	fun shouldClearBit() {
-		assertEquals(0L, BitOperation.clearBitAt(4L, 2))
-		assertEquals(3L, BitOperation.clearBitAt(7L, 2))
+		assertEquals(0UL, BitOperation.clearBitAt(4UL, 2))
+		assertEquals(3UL, BitOperation.clearBitAt(7UL, 2))
 	}
 
 	@Test
 	fun shouldCalculatePower() {
-		assertEquals(1, BitOperation.power(0))
-		assertEquals(2, BitOperation.power(1))
-		assertEquals(4, BitOperation.power(2))
-		assertEquals(8, BitOperation.power(3))
-		assertEquals(256, BitOperation.power(8))
-		assertEquals(65536, BitOperation.power(16))
-		assertEquals(4_294_967_296, BitOperation.power(32))
+		assertEquals(1UL, BitOperation.power(0))
+		assertEquals(2UL, BitOperation.power(1))
+		assertEquals(4UL, BitOperation.power(2))
+		assertEquals(8UL, BitOperation.power(3))
+		assertEquals(256UL, BitOperation.power(8))
+		assertEquals(65536UL, BitOperation.power(16))
+		assertEquals(4_294_967_296UL, BitOperation.power(32))
 	}
 
 	@Test
 	fun shouldConvertHexToLong() {
-		assertEquals(0L, BitOperation.hexToLong(""))
-		assertEquals(0L, BitOperation.hexToLong("0"))
-		assertEquals(5L, BitOperation.hexToLong("5"))
-		assertEquals(18L, BitOperation.hexToLong("12"))
-		assertEquals(10L, BitOperation.hexToLong("A"))
-		assertEquals(255L, BitOperation.hexToLong("FF"))
-		assertEquals(65535L, BitOperation.hexToLong("FFFF"))
+		assertEquals(0UL, BitOperation.hexToLong(""))
+		assertEquals(0UL, BitOperation.hexToLong("0"))
+		assertEquals(5UL, BitOperation.hexToLong("5"))
+		assertEquals(18UL, BitOperation.hexToLong("12"))
+		assertEquals(10UL, BitOperation.hexToLong("A"))
+		assertEquals(255UL, BitOperation.hexToLong("FF"))
+		assertEquals(65535UL, BitOperation.hexToLong("FFFF"))
 	}
 
 	@Test
@@ -67,17 +67,17 @@ class BitOperationTest {
 
 	@Test
 	fun shouldConvertLongToHex() {
-		assertEquals("0", BitOperation.longToHex(0))
-		assertEquals("5", BitOperation.longToHex(5))
-		assertEquals("A", BitOperation.longToHex(10))
-		assertEquals("FF", BitOperation.longToHex(255))
+		assertEquals("0", BitOperation.longToHex(0UL))
+		assertEquals("5", BitOperation.longToHex(5UL))
+		assertEquals("A", BitOperation.longToHex(10UL))
+		assertEquals("FF", BitOperation.longToHex(255UL))
 	}
 
 	@Test
 	fun shouldConvertLongToHexPadded() {
-		assertEquals("3", BitOperation.longToHexPadded(3, BitWidth.BW_2))
-		assertEquals("5", BitOperation.longToHexPadded(5, BitWidth.BW_4))
-		assertEquals("05", BitOperation.longToHexPadded(5, BitWidth.BW_8))
+		assertEquals("3", BitOperation.longToHexPadded(3UL, BitWidth.BW_2))
+		assertEquals("5", BitOperation.longToHexPadded(5UL, BitWidth.BW_4))
+		assertEquals("05", BitOperation.longToHexPadded(5UL, BitWidth.BW_8))
 	}
 
 	@Test

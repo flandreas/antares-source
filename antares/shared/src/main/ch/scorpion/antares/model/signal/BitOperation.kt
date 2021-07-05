@@ -10,21 +10,21 @@ import kotlin.math.pow
 object BitOperation {
 
     private val HEX = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
-	private val POWER = Array(32 + 1) { 2.0.pow(it).toLong() }
+	private val POWER = Array(32 + 1) { 2.0.pow(it).toULong() }
 
-	fun getBitAt(value: Long, index: Int): Boolean {
-        return value shr index and 1 == 1L
+	fun getBitAt(value: ULong, index: Int): Boolean {
+        return value shr index and 1UL == 1UL
     }
 
-    fun setBitAt(value: Long, index: Int): Long {
-        return value or (1L shl index)
+    fun setBitAt(value: ULong, index: Int): ULong {
+        return value or (1UL shl index)
     }
 
-    fun clearBitAt(value: Long, index: Int): Long {
-        return value and (1L shl index).inv()
+    fun clearBitAt(value: ULong, index: Int): ULong {
+        return value and (1UL shl index).inv()
     }
 
-    fun power(value: Byte): Long {
+    fun power(value: Byte): ULong {
 	    checkArgument(value <= 32, "value must not be larger than 32")
 	    return POWER[value.toInt()]
     }
@@ -39,7 +39,7 @@ object BitOperation {
 			if (value.length > 1) {
 				return null
 			}
-			val maxDigit = bitWidth.power() - 1
+			val maxDigit = bitWidth.power() - 1UL
 			if (value[0] !in '0'..maxDigit.toInt().toChar()) {
 				return null
 			}
@@ -58,17 +58,17 @@ object BitOperation {
 	}
 
     /** Converts a hexadecimal value to a decimal long value*/
-    fun hexToLong(hex: String): Long {
-        var value = 0L
-        var factor = 1L
+    fun hexToLong(hex: String): ULong {
+        var value = 0UL
+        var factor = 1UL
 
         for (c in hex.uppercase().reversed()) {
 	        value += when (c) {
-		        in '0'..'9' -> factor * (c.code - '0'.code)
-		        in 'A'..'F' -> factor * (c.code - 'A'.code + 10)
+		        in '0'..'9' -> factor * (c.code - '0'.code).toULong()
+		        in 'A'..'F' -> factor * (c.code - 'A'.code + 10).toULong()
 		        else -> throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
 	        }
-            factor *= 16
+            factor *= 16UL
         }
 
         return value
@@ -116,7 +116,7 @@ object BitOperation {
 			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
 			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Error)
 			else -> {
-				val value = decimal.code.toLong() - '0'.code.toLong()
+				val value = decimal.code.toULong() - '0'.code.toULong()
 				if (value >= bitWidth.power()) {
 					return null
 				}
@@ -129,20 +129,20 @@ object BitOperation {
      * Converts a decimal number into its hexadecimal string representation.
      * Standard Long.toString(radix) not supported on JS platform.
      */
-    fun longToHex(value: Long): String {
-        if (value == 0L) {
+    fun longToHex(value: ULong): String {
+        if (value == 0UL) {
             return "0"
         }
         val hex = StringBuilder()
         var num = value
-        while (num > 0) {
-            hex.append(HEX[(num % 16).toInt()])
-            num /= 16
+        while (num > 0UL) {
+            hex.append(HEX[(num % 16UL).toInt()])
+            num /= 16UL
         }
         return hex.toString().reversed()
     }
 
-	fun longToHexPadded(value: Long, bitWidth: BitWidth): String {
+	fun longToHexPadded(value: ULong, bitWidth: BitWidth): String {
 		return longToHex(value).padStart(max(1, bitWidth.width / 4), '0')
 	}
 

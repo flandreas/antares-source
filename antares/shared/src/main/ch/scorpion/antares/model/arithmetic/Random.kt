@@ -16,12 +16,13 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.random.nextULong
 
 /**
  * Produces a random value of a specifiable [BitWidth] when the trigger input value changes to 1.
  */
 class Random(
-	private val valueProvider: (Long) -> Long = { kotlin.random.Random.nextLong(0, it) }
+	private val valueProvider: (ULong) -> ULong = { kotlin.random.Random.nextULong(0UL, it) }
 ) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
 	companion object {
@@ -39,7 +40,7 @@ class Random(
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-						DigitalSignalFactory.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.power() - 1)),
+						DigitalSignalFactory.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.power() - 1UL)),
 						signalHandler
 					)
 				}

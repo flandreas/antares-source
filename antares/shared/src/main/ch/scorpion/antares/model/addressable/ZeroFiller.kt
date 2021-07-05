@@ -31,7 +31,7 @@ class ZeroFiller(private val iter: Iterator<MemoryCell>) : Iterator<MemoryCell> 
         }
 
         if (nextCell!!.address > lastAddress + 1) {
-            return MemoryCell(++lastAddress, 0L)
+            return MemoryCell(++lastAddress, 0UL)
         }
 
         val result = nextCell

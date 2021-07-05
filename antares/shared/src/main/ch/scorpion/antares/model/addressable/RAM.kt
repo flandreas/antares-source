@@ -101,13 +101,13 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
 
-	override val data: Long
+	override val data: ULong
 		get() {
 			val address = currentAddress
 			if (address >= 0) {
 				return memory.read(address)
 			}
-			return 0
+			return 0UL
 		}
 
 	override var addressWidth: BitWidth
@@ -135,9 +135,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		stateChanged()
 	}
 
-	override fun dataAt(address: Int): Long = memory.read(address)
+	override fun dataAt(address: Int): ULong = memory.read(address)
 
-	override fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?) {
+	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
 		memory.write(address, value)
 		update()
 		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
@@ -193,9 +193,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
 	}
 
-	fun read(address: Int): Long = memory.read(address)
+	fun read(address: Int): ULong = memory.read(address)
 
-	fun write(address: Int, value: Long, signalHandler: SignalHandler? = null) {
+	fun write(address: Int, value: ULong, signalHandler: SignalHandler? = null) {
 		memory.write(address, value)
 		stateChanged(signalHandler)
 	}

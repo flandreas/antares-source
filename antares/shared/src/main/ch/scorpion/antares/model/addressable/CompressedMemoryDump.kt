@@ -27,7 +27,7 @@ object CompressedMemoryDump {
 	 */
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
-		val mask: Long = BitOperation.power(bitWidth.width.toByte()) - 1L
+		val mask: ULong = BitOperation.power(bitWidth.width.toByte()) - 1UL
 		val length = max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
@@ -63,7 +63,7 @@ object CompressedMemoryDump {
 		return builder.toString()
 	}
 
-	private fun write(value: Long, comment: String?, count: Int, mask: Long, length: Int, builder: StringBuilder) {
+	private fun write(value: ULong, comment: String?, count: Int, mask: ULong, length: Int, builder: StringBuilder) {
 		if (count > 1) {
 			builder.append(count.toString())
 			builder.append(CARDINALITY_DELIMITER)
@@ -75,7 +75,7 @@ object CompressedMemoryDump {
 		}
 	}
 
-	private fun writePaddedHex(value: Long, mask: Long, length: Int, builder: StringBuilder) {
+	private fun writePaddedHex(value: ULong, mask: ULong, length: Int, builder: StringBuilder) {
 		builder.append(BitOperation.longToHex(value and mask).uppercase().padStart(length, '0'))
 	}
 
@@ -110,7 +110,7 @@ object CompressedMemoryDump {
 
 		val commentDelimiterIndex = cellContent.indexOf(COMMENT_DELIMITER)
 		val comment: String?
-		val value: Long
+		val value: ULong
 		if (commentDelimiterIndex == -1) {
 			value = BitOperation.hexToLong(cellContent)
 			comment = null

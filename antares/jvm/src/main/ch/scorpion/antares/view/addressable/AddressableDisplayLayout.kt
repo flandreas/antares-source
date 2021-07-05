@@ -34,7 +34,7 @@ class AddressableTableModelEvent(
 	source: TableModel,
 	row: Int,
 	column: Int,
-	val oldValue: Long
+	val oldValue: ULong
 ) : TableModelEvent(source, row, column, UPDATE)
 
 abstract class AbstractAddressableDisplayLayout(
@@ -48,7 +48,7 @@ class FixedWidthLayout(
 	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableDisplayLayout(addressable) {
 
-	private val rowCount: Int = ceil((addressable.addressWidth.power() / cellsPerRow).toDouble()).toInt()
+	private val rowCount: Int = ceil((addressable.addressWidth.power() / cellsPerRow.toULong()).toDouble()).toInt()
 
 	override fun toString(): String {
 		return Translations.getString("antares.memory.layout.columns", cellsPerRow)
@@ -109,7 +109,7 @@ private abstract class AbstractAddressableTableModel(
 
 	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
 
-	protected fun getCellValue(rowIndex: Int, columnIndex: Int): Long =
+	protected fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
 		addressable.dataAt(getCellAddress(rowIndex, columnIndex))
 }
 

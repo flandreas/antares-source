@@ -120,7 +120,7 @@ class ConstantView(
 	/** ---- UI properties */
 
 	var value: Long
-		get() = model.value.getValue()
+		get() = model.value.getValue().toLong()
 		set(newValue) {
 			invalidate()
 			model.value = DigitalSignalFactory.of(bitWidth, newValue)

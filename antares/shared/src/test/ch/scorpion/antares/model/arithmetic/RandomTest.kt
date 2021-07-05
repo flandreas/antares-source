@@ -22,7 +22,7 @@ class RandomTest {
 	@Test
 	fun shouldProduceRandom() {
 		val random = Random(valueProvider::provide)
-		valueProvider.nextValue = 42
+		valueProvider.nextValue = 42UL
 
 		random.getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.of(Bit.True), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
@@ -33,11 +33,11 @@ class RandomTest {
 	@Test
 	fun shouldProduceOnlyOnRaisingEdge() {
 		val random = Random(valueProvider::provide)
-		valueProvider.nextValue = 42
+		valueProvider.nextValue = 42UL
 		random.getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.of(Bit.True), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
-		valueProvider.nextValue = 99
+		valueProvider.nextValue = 99UL
 		random.getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.of(Bit.False), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
@@ -45,9 +45,9 @@ class RandomTest {
 	}
 
 	private class RandomProvider {
-		var nextValue: Long = 0
+		var nextValue: ULong = 0UL
 
-		fun provide (@Suppress("UNUSED_PARAMETER") max: Long): Long {
+		fun provide (@Suppress("UNUSED_PARAMETER") max: ULong): ULong {
 			return nextValue
 		}
 	}

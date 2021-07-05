@@ -4,7 +4,6 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +32,7 @@ class ConcentratorTest {
         concentrator.act(signalHandler, concentrator.createActorData(concentrator.getInput<DigitalSignal>(5)))
 
         assertEquals(BitWidth.BW_4, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).bitWidth)
-        assertEquals(6L, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).getValue())
+        assertEquals(6UL, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).getValue())
     }
 
     @Test
@@ -47,6 +46,6 @@ class ConcentratorTest {
         concentrator.act(signalHandler, concentrator.createActorData(concentrator.getInput<DigitalSignal>(5)))
 
         assertEquals(BitWidth.BW_8, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).bitWidth)
-        assertEquals(254L, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).getValue())
+        assertEquals(254UL, (concentrator.getOutput<Any>().getOutgoingSignal() as DigitalSignal).getValue())
     }
 }

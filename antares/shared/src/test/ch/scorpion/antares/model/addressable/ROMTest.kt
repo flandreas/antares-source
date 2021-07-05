@@ -27,18 +27,18 @@ class ROMTest {
 
     @Test
     fun shouldReadAndWrite() {
-        rom.write(0, 99)
-        assertEquals(99L, rom.read(0))
+        rom.write(0, 99UL)
+        assertEquals(99UL, rom.read(0))
     }
 
     @Test
     fun shouldReadZeroFromUnwrittenAddress() {
-        assertEquals(0L, rom.read(1234))
+        assertEquals(0UL, rom.read(1234))
     }
 
     @Test
     fun shouldReadWhenCS() {
-        rom.write(1, 99)
+        rom.write(1, 99UL)
         rom.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_1, 1L), signalHandler)
 
@@ -50,7 +50,7 @@ class ROMTest {
 
     @Test
     fun shouldBeUndefinedWithoutCS() {
-        rom.write(1, 99)
+        rom.write(1, 99UL)
         rom.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_1, 0L), signalHandler)
 
@@ -62,7 +62,7 @@ class ROMTest {
 
     @Test
     fun shouldBeErrorWithUndefinedAddress() {
-        rom.write(1, 99)
+        rom.write(1, 99UL)
         rom.getAddressInput().setIncomingSignal(DigitalSignalFactory.undefined(BitWidth.BW_8), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_1, 1L), signalHandler)
 
@@ -82,10 +82,10 @@ class ROMTest {
 
     @Test
     fun shouldGetCurrentData() {
-        rom.write(1, 255)
+        rom.write(1, 255UL)
         rom.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
 	    rom.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_1, 1L), signalHandler)
 	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
-        assertEquals(255L, rom.data)
+        assertEquals(255UL, rom.data)
     }
 }

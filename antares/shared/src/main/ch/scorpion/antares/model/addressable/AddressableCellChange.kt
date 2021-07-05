@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /** Represents the change of the value of an [Addressable] cell by the user.*/
-data class AddressableCellChange(val address: Int, val newValue: Long, val origValue: Long)
+data class AddressableCellChange(val address: Int, val newValue: ULong, val origValue: ULong)
 
 class AddressableCellChangeCommand(
 	private val controller: ApplicationDataViewController,

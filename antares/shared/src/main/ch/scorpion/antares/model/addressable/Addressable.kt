@@ -29,7 +29,7 @@ interface Addressable : Vertice {
     val maxAddress: Int
 
     /** Returns the current data at [currentAddress].*/
-    val data: Long
+    val data: ULong
 
     /** Contains the width of the cell's addresses.*/
     var addressWidth: BitWidth
@@ -53,9 +53,9 @@ interface Addressable : Vertice {
 	fun update()
 
     /** Returns the data at the specified address.*/
-    fun dataAt(address: Int): Long
+    fun dataAt(address: Int): ULong
 
-	fun setDataAt(address: Int, value: Long, signalHandler: SignalHandler?)
+	fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?)
 
 	/** Returns the comment at the specified address.*/
 	fun commentAt(address: Int): String?

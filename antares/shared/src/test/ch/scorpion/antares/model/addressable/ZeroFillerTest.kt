@@ -19,40 +19,40 @@ class ZeroFillerTest {
     @Test
     fun shouldFillLeadingZero() {
         val memory = Memory(8)
-        memory.write(1, 11)
+        memory.write(1, 11UL)
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertEquals(MemoryCell(0, 0L), iter.next())
-        assertEquals(MemoryCell(1, 11L), iter.next())
+        assertEquals(MemoryCell(0, 0UL), iter.next())
+        assertEquals(MemoryCell(1, 11UL), iter.next())
         assertFalse(iter.hasNext())
     }
 
     @Test
     fun shouldAcceptLeadingValue() {
         val memory = Memory(8)
-        memory.write(0, 5)
-        memory.write(1, 11)
+        memory.write(0, 5UL)
+        memory.write(1, 11UL)
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertEquals(MemoryCell(0, 5L), iter.next())
-        assertEquals(MemoryCell(1, 11L), iter.next())
+        assertEquals(MemoryCell(0, 5UL), iter.next())
+        assertEquals(MemoryCell(1, 11UL), iter.next())
         assertFalse(iter.hasNext())
     }
 
     @Test
     fun shouldFillIntermediateZeros() {
         val memory = Memory(8)
-        memory.write(0, 5)
-        memory.write(3, 11)
+        memory.write(0, 5UL)
+        memory.write(3, 11UL)
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertEquals(MemoryCell(0, 5L), iter.next())
-        assertEquals(MemoryCell(1, 0L), iter.next())
-        assertEquals(MemoryCell(2, 0L), iter.next())
-        assertEquals(MemoryCell(3, 11L), iter.next())
+        assertEquals(MemoryCell(0, 5UL), iter.next())
+        assertEquals(MemoryCell(1, 0UL), iter.next())
+        assertEquals(MemoryCell(2, 0UL), iter.next())
+        assertEquals(MemoryCell(3, 11UL), iter.next())
         assertFalse(iter.hasNext())
     }
 }

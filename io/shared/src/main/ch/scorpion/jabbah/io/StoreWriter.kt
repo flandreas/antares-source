@@ -72,6 +72,8 @@ interface StoreWriter : GlobalIdentityProvider {
      */
     fun writeLong(name: String, value: Long)
 
+    fun writeULong(name: String, value: ULong)
+
     /** Writes a list of [Point2D] as an attribute with the given name.*/
     fun writePoints(name: String, points: List<Point2D>)
 

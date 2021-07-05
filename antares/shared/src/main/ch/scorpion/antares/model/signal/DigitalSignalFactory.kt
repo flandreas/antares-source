@@ -6,7 +6,9 @@ object DigitalSignalFactory {
 
 	fun of(bit: Bit): DigitalSignal = Word.of(bit)
 
-	fun of(bitWidth: BitWidth, value: Long?): DigitalSignal = Word.of(bitWidth, value)
+	fun of(bitWidth: BitWidth, value: Long?): DigitalSignal = of(bitWidth, value?.toULong())
+
+	fun of(bitWidth: BitWidth, value: ULong?): DigitalSignal = Word.of(bitWidth, value)
 
 	fun of(words: List<DigitalSignal>): DigitalSignal = Word.of(words)
 

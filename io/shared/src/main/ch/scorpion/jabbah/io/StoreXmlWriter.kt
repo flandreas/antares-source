@@ -95,6 +95,10 @@ class StoreXmlWriter(
 		xmlWriter.setAttributeValue(name, value.toString())
 	}
 
+	override fun writeULong(name: String, value: ULong) {
+		xmlWriter.setAttributeValue(name, value.toString())
+	}
+
 	override fun writePoints(name: String, points: List<Point2D>) {
 		val list = StringBuilder()
 		for (i in 0 until points.size) {

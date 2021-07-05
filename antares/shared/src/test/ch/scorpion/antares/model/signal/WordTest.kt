@@ -19,29 +19,29 @@ class WordTest {
 
 	@Test
 	fun shouldBuildFromWords() {
-		val list = listOf(Word.of(BW_2, 1L), DigitalSignalFactory.of(BW_2, 2L))
-		assertEquals(9L, Word.of(list).getValue())
+		val list = listOf(Word.of(BW_2, 1UL), DigitalSignalFactory.of(BW_2, 2L))
+		assertEquals(9UL, Word.of(list).getValue())
 	}
 
 	@Test
 	fun shouldBeEqual() {
 		assertEquals(Word.of(true), DigitalSignalFactory.of(true))
-		assertEquals(Word.of(BW_4, 7L), DigitalSignalFactory.of(BW_4, 7L))
+		assertEquals(Word.of(BW_4, 7UL), DigitalSignalFactory.of(BW_4, 7L))
 	}
 
 	@Test
 	fun shouldNotBeEqual() {
 		assertNotEquals(Word.of(true), DigitalSignalFactory.of(false))
-		assertNotEquals(Word.of(BW_4, 7L), DigitalSignalFactory.of(BW_4, 6L))
-		assertNotEquals(Word.of(BW_8, 7L), DigitalSignalFactory.of(BW_4, 7L))
+		assertNotEquals(Word.of(BW_4, 7UL), DigitalSignalFactory.of(BW_4, 6L))
+		assertNotEquals(Word.of(BW_8, 7UL), DigitalSignalFactory.of(BW_4, 7L))
 	}
 
 	@Test
 	fun shouldRetrieveBitAt() {
-		assertEquals(True, Word.of(BW_4, 255L).bitAt(0))
-		assertEquals(True, Word.of(BW_4, 255L).bitAt(3))
-		assertEquals(True, Word.of(BW_4, 1L).bitAt(0))
-		assertEquals(False, Word.of(BW_4, 2L).bitAt(0))
+		assertEquals(True, Word.of(BW_4, 255UL).bitAt(0))
+		assertEquals(True, Word.of(BW_4, 255UL).bitAt(3))
+		assertEquals(True, Word.of(BW_4, 1UL).bitAt(0))
+		assertEquals(False, Word.of(BW_4, 2UL).bitAt(0))
 	}
 
 	@Test
@@ -61,21 +61,21 @@ class WordTest {
 
 	@Test
 	fun shouldExtractSubwordValue() {
-		assertEquals(15L, DigitalSignalFactory.of(BW_4, 15L).getSubwordValue(BW_4, 0))
-		assertEquals(15L, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 0))
-		assertEquals(15L, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 1))
-		assertEquals(0L, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 0))
-		assertEquals(0L, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 1))
-		assertEquals(7L, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 0))
-		assertEquals(0L, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 1))
-		assertEquals(1L, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 0))
-		assertEquals(2L, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 1))
+		assertEquals(15UL, DigitalSignalFactory.of(BW_4, 15L).getSubwordValue(BW_4, 0))
+		assertEquals(15UL, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 0))
+		assertEquals(15UL, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 1))
+		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 0))
+		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 1))
+		assertEquals(7UL, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 0))
+		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 1))
+		assertEquals(1UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 0))
+		assertEquals(2UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 1))
 	}
 
 	@Test
 	fun shouldExtractSubwordFromBitWidth2() {
-		assertEquals(0, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 0))
-		assertEquals(1, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 1))
+		assertEquals(0UL, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 0))
+		assertEquals(1UL, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 1))
 	}
 
 	@Test
@@ -178,14 +178,14 @@ class WordTest {
 	@Test
 	fun shouldExpandToWidth() {
 		val expandedWord = DigitalSignalFactory.of(BW_4, 1L).ofWidth(BW_8)
-		assertEquals(1, expandedWord.getValue())
+		assertEquals(1UL, expandedWord.getValue())
 		assertEquals(BW_8, expandedWord.bitWidth)
 	}
 
 	@Test
 	fun shouldReduceToWidth() {
 		val reducedWord = DigitalSignalFactory.of(BW_8, 1L).ofWidth(BW_4)
-		assertEquals(1, reducedWord.getValue())
+		assertEquals(1UL, reducedWord.getValue())
 		assertEquals(BW_4, reducedWord.bitWidth)
 	}
 

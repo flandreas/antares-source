@@ -31,10 +31,10 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, data)
 
-		assertEquals("40".toLong(16), memory.read(0))
+		assertEquals("40".toULong(16), memory.read(0))
 		assertEquals("Comment 1", memory.readComment(0))
-		assertEquals("F7".toLong(16), memory.read(1))
-		assertEquals("0A".toLong(16), memory.read(2))
+		assertEquals("F7".toULong(16), memory.read(1))
+		assertEquals("0A".toULong(16), memory.read(2))
 		assertEquals("Comment 2", memory.readComment(2))
 	}
 
@@ -49,10 +49,10 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, data)
 
-		assertEquals("40".toLong(16), memory.read(0))
+		assertEquals("40".toULong(16), memory.read(0))
 		assertEquals("Comment 1", memory.readComment(0))
-		assertEquals("F7".toLong(16), memory.read(1))
-		assertEquals("0A".toLong(16), memory.read(2))
+		assertEquals("F7".toULong(16), memory.read(1))
+		assertEquals("0A".toULong(16), memory.read(2))
 		assertEquals("Comment 2", memory.readComment(2))
 	}
 
@@ -68,11 +68,11 @@ class MemoryDumpTest {
     @Test
     fun shouldWriteArbitrary8BitData() {
         val memory = Memory()
-        memory.write(0, 4)
-        memory.write(1, 255)
-        memory.write(2, 255)
-        memory.write(8, 1)
-        memory.write(10, 2)
+        memory.write(0, 4UL)
+        memory.write(1, 255UL)
+        memory.write(2, 255UL)
+        memory.write(8, 1UL)
+        memory.write(10, 2UL)
 
         assertEquals("04 FF FF 00 00 00 00 00 01 00 02", MemoryDump.write(memory, BitWidth.BW_8))
     }
@@ -82,11 +82,11 @@ class MemoryDumpTest {
     @Test
     fun shouldWriteArbitrary16BitData() {
         val memory = Memory()
-        memory.write(0, 4)
-        memory.write(1, 65535)
-        memory.write(2, 255)
-        memory.write(8, 1)
-        memory.write(10, 138)
+        memory.write(0, 4UL)
+        memory.write(1, 65535UL)
+        memory.write(2, 255UL)
+        memory.write(8, 1UL)
+        memory.write(10, 138UL)
 
         assertEquals("0004 FFFF 00FF 0000 0000 0000 0000 0000 0001 0000 008A", MemoryDump.write(memory, BitWidth.BW_16))
     }
@@ -96,18 +96,18 @@ class MemoryDumpTest {
     @Test
     fun shouldClearBeforeRead() {
         val memory = Memory()
-        memory.write(10, 255)
+        memory.write(10, 255UL)
 
         MemoryDump.read(memory, "01 02 03")
 
-        assertEquals(0L, memory.read(10))
+        assertEquals(0UL, memory.read(10))
     }
 
     @Test
     fun shouldReadEmptyData() {
         val memory = Memory(8)
         MemoryDump.read(memory, "")
-        assertEquals(0L, memory.read(0))
+        assertEquals(0UL, memory.read(0))
     }
 
     @Test
@@ -116,14 +116,14 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "04 00 FF 1A 00 00 08")
 
-        assertEquals(4L, memory.read(0))
-        assertEquals(0L, memory.read(1))
-        assertEquals(255L, memory.read(2))
-        assertEquals(26L, memory.read(3))
-        assertEquals(0L, memory.read(4))
-        assertEquals(0L, memory.read(5))
-        assertEquals(8L, memory.read(6))
-        assertEquals(0L, memory.read(7))
+        assertEquals(4UL, memory.read(0))
+        assertEquals(0UL, memory.read(1))
+        assertEquals(255UL, memory.read(2))
+        assertEquals(26UL, memory.read(3))
+        assertEquals(0UL, memory.read(4))
+        assertEquals(0UL, memory.read(5))
+        assertEquals(8UL, memory.read(6))
+        assertEquals(0UL, memory.read(7))
     }
 
 	@Test
@@ -145,14 +145,14 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "0004 FFFF 00FF 001A 0000 0000 0008")
 
-        assertEquals(4L, memory.read(0))
-        assertEquals(65535L, memory.read(1))
-        assertEquals(255L, memory.read(2))
-        assertEquals(26L, memory.read(3))
-        assertEquals(0L, memory.read(4))
-        assertEquals(0L, memory.read(5))
-        assertEquals(8L, memory.read(6))
-        assertEquals(0L, memory.read(7))
+        assertEquals(4UL, memory.read(0))
+        assertEquals(65535UL, memory.read(1))
+        assertEquals(255UL, memory.read(2))
+        assertEquals(26UL, memory.read(3))
+        assertEquals(0UL, memory.read(4))
+        assertEquals(0UL, memory.read(5))
+        assertEquals(8UL, memory.read(6))
+        assertEquals(0UL, memory.read(7))
     }
 
     /** ---- Read 32 bit tests */
@@ -180,9 +180,9 @@ class MemoryDumpTest {
 	@Test
 	fun shouldWriteCellComment() {
 		val memory = Memory()
-		memory.write(0, 4)
-		memory.writeCommentedValue(1, 255, "Comment1")
-		memory.write(2, 8)
+		memory.write(0, 4UL)
+		memory.writeCommentedValue(1, 255UL, "Comment1")
+		memory.write(2, 8UL)
 
 		assertEquals("04 FF:Comment1 08", MemoryDump.write(memory, BitWidth.BW_8))
 	}
@@ -193,18 +193,18 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, "04 FF:Comment1 08")
 
-		assertEquals(4L, memory.read(0))
-		assertEquals(255L, memory.read(1))
+		assertEquals(4UL, memory.read(0))
+		assertEquals(255UL, memory.read(1))
 		assertEquals("Comment1", memory.readComment(1))
-		assertEquals(8L, memory.read(2))
+		assertEquals(8UL, memory.read(2))
 	}
 
 	@Test
 	fun shouldWriteEscapedCellComment() {
 		val memory = Memory()
-		memory.write(0, 4)
-		memory.writeCommentedValue(1, 255, "Bla:Blu Bli")
-		memory.write(2, 8)
+		memory.write(0, 4UL)
+		memory.writeCommentedValue(1, 255UL, "Bla:Blu Bli")
+		memory.write(2, 8UL)
 
 		assertEquals("04 FF:Bla\\:Blu\\ Bli 08", MemoryDump.write(memory, BitWidth.BW_8))
 	}
@@ -215,10 +215,10 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, "04 FF:Bla\\:Blu\\ Bli 08")
 
-		assertEquals(4L, memory.read(0))
-		assertEquals(255L, memory.read(1))
+		assertEquals(4UL, memory.read(0))
+		assertEquals(255UL, memory.read(1))
 		assertEquals("Bla:Blu Bli", memory.readComment(1))
-		assertEquals(8L, memory.read(2))
+		assertEquals(8UL, memory.read(2))
 	}
 
 	@Test
@@ -251,7 +251,7 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, data)
 
-		assertEquals("7000".toLong(16), memory.read(0))
+		assertEquals("7000".toULong(16), memory.read(0))
 		assertEquals("Initialize I at 0800", memory.readComment(0))
 	}
 }

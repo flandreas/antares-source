@@ -49,7 +49,7 @@ object MemoryDump {
 	 */
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
-		val mask = BitOperation.power(bitWidth.width.toByte()) - 1L
+		val mask = BitOperation.power(bitWidth.width.toByte()) - 1UL
 		val length = max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
@@ -111,7 +111,7 @@ object MemoryDump {
 		for (line in removeCommentLines(dump).split('\n')) {
 			val commentDelimiterIndex = line.indexOf(CELL_COMMENT_DELIMITER)
 			val comment: String?
-			val value: Long
+			val value: ULong
 			if (commentDelimiterIndex == -1) {
 				for (cell in line.split(CELL_DELIMITER)) {
 					memory.write(address++, BitOperation.hexToLong(cell))
@@ -124,7 +124,7 @@ object MemoryDump {
 		}
 	}
 
-	private fun writePaddedHex(value: Long, mask: Long, length: Int, builder: StringBuilder) {
+	private fun writePaddedHex(value: ULong, mask: ULong, length: Int, builder: StringBuilder) {
 		builder.append(BitOperation.longToHex(value and mask).uppercase().padStart(length, '0'))
 	}
 

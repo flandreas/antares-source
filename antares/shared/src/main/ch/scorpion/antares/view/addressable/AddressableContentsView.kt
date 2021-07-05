@@ -205,7 +205,7 @@ class AddressableContentsView(
 
 		// Draw address
 		addressLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).disabledTextColor
-		addressLabel.text = BitOperation.longToHexPadded(address.toLong(), addressable.addressWidth)
+		addressLabel.text = BitOperation.longToHexPadded(address.toULong(), addressable.addressWidth)
 		addressLabel.location = Point2D(x, y)
 		addressLabel.draw(context)
 

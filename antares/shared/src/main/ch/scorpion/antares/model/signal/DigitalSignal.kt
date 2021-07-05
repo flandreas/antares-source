@@ -33,7 +33,7 @@ interface DigitalSignal {
 
     fun getSubword(subwordWidth: BitWidth, index: Int): DigitalSignal
 
-	fun getSubwordValue(subwordWidth: BitWidth, index: Int): Long?
+	fun getSubwordValue(subwordWidth: BitWidth, index: Int): ULong?
 
     /**
      * Returns the value of this [DigitalSignal] as an Integer, or `null` if any of the [Bit]s is
@@ -41,7 +41,7 @@ interface DigitalSignal {
      */
     fun toInt(): Int?
 
-    fun toLong(): Long?
+    fun toLong(): ULong?
 
 	/**
 	 * Creates a copy of this [DigitalSignal] by replacing all [Bit]s with [replacement]
@@ -76,7 +76,7 @@ interface DigitalSignal {
 	 */
 	fun withBit(index: Int, bit: Bit): DigitalSignal
 
-	fun getValue(): Long
+	fun getValue(): ULong
 
 	/**
 	 * Creates a copy of this [DigitalSignal] and sets the specified sub-word in the copy.
