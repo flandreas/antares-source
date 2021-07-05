@@ -146,7 +146,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 				if (singleBit) {
 					drawSingleBitRightBorder(context, effNextX, y)
 				} else {
-					multiBitLabel.text = entry.signal.toHexString()
+					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
 					multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
 					drawMultiBitRightBorder(context, effNextX)
@@ -163,7 +163,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 				if (singleBit) {
 					drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 				} else {
-					multiBitLabel.text = entry.signal.toHexString()
+					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
 					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
 					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX, first = false)

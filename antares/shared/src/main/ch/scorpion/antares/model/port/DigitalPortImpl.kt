@@ -221,7 +221,7 @@ open class DigitalPortImpl(
 
 	override val isOutputPartiallyUndefined: Boolean get() {
 		val outgoingSignal = getOutgoingSignal()
-		return outgoingSignal == null || outgoingSignal.containsUndefinedBit()
+		return outgoingSignal == null || outgoingSignal.isPartiallyUndefined
 	}
 
 	override fun isOutgoingSignalConsistentWith(signal: DigitalSignal?): Boolean =

@@ -107,7 +107,7 @@ class AndGateView(
 		}
 
 		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-			context.g.color = model.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
+			context.g.color = model.getOutput<DigitalSignal>().getOutgoingSignal()!!.color.foregroundColor
 		} else {
 			context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
 		}

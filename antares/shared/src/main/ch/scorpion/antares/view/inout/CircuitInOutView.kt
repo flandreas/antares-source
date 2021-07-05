@@ -295,12 +295,12 @@ class CircuitInOutView(
 	private fun drawSimulated(context: DrawContext) {
 		if (model.signal!!.bitWidth.width > 1) {
 			drawEdited(context,
-				transparent.applyTo(model.signal!!.getColor().foregroundColor),
+				transparent.applyTo(model.signal!!.color.foregroundColor),
 				transparent.applyTo(propertiesBackgroundColor))
 		} else {
 			drawEdited(context,
-				transparent.applyTo(model.signal!!.getColor().backgroundColor),
-				transparent.applyTo(model.signal!!.getColor().foregroundColor))
+				transparent.applyTo(model.signal!!.color.backgroundColor),
+				transparent.applyTo(model.signal!!.color.foregroundColor))
 		}
 
 		val translation = getArrowPathTranslation()

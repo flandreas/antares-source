@@ -110,7 +110,7 @@ class PullResistorView(
 		}
 
 	private val netExecutionColor: CompositeColor get() =
-		model.getOutputPort().net?.signal?.getColor() ?: Bit.Undefined.color
+		model.getOutputPort().net?.signal?.color ?: Bit.Undefined.color
 
 	private fun drawPullDirection(context: DrawContext) {
 		when(pullDirection) {

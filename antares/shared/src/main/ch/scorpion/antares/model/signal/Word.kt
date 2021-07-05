@@ -11,7 +11,9 @@ import kotlin.math.min
  *
  * @property bits Holds all [Bit]s of this [Word], with the least priority [Bit] at index `0`.
  */
-internal data class Word(override val bits: List<Bit>) : DigitalSignal {
+internal data class Word(
+	override val bits: List<Bit>
+) : DigitalSignal {
 
 	override val bitWidth: BitWidth = BitWidth.of(bits.size)
 
@@ -110,57 +112,63 @@ internal data class Word(override val bits: List<Bit>) : DigitalSignal {
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return if (containsUndefinedBit()) {
-			toBinaryString()
+		return if (isPartiallyUndefined) {
+			binaryString
 		} else {
-			toHexString()
+			hexString
 		}
 	}
 
 	/** ---- [DigitalSignal] interface */
 
-	override fun toHexString(): String {
+	override val hexString: String by lazy {
 		val sb = StringBuilder()
 		for (i in max(0, bits.size / 4 - 1) downTo 0) {
 			sb.append(nibbleToHexChar(i))
 		}
-		return sb.toString().padStart(bitWidth.width / 4, '0')
+		sb.toString().padStart(bitWidth.width / 4, '0')
 	}
 
 	override val isFullyUndefined: Boolean get() = isAllOf(Bit.Undefined)
 
 	override val isPartiallyUndefined: Boolean get() = undefined
 
-	override fun toBinaryString(): String {
+	override val hasError: Boolean get() = error
+
+	override val binaryString: String by lazy {
 		val sb = StringBuilder()
 		for (i in bits.size - 1 downTo 0) {
 			sb.append(bits[i].toBinaryString())
 		}
-		return sb.toString()
+		sb.toString()
 	}
 
-	override fun toDecimalString(): String = toLong()?.toString() ?:
+	override val decimalString: String by lazy {
+		toLong()?.toString() ?:
 		if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
+	}
 
-	override fun getColor(): CompositeColor {
+	override val color: CompositeColor by lazy calcColor@ {
 		if (bitWidth == BitWidth.BW_1) {
-			return bitAt(0).color
+			return@calcColor bitAt(0).color
 		}
 		if (zero) {
-			return Themes.get<AntaresTheme>().wordZero
+			return@calcColor Themes.get<AntaresTheme>().wordZero
 		}
 		if (error) {
-			return Themes.get<AntaresTheme>().error
+			return@calcColor Themes.get<AntaresTheme>().error
 		}
 		if (isFullyUndefined) {
-			return Themes.get<AntaresTheme>().undefined
+			return@calcColor Themes.get<AntaresTheme>().undefined
 		}
-		return Themes.get<AntaresTheme>().word
+		return@calcColor Themes.get<AntaresTheme>().word
 	}
 
-	//override fun getBitWidth(): BitWidth = bitWidth
+	private val notValue: DigitalSignal by lazy {
+		Word((0 until bitWidth.width).map { bitAt(it).not() })
+	}
 
-	override fun not(): DigitalSignal = Word((0 until bitWidth.width).map { bitAt(it).not() })
+	override fun not(): DigitalSignal = notValue
 
 	override fun flip(index: Int): DigitalSignal =
 		Word((0 until bitWidth.width).map {
@@ -171,26 +179,28 @@ internal data class Word(override val bits: List<Bit>) : DigitalSignal {
 
 	override fun bitAt(index: Int): Bit = bits[index]
 
-	override fun toLong(): Long? {
+	private val longValue: Long? by lazy calcLong@ {
 		var value = 0L
 		var factor = 1
 		for (bit in bits) {
 			if (!bit.isDefined) {
-				return null
+				return@calcLong null
 			}
 			if (bit.isSet) {
 				value += factor
 			}
 			factor *= 2
 		}
-		return value
+		return@calcLong value
 	}
+
+	override fun toLong(): Long? = longValue
 
 	override fun toInt(): Int? = toLong()?.toInt()
 
 	/** ---- [Word] */
 
-	override fun getValue(): Long = getSubwordValue(bitWidth, 0)!!
+	override fun getValue(): Long = longValue!!
 
 	override fun isAllOf(bit: Bit): Boolean = bits.all { it == bit }
 
@@ -236,8 +246,8 @@ internal data class Word(override val bits: List<Bit>) : DigitalSignal {
 		val subword = getSubword(BitWidth.BW_4, index)
 		return when {
 			subword.isAllOf(Bit.Undefined) -> Bit.ALL_UNDEFINED_CHAR
-			subword.containsErrorBit() -> Bit.ERROR_CHAR
-			subword.containsUndefinedBit() -> Bit.SOME_UNDEFINED_CHAR
+			subword.hasError -> Bit.ERROR_CHAR
+			subword.isPartiallyUndefined -> Bit.SOME_UNDEFINED_CHAR
 			// Long.toString(radix:Int) is only supported on JVM
 			else -> BitOperation.hexDigit(subword.toInt()!!.toLong())
 		}
@@ -282,10 +292,6 @@ internal data class Word(override val bits: List<Bit>) : DigitalSignal {
 		replaceFromSubword(resultBits, subword as Word, index) { resultBits[it] == Bit.Undefined }
 		return Word(resultBits)
 	}
-
-	override fun containsUndefinedBit(): Boolean = bits.any { it == Bit.Undefined }
-
-	override fun containsErrorBit(): Boolean = bits.any { it == Bit.Error }
 
 	/**
 	 * Creates a copy of this [Word]'s value and expands or reduces it to the specified [BitWidth].

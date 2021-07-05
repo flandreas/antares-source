@@ -96,7 +96,7 @@ class DigitView(
 		        context.g.color = if (inactive) {
 			        transparent.applyTo(disabledColor.foregroundColor)
 		        } else {
-			        transparent.applyTo(signalDigit.getColor().foregroundColor)
+			        transparent.applyTo(signalDigit.color.foregroundColor)
 		        }
 		        context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
 	        }
@@ -108,7 +108,7 @@ class DigitView(
             }
         }
         label.color = transparent.applyTo(when {
-            isOn -> signalDigit.getColor().textColor
+            isOn -> signalDigit.color.textColor
             context.useContextColors -> context.color!!.textColor
             else -> oldColor
         })

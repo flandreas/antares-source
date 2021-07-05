@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 interface DigitalSignal {
@@ -11,15 +10,17 @@ interface DigitalSignal {
 
 	val isPartiallyUndefined: Boolean
 
+	val hasError: Boolean
+
 	val bits: List<Bit>
 
-    fun toHexString(): String
+	val hexString: String
 
-    fun toDecimalString(): String
+	val binaryString: String
 
-    fun toBinaryString(): String
+	val decimalString: String
 
-    fun getColor(): CompositeColor
+	val color: CompositeColor
 
     operator fun not(): DigitalSignal
 
@@ -91,10 +92,6 @@ interface DigitalSignal {
 	fun shiftLeft(bitCount: Int = 1): DigitalSignal
 
 	fun shiftRight(bitCount: Int = 1): DigitalSignal
-
-	fun containsUndefinedBit(): Boolean
-
-	fun containsErrorBit(): Boolean
 
 	fun isAllOf(bit: Bit): Boolean
 

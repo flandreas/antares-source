@@ -53,7 +53,7 @@ enum class TunnelViewFace(val customName: String) {
 			context.g.drawRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().getColor().foregroundColor)
+				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().color.foregroundColor)
 			}
 
 			// Draw tunnel entry
@@ -91,7 +91,7 @@ enum class TunnelViewFace(val customName: String) {
 			context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().getColor().foregroundColor)
+				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().color.foregroundColor)
 			} else {
 				context.g.color = if (context.useContextColors) {
 					context.color!!.backgroundColor

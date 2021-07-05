@@ -9,7 +9,7 @@ class Word(val word: ch.scorpion.antares.model.signal.DigitalSignal) {
 
 	fun toInt(): Int = word.toInt()!!
 
-	fun toHexString(): String = word.toHexString()
+	fun toHexString(): String = word.hexString
 
 	fun not(): Word = Word(word.not() as ch.scorpion.antares.model.signal.Word)
 

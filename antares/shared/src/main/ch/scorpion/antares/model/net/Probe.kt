@@ -54,7 +54,7 @@ class Probe(
 		eventBus.post(LogEvent(
 			source = this,
 			name = StringUtils.orElse(name, "<Unknown>"),
-			value = data.getSignal<DigitalSignal>(1)?.toHexString() ?: "<empty>",
+			value = data.getSignal<DigitalSignal>(1)?.hexString ?: "<empty>",
 			time = time))
 	}
 

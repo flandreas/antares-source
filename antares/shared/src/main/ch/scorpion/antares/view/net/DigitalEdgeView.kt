@@ -65,7 +65,7 @@ class DigitalEdgeView(
 			if (model.isError) {
 				Themes.get<AntaresTheme>().error
 			} else {
-				val signalColor = model.signal!!.getColor()
+				val signalColor = model.signal!!.color
 				if (styling.isArea) {
 					CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
 				} else {

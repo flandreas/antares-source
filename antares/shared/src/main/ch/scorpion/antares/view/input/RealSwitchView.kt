@@ -125,7 +125,7 @@ class RealSwitchView(
 	private fun getPortColor(portId: Int, context: DrawContext): Color {
 		return if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			val port = (model.getPort<DigitalSignal>(portId) as DigitalPort)
-			port.net?.signal?.getColor()?.foregroundColor ?: DigitalSignalFactory.undefined(BitWidth.BW_1).getColor().foregroundColor
+			port.net?.signal?.color?.foregroundColor ?: DigitalSignalFactory.undefined(BitWidth.BW_1).color.foregroundColor
 		} else {
 			// Draw in edge color and not in vertice color
 			transparent.applyTo(context.choose(Themes.get<AntaresTheme>().edge.color).foregroundColor)

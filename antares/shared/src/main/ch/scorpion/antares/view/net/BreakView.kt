@@ -95,14 +95,14 @@ class BreakView(
 
 	private fun getFillColor(context: DrawContext): Color =
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			transparent.applyTo(model.inputSignal!!.getColor().foregroundColor)
+			transparent.applyTo(model.inputSignal!!.color.foregroundColor)
 		} else {
 			getApplicableBackgroudColor(context)
 		}
 
 	private fun getBorderColor(context: DrawContext): Color =
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			transparent.applyTo(model.inputSignal!!.getColor().backgroundColor)
+			transparent.applyTo(model.inputSignal!!.color.backgroundColor)
 		} else {
 			getApplicableForegroundColor(context)
 		}

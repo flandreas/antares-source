@@ -183,9 +183,9 @@ class DigitalPortView(
 
 		if (appContext.showNetState) {
 			context.g.color = transparent.applyTo(when (port.portType) {
-				PortType.INOUT -> drawableInOutSignal.getColor().foregroundColor
-				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
-				PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
+				PortType.INOUT -> drawableInOutSignal.color.foregroundColor
+				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.color.foregroundColor
+				PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.color.foregroundColor
 			})
 		} else {
 			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor

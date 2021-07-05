@@ -128,7 +128,7 @@ open class CircuitElemModelBridge(
 	/** Checks whether any [Bit] in the specified [Word] is undefined.*/
 	@Suppress("unused")
 	fun anyBitUndefined(word: Word): Boolean {
-		return word.word.containsUndefinedBit()
+		return word.word.isPartiallyUndefined
 	}
 
 	@Suppress("unused")

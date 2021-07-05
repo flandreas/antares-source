@@ -173,7 +173,7 @@ object GateMnemonic {
 		val portX = gateView.getPortViews()[0].locationX.toInt() - gateView.x
 
 		val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
-		val color2 = if (isExec) signalOut.getColor().foregroundColor else foreground
+		val color2 = if (isExec) signalOut.color.foregroundColor else foreground
 
 		// Input 1
 		context.g.stroke = LINE_STROKE

@@ -111,27 +111,27 @@ class WordTest {
 
 	@Test
 	fun shouldRepresentAsBinary() {
-		assertEquals("0001", DigitalSignalFactory.of(BW_4, 1L).toBinaryString())
-		assertEquals("0110", DigitalSignalFactory.of(BW_4, 6L).toBinaryString())
-		assertEquals("00000000", DigitalSignalFactory.of(BW_8, 0L).toBinaryString())
+		assertEquals("0001", DigitalSignalFactory.of(BW_4, 1L).binaryString)
+		assertEquals("0110", DigitalSignalFactory.of(BW_4, 6L).binaryString)
+		assertEquals("00000000", DigitalSignalFactory.of(BW_8, 0L).binaryString)
 	}
 
 	@Test
 	fun shouldRepresentAsDecimal() {
-		assertEquals("6", DigitalSignalFactory.of(BW_4, 6L).toDecimalString())
-		assertEquals("6", DigitalSignalFactory.of(BW_8, 6L).toDecimalString())
+		assertEquals("6", DigitalSignalFactory.of(BW_4, 6L).decimalString)
+		assertEquals("6", DigitalSignalFactory.of(BW_8, 6L).decimalString)
 	}
 
 	@Test
 	fun shouldRepresentAsHex() {
-		assertEquals("Z", DigitalSignalFactory.of(Undefined).toHexString())
-		assertEquals("z", Word(listOf(False, Undefined)).toHexString())
-		assertEquals("0", DigitalSignalFactory.of(BW_1, 0L).toHexString())
-		assertEquals("3", DigitalSignalFactory.of(BW_2, 3L).toHexString())
-		assertEquals("F", DigitalSignalFactory.of(BW_4, 15L).toHexString())
-		assertEquals("FF", DigitalSignalFactory.of(BW_8, 255L).toHexString())
-		assertEquals("0F", DigitalSignalFactory.of(BW_8, 15L).toHexString())
-		assertEquals("ZZ", DigitalSignalFactory.of(BW_8, null).toHexString())
+		assertEquals("Z", DigitalSignalFactory.of(Undefined).hexString)
+		assertEquals("z", Word(listOf(False, Undefined)).hexString)
+		assertEquals("0", DigitalSignalFactory.of(BW_1, 0L).hexString)
+		assertEquals("3", DigitalSignalFactory.of(BW_2, 3L).hexString)
+		assertEquals("F", DigitalSignalFactory.of(BW_4, 15L).hexString)
+		assertEquals("FF", DigitalSignalFactory.of(BW_8, 255L).hexString)
+		assertEquals("0F", DigitalSignalFactory.of(BW_8, 15L).hexString)
+		assertEquals("ZZ", DigitalSignalFactory.of(BW_8, null).hexString)
 	}
 
 	@Test
@@ -149,18 +149,18 @@ class WordTest {
 
 	@Test
 	fun shouldCheckZeroWithChangedBit() {
-		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 0L).withBit(0, True).getColor())
-		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 1L).withBit(0, False).getColor())
+		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 0L).withBit(0, True).color)
+		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 1L).withBit(0, False).color)
 	}
 
 	@Test
 	fun shouldReturnBusColor() {
-		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 1L).getColor())
+		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 1L).color)
 	}
 
 	@Test
 	fun shouldReturnBusZeroColor() {
-		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 0L).getColor())
+		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 0L).color)
 	}
 
 	@Test

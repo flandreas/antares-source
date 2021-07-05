@@ -102,7 +102,7 @@ class DigitalEdgeAnimationView(
 		}
 
 	override fun draw(context: DrawContext) {
-		context.g.color = signalView.signal.getColor().foregroundColor
+		context.g.color = signalView.signal.color.foregroundColor
 		context.g.stroke = (edgeView.style as EdgeStyle).executionStroke
 
 		val polyline = signalView.orthoPolyline

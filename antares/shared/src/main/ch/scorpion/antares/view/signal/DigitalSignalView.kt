@@ -58,7 +58,7 @@ class DigitalSignalView(
 	private val label = Label(
 		text = representation.represent(signal),
 		font = FONT,
-		color = signal.getColor().textColor,
+		color = signal.color.textColor,
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER,
 		location = Point2D(0, 0))
@@ -66,7 +66,7 @@ class DigitalSignalView(
 	/** ---- [AbstractRectangle] */
 
 	override fun draw(context: DrawContext) {
-		drawRectangle(context, signal.getColor().backgroundColor, signal.getColor().foregroundColor, Themes.get<AntaresTheme>().annotation.stroke)
+		drawRectangle(context, signal.color.backgroundColor, signal.color.foregroundColor, Themes.get<AntaresTheme>().annotation.stroke)
 		context.g.translate(location.x, location.y)
 		label.draw(context)
 		context.g.translate(-location.x, -location.y)
