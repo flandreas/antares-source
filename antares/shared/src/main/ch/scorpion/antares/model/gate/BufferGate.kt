@@ -2,8 +2,10 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -19,7 +21,21 @@ import ch.scorpion.jabbah.io.StoreWriter
 class BufferCalculator<T : Vertice> : VerticeCalculator<T> {
 
 	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+		val signal = data.getSignal<DigitalSignal>(1)!!.bitAt(0)
+
+		val result = if (signal == Bit.Undefined) {
+			when (CurrentOpenGateInputBehaviour.value) {
+				OpenGateInputBehavior.Accept -> Bit.False
+				OpenGateInputBehavior.Random -> Bit.random()
+				OpenGateInputBehavior.Error -> Bit.Error
+			}
+		} else {
+			signal
+		}
+
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
+			DigitalSignalFactory.of(result),
+			signalHandler)
 	}
 }
 

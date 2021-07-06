@@ -35,6 +35,7 @@ object AntaresModelModule : AbstractModule() {
 
 	private fun customizeProperties(properties: Properties) {
 		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
+		properties.set(OpenGateInputBehavior.PROP_OPEN_GATE_INPUT_BEHAVIOR, OpenGateInputBehavior.Accept.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.Error
 import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
@@ -21,18 +22,42 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 
 	override fun calculate(vertice: TriStateBufferGate, data: GraphActorData, signalHandler: SignalHandler) {
+
 		val control = data.getSignal<DigitalSignal>(2)!!.bitAt(0)
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-			when (control) {
-				Undefined -> DigitalSignalFactory.undefined(vertice.bitWidth)
-				Error -> DigitalSignalFactory.error(vertice.bitWidth)
-				else -> if (vertice.enableLogic.evaluate(control.isSet)) {
-					data.getSignal(1)!!
+		val result = when (control) {
+			Undefined -> {
+				when (CurrentOpenGateInputBehaviour.value) {
+					OpenGateInputBehavior.Accept -> DigitalSignalFactory.undefined(vertice.bitWidth)
+					OpenGateInputBehavior.Random -> DigitalSignalFactory.random(vertice.bitWidth)
+					OpenGateInputBehavior.Error -> DigitalSignalFactory.error(vertice.bitWidth)
+				}
+			}
+			Error -> DigitalSignalFactory.error(vertice.bitWidth)
+			else -> {
+				if (vertice.enableLogic.evaluate(control.isSet)) {
+					calculateOutputValue(vertice, data.getSignal(1)!!)
 				} else {
 					DigitalSignalFactory.undefined(vertice.bitWidth)
 				}
-			},
-			signalHandler)
+			}
+		}
+
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(result, signalHandler)
+	}
+
+	private fun calculateOutputValue(vertice: TriStateBufferGate, inputValue: DigitalSignal): DigitalSignal {
+		return DigitalSignalFactory.ofBits(inputValue.bits.map {
+			when (it) {
+				Undefined -> {
+					when(CurrentOpenGateInputBehaviour.value) {
+						OpenGateInputBehavior.Accept -> vertice.undefinedInputResult
+						OpenGateInputBehavior.Random -> Bit.random()
+						OpenGateInputBehavior.Error -> Error
+					}
+				}
+				else -> it
+			}
+		})
 	}
 }
 
@@ -107,6 +132,9 @@ open class TriStateBufferGate(
     }
 
     /** ---- [TriStateBufferGate] */
+
+    /** The result [Bit] if the input is [Bit.Undefined]. */
+    open val undefinedInputResult: Bit get() = Bit.False
 
     fun getInputPort(): DigitalPort = getInput<DigitalSignal>(1) as DigitalPort
 

@@ -5,10 +5,9 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.DesignError
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 
 /**
@@ -17,6 +16,10 @@ import ch.scorpion.jabbah.graph.model.net.NetImpl
  * - identify and propagate a design error if this [Net] connects [Port]s with incompatible [BitWidth]
  */
 open class DigitalNet : NetImpl<DigitalSignal>() {
+
+	companion object {
+		private val LOG by logger(DigitalNet::class)
+	}
 
 	private val portPropertyListener = PortPropertyListener()
 
@@ -69,6 +72,14 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 		}
 	}
 
+	override fun setSignal(signal: DigitalSignal?, origin: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
+		if (signal?.hasError == true) {
+			raiseError(signal, origin, signalHandler)
+		} else {
+			super.setSignal(signal, origin, signalHandler)
+		}
+	}
+
 	override fun connect(port: Port<DigitalSignal>) {
 		super.connect(port)
 		port.addPropertyChangeListener(portPropertyListener)
@@ -77,6 +88,14 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	override fun unconnect(port: Port<*>) {
 		super.unconnect(port)
 		port.removePropertyChangeListener(portPropertyListener)
+	}
+
+	private fun raiseError(signal: DigitalSignal, origin: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
+		val error = SignalError(origin, signalHandler.executionTime)
+		val logMsg = "Error signal $signal from port ${origin.portId} in ${origin.owner?.id}"
+		LOG.trace(logMsg)
+		executionError = error
+		signalHandler.deferExecutionError(error)
 	}
 
 	/** ---- [DigitalNet] */

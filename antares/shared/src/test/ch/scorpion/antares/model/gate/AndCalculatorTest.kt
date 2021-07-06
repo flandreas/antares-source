@@ -15,10 +15,12 @@ class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
 
 	@Test
 	fun shouldFulfillTruthTable() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		assertTwoInput(False, False, False)
 		assertTwoInput(False, True, False)
 		assertTwoInput(False, Undefined, False)
-		assertTwoInput(False, Error, False)
+		assertTwoInput(False, Error, Error)
 
 		assertTwoInput(True, False, False)
 		assertTwoInput(True, True, True)
@@ -30,7 +32,32 @@ class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
 		assertTwoInput(Undefined, Undefined, False)
 		assertTwoInput(Undefined, Error, Error)
 
-		assertTwoInput(Error, False, False)
+		assertTwoInput(Error, False, Error)
+		assertTwoInput(Error, True, Error)
+		assertTwoInput(Error, Undefined, Error)
+		assertTwoInput(Error, Error, Error)
+	}
+
+	@Test
+	fun shouldCalculateWithErrorForUndefinedInput() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
+
+		assertTwoInput(False, False, False)
+		assertTwoInput(False, True, False)
+		assertTwoInput(False, Undefined, Error)
+		assertTwoInput(False, Error, Error)
+
+		assertTwoInput(True, False, False)
+		assertTwoInput(True, True, True)
+		assertTwoInput(True, Undefined, Error)
+		assertTwoInput(True, Error, Error)
+
+		assertTwoInput(Undefined, False, Error)
+		assertTwoInput(Undefined, True, Error)
+		assertTwoInput(Undefined, Undefined, Error)
+		assertTwoInput(Undefined, Error, Error)
+
+		assertTwoInput(Error, False, Error)
 		assertTwoInput(Error, True, Error)
 		assertTwoInput(Error, Undefined, Error)
 		assertTwoInput(Error, Error, Error)

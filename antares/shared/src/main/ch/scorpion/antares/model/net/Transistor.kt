@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.io.Storable
@@ -53,6 +54,8 @@ class Transistor(
 	fun getGatePort(): DigitalPort = getEnablePort()
 	fun getSourcePort(): DigitalPort = getInputPort()
 	fun getDrainPort(): DigitalPort = getOutputPort()
+
+	override val undefinedInputResult: Bit get() = Bit.Undefined
 
 	/** ---- [Storable] interface */
 

@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -15,23 +16,23 @@ class XorCalculator : AbstractDigitalGateCalculator() {
 
 		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
 			var trueCount = 0
-			var error = false
 			var undefined = false
 
 			for (portId in (1..source.signalCount).filter { filter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
 				when (source.getSignal(portId)) {
-					Bit.True -> trueCount++
-					Bit.Error -> error = true
-					Bit.Undefined -> undefined = true
+					True -> trueCount++
+					Error -> return Error
+					Undefined -> undefined = true
 				}
 			}
 
-			if (error) {
-				return Bit.Error
-			}
 			if (undefined) {
-				return Bit.False
+				when (CurrentOpenGateInputBehaviour.value) {
+					OpenGateInputBehavior.Accept -> {}
+					OpenGateInputBehavior.Random -> return Bit.random()
+					OpenGateInputBehavior.Error -> return Error
+				}
 			}
 
 			return Bit.of(trueCount.rem(2) == 1)

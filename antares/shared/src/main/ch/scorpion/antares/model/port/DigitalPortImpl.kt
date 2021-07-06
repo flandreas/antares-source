@@ -196,6 +196,11 @@ open class DigitalPortImpl(
 			if (portType == PortType.INOUT) {
 				return DigitalSignalFactory.undefined(bitWidth)
 			}
+
+			if (portType == PortType.INPUT) {
+				return DigitalSignalFactory.undefined(bitWidth)
+			}
+
 			// Needed for power-on behaviour, especially for bistable circuits ('Undefined' would not work)
 			return DigitalSignalFactory.allOf(bitWidth, Bit.False)
 		}

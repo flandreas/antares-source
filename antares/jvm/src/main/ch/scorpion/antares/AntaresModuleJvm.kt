@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.gate.OpenGateInputBehaviourPreference
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
@@ -181,6 +182,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		))
 
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(OpenGateInputBehaviourPreference())
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = AndGateView.PROP_DATA_FLOW_ENABLED,

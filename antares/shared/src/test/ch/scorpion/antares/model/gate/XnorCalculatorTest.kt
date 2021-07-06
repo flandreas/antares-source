@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -21,6 +20,8 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun shouldFulfillTruthTable() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		assertTwoInput(False, False, True)
 		assertTwoInput(False, True, False)
 		assertTwoInput(False, Undefined, True)
@@ -28,11 +29,11 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 		assertTwoInput(True, False, False)
 		assertTwoInput(True, True, True)
-		assertTwoInput(True, Undefined, True)
+		assertTwoInput(True, Undefined, False)
 		assertTwoInput(True, Error, Error)
 
 		assertTwoInput(Undefined, False, True)
-		assertTwoInput(Undefined, True, True)
+		assertTwoInput(Undefined, True, False)
 		assertTwoInput(Undefined, Undefined, True)
 		assertTwoInput(Undefined, Error, Error)
 
@@ -44,6 +45,8 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun evenNumberOfInputShouldCalculateTrue() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		val xnor = XnorGate(InputCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
@@ -54,6 +57,8 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun oddNumberOfInputShouldCalculateFalse() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		val xnor = XnorGate(InputCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)

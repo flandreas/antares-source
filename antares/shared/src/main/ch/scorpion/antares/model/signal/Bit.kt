@@ -32,6 +32,8 @@ enum class Bit(private val value: Int?) {
 			return of(if (value) 1 else 0)
 		}
 
+		fun random(): Bit = of(kotlin.random.Random.nextBoolean())
+
 		/**
 		 * Converts a [Int] to the first [length] [Bit]s of its binary representation, starting with
 		 * the least-priority bit.

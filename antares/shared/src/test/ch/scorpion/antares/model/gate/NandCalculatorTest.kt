@@ -15,10 +15,12 @@ class NandCalculatorTest : AbstractGateCalculatorTest(NandCalculator()) {
 
 	@Test
 	fun shouldFulfillTruthTable() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		assertTwoInput(False, False, True)
 		assertTwoInput(False, True, True)
 		assertTwoInput(False, Undefined, True)
-		assertTwoInput(False, Error, True)
+		assertTwoInput(False, Error, Error)
 
 		assertTwoInput(True, False, True)
 		assertTwoInput(True, True, False)
@@ -30,7 +32,7 @@ class NandCalculatorTest : AbstractGateCalculatorTest(NandCalculator()) {
 		assertTwoInput(Undefined, Undefined, True)
 		assertTwoInput(Undefined, Error, Error)
 
-		assertTwoInput(Error, False, True)
+		assertTwoInput(Error, False, Error)
 		assertTwoInput(Error, True, Error)
 		assertTwoInput(Error, Undefined, Error)
 		assertTwoInput(Error, Error, Error)

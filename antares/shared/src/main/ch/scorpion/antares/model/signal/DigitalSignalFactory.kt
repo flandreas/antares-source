@@ -25,4 +25,6 @@ object DigitalSignalFactory {
 	fun trueValue(bitWidth: BitWidth): DigitalSignal = Word.trueValue(bitWidth)
 
 	fun allOf(bitWidth: BitWidth, bit: Bit): DigitalSignal = Word.allOf(bitWidth, bit)
+
+	fun random(bitWidth: BitWidth): DigitalSignal = Word.random(bitWidth)
 }

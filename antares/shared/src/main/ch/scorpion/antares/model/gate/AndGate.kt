@@ -13,25 +13,26 @@ class AndCalculator : AbstractDigitalGateCalculator() {
 	companion object {
 
 		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
-			var error = false
 			var undefined = false
+			var trueCount = 0
 			for (portId in (1..source.signalCount).filter { filter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
 				when (source.getSignal(portId)) {
-					False -> return False
-					Error -> error = true
+					True -> trueCount++
+					Error -> return Error
 					Undefined -> undefined = true
 				}
 			}
 
-			if (error) {
-				return Error
-			}
 			if (undefined) {
-				return False
+				when (CurrentOpenGateInputBehaviour.value) {
+					OpenGateInputBehavior.Accept -> {}
+					OpenGateInputBehavior.Random -> return Bit.random()
+					OpenGateInputBehavior.Error -> return Error
+				}
 			}
 
-			return True
+			return Bit.of(trueCount == source.signalCount)
 		}
 	}
 

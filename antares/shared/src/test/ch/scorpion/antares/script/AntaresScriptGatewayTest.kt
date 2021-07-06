@@ -100,11 +100,15 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldGetInputSignal() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
 		assertEquals("0", gateway.exec(script("return circuit.input(\"I1\");"), view))
 	}
 
 	@Test
 	fun shouldGetOutputSignal() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
 		assertEquals("0", gateway.exec(script("return circuit.output(\"O1\");"), view))
 	}
 

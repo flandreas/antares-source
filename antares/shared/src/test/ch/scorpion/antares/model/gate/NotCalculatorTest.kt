@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,9 +32,21 @@ class NotCalculatorTest {
 
 	@Test
 	fun shouldFulfillTruthTable() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+
 		assertOneInput(False, True)
 		assertOneInput(True, False)
-		assertOneInput(Undefined, Undefined)
+		assertOneInput(Undefined, False)
+		assertOneInput(Error, Error)
+	}
+
+	@Test
+	fun shouldCalculateWithErrorForUndefinedInput() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
+
+		assertOneInput(False, True)
+		assertOneInput(True, False)
+		assertOneInput(Undefined, Error)
 		assertOneInput(Error, Error)
 	}
 

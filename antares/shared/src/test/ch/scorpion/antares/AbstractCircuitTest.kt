@@ -1,5 +1,7 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.gate.CurrentOpenGateInputBehaviour
+import ch.scorpion.antares.model.gate.OpenGateInputBehavior
 import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -46,6 +48,7 @@ abstract class AbstractCircuitTest {
 		timer = ControlledTimer(timeService)
 		task = TimedSchedulerTask(ControlledTimer(timeService))
 		scheduler = SchedulerImpl(timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
 	}
 
 	abstract fun getCircuitView(): GraphView

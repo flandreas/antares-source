@@ -99,6 +99,14 @@ internal data class Word(
 			return of(bitWidth, BitOperation.hexToLong(hexValue))
 		}
 
+		fun random(bitWidth: BitWidth): Word {
+			val list = mutableListOf<Bit>()
+			for (i in 0 until bitWidth.width) {
+				list.add(Bit.random())
+			}
+			return Word(list)
+		}
+
 		/** Creates a list with all the same [Bit]s of the length as defined by the specified [BitWidth].*/
 		private fun createListWithBit(bitWidth: BitWidth, bit: Bit): List<Bit> {
 			val list = mutableListOf<Bit>()

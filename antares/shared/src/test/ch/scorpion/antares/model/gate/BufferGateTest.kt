@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,29 +30,27 @@ class BufferCalculatorTest {
 	}
 
 	@Test
-	fun shouldBeTrueWithTrueInput() {
-		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+	fun shouldFulfillTruthTable() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
 
-		val output = vertice.getOutput<DigitalSignal>()
-		assertEquals(Bit.True, output.getOutgoingSignal()!!.bitAt(0))
+		assertOneInput(Bit.False, Bit.False)
+		assertOneInput(Bit.True, Bit.True)
+		assertOneInput(Bit.Undefined, Bit.False)
+		assertOneInput(Bit.Error, Bit.Error)
 	}
 
 	@Test
-	fun shouldBeFalseWithFalseInput() {
-		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+	fun shouldCalculateWithErrorForUndefinedInput() {
+		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
 
-		val output = vertice.getOutput<DigitalSignal>()
-		assertEquals(Bit.False, output.getOutgoingSignal()!!.bitAt(0))
+		assertOneInput(Bit.False, Bit.False)
+		assertOneInput(Bit.True, Bit.True)
+		assertOneInput(Bit.Undefined, Bit.Error)
+		assertOneInput(Bit.Error, Bit.Error)
 	}
 
-	@Test
-	fun shouldBeUndefinedWithUndefinedInput() {
-		val input = vertice.getInput<DigitalSignal>()
-		input.setIncomingSignal(DigitalSignalFactory.of(Bit.Undefined), signalHandler)
-
-		val output = vertice.getOutput<DigitalSignal>()
-		assertEquals(Bit.Undefined, output.getOutgoingSignal()!!.bitAt(0))
+	private fun assertOneInput(a: Bit, result: Bit) {
+		vertice.getInput<DigitalSignal>().setIncomingSignal(DigitalSignalFactory.of(a), signalHandler)
+		assertEquals(result, vertice.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0))
 	}
 }
