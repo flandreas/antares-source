@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
@@ -54,6 +57,13 @@ data class LibraryDirectoryRenamedEvent(
 	val directory: LibraryDirectory,
 	val oldName: TranslatableText
 )
+
+enum class MetaGraphBundleImportResult {
+	Success,
+	Invalid,
+	StaleLibraryReference,
+	UuidAlreadyExists
+}
 
 /**
  * Provides methods for accessing and manipulating a single [Library].
@@ -331,6 +341,80 @@ class LibraryService(
 		} catch (e: Throwable) {
 			userLibraryPersister.deleteLibrary(uuid)
 			throw e
+		}
+	}
+
+	/**
+	 * Creates a [MetaGraphBundle] for the [MetaGraph] in [element] and stores it as a ZIP file
+	 * at the location [outputPath].
+	 */
+	fun exportMetaGraphBundle(element: ContainerLibraryElement, outputPath: String) {
+		ensureMetaGraph(element.library!!, element)
+		val bundle = GraphModelModule.metaGraphRepository.createBundle(element.metaGraph!!)
+		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
+	}
+
+	fun importMetaGraphBundle(
+		inputPath: String,
+		bundleName: String,
+		destination: LibraryDirectory,
+		replaceIfUuidExists: Boolean
+	): MetaGraphBundleImportResult {
+		lateinit var bundle: MetaGraphBundle
+
+		try {
+			bundle = userLibraryPersister.importMetaGraphBundle(inputPath)
+		} catch (e: Throwable) {
+			return MetaGraphBundleImportResult.Invalid
+		}
+
+		if (!checkBundleLibrary(bundle, destination.library!!)) {
+			return MetaGraphBundleImportResult.StaleLibraryReference
+		}
+
+		val conflict = anyBundleUuidExists(bundle)
+		if (conflict && !replaceIfUuidExists) {
+			return MetaGraphBundleImportResult.UuidAlreadyExists
+		}
+
+		if (conflict) {
+			deleteBundleMetaGraphs(bundle, destination.library!!)
+		}
+
+		importMetaGraphBundle(bundle, bundleName, destination)
+
+		return MetaGraphBundleImportResult.Success
+	}
+
+	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
+		bundle.metaGraphs.any { GraphModelModule.metaGraphRepository.containsMetaGraph(it.uuid) }
+
+	private fun checkBundleLibrary(bundle: MetaGraphBundle, destination: Library): Boolean {
+		if (bundle.referencedSystemLibrary == null) {
+			return true
+		}
+		if (destination is Project && bundle.referencedSystemLibrary != destination.importedLibrary) {
+			return false
+		}
+		if (bundle.referencedSystemLibrary != destination.uuid) {
+			return false
+		}
+		return true
+	}
+
+	private fun importMetaGraphBundle(bundle: MetaGraphBundle, bundleName: String, destination: LibraryDirectory) {
+		val bundleDirectory = addFolder(destination.library!!, TranslatableText("Import '$bundleName'"), destination)
+		bundle.metaGraphs.forEach {
+			addContainerLibraryElement(destination.library!!, it, bundleDirectory)
+		}
+	}
+
+	private fun deleteBundleMetaGraphs(bundle: MetaGraphBundle, library: Library) {
+		bundle.metaGraphs.forEach { metaGraph ->
+			library.getContainerLibraryElement(metaGraph.uuid)?.let {
+				LOG.trace("Replace MetaGraph ${metaGraph.uuid}")
+				removeLibraryItem(library, it, getDirectoryOf(library, it))
+			}
 		}
 	}
 

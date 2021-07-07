@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
@@ -130,6 +131,7 @@ open class LibraryImpl(
 	/** ---- [MetaGraphRepository] */
 
 	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		// TODO This should never be called, use MetaGraphRepository instead!
 		val metaGraph = getMetaGraph(graphUUID)
 		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
 			return true
@@ -154,6 +156,10 @@ open class LibraryImpl(
 
 	override fun containsMetaGraph(uuid: UUID): Boolean {
 		return findContainerLibraryElementFor(uuid) != null
+	}
+
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+		throw UnsupportedOperationException("not implemented")
 	}
 
 	/** ---- [Storable] interface */

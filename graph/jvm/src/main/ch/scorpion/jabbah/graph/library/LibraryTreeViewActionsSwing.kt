@@ -21,6 +21,7 @@ class LibraryTreeViewActionsSwing(
 
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
+	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
 
 	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
@@ -28,6 +29,7 @@ class LibraryTreeViewActionsSwing(
 	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(controller, libraryOperationTarget)
 	private val deleteLibraryElementAction = DeleteLibraryElementAction(controller, libraryOperationTarget)
 	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
+	private val importLibraryMetaGraphAction = ImportMetaGraphAction(controller, libraryOperationTarget)
 
 	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
 	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
@@ -36,6 +38,7 @@ class LibraryTreeViewActionsSwing(
 	private val deleteProjectElementAction = DeleteLibraryElementAction(controller, projectOperationTarget)
 	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
+	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
 
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
@@ -111,6 +114,8 @@ class LibraryTreeViewActionsSwing(
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newProjectGraphAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(addProjectFolderAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(deleteProjectFolderAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
+		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(projectFolderPropertiesAction))
 
 		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
@@ -118,14 +123,16 @@ class LibraryTreeViewActionsSwing(
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
 		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
-		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
+		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
+		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
 
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 
 		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 
@@ -137,6 +144,8 @@ class LibraryTreeViewActionsSwing(
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryDirectoryPopupMenu.addSeparator()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 
 		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
@@ -145,13 +154,15 @@ class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
+		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 
 		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}

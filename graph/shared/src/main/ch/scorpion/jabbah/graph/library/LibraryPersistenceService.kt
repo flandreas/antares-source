@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.MetaGraphBundle
 
 /**
  * Service methods for managing persistent library items and elements.
@@ -38,6 +39,12 @@ interface LibraryPersistenceService {
 	 * Exports the [Library] with the specified [UUID]  and return the path of the temporary directory.
 	 */
 	fun exportLibraryTemporarily(uuid: UUID): String
+
+	/** Exports [bundle] as a ZIP file to the specified location [outputPath]. */
+	fun exportMetaGraphBundle(bundle: MetaGraphBundle, outputPath: String)
+
+	/** Imports a [MetaGraphBundle] from a ZIP file at location [inputPath]. */
+	fun importMetaGraphBundle(inputPath: String): MetaGraphBundle
 }
 
 /**
@@ -80,6 +87,14 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 		throw UnsupportedOperationException("not implemented")
 
 	override fun exportLibraryTemporarily(uuid: UUID): String {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun exportMetaGraphBundle(bundle: MetaGraphBundle, outputPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
 		throw UnsupportedOperationException("not implemented")
 	}
 }
