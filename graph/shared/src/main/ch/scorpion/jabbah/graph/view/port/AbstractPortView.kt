@@ -188,6 +188,20 @@ abstract class AbstractPortView<T : Any>(
 		update()
 	}
 
+	protected fun updateLength() {
+		val newLength = if (_port.isConnected) {
+			getConnectedLength()
+		} else {
+			unconnectedLength
+		}
+		if (newLength != length) {
+			invalidate()
+			length = newLength
+			invalidate()
+			update()
+		}
+	}
+
 	/** ---- [SnappableX] interface */
 
 	/** Delegate to owner to apply translation and rotation.*/

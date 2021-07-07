@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger

@@ -146,6 +146,7 @@ class DigitalPortView(
 		super.modelChanged()
 		buildPortLabel()
 		buildBitWidthAnnotation()
+		updateLength()
 	}
 
 	override fun getConnectedLength(): Int {
