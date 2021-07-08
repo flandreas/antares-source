@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 
 /**
  * The graphical figure used in probe views.
@@ -36,7 +37,7 @@ class OscilloscopeProbeViewIcon(
 		text = name,
 		font = Themes.get<DrawTheme>().annotation.font,
 		location = Point2D(20, 17),
-		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
+		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL
 	)
 
 	var filled = true

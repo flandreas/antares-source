@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
@@ -40,7 +41,7 @@ class BitWidthAnnotation(
         horizontalAlignment = getHorizontalLabelAlignment(),
         verticalAlignment = getVerticalLabelAlignment(),
         location = getLabelLocation(),
-	    rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+	    rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
 	    ownerRotation = ownerRotation)
 
     /** ---- [Drawable] interface */

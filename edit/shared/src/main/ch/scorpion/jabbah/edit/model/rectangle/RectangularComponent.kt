@@ -14,9 +14,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
@@ -35,6 +33,8 @@ abstract class AbstractRectangularComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	val shape: RectangularShape = Rectangle2D()
 ) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
+
+	open val shapeToDraw: Shape get() = shape
 
 	open fun drawText(context: DrawContext) {
 		// empty
@@ -139,8 +139,10 @@ abstract class AbstractRectangularComponent(
 abstract class RectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	shape: RectangularShape
-) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable {
+	shape: RectangularShape,
+	labelRotation: Rotation = Rotation.R0,
+	labelRotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE
+) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled {
 
 	companion object {
 		// The distance between the rectangle border and the text box (if at top or at bottom)
@@ -149,7 +151,7 @@ abstract class RectangularComponent(
 
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))
 
-	private val label = Label("", font)
+	override val label = Label("", font, rotation = labelRotation, rotationDisplayStrategy = labelRotationDisplayStrategy)
 
 	override var description: Description by observableDescription(Description(""))
 
@@ -166,7 +168,7 @@ abstract class RectangularComponent(
 			}
 		}
 
-	var alignment: VerticalAlignment
+	var verticalAlignment: VerticalAlignment
 		get() = label.verticalAlignment
 		set(value) {
 			if (label.verticalAlignment != value) {
@@ -177,8 +179,26 @@ abstract class RectangularComponent(
 			}
 		}
 
+	var horizontalAlignment: HorizontalAlignment
+		get() = label.horizontalAlignment
+		set(value) {
+			if (label.horizontalAlignment != value) {
+				invalidate()
+				label.horizontalAlignment = value
+				updateLabelLocation()
+				invalidate()
+			}
+		}
+
 	init {
 		updateLabelLocation()
+	}
+
+	/** ---- [AbstractComponent] interface */
+
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		label.ownerRotation = rotation
 	}
 
 	/** ---- [Transparent] interface */
@@ -205,8 +225,11 @@ abstract class RectangularComponent(
 		if (!text.isEmpty) {
 			writer.writeStorables("text", text.allTranslations())
 		}
-		if (alignment != VerticalAlignment.CENTER) {
-			writer.writeString("vAlign", alignment.customName)
+		if (verticalAlignment != VerticalAlignment.CENTER) {
+			writer.writeString("vAlign", verticalAlignment.customName)
+		}
+		if (horizontalAlignment != HorizontalAlignment.CENTER) {
+			writer.writeString("hAlign", horizontalAlignment.customName)
 		}
 		description.write("desc", writer)
 	}
@@ -221,7 +244,10 @@ abstract class RectangularComponent(
 			text = TranslatableText(reader.readStorables("text"))
 		}
 		if (reader.hasAttribute("vAlign")) {
-			alignment = VerticalAlignment.withName(reader.readString("vAlign"))
+			verticalAlignment = VerticalAlignment.withName(reader.readString("vAlign"))
+		}
+		if (reader.hasAttribute("hAlign")) {
+			horizontalAlignment = HorizontalAlignment.withName(reader.readString("hAlign"))
 		}
 		description = Description.read("desc", reader)
 	}
@@ -239,28 +265,35 @@ abstract class RectangularComponent(
 		}
 	}
 
-	private fun drawImpl(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
+	protected fun drawImpl(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
 		val oldColor = context.g.color
 
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				if (fillColor != null) {
-					drawFill(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor)
-				}
-				if (strokeColor != null) {
-					drawStroke(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor, stroke)
-				}
-			}
-		}
-
-		drawFill(context, shape, fillColor)
-		drawStroke(context, shape, strokeColor, stroke)
+		drawShadow(context, strokeColor, fillColor)
+		drawShape(context, strokeColor, fillColor)
 		context.g.color = transparent.applyTo(textColor)
 		drawText(context)
 
 		DrawModule.drawLocatableDebugBoundingBox(this, context)
 
 		context.g.color = oldColor
+	}
+
+	protected open fun drawShape(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
+		drawFill(context, shapeToDraw, fillColor)
+		drawStroke(context, shapeToDraw, strokeColor, stroke)
+	}
+
+	private fun drawShadow(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				if (fillColor != null) {
+					drawFill(context, shapeToDraw, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor)
+				}
+				if (strokeColor != null) {
+					drawStroke(context, shapeToDraw, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor, stroke)
+				}
+			}
+		}
 	}
 
 	override fun drawText(context: DrawContext) {
@@ -277,15 +310,20 @@ abstract class RectangularComponent(
 		return null
 	}
 
-	/** ---- [AbstractRectangularComponent] */
+	/** ---- [RectangularComponent] */
 
 	private fun updateLabelLocation() {
-		val y: Double = when (alignment) {
+		val y: Double = when (verticalAlignment) {
 			VerticalAlignment.BOTTOM -> height - TEXT_INSET
 			VerticalAlignment.CENTER -> height / 2
 			VerticalAlignment.TOP -> TEXT_INSET.toDouble()
 		}
-		label.location = Point2D(width / 2, y)
+		val x: Double = when (horizontalAlignment) {
+			HorizontalAlignment.LEFT -> TEXT_INSET.toDouble()
+			HorizontalAlignment.CENTER -> width / 2
+			HorizontalAlignment.RIGHT -> width - TEXT_INSET
+		}
+		label.location = Point2D(x, y)
 	}
 }
 

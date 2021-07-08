@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.input.JoystickDeflection
+import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
@@ -132,10 +133,17 @@ class TransistorTypeEditor : ComboBoxPropertyEditor() {
 	}
 }
 
-class JoystickDeflection : ComboBoxPropertyEditor() {
+class JoystickDeflectionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(JoystickDeflection.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<JoystickDeflection>()
+	}
+}
+
+class DigitalPortViewStyleEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(DigitalPortViewStyle.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<DigitalPortViewStyle>()
 	}
 }
 

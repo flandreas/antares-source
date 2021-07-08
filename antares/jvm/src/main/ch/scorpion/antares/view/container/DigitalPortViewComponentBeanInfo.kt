@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.container
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
@@ -19,6 +20,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
     companion object {
 	    private val id = CommandPropertySwing("portId", "graph.property.PortId", Int::class.java, componentBeanProvider)
 	    private val name = EditProperties.untranslatableName("port.name")
+	    private val portViewStyle = CommandPropertySwing("portViewStyle", "element.property.DigitalPortViewStyle", DigitalPortViewStyle::class.java, componentBeanProvider)
 	    private val direction = CommandPropertySwing("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
 		private val portLabelPos = CommandPropertySwing("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
 	    private val showBitWidth = CommandPropertySwing("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
@@ -32,6 +34,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 
 	    properties.add(id.bind(editor, bean.id, editable = false))
 	    properties.add(name.bind(editor, bean.id, editable = false))
+	    properties.add(portViewStyle.bind(editor, bean.id))
 	    properties.add(direction.bind(editor, bean.id))
 	    properties.add(portLabelPos.bind(editor, bean.id))
 	    properties.add(showBitWidth.bind(editor, bean.id))

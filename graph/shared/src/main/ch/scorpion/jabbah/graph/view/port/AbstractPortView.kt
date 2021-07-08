@@ -32,8 +32,7 @@ abstract class AbstractPortView<T : Any>(
 	y: Int,
 	direction: Direction,
 	open var portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
-	unconnectedLength: Int,
-	length: Int = unconnectedLength,
+	length: Int,
 	override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
 
@@ -46,14 +45,6 @@ abstract class AbstractPortView<T : Any>(
 		}
 
 	override var length: Int = length
-
-	override var unconnectedLength: Int = unconnectedLength
-		set(value) {
-			invalidate()
-			field = value
-			invalidate()
-			update()
-		}
 
 	override var owner: VerticeView<*>? = null
 		set(value) {
@@ -70,7 +61,7 @@ abstract class AbstractPortView<T : Any>(
 			invalidate()
 			_port = value
 			if (_port.isConnected) {
-				length = getConnectedLength()
+				length = connectedLength
 			}
 			modelChanged()
 			invalidate()
@@ -167,7 +158,7 @@ abstract class AbstractPortView<T : Any>(
 	override fun handleConnect(edgeView: EdgeView<T>) {
 		invalidate()
 		edgeViewWidth = edgeView.width
-		length = getConnectedLength()
+		length = connectedLength
 		invalidate()
 		update()
 	}
@@ -190,7 +181,7 @@ abstract class AbstractPortView<T : Any>(
 
 	protected fun updateLength() {
 		val newLength = if (_port.isConnected) {
-			getConnectedLength()
+			connectedLength
 		} else {
 			unconnectedLength
 		}
@@ -292,9 +283,6 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	/** ---- [AbstractPortView] */
-
-	/** Returns the length of the line to be used if the [Port] is connected. */
-	protected abstract fun getConnectedLength(): Int
 
 	/**
 	 * This method is automatically called by [AbstractPortView] whenever a property of the underlying

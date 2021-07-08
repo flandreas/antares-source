@@ -11,6 +11,7 @@ import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
+import ch.scorpion.antares.view.container.DilCase
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
@@ -35,6 +36,10 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
@@ -263,6 +268,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("realSwitchView", RealSwitchView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
+		typeMap.register("dilCase", DilCase::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -315,6 +321,10 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class) { SelectedColorSelectionModel(it) }
+
+		factory.register(SelectionDrawingStrategy.BELOW, DilCase::class) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
+		factory.register(SelectionDrawingStrategy.ABOVE, DilCase::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DilCase::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {

@@ -12,30 +12,30 @@ import ch.scorpion.jabbah.edit.model.AbstractComponentTool
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
- * A [Tool] for interactively creating a [LabelComponent] in a [Drawing].
+ * A [Tool] for interactively creating a [Component] in a [Drawing] at the mouse click location.
  */
-class LabelTool(
+class ComponentAtLocationTool(
 	editor: Editor,
 	service: DrawingAppService = EditModule.drawingAppService,
-	factory: () -> LabelComponent,
-	adder: (TextComponent) -> Component = { it }
-) : AbstractComponentTool<LabelComponent>(editor, service, factory, adder) {
+	factory: () -> Component,
+	private val cursor: Cursor = Cursor.CROSSHAIR,
+	adder: (Component) -> Component = { it }
+) : AbstractComponentTool<Component>(editor, service, factory, adder) {
 
     override fun activate() {
-        editor.view.setCursor(Cursor.TEXT)
+        editor.view.setCursor(cursor)
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
         super.mousePressed(e, x, y)
 
-        //val label = factory.invoke()
-	    val label = createComponent()
+	    val component = createComponent()
 
         // snap the mouse pressed location
         val offset = editor.snapManager.snap(x, y)
-        label.location = Point2D(x + offset.x, y + offset.y)
+        component.location = Point2D(x + offset.x, y + offset.y)
 
-	    addComponent(getAddedComponent(label))
+	    addComponent(getAddedComponent(component))
 
         editor.toolDone()
     }

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.container.PortViewComponent
@@ -74,15 +75,30 @@ class DigitalPortViewComponent(
             portView!!.validate()
         }
 
+	var portViewStyle: DigitalPortViewStyle
+		get() = digitalPortView.portViewStyle
+		set(value) {
+			portView!!.invalidate()
+			digitalPortView.portViewStyle = value
+			portView!!.invalidate()
+			portView!!.validate()
+		}
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeBoolean("showBitWidthAnnotation", showBitWidthAnnotation)
+	    if (portViewStyle != DigitalPortViewStyle.Line) {
+	    	writer.writeString("portViewStyle", portViewStyle.customName)
+	    }
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
         showBitWidthAnnotation = reader.readBoolean("showBitWidthAnnotation")
+	    if (reader.hasAttribute("portViewStyle")) {
+	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
+	    }
     }
 }

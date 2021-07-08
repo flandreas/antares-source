@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
@@ -146,7 +147,7 @@ class EditSubGraphVerticeViewPanel(
 	private fun createToolBarPanel(): JPanel {
 		val toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
-		containerPanel.createToolbars(separator = false).forEach { toolbarPanel.add(it) }
+		GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(containerPanel.editor, separator = false).forEach { toolbarPanel.add(it) }
 		return toolbarPanel
 	}
 

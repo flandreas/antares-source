@@ -17,7 +17,8 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
         private val color = EditProperties.color()
 	    private val stroke = EditProperties.stroke()
         private val text = EditProperties.translatableText()
-        private val alignment = EditProperties.verticalAlignment()
+        private val verticalAlignment = EditProperties.verticalAlignment()
+	    private val horizontalAlignment = EditProperties.horizontalAlignment()
 	    private val shadow = EditProperties.shadow()
 	    private val description = EditProperties.description()
     }
@@ -33,7 +34,8 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
 	    properties.add(stroke.bind(editor, bean.id))
         properties.add(text.bind(editor, bean.id, filter = { false }))
 	    properties.add(description.bind(editor, bean.id))
-        properties.add(alignment.bind(editor, bean.id))
+        properties.add(verticalAlignment.bind(editor, bean.id))
+        properties.add(horizontalAlignment.bind(editor, bean.id))
     }
 }
 

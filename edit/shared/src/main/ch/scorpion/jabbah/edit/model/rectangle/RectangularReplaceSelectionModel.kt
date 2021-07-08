@@ -27,7 +27,7 @@ open class RectangularReplaceSelectionModel(
 				val oldStroke = context.g.stroke
 				context.g.color = Themes.get<EditTheme>().selection.color.foregroundColor
 				context.g.stroke = component.stroke
-				context.g.draw(component.shape)
+				context.g.draw(component.shapeToDraw)
 				component.drawText(context)
 				context.g.stroke = oldStroke
 			}

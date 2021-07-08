@@ -78,7 +78,7 @@ object EditProperties {
 	}
 
 	fun verticalAlignment(
-		name: String = "alignment",
+		name: String = "verticalAlignment",
 		baseKey: String = "edit.property.verticalAlignment",
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<VerticalAlignment> {
@@ -86,7 +86,7 @@ object EditProperties {
 	}
 
 	fun horizontalAlignment(
-		name: String = "alignment",
+		name: String = "horizontalAlignment",
 		baseKey: String = "edit.property.horizontalAlignment",
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<HorizontalAlignment> {

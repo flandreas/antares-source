@@ -33,43 +33,35 @@ enum class Rotation(val customName: String, val angle: Double) {
     }
 
     /** Returns the next clockwise [Rotation].*/
-    fun next(): Rotation {
-        return values()[(this.ordinal + 1) % 4]
-    }
+    fun next(): Rotation = values()[(this.ordinal + 1) % 4]
 
-	fun previous(): Rotation {
-		return values()[(this.ordinal + 3) % 4]
-	}
+	fun previous(): Rotation = values()[(this.ordinal + 3) % 4]
 
     /** Returns the opposite of this [Rotation].*/
-    fun opposite(): Rotation {
-        return values()[(this.ordinal + 2) % 4]
-    }
+    fun opposite(): Rotation = values()[(this.ordinal + 2) % 4]
 
-    fun inverse(): Rotation {
-        return when (this) {
-            R0 -> R0
-            R90 -> R270
-            R180 -> R180
-            R270 -> R90
-        }
-    }
+    fun inverse(): Rotation =
+    	when (this) {
+	        R0 -> R0
+	        R90 -> R270
+	        R180 -> R180
+	        R270 -> R90
+	    }
+
+	fun add(other: Rotation): Rotation = values()[(this.ordinal + other.ordinal) % 4]
 
     /** Rotates a [Point2D] with coordinates expressed as relative (0, 0).*/
     @Suppress("unused")
-    fun rotatePoint(p: Point2D): Point2D {
-        return rotatePoint(p.x, p.y)
-    }
+    fun rotatePoint(p: Point2D): Point2D = rotatePoint(p.x, p.y)
 
     /** Rotates a (x,y) point with coordinates expressed as relative (0, 0).*/
-    fun rotatePoint(x: Double, y: Double): Point2D {
-        return when (this) {
-            R0 -> Point2D(x, y)
-            R90 -> Point2D(y, -x)
-            R180 -> Point2D(-x, -y)
-            R270 -> Point2D(-y, x)
-        }
-    }
+    fun rotatePoint(x: Double, y: Double): Point2D =
+    	when (this) {
+	        R0 -> Point2D(x, y)
+	        R90 -> Point2D(y, -x)
+	        R180 -> Point2D(-x, -y)
+	        R270 -> Point2D(-y, x)
+	    }
 
     /** Rotates a (x,y) point around the specified rotation center (pivot).*/
     fun rotatePointAround(pivot: Point2D, x: Double, y: Double): Point2D {

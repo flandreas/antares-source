@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import org.w3c.dom.Document
@@ -78,6 +79,14 @@ class RestLibraryPersistenceService(
     }
 
 	override fun exportLibraryTemporarily(uuid: UUID): String {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun exportMetaGraphBundle(bundle: MetaGraphBundle, outputPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
 		throw UnsupportedOperationException("not implemented")
 	}
 

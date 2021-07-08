@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
@@ -23,6 +22,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
@@ -36,7 +36,6 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
-import kotlin.math.min
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -49,11 +48,11 @@ class DigitalPortView(
 	direction: Direction = Direction.EAST,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	length: Int? = null,
-	unconnectedLength: Int = length ?: LENGTH,
-	var predefinedConnectedLength: Int? = null,
+	customUnconnectedLength: Int? = null,
 	showBitWidthAnnotation: Boolean = true,
-	showLogicAnnotation: Boolean = true
-) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, unconnectedLength, length ?: LENGTH) {
+	showLogicAnnotation: Boolean = true,
+	style: DigitalPortViewStyle = DigitalPortViewStyle.Line
+) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition,  length ?: style.unconnectedLength) {
 
 	companion object {
 		const val LENGTH: Int = 2 * Look.SCALE
@@ -78,6 +77,17 @@ class DigitalPortView(
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2 - 1.5, INTERNAL_ANNOTATION_SIZE / 2 - 1.0)
 			.close()
 	}
+
+	var portViewStyle: DigitalPortViewStyle = style
+		set(value) {
+			if (value != field) {
+				invalidate()
+				field = value
+				length = unconnectedLength
+				invalidate()
+				validate()
+			}
+		}
 
 	/** Determines whether this [DigitalPortView] shows an annotation that indicates the [DigitalPort]'s [BitWidth].*/
 	var showBitWidthAnnotation: Boolean = showBitWidthAnnotation
@@ -149,16 +159,6 @@ class DigitalPortView(
 		updateLength()
 	}
 
-	override fun getConnectedLength(): Int {
-		if (predefinedConnectedLength != null) {
-			return predefinedConnectedLength!!
-		}
-		if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
-			return LOGIC_SIZE
-		}
-		return 0
-	}
-
 	/** ---- [Storable] */
 
 	override fun read(reader: StoreReader) {
@@ -169,9 +169,7 @@ class DigitalPortView(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "portRef") {
-			unconnectedLength = LENGTH
-			length = LENGTH
-			predefinedConnectedLength = null
+			length = unconnectedLength
 			buildPortLabel()
 			buildBitWidthAnnotation()
 		}
@@ -229,7 +227,7 @@ class DigitalPortView(
 			bitWidthAnnotation!!.draw(context)
 		}
 
-		drawLogic(context)
+		portViewStyle.drawLogic(this, context, styleProvider, transparent)
 
 		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.ANNOTATION).color).foregroundColor)
 		if (hasInternalInputAnnotation) {
@@ -243,7 +241,7 @@ class DigitalPortView(
 			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
 				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
 			} else {
-				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color)).textColor
+				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
 			})
 			portLabel?.draw(context)
 		}
@@ -258,11 +256,9 @@ class DigitalPortView(
 	override fun drawBelowOwner(context: DrawContext) {
 		val origColor = context.g.color
 
-		if (!port.isConnected) {
+		if (portViewStyle.isDrawAccess(this)) {
 			prepareConnectionDrawContext(context)
-
-			val connPoint = connectionPoint
-			context.g.drawLine(locationX.toInt(), locationY.toInt(), connPoint.x.toInt(), connPoint.y.toInt())
+			portViewStyle.drawAccess(this, context, styleProvider, transparent)
 		}
 
 		context.g.color = origColor
@@ -305,6 +301,12 @@ class DigitalPortView(
 
 	/** ---- [PortView] interface */
 
+	override val connectedLength: Int get() = portViewStyle.getConnectedLength(this)
+
+	override val unconnectedLength: Int get() = customUnconnectedLength ?: portViewStyle.unconnectedLength
+
+	override val customUnconnectedLength: Int? = customUnconnectedLength
+
 	override fun prepareConnectionDrawContext(context: DrawContext) {
 		setupColor(context)
 		setupStroke(context)
@@ -337,9 +339,7 @@ class DigitalPortView(
 
 	/** ---- [DigitalPortView] */
 
-	private fun getDigitalPort(): DigitalPort {
-		return port as DigitalPort
-	}
+	fun getDigitalPort(): DigitalPort = port as DigitalPort
 
 	private fun buildBitWidthAnnotation() {
 		bitWidthAnnotation = if (getDigitalPort().bitWidth != BitWidth.BW_1) {
@@ -369,7 +369,7 @@ class DigitalPortView(
 			font = Look.INT_PIN_FONT,
 			text = port.name,
 			location = getInternalLabelLocation(direction),
-			rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
 			ownerRotation = ownerRotation)
 	}
 
@@ -385,7 +385,7 @@ class DigitalPortView(
 			font = Look.EXT_PIN_FONT,
 			text = port.name,
 			location = getExternalLabelLocation(direction),
-			rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
 			rotation = rotation,
 			ownerRotation = ownerRotation)
 	}
@@ -444,33 +444,6 @@ class DigitalPortView(
 			Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, -1)
 			Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
 			Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
-		}
-	}
-
-	private fun drawLogic(context: DrawContext) {
-		if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
-			val x1 = 0
-			val x2 = LOGIC_SIZE * direction.dx + LOGIC_SIZE * direction.next().dx
-			val y1 = 0
-			val y2 = LOGIC_SIZE * direction.dy + LOGIC_SIZE * direction.next().dy
-
-			var logicX = min(x1, x2)
-			var logicY = min(y1, y2)
-
-			logicX += LOGIC_SIZE * direction.previous().dx / 2
-			logicY += LOGIC_SIZE * direction.previous().dy / 2
-
-			val fillColor = if (Look.FILL_BASIC_COMPONENTS) {
-				context.styleColor(styleProvider.getStyle(StyleType.BACKGROUND).color)
-			} else {
-				styleProvider.getStyle(StyleType.BACKGROUND).color
-			}
-			context.g.color = transparent.applyTo(context.choose(fillColor).backgroundColor)
-			context.g.fillOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
-
-			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
-			context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.VERTICE).color)).foregroundColor)
-			context.g.drawOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
 		}
 	}
 

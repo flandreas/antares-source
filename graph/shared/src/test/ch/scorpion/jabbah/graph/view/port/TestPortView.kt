@@ -33,10 +33,13 @@ class TestPortView<T: Any>(
 
     override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
 
-    override val minSegmentLength: Int
-        get() = unconnectedLength
+    override val minSegmentLength: Int get() = unconnectedLength
 
-    override fun getConnectedLength(): Int = 0
+    override val connectedLength: Int get() = 0
+
+	override val unconnectedLength: Int = length ?: LENGTH
+
+	override val customUnconnectedLength: Int? get() = null
 
 	override fun drawAboveOwner(context: DrawContext) { }
 

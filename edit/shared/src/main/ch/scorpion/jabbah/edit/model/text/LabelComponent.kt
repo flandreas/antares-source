@@ -26,8 +26,8 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class LabelComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	val label: Label = createLabel(DEFAULT_TEXT)
-) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
+	override val label: Label = createLabel(DEFAULT_TEXT)
+) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent, Labeled {
 
 	constructor(text: String): this(label = createLabel(text))
 
@@ -43,7 +43,7 @@ class LabelComponent(
 				horizontalAlignment = HorizontalAlignment.CENTER,
 				verticalAlignment = VerticalAlignment.CENTER,
 				location = Point2D.ZERO,
-				rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF)
+				rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF)
 		}
 	}
 

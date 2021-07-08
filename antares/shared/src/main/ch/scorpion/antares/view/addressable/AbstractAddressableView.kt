@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -60,7 +61,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	val label = Label(
 		font = font,
 		text = buildLabelText(),
-		rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+		rotationDisplayStrategy = ROTATE_HALF,
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER
 	)

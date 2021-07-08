@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -116,7 +117,7 @@ open class BoxGateView<T : Vertice>(
 			horizontalAlignment = HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
 			location = Point2D.ZERO,
-			rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
+			rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
 	} else {
 		null
 	}

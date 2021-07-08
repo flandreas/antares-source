@@ -15,7 +15,9 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerPanel
+import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -94,7 +96,7 @@ open class GraphFrameSwing(
 
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
-			fillToolbarPanel(containerPanel.createToolbars())
+			fillToolbarPanel(GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(containerPanel.editor))
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
 			contentPane.add(containerPanel, BorderLayout.CENTER)
 			contentPane.add(statusBar, BorderLayout.SOUTH)
@@ -110,6 +112,8 @@ open class GraphFrameSwing(
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
+
+	protected open fun createContainerToolBarBuilder(): ContainerToolBarBuilder = ContainerToolBarBuilder()
 
 	/** ---- [AbstractApplicationFrame] */
 

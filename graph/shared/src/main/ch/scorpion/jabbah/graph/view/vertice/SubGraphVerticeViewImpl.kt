@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.actor.*
@@ -297,13 +298,6 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [Component] */
 
-	override var rotation: Rotation
-		get() = super.rotation
-		set(value) {
-			super.rotation = value
-			drawableBag.rotation = value
-		}
-
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.REPLACE
 		set(value) {
@@ -312,10 +306,10 @@ class SubGraphVerticeViewImpl(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
+		drawableBag.rotation = newRotation
 		drawableBag.drawables.forEach {
-			when (it) {
-				is LabelComponent -> it.label.ownerRotation = newRotation
-				is BrokenReferenceView -> it.label.ownerRotation = newRotation
+			if (it is Labeled) {
+				it.label.ownerRotation = newRotation
 			}
 		}
 	}
@@ -441,6 +435,7 @@ class SubGraphVerticeViewImpl(
 		label?.let {
 			getLabelComponent()?.text = it
 		}
+		rotationChanged(rotation)
 
 		updateBoxes()
 	}

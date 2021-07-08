@@ -32,6 +32,9 @@ interface Transparent : Drawable {
      */
     var transparency: Int
 
+	/** Applies the transparency to the specified [Color] and returns the new [Color].*/
+	fun applyTo(color: Color): Color  = applyTo(transparency, color)
+
 }
 
 /**
@@ -47,9 +50,4 @@ class TransparentImpl(val owner: Drawable) : Transparent, Drawable by owner {
             field = value
             owner.invalidate()
         }
-
-	/** Applies the transparency to the specified [Color] and returns the new [Color].*/
-	fun applyTo(color: Color): Color {
-		return Transparent.applyTo(transparency, color)
-	}
 }

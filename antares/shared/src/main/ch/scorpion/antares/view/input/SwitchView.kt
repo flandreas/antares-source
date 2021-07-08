@@ -21,10 +21,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -106,7 +103,7 @@ class SwitchView(
 		location = Point2D(DigitalPortView.LENGTH - SIZE / 2.0, 0.0),
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER,
-		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
+		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
 
 	private val externalLabel = HorizontalLabel(
 		owner = this,
@@ -132,9 +129,9 @@ class SwitchView(
 	private fun updateLabelGeometries() {
 		internalLabel.location = Point2D(bounds.centerX, bounds.centerY)
 		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF
+			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF
 		} else {
-			internalLabel.rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
+			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL
 		}
 	}
 

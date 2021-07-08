@@ -14,6 +14,13 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
+/**
+ * Implemented by classes having a [Label].
+ * Primarily used for forwarding changes of [Rotation] to [Label]s needing to react.
+ */
+interface Labeled {
+	val label: Label
+}
 
 /**
  * A [Drawable] that displays a simple, single line text.
@@ -120,7 +127,7 @@ class Label(
 	private var displayableText = FormattedText.empty()
 
 	/** The [Rectangle2D] that contains the text entirely.*/
-	private val bounds = Rectangle2D()
+	val bounds = Rectangle2D()
 
 	/** The point at which the text's baseline starts relative to the location.*/
 	private var baselinePoint = Point2D.ZERO
@@ -130,66 +137,7 @@ class Label(
 		updateGeometry()
 	}
 
-	/** Defines how a [Label] reacts to a [Rotation] when drawing itself. */
-	enum class RotationDisplayStrategy {
 
-		/** Doesn't react to owner rotation, i.e. the label text is fully rotated.*/
-		IGNORE {
-			override fun beforeDraw(context: DrawContext, label: Label) {
-				// empty
-			}
-
-			override fun afterDraw(context: DrawContext, label: Label) {
-				// empty
-			}
-		},
-
-		/**
-		 * Rotates the label text so that it is horizontal (when rotated 0 or 180 degrees),
-		 * or so that it is written from upwards and can be read from left (when rotated 90 or 270 degrees)
-		 */
-		ROTATE_HALF {
-			override fun beforeDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX, label.bounds.centerY)
-				context.g.rotate(calculateRotation(label).angle)
-				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
-			}
-
-			override fun afterDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX, label.bounds.centerY)
-				context.g.rotate(calculateRotation(label).angle)
-				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
-			}
-
-			private fun calculateRotation(label: Label): Rotation {
-				return when (label.ownerRotation) {
-					Rotation.R0 -> Rotation.R0
-					Rotation.R180 -> Rotation.R180
-					Rotation.R90 -> Rotation.R0
-					Rotation.R270 -> Rotation.R180
-				}
-			}
-		},
-
-		/** Keeps the label text always horizontal.*/
-		KEEP_HORIZONTAL {
-			override fun beforeDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX, label.bounds.centerY)
-				context.g.rotate(-label.ownerRotation.angle)
-				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
-			}
-
-			override fun afterDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX, label.bounds.centerY)
-				context.g.rotate(label.ownerRotation.angle)
-				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
-			}
-		};
-
-		internal abstract fun beforeDraw(context: DrawContext, label: Label)
-		internal abstract fun afterDraw(context: DrawContext, label: Label)
-
-	}
 
 	/** ---- [Drawable] */
 
@@ -238,7 +186,11 @@ class Label(
 		}
 
 		context.g.font = font
+		drawTextRotated(lText, context)
+		context.g.color = oldColor
+	}
 
+	private fun drawTextRotated(lText: FormattedText, context: DrawContext) {
 		rotationDisplayStrategy.beforeDraw(context, this)
 
 		context.g.translate(location.x, location.y)
@@ -257,8 +209,6 @@ class Label(
 		context.g.translate(-location.x, -location.y)
 
 		rotationDisplayStrategy.afterDraw(context, this)
-
-		context.g.color = oldColor
 	}
 
 	/** ---- [Label] */

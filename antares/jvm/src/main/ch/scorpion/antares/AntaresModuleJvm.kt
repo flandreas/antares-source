@@ -11,6 +11,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
+import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
@@ -20,6 +21,7 @@ import ch.scorpion.antares.view.net.TunnelViewFacePreference
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
+import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
@@ -68,6 +70,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	override fun initialize() {
 
 		GraphViewModule.containerEditorFactory = { createContainerEditor(it) }
+		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
 
 		GraphModuleJvm.require()
@@ -155,7 +158,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PullDirection::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TransistorType::class.java, EnumRenderer::class.java)
-		registry.registerRenderer(JoystickDeflection::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(JoystickDeflectionEditor::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(DigitalPortViewStyle::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -172,7 +176,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 		registry.registerEditor(PullDirection::class.java, PullDirectionEditor::class.java)
 		registry.registerEditor(TransistorType::class.java, TransistorTypeEditor::class.java)
-		registry.registerEditor(JoystickDeflection::class.java, JoystickDeflection::class.java)
+		registry.registerEditor(JoystickDeflectionEditor::class.java, JoystickDeflectionEditor::class.java)
+		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

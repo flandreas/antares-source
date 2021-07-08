@@ -51,7 +51,7 @@ class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 
 	companion object {
 		private val text = EditProperties.translatableText()
-		private val horizontalAlignment = EditProperties.horizontalAlignment("horizontalAlignment")
+		private val horizontalAlignment = EditProperties.horizontalAlignment()
 	}
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {

@@ -12,9 +12,7 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
@@ -24,7 +22,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 class BrokenReferenceView(
 	ownerRotation: Rotation = Rotation.R0,
 	private val styleProvider: StyleProvider
-) : AbstractRectangle(1.5 * EXPECTED_PORT_VIEW_SIZE, -EXPECTED_VERTICAL_INSET, SIZE, SIZE) {
+) : AbstractRectangle(1.5 * EXPECTED_PORT_VIEW_SIZE, -EXPECTED_VERTICAL_INSET, SIZE, SIZE), Labeled {
 
 	companion object {
 		private const val SIZE = 40.0
@@ -46,13 +44,13 @@ class BrokenReferenceView(
 
 	private val textColor: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.textColor
 
-	val label: Label = Label(
+	override val label: Label = Label(
 		text = "?",
 		font = font,
 		color = textColor,
 		location = Point2D(bounds.centerX, bounds.centerY),
 		ownerRotation = ownerRotation,
-		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
+		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL
 	)
 
 	override fun draw(context: DrawContext) {

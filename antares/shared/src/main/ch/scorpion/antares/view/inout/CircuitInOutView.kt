@@ -375,7 +375,7 @@ class CircuitInOutView(
 					styleProvider = styleProvider,
 					port = model.getPort(),
 					direction = orientation,
-					unconnectedLength = template?.unconnectedLength  ?: DigitalPortView.LENGTH,
+					customUnconnectedLength = template?.customUnconnectedLength,
 					length = template?.length)
 				portView.setLocation(
 					-portView.unconnectedLength * orientation.dx,
@@ -387,7 +387,7 @@ class CircuitInOutView(
 					styleProvider = styleProvider,
 					port = model.getInput(),
 					direction = orientation.opposite(),
-					unconnectedLength = template?.unconnectedLength  ?: DigitalPortView.LENGTH,
+					customUnconnectedLength = template?.customUnconnectedLength,
 					length = template?.length)
 				portView.setLocation(
 					portView.unconnectedLength * orientation.dx,

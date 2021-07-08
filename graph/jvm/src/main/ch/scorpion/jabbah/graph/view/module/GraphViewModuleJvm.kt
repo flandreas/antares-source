@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
@@ -15,26 +14,25 @@ import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
-import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
-import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
+import ch.scorpion.jabbah.graph.ui.NavigationStackViewSwing
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -49,6 +47,8 @@ import ch.scorpion.jabbah.io.IOModuleJvm
 object GraphViewModuleJvm : AbstractModule() {
 
 	const val PREF_TREE_OSCILLOSCOPE = "graph.preferences.group.oscilloscope"
+
+	var containerToolBarBuilderFactory: () -> ContainerToolBarBuilder = { ContainerToolBarBuilder() }
 
 	override fun initialize() {
 		IOModuleJvm.require()

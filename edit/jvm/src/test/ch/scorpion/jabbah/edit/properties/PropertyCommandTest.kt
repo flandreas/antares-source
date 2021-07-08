@@ -36,23 +36,23 @@ class PropertyCommandTest {
 
 	@Test
 	fun shouldExecute() {
-		rectangle.alignment = VerticalAlignment.CENTER
-		val cmd = createCommand("alignment", "edit.property.verticalAlignment", rectangle.id, VerticalAlignment.TOP)
+		rectangle.verticalAlignment = VerticalAlignment.CENTER
+		val cmd = createCommand("verticalAlignment", "edit.property.verticalAlignment", rectangle.id, VerticalAlignment.TOP)
 
 		cmd.execute()
 
-		assertEquals(VerticalAlignment.TOP, rectangle.alignment)
+		assertEquals(VerticalAlignment.TOP, rectangle.verticalAlignment)
 	}
 
 	@Test
 	fun shouldUndo() {
-		rectangle.alignment = VerticalAlignment.CENTER
-		val cmd = createCommand("alignment", "edit.property.verticalAlignment", rectangle.id, VerticalAlignment.TOP)
+		rectangle.verticalAlignment = VerticalAlignment.CENTER
+		val cmd = createCommand("verticalAlignment", "edit.property.verticalAlignment", rectangle.id, VerticalAlignment.TOP)
 
 		cmd.execute()
 		cmd.undo()
 
-		assertEquals(VerticalAlignment.CENTER, rectangle.alignment)
+		assertEquals(VerticalAlignment.CENTER, rectangle.verticalAlignment)
 	}
 
 	@Test

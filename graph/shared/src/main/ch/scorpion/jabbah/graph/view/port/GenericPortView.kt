@@ -14,7 +14,7 @@ class GenericPortView<T : Any>(
 	direction: Direction = Direction.SOUTH,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	connectable: Boolean = false
-) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, 0, connectable) {
+) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable = connectable) {
 
 	override var transparency: Int = Transparent.FULLY_OPAQUE
 
@@ -22,7 +22,11 @@ class GenericPortView<T : Any>(
 
 	override val minSegmentLength: Int get() = 0
 
-	override fun getConnectedLength(): Int = 0
+	override val connectedLength: Int get() = 0
+
+	override val unconnectedLength: Int get() = 0
+
+	override val customUnconnectedLength: Int? get() = null
 
 	override val boundingBox: RectangularShape get() = Rectangle2D(location.x, location.y, 0.0, 0.0)
 

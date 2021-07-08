@@ -2,29 +2,13 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.ToolBar
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.app.ComponentSnapAction
-import ch.scorpion.jabbah.edit.app.GridSnapAction
-import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
-import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
-import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
-import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.edit.model.text.LabelTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
@@ -105,6 +89,7 @@ class ContainerPanel(
 		editor.view.initialize()
 	}
 
+	/*
 	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> {
 		val toolbars = listOf(
 			createToolbar(editor, separator),
@@ -112,6 +97,7 @@ class ContainerPanel(
 		toolbars.forEach { it.isFloatable = false }
 		return toolbars
 	}
+	*/
 
 	/**
 	 * Sets the data to be displayed by this [ContainerPanel]. This method is used if this
@@ -160,20 +146,26 @@ class ContainerPanel(
 		add(mainSplitPane)
 	}
 
+	/*
 	private fun createToolbar(editor: Editor, separator: Boolean): ToolBar {
 		val toolbar = ToolBar(editor)
 		if (separator) {
 			toolbar.addSeparator()
 		}
 		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
-		toolbar.addTool(LabelTool(editor, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
+		toolbar.addTool(ComponentAtLocationTool(editor, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
 		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline24.png", Translations.getString("edit.component.polyline"))
+		// TEST BEGIN
+		toolbar.addTool(ComponentAtLocationTool(editor, factory = { DilCase() } ), "/img/rectangle24.png", Translations.getString("antares.dilCase.name"))
+		// TEST END
 
 		return toolbar
 	}
+	*/
 
+	/*
 	private fun createSettingsToolBar(): ToolBar {
 		val toolBar = ToolBar(editor)
 		toolBar.addSeparator()
@@ -194,6 +186,7 @@ class ContainerPanel(
 
 		return toolBar
 	}
+	*/
 
 	private fun updateEditability() {
 		editor.active = editable && editedContainerDrawing != null

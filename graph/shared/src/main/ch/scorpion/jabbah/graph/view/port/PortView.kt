@@ -98,11 +98,20 @@ interface PortView<T : Any> : Drawable, Storable, SnappableX, SnappableY, Transp
 	 */
 	val length: Int
 
+	/** Returns the length of the line to be used if the [Port] is connected. */
+	val connectedLength: Int
+
 	/**
 	 * Returns the distance (in [direction]) between the origin and the connection point of this
 	 * [PortView] when this [PortView] is not connected to an [EdgeView].
 	 */
 	val unconnectedLength: Int
+
+	/**
+	 * Used by [VerticeView]s whose geometry asks for [PortView]s with a custom length.
+	 * If `null`, [unconnectedLength] gets used.
+	 */
+	val customUnconnectedLength: Int?
 
 	/**
 	 * Returns the minimum length of the first or last segment of a [EdgeView] connected to this [PortView].

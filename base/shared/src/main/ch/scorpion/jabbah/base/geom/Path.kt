@@ -29,9 +29,9 @@ interface Path : Shape {
     fun quadTo(x1: Int, y1: Int, x2: Int, y2: Int): Path = quadTo(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble())
 
     /**
-     * Adds a curved segment, defined by three new points, to the path by drawing a Bézier curve that intersects
+     * Adds a curved segment, defined by three new points, to the path by drawing a BÃ©zier curve that intersects
      * both the current coordinates and the specified coordinates (x3,y3), using the specified points
-     * (x1,y1) and (x2,y2) as Bézier control points.
+     * (x1,y1) and (x2,y2) as BÃ©zier control points.
      */
     fun curveTo(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Path
 
