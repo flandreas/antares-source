@@ -18,6 +18,9 @@ plugins {
 allprojects {
 
 	repositories {
+		maven("https://dl.bintray.com/kotlin/kotlin-eap")
+		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
+		maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
 		mavenCentral()
 		jcenter()
 		flatDir {
@@ -118,18 +121,20 @@ subprojects {
 				dependencies {
 
 					//React, React DOM + Wrappers (chapter 3)
-					implementation("org.jetbrains:kotlin-react:17.0.1-pre.148-kotlin-1.4.30")
-					implementation("org.jetbrains:kotlin-react-dom:17.0.1-pre.148-kotlin-1.4.30")
-					implementation(npm("react", "17.0.1"))
-					implementation(npm("react-dom", "17.0.1"))
+					//implementation("org.jetbrains:kotlin-react:17.0.2-pre.154-kotlin-1.5.0")
+					//implementation("org.jetbrains:kotlin-react-dom:17.0.2-pre.154-kotlin-1.5.0")
+					//implementation(npm("react", "17.0.2"))
+					//implementation(npm("react-dom", "17.0.2"))
 
 					//Kotlin Styled (chapter 3)
-					implementation("org.jetbrains:kotlin-styled:5.2.1-pre.146-kotlin-1.4.30")
-					implementation(npm("styled-components", "5.2.1"))
+					//implementation("org.jetbrains:kotlin-styled:5.2.3-pre.154-kotlin-1.5.0")
+					//implementation(npm("styled-components", "~5.2.3"))
 					//implementation(npm("inline-style-prefixer", "~6.0.0"))
 
-					implementation(npm("react-hot-loader", "^4.12.20"))
-					implementation("com.ccfraser.muirwik:muirwik-components:0.6.5")
+					//implementation(npm("react-hot-loader", "^4.12.20"))
+					//implementation("org.jetbrains:kotlin-styled:5.3.0-pre.204-kotlin-1.5.0")
+					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.0-pre.204-kotlin-1.5.0")
+					implementation("com.ccfraser.muirwik:muirwik-components:0.8.2")
 					implementation(npm("react-resize-detector", "6.7.0"))
 					implementation(npm("react-split-pane", "0.1.92"))
 				}

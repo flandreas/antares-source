@@ -8,14 +8,14 @@ external interface ResizeDetectorProps {
 	var onResize: ((Int, Int) -> Unit)?
 }
 
-external interface ResizeDetectorFunctionProps<T> : ResizeDetectorProps {
+external interface ResizeDetectorFunctionProps<T : Any> : ResizeDetectorProps {
 	var targetRef: RMutableRef<T>
 }
 
-external interface UseResizeDetectorResult<T> {
+external interface UseResizeDetectorResult<T : Any> {
 	val ref: RMutableRef<T>
 	val width: Int
 	val height: Int
 }
 
-external fun <T> useResizeDetector(props: ResizeDetectorFunctionProps<T>? = definedExternally): UseResizeDetectorResult<T>
+external fun <T : Any> useResizeDetector(props: ResizeDetectorFunctionProps<T>? = definedExternally): UseResizeDetectorResult<T>
