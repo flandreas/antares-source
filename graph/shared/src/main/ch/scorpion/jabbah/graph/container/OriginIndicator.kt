@@ -5,9 +5,6 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -16,6 +13,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Indicates the location of the origin of the [Drawing] that represents the outer view of a container.
@@ -86,6 +84,11 @@ class OriginIndicator(
 			super.preferredSelectionDrawingStrategy = value
 		}
 
+	/** ---- [Snappable] interface */
+
+	override val snappableX: Array<SnappableX> get() = Snappable.EMPTY_X
+
+	override val snappableY: Array<SnappableY> get() = Snappable.EMPTY_Y
 
 	/** ---- [OriginIndicator] */
 

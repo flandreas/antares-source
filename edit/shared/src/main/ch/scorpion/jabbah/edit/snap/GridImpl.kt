@@ -146,9 +146,9 @@ class GridImpl(
 			}
 		}
 
-	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double = snapValue(initSnappableX.x + initDx)
+	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): DoSnapResult = DoSnapResult(snapValue(initSnappableX.x + initDx), null)
 
-	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double = snapValue(initSnappableY.y + initDy)
+	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): DoSnapResult = DoSnapResult(snapValue(initSnappableY.y + initDy), null)
 
 	/** ---- [GridImpl] */
 

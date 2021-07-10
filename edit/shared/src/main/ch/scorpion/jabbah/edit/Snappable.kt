@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
+
 /**
  * [Snappable] is implemented by [Component]s that want to be snapped by [Snapper]s.
  *
@@ -26,6 +28,12 @@ interface Snappable {
      * doesn't want to be snapped at y-coordinates.
      */
     val snappableY: Array<SnappableY>
+
+    /** Returns a visual indication of the x snapping, or `null` if default visual indication should be used.*/
+    fun getSnapHighlightX(x: Double, y: Double): Unzoomable? = null
+
+	/** Returns a visual indication of the y snapping, or `null` if default visual indication should be used.*/
+	fun getSnapHighlightY(x: Double, y: Double): Unzoomable? = null
 }
 
 interface SnappableX {

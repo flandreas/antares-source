@@ -2,16 +2,13 @@ package ch.scorpion.jabbah.edit
 
 /**
  * A utility class used to transport snapping results between the hierarchically structured [Snapper]s.
+ *
+ * @param x stores the snapped x coordinate
+ * @param y stores the snapped y coordinate
  */
-class SnapResult(x: Double = 0.0, y: Double = 0.0) {
+class SnapResult(var x: Double = 0.0, var y: Double = 0.0) {
 
-    /** Stores the snapped x coordinate.*/
-    var x: Double = x
-
-    /** Stores the snapped y coordinate.*/
-    var y: Double = y
-
-    /**
+	/**
      * Stores the distance between the original and the snapped x coordinate, i.e. the x distance by which the
      * original point or [Snappable] must be dislocated in order to satisfy the calculated snapping constraints.
      */
@@ -35,6 +32,12 @@ class SnapResult(x: Double = 0.0, y: Double = 0.0) {
     /** Stores the [Snapper] that snapped the y coordinate, if any.*/
     var snapperY: Snapper? = null
 
+	/** Stores the [Snappable] that snapped the x coordinate, if any.*/
+	var snappableX: Snappable? = null
+
+	/** Stores the [Snappable] that snapped the y coordinate, if any.*/
+	var snappableY: Snappable? = null
+
     /**
      * Resets the state of this [SnapResult] to default, unsnapped values.
      *
@@ -50,6 +53,8 @@ class SnapResult(x: Double = 0.0, y: Double = 0.0) {
         snappedY = false
         snapperX = null
         snapperY = null
+	    snappableX = null
+	    snappableY = null
     }
 
     /**

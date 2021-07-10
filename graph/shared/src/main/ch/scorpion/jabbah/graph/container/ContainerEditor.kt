@@ -35,7 +35,6 @@ open class ContainerEditor(
 
 	init {
 		configureDefaultZoomFactor()
-		view.drawing = ContainerDrawing()
 
 		eventBus.register(GraphPortViewEvent::class) {
 			if (it.type == GraphPortViewEvent.Type.REMOVE) {

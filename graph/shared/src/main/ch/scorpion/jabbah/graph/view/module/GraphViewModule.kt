@@ -82,7 +82,11 @@ object GraphViewModule : AbstractModule() {
 		GraphEditor(drawingView, eventBus)
 	}
 
-	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
+	var containerEditorFactory: (EventBus) -> ContainerEditor = { eventBus ->
+		val drawing = ContainerDrawing()
+		val drawingView = EditModule.drawingViewFactory.invoke(drawing)
+		ContainerEditor(drawingView, eventBus)
+	}
 
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }

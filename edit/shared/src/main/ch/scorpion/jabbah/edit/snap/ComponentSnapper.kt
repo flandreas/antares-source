@@ -77,11 +77,12 @@ class ComponentSnapper(
 	 * Calculates the x snapping offset according to the [Component] that yields the smallest
 	 * snappable distance from the specified location.
 	 */
-	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double {
+	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): DoSnapResult? {
 		var minSnapDX = Double.MAX_VALUE
 		var minSnapX = Double.MAX_VALUE
 		var otherSnappableX: Array<SnappableX>
 		var dx: Double
+		var minSnappable: Snappable? = null
 
 		val iter = editor.drawing.frontToBackIterator()
 		while (iter.hasNext()) {
@@ -93,7 +94,7 @@ class ComponentSnapper(
 
 			otherSnappableX = comp.snappableX
 			for (i in otherSnappableX.indices) {
-				if (!initSnappableX.accept(otherSnappableX[i])) {
+				if (!initSnappableX.accept(otherSnappableX[i]) || !otherSnappableX[i].accept(initSnappableX)) {
 					continue
 				}
 
@@ -105,22 +106,24 @@ class ComponentSnapper(
 				if (abs(dx) < abs(minSnapDX)) {
 					minSnapDX = dx
 					minSnapX = otherSnappableX[i].x
+					minSnappable = comp
 				}
 			}
 		}
 
-		return minSnapX
+		return minSnappable?.let { DoSnapResult(minSnapX, it) }
 	}
 
 	/**
 	 * Calculates the y snapping offset according to the [Component] that yields the smallest
 	 * snappable distance from the specified location.
 	 */
-	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double {
+	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): DoSnapResult? {
 		var minSnapDY = Double.MAX_VALUE
 		var minSnapY = Double.MAX_VALUE
 		var otherSnappableY: Array<SnappableY>
 		var dy: Double
+		var minSnappable: Snappable? = null
 
 		val iter = editor.drawing.frontToBackIterator()
 		while (iter.hasNext()) {
@@ -132,7 +135,7 @@ class ComponentSnapper(
 
 			otherSnappableY = comp.snappableY
 			for (i in otherSnappableY.indices) {
-				if (!initSnappableY.accept(otherSnappableY[i])) {
+				if (!initSnappableY.accept(otherSnappableY[i]) || !otherSnappableY[i].accept(initSnappableY)) {
 					continue
 				}
 
@@ -144,15 +147,25 @@ class ComponentSnapper(
 				if (abs(dy) < abs(minSnapDY)) {
 					minSnapDY = dy
 					minSnapY = otherSnappableY[i].y
+					minSnappable = comp
 				}
 			}
 		}
 
-		return minSnapY
+		return minSnappable?.let { DoSnapResult(minSnapY, it) }
 	}
 
-	override fun getSnapHighlightX(x: Double, y: Double): Unzoomable? {
+	override fun getSnapHighlightX(x: Double, y: Double, snappable: Snappable?): Unzoomable? {
 		LOG.trace("getSnapHighlightX for $x")
+
+		if (snappable != null) {
+			val snappableHighlight = snappable.getSnapHighlightX(x, y)
+			if (snappableHighlight != null) {
+				return snappableHighlight
+			}
+		}
+
+		// Return default highlight
 		if (highlightX == null) {
 			highlightX = SnapHighlightX()
 		}
@@ -160,8 +173,16 @@ class ComponentSnapper(
 		return highlightX
 	}
 
-	override fun getSnapHighlightY(x: Double, y: Double): Unzoomable? {
+	override fun getSnapHighlightY(x: Double, y: Double, snappable: Snappable?): Unzoomable? {
 		LOG.trace("getSnapHighlightX for $y")
+
+		if (snappable != null) {
+			val snappableHighlight = snappable.getSnapHighlightY(x, y)
+			if (snappableHighlight != null) {
+				return snappableHighlight
+			}
+		}
+
 		if (highlightY == null) {
 			highlightY = SnapHighlightY()
 		}

@@ -69,7 +69,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	override fun initialize() {
 
-		GraphViewModule.containerEditorFactory = { createContainerEditor(it) }
+		GraphViewModule.containerEditorFactory = { eventBus ->
+			val drawing = ContainerDrawing()
+			val drawingView = EditModule.drawingViewFactory.invoke(drawing)
+			DigitalContainerEditor(drawingView, eventBus)
+		}
+
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
 
@@ -129,11 +134,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
-	}
-
-	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
-		val containerCanvas = CanvasJvm(EditModule.drawingViewFactory.invoke(ContainerDrawing()))
-		return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 
 	private fun customizeProperties(properties: Properties) {

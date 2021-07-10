@@ -9,9 +9,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Cloneable
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -30,7 +28,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 open class PortViewComponent<T : Any>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	var portView: PortView<T>? = null
-) : AbstractComponent(styleProvider) {
+) : AbstractComponent(styleProvider), SnappableX, SnappableY {
 
 	companion object {
 		private val TYPE = Translations.getString("graph.component.port")
@@ -111,4 +109,20 @@ open class PortViewComponent<T : Any>(
 		set(value) {
 			portView!!.location = value
 		}
+
+	override val snappableX: Array<SnappableX> get() = arrayOf(this)
+
+	override val snappableY: Array<SnappableY> get() = arrayOf(this)
+
+	/** ---- [SnappableX] */
+
+	override val x: Double get() = location.x
+
+	override fun accept(other: SnappableX): Boolean = other is PortViewContainer
+
+	override val y: Double get() = location.y
+
+	/** ---- [SnappableX] */
+
+	override fun accept(other: SnappableY): Boolean = other is PortViewContainer
 }

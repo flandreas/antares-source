@@ -268,7 +268,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 		var newHighlightX: Unzoomable? = null
 
 		if (result.snappedX) {
-			newHighlightX = result.snapperX!!.getSnapHighlightX(result.x, if (result.snappedY) result.y else y)
+			newHighlightX = result.snapperX!!.getSnapHighlightX(result.x, if (result.snappedY) result.y else y, result.snappableX)
 		}
 
 		if (highlightX != null && (newHighlightX == null || newHighlightX !== highlightX)) {
@@ -285,7 +285,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 		var newHighlightY: Unzoomable? = null
 
 		if (result.snappedY) {
-			newHighlightY = result.snapperY!!.getSnapHighlightY(if (result.snappedX) result.x else x, result.y)
+			newHighlightY = result.snapperY!!.getSnapHighlightY(if (result.snappedX) result.x else x, result.y, result.snappableY)
 		}
 
 		if (highlightY != null && (newHighlightY == null || newHighlightY !== highlightY)) {

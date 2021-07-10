@@ -120,7 +120,7 @@ interface Snapper {
      * @return the [Drawable] that highlight the snapping, or `null` if no x coordinate highlighting is
      *      provided by this [Snapper]
      */
-    fun getSnapHighlightX(x: Double, y: Double): Unzoomable?
+    fun getSnapHighlightX(x: Double, y: Double, snappable: Snappable?): Unzoomable? = null
 
     /**
      * Returns an unzoomable [Drawable] that graphically highlights the last snapping of an y coordinate that was
@@ -131,5 +131,5 @@ interface Snapper {
      * @return the [Drawable] that highlight the snapping, or `null` if no y coordinate highlighting is
      *      provided by this [Snapper]
      */
-    fun getSnapHighlightY(x: Double, y: Double): Unzoomable?
+    fun getSnapHighlightY(x: Double, y: Double, snappable: Snappable?): Unzoomable? = null
 }

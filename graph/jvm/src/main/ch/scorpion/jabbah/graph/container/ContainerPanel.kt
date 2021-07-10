@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.ZoomStrategy
+import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
@@ -68,6 +69,8 @@ class ContainerPanel(
 		}
 
 	init {
+		CanvasJvm(editor.view)
+
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
 
@@ -88,16 +91,6 @@ class ContainerPanel(
 	fun initialize() {
 		editor.view.initialize()
 	}
-
-	/*
-	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> {
-		val toolbars = listOf(
-			createToolbar(editor, separator),
-			createSettingsToolBar()).toImmutableList()
-		toolbars.forEach { it.isFloatable = false }
-		return toolbars
-	}
-	*/
 
 	/**
 	 * Sets the data to be displayed by this [ContainerPanel]. This method is used if this
