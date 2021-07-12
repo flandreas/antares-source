@@ -27,8 +27,8 @@ interface Movable : Locatable {
 			}
 		}
 
-		fun dragFinished(locatables: Collection<Movable>) {
-			locatables.forEach { it.dragFinished() }
+		fun dragFinished(editor: Editor, locatables: Collection<Movable>) {
+			locatables.forEach { it.dragFinished(editor) }
 		}
 	}
 
@@ -46,7 +46,7 @@ interface Movable : Locatable {
 		// empty
 	}
 
-	fun dragFinished() {
+	fun dragFinished(editor: Editor) {
 		// empty
 	}
 

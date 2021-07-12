@@ -236,13 +236,13 @@ abstract class AbstractVerticeView<T : Vertice>(
 		AutoConnector.handleDragged(editor, this)
 	}
 
-	override fun dragFinished() {
-		super<AbstractGraphElementView>.dragFinished()
-		AutoConnector.handleDragFinished()
+	override fun dragFinished(editor: Editor) {
+		super<AbstractGraphElementView>.dragFinished(editor)
+		AutoConnector.handleDragFinished(editor)
 	}
 
 	override fun getMoveCommand(editor: Editor, offset: Point2D): Command {
-		val commands = AutoConnector.getAutoConnectCommands(editor, this)
+		val commands = AutoConnector.createAutoConnectCommands(editor, this)
 		return if (commands.isEmpty()) {
 			super<AbstractGraphElementView>.getMoveCommand(editor, offset)
 		} else {

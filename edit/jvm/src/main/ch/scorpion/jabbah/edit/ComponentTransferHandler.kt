@@ -59,7 +59,7 @@ open class ComponentTransferHandler(
                 super.dragExit(dte)
 	            editor.view.dropComponent?.let {
 		            editor.view.setDropComponent(null, null)
-		            Movable.dragFinished(listOf(it))
+		            Movable.dragFinished(editor, listOf(it))
 	            }
             }
 

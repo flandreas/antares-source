@@ -7,14 +7,13 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.connect.ConnectDestinationCommand
 import ch.scorpion.jabbah.graph.view.connect.ConnectOriginCommand
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 object AutoConnector {
-
-	lateinit var drawingView: DrawingView<*>
 
 	/** Used for highlighting the current possible connection points.*/
 	private val highlight = AutoConnectorHighlight()
@@ -31,20 +30,20 @@ object AutoConnector {
 		if (points.size > 0) {
 			if (!isHighlightDisplayed) {
 				highlight.setPoints(points)
-				addHighlight()
+				addHighlight(editor.view)
 			}
 		} else {
 			if (isHighlightDisplayed) {
-				removeHighlight()
+				removeHighlight(editor.view)
 			}
 		}
 	}
 
-	fun handleDragFinished() {
-		removeHighlight()
+	fun handleDragFinished(editor: Editor) {
+		removeHighlight(editor.view)
 	}
 
-	fun getAutoConnectCommands(
+	fun createAutoConnectCommands(
 		editor: Editor,
 		verticeView: VerticeView<*>,
 		service: GraphViewConnectService = GraphViewModule.graphViewConnectService
@@ -89,13 +88,13 @@ object AutoConnector {
 			}
 	}
 
-	private fun addHighlight() {
+	private fun addHighlight(drawingView: DrawingView<*>) {
 		drawingView.animationContainer.add(highlight)
 		highlight.validate()
 		isHighlightDisplayed = true
 	}
 
-	private fun removeHighlight() {
+	private fun removeHighlight(drawingView: DrawingView<*>) {
 		drawingView.animationContainer.remove(highlight)
 		drawingView.drawing.validate()
 		isHighlightDisplayed = false

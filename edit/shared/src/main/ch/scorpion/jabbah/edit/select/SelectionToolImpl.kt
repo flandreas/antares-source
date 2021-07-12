@@ -258,7 +258,7 @@ class SelectionToolImpl(
 					editor.commandManager.rollbackTransaction()
 				}
 			}
-			Movable.dragFinished(selection)
+			Movable.dragFinished(editor, selection)
 		}
 
 		// Cleanup

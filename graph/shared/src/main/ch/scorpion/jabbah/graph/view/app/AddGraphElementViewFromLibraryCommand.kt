@@ -43,8 +43,8 @@ class AddGraphElementViewFromLibraryCommand(
 		componentCustomizer.invoke(verticeView)
 
 		if (connectCommands == null) {
-			connectCommands = AutoConnector.getAutoConnectCommands(editor!!, verticeView, service)
-			AutoConnector.handleDragFinished()
+			connectCommands = AutoConnector.createAutoConnectCommands(editor!!, verticeView, service)
+			AutoConnector.handleDragFinished(editor)
 		}
 
 		connectCommands!!.forEach { it.execute() }
