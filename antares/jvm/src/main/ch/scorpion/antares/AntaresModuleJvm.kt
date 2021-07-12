@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
-import ch.scorpion.antares.model.gate.OpenGateInputBehaviourPreference
+import ch.scorpion.antares.model.gate.UndefinedGateInputBehaviorPreference
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
@@ -26,7 +26,6 @@ import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
@@ -34,10 +33,6 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
-import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -45,7 +40,6 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -188,7 +182,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(OpenGateInputBehaviourPreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(UndefinedGateInputBehaviorPreference())
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = AndGateView.PROP_DATA_FLOW_ENABLED,

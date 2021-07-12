@@ -13,32 +13,20 @@ class AndCalculator : AbstractDigitalGateCalculator() {
 	companion object {
 
 		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
-			var undefined = false
 			var trueCount = 0
 			for (portId in (1..source.signalCount).filter { filter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (source.getSignal(portId)) {
+				when (effectiveGateInputValue(portId, source)) {
 					True -> trueCount++
 					Error -> return Error
-					Undefined -> undefined = true
 				}
 			}
-
-			if (undefined) {
-				when (CurrentOpenGateInputBehaviour.value) {
-					OpenGateInputBehavior.Accept -> {}
-					OpenGateInputBehavior.Random -> return Bit.random()
-					OpenGateInputBehavior.Error -> return Error
-				}
-			}
-
 			return Bit.of(trueCount == source.signalCount)
 		}
 	}
 
-	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit {
-		return Companion.calculate(source, filter)
-	}
+	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit =
+		Companion.calculate(source, filter)
 }
 
 /** A digital gate that performs a logical AND operation. */

@@ -32,21 +32,11 @@ class NotCalculatorTest {
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertOneInput(False, True)
 		assertOneInput(True, False)
 		assertOneInput(Undefined, False)
-		assertOneInput(Error, Error)
-	}
-
-	@Test
-	fun shouldCalculateWithErrorForUndefinedInput() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
-
-		assertOneInput(False, True)
-		assertOneInput(True, False)
-		assertOneInput(Undefined, Error)
 		assertOneInput(Error, Error)
 	}
 

@@ -31,21 +31,11 @@ class BufferCalculatorTest {
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertOneInput(Bit.False, Bit.False)
 		assertOneInput(Bit.True, Bit.True)
 		assertOneInput(Bit.Undefined, Bit.False)
-		assertOneInput(Bit.Error, Bit.Error)
-	}
-
-	@Test
-	fun shouldCalculateWithErrorForUndefinedInput() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
-
-		assertOneInput(Bit.False, Bit.False)
-		assertOneInput(Bit.True, Bit.True)
-		assertOneInput(Bit.Undefined, Bit.Error)
 		assertOneInput(Bit.Error, Bit.Error)
 	}
 

@@ -197,7 +197,7 @@ open class DigitalPortImpl(
 				return DigitalSignalFactory.undefined(bitWidth)
 			}
 
-			if (portType == PortType.INPUT) {
+			if (portType == PortType.INPUT && !isConnected) {
 				return DigitalSignalFactory.undefined(bitWidth)
 			}
 

@@ -16,7 +16,7 @@ class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertTwoInput(Bit.False, Bit.False, Bit.True)
 		assertTwoInput(Bit.False, Bit.True, Bit.False)
@@ -31,31 +31,6 @@ class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
 		assertTwoInput(Bit.Undefined, Bit.False, Bit.True)
 		assertTwoInput(Bit.Undefined, Bit.True, Bit.False)
 		assertTwoInput(Bit.Undefined, Bit.Undefined, Bit.True)
-		assertTwoInput(Bit.Undefined, Bit.Error, Bit.Error)
-
-		assertTwoInput(Bit.Error, Bit.False, Bit.Error)
-		assertTwoInput(Bit.Error, Bit.True, Bit.Error)
-		assertTwoInput(Bit.Error, Bit.Undefined, Bit.Error)
-		assertTwoInput(Bit.Error, Bit.Error, Bit.Error)
-	}
-
-	@Test
-	fun shouldCalculateWithErrorForUndefinedInput() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
-
-		assertTwoInput(Bit.False, Bit.False, Bit.True)
-		assertTwoInput(Bit.False, Bit.True, Bit.False)
-		assertTwoInput(Bit.False, Bit.Undefined, Bit.Error)
-		assertTwoInput(Bit.False, Bit.Error, Bit.Error)
-
-		assertTwoInput(Bit.True, Bit.False, Bit.False)
-		assertTwoInput(Bit.True, Bit.True, Bit.False)
-		assertTwoInput(Bit.True, Bit.Undefined, Bit.Error)
-		assertTwoInput(Bit.True, Bit.Error, Bit.Error)
-
-		assertTwoInput(Bit.Undefined, Bit.False, Bit.Error)
-		assertTwoInput(Bit.Undefined, Bit.True, Bit.Error)
-		assertTwoInput(Bit.Undefined, Bit.Undefined, Bit.Error)
 		assertTwoInput(Bit.Undefined, Bit.Error, Bit.Error)
 
 		assertTwoInput(Bit.Error, Bit.False, Bit.Error)

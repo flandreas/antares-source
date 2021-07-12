@@ -15,7 +15,7 @@ class NandCalculatorTest : AbstractGateCalculatorTest(NandCalculator()) {
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertTwoInput(False, False, True)
 		assertTwoInput(False, True, True)

@@ -31,13 +31,7 @@ class NotCalculator<T : Vertice> : VerticeCalculator<T> {
 	private fun calculateOutputValue(inputValue: DigitalSignal): DigitalSignal {
 		return DigitalSignalFactory.ofBits(inputValue.bits.map {
 			when (it) {
-				Bit.Undefined -> {
-					when (CurrentOpenGateInputBehaviour.value) {
-						OpenGateInputBehavior.Accept -> Bit.False
-						OpenGateInputBehavior.Random -> Bit.random()
-						OpenGateInputBehavior.Error -> Bit.Error
-					}
-				}
+				Bit.Undefined -> CurrentUndefinedGateInputBehavior.value.definedBit
 				else -> it.not()
 			}
 		})

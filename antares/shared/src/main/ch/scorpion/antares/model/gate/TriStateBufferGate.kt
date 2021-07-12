@@ -22,16 +22,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 
 	override fun calculate(vertice: TriStateBufferGate, data: GraphActorData, signalHandler: SignalHandler) {
-
-		val control = data.getSignal<DigitalSignal>(2)!!.bitAt(0)
+		val control = effectiveGateInputBit(data.getSignal<DigitalSignal>(2)!!.bitAt(0))
 		val result = when (control) {
-			Undefined -> {
-				when (CurrentOpenGateInputBehaviour.value) {
-					OpenGateInputBehavior.Accept -> DigitalSignalFactory.undefined(vertice.bitWidth)
-					OpenGateInputBehavior.Random -> DigitalSignalFactory.random(vertice.bitWidth)
-					OpenGateInputBehavior.Error -> DigitalSignalFactory.error(vertice.bitWidth)
-				}
-			}
 			Error -> DigitalSignalFactory.error(vertice.bitWidth)
 			else -> {
 				if (vertice.enableLogic.evaluate(control.isSet)) {
@@ -41,20 +33,13 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 				}
 			}
 		}
-
 		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(result, signalHandler)
 	}
 
 	private fun calculateOutputValue(vertice: TriStateBufferGate, inputValue: DigitalSignal): DigitalSignal {
 		return DigitalSignalFactory.ofBits(inputValue.bits.map {
 			when (it) {
-				Undefined -> {
-					when(CurrentOpenGateInputBehaviour.value) {
-						OpenGateInputBehavior.Accept -> vertice.undefinedInputResult
-						OpenGateInputBehavior.Random -> Bit.random()
-						OpenGateInputBehavior.Error -> Error
-					}
-				}
+				Undefined -> vertice.undefinedInputResult
 				else -> it
 			}
 		})

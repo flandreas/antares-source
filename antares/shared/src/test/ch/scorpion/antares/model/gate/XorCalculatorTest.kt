@@ -20,7 +20,7 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertTwoInput(False, False, False)
 		assertTwoInput(False, True, True)
@@ -44,33 +44,8 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 	}
 
 	@Test
-	fun shouldCalculateWithErrorForUndefinedInput() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Error
-
-		assertTwoInput(False, False, False)
-		assertTwoInput(False, True, True)
-		assertTwoInput(False, Undefined, Error)
-		assertTwoInput(False, Error, Error)
-
-		assertTwoInput(True, False, True)
-		assertTwoInput(True, True, False)
-		assertTwoInput(True, Undefined, Error)
-		assertTwoInput(True, Error, Error)
-
-		assertTwoInput(Undefined, False, Error)
-		assertTwoInput(Undefined, True, Error)
-		assertTwoInput(Undefined, Undefined, Error)
-		assertTwoInput(Undefined, Error, Error)
-
-		assertTwoInput(Error, False, Error)
-		assertTwoInput(Error, True, Error)
-		assertTwoInput(Error, Undefined, Error)
-		assertTwoInput(Error, Error, Error)
-	}
-
-	@Test
 	fun oddNumberOfInputShouldCalculateTrue() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		val xor = XorGate(InputCount.THREE)
 		xor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
@@ -82,7 +57,7 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 
 	@Test
 	fun evenNumberOfInputShouldCalculateFalse() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		val xor = XorGate(InputCount.THREE)
 		xor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)

@@ -16,25 +16,13 @@ class XorCalculator : AbstractDigitalGateCalculator() {
 
 		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
 			var trueCount = 0
-			var undefined = false
-
 			for (portId in (1..source.signalCount).filter { filter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (source.getSignal(portId)) {
+				when (effectiveGateInputValue(portId, source)) {
 					True -> trueCount++
 					Error -> return Error
-					Undefined -> undefined = true
 				}
 			}
-
-			if (undefined) {
-				when (CurrentOpenGateInputBehaviour.value) {
-					OpenGateInputBehavior.Accept -> {}
-					OpenGateInputBehavior.Random -> return Bit.random()
-					OpenGateInputBehavior.Error -> return Error
-				}
-			}
-
 			return Bit.of(trueCount.rem(2) == 1)
 		}
 	}

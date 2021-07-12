@@ -28,6 +28,19 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 	}
 }
 
+fun effectiveGateInputBit(bit: Bit): Bit =
+	if (bit == Bit.Undefined) {
+		CurrentUndefinedGateInputBehavior.value.definedBit
+	} else {
+		bit
+	}
+
+fun effectiveGateInputWord(input: DigitalSignal): DigitalSignal =
+	DigitalSignalFactory.ofBits(input.bits.map { bit -> effectiveGateInputBit(bit) })
+
+fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<Bit>): Bit =
+	effectiveGateInputBit(source.getSignal(portId))
+
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
  * of [InputPort]s can be chosen by the user up to a certain limit.

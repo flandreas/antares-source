@@ -20,7 +20,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun shouldFulfillTruthTable() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertTwoInput(False, False, True)
 		assertTwoInput(False, True, False)
@@ -45,7 +45,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun evenNumberOfInputShouldCalculateTrue() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		val xnor = XnorGate(InputCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
@@ -57,7 +57,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun oddNumberOfInputShouldCalculateFalse() {
-		CurrentOpenGateInputBehaviour.value = OpenGateInputBehavior.Accept
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		val xnor = XnorGate(InputCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
