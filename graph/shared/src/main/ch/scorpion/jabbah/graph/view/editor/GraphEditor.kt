@@ -23,10 +23,6 @@ class GraphEditor(
     private val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
-	init {
-		AutoConnector.drawingView = view
-	}
-
     override fun handleComponentAdded(component: Component) {
         if (component is GraphPortView<*>) {
             eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, component))

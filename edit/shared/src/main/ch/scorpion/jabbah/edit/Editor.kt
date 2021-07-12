@@ -70,6 +70,9 @@ interface Editor {
     /** Holds the [SnapManager] that controls snapping on behalf of this [Editor].*/
     val snapManager: SnapManager
 
+    /** Holds the [DragManager] that controls dragging of [Component]s on behalf of this [Editor].*/
+    val dragManager: DragManager
+
     /** Holds the [CommandManager] that manages the [Command]s created by this [Editor].*/
     val commandManager: CommandManager
 

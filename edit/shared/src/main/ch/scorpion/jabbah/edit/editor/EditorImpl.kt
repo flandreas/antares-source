@@ -37,6 +37,8 @@ open class EditorImpl(
 
     final override val snapManager: SnapManager = SnapManagerImpl(this)
 
+	final override val dragManager: DragManager = DragManagerImpl(this)
+
     final override var active: Boolean = false
         set(value) {
             if (value == field) {
