@@ -382,7 +382,7 @@ object GateMnemonic {
 	private fun drawBufferImpl(gateView: BoxGateView<*>, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = getInputSignal(gateView, 1)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!
 		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
 		context.g.stroke = LINE_STROKE
 		context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
@@ -392,9 +392,9 @@ object GateMnemonic {
 	private fun drawTriStateRight(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = getInputSignal(gateView, 1)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!
 		val control = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
 
 		// Internal connection
 		context.g.font = FONT
