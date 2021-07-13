@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.app.DrawingAppService
-import ch.scorpion.jabbah.edit.editor.DropEvent
+import ch.scorpion.jabbah.edit.drag.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
@@ -113,6 +113,9 @@ open class ComponentTransferHandler(
         }
     }
 
-	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component =
-		service.add(dropComponent, editor.view)
+	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component {
+		val component = service.add(dropComponent, editor.view)
+		editor.dragManager.finishDrop(component)
+		return component
+	}
 }

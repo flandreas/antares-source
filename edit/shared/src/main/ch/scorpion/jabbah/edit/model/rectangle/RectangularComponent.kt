@@ -79,13 +79,11 @@ abstract class AbstractRectangularComponent(
 			return bb
 		}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return shape.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
 
-	override fun contains(p: Point2D): Boolean {
-		return shape.contains(p)
-	}
+	override fun contains(p: Point2D): Boolean = shape.contains(p)
+
+	override fun intersects(rect: RectangularShape): Boolean = shape.intersects(rect)
 
 	override val canMirror: Boolean = true
 

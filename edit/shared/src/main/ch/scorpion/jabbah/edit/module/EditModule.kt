@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
+import ch.scorpion.jabbah.edit.drag.EditDragModule
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -69,6 +70,7 @@ object EditModule : AbstractModule() {
 	    EditModelGroupModule.require()
 		EditModuleQuadCurveModule.require()
         EditSnapModule.require()
+	    EditDragModule.require()
         EditSelectModule.require()
         EditEditorModule.require()
 	    EditAuthModule.require()

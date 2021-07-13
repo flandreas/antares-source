@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.editor.DropEvent
+import ch.scorpion.jabbah.edit.drag.DropEvent
 
 /**
  * Standard implementation of the [SnapManager] interface.

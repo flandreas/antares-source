@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.container.DilCase
+import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
@@ -35,6 +36,8 @@ import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
+import ch.scorpion.jabbah.edit.drag.EditDragModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
@@ -162,6 +165,7 @@ object AntaresViewModule : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
+		configureDragDestinationHighlights(EditDragModule.dragDestinationHighlightFactoryRegistry)
 
 		ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
 
@@ -343,6 +347,10 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class) { BoundingBoxBelowSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class) { BoundingBoxBelowSelectionModel(it) }
+	}
+
+	private fun configureDragDestinationHighlights(registry: DragDestinationHighlightFactoryRegistry) {
+		registry.register(DilCase::class) { DilCaseDragDestinationHighlight(it) }
 	}
 
 	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {

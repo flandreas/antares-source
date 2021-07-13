@@ -84,12 +84,6 @@ class OriginIndicator(
 			super.preferredSelectionDrawingStrategy = value
 		}
 
-	/** ---- [Snappable] interface */
-
-	override val snappableX: Array<SnappableX> get() = Snappable.EMPTY_X
-
-	override val snappableY: Array<SnappableY> get() = Snappable.EMPTY_Y
-
 	/** ---- [OriginIndicator] */
 
 	fun drawSelected(context: DrawContext) {

@@ -84,6 +84,9 @@ interface Drawable {
 	/** Determines whether the specified [Point2D] is located within this [Drawable]. */
 	fun contains(p: Point2D): Boolean = contains(p.x, p.y)
 
+	/** Determines whether [rect] intersects with this [Drawable]'s [boundingBox]. */
+	fun intersects(rect: RectangularShape): Boolean = boundingBox.intersects(rect)
+
 	/**
 	 * Notifies this [Drawable] that is has been added to a [DrawableContainer].
 	 * As a reaction, this [Drawable] should store a reference to that parent [DrawableContainer] in order

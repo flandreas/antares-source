@@ -44,12 +44,15 @@ object AutoConnector : DragManagerPlugin {
 	}
 
 	override fun handleDragFinished(editor: Editor, component: Component): Collection<Command> {
-		removeHighlight(editor.view)
 		return if (component is VerticeView<*>) {
 			createAutoConnectCommands(editor, component)
 		} else {
 			emptySet()
 		}
+	}
+
+	override fun handleDragTerminated(editor: Editor) {
+		removeHighlight(editor.view)
 	}
 
 	private fun createAutoConnectCommands(

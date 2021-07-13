@@ -10,9 +10,11 @@ import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.edit.drag.DragDestination
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.graph.container.PortViewComponent
@@ -26,7 +28,7 @@ class DilCase(
 	DilShape(0.0, 0.0, DEF_WIDTH.toDouble(), DEF_HEIGHT.toDouble()),
 	labelRotation = Rotation.R90,
 	labelRotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF
-) {
+), DragDestination {
 
 	companion object {
 		const val SCALE = 7
@@ -41,6 +43,10 @@ class DilCase(
 
 	private var _snappableX: Array<SnappableX>? = null
 	private var _snappableY: Array<SnappableY>? = null
+
+	/** ---- [DragDestination] */
+
+	override fun acceptDrag(component: Component): Boolean = component is PortViewComponent<*>
 
 	/** ---- [RectangularComponent] */
 
@@ -80,13 +86,13 @@ class DilCase(
 		return snapHighlight
 	}
 
-	data class DilPositionX(override val x: Double, private val isBorder: Boolean) : SnappableX, PortViewContainer {
+	data class DilPositionX(override val x: Double, val isBorder: Boolean) : SnappableX, PortViewContainer {
 		override fun accept(other: SnappableX): Boolean =
 			other is PortViewComponent<*>
 				&& (isBorder && other.direction.isHorizontal() || !isBorder && other.direction.isVertical())
 	}
 
-	data class DilPositionY(override val y: Double, private val isBorder: Boolean) : SnappableY, PortViewContainer {
+	data class DilPositionY(override val y: Double, val isBorder: Boolean) : SnappableY, PortViewContainer {
 		override fun accept(other: SnappableY): Boolean =
 			other is PortViewComponent<*>
 				&& (isBorder && other.direction.isVertical() || !isBorder && other.direction.isHorizontal())
@@ -99,7 +105,7 @@ class DilCase(
 			DilPositionX(minX, isBorder = true),
 			DilPositionX(maxX, isBorder = true))
 		var snapX = minX + DEF_PORT_INSET
-		while (snapX < maxX - DEF_PORT_INSET) {
+		while (snapX <= maxX - DEF_PORT_INSET) {
 			xList.add(DilPositionX(snapX, isBorder = false))
 			snapX += DEF_PORT_DIST
 		}
@@ -109,7 +115,7 @@ class DilCase(
 			DilPositionY(minY, isBorder = true),
 			DilPositionY(maxY, isBorder = true))
 		var snapY = minY + DEF_PORT_INSET
-		while (snapY < maxY - DEF_PORT_INSET) {
+		while (snapY <= maxY - DEF_PORT_INSET) {
 			yList.add(DilPositionY(snapY, isBorder = false))
 			snapY += DEF_PORT_DIST
 		}

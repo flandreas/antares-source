@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.editor
+package ch.scorpion.jabbah.edit.drag
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Component

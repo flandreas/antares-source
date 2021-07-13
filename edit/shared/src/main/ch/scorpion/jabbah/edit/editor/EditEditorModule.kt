@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.drag.DragManagerImpl
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 

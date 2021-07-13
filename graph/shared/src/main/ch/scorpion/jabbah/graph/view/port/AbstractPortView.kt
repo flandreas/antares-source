@@ -70,21 +70,25 @@ abstract class AbstractPortView<T : Any>(
 
 	override var direction: Direction = direction
 		set(value) {
-			invalidate()
-			field = value
-			modelChanged()
-			invalidate()
-			update()
+			if (field != value) {
+				invalidate()
+				field = value
+				modelChanged()
+				invalidate()
+				update()
+			}
 		}
 
 	@Suppress("UNUSED_PARAMETER")
 	override var ownerRotation: Rotation
 		get() = owner?.rotation ?: Rotation.R0
 		set(value) {
-			invalidate()
-			ownerRotationChanged()
-			invalidate()
-			update()
+			if (ownerRotation != value) {
+				invalidate()
+				ownerRotationChanged()
+				invalidate()
+				update()
+			}
 		}
 
 	override val connectionPoint: Point2D get() = Point2D(connectionPointX, connectionPointY)

@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.editor
+package ch.scorpion.jabbah.edit.drag
 
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
@@ -21,6 +21,12 @@ class DragManagerImpl(
 	}
 
 	private val plugins = mutableSetOf<DragManagerPlugin>()
+
+	/**
+	 * Set to `true` if any of the registered plugins implements [DragManagerDestinationPlugin], in which
+	 * case destination [Component]s as drag targets are located.
+	 */
+	private var pluginsNeedDestination: Boolean = false
 
 	/** The [Component] acting as reference for moving potentially many [Component]s. */
 	private var movedReferenceComponent: Component? = null
@@ -52,6 +58,9 @@ class DragManagerImpl(
 
 	override fun registerPlugin(plugin: DragManagerPlugin) {
 		plugins.add(plugin)
+		if (plugin is DragManagerPlugin) {
+			pluginsNeedDestination = true
+		}
 	}
 
 	override fun prepareDrag(component: Component, x: Double, y: Double) {
@@ -61,31 +70,52 @@ class DragManagerImpl(
 	}
 
 	override fun mouseDragged(x: Double, y: Double) {
+		val selection = editor.view.selectionManager.selection
+
+		dragSnapped(selection, x, y)
+
+		if (selection.size == 1) {
+			involvePluginsDragged(selection.first())
+		}
+
+		editor.drawing.validate()
+	}
+
+	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double) {
 		val dx = x - moveLastLocation.x
 		val dy = y - moveLastLocation.y
-		val selection = editor.view.selectionManager.selection
-		var offset = Point2D.ZERO
+		var snap = Point2D.ZERO
 
 		if (editor.snapManager.snapEnabled) {
-			if (selection.size > 1) {
+			if (components.size > 1) {
 				if (multiComponentSnappable == null) {
-					multiComponentSnappable = MultiComponentSnappable(selection)
+					multiComponentSnappable = MultiComponentSnappable(components)
 				}
-				offset = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
-			} else if (selection.size == 1) {
-				offset = editor.snapManager.snap(selection.first(), dx, dy)
+				snap = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
+			} else if (components.size == 1) {
+				snap = editor.snapManager.snap(components.first(), dx, dy)
 			}
 		}
 
+		val offset =  Point2D(dx + snap.x, dy + snap.y)
+
 		// Move all selected [Components] by the same snapped offset
-		Movable.dragBy(selection, Point2D(dx + offset.x, dy + offset.y))
+		Movable.dragBy(components, offset)
+		moveLastLocation = Point2D(x + snap.x, y + snap.y)
+	}
 
-		if (selection.size == 1) {
-			plugins.forEach { it.handleDragged(editor, selection.first()) }
+	private fun involvePluginsDragged(component: Component) {
+		var destination: Component? = null
+		if (pluginsNeedDestination) {
+			destination = editor.drawing.getDrawableAt(component.boundingBox) { it !== component }
 		}
-
-		moveLastLocation = Point2D(x + offset.x, y + offset.y)
-		editor.drawing.validate()
+		plugins.forEach {
+			if (it is DragManagerDestinationPlugin) {
+				it.handleDragged(editor, component, destination)
+			} else {
+				it.handleDragged(editor, component)
+			}
+		}
 	}
 
 	override fun mouseReleased(x: Double, y: Double) {
@@ -93,9 +123,10 @@ class DragManagerImpl(
 			val selection = editor.view.selectionManager.selection
 			if (moveStartLocation != movedReferenceComponent?.location) {
 
-				val additionalCommands = mutableListOf<Command>()
-				if (selection.size == 1) {
-					plugins.forEach { additionalCommands.addAll(it.handleDragFinished(editor, selection.first())) }
+				val additionalCommands = if (selection.size == 1) {
+					involvePluginsDragFinished(selection.first())
+				} else {
+					emptyList()
 				}
 
 				try {
@@ -114,8 +145,20 @@ class DragManagerImpl(
 			}
 		}
 
+		involvePluginsDragTerminated()
+	}
+
+	private fun involvePluginsDragFinished(component: Component): List<Command> {
+		val commands = mutableListOf<Command>()
+		plugins.forEach { commands.addAll(it.handleDragFinished(editor, component)) }
+		return commands
+	}
+
+	private fun involvePluginsDragTerminated() {
 		multiComponentSnappable = null
 		movedReferenceComponent = null
+		dropComponent = null
+		plugins.forEach { it.handleDragTerminated(editor) }
 	}
 
 	override fun isMoveKey(event: KeyEvent): Boolean =
@@ -137,13 +180,11 @@ class DragManagerImpl(
 	override fun setDropComponent(component: Component?, location: Point2D?) {
 		if (component != null) {
 			if (dropComponent != null) {
-				val snap = editor.snapManager.snap(location!!.x, location.y)
-				if (snap != snappedDropLocation) {
-					snappedDropLocation = snap
-					dropComponent!!.location = location.add(snap)
-					plugins.forEach { it.handleDragged(editor, dropComponent!!) }
-				}
+				dragSnapped(listOf(component), location!!.x, location.y)
+				involvePluginsDragged(component)
 			} else {
+				component.location = location!!
+				prepareDrag(component, location.x, location.y)
 				dropComponent = component
 				editor.view.animationContainer.add(component)
 			}
@@ -152,16 +193,13 @@ class DragManagerImpl(
 			if (dropComponent != null) {
 				editor.view.animationContainer.remove(dropComponent!!)
 				editor.drawing.validate()
-				dropComponent = null
 			}
+			involvePluginsDragTerminated()
 		}
 	}
 
-	override fun finishDrop(component: Component): Collection<Command> {
-		val additionalCommands = mutableListOf<Command>()
-		plugins.forEach { additionalCommands.addAll(it.handleDragFinished(editor, component)) }
-		return additionalCommands
-	}
+	override fun finishDrop(component: Component): Collection<Command> =
+		involvePluginsDragFinished(component)
 
 	/** ---- [DragManagerImpl] */
 

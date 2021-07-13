@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 
 /**
@@ -75,9 +77,20 @@ interface DrawableBag<T: Drawable> {
 	 */
 	fun getDrawableAt(x: Double, y: Double, predicate: (T) -> Boolean): T?  {
 		if (useLocation) {
-			return drawables.firstOrNull { it.visible && predicate.invoke(it) && it.contains(rotateBack(x, y).subtract(location)) }
+			val p = rotateBack(x, y).subtract(location)
+			return drawables.firstOrNull { it.visible && predicate.invoke(it) && it.contains(p) }
 		}
-		return drawables.firstOrNull { it.visible && it.contains(rotateBack(x, y)) }
+		val p = rotateBack(x, y)
+		return drawables.firstOrNull { it.visible && predicate.invoke(it) && it.contains(p) }
+	}
+
+	fun getDrawableAt(rect: RectangularShape, predicate: (T) -> Boolean): T? {
+		if (useLocation) {
+			val r = rotateBack(rect).moveBy(location.negate)
+			return drawables.firstOrNull { it.visible && predicate.invoke(it) && it.intersects(r) }
+		}
+		val r = rotateBack(rect)
+		return drawables.firstOrNull { it.visible && predicate.invoke(it) && it.intersects(r) }
 	}
 
 	fun getDrawableAt(x: Double, y: Double): T? = getDrawableAt(x, y) { true }
@@ -95,4 +108,7 @@ interface DrawableBag<T: Drawable> {
 		= rotation.inverse().rotatePointAround(location, x, y)
 
 	fun rotateBack(pos: Point2D): Point2D = rotateBack(pos.x, pos.y)
+
+	fun rotateBack(rect: RectangularShape): Rectangle2D
+		= rotation.inverse().rotateRectangleAround(location, rect)
 }

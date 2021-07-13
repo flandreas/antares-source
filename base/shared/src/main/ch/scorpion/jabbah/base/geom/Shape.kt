@@ -19,9 +19,12 @@ interface Shape {
     fun contains(x: Double, y: Double, width: Double, height: Double): Boolean
 
     /** Tests if the interior of this [Shape] entirely contains the specified [Rectangle2D].*/
-    fun contains(rect: Rectangle2D): Boolean = contains(rect.x, rect.y, rect.width, rect.height)
+    fun contains(rect: RectangularShape): Boolean = contains(rect.x, rect.y, rect.width, rect.height)
 
     /** Tests if the interior of this [Shape] intersects the interior of the specified rectangular area.*/
     fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean
+
+    /** Tests if the interior of this [Shape] intersects the interior of the specified rectangular area. */
+    fun intersects(rect: RectangularShape): Boolean = intersects(rect.x, rect.y, rect.width, rect.height)
 
 }

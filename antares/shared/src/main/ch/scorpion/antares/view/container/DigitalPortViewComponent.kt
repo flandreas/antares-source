@@ -9,6 +9,8 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Cloneable
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.Storable
@@ -101,4 +103,13 @@ class DigitalPortViewComponent(
 	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
 	    }
     }
+
+	/** ---- [Cloneable] */
+
+	override fun doClone(): Component {
+		val clone = super.doClone() as DigitalPortViewComponent
+		clone.showBitWidthAnnotation = this.showBitWidthAnnotation
+		clone.portViewStyle = this.portViewStyle
+		return clone
+	}
 }

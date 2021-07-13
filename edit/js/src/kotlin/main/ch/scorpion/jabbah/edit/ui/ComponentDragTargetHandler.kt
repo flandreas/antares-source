@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.app.DrawingAppService
-import ch.scorpion.jabbah.edit.editor.DropEvent
+import ch.scorpion.jabbah.edit.drag.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import org.w3c.dom.DragEvent
 

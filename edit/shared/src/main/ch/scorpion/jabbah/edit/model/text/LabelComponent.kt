@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -91,6 +92,8 @@ class LabelComponent(
 	override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
 	override fun contains(p: Point2D): Boolean = label.contains(p)
+
+	override fun intersects(rect: RectangularShape): Boolean = label.intersects(rect)
 
 	override fun draw(context: DrawContext) {
 		if (!context.useContextColors) {

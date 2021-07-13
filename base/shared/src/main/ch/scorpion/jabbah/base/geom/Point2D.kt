@@ -20,6 +20,8 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 	val xInt: Int get() = x.toInt()
 	val yInt: Int get() = y.toInt()
 
+	val negate: Point2D get() = Point2D(-x, -y)
+
 	/** Returns the square of the distance from this [Point2D] to a specified location.*/
 	fun distanceSq(x: Double, y: Double): Double {
 		val px = x - this.x
@@ -62,7 +64,7 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 		return Point2D(x - p.x, y - p.y)
 	}
 
-	/** Creates a new [Point2] by multiplying the coordinates of this [Point2D] with the specified factor.*/
+	/** Creates a new [Point2D] by multiplying the coordinates of this [Point2D] with the specified factor.*/
 	fun multiply(factor: Double): Point2D {
 		return Point2D(x * factor, y * factor)
 	}

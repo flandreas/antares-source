@@ -4,7 +4,7 @@ import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
 
-/** Wraps a [Component] as a drag'n drop [Transferable]. */
+/** Wraps a [Component] as a drag&drop drop [Transferable]. */
 class ComponentTransferable(val component: Component) : Transferable {
 
     companion object {

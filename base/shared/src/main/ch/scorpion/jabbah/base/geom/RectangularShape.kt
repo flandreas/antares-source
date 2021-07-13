@@ -153,8 +153,4 @@ interface RectangularShape : Shape {
 		setFrame(x - deltaX, y, width + deltaX, height)
 		return this
 	}
-
-    fun contains(rect: RectangularShape): Boolean {
-        return contains(rect.x, rect.y, rect.width, rect.height)
-    }
 }

@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -213,13 +210,11 @@ open class TextComponentJvm(
 
 	/** ---- [Drawable] */
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return super<AbstractRectangularComponent>.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = super<AbstractRectangularComponent>.contains(x, y)
 
-	override fun contains(p: Point2D): Boolean {
-		return super<AbstractRectangularComponent>.contains(p)
-	}
+	override fun contains(p: Point2D): Boolean = super<AbstractRectangularComponent>.contains(p)
+
+	override fun intersects(rect: RectangularShape): Boolean = super<AbstractRectangularComponent>.intersects(rect)
 
 	override fun draw(context: DrawContext) {
 		if (filled) {

@@ -79,4 +79,16 @@ interface DragManagerPlugin {
 	 * The returned [Command] will be executed, not only registered.
 	 */
 	fun handleDragFinished(editor: Editor, component: Component): Collection<Command>
+
+	fun handleDragTerminated(editor: Editor)
+}
+
+/**
+ * A [DragManagerPlugin] being interested in the [Component] that is currently at the mouse location
+ * during a drag operation.
+ */
+interface DragManagerDestinationPlugin : DragManagerPlugin {
+
+	/** Performs additional logic when the user drags [component] onto [destination].*/
+	fun handleDragged(editor: Editor, component: Component, destination: Component?)
 }

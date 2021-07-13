@@ -139,48 +139,6 @@ class ContainerPanel(
 		add(mainSplitPane)
 	}
 
-	/*
-	private fun createToolbar(editor: Editor, separator: Boolean): ToolBar {
-		val toolbar = ToolBar(editor)
-		if (separator) {
-			toolbar.addSeparator()
-		}
-		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
-		toolbar.addTool(ComponentAtLocationTool(editor, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
-		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline24.png", Translations.getString("edit.component.polyline"))
-		// TEST BEGIN
-		toolbar.addTool(ComponentAtLocationTool(editor, factory = { DilCase() } ), "/img/rectangle24.png", Translations.getString("antares.dilCase.name"))
-		// TEST END
-
-		return toolbar
-	}
-	*/
-
-	/*
-	private fun createSettingsToolBar(): ToolBar {
-		val toolBar = ToolBar(editor)
-		toolBar.addSeparator()
-
-		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
-		gridButton.text = null
-		gridButton.isFocusPainted = false
-		gridButton.icon = UiUtil.themedIcon("/img/grid24.png")
-		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
-		toolBar.add(gridButton)
-
-		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
-		button.text = null
-		button.isFocusPainted = false
-		button.icon = UiUtil.themedIcon("/img/snap24.png")
-		button.toolTipText = Translations.getString("edit.tool.align.name")
-		toolBar.add(button)
-
-		return toolBar
-	}
-	*/
-
 	private fun updateEditability() {
 		editor.active = editable && editedContainerDrawing != null
 		editor.view.editable = editor.active
