@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -69,9 +70,8 @@ class GraphViewExecutionHandler(
 	private inner class MouseHandler : MouseAdapter() {
 
 		override fun mouseMoved(e: MouseEvent) {
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			val context = mouseEventContext(e, x, y)
+			val p = view.viewToModel(e.location)
+			val context = mouseEventContext(e, p)
 
 			if (target != null) {
 				target = target!!.mouseMoved(context)
@@ -80,12 +80,12 @@ class GraphViewExecutionHandler(
 				}
 			}
 
-			val actorViewAt = getActorViewAt(x, y)
+			val actorViewAt = getActorViewAt(p.x, p.y)
 			target = actorViewAt?.getActorInteractionHandler(context)?.mouseMoved(context)
 			if (actorViewAt == null) {
 				view.setCursor(Cursor.DEFAULT)
 			}
-			tooltipHandler.handle(view, view.drawing, x, y)
+			tooltipHandler.handle(view, view.drawing, p.x, p.y)
 		}
 
 		override fun mousePressed(e: MouseEvent) {
@@ -95,9 +95,8 @@ class GraphViewExecutionHandler(
 				return
 			}
 
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			val context = mouseEventContext(e, x, y)
+			val p = view.viewToModel(e.location)
+			val context = mouseEventContext(e, p)
 
 			if (target != null) {
 				target = target?.mousePressed(context)
@@ -106,7 +105,7 @@ class GraphViewExecutionHandler(
 				}
 			}
 
-			val actorViewAt = getActorViewAt(x, y)
+			val actorViewAt = getActorViewAt(p.x, p.y)
 			target = actorViewAt?.getActorInteractionHandler(context)?.mousePressed(context)
 			if (actorViewAt == null) {
 				view.setCursor(Cursor.DEFAULT)
@@ -119,9 +118,8 @@ class GraphViewExecutionHandler(
 				return
 			}
 
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			val context = mouseEventContext(e, x, y)
+			val p = view.viewToModel(e.location)
+			val context = mouseEventContext(e, p)
 
 			if (target != null) {
 				target = target?.mouseDragged(context)
@@ -130,7 +128,7 @@ class GraphViewExecutionHandler(
 				}
 			}
 
-			val actorViewAt = getActorViewAt(x, y)
+			val actorViewAt = getActorViewAt(p.x, p.y)
 			target = actorViewAt?.getActorInteractionHandler(context)?.mouseDragged(context)
 			if (actorViewAt == null) {
 				view.setCursor(Cursor.DEFAULT)
@@ -142,15 +140,14 @@ class GraphViewExecutionHandler(
 				return
 			}
 
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			val context = mouseEventContext(e, x, y)
+			val p = view.viewToModel(e.location)
+			val context = mouseEventContext(e, p)
 
 			if (target != null) {
 				target = target?.mouseReleased(context)
 			}
 			target = null
-			if (getActorViewAt(x, y) == null) {
+			if (getActorViewAt(p.x, p.y) == null) {
 				view.setCursor(Cursor.DEFAULT)
 			}
 		}
@@ -160,26 +157,25 @@ class GraphViewExecutionHandler(
 				return
 			}
 
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			val context = mouseEventContext(e, x, y)
+			val p = view.viewToModel(e.location)
+			val context = mouseEventContext(e, p)
 
 			if (target != null) {
 				target = target?.mouseClicked(context)
 				return
 			}
 
-			val actorViewAt = getActorViewAt(x, y)
+			val actorViewAt = getActorViewAt(p.x, p.y)
 			target = actorViewAt?.getActorInteractionHandler(context)?.mouseClicked(context)
 		}
 
-		private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
+		private fun mouseEventContext(e: MouseEvent, p: Point2D): ActorInteractionContext {
 			return ActorInteractionContext(
 				signalHandler = scheduler,
 				view = view,
 				mouseEvent = e,
-				x = x,
-				y = y
+				x = p.x,
+				y = p.y
 			)
 		}
 	}

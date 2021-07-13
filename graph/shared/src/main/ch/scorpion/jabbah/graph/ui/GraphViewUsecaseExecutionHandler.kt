@@ -29,9 +29,8 @@ class GraphViewUsecaseExecutionHandler(
 	private inner class MouseHandler : MouseAdapter() {
 
 		override fun mouseMoved(e: MouseEvent) {
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
-			tooltipHandler.handle(view, view.drawing, x, y)
+			val p = view.viewToModel(e.location)
+			tooltipHandler.handle(view, view.drawing, p.x, p.y)
 		}
 	}
 

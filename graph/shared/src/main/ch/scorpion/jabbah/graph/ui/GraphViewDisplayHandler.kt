@@ -77,11 +77,10 @@ class GraphViewDisplayHandler(
 		/** Displays the hand cursor if the mouse is over a [SubGraphVerticeView] */
 		override fun mouseMoved(e: MouseEvent) {
 			LOG.trace("GraphViewDisplayHandler.mouseMoved")
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
+			val p = view.viewToModel(e.location)
 
-			val drawable = view.drawing.getDrawableAt(x, y)
-			tooltipHandler.handle(view, view.drawing, x, y)
+			val drawable = view.drawing.getDrawableAt(p)
+			tooltipHandler.handle(view, view.drawing, p.x, p.y)
 
 			if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
 				view.setCursor(Cursor.CLICK)
@@ -98,16 +97,15 @@ class GraphViewDisplayHandler(
 				return
 			}
 
-			val x = view.viewToModelX(e.x.toDouble())
-			val y = view.viewToModelY(e.y.toDouble())
+			val p = view.viewToModel(e.location)
 
-			val drawable = view.drawing.getDrawableAt(x, y)
+			val drawable = view.drawing.getDrawableAt(p)
 			if (drawable != null /*&& drawable is SubGraphVerticeView*/) {
 				val context = InputEventContext(
 					view = view,
 					mouseEvent = e,
-					x = x,
-					y = y,
+					x = p.x,
+					y = p.y,
 					readonly = true)
 				drawable.getInputEventHandler(context).mouseClicked(context)
 				view.drawing.validate()

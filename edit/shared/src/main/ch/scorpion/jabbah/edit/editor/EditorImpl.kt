@@ -170,16 +170,16 @@ open class EditorImpl(
         private var pressedLocation = Point2D.ZERO
 
         override fun mouseMoved(e: MouseEvent) {
-            currentTool.mouseMoved(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
+        	currentTool.mouseMoved(e, view.viewToModel(e.location))
         }
 
         override fun mouseClicked(e: MouseEvent) {
-            currentTool.mouseClicked(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
+        	currentTool.mouseClicked(e, view.viewToModel(e.location))
         }
 
         override fun mousePressed(e: MouseEvent) {
-            pressedLocation = Point2D(e.x.toDouble(), e.y.toDouble())
-            currentTool.mousePressed(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
+        	pressedLocation = e.location
+	        currentTool.mousePressed(e, view.viewToModel(e.location))
         }
 
         override fun mouseDragged(e: MouseEvent) {
@@ -187,12 +187,12 @@ open class EditorImpl(
                isDragging = true
             }
             if (isDragging) {
-                currentTool.mouseDragged(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
+            	currentTool.mouseDragged(e, view.viewToModel(e.location))
             }
         }
 
         override fun mouseReleased(e: MouseEvent) {
-            currentTool.mouseReleased(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
+	        currentTool.mouseReleased(e, view.viewToModel(e.location))
             isDragging = false
         }
     }

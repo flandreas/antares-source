@@ -82,9 +82,7 @@ open class ComponentTransferHandler(
             }
 
             private fun setComponent(component: Component, location: Point2D) {
-                val x = editor.view.viewToModelX(location.x)
-                val y = editor.view.viewToModelY(location.y)
-	            editor.dragManager.setDropComponent(component, Point2D(x, y))
+            	editor.dragManager.setDropComponent(component, editor.view.viewToModel(location))
             }
         }
     }

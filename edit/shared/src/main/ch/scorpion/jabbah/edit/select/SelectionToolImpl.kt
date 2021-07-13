@@ -80,8 +80,6 @@ class SelectionToolImpl(
 			return
 		}
 
-		super.mouseMoved(e, x, y)
-
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("mouseMoved to $x,$y")
 		}

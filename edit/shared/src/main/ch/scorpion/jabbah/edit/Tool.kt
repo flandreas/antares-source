@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.KeyListener
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
  * A [Tool] is a part of an [Editor] and provides means for interactively editing the [Component]s of a
@@ -36,6 +37,7 @@ interface Tool : KeyListener {
      * @param y the y coordinate in model space where the mouse was pressed
      */
     fun mouseClicked(e: MouseEvent, x: Double, y: Double)
+    fun mouseClicked(e: MouseEvent, p: Point2D) = mouseClicked(e, p.x, p.y)
 
     /**
      * This method is called when a user presses a mouse button while this [Tool] is active.
@@ -44,6 +46,7 @@ interface Tool : KeyListener {
      * @param y the y coordinate in model space where the mouse was pressed
      */
     fun mousePressed(e: MouseEvent, x: Double, y: Double)
+    fun mousePressed(e: MouseEvent, p: Point2D) = mousePressed(e, p.x, p.y)
 
     /**
      * This method is called when a user releases a mouse button while this [Tool] is active.
@@ -52,6 +55,7 @@ interface Tool : KeyListener {
      * @param y the y coordinate in model space where the mouse was released
      */
     fun mouseReleased(e: MouseEvent, x: Double, y: Double)
+    fun mouseReleased(e: MouseEvent, p: Point2D) = mouseReleased(e, p.x, p.y)
 
     /**
      * This method is called when a user moves the mouse while this [Tool] is active.
@@ -61,6 +65,7 @@ interface Tool : KeyListener {
      * @param y the y coordinate in model space where the mouse was moved
      */
     fun mouseMoved(e: MouseEvent, x: Double, y: Double)
+    fun mouseMoved(e: MouseEvent, p: Point2D) = mouseMoved(e, p.x, p.y)
 
     /**
      * This method is called when a user drags the mouse while this [Tool] is active.
@@ -69,4 +74,5 @@ interface Tool : KeyListener {
      * @param y the y coordinate in model space where the mouse was dragged
      */
     fun mouseDragged(e: MouseEvent, x: Double, y: Double)
+    fun mouseDragged(e: MouseEvent, p: Point2D) = mouseDragged(e, p.x, p.y)
 }

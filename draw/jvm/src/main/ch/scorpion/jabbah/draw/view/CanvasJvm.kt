@@ -59,16 +59,10 @@ class CanvasJvm(
 			override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {}
 			override fun popupMenuCanceled(e: PopupMenuEvent?) {}
 			override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
-				//val mousePos = Frame.getFrames()[0].mousePosition
-				val mousePos = mousePosition
-				DrawModuleJvm.contextMenuProvider.fillContextMenu(
-					view,
-					view.viewToModelX(mousePos.getX()),
-					view.viewToModelY(mousePos.getY()),
-					contextMenu)
+				val mousePos = view.viewToModel(Point2D(mousePosition.getX(), mousePosition.getY()))
+				DrawModuleJvm.contextMenuProvider.fillContextMenu(view, mousePos.x, mousePos.y, contextMenu)
 			}
 		})
-
 	}
 
 	private fun installBackgroundColor() {
