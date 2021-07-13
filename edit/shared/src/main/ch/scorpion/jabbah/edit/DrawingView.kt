@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
-import ch.scorpion.jabbah.draw.container.UnzoomableContainer
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
@@ -77,9 +79,6 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	/** Holds the [DrawableContainer] that contains the [Drawable]s that highlight [Component]s.*/
 	val highlightContainer: DrawableContainer<Drawable>
 
-	/** Returns the [Component] that has previously been set using [setDropComponent], if */
-	val dropComponent: Component?
-
 	/** Creates a new [DrawingViewContent] for the specified [Drawing]*/
 	fun createContent(drawing: T): DrawingViewContent<T>
 
@@ -96,14 +95,6 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	 * Otherwise, the default [SelectionDrawingStrategy] of this [DrawingView] will be returned.
 	 */
 	fun getComponentSelectionDrawingStrategy(component: Component): SelectionDrawingStrategy
-
-	/**
-	 * Sets the [Component] to be dragged into this [DrawingView]. This method supports "snapped" drag and drop.
-	 * This [DrawingView] adds the specified [Component] to the animation container, if not already present,
-	 * and updates its location according to the specified [Point2D].
-	 * Removes the previously set [Component] if `null` is specified.
-	 */
-	fun setDropComponent(component: Component?, location: Point2D?)
 }
 
 interface DrawingViewContent<T : Drawing<*>> {

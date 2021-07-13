@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 
@@ -13,12 +10,13 @@ import ch.scorpion.jabbah.edit.select.EditSelectModule
  */
 object EditEditorModule : AbstractModule() {
 
+	var dragManagerFactory: DragManagerFactory = { editor -> DragManagerImpl(editor) }
+
     override fun initialize() {
         // empty
     }
 
     @Suppress("unused")
-    fun createEditor(view: DrawingView<Drawing<Component>>): Editor {
-        return EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
-    }
+    fun createEditor(view: DrawingView<Drawing<Component>>): Editor =
+	    EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
 }

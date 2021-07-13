@@ -36,9 +36,7 @@ open class ComponentTransferHandler(
 	/** Preserves the [Transferable] until the final drop action.*/
 	private var transferable: Transferable? = null
 
-    protected open fun extractTransferData (transferData: Any?): Any? {
-        return transferData
-    }
+    protected open fun extractTransferData (transferData: Any?): Any? = transferData
 
     init {
         (editor.view.canvas as JComponent).dropTarget = object : DropTarget() {
@@ -57,9 +55,8 @@ open class ComponentTransferHandler(
 
             override fun dragExit(dte: DropTargetEvent?) {
                 super.dragExit(dte)
-	            editor.view.dropComponent?.let {
-		            editor.view.setDropComponent(null, null)
-		            Movable.dragFinished(editor, listOf(it))
+	            editor.dragManager.dropComponent?.let {
+	            	editor.dragManager.setDropComponent(null, null)
 	            }
             }
 
@@ -68,19 +65,18 @@ open class ComponentTransferHandler(
                 val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
                 if (transferData is Component) {
 	                setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
-	                transferData.dragged(editor)
                 }
             }
 
             override fun drop(dtde: DropTargetDropEvent) {
                 super.drop(dtde)
-                val dropComponent = editor.view.dropComponent
+	            val dropComponent = editor.dragManager.dropComponent
                 val localTransferable = transferable
                 InvocationHandler.invoke {
                     if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
                         SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
                     }
-                    editor.view.setDropComponent(null, null)
+	                editor.dragManager.setDropComponent(null, null)
                     transferable = null
                 }
             }
@@ -88,10 +84,7 @@ open class ComponentTransferHandler(
             private fun setComponent(component: Component, location: Point2D) {
                 val x = editor.view.viewToModelX(location.x)
                 val y = editor.view.viewToModelY(location.y)
-
-                val snap = editor.snapManager.snap(x, y)
-
-                editor.view.setDropComponent(component, Point2D(x + snap.x, y + snap.y))
+	            editor.dragManager.setDropComponent(component, Point2D(x, y))
             }
         }
     }
@@ -122,7 +115,6 @@ open class ComponentTransferHandler(
         }
     }
 
-	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component {
-		return service.add(dropComponent, editor.view)
-	}
+	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component =
+		service.add(dropComponent, editor.view)
 }

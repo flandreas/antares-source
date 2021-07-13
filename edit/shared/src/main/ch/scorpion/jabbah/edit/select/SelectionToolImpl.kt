@@ -181,7 +181,7 @@ class SelectionToolImpl(
 			}
 		}
 
-		editor.dragManager.mouseDragged(e, x, y)
+		editor.dragManager.mouseDragged(x, y)
 	}
 
 	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
@@ -199,7 +199,7 @@ class SelectionToolImpl(
 			target = target?.mouseReleased(mouseEventContext(e, x, y))
 		}
 
-		editor.dragManager.mouseReleased(e, x, y)
+		editor.dragManager.mouseReleased(x, y)
 
 		if (target == null) {
 			updateCursor(editor.drawing.getDrawableAt(x, y))

@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 /**
  * Moves a [VerticeView] within a [Drawing] and optionally connects it with open-ended [EdgeView]s.
  */
+/*
 class AutoConnectCommand(
 	editor: Editor,
 	verticeViewId: Int,
@@ -27,3 +28,4 @@ class AutoConnectCommand(
 		connectCommands.forEach { it.execute() }
 	}
 }
+ */

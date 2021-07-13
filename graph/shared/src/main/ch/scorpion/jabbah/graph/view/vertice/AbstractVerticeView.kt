@@ -36,8 +36,6 @@ import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.AutoConnectCommand
-import ch.scorpion.jabbah.graph.view.editor.AutoConnector
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -228,27 +226,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 			transparent.transparency = value
 			portViews.forEach { it.transparency = value }
 		}
-
-	/** ---- [Movable] interface */
-
-	override fun dragged(editor: Editor) {
-		super<AbstractGraphElementView>.dragged(editor)
-		AutoConnector.handleDragged(editor, this)
-	}
-
-	override fun dragFinished(editor: Editor) {
-		super<AbstractGraphElementView>.dragFinished(editor)
-		AutoConnector.handleDragFinished(editor)
-	}
-
-	override fun getMoveCommand(editor: Editor, offset: Point2D): Command {
-		val commands = AutoConnector.createAutoConnectCommands(editor, this)
-		return if (commands.isEmpty()) {
-			super<AbstractGraphElementView>.getMoveCommand(editor, offset)
-		} else {
-			AutoConnectCommand(editor, this.id, offset, commands)
-		}
-	}
 
 	/** ---- [Snappable] interface */
 

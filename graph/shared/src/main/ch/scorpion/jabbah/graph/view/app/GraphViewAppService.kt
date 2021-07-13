@@ -27,7 +27,11 @@ interface GraphViewAppService : DrawingAppService {
 	 * [LibraryElement]. This is necessary because [add] creates a clone using [StorableCloner], which doesn't work
 	 * for [GraphElementView] (the model would be cloned).
 	 */
-	fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, editor: Editor): Component
+	fun addGraphElementViewFromLibrary(
+		libraryElement: LibraryElement,
+		location: Point2D,
+		editor: Editor
+	): Component
 }
 
 open class GraphViewAppServiceImpl(
@@ -81,10 +85,19 @@ open class GraphViewAppServiceImpl(
 
 	/** ---- [GraphViewAppService] interface */
 
-	override fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, editor: Editor): Component {
+	override fun addGraphElementViewFromLibrary(
+		libraryElement: LibraryElement,
+		location: Point2D,
+		editor: Editor
+	): Component {
 		LOG.debug("Add Component '${libraryElement.name}' from library/project")
 
-		val command = AddGraphElementViewFromLibraryCommand(editor, libraryElement, location, componentCustomizer = ::customizeAddedComponent)
+		val command = AddGraphElementViewFromLibraryCommand(
+			editor,
+			libraryElement,
+			location,
+			componentCustomizer = ::customizeAddedComponent)
+
 		commandManager.execute(command)
 		val component = editor.view.drawing.getWithId(command.addedComponentId) as Component
 

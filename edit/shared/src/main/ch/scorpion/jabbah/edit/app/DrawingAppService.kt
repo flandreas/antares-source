@@ -55,7 +55,12 @@ interface DrawingAppService {
 	/**
 	 * Moves the specified [Movable]s by a given offset.
 	 */
-	fun move(movables: Collection<Movable>, offset: Point2D, editor: Editor, register: Boolean)
+	fun move(
+		movables: Collection<Movable>,
+		offset: Point2D,
+		editor: Editor,
+		register: Boolean,
+		additionalCommands: List<Command> = emptyList())
 }
 
 open class DrawingAppServiceImpl(
@@ -166,13 +171,16 @@ open class DrawingAppServiceImpl(
 		}
 	}
 
-	override fun move(movables: Collection<Movable>, offset: Point2D, editor: Editor, register: Boolean) {
-		val command = if (movables.size == 1) {
-			movables.first().getMoveCommand(editor, offset)
-		} else {
-			MoveCommand(editor, movables.map { it.id }.toList(), offset)
-		}
+	override fun move(
+		movables: Collection<Movable>,
+		offset: Point2D,
+		editor: Editor,
+		register: Boolean,
+		additionalCommands: List<Command>
+	) {
+		val command = MoveCommand(editor, movables.map { it.id }.toList(), offset, additionalCommands)
 		if (register) {
+			additionalCommands.forEach { it.execute() }
 			commandManager.register(command)
 		} else {
 			commandManager.execute(command)

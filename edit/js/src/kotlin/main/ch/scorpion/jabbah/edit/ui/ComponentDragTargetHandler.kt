@@ -25,14 +25,6 @@ open class ComponentDragTargetHandler(
 		private val LOG by logger(ComponentDragTargetHandler::class)
 	}
 
-	/**
-	 * The method [onDragOver] gets called hundreds of times each second even if the
-	 * mouse is not moved. In order to limit the repainting load in the target [View],
-	 * keep the snapped [Component] location and update the [Component]'s location
-	 * only it has changed.
-	 */
-	private var snappedLocation = Point2D()
-
 	override fun onDragEnter(event: DragEvent, viewLocation: Point2D) {
 		val transferData = extractTransferData()
 		if (transferData is Component) {
@@ -45,18 +37,17 @@ open class ComponentDragTargetHandler(
 		val transferData = extractTransferData()
 		if (transferData is Component) {
 			setComponent(transferData, viewLocation)
-			transferData.dragged(editor)
 			event.preventDefault()
 		}
 	}
 
 	override fun onDrop(event: DragEvent, viewLocation: Point2D) {
-		val dropComponent = editor.view.dropComponent
+		val dropComponent = editor.dragManager.dropComponent
 		if (dropComponent != null) {
 			importElement(dropComponent)
 			event.preventDefault()
 		}
-		editor.view.setDropComponent(null, null)
+		editor.dragManager.setDropComponent(null, null)
 	}
 
 	protected open fun extractTransferData(): Any? = DragAndDropDepo.data
@@ -66,14 +57,7 @@ open class ComponentDragTargetHandler(
 	}
 
 	private fun setComponent(component: Component, viewLocation: Point2D) {
-		val modelLoc = editor.view.viewToModel(viewLocation)
-
-		val newSnappedLocation = modelLoc.add(editor.snapManager.snap(modelLoc.x, modelLoc.y))
-
-		if (newSnappedLocation != snappedLocation) {
-			snappedLocation = newSnappedLocation
-			editor.view.setDropComponent(component, newSnappedLocation)
-		}
+		editor.dragManager.setDropComponent(component, editor.view.viewToModel(viewLocation))
 	}
 
 	private fun importElement(dropComponent: Component) {

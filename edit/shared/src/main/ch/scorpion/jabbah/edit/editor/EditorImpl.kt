@@ -19,7 +19,8 @@ import ch.scorpion.jabbah.draw.View
 open class EditorImpl(
     final override val view: DrawingView<Drawing<Component>>,
     final override val commandManager: CommandManager,
-    selectionToolFactory: SelectionToolFactory
+    selectionToolFactory: SelectionToolFactory,
+    dragManagerFactory: DragManagerFactory = EditEditorModule.dragManagerFactory
 ) : Editor {
 
     @Suppress("unused")
@@ -37,7 +38,7 @@ open class EditorImpl(
 
     final override val snapManager: SnapManager = SnapManagerImpl(this)
 
-	final override val dragManager: DragManager = DragManagerImpl(this)
+	final override val dragManager: DragManager = dragManagerFactory(this)
 
     final override var active: Boolean = false
         set(value) {

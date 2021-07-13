@@ -142,29 +142,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		grid.dispose()
 	}
 
-	override var dropComponent: Component? = null
-        private set
-
     override fun createContent(drawing: T): DrawingViewContent<T> {
         return DrawingViewContentImpl(this, drawing, selectionManagerFactory, highlighterFactory)
-    }
-
-    override fun setDropComponent(component: Component?, location: Point2D?) {
-        if (component != null) {
-            if (dropComponent != null) {
-                dropComponent!!.location = location!!.copy()
-            } else {
-                dropComponent = component
-                animationContainer.add(component)
-            }
-            dropComponent!!.validate()
-        } else {
-            if (dropComponent != null) {
-                animationContainer.remove(dropComponent!!)
-                drawing.validate()
-                dropComponent = null
-            }
-        }
     }
 
     override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {

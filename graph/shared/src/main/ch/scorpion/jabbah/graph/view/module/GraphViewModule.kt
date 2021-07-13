@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.editor.DragManagerImpl
+import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -42,6 +44,7 @@ import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.*
 import ch.scorpion.jabbah.graph.view.connect.*
+import ch.scorpion.jabbah.graph.view.editor.AutoConnector
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.*
@@ -148,6 +151,13 @@ object GraphViewModule : AbstractModule() {
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
 		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptEngine(BaseModule.eventBus)) }
+		EditEditorModule.dragManagerFactory = { editor ->
+			if (editor is GraphEditor) {
+				DragManagerImpl(editor, plugins = setOf(AutoConnector))
+			} else {
+				DragManagerImpl(editor)
+			}
+		}
 		EditModule.drawingAppService = graphViewAppService
 
 		ExecutionModule.schedulerTaskFactory = {

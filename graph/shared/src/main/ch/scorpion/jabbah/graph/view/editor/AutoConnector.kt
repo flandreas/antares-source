@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.graph.view.editor
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -13,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.connect.ConnectOriginCommand
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
-object AutoConnector {
+object AutoConnector : DragManagerPlugin {
 
 	/** Used for highlighting the current possible connection points.*/
 	private val highlight = AutoConnectorHighlight()
@@ -24,7 +22,7 @@ object AutoConnector {
 	/** Contains the [Point2D]s where a connection is currently possible.*/
 	private val points = mutableListOf<Point2D>()
 
-	fun handleDragged(editor: Editor, verticeView: VerticeView<*>) {
+	private fun handleDragged(editor: Editor, verticeView: VerticeView<*>) {
 		matchPoints(editor.drawing as GraphView, verticeView)
 
 		if (points.size > 0) {
@@ -39,18 +37,29 @@ object AutoConnector {
 		}
 	}
 
-	fun handleDragFinished(editor: Editor) {
-		removeHighlight(editor.view)
+	override fun handleDragged(editor: Editor, component: Component) {
+		if (component is VerticeView<*>) {
+			handleDragged(editor, component)
+		}
 	}
 
-	fun createAutoConnectCommands(
+	override fun handleDragFinished(editor: Editor, component: Component): Collection<Command> {
+		removeHighlight(editor.view)
+		return if (component is VerticeView<*>) {
+			createAutoConnectCommands(editor, component)
+		} else {
+			emptySet()
+		}
+	}
+
+	private fun createAutoConnectCommands(
 		editor: Editor,
 		verticeView: VerticeView<*>,
 		service: GraphViewConnectService = GraphViewModule.graphViewConnectService
 	): Collection<Command> {
 		val commands = mutableListOf<Command>()
 
-		(verticeView.parent as GraphView).getEdgeViews()
+		(editor.drawing as GraphView).getEdgeViews()
 			.filter { it.origin == null || it.destination == null }
 			.forEach { ev ->
 				verticeView.getPortViews().forEach {
