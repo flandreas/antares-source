@@ -21,11 +21,12 @@ class DilCaseDragDestinationHighlight(
 ) : AbstractRectangle(destination.boundingBox), DragDestinationHighlight {
 
 	companion object {
-		private val STROKE = Stroke(1.0f)
-		private const val HALF_SIZE = 2
+		private const val HALF_SIZE = 3
 	}
 
 	private val snapPoints = mutableListOf<Point2D>()
+
+	private val stroke: Stroke get() = DrawModule.properties.getStroke(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE)
 
 	init {
 		fillSnapPoints(destination)
@@ -57,11 +58,11 @@ class DilCaseDragDestinationHighlight(
 
 	override fun draw(context: DrawContext) {
 		context.g.color = DrawModule.properties.getColor(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR)
-		context.g.stroke = STROKE
+		context.g.stroke = stroke
 		snapPoints.forEach { drawSnapPoints(context, it) }
 	}
 
-	override val lineWidth: Double get() = STROKE.width.toDouble()
+	override val lineWidth: Double get() = stroke.width.toDouble()
 
 	private fun fillSnapPoints(destination: DilCase) {
 		val snappableX = destination.snappableX.map { it as DilCase.DilPositionX }.toList()

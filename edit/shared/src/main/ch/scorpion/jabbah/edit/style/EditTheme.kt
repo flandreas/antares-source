@@ -22,6 +22,7 @@ open class EditTheme(
 	hover: CompositeColor = DEF_HOVER,
 	val selection: Style = DEF_SELECTION,
 	val highlight: Style = DEF_HIGHLIGHT,
+	val snap: Style = DEF_SNAP,
 	val messageInfo: Style = DEF_MESSAGE_INFO,
 	val messageError: Style = DEF_MESSAGE_ERROR
 ) : DrawTheme(
@@ -46,6 +47,7 @@ open class EditTheme(
 
 		val DEF_SELECTION = BasicStyle(CompositeColor(Color.ORANGE, Color.WHITE, Color.ORANGE))
 		val DEF_HIGHLIGHT = BasicStyle(CompositeColor(Color.YELLOW, Color.YELLOW, Color.BLACK))
+		val DEF_SNAP = BasicStyle(CompositeColor(Color.GREEN, Color.GREEN, Color.GREEN), Stroke(0.5f))
 		val DEF_MESSAGE_ERROR = BasicStyle(DEF_ERROR_MESSAGE_COLOR)
 		val DEF_MESSAGE_INFO = BasicStyle(DEF_INFO_MESSAGE_COLOR)
 	}

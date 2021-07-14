@@ -30,7 +30,6 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Themes
@@ -48,6 +47,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
+import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -186,8 +186,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
 		properties.set(Grid.PROP_GRID_MIN_DISTANCE, 12)
 
-		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
-		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
+		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<EditTheme>().snap.color.foregroundColor)
+		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE,Themes.get<EditTheme>().snap.stroke)
 
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 

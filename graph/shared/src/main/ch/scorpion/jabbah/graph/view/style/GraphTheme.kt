@@ -23,6 +23,7 @@ open class GraphTheme(
 	hover: CompositeColor = DEF_HOVER,
 	selection: Style = DEF_SELECTION,
 	highlight: Style = DEF_HIGHLIGHT,
+	snap: Style = DEF_SNAP,
 	messageInfo: Style = DEF_MESSAGE_INFO,
 	messageError: Style = DEF_MESSAGE_ERROR,
 	val vertice: Style = DEF_VERTICE,
@@ -45,6 +46,7 @@ open class GraphTheme(
 	hover,
 	selection,
 	highlight,
+	snap,
 	messageInfo,
 	messageError
 ) {
