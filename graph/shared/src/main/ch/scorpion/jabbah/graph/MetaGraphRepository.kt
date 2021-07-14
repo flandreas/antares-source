@@ -56,11 +56,11 @@ class CombinedMetaGraphRepository(
 	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? =
 		LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid)
-			?: ProjectModule.projectHolder.project!!.getOptionalMetaGraph(uuid)
+			?: ProjectModule.projectHolder.project?.getOptionalMetaGraph(uuid)
 
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	override fun containsMetaGraph(uuid: UUID): Boolean =
-		LibraryModule.libraryHolder.library.containsMetaGraph(uuid) || ProjectModule.projectHolder.project!!.containsMetaGraph(uuid)
+		LibraryModule.libraryHolder.library.containsMetaGraph(uuid) || ProjectModule.projectHolder.project?.containsMetaGraph(uuid) == true
 
 	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
 		val metaGraph = getMetaGraph(graphUUID)
