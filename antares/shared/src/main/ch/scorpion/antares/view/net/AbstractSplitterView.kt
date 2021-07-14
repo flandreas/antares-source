@@ -8,9 +8,11 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.PortViewSpacing
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -34,7 +36,6 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 	companion object {
 		const val WIDTH = 2 * Look.GRID
 		const val PORT_INSET = Look.SCALE
-		const val PORT_DISTANCE = 2 * Look.SCALE
 		const val DIR_PATH_WIDTH = Look.SCALE
 		const val DIR_PATH_HEIGHT_HALF = Look.SCALE / 2
 
@@ -87,6 +88,18 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 			model.signalRepresentation = value
 		}
 
+	var portViewSpacing: PortViewSpacing = PortViewSpacing.Narrow
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateGeometry()
+				invalidate()
+				update()
+			}
+		}
+
+
 	init {
 		modelExchanged(null)
 	}
@@ -94,7 +107,7 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 	override fun modelExchanged(oldModel: AbstractSplitter?) {
 		super.modelExchanged(oldModel)
 
-		val height = 2 * PORT_INSET + PORT_DISTANCE * (model.narrowSidePorts.count() - 1)
+		val height = 2 * PORT_INSET + portViewSpacing.value * (model.narrowSidePorts.count() - 1)
 
 		// Wide side
 		val wideSidePortView = createWideSidePortView(height)
@@ -102,7 +115,7 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 
 		setBounds(createBodyBounds(height))
 
-		val dy = if (handedness == Handedness.RIGHT) -PORT_DISTANCE else +PORT_DISTANCE
+		val dy = if (handedness == Handedness.RIGHT) -portViewSpacing.value else +portViewSpacing.value
 		var y = if (handedness == Handedness.RIGHT) height / 2 - PORT_INSET else -height / 2 + PORT_INSET
 
 		for (narrowSidePort in model.narrowSidePorts) {
@@ -113,7 +126,26 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 		}
 	}
 
+	private fun updateGeometry() {
+		val height = 2 * PORT_INSET + portViewSpacing.value * (model.narrowSidePorts.count() - 1)
+		setBounds(createBodyBounds(height))
+
+		getPortView(model.getPort(1))!!.location = Point2D(wideSidePortViewX, 0)
+
+		val dy = if (handedness == Handedness.RIGHT) -portViewSpacing.value else +portViewSpacing.value
+		var y = if (handedness == Handedness.RIGHT) height / 2 - PORT_INSET else -height / 2 + PORT_INSET
+
+		for (narrowSidePort in model.narrowSidePorts) {
+			val portView = getPortView(narrowSidePort)
+			portView!!.location = Point2D(narrowSidePortViewX, y)
+			y += dy
+		}
+	}
+
 	/** ---- [AbstractSplitterView] */
+
+	protected abstract val wideSidePortViewX: Int
+	protected abstract val narrowSidePortViewX: Int
 
 	protected abstract fun createWideSidePortView(height: Int): DigitalPortView
 
@@ -126,12 +158,18 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("handedness", handedness.customName)
+		if (portViewSpacing != PortViewSpacing.Narrow) {
+			writer.writeString("portViewSpacing", portViewSpacing.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("handedness")) {
 			handedness = Handedness.withName(reader.readString("handedness"))
+		}
+		if (reader.hasAttribute("portViewSpacing")) {
+			portViewSpacing = PortViewSpacing.withName(reader.readString("portViewSpacing"))
 		}
 	}
 

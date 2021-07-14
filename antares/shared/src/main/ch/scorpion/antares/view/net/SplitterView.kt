@@ -28,9 +28,12 @@ class SplitterView(
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = 0,
 			y = (height / 2))
-		portView.setLocation(DigitalPortView.LENGTH, 0)
+		portView.setLocation(wideSidePortViewX, 0)
 		return portView
 	}
+
+	override val wideSidePortViewX: Int get() = DigitalPortView.LENGTH
+	override val narrowSidePortViewX: Int get() = DigitalPortView.LENGTH + WIDTH
 
 	override fun createNarrowSidePortView(port: DigitalPort, y: Int): DigitalPortView {
 		val portView = DigitalPortView(
@@ -38,7 +41,7 @@ class SplitterView(
 			port = port as Port<DigitalSignal>,
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL)
-		portView.setLocation(DigitalPortView.LENGTH + WIDTH, y)
+		portView.setLocation(narrowSidePortViewX, y)
 		return portView
 	}
 

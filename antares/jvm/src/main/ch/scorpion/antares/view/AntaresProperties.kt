@@ -37,4 +37,7 @@ object AntaresProperties {
 
 	fun joystickDeflection(name: String = "deflection", baseKey: String = "element.property.joystickDeflection"): CommandPropertySwing<JoystickDeflectionEditor> =
 		CommandPropertySwing(name, baseKey, JoystickDeflectionEditor::class.java, componentBeanProvider)
+
+	fun portViewSpacing(name: String = "portViewSpacing", baseKey: String = "element.property.portViewSpacing"): CommandPropertySwing<PortViewSpacing> =
+		CommandPropertySwing(name, baseKey, PortViewSpacing::class.java, componentBeanProvider)
 }

@@ -154,6 +154,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(TransistorType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(JoystickDeflectionEditor::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(DigitalPortViewStyle::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(PortViewSpacing::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -172,6 +173,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(TransistorType::class.java, TransistorTypeEditor::class.java)
 		registry.registerEditor(JoystickDeflectionEditor::class.java, JoystickDeflectionEditor::class.java)
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
+		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

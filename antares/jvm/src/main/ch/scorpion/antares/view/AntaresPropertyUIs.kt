@@ -147,3 +147,10 @@ class DigitalPortViewStyleEditor : ComboBoxPropertyEditor() {
 	}
 }
 
+class PortViewSpacingEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(PortViewSpacing.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<PortViewSpacing>()
+	}
+}
+

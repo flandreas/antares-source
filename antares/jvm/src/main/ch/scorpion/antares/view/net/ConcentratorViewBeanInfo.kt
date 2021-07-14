@@ -15,6 +15,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val branchCount = CommandPropertySwing("branchCount", "element.property.branchCount", BranchCount::class.java, componentBeanProvider)
 	    private val handedness = AntaresProperties.handedness(baseKey = "element.property.Splitter.handedness")
+	    private val portViewSpacing = AntaresProperties.portViewSpacing()
 	    private val signalRep = AntaresProperties.signalRepresentation()
     }
 
@@ -28,6 +29,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 	    properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
 	    properties.add(branchCount.bind(editor, bean.id, editable = !connected, filter = { bean.model.supportedBranchCounts.contains(it) }))
 	    properties.add(handedness.bind(editor, bean.id, editable = !connected))
+		properties.add(portViewSpacing.bind(editor, bean.id))
 	    properties.add(signalRep.bind(editor, bean.id))
     }
 }
