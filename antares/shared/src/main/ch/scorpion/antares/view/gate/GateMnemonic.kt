@@ -454,9 +454,9 @@ object GateMnemonic {
 
 	private fun drawSource(transparent: Transparent, context: DrawContext, isExec: Boolean, foreground: Color, background: Color) {
 		context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else background)
-		context.g.fillOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
+		context.g.fillCircle(s(1.0), s(4.0), s(0.25))
 		context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.backgroundColor else foreground)
-		context.g.drawOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
+		context.g.drawCircle(s(1.0), s(4.0), s(0.25))
 	}
 
 	/**
