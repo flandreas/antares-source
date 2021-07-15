@@ -482,7 +482,7 @@ class DipSwitchView(
 
 			// Draw index label
 			with(bitLabelFlyweight) {
-				location = Point2D(bounds.centerX, bounds.minY + 4)
+				location = Point2D(this@BitView.bounds.centerX, this@BitView.bounds.minY + 4)
 				text = index.toString()
 				color = bitLabelColor
 				draw(context)
