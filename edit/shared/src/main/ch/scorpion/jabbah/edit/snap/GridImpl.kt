@@ -21,6 +21,10 @@ import kotlin.math.floor
  *
  * [GridImpl] delegates drawing of the grid points to a pluggable [GridPainter]. If the distance of these
  * points falls below a certain minimum distance because of zooming, [GridImpl] doesn't draw these points any more.
+ *
+ * [GridImpl] only snaps to the first point of a [Snappable]. If it would respect ALL points, and the points
+ * of [Snappable] would not ALL be aligned with the grid distance, it would lead to sub-grid snapping,
+ * which would defeat the purpose of the [Grid].
  */
 class GridImpl(
 	private val styleProvider: StyleProvider = StyleRepository.INSTANCE,
@@ -146,9 +150,15 @@ class GridImpl(
 			}
 		}
 
-	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): DoSnapResult = DoSnapResult(snapValue(initSnappableX.x + initDx), null)
+	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): DoSnapResult =
+		DoSnapResult(snapValue(initSnappableX.x + initDx), null)
 
-	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): DoSnapResult = DoSnapResult(snapValue(initSnappableY.y + initDy), null)
+	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): DoSnapResult =
+		DoSnapResult(snapValue(initSnappableY.y + initDy), null)
+
+	/** Only snap to the first point of a [Snappable] */
+	override val snappableXFilter: (Int, SnappableX) -> Boolean = { i ,_ -> i == 0 }
+	override val snappableYFilter: (Int, SnappableY) -> Boolean = { i ,_ -> i == 0 }
 
 	/** ---- [GridImpl] */
 

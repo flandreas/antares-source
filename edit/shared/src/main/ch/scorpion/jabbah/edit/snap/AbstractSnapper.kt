@@ -56,7 +56,7 @@ abstract class AbstractSnapper(
 		var minSnapX = 0.0
 		var minSnappable: Snappable? = null
 
-		for (i in snappableX.indices) {
+		for (i in snappableX.filterIndexed(snappableXFilter).indices) {
 			doSnapX(snappableX[i], dx)?.let {
 				val dX = it.value - (snappableX[i].x + dx)
 				if (abs(dX) < abs(minSnapDX)) {
@@ -82,7 +82,7 @@ abstract class AbstractSnapper(
 		var minSnapY = 0.0
 		var minSnappable: Snappable? = null
 
-		for (i in snappableY.indices) {
+		for (i in snappableY.filterIndexed(snappableYFilter).indices) {
 			doSnapY(snappableY[i], dy)?.let {
 				val dY = it.value - (snappableY[i].y + dy)
 				if (abs(dY) < abs(minSnapDY)) {
@@ -99,6 +99,9 @@ abstract class AbstractSnapper(
 	}
 
 	/** ---- [AbstractSnapper] */
+
+	protected open val snappableXFilter: (Int, SnappableX) -> Boolean = { _,_ -> true }
+	protected open val snappableYFilter: (Int, SnappableY) -> Boolean = { _,_ -> true }
 
 	protected data class DoSnapResult(val value: Double, val snappable: Snappable?)
 
