@@ -246,6 +246,11 @@ open class PortImpl<T : Any>(
 		signalHandler.deferExecutionError(error)
 	}
 
+	private fun resetExecutionError() {
+		combinedNets.forEach { it.setExecutionError(null) }
+		net!!.executionError = null
+	}
+
 	private fun forwardSignal(signalHandler: SignalHandler) {
 		if (net == null) {
 			return
@@ -278,7 +283,7 @@ open class PortImpl<T : Any>(
 		// Net has become consistent and has to recover from execution error
 		if (!isOutputFullyUndefined) {
 			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
-			combinedNets.forEach { it.setExecutionError(null) }
+			resetExecutionError()
 			net!!.setSignal(_outgoingSignal, this, signalHandler)
 			return
 		}
@@ -286,7 +291,7 @@ open class PortImpl<T : Any>(
 		// Net has become consistent by withdrawing an inconsistent signal and asserting a fully undefined signal
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		val replacement = replaceOwnUndefinedSignals(signalHandler)
-		combinedNets.forEach { it.setExecutionError(null) }
+		resetExecutionError()
 		net!!.setSignal(replacement.signal, replacement.originPort, signalHandler)
 	}
 
