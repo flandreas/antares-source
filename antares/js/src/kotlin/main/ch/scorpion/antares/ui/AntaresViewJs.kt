@@ -104,6 +104,7 @@ class AntaresViewJs(
 				}
 			}
 			else {
+				antaresMenuBar {  }
 				graphExecutionToolbar {
 					applicationDataHolder = props.applicationDataHolder
 					scheduler = ExecutionModule.scheduler
