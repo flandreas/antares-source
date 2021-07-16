@@ -11,6 +11,7 @@ import react.*
 
 interface JMMenuItemProps : MMenuItemProps {
 	var action: Action
+	var parentClickHandler: () -> Unit
 }
 
 fun RBuilder.jmMenuItem(handler: JMMenuItemProps.() -> Unit): ReactElement =
@@ -42,6 +43,7 @@ class JabbahMaterialMenuItem : RComponent<JMMenuItemProps, RState>() {
 	}
 
 	private fun onClick(event: Event) {
+		props.parentClickHandler()
 		props.action.execute(ActionEvent(event.toString(), this, 0, "click", 0))
 	}
 }

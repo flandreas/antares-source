@@ -55,8 +55,14 @@ class AntaresMenuBar : RComponent<AntaresMenuBarJsProps , RState>() {
 			mButton("Edit", onClick = { handleShowMenuClick(it, 2)})
 			div {
 				mMenu(selectedMenuIndex == 2, anchorElement = anchorElement, onClose = { _, reason -> handleOnClose(reason)}) {
-					jmMenuItem { action = undoAction }
-					jmMenuItem { action = redoAction }
+					jmMenuItem {
+						action = undoAction
+						parentClickHandler = ::handleSimpleClick
+					}
+					jmMenuItem {
+						action = redoAction
+						parentClickHandler = ::handleSimpleClick
+					}
 				}
 			}
 			mButton("View")
