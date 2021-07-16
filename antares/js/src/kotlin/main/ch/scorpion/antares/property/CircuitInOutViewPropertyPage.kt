@@ -4,24 +4,13 @@ import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.properties.*
-import com.ccfraser.muirwik.components.*
-import kotlinx.css.margin
-import kotlinx.css.maxWidth
-import kotlinx.css.minWidth
-import kotlinx.css.px
+import com.ccfraser.muirwik.components.MGridAlignItems
+import com.ccfraser.muirwik.components.MGridSpacing
+import com.ccfraser.muirwik.components.mGridContainer
 import react.RBuilder
-import styled.StyleSheet
 
 @Suppress("unused")
 class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
-
-	private object ComponentStyles : StyleSheet("ComponentStyles", isStatic = true) {
-		val formControl by css {
-			margin(1.spacingUnits)
-			minWidth = 120.px
-			maxWidth = 300.px
-		}
-	}
 
 	override fun render(bean: CircuitInOutView, editor: Editor, builder: RBuilder) {
 		builder.run {

@@ -27,7 +27,7 @@ class PropertyPageRendererRegistry {
 	}
 }
 
-fun StyledElementBuilder<MGridProps>.propertyRow(labelKey: String, handler: (StyledElementBuilder<*>) -> Unit) {
+fun StyledElementBuilder<MGridProps>.propertyRow(labelKey: String, handler: (StyledElementBuilder<MGridProps>) -> Unit) {
 	mGridItem(xs = MGridSize.cells4) {
 		mTypography(Translations.getString(labelKey))
 	}

@@ -1,9 +1,13 @@
 package ch.scorpion.antares.model
 
+import ch.scorpion.jabbah.base.EnumProperty
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.antares.model.gate.AbstractDigitalGate
+
 /**
  * Enumerates the possible number of [InputPort]s of an [AbstractDigitalGate].
  */
-enum class InputCount(val count: Int) {
+enum class InputCount(val count: Int) : EnumProperty<InputCount> {
     ZERO(0),
     ONE(1),
     TWO(2),
@@ -16,9 +20,7 @@ enum class InputCount(val count: Int) {
 
     companion object {
 
-        fun of(value: Int): InputCount {
-            return values().first { it.count == value }
-        }
+        fun of(value: Int): InputCount = values().first { it.count == value }
 
         fun withName(customName: String): InputCount {
             for (inputCount in values()) {
@@ -30,9 +32,7 @@ enum class InputCount(val count: Int) {
         }
     }
 
-    val customName: String get() = count.toString()
+    override val customName: String get() = count.toString()
 
-    override fun toString(): String {
-        return customName
-    }
+    override fun toString(): String = customName
 }

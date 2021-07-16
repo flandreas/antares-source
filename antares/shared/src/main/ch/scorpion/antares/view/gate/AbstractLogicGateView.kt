@@ -16,6 +16,8 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	gate: T
 ) : AbstractDigitalGateView<T>(styleProvider, text, gate), CustomShapeContent {
 
+	// Explicit properties needed for reflective Commands on the JVM platform
+
 	var negateInput1: Boolean
 		get() = model.getNegateInput(1)
 		set(value) = setInputNegation(1, value)
@@ -48,7 +50,7 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 		get() = model.getNegateInput(8)
 		set(value) = setInputNegation(8, value)
 
-	private fun setInputNegation(portId: Int, value: Boolean) {
+	fun setInputNegation(portId: Int, value: Boolean) {
 		if (model.getNegateInput(portId) != value) {
 			model.setNegateInput(portId, value)
 
@@ -56,6 +58,8 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 			update()
 		}
 	}
+
+	fun getInputNegation(portId: Int): Boolean = model.getNegateInput(portId)
 
 	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		drawMnemonics(context, foregroundColor, backgroundColor)
