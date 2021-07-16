@@ -13,10 +13,10 @@ fun <V> submitCommand(props: PropertyProps<V>, newValue: V?) {
 				beginTransaction(command)
 				commitTransaction()
 			} catch (t: Throwable) {
-				error("Error in submitCommand: $t")
 				if (isInTransaction) {
 					rollbackTransaction()
 				}
+				error("Error in submitCommand: $t")
 			}
 		}
 	}

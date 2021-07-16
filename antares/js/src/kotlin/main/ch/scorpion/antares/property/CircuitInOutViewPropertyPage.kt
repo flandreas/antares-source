@@ -2,6 +2,7 @@ package ch.scorpion.antares.property
 
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.properties.*
 import com.ccfraser.muirwik.components.*
 import kotlinx.css.margin
@@ -60,6 +61,10 @@ class CircuitInOutViewPropertyPage : PropertyPageRenderer<CircuitInOutView> {
 
 				propertyRow("element.property.Switch.toggle.name") {
 					it.jmCheckboxField(editor, { bean.toggle }, { _, value -> bean.toggle = value!! }, bean.id)
+				}
+
+				propertyRow("edit.property.description.name") {
+					it.jmMultilineTextField(editor, { bean.description.value }, { _, value -> bean.description = Description(value ?: "EMPTY") }, bean.id)
 				}
 			}
 		}
