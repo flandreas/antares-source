@@ -12,10 +12,12 @@ import react.useState
 
 val jmTextField = functionalComponent<PropertyProps<String>>("TextField") { props ->
 	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
-	var (value, setValue) = useState(oldValue)
+	val (value, setValue) = useState(oldValue)
 	mInput(value, disabled = props.disabled, fullWidth = false, onChange = { setValue((it.target as HTMLInputElement).value) }) {
 		oldValue = value
-		attrs.onBlur = { submitCommand(props, oldValue, value) }
+		attrs.onBlur = {
+			submitCommand(props, value)
+		}
 		attrs.margin = MInputMargin.dense
 	}
 }

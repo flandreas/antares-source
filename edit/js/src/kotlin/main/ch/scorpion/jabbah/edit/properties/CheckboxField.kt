@@ -5,12 +5,12 @@ import com.ccfraser.muirwik.components.mCheckbox
 import react.RBuilder
 import react.*
 
-val jmCheckboxField = functionalComponent<PropertyProps<Boolean>>() { props ->
+val jmCheckboxField = functionalComponent<PropertyProps<Boolean>> { props ->
 	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
-	var (value, setValue) = useState(oldValue)
-	mCheckbox(value ?: false, disabled = props.disabled, onChange = { e, b ->
+	val (value, setValue) = useState(oldValue)
+	mCheckbox(value ?: false, disabled = props.disabled, onChange = { _, b ->
 		setValue(b)
-		submitCommand(props, oldValue, b)
+		submitCommand(props, b)
 		oldValue = b
 	})
 }

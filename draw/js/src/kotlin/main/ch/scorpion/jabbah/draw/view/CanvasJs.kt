@@ -476,7 +476,6 @@ private class KeyEventJs(
 private class KeyEventBridge(val listener: KeyListener, val canvas: HTMLCanvasElement) : EventListener {
 
 	override fun handleEvent(event: Event) {
-		console.info("Handle key event: ${event.type}")
 		val e = KeyEventJs(canvas, event as org.w3c.dom.events.KeyboardEvent)
 		when (e.type) {
 			KeyEventType.TYPED -> listener.keyTyped(e)

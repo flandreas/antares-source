@@ -116,12 +116,14 @@ class CircuitInOutView(
 	var name: String?
 		get() = model.name
 		set(value) {
+			println("Setting name of CircuitInOut to '$value'")
 			model.name = value
 		}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
 		set(value) {
+			println("Setting bitWidth to '$value'")
 			invalidate()
 			model.bitWidth = value
 			updateView()

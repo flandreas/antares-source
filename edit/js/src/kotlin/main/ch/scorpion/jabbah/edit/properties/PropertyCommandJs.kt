@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.edit.properties
 import ch.scorpion.jabbah.edit.*
 
 /** Creates and submits a new [PropertyCommandJs] for the specified values.*/
-fun <V> submitCommand(props: PropertyProps<V>, oldValue: V?, newValue: V?) {
+fun <V> submitCommand(props: PropertyProps<V>, newValue: V?) {
 	val command = PropertyCommandJs(props.editor, props.propertyBaseKey, props.beanProvider, props.beanIds, newValue, props.getter, props.setter)
 	command.establishOldValue()
 
-	if (newValue != oldValue) {
+	if (newValue != command.oldValue) {
 		props.editor.commandManager.apply {
 			try {
 				beginTransaction(command)

@@ -17,12 +17,12 @@ fun <E : EnumProperty<E>> enumPropertyField(
 ): FunctionalComponent<PropertyProps<E>> {
 	return functionalComponent(displayName) { props ->
 		var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
-		var (value, setValue) = useState(oldValue)
+		val (value, setValue) = useState(oldValue)
 
 		mSelect(value?.customName, onChange = { e, _ ->
 			val newValue = enumValues.first { it.customName == e.targetValue }
 			setValue(newValue)
-			submitCommand(props, oldValue, newValue)
+			submitCommand(props, newValue)
 			oldValue = newValue
 		}) {
 			enumValues.forEach {

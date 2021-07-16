@@ -15,12 +15,12 @@ fun predefinedColorField(
 	provider: PredefinedColorProvider
 ): FunctionalComponent<PropertyProps<PredefinedColor?>> = functionalComponent(displayName) { props ->
 	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
-	var (value, setValue) = useState(oldValue)
+	val (value, setValue) = useState(oldValue)
 
 	mSelect(value?.name ?: "none", onChange = { e, _ ->
 		val newValue = provider.withIdName(e.targetValue as String)
 		setValue(newValue)
-		submitCommand(props, oldValue, newValue)
+		submitCommand(props, newValue)
 		oldValue = newValue
 	}) {
 		mMenuItem(Translations.getString("edit.style.property.fromStyle.name"), value = "none")
