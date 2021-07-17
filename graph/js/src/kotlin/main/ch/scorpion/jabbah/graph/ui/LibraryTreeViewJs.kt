@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import com.ccfraser.muirwik.components.mIcon
 import com.ccfraser.muirwik.components.mTypography
+import com.ccfraser.muirwik.components.spacingUnits
 import kotlinx.browser.document
 import kotlinx.css.*
 import org.w3c.dom.DragEvent
@@ -62,6 +63,7 @@ class LibraryTreeViewJs(
 			defaultCollapseIcon = createCollapseIcon(),
 		) {
 			css {
+				padding(2.spacingUnits)
 				maxHeight = LinearDimension.fillAvailable
 				maxWidth = LinearDimension.fillAvailable
 				flexGrow = 1.0
