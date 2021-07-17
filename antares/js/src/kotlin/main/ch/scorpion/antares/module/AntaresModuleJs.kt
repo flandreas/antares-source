@@ -4,9 +4,7 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.property.*
 import ch.scorpion.antares.ui.registerAntaresIconsInProvider
 import ch.scorpion.antares.view.AntaresLibraryFactory
-import ch.scorpion.antares.view.gate.AndGateView
-import ch.scorpion.antares.view.gate.NotGateView
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.DigitalEdgeView
@@ -85,8 +83,15 @@ object AntaresModuleJs : AbstractModule() {
 
 	private fun registerPropertyPageRenderers(registry: PropertyPageRendererRegistry) {
 		registry.register(AndGateView::class, AndGateViewPropertyPage())
-		registry.register(OrGateView::class, LogicGateViewPropertyPage<OrGateView>())
+		registry.register(BufferGateView::class, BufferGateViewPropertyPage())
+		registry.register(DelayGateView::class, DelayGateViewPropertyPage())
+		registry.register(NandGateView::class, LogicGateViewPropertyPage<NandGateView>())
+		registry.register(NorGateView::class, LogicGateViewPropertyPage<NorGateView>())
 		registry.register(NotGateView::class, NotGateViewPropertyPage())
+		registry.register(OrGateView::class, LogicGateViewPropertyPage<OrGateView>())
+		registry.register(XnorGateView::class, LogicGateViewPropertyPage<XnorGateView>())
+		registry.register(XorGateView::class, LogicGateViewPropertyPage<XorGateView>())
+		registry.register(TriStateBufferGateView::class, TriStateBufferGateViewPropertyPage())
 		registry.register(CircuitInOutView::class, CircuitInOutViewPropertyPage())
 		registry.register(DigitalEdgeView::class, EdgeViewPropertyPage())
 	}
