@@ -20,7 +20,7 @@ object CompressedMemoryDump {
 	private const val COMMENT_DELIMITER = ':'
 
 	/** The regular expression for separating individual cells.*/
-	private val cellSeparationRegex = Regex("(?<!\\\\)$CELL_DELIMITER|\n")
+	private val cellSeparationRegex by lazy { Regex("(?<!\\\\)$CELL_DELIMITER|\n") }
 
 	/**
 	 * Writes a dump of a [Memory] to a new [String].
@@ -88,13 +88,15 @@ object CompressedMemoryDump {
 
 
 	/**
-	 * Reads a dump into a [Memory] from a [Readable].
+	 * Reads a dump into a [Memory] from an external dump.
 	 */
 	fun read(memory: Memory, dump: String) {
 		memory.clear()
-		var address = 0
-		for (cell in dump.split(cellSeparationRegex)) {
-			address = read(cell, address, memory)
+		if (dump.isNotBlank()) {
+			var address = 0
+			for (cell in dump.split(cellSeparationRegex)) {
+				address = read(cell, address, memory)
+			}
 		}
 	}
 
