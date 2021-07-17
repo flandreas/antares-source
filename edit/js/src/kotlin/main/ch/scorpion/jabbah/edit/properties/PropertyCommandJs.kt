@@ -2,9 +2,16 @@ package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.edit.*
 
+fun <V> propertyCommandFactory(props: PropertyProps<V>, newValue: V?): PropertyCommandJs<V> =
+	PropertyCommandJs(props.editor, props.propertyBaseKey, props.beanProvider, props.beanIds, newValue, props.getter, props.setter)
+
 /** Creates and submits a new [PropertyCommandJs] for the specified values.*/
-fun <V> submitCommand(props: PropertyProps<V>, newValue: V?) {
-	val command = PropertyCommandJs(props.editor, props.propertyBaseKey, props.beanProvider, props.beanIds, newValue, props.getter, props.setter)
+fun <V> submitCommand(
+	props: PropertyProps<V>,
+	newValue: V?,
+	cmdFactory: (PropertyProps<V>, V?) -> PropertyCommandJs<V> = { p, _ -> propertyCommandFactory(p, newValue) }
+) {
+	val command = cmdFactory(props, newValue)
 	command.establishOldValue()
 
 	if (newValue != command.oldValue) {
@@ -23,7 +30,7 @@ fun <V> submitCommand(props: PropertyProps<V>, newValue: V?) {
 }
 
 /** An implementation of [AbstractPropertyCommand] for the JS platform. */
-class PropertyCommandJs<V>(
+open class PropertyCommandJs<V>(
 	editor: Editor,
 	propertyBaseKey: String,
 	beanProvider: BeanProvider,

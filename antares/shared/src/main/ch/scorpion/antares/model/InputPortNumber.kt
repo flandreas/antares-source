@@ -2,12 +2,13 @@ package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 
 /**
  * Identifies a particular [InputPort] of an [AbstractDigitalGate].
  */
-enum class InputPortNumber(val id: Int) {
+enum class InputPortNumber(val id: Int) : EnumProperty<InputPortNumber> {
 	NONE(0),
 	ONE(1),
 	TWO(2),
@@ -34,7 +35,7 @@ enum class InputPortNumber(val id: Int) {
 		}
 	}
 
-	val customName: String get() = id.toString()
+	override val customName: String get() = id.toString()
 
 	override fun toString(): String {
 		return when (id) {

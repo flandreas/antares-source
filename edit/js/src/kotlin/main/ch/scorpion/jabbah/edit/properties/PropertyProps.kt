@@ -14,4 +14,5 @@ external interface PropertyProps<T> : RProps {
 	var getter: PropertyGetter<T>
 	var setter: PropertySetter<T>
 	var disabled: Boolean
+	var filter: ((T) -> Boolean)?
 }

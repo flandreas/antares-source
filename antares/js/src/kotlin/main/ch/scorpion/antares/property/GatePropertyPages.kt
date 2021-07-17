@@ -1,7 +1,6 @@
 package ch.scorpion.antares.property
 
 import ch.scorpion.antares.view.DigitalComponentView
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.antares.view.gate.AbstractLogicGateView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
@@ -31,12 +30,11 @@ abstract class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : Digital
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
-			// TODO: Support for properties without setter that instead create a Command (for calling a service)
-			/*
-			propertyRow("element.property.inputCount") {
-				it.jmInputCount(editor, { bean.chosenInputCount}, { _, value -> bean.chosenInputCount = value!!}, bean.id)
+			propertyRow("element.property.inputCount.name") {
+				it.jmInputCount(editor, { bean.chosenInputCount}, bean.id) {
+					filter = { inputCount -> inputCount.ordinal >= 2 }
+				}
 			}
-			*/
 			propertyRow("element.property.outputPort.name") {
 				it.jmTextField(editor, { bean.outputPortName }, { _, value -> bean.outputPortName = value }, bean.id)
 			}
@@ -54,7 +52,11 @@ class AndGateViewPropertyPage : LogicGateViewPropertyPage<AndGateView>() {
 		builder.run {
 			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
 				addProperties(bean, editor, this)
-				// TODO: Add dataPort property using filter
+				propertyRow("element.property.AndGate.dataPort.name") {
+					it.jmInputPortNumber(editor, { bean.dataPort}, { _, value -> bean.dataPort = value!!}, bean.id) {
+						filter = { inputPortNumber -> inputPortNumber.id <= bean.chosenInputCount.count }
+					}
+				}
 			}
 		}
 	}
@@ -66,7 +68,6 @@ class NotGateViewPropertyPage : DigitalComponentPropertyPage<NotGateView>() {
 		builder.run {
 			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
 				addProperties(bean, editor, this)
-
 				propertyRow("element.property.bitWidth.name") {
 					it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 				}

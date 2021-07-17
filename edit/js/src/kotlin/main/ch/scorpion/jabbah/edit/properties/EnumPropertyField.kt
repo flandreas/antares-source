@@ -13,19 +13,24 @@ import react.useState
  */
 fun <E : EnumProperty<E>> enumPropertyField(
 	displayName: String? = null,
-	enumValues: Array<E>
+	enumValues: Array<E>,
+	cmdFactory: (PropertyProps<E>, newValue: E?) -> PropertyCommandJs<E> = { props, newValue -> propertyCommandFactory(props, newValue) }
 ): FunctionalComponent<PropertyProps<E>> {
 	return functionalComponent(displayName) { props ->
 		var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
 		val (value, setValue) = useState(oldValue)
 
 		mSelect(value?.customName, onChange = { e, _ ->
-			val newValue = enumValues.first { it.customName == e.targetValue }
+			val newValue = enumValues
+				.filter { props.filter?.invoke(it) ?: true }
+				.first { it.customName == e.targetValue }
 			setValue(newValue)
-			submitCommand(props, newValue)
+			submitCommand(props, newValue, cmdFactory)
 			oldValue = newValue
 		}) {
-			enumValues.forEach {
+			enumValues
+				.filter { props.filter?.invoke(it) ?: true }
+				.forEach {
 				mMenuItem(it.toString(), value = it.customName)
 			}
 		}
