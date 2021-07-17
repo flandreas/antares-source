@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /**
  * Represents the supported types for laying out the segments of an [EdgeView].
  */
-enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEventHandler) {
+enum class LayoutType(override val customName: String, inputEventHandler: EdgeViewInputEventHandler) : EnumProperty<LayoutType> {
 
 	STRAIGHT("straight", EdgeViewInputEventHandler()) {
 

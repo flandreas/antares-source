@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.netview
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -12,7 +13,7 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewBlockStyling
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewDotStyling
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
-enum class NetViewStyle(val customName: String) {
+enum class NetViewStyle(override val customName: String) : EnumProperty<NetViewStyle> {
 
     LINE("line") {
 

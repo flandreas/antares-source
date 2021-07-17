@@ -26,7 +26,7 @@ abstract class DigitalComponentPropertyPage<T : DigitalComponentView<*>> : Verti
 	}
 }
 
-abstract class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComponentPropertyPage<T>() {
+open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComponentPropertyPage<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
@@ -42,6 +42,14 @@ abstract class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : Digital
 				propertyRow("element.property.Gate.negateInput${i + 1}.name") {
 					it.jmCheckboxField(editor, { bean.getInputNegation(i) }, { _, value -> bean.setInputNegation(i, value!!)}, bean.id)
 				}
+			}
+		}
+	}
+
+	override fun render(bean: T, editor: Editor, builder: RBuilder) {
+		builder.run {
+			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
+				addProperties(bean, editor, this)
 			}
 		}
 	}

@@ -53,7 +53,7 @@ open class EdgeViewImpl<T : Any>(
 	private companion object {
 		private val LOG by logger(EdgeViewImpl::class)
 
-		private val TYPE = Translations.getString("graph.component.edge")
+		private val TYPE get() = Translations.getString("graph.component.edge")
 		private val NO_OP_ACTOR_HANDLER = InputEventHandlerAdapter<ActorInteractionContext>()
 
 		private val MIN_LENGTH = BaseModule.properties.getInt(PROP_MIN_EDGE_VIEW_LENGTH)
