@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import com.ccfraser.muirwik.components.MGridProps
 import styled.StyledElementBuilder
 
-abstract class VerticeViewPropertyPage<T : AbstractVerticeView<*>> : ComponentPropertyPage<T>() {
+open class VerticeViewPropertyPage<T : AbstractVerticeView<*>> : ComponentPropertyPage<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {

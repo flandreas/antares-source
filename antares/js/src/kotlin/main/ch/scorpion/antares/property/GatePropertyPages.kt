@@ -10,14 +10,10 @@ import ch.scorpion.jabbah.edit.properties.jmDirectionField
 import ch.scorpion.jabbah.edit.properties.jmTextField
 import ch.scorpion.jabbah.edit.properties.propertyRow
 import ch.scorpion.jabbah.graph.ui.property.VerticeViewPropertyPage
-import com.ccfraser.muirwik.components.MGridAlignItems
 import com.ccfraser.muirwik.components.MGridProps
-import com.ccfraser.muirwik.components.MGridSpacing
-import com.ccfraser.muirwik.components.mGridContainer
-import react.RBuilder
 import styled.StyledElementBuilder
 
-abstract class DigitalComponentPropertyPage<T : DigitalComponentView<*>> : VerticeViewPropertyPage<T>() {
+open class DigitalComponentPropertyPage<T : DigitalComponentView<*>> : VerticeViewPropertyPage<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.propertyRow("edit.property.Component.orientation.name") {
@@ -45,26 +41,14 @@ open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComp
 			}
 		}
 	}
-
-	override fun render(bean: T, editor: Editor, builder: RBuilder) {
-		builder.run {
-			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
-				addProperties(bean, editor, this)
-			}
-		}
-	}
 }
 
 class AndGateViewPropertyPage : LogicGateViewPropertyPage<AndGateView>() {
-	override fun render(bean: AndGateView, editor: Editor, builder: RBuilder) {
-		builder.run {
-			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
-				addProperties(bean, editor, this)
-				propertyRow("element.property.AndGate.dataPort.name") {
-					it.jmInputPortNumber(editor, { bean.dataPort}, { _, value -> bean.dataPort = value!!}, bean.id) {
-						filter = { inputPortNumber -> inputPortNumber.id <= bean.chosenInputCount.count }
-					}
-				}
+	override fun addProperties(bean: AndGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
+		super.addProperties(bean, editor, builder)
+		builder.propertyRow("element.property.AndGate.dataPort.name") {
+			it.jmInputPortNumber(editor, { bean.dataPort}, { _, value -> bean.dataPort = value!!}, bean.id) {
+				filter = { inputPortNumber -> inputPortNumber.id <= bean.chosenInputCount.count }
 			}
 		}
 	}
@@ -72,14 +56,10 @@ class AndGateViewPropertyPage : LogicGateViewPropertyPage<AndGateView>() {
 
 class NotGateViewPropertyPage : DigitalComponentPropertyPage<NotGateView>() {
 
-	override fun render(bean: NotGateView, editor: Editor, builder: RBuilder) {
-		builder.run {
-			mGridContainer(MGridSpacing.spacing1, alignItems = MGridAlignItems.center) {
-				addProperties(bean, editor, this)
-				propertyRow("element.property.bitWidth.name") {
-					it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
-				}
-			}
+	override fun addProperties(bean: NotGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
+		super.addProperties(bean, editor, builder)
+		builder.propertyRow("element.property.bitWidth.name") {
+			it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 		}
 	}
 }
