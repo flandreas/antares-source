@@ -110,7 +110,9 @@ class SimpleTextComponent(
 	override fun intersects(rect: RectangularShape): Boolean = super<AbstractRectangularComponent>.intersects(rect)
 
 	override fun draw(context: DrawContext) {
-		decorator.drawBackground(this, context)
+		if (filled) {
+			decorator.drawBackground(this, context)
+		}
 
 		context.g.font = font
 		context.g.color = textColor
@@ -124,7 +126,9 @@ class SimpleTextComponent(
 		context.g.translate(-(x + INSET_X), -(y + INSET_Y))
 		//(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
-		decorator.drawForeground(this, context)
+		if (stroked) {
+			decorator.drawForeground(this, context)
+		}
 	}
 
 	override fun update() {
