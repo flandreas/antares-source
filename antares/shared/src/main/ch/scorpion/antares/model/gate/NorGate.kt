@@ -4,9 +4,9 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 
@@ -14,11 +14,16 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * Performs a logical "NOR" function with the current input signals of a [Vertice].
  */
 class NorCalculator : AbstractDigitalGateCalculator() {
-	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit =
-		OrCalculator.calculate(source, filter).not()
+	private val orCalculator = OrCalculator()
+
+	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
+		orCalculator.calculateBit(input, bitIndex).not()
 }
 
-class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class NorGate(
+	inputCount: InputCount = InputCount.TWO,
+	bitWidth: BitWidth = BitWidth.BW_1
+) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.NorGate"

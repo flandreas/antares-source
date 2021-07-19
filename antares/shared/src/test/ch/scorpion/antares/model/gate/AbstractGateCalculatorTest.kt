@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.assertEquals
 
 abstract class AbstractGateCalculatorTest(
-	calculator: AbstractDigitalGateCalculator
+	protected val calculator: AbstractDigitalGateCalculator
 ) {
 
 	private val gate = TestGate(calculator)

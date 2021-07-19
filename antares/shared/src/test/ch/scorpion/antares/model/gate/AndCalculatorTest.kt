@@ -2,7 +2,11 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Unit tests for [AndCalculator]. */
 class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
@@ -36,5 +40,16 @@ class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
 		assertTwoInput(Error, True, Error)
 		assertTwoInput(Error, Undefined, Error)
 		assertTwoInput(Error, Error, Error)
+	}
+
+	@Test
+	fun shouldCalculateMultiBit() {
+		val andGate = AndGate(bitWidth = BitWidth.BW_2)
+		andGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(True, False)), signalHandler)
+		andGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(True, True)), signalHandler)
+
+		val result = calculator.calculateMultiBit(andGate)
+
+		assertEquals(Word(listOf(True, False)), result)
 	}
 }

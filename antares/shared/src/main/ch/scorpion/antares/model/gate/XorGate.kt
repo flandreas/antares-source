@@ -2,9 +2,11 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.Bit.Error
+import ch.scorpion.antares.model.signal.Bit.True
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
@@ -12,26 +14,23 @@ import ch.scorpion.jabbah.graph.model.Vertice
  */
 class XorCalculator : AbstractDigitalGateCalculator() {
 
-	companion object {
-
-		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
-			var trueCount = 0
-			for (portId in (1..source.signalCount).filter { filter(it) }) {
-				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (effectiveGateInputValue(portId, source)) {
-					True -> trueCount++
-					Error -> return Error
-				}
+	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
+		var trueCount = 0
+		input.forEach {
+			@Suppress("NON_EXHAUSTIVE_WHEN")
+			when (it.bitAt(bitIndex)) {
+				True -> trueCount++
+				Error -> return Error
 			}
-			return Bit.of(trueCount.rem(2) == 1)
 		}
+		return Bit.of(trueCount.rem(2) == 1)
 	}
-
-	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit =
-		Companion.calculate(source, filter)
 }
 
-class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class XorGate(
+	inputCount: InputCount = InputCount.TWO,
+	bitWidth: BitWidth = BitWidth.BW_1
+) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 

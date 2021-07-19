@@ -9,10 +9,9 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
@@ -21,6 +20,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 
 class GateMnemonicsEvent
 
@@ -139,12 +139,13 @@ object GateMnemonic {
 		return effectiveGateInputBit(inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0)))
 	}
 
-	private fun drawSerial(gateView: DigitalComponentView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+	private fun drawSerial(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signal1 = getInputSignal(gateView, 1)
-		val signal2 = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signal1 = if (passive) Bit.False else getInputSignal(gateView, 1)
+		val signal2 = if (passive) Bit.False else getInputSignal(gateView, 2)
+		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
 		context.g.font = FONT
@@ -157,7 +158,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signal1.invert(invert1).color.foregroundColor else foreground)
 		context.g.drawLine(s(2.5), s(4.0), s(3.0), s(4.0))
 		// Segment 3
-		context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
+		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
 		context.g.drawLine(s(4.0), s(4.0), s(6.0), s(4.0))
 
 		val y1 = if (invert1) {
@@ -196,11 +197,12 @@ object GateMnemonic {
 	}
 
 	private fun drawParallelTwice(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signal1 = getInputSignal(gateView, 1)
-		val signal2 = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal1 = if (passive) Bit.False else getInputSignal(gateView, 1)
+		val signal2 = if (passive) Bit.False else getInputSignal(gateView, 2)
+		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		val yu = s(3.0)
 		val yl = s(5.0)
@@ -280,11 +282,12 @@ object GateMnemonic {
 	}
 
 	private fun drawParallel(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signal1 = getInputSignal(gateView, 1)
-		val signal2 = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signal1 = if (passive) Bit.False else getInputSignal(gateView, 1)
+		val signal2 = if (passive) Bit.False else getInputSignal(gateView, 2)
+		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
 		val color2 = if (isExec) signal2.invert(invert2).color.foregroundColor else foreground
@@ -311,7 +314,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.25), yl, s(4.5), yl)
 		context.g.drawLine(s(4.5), yl, s(4.5), s(4.0))
 		// Segment 2.out
-		context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
+		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
 		context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
 		val portX = (gateView.getPortViews()[0].locationX.toInt() + inputOffsetX - gateView.x)
@@ -346,11 +349,12 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y2, s(3.25) - 1, y2)
 	}
 
-	private fun drawInverter(gateView: BoxGateView<*>, context: DrawContext, foreground: Color, background: Color) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+	private fun drawInverter(gateView: NotGateView, context: DrawContext, foreground: Color, background: Color) {
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
-		val signal = signalOut.not()
+		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal = if (passive) Bit.True else signalOut.not()
 
 		val yu = s(3.0)
 
@@ -380,10 +384,11 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y, s(3.25) - 1, y)
 	}
 
-	private fun drawBufferImpl(gateView: BoxGateView<*>, context: DrawContext, foreground: Color) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+	private fun drawBufferImpl(gateView: BufferGateView, context: DrawContext, foreground: Color) {
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
 		context.g.stroke = LINE_STROKE
 		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
@@ -391,11 +396,12 @@ object GateMnemonic {
 	}
 
 	private fun drawTriStateRight(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!
-		val control = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signal = if (passive) Bit.False else gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val control = if (passive) Bit.False else getInputSignal(gateView, 2)
+		val signalOut = if (passive) Bit.Undefined else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
 		context.g.font = FONT
@@ -422,11 +428,12 @@ object GateMnemonic {
 	}
 
 	private fun drawTriStateLeft(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
-		val signal = getInputSignal(gateView, 1)
-		val control = getInputSignal(gateView, 2)
-		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal = if (passive) Bit.False else getInputSignal(gateView, 1)
+		val control = if (passive) Bit.False else getInputSignal(gateView, 2)
+		val signalOut = if (passive) Bit.Undefined else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
 		context.g.font = FONT

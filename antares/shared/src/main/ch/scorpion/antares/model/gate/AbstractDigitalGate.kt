@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTableModel
@@ -21,10 +22,34 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigitalGate> {
 
-	abstract fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit
+	fun calculateMultiBit(source: MultiSignalSource<DigitalSignal>, filter: (portId: Int) -> Boolean = { true }): DigitalSignal {
+		val inputValues = (1..source.signalCount)
+			.filter(filter)
+			.map { effectiveGateInputValue(it, source) }
+
+		val outputBits = mutableListOf<Bit>()
+		for (bitIndex in 0 until inputValues.first().bitWidth.width) {
+			outputBits.add(calculateBit(inputValues, bitIndex))
+		}
+
+		return DigitalSignalFactory.ofBits(outputBits)
+	}
+
+	fun calculateSingleBit(source: MultiSignalSource<DigitalSignal>, filter: (portId: Int) -> Boolean = { true }): DigitalSignal =
+		DigitalSignalFactory.of(calculateBit(
+			(1..source.signalCount)
+				.filter(filter)
+				.map { effectiveGateInputValue(it, source) },
+			0))
+
+	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
 
 	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(calculate(vertice)), signalHandler)
+		if (vertice.bitWidth == BitWidth.BW_1) {
+			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateSingleBit(vertice), signalHandler)
+		} else {
+			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateMultiBit(vertice), signalHandler)
+		}
 	}
 }
 
@@ -38,8 +63,8 @@ fun effectiveGateInputBit(bit: Bit): Bit =
 fun effectiveGateInputWord(input: DigitalSignal): DigitalSignal =
 	DigitalSignalFactory.ofBits(input.bits.map { bit -> effectiveGateInputBit(bit) })
 
-fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<Bit>): Bit =
-	effectiveGateInputBit(source.getSignal(portId))
+fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<DigitalSignal>): DigitalSignal =
+	effectiveGateInputWord(source.getSignal(portId))
 
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
@@ -47,8 +72,9 @@ fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<Bit>): Bit =
  */
 abstract class AbstractDigitalGate(
     calculator: AbstractDigitalGateCalculator,
-    inputCount: InputCount
-) : CalculatingVertice(calculator), MultiSignalSource<Bit> {
+    inputCount: InputCount,
+    bitWidth: BitWidth = BitWidth.BW_1
+) : CalculatingVertice(calculator), MultiSignalSource<DigitalSignal> {
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)
@@ -58,6 +84,16 @@ abstract class AbstractDigitalGate(
     }
 
 	val chosenInputCount: InputCount get() = InputCount.of(inputCount)
+
+	var bitWidth: BitWidth = bitWidth
+		set(value) {
+			if (field != value) {
+				field = value
+				getInputs().map { it as DigitalPort }.forEach { it.bitWidth = value }
+				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+				stateChanged()
+			}
+		}
 
     init {
         propagationDelay = DEFAULT_PROPAGATION_DELAY
@@ -81,6 +117,9 @@ abstract class AbstractDigitalGate(
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
 	    writer.writeIntegers("negatedInputs", negatedInputPortIds)
+	    if (bitWidth != BitWidth.BW_1) {
+	    	writer.writeString("bitWidth", bitWidth.customName)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -94,15 +133,18 @@ abstract class AbstractDigitalGate(
 			    (getInput<DigitalSignal>(it) as DigitalPort).logic = Logic.NEGATIVE
 		    }
 	    }
+	    if (reader.hasAttribute("bitWidth")) {
+	    	bitWidth = BitWidth.withName(reader.readString("bitWidth"))
+	    }
     }
 
 	/** ---- [MultiSignalSource] */
 
 	override val signalCount: Int get() = chosenInputCount.count
 
-	override fun getSignal(id: Int): Bit {
+	override fun getSignal(id: Int): DigitalSignal {
 		val inputPort = getInput<DigitalSignal>(id) as DigitalPort
-		return inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0))
+		return inputPort.logic.evaluate(inputPort.getIncomingSignal()!!)
 	}
 
     /** ---- [Actor] interface */
@@ -118,7 +160,7 @@ abstract class AbstractDigitalGate(
 
     open val maxInputCount: InputCount get() = DEF_MAX_INPUT_COUNT
 
-	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput()
+	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput(logic = Logic.POSITIVE, name = null, bitWidth = bitWidth)
 
 	/** ---- [AbstractDigitalGate] */
 
@@ -126,7 +168,7 @@ abstract class AbstractDigitalGate(
      * Called by setter [chosenInputCount] which establishes the required [InputPort] and a single [OutputPort],
      * which is created by this method.
      */
-    protected open fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput()
+    protected open fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput(logic = Logic.POSITIVE, name = null, bitWidth = bitWidth)
 
 	fun getNegateInput(portId: Int): Boolean = (getInput<DigitalSignal>(portId) as DigitalPort).logic == Logic.NEGATIVE
 
@@ -142,7 +184,9 @@ abstract class AbstractDigitalGate(
 			val port = getInput<DigitalSignal>(portId) as DigitalPort
 			inputColumns.add(TruthTableModel.Column("I$portId", port.logic))
 		}
-		return TruthTableModel(inputColumns, listOf("O")).calculate { (calculator as AbstractDigitalGateCalculator).calculate(it) }
+		return TruthTableModel(inputColumns, listOf("O")).calculate {
+			(calculator as AbstractDigitalGateCalculator).calculateMultiBit(it)
+		}
 	}
 
 

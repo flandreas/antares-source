@@ -42,7 +42,7 @@ class NotGateView(
 			model.bitWidth = value
 		}
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*> {
         EXPLANATION.explanation.vertice = model
         EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
         return EXPLANATION
@@ -57,8 +57,6 @@ class NotGateView(
 	}
 
 	private fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		if (bitWidth == BitWidth.BW_1) {
-			GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
-		}
+		GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
 	}
 }

@@ -67,7 +67,8 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
 		return if (model.inputCount == 2) {
-			DrawableExplanation(TruthTableView(model.calculateTruthTable(), model), Point2D(boundingBox.centerX, boundingBox.minY))
+			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
+			DrawableExplanation(truthTableView, Point2D(boundingBox.centerX, boundingBox.minY))
 		} else null
 	}
 

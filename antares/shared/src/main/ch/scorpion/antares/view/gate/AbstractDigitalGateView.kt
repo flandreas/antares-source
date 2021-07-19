@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -29,6 +30,17 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 			invalidate()
 			model.getOutput<DigitalSignal>().name = value
 			invalidate()
+		}
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			if (value != model.bitWidth) {
+				invalidate()
+				model.bitWidth = value
+				invalidate()
+				validate()
+			}
 		}
 
 	/** ---- [AbstractVerticeView] */

@@ -3,9 +3,12 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -65,5 +68,16 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 
 		assertFalse(xnor.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0).isSet)
+	}
+
+	@Test
+	fun shouldCalculateMultiBit() {
+		val xnorGate = XnorGate(bitWidth = BitWidth.BW_2)
+		xnorGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(True, False)), signalHandler)
+		xnorGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(False, False)), signalHandler)
+
+		val result = calculator.calculateMultiBit(xnorGate)
+
+		assertEquals(Word(listOf(False, True)), result)
 	}
 }

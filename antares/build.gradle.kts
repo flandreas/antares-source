@@ -13,12 +13,14 @@ val win_jpackage_home: String by extra
 repositories {
 	mavenCentral()
 	jcenter()
+	/*
 	maven {
 		url = uri("https://dl.bintray.com/kotlin/kotlinx")
 	}
 	maven {
 		url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
 	}
+	*/
 }
 
 plugins {

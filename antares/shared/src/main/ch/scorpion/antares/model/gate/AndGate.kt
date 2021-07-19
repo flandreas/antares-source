@@ -2,35 +2,34 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.Bit.Error
+import ch.scorpion.antares.model.signal.Bit.True
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /** Performs a logical "AND" function with the current input signals of a [Vertice].*/
 class AndCalculator : AbstractDigitalGateCalculator() {
 
-	companion object {
-
-		fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean = { true }): Bit {
-			var trueCount = 0
-			for (portId in (1..source.signalCount).filter { filter(it) }) {
-				@Suppress("NON_EXHAUSTIVE_WHEN")
-				when (effectiveGateInputValue(portId, source)) {
-					True -> trueCount++
-					Error -> return Error
-				}
+	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
+		var trueCount = 0
+		input.forEach {
+			@Suppress("NON_EXHAUSTIVE_WHEN")
+			when (it.bitAt(bitIndex)) {
+				True -> trueCount++
+				Error -> return Error
 			}
-			return Bit.of(trueCount == source.signalCount)
 		}
+		return Bit.of(trueCount == input.size)
 	}
-
-	override fun calculate(source: MultiSignalSource<Bit>, filter: (Int) -> Boolean): Bit =
-		Companion.calculate(source, filter)
 }
 
 /** A digital gate that performs a logical AND operation. */
-class AndGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class AndGate(
+	inputCount: InputCount = InputCount.TWO,
+	bitWidth: BitWidth = BitWidth.BW_1
+) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.AndGate"
@@ -43,5 +42,9 @@ class AndGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	fun calculate(portFilter: (Int) -> Boolean): Bit = AndCalculator.calculate(this, portFilter)
+	fun calculate(portFilter: (Int) -> Boolean): DigitalSignal = if (bitWidth == BitWidth.BW_1) {
+		CALCULATOR.calculateSingleBit(this, portFilter)
+	} else {
+		CALCULATOR.calculateMultiBit(this, portFilter)
+	}
 }

@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.gate.AndGate
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
@@ -96,7 +97,7 @@ class AndGateView(
 
 		if (appContext.mode.isExecute()) {
 			val controlState = model.calculate { it != dataPort.id }
-			if (controlState.isSet) {
+			if (controlState.isAllOf(Bit.True)) {
 				context.g.stroke = createClosedDataPathStroke()
 			} else {
 				context.g.stroke = createOpenDataPathStroke()

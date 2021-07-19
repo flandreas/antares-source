@@ -3,10 +3,11 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.graph.model.MultiSignalSource
+import ch.scorpion.jabbah.graph.model.Vertice
 
 typealias Bits = Array<Bit>
 
@@ -94,9 +95,10 @@ class TruthTableModel(
 		return bitsToInts(outputOf(intsToBits(input)))
 	}
 
-	fun calculate(calculator: (MultiSignalSource<Bit>) -> Bit): TruthTableModel {
+	/** Calculates the [TruthTableModel] by using [Bit] 0 of the specified [MultiSignalSource].*/
+	fun calculate(calculator: (MultiSignalSource<DigitalSignal>) -> DigitalSignal): TruthTableModel {
 		for (row in rows) {
-			row.output[0] = calculator(row)
+			row.output[0] = calculator(row).bitAt(0)
 		}
 		return this
 	}
@@ -134,9 +136,9 @@ class TruthTableModel(
 		return IntArray(bits.size) { bits[it].numericalValue }
 	}
 
-	inner class Row(val input: Bits, val output: Bits) : MultiSignalSource<Bit> {
+	inner class Row(val input: Bits, val output: Bits) : MultiSignalSource<DigitalSignal> {
 		override val signalCount: Int get() = input.size
-		override fun getSignal(id: Int): Bit = inputColumns[id - 1].logic.evaluate(input[id - 1])
+		override fun getSignal(id: Int): DigitalSignal = inputColumns[id - 1].logic.evaluate(input[id - 1].asWord)
 	}
 
 	data class Column(val name: String, val logic: Logic = Logic.POSITIVE)

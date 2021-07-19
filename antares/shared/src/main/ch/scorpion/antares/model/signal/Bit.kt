@@ -20,6 +20,11 @@ enum class Bit(private val value: Int?) {
 		const val SOME_UNDEFINED_CHAR = 'z'
 		const val ERROR_CHAR = 'X'
 
+		val WORD_UNDEFINED: DigitalSignal by lazy { Word.of(Undefined) }
+		val WORD_ERROR: DigitalSignal by lazy { Word.of(Error) }
+		val WORD_FALSE: DigitalSignal by lazy { Word.of(False) }
+		val WORD_TRUE: DigitalSignal by lazy { Word.of(True) }
+
 		fun of(value: Int): Bit {
 			return when (value) {
 				0 -> False
@@ -66,6 +71,14 @@ enum class Bit(private val value: Int?) {
 				False -> Themes.get<AntaresTheme>().zero
 				True -> Themes.get<AntaresTheme>().one
 			}
+		}
+
+	val asWord: DigitalSignal get() =
+		when (this) {
+			Undefined -> WORD_UNDEFINED
+			Error -> WORD_ERROR
+			False -> WORD_FALSE
+			True -> WORD_TRUE
 		}
 
 	/** Returns the inverse of this [Bit].*/
