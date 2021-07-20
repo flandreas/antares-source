@@ -15,7 +15,9 @@ import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
 import com.ccfraser.muirwik.components.*
+import kotlinx.css.*
 import react.*
+import styled.css
 import styled.styledDiv
 
 external interface AntaresViewJsProps : RProps {
@@ -92,30 +94,53 @@ class AntaresViewJs(
 	}
 
 	override fun RBuilder.render() {
-		mAppBar(position = MAppBarPosition.static) {
-			mToolbar {
-				mToolbarTitle("Antares")
-			}
-		}
+		mCssBaseline()
+
 		styledDiv {
-			if (state.isLoading) {
-				mBackdrop(open = true) {
-					mCircularProgress(color = MCircularProgressColor.inherit)
+			css {
+				display = Display.flex
+				height = 100.vh
+				width = 100.vw
+				flexDirection = FlexDirection.column
+			}
+
+			mAppBar(position = MAppBarPosition.static) {
+				mToolbar {
+					mToolbarTitle("Antares")
 				}
 			}
-			else {
-				antaresMenuBar {  }
-				graphExecutionToolbar {
-					applicationDataHolder = props.applicationDataHolder
-					scheduler = ExecutionModule.scheduler
-					eventBus = BaseModule.eventBus
+
+			styledDiv {
+				css {
+					display = Display.flex
+					flexDirection = FlexDirection.column
+					flexGrow = 1.0
 				}
-				graphPanelView {
-					controller = this@AntaresViewJs.controller
-					application = this@AntaresViewJs.props.application
-					canvasId = props.canvasId
-					size = props.size
-					metaGraph = props.metaGraph
+				if (state.isLoading) {
+					mBackdrop(open = true) {
+						mCircularProgress(color = MCircularProgressColor.inherit)
+					}
+				} else {
+					antaresMenuBar {  }
+					graphExecutionToolbar {
+						applicationDataHolder = props.applicationDataHolder
+						scheduler = ExecutionModule.scheduler
+						eventBus = BaseModule.eventBus
+					}
+
+					styledDiv {
+						css {
+							flexGrow = 1.0
+							position = Position.relative
+						}
+						graphPanelView {
+							controller = this@AntaresViewJs.controller
+							application = this@AntaresViewJs.props.application
+							canvasId = props.canvasId
+							size = props.size
+							metaGraph = props.metaGraph
+						}
+					}
 				}
 			}
 		}

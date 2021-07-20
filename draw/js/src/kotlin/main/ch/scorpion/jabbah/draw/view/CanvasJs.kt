@@ -98,18 +98,17 @@ class CanvasJs(
 		val scaledHeight = height * devicePixelRatio
 
 		val oldDimension = _dimension
+		val newDimension = Dimension2D(scaledWidth, scaledHeight)
 
-		_dimension = Dimension2D(scaledWidth, scaledHeight)
+		if (oldDimension != newDimension) {
+			_dimension = newDimension
 
-		canvas.width = scaledWidth
-		canvas.height = scaledHeight
+			canvas.width = scaledWidth
+			canvas.height = scaledHeight
 
-		canvas.style.width = "100%"
-		canvas.style.height = "100%"
-
-		fire(Canvas.PROP_DIMENSION, oldDimension, _dimension)
-
-		repaint()
+			fire(Canvas.PROP_DIMENSION, oldDimension, _dimension)
+			repaint()
+		}
 	}
 
 	override fun requestViewFocus() {

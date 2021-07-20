@@ -3,7 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.responsiveCanvas
+import kotlinx.css.*
 import react.*
+import styled.css
+import styled.styledDiv
 
 external interface GraphNavigationViewJsProps : RProps {
 	var canvasId: String
@@ -39,12 +42,20 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun RBuilder.render() {
-		navigationStackView {
-			controller = props.controller.navigationStackViewController
-		}
-		child(responsiveCanvas) {
-			attrs.canvasId = props.canvasId
-			attrs.canvasJsProvider = { canvasJs }
+		styledDiv {
+			css {
+				display = Display.flex
+				flexDirection = FlexDirection.column
+				width = 100.vw
+				height = 100.vh
+			}
+			navigationStackView {
+				controller = props.controller.navigationStackViewController
+			}
+			child(responsiveCanvas) {
+				attrs.canvasId = props.canvasId
+				attrs.canvasJsProvider = { canvasJs }
+			}
 		}
 	}
 

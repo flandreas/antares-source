@@ -9,7 +9,7 @@ external interface ResizeDetectorProps {
 }
 
 external interface ResizeDetectorFunctionProps<T : Any> : ResizeDetectorProps {
-	var targetRef: RMutableRef<T>
+	var targetRef: RMutableRef<T>?
 }
 
 external interface UseResizeDetectorResult<T : Any> {

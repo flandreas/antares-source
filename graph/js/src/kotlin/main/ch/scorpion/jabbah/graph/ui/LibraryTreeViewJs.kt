@@ -63,7 +63,7 @@ class LibraryTreeViewJs(
 			defaultCollapseIcon = createCollapseIcon(),
 		) {
 			css {
-				padding(2.spacingUnits)
+				paddingLeft = 2.spacingUnits
 				maxHeight = LinearDimension.fillAvailable
 				maxWidth = LinearDimension.fillAvailable
 				flexGrow = 1.0

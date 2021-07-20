@@ -17,6 +17,8 @@ interface SplitPaneProps : StyledPropsWithCommonAttributes {
 	var split: String
 	var defaultSize: Int?
 	var minSize: Int?
+	var maxSize: Int?
+	var primary: String?
 }
 
 /**
@@ -27,6 +29,8 @@ fun RBuilder.splitPane(
 	split: String,
 	defaultSize: Int? = null,
 	minSize: Int? = null,
+	maxSize: Int? = null,
+	primary: String? = null,
 	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<SplitPaneProps>? = null
@@ -34,5 +38,7 @@ fun RBuilder.splitPane(
 	attrs.split = split
 	attrs.defaultSize = defaultSize
 	attrs.minSize = minSize
+	attrs.maxSize = maxSize
+	primary?.let { attrs.primary = it }
 	setStyledPropsAndRunHandler(className, handler)
 }

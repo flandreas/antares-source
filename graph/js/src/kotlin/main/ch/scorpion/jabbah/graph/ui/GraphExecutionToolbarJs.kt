@@ -8,11 +8,10 @@ import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.systemSpeedSlider
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import com.ccfraser.muirwik.components.MGridAlignItems
-import com.ccfraser.muirwik.components.MGridSize
-import com.ccfraser.muirwik.components.mGridContainer
-import com.ccfraser.muirwik.components.mGridItem
+import com.ccfraser.muirwik.components.*
+import kotlinx.css.paddingLeft
 import react.*
+import styled.css
 import styled.styledDiv
 
 external interface GraphExecutionToolbarJsProps : RProps {
@@ -51,6 +50,9 @@ class GraphExecutionToolbarJs(
 
 	override fun RBuilder.render() {
 		styledDiv {
+			css {
+				paddingLeft = 2.spacingUnits
+			}
 			mGridContainer(alignItems = MGridAlignItems.center) {
 				mGridItem {
 					jmToggleButton {
