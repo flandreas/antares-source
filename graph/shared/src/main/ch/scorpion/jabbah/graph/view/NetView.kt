@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.model.Net
@@ -27,6 +28,8 @@ interface NetView<T : Any> : Storable, Bean {
     val isEmpty: Boolean
 
     var style: NetViewStyle
+
+    var customColor: PredefinedColor?
 
     fun add(elem: NetViewElement<T>)
 

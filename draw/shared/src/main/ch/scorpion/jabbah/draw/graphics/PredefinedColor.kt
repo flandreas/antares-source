@@ -12,10 +12,13 @@ enum class PredefinedColorIdentity(
 	White("white", "graphics.color.white.name"),
 	Black("black", "graphics.color.black.name"),
 	Gray("gray", "graphics.color.gray.name"),
+	Yellow("yellow", "graphics.color.yellow.name"),
+	Brown("brown", "graphics.color.brown.name"),
 	Red("red", "graphics.color.red.name"),
+	Violet("violet", "graphics.color.violet.name"),
 	Blue("blue", "graphics.color.blue.name"),
-	Green("green", "graphics.color.green.name"),
-	Yellow("yellow", "graphics.color.yellow.name");
+	Turquoise("turquoise", "graphics.color.turquoise.name"),
+	Green("green", "graphics.color.green.name");
 
 	companion object {
 		fun containsIdName(idName: String): Boolean = values().map { it.idName }.contains(idName)

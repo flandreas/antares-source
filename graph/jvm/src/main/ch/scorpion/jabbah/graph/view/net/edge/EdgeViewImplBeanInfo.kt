@@ -16,6 +16,7 @@ open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
 		private val arrow = CommandPropertySwing("arrow", "graph.property.edgeView.arrow", Boolean::class.java, componentBeanProvider)
 		private val layout = CommandPropertySwing("layout.type", "graph.property.edgeView.layout", LayoutType::class.java, componentBeanProvider)
 		private val style = CommandPropertySwing("netView.style", "graph.property.edgeViewLineStyle", NetViewStyle::class.java, componentBeanProvider)
+		private val color = EditProperties.color("netView.customColor")
 		private val description = EditProperties.description()
 	}
 
@@ -26,6 +27,7 @@ open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
 		properties.add(arrow.bind(editor, bean.id))
 		properties.add(layout.bind(editor, bean.id))
 		properties.add(style.bind(editor, bean.id))
+		properties.add(color.bind(editor, bean.id))
 		properties.add(description.bind(editor, bean.id))
 	}
 }

@@ -44,10 +44,13 @@ open class DrawTheme(
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
 			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
 			PredefinedColor(PredefinedColorIdentity.Gray, DrawGraphicsModule.GRAY),
+			PredefinedColor(PredefinedColorIdentity.Yellow, DrawGraphicsModule.YELLOW),
+			PredefinedColor(PredefinedColorIdentity.Brown, DrawGraphicsModule.BROWN),
 			PredefinedColor(PredefinedColorIdentity.Red, DrawGraphicsModule.RED),
+			PredefinedColor(PredefinedColorIdentity.Violet, DrawGraphicsModule.VIOLET),
 			PredefinedColor(PredefinedColorIdentity.Blue, DrawGraphicsModule.BLUE),
+			PredefinedColor(PredefinedColorIdentity.Turquoise, DrawGraphicsModule.TURQUOISE),
 			PredefinedColor(PredefinedColorIdentity.Green, DrawGraphicsModule.GREEN),
-			PredefinedColor(PredefinedColorIdentity.Yellow, DrawGraphicsModule.YELLOW)
 		)
 	}
 

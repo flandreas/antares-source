@@ -2,10 +2,12 @@ package ch.scorpion.antares.view.theme
 
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.BLUE_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.BROWN_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.GRAY_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.GREEN_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.PINK_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.RED_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.TURQUOISE_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.VIOLET_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.YELLOW_ON_DARK
 import ch.scorpion.jabbah.draw.style.BasicStyle
@@ -33,10 +35,13 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
 			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
 			PredefinedColor(PredefinedColorIdentity.Gray, GRAY_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Brown, BROWN_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Red, RED_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Violet, VIOLET_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Blue, BLUE_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Turquoise, TURQUOISE_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Green, GREEN_ON_DARK),
-			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW_ON_DARK)
 		)
 
 		val DARK_BUS_FILL_COLOR = Color(48, 48, 48)

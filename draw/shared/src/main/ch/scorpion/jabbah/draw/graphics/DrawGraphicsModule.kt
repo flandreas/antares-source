@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 object DrawGraphicsModule : AbstractModule() {
 
     val RED = CompositeColor.withDarkerText(Color(236, 35, 46), Color(248, 170, 145))
-	//val RED_ON_DARK = CompositeColor.withBrighterText(Color(236, 35, 46), Color(120, 3, 7))
 	val RED_ON_DARK = CompositeColor(Color(236, 35, 46), Color(90, 3, 7), Color(255, 204, 204))
 
     val BLUE = CompositeColor.withDarkerText(Color(72, 186, 233), Color(185, 223, 245))
@@ -21,7 +20,6 @@ object DrawGraphicsModule : AbstractModule() {
 	val GREEN_ON_DARK = CompositeColor.withBrighterText(Color(115, 191, 91), Color(7, 87, 9))
 
     val YELLOW = CompositeColor.withDarkerText(Color(254, 209, 58), Color(251, 245, 183))
-	//val YELLOW_ON_DARK = CompositeColor.withBrighterText(Color(245, 235, 62), Color(67, 69, 10))
 	val YELLOW_ON_DARK = CompositeColor(Color(245, 235, 62), Color(67, 69, 10), Color(255, 255, 228))
 
     val VIOLET = CompositeColor.withDarkerText(Color(91, 84, 161), Color(211, 207, 231))
@@ -29,6 +27,12 @@ object DrawGraphicsModule : AbstractModule() {
 
     val PINK = CompositeColor.withDarkerText(Color(234, 34, 123), Color(250, 214, 223))
 	val PINK_ON_DARK = CompositeColor.withBrighterText(Color(188, 126, 179), Color(104, 8, 89))
+
+	val BROWN = CompositeColor.withDarkerText(Color(149, 92, 11), Color(234, 173, 85))
+	val BROWN_ON_DARK = CompositeColor(Color(203,119,18), Color(94,65,4), Color(255, 197, 109))
+
+	val TURQUOISE = CompositeColor.withDarkerText(Color(69, 181, 172), Color(187, 255, 242))
+	val TURQUOISE_ON_DARK = CompositeColor.withBrighterText(Color(69,213,203), Color(12,86,103))
 
     val WHITE = CompositeColor(Color.BLACK, Color.WHITE)
     val BLACK = CompositeColor(Color.WHITE, Color.BLACK)
@@ -67,10 +71,13 @@ object DrawGraphicsModule : AbstractModule() {
         repository.register(PredefinedColor(PredefinedColorIdentity.White, WHITE))
         repository.register(PredefinedColor(PredefinedColorIdentity.Black, BLACK))
         repository.register(PredefinedColor(PredefinedColorIdentity.Gray, GRAY))
-        repository.register(PredefinedColor(PredefinedColorIdentity.Red, RED))
-        repository.register(PredefinedColor(PredefinedColorIdentity.Blue, BLUE))
-        repository.register(PredefinedColor(PredefinedColorIdentity.Green, GREEN))
         repository.register(PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Brown, BROWN))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Red, RED))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Violet, VIOLET))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Blue, BLUE))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Turquoise, TURQUOISE))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Green, GREEN))
     }
 
 	private fun predefineStrokes(repository: PredefinedStrokeRepository) {
