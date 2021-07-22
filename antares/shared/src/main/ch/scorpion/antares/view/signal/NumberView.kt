@@ -1,20 +1,21 @@
 package ch.scorpion.antares.view.signal
 
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.LEFT
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.RIGHT
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment.BOTTOM
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment.CENTER
 import kotlin.math.max
 
 /**
@@ -29,7 +30,8 @@ class NumberView(
 
 	companion object {
 		private const val DIGIT_GROUP_GAP = 5
-		private const val BYTE_LABEL_HOR_GAP = 0
+		private const val BYTE_LABEL_HOR_GAP = 1
+		private const val SIGNAL_NOTATION_LABEL_GAP = 1
 	}
 
 	/** Contains the individual digit views, starting with the lowest priority bit at index 0. */
@@ -37,6 +39,8 @@ class NumberView(
 
 	/** Contains the [Label]s that designate the index of the displayed byte within the entire signal value. */
 	private val byteIndexLabels = mutableListOf<Label>()
+
+	private lateinit var signalNotationLabel: Label
 
 	/** The index of the [digitViews] that has the focus, or `null` if none has the focus. */
 	var focusIndex: Int? = null
@@ -67,10 +71,16 @@ class NumberView(
 
 	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false) {
 		context.g.translate(x, y)
+
 		for (digitView in digitViews) {
 			digitView.draw(context, isOn, inactive)
 		}
 		drawByteIndexLabels(context)
+
+		if (digitViews.size > 1) {
+			signalNotationLabel.draw(context)
+		}
+
 		context.g.translate(-x, -y)
 	}
 
@@ -156,12 +166,14 @@ class NumberView(
 		drawBox: Boolean
 	) {
 		val bounds = Rectangle2D(0, 0, 0, 0)
-		var x = 0.0
+		var x: Double
 		var y = 0.0
 		var byteLabelColumnWidth = 0.0
 
 		val maxDigitPerRow = 2 * representation.digitGroupSize
 		val digitViewCount = representation.digitCount(bitWidth)
+
+		createSignalNotationLabel(representation)
 
 		// First row inset
 		if (digitViewCount > maxDigitPerRow && digitViewCount % maxDigitPerRow != 0) {
@@ -171,6 +183,8 @@ class NumberView(
 				inset += DIGIT_GROUP_GAP
 			}
 			x = inset.toDouble()
+		} else {
+			x = 0.0
 		}
 
 		for (i in digitViewCount - 1 downTo 0) {
@@ -180,15 +194,14 @@ class NumberView(
 
 			if (digitViewCount > maxDigitPerRow && i % maxDigitPerRow == 0) {
 				// Row break
-				val label = Label(
-					text = i.toString(),
-					location = Point2D(x + BYTE_LABEL_HOR_GAP, y + digitView.height),
-					font = Look.EXT_PIN_FONT,
-					color = Themes.get<AntaresTheme>().vertice.color.textColor,
-					horizontalAlignment = HorizontalAlignment.LEFT,
-					verticalAlignment = VerticalAlignment.BOTTOM)
+
+				val label = when (CurrentDigitalSignalNotation.notation) {
+					DigitalSignalNotation.PREFIX -> createByteIndexLabel(i, LEFT, Point2D(x + BYTE_LABEL_HOR_GAP, y + digitView.height))
+					else -> createByteIndexLabel(i, RIGHT, Point2D(bounds.minX - BYTE_LABEL_HOR_GAP, y + digitView.height))
+				}
 				byteIndexLabels.add(label)
 				byteLabelColumnWidth = max(byteLabelColumnWidth, label.boundingBox.width)
+
 				x = 0.0
 				y += digitView.height.toInt()
 			} else if (i % representation.digitGroupSize == 0 && i > 0) {
@@ -197,7 +210,64 @@ class NumberView(
 
 			bounds.add(digitView.bounds)
 		}
+
+		if (CurrentDigitalSignalNotation.notation != DigitalSignalNotation.PREFIX) {
+			moveChildrenDeltaX(byteLabelColumnWidth)
+		}
 		bounds.expandLeftBy(byteLabelColumnWidth)
+
+		if (digitViews.size > 1) {
+			placeSignalNotationLabel(bounds)
+		}
+
 		setBounds(bounds)
+	}
+
+	private fun placeSignalNotationLabel(bounds: Rectangle2D) {
+		val signalNotationLabelColumnWidth = signalNotationLabel.bounds.width + SIGNAL_NOTATION_LABEL_GAP - 2
+		when (CurrentDigitalSignalNotation.notation) {
+			DigitalSignalNotation.PREFIX -> {
+				// place at the left side of the last DigitView
+				val lastDigitView = digitViews.last()
+				signalNotationLabel.location = Point2D(lastDigitView.x - SIGNAL_NOTATION_LABEL_GAP, lastDigitView.bounds.centerY)
+				moveChildrenDeltaX(signalNotationLabelColumnWidth)
+				bounds.expandLeftBy(signalNotationLabelColumnWidth)
+			}
+			else -> {
+				// place at the right side of the first DigitView
+				var firstDigitView = digitViews.first()
+				signalNotationLabel.location = Point2D(firstDigitView.bounds.maxX + SIGNAL_NOTATION_LABEL_GAP, firstDigitView.bounds.centerY)
+				bounds.expandLeftBy(signalNotationLabelColumnWidth)
+			}
+		}
+	}
+
+	private fun moveChildrenDeltaX(deltaX: Double) {
+		digitViews.forEach { it.moveBy(deltaX, 0.0) }
+		byteIndexLabels.forEach { it.location = it.location.add(deltaX, 0.0) }
+		signalNotationLabel.location = signalNotationLabel.location.add(deltaX, 0.0)
+	}
+
+	private fun createByteIndexLabel(i: Int, horizontalAlignment: HorizontalAlignment, location: Point2D): Label {
+		return Label(
+			text = i.toString(),
+			location = location,
+			font = Look.EXT_PIN_FONT,
+			color = Themes.get<AntaresTheme>().vertice.color.textColor,
+			horizontalAlignment = horizontalAlignment,
+			verticalAlignment = BOTTOM)
+	}
+
+	private fun createSignalNotationLabel(representation: DigitalSignalRepresentation) {
+		signalNotationLabel = Label(
+			text = CurrentDigitalSignalNotation.notation.notate(representation),
+			font = DigitView.FONT,
+			color = Themes.get<AntaresTheme>().vertice.color.textColor,
+			horizontalAlignment = when (CurrentDigitalSignalNotation.notation) {
+				DigitalSignalNotation.PREFIX -> RIGHT
+				else -> LEFT
+			},
+			verticalAlignment = CENTER
+		)
 	}
 }

@@ -7,7 +7,8 @@ import javax.swing.JComboBox
 
 class DigitalSignalNotationPreference : AbstractPreference(
 	id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,
-	nameKey = "antares.preferences.DigitalSignalNotation"
+	nameKey = "antares.preferences.DigitalSignalNotation",
+	needsRestart = true
 ) {
 
 	private val editor = JComboBox<DigitalSignalNotation>()

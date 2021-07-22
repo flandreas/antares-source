@@ -9,6 +9,9 @@ enum class DigitalSignalNotation(
 ) {
 
 	PREFIX("prefix", "element.signal.notation.prefix") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.prefix
+
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
 			val r = representation.represent(signal)
 			return if (r.length > 1) {
@@ -20,6 +23,9 @@ enum class DigitalSignalNotation(
 	},
 
 	BASE_SUBSCRIPT("baseSubscript", "element.signal.notation.baseSubscript") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = createBaseSubscript(representation.base)
+
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
 			val r = representation.represent(signal)
 			return if (r.length > 1) {
@@ -31,6 +37,9 @@ enum class DigitalSignalNotation(
 	},
 
 	SUFFIX("suffix", "element.signal.notation.suffix") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.suffix
+
 		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
 			val r = representation.represent(signal)
 			return if (r.length > 1) {
@@ -54,6 +63,8 @@ enum class DigitalSignalNotation(
 				?: throw IllegalArgumentException("unknown DigitalSignalNotation '$customName'")
 		}
 	}
+
+	abstract fun notate(representation: DigitalSignalRepresentation): String
 
 	abstract fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String
 
