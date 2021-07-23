@@ -96,6 +96,13 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 		private const val INSET = 2
 
 		val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width)
+
+		fun drawNormalViewAt(location: Point2D, context: DrawContext) {
+			context.g.color = DrawModule.properties.getColor(PROP_COLOR)
+			context.g.fillCircle(location.x, location.y, SIZE_HALF - INSET)
+			context.g.stroke = stroke
+			context.g.drawCircle(location.x, location.y, SIZE_HALF)
+		}
 	}
 
 	override val lineWidth: Double get() = stroke.width.toDouble()
@@ -120,10 +127,7 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 	}
 
 	private fun drawNormalView(context: DrawContext) {
-		val rect = getViewRectangle()
-		context.g.fillOval(rect.x + INSET, rect.y + INSET, rect.width - 2*INSET, rect.height - 2*INSET)
-		context.g.stroke = stroke
-		context.g.drawOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+		drawNormalViewAt(getViewRectangle().center, context)
 	}
 
 	private fun drawAlternativeView(context: DrawContext) {

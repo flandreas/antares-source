@@ -208,7 +208,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(PortView.PROP_HIGHLIGHT_RECONNECT, ConnectionPointReconnect())
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
 		properties.set(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
-		properties.set(ConnectionPointHighlight.PROP_COLOR, Themes.get<EditTheme>().selection.color.foregroundColor)
+		properties.set(ConnectionPointHighlight.PROP_COLOR, Themes.get<EditTheme>().snap.color.foregroundColor)
 		properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 		properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.Animation.customName)

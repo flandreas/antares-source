@@ -194,7 +194,6 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(Handle.PROP_BORDER_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 		properties.set(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.color.backgroundColor)
 
-		properties.set(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 
 		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, DigitalPortView.LENGTH + 5)

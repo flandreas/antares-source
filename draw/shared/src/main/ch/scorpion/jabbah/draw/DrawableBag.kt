@@ -101,6 +101,15 @@ interface DrawableBag<T: Drawable> {
 	/** Returns the [Drawable]s that match the specified predicate.*/
 	fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T> = drawables.filter(predicate).toImmutableList()
 
+	fun getDrawableIntersection(drawable: Drawable, predicate: (T) -> Boolean = { true} ): Collection<T> {
+		if (useLocation) {
+			val r = rotateBack(drawable.boundingBox).moveBy(location.negate)
+			return drawables.filter { it !== drawable && it.visible && predicate.invoke(it) && it.intersects(r) }
+		}
+		val r = rotateBack(drawable.boundingBox)
+		return drawables.filter { it !== drawable && it.visible && predicate.invoke(it) && it.intersects(r) }
+	}
+
 	/** Returns the first [Drawable] that matches the specified predicate.*/
 	fun getDrawable(predicate: (T) -> Boolean): T? = drawables.firstOrNull(predicate)
 

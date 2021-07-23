@@ -16,7 +16,7 @@ enum class EdgeViewEndpointType {
 
     ORIGIN {
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>): Boolean {
+        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean {
         	return port.portType.isOutput
         }
 
@@ -55,8 +55,8 @@ enum class EdgeViewEndpointType {
 
     DESTINATION {
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>): Boolean {
-        	return port.portType.isInput || (port is OutputPort && (port.canBeUndefined || net.ports.none { it.portType.isOutput }))
+        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean {
+        	return port.portType.isInput || (port is OutputPort && (port.canBeUndefined || net?.ports?.none { it.portType.isOutput } == true))
         }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
@@ -95,9 +95,9 @@ enum class EdgeViewEndpointType {
     /**
      * Determines whether and endpoint of this type can connect to the specified [Port].
      * @param port the [Port] to connect to
-     * @param net the [Net] to which [port] is supposed to be connected
+     * @param net the [Net] to which [port] is supposed to be connected, if already existing
      */
-    abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>): Boolean
+    abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean
 
     /** Moves this endpoint of an [EdgeView] to the specified location. */
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)

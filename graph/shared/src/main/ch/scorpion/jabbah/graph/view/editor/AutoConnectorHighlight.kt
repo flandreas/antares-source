@@ -1,33 +1,22 @@
 package ch.scorpion.jabbah.graph.view.editor
 
-import ch.scorpion.jabbah.draw.DrawProperties
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.ZoomPan
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlight.Companion.SIZE_HALF
+import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlightCircle
 
 /**
  * Highlights the connection points of a [VerticeView] that will automatically connect to open
  * [EdgeView]s when dragging the [VerticeView].
+ *
+ * Uses [ConnectionPointHighlightCircle] for rendering.
  */
 class AutoConnectorHighlight : AbstractDrawable() {
-
-    companion object {
-        /** The name of the [Color] property in [DrawProperties]. */
-        val PROP_COLOR = "graph.view.port.highlight.color"
-
-        private val SIZE_HALF = 6
-
-        private val STROKE = Stroke(width = 1f)
-    }
 
     /** Holds the currently highlighted points.*/
     private val points = mutableListOf<Point2D>()
@@ -40,12 +29,9 @@ class AutoConnectorHighlight : AbstractDrawable() {
     override val boundingBox: RectangularShape get() = bboxModel
 
     override fun draw(context: DrawContext) {
-        context.g.color = DrawModule.properties.getColor(PROP_COLOR)
-        context.g.stroke = STROKE
-        for (p in points) {
-            context.g.drawOval(p.x.toInt() - SIZE_HALF, p.y.toInt() - SIZE_HALF, 2 * SIZE_HALF, 2 * SIZE_HALF)
-            context.g.fillOval(p.x.toInt() - SIZE_HALF, p.y.toInt() - SIZE_HALF, 2 * SIZE_HALF, 2 * SIZE_HALF)
-        }
+    	for (p in points) {
+    		ConnectionPointHighlightCircle.drawNormalViewAt(p, context)
+	    }
     }
 
     override fun contains(x: Double, y: Double): Boolean = false
@@ -73,7 +59,6 @@ class AutoConnectorHighlight : AbstractDrawable() {
         }
     }
 
-    private fun getPointBoundingBox(p: Point2D): Rectangle2D {
-        return Rectangle2D(p.x - SIZE_HALF, p.y - SIZE_HALF, 2.0 * SIZE_HALF, 2.0 * SIZE_HALF)
-    }
+    private fun getPointBoundingBox(p: Point2D): Rectangle2D =
+	    Rectangle2D(p.x - SIZE_HALF, p.y - SIZE_HALF, 2.0 * SIZE_HALF, 2.0 * SIZE_HALF)
 }
