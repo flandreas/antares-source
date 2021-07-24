@@ -48,12 +48,12 @@ object AutoConnector : DragManagerPlugin {
 
 	override fun handleDragFinished(editor: Editor, component: Component): Collection<Command> {
 		this.editor = editor
+		lastMatchLocation = null
 		return if (component is VerticeView<*>) {
 			createCommands(editor.drawing as GraphView, component)
 		} else {
 			emptySet()
 		}
-		lastMatchLocation = null
 	}
 
 	override fun handleDragTerminated(editor: Editor) {
@@ -85,7 +85,6 @@ object AutoConnector : DragManagerPlugin {
 	 * an [EdgeView] endpoint into [points].
 	 */
 	private fun matchPoints(graphView: GraphView, verticeView: VerticeView<*>) {
-		println("matchPoints at ${verticeView.location}")
 		mode = Mode.Points
 		points.clear()
 		graphView.getDrawableIntersection(verticeView).forEach {

@@ -98,8 +98,8 @@ enum class DigitalPortViewStyle(val customName: String) {
 			Direction.WEST to Direction.WEST.rotation.rotateRectangleAround(Point2D.ZERO, LOGIC_BOX),
 			Direction.SOUTH to Direction.SOUTH.rotation.rotateRectangleAround(Point2D.ZERO, LOGIC_BOX))
 
-		private const val DIL_ACCESS_W = DigitalPortView.LOGIC_SIZE / 2
-		private const val DIL_ACCESS_H = DigitalPortView.LOGIC_SIZE
+		private const val DIL_ACCESS_W = Look.SCALE
+		private const val DIL_ACCESS_H = 2 * Look.SCALE
 		private val DIL_BOX = Rectangle2D(0, -DIL_ACCESS_H / 2, DIL_ACCESS_W, DIL_ACCESS_H)
 		private val DIL_ACCESSES = mapOf(
 			Direction.EAST to Direction.EAST.rotation.rotateRectangleAround(Point2D.ZERO, DIL_BOX),
