@@ -16,6 +16,7 @@ enum class Size(val customName: String) {
     companion object {
 
         private val LOG by logger(Size::class)
+	    const val BASE_KEY_SIZE = "edit.property.size"
 
         fun withName(name: String): Size {
             for (size in values()) {

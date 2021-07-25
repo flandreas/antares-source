@@ -16,7 +16,7 @@ class SwitchViewBeanInfo : DigitalComponentBeanInfo<SwitchView>(), ControlViewBe
 
     companion object {
 	    private val name = EditProperties.untranslatableName()
-	    private val toggle = CommandPropertySwing("toggle", "element.property.Switch.toggle", Boolean::class.java, componentBeanProvider)
+	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 	    private val labelPosition = GraphProperties.verticalLabelPosition()
 		private val controlViewLabelPosition = GraphProperties.verticalLabelPosition(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.labelPosition")
     }

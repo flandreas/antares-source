@@ -17,12 +17,12 @@ object GraphProperties {
 
 	fun modelId(
 		name: String = "modelId",
-		baseKey: String = "graph.property.modelId",
+		baseKey: String = AbstractGraphElementView.BASE_KEY_MODEL_ID,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Int> = CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 
 	fun propagationDelay(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> =
-		CommandPropertySwing("propagationDelay", "element.property.propagationDelay", Long::class.java, beanProvider)
+		CommandPropertySwing("propagationDelay", AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, Long::class.java, beanProvider)
 
 	fun label(
 		name: String = "label",

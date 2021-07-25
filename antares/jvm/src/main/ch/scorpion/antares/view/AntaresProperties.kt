@@ -12,13 +12,13 @@ import ch.scorpion.jabbah.graph.model.PortType
 object AntaresProperties {
 
 	fun bitWidth(): CommandPropertySwing<BitWidth> =
-		CommandPropertySwing("bitWidth", "element.property.bitWidth", BitWidth::class.java, componentBeanProvider)
+		CommandPropertySwing("bitWidth", BitWidth.BASE_KEY, BitWidth::class.java, componentBeanProvider)
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
-		CommandPropertySwing(name, "graph.property.portType", PortType::class.java, componentBeanProvider)
+		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)
 
 	fun signalRepresentation(name: String ="signalRepresentation"): CommandPropertySwing<DigitalSignalRepresentation> =
-		CommandPropertySwing(name, "element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java, componentBeanProvider)
+		CommandPropertySwing(name, DigitalSignalRepresentation.BASE_KEY, DigitalSignalRepresentation::class.java, componentBeanProvider)
 
 	fun handedness(name: String = "handedness", baseKey: String): CommandPropertySwing<Handedness> =
 		CommandPropertySwing(name, baseKey, Handedness::class.java, componentBeanProvider)

@@ -21,7 +21,7 @@ class ChangeInputCountCommandJs(
 	private val service: DigitalGraphViewService = EditModule.drawingAppService as DigitalGraphViewService
 ) : PropertyCommandJs<InputCount>(
 	editor,
-	"element.property.inputCount",
+	InputCount.BASE_KEY,
 	beanProvider,
 	beanIds,
 	newValue,

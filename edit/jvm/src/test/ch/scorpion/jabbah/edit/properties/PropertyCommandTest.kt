@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_NAME
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -59,7 +60,7 @@ class PropertyCommandTest {
 	fun shouldExecuteNestedProperty() {
 		val component = ComponentWithNestedProperty(NestedProperty("oldName"))
 		drawing.add(component)
-		val cmd = createCommand("property.value", "edit.property.name", component.id, "newName")
+		val cmd = createCommand("property.value", BASE_KEY_NAME, component.id, "newName")
 
 		cmd.execute()
 
@@ -69,7 +70,7 @@ class PropertyCommandTest {
 	fun shouldUndoNestedProperty() {
 		val component = ComponentWithNestedProperty(NestedProperty("oldName"))
 		drawing.add(component)
-		val cmd = createCommand("property.value", "edit.property.name", component.id,"newName")
+		val cmd = createCommand("property.value", BASE_KEY_NAME, component.id,"newName")
 
 		cmd.execute()
 		cmd.undo()

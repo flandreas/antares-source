@@ -16,6 +16,10 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	gate: T
 ) : AbstractDigitalGateView<T>(styleProvider, text, gate), CustomShapeContent {
 
+	companion object {
+		const val BASE_KEY_NEGATE_INPUT = "element.property.Gate.negateInput"
+	}
+
 	// Explicit properties needed for reflective Commands on the JVM platform
 
 	var negateInput1: Boolean

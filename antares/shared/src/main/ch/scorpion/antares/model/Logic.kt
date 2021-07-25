@@ -16,6 +16,8 @@ enum class Logic(override val customName: String) : EnumProperty<Logic> {
 
     companion object {
 
+	    const val BASE_KEY = "element.property.logic"
+
 	    fun negated(b: Boolean): Logic = if (b) NEGATIVE else POSITIVE
 
         fun withName(customName: String): Logic {

@@ -20,6 +20,8 @@ enum class InputCount(val count: Int) : EnumProperty<InputCount> {
 
     companion object {
 
+	    const val BASE_KEY = "element.property.inputCount"
+
         fun of(value: Int): InputCount = values().first { it.count == value }
 
         fun withName(customName: String): InputCount {

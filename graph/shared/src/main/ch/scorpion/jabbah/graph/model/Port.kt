@@ -191,6 +191,9 @@ enum class PortType(override val customName: String) : EnumProperty<PortType> {
 	INOUT("inout");
 
 	companion object {
+
+		const val BASE_KEY = "graph.property.portType"
+
 		private val LOG by logger(PortType::class)
 
 		fun withName(customName: String): PortType {

@@ -21,6 +21,10 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 	vertice: T
 ) : BoxGateView<T>(styleProvider, text, vertice) {
 
+	companion object {
+		const val BASE_KEY_OUTPUT_PORT_NAME = "element.property.outputPort"
+	}
+
 	/** Use [DigitalGraphViewService] for changing this value.*/
 	val chosenInputCount: InputCount get() = model.chosenInputCount
 

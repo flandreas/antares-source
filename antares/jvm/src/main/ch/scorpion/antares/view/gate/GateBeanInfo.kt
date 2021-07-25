@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.view.DigitalGateViewBeanInfo
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -15,7 +16,7 @@ import com.l2fprod.common.propertysheet.Property
 @Suppress("unused")
 class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 	companion object {
-		val dataPort = CommandPropertySwing("dataPort", "element.property.AndGate.dataPort", InputPortNumber::class.java, componentBeanProvider)
+		val dataPort = CommandPropertySwing("dataPort", AndGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: AndGateView, editor: Editor, properties: MutableList<Property>) {
@@ -77,9 +78,9 @@ class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
 @Suppress("unused")
 class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
 	companion object {
-		val enableLogic = CommandPropertySwing("enableLogic", "element.property.logic", Logic::class.java, componentBeanProvider)
+		val enableLogic = CommandPropertySwing("enableLogic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 		val bitWidth = AntaresProperties.bitWidth()
-		val handedness = AntaresProperties.handedness(baseKey = "element.property.TriStateBuffer.handedness")
+		val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
 	}
 
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, properties: MutableList<Property>) {

@@ -23,6 +23,8 @@ enum class BitWidth(
 
     companion object {
 
+	    const val BASE_KEY = "element.property.bitWidth"
+
         fun of(width: Int): BitWidth {
             for (bw in values()) {
                 if (bw.width == width) {

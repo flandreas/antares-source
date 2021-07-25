@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.app.InputCountPropertySwing
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
+import ch.scorpion.antares.view.gate.AbstractLogicGateView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -12,9 +13,9 @@ open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalCompo
     companion object {
 	    private val inputCount = InputCountPropertySwing(componentBeanProvider)
 	    private val bitWidth = AntaresProperties.bitWidth()
-	    private val outputPortName = CommandPropertySwing("outputPortName", "element.property.outputPort", String::class.java, componentBeanProvider)
+	    private val outputPortName = CommandPropertySwing("outputPortName", AbstractDigitalGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
 	    private val negateInput = Array(8) { portId ->
-		    CommandPropertySwing("negateInput${portId + 1}", "element.property.Gate.negateInput${portId + 1}", Boolean::class.java, componentBeanProvider)
+		    CommandPropertySwing("negateInput${portId + 1}", "${AbstractLogicGateView.BASE_KEY_NEGATE_INPUT}${portId + 1}", Boolean::class.java, componentBeanProvider)
 	    }
     }
 

@@ -8,6 +8,14 @@ import ch.scorpion.jabbah.draw.graphics.*
  */
 interface Stylable {
 
+	companion object {
+		const val BASE_KEY_CUSTOM_COLOR = "edit.property.color"
+		const val BASE_KEY_CUSTOM_STROKE = "edit.property.stroke"
+		const val BASE_KEY_SHADOW = "edit.property.shadow"
+		const val BASE_KEY_FILLED = "edit.property.filled"
+		const val BASE_KEY_STROKED = "edit.property.stroked"
+	}
+
     var invalidator: (() -> Unit)?
 
     var styleProvider: StyleProvider

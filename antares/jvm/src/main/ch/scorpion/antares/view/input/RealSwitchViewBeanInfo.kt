@@ -12,7 +12,7 @@ class RealSwitchViewBeanInfo : DigitalComponentBeanInfo<RealSwitchView>() {
 
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
-		private val toggle = CommandPropertySwing("toggle", "element.property.Switch.toggle", Boolean::class.java, componentBeanProvider)
+		private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: RealSwitchView, editor: Editor, properties: MutableList<Property>) {

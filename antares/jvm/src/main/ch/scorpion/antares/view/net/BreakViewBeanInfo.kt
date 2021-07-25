@@ -10,7 +10,7 @@ import com.l2fprod.common.propertysheet.Property
 @Suppress("unused")
 class BreakViewBeanInfo : DigitalComponentBeanInfo<BreakView>() {
 	companion object {
-		val logic = CommandPropertySwing("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
+		val logic = CommandPropertySwing("logic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: BreakView, editor: Editor, properties: MutableList<Property>) {

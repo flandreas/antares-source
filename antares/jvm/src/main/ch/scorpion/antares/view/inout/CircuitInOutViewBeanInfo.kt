@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.view.AntaresProperties
+import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -20,7 +21,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val orientation = EditProperties.orientation()
 	    private val color = EditProperties.color()
 	    private val signalRepresentation = AntaresProperties.signalRepresentation()
-	    private val toggle = CommandPropertySwing("toggle", "element.property.Switch.toggle", Boolean::class.java, componentBeanProvider)
+	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 	    private val description = EditProperties.description()
     }
 

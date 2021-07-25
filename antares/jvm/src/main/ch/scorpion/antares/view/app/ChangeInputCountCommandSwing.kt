@@ -23,7 +23,7 @@ class ChangeInputCountCommandSwing(
 	private val service: DigitalGraphViewService = EditModule.drawingAppService as DigitalGraphViewService
 ) : PropertyCommandSwing<InputCount>(
 	editor,
-	"element.property.inputCount",
+	InputCount.BASE_KEY,
 	beanProvider,
 	beanIds,
 	newValue,

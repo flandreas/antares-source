@@ -33,6 +33,11 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	companion object {
 
+		const val BASE_KEY_ARROW = "graph.property.edgeView.arrow"
+		const val BASE_KEY_LAYOUT = "graph.property.edgeView.layout"
+		const val BASE_KEY_LINE_STYLE = "graph.property.edgeViewLineStyle"
+
+
 		/** The name of the [Int] property in [Properties] containing the minimum length of interactively created [EdgeView]s*/
 		const val PROP_MIN_EDGE_VIEW_LENGTH = "ch.scorpion.jabbah.graph.view.EdgeView.minLength"
 

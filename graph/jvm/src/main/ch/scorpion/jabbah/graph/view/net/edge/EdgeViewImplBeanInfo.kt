@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import com.l2fprod.common.propertysheet.Property
@@ -13,9 +14,9 @@ open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
 
 	companion object {
 		private val modelId = GraphProperties.modelId()
-		private val arrow = CommandPropertySwing("arrow", "graph.property.edgeView.arrow", Boolean::class.java, componentBeanProvider)
-		private val layout = CommandPropertySwing("layout.type", "graph.property.edgeView.layout", LayoutType::class.java, componentBeanProvider)
-		private val style = CommandPropertySwing("netView.style", "graph.property.edgeViewLineStyle", NetViewStyle::class.java, componentBeanProvider)
+		private val arrow = CommandPropertySwing("arrow", EdgeView.BASE_KEY_ARROW, Boolean::class.java, componentBeanProvider)
+		private val layout = CommandPropertySwing("layout.type", EdgeView.BASE_KEY_LAYOUT, LayoutType::class.java, componentBeanProvider)
+		private val style = CommandPropertySwing("netView.style", EdgeView.BASE_KEY_LINE_STYLE, NetViewStyle::class.java, componentBeanProvider)
 		private val color = EditProperties.color("netView.customColor")
 		private val description = EditProperties.description()
 	}

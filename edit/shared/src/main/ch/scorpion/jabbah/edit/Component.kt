@@ -19,6 +19,11 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Component>, Bean {
 
+	companion object {
+		const val BASE_KEY_ID = "edit.property.id"
+		const val BASE_KEY_ORIENTATION = "edit.property.Component.orientation"
+	}
+
 	/** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
 	override var id: Int
 

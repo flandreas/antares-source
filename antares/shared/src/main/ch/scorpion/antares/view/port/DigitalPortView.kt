@@ -294,7 +294,7 @@ class DigitalPortView(
 	override fun buildToolTipContent(): String {
 		val content = StringBuilder(super.buildToolTipContent())
 		if (getDigitalPort().bitWidth != BitWidth.BW_1) {
-			content.append("<p/><b>${Translations.getString("element.property.bitWidth.name")}</b>: ${getDigitalPort().bitWidth.width}")
+			content.append("<p/><b>${Translations.getString("${BitWidth.BASE_KEY}.name")}</b>: ${getDigitalPort().bitWidth.width}")
 		}
 		return content.toString()
 	}

@@ -1,7 +1,12 @@
 package ch.scorpion.antares.property
 
+import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.gate.*
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.jmCheckboxField
 import ch.scorpion.jabbah.edit.properties.jmDirectionField
@@ -15,7 +20,7 @@ import styled.StyledElementBuilder
 open class DigitalComponentPropertyPage<T : DigitalComponentView<*>> : VerticeViewPropertyPage<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
-		builder.propertyRow("edit.property.Component.orientation.name") {
+		builder.propertyRow(Component.BASE_KEY_ORIENTATION) {
 			it.jmDirectionField(editor, { bean.orientation }, { _, value -> bean.orientation = value!! }, bean.id )
 		}
 	}
@@ -25,16 +30,16 @@ open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComp
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
-			propertyRow("element.property.inputCount.name") {
+			propertyRow(InputCount.BASE_KEY) {
 				it.jmInputCount(editor, { bean.chosenInputCount}, bean.id) {
 					filter = { inputCount -> inputCount.ordinal >= 2 }
 				}
 			}
-			propertyRow("element.property.outputPort.name") {
+			propertyRow(AbstractDigitalGateView.BASE_KEY_OUTPUT_PORT_NAME) {
 				it.jmTextField(editor, { bean.outputPortName }, { _, value -> bean.outputPortName = value }, bean.id)
 			}
 			for (i in 1..bean.chosenInputCount.count) {
-				propertyRow("element.property.Gate.negateInput${i + 1}.name") {
+				propertyRow("${AbstractLogicGateView.BASE_KEY_NEGATE_INPUT}${i + 1}") {
 					it.jmCheckboxField(editor, { bean.getInputNegation(i) }, { _, value -> bean.setInputNegation(i, value!!)}, bean.id)
 				}
 			}
@@ -45,7 +50,7 @@ open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComp
 class AndGateViewPropertyPage : LogicGateViewPropertyPage<AndGateView>() {
 	override fun addProperties(bean: AndGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
-		builder.propertyRow("element.property.AndGate.dataPort.name") {
+		builder.propertyRow(AndGateView.BASE_KEY_DATA_PORT) {
 			it.jmInputPortNumber(editor, { bean.dataPort}, { _, value -> bean.dataPort = value!!}, bean.id) {
 				filter = { inputPortNumber -> inputPortNumber.id <= bean.chosenInputCount.count }
 			}
@@ -56,7 +61,7 @@ class AndGateViewPropertyPage : LogicGateViewPropertyPage<AndGateView>() {
 class BufferGateViewPropertyPage : DigitalComponentPropertyPage<BufferGateView>() {
 	override fun addProperties(bean: BufferGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
-		builder.propertyRow("element.property.bitWidth.name") {
+		builder.propertyRow(BitWidth.BASE_KEY) {
 			it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 		}
 	}
@@ -67,10 +72,10 @@ class DelayGateViewPropertyPage : ComponentPropertyPage<DelayGateView>() {
 		super.addProperties(bean, editor, builder)
 		// TODO Add delay property
 		builder.run {
-			propertyRow("element.property.bitWidth.name") {
+			propertyRow(BitWidth.BASE_KEY) {
 				it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 			}
-			propertyRow("edit.property.Component.orientation.name") {
+			propertyRow(Component.BASE_KEY_ORIENTATION) {
 				it.jmDirectionField(editor, { bean.orientation }, { _, value -> bean.orientation = value!! }, bean.id )
 			}
 		}
@@ -80,7 +85,7 @@ class DelayGateViewPropertyPage : ComponentPropertyPage<DelayGateView>() {
 class NotGateViewPropertyPage : DigitalComponentPropertyPage<NotGateView>() {
 	override fun addProperties(bean: NotGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
-		builder.propertyRow("element.property.bitWidth.name") {
+		builder.propertyRow(BitWidth.BASE_KEY) {
 			it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 		}
 	}
@@ -90,13 +95,13 @@ class TriStateBufferGateViewPropertyPage : DigitalComponentPropertyPage<TriState
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
-			propertyRow("element.property.logic.name") {
+			propertyRow(Logic.BASE_KEY) {
 				it.jmLogicField(editor, { bean.enableLogic }, { _, value -> bean.enableLogic = value!! }, bean.id)
 			}
-			propertyRow("element.property.bitWidth.name") {
+			propertyRow(BitWidth.BASE_KEY) {
 				it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 			}
-			propertyRow("element.property.TriStateBuffer.handedness.name") {
+			propertyRow(Handedness.BASE_KEY) {
 				it.jmHandednessField(editor, { bean.handedness }, { _, value -> bean.handedness = value!! }, bean.id)
 			}
 		}

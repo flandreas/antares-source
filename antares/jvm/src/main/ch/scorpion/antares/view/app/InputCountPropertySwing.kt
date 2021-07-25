@@ -9,7 +9,7 @@ class InputCountPropertySwing(
 	private val beanProvider: BeanProvider,
 ) : CommandPropertySwing<InputCount>(
 	"chosenInputCount",
-	"element.property.inputCount",
+	InputCount.BASE_KEY,
 	InputCount::class.java,
 	beanProvider
 ) {

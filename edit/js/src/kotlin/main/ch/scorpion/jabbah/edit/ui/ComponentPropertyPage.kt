@@ -10,7 +10,7 @@ import styled.StyledElementBuilder
 
 open class ComponentPropertyPage<T : Component> : AbstractPropertyPageRenderer<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
-		builder.propertyRow("edit.property.id.name") {
+		builder.propertyRow(Component.BASE_KEY_ID) {
 			it.jmReadOnlyTextField(editor, { bean.id.toString() }, bean.id)
 		}
 	}

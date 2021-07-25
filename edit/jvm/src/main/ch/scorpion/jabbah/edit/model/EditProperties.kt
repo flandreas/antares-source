@@ -3,10 +3,17 @@ package ch.scorpion.jabbah.edit.model
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_DESCRIPTION
+import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_NAME
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -15,7 +22,7 @@ object EditProperties {
 
 	fun id(
 		name: String = "id",
-		baseKey: String = "edit.property.id",
+		baseKey: String = Component.BASE_KEY_ID,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Int> {
 		return CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
@@ -23,7 +30,7 @@ object EditProperties {
 
 	fun filled(
 		name: String = "filled",
-		baseKey: String = "edit.property.filled",
+		baseKey: String = Stylable.BASE_KEY_FILLED,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Boolean> {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
@@ -31,7 +38,7 @@ object EditProperties {
 
 	fun stroked(
 		name: String = "stroked",
-		baseKey: String = "edit.property.stroked",
+		baseKey: String = Stylable.BASE_KEY_STROKED,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Boolean> {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
@@ -47,7 +54,7 @@ object EditProperties {
 
 	fun color(
 		name: String = "customColor",
-		baseKey: String = "edit.property.color",
+		baseKey: String = Stylable.BASE_KEY_CUSTOM_COLOR,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<PredefinedColor> {
 		return CommandPropertySwing(name, baseKey, PredefinedColor::class.java, beanProvider)
@@ -55,7 +62,7 @@ object EditProperties {
 
 	fun stroke(
 		name: String = "customStroke",
-		baseKey: String = "edit.property.stroke",
+		baseKey: String = Stylable.BASE_KEY_CUSTOM_STROKE,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<PredefinedStroke> {
 		return CommandPropertySwing(name, baseKey, PredefinedStroke::class.java, beanProvider)
@@ -95,7 +102,7 @@ object EditProperties {
 
 	fun shadow(
 		name: String = "shadow",
-		baseKey: String = "edit.property.shadow",
+		baseKey: String = Stylable.BASE_KEY_SHADOW,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Boolean> {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider, setterPropertyName = "customShadow")
@@ -103,18 +110,18 @@ object EditProperties {
 
 	fun name(
 		name: String = "name",
-		baseKey: String = "edit.property.name",
+		baseKey: String = BASE_KEY_NAME,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Name> {
 		return CommandPropertySwing(name, baseKey, Name::class.java, beanProvider)
 	}
 
 	fun untranslatableName(name: String = "name"): CommandPropertySwing<String> =
-		CommandPropertySwing(name, "edit.property.name", String::class.java, componentBeanProvider)
+		CommandPropertySwing(name, BASE_KEY_NAME, String::class.java, componentBeanProvider)
 
 	fun description(
 		name: String = "description",
-		baseKey: String = "edit.property.description",
+		baseKey: String = BASE_KEY_DESCRIPTION,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Description> {
 		return CommandPropertySwing(name, baseKey, Description::class.java, beanProvider)
@@ -122,7 +129,7 @@ object EditProperties {
 
 	fun orientation(
 		name: String = "orientation",
-		baseKey: String = "edit.property.Component.orientation",
+		baseKey: String = Component.BASE_KEY_ORIENTATION,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Direction> {
 		return CommandPropertySwing(name, baseKey, Direction::class.java, beanProvider)
@@ -130,7 +137,7 @@ object EditProperties {
 
 	fun size(
 		name: String = "size",
-		baseKey: String = "edit.property.size",
+		baseKey: String = Size.BASE_KEY_SIZE,
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Size> {
 		return CommandPropertySwing(name, baseKey, Size::class.java, beanProvider)

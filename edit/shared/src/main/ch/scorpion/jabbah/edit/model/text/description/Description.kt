@@ -18,6 +18,8 @@ interface Describable {
 	var description: Description
 }
 
+const val BASE_KEY_DESCRIPTION = "edit.property.description"
+
 /** Posted on the system's [EventBus] when the [Description] of a [Describable] has changed.*/
 data class DescriptionChangedEvent(
 	val owner: Describable,

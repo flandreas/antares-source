@@ -34,6 +34,8 @@ class AndGateView(
 
 		/** The name of the [Boolean] property in [Properties] defining whether the data flow feature is enabled.*/
 		const val PROP_DATA_FLOW_ENABLED = "antares.andGate.dataFlow"
+
+		const val BASE_KEY_DATA_PORT = "element.property.AndGate.dataPort"
 	}
 
 	var dataPort: InputPortNumber = InputPortNumber.NONE

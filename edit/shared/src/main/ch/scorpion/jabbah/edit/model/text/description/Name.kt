@@ -18,6 +18,8 @@ interface Namable {
 	var name: Name
 }
 
+const val BASE_KEY_NAME = "edit.property.name"
+
 /** Posted on the system's [EventBus] when the name of a [Namable] has changed. */
 data class NameChangedEvent(
 	val owner: Namable,

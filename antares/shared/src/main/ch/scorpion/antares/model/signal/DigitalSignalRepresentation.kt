@@ -67,6 +67,9 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
     };
 
     companion object {
+
+	    const val BASE_KEY = "element.property.DigitalSignalRepresentation"
+
         fun withName(customName: String): DigitalSignalRepresentation {
             for (r in values()) {
                 if (r.customName == customName) {

@@ -55,6 +55,9 @@ class SwitchView(
 ) : AbstractSwitchView<Switch>(styleProvider, model, eventBus), ControlView<Switch>, ControlViewSource<Switch> {
 
 	companion object {
+
+		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
+
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
 		private val TOGGLE_TYPE_DESC = Translations.getOptionalString("$TOGGLE_BASE_RESOURCE_KEY.desc")

@@ -24,7 +24,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    private val direction = CommandPropertySwing("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
 		private val portLabelPos = CommandPropertySwing("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
 	    private val showBitWidth = CommandPropertySwing("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
-	    private val logic = CommandPropertySwing("logic", "element.property.logic", Logic::class.java, componentBeanProvider)
+	    private val logic = CommandPropertySwing("logic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 	    private val trigger = CommandPropertySwing("trigger", "element.property.trigger", Trigger::class.java, componentBeanProvider)
 	    private val outputAnnotation = CommandPropertySwing("outputAnnotation", "element.property.outputAnnotation", OutputAnnotation::class.java, componentBeanProvider)
     }
