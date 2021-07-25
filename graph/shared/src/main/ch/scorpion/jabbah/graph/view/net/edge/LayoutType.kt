@@ -68,6 +68,7 @@ enum class LayoutType(override val customName: String, inputEventHandler: EdgeVi
 	companion object {
 
 		val LOG by logger(LayoutType::class)
+		const val BASE_KEY = "graph.property.edgeView.layout"
 
 		fun withName(customName: String): LayoutType {
 			for (i in 0 until values().size) {

@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.edit.ui.ComponentPropertyPage
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
+import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import com.ccfraser.muirwik.components.MGridProps
 import styled.StyledElementBuilder
 
@@ -22,10 +24,10 @@ class EdgeViewPropertyPage : ComponentPropertyPage<EdgeViewImpl<*>>() {
 			propertyRow(EdgeView.BASE_KEY_ARROW) {
 				it.jmCheckboxField(editor, { bean.isArrow}, { _, value -> bean.isArrow = value!! }, bean.id)
 			}
-			propertyRow(EdgeView.BASE_KEY_LAYOUT) {
+			propertyRow(LayoutType.BASE_KEY) {
 				it.jmLayoutTypeField(editor, { bean.layout.type}, { _, value -> bean.layout.type = value!!}, bean.id)
 			}
-			propertyRow(EdgeView.BASE_KEY_LINE_STYLE) {
+			propertyRow(NetViewStyle.BASE_KEY) {
 				it.jmNetViewStyleField(editor, { bean.netView!!.style}, { _, value -> bean.netView!!.style = value!!}, bean.id)
 			}
 		}

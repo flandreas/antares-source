@@ -38,6 +38,7 @@ enum class NetViewStyle(override val customName: String) : EnumProperty<NetViewS
 
     companion object {
 
+	    const val BASE_KEY = "graph.property.edgeViewLineStyle"
         val BLOCK_BORDER_STROKE = Stroke(0.5f)
 
         const val BLOCK_HW = 10
