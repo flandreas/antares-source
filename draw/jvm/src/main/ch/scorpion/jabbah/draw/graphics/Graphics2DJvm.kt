@@ -8,10 +8,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
 import java.awt.*
 import java.awt.geom.Area
 import java.awt.geom.Point2D
-import javax.swing.BorderFactory
 import javax.swing.JTextPane
-import javax.swing.text.SimpleAttributeSet
-import javax.swing.text.StyleConstants
 
 /**
  * Adapts a [java.awt.Graphics2D] object to the [Graphics2D] interface.
@@ -29,10 +26,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         private val ELLIPSE = java.awt.geom.Ellipse2D.Double()
         private val ROUND_RECT = java.awt.geom.RoundRectangle2D.Double()
 
-        /** Flyweight used to implement [drawText] that supports HTML text. */
-        private val TEXT_PAINTER = JTextPane()
-
-        val stack: Stack<java.awt.Graphics2D> by lazy { Stack<java.awt.Graphics2D>() }
+        val stack: Stack<java.awt.Graphics2D> by lazy { Stack() }
 
         fun toFontStyle(awtFont: java.awt.Font): Int {
             var fontStyle = FontStyle.PLAIN.value
@@ -63,7 +57,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 		    Color(color.red, color.green, color.blue, color.alpha)
 
         fun toAwtFont(font: Font): java.awt.Font {
-            return java.awt.Font(font.family.javaName, fromFontStyle(font), font.size)
+            return Font(font.family.javaName, fromFontStyle(font), font.size)
         }
 
 	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
@@ -75,33 +69,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 			    stroke.dash,
 			    stroke.dashPhase ?: 0f)
 	    }
-
-        fun measureHtmlText(text: String, font: java.awt.Font, width: Int): TextRenderInfo {
-            setupTextPainter(text, font, java.awt.Color.BLACK, 0, 0, width, 1000)
-            val prefSize1 = TEXT_PAINTER.preferredSize
-
-            setupTextPainter(text, font, java.awt.Color.BLACK, 0, 0, 10000, font.size)
-            val prefSize2 = TEXT_PAINTER.preferredSize
-
-            return TextRenderInfo(Rectangle2D(0, 0, Math.min(width, prefSize2.width), prefSize1.height), 0.0)
-        }
-
-        private fun setupTextPainter(text: String, font: java.awt.Font, color: java.awt.Color, x: Int, y: Int, w: Int, h: Int) {
-            val attr = SimpleAttributeSet()
-
-            StyleConstants.setFontFamily(attr, font.family)
-            StyleConstants.setFontSize(attr, font.size)
-            StyleConstants.setBold(attr, font.isBold)
-            StyleConstants.setItalic(attr, font.isItalic)
-            StyleConstants.setForeground(attr, color)
-            StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
-
-            TEXT_PAINTER.text = text
-            TEXT_PAINTER.setBounds(x, y, w, h)
-            TEXT_PAINTER.selectAll()
-            TEXT_PAINTER.setParagraphAttributes(attr, true)
-            TEXT_PAINTER.doLayout()
-        }
 
 	    private fun fromLineCap(cap: LineCap): Int {
 		    return when (cap) {
@@ -118,12 +85,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 			    LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
 		    }
 	    }
-    }
-
-    init {
-        TEXT_PAINTER.contentType = "text/html"
-        TEXT_PAINTER.isOpaque = false
-        TEXT_PAINTER.border = BorderFactory.createEmptyBorder(1, 1, 1, 1)
     }
 
     /** ---- [Graphics2D] interface */
@@ -267,16 +228,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     override fun drawString(s: String, x: Int, y: Int) {
         g.drawString(s, x, y)
-    }
-
-    override fun drawText(s: String, x: Int, y: Int, w: Int) {
-        val oldClip = g.clipBounds
-        setupTextPainter(s, g.font, g.color, x, y, w, 1000)
-	    g.clipRect(x, y, w, Int.MAX_VALUE)
-        g.translate(x, y)
-        TEXT_PAINTER.paint(g)
-        g.translate(-x, -y)
-        g.setClip(oldClip.x, oldClip.y, oldClip.width, oldClip.height)
     }
 
     override fun draw(shape: Shape) {

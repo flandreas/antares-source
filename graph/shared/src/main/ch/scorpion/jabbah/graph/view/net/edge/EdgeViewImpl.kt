@@ -104,12 +104,12 @@ open class EdgeViewImpl<T : Any>(
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
 		val content = StringBuilder(StringUtils.orEmpty(model.description.value))
 		if (content.isNotEmpty()) {
-			content.append("<p/>")
+			content.appendLine()
 		}
 
 		net?.executionError?.tooltipText?.let {
 			content.append(it)
-		} ?: content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: ${model.signalDescription}")
+		} ?: content.append("${Translations.getString("graph.currentValue.name")}: ${model.signalDescription}")
 
 		return Tooltip(content.toString(), x, y)
 	}

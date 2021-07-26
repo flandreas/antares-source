@@ -12,8 +12,4 @@ actual object TextRenderInfoFactory : TextMeasurer {
 		val lm = awtFont.getLineMetrics(text, context)
 		return TextRenderInfo(Rectangle2D(rect.x, rect.y, rect.width, rect.height), lm.ascent.toDouble())
 	}
-
-	override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
-		return Graphics2DJvm.measureHtmlText(text, Graphics2DJvm.toAwtFont(font), width)
-	}
 }

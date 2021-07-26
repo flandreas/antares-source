@@ -153,6 +153,6 @@ class SimpleTextComponent(
 	}
 
 	private fun updateMultilineText() {
-		multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
+		multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble())
 	}
 }

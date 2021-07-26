@@ -12,11 +12,42 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import kotlin.math.max
+
+fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean = false): String {
+	val sb = StringBuilder()
+
+	val hasText = StringUtils.isNotEmpty(text)
+	val hasSubText = StringUtils.isNotEmpty(subText)
+
+	if (StringUtils.isNotBlank(title)) {
+		sb.append(title)
+		if (hasText) {
+			sb.append(": ")
+		}
+	}
+
+	if (hasText) {
+		sb.append(text)
+		if (endWithPeriod && !text!!.endsWith(".")) {
+			sb.append('.')
+		}
+	}
+
+	if (hasSubText) {
+		if (sb.isNotEmpty()) {
+			sb.appendLine().appendLine()
+		}
+		sb.append(subText)
+		if (endWithPeriod && !subText!!.endsWith(".")) {
+			sb.append('.')
+		}
+	}
+
+	return sb.toString()
+}
 
 /**
  * Represents a request to display or hide the tooltip of a [Drawable] in a particular [View].
@@ -163,7 +194,7 @@ object TooltipManager {
 
 	private const val WIDTH = 300
 
-	private const val MIN_WIDTH = 100
+	private const val MIN_WIDTH = 50
 
 	/** The vertical distance between the bottom edge of the origin's bounding box and the tip of the [ArrowBubble]. */
 	private const val Y_DIST = 10
@@ -286,13 +317,8 @@ object TooltipManager {
 	}
 
 	private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
-		val safetyBuffer = 5
 		val font = styleProvider.getStyle(StyleType.TOOLTIP).font
-		val textRenderInfo = TextRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
-		val width = max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt() + safetyBuffer).toDouble()
-
-		val multilineText = MultilineText(text = tooltip.text, font = font, maxWidth = width, asHtml = true)
-		multilineText.setBounds(0, 0, width.toInt(), textRenderInfo.textBounds.height.toInt())
+		val multilineText = MultilineText(text = tooltip.text, font = font, preferredWidth = WIDTH.toDouble(), minWidth = MIN_WIDTH.toDouble())
 
 		return ArrowBubble(
 			multilineText,

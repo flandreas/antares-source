@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -13,6 +12,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
@@ -142,10 +142,10 @@ abstract class AbstractPortView<T : Any>(
 		}
 		val content = StringBuilder(buildToolTipContent())
 		if (StringUtils.isNotEmpty(valueText)) {
-			content.append("<p/>")
-			content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: $valueText")
+			content.appendLine()
+			content.append("${Translations.getString("graph.currentValue.name")}: $valueText")
 		}
-		val text = System.buildToolTipText(buildToolTipTitle(), content.toString(), null)
+		val text = ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), content.toString(), null)
 		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 
@@ -250,7 +250,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		val text = System.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)
+		val text = ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 

@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.TextMeasurer
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfo
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

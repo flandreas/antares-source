@@ -53,9 +53,9 @@ class InconsistentNetError(
 	override val tooltipText: String get() {
 		val text = StringBuilder()
 		text.append(name)
-		text.append("<p/>")
+		text.appendLine()
 		text.append(originDesc)
-		text.append("<p/>")
+		text.appendLine()
 		text.append(description)
 		return text.toString()
 	}

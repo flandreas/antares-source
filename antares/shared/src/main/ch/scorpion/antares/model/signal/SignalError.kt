@@ -21,7 +21,7 @@ class SignalError(
 	override val tooltipText: String get() {
 		val text = StringBuilder()
 		text.append(name)
-		text.append("<p/>")
+		text.appendLine()
 		text.append(originDesc)
 		return text.toString()
 	}

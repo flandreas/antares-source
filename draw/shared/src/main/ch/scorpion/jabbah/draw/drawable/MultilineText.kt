@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.TextMeasurer
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
+import kotlin.math.max
 
 /**
  * Breaks text into multiple lines according to a box with a fix width.
@@ -18,11 +19,11 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  * @property location the upper-left corner of the surrounding box relative to the owner's coordinate system
  */
 class MultilineText(
-	private val text: String,
+	text: String,
 	private val font: Font,
-	private val maxWidth: Double,
+	preferredWidth: Double,
+	minWidth: Double = preferredWidth,
 	override var location: Point2D = Point2D.ZERO,
-	private val asHtml: Boolean = false,
 	textMeasurer: TextMeasurer = TextRenderInfoFactory
 ) : AbstractRectangle(), Locatable {
 
@@ -38,16 +39,19 @@ class MultilineText(
 
 	init {
 		var lAscent = 0
+		var maxWidth = 0.0
 
 		for (car in text.split('\n')) {
 			var line = ""
+			var testWidth = 0.0
 			for (word in car.split(' ')) {
 				val testLine = "$line$word "
 				val textRenderInfo = textMeasurer.measureSingleLineText(testLine, font)
-				val testWidth = textRenderInfo.textBounds.width
+				testWidth = textRenderInfo.textBounds.width
 				lAscent = textRenderInfo.ascent.toInt()
 
-				line = if (testWidth > maxWidth) {
+				line = if (testWidth > preferredWidth) {
+					maxWidth = max(testWidth, maxWidth)
 					lines.add(line)
 					"$word "
 				} else {
@@ -55,12 +59,13 @@ class MultilineText(
 				}
 			}
 
+			maxWidth = max(testWidth, maxWidth)
 			lines.add(line)
 		}
 
 		ascent = lAscent
 
-		setBounds(location.x, location.y, maxWidth, lines.size * lineHeight)
+		setBounds(location.x, location.y, max(minWidth, maxWidth), lines.size * lineHeight)
 	}
 
 	/** ---- [RectangularDrawable] */
@@ -70,15 +75,11 @@ class MultilineText(
 	/** ----- [Drawable] interface */
 
 	override fun draw(context: DrawContext) {
-		if (asHtml) {
-			context.g.drawText(text, xInt, yInt, widthInt)
-		} else {
-			context.g.font = font
-			var yy = location.y + ascent
-			for (line in lines) {
-				context.g.drawString(line, location.x.toInt(), yy.toInt())
-				yy += lineHeight
-			}
+		context.g.font = font
+		var yy = location.y + ascent
+		for (line in lines) {
+			context.g.drawString(line, location.x.toInt(), yy.toInt())
+			yy += lineHeight
 		}
 
 		DrawModule.drawDebugBoundingBox(this, context.g)

@@ -35,8 +35,6 @@ expect object System {
     /** Creates a new [Path].*/
     fun createPath(): Path
 
-    fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean = false): String?
-
     fun createUUID(uuid: String? = null): UUID
 
     fun invokeLater(invocable: () -> Unit)
@@ -64,3 +62,4 @@ expect object System {
 	 * multiplatform bug with setting breakpoints in common code.*/
 	fun breakpoint(condition: () -> Boolean = { true })
 }
+

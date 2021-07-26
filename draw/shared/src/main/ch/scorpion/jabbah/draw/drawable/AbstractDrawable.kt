@@ -141,9 +141,8 @@ abstract class AbstractDrawable : Drawable {
 		}
 	}
 
-	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? {
-		return System.buildToolTipText(title, text, subText, true)
-	}
+	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? =
+		ch.scorpion.jabbah.draw.view.buildToolTipText(title, text, subText, true)
 
 	/**
 	 * Calculates the absolute (i.e. toplevel) model space coordinate of the specified [Point2D]

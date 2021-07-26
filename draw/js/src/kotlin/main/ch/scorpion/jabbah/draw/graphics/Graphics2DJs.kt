@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.base.logger
 import org.w3c.dom.*
-import ch.scorpion.jabbah.base.geom.Path2DJs
 
 /**
  * Bridges [Graphics2D] methods to [CanvasRenderingContext2D] functionality.
@@ -12,8 +10,6 @@ class Graphics2DJs(
 	private val ctx: CanvasRenderingContext2D,
 	initialScale: Double = 1.0
 ) : AbstractGraphics2D() {
-
-	private val LOG by logger(Graphics2DJs::class)
 
 	val clip: Rectangle2D = Rectangle2D()
 
@@ -257,11 +253,6 @@ class Graphics2DJs(
 	}
 
 	override fun drawString(s: String, x: Int, y: Int) {
-		ctx.fillText(s, x.toDouble(), y.toDouble())
-	}
-
-	override fun drawText(s: String, x: Int, y: Int, w: Int) {
-		// TODO Implement properly
 		ctx.fillText(s, x.toDouble(), y.toDouble())
 	}
 

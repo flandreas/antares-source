@@ -28,9 +28,4 @@ actual object TextRenderInfoFactory : TextMeasurer {
 				ascent + descent),
 			ascent)
 	}
-
-	override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
-		// TODO Implement properly
-		return measureSingleLineText(text, font)
-	}
 }

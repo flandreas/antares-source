@@ -44,45 +44,6 @@ actual object System {
 		return UUID(uuid)
 	}
 
-	actual fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean): String? {
-		val sb = StringBuilder()
-
-		val hasText = StringUtils.isNotEmpty(text)
-		val hasSubText = StringUtils.isNotEmpty(subText)
-
-		sb.append("<html>")
-
-		if (StringUtils.isNotBlank(title)) {
-			sb.append("<strong>")
-
-			sb.append(title)
-			if (hasText) {
-				sb.append(":&nbsp;")
-			}
-			sb.append("</strong>")
-		}
-
-		if (hasText) {
-			sb.append(text)
-			if (endWithPeriod && !text!!.endsWith(".")) {
-				sb.append('.')
-			}
-		}
-
-		if (hasSubText) {
-			if (sb.isNotEmpty()) {
-				sb.append("<br><br>")
-			}
-			sb.append(subText)
-			if (endWithPeriod && !subText!!.endsWith(".")) {
-				sb.append('.')
-			}
-		}
-
-		sb.append("</html>")
-		return sb.toString()
-	}
-
 	actual fun invokeLater(invocable: () -> Unit) {
 		invoker.invoke(invocable)
 	}
