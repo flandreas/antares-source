@@ -24,7 +24,7 @@ abstract class AbstractAntaresThemeBuilder(protected val name: String) {
 
 		val TOOLTIP_STROKE = Stroke(1.0f)
 
-		val TOOLTIP_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 13)
+		val TOOLTIP_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
 		val HIGHLIGHT_STROKE = Stroke(10.0f, LineCap.ROUND, LineJoin.ROUND)
 

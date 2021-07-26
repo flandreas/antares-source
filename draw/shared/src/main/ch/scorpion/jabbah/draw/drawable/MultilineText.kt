@@ -43,24 +43,30 @@ class MultilineText(
 
 		for (car in text.split('\n')) {
 			var line = ""
+			var lineWidth = 0.0
 			var testWidth = 0.0
 			for (word in car.split(' ')) {
-				val testLine = "$line$word "
+				val testLine = if (line.isEmpty()) word else "$line $word"
 				val textRenderInfo = textMeasurer.measureSingleLineText(testLine, font)
 				testWidth = textRenderInfo.textBounds.width
 				lAscent = textRenderInfo.ascent.toInt()
 
 				line = if (testWidth > preferredWidth) {
-					maxWidth = max(testWidth, maxWidth)
-					lines.add(line)
+					if (line.isNotBlank()) {
+						maxWidth = max(lineWidth, maxWidth)
+						lines.add(line.trim())
+					} else {
+						lineWidth = testWidth
+					}
 					"$word "
 				} else {
+					lineWidth = testWidth
 					testLine
 				}
 			}
 
-			maxWidth = max(testWidth, maxWidth)
-			lines.add(line)
+			maxWidth = max(lineWidth, maxWidth)
+			lines.add(line.trim())
 		}
 
 		ascent = lAscent
