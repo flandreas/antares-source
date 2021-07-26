@@ -8,7 +8,10 @@ import ch.scorpion.jabbah.base.geom.Path2DJs
 /**
  * Bridges [Graphics2D] methods to [CanvasRenderingContext2D] functionality.
  */
-class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
+class Graphics2DJs(
+	private val ctx: CanvasRenderingContext2D,
+	initialScale: Double = 1.0
+) : AbstractGraphics2D() {
 
 	private val LOG by logger(Graphics2DJs::class)
 
@@ -33,8 +36,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 	}
 
 	init {
-		// Initialize with identity
-		ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+		ctx.setTransform(initialScale, 0.0, 0.0, initialScale, 0.0, 0.0)
 	}
 
 	/** ---- Path rendering methods */
@@ -94,7 +96,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 	 * HTML canvas doesn't provide access to the current transform yet, so keep a local
 	 * [AffineTransform] and forward all changes to the rendering context.
 	 */
-	override var transform: AffineTransform = AffineTransformImpl()
+	override var transform: AffineTransform = AffineTransformImpl(m00 = initialScale, m11 = initialScale)
 		get() = AffineTransformImpl(field as AffineTransformImpl)
 		set(value) {
 			field = value

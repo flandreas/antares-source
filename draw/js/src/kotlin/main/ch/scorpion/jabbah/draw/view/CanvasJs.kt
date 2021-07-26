@@ -49,11 +49,11 @@ class CanvasJs(
 
 	private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
-	private val g = Graphics2DJs(ctx)
+	override val devicePixelRatio: Int = window.devicePixelRatio.toInt()
+
+	private val g = Graphics2DJs(ctx, window.devicePixelRatio)
 
 	private var initalizing: Boolean = true
-
-	override val devicePixelRatio: Int = window.devicePixelRatio.toInt()
 
 	private var _dimension = Dimension2D(0, 0)
 	override val dimension: Dimension2D get() = _dimension
@@ -98,7 +98,7 @@ class CanvasJs(
 		val scaledHeight = height * devicePixelRatio
 
 		val oldDimension = _dimension
-		val newDimension = Dimension2D(scaledWidth, scaledHeight)
+		val newDimension = Dimension2D(width, height)
 
 		if (oldDimension != newDimension) {
 			_dimension = newDimension
@@ -273,8 +273,8 @@ class CanvasJs(
 	private fun windowToCanvas(event: org.w3c.dom.events.MouseEvent): Point2D {
 		val rect = canvas.getBoundingClientRect()
 		return Point2D(
-			((event.clientX - rect.left) * devicePixelRatio).toInt(),
-			((event.clientY - rect.top) * devicePixelRatio).toInt()
+			((event.clientX - rect.left)).toInt(),
+			((event.clientY - rect.top)).toInt()
 		)
 	}
 

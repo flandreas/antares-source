@@ -26,7 +26,7 @@ object DrawModuleJs : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		// Disable textual HTML tooltips in JS until HTML text boxed can be rendered
-		properties.set(TooltipHandler.PROP_TOOLTIPS_ENABLED, false)
+		properties.set(TooltipHandler.PROP_TOOLTIPS_ENABLED, true)
 
 		// Zooming with mouse wheel requires META key in order not to interfere with scrolling on web page
 		properties.set(ZoomPanController.PROP_WHEEL_ZOOM_REQUIRES_META, true)
