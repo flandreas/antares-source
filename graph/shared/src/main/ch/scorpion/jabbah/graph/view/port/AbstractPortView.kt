@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
@@ -107,6 +106,13 @@ abstract class AbstractPortView<T : Any>(
 
 	private val connectionPointY: Double get() = location.y + length * direction.dy
 
+	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
+	private val tooltip: Tooltip? by lazy {
+		ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)?.let {
+			Tooltip(it, owner!!.getPortConnectionPoint(port))
+		}
+	}
+
 	init {
 		port.addPropertyChangeListener(portListener)
 	}
@@ -145,8 +151,9 @@ abstract class AbstractPortView<T : Any>(
 			content.appendLine()
 			content.append("${Translations.getString("graph.currentValue.name")}: $valueText")
 		}
-		val text = ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), content.toString(), null)
-		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
+		return ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), content.toString(), null)?.let {
+			Tooltip(it, owner!!.getPortConnectionPoint(port))
+		}
 	}
 
 	override fun setPortName(name: String) {
@@ -249,10 +256,8 @@ abstract class AbstractPortView<T : Any>(
 		update()
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		val text = ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)
-		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
-	}
+	override fun getTooltip(x: Double, y: Double): Tooltip? =
+		tooltip?.also { it.location = owner!!.getPortConnectionPoint(port) }
 
 	/** ---- [Storable] interface */
 

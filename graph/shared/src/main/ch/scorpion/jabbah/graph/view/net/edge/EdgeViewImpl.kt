@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -111,7 +112,7 @@ open class EdgeViewImpl<T : Any>(
 			content.append(it)
 		} ?: content.append("${Translations.getString("graph.currentValue.name")}: ${model.signalDescription}")
 
-		return Tooltip(content.toString(), x, y)
+		return Tooltip(StyledTextBuilder().append(content.toString()).build(), x, y)
 	}
 
 	/** ---- [EdgeView] interface */
@@ -568,9 +569,9 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
 		return if (net!!.designError != null) {
-			Tooltip(net!!.designError!!.description, x, y)
+			Tooltip(StyledTextBuilder().append(net!!.designError!!.description).build(), x, y)
 		} else if (StringUtils.isNotEmpty(net!!.description.value)) {
-			Tooltip(net!!.description.value!!, x, y)
+			Tooltip(StyledTextBuilder().append(net!!.description.value!!).build(), x, y)
 		} else {
 			super.getTooltip(x, y)
 		}

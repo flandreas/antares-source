@@ -6,8 +6,10 @@ import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -20,10 +22,11 @@ class NotGateView(
     notGate: NotGate = NotGate()
 ) : BoxGateView<NotGate>(styleProvider, "1", notGate), CustomShapeContent {
 
-    companion object {
-        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(NotGate.TRUTH_TABLE, null), Point2D.ZERO)
-    }
+	private val explanation = resettableLazy {
+		DrawableExplanation(
+			TruthTableView(NotGate.TRUTH_TABLE, model, passive = model.bitWidth.width > 1),
+			Point2D.ZERO)
+	}
 
     init {
         modelExchanged(null)
@@ -42,11 +45,10 @@ class NotGateView(
 			model.bitWidth = value
 		}
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*> {
-        EXPLANATION.explanation.vertice = model
-        EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
-        return EXPLANATION
-    }
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<RectangularDrawable> =
+		explanation.value.also {
+			it.location = Point2D(boundingBox.centerX, boundingBox.minY)
+		}
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawNotGate(this, context, foregroundColor, backgroundColor, stroke)

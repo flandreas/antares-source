@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Icon
@@ -71,7 +72,10 @@ abstract class AbstractIconButton(
 	/** ---- [AbstractDrawable] */
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		tooltipKey?.let { Tooltip(Translations.getString(it), toAbsoluteLocation(Point2D(x, y))) }
+		tooltipKey?.let {
+			val text = StyledTextBuilder().append(Translations.getString(it)).build()
+			Tooltip(text, toAbsoluteLocation(Point2D(x, y)))
+		}
 
 	override fun update() {
 		isHovering = false

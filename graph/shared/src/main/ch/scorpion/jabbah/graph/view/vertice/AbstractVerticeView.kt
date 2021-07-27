@@ -99,6 +99,13 @@ abstract class AbstractVerticeView<T : Vertice>(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
 
+	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
+	private val tooltip: Tooltip? by lazy {
+		buildToolTipText(type, typeDesc, description.value)?.let {
+			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
+		}
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun doClone(): Component {
@@ -271,8 +278,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portView != null) {
 			return portView.getTooltip(x, y)
 		}
-		val text = buildToolTipText(type, typeDesc, description.value)
-		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
+		return tooltip?.also { it.location = Point2D(plainBoundingBox.centerX, plainBoundingBox.maxY) }
 	}
 
 	override fun draw(context: DrawContext) {
@@ -315,8 +321,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		val text = buildToolTipText(type, typeDesc, executionTooltipSubtext)
-		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
+		return buildToolTipText(type, typeDesc, executionTooltipSubtext)?.let {
+			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
+		}
 	}
 
 	protected open val executionTooltipSubtext: String? get() = description.value

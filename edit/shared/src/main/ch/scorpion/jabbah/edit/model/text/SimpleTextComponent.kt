@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.MultilineText
@@ -140,7 +141,7 @@ class SimpleTextComponent(
 
 	private val displayedText: String get() = if (text.isEmpty) "" else text.getTranslation()
 
-	private var multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble())
+	private var multilineText = MultilineText(StyledTextBuilder().append(displayedText).build(), font, (width.toInt() - 2 * INSET_X).toDouble())
 
 	private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
 		shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
@@ -153,6 +154,6 @@ class SimpleTextComponent(
 	}
 
 	private fun updateMultilineText() {
-		multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble())
+		multilineText = MultilineText(StyledTextBuilder().append(displayedText).build(), font, (width.toInt() - 2 * INSET_X).toDouble())
 	}
 }

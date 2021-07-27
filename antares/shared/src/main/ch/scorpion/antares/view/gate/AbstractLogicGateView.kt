@@ -4,10 +4,12 @@ import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 
 abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	styleProvider: StyleProvider,
@@ -18,6 +20,13 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 
 	companion object {
 		const val BASE_KEY_NEGATE_INPUT = "element.property.Gate.negateInput"
+	}
+
+	private val explanation = resettableLazy {
+		if (model.inputCount == 2) {
+			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
+			DrawableExplanation(truthTableView, Point2D(boundingBox.centerX, boundingBox.minY))
+		} else null
 	}
 
 	// Explicit properties needed for reflective Commands on the JVM platform
@@ -70,11 +79,17 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	}
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-		return if (model.inputCount == 2) {
-			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
-			DrawableExplanation(truthTableView, Point2D(boundingBox.centerX, boundingBox.minY))
-		} else null
+		return explanation.value?.also {
+			it.location = Point2D(boundingBox.centerX, boundingBox.minY)
+		}
 	}
 
 	protected abstract fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color)
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.signalHandler == null) {
+			explanation.reset()
+		}
+	}
 }

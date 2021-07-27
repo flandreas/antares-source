@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.TextMeasurer
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import kotlin.math.max
 
@@ -16,10 +15,13 @@ import kotlin.math.max
  * Used primarily for rendering multi-line text of the JavaScript platform, but could also
  * be useful on the JVM platform, and therefore contained in the 'shared' module.
  *
+ * Attempts to render according to the style information in [StyledText]. Besides standard (normal) text,
+ * currently only bold is supported.
+ *
  * @property location the upper-left corner of the surrounding box relative to the owner's coordinate system
  */
 class MultilineText(
-	text: String,
+	text: StyledText,
 	private val font: Font,
 	preferredWidth: Double,
 	minWidth: Double = preferredWidth,
@@ -31,48 +33,72 @@ class MultilineText(
 		const val LINE_DIST = 5.0
 	}
 
-	private val lines = mutableListOf<String>()
+	private val boldFont = font.deriveFont(FontStyle.BOLD)
 
 	private val ascent: Int
 
 	private val lineHeight: Double = font.size + LINE_DIST
 
+	private val words = mutableListOf<Word>()
+
+	private data class Word(val text: String, val pos: Point2D, val font: Font)
+
 	init {
 		var lAscent = 0
 		var maxWidth = 0.0
+		var x = 0.0
+		var y = font.size.toDouble() - lineHeight
 
-		for (car in text.split('\n')) {
-			var line = ""
+		val blankWidth = textMeasurer.measureSingleLineText(" ", font).textBounds.width
+		for (car in text.splitLines()) {
 			var lineWidth = 0.0
-			var testWidth = 0.0
-			for (word in car.split(' ')) {
-				val testLine = if (line.isEmpty()) word else "$line $word"
-				val textRenderInfo = textMeasurer.measureSingleLineText(testLine, font)
-				testWidth = textRenderInfo.textBounds.width
-				lAscent = textRenderInfo.ascent.toInt()
+			x = location.x
+			y += lineHeight
+			for (word in car.split( ' ')) {
+				// Word splitting swallows the blanks
 
-				line = if (testWidth > preferredWidth) {
-					if (line.isNotBlank()) {
+				val wordFont = styledFont(word)
+
+				val wordRenderInfo = textMeasurer.measureSingleLineText(word.asPlainText(), wordFont)
+				val wordWidth = wordRenderInfo.textBounds.width
+				lAscent = wordRenderInfo.ascent.toInt()
+				val textWidth = if (x != 0.0) blankWidth + wordWidth else wordWidth
+
+				if (lineWidth + textWidth > preferredWidth) {
+					// No room for word in current line
+					if (x != 0.0) {
+						// Terminate current line, place word in next line
 						maxWidth = max(lineWidth, maxWidth)
-						lines.add(line.trim())
+						x = 0.0
+						y += lineHeight
+						words.add(Word(word.asPlainText(), Point2D(x, y), wordFont))
+						lineWidth = wordWidth
+						x += wordWidth
 					} else {
-						lineWidth = testWidth
+						// single overly long word, but place anyway in current line (no hyphenation)
+						maxWidth = max(wordWidth, maxWidth)
+						words.add(Word(word.asPlainText(), Point2D(x, y), wordFont))
+						lineWidth = 0.0
+						y += lineHeight
 					}
-					"$word "
 				} else {
-					lineWidth = testWidth
-					testLine
+					// Still room for word in current line
+					val wordText = if (x == 0.0) word.asPlainText() else " ${word.asPlainText()}"
+					val wordTextWidth = if (x == 0.0) wordWidth else wordWidth + blankWidth
+					words.add(Word(wordText, Point2D(x, y), wordFont))
+					x += wordTextWidth
+					lineWidth += wordTextWidth
 				}
 			}
 
 			maxWidth = max(lineWidth, maxWidth)
-			lines.add(line.trim())
 		}
 
 		ascent = lAscent
-
-		setBounds(location.x, location.y, max(minWidth, maxWidth), lines.size * lineHeight)
+		setBounds(location.x, location.y, max(minWidth, maxWidth), y + LINE_DIST)
 	}
+
+	private fun styledFont(text: StyledText): Font = if (text.isBold(0)) boldFont else font
 
 	/** ---- [RectangularDrawable] */
 
@@ -81,16 +107,22 @@ class MultilineText(
 	/** ----- [Drawable] interface */
 
 	override fun draw(context: DrawContext) {
-		context.g.font = font
-		var yy = location.y + ascent
-		for (line in lines) {
-			context.g.drawString(line, location.x.toInt(), yy.toInt())
-			yy += lineHeight
-		}
-
+		draw(context.g)
 		DrawModule.drawDebugBoundingBox(this, context.g)
 	}
 
 	override fun contains(x: Double, y: Double): Boolean =
 		boundingBox.contains(x, y)
+
+	/** ---- [MultilineText] */
+
+	fun draw(g: Graphics2D) {
+		g.font = font
+		g.translate(location.x, location.y)
+		for (word in words) {
+			g.font = word.font
+			g.drawString(word.text, word.pos.xInt, word.pos.yInt)
+		}
+		g.translate(-location.x, -location.y)
+	}
 }

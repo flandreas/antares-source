@@ -70,6 +70,9 @@ interface GraphElement : Storable, Actor, Describable {
 
 	/** Forms the necessary [CombinedNet]s used for execution.*/
 	fun formNet(signalHandler: SignalHandler)
+
+	/** Called by services that updated this [GraphElement], which then informs all registered [GraphElementListener].*/
+	fun notifyStateChanged()
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

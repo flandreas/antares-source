@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -13,6 +12,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
 import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -52,18 +52,12 @@ class LibraryPreviewPanel(
 
 	private val componentDisplay = ComponentDisplay()
 
-	private val descriptionArea = JTextPane()
+	private val descriptionDisplay = MultilineTextDisplayJvm()
 
 	/** Stores the preview [Component] of the currently selected [LibraryElement]. */
 	private var selection: Component? = null
 
 	init {
-		descriptionArea.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true)
-		descriptionArea.contentType = "text/html"
-		descriptionArea.isEditable = false
-		descriptionArea.preferredSize = Dimension(150, 50)
-		descriptionArea.background = BACKGROUND_COLOR
-
 		eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
 		eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
 		eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
@@ -83,11 +77,11 @@ class LibraryPreviewPanel(
 
 	private fun buildUI() {
 		background = BACKGROUND_COLOR
-		layout = BorderLayout()
+		layout = BorderLayout(10, 0)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-		descriptionArea.border = BorderFactory.createEmptyBorder(0, 10, 0, 0)
+		descriptionDisplay.background = BACKGROUND_COLOR
 		add(componentDisplay, BorderLayout.WEST)
-		add(descriptionArea, BorderLayout.CENTER)
+		add(descriptionDisplay, BorderLayout.CENTER)
 	}
 
 	private fun handleLibrarySelectionChanged(e: LibrarySelectionChangedEvent) {
@@ -114,7 +108,7 @@ class LibraryPreviewPanel(
 	private fun updateSelection(libraryElement: LibraryElement?) {
 		if (libraryElement == null) {
 			selection = null
-			descriptionArea.text = null
+			descriptionDisplay.styledText = null
 			return
 		}
 
@@ -151,7 +145,7 @@ class LibraryPreviewPanel(
 	private fun updateSelectionImpl(component: Component) {
 		selection = component
 		componentDisplay.updateLayout()
-		descriptionArea.text = buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
+		descriptionDisplay.styledText = buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
 	}
 
 	/** Displays the graphical preview of the selected [Component]. */

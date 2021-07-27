@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.StyledText
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
@@ -16,37 +18,72 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 
-fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean = false): String {
-	val sb = StringBuilder()
+/**
+ * The tooltip system consists of various parts used by client objects that want to display tooltips.
+ *
+ * Client objects such a selection tool instantiate a [TooltipHandler] and delegate handling of mouse move
+ * event to that [TooltipHandler].
+ *
+ * The [TooltipHandler] searches for a [Drawable] at the mouse location and, if one is found, asks that
+ * [Drawable] for its [Tooltip], typically using [Drawable.getTooltip]. A [Tooltip] consists of
+ * a [StyledText] and a location where to display it (only data, no graphical representation).
+ *
+ * If there is a [Tooltip] to be displayed, [TooltipHandler] posts a [TooltipEvent] on the [EventBus],
+ * which is handled by [TooltipManager] in order to display it. [TooltipManager] uses a [Timer] for
+ * delaying [Tooltip] displaying, and creates the appropriate visual representation of a [Tooltip].
+ *
+ * Dismissing [Tooltip]s is initiated by client objects either explicitly using [TooltipHandler.clear],
+ * or implicitly using [TooltipHandler.handle] for a location where no [Tooltip] is needed.
+ *
+ * Tooltips can generally be enabled/disabled using [TooltipHandler.PROP_TOOLTIPS_ENABLED].
+ *
+ * [buildToolTipText] is used by client of the tooltip system to build structured texts to be displayed within a tooltip,
+ * typically in implementations of [Drawable.getTooltip].
+ *
+ * @param title the title to be rendered in bold
+ * @param text the text following the title
+ * @param subText additional text separated from the previous text by an empty line
+ * @param endWithPeriod if `true` add a period at the end of [subText] if it doesn't have one already
+*/
+fun buildToolTipText(
+	title: String?,
+	text: String?,
+	subText: String?,
+	endWithPeriod: Boolean = false
+): StyledText? {
+	val builder = StyledTextBuilder()
 
 	val hasText = StringUtils.isNotEmpty(text)
 	val hasSubText = StringUtils.isNotEmpty(subText)
 
 	if (StringUtils.isNotBlank(title)) {
-		sb.append(title)
+		builder.beginBold()
+		builder.append(title!!)
 		if (hasText) {
-			sb.append(": ")
+			builder.append(": ")
 		}
+		builder.endBold()
 	}
 
 	if (hasText) {
-		sb.append(text)
-		if (endWithPeriod && !text!!.endsWith(".")) {
-			sb.append('.')
+		builder.append(text!!)
+		if (endWithPeriod && !text.endsWith(".")) {
+			builder.append('.')
 		}
 	}
 
 	if (hasSubText) {
-		if (sb.isNotEmpty()) {
-			sb.appendLine().appendLine()
+		if (builder.notEmpty) {
+			builder.appendLine().appendLine()
 		}
-		sb.append(subText)
-		if (endWithPeriod && !subText!!.endsWith(".")) {
-			sb.append('.')
+		builder.append(subText!!)
+		if (endWithPeriod && !subText.endsWith(".")) {
+			builder.append('.')
 		}
 	}
 
-	return sb.toString()
+	val styledText = builder.build()
+	return if (styledText.empty) null else styledText
 }
 
 /**
@@ -99,7 +136,7 @@ class TooltipHandler(
 	 * The text for which a [TooltipEvent] has been posted by this [TooltipHandler] recently.
 	 * This reference is kept in order to avoid duplicate consecutive event posts.
 	 */
-	private var lastTooltipText: String? = null
+	private var lastTooltipText: StyledText? = null
 
 	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
@@ -123,9 +160,10 @@ class TooltipHandler(
 			return
 		}
 
-		val tooltip = createTooltip(drawable, x, y)
-		val explanation = explanationAccessor.invoke(drawable, x, y)
-		if (StringUtils.isEmpty(tooltip?.text) && explanation == null) {
+		val tooltip = getTooltip(drawable, x, y)
+		val explanation = getExplanation(drawable, x, y)
+
+		if (tooltip?.text?.empty != false && explanation == null) {
 			if (lastTooltipDrawable != null || lastExplanation != null) {
 				clearLastTargets()
 				eventBus.post(TooltipEvent(null, view, null, null))
@@ -133,14 +171,25 @@ class TooltipHandler(
 			return
 		}
 
-		if (drawable !== lastTooltipDrawable || tooltip?.text != lastTooltipText || explanation?.explanation !== lastExplanation?.explanation || lastTooltipLocation != tooltip?.location) {
+		if (drawable !== lastTooltipDrawable
+			|| tooltip?.text != lastTooltipText
+			|| explanation?.explanation !== lastExplanation?.explanation
+			|| lastTooltipLocation != tooltip?.location
+		) {
 			setLastTargets(drawable, tooltip?.text, explanation, tooltip?.location)
 			eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
 		}
 	}
 
-	private fun createTooltip(drawable: Drawable, x: Double, y: Double): Tooltip? =
-		if (tooltipsEnabled) tooltipAccessor.invoke(drawable, x, y) else null
+	private fun getTooltip(drawable: Drawable, x: Double, y: Double): Tooltip? =
+		if (tooltipsEnabled) {
+			tooltipAccessor(drawable, x, y)
+		} else null
+
+	private fun getExplanation(drawable: Drawable, x: Double, y: Double): DrawableExplanation<RectangularDrawable>? =
+		if (tooltipsEnabled) {
+			explanationAccessor(drawable, x, y)
+		} else null
 
 	fun clear(view: View<*>) {
 		eventBus.post(TooltipEvent(null, view, null, null))
@@ -148,15 +197,13 @@ class TooltipHandler(
 
 	/** Clears [lastTooltipText] and [lastExplanation], if available.*/
 	private fun clearLastTargets() {
-		lastExplanation?.explanation?.dispose()
 		lastTooltipDrawable = null
 		lastTooltipText = null
 		lastExplanation = null
 		lastTooltipLocation = null
 	}
 
-	private fun setLastTargets(drawable: Drawable, tooltipText: String?, explanation: DrawableExplanation<RectangularDrawable>?, location: Point2D?) {
-		lastExplanation?.explanation?.dispose()
+	private fun setLastTargets(drawable: Drawable, tooltipText: StyledText?, explanation: DrawableExplanation<RectangularDrawable>?, location: Point2D?) {
 		lastTooltipDrawable = drawable
 		lastTooltipText = tooltipText
 		lastExplanation = explanation

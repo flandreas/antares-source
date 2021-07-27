@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
 import java.awt.*
 import java.awt.geom.Area
 import java.awt.geom.Point2D
-import javax.swing.JTextPane
 
 /**
  * Adapts a [java.awt.Graphics2D] object to the [Graphics2D] interface.
@@ -59,6 +58,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         fun toAwtFont(font: Font): java.awt.Font {
             return Font(font.family.javaName, fromFontStyle(font), font.size)
         }
+
+	    fun fromAwtFont(font: java.awt.Font): Font {
+	    	return FontImpl(FontFamily.fromJavaName(font.fontName)!!, toFontStyle(font), font.size)
+	    }
 
 	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
 		    return BasicStroke(

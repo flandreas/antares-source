@@ -86,6 +86,7 @@ class DigitalGraphViewService(
 			// Re-establish Port.id of OutputPort
 			getOutput<DigitalSignal>().portId = inputCount + 1
 
+			gateView.model.notifyStateChanged()
 			gateView.updateLayout()
 		}
 	}
@@ -104,6 +105,7 @@ class DigitalGraphViewService(
 			// Re-establish Port.id of OutputPort
 			getOutput<DigitalSignal>().portId = inputCount + 1
 
+			gateView.model.notifyStateChanged()
 			gateView.updateLayout()
 		}
 	}

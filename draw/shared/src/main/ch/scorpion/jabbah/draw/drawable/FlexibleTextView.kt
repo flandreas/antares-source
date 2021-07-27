@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
@@ -45,9 +46,9 @@ class FlexibleTextView(
 	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
 
 	private val multilineText = if (isUnzoomable) {
-		MultilineText(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
+		MultilineText(StyledTextBuilder().append(text).build(), font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
 	} else {
-		MultilineText(text, font, width.toDouble())
+		MultilineText(StyledTextBuilder().append(text).build(), font, width.toDouble())
 	}
 
 	/** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/

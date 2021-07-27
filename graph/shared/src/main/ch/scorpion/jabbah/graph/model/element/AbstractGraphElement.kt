@@ -38,6 +38,10 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 		return visitor.visit(this)
 	}
 
+	override fun notifyStateChanged() {
+		stateChanged(null)
+	}
+
 	override fun addGraphElementListener(l: GraphElementListener) {
 		if (listeners == null) {
 			listeners = mutableListOf()

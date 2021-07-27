@@ -27,13 +27,11 @@ import ch.scorpion.jabbah.graph.model.*
  * @property vertice the [Vertice] to be used for highlighting the actual signal values in the rendered view,
  * and for determining column names according to the [Vertice]' port names
  * @property vertice the [Vertice] whose [Port] values are used to determine the current row.
- * Can be `null` in order to support usage scenarios where instances of [TruthTableView] instances are shared
- * between multiple [Vertice]s, as [TruthTableView] is mainly presumed to be used as a flyweight.
  * @property passive if `false`, this [TruthTableView] doesn't try to follow signal changes during simulation
  */
 class TruthTableView(
 	private val model: TruthTableModel,
-	vertice: Vertice?,
+	private val vertice: Vertice,
 	private val passive: Boolean = false,
 	private val styleType: StyleType = StyleType.TOOLTIP,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
@@ -51,22 +49,11 @@ class TruthTableView(
 		}
 	}
 
-	var vertice: Vertice? = null
-		set(value) {
-			if (field != null) {
-				field!!.removeGraphElementListener(verticeListener)
-			}
-			if (field !== value) {
-				field = value
-			}
-			if (field != null && !passive) {
-				field!!.addGraphElementListener(verticeListener)
-			}
-		}
-
 	init {
 		build()
-		this.vertice = vertice
+		if (!passive) {
+			vertice.addGraphElementListener(verticeListener)
+		}
 	}
 
 	private val stroke: Stroke = Stroke(0.5f)
@@ -97,8 +84,7 @@ class TruthTableView(
 	 * [TruthTableView] might be reused later for a different [Vertice].
 	 * */
 	override fun dispose() {
-		vertice?.removeGraphElementListener(verticeListener)
-		vertice = null
+		vertice.removeGraphElementListener(verticeListener)
 	}
 
 	override fun draw(context: DrawContext) {
