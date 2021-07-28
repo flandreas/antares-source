@@ -439,6 +439,12 @@
                 <translation lang='de' text='Frequenzteiler 1:16'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='108' uuid='7de920b3-7694-4f03-a1e6-f44ff92475ec'>
+              <name>
+                <translation lang='de' text='Binärzähler 4-Bit mit Load/Reset'/>
+                <translation lang='en' text='Binary Counter 4 Bit LD/CLR'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
       </items>
