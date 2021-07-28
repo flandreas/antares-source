@@ -17,7 +17,7 @@ class FlexibleTextViewTest {
 
 	@Test
 	fun test() {
-		val textView = FlexibleTextView("", Point2D(0, 0), Direction.SOUTH, width = 100)
+		val textView = FlexibleTextView(" ", Point2D(0, 0), Direction.SOUTH, width = 100)
 		assertEquals(-100.0/2 - 10 - 1, textView.boundingBox.topLeft.x)
 		assertEquals(100.0/2 + 10 + 1, textView.boundingBox.bottomRight.x)
 		assertEquals(0.0 - 1, textView.boundingBox.topLeft.y)

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import io.mockk.every
 import io.mockk.mockk
@@ -56,7 +57,7 @@ class DrawableMockBuilder {
     }
 
     fun tooltip(s: String): DrawableMockBuilder {
-	    every { drawable.getTooltip(any(), any()) } returns Tooltip(s, 0.0, 0.0)
+	    every { drawable.getTooltip(any(), any()) } returns Tooltip(StyledTextBuilder().append(s).build(), 0.0, 0.0)
         return this
     }
 

@@ -85,7 +85,7 @@ class DescriptionIntegrationTest {
 	}
 
 	private fun tooltipText(vv: VerticeView<*>): String =
-		vv.getTooltip(vv.boundingBox.centerX, vv.boundingBox.centerY)!!.text
+		vv.getTooltip(vv.boundingBox.centerX, vv.boundingBox.centerY)!!.text.asPlainText()
 
 	private fun createMetaGraph(desc: String): ContainerLibraryElement {
 		val library = LibraryModule.libraryHolder.library

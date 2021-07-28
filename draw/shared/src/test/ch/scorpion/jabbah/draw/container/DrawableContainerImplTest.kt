@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
@@ -143,7 +144,7 @@ class DrawableContainerImplTest {
 
 		container.add(innerContainer)
 
-		assertEquals("Test", container.getTooltip(125.0, 125.0)?.text)
+		assertEquals("Test", container.getTooltip(125.0, 125.0)?.text?.asPlainText())
 	}
 
 	@Test
@@ -198,7 +199,7 @@ class DrawableContainerImplTest {
 		override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = handler
 		override fun draw(context: DrawContext) {}
 		override val lineWidth: Double get() = 0.0
-		override fun getTooltip(x: Double, y: Double): Tooltip = Tooltip("Test", x, y)
+		override fun getTooltip(x: Double, y: Double): Tooltip = Tooltip(StyledTextBuilder().append("Test").build(), x, y)
 
 		private inner class Handler : InputEventHandlerAdapter<InputEventContext>() {
 			override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {

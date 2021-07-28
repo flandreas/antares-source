@@ -96,13 +96,13 @@ class LibraryFolder(
 	}
 
 	override fun contains(item: LibraryItem): Boolean {
-		return items.any { it.name == item.name }
+		return items.any { it === item }
 	}
 
 	override fun containsRecursively(item: LibraryItem): Boolean {
 		return items.any {
 			when {
-				it.name == item.name -> true
+				it === item -> true
 				it is LibraryDirectory -> it.containsRecursively(item)
 				else -> false
 			}
