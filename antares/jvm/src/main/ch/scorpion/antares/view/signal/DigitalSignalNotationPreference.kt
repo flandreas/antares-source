@@ -18,6 +18,7 @@ class DigitalSignalNotationPreference : AbstractPreference(
 		editor.addItem(DigitalSignalNotation.PREFIX)
 		editor.addItem(DigitalSignalNotation.BASE_SUBSCRIPT)
 		editor.addItem(DigitalSignalNotation.SUFFIX)
+		editor.addItem(DigitalSignalNotation.SUFFIX_UPPERCASE)
 
 		editor.addActionListener {
 			panel?.preferences?.customize(this, (editor.selectedItem as DigitalSignalNotation).customName)

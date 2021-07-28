@@ -48,6 +48,20 @@ enum class DigitalSignalNotation(
 				r
 			}
 		}
+	},
+
+	SUFFIX_UPPERCASE("suffixUppercase", "element.signal.notation.suffixUppercase") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.suffix.uppercase()
+
+		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${representation.suffix.uppercase()}"
+			} else {
+				r
+			}
+		}
 	};
 
 	companion object {

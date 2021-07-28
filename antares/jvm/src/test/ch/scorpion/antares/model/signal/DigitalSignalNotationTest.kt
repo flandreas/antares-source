@@ -40,6 +40,12 @@ class DigitalSignalNotationTest {
 	}
 
 	@Test
+	fun shouldNotateWithSuffixUppercase() {
+		assertEquals("00010001B", DigitalSignalNotation.SUFFIX_UPPERCASE.notate(value, BINARY))
+		assertEquals("11H", DigitalSignalNotation.SUFFIX_UPPERCASE.notate(value, HEXADECIMAL))
+	}
+
+	@Test
 	fun shouldOmitSuffixForSingleDigit() {
 		assertEquals("1", DigitalSignalNotation.SUFFIX.notate(DigitalSignalFactory.of(BitWidth.BW_1, 1), BINARY))
 		assertEquals("F", DigitalSignalNotation.SUFFIX.notate(DigitalSignalFactory.of(BitWidth.BW_4, 15), HEXADECIMAL))
