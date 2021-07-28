@@ -109,7 +109,7 @@ abstract class AbstractPortView<T : Any>(
 	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
 	private val tooltip: Tooltip? by lazy {
 		ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)?.let {
-			Tooltip(it, owner!!.getPortConnectionPoint(port))
+			Tooltip(it, owner!!.getPortConnectionPoint(this.port))
 		}
 	}
 
