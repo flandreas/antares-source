@@ -14,8 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.io.Storable
@@ -85,6 +84,14 @@ class LabelComponent(
 			transparent.transparency = value
 		}
 
+	/** ---- [Snappable] interface */
+
+	override val snappableX: Array<SnappableX>
+		get() = arrayOf(SnappableXCoordinate(location.x))
+
+	override val snappableY: Array<SnappableY>
+		get() = arrayOf(SnappableYCoordinate(location.y))
+
 	/** ---- [Drawable] */
 
 	override val boundingBox: Rectangle2D get() = label.boundingBox
@@ -113,7 +120,7 @@ class LabelComponent(
 	}
 
 	override var location: Point2D
-		get() = Point2D(label.location)
+		get() = label.location
 		set(value) {
 			label.location = value
 		}
