@@ -80,9 +80,10 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun handle(event: LibraryItemUpdatedEvent) {
-		val node = findTreeNode(event.item)
-		node.userObject = event.item
-		(model as DefaultTreeModel).nodeChanged(node)
+		findOptionalTreeNode(event.item)?.let {
+			it.userObject = event.item
+			(model as DefaultTreeModel).nodeChanged(it)
+		}
 	}
 
 	override fun handle(event: LibraryItemMovedEvent) {
