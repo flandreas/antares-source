@@ -32,6 +32,9 @@ enum class DigitalPortViewStyle(val customName: String) {
 			}
 		}
 
+		override fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D =
+			Rectangle2D(portView.location.xInt, portView.location.yInt, 0, 0)
+
 		override fun isDrawAccess(portView: DigitalPortView): Boolean = !portView.port.isConnected
 
 		override fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
@@ -67,6 +70,11 @@ enum class DigitalPortViewStyle(val customName: String) {
 		override fun getConnectedLength(portView: DigitalPortView): Int = DIL_ACCESS_W
 
 		override fun isDrawAccess(portView: DigitalPortView): Boolean = true
+
+		override fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D =
+			DIL_ACCESSES[portView.direction]!!.copy()
+				.moveBy(portView.location)
+				.expandBy(Themes.get<AntaresTheme>().figure.stroke.width.toDouble()) as Rectangle2D
 
 		override fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
 			with(portView) {
@@ -118,6 +126,8 @@ enum class DigitalPortViewStyle(val customName: String) {
 	abstract fun getConnectedLength(portView: DigitalPortView): Int
 
 	abstract fun isDrawAccess(portView: DigitalPortView): Boolean
+
+	abstract fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D
 
 	/** Draws the access (e.g. a line) of [portView] in a [DrawContext] located at the origin of [DigitalPortView]. */
 	abstract fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent)

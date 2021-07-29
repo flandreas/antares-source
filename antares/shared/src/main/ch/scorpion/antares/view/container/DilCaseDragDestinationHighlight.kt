@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.container
 
-import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.drag.DragDestination
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlight
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
-import ch.scorpion.jabbah.graph.container.PortViewComponent
 
 class DilCaseDragDestinationHighlight(
 	destination: DilCase
@@ -35,20 +33,22 @@ class DilCaseDragDestinationHighlight(
 	/** ---- [DragDestinationHighlight] */
 
 	override fun handleDragged(component: Component, destination: DragDestination) {
-		if (component !is PortViewComponent<*> || destination !is DilCase) {
+		if (component !is DigitalPortViewComponent || destination !is DilCase) {
 			return
 		}
-		val portView = component.portView as DigitalPortView
-
-		if (portView.portViewStyle != DigitalPortViewStyle.DIL) {
-			portView.portViewStyle = DigitalPortViewStyle.DIL
+		if (component.portViewStyle != DigitalPortViewStyle.DIL) {
+			changePortViewStyleToDil(component)
 		}
-
 		if (component.location.x < destination.centerX) {
-			portView.direction = Direction.WEST
+			component.direction = Direction.WEST
 		} else {
-			portView.direction = Direction.EAST
+			component.direction = Direction.EAST
 		}
+	}
+
+	private fun changePortViewStyleToDil(component: DigitalPortViewComponent) {
+		component.portViewStyle = DigitalPortViewStyle.DIL
+		component.showBitWidthAnnotation = false
 	}
 
 	/** ---- [Drawable] */

@@ -272,6 +272,8 @@ class DigitalPortView(
 			} else {
 				Rectangle2D(locationX, locationY, 0.0, 0.0)
 			}
+			bbox.add(portViewStyle.createBasicBoundingBox(this))
+
 			if (bitWidthAnnotation != null) {
 				val bb = bitWidthAnnotation!!.boundingBox
 				bbox.add(Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height))
