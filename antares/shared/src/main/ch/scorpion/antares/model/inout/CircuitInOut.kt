@@ -35,6 +35,13 @@ interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSign
 	 * used by a [Switch].
 	 */
 	fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler)
+
+	/**
+	 * Sets the new signal entered manually by the user.
+	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
+	 * used by a [Switch].
+	 */
+	fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler)
 }
 
 /** Notifies the change of the [BitWidth] of a [CircuitInOut].*/

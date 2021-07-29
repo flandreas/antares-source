@@ -574,13 +574,13 @@ class CircuitInOutView(
 				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 					val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
 					val newWord = signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)
-					model.setIncomingSignal(newWord, context.signalHandler)
+					model.setSignalManually(newWord, context.signalHandler)
 					numberView!!.transferFocusRight()
 				} else {
 					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), context.keyEvent!!.key.toChar())
 					if (digitWord != null && checkTopLevelKey()) {
 						val newWord = signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)
-						model.setIncomingSignal(newWord, context.signalHandler)
+						model.setSignalManually(newWord, context.signalHandler)
 						numberView!!.transferFocusRight()
 					}
 				}

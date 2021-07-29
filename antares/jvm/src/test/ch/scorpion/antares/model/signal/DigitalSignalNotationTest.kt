@@ -11,7 +11,7 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldNotateWithPrefix() {
-		assertEquals("0b00010001", DigitalSignalNotation.PREFIX.notate(value, BINARY))
+		assertEquals("0b10001", DigitalSignalNotation.PREFIX.notate(value, BINARY))
 		assertEquals("0x11", DigitalSignalNotation.PREFIX.notate(value, HEXADECIMAL))
 	}
 
@@ -23,7 +23,7 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldNotateWithBaseSubscript() {
-		assertEquals("00010001\u2082", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, BINARY))
+		assertEquals("10001\u2082", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, BINARY))
 		assertEquals("11\u2081\u2086", DigitalSignalNotation.BASE_SUBSCRIPT.notate(value, HEXADECIMAL))
 	}
 
@@ -35,13 +35,13 @@ class DigitalSignalNotationTest {
 
 	@Test
 	fun shouldNotateWithSuffix() {
-		assertEquals("00010001b", DigitalSignalNotation.SUFFIX.notate(value, BINARY))
+		assertEquals("10001b", DigitalSignalNotation.SUFFIX.notate(value, BINARY))
 		assertEquals("11h", DigitalSignalNotation.SUFFIX.notate(value, HEXADECIMAL))
 	}
 
 	@Test
 	fun shouldNotateWithSuffixUppercase() {
-		assertEquals("00010001B", DigitalSignalNotation.SUFFIX_UPPERCASE.notate(value, BINARY))
+		assertEquals("10001B", DigitalSignalNotation.SUFFIX_UPPERCASE.notate(value, BINARY))
 		assertEquals("11H", DigitalSignalNotation.SUFFIX_UPPERCASE.notate(value, HEXADECIMAL))
 	}
 

@@ -260,6 +260,10 @@ class CircuitInOutImpl(
 		setIncomingSignal(s.withBit(index, bit.not()), signalHandler, Switch.DEF_PROP_DELAY)
 	}
 
+	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler) {
+		setIncomingSignal(signal, signalHandler, Switch.DEF_PROP_DELAY)
+	}
+
 	/** ---- [CircuitInOutImpl] */
 
 	private fun getDigitalPort(): DigitalPort = getPort<DigitalPort>() as DigitalPort

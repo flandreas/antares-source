@@ -34,7 +34,7 @@ class DigitalSignalView(
 	companion object {
 		private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
 		private const val V_INSET = 3
-		private const val H_INSET = 4
+		private const val H_INSET = 6
 		private const val ARCH_SIZE = 12.0
 	}
 
