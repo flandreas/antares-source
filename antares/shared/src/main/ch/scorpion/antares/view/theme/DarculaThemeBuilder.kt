@@ -45,6 +45,11 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val MESSAGE_INFO_COLOR = DrawGraphicsModule.GREEN_ON_DARK
 
+	private val DARK_ZERO_COLOR = CompositeColor(ZERO_COLOR.foregroundColor.darker(), ZERO_COLOR.foregroundColor.darker().darker(), MAIN_COLOR.textColor.brighter())
+
+	private val DARK_ONE_FOREGROUND_COLOR = Color(0, 218, 0)
+	private val DARK_ONE_COLOR = CompositeColor(DARK_ONE_FOREGROUND_COLOR, AntaresTheme.DEF_ONE_BACKGROUND_COLOR, AntaresTheme.DEF_ONE_TEXT_COLOR)
+
 	private val WORD_ZERO_COLOR = CompositeColor(
 		foregroundColor = MAIN_COLOR.foregroundColor.brighter(),
 		backgroundColor = DARK_BUS_FILL_COLOR,
@@ -100,7 +105,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			subsystem = SUBSYSTEM_STYLE,
 			selection = SELECTION_STYLE,
 			zero = DARK_ZERO_COLOR,
-			one = ONE_COLOR,
+			one = DARK_ONE_COLOR,
 			undefined = DARK_UNDEFINED_COLOR,
 			wordZero = WORD_ZERO_COLOR,
 			word = WORD_COLOR,
