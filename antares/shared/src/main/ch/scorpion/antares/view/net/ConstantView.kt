@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Constant
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -56,6 +57,7 @@ class ConstantView(
 		set(value) {
 			if (value != field) {
 				field = value
+				(model.getPort<DigitalSignal>() as DigitalPort).signalRepresentation = value
 				updateView()
 			}
 		}
@@ -91,6 +93,7 @@ class ConstantView(
 			direction = Direction.EAST)
 		portView.setLocation(-DigitalPortView.LENGTH, 0)
 		addPortView(portView)
+		(model.getPort<DigitalSignal>() as DigitalPort).signalRepresentation = signalRepresentation
 		updateView()
 	}
 
