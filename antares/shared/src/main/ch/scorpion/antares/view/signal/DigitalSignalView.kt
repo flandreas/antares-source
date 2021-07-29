@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.CurrentDigitalSignalNotation
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.Look
@@ -19,7 +20,6 @@ import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import kotlin.math.ceil
 
 /**
  * A graphical, circular representation of a [DigitalSignal].
@@ -29,23 +29,13 @@ class DigitalSignalView(
 	val signal: DigitalSignal,
 	val bitWidth: BitWidth,
 	representation: DigitalSignalRepresentation
-) : AbstractRectangle(RoundRectangle2D(0.0, 0.0, calcWidth(bitWidth, representation), calcHeight(), ARCH_SIZE, ARCH_SIZE)), Locatable {
+) : AbstractRectangle(RoundRectangle2D(0.0, 0.0, 0.0, 0.0, ARCH_SIZE, ARCH_SIZE)) {
 
 	companion object {
-		val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+		private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
 		private const val V_INSET = 3
 		private const val H_INSET = 4
-		const val ARCH_SIZE = 12.0
-
-		fun calcHeight(): Double {
-			return FONT.size + 2.0 * V_INSET
-		}
-
-		fun calcWidth(bitWidth: BitWidth, representation: DigitalSignalRepresentation): Double {
-			val digitCount = representation.digitCount(bitWidth)
-			val textRenderInfo = TextRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
-			return ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
-		}
+		private const val ARCH_SIZE = 12.0
 	}
 
 	/**
@@ -55,13 +45,22 @@ class DigitalSignalView(
 	 */
 	val orthoPolyline = CompactablePolyline()
 
-	private val label = Label(
-		text = representation.represent(signal),
-		font = FONT,
-		color = signal.color.textColor,
-		horizontalAlignment = HorizontalAlignment.CENTER,
-		verticalAlignment = VerticalAlignment.CENTER,
-		location = Point2D(0, 0))
+	private val label: Label
+
+	init {
+		val text = CurrentDigitalSignalNotation.notation.notate(signal, representation)
+		val textSize = TextRenderInfoFactory.measureSingleLineText(text, FONT).textBounds
+
+		label = Label(
+			text = text,
+			font = FONT,
+			color = signal.color.textColor,
+			horizontalAlignment = HorizontalAlignment.CENTER,
+			verticalAlignment = VerticalAlignment.CENTER,
+			location = Point2D(0, 0))
+
+		setBounds(0.0, 0.0, textSize.width + 2 * H_INSET, textSize.height + 2 * V_INSET)
+	}
 
 	/** ---- [AbstractRectangle] */
 
