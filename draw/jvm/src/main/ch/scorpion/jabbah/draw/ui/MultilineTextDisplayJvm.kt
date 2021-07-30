@@ -35,6 +35,7 @@ class MultilineTextDisplayJvm: JPanel() {
 		super.paintComponent(g)
 		text?.let {
 			val jg = Graphics2DJvm(g as Graphics2D)
+			jg.antialiasing = true
 			it.draw(jg)
 		}
 	}
