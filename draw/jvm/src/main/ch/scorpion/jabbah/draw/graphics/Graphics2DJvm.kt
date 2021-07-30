@@ -60,7 +60,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         }
 
 	    fun fromAwtFont(font: java.awt.Font): Font {
-	    	return FontImpl(FontFamily.fromJavaName(font.fontName)!!, toFontStyle(font), font.size)
+	    	return FontImpl(FontFamily.fromJavaName(font.fontName), toFontStyle(font), font.size)
 	    }
 
 	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {

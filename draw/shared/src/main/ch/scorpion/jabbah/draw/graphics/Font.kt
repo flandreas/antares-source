@@ -14,8 +14,8 @@ enum class FontFamily(val javaName: String, val jsName: String) {
 
 	companion object {
 		fun fromJavaName(name: String): FontFamily {
-			FontFamily.values()
-				.filter { it.javaName == name }
+			values()
+				.filter { name.startsWith(it.javaName, ignoreCase = true)}
 				.forEach { return it }
 			throw IllegalArgumentException("unknown Java FontFamily name $name")
 		}
