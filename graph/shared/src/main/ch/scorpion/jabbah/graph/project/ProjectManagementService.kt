@@ -15,14 +15,6 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 
-enum class ProjectImportResult {
-	Success,
-	NameAlreadyExists,
-	Invalid,
-	StaleLibraryReference,
-	UuidAlreadyExists
-}
-
 /**
  * Posted on [EventBus] when a [Project] is to be opened and is to replace the currently open [Project], if any.
  * Subscribers for this event can raise their veto, such as the application class that keeps track of
@@ -40,14 +32,14 @@ data class CloseProjectRequest (val project: Project)
 /** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
 class ProjectManagementService(
 	private val projectFactory: (TranslatableText) -> Project = ProjectModule.projectFactory,
-	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
-	private val eventBus: EventBus = BaseModule.eventBus
-) {
+	projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractLibraryManagementService(libraryService, projectDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(ProjectManagementService::class)
@@ -61,17 +53,24 @@ class ProjectManagementService(
 	val currentProject: Project? get() = projectHolder.project
 
 	/** Determines whether the directory for storing the project [LibraryDictionary] already exists.*/
-	val directoryExists: Boolean get() = projectDictionaryService.directoryExists
+	val directoryExists: Boolean get() = dictionaryService.directoryExists
 
-	/** Determines whether [projectName] already exists as the name of a stored project.*/
-	fun exists(projectName: TranslatableText, except: UUID? = null): Boolean =
-		projectDictionaryService.existsName(projectName, except)
+
+	/** ---- [AbstractLibraryManagementService] */
+
+	override fun hasStaleImportReferences(library: Library): Boolean =
+		!libraryManagementService.contains((library as Project).importedLibrary!!)
+
+	override fun existsName(projectName: TranslatableText, except: UUID?): Boolean =
+		dictionaryService.existsName(projectName, except)
+
+	/** ---- [ProjectManagementService] */
 
 	fun contains(projectUUID: UUID): Boolean =
-		projectDictionaryService.contains(projectUUID)
+		dictionaryService.contains(projectUUID)
 
 	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
-		projectDictionaryService.getEntries()
+		dictionaryService.getEntries()
 
 	/**
 	 * Loads the [Project] with the specified [UUID].
@@ -86,7 +85,7 @@ class ProjectManagementService(
 	 * with the specified name already exists
 	 */
 	fun create(properties: LibraryProperties, library: UUID = libraryHolder.library.uuid): Project {
-		if (exists(properties.name)) {
+		if (existsName(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
 		LOG.trace("creating new project '${properties.name.getTranslation()}'")
@@ -100,7 +99,7 @@ class ProjectManagementService(
 		project.defaultElementUUID = metaGraph.uuid
 
 		libraryService.storeLibrary(project)
-		projectDictionaryService.add(project)
+		dictionaryService.add(project)
 
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
@@ -127,16 +126,16 @@ class ProjectManagementService(
 		LOG.trace("updating project '${project.name}'")
 
 		if (project.name.translation != properties.name) {
-			if (exists(properties.name, except = project.uuid)) {
+			if (existsName(properties.name, except = project.uuid)) {
 				throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 			}
 			libraryService.renameLibrary(project, properties.name)
-			projectDictionaryService.rename(project, properties.name)
+			dictionaryService.rename(project, properties.name)
 		}
 
 		project.properties = properties
 		libraryService.storeLibrary(project)
-		projectDictionaryService.update(project, properties)
+		dictionaryService.update(project, properties)
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
@@ -196,14 +195,9 @@ class ProjectManagementService(
 		}
 	}
 
-	private fun deleteImpl(uuid: UUID) {
-		libraryService.deleteLibrary(uuid)
-		projectDictionaryService.remove(uuid)
-	}
-
 	/** Closes the currently open [Project].*/
 	fun close() {
-		closeImpl {}
+		closeImpl { }
 	}
 
 	private fun closeImpl(additionalThenHandler: () -> Unit) {
@@ -218,46 +212,5 @@ class ProjectManagementService(
 				}
 			)
 		}
-	}
-
-	fun export(uuid: UUID, outputPath: String) {
-		libraryService.exportLibrary(uuid, outputPath)
-	}
-
-	fun import(inputPath: String, replaceIfUuidExists: Boolean): ProjectImportResult {
-		lateinit var library: Library
-
-		try {
-			library = libraryService.importLibrary(inputPath)
-		} catch (e: LibraryImportConflictException) {
-			if (replaceIfUuidExists) {
-				deleteImpl(e.uuid)
-				try {
-					library = libraryService.importLibrary(inputPath)
-				} catch (e: Throwable) {
-					return ProjectImportResult.Invalid
-				}
-			} else {
-				return ProjectImportResult.UuidAlreadyExists
-			}
-		} catch (e: Throwable) {
-			return ProjectImportResult.Invalid
-		}
-
-		if (exists(library.name.translation)) {
-			LOG.trace("Name of imported project already exists")
-			libraryService.purgeLibrary(library.uuid)
-			return ProjectImportResult.NameAlreadyExists
-		}
-
-		if (!libraryManagementService.contains((library as Project).importedLibrary!!)) {
-			LOG.trace("Library for imported project doesn't exist")
-			libraryService.purgeLibrary(library.uuid)
-			return ProjectImportResult.StaleLibraryReference
-		}
-
-		projectDictionaryService.add(library)
-
-		return ProjectImportResult.Success
 	}
 }

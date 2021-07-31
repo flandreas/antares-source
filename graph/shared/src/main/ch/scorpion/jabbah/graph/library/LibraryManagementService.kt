@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.io.StorableCloner
 
-
 /**
  * Posted on [EventBus] when a [Library] is to be opened and is to replace the currently open [Library].
  * Subscribers for this event can raise their veto, such as the application class that keeps track of
@@ -31,24 +30,31 @@ data class LibraryCreatedEvent(val library: Library)
  */
 class LibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
-	private val libraryService: LibraryService = LibraryModule.libraryService,
+	libraryService: LibraryService = LibraryModule.libraryService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
-	private val eventBus: EventBus = BaseModule.eventBus
-) {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(LibraryManagementService::class)
 	}
 
+
+	/** ---- [AbstractLibraryManagementService] */
+
+	/** Always `false`, because [Library] doesn't (yet) reference other [Libraries][Library]*/
+	override fun hasStaleImportReferences(library: Library): Boolean = false
+
+	override fun existsName(name: TranslatableText, except: UUID?): Boolean
+		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
+
+	/** ---- [LibraryManagementService] */
+
 	private fun isSystemLibrary(uuid: UUID): Boolean {
 		return systemDictionaryService.contains(uuid)
 	}
-
-	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
-	fun existsName(name: TranslatableText, except: UUID? = null): Boolean
-		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
 
 	/** Determines whether [uuid] exists as the [UUID] of either a user or a system [Library]. */
 	fun contains(uuid: UUID): Boolean
@@ -147,8 +153,7 @@ class LibraryManagementService(
 		if (libraryHolder.library.uuid == uuid) {
 			throw IllegalArgumentException("illegal attempt to delete the currently open library $uuid")
 		}
-		libraryService.deleteLibrary(uuid)
-		userDictionaryService.remove(uuid)
+		deleteImpl(uuid)
 	}
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

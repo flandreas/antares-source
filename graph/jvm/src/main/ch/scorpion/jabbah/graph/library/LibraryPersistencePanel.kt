@@ -17,6 +17,7 @@ import java.awt.Dimension
 import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.io.File
 import javax.swing.*
 
 /** An [Action] that opens a dialog containing [LibraryPersistencePanel].*/
@@ -33,11 +34,11 @@ class ShowLibrariesDialogAction(private val parent: JFrame) : AbstractApplicatio
  * Displays a list of all existing [Libraries][Library] and allows the user to manage them.
  */
 class LibraryPersistencePanel(
-	private val service: LibraryManagementService = LibraryModule.libraryManagementService,
+	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userHolder: UserHolder = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : JPanel() {
+) : AbstractLibraryPersistencePanel(managementService, "library") {
 
 	companion object {
 
@@ -60,7 +61,36 @@ class LibraryPersistencePanel(
 	private val deleteAction = DeleteAction()
 	val openButton = createButton(openAction)
 
-	private val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+	override val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+
+	override fun getExportSuccessMsg(entry: LibraryDictionaryEntry): String =
+		Translations.getString("library.dialog.export.success.msg", entry.name.value)
+
+	override fun getImportSuccessMsg(name: String): String =
+		Translations.getString("library.dialog.import.success.msg", name)
+
+	override fun getAlreadyExistsMsg(name: String): String =
+		Translations.getString("library.dialog.import.alreadyExists.msg", name)
+
+	override fun getInvalidMsg(name: String): String =
+		Translations.getString("library.dialog.import.invalid.msg", name)
+
+	override fun getStaleReferenceMsg(name: String): String =
+		Translations.getString("library.dialog.import.staleLibraryReference.msg", name)
+
+	override fun getUuidAlreadyExistsMsg(): String =
+		Translations.getString("library.dialog.import.uuidAlreadyExists.msg")
+
+	override val exportActionNameKey: String get() = "library.dialog.export.action"
+
+	override val importActionNameKey: String get() = "library.dialog.import.action"
+
+	override val fileExtensionFilterName: String
+		get() = Translations.getString("library.dialog.import.filter.name")
+
+	override fun refreshLibraries() {
+		libraryDictionaryEntries.model = loadLibraryDirectoryEntries()
+	}
 
 	init {
 		libraryDictionaryEntries.addListSelectionListener {
@@ -119,6 +149,9 @@ class LibraryPersistencePanel(
 		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(deleteAction))
 		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(createButton(importAction))
+		buttonPanel.add(Box.createHorizontalStrut(9))
 
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(createButton(CancelAction()))
@@ -137,7 +170,7 @@ class LibraryPersistencePanel(
 
 	private fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
 		val list = DefaultListModel<LibraryDictionaryEntry>()
-		service.getLibraryDirectoryEntries().forEach { list.addElement(it) }
+		managementService.getLibraryDirectoryEntries().forEach { list.addElement(it) }
 		return list
 	}
 
@@ -150,6 +183,8 @@ class LibraryPersistencePanel(
 			!libraryDictionaryEntries.isSelectionEmpty
 			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
 			&& !isReadonly(libraryDictionaryEntries.selectedValue)
+
+		exportAction.enabled = !libraryDictionaryEntries.isSelectionEmpty
 	}
 
 	private fun updateDescription() {
@@ -161,7 +196,7 @@ class LibraryPersistencePanel(
 			selectedLibrary?.let {
 				LOG.debug("open library '${it.uuid}'")
 				InvocationHandler.invoke {
-					service.open(it.uuid)
+					managementService.open(it.uuid)
 					closeHandler.invoke()
 				}
 			}
@@ -183,7 +218,7 @@ class LibraryPersistencePanel(
 			var info: CreateLibraryPanel.CreateLibraryInfo
 
 			while(true) {
-				info = CreateLibraryPanel.showAsDialog(parent = parent, service = service) ?: return
+				info = CreateLibraryPanel.showAsDialog(parent = parent, service = managementService) ?: return
 
 				if (info.name.isEmpty) {
 					if (JOptionPane.showConfirmDialog(
@@ -195,7 +230,7 @@ class LibraryPersistencePanel(
 					) {
 						return
 					}
-				} else if (service.existsName(info.name)) {
+				} else if (managementService.existsName(info.name)) {
 					if (JOptionPane.showConfirmDialog(
 						parent,
 						Translations.getString("library.duplicate.msg", info.name.getTranslation()),
@@ -212,7 +247,7 @@ class LibraryPersistencePanel(
 
 			LOG.debug("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
-				service.open(service.create(LibraryProperties(info.name), info.templateUuid))
+				managementService.open(managementService.create(LibraryProperties(info.name), info.templateUuid))
 				closeHandler.invoke()
 			}
 		}
@@ -234,7 +269,7 @@ class LibraryPersistencePanel(
 
 				LOG.trace("delete library ${it.uuid}")
 				InvocationHandler.invoke {
-					service.delete(it.uuid)
+					managementService.delete(it.uuid)
 					closeHandler.invoke()
 				}
 			}
