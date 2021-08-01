@@ -161,7 +161,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      */
     fun connectToDestination(connection: Connection<T>)
 
-	fun unconnectFromDestination()
+	fun unconnectFromDestination(lockEndpoint: Boolean = false)
 
     /** Moves the point with the specified index to a new location. */
     fun movePoint(index: Int, x: Double, y: Double)

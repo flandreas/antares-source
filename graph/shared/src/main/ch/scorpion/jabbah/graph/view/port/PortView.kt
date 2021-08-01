@@ -163,7 +163,7 @@ interface PortView<T : Any> : Drawable, Storable, SnappableX, SnappableY, Transp
 	 * However, this is an exceptional use case; normally, you should provide the [EdgeView] from which
 	 * to unconnect this [PortView].
 	 */
-	fun handleUnconnect(edgeView: EdgeView<T>?)
+	fun handleUnconnect(edgeView: EdgeView<T>?, lockEndpoint: Boolean = false)
 
 	/**
 	 * Reuse properties from another [PortView].

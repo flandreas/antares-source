@@ -150,7 +150,37 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		assertEquals(Point2D(170, 200), origEdgeView.getSegmentPoint(3))
 	}
 
-	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {
-		return TestVerticeView(loc = Point2D(x, y), inputDirection = dir, portViewLength = 20)
+	/** Regression test for GitHub issue #213.*/
+	@Test
+	fun shouldNotDistortLayoutWhenSplittingUpwards() {
+		val v1 = builder.addVerticeView(createVerticeView(100, 300, Direction.EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.SOUTH))
+		val v3 = builder.addVerticeView(createVerticeView(200, 100, Direction.SOUTH))
+		val v4 = builder.addVerticeView(createVerticeView(200, 0, Direction.SOUTH))
+		val ev12 = builder.connect(v1, v2)
+		val ev13 = builder.split(ev12, 0, Point2D(150, 300), v3)
+
+		assertEquals(4, ev13.newEdgeView.segmentPointCount)
+		assertEquals(Point2D(150, 300), ev13.newEdgeView.polyline.getPointAt(0))
+		assertEquals(Point2D(150, 200), ev13.newEdgeView.polyline.getPointAt(1))
+		assertEquals(Point2D(200, 200), ev13.newEdgeView.polyline.getPointAt(2))
+		assertEquals(Point2D(200, 100), ev13.newEdgeView.polyline.getPointAt(3))
+
+		val ev14 = builder.split(ev13.newEdgeView, 0, Point2D(150, 200), v4)
+
+		// Layout of previous EdgeView
+		assertEquals(2, ev13.newEdgeView.polyline.pointsCount)
+		assertEquals(Point2D(150, 300), ev13.newEdgeView.polyline.getPointAt(0))
+		assertEquals(Point2D(150, 200), ev13.newEdgeView.polyline.getPointAt(1))
+
+		// Layout of new EdgeView
+		assertEquals(4, ev14.newEdgeView.segmentPointCount)
+		assertEquals(Point2D(150, 200), ev14.newEdgeView.polyline.getPointAt(0))
+		assertEquals(Point2D(150, 100), ev14.newEdgeView.polyline.getPointAt(1))
+		assertEquals(Point2D(200, 100), ev14.newEdgeView.polyline.getPointAt(2))
+		assertEquals(Point2D(200, 0), ev14.newEdgeView.polyline.getPointAt(3))
 	}
+
+	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView =
+		TestVerticeView(loc = Point2D(x, y), inputDirection = dir, portViewLength = 20)
 }

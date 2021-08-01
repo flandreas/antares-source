@@ -227,7 +227,7 @@ open class NodeViewImpl<T : Any>(
 		// empty
 	}
 
-	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean) {
 		// empty
 	}
 

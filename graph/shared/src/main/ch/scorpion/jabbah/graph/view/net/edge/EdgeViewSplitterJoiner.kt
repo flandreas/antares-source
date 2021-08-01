@@ -40,8 +40,7 @@ object EdgeViewSplitterJoiner {
 		tail.isArrow = edgeView.isArrow
 
 		val oldDestination = edgeView.destination
-
-		edgeView.unconnectFromDestination()
+		edgeView.unconnectFromDestination(lockEndpoint = true)
 
 		if (oldDestination != null) {
 			tail.connectToDestination(oldDestination)

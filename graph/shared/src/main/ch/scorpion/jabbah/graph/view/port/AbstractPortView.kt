@@ -174,11 +174,11 @@ abstract class AbstractPortView<T : Any>(
 		update()
 	}
 
-	override fun handleUnconnect(edgeView: EdgeView<T>?) {
+	override fun handleUnconnect(edgeView: EdgeView<T>?, lockEndpoint: Boolean) {
 		invalidate()
 		edgeViewWidth = 0
 		length = unconnectedLength
-		if (edgeView != null) {
+		if (edgeView != null && !lockEndpoint) {
 			val connectionPoint = owner!!.getPortConnectionPoint(port)
 			if (edgeView.origin?.port === port) {
 				edgeView.moveOriginEndPoint(connectionPoint.x, connectionPoint.y)

@@ -300,10 +300,10 @@ open class EdgeViewImpl<T : Any>(
 		styling.updateBoundingBox()
 	}
 
-	override fun unconnectFromDestination() {
+	override fun unconnectFromDestination(lockEndpoint: Boolean) {
 		destination?.let {
 			it.connectableView.removeDrawableListener(layout)
-			it.connectableView.handleUnconnect(this, it.port)
+			it.connectableView.handleUnconnect(this, it.port, lockEndpoint)
 		}
 		destination = null
 	}

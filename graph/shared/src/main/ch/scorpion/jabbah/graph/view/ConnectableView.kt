@@ -62,7 +62,7 @@ interface ConnectableView : Drawable, Storable {
      * @param edgeView the [EdgeView] that has unconnected
      * @param port the [Port] from which the [Net] of the [EdgeView] has been disconnected
      */
-    fun <G: Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?)
+    fun <G: Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean = false)
 
     /**
      * Notified this [ConnectableView] that the width of its connected [EdgeView]s has changed.

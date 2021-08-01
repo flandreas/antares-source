@@ -185,11 +185,11 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean) {
 		if (port != null) {
 			getPortView(port)?.let {
 				invalidate()
-				it.handleUnconnect(edgeView)
+				it.handleUnconnect(edgeView, lockEndpoint)
 				invalidate()
 			}
 		}

@@ -147,8 +147,8 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 		updateBoxes()
 	}
 
-	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
-		super.handleUnconnect(edgeView, port)
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean) {
+		super.handleUnconnect(edgeView, port, lockEndpoint)
 		updateBoxes()
 	}
 
