@@ -10,6 +10,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Snappable
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.model.Net
@@ -58,6 +61,12 @@ open class NodeViewImpl<T : Any>(
 			field = value
 			updateGeometry()
 		}
+
+	/** ---- [Snappable] interface */
+
+	override val snappableX: Array<SnappableX> get() = emptyArray()
+
+	override val snappableY: Array<SnappableY> get() = emptyArray()
 
 	/** ---- [NetViewElement] interface */
 
