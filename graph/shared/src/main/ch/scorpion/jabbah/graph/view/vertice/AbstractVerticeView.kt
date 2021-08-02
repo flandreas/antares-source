@@ -239,7 +239,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 	override val snappableX: Array<SnappableX>
 		get() {
 			val list = mutableListOf<SnappableX>()
-			list.add(SnappableXCoordinate(location.x))
 			getPortViews()
 				.filter { !it.port.isConnected }
 				.forEach { list.add(it) }
@@ -249,7 +248,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 	override val snappableY: Array<SnappableY>
 		get() {
 			val list = mutableListOf<SnappableY>()
-			list.add(SnappableYCoordinate(location.y))
 			getPortViews()
 				.filter { !it.port.isConnected }
 				.forEach { list.add(it) }

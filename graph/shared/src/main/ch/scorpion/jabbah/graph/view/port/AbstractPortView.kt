@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.io.*
+import kotlin.math.sign
 
 /**
  * A [PortView] that draws a line that points to one of the four [Direction]s.
@@ -209,30 +210,44 @@ abstract class AbstractPortView<T : Any>(
 	/** Delegate to owner to apply translation and rotation.*/
 	override val x: Double get() = owner!!.getPortConnectionPoint(port).x
 
-	override fun accept(other: SnappableX): Boolean {
-		return other is PortView<*>
-			&& relativeDirection.isVertical()
-			&& relativeDirection == other.relativeDirection.opposite()
+	override fun accept(other: SnappableX): Boolean =
+		other is PortView<*>
+			&& (isVerticallyPointingTowardsCompatible(other) || isVerticallyAlignedWithAlike(other))
+
+	private fun isVerticallyPointingTowardsCompatible(other: PortView<*>): Boolean =
+		relativeDirection.isVertical()
 			&& port.portType.isCompatibleWith(other.port.portType)
-	}
+			&& relativeDirection == other.relativeDirection.opposite()
+			&& sign(other.y - y).toInt() == relativeDirection.dy
+
+	private fun isVerticallyAlignedWithAlike(other: PortView<*>): Boolean =
+		relativeDirection.isHorizontal()
+			&& relativeDirection == other.relativeDirection
+			&& x == other.x
 
 	/** ---- [SnappableY] interface */
 
 	/** Delegate to owner to apply translation and rotation.*/
 	override val y: Double get() = owner!!.getPortConnectionPoint(port).y
 
-	override fun accept(other: SnappableY): Boolean {
-		return other is PortView<*>
-			&& relativeDirection.isHorizontal()
-			&& relativeDirection == other.relativeDirection.opposite()
+	override fun accept(other: SnappableY): Boolean =
+		other is PortView<*>
+			&& (isHorizontallyPointingTowardsCompatible(other) || isHorizontallyAlignedWithAlike(other))
+
+	private fun isHorizontallyPointingTowardsCompatible(other: PortView<*>): Boolean =
+		relativeDirection.isHorizontal()
 			&& port.portType.isCompatibleWith(other.port.portType)
-	}
+			&& relativeDirection == other.relativeDirection.opposite()
+			&& sign(other.x - x).toInt() == relativeDirection.dx
+
+	private fun isHorizontallyAlignedWithAlike(other: PortView<*>): Boolean =
+		relativeDirection.isVertical()
+			&& relativeDirection == other.relativeDirection
+			&& y == other.y
 
 	/** ---- [Any] */
 
-	override fun toString(): String {
-		return "${super.toString()} for Port $port"
-	}
+	override fun toString(): String = "${super.toString()} for Port $port"
 
 	/** ---- [Drawable] interface */
 
