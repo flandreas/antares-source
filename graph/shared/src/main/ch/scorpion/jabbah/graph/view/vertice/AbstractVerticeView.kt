@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -18,7 +17,10 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Snappable
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -216,6 +218,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 		return rotate(getPortView(port!!)!!.connectionPoint.add(location))
 	}
 
+	override fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D {
+		return rotate(getPortView(port)!!.unconnectedConnectionPoint.add(location))
+	}
+
 	override fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, port: Port<*>?, refPoint: Point2D?): Set<Direction> {
 		if (port != null) {
 			return setOf(rotate(getPortView(port)!!.direction))
@@ -236,27 +242,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Snappable] interface */
 
-	override val snappableX: Array<SnappableX>
-		get() {
-			val list = mutableListOf<SnappableX>()
-			getPortViews()
-				.filter { !it.port.isConnected }
-				.forEach { list.add(it) }
-			return list.toTypedArray()
-		}
+	override val snappableX: Array<SnappableX> get() = getPortViews().toTypedArray()
 
-	override val snappableY: Array<SnappableY>
-		get() {
-			val list = mutableListOf<SnappableY>()
-			getPortViews()
-				.filter { !it.port.isConnected }
-				.forEach { list.add(it) }
-			return list.toTypedArray()
-		}
-
-	private fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D {
-		return rotate(getPortView(port)!!.unconnectedConnectionPoint.add(location))
-	}
+	override val snappableY: Array<SnappableY> get() = getPortViews().toTypedArray()
 
 	/** ---- [Drawable] */
 

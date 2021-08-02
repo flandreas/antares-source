@@ -29,6 +29,8 @@ interface ConnectableView : Drawable, Storable {
      */
     fun getPortConnectionPoint(port: Port<*>?): Point2D
 
+    fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D
+
     /**
      * Returns the [Direction]s in which [EdgeView]s could leave the specified [Port].
      * @param edgeView the [EdgeView] being laid out

@@ -208,7 +208,7 @@ abstract class AbstractPortView<T : Any>(
 	/** ---- [SnappableX] interface */
 
 	/** Delegate to owner to apply translation and rotation.*/
-	override val x: Double get() = owner!!.getPortConnectionPoint(port).x
+	override val x: Double get() = owner!!.getUnconnectedPortConnectionPoint(port).x
 
 	override fun accept(other: SnappableX): Boolean =
 		other is PortView<*>
@@ -228,7 +228,7 @@ abstract class AbstractPortView<T : Any>(
 	/** ---- [SnappableY] interface */
 
 	/** Delegate to owner to apply translation and rotation.*/
-	override val y: Double get() = owner!!.getPortConnectionPoint(port).y
+	override val y: Double get() = owner!!.getUnconnectedPortConnectionPoint(port).y
 
 	override fun accept(other: SnappableY): Boolean =
 		other is PortView<*>

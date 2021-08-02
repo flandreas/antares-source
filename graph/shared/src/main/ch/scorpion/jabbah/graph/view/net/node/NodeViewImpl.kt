@@ -183,9 +183,9 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [ConnectableView] */
 
-	override fun getPortConnectionPoint(port: Port<*>?): Point2D {
-		return location
-	}
+	override fun getPortConnectionPoint(port: Port<*>?): Point2D = location
+
+	override fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D = location
 
 	override fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, port: Port<*>?, refPoint: Point2D?): Set<Direction> {
 		if (refPoint == null) {
