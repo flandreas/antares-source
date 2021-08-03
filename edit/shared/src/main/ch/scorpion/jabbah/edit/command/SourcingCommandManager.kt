@@ -55,6 +55,9 @@ class SourcingCommandManager(
 
 	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
 
+	private val maxSnapshotSizeReached: Boolean get() =
+		!state.snapshots.empty && state.snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot
+
 	private lateinit var undoableDataHolder: UndoableDataHolder
 
 	private val states = Stack<State>()
@@ -372,7 +375,10 @@ class SourcingCommandManager(
 	 * the [Snapshot] where a new [Command] can be added.
 	 */
 	private fun addableSnapshot(): Snapshot {
-		if (state.snapshots.empty || state.snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot) {
+		if (state.snapshots.empty || maxSnapshotSizeReached) {
+			if (maxSnapshotSizeReached) {
+				LOG.debug("Max snapshot size reached. Create new snapshot.")
+			}
 			addSnapshot()
 		}
 		return state.snapshots.peek()
