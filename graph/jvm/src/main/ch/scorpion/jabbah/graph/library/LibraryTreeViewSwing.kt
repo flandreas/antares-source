@@ -1,8 +1,11 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.PROP_BEGINNER_HELP_TOOLTIP
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
@@ -26,6 +29,8 @@ class LibraryTreeViewSwing(
 		private val LOG by logger(LibraryTreeViewSwing::class)
 	}
 
+	private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
+
 	val actions = LibraryTreeViewActionsSwing(controller, controller.type, application)
 
 	init {
@@ -46,9 +51,13 @@ class LibraryTreeViewSwing(
 		showsRootHandles = true
 
 		expandRow(0)
+
+		ToolTipManager.sharedInstance().registerComponent(this)
 	}
 
-	override fun dispose() { }
+	override fun dispose() {
+		ToolTipManager.sharedInstance().unregisterComponent(this)
+	}
 
 	/** ---- [LibraryTreeView] interface */
 
@@ -221,12 +230,19 @@ class LibraryTreeViewSwing(
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+			component.toolTipText = null
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath
 				component.font = this@LibraryTreeViewSwing.font
 				if (StringUtils.isNotEmpty(iconPath)) {
 					component.icon = getIcon(iconPath!!)
+					if (showBeginnerTips) {
+						component.toolTipText = Translations.getString("library.action.baseElement.tip")
+					}
 				} else if (value.userObject is ContainerLibraryElement) {
+					if (showBeginnerTips) {
+						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
+					}
 					component.icon = containerLibElemIcon
 					if (controller.isCurrentElement(value.userObject as ContainerLibraryElement)) {
 						component.icon = currentContainerLibElemIcon
