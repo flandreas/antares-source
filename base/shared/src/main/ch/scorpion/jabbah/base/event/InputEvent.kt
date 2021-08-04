@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.base.event
 
 /** These masks are the same as in the corresponding JDK class.*/
-const val SHIFT_MASK = 1.shl(6)
-const val CTRL_MASK = 1.shl(7)
-const val META_MASK = 1.shl(8)
-const val ALT_MASK = 1.shl(9)
-const val ALT_GRAPH_MASK = 1.shl(13)
+enum class Modifier(val label: String, val mask: Int) {
+	Shift("Shift", 1.shl(6)),
+	Ctrl("Ctrl", 1.shl(7)),
+	Meta("Meta", 1.shl(8)),
+	Alt("Alt", 1.shl(9)),
+	AltGraph("AltGr", 1.shl(13))
+}
 
 /**
  * Abstract cross-platform base class of events that indicate a user input.
@@ -21,17 +23,19 @@ interface InputEvent  {
     /** The state of the modified mask at the time the [InputEvent] was fired.*/
     val modifiers: Int
 
-    val isAltDown: Boolean get() = (modifiers and ALT_MASK) != 0
+    val isAltDown: Boolean get() = (modifiers and Modifier.Alt.mask) != 0
 
-    val isControlDown: Boolean get() = (modifiers and CTRL_MASK) != 0
+    val isControlDown: Boolean get() = (modifiers and Modifier.Ctrl.mask) != 0
 
-    val isShiftDown: Boolean get() = (modifiers and SHIFT_MASK) != 0
+    val isShiftDown: Boolean get() = (modifiers and Modifier.Shift.mask) != 0
 
-    val isCtrlDown: Boolean get() = (modifiers and CTRL_MASK) != 0
+    val isCtrlDown: Boolean get() = (modifiers and Modifier.Ctrl.mask) != 0
 
-    val isAltGraphDown: Boolean get() = (modifiers and ALT_GRAPH_MASK) != 0
+    val isAltGraphDown: Boolean get() = (modifiers and Modifier.AltGraph.mask) != 0
 
-    val isMetaDown: Boolean get() = (modifiers and META_MASK) != 0
+    val isMetaDown: Boolean get() = (modifiers and Modifier.Meta.mask) != 0
+
+	fun hasModifier(modifier: Modifier): Boolean = (modifiers and modifier.mask) != 0
 
     fun consume()
 

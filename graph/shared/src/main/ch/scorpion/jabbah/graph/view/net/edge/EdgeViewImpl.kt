@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
@@ -85,6 +86,8 @@ open class EdgeViewImpl<T : Any>(
 
 	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 		private set
+
+	private val tooltip = resettableLazy { createTooltip() }
 
 	init {
 		modelExchanged(null)
@@ -579,15 +582,7 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		return if (net!!.designError != null) {
-			Tooltip(StyledTextBuilder().append(net!!.designError!!.description).build(), x, y)
-		} else if (StringUtils.isNotEmpty(net!!.description.value)) {
-			Tooltip(StyledTextBuilder().append(net!!.description.value!!).build(), x, y)
-		} else {
-			super.getTooltip(x, y)
-		}
-	}
+	override fun getTooltip(x: Double, y: Double): Tooltip? = tooltip.value?.also { it.location = Point2D(x, y) }
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
@@ -740,6 +735,15 @@ open class EdgeViewImpl<T : Any>(
 
 	private data class VerticeViewRef(val verticeViewId: Int, val portId: Int?)
 
+	/** ---- [AbstractGraphElementView] */
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.signalHandler != null) {
+			tooltip.reset()
+		}
+	}
+
 	/** ---- [Component] interface */
 
 	override val type: String get() = TYPE
@@ -773,4 +777,28 @@ open class EdgeViewImpl<T : Any>(
 	 */
 	private fun checkDestinationSegmentLength(): Boolean =
 		destination?.port == null || polyline.getSegmentLength(polyline.pointsCount - 2) >= destination!!.portView!!.minSegmentLength
+
+	private fun createTooltip(): Tooltip? {
+		if (model.designError != null) {
+			return Tooltip(StyledTextBuilder().append(model.designError!!.description).build(), Point2D.ZERO)
+		}
+
+		val text = StyledTextBuilder()
+		if (StringUtils.isNotEmpty(model.description.value)) {
+			text.append(model.description.value!!)
+		}
+
+		if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
+			if (text.notEmpty) {
+				text.appendLine().appendLine()
+			}
+			text.append(Translations.getString("graph.action.splitEdgeView.tip", EdgeToPortConnector.SPLIT_EDGE_VIEW_MODIFIER.label))
+		}
+
+		return if (text.empty) {
+			null
+		} else {
+			Tooltip(text.build(), Point2D.ZERO)
+		}
+	}
 }

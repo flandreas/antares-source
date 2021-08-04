@@ -1,27 +1,26 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.EditorToolDriver
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -75,8 +74,8 @@ class UndoSplitEdgeViewIntegrationTest {
 		assertEquals(1, builder.graphView.getEdgeViews().size)
 
 		// Split to v4
-		driver.mouseMoveTo(150, 100, modifiers = ALT_MASK)
-		driver.pressMouseAt(150, 100, modifiers = ALT_MASK)
+		driver.mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
+		driver.pressMouseAt(150, 100, modifiers = Modifier.Alt.mask)
 		driver.dragMouseTo(190, 200)
 		driver.releaseMouseAt(190, 200)
 		assertEquals(3, builder.graphView.getEdgeViews().size)

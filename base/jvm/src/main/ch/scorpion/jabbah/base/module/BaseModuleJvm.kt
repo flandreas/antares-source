@@ -58,6 +58,12 @@ object BaseModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
 
+		// Needs restart because ToolTips are usually cached
+		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
+			id = PROP_BEGINNER_HELP_TOOLTIP,
+			nameKey = "base.preferences.beginnerTooltips",
+			needsRestart = true))
+
 		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
 			id = InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR,
 			nameKey = "base.preferences.showUnexpectedErrors"))

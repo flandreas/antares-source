@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
@@ -29,6 +30,7 @@ class EdgeToPortConnector(
 ) {
 
 	companion object {
+		val SPLIT_EDGE_VIEW_MODIFIER = Modifier.Alt
 		private val LOG by logger(EdgeToPortConnector::class)
 	}
 

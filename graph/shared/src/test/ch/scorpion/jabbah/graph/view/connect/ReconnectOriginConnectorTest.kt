@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
@@ -35,7 +35,7 @@ class ReconnectOriginConnectorTest
 	}
 
 	private fun reconnect() {
-		mouseMoveTo(115, 100, modifiers = ALT_MASK)
+		mouseMoveTo(115, 100, modifiers = Modifier.Alt.mask)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
@@ -99,7 +99,7 @@ class ReconnectOriginConnectorTest
 	}
 
 	private fun reconnectOpenEnded() {
-		mouseMoveTo(115, 100, modifiers = ALT_MASK)
+		mouseMoveTo(115, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(115, 100)
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)

@@ -354,16 +354,16 @@ private class MouseEventJs(
 	private fun convertModifiers(): Int {
 		var modifiers = 0
 		if (event.shiftKey) {
-			modifiers = modifiers or SHIFT_MASK
+			modifiers = modifiers or Modifier.Shift.mask
 		}
 		if (event.ctrlKey) {
-			modifiers = modifiers or CTRL_MASK
+			modifiers = modifiers or Modifier.Ctrl.mask
 		}
 		if (event.metaKey) {
-			modifiers = modifiers or META_MASK
+			modifiers = modifiers or Modifier.Meta.mask
 		}
 		if (event.altKey) {
-			modifiers = modifiers or ALT_MASK
+			modifiers = modifiers or Modifier.Alt.mask
 		}
 
 		return modifiers
@@ -448,16 +448,16 @@ private class KeyEventJs(
 	private fun convertModifiers(): Int {
 		var modifiers = 0
 		if (event.shiftKey) {
-			modifiers = modifiers or SHIFT_MASK
+			modifiers = modifiers or Modifier.Shift.mask
 		}
 		if (event.ctrlKey) {
-			modifiers = modifiers or CTRL_MASK
+			modifiers = modifiers or Modifier.Ctrl.mask
 		}
 		if (event.metaKey) {
-			modifiers = modifiers or META_MASK
+			modifiers = modifiers or Modifier.Meta.mask
 		}
 		if (event.altKey) {
-			modifiers = modifiers or ALT_MASK
+			modifiers = modifiers or Modifier.Alt.mask
 		}
 
 		return modifiers

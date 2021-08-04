@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 
 /**
  * Represents the supported types for laying out the segments of an [EdgeView].
@@ -111,7 +112,7 @@ enum class LayoutType(override val customName: String, inputEventHandler: EdgeVi
 			if (edgeView.origin == null && edgeView.originEndpointView.contains(context.x, context.y)) {
 				return edgeView.originEndpointView.getInputEventHandler(context)
 			}
-			if (context.mouseEvent?.isAltDown == true) {
+			if (context.mouseEvent?.hasModifier(EdgeToPortConnector.SPLIT_EDGE_VIEW_MODIFIER) == true) {
 				edgeView.edgeToPortConnectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
 				return edgeView.edgeToPortConnectorSupplier.invoke().handler as InputEventHandler<T>
 			}

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -211,7 +211,7 @@ class InputToOutputOrEdgeConnectorTest
 
 	private fun adjustToPortView() {
 		mouseMoveTo(190, 100)
-		clickMouseAt(190, 100, modifiers = ALT_MASK)
+		clickMouseAt(190, 100, modifiers = Modifier.Alt.mask)
 
 		mouseMoveTo(160, 200)
 		clickMouseAt(160, 200)
@@ -270,7 +270,7 @@ class InputToOutputOrEdgeConnectorTest
 	@Test
 	fun shouldCancelAdjustmentWithEscapePressed() {
 		mouseMoveTo(190, 100)
-		clickMouseAt(190, 100, modifiers = ALT_MASK)
+		clickMouseAt(190, 100, modifiers = Modifier.Alt.mask)
 
 		mouseMoveTo(160, 200)
 		clickMouseAt(160, 200)
@@ -300,7 +300,7 @@ class InputToOutputOrEdgeConnectorTest
 		editor.commandManager.reset()
 
 		mouseMoveTo(190, 200)
-		clickMouseAt(190, 200, modifiers = ALT_MASK)
+		clickMouseAt(190, 200, modifiers = Modifier.Alt.mask)
 
 		mouseMoveTo(150, 200)
 		clickMouseAt(150, 200)

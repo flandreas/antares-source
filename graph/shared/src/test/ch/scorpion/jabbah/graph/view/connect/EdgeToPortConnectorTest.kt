@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.StateMachine
@@ -55,7 +55,7 @@ class EdgeToPortConnectorTest
 	}
 
 	private fun shouldConnectToPortViewImpl() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
@@ -84,7 +84,7 @@ class EdgeToPortConnectorTest
 		)
 		builder.addVerticeView(vv4)
 
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		dragMouseTo(230, 300)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
@@ -112,7 +112,7 @@ class EdgeToPortConnectorTest
 		val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 300))
 		val ev = builder.connectInputOpen(v3, Point2D(150, 200))
 
-		mouseMoveTo(170, 200, modifiers = ALT_MASK)
+		mouseMoveTo(170, 200, modifiers = Modifier.Alt.mask)
 		pressMouseAt(170, 200)
 		dragMouseTo(130, 300)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
@@ -129,7 +129,7 @@ class EdgeToPortConnectorTest
 	 */
 	@Test
 	fun shouldConnectWithInterferingKeyPressedEvents() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressAlt()
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
@@ -157,7 +157,7 @@ class EdgeToPortConnectorTest
 
 	@Test
 	fun shouldUndoConnectToPortView() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		dragMouseTo(190, 200)
 		releaseMouseAt(190, 200)
@@ -184,7 +184,7 @@ class EdgeToPortConnectorTest
 
 	@Test
 	fun shouldRedoConnectToPortView() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		dragMouseTo(190, 200)
 		releaseMouseAt(190, 200)
@@ -203,7 +203,7 @@ class EdgeToPortConnectorTest
 	}
 
 	private fun connectOpenEnded() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)
@@ -246,7 +246,7 @@ class EdgeToPortConnectorTest
 
 	@Test
 	fun shouldCancelReleaseAtStartLocation() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		releaseMouseAt(150, 100)
 
@@ -263,7 +263,7 @@ class EdgeToPortConnectorTest
 		v3.moveBy(offset.x, offset.y)
 		EditModule.drawingAppService.move(listOf(v3), offset, editor, register = true)
 
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
 		pressMouseAt(150, 100)
 		releaseMouseAt(150, 100)
 
