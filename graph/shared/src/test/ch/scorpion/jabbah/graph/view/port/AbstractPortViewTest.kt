@@ -102,7 +102,7 @@ class AbstractPortViewTest {
 	private fun portView(portType: PortType, direction: Direction, globalLocation: Point2D): TestPortView<*> {
 		val portView = TestPortView(PortImpl(portType), direction)
 		val owner = mockk<VerticeView<*>>()
-		every { owner.getPortConnectionPoint(any()) } returns globalLocation
+		every { owner.getUnconnectedPortConnectionPoint(any()) } returns globalLocation
 		every { owner.rotation } returns Rotation.R0
 		portView.owner = owner
 		return portView
