@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
@@ -108,11 +109,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-	/** ---- [Storable] interface */
+	/** ---- [Cloneable] interface */
 
-	override fun doClone(): Component {
-		return StorableCloner.clone(VerticeViewStorable(this)).verticeView!!
-	}
+	override fun doClone(): Component = StorableCloner.clone(VerticeViewStorable(this)).verticeView!!
 
 	/** ---- [Describable] */
 

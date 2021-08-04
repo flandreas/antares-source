@@ -98,6 +98,18 @@ open class EdgeViewImpl<T : Any>(
 			?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
 	}
 
+	/** ---- [Cloneable] interface */
+
+	override fun doClone(): Component {
+		val clone = super.doClone() as EdgeViewImpl<*>
+		clone.resetModel()
+		return clone
+	}
+
+	private fun resetModel() {
+		model = model.cloneEmpty()
+	}
+
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = NO_OP_ACTOR_HANDLER

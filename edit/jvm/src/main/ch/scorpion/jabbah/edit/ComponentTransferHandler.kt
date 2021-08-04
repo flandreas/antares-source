@@ -110,6 +110,7 @@ open class ComponentTransferHandler(
             (editor.view.canvas as JPanel).requestFocusInWindow()
         } catch (e: Exception) {
             LOG.error("Error in importing dropped Component: ${e.message}")
+	        throw e
         }
     }
 

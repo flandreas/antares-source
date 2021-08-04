@@ -17,57 +17,57 @@ open class InputEventDriver(
 	protected val handler: InputEventHandler<EditInputEventContext>
 ) {
 
-	protected open fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+	open fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		handler.mouseMoved(context(MouseEventType.MOVED, x, y, modifiers))
 		return this
 	}
 
-	protected fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		handler.mousePressed(context(MouseEventType.PRESSED, x, y, modifiers))
 		return this
 	}
 
-	protected fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
 		return this
 	}
 
-	protected fun doubleClickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+	fun doubleClickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers, clickCount = 2))
 		return this
 	}
 
-	protected fun dragMouseTo(x: Int, y: Int): InputEventDriver {
+	fun dragMouseTo(x: Int, y: Int): InputEventDriver {
 		handler.mouseDragged(context(MouseEventType.DRAGGED, x, y))
 		return this
 	}
 
-	protected fun releaseMouseAt(x: Int, y: Int): InputEventDriver {
+	fun releaseMouseAt(x: Int, y: Int): InputEventDriver {
 		handler.mouseReleased(context(MouseEventType.RELEASED, x, y))
 		return this
 	}
 
-	protected fun pressKey(keyCode: Int): InputEventDriver {
+	fun pressKey(keyCode: Int): InputEventDriver {
 		handler.keyPressed(context(KeyEventType.PRESSED, keyCode))
 		return this
 	}
 
-	protected fun releaseKey(keyCode: Int): InputEventDriver {
+	fun releaseKey(keyCode: Int): InputEventDriver {
 		handler.keyReleased(context(KeyEventType.RELEASED, keyCode))
 		return this
 	}
 
-	protected fun pressEscape(): InputEventDriver {
+	fun pressEscape(): InputEventDriver {
 		pressKey(KeyEvent.VK_ESCAPE)
 		return this
 	}
 
-	protected fun pressAlt(): InputEventDriver {
+	fun pressAlt(): InputEventDriver {
 		pressKey(KeyEvent.VK_ALT)
 		return this
 	}
 
-	protected fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
+	fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
 		return EditInputEventContext(
 			editor = editor,
 			mouseEvent = MouseEventImpl(type, x = x, y = y, modifiers = modifiers, clickCount = clickCount),
@@ -75,7 +75,7 @@ open class InputEventDriver(
 			y = y.toDouble())
 	}
 
-	protected fun context(type: KeyEventType, keyCode: Int): EditInputEventContext {
+	fun context(type: KeyEventType, keyCode: Int): EditInputEventContext {
 		return EditInputEventContext(editor, keyEvent = KeyEventImpl(type, key = keyCode, keyChar = ' '))
 	}
 }

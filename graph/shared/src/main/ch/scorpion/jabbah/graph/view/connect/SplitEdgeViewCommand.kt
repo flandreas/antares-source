@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Editor
@@ -41,6 +42,11 @@ class SplitEdgeViewCommand(
 
 	lateinit var result: SplitEdgeViewResult<Any>
 	lateinit var addedNewEdgeView: EdgeView<Any>
+
+	init {
+		checkArgument(newEdgeView.origin == null)
+		checkArgument(newEdgeView.destination == null)
+	}
 
 	override fun execute() {
 		LOG.trace("Execute on GraphView ${graphView.hashCode().toString(16)}")

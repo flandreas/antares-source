@@ -19,6 +19,7 @@ class DrawingViewMockBuilder {
 		every { grid.distance } returns 10.0
 		every { drawingView.grid } returns grid
 		every { drawingView.selectionManager } returns selectionManager
+		every { drawingView.editable } returns true
 	}
 
 	fun withDrawing(drawing: Drawing<*>): DrawingViewMockBuilder {
