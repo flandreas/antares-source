@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.base.event.SHIFT_MASK
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,7 +14,10 @@ import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.tool.ToolTestUtil
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class SelectionToolImplTest {
 
@@ -65,8 +68,8 @@ class SelectionToolImplTest {
 	@Test
 	fun shouldInvertSelectionWithShiftPress() {
 		toolUtil.pressMouseAt(150, 150)
-		toolUtil.pressMouseAt(350, 350, SHIFT_MASK)
-		toolUtil.pressMouseAt(350, 350, SHIFT_MASK)
+		toolUtil.pressMouseAt(350, 350, Modifier.Shift.mask)
+		toolUtil.pressMouseAt(350, 350, Modifier.Shift.mask)
 
 		assertTrue(editor.view.selectionManager.isSelected(rect1))
 		assertFalse(editor.view.selectionManager.isSelected(rect2))
@@ -75,7 +78,7 @@ class SelectionToolImplTest {
 	@Test
 	fun shouldExpandSelectionWithShiftPress() {
 		toolUtil.pressMouseAt(150, 150)
-		toolUtil.pressMouseAt(350, 350, SHIFT_MASK)
+		toolUtil.pressMouseAt(350, 350, Modifier.Shift.mask)
 
 		assertEquals(2, editor.view.selectionManager.selectionCount)
 	}
@@ -115,7 +118,7 @@ class SelectionToolImplTest {
 	@Test
 	fun shouldExpandRubberbandSelectionWithShiftPress() {
 		editor.view.selectionManager.select(rect1)
-		toolUtil.pressMouseAt(290, 290, SHIFT_MASK)
+		toolUtil.pressMouseAt(290, 290, Modifier.Shift.mask)
 		toolUtil.dragMouseTo(410, 410)
 		toolUtil.releaseMouseAt(410, 410)
 

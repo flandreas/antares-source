@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.container.DilCase
@@ -114,6 +115,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val RAM = "RAM"
 
 	private const val RANDOM = "Random"
+	private const val BIT_EXTENDER = "BitExtender"
 
 	val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
 
@@ -269,6 +271,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("powerView", PowerView::class)
 		typeMap.register("joystickView", JoystickView::class)
 		typeMap.register("realSwitchView", RealSwitchView::class)
+		typeMap.register("bitExtenderView", BitExtenderView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -324,6 +327,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BitExtenderView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.BELOW, DilCase::class) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 		factory.register(SelectionDrawingStrategy.ABOVE, DilCase::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
@@ -399,6 +403,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(RAM, "library.element.RAM", "/img/ram.png", RAMView::class)
 
 		repository.register(RANDOM, "library.element.Random", "/img/random.png", RandomView::class)
+		repository.register(BIT_EXTENDER, "library.element.BitExtender", "/img/bitextender.png", BitExtenderView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {
@@ -464,6 +469,7 @@ object AntaresViewModule : AbstractModule() {
 
 		val arithmetic = LibraryFolder(Translations.getString("library.folder.arithmetic"))
 		addLibraryItem(library, BaseLibraryElement(RANDOM), arithmetic)
+		addLibraryItem(library, BaseLibraryElement(BIT_EXTENDER), arithmetic)
 		addLibraryItem(library, arithmetic, library)
 	}
 

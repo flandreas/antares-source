@@ -22,6 +22,12 @@ interface DigitalSignal {
 
 	val color: CompositeColor
 
+	/** Returns the most significant bit. */
+	val msb: Bit get() = bitAt(bitWidth.width - 1)
+
+	/** Returns the least significant bit. */
+	val lsb: Bit get() = bitAt(0)
+
     operator fun not(): DigitalSignal
 
     /** Returns the bitwise 'and' of this [DigitalSignal] and the specified one.*/

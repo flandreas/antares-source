@@ -70,9 +70,9 @@ class InputPortNumberEditor(filter: (InputPortNumber) -> Boolean = { _ -> true }
     }
 }
 
-class BitWidthEditor : ComboBoxPropertyEditor() {
+class BitWidthEditor(filter: (BitWidth) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(BitWidth.values())
+        setAvailableValues(BitWidth.values().filter { filter(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<BitWidth>()
     }
 }

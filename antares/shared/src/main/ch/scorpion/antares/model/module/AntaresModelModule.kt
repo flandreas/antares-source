@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.model.output.LEDMatrix
@@ -81,5 +82,6 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("power", Power::class)
 		typeMap.register("joystick", Joystick::class)
 		typeMap.register("realSwitch", RealSwitch::class)
+		typeMap.register("bitExtender", BitExtender::class)
 	}
 }

@@ -108,6 +108,7 @@
           </name>
           <items>
             <baseLibraryElement _id='34' id='Random'/>
+            <baseLibraryElement _id='52' id='BitExtender'/>
           </items>
         </libraryFolder>
       </items>

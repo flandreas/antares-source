@@ -25,18 +25,16 @@ open class DigitalComponentView<T : Vertice>(
          * @param value the value in basic model grid coordinates
          * @return the transformed width in view coordinates.
          */
-        fun w(value: Int): Double {
-            return (value * Look.SCALE).toDouble()
-        }
+        fun w(value: Int): Double = (value * Look.SCALE).toDouble()
+	    fun w(value: Double): Double = value * Look.SCALE
 
         /**
          * Transforms a height in basic model grid coordinates to view coordinates.
          * @param value the value in basic model grid coordinates
          * @return the transformed height in view coordinates.
          */
-        fun h(value: Int): Double {
-            return (value * Look.SCALE).toDouble()
-        }
+        fun h(value: Int): Double = (value * Look.SCALE).toDouble()
+	    fun h(value: Double): Double = value * Look.SCALE
     }
 
 	protected val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor

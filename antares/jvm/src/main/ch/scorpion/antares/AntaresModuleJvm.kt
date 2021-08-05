@@ -164,7 +164,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
-		registry.registerEditor(BitWidth::class.java, BitWidthEditor::class.java)
+		registry.register(BitWidth::class.java) { BitWidthEditor((it as CommandPropertySwing<BitWidth>).filter )}
 		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)

@@ -180,6 +180,7 @@
           </name>
           <items>
             <baseLibraryElement _id='65' id='Random'/>
+            <baseLibraryElement _id='111' id='BitExtender'/>
             <containerLibraryElement _id='66' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
               <name>
                 <translation lang='en' text='Half Adder'/>

@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.graph.model.PortType
 
 object AntaresProperties {
 
-	fun bitWidth(): CommandPropertySwing<BitWidth> =
-		CommandPropertySwing("bitWidth", BitWidth.BASE_KEY, BitWidth::class.java, componentBeanProvider)
+	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY): CommandPropertySwing<BitWidth> =
+		CommandPropertySwing(name, baseKey, BitWidth::class.java, componentBeanProvider)
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
 		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)
