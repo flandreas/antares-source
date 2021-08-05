@@ -138,6 +138,8 @@ interface DrawingViewContent<T : Drawing<*>> {
 	/** Determines whether this [DrawingView] shows a [SelectionModel] for the specified [Component].*/
 	fun hasSelectionModelFor(component: Component): Boolean
 
+	fun getReplacingSelectionModel(component: Component): SelectionModel<Component>?
+
 	/** Returns the [DrawableContainer] that contains the zoomable [SelectionModel]s of the specified [SelectionDrawingStrategy].*/
 	fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>?
 

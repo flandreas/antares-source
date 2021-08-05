@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -173,6 +172,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
     /** ---- [DrawingViewImpl] */
 
     private fun setupContent() {
+	    // The DrawableContainer for REPLACE is expected to be invisible, because its SelectionModels are
+	    // drawn by DrawingDrawer instead of the DrawableContainer. It must still be added to the View
+	    // to avoid repainting issues (invalid regions would be wrong)
         super.addDrawable(ghostContainer)
         super.addDrawable(animationContainer)
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
@@ -218,8 +220,16 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	        content.highlighter.getHighlightFor(drawable)?.draw(context)
 
-	        if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
-		        drawable.draw(context)
+	        if (selectionManager.isSelected(drawable)) {
+	        	val replacingSelectionModel = content.getReplacingSelectionModel(drawable)
+		        if (replacingSelectionModel != null) {
+		        	replacingSelectionModel.draw(context)
+		        } else {
+		        	drawable.draw(context)
+		        }
+
+	        } else {
+	        	drawable.draw(context)
 	        }
 
 	        nextProcessor(context, drawable)

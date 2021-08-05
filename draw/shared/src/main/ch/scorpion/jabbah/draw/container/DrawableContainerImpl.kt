@@ -20,8 +20,9 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  */
 open class DrawableContainerImpl<T : Drawable>(
 	override var location: Point2D = Point2D.ZERO,
-	override val useLocation: Boolean = false
-) : AbstractDrawable(), DrawableContainer<T>, Locatable {
+	override val useLocation: Boolean = false,
+	visible: Boolean = true
+) : AbstractDrawable(visible), DrawableContainer<T>, Locatable {
 
 	/**
 	 * Holds the child [Drawable]s that this [DrawableContainer] contains. The topmost [Drawable] is stored
@@ -96,7 +97,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun draw(context: DrawContext) {
-		if (children.isNotEmpty()) {
+		if (visible && children.isNotEmpty()) {
 			if (useLocation) {
 				context.g.translate(location.x, location.y)
 			}

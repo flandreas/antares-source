@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 /**
  * An abstract base implementation of the [Drawable] interface.
  */
-abstract class AbstractDrawable : Drawable {
+abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 
 	private val listeners: MutableList<DrawableListener> by lazy { mutableListOf() }
 
@@ -29,7 +29,7 @@ abstract class AbstractDrawable : Drawable {
 	 */
 	override val canMirror: Boolean = false
 
-	override var visible: Boolean = true
+	override var visible: Boolean = visible
 		set(value) {
 			if (value != visible) {
 				invalidate()

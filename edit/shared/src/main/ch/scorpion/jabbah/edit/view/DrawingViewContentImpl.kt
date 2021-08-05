@@ -28,7 +28,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	init {
 		selectionContainers[SelectionDrawingStrategy.ABOVE] = DrawableContainerImpl()
-		selectionContainers[SelectionDrawingStrategy.REPLACE] = DrawableContainerImpl()
+		selectionContainers[SelectionDrawingStrategy.REPLACE] = DrawableContainerImpl(visible = false)
 		selectionContainers[SelectionDrawingStrategy.BELOW] = DrawableContainerImpl()
 		unzoomableSelectionContainers[SelectionDrawingStrategy.ABOVE] = UnzoomableContainer()
 		drawing.addDrawableContainerListener(componentRemoveListener)
@@ -88,6 +88,9 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 		}
 		return false
 	}
+
+	override fun getReplacingSelectionModel(component: Component): SelectionModel<Component>? =
+		selectionContainers[SelectionDrawingStrategy.REPLACE]!!.drawables.firstOrNull { it.component === component }
 
 	override fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>? {
 		return selectionContainers[strategy]
