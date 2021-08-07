@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.app
 
+import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
@@ -10,22 +11,30 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
-/** An [Action] for toggling the [ApplicationMode] of the [ApplicationModeHolder]. */
+/**
+ * An [Action] for toggling the [ApplicationMode] of the [ApplicationModeHolder].
+ * If the optional [ApplicationDataHolder] is set, this [ToggleApplicationModeAction] is only enabled
+ * if [ApplicationData] is present.
+ */
 class ToggleApplicationModeAction(
-	private val applicationDataHolder: ApplicationDataHolder,
+	private val applicationDataHolder: ApplicationDataHolder?,
+	private val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.execute") {
 
-	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateState() }
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
+		if (it.source == applicationModeHolder) {
+			updateState()
+		}
+	}
+
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { updateState() }
 
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
-		selected = false
-		enabled = false
+		updateState()
 	}
 
 	override fun dispose() {
@@ -35,21 +44,21 @@ class ToggleApplicationModeAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		if (GraphViewModule.applicationModeHolder.currentMode.isExecute()) {
-			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EDIT)
+		if (applicationModeHolder.currentMode.isExecute()) {
+			applicationModeHolder.setMode(ApplicationMode.EDIT)
 			updateState()
 		} else {
 			InvocationHandler.invoke {
-				GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
+				applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 				updateState()
 			}
 		}
 	}
 
 	private fun updateState() {
-		enabled = applicationDataHolder.data != null
+		enabled = applicationDataHolder == null || applicationDataHolder.data != null
 
-		when (GraphViewModule.applicationModeHolder.currentMode) {
+		when (applicationModeHolder.currentMode) {
 			ApplicationMode.EDIT -> {
 				description = Translations.getString("execution.action.start.desc")
 				selected = false

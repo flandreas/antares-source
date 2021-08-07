@@ -118,7 +118,7 @@ class GraphPanelViewController(
 
 	val gridSnapAction = GridSnapAction(editor)
 	val componentSnapAction = ComponentSnapAction(editor)
-	val toggleApplicationModeAction = ToggleApplicationModeAction(applicationDataHolder, eventBus)
+	val toggleApplicationModeAction = ToggleApplicationModeAction(applicationDataHolder, applicationModeHolder, eventBus)
 
 	val rectangleTool: Tool = RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) })
 	val ellipseTool: Tool = RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) })

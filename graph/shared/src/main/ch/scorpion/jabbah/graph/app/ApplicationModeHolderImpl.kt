@@ -15,7 +15,10 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.view.GraphView
 
-/** An aggregatable implementation of [ApplicationModeHolder].*/
+/**
+ * An aggregatable implementation of [ApplicationModeHolder] that disables an associated
+ * [Editor] when [ApplicationMode] is set to [ApplicationMode.EXECUTE].
+ */
 class ApplicationModeHolderImpl(
 	val editor: Editor,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
@@ -74,21 +77,21 @@ class ApplicationModeHolderImpl(
 			scheduler.isActive = false
 		}
 		updateEditorEditability()
-		eventBus.post(ApplicationModeEvent(currentMode))
+		eventBus.post(ApplicationModeEvent(this, currentMode))
 		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
 	}
 
 	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
 		LOG.debug("Enter execution mode (deep = ${scheduler.isDeepExecution})")
 
-		eventBus.post(ApplicationModeBeginEvent(mode))
+		eventBus.post(ApplicationModeBeginEvent(this, mode))
 
 		if (rootGraphView.checkDesign()) {
 			currentMode = mode
 			System.invokeLater {
 				scheduler.isActive = true
 				updateEditorEditability()
-				eventBus.post(ApplicationModeEvent(currentMode))
+				eventBus.post(ApplicationModeEvent(this, currentMode))
 				Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
 				after.invoke()
 			}

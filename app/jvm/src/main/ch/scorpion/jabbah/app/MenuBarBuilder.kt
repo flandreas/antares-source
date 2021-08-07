@@ -22,11 +22,26 @@ open class MenuBarBuilder(
 	val eventBus: EventBus
 ) {
 
+	companion object {
+		fun createFileMenu(): JMenu = JMenu(Translations.getString("application.menu.file"))
+		fun createEditMenu(): JMenu = JMenu(Translations.getString("application.menu.edit"))
+		fun createViewMenu(): JMenu = JMenu(Translations.getString("application.menu.view"))
+		fun createHelpMenu(): JMenu = JMenu(Translations.getString("application.menu.help"))
+
+		fun addZoomActions(menu:JMenu) {
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomCenterAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomFitAction())))
+		}
+	}
+
     val menuBar = JMenuBar()
-    private val fileMenu = JMenu(Translations.getString("application.menu.file"))
-    private val editMenu = JMenu(Translations.getString("application.menu.edit"))
-    private val viewMenu = JMenu(Translations.getString("application.menu.view"))
-	private val helpMenu = JMenu(Translations.getString("application.menu.help"))
+    private val fileMenu = createFileMenu()
+    private val editMenu = createEditMenu()
+    private val viewMenu = createViewMenu()
+	private val helpMenu = createHelpMenu()
     protected val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
 
     init {
@@ -98,11 +113,7 @@ open class MenuBarBuilder(
     protected open fun fillViewMenu(menu: JMenu) {
 	    menu.add(JMenuItem(ActionWrapperSwing(CloseViewAction())))
 	    menu.addSeparator()
-        menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
-        menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
-        menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
-        menu.add(JMenuItem(ActionWrapperSwing(ZoomCenterAction())))
-        menu.add(JMenuItem(ActionWrapperSwing(ZoomFitAction())))
+	    addZoomActions(menu)
         menu.addSeparator()
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GridAction())))
     }

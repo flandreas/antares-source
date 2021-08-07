@@ -29,7 +29,8 @@ class GraphNavigationViewSwing(
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ViewManager,
 	contextBorderColor: CompositeColor? = null,
-	eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus,
+	allowCloseInHeader: Boolean = true
 ) : AbstractGraphDesktopItemPanel(), GraphNavigationView {
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
@@ -38,7 +39,7 @@ class GraphNavigationViewSwing(
 
 	private val navigationStackView = NavigationStackViewSwing(controller.navigationStackViewController)
 
-	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = true)
+	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = allowCloseInHeader)
 
 	private val layeredPane = JLayeredPane()
 

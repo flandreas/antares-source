@@ -24,10 +24,14 @@ enum class ApplicationMode(val nameKey: String) {
  * The change is not guaranteed to happen, because entering the new mode might be aborted by
  * application logic.
  */
-data class ApplicationModeBeginEvent(val applicationMode: ApplicationMode)
+data class ApplicationModeBeginEvent(
+	val source: ApplicationModeHolder,
+	val applicationMode: ApplicationMode)
 
 /** Gets posted on [EventBus] when the current [ApplicationMode] has changed.*/
-data class ApplicationModeEvent(val applicationMode: ApplicationMode)
+data class ApplicationModeEvent(
+	val source: ApplicationModeHolder,
+	val applicationMode: ApplicationMode)
 
 interface ApplicationModeHolder {
 

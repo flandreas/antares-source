@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
@@ -22,6 +23,7 @@ class LibraryTreeViewActionsSwing(
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
 	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
+	private val newGraphViewerAction = NewGraphViewerAction(application.displayName, controller)
 
 	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
@@ -133,6 +135,7 @@ class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 
 		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 
@@ -163,6 +166,7 @@ class LibraryTreeViewActionsSwing(
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 
 		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}

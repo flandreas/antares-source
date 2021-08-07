@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.mockk.every
@@ -96,7 +97,7 @@ class GraphNavigationViewControllerTest {
 	fun shouldPropagateContextWithApplicationMode() {
 		every { scheduler.isActive } returns true
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
-		eventBus.post(ApplicationModeEvent(ApplicationMode.EXECUTE))
+		eventBus.post(ApplicationModeEvent(GraphViewModule.applicationModeHolder, ApplicationMode.EXECUTE))
 
 		assertTrue((drawingView.applicationContext as GraphApplicationContext).isExecute)
 	}
@@ -144,7 +145,7 @@ class GraphNavigationViewControllerTest {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		drawingView.content.selectionManager.select(vv)
 
-		eventBus.post(ApplicationModeEvent(ApplicationMode.EXECUTE))
+		eventBus.post(ApplicationModeEvent(GraphViewModule.applicationModeHolder, ApplicationMode.EXECUTE))
 
 		assertFalse(drawingView.content.selectionManager.isSelected(vv))
 	}

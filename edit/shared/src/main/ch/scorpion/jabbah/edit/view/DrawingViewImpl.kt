@@ -37,7 +37,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
     animator: Animator = AnimationModule.animator,
-    viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) }
+    viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) },
+    editable: Boolean = true
 ) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
 
 	companion object {
@@ -85,7 +86,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
         }
 
-    override var editable: Boolean = true
+    override var editable: Boolean = editable
         set(value) {
 	        LOG.trace("Setting DrawingView with '$drawing' to editable=$value")
             if (value != field) {
