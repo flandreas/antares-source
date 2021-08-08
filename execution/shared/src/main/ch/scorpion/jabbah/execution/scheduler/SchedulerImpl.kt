@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.execution.scheduler
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
@@ -67,20 +68,28 @@ class SchedulerImpl(
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
 
+	private val issueCollectorListener: EventHandler<IssueCollectorEvent> = {
+		if (isActive && isStopOnIssue && it.issue != null) {
+			isPaused = true
+			System.invokeLater {
+				LOG.trace("execution stopped due to Issue '${it.issue.name}'")
+				eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
+			}
+		}
+	}
+
+	private val breakListener: EventHandler<BreakEvent> = { hardBreakpointReceived = true }
+
 	init {
 		task.bind(this)
 
-		eventBus.register(IssueCollectorEvent::class) {
-			if (isActive && isStopOnIssue && it.issue != null) {
-				isPaused = true
-				System.invokeLater {
-					LOG.trace("execution stopped due to Issue '${it.issue.name}'")
-					eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
-				}
-			}
-		}
+		eventBus.register(IssueCollectorEvent::class, issueCollectorListener)
+		eventBus.register(BreakEvent::class, breakListener)
+	}
 
-		eventBus.register(BreakEvent::class) { hardBreakpointReceived = true }
+	override fun dispose() {
+		eventBus.unregister(issueCollectorListener)
+		eventBus.unregister(breakListener)
 	}
 
 	/** ---- [Scheduler] interface */

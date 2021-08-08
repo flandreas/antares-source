@@ -34,7 +34,7 @@ class GraphViewExecutionController(
 	private val isRoot: Boolean,
 	private val rootGraphProvider: () -> Graph?,
 	private val graphViewsProvider: () -> Collection<GraphView>,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus

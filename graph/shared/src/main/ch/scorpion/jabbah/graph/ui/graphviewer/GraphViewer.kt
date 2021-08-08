@@ -10,8 +10,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode.*
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
@@ -25,13 +25,14 @@ interface GraphViewerView : UIView
  * Doesn't feature editing capabilities.
  */
 class GraphViewerController(
-	val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphViewerView>(), ApplicationModeHolder {
 
 	companion object {
 		private val LOG by logger(GraphViewerController::class)
 	}
+
+	val scheduler: Scheduler = SchedulerImpl(eventBus = eventBus)
 
 	override var currentMode: ApplicationMode = EDIT
 		private set
@@ -40,13 +41,14 @@ class GraphViewerController(
 		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
 	) as DrawingView<GraphView>
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView)
+	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView, scheduler = scheduler)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
 
 	override fun dispose() {
 		super.dispose()
 		LOG.debug("Close separate viewer for '${graphNavigationViewController.drawingView.drawing.graph!!.name.value}'")
+		scheduler.dispose()
 		graphNavigationViewController.dispose()
 		toggleApplicationModeAction.dispose()
 	}

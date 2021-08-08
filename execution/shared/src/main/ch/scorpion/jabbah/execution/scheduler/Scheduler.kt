@@ -38,6 +38,8 @@ interface Scheduler : SignalHandler {
 
 	var isSoftBreakpointsEnabled: Boolean
 
+	fun dispose()
+
 	/** Resumes simulation after it has been suspended by a breakpoint. */
 	fun resume()
 

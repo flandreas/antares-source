@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -27,7 +28,12 @@ class GraphEditViewController(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphEditView>() {
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, editor.view as DrawingView<GraphView>, initialSavable, eventBus = eventBus)
+	val graphNavigationViewController = GraphNavigationViewController(
+		isRoot = true,
+		editor.view as DrawingView<GraphView>,
+		initialSavable,
+		scheduler = ExecutionModule.scheduler,
+		eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(editor, eventBus)
 	val usecaseViewController = UsecaseViewController(editor, eventBus)
 

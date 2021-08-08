@@ -28,7 +28,6 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphViewActorListener
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -54,7 +53,7 @@ class GraphNavigationViewController(
 	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.animator,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
