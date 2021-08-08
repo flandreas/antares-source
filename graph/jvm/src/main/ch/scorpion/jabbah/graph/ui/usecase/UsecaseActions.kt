@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
@@ -101,12 +102,13 @@ class RunUsecaseAction(
 	application: Application,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecases.action.runUsecase", application, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseRunner(it, graphView, scheduler).run()
+			UsecaseRunner(it, graphView, scheduler, applicationModeHolder).run()
 		}
 	}
 
@@ -120,12 +122,13 @@ class RunSingleUsecaseTestAction(
 	application: Application,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", application, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseTestRunner(listOf(it), graphView, scheduler).run()
+			UsecaseTestRunner(listOf(it), graphView, scheduler,applicationModeHolder).run()
 		}
 	}
 
@@ -138,11 +141,12 @@ class RunAllTestsAction(
 	application: Application,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		UsecaseTestRunner(graphView.usecases.withTests(), graphView, scheduler).run()
+		UsecaseTestRunner(graphView.usecases.withTests(), graphView, scheduler, applicationModeHolder).run()
 	}
 
 	override fun calculateEnabled(): Boolean {

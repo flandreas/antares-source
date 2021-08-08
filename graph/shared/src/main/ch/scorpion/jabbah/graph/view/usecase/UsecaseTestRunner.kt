@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -27,6 +28,7 @@ class UsecaseTestRunner(
 	usecases: List<Usecase>,
 	val graphView: GraphView,
 	private val scheduler: Scheduler,
+	private val applicationModeHolder: ApplicationModeHolder,
 	private val gateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val throwFailureException: Boolean = false
@@ -61,8 +63,8 @@ class UsecaseTestRunner(
 			_usecase = usecase
 			_script = Script(usecase.testScript!!, usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
 
-			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, gateway)
-			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
+			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, applicationModeHolder, gateway)
+			applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
 				gateway.usecaseAction(usecaseActionRunner.script, usecaseActionRunner, scheduler)
 				gateway.usecaseTest(script, this)
 				scheduler.requestActingAfter(FinishTestActor(), maxAssertionTime + 1, SimpleActorData())

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -15,13 +16,14 @@ import javax.swing.JSplitPane
 class UsecaseViewSwing(
 	controller: UsecaseViewController,
 	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), UsecaseView {
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = UsecaseTreeView(application, eventBus)
+	private val treeView = UsecaseTreeView(application, applicationModeHolder, eventBus)
 
 	private val propertyPanel = UsecasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 

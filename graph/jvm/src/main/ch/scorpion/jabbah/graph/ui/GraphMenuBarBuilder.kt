@@ -106,12 +106,13 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
+		val applicationModeHolder = graphFrame.controller.graphPanelViewController
 		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application, applicationModeHolder = applicationModeHolder))))
 		return menu
 	}
 }

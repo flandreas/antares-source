@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -24,6 +25,7 @@ interface GraphEditView : UIView
 
 class GraphEditViewController(
 	val editor: Editor,
+	val applicationModeHolder: ApplicationModeHolder,
 	initialSavable: Savable? = null,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphEditView>() {

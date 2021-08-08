@@ -37,7 +37,12 @@ class GraphEditViewSwing(
 
 	private val scenarioView = ScenarioViewSwing(controller.scenarioViewController, application, eventBus, propertySheetFactory)
 
-	private val usecaseView = UsecaseViewSwing(controller.usecaseViewController, application, eventBus, propertySheetFactory)
+	private val usecaseView = UsecaseViewSwing(
+		controller.usecaseViewController,
+		application,
+		controller.applicationModeHolder,
+		eventBus,
+		propertySheetFactory)
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,

@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.SystemSpeedSliderSwing
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import java.awt.Dimension
@@ -21,6 +22,7 @@ import javax.swing.JToggleButton
 
 class ExecutionToolbarBuilder(
 	private val scheduler: Scheduler,
+	private val applicationModeHolder: ApplicationModeHolder,
 	private val toggleApplicationModeAction: ToggleApplicationModeAction,
 	private val eventBus: EventBus
 ) {
@@ -42,7 +44,7 @@ class ExecutionToolbarBuilder(
 		val speedSlider = SystemSpeedSliderSwing()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
-		val usecaseSelector = UsecaseSelector()
+		val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)
 
 		val mainToolBar = ToolBar()
 		mainToolBar.isFloatable = false

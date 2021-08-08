@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -21,7 +22,8 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer
  * Allows the user to select a [Usecase] to run it.
  */
 class UsecaseSelector(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
+	private val applicationModeHolder: ApplicationModeHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : JComboBox<Usecase>() {
 
@@ -53,7 +55,7 @@ class UsecaseSelector(
 	}
 
 	private fun runUsecase(usecase: Usecase) {
-		UsecaseRunner(usecase, graphView!!, scheduler).run()
+		UsecaseRunner(usecase, graphView!!, scheduler, applicationModeHolder).run()
 	}
 
 	private fun handle(event: EditedGraphViewEvent) {
