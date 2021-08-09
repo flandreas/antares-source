@@ -3,16 +3,10 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.jabbah.app.ApplicationDataHolder
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
@@ -30,12 +24,8 @@ interface AntaresFrame : GraphFrame {
 class AntaresFrameController(
 	applicationDataHolder: ApplicationDataHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
-	viewManager: ViewManager = DrawViewModule.viewManager,
-	scheduler: Scheduler = ExecutionModule.scheduler,
-	properties: Properties = BaseModule.properties
 ) : GraphFrameController<AntaresFrame>(
-	applicationDataHolder, eventBus, editor, viewManager, scheduler, properties
+	applicationDataHolder, eventBus
 ) {
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }

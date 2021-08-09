@@ -6,6 +6,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.graphExecutionToolbar
@@ -43,7 +46,10 @@ class AntaresViewJs(
 	init {
 		console.info("AntaresViewJs.init")
 
-		val editor = GraphViewModule.graphEditorFactory.invoke(BaseModule.eventBus)
+		val drawingView = EditModule.drawingViewFactory.invoke(
+			GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+		)
+		val editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 
 		controller = GraphPanelViewController(editor, props.applicationDataHolder)
 

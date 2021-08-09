@@ -15,7 +15,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -67,7 +70,6 @@ interface GraphFrameActions {
 open class GraphFrameController<T: GraphFrame>(
 	applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
-	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	scheduler: Scheduler = ExecutionModule.scheduler,
 	private val properties: Properties = BaseModule.properties
@@ -84,6 +86,12 @@ open class GraphFrameController<T: GraphFrame>(
 		/** The percentage of the maximal zoom factor that switches this [GraphFrame] to display the desktop.*/
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 	}
+
+	private val drawingView = EditModule.drawingViewFactory.invoke(
+		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+	)
+
+	private val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
