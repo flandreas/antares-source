@@ -1,17 +1,14 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
-typealias DrawingViewFactory<T> = (T) -> DrawingView<T>
+typealias DrawingViewFactory<T> = (drawing:T, contextHolder:ApplicationContextHolder?) -> DrawingView<T>
 
 /**
  * Enhances [View] with functionality needed for editing [Drawing]s.

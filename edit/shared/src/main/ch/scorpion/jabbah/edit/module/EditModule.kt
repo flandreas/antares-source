@@ -50,7 +50,9 @@ object EditModule : AbstractModule() {
 
     var commandManager: CommandManager = SourcingCommandManager()
 
-	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = { drawing -> DrawingViewImpl(drawing) }
+	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = {
+		drawing, contextHolder -> DrawingViewImpl(drawing, applicationContextHolder = contextHolder)
+	}
 
     /**
      * Creates an [AttentionDrawer] that produces an animation for drawing the attention

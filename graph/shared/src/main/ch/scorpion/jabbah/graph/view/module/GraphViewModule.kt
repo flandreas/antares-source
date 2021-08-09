@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.BasicStyle
@@ -16,6 +15,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.drag.DragDestinationHighlighter
 import ch.scorpion.jabbah.edit.drag.DragManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
@@ -46,7 +46,6 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.*
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.editor.AutoConnector
-import ch.scorpion.jabbah.edit.drag.DragDestinationHighlighter
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.*
@@ -83,11 +82,7 @@ object GraphViewModule : AbstractModule() {
 
 	var graphEditorFactory: (DrawingView<Drawing<Component>>) -> GraphEditor = { GraphEditor(it) }
 
-	var containerEditorFactory: (EventBus) -> ContainerEditor = { eventBus ->
-		val drawing = ContainerDrawing()
-		val drawingView = EditModule.drawingViewFactory.invoke(drawing)
-		ContainerEditor(drawingView, eventBus)
-	}
+	var containerEditorFactory: (DrawingView<Drawing<Component>>) -> ContainerEditor = { ContainerEditor(it) }
 
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }

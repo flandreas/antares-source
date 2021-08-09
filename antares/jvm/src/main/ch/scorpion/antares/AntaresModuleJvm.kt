@@ -34,12 +34,10 @@ import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
-import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -62,12 +60,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	override fun initialize() {
-
-		GraphViewModule.containerEditorFactory = { eventBus ->
-			val drawing = ContainerDrawing()
-			val drawingView = EditModule.drawingViewFactory.invoke(drawing)
-			DigitalContainerEditor(drawingView, eventBus)
-		}
+		GraphViewModule.containerEditorFactory = { DigitalContainerEditor(it) }
 
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }

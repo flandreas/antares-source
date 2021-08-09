@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -70,6 +71,7 @@ interface GraphDesktopView : UIView {
  * Listens for [CurrentProjectEvent] and closes all open [GraphDesktopViewItem]s.
  */
 class GraphDesktopViewController(
+	val applicationContextHolder: GraphApplicationContextHolder,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphDesktopView>() {

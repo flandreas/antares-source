@@ -100,7 +100,7 @@ class GraphDesktopItemHeaderPanel(
 }
 
 class GraphDesktopViewSwing(
-	controller: GraphDesktopViewController,
+	private val controller: GraphDesktopViewController,
 	private val graphEditView: GraphEditViewSwing
 ) : JPanel(), GraphDesktopView {
 
@@ -182,7 +182,9 @@ class GraphDesktopViewSwing(
 		viewManager: ViewManager
 	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
-		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>) as DrawingView<GraphView>
+		val drawingView = EditModule.drawingViewFactory.invoke(
+			subGraphView as Drawing<Component>, controller.applicationContextHolder
+		) as DrawingView<GraphView>
 
 		val controller = GraphNavigationViewController(
 			isRoot = false,

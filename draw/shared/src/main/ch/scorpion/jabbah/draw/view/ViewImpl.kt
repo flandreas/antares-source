@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.draw.style.ThemeEvent
  */
 open class ViewImpl<C : InputEventContext>(
 	private val transformFactory: () -> AffineTransform,
-	private val applicationContextHolder: ApplicationContextHolder?,
+	applicationContextHolder: ApplicationContextHolder?,
 	protected val eventBus: EventBus = BaseModule.eventBus,
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
@@ -64,10 +64,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
-		applicationContextHolder?.viewUpdateCallback = {
-			invalidate()
-			repaint()
-		}
+		applicationContextHolder?.addPropertyChangeListener(propertyChangeHandler)
 	}
 
 	/** ---- Life cycle */
@@ -82,6 +79,8 @@ open class ViewImpl<C : InputEventContext>(
 		_canvas?.removePropertyChangeListener(propertyChangeHandler)
 		applicationContextHolder?.dispose()
 	}
+
+	override val applicationContextHolder: ApplicationContextHolder? = applicationContextHolder
 
 	override val applicationContext: Any? get() = applicationContextHolder?.applicationContext
 
@@ -446,8 +445,12 @@ open class ViewImpl<C : InputEventContext>(
 
 	private inner class PropertyChangeHandler : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == Canvas.PROP_DIMENSION) {
-				applyDefaultZoomStrategy()
+			when (e.name) {
+				Canvas.PROP_DIMENSION -> applyDefaultZoomStrategy()
+				ApplicationContextHolder.PROP_APPLICATION_CONTEXT -> {
+					invalidate()
+					repaint()
+				}
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.inout.CircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.CircuitInOutSignalRepresentationChanged
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -11,7 +12,7 @@ import ch.scorpion.jabbah.graph.container.ContainerEditor
 
 class DigitalContainerEditor(
     view: DrawingView<Drawing<Component>>,
-    eventBus: EventBus
+    eventBus: EventBus = BaseModule.eventBus
 ) : ContainerEditor(view, eventBus) {
 
     init {

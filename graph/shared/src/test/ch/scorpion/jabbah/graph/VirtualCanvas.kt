@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -16,8 +15,8 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
  * TODO: Move to draw package once test utility classes can be shared between Kotlin MPP gradle modules (KT-35073).
  */
 class VirtualCanvas(
-	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl(),
-	viewFactory: (Canvas) -> View<out InputEventContext>
+	override val view: View<*>,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
 
 	private val mouseListeners = mutableListOf<MouseListener>()
@@ -25,13 +24,7 @@ class VirtualCanvas(
 	private val mouseWheelListeners = mutableListOf<MouseWheelListener>()
 	private val keyListeners = mutableListOf<KeyListener>()
 
-	init {
-		propertyOwner.source = this
-	}
-
 	/** ---- [Canvas] interface */
-
-	override val view: View<*> by lazy { viewFactory.invoke(this).also { it.canvas = this } }
 
 	override val devicePixelRatio: Int = 1
 
@@ -69,6 +62,11 @@ class VirtualCanvas(
 	override fun setToolTipText(text: String?) { }
 
 	override fun dispatchEvent(e: InputEvent) { }
+
+	init {
+		propertyOwner.source = this
+		view.canvas = this
+	}
 
 	/** Event sending API */
 

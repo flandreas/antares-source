@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 open class ContainerEditor(
 	view: DrawingView<Drawing<Component>>,
-	eventBus: EventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
 	companion object {

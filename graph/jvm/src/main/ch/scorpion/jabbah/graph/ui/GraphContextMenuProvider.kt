@@ -7,28 +7,27 @@ import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
 
-open class GraphContextMenuProvider(
-	private val scheduler: Scheduler = ExecutionModule.scheduler
-) : EditContextMenuProvider() {
+open class GraphContextMenuProvider : EditContextMenuProvider() {
 
 	companion object {
 		private val cutAction by lazy { ActionWrapperSwing(CutAction()) }
 		private val copyAction by lazy { ActionWrapperSwing(CopyAction()) }
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
-		private val editSubGraphAction by lazy { ActionWrapperSwing(EditSubGraphVerticeViewAction()) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
 	}
 
+	private fun getGraphApplicationContextHolder(view: View<*>): GraphApplicationContextHolder? =
+		view.applicationContextHolder as GraphApplicationContextHolder?
+
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
 		openGraphAction.subGraphVerticeView = null
-		if (scheduler.isActive) {
+		if (getGraphApplicationContextHolder(view)?.scheduler?.isActive == true) {
 			addExecutionActions(view, x, y, menu)
 		} else {
 			super.fillContextMenu(view, x, y, menu)
@@ -40,11 +39,13 @@ open class GraphContextMenuProvider(
 		popupMenu.add(copyAction)
 	}
 
-	override fun addActions(popupMenu: JPopupMenu) {
-		super.addActions(popupMenu)
+	override fun addActions(view: View<*>, popupMenu: JPopupMenu) {
+		super.addActions(view, popupMenu)
 		popupMenu.addSeparator()
 		popupMenu.add(ActionWrapperSwing(openGraphAction))
-		popupMenu.add(editSubGraphAction)
+		getGraphApplicationContextHolder(view)?.let {
+			popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
+		}
 		popupMenu.add(resetSubGraphAction)
 	}
 

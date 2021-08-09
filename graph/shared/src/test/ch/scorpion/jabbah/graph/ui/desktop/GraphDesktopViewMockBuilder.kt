@@ -13,7 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 
-class GraphDesktopViewMockBuilder(controller: GraphDesktopViewController) {
+class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewController) {
 
 	private val view = mockk<GraphDesktopView>(relaxed = true)
 	private val referenceColorSlot = slot<CompositeColor>()
@@ -45,7 +45,7 @@ class GraphDesktopViewMockBuilder(controller: GraphDesktopViewController) {
 
 	private fun createGraphNavigationViewDesktopItem(verticeView: SubGraphVerticeView<*>, isParentDetached: Boolean): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
-		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>) as DrawingView<GraphView>
+		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, controller.applicationContextHolder) as DrawingView<GraphView>
 
 		val controller = GraphNavigationViewController(
 			isRoot = false,

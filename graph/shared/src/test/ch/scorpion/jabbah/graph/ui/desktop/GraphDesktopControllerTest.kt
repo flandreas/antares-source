@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -36,9 +37,10 @@ class GraphDesktopControllerTest {
 	}
 
 	private val eventBus = EventBusImpl()
+	private val applicationContextHolder = GraphApplicationContextHolder()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
-	private val controller = GraphDesktopViewController(eventBus = eventBus)
+	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
+	private val controller = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	private val vv = createSubGraphVerticeView()
 	private val viewItemMock = GraphDesktopViewItemMockBuilder()
 		.withDrawingView(drawingView as DrawingView<GraphView>)

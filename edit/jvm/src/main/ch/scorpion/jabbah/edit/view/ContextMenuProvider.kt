@@ -25,13 +25,13 @@ open class EditContextMenuProvider : ContextMenuProvider {
 	}
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
-		fillContextMenu((view as DrawingView<*>).selectionManager.selection, menu)
+		fillContextMenu(view, (view as DrawingView<*>).selectionManager.selection, menu)
 	}
 
-	private fun fillContextMenu(selection: Collection<Component>, popupMenu: JPopupMenu) {
+	private fun fillContextMenu(view: View<*>, selection: Collection<Component>, popupMenu: JPopupMenu) {
 		popupMenu.removeAll()
 		if (selection.size == 1) {
-			addActions(popupMenu)
+			addActions(view, popupMenu)
 		}
 	}
 
@@ -40,7 +40,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 		popupMenu.add(ActionWrapperSwing(copyAction))
 	}
 
-	protected open fun addActions(popupMenu: JPopupMenu) {
+	protected open fun addActions(view: View<*>, popupMenu: JPopupMenu) {
 		addClipboardActions(popupMenu)
 		popupMenu.addSeparator()
 		popupMenu.add(ActionWrapperSwing(deleteAction))

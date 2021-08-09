@@ -64,7 +64,7 @@ class GraphViewerFrameSwing(
 		graphNavigationView.preferredSize = Dimension(1000, 800)
 		layout = BorderLayout()
 		add(BorderLayout.NORTH, ExecutionToolbarBuilder(
-			controller.scheduler,
+			controller.applicationContextHolder.scheduler,
 			controller,
 			controller.toggleApplicationModeAction,
 			eventBus

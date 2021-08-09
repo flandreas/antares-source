@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.library.LibraryHolder
@@ -91,6 +92,7 @@ interface GraphPanelView : UIView {
 class GraphPanelViewController(
 	val editor: Editor,
 	applicationDataHolder: ApplicationDataHolder,
+	applicationContextHolder: GraphApplicationContextHolder,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler =ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -106,7 +108,7 @@ class GraphPanelViewController(
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
 	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationDataHolder.data?.savable, eventBus)
-	val desktopController = GraphDesktopViewController(eventBus = eventBus)
+	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(eventBus)
 

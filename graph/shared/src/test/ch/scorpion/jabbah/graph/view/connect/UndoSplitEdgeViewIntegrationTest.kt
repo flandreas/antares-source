@@ -36,12 +36,10 @@ class UndoSplitEdgeViewIntegrationTest {
 	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder {
 		builder -> drawingView.drawing = builder.graphView as Drawing<Component>
 	}
-	private val drawingView = EditModule.drawingViewFactory.invoke(builder.graphView as Drawing<Component>)
+	private val drawingView = EditModule.drawingViewFactory.invoke(builder.graphView as Drawing<Component>, null)
 	private val editor: Editor = EditEditorModule.createEditor(drawingView)
 	private val driver = EditorToolDriver(editor)
 	private val service = GraphViewModule.graphViewAppService
-
-
 
 	init {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)

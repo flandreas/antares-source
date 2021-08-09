@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -21,6 +22,7 @@ import javax.swing.Action
  * [ContainerDrawing] using a [ContainerEditor] in a dialog.
  */
 class EditSubGraphVerticeViewAction(
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
@@ -44,8 +46,9 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
+		val containerDrawingView = EditModule.drawingViewFactory.invoke(ContainerDrawing(), applicationContextHolder)
 		val containerPanel = ContainerPanel(
-			GraphViewModule.containerEditorFactory.invoke(eventBus),
+			GraphViewModule.containerEditorFactory.invoke(containerDrawingView),
 			EditModuleJvm.propertySheetPanelFactory,
 			eventBus,
 			viewManager)

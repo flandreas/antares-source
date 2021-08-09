@@ -4,11 +4,7 @@ import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -18,8 +14,6 @@ import ch.scorpion.jabbah.graph.ui.TestGraphApplication
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.editor.GraphEditor
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -49,9 +43,7 @@ class GraphPanelViewEditabilityTest {
 	private val application = TestGraphApplication()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val vv = createSubGraphVerticeView()
-	private val canvas = VirtualCanvas { DrawingViewImpl(GraphViewImpl() as Drawing<Component>, eventBus = eventBus) }
-	private val editor = GraphEditor(canvas.view as DrawingView<Drawing<Component>>, eventBus)
-	private val controller = GraphPanelViewController(editor, mockk(relaxed = true), eventBus = eventBus)
+	private val controller = application.graphFrameController.graphPanelViewController
 
 	init {
 		graphViewBuilder.addVerticeView(vv)
@@ -59,7 +51,7 @@ class GraphPanelViewEditabilityTest {
 
 		GraphViewModule.applicationModeHolder = controller
 		GraphPanelViewMockBuilder(controller)
-		DrawViewModule.viewManager.activeView = editor.view
+		DrawViewModule.viewManager.activeView = application.editor.view
 	}
 
 	@Test
@@ -104,17 +96,17 @@ class GraphPanelViewEditabilityTest {
 
 	private fun canSelectComponent(): Boolean {
 		val location = vv.boundingBox.center
-		canvas.pressMouseAt(location.xInt, location.yInt)
-		return editor.view.content.selectionManager.selectionCount == 1
+		application.canvas.pressMouseAt(location.xInt, location.yInt)
+		return application.editor.view.content.selectionManager.selectionCount == 1
 	}
 
 	private fun canMoveComponent(): Boolean {
 		val location = vv.boundingBox.center
-		canvas
+		application.canvas
 			.pressMouseAt(location.xInt, location.yInt)
 			.dragMouse(50, 0)
 			.releaseMouse()
-		return editor.commandManager.canUndo()
+		return application.editor.commandManager.canUndo()
 	}
 
 	private fun establishEditableData() {

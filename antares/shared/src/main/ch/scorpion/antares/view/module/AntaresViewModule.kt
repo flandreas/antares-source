@@ -52,14 +52,12 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
-import ch.scorpion.jabbah.graph.view.editor.AutoConnectorHighlight
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
@@ -123,8 +121,8 @@ object AntaresViewModule : AbstractModule() {
 		Translations.addBundle("antares")
 
 		// Overwritten in order to change the [DrawableDrawer]
-		EditModule.drawingViewFactory = { d ->
-			val drawingView = DrawingViewImpl(d, applicationContextHolder = GraphApplicationContextHolder())
+		EditModule.drawingViewFactory = { drawing, contextHolder ->
+			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}

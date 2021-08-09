@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -41,7 +43,9 @@ open class GraphFrameSwing(
 
 	val graphPanel = GraphPanelViewSwing(controller.graphPanelViewController, viewManager = viewManager, application = application)
 
-	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
+	private val containerDrawingView = EditModule.drawingViewFactory.invoke(ContainerDrawing(), controller.applicationContextHolder)
+
+	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(containerDrawingView), viewManager)
 
 	init {
 		controller.view = this

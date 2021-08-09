@@ -12,7 +12,7 @@ data class PropertyChangeEvent<out T> (
 /**
  * Listens to [PropertyChangeEvent]s from beans.
  */
-interface PropertyChangeListener<in T: Any> {
+fun interface PropertyChangeListener<in T: Any> {
     fun propertyChanged(e: PropertyChangeEvent<T>)
 }
 
@@ -31,11 +31,7 @@ class PropertyChangeSupport<T: Any>(var source: Any) {
     }
 
 	fun add(handler: (PropertyChangeEvent<T>) -> Unit): PropertyChangeListener<T> {
-		val listener = object : PropertyChangeListener<T> {
-			override fun propertyChanged(e: PropertyChangeEvent<T>) {
-				handler.invoke(e)
-			}
-		}
+		val listener = PropertyChangeListener<T> { e -> handler.invoke(e) }
 		add(listener)
 		return listener
 	}

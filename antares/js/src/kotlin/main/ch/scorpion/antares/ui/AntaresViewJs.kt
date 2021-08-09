@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.graphExecutionToolbar
 import ch.scorpion.jabbah.graph.ui.graphNavigationView
@@ -43,15 +45,19 @@ class AntaresViewJs(
 	private val translationEventHandler: EventHandler<TranslationBundleAdded> = { handle(it) }
 	private val controller: GraphPanelViewController
 
+	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
+	private val applicationContextHolder = GraphApplicationContextHolder()
+
 	init {
 		console.info("AntaresViewJs.init")
 
 		val drawingView = EditModule.drawingViewFactory.invoke(
-			GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
-		)
+			GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
+			applicationContextHolder)
+
 		val editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 
-		controller = GraphPanelViewController(editor, props.applicationDataHolder)
+		controller = GraphPanelViewController(editor, props.applicationDataHolder, applicationContextHolder)
 
 		// TODO Is this needed?
 		GraphViewModule.applicationModeHolder = controller.applicationModeHolder

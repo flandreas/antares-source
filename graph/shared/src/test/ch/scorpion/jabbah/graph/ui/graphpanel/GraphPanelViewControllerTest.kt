@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.TestEditorBuilder
@@ -36,7 +37,8 @@ class GraphPanelViewControllerTest {
 
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, eventBus = eventBus)
+	private val applicationContextHolder = GraphApplicationContextHolder()
+	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
 	private val editor = TestEditorBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
 	private val controller: GraphPanelViewController
 
@@ -45,7 +47,7 @@ class GraphPanelViewControllerTest {
 		LibraryModule.libraryHolder.l = mockk(relaxed = true)
 		ProjectModule.projectHolder.p = mockk(relaxed = true)
 
-		controller = GraphPanelViewController(editor, mockk(relaxed = true), eventBus = eventBus)
+		controller = GraphPanelViewController(editor, mockk(relaxed = true), applicationContextHolder, eventBus = eventBus)
 		GraphViewModule.applicationModeHolder = controller
 		GraphPanelViewMockBuilder(controller)
 	}

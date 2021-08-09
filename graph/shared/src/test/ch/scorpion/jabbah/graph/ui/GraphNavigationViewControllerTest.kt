@@ -46,9 +46,10 @@ class GraphNavigationViewControllerTest {
 	private val scheduler = mockk<Scheduler>(relaxed = true)
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
+	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus)
 	private val drawingView = DrawingViewImpl(
 		drawing = graphViewBuilder.graphView as Drawing<Component>,
-		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus),
+		applicationContextHolder = applicationContextHolder,
 		eventBus = eventBus)
 	private val vv = createSubGraphVerticeView()
 	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus, scheduler = scheduler)

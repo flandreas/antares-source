@@ -28,6 +28,7 @@ object GraphViewTestRule {
 
 	fun configure() {
 		BaseModule.require()
+		BaseModule.eventBus.clear()
 		GraphViewModule.require()
 
 		Translations.withAnyKey()

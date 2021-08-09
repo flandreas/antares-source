@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode.*
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
@@ -32,23 +32,25 @@ class GraphViewerController(
 		private val LOG by logger(GraphViewerController::class)
 	}
 
-	val scheduler: Scheduler = SchedulerImpl(eventBus = eventBus)
+	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
+	val applicationContextHolder = GraphApplicationContextHolder()
 
 	override var currentMode: ApplicationMode = EDIT
 		private set
 
 	val drawingView = EditModule.drawingViewFactory.invoke(
-		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
+		applicationContextHolder
 	) as DrawingView<GraphView>
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView, scheduler = scheduler)
+	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView, scheduler = applicationContextHolder.scheduler)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
 
 	override fun dispose() {
 		super.dispose()
 		LOG.debug("Close separate viewer for '${graphNavigationViewController.drawingView.drawing.graph!!.name.value}'")
-		scheduler.dispose()
+		applicationContextHolder.scheduler.dispose()
 		graphNavigationViewController.dispose()
 		toggleApplicationModeAction.dispose()
 	}
@@ -72,7 +74,7 @@ class GraphViewerController(
 
 	private fun quitExecutionMode() {
 		currentMode = EDIT
-		scheduler.isActive = false
+		applicationContextHolder.scheduler.isActive = false
 		eventBus.post(ApplicationModeEvent(this, currentMode))
 	}
 
@@ -80,7 +82,7 @@ class GraphViewerController(
 		eventBus.post(ApplicationModeBeginEvent(this, mode))
 		currentMode = mode
 		System.invokeLater {
-			scheduler.isActive = true
+			applicationContextHolder.scheduler.isActive = true
 			eventBus.post(ApplicationModeEvent(this, currentMode))
 			after()
 		}

@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
@@ -87,16 +88,20 @@ open class GraphFrameController<T: GraphFrame>(
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 	}
 
+	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
+	val applicationContextHolder = GraphApplicationContextHolder()
+
 	private val drawingView = EditModule.drawingViewFactory.invoke(
-		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
+		applicationContextHolder
 	)
 
-	private val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
+	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, viewManager, scheduler, eventBus)
+	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, applicationContextHolder, viewManager, scheduler, eventBus)
 
 	private val zoomEventHandler = ZoomEventHandler()
 

@@ -28,10 +28,10 @@ data class GraphApplicationContext(
 }
 
 class GraphApplicationContextHolder(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : ApplicationContextHolder {
+) : ApplicationContextHolder() {
 
 	private val applicationMode: ApplicationMode get() = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 
@@ -43,6 +43,7 @@ class GraphApplicationContextHolder(
 		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		applicationContext = createApplicationContext()
 	}
 
 	override fun dispose() {
@@ -50,14 +51,6 @@ class GraphApplicationContextHolder(
 		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
 	}
-
-	override var viewUpdateCallback: () -> Unit = {}
-
-	override var applicationContext: Any? = createApplicationContext()
-		private set(value) {
-			field = value
-			viewUpdateCallback.invoke()
-		}
 
 	private fun updateApplicationContext() {
 		applicationContext = createApplicationContext()
