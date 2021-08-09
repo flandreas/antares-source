@@ -4,15 +4,15 @@ import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.view.TooltipHandler
 
 
 /**
@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.draw.view.TooltipHandler
  */
 class GraphViewDisplayHandler(
 	private val view: DrawingView<GraphView>,
-	private val scheduler: Scheduler,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus
 ) {
 
@@ -55,7 +55,7 @@ class GraphViewDisplayHandler(
 	}
 
 	private fun updateActivationState() {
-		if (!scheduler.isActive && !view.editable) {
+		if (!applicationContextHolder.scheduler.isActive && !view.editable) {
 			activate()
 		} else {
 			passivate()

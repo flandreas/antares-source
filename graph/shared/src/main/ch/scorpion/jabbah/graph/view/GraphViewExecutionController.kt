@@ -4,9 +4,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
@@ -34,28 +33,28 @@ class GraphViewExecutionController(
 	private val isRoot: Boolean,
 	private val rootGraphProvider: () -> Graph?,
 	private val graphViewsProvider: () -> Collection<GraphView>,
-	private val scheduler: Scheduler,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	private val initialMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
+	private val initialMode: ApplicationMode = if (applicationContextHolder.scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 
 	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 
 	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
 
 	/** Forwards input events to the [GraphView] while executing.*/
-	private val graphViewExecutionHandler = GraphViewExecutionHandler(graphViewUI.drawingView, scheduler, eventBus, initialMode)
+	private val graphViewExecutionHandler = GraphViewExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus, initialMode)
 
 	/** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
-	private val graphViewDisplayHandler = GraphViewDisplayHandler(graphViewUI.drawingView, scheduler, eventBus)
+	private val graphViewDisplayHandler = GraphViewDisplayHandler(graphViewUI.drawingView, applicationContextHolder, eventBus)
 
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
-	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(graphViewUI.drawingView, scheduler, eventBus, initialMode)
+	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus, initialMode)
 
-	private val actorListener = GraphViewActorListener(graphViewUI.drawingView, scheduler, eventBus = eventBus)
+	private val actorListener = GraphViewActorListener(graphViewUI.drawingView, applicationContextHolder, eventBus = eventBus)
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
@@ -77,12 +76,15 @@ class GraphViewExecutionController(
 	 */
 	fun updateDrawingViewEditability() {
 		graphViewUI.drawingView.editable = isRoot
-			&& !scheduler.isActive
+			&& !applicationContextHolder.scheduler.isActive
 			&& graphViewUI.isEditable
 	}
 
 	fun updateDetachedUI() {
-		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached && scheduler.isActive && (!scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)) {
+		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached
+			&& applicationContextHolder.scheduler.isActive
+			&& (!applicationContextHolder.scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)
+		) {
 			Themes.get<GraphTheme>().overlay
 		} else {
 			null

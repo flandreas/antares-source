@@ -3,8 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationMode.EXEC_USECASE
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -15,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.Usecase
  */
 class GraphViewUsecaseExecutionHandler(
 	view: DrawingView<GraphView>,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationMode: ApplicationMode
 ) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
@@ -38,8 +37,8 @@ class GraphViewUsecaseExecutionHandler(
 
 		override fun keyPressed(e: KeyEvent) {
 			if (e.key == ' '.code) {
-				if (scheduler.isPaused) {
-					scheduler.resume()
+				if (applicationContextHolder.scheduler.isPaused) {
+					applicationContextHolder.scheduler.resume()
 				}
 			}
 		}

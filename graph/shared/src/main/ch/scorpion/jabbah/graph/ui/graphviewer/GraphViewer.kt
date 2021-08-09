@@ -43,7 +43,7 @@ class GraphViewerController(
 		applicationContextHolder
 	) as DrawingView<GraphView>
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView, scheduler = applicationContextHolder.scheduler)
+	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
 

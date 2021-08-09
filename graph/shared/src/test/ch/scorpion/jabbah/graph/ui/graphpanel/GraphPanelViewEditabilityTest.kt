@@ -2,14 +2,19 @@ package ch.scorpion.jabbah.graph.ui.graphpanel
 
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.*
+import ch.scorpion.jabbah.graph.GraphStorable
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.SavableMockBuilder
+import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.ui.GraphFrameMockBuilder
 import ch.scorpion.jabbah.graph.ui.TestGraphApplication
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -39,19 +44,24 @@ class GraphPanelViewEditabilityTest {
 		}
 	}
 
-	private val eventBus = BaseModule.eventBus
-	private val application = TestGraphApplication()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val vv = createSubGraphVerticeView()
-	private val controller = application.graphFrameController.graphPanelViewController
+	private val vv: SubGraphVerticeView<*>
+	private val application: TestGraphApplication
+	private val controller: GraphPanelViewController
 
 	init {
-		graphViewBuilder.addVerticeView(vv)
+		BaseModule.eventBus = EventBusImpl()
+
+		application = TestGraphApplication()
 		application.controller.view = mockk(relaxed = true)
+		controller = application.graphFrameController.graphPanelViewController
 
 		GraphViewModule.applicationModeHolder = controller
-		GraphPanelViewMockBuilder(controller)
+		GraphFrameMockBuilder(application.graphFrameController)
 		DrawViewModule.viewManager.activeView = application.editor.view
+
+		vv = createSubGraphVerticeView()
+		graphViewBuilder.addVerticeView(vv)
 	}
 
 	@Test
@@ -76,7 +86,7 @@ class GraphPanelViewEditabilityTest {
 	@Test
 	fun shouldNotBeEditableAfterDescending() {
 		establishEditableData()
-		eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
+		BaseModule.eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
 		assertNonEditableUI(canSelect = false)
 	}
 
@@ -120,8 +130,7 @@ class GraphPanelViewEditabilityTest {
 	private fun applicationData(savable: Savable): ApplicationData = ApplicationData(
 		MetaGraph(
 			graph = GraphStorable(graphViewBuilder.build()),
-			containerDrawing = ContainerDrawing(),
-			eventBus = eventBus),
+			containerDrawing = ContainerDrawing()),
 		savable)
 
 	private fun createSubGraphVerticeView(): SubGraphVerticeView<*> {

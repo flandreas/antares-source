@@ -13,9 +13,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -26,7 +25,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  */
 class GraphViewActorListener(
 	private val drawingView: DrawingView<GraphView>,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val currentGraphAnimationType: CurrentGraphViewAnimationType = GraphViewModule.currentGraphViewAnimationType,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ActorListener {
@@ -52,7 +51,7 @@ class GraphViewActorListener(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		drawingView.addPropertyChangeListener(addRemoveListener)
 
-		if (scheduler.isActive) {
+		if (applicationContextHolder.scheduler.isActive) {
 			registerActorListener(drawingView.drawing.graph!!)
 		}
 	}
@@ -72,7 +71,7 @@ class GraphViewActorListener(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerActivationStateEvent) {
-		if (scheduler.isActive) {
+		if (applicationContextHolder.scheduler.isActive) {
 			registerActorListener(drawingView.drawing.graph!!)
 		} else {
 			unregisterActorListener(drawingView.drawing.graph!!)

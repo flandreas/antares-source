@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -50,8 +49,7 @@ class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewContro
 		val controller = GraphNavigationViewController(
 			isRoot = false,
 			isParentDetached = isParentDetached,
-			drawingView = drawingView,
-			scheduler = ExecutionModule.scheduler)
+			drawingView = drawingView)
 		GraphNavigationViewMockBuilder(controller)
 
 		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true)

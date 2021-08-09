@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -25,6 +26,7 @@ class GrandUiIntegrationTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
+			BaseModule.eventBus = EventBusImpl()
 
 			val tempDir = Files.createTempDirectory(null)
 
@@ -66,6 +68,7 @@ class GrandUiIntegrationTest {
 	fun shouldUseVirginSubGraphVerticeView() {
 		createUserLibrary("Lib1")
 		application = TestGraphApplication()
+		GraphFrameMockBuilder(application.graphFrameController)
 		application.start()
 
 		createAndOpenNewProject("Test1")
@@ -88,6 +91,7 @@ class GrandUiIntegrationTest {
 	fun shouldDetachFromModelsWhenClosingSecondView() {
 		createUserLibrary("Lib2")
 		application = TestGraphApplication()
+		GraphFrameMockBuilder(application.graphFrameController)
 		application.start()
 
 		createAndOpenNewProject("Test2")

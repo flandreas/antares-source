@@ -23,8 +23,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -53,7 +53,6 @@ class GraphNavigationViewController(
 	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.animator,
-	private val scheduler: Scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
@@ -95,7 +94,7 @@ class GraphNavigationViewController(
 		isRoot,
 		rootGraphProvider = { rootEntry?.content?.drawing?.graph },
 		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
-		scheduler,
+		(drawingView.applicationContextHolder as GraphApplicationContextHolder),
 		eventBus = eventBus
 	)
 
@@ -180,7 +179,12 @@ class GraphNavigationViewController(
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
 
 		scenarioDetector?.dispose()
-		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
+		scenarioDetector = ScenarioDetector(
+			drawingView,
+			drawingView.applicationContextHolder as GraphApplicationContextHolder,
+			scriptGateway,
+			eventBus,
+			currentSystemSpeedCategory)
 
 		graphViewExecutionController.updateDetachedUI()
 	}

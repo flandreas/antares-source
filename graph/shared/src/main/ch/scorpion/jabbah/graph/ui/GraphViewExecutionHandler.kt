@@ -11,9 +11,9 @@ import ch.scorpion.jabbah.edit.FocusManager
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationMode.EXECUTE
 import ch.scorpion.jabbah.graph.model.Graph
@@ -38,7 +38,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class GraphViewExecutionHandler(
 	view: DrawingView<GraphView>,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationMode: ApplicationMode
 ) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
@@ -171,7 +171,7 @@ class GraphViewExecutionHandler(
 
 		private fun mouseEventContext(e: MouseEvent, p: Point2D): ActorInteractionContext {
 			return ActorInteractionContext(
-				signalHandler = scheduler,
+				signalHandler = applicationContextHolder.scheduler,
 				view = view,
 				mouseEvent = e,
 				x = p.x,
@@ -230,7 +230,7 @@ class GraphViewExecutionHandler(
 
 		private fun keyEventContext(e: KeyEvent): ActorInteractionContext {
 			return ActorInteractionContext(
-				signalHandler = scheduler,
+				signalHandler = applicationContextHolder.scheduler,
 				view = view,
 				keyEvent = e
 			)
