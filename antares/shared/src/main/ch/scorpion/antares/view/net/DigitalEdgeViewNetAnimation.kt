@@ -41,7 +41,7 @@ class DigitalEdgeViewNetAnimation(
 	val startPort: DigitalPort,
 	val drawingView: DrawingView<GraphView>,
 	val animator: Animator = AnimationModule.animator,
-	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler,
 	val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : EdgeViewNetAnimation {
 

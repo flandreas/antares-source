@@ -32,9 +32,7 @@ import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -92,11 +90,10 @@ interface GraphPanelView : UIView {
 class GraphPanelViewController(
 	val editor: Editor,
 	applicationDataHolder: ApplicationDataHolder,
-	applicationContextHolder: GraphApplicationContextHolder,
+	val applicationContextHolder: GraphApplicationContextHolder,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
-	private val scheduler: Scheduler =ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, viewManager, scheduler, eventBus),
+	val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, applicationContextHolder.scheduler, viewManager, eventBus),
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
@@ -107,7 +104,7 @@ class GraphPanelViewController(
 
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
-	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationDataHolder.data?.savable, eventBus)
+	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(eventBus)
@@ -174,7 +171,7 @@ class GraphPanelViewController(
 	/** ---- [GraphPanelViewController] */
 
 	private fun handle(event: SchedulerActivationStateEvent) {
-		if (event.scheduler === scheduler && !event.scheduler.isActive) {
+		if (event.scheduler === applicationContextHolder.scheduler && !event.scheduler.isActive) {
 			setMode(ApplicationMode.EDIT)
 		}
 	}

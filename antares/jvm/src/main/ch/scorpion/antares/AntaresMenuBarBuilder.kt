@@ -74,7 +74,7 @@ class AntaresMenuBarBuilder(
 	    menu.add(createSchedulerTaskMenu())
 	    menu.add(JMenuItem(ActionWrapperSwing(ManualSchedulerTaskAction(GraphViewModule.manualSchedulerTask))))
         menu.addSeparator()
-        menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction((frame as GraphFrameSwing).controller.applicationContextHolder.scheduler))))
 
         return menu
     }

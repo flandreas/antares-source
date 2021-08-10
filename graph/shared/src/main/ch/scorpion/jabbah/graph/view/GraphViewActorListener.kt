@@ -40,7 +40,7 @@ class GraphViewActorListener(
 	 */
 	private val graphViewListener = GraphViewListener()
 
-	private val animatorProxy = AnimatorProxy(GraphViewExecutionAnimator(this, drawingView))
+	private val animatorProxy = AnimatorProxy(GraphViewExecutionAnimator(this, drawingView, applicationContextHolder))
 
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
 

@@ -9,8 +9,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout
@@ -27,7 +26,7 @@ import javax.swing.text.JTextComponent
 class AddressableDisplayPanel(
 	private val addressable: Addressable,
 	editable: Boolean,
-	private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val applicationContextHolder: GraphApplicationContextHolder
 ) : JPanel() {
 
 	companion object {
@@ -35,10 +34,10 @@ class AddressableDisplayPanel(
 	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
-		FixedWidthLayout(1, addressable, editable, scheduler),
-		FixedWidthLayout(4, addressable, editable, scheduler),
-		FixedWidthLayout(8, addressable, editable, scheduler),
-		FixedWidthLayout(16, addressable, editable, scheduler)
+		FixedWidthLayout(1, addressable, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(4, addressable, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(8, addressable, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(16, addressable, editable, applicationContextHolder.scheduler)
 	)
 
     private val table = JTable(layouts[1].createTableModel())
@@ -105,7 +104,7 @@ class AddressableDisplayPanel(
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
-			if (scheduler.isActive && addressable.isSelected && addressableDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
+			if (applicationContextHolder.scheduler.isActive && addressable.isSelected && addressableDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
 				component.background = Graphics2DJvm.toAwtColor(Look.highlightWithSelectionColor)
 			} else {
 				if (isSelected) {

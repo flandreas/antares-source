@@ -23,7 +23,7 @@ class UsecaseViewSwing(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = UsecaseTreeView(application, applicationModeHolder, eventBus)
+	private val treeView = UsecaseTreeView(application, applicationModeHolder, controller.applicationContextHolder, eventBus)
 
 	private val propertyPanel = UsecasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 

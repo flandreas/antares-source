@@ -19,7 +19,7 @@ abstract class AbstractSchedulerAction(
 
 /** Toggles the [SchedulerActivationState] of a [Scheduler]. */
 class PauseExecutionAction(
-	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.pause", eventBus) {
 
@@ -46,7 +46,7 @@ class PauseExecutionAction(
 
 /** Resumes execution of a [Scheduler] after it has been suspended by a breakpoint.*/
 class ResumeExecutionAction(
-	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.resume", eventBus) {
 
@@ -73,7 +73,7 @@ class ResumeExecutionAction(
 
 /** Toggles the [SignalHandler.isDeepExecution] property of a [Scheduler].*/
 class ExecutionDepthAction(
-	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.deepSimulation", eventBus) {
 
@@ -104,7 +104,7 @@ class ExecutionDepthAction(
 
 /** Toggles the [Scheduler.isStopOnIssue] property. */
 class StopOnIssueAction(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.pauseOnIssue", eventBus) {
 
@@ -132,7 +132,7 @@ class StopOnIssueAction(
 
 /** Toggles the [Scheduler.isSimulationTimeStatusEnabled] property.*/
 class SimulationTimeStatusEnabledAction(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.enableSimulationTimeStatus", eventBus) {
 
@@ -158,7 +158,7 @@ class SimulationTimeStatusEnabledAction(
 }
 
 class EnableSoftBreakpointsAction(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.enableSoftBreakpoints", eventBus) {
 
@@ -184,7 +184,7 @@ class EnableSoftBreakpointsAction(
 }
 
 class PrintScheduleAction(
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.print", eventBus) {
 

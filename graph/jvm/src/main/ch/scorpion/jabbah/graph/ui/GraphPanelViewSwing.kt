@@ -18,8 +18,6 @@ import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
@@ -40,7 +38,6 @@ class GraphPanelViewSwing(
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager,
-	private var scheduler: Scheduler = ExecutionModule.scheduler,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), GraphPanelView {
@@ -196,7 +193,7 @@ class GraphPanelViewSwing(
 	}
 
 	private fun createExecutionToolBar(controller: GraphPanelViewController): ToolBar =
-		ExecutionToolbarBuilder(scheduler, controller, controller.toggleApplicationModeAction, eventBus).build()
+		ExecutionToolbarBuilder(controller.applicationContextHolder.scheduler, controller, controller.toggleApplicationModeAction, eventBus).build()
 
 	private fun createDrawingToolBar(controller: GraphPanelViewController): ToolBar {
 		val toolbar = ToolBar(controller.editor)

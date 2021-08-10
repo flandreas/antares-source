@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerTask
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
@@ -28,8 +27,6 @@ object ExecutionModule : AbstractModule() {
 	val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder(noNoiseGenerator) }
 
 	var schedulerTaskFactory: (EventBus) -> SchedulerTask = { TimedSchedulerTask() }
-
-	val scheduler: Scheduler by lazy { SchedulerImpl() }
 
 	val currentSystemSpeedCategory: CurrentSystemSpeedCategory by lazy { CurrentSystemSpeedCategory() }
 

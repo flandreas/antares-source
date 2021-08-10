@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
@@ -25,6 +26,7 @@ interface GraphEditView : UIView
 class GraphEditViewController(
 	val editor: Editor,
 	val applicationModeHolder: ApplicationModeHolder,
+	val applicationContextHolder: GraphApplicationContextHolder,
 	initialSavable: Savable? = null,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphEditView>() {
@@ -35,7 +37,7 @@ class GraphEditViewController(
 		initialSavable,
 		eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(editor, eventBus)
-	val usecaseViewController = UsecaseViewController(editor, eventBus)
+	val usecaseViewController = UsecaseViewController(editor, applicationContextHolder, eventBus)
 
 	override fun dispose() {
 		super.dispose()

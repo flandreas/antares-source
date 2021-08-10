@@ -20,9 +20,9 @@ abstract class AbstractGraphViewExecutionHandler(
 	protected var currentMode: ApplicationMode = applicationMode
 		private set
 
-	protected val mouseHandler = createMouseHandler()
+	private val mouseHandler = createMouseHandler()
 
-	protected val keyHandler = createKeyHandler()
+	private val keyHandler = createKeyHandler()
 
 	private val modeEventHandler: EventHandler<ApplicationModeEvent> = {
 		currentMode = it.applicationMode
@@ -55,12 +55,12 @@ abstract class AbstractGraphViewExecutionHandler(
 		passivate()
 	}
 
-	protected open fun activate() {
+	private fun activate() {
 		view.addMouseMotionListener(mouseHandler)
 		view.addKeyListener(keyHandler)
 	}
 
-	protected open fun passivate() {
+	private fun passivate() {
 		view.removeMouseMotionListener(mouseHandler)
 		view.removeKeyListener(keyHandler)
 	}

@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.ui.*
@@ -33,12 +34,13 @@ class AddressableContentGraphDesktopItem(
 	controller: ApplicationDataViewController,
 	addressable: Addressable,
 	title: String,
+	applicationContextHolder: GraphApplicationContextHolder,
 	cmdManager: CommandManager = EditModule.commandManager,
 	readonly: Boolean = false,
 	contextColor: CompositeColor
 ) : AbstractGraphDesktopItemPanel() {
 
-	private val memoryContentPanel = AddressableContentsPanel(controller, addressable, cmdManager, readonly)
+	private val memoryContentPanel = AddressableContentsPanel(controller, applicationContextHolder, addressable, cmdManager, readonly)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
 
@@ -81,6 +83,7 @@ class AddressableContentGraphDesktopItem(
  */
 class AddressableContentsPanel(
 	private val controller: ApplicationDataViewController,
+	applicationContextHolder: GraphApplicationContextHolder,
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
@@ -95,13 +98,14 @@ class AddressableContentsPanel(
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
 			controller: ApplicationDataViewController,
+			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
 			addressable: Addressable,
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
-				.content { dialog -> AddressableContentsPanel(controller, addressable, cmdManager, readonly) { dialog.dispose()} }
+				.content { dialog -> AddressableContentsPanel(controller, applicationContextHolder, addressable, cmdManager, readonly) { dialog.dispose()} }
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
@@ -109,7 +113,7 @@ class AddressableContentsPanel(
 		}
 	}
 
-	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly)
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly, applicationContextHolder)
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {

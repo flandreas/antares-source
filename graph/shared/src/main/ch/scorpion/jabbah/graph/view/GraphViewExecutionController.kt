@@ -70,16 +70,16 @@ class GraphViewExecutionController(
 		actorListener.dispose()
 	}
 
-	/**
-	 * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
-	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
-	 */
 	fun updateDrawingViewEditability() {
 		graphViewUI.drawingView.editable = isRoot
 			&& !applicationContextHolder.scheduler.isActive
 			&& graphViewUI.isEditable
 	}
 
+	/**
+	 * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
+	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
+	 */
 	fun updateDetachedUI() {
 		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached
 			&& applicationContextHolder.scheduler.isActive

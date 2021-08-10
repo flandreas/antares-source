@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -97,8 +96,7 @@ class AntaresViewJs(
 
 	override fun componentDidMount() {
 		props.application.controller.view = this
-
-		ExecutionModule.scheduler.isSoftBreakpointsEnabled = true
+		applicationContextHolder.scheduler.isSoftBreakpointsEnabled = true
 	}
 
 	override fun componentWillUnmount() {
@@ -136,7 +134,7 @@ class AntaresViewJs(
 					antaresMenuBar {  }
 					graphExecutionToolbar {
 						applicationDataHolder = props.applicationDataHolder
-						scheduler = ExecutionModule.scheduler
+						scheduler = applicationContextHolder.scheduler
 						eventBus = BaseModule.eventBus
 					}
 

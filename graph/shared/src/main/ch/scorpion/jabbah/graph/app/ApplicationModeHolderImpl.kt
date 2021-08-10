@@ -21,8 +21,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 class ApplicationModeHolderImpl(
 	val editor: Editor,
+	private val scheduler: Scheduler,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ApplicationModeHolder {
 

@@ -23,8 +23,8 @@ class AntaresExecutionAnimationFactory : AbstractGraphViewExecutionAnimationFact
 		startEdgeView: EdgeView<*>,
 		startPort: Port<*>,
 		drawingView: DrawingView<GraphView>,
-		animator: Animator,
 		scheduler: Scheduler,
+		animator: Animator,
 		styleProvider: StyleProvider
 	): EdgeViewNetAnimation {
 

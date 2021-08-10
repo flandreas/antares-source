@@ -72,7 +72,6 @@ open class GraphFrameController<T: GraphFrame>(
 	applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
-	scheduler: Scheduler = ExecutionModule.scheduler,
 	private val properties: Properties = BaseModule.properties
 ) : AbstractUIController<T>(), GraphFrameActions {
 
@@ -101,7 +100,7 @@ open class GraphFrameController<T: GraphFrame>(
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, applicationContextHolder, viewManager, scheduler, eventBus)
+	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, applicationContextHolder, viewManager, eventBus)
 
 	private val zoomEventHandler = ZoomEventHandler()
 

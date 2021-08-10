@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -100,9 +99,9 @@ class DeleteUsecaseAction(
 
 class RunUsecaseAction(
 	application: Application,
+	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecases.action.runUsecase", application, service, eventBus) {
 
@@ -120,9 +119,9 @@ class RunUsecaseAction(
 /** Executes the test script of the currently selected [Usecase].*/
 class RunSingleUsecaseTestAction(
 	application: Application,
+	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", application, service, eventBus) {
 
@@ -139,9 +138,9 @@ class RunSingleUsecaseTestAction(
 
 class RunAllTestsAction(
 	application: Application,
+	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val applicationModeHolder: ApplicationModeHolder
 ) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, service, eventBus) {
 

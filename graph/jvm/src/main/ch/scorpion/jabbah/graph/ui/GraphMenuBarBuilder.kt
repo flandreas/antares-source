@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.*
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
@@ -40,6 +41,8 @@ open class GraphMenuBarBuilder(
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
 	private val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
+
+	private val scheduler: Scheduler get() = graphFrame.controller.applicationContextHolder.scheduler
 
 	override fun fillMenuBar(menuBar: JMenuBar) {
 		super.fillMenuBar(menuBar)
@@ -88,11 +91,11 @@ open class GraphMenuBarBuilder(
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction(frame.application.controller, GraphViewModule.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(ResumeExecutionAction())))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction())))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ResumeExecutionAction(scheduler))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction(scheduler))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction(scheduler))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction(scheduler))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction(scheduler))))
 		menu.add(SignalConflictBehaviourMenu())
 		return menu
 	}
@@ -110,9 +113,9 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application, applicationModeHolder = applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		return menu
 	}
 }

@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
@@ -41,8 +40,8 @@ interface GraphViewExecutionAnimationFactory {
 		startEdgeView: EdgeView<*>,
 		startPort: Port<*>,
 		drawingView: DrawingView<GraphView>,
+		scheduler: Scheduler,
 		animator: Animator = AnimationModule.animator,
-		scheduler: Scheduler = ExecutionModule.scheduler,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider
 	): EdgeViewNetAnimation
 
@@ -55,7 +54,7 @@ interface GraphViewExecutionAnimationFactory {
 
 class UndefinedGraphViewExecutionAnimationFactory : GraphViewExecutionAnimationFactory {
 
-	override fun createEdgeViewNetAnimation(actorListener: ActorListener, actorData: ActorData, startEdgeView: EdgeView<*>, startPort: Port<*>, drawingView: DrawingView<GraphView>, animator: Animator, scheduler: Scheduler, styleProvider: StyleProvider): EdgeViewNetAnimation {
+	override fun createEdgeViewNetAnimation(actorListener: ActorListener, actorData: ActorData, startEdgeView: EdgeView<*>, startPort: Port<*>, drawingView: DrawingView<GraphView>, scheduler: Scheduler, animator: Animator, styleProvider: StyleProvider): EdgeViewNetAnimation {
 		throw UnsupportedOperationException("not implemented")
 	}
 

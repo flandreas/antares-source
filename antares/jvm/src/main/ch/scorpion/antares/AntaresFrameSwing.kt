@@ -32,6 +32,7 @@ class AntaresFrameSwing(
 			controller = application.controller,
 			addressable = request.addressable,
 			title = request.name,
+			applicationContextHolder = controller.applicationContextHolder,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
 			readonly = request.readonly,
 			contextColor = contextColor)
@@ -41,6 +42,7 @@ class AntaresFrameSwing(
 		AddressableContentsPanel.showAsDialog(
 			parent = Frame.getFrames()[0],
 			controller = application.controller,
+			applicationContextHolder = controller.applicationContextHolder,
 			name = request.name,
 			addressable = request.addressable,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -44,8 +46,6 @@ class GraphPanelViewEditabilityTest {
 		}
 	}
 
-	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val vv: SubGraphVerticeView<*>
 	private val application: TestGraphApplication
 	private val controller: GraphPanelViewController
 
@@ -59,59 +59,62 @@ class GraphPanelViewEditabilityTest {
 		GraphViewModule.applicationModeHolder = controller
 		GraphFrameMockBuilder(application.graphFrameController)
 		DrawViewModule.viewManager.activeView = application.editor.view
-
-		vv = createSubGraphVerticeView()
-		graphViewBuilder.addVerticeView(vv)
 	}
+
+	private fun findSubGraphVerticeView(): SubGraphVerticeView<*> =
+		application.editor.drawing.getDrawable { it is SubGraphVerticeView<*> } as SubGraphVerticeView<*>
+
+	private fun findTestVerticeView(): TestVerticeView =
+		application.editor.drawing.getDrawable { it is TestVerticeView } as TestVerticeView
 
 	@Test
 	fun shouldBeEditableWithEditableSavable() {
 		establishEditableData()
-		assertEditableUI()
+		assertEditableUI(findSubGraphVerticeView())
 	}
 
 	@Test
 	fun shouldNotBeEditableWithNonEditableSavable() {
 		establishNonEditableData()
-		assertNonEditableUI(canSelect = true)
+		assertNonEditableUI(canSelect = true, findSubGraphVerticeView())
 	}
 
 	@Test
 	fun shouldNotBeEditableWhenExecuting() {
 		establishEditableData()
 		controller.setMode(ApplicationMode.EXECUTE)
-		assertNonEditableUI(canSelect = false)
+		assertNonEditableUI(canSelect = false, findSubGraphVerticeView())
 	}
 
 	@Test
 	fun shouldNotBeEditableAfterDescending() {
 		establishEditableData()
-		BaseModule.eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
-		assertNonEditableUI(canSelect = false)
+		BaseModule.eventBus.post(OpenSubGraphRequest(findSubGraphVerticeView(), newView = false, quickMode = true))
+		assertNonEditableUI(canSelect = true, findTestVerticeView())
 	}
 
-	private fun assertEditableUI() {
+	private fun assertEditableUI(component: Component) {
 		assertTrue(controller.editor.view.editable)
 		assertTrue(controller.editor.active)
-		assertTrue(canSelectComponent())
-		assertTrue(canMoveComponent())
+		assertTrue(canSelectComponent(component))
+		assertTrue(canMoveComponent(component))
 	}
 
-	private fun assertNonEditableUI(canSelect: Boolean) {
+	private fun assertNonEditableUI(canSelect: Boolean, component: Component) {
 		assertFalse(controller.editor.view.editable)
 		assertEquals(canSelect, controller.editor.active)
-		assertEquals(canSelect, canSelectComponent())
-		assertFalse(canMoveComponent())
+		assertEquals(canSelect, canSelectComponent(component))
+		assertFalse(canMoveComponent(component))
 	}
 
-	private fun canSelectComponent(): Boolean {
-		val location = vv.boundingBox.center
+	private fun canSelectComponent(component: Component): Boolean {
+		val location = component.boundingBox.center
 		application.canvas.pressMouseAt(location.xInt, location.yInt)
 		return application.editor.view.content.selectionManager.selectionCount == 1
 	}
 
-	private fun canMoveComponent(): Boolean {
-		val location = vv.boundingBox.center
+	private fun canMoveComponent(component: Component): Boolean {
+		val location = component.boundingBox.center
 		application.canvas
 			.pressMouseAt(location.xInt, location.yInt)
 			.dragMouse(50, 0)
@@ -127,11 +130,16 @@ class GraphPanelViewEditabilityTest {
 		application.controller.data = applicationData(SavableMockBuilder().nonEditable().build())
 	}
 
-	private fun applicationData(savable: Savable): ApplicationData = ApplicationData(
-		MetaGraph(
-			graph = GraphStorable(graphViewBuilder.build()),
-			containerDrawing = ContainerDrawing()),
-		savable)
+	private fun applicationData(savable: Savable): ApplicationData {
+		val graphViewBuilder = GraphViewBuilder<Boolean>()
+		val vv = createSubGraphVerticeView()
+		graphViewBuilder.addVerticeView(vv)
+		return ApplicationData(
+			MetaGraph(
+				graph = GraphStorable(graphViewBuilder.build()),
+				containerDrawing = ContainerDrawing()),
+			savable)
+	}
 
 	private fun createSubGraphVerticeView(): SubGraphVerticeView<*> {
 		val library = LibraryModule.libraryHolder.library

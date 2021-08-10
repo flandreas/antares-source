@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.ApplicationContextHolder
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -28,7 +29,7 @@ data class GraphApplicationContext(
 }
 
 class GraphApplicationContextHolder(
-	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val scheduler: Scheduler = SchedulerImpl(),
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ApplicationContextHolder() {

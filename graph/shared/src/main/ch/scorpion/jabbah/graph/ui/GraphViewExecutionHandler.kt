@@ -33,7 +33,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  *
  * The responsibilities 1. and 2. are already covered by the [GraphView]'s [Editor] when in edit mode.
  *
- * [GraphViewExecutionHandler] listens for [SchedulerActivationStateEvent]s from [scheduler] and disables
+ * [GraphViewExecutionHandler] listens for [SchedulerActivationStateEvent]s from [Scheduler] and disables
  * itself when not in execution mode.
  */
 class GraphViewExecutionHandler(
@@ -56,6 +56,8 @@ class GraphViewExecutionHandler(
 
 	override val activationCondition: Boolean get() = currentMode === EXECUTE
 
+	// Already covered by superclass
+	/*
 	override fun activate() {
 		super.activate()
 		view.addMouseListener(mouseHandler)
@@ -65,6 +67,7 @@ class GraphViewExecutionHandler(
 		super.passivate()
 		view.removeMouseListener(mouseHandler)
 	}
+	*/
 
 	// TODO Refactoring: Many commonalities with SelectionToolImpl. Unify!
 	private inner class MouseHandler : MouseAdapter() {
