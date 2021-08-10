@@ -20,7 +20,6 @@ import ch.scorpion.jabbah.graph.ui.TestGraphApplication
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -56,7 +55,6 @@ class GraphPanelViewEditabilityTest {
 		application.controller.view = mockk(relaxed = true)
 		controller = application.graphFrameController.graphPanelViewController
 
-		GraphViewModule.applicationModeHolder = controller
 		GraphFrameMockBuilder(application.graphFrameController)
 		DrawViewModule.viewManager.activeView = application.editor.view
 	}
@@ -82,7 +80,7 @@ class GraphPanelViewEditabilityTest {
 	@Test
 	fun shouldNotBeEditableWhenExecuting() {
 		establishEditableData()
-		controller.setMode(ApplicationMode.EXECUTE)
+		controller.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 		assertNonEditableUI(canSelect = false, findSubGraphVerticeView())
 	}
 

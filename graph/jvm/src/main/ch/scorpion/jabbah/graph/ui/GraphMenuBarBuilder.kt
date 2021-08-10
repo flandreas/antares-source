@@ -15,17 +15,16 @@ import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
-import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
-import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
+import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
@@ -90,7 +89,7 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction(frame.application.controller, GraphViewModule.applicationModeHolder))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
 		menu.add(JMenuItem(ActionWrapperSwing(ResumeExecutionAction(scheduler))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction(scheduler))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction(scheduler))))
@@ -109,7 +108,7 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
-		val applicationModeHolder = graphFrame.controller.graphPanelViewController
+		val applicationModeHolder = graphFrame.controller.applicationModeHolder
 		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
 		menu.addSeparator()

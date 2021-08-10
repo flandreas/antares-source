@@ -14,16 +14,16 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
-import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.mockk.every
@@ -47,6 +47,10 @@ class GraphNavigationViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus)
+	private val applicationModeHolder = mockk<ApplicationModeHolder>().also {
+		applicationContextHolder.applicationModeHolder = it
+		every { it.currentMode } returns ApplicationMode.EDIT
+	}
 	private val drawingView = DrawingViewImpl(
 		drawing = graphViewBuilder.graphView as Drawing<Component>,
 		applicationContextHolder = applicationContextHolder,
@@ -98,7 +102,7 @@ class GraphNavigationViewControllerTest {
 	fun shouldPropagateContextWithApplicationMode() {
 		every { scheduler.isActive } returns true
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
-		eventBus.post(ApplicationModeEvent(GraphViewModule.applicationModeHolder, ApplicationMode.EXECUTE))
+		eventBus.post(ApplicationModeEvent((drawingView.applicationContextHolder as GraphApplicationContextHolder).applicationModeHolder, ApplicationMode.EXECUTE))
 
 		assertTrue((drawingView.applicationContext as GraphApplicationContext).isExecute)
 	}
@@ -130,6 +134,7 @@ class GraphNavigationViewControllerTest {
 		val testVerticeView = mockk<VerticeView<Vertice>>(relaxed = true)
 		every { testVerticeView.model } returns testVertice
 		every { scheduler.isActive } returns true
+		every { applicationModeHolder.currentMode } returns ApplicationMode.EXECUTE
 
 		graphViewBuilder.addVerticeView(testVerticeView)
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
@@ -146,7 +151,7 @@ class GraphNavigationViewControllerTest {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		drawingView.content.selectionManager.select(vv)
 
-		eventBus.post(ApplicationModeEvent(GraphViewModule.applicationModeHolder, ApplicationMode.EXECUTE))
+		eventBus.post(ApplicationModeEvent((drawingView.applicationContextHolder as GraphApplicationContextHolder).applicationModeHolder, ApplicationMode.EXECUTE))
 
 		assertFalse(drawingView.content.selectionManager.isSelected(vv))
 	}

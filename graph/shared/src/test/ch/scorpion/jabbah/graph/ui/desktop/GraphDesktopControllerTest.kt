@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
@@ -37,7 +38,7 @@ class GraphDesktopControllerTest {
 	}
 
 	private val eventBus = EventBusImpl()
-	private val applicationContextHolder = GraphApplicationContextHolder()
+	private val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl())
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
 	private val controller = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)

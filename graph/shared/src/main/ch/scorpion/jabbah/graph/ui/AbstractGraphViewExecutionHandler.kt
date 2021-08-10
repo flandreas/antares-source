@@ -7,26 +7,29 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 
 abstract class AbstractGraphViewExecutionHandler(
 	protected val view: DrawingView<GraphView>,
-	protected val eventBus: EventBus = BaseModule.eventBus,
-	applicationMode: ApplicationMode
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	protected var currentMode: ApplicationMode = applicationMode
-		private set
+	private val applicationModeHolder: ApplicationModeHolder get() = (view.applicationContextHolder as GraphApplicationContextHolder).applicationModeHolder
 
-	private val mouseHandler = createMouseHandler()
+	protected val currentMode: ApplicationMode get() = applicationModeHolder.currentMode
+
+	protected val mouseHandler = createMouseHandler()
 
 	private val keyHandler = createKeyHandler()
 
 	private val modeEventHandler: EventHandler<ApplicationModeEvent> = {
-		currentMode = it.applicationMode
-		updateActivationState()
+		if (it.source === applicationModeHolder) {
+			updateActivationState()
+		}
 	}
 
 	private val viewCanvasListener: PropertyChangeListener<Any> = object : PropertyChangeListener<Any> {
@@ -55,12 +58,12 @@ abstract class AbstractGraphViewExecutionHandler(
 		passivate()
 	}
 
-	private fun activate() {
+	protected open fun activate() {
 		view.addMouseMotionListener(mouseHandler)
 		view.addKeyListener(keyHandler)
 	}
 
-	private fun passivate() {
+	protected open fun passivate() {
 		view.removeMouseMotionListener(mouseHandler)
 		view.removeKeyListener(keyHandler)
 	}

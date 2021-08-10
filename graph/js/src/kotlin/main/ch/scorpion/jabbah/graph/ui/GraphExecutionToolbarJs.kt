@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.systemSpeedSlider
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import com.ccfraser.muirwik.components.*
 import kotlinx.css.paddingLeft
 import react.*
@@ -17,6 +17,7 @@ import styled.styledDiv
 
 external interface GraphExecutionToolbarJsProps : RProps {
 	var applicationDataHolder: ApplicationDataHolder
+	var applicationModeHolder: ApplicationModeHolder
 	var scheduler: Scheduler
 	var eventBus: EventBus
 }
@@ -35,7 +36,7 @@ class GraphExecutionToolbarJs(
 	props: GraphExecutionToolbarJsProps
 ) : RComponent<GraphExecutionToolbarJsProps, RState>(props) {
 
-	private val toggleModeAction = ToggleApplicationModeAction(props.applicationDataHolder, GraphViewModule.applicationModeHolder, props.eventBus)
+	private val toggleModeAction = ToggleApplicationModeAction(props.applicationDataHolder, props.applicationModeHolder, props.eventBus)
 	private val pauseAction = PauseExecutionAction(props.scheduler, props.eventBus)
 	private val resumeAction = ResumeExecutionAction(props.scheduler, props.eventBus)
 

@@ -91,12 +91,11 @@ class GraphPanelViewController(
 	val editor: Editor,
 	applicationDataHolder: ApplicationDataHolder,
 	val applicationContextHolder: GraphApplicationContextHolder,
-	private val viewManager: ViewManager = DrawViewModule.viewManager,
+	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	val applicationModeHolder: ApplicationModeHolder = ApplicationModeHolderImpl(editor, applicationContextHolder.scheduler, viewManager, eventBus),
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder
-) : AbstractUIController<GraphPanelView>(), ApplicationModeHolder by applicationModeHolder {
+) : AbstractUIController<GraphPanelView>() {
 
 	companion object {
 		private val LOG by logger(GraphPanelViewController::class)
@@ -129,7 +128,7 @@ class GraphPanelViewController(
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
-	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { updateEditorEditability() }
+	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { applicationModeHolder.updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
 
@@ -172,7 +171,7 @@ class GraphPanelViewController(
 
 	private fun handle(event: SchedulerActivationStateEvent) {
 		if (event.scheduler === applicationContextHolder.scheduler && !event.scheduler.isActive) {
-			setMode(ApplicationMode.EDIT)
+			applicationModeHolder.setMode(ApplicationMode.EDIT)
 		}
 	}
 
@@ -202,8 +201,8 @@ class GraphPanelViewController(
 	}
 
 	private fun stopSimulationWhenClosingApplicationData(data: ApplicationData?) {
-		if (data == null && currentMode.isExecute()) {
-			setMode(ApplicationMode.EDIT)
+		if (data == null && applicationModeHolder.currentMode.isExecute()) {
+			applicationModeHolder.setMode(ApplicationMode.EDIT)
 		}
 	}
 
@@ -242,6 +241,6 @@ class GraphPanelViewController(
 			it.snapper = editor.view.grid
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
-		updateEditorEditability()
+		applicationModeHolder.updateEditorEditability()
 	}
 }

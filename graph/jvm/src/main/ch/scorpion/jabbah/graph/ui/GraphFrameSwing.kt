@@ -50,8 +50,6 @@ open class GraphFrameSwing(
 	init {
 		controller.view = this
 
-		GraphViewModule.applicationModeHolder = controller.graphPanelViewController
-
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction)
 
@@ -62,7 +60,7 @@ open class GraphFrameSwing(
 
 	override var displayedView: GraphFrame.DisplayedView = GraphFrame.DisplayedView.Container
 
-	override val applicationMode: ApplicationMode get() = controller.graphPanelViewController.currentMode
+	override val applicationMode: ApplicationMode get() = controller.applicationModeHolder.currentMode
 
 	override val desktopView: View<*> get() = editor.view
 

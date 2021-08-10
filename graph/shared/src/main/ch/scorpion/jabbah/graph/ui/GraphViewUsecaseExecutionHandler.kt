@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationMode.EXEC_USECASE
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -15,9 +14,8 @@ import ch.scorpion.jabbah.graph.view.Usecase
 class GraphViewUsecaseExecutionHandler(
 	view: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	eventBus: EventBus = BaseModule.eventBus,
-	applicationMode: ApplicationMode
-) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractGraphViewExecutionHandler(view, eventBus) {
 
 	override fun createMouseHandler(): MouseAdapter = MouseHandler()
 

@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 
 /** A test [Application] implementation used for integration testing. */
@@ -22,10 +21,6 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 		graphFrameController.graphPanelViewController.libraryPanelController.libraryTreeViewController,
 		this)
 
-	init {
-		GraphViewModule.applicationModeHolder = graphFrameController.graphPanelViewController
-	}
-
 	/** ---- [Application] */
 
 	override val displayName: String = "Test"
@@ -37,11 +32,11 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 	val editor: Editor get() = graphFrameController.editor
 
 	fun startSimulation() {
-		graphFrameController.graphPanelViewController.setMode(ApplicationMode.EXECUTE)
+		graphFrameController.graphPanelViewController.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 	}
 
 	fun stopSimulation() {
-		graphFrameController.graphPanelViewController.setMode(ApplicationMode.EDIT)
+		graphFrameController.graphPanelViewController.applicationModeHolder.setMode(ApplicationMode.EDIT)
 	}
 
 	private fun openInitialSavable() {

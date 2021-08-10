@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationMode.EXECUTE
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -39,9 +38,8 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 class GraphViewExecutionHandler(
 	view: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	eventBus: EventBus = BaseModule.eventBus,
-	applicationMode: ApplicationMode
-) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractGraphViewExecutionHandler(view, eventBus) {
 
 	companion object {
 		private val LOG by logger(GraphViewExecutionHandler::class)
@@ -56,18 +54,17 @@ class GraphViewExecutionHandler(
 
 	override val activationCondition: Boolean get() = currentMode === EXECUTE
 
-	// Already covered by superclass
-	/*
+	/** Enhance superclass behaviour by mouseListener.*/
 	override fun activate() {
 		super.activate()
 		view.addMouseListener(mouseHandler)
 	}
 
+	/** Enhance superclass behaviour by mouseListener.*/
 	override fun passivate() {
 		super.passivate()
 		view.removeMouseListener(mouseHandler)
 	}
-	*/
 
 	// TODO Refactoring: Many commonalities with SelectionToolImpl. Unify!
 	private inner class MouseHandler : MouseAdapter() {

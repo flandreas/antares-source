@@ -7,12 +7,12 @@ import ch.scorpion.jabbah.draw.ApplicationContextHolder
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 
 /**
  * A graph application sets an instance of [GraphApplicationContext] as the application context
@@ -29,7 +29,7 @@ data class GraphApplicationContext(
 }
 
 class GraphApplicationContextHolder(
-	val scheduler: Scheduler = SchedulerImpl(),
+	val scheduler: Scheduler,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ApplicationContextHolder() {
@@ -39,6 +39,9 @@ class GraphApplicationContextHolder(
 	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { updateApplicationContext() }
 	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { updateApplicationContext() }
 	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { updateApplicationContext() }
+
+	/** Variable due to cyclic redundancy.*/
+	lateinit var applicationModeHolder: ApplicationModeHolder
 
 	init {
 		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)

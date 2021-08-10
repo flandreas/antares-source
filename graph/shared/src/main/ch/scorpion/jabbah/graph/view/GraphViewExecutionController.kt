@@ -46,13 +46,13 @@ class GraphViewExecutionController(
 	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
 
 	/** Forwards input events to the [GraphView] while executing.*/
-	private val graphViewExecutionHandler = GraphViewExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus, initialMode)
+	private val graphViewExecutionHandler = GraphViewExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus)
 
 	/** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
 	private val graphViewDisplayHandler = GraphViewDisplayHandler(graphViewUI.drawingView, applicationContextHolder, eventBus)
 
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
-	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus, initialMode)
+	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(graphViewUI.drawingView, applicationContextHolder, eventBus)
 
 	private val actorListener = GraphViewActorListener(graphViewUI.drawingView, applicationContextHolder, eventBus = eventBus)
 

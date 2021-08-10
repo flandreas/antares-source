@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataHolder
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Properties
@@ -12,6 +10,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -19,11 +19,12 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -87,8 +88,10 @@ open class GraphFrameController<T: GraphFrame>(
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 	}
 
+	private val scheduler = SchedulerImpl()
+
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	val applicationContextHolder = GraphApplicationContextHolder()
+	val applicationContextHolder = GraphApplicationContextHolder(scheduler)
 
 	private val drawingView = EditModule.drawingViewFactory.invoke(
 		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
@@ -97,10 +100,20 @@ open class GraphFrameController<T: GraphFrame>(
 
 	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 
+	val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
+		// Cyclic dependency
+		applicationContextHolder.applicationModeHolder = it
+	}
+
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	val graphPanelViewController = GraphPanelViewController(editor, applicationDataHolder, applicationContextHolder, viewManager, eventBus)
+	val graphPanelViewController = GraphPanelViewController(
+		editor,
+		applicationDataHolder,
+		applicationContextHolder,
+		applicationModeHolder,
+		eventBus)
 
 	private val zoomEventHandler = ZoomEventHandler()
 

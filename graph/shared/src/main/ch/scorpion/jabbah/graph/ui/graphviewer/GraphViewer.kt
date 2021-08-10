@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode.*
@@ -33,7 +34,7 @@ class GraphViewerController(
 	}
 
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	val applicationContextHolder = GraphApplicationContextHolder()
+	val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl())
 
 	override var currentMode: ApplicationMode = EDIT
 		private set
@@ -46,6 +47,11 @@ class GraphViewerController(
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
+
+	init {
+		// Cyclic dependency
+		applicationContextHolder.applicationModeHolder = this
+	}
 
 	override fun dispose() {
 		super.dispose()

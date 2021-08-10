@@ -116,8 +116,6 @@ object GraphViewModule : AbstractModule() {
 
 	val usecaseAppService = UsecaseAppService()
 
-	var applicationModeHolder: ApplicationModeHolder = UndefinedApplicationModeHolder()
-
 	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
 	val manualSchedulerTask = ManualSchedulerTask()

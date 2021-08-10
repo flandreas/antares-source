@@ -9,11 +9,13 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -21,7 +23,6 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,10 +37,12 @@ class GraphPanelViewControllerTest {
 	}
 
 	private val eventBus = EventBusImpl()
+	private val scheduler = SchedulerImpl()
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val applicationContextHolder = GraphApplicationContextHolder()
+	private val applicationContextHolder = GraphApplicationContextHolder(scheduler)
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
 	private val editor = TestEditorBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
+	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler)
 	private val controller: GraphPanelViewController
 
 	init {
@@ -47,8 +50,7 @@ class GraphPanelViewControllerTest {
 		LibraryModule.libraryHolder.l = mockk(relaxed = true)
 		ProjectModule.projectHolder.p = mockk(relaxed = true)
 
-		controller = GraphPanelViewController(editor, mockk(relaxed = true), applicationContextHolder, eventBus = eventBus)
-		GraphViewModule.applicationModeHolder = controller
+		controller = GraphPanelViewController(editor, mockk(relaxed = true), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
 		GraphPanelViewMockBuilder(controller)
 	}
 
@@ -85,11 +87,11 @@ class GraphPanelViewControllerTest {
 		val content = GraphViewBuilder<Boolean>().build()
 		val savable = mockk<Savable>(relaxed = true)
 		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
-		GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
+		controller.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 
 		eventBus.post(ApplicationDataEvent(null, null))
 
-		assertEquals(ApplicationMode.EDIT, controller.currentMode)
+		assertEquals(ApplicationMode.EDIT, controller.applicationModeHolder.currentMode)
 	}
 
 	private fun applicationDataFor(content: GraphView, savable: Savable): ApplicationData =
