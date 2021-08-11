@@ -193,7 +193,12 @@ class GraphPanelViewSwing(
 	}
 
 	private fun createExecutionToolBar(controller: GraphPanelViewController): ToolBar =
-		ExecutionToolbarBuilder(controller.applicationContextHolder.scheduler, controller.applicationModeHolder, controller.toggleApplicationModeAction, eventBus).build()
+		ExecutionToolbarBuilder(
+			controller.applicationContextHolder.scheduler,
+			controller.applicationContextHolder.systemSpeed,
+			controller.applicationModeHolder,
+			controller.toggleApplicationModeAction, eventBus
+		).build()
 
 	private fun createDrawingToolBar(controller: GraphPanelViewController): ToolBar {
 		val toolbar = ToolBar(controller.editor)

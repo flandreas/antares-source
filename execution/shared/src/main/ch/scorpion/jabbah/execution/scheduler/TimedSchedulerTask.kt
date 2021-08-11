@@ -9,15 +9,14 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.base.time.Timer
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import kotlin.math.max
 
 /** A [SchedulerTask] that is driven by a [Timer]. */
 class TimedSchedulerTask(
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	private val timer: Timer = System.createTimer(),
 	eventBus: EventBus = BaseModule.eventBus,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
 ) : AbstractSchedulerTask("execution.task.timed"), ActionListener {
 
 	companion object {

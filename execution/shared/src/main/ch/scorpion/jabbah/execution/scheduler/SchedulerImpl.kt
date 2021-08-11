@@ -26,11 +26,11 @@ import kotlin.reflect.KClass
  * Standard implementation of the [Scheduler] interface.
  */
 class SchedulerImpl(
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	private val timeService: TimeService = BaseModule.timeService,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(eventBus),
+	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(currentSystemSpeedCategory, eventBus),
 	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl()
 ) : Scheduler, ExecutionErrorHandler by executionErrorHandler {
 

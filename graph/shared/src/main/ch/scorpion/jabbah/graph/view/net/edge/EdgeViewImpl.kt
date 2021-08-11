@@ -18,8 +18,6 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -47,10 +45,9 @@ open class EdgeViewImpl<T : Any>(
 	override val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
 	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
 	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-	currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	net: Net<T>,
 	netViewStyle: NetViewStyle? = null
-) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), EdgeView<T> {
+) : AbstractNetViewElement<T>(styleProvider, net), EdgeView<T> {
 
 	private companion object {
 		private val LOG by logger(EdgeViewImpl::class)
@@ -65,14 +62,13 @@ open class EdgeViewImpl<T : Any>(
 		styleProvider: StyleProvider,
 		edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
 		origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-		destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-		currentSystemSpeedCategory: CurrentSystemSpeedCategory
+		destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector
 	) : this(
 		styleProvider,
 		edgeToPortConnectorSupplier,
 		origEndpointConnectorSupplier,
 		destEndpointConnectorSupplier,
-		currentSystemSpeedCategory, NetImpl<T>()
+		NetImpl<T>()
 	)
 
 	@Suppress("unused")
@@ -80,8 +76,7 @@ open class EdgeViewImpl<T : Any>(
 		DrawStyleModule.styleProvider,
 		{ GraphViewModule.edgeToPortConnector },
 		{ GraphViewModule.dragEdgeViewOriginConnector },
-		{ GraphViewModule.dragEdgeViewDestinationConnector },
-		ExecutionModule.currentSystemSpeedCategory
+		{ GraphViewModule.dragEdgeViewDestinationConnector }
 	)
 
 	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)

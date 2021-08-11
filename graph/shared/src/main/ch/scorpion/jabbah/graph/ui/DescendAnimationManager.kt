@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * Manages the various animations used for animating the descend into a [SubGraphVerticeView] when using the pan
  * functions of a [View].
  */
-class DescendAnimationManager(val animator: Animator = AnimationModule.animator) {
+class DescendAnimationManager(
+	val animator: Animator = AnimationModule.constantSpeedAnimator
+) {
 
     companion object {
         private const val ZOOM_DURATION = 1_000.0

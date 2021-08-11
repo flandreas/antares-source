@@ -17,12 +17,11 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.*
-import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.*
+import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.ROTATE_HALF
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -257,10 +256,11 @@ abstract class AbstractAddressableView<T : Addressable>(
 
 	/** Determines whether drawing hte [AddressableContentsView] is required depending on the [CurrentSystemSpeedCategory].*/
 	private fun requireDrawContents(context: DrawContext): Boolean {
+		val graphApplicationContext = context.castedAppContext<GraphApplicationContext>()!!
 		return showContents && (
-			!context.castedAppContext<GraphApplicationContext>()!!.isExecute
-				|| context.castedAppContext<GraphApplicationContext>()!!.isPausing
-				|| ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
+			!graphApplicationContext.isExecute
+				|| graphApplicationContext.isPausing
+				|| graphApplicationContext.systemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
 	}
 
 	/** ---- [AbstractAddressableView] */

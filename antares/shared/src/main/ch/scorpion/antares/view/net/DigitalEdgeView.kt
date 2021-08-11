@@ -11,8 +11,6 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -39,14 +37,12 @@ class DigitalEdgeView(
 	edgeToPortConnectorSupplier: () -> EdgeToPortConnector = { GraphViewModule.edgeToPortConnector },
 	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = { GraphViewModule.dragEdgeViewOriginConnector },
 	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = { GraphViewModule.dragEdgeViewDestinationConnector },
-	currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	net: Net<DigitalSignal> = DigitalNet()
 ) : EdgeViewImpl<DigitalSignal>(
 	styleProvider,
 	edgeToPortConnectorSupplier,
 	origEndpointConnectorSupplier,
 	destEndpointConnectorSupplier,
-	currentSystemSpeedCategory,
 	net
 ) {
 
@@ -98,16 +94,15 @@ class DigitalEdgeViewFactory(
 	private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
 	private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
 	private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : EdgeViewFactory<DigitalSignal> {
 
 	override fun createEdgeView(): EdgeView<DigitalSignal> {
 		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, currentSystemSpeedCategory)
+			destEndpointConnectorSupplier)
 	}
 
 	override fun createEdgeView(netView: NetView<DigitalSignal>): EdgeView<DigitalSignal> {
 		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, currentSystemSpeedCategory, netView.net)
+			destEndpointConnectorSupplier, netView.net)
 	}
 }

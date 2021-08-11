@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
@@ -15,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
 import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.ui.library.LibrarySelectionChangedEvent
@@ -153,6 +155,7 @@ class LibraryPreviewPanel(
 
 		private var drawableDrawer: DrawableDrawer<Component> = DefaultDrawableDrawer()
 		private var scale: Double = 1.0
+		private val appContext = GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed()))
 
 		init {
 			background = BACKGROUND_COLOR
@@ -177,7 +180,7 @@ class LibraryPreviewPanel(
 			}
 
 			if (selection != null) {
-				drawableDrawer.process(DrawContext(Graphics2DJvm(g2), GraphApplicationContext()), selection!!)
+				drawableDrawer.process(DrawContext(Graphics2DJvm(g2), appContext), selection!!)
 			}
 
 			if (scale != 1.0) {

@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -51,8 +50,8 @@ object GateMnemonic {
 	 */
 	private fun isDisplayableFor(transform: AffineTransform): Boolean = enabled && transform.uniformScale >= ZOOM_LIMIT
 
-	private fun isDisplayableFor(mode: ApplicationMode): Boolean {
-		return mode == ApplicationMode.EDIT || ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe
+	private fun isDisplayableFor(mode: ApplicationMode, systemSpeedCategory: SystemSpeedCategory): Boolean {
+		return mode == ApplicationMode.EDIT || systemSpeedCategory >= SystemSpeedCategory.Observe
 	}
 
 	fun drawAnd(gateView: AndGateView, context: DrawContext, foreground: Color, background: Color) {
@@ -472,9 +471,10 @@ object GateMnemonic {
 	 * coordinate system origin if drawing is required.
 	 */
 	private fun begin(gateView: DigitalComponentView<*>, context: DrawContext): Boolean {
+		val graphApplicationContext = context.castedAppContext<GraphApplicationContext>()!!
 		if (gateView.model.inputCount <= 2
 			&& isDisplayableFor(context.g.transform)
-			&& isDisplayableFor(context.castedAppContext<GraphApplicationContext>()!!.mode)
+			&& isDisplayableFor(graphApplicationContext.mode, graphApplicationContext.systemSpeedCategory.systemSpeedCategory)
 		) {
 			if (gateView is BoxGateView<*>) {
 				gateView.labelStyle = BoxGateView.LabelStyle.SMALL_UPPER_LEFT

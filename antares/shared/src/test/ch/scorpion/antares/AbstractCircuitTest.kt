@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -16,6 +17,7 @@ import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
@@ -33,6 +35,7 @@ abstract class AbstractCircuitTest {
 		}
 	}
 
+	protected lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	protected lateinit var styleProvider: StyleProvider
 	protected lateinit var eventBus: EventBus
 	protected lateinit var timeService: ControlledTimeService
@@ -44,10 +47,11 @@ abstract class AbstractCircuitTest {
 	open fun setup() {
 		styleProvider = DrawStyleModule.styleProvider
 		eventBus = BaseModule.eventBus
+		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus), eventBus)
 		timeService = ControlledTimeService()
 		timer = ControlledTimer(timeService)
-		task = TimedSchedulerTask(ControlledTimer(timeService))
-		scheduler = SchedulerImpl(timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
+		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), ControlledTimer(timeService))
+		scheduler = SchedulerImpl(currentSystemSpeedCategory, timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 	}
 

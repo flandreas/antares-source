@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.animation.AnimatorImpl
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.ApplicationContextHolder
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -19,8 +21,8 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
  * in the [View]s it displays.
  */
 data class GraphApplicationContext(
+	val systemSpeedCategory: CurrentSystemSpeedCategory,
 	val mode: ApplicationMode = ApplicationMode.EDIT,
-	val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	val isPausing: Boolean = false
 ) {
 	val isExecute: Boolean get() = mode.isExecute()
@@ -30,8 +32,10 @@ data class GraphApplicationContext(
 
 class GraphApplicationContextHolder(
 	val scheduler: Scheduler,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	val systemSpeed: SystemSpeed = SystemSpeed(eventBus),
+	val currentSystemSpeedCategory: CurrentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed),
+	val animator: Animator = AnimatorImpl(systemSpeed)
 ) : ApplicationContextHolder() {
 
 	private val applicationMode: ApplicationMode get() = applicationModeHolder.currentMode
@@ -50,7 +54,7 @@ class GraphApplicationContextHolder(
 		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
 		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
-		applicationContext = GraphApplicationContext(ApplicationMode.EDIT, currentSystemSpeedCategory, scheduler.isPaused)
+		applicationContext = GraphApplicationContext(currentSystemSpeedCategory, ApplicationMode.EDIT, scheduler.isPaused)
 	}
 
 	override fun dispose() {
@@ -64,5 +68,5 @@ class GraphApplicationContextHolder(
 	}
 
 	private fun createApplicationContext(): GraphApplicationContext =
-		GraphApplicationContext(applicationMode, currentSystemSpeedCategory, scheduler.isPaused)
+		GraphApplicationContext(currentSystemSpeedCategory, applicationMode,  scheduler.isPaused)
 }

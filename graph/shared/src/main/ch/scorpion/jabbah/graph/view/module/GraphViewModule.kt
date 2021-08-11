@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlighter
 import ch.scorpion.jabbah.edit.drag.DragManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
@@ -27,12 +26,10 @@ import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.*
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphAuthorizations
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.app.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -220,8 +217,7 @@ object GraphViewModule : AbstractModule() {
 		DrawStyleModule.styleProvider,
 		{ edgeToPortConnector },
 		{ dragEdgeViewOriginConnector },
-		{ dragEdgeViewDestinationConnector },
-		ExecutionModule.currentSystemSpeedCategory
+		{ dragEdgeViewDestinationConnector }
 	)
 
 	fun <T : Any> getEdgeViewFactory(): EdgeViewFactory<T> {
@@ -233,8 +229,7 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	private var nodeViewFactory: NodeViewFactory<Any> = NodeViewFactoryImpl(
-		DrawStyleModule.styleProvider,
-		ExecutionModule.currentSystemSpeedCategory
+		DrawStyleModule.styleProvider
 	)
 
 	fun <T : Any> getNodeViewFactory(): NodeViewFactory<T> {

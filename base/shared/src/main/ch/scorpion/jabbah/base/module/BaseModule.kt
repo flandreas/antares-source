@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.TimeService
 
 /**
@@ -17,8 +16,6 @@ object BaseModule : AbstractModule() {
     var settings: Settings = Settings()
 
     var eventBus: EventBus = EventBusImpl()
-
-    val systemSpeed: SystemSpeed by lazy { SystemSpeed(eventBus) }
 
     var timeService: TimeService = ControlledTimeService()
 

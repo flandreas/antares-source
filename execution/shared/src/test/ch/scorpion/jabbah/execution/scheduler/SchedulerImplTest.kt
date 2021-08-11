@@ -4,12 +4,14 @@ import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.ExecutionTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -28,12 +30,14 @@ class SchedulerImplTest {
 
 	init {
 		ExecutionTestRule.configure()
+		val currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus), eventBus)
 		timeService = ControlledTimeService()
 		scheduler = SchedulerImpl(
+			currentSystemSpeedCategory,
 			timeService,
 			eventBus,
 			NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
-			task = TimedSchedulerTask(ControlledTimer(timeService))
+			task = TimedSchedulerTask(currentSystemSpeedCategory, ControlledTimer(timeService))
 		)
 		eventBus.register(BreakpointEvent::class) { breakpointEvent = it }
 	}

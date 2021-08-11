@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.SystemSpeedSliderSwing
@@ -22,6 +23,7 @@ import javax.swing.JToggleButton
 
 class ExecutionToolbarBuilder(
 	private val scheduler: Scheduler,
+	private val systemSpeed: SystemSpeed,
 	private val applicationModeHolder: ApplicationModeHolder,
 	private val toggleApplicationModeAction: ToggleApplicationModeAction,
 	private val eventBus: EventBus
@@ -41,7 +43,7 @@ class ExecutionToolbarBuilder(
 		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
 		pauseToggleButton.toolTipText = pauseAction.name
 
-		val speedSlider = SystemSpeedSliderSwing()
+		val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
 		val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)

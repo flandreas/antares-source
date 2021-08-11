@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
@@ -25,9 +27,11 @@ class GraphEditViewControllerTest {
 	}
 
 	private val eventBus = EventBusImpl()
+	private val systemSpeed = SystemSpeed(eventBus)
+	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val scheduler = SchedulerImpl()
-	private val applicationContextHolder = GraphApplicationContextHolder(scheduler)
+	private val scheduler = SchedulerImpl(currentSystemSpeedCategory)
+	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
 	private val drawingView = DrawingViewImpl(
 		graphViewBuilder.graphView as Drawing<Component>,
 		applicationContextHolder = applicationContextHolder,

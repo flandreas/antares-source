@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.animation
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
@@ -14,10 +15,10 @@ import ch.scorpion.jabbah.base.logger
  * @param period the time in milliseconds between two animation pulses
  */
 class AnimatorImpl(
-	private val timer: Timer,
+	private val systemSpeed: SystemSpeed,
+	private val timer: Timer = System.createTimer(),
 	private val period: Int = DEFAULT_PERIOD,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
 ) : Animator {
 
 	init {

@@ -3,17 +3,16 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
@@ -45,8 +44,10 @@ class GraphNavigationViewControllerTest {
 
 	private val scheduler = mockk<Scheduler>(relaxed = true)
 	private val eventBus = EventBusImpl()
+	private val systemSpeed = SystemSpeed(eventBus)
+	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus = eventBus)
+	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
 	private val applicationModeHolder = mockk<ApplicationModeHolder>().also {
 		applicationContextHolder.applicationModeHolder = it
 		every { it.currentMode } returns ApplicationMode.EDIT
@@ -93,9 +94,9 @@ class GraphNavigationViewControllerTest {
 	@Test
 	fun shouldPropagateContextWithSystemSpeedCategory() {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
-		BaseModule.systemSpeed.speed = SystemSpeed.MAX_SPEED
+		systemSpeed.speed = SystemSpeed.MAX_SPEED
 
-		assertEquals(ExecutionModule.currentSystemSpeedCategory, (drawingView.applicationContext as GraphApplicationContext).systemSpeedCategory)
+		assertEquals(currentSystemSpeedCategory, (drawingView.applicationContext as GraphApplicationContext).systemSpeedCategory)
 	}
 
 	@Test

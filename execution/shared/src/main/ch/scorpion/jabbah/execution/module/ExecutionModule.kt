@@ -26,9 +26,7 @@ object ExecutionModule : AbstractModule() {
 
 	val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder(noNoiseGenerator) }
 
-	var schedulerTaskFactory: (EventBus) -> SchedulerTask = { TimedSchedulerTask() }
-
-	val currentSystemSpeedCategory: CurrentSystemSpeedCategory by lazy { CurrentSystemSpeedCategory() }
+	var schedulerTaskFactory: (CurrentSystemSpeedCategory, EventBus) -> SchedulerTask = { speedCategory, eventBus -> TimedSchedulerTask(speedCategory, eventBus = eventBus) }
 
 	val issueCollector: IssueCollector = IssueCollector(eventBus = BaseModule.eventBus, clearOnExecutionStart = true)
 

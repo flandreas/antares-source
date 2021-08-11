@@ -67,7 +67,7 @@ class TransparentAnimation(
 			fadeInTimeMs: Int = 300,
 			holdTimeMs: Int = 2_000,
 			fadeOutTimeMs: Int = 600,
-			animator: Animator = AnimationModule.animator
+			animator: Animator = AnimationModule.constantSpeedAnimator
 		) {
 			transparent.transparency = Transparent.FULLY_TRANSPARENT
 

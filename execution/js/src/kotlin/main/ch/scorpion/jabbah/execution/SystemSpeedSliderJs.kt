@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.execution
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import com.ccfraser.muirwik.components.*
 import react.RBuilder
@@ -19,7 +18,7 @@ private external val sliderModule: dynamic
 private val sliderComponent: RComponent<SystemSpeedSliderProps, RState> = sliderModule.default
 
 fun RBuilder.systemSpeedSlider(
-	systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	systemSpeedCategory: CurrentSystemSpeedCategory,
 	eventBus: EventBus = BaseModule.eventBus,
 	handler: SystemSpeedSliderProps.() -> Unit
 ): ReactElement {

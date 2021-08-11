@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.animation.AnimationModule
-import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
@@ -36,7 +34,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
-    animator: Animator = AnimationModule.animator,
     viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) },
     editable: Boolean = true
 ) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
@@ -59,7 +56,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
     private val componentMessageDisplayer = ComponentMessageDisplayer(
-	    drawingView = this, displayGlobalMessages = displayGlobalMessages, eventBus = eventBus, animator = animator)
+	    drawingView = this, displayGlobalMessages = displayGlobalMessages, eventBus = eventBus)
 
 	private val preferenceChangeHandler: (PreferencesChangedEvent) -> Unit = {
 		invalidate()

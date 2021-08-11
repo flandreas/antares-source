@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.edit.view
 
+import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.View
@@ -26,8 +28,8 @@ import kotlin.math.abs
 class ComponentMessageDisplayer<T : Drawing<Component>>(
 	private val drawingView: DrawingView<T>,
 	private val displayGlobalMessages: Boolean,
-	private val eventBus: EventBus,
-	private val animator: Animator
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val animator: Animator = AnimationModule.constantSpeedAnimator
 ) {
 
 	companion object {

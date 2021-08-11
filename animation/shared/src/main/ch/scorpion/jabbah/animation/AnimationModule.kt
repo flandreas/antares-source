@@ -4,13 +4,14 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
 
 /**
- * Module definitions for the [jabbah.animation] module.
+ * Module definitions for the [ch.scorpion.jabbah.animation] module.
  */
 object AnimationModule : AbstractModule() {
 
-	var animator: Animator = AnimatorImpl(System.createTimer())
+	var constantSpeedAnimator = AnimatorImpl( SystemSpeed(), System.createTimer())
 
 	override fun initialize() {
 		configureProperties(BaseModule.properties)

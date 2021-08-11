@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.execution.speed
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
@@ -55,18 +56,25 @@ enum class SystemSpeedCategory(val customName: String, val speedRange: IntRange)
  * a [SystemSpeedCategoryEvent] on its [EventBus] if the value has changed.
  */
 class CurrentSystemSpeedCategory(
-    val systemSpeed: SystemSpeed = BaseModule.systemSpeed,
+    val systemSpeed: SystemSpeed,
     private val eventBus: EventBus = BaseModule.eventBus
 ) {
+
+	private val systemSpeedHandler: EventHandler<SystemSpeedEvent> = { update() }
     init {
-        eventBus.register(SystemSpeedEvent::class) { update() }
+        eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
     }
+
+	fun dispose() {
+		eventBus.unregister(systemSpeedHandler)
+	}
 
 	companion object {
         private val LOG by logger(CurrentSystemSpeedCategory::class)
 	}
 
     var systemSpeedCategory: SystemSpeedCategory = calculate()
+		private set
 
     private fun update() {
         val oldValue = systemSpeedCategory
@@ -77,9 +85,8 @@ class CurrentSystemSpeedCategory(
         }
     }
 
-    private fun calculate(): SystemSpeedCategory {
-        return SystemSpeedCategory.values().first { systemSpeed.speed >= it.speedRange.first}
-    }
+    private fun calculate(): SystemSpeedCategory =
+	    SystemSpeedCategory.values().first { systemSpeed.speed >= it.speedRange.first }
 }
 
 /** Posted by [CurrentSystemSpeedCategory] when the current [SystemSpeedCategory] has changed.*/

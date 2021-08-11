@@ -51,7 +51,6 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
@@ -145,14 +144,10 @@ object AntaresViewModule : AbstractModule() {
 			DrawStyleModule.styleProvider,
 			{ GraphViewModule.edgeToPortConnector },
 			{ GraphViewModule.dragEdgeViewOriginConnector },
-			{ GraphViewModule.dragEdgeViewDestinationConnector },
-			ExecutionModule.currentSystemSpeedCategory
-		)
+			{ GraphViewModule.dragEdgeViewDestinationConnector })
 		GraphViewModule.setEdgeViewFactory(edgeViewFactory)
 		GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(
-			DrawStyleModule.styleProvider,
-			ExecutionModule.currentSystemSpeedCategory)
-		)
+			DrawStyleModule.styleProvider))
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
 

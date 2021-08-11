@@ -28,17 +28,16 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
  */
 class DigitalNodeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	net: Net<DigitalSignal> = DigitalNet(),
 	netViewStyle: NetViewStyle? = null
-) : NodeViewImpl<DigitalSignal>(styleProvider, currentSystemSpeedCategory, net, netViewStyle) {
+) : NodeViewImpl<DigitalSignal>(styleProvider, net, netViewStyle) {
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		context.color = if (graphAppContext.isExecute && showNetState(graphAppContext.isPausing)) {
+		context.color = if (graphAppContext.showNetState) {
 			if (model.isError) {
 				Themes.get<AntaresTheme>().error
 			} else {
@@ -61,10 +60,9 @@ class DigitalNodeView(
 }
 
 class DigitalNodeViewFactory(
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : NodeViewFactory<DigitalSignal> {
 
 	override fun create(netView: NetView<DigitalSignal>): NodeView<DigitalSignal> =
-		DigitalNodeView(styleProvider, currentSystemSpeedCategory, netView.net, netView.style)
+		DigitalNodeView(styleProvider, netView.net, netView.style)
 }

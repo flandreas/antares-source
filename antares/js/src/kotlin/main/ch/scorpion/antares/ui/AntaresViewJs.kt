@@ -6,11 +6,13 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
@@ -45,10 +47,12 @@ class AntaresViewJs(
 
 	private val translationEventHandler: EventHandler<TranslationBundleAdded> = { handle(it) }
 	private val controller: GraphPanelViewController
-	private val scheduler = SchedulerImpl()
+	private val systemSpeed = SystemSpeed()
+	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
+	private val scheduler = SchedulerImpl(currentSystemSpeedCategory)
 
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	private val applicationContextHolder = GraphApplicationContextHolder(scheduler)
+	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = currentSystemSpeedCategory)
 
 	init {
 		console.info("AntaresViewJs.init")

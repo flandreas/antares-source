@@ -2,8 +2,10 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.graph.view.EdgeViewNetAnimation
-import ch.scorpion.jabbah.animation.*
+import ch.scorpion.jabbah.animation.AnimationTask
+import ch.scorpion.jabbah.animation.AnimationTaskAdapter
+import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.animation.Sequence
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.MoveLocatableAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -11,10 +13,10 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.view.ConnectableView
+import ch.scorpion.jabbah.graph.view.EdgeViewNetAnimation
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewPointSequence
@@ -40,7 +42,7 @@ class DigitalEdgeViewNetAnimation(
 	val startEdgeView: DigitalEdgeView,
 	val startPort: DigitalPort,
 	val drawingView: DrawingView<GraphView>,
-	val animator: Animator = AnimationModule.animator,
+	val animator: Animator,
 	val scheduler: Scheduler,
 	val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : EdgeViewNetAnimation {

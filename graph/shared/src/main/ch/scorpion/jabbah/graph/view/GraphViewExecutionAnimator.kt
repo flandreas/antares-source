@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
-import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -19,9 +17,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.*
@@ -47,8 +43,6 @@ class GraphViewExecutionAnimator(
 	private val drawingView: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val animationFactory: GraphViewExecutionAnimationFactory = GraphViewModule.graphViewExecutionAnimationFactory,
-	private val animator: Animator = AnimationModule.animator,
-	private val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) {
@@ -68,7 +62,7 @@ class GraphViewExecutionAnimator(
 		if (it.scheduler === applicationContextHolder.scheduler) {
 			if (!it.scheduler.isActive) {
 				// TODO Should stop only animations related to this GraphViewAnimator
-				animator.stopAllTasks()
+				applicationContextHolder.animator.stopAllTasks()
 				stopAllVerticeViewActingAnimations()
 				netAnimationMap.clear()
 			}
@@ -140,7 +134,7 @@ class GraphViewExecutionAnimator(
 			startEdgeView = edgeView,
 			startPort = changedPort,
 			drawingView = drawingView,
-			animator = animator,
+			animator = applicationContextHolder.animator,
 			scheduler = applicationContextHolder.scheduler,
 			styleProvider = styleProvider
 		))
@@ -148,7 +142,7 @@ class GraphViewExecutionAnimator(
 		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
 			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
 			drawingView,
-			animator
+			applicationContextHolder.animator
 		)
 
 		applicationContextHolder.scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
@@ -232,7 +226,8 @@ class GraphViewExecutionAnimator(
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
 	private fun requireEdgeViewAnimation(): Boolean =
-		applicationContextHolder.scheduler.executionTime > 0 && systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
+		applicationContextHolder.scheduler.executionTime > 0
+			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
 
 	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
 	private fun requireVerticeViewGlowAnimation(): Boolean = applicationContextHolder.scheduler.isPaused

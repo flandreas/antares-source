@@ -67,8 +67,8 @@ object SynchronizedGlowAnimation {
 	private fun startIfNeeded() {
 		if (!isRunning) {
 			LOG.trace("Start GlowAnimation task")
-			if (AnimationModule.animator.getTasksForTarget(SynchronizedGlowAnimation).isEmpty()) {
-				AnimationModule.animator.schedule(task)
+			if (AnimationModule.constantSpeedAnimator.getTasksForTarget(SynchronizedGlowAnimation).isEmpty()) {
+				AnimationModule.constantSpeedAnimator.schedule(task)
 			}
 			task.start()
 			isRunning = true

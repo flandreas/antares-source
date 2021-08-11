@@ -22,8 +22,6 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -52,10 +50,9 @@ class GraphNavigationViewController(
 	override val drawingView: DrawingView<GraphView>,
 	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
-	private val animator: Animator = AnimationModule.animator,
+	private val animator: Animator = AnimationModule.constantSpeedAnimator,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
 ) : AbstractUIController<GraphNavigationView>(), GraphViewUI {
 
@@ -183,8 +180,7 @@ class GraphNavigationViewController(
 			drawingView,
 			drawingView.applicationContextHolder as GraphApplicationContextHolder,
 			scriptGateway,
-			eventBus,
-			currentSystemSpeedCategory)
+			eventBus)
 
 		graphViewExecutionController.updateDetachedUI()
 	}

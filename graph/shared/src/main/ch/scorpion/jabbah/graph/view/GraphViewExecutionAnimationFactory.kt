@@ -41,7 +41,7 @@ interface GraphViewExecutionAnimationFactory {
 		startPort: Port<*>,
 		drawingView: DrawingView<GraphView>,
 		scheduler: Scheduler,
-		animator: Animator = AnimationModule.animator,
+		animator: Animator,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider
 	): EdgeViewNetAnimation
 

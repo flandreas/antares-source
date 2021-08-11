@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.animation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import io.mockk.every
 import io.mockk.spyk
 import io.mockk.verify
@@ -22,7 +23,7 @@ class AnimatorImplTest {
 	fun init() {
 		BaseModule.require()
 		timeService = ControlledTimeService()
-		animator = AnimatorImpl(ControlledTimer(timeService), 100)
+		animator = AnimatorImpl(SystemSpeed(), ControlledTimer(timeService), 100)
 	}
 
 	@Test

@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningState
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -38,8 +37,7 @@ class ScenarioDetector(
 	private val view: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val scriptGateway: ScriptGateway,
-	private val eventBus: EventBus,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	private val eventBus: EventBus
 ) {
 
 	companion object {
@@ -144,7 +142,8 @@ class ScenarioDetector(
 
 	private fun updateActive() {
 		val oldValue = isActive
-		isActive = applicationContextHolder.scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
+		isActive = applicationContextHolder.scheduler.isActive
+			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
 		if (isActive != oldValue) {
 			LOG.trace("active = '$isActive'")
 			view.drawing.currentScenario = null

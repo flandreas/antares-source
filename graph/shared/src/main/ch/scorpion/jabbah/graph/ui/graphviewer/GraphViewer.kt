@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Component
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode.*
@@ -33,8 +35,12 @@ class GraphViewerController(
 		private val LOG by logger(GraphViewerController::class)
 	}
 
+	private val systemSpeed = SystemSpeed(eventBus)
+
+	private val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
+
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl())
+	val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(systemSpeedCategory))
 
 	override var currentMode: ApplicationMode = EDIT
 		private set
@@ -59,6 +65,7 @@ class GraphViewerController(
 		applicationContextHolder.scheduler.dispose()
 		graphNavigationViewController.dispose()
 		toggleApplicationModeAction.dispose()
+		systemSpeedCategory.dispose()
 	}
 
 	fun setGraphView(graphView: GraphView) {

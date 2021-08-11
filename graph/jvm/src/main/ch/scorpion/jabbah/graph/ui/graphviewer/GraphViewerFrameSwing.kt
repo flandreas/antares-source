@@ -65,6 +65,7 @@ class GraphViewerFrameSwing(
 		layout = BorderLayout()
 		add(BorderLayout.NORTH, ExecutionToolbarBuilder(
 			controller.applicationContextHolder.scheduler,
+			controller.applicationContextHolder.systemSpeed,
 			controller,
 			controller.toggleApplicationModeAction,
 			eventBus
