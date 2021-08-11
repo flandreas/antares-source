@@ -101,6 +101,7 @@ class GraphNavigationViewControllerTest {
 	@Test
 	fun shouldPropagateContextWithApplicationMode() {
 		every { scheduler.isActive } returns true
+		every { applicationModeHolder.currentMode } returns ApplicationMode.EXECUTE
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		eventBus.post(ApplicationModeEvent((drawingView.applicationContextHolder as GraphApplicationContextHolder).applicationModeHolder, ApplicationMode.EXECUTE))
 

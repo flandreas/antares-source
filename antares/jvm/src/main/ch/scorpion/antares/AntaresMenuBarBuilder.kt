@@ -13,8 +13,6 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.ManualSchedulerTaskAction
-import ch.scorpion.jabbah.execution.scheduler.SchedulerTaskSelectionAction
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -70,30 +68,9 @@ class AntaresMenuBarBuilder(
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(RunRepaintingObserverAction())))
         menu.add(JMenuItem(ActionWrapperSwing(PreviousRepaintingObserverLogAction())))
         menu.add(JMenuItem(ActionWrapperSwing(NextRepaintingObserverLogAction())))
-	    menu.addSeparator()
-	    menu.add(createSchedulerTaskMenu())
-	    menu.add(JMenuItem(ActionWrapperSwing(ManualSchedulerTaskAction(GraphViewModule.manualSchedulerTask))))
         menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction((frame as GraphFrameSwing).controller.applicationContextHolder.scheduler))))
 
         return menu
     }
-
-	private fun createSchedulerTaskMenu(): JMenu {
-		val taskMenu = JMenu(Translations.getString("execution.task.switch.name"))
-		val timedTaskMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(SchedulerTaskSelectionAction(
-			GraphViewModule.switchableSchedulerTask,
-			GraphViewModule.timedSchedulerTask
-		)))
-		val manualTaskMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(SchedulerTaskSelectionAction(
-			GraphViewModule.switchableSchedulerTask,
-			GraphViewModule.manualSchedulerTask
-		)))
-		val taskMenuItemGroup = ButtonGroup()
-		taskMenuItemGroup.add(timedTaskMenuItem)
-		taskMenuItemGroup.add(manualTaskMenuItem)
-		taskMenu.add(timedTaskMenuItem)
-		taskMenu.add(manualTaskMenuItem)
-		return taskMenu
-	}
 }

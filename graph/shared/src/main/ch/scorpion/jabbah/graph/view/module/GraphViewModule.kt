@@ -118,12 +118,6 @@ object GraphViewModule : AbstractModule() {
 
 	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
-	val manualSchedulerTask = ManualSchedulerTask()
-
-	val timedSchedulerTask = TimedSchedulerTask()
-
-	val switchableSchedulerTask = SwitchableSchedulerTask(listOf(timedSchedulerTask, manualSchedulerTask))
-
 	var graphNavigationViewControllerExtension: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = { EmptyGraphNavigationControllerExtension() }
 
 	var graphViewExecutionAnimationFactory: GraphViewExecutionAnimationFactory = UndefinedGraphViewExecutionAnimationFactory()
@@ -152,14 +146,6 @@ object GraphViewModule : AbstractModule() {
 			}
 		}
 		EditModule.drawingAppService = graphViewAppService
-
-		ExecutionModule.schedulerTaskFactory = {
-			if (EditAuthModule.userHolder.user.isDeveloper) {
-				switchableSchedulerTask
-			} else {
-				timedSchedulerTask
-			}
-		}
 
 		BaseModule.eventBus.register(SchedulerActivationStateEvent::class) { EditModule.commandManager.active = !it.scheduler.isActive }
 
