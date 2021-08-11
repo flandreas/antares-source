@@ -30,6 +30,7 @@ class EditLibraryAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	actionBaseName = "library.composition.action",
+	controller.applicationModeHolder,
 	operation = Change,
 	controller,
 	eventBus

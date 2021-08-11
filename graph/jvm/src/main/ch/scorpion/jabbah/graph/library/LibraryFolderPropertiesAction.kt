@@ -22,6 +22,7 @@ class LibraryFolderPropertiesAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.editFolderProperties",
+	controller.applicationModeHolder,
 	operation = Operation.View,
 	controller,
 	eventBus

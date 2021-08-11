@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.AbstractLibraryPersistencePanel
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
@@ -22,8 +23,9 @@ import javax.swing.*
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
 class ShowProjectsDialogAction(
+	applicationModeHolder: ApplicationModeHolder,
 	private val parent: JFrame
-) : AbstractApplicationModeEditAction("project.dialog.action") {
+) : AbstractApplicationModeEditAction("project.dialog.action", applicationModeHolder) {
 
 	override fun execute(event: ActionEvent) {
 		ProjectPersistencePanel.showAsDialog(parent)
@@ -44,8 +46,6 @@ class ProjectPersistencePanel(
 	companion object {
 
 		private val LOG by logger(ProjectPersistencePanel::class)
-
-		//private const val EXPORT_FILE_EXTENSION = "zip"
 
 		fun showAsDialog(parent: JFrame) {
 			DialogBuilder<ProjectPersistencePanel>(parent)

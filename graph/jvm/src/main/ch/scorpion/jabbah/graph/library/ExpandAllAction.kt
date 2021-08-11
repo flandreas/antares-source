@@ -13,6 +13,7 @@ class ExpandAllAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	actionBaseName = "library.action.expandAll",
+	controller.applicationModeHolder,
 	operation = View,
 	controller,
 	eventBus
@@ -35,6 +36,7 @@ class CollapseAllAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	"library.action.collapseAll",
+	controller.applicationModeHolder,
 	operation = Change,
 	controller,
 	eventBus

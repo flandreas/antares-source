@@ -20,6 +20,7 @@ class DefaultContainerLibraryElementAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.setDefaultElement",
+	controller.applicationModeHolder,
 	operation = Operation.Change,
 	controller,
 	eventBus

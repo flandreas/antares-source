@@ -65,16 +65,20 @@ class GraphViewExecutionAnimator(
 
 	/** Listens for changes of the [SchedulerActivationState].*/
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
-		if (!it.scheduler.isActive) {
-			// TODO Should stop only animations related to this GraphViewAnimator
-			animator.stopAllTasks()
-			stopAllVerticeViewActingAnimations()
-			netAnimationMap.clear()
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			if (!it.scheduler.isActive) {
+				// TODO Should stop only animations related to this GraphViewAnimator
+				animator.stopAllTasks()
+				stopAllVerticeViewActingAnimations()
+				netAnimationMap.clear()
+			}
 		}
 	}
 
 	private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = {
-		stopAllVerticeViewActingAnimations()
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			stopAllVerticeViewActingAnimations()
+		}
 	}
 
 	init {

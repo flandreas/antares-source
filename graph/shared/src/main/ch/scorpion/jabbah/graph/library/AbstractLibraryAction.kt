@@ -9,21 +9,24 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibrarySelectionChangedEvent
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /**
- * A base class for implementing [Action]s that operate on items of [LibraryTreeViewSwing].
- * Listens for [LibrarySelectionChangedEvent]s and remembers the source [LibraryTreeViewSwing].
+ * A base class for implementing [Action]s that operate on items of [LibraryTreeView].
+ * Listens for [LibrarySelectionChangedEvent]s and remembers the source [LibraryTreeView].
  */
 abstract class AbstractLibraryAction(
 	actionBaseName: String,
+	applicationModeHolder: ApplicationModeHolder,
 	protected val operation: Operation,
 	protected val controller: LibraryTreeViewController,
 	eventBus: EventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractApplicationModeEditAction(actionBaseName, eventBus = eventBus) {
+) : AbstractApplicationModeEditAction(actionBaseName, applicationModeHolder, eventBus = eventBus) {
 
 	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
 		if (it.controller === controller) {
@@ -75,10 +78,11 @@ abstract class AbstractLibraryAction(
 /** An [Action] that is only enabled if the selected item is a [LibraryDirectory].*/
 abstract class AbstractLibraryFolderAction(
 	actionBaseName: String,
+	applicationModeHolder: ApplicationModeHolder,
 	operation: Operation,
 	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
+) : AbstractLibraryAction(actionBaseName, applicationModeHolder, operation, controller, eventBus) {
 
 	val selectedFolder: LibraryDirectory get() = selectedItem as LibraryDirectory
 
@@ -88,10 +92,11 @@ abstract class AbstractLibraryFolderAction(
 /** An [Action] that is only enabled if the selected item is a [ContainerLibraryElement].*/
 abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
+	applicationModeHolder: ApplicationModeHolder,
 	operation: Operation,
 	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
+) : AbstractLibraryAction(actionBaseName, applicationModeHolder, operation, controller, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is ContainerLibraryElement
 }
@@ -99,10 +104,11 @@ abstract class AbstractContainerLibraryElementAction(
 /** An [Action] that is only enabled if the selected item is a [BaseLibraryElement].*/
 abstract class AbstractBaseLibraryElementAction(
 	actionBaseName: String,
+	applicationModeHolder: ApplicationModeHolder,
 	operation: Operation,
 	controller: LibraryTreeViewController,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, operation, controller, eventBus) {
+) : AbstractLibraryAction(actionBaseName, applicationModeHolder, operation, controller, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is BaseLibraryElement
 }

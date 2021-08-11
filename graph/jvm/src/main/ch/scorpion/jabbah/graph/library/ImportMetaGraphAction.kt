@@ -25,6 +25,7 @@ class ImportMetaGraphAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	"library.action.importMetaGraph",
+	controller.applicationModeHolder,
 	Operation.Change,
 	controller,
 	eventBus

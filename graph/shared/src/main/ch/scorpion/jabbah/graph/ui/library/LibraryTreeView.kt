@@ -71,7 +71,7 @@ class LibraryTreeViewController (
 	val type: LibraryTreeViewType,
 	library: Library,
 	project: Project? = null,
-	private val applicationModeHolder: ApplicationModeHolder,
+	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryTreeView>() {
 

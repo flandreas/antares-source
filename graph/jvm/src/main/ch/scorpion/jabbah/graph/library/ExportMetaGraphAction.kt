@@ -22,6 +22,7 @@ class ExportMetaGraphAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.exportMetaGraph",
+	controller.applicationModeHolder,
 	operation = Operation.View,
 	controller,
 	eventBus

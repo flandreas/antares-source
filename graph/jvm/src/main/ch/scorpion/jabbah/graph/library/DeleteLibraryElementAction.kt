@@ -21,6 +21,7 @@ class DeleteLibraryElementAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction(
 	BASE_RESOURCE_NAME,
+	controller.applicationModeHolder,
 	operation = Operation.Change,
 	controller,
 	eventBus

@@ -20,6 +20,7 @@ class DeleteLibraryFolderAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "graph.action.deleteLibraryDirectory",
+	controller.applicationModeHolder,
 	operation = Change,
 	controller,
 	eventBus

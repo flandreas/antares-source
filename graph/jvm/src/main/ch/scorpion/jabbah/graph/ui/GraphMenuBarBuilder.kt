@@ -55,8 +55,8 @@ open class GraphMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
 			menu.addSeparator()
 		}
-		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
-		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(frame))))
+		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
+		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()

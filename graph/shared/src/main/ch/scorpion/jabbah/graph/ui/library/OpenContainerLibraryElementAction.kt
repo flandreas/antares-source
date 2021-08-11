@@ -22,6 +22,7 @@ class OpenContainerLibraryElementAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "graph.action.openContainerLibraryElement",
+	controller.applicationModeHolder,
 	operation = Operation.View,
 	controller,
 	eventBus

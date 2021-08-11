@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
@@ -17,11 +18,13 @@ import java.awt.Dimension
 import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.io.File
 import javax.swing.*
 
 /** An [Action] that opens a dialog containing [LibraryPersistencePanel].*/
-class ShowLibrariesDialogAction(private val parent: JFrame) : AbstractApplicationModeEditAction("library.dialog.action") {
+class ShowLibrariesDialogAction(
+	applicationModeHolder: ApplicationModeHolder,
+	private val parent: JFrame
+) : AbstractApplicationModeEditAction("library.dialog.action", applicationModeHolder) {
 
 	override fun execute(event: ActionEvent) {
 		LibraryPersistencePanel.showAsDialog(parent)

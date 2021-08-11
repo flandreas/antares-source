@@ -23,6 +23,7 @@ class AddLibraryFolderAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.addFolder",
+	controller.applicationModeHolder,
 	operation = Change,
 	controller,
 	eventBus

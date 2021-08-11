@@ -22,6 +22,7 @@ class NewGraphAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.newGraph",
+	controller.applicationModeHolder,
 	operation = Operation.Change,
 	controller,
 	eventBus

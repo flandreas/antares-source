@@ -7,29 +7,27 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 
 /** A base class for action implementations that are only enabled in [ApplicationMode.EDIT].*/
 abstract class AbstractApplicationModeEditAction(
 	actionBaseName: String,
-	initialMode: ApplicationMode = ApplicationMode.EDIT,
+	private val applicationModeHolder: ApplicationModeHolder,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(actionBaseName) {
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
-		applicationMode = it.applicationMode
-	}
-
-	/** Contains the [ApplicationMode] received with the most recent [ApplicationModeEvent].*/
-	protected var applicationMode: ApplicationMode = initialMode
-		set(value) {
-			if (value != field) {
-				field = value
+		if (it.source === applicationModeHolder) {
+			if (it.applicationMode != applicationModeHolder.currentMode) {
 				updateEnabledness()
 			}
 		}
+	}
+
+	protected val applicationMode: ApplicationMode get() = applicationModeHolder.currentMode
 
 	init {
-		enabled = initialMode.isEdit()
+		enabled = applicationModeHolder.currentMode.isEdit()
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 	}
 
@@ -39,7 +37,7 @@ abstract class AbstractApplicationModeEditAction(
 	}
 
 	protected fun updateEnabledness() {
-		enabled = applicationMode.isEdit() && calculateEnabledness()
+		enabled = applicationModeHolder.currentMode.isEdit() && calculateEnabledness()
 	}
 
 	/** Implemented by subclasses to further decide whether this [Action] should be enabled. */

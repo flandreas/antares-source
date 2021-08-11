@@ -25,6 +25,7 @@ class DuplicateGraphAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.duplicateGraph",
+	controller.applicationModeHolder,
 	operation = Operation.Change,
 	controller,
 	eventBus
