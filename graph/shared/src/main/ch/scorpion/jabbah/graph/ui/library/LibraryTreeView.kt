@@ -112,7 +112,11 @@ class LibraryTreeViewController (
 		}
 	}
 
-	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateActive() }
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
+		if (it.source === applicationModeHolder) {
+			updateActive()
+		}
+	}
 
 	var active: Boolean = applicationModeHolder.currentMode.isEdit()
 		private set(value) {

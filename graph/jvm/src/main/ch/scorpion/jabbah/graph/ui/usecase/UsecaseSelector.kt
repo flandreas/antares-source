@@ -68,9 +68,11 @@ class UsecaseSelector(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerActivationStateEvent) {
-		updateEnabledness()
-		if (!scheduler.isActive) {
-			selectedIndex = 0
+		if (event.scheduler === scheduler) {
+			updateEnabledness()
+			if (!scheduler.isActive) {
+				selectedIndex = 0
+			}
 		}
 	}
 

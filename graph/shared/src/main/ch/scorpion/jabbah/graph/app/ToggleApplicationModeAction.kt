@@ -24,7 +24,7 @@ class ToggleApplicationModeAction(
 ) : AbstractAction("execution.action.execute") {
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
-		if (it.source == applicationModeHolder) {
+		if (it.source === applicationModeHolder) {
 			updateState()
 		}
 	}

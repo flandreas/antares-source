@@ -71,10 +71,12 @@ class GraphViewActorListener(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerActivationStateEvent) {
-		if (applicationContextHolder.scheduler.isActive) {
-			registerActorListener(drawingView.drawing.graph!!)
-		} else {
-			unregisterActorListener(drawingView.drawing.graph!!)
+		if (event.scheduler === applicationContextHolder.scheduler) {
+			if (applicationContextHolder.scheduler.isActive) {
+				registerActorListener(drawingView.drawing.graph!!)
+			} else {
+				unregisterActorListener(drawingView.drawing.graph!!)
+			}
 		}
 	}
 

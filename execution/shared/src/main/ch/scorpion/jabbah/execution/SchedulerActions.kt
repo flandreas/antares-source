@@ -77,7 +77,11 @@ class ExecutionDepthAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.deepSimulation", eventBus) {
 
-	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateState() }
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === scheduler) {
+			updateState()
+		}
+	}
 	private val executionDepthHandler: EventHandler<ExecutionDepthEvent> = { updateState() }
 
 	init {

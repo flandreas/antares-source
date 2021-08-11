@@ -64,7 +64,11 @@ class ScenarioDetector(
 
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = { updateActive() }
 
-	private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateActive() }
+	private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			updateActive()
+		}
+	}
 
 	private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
 		if (it.graphView === view.drawing) {

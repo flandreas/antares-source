@@ -157,7 +157,11 @@ open class GraphFrameController<T: GraphFrame>(
 		init {
 			imagePath = "/img/drawing-24.png"
 			eventBus.register(GraphFrameEvent::class) { update() }
-			eventBus.register(ApplicationModeEvent::class) { update() }
+			eventBus.register(ApplicationModeEvent::class) {
+				if (it.source === applicationModeHolder) {
+					update()
+				}
+			}
 		}
 
 		override fun execute(event: ActionEvent) {

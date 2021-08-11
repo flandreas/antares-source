@@ -40,7 +40,12 @@ class GraphViewDisplayHandler(
 	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
 	init {
-		eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+		eventBus.register(SchedulerActivationStateEvent::class) {
+			if (it.scheduler === applicationContextHolder.scheduler) {
+				updateActivationState()
+			}
+		}
+
 		view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 				if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE || e.name == View.PROP_CANVAS) {

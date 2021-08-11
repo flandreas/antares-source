@@ -56,10 +56,12 @@ class UsecaseTreeView(
 		}
 
 		eventBus.register(SchedulerActivationStateEvent::class) {
-			if (it.scheduler.isActive) {
-				selectionModel.clearSelection()
+			if (it.scheduler === applicationContextHolder.scheduler) {
+				if (it.scheduler.isActive) {
+					selectionModel.clearSelection()
+				}
+				isEnabled = !it.scheduler.isActive
 			}
-			isEnabled = !it.scheduler.isActive
 		}
 
 		eventBus.register(NameChangedEvent::class) {

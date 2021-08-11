@@ -39,8 +39,6 @@ class GraphViewExecutionController(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	private val initialMode: ApplicationMode = if (applicationContextHolder.scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
-
 	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 
 	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
@@ -92,24 +90,28 @@ class GraphViewExecutionController(
 	}
 
 	private fun handle(event: SchedulerActivationStateEvent) {
-		rootGraphProvider.invoke()?.apply {
-			if (event.scheduler.isActive) {
-				if (isRoot) {
-					bind(repository, storableCreator)
+		if (event.scheduler === applicationContextHolder.scheduler) {
+			rootGraphProvider.invoke()?.apply {
+				if (event.scheduler.isActive) {
+					if (isRoot) {
+						bind(repository, storableCreator)
+					}
+					graphViewsProvider.invoke().forEach { it.bind() }
+					formNet(event.scheduler)
+					executionInitialize(event.scheduler)
+					executionStart(event.scheduler)
+				} else {
+					executionStopped(event.scheduler)
 				}
-				graphViewsProvider.invoke().forEach { it.bind() }
-				formNet(event.scheduler)
-				executionInitialize(event.scheduler)
-				executionStart(event.scheduler)
-			} else {
-				executionStopped(event.scheduler)
 			}
 		}
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationModeEvent) {
-		graphViewUI.deselectAll()
-		updateDrawingViewEditability()
-		updateDetachedUI()
+		if (event.source === applicationContextHolder.applicationModeHolder) {
+			graphViewUI.deselectAll()
+			updateDrawingViewEditability()
+			updateDetachedUI()
+		}
 	}
 }
