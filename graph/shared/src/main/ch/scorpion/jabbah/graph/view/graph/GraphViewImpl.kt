@@ -21,8 +21,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphGlobalIdentityProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -53,19 +51,8 @@ open class GraphViewImpl(
 		var inputEventHandler: GraphViewInputEventHandler<*>? = null
 	}
 
-	/** Resets the current [Scenario] and [ScenarioStep] when the [Scheduler] is activated or deactivated. */
-	private val schedulerActivationObserver: (SchedulerActivationStateEvent) -> Unit = {
-		currentScenario = null
-		currentScenarioStep = null
-	}
-
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
-
-	init {
-		LOG.trace("Create GraphViewImpl ${hashCode().toString(16)}")
-		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationObserver)
-	}
 
 	/** ---- [Any] */
 
@@ -295,7 +282,6 @@ open class GraphViewImpl(
 		}
 		scenarios.dispose()
 		usecases.dispose()
-		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationObserver)
 	}
 
 	// ---- [DrawableContainerImpl] */

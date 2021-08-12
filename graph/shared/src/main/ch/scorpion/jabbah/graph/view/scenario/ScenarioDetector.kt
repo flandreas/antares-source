@@ -124,7 +124,7 @@ class ScenarioDetector(
 			val detectedScenario = view.drawing.scenarios.getScenarios().firstOrNull {
 				it.condition.invoke(view, scriptGateway)
 			}
-			view.drawing.currentScenario = detectedScenario
+			setCurrentScenario(detectedScenario)
 		}
 
 		// An occurred Issue could have deactivated the Scheduler
@@ -149,6 +149,10 @@ class ScenarioDetector(
 			view.drawing.currentScenario = null
 			view.drawing.currentScenarioStep = null
 		}
+	}
+
+	private fun setCurrentScenario(scenario: Scenario?) {
+		view.drawing.currentScenario = scenario
 	}
 
 	private fun setCurrentScenarioStep(scenarioStep: ScenarioStep?) {
