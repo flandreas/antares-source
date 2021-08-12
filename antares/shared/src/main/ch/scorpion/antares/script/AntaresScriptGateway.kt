@@ -39,7 +39,7 @@ class AntaresScriptGateway(
 	}
 
 	init {
-		eventBus.register(SchedulerActivationStateEvent::class) { store.clear() }
+		eventBus.register(SchedulerActivationStateEvent::class) { store.clear(it.scheduler) }
 	}
 
 	/** Allows [Vertice]s to store [DigitalSignal]s between individual script calls.*/
@@ -97,14 +97,29 @@ class AntaresScriptGateway(
 	 * Allows [Vertice]s to store [DigitalSignal]s between separate script calls. The [Store] gets reset
 	 * whenever the execution is restarted.
 	 */
-	class Store() {
+	class Store {
 
+		private val stores = mutableMapOf<SignalHandler, StorePerSignalHandler>()
+
+		fun clear(signalHandler: SignalHandler) {
+			stores.remove(signalHandler)
+		}
+
+		fun put(signalHandler: SignalHandler, vertice: Vertice, name: String, value: DigitalSignal) {
+			stores
+				.getOrPut(signalHandler) { StorePerSignalHandler(signalHandler) }
+				.put(vertice, name, value)
+		}
+
+		fun get(signalHandler: SignalHandler, vertice: Vertice, name: String): DigitalSignal? =
+			stores[signalHandler]?.get(vertice, name)
+	}
+
+	private class StorePerSignalHandler(val signalHandler: SignalHandler) {
 		private val entries = mutableMapOf<Vertice, MutableMap<String, DigitalSignal>>()
 
-		fun clear() = entries.clear()
-
 		fun put(vertice: Vertice, name: String, value: DigitalSignal) {
-			entries.getOrPut(vertice, { mutableMapOf() })[name] = value
+			entries.getOrPut(vertice) { mutableMapOf() }[name] = value
 		}
 
 		fun get(vertice: Vertice, name: String): DigitalSignal? = entries[vertice]?.get(name)

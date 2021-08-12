@@ -133,11 +133,15 @@ open class CircuitElemModelBridge(
 
 	@Suppress("unused")
 	fun store(name: String, value: Word) {
-		store.put(vertice, name, value.word)
+		signalHandler
+			?.let { store.put(it, vertice, name, value.word) }
+			?: throw IllegalStateException("No SignalHandler available. Cannot store value.")
 	}
 
 	@Suppress("unused")
-	fun load(name: String): Word? = store.get(vertice, name)?.let { Word(it) }
+	fun load(name: String): Word? = signalHandler
+		?.let { store.get(it, vertice, name)?.let { signal -> Word(signal) } }
+		?: throw IllegalStateException("No SignalHandler available. Cannot load value.")
 
 	/** Creates a new [Word] with the specified hexadecimal value.*/
 	@Suppress("unused")
