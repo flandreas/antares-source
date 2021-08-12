@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -22,7 +23,7 @@ class ScenarioViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphView = GraphViewBuilder<Boolean>().build()
 	private val editor = TestEditorBuilder().withDrawing(graphView).build()
-	private val controller = ScenarioViewController(editor, eventBus)
+	private val controller = ScenarioViewController(editor, GraphApplicationContextHolder(mockk(relaxed = true)), eventBus)
 
 	init {
 		ScenarioViewMockBuilder(controller)

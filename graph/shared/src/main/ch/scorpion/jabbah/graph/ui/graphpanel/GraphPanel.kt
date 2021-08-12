@@ -107,7 +107,7 @@ class GraphPanelViewController(
 	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
-	val logViewController = LogViewController(eventBus)
+	val logViewController = LogViewController(applicationContextHolder, eventBus)
 
 	/**
 	 * Captures whether the [Savable] designated the current [GraphView] as 'editable'.

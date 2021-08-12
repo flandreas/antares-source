@@ -3,12 +3,14 @@ package ch.scorpion.jabbah.graph.ui.scenario
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.*
@@ -30,8 +32,9 @@ import javax.swing.tree.*
  */
 class ScenarioTreeView(
 	private val application: Application,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val service: ScenarioAppService = GraphViewModule.scenarioAppService,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	companion object {
@@ -47,6 +50,60 @@ class ScenarioTreeView(
 	/** The [JPopupMenu] to be displayed for a [ScenarioStep] node.*/
 	private val scenarioStepPopupMenu = JPopupMenu()
 
+	// Adds a [Scenario] to this [ScenarioTreeView]
+	private val scenarioAddedHandler: EventHandler<ScenarioAddedEvent> = {
+		if (it.graphView === this.graphView) {
+			val scenarioNode = scenarioTreeModel.addScenario(it.scenario)
+			selectionPath = JTreeUtil.getPath(scenarioNode)
+		}
+	}
+
+	// Removes the [TreeNode] that represents a removed [Scenario]
+	private val scenarioRemovedHandler: EventHandler<ScenarioRemovedEvent> = {
+		if (it.graphView === this.graphView) {
+			scenarioTreeModel.removeScenario(it.scenario)
+		}
+	}
+
+	// Adds an added [ScenarioStep] to this [ScenarioTreeView]
+	private val scenarioStepAddedHandler: EventHandler<ScenarioStepAddedEvent> = {
+		if (it.graphView === this.graphView) {
+			val stepNode = scenarioTreeModel.addScenarioStep(it.scenario, it.scenarioStep)
+			selectionPath = JTreeUtil.getPath(stepNode)
+		}
+	}
+
+	// Removes the [TreeNode] that represents a removed [ScenarioStep]
+	private val scenarioStepRemovedHandler: EventHandler<ScenarioStepRemovedEvent> = {
+		if (it.graphView === this.graphView) {
+			scenarioTreeModel.removeScenarioStep(it.scenario, it.scenarioStep)
+		}
+	}
+
+	// Moves a [ScenarioStep] to another position within the same [Scenario]
+	private val scenarioStepMovedHandler: EventHandler<ScenarioStepMovedEvent> = {
+		if (it.graphView === this.graphView) {
+			val stepNode = scenarioTreeModel.moveScenarioStep(it.scenario, it.scenarioStep, it.index)
+			selectionPath = JTreeUtil.getPath(stepNode)
+		}
+	}
+
+	// Disables this [ScenarioTreeView] when the [Scheduler] is active.
+	private val activationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			if (it.scheduler.isActive) {
+				selectionModel.clearSelection()
+			}
+			isEnabled = !it.scheduler.isActive
+		}
+	}
+
+	private val nameChangedHandler: EventHandler<NameChangedEvent> = {
+		if (this.graphView != null && it.owner === this.graphView!!.graph) {
+			scenarioTreeModel.updateGraphName()
+		}
+	}
+
 	init {
 
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
@@ -59,64 +116,28 @@ class ScenarioTreeView(
 		dropMode = DropMode.INSERT
 		transferHandler = ScenarioDndTransferHandler()
 
-		// Adds a [Scenario] to this [ScenarioTreeView]
-		eventBus.register(ScenarioAddedEvent::class) {
-			if (it.graphView === this.graphView) {
-				val scenarioNode = scenarioTreeModel.addScenario(it.scenario)
-				selectionPath = JTreeUtil.getPath(scenarioNode)
-			}
-		}
-
-		// Removes the [TreeNode] that represents a removed [Scenario]
-		eventBus.register(ScenarioRemovedEvent::class) {
-			if (it.graphView === this.graphView) {
-				scenarioTreeModel.removeScenario(it.scenario)
-			}
-		}
-
-		// Adds an added [ScenarioStep] to this [ScenarioTreeView]
-		eventBus.register(ScenarioStepAddedEvent::class) {
-			if (it.graphView === this.graphView) {
-				val stepNode = scenarioTreeModel.addScenarioStep(it.scenario, it.scenarioStep)
-				selectionPath = JTreeUtil.getPath(stepNode)
-			}
-		}
-
-		// Removes the [TreeNode] that represents a removed [ScenarioStep]
-		eventBus.register(ScenarioStepRemovedEvent::class) {
-			if (it.graphView === this.graphView) {
-				scenarioTreeModel.removeScenarioStep(it.scenario, it.scenarioStep)
-			}
-		}
-
-		// Moves a [ScenarioStep] to another position within the same [Scenario]
-		eventBus.register(ScenarioStepMovedEvent::class) {
-			if (it.graphView === this.graphView) {
-				val stepNode = scenarioTreeModel.moveScenarioStep(it.scenario, it.scenarioStep, it.index)
-				selectionPath = JTreeUtil.getPath(stepNode)
-			}
-		}
-
-		// Disables this [ScenarioTreeView] when the [Scheduler] is active.
-		eventBus.register(SchedulerActivationStateEvent::class) {
-			if (it.scheduler.isActive) {
-				selectionModel.clearSelection()
-			}
-			isEnabled = !it.scheduler.isActive
-		}
-
-		eventBus.register(NameChangedEvent::class) {
-			if (this.graphView != null && it.owner === this.graphView!!.graph) {
-				scenarioTreeModel.updateGraphName()
-			}
-		}
+		eventBus.register(ScenarioAddedEvent::class, scenarioAddedHandler)
+		eventBus.register(ScenarioRemovedEvent::class, scenarioRemovedHandler)
+		eventBus.register(ScenarioStepAddedEvent::class, scenarioStepAddedHandler)
+		eventBus.register(ScenarioStepRemovedEvent::class, scenarioStepRemovedHandler)
+		eventBus.register(ScenarioStepMovedEvent::class, scenarioStepMovedHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, activationStateHandler)
+		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
 		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(application)))
-
 		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(application)))
 		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(application)))
-
 		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(application)))
+	}
+
+	fun dispose() {
+		eventBus.unregister(scenarioAddedHandler)
+		eventBus.unregister(scenarioRemovedHandler)
+		eventBus.unregister(scenarioStepAddedHandler)
+		eventBus.unregister(scenarioStepRemovedHandler)
+		eventBus.unregister(scenarioStepMovedHandler)
+		eventBus.unregister(activationStateHandler)
+		eventBus.unregister(nameChangedHandler)
 	}
 
 	/** Holds the [GraphView] whose [Graph] is the source of the [Scenario] tree.*/
@@ -365,8 +386,7 @@ class ScenarioTreeView(
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
 
-			val userObject = (value as DefaultMutableTreeNode).userObject
-			when (userObject) {
+			when ((value as DefaultMutableTreeNode).userObject) {
 				is Scenario -> {
 					component.icon = scenarioIcon
 					component.disabledIcon = scenarioIcon

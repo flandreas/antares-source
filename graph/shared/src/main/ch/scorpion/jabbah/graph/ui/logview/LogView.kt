@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.LogEvent
 
 interface LogView : UIView {
@@ -19,6 +20,7 @@ interface LogView : UIView {
 
 /** Displays collected [LogEvent]s.*/
 class LogViewController(
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LogView>() {
 
@@ -54,8 +56,10 @@ class LogViewController(
 	}
 
 	private fun handle(event: SchedulerActivationStateEvent) {
-		if (event.scheduler.isActive) {
-			clear()
+		if (event.scheduler === applicationContextHolder.scheduler) {
+			if (event.scheduler.isActive) {
+				clear()
+			}
 		}
 	}
 

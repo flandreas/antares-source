@@ -36,7 +36,7 @@ class GraphEditViewController(
 		editor.view as DrawingView<GraphView>,
 		initialSavable,
 		eventBus = eventBus)
-	val scenarioViewController = ScenarioViewController(editor, eventBus)
+	val scenarioViewController = ScenarioViewController(editor, applicationContextHolder, eventBus)
 	val usecaseViewController = UsecaseViewController(editor, applicationContextHolder, eventBus)
 
 	override fun dispose() {

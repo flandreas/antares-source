@@ -27,7 +27,7 @@ class ScenarioViewSwing(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = ScenarioTreeView(application)
+	private val treeView = ScenarioTreeView(application, controller.applicationContextHolder)
 
 	private val propertyPanel = ScenarioPropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 
@@ -55,6 +55,7 @@ class ScenarioViewSwing(
 
 	override fun dispose() {
 		BaseModule.settings.set("scenarioPanel.splitPos", splitPane.dividerLocation)
+		treeView.dispose()
 	}
 
 	fun clearSelection() {
