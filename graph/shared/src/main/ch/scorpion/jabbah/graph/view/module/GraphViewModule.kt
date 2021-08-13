@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphAuthorizations
@@ -143,8 +142,6 @@ object GraphViewModule : AbstractModule() {
 			}
 		}
 		EditModule.drawingAppService = graphViewAppService
-
-		BaseModule.eventBus.register(SchedulerActivationStateEvent::class) { EditModule.commandManager.active = !it.scheduler.isActive }
 
 		GraphAuthorizations.define()
 	}

@@ -25,6 +25,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
@@ -171,8 +172,11 @@ class GraphPanelViewController(
 	/** ---- [GraphPanelViewController] */
 
 	private fun handle(event: SchedulerActivationStateEvent) {
-		if (event.scheduler === applicationContextHolder.scheduler && !event.scheduler.isActive) {
-			applicationModeHolder.setMode(ApplicationMode.EDIT)
+		if (event.scheduler === applicationContextHolder.scheduler) {
+			if (!event.scheduler.isActive) {
+				applicationModeHolder.setMode(ApplicationMode.EDIT)
+			}
+			EditModule.commandManager.active = !event.scheduler.isActive
 		}
 	}
 
