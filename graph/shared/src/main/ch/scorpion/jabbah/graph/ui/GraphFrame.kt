@@ -97,7 +97,7 @@ open class GraphFrameController<T: GraphFrame>(
 	private val scheduler = SchedulerImpl(systemSpeedCategory)
 
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	val applicationContextHolder = GraphApplicationContextHolder(scheduler)
+	val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = systemSpeedCategory)
 
 	private val drawingView = EditModule.drawingViewFactory.invoke(
 		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,

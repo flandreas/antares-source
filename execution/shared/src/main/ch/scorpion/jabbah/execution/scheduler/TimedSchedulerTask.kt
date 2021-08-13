@@ -36,6 +36,7 @@ class TimedSchedulerTask(
 	override fun startIfNeeded() {
 		if (!scheduler.isQueueEmpty && !timer.isRunning()) {
 			LOG.trace("Starting timer")
+			adaptToSystemSpeed()
 			timer.start()
 		}
 	}
