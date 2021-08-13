@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.execution
 
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
 
 /**
@@ -50,7 +49,11 @@ class ResumeExecutionAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.resume", eventBus) {
 
-	private val handler: EventHandler<BreakpointEvent> = { updateEnabledness() }
+	private val handler: EventHandler<BreakpointEvent> = {
+		if (it.scheduler === scheduler) {
+			updateEnabledness()
+		}
+	}
 
 	init {
 		eventBus.register(BreakpointEvent::class, handler)
@@ -82,7 +85,11 @@ class ExecutionDepthAction(
 			updateState()
 		}
 	}
-	private val executionDepthHandler: EventHandler<ExecutionDepthEvent> = { updateState() }
+	private val executionDepthHandler: EventHandler<ExecutionDepthEvent> = {
+		if (it.scheduler === scheduler) {
+			updateState()
+		}
+	}
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
@@ -112,7 +119,11 @@ class StopOnIssueAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.pauseOnIssue", eventBus) {
 
-	private val stopOnIssueHandler: EventHandler<StopOnIssueEvent> = { updateState() }
+	private val stopOnIssueHandler: EventHandler<StopOnIssueEvent> = {
+		if (it.scheduler === scheduler) {
+			updateState()
+		}
+	}
 
 	init {
 		eventBus.register(StopOnIssueEvent::class, stopOnIssueHandler)
@@ -140,7 +151,11 @@ class SimulationTimeStatusEnabledAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.enableSimulationTimeStatus", eventBus) {
 
-	private val simulationTimeStatusEnabledHandler: EventHandler<SimulationTimeStatusEnabledEvent> = { updateState() }
+	private val simulationTimeStatusEnabledHandler: EventHandler<SimulationTimeStatusEnabledEvent> = {
+		if (it.scheduler === scheduler) {
+			updateState()
+		}
+	}
 
 	init {
 		eventBus.register(SimulationTimeStatusEnabledEvent::class, simulationTimeStatusEnabledHandler)
@@ -166,7 +181,11 @@ class EnableSoftBreakpointsAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.enableSoftBreakpoints", eventBus) {
 
-	private val handler: EventHandler<EnableSoftBreakpointsEvent> = { updateState() }
+	private val handler: EventHandler<EnableSoftBreakpointsEvent> = {
+		if (it.scheduler === scheduler) {
+			updateState()
+		}
+	}
 
 	init {
 		updateState()

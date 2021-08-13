@@ -79,9 +79,6 @@ class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor)
 /** Posted by an executed system to temporarily suspend execution. */
 class BreakEvent
 
-/** Posted by a [Scheduler] in [SchedulerRunningState.PAUSED] after an execution cycle.*/
-data class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Long)
-
 /** Posted by a [Scheduler] when the execution depth changes.*/
 data class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
 

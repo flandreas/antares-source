@@ -55,7 +55,7 @@ class ScenarioDetector(
 	}
 
 	private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
-		if (it.actor is GraphElement && view.drawing.graph!!.contains(it.actor as GraphElement)) {
+		if (it.scheduler === applicationContextHolder.scheduler && it.actor is GraphElement && view.drawing.graph!!.contains(it.actor as GraphElement)) {
 			detect()
 		}
 	}

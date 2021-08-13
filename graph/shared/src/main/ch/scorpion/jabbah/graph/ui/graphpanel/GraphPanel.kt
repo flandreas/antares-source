@@ -191,10 +191,12 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: ExecutionStoppedOnIssueEvent) {
-		eventBus.post(ComponentMessage(
-			type = ComponentMessageType.Error,
-			source = null,
-			messageKey = "execution.scheduler.pausedDueToIssue.msg"))
+		if (event.scheduler === applicationContextHolder.scheduler) {
+			eventBus.post(ComponentMessage(
+				type = ComponentMessageType.Error,
+				source = null,
+				messageKey = "execution.scheduler.pausedDueToIssue.msg"))
+		}
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
