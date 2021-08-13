@@ -143,6 +143,8 @@ class AntaresViewJs(
 						applicationDataHolder = props.applicationDataHolder
 						scheduler = applicationContextHolder.scheduler
 						eventBus = BaseModule.eventBus
+						toggleApplicationModeAction = controller.toggleApplicationModeAction
+						currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
 					}
 
 					styledDiv {

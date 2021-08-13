@@ -22,6 +22,7 @@ external interface GraphExecutionToolbarJsProps : RProps {
 	var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	var scheduler: Scheduler
 	var eventBus: EventBus
+	var toggleApplicationModeAction: ToggleApplicationModeAction
 }
 
 fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit): ReactElement {
@@ -38,16 +39,14 @@ class GraphExecutionToolbarJs(
 	props: GraphExecutionToolbarJsProps
 ) : RComponent<GraphExecutionToolbarJsProps, RState>(props) {
 
-	private val toggleModeAction = ToggleApplicationModeAction(props.applicationDataHolder, props.applicationModeHolder, props.eventBus)
 	private val pauseAction = PauseExecutionAction(props.scheduler, props.eventBus)
 	private val resumeAction = ResumeExecutionAction(props.scheduler, props.eventBus)
 
 	override fun componentDidMount() {
-		toggleModeAction.enabled = true
+		props.toggleApplicationModeAction.enabled = true
 	}
 
 	override fun componentWillUnmount() {
-		toggleModeAction.dispose()
 		pauseAction.dispose()
 		resumeAction.dispose()
 	}
@@ -60,7 +59,7 @@ class GraphExecutionToolbarJs(
 			mGridContainer(alignItems = MGridAlignItems.center) {
 				mGridItem {
 					jmToggleButton {
-						action = toggleModeAction
+						action = props.toggleApplicationModeAction
 						iconName = "play_arrow"
 					}
 					jmToggleButton {
