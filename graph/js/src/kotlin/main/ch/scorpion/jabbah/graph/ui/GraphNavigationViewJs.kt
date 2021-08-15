@@ -4,7 +4,9 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.responsiveCanvas
 import kotlinx.css.*
+import kotlinx.html.id
 import react.*
+import react.dom.canvas
 import styled.css
 import styled.styledDiv
 
@@ -42,19 +44,31 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun RBuilder.render() {
-		styledDiv {
-			css {
-				display = Display.flex
-				flexDirection = FlexDirection.column
-				width = 100.vw
-				height = 100.vh
+		if (props.size == null) {
+			styledDiv {
+				css {
+					display = Display.flex
+					flexDirection = FlexDirection.column
+					width = 100.vw
+					height = 100.vh
+				}
+				navigationStackView {
+					controller = props.controller.navigationStackViewController
+				}
+				child(responsiveCanvas) {
+					attrs.canvasId = props.canvasId
+					attrs.canvasJsProvider = { canvasJs }
+				}
 			}
-			navigationStackView {
-				controller = props.controller.navigationStackViewController
-			}
-			child(responsiveCanvas) {
-				attrs.canvasId = props.canvasId
-				attrs.canvasJsProvider = { canvasJs }
+		} else {
+			styledDiv {
+				navigationStackView {
+					controller = props.controller.navigationStackViewController
+				}
+				canvas {
+					// SIze is set in CanvasJs
+					attrs.id = props.canvasId
+				}
 			}
 		}
 	}

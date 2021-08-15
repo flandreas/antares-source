@@ -1,6 +1,8 @@
 package ch.scorpion.antares.ui
 
-import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.app.ApplicationDataViewJs
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -16,12 +18,11 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
+import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.graphExecutionToolbar
-import ch.scorpion.jabbah.graph.ui.graphNavigationView
 import ch.scorpion.jabbah.graph.ui.graphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.io.Storable
 import com.ccfraser.muirwik.components.*
 import kotlinx.css.*
 import react.*
@@ -40,16 +41,20 @@ external interface AntaresCanvasState : RState {
 	var isLoading: Boolean
 }
 
-/** Displays simulation controls and a [graphNavigationView]. */
+/**
+ * This is roughly equivalent to [GraphFrame] of the desktop version, but still without Controller/View separation,
+ * and still without a Container view.
+ */
 class AntaresViewJs(
 	props: AntaresViewJsProps
-) : RComponent<AntaresViewJsProps, AntaresCanvasState>(props), ApplicationDataView {
+) : RComponent<AntaresViewJsProps, AntaresCanvasState>(props) {
 
 	private val translationEventHandler: EventHandler<TranslationBundleAdded> = { handle(it) }
 	private val controller: GraphPanelViewController
 	private val systemSpeed = SystemSpeed()
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
 	private val scheduler = SchedulerImpl(currentSystemSpeedCategory)
+	private val applicationDataView = ApplicationDataViewJs()
 
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = currentSystemSpeedCategory)
@@ -73,7 +78,7 @@ class AntaresViewJs(
 		BaseModule.eventBus.register(TranslationBundleAdded::class, translationEventHandler)
 	}
 
-	override fun dispose() {
+	fun dispose() {
 		controller.dispose()
 		BaseModule.eventBus.unregister(translationEventHandler)
 	}
@@ -102,7 +107,7 @@ class AntaresViewJs(
 	/** ---- [RComponent] */
 
 	override fun componentDidMount() {
-		props.application.controller.view = this
+		props.application.controller.view = applicationDataView
 		applicationContextHolder.scheduler.isSoftBreakpointsEnabled = true
 	}
 
@@ -163,24 +168,5 @@ class AntaresViewJs(
 				}
 			}
 		}
-	}
-
-	override fun decideSaveChangedData(action: String): SaveUnchangedDataDecision {
-		// TODO
-		return SaveUnchangedDataDecision.No
-	}
-
-	override fun defineSavableForStoring(storable: Storable, currentSavable: Savable?): Savable? {
-		// TODO
-		return null
-	}
-
-	override fun defineSavableForLoading(): Savable? {
-		// TODO
-		return null
-	}
-
-	override fun showModalMessage(type: ModalMessageType, title: String, message: String) {
-		// TODO
 	}
 }
