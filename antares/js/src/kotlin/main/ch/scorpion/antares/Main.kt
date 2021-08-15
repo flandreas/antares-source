@@ -1,8 +1,8 @@
 package ch.scorpion.antares
 
 fun main() {
-	AntaresJs().start()
-	//AntaresPage().show()
+	//AntaresJs().start()
+	AntaresPage().show()
 }
 
 

@@ -79,8 +79,8 @@ class CanvasJs(
 
 		if (size != null) {
 			resize(size.width.toInt(), size.height.toInt())
-			canvas.style.width = "${size.width.toInt()}"
-			canvas.style.height = "${size.height.toInt()}"
+			canvas.style.width = "${size.width.toInt()}px"
+			canvas.style.height = "${size.height.toInt()}px"
 		} else {
 			resize(canvas.width, canvas.height)
 		}
