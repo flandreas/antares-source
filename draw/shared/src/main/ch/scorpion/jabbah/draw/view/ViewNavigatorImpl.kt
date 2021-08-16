@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewNavigator
 import ch.scorpion.jabbah.draw.ZoomPan
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -29,8 +28,7 @@ class ViewNavigatorImpl(
 		const val FIT_ZOOM_INSET: Int = 20
 	}
 
-	private val defaultZoomFactor: Double get() =
-		(properties.getFloat(View.PROP_DEFAULT_ZOOM_FACTOR) * max(1, view.canvas.devicePixelRatio)).toDouble()
+	private val defaultZoomFactor: Double get() = properties.getFloat(View.PROP_DEFAULT_ZOOM_FACTOR).toDouble()
 
 	/** ---- [ViewNavigator] interface */
 
@@ -79,11 +77,13 @@ class ViewNavigatorImpl(
 	}
 
 	override fun fit() {
+		println("ViewNavigator: fit")
 		val zoomFactor = calculateFitZoomFactor()
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
 
 	override fun fitMaxNormal() {
+		println("ViewNavigator: fitMaxNormal")
 		val zoomFactor = min(defaultZoomFactor, calculateFitZoomFactor())
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
