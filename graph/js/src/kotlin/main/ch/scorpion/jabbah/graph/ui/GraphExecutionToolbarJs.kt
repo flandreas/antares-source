@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.mreact.jmToggleButton
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -8,7 +7,6 @@ import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.systemSpeedSlider
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import com.ccfraser.muirwik.components.*
 import kotlinx.css.paddingLeft
@@ -17,8 +15,6 @@ import styled.css
 import styled.styledDiv
 
 external interface GraphExecutionToolbarJsProps : RProps {
-	var applicationDataHolder: ApplicationDataHolder
-	var applicationModeHolder: ApplicationModeHolder
 	var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	var scheduler: Scheduler
 	var eventBus: EventBus

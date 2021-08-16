@@ -145,7 +145,6 @@ class AntaresViewJs(
 				} else {
 					antaresMenuBar {  }
 					graphExecutionToolbar {
-						applicationDataHolder = props.applicationDataHolder
 						scheduler = applicationContextHolder.scheduler
 						eventBus = BaseModule.eventBus
 						toggleApplicationModeAction = controller.toggleApplicationModeAction
