@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
  */
 interface ScriptGateway {
 
+	val isSupported: Boolean
+
 	/**
 	 * Defines the script function to be used when executing a [SubGraphVerticeRef].
 	 * @return the object to be passed in in [runVerticeExecutionScript]

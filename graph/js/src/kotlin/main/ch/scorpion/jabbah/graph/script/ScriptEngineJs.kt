@@ -4,11 +4,14 @@ import ch.scorpion.jabbah.base.event.EventBus
 
 actual class ScriptEngine actual constructor(eventBus: EventBus) {
 
+	actual val isSupported: Boolean get() = false
+
 	actual fun eval(script: Script) {
-		throw UnsupportedOperationException()
+		// not yet supported
 	}
 
 	actual fun invoke(name: String, script: Script?, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
-		throw UnsupportedOperationException()
+		// not yet supported
+		return null
 	}
 }

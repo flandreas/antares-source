@@ -142,7 +142,8 @@ class ScenarioDetector(
 
 	private fun updateActive() {
 		val oldValue = isActive
-		isActive = applicationContextHolder.scheduler.isActive
+		isActive = scriptGateway.isSupported
+			&& applicationContextHolder.scheduler.isActive
 			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
 		if (isActive != oldValue) {
 			LOG.trace("active = '$isActive'")

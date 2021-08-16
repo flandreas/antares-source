@@ -20,6 +20,8 @@ actual class ScriptEngine actual constructor(private val eventBus: EventBus) {
 	private val engine = ScriptEngineManager().getEngineByName("nashorn")
 	private var lastScript: Script? = null
 
+	actual val isSupported: Boolean get() = true
+
 	actual fun eval(script: Script) {
 		lastScript = script
 		try {

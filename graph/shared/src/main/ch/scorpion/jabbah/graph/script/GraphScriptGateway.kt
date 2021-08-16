@@ -23,6 +23,8 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		private const val VERTICE_VIEW_WRAPPER = "function execVerticeView(verticeView) {\$BODY}"
 	}
 
+	override val isSupported: Boolean get() = engine.isSupported
+
 	override fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any {
 		throw UnsupportedOperationException("not implemented")
 	}

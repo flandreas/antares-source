@@ -49,6 +49,8 @@ class AntaresScriptGateway(
 
 	private fun functionPrefix(uuid: UUID): String = "f_" + uuid.toString().replace('-', '_')
 
+	override val isSupported: Boolean get() = engine.isSupported
+
 	override fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any {
 		engine.eval(script.copy(code = VERTICE_WRAPPER
 			.replaceFirst("\$UUID", functionPrefix(uuid))

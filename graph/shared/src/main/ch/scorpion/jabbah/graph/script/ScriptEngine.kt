@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
  */
 expect class ScriptEngine(eventBus: EventBus = BaseModule.eventBus) {
 
+	val isSupported: Boolean
+
     /** Evaluates (executes) the specified javascript. Primarily used for defining functions.*/
     fun eval(script: Script)
 
