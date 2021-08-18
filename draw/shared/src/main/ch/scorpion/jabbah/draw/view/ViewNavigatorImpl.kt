@@ -77,13 +77,11 @@ class ViewNavigatorImpl(
 	}
 
 	override fun fit() {
-		println("ViewNavigator: fit")
 		val zoomFactor = calculateFitZoomFactor()
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
 
 	override fun fitMaxNormal() {
-		println("ViewNavigator: fitMaxNormal")
 		val zoomFactor = min(defaultZoomFactor, calculateFitZoomFactor())
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}

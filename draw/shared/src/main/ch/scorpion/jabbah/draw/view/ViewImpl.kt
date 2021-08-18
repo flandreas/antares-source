@@ -48,19 +48,18 @@ open class ViewImpl<C : InputEventContext>(
 	private val propertyChangeHandler = PropertyChangeHandler()
 
 	// Backing property as alternative to 'lateinit' with custom setter.
-	private var _canvas: Canvas? = null
+	protected var _canvas: Canvas? = null
 
 	override var canvas: Canvas
 		get() = _canvas!!
 		set(value) {
 			if (_canvas != null) {
-				throw IllegalStateException("Recurring attempt to bind Canvas in View")
+				_canvas!!.removePropertyChangeListener(propertyChangeHandler)
 			}
 			_canvas = value
 			canvas.addPropertyChangeListener(propertyChangeHandler)
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
 		}
-
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)

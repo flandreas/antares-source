@@ -45,10 +45,13 @@ class DrawingViewImpl<T: Drawing<Component>>(
 	override var canvas: Canvas
 		get() = super.canvas
 		set(value) {
+			val firstTime = super._canvas == null
 			super.canvas = value
-			setupContent()
-			grid.view = this
-			showGrid = true
+			if (firstTime) {
+				setupContent()
+				grid.view = this
+				showGrid = true
+			}
 		}
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/

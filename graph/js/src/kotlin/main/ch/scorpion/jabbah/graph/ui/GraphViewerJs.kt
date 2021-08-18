@@ -35,16 +35,18 @@ class GraphViewerJs(
 	}
 
 	override fun RBuilder.render() {
-		graphExecutionToolbar {
-			currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
-			scheduler = controller.applicationContextHolder.scheduler
-			eventBus = BaseModule.eventBus
-			toggleApplicationModeAction = controller.toggleApplicationModeAction
-		}
 		graphNavigationView {
 			canvasId = props.canvasId
 			controller = this@GraphViewerJs.controller.graphNavigationViewController
 			size = props.size
+			canvasToolbarRenderer = {
+				it.graphExecutionToolbar {
+					currentSystemSpeedCategory = this@GraphViewerJs.controller.applicationContextHolder.currentSystemSpeedCategory
+					scheduler = this@GraphViewerJs.controller.applicationContextHolder.scheduler
+					eventBus = BaseModule.eventBus
+					toggleApplicationModeAction = this@GraphViewerJs.controller.toggleApplicationModeAction
+				}
+			}
 		}
 	}
 

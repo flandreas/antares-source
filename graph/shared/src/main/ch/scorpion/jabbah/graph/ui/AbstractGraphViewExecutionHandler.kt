@@ -36,7 +36,7 @@ abstract class AbstractGraphViewExecutionHandler(
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == View.PROP_CANVAS) {
 				updateActivationState()
-				view.removePropertyChangeListener(this)
+				//view.removePropertyChangeListener(this)
 			}
 		}
 	}

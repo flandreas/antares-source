@@ -33,7 +33,7 @@ val responsiveCanvas = functionalComponent<ResponsiveCanvasProps> { props ->
 		ResizeDetectorFunctionPropsObj(
 			onResize = { w, h ->
 				props.canvasJsProvider.invoke()?.let { canvasJs ->
-					canvasJs.resize(w, h)
+					//canvasJs.resize(w, h)
 				}
 		   },
 			targetRef = null

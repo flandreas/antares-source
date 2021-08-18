@@ -67,7 +67,7 @@ class GraphExecutionToolbarJs(
 						iconName = "skip_next"
 					}
 				}
-				mGridItem(xs = MGridSize.cells2) {
+				mGridItem(xs = MGridSize.cells3) {
 					systemSpeedSlider(props.currentSystemSpeedCategory) {  }
 				}
 			}
