@@ -72,9 +72,28 @@ class CanvasJs(
 		initalizing = false
 	}
 
-	override fun requestViewFocus() { }
+	override fun requestViewFocus() {
+		canvas.focus()
+	}
 
-	override fun setCursor(cursor: Cursor) { }
+	override fun setCursor(cursor: Cursor) {
+		when (cursor) {
+			Cursor.DEFAULT -> canvas.style.cursor = "default"
+			Cursor.WAIT -> canvas.style.cursor = "wait"
+			Cursor.CLICK -> canvas.style.cursor = "pointer"
+			Cursor.MOVE -> canvas.style.cursor = "move"
+			Cursor.CROSSHAIR -> canvas.style.cursor = "crosshair"
+			Cursor.NW_RESIZE -> canvas.style.cursor = "nw-resize"
+			Cursor.N_RESIZE -> canvas.style.cursor = "n-resize"
+			Cursor.NE_RESIZE -> canvas.style.cursor = "ne-resize"
+			Cursor.E_RESIZE -> canvas.style.cursor = "e-resize"
+			Cursor.SE_RESIZE -> canvas.style.cursor = "se-resize"
+			Cursor.S_RESIZE -> canvas.style.cursor = "s-resize"
+			Cursor.SW_RESIZE -> canvas.style.cursor = "sw-resize"
+			Cursor.W_RESIZE -> canvas.style.cursor = "w-resize"
+			Cursor.TEXT -> canvas.style.cursor = "text"
+		}
+	}
 
 	override fun repaint() {
 		repaint(0, 0, canvas.width, canvas.height)
