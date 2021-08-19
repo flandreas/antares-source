@@ -109,6 +109,12 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
+	private val executionTooltip: Tooltip? by lazy {
+		buildToolTipText(type, typeDesc, executionTooltipSubtext)?.let {
+			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
+		}
+	}
+
 	/** ---- [Cloneable] interface */
 
 	override fun doClone(): Component = StorableCloner.clone(VerticeViewStorable(this)).verticeView!!
@@ -306,9 +312,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		return buildToolTipText(type, typeDesc, executionTooltipSubtext)?.let {
-			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
-		}
+		return executionTooltip?.also { it.location = Point2D(plainBoundingBox.centerX, plainBoundingBox.maxY) }
 	}
 
 	protected open val executionTooltipSubtext: String? get() = description.value

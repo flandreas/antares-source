@@ -15,23 +15,33 @@ class RealTimeTimerJs : Timer {
 
     private var handler: ((ActionEvent) -> Unit)? = null
 
+	private var repeats: Boolean = true
+
     /** ---- [Timer] interface */
 
-    override fun initialize(interval: Int, handler: (ActionEvent) -> Unit) {
+    override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit) {
         if (this.interval > 0) {
             throw IllegalStateException("already initialized")
         }
         this.interval = interval
         this.handler = handler
+	    this.repeats = repeats
     }
 
     override fun start() {
         if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
-        id = kotlinx.browser.window.setInterval({
-            handler!!(ActionEvent(null, kotlinx.browser.window, 0, "timer", Date().getTime().toLong()))
-        }, interval)
+	    id = if (repeats) {
+		    kotlinx.browser.window.setInterval({
+			    handler!!(ActionEvent(null, kotlinx.browser.window, 0, "timer", Date().getTime().toLong()))
+			    id = null
+		    }, interval)
+	    } else {
+	    	kotlinx.browser.window.setTimeout({
+			    handler!!(ActionEvent(null, kotlinx.browser.window, 0, "timer", Date().getTime().toLong()))
+		    }, interval)
+	    }
     }
 
     override fun stop() {
@@ -39,12 +49,14 @@ class RealTimeTimerJs : Timer {
             throw IllegalStateException("not yet initialized")
         }
 	    id?.let {
-		    kotlinx.browser.window.clearInterval(it)
-            id = null
+	    	if (repeats) {
+			    kotlinx.browser.window.clearInterval(it)
+		    } else {
+		        kotlinx.browser.window.clearTimeout(it)
+		    }
+		    id = null
 	    }
     }
 
-    override fun isRunning(): Boolean {
-        return id != null
-    }
+    override fun isRunning(): Boolean = id != null
 }

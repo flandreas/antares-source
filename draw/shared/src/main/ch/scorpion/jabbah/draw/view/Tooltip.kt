@@ -122,6 +122,8 @@ class TooltipHandler(
 
 	companion object {
 
+		private val LOG by logger(TooltipHandler::class)
+
 		/** The name of the [Boolean] property in [Properties] that decides if textual HTML tooltips are to be displayed.*/
 		const val PROP_TOOLTIPS_ENABLED = "draw.view.tooltipsEnabled"
 	}
@@ -293,7 +295,7 @@ object TooltipManager {
 
 	private fun initTimer() {
 		_timer = System.createTimer()
-		timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
+		timer.initialize(BaseModule.properties.getInt(PROP_DELAY), repeats = false) { displayImpl() }
 	}
 
 	private fun handle(event: TooltipEvent) {
@@ -308,7 +310,6 @@ object TooltipManager {
 		if (textTooltip != null || explanationTooltip != null) {
 			disposeTooltip()
 		}
-		LOG.trace("tooltipRequested for text '${event.tooltip!!.text}' and explanation ${event.explanation}")
 		request = TooltipRequest(event.origin!!, event.view, event.tooltip, event.explanation)
 		timer.start()
 	}
@@ -325,6 +326,7 @@ object TooltipManager {
 
 	/** Called by the [timer] in order to effectively display the textTooltip, if still needed. */
 	private fun displayImpl() {
+		timer.stop()
 		request?.let {
 			disposeTooltip()
 			if (it.tooltip != null) {
@@ -342,7 +344,6 @@ object TooltipManager {
 				}
 			}
 			request = null
-			timer.stop()
 		}
 	}
 
