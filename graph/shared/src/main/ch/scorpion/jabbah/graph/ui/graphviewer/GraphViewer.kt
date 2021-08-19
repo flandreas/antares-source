@@ -40,7 +40,10 @@ class GraphViewerController(
 	private val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
 
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
-	val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(systemSpeedCategory))
+	val applicationContextHolder = GraphApplicationContextHolder(
+		SchedulerImpl(systemSpeedCategory),
+		systemSpeed = systemSpeed,
+		currentSystemSpeedCategory = systemSpeedCategory)
 
 	override var currentMode: ApplicationMode = EDIT
 		private set

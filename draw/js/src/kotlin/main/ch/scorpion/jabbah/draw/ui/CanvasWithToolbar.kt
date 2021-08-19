@@ -36,7 +36,6 @@ class CanvasWithToolbar(
 						position = Position.absolute
 						width = props.size.width.px
 					}
-					//p { +"Toolbar" }
 					props.toolbarRenderer(this)
 				}
 			}
@@ -51,12 +50,10 @@ class CanvasWithToolbar(
 	}
 
 	private fun onMouseOver(event: Event) {
-		println("mouseOver")
 		setState { toolbarVisible = true }
 	}
 
 	private fun onMouseOut(event: Event) {
-		println("mouseOut")
 		setState { toolbarVisible = false }
 	}
 }

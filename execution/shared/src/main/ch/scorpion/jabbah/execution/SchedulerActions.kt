@@ -57,7 +57,7 @@ class ResumeExecutionAction(
 
 	init {
 		eventBus.register(BreakpointEvent::class, handler)
-		enabled = false
+		updateEnabledness()
 	}
 
 	override fun dispose() {

@@ -27,6 +27,7 @@ class GraphViewerJs(
 
 	init {
 		controller.view = this
+		controller.applicationContextHolder.scheduler.isSoftBreakpointsEnabled = true
 	}
 
 	override fun componentDidMount() {

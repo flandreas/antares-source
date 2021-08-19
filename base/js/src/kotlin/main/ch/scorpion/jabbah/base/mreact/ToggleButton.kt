@@ -35,9 +35,7 @@ fun RBuilder.jmToggleButton(handler: JMToggleButtonProps.() -> Unit): ReactEleme
 /** Wraps a Jabbah [Action] in a React Material ToggleButton.*/
 class JabbahMaterialToggleButton : RComponent<JMToggleButtonProps, RState>() {
 
-	private val actionListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) { forceUpdate() }
-	}
+	private val actionListener = PropertyChangeListener<Any> { forceUpdate() }
 
 	override fun componentDidMount() {
 		props.action.addPropertyChangeListener(actionListener)
