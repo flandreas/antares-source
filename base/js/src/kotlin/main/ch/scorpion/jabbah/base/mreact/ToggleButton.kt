@@ -52,7 +52,11 @@ class JabbahMaterialToggleButton : RComponent<JMToggleButtonProps, RState>() {
 			attrs.value = ""
 			attrs.onClick = ::onClick
 
-			mIcon(props.iconName, fontSize = MIconFontSize.small)
+			props.action.description?.let {
+				mTooltip(it) {
+					mIcon(props.iconName, fontSize = MIconFontSize.small)
+				}
+			} ?: mIcon(props.iconName, fontSize = MIconFontSize.small)
 		}
 	}
 

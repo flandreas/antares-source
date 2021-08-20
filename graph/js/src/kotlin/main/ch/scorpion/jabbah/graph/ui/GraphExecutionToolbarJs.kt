@@ -68,7 +68,7 @@ class GraphExecutionToolbarJs(
 					}
 				}
 				mGridItem(xs = MGridSize.cells3) {
-					systemSpeedSlider(props.currentSystemSpeedCategory) {  }
+					systemSpeedSlider(props.currentSystemSpeedCategory) { }
 				}
 			}
 		}

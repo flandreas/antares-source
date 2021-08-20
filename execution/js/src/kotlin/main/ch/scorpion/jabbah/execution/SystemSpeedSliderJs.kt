@@ -1,14 +1,12 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import com.ccfraser.muirwik.components.*
-import react.RBuilder
-import react.RComponent
-import react.RState
-import react.ReactElement
+import react.*
 
 @JsModule("@material-ui/core/Slider")
 @JsNonModule
@@ -34,25 +32,25 @@ interface SystemSpeedSliderProps : MSliderProps {
 	var eventBus: EventBus
 }
 
-/**
- * A slider that allows to change the current [SystemSpeed].
- * TODO Display somehow the current [CurrentSystemSpeedCategory] (Explore, observe, use).
- */
+/** A slider that allows to change the current [SystemSpeed]. */
 class SystemSpeedSlider : RComponent<SystemSpeedSliderProps, RState>() {
 
 	override fun RBuilder.render() {
-		createStyled(sliderComponent) {
-			attrs.defaultValue = props.systemSpeedCategory.systemSpeed.speed
-			attrs.min = 0
-			attrs.max = 100
-			attrs.step = 1
-			attrs.valueLabelDisplay = MSliderValueLabelDisplay.auto
-			attrs.onChange = ::changeSpeed
-			attrs.marks = listOf(MSliderMark(33, "33%"), MSliderMark(66, "66%")).toTypedArray()
+		mTooltip("${Translations.getString("execution.action.speed.name")}: ${props.systemSpeedCategory.systemSpeedCategory}") {
+			createStyled(sliderComponent) {
+				attrs.value = props.systemSpeedCategory.systemSpeed.speed
+				attrs.min = 0
+				attrs.max = 100
+				attrs.step = 1
+				attrs.valueLabelDisplay = MSliderValueLabelDisplay.auto
+				attrs.onChange = ::changeSpeed
+				attrs.marks = listOf(MSliderMark(33), MSliderMark(66)).toTypedArray()
+			}
 		}
 	}
 
 	private fun changeSpeed(event: Any, value: Number) {
 		props.systemSpeedCategory.systemSpeed.speed = value as Int
+		forceUpdate()
 	}
 }
