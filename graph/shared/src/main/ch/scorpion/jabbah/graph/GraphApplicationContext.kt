@@ -39,7 +39,11 @@ class GraphApplicationContextHolder(
 ) : ApplicationContextHolder() {
 
 	private val applicationMode: ApplicationMode get() = applicationModeHolder.currentMode
-	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { updateApplicationContext() }
+	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = {
+		if (it.source === systemSpeed) {
+			updateApplicationContext()
+		}
+	}
 	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = {
 		if (it.source === applicationModeHolder) {
 			updateApplicationContext()

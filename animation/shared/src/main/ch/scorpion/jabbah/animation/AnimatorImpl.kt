@@ -24,8 +24,10 @@ class AnimatorImpl(
 	init {
 		timer.initialize(period) { animationStep() }
 		eventBus.register(SystemSpeedEvent::class) {
-			if (it.oldSpeed == 0 && it.newSpeed > 0) {
-				resumeSuspendedJobs()
+			if (it.source === systemSpeed) {
+				if (it.oldSpeed == 0 && it.newSpeed > 0) {
+					resumeSuspendedJobs()
+				}
 			}
 		}
 	}
@@ -33,7 +35,7 @@ class AnimatorImpl(
 	private companion object {
 		val LOG by logger(AnimatorImpl::class)
 		// The default animation pulse in milliseconds
-		const val DEFAULT_PERIOD = 20
+		const val DEFAULT_PERIOD = 40
 	}
 
 
@@ -143,7 +145,11 @@ class AnimatorImpl(
 	 * depend on [SystemSpeed]. If it does, the effectively used distance is shortened according to the
 	 * [SystemSpeed]'s current value.
 	 */
-	private class AnimationJob(val task: AnimationTask, private val maxDistance: Double, private val systemSpeed: SystemSpeed) {
+	private class AnimationJob(
+		val task: AnimationTask,
+		private val maxDistance: Double,
+		private val systemSpeed: SystemSpeed
+	) {
 
 		enum class State {
 			Created,

@@ -25,7 +25,11 @@ class TimedSchedulerTask(
 	}
 
 	init {
-		eventBus.register(SystemSpeedEvent::class) { adaptToSystemSpeed() }
+		eventBus.register(SystemSpeedEvent::class) {
+			if (it.source === currentSystemSpeedCategory.systemSpeed) {
+				adaptToSystemSpeed()
+			}
+		}
 		timer.initialize(calculateTimerInterval()) { actionPerformed(it) }
 	}
 

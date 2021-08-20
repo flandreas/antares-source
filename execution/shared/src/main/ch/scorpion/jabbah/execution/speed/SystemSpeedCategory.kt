@@ -60,7 +60,12 @@ class CurrentSystemSpeedCategory(
     private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	private val systemSpeedHandler: EventHandler<SystemSpeedEvent> = { update() }
+	private val systemSpeedHandler: EventHandler<SystemSpeedEvent> = {
+		if (it.source === systemSpeed) {
+			update()
+		}
+	}
+
     init {
         eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
     }

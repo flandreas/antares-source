@@ -26,11 +26,11 @@ class SystemSpeed(
 			BaseModule.settings.set(SETTING_SPEED, value)
 			val oldSpeed = field
 			field = value
-			eventBus.post(SystemSpeedEvent(oldSpeed, field))
+			eventBus.post(SystemSpeedEvent(this, oldSpeed, field))
 		}
 
 	val isMaximum: Boolean get() = speed == MAX_SPEED
 }
 
-/** Posted by [SystemSpeed] when the current speed has changed. */
-data class SystemSpeedEvent(val oldSpeed: Int, val newSpeed: Int)
+/** Posted by [SystemSpeed] when the current value of [SystemSpeed] has changed. */
+data class SystemSpeedEvent(val source: SystemSpeed, val oldSpeed: Int, val newSpeed: Int)
