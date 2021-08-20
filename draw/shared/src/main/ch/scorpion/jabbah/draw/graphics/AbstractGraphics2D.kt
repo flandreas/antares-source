@@ -140,8 +140,8 @@ abstract class AbstractGraphics2D : Graphics2D {
 	}
 
 	protected fun playRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
-		val arcWW = min(arcW, w / 2)
-		val arcHH = min(arcH, h / 2)
+		val arcWW = min(arcW / 2, w / 2)
+		val arcHH = min(arcH / 2, h / 2)
 		moveTo(x, y + arcHH)
 		lineTo(x, y + h - arcHH)
 		quadraticCurveTo(x, y + h, x + arcWW, y + h)
