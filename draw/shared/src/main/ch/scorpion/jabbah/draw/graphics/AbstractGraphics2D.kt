@@ -101,6 +101,7 @@ abstract class AbstractGraphics2D : Graphics2D {
 	protected fun drawRing(ring: Ring2D) {
 		beginPath()
 		playRing(ring.x, ring.y, ring.width, ring.height, ring.thickness)
+		fillPath()
 	}
 
 	protected fun drawEllipse(ellipse: Ellipse2D) {
