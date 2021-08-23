@@ -1,3 +1,11 @@
+.toolbarOverCanvas {
+  display: none;
+}
+
+canvas:hover + .toolbarOverCanvas, .toolbarOverCanvas:hover {
+  display: block
+}
+
 /* From https://www.npmjs.com/package/react-split-pane */
 .Resizer {
   background: #000;

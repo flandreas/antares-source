@@ -9,10 +9,7 @@ import kotlinx.css.height
 import kotlinx.css.px
 import kotlinx.css.width
 import kotlinx.html.id
-import kotlinx.html.js.onMouseOutFunction
-import kotlinx.html.js.onMouseOverFunction
 import kotlinx.html.tabIndex
-import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import styled.css
@@ -22,8 +19,6 @@ external interface CanvasElementProps : RProps {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D
-	var mouseOverCallback: ((Event) -> Unit)?
-	var mouseOutCallback: ((Event) -> Unit)?
 }
 
 fun RBuilder.jCanvas(handler: CanvasElementProps.() -> Unit): ReactElement =
@@ -52,8 +47,6 @@ class CanvasElement(
 				width = "${props.size.width.toInt() * window.devicePixelRatio.toInt()}"
 				height = "${props.size.height.toInt() * window.devicePixelRatio.toInt()}"
 				tabIndex = "1"
-				props.mouseOverCallback?.let { onMouseOverFunction = it }
-				props.mouseOutCallback?.let { onMouseOutFunction = it }
 			}
 		}
 	}
