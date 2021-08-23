@@ -32,10 +32,13 @@ class RealTimeTimerJs : Timer {
         if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
+	    if (id != null) {
+	    	// already running
+	    	return
+	    }
 	    id = if (repeats) {
 		    kotlinx.browser.window.setInterval({
 			    handler!!(ActionEvent(null, kotlinx.browser.window, 0, "timer", Date().getTime().toLong()))
-			    id = null
 		    }, interval)
 	    } else {
 	    	kotlinx.browser.window.setTimeout({

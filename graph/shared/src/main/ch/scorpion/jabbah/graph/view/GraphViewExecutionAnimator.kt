@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.base.event.EventBus
@@ -142,7 +143,7 @@ class GraphViewExecutionAnimator(
 		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
 			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
 			drawingView,
-			applicationContextHolder.animator
+			AnimationModule.constantSpeedAnimator
 		)
 
 		applicationContextHolder.scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }

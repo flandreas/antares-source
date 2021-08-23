@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
  */
 object AnimationModule : AbstractModule() {
 
-	var constantSpeedAnimator = AnimatorImpl( SystemSpeed(), System.createTimer())
+	val constantSpeedAnimator = AnimatorImpl(SystemSpeed(SystemSpeed.MAX_SPEED), System.createTimer())
 
 	override fun initialize() {
 		configureProperties(BaseModule.properties)

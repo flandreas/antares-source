@@ -101,7 +101,6 @@ class AnimatorImpl(
 	 * isRunning [AnimationTask] on step further.
 	 */
 	private fun animationStep() {
-		LOG.trace("animationStep")
 		jobs.toList()
 			.filter { jobs.contains(it) && it.isRunning }
 			.forEach { it.animate() }

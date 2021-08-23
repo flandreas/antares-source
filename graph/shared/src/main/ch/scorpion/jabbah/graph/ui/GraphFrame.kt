@@ -90,7 +90,7 @@ open class GraphFrameController<T: GraphFrame>(
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 	}
 
-	private val systemSpeed = SystemSpeed(eventBus)
+	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 
 	private val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
 

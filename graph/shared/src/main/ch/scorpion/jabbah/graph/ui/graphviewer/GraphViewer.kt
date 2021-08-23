@@ -35,7 +35,7 @@ class GraphViewerController(
 		private val LOG by logger(GraphViewerController::class)
 	}
 
-	private val systemSpeed = SystemSpeed(eventBus)
+	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 
 	private val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
 
