@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphViewerJs
 import ch.scorpion.jabbah.graph.ui.graphViewer
+import com.ccfraser.muirwik.components.MTypographyVariant
 import com.ccfraser.muirwik.components.mContainer
+import com.ccfraser.muirwik.components.mTypography
 import com.ccfraser.muirwik.components.styles.Breakpoint
 import kotlinx.browser.document
 import kotlinx.css.Color
@@ -55,24 +57,29 @@ class AntaresPage {
 			mContainer(maxWidth = Breakpoint.md) {
 				css {
 					backgroundColor = Color.white
+					//backgroundColor = kotlinx.css.Color("#dcedfa")
 				}
-				h2 { +"This is AntaresPage" }
+				//h2 { +"This is AntaresPage" }
+				mTypography("Binary Addition", variant = MTypographyVariant.h3)
 
-				p { +"This is a circuit from the project"  }
+				//p { +"This is a circuit from the project"  }
+				mTypography("This is a circuit from the project", paragraph = true)
 				graphViewer {
 					canvasId = "canvas0"
 					metaGraphUuid = UUID("440b10dc-0999-4426-aa0f-c22c5221f641")
 					size = Dimension2D(500, 400)
 				}
 
-				p { +"The following explains how a 'Half Adder' works."  }
+				//p { +"The following explains how a 'Half Adder' works."  }
+				mTypography("The following explains how a 'Half Adder' works.", paragraph = true)
 				graphViewer {
 					canvasId = "canvas1"
 					metaGraphUuid = UUID("52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82")
 					size = Dimension2D(500, 400)
 				}
 
-				p { +"The following explains how a 'Full Adder' works."  }
+				//p { +"The following explains how a 'Full Adder' works."  }
+				mTypography("The following explains how a 'Full Adder' works.", paragraph = true)
 				graphViewer {
 					canvasId = "canvas2"
 					metaGraphUuid = UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300")
