@@ -2,12 +2,22 @@
   <folder>
     <libraryFolder _id='1'>
       <name>
-        <translation lang='en' text='Hello World'/>
+        <translation lang='en' text='Binary Addition'/>
       </name>
       <items>
         <containerLibraryElement _id='2' uuid='440b10dc-0999-4426-aa0f-c22c5221f641'>
           <name>
-            <translation lang='en' text='XOR Gate'/>
+            <translation lang='en' text='Result Calculation'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='ae8e1d4c-5201-489d-9494-8eec9f54380d'>
+          <name>
+            <translation lang='en' text='Carry Calculation'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='e2252451-b870-4541-ac11-1ffe2aca72ca'>
+          <name>
+            <translation lang='en' text='4 Bit Addition'/>
           </name>
         </containerLibraryElement>
       </items>
