@@ -1,23 +1,13 @@
-<project _id='0' defaultElement='bd2fcae8-06e9-41a7-9c3d-c2e53e5f5146' uuid='532f0477-722c-4c88-ada3-c419a386d06a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='440b10dc-0999-4426-aa0f-c22c5221f641' uuid='532f0477-722c-4c88-ada3-c419a386d06a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
         <translation lang='en' text='Hello World'/>
       </name>
       <items>
-        <containerLibraryElement _id='2' uuid='f07a35a3-69ed-4c48-936c-ff8f0f5f4813'>
+        <containerLibraryElement _id='2' uuid='440b10dc-0999-4426-aa0f-c22c5221f641'>
           <name>
-            <translation lang='en' text='New Circuit'/>
-          </name>
-        </containerLibraryElement>
-        <containerLibraryElement _id='3' uuid='bd2fcae8-06e9-41a7-9c3d-c2e53e5f5146'>
-          <name>
-            <translation lang='de' text='Built-in Components'/>
-          </name>
-        </containerLibraryElement>
-        <containerLibraryElement _id='4' uuid='440b10dc-0999-4426-aa0f-c22c5221f641'>
-          <name>
-            <translation lang='en' text='Simplest'/>
+            <translation lang='en' text='XOR Gate'/>
           </name>
         </containerLibraryElement>
       </items>
