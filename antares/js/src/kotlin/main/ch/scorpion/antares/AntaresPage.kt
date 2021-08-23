@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphViewerJs
 import ch.scorpion.jabbah.graph.ui.graphViewer
 import com.ccfraser.muirwik.components.mContainer
@@ -16,8 +17,6 @@ import com.ccfraser.muirwik.components.styles.Breakpoint
 import kotlinx.browser.document
 import kotlinx.css.Color
 import kotlinx.css.backgroundColor
-import kotlinx.css.marginTop
-import kotlinx.css.px
 import react.dom.h2
 import react.dom.p
 import react.dom.render
@@ -37,11 +36,18 @@ class AntaresPage {
 		AntaresModuleJs.require()
 
 		EditAuthModule.userHolder.u = User.developer
+
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+		loadProject()
 
 		AntaresThemes.install()
 
 		LogSystem.level = LogLevel.Info
+	}
+
+	private fun loadProject() {
+		val projectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.load(projectUuid)
 	}
 
 	private fun display() {
@@ -51,6 +57,13 @@ class AntaresPage {
 					backgroundColor = Color.white
 				}
 				h2 { +"This is AntaresPage" }
+
+				p { +"This is a circuit from the project"  }
+				graphViewer {
+					canvasId = "canvas0"
+					metaGraphUuid = UUID("440b10dc-0999-4426-aa0f-c22c5221f641")
+					size = Dimension2D(500, 400)
+				}
 
 				p { +"The following explains how a 'Half Adder' works."  }
 				graphViewer {

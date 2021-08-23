@@ -12,7 +12,12 @@
         </containerLibraryElement>
         <containerLibraryElement _id='3' uuid='bd2fcae8-06e9-41a7-9c3d-c2e53e5f5146'>
           <name>
-            <translation lang='en' text='Built-in Components'/>
+            <translation lang='de' text='Built-in Components'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='440b10dc-0999-4426-aa0f-c22c5221f641'>
+          <name>
+            <translation lang='en' text='Simplest'/>
           </name>
         </containerLibraryElement>
       </items>

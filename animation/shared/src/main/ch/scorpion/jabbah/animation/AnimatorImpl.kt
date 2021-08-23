@@ -110,13 +110,7 @@ class AnimatorImpl(
 	}
 
 	private fun removeEndedJobs() {
-		val iter = jobs.iterator()
-		while (iter.hasNext()) {
-			if (iter.next().isEnded) {
-				iter.remove()
-			}
-		}
-
+		jobs.removeAll { it.isEnded }
 		if (!hasRunningJobs()) {
 			timer.stop()
 		}
@@ -217,7 +211,7 @@ class AnimatorImpl(
 			findJob(task).end()
 			task.removeListener(taskListener)
 			removeEndedJobs()
-			LOG.trace("$task started, $taskCount remaining tasks")
+			LOG.trace("$task ended, $taskCount remaining tasks")
 		}
 	}
 }

@@ -17,12 +17,12 @@ class RealTimeTimerJvm : Timer {
 
     private var timer: javax.swing.Timer? = null
 
-    override fun initialize(interval: Int, repreats: Boolean, handler: (ActionEvent) -> Unit) {
+    override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit) {
         if (timer != null) {
             throw IllegalStateException("already initialized")
         }
         timer = javax.swing.Timer(interval, ActionListenerJvm(handler)).also {
-        	it.isRepeats = repreats
+        	it.isRepeats = repeats
         }
     }
 
