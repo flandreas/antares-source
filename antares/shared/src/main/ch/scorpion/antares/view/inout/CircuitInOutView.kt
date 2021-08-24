@@ -524,7 +524,7 @@ class CircuitInOutView(
 				return null
 			}
 			toggle(context.mouseEvent?.isAltDown ?: false, context.signalHandler, context.x, context.y)
-			context.mouseEvent?.consume()
+			// Don't consume event so that Canvas can gain focus
 			return this
 		}
 
