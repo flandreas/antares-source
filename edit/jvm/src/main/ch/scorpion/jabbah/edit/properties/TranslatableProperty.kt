@@ -80,7 +80,7 @@ class TranslatablePropertyEditor(
 	/** ---- [AbstractPropertyEditor] */
 
 	override fun getValue(): Any {
-		return if (StringUtils.isBlank(textComponent.text)) {
+		return if (StringUtils.isEmpty(textComponent.text)) {
 			text.withoutTranslation()
 		} else {
 			text.withTranslation(textComponent.text)

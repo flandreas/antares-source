@@ -114,8 +114,15 @@ class SubGraphVerticeViewImpl(
 		}
 
 	/**
+	 * Corresponds with [label]. Used to decide whether label is overwritten and needs to
+	 * be stored.
+	 */
+	private var _label: Translatable? = null
+
+	/**
 	 * The text to be used to overwrite the first [LabelComponent], if any. If `null` no overwriting
 	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
+	 * Returns the standard value from the [ContainerDrawing] if not overwritten. Used by the UI.
 	 */
 	var label: Translatable? = null
 		get() {
@@ -129,8 +136,16 @@ class SubGraphVerticeViewImpl(
 			val labelComponent = getLabelComponent()
 			if (labelComponent != null) {
 				field = value
+				_label = field
+
+				if (field?.isEmpty == true) {
+					resetLabel()
+				}
+
 				invalidate()
-				field?.let { labelComponent.text = it }
+				field?.let {
+					labelComponent.text =it
+				}
 				invalidate()
 			}
 		}
@@ -205,7 +220,7 @@ class SubGraphVerticeViewImpl(
 		if (isVerticallyMirrored) {
 			writer.writeBoolean("mirrorV", isVerticallyMirrored)
 		}
-		if (label != null && label!!.isNotEmpty && label != getLabelComponent()?.text) {
+		if (_label != null) {
 			writer.writeStorables("label", label!!.allTranslations())
 		}
 		if (customizedContainerDrawing != null) {
@@ -420,7 +435,7 @@ class SubGraphVerticeViewImpl(
 	private fun getGraph(): Graph =
 		subGraphVertice.getGraph(repository, storableCreator)
 
-	private fun getLabelComponent(): LabelComponent? =
+	fun getLabelComponent(): LabelComponent? =
 		drawableBag.drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
 
 	// Visible for testing
@@ -438,6 +453,12 @@ class SubGraphVerticeViewImpl(
 		rotationChanged(rotation)
 
 		updateBoxes()
+	}
+
+	private fun resetLabel() {
+		repository.getMetaGraph(model.graphUUID!!).containerDrawing.drawables.filterIsInstance<LabelComponent>().firstOrNull()?.let {
+			label = it.text
+		}
 	}
 
 	private fun fillDesignErrorRepresentation() {

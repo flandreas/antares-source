@@ -25,25 +25,26 @@ class TestLibraryBuilder(
 	 * Adds a custom component (as of [CompositeTestGraphViewBuilder.buildInnerCustomComponent] to the specified [Library].
 	 * @return the created [MetaGraph] that contains the created custom component
 	 */
-	fun addInnerCustomComponent(library: Library): MetaGraph {
+	fun addInnerCustomComponent(library: Library, label: String? = null): MetaGraph {
 		val builder = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP, portFactory, portViewFactory)
 		return libraryService.addContainerLibraryElement(
 			library,
-			builder.buildMetaGraph(builder.buildInnerCustomComponent()),
+			builder.buildMetaGraph(builder.buildInnerCustomComponent(), label),
 			library
 		).metaGraph!!
 	}
 
-	fun addOuterCustomComponent(library: Library): MetaGraph {
+	fun addOuterCustomComponent(library: Library, label: String? = null): MetaGraph {
 		val builder = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP, portFactory, portViewFactory)
 		return libraryService.addContainerLibraryElement(
 			library,
-			builder.buildMetaGraph(builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library))),
+			builder.buildMetaGraph(
+				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library)),
+				label),
 			library
 		).metaGraph!!
 	}
 
-	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl {
-		return (libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
-	}
+	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl =
+		(libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
 }

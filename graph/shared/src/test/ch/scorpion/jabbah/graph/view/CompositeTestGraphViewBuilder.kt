@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -48,9 +49,8 @@ class CompositeTestGraphViewBuilder(
 		return graphView
 	}
 
-	fun buildMetaGraph(graphView: GraphView): MetaGraph {
-		return MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
-	}
+	fun buildMetaGraph(graphView: GraphView, containerLabel: String? = null): MetaGraph =
+		MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView, containerLabel))
 
 	private fun addInput(name: String = "I"): TestGraphPortView {
 		val input = TestGraphPortView.input(name)
@@ -64,7 +64,7 @@ class CompositeTestGraphViewBuilder(
 		return output
 	}
 
-	private fun createContainerDrawing(graphView: GraphView): ContainerDrawing {
+	private fun createContainerDrawing(graphView: GraphView, containerLabel: String? = null): ContainerDrawing {
 		val containerDrawing = GraphViewModule.createContainerDrawing()
 
 		containerDrawing.model.graphUUID = graphView.graph!!.uuid
@@ -77,6 +77,10 @@ class CompositeTestGraphViewBuilder(
 		for (circuitOutput in graphView.graph!!.graphOutputs) {
 			containerDrawing.add(
 				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+		}
+
+		if (containerLabel != null) {
+			containerDrawing.add(LabelComponent(containerLabel))
 		}
 
 		return containerDrawing
