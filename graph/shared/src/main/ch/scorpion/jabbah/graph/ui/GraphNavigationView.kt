@@ -70,6 +70,8 @@ class GraphNavigationViewController(
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
 	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
 
+	private var editable: Boolean = false
+
 	private var currentSavable: Savable? = initialSavable
 	private var scenarioDetector: ScenarioDetector? = null
 
@@ -149,7 +151,8 @@ class GraphNavigationViewController(
 			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
 
 	override val isEditable: Boolean
-		get() = navigationStackViewController.navigationStack.size == 1
+		get() = editable
+			&& navigationStackViewController.navigationStack.size == 1
 			&& (currentSavable?.editable ?: false)
 
 	override fun deselectAll() {
@@ -160,13 +163,15 @@ class GraphNavigationViewController(
 	/** ---- [GraphNavigationView] */
 
 	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
+		this.editable = editable
+
 		val oldZoomStrategy = drawingView.defaultZoomStrategy
 		if (!applyZoomStrategy) {
 			drawingView.defaultZoomStrategy = ZoomStrategy.NONE
 		}
 		drawingView.drawing = graphView
 
-		drawingView.editable = drawingView.editable && isRoot
+		drawingView.editable = editable && isRoot
 
 		if (!applyZoomStrategy) {
 			drawingView.defaultZoomStrategy = oldZoomStrategy

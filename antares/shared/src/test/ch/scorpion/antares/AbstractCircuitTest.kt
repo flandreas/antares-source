@@ -47,7 +47,7 @@ abstract class AbstractCircuitTest {
 	open fun setup() {
 		styleProvider = DrawStyleModule.styleProvider
 		eventBus = BaseModule.eventBus
-		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus), eventBus)
+		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)
 		timeService = ControlledTimeService()
 		timer = ControlledTimer(timeService)
 		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), ControlledTimer(timeService))

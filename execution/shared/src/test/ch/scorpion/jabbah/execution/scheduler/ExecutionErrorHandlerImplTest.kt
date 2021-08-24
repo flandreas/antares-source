@@ -27,7 +27,7 @@ class ExecutionErrorHandlerImplTest {
 	init {
 		ExecutionTestRule.configure()
 
-		val currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus), eventBus)
+		val currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)
 		timeService = ControlledTimeService()
 		scheduler = SchedulerImpl(
 			currentSystemSpeedCategory,

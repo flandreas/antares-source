@@ -40,7 +40,7 @@ class GraphDesktopControllerTest {
 	}
 
 	private val eventBus = EventBusImpl()
-	private val systemSpeed = SystemSpeed(eventBus)
+	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(currentSystemSpeedCategory), eventBus, systemSpeed, currentSystemSpeedCategory)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()

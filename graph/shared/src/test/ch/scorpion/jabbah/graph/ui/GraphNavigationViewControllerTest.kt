@@ -44,7 +44,7 @@ class GraphNavigationViewControllerTest {
 
 	private val scheduler = mockk<Scheduler>(relaxed = true)
 	private val eventBus = EventBusImpl()
-	private val systemSpeed = SystemSpeed(eventBus)
+	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
