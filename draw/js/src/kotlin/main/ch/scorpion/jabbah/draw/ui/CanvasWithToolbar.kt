@@ -37,8 +37,9 @@ class CanvasWithToolbar(
 			styledDiv {
 				css {
 					position = Position.absolute
-					top = 0.px
-					width = props.size.width.px
+					top = 1.px
+					left = 1.px
+					width = props.size.width.px - 1.px
 					classes = mutableListOf("toolbarOverCanvas")
 				}
 				props.toolbarRenderer(this)

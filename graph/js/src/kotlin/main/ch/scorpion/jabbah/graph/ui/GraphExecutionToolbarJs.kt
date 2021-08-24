@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.systemSpeedSlider
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import com.ccfraser.muirwik.components.*
-import kotlinx.css.paddingLeft
+import kotlinx.css.background
 import react.*
 import styled.css
 import styled.styledDiv
@@ -50,7 +50,7 @@ class GraphExecutionToolbarJs(
 	override fun RBuilder.render() {
 		styledDiv {
 			css {
-				paddingLeft = 2.spacingUnits
+				background = "#f5f5f5f0"
 			}
 			mGridContainer(alignItems = MGridAlignItems.center) {
 				mGridItem {
