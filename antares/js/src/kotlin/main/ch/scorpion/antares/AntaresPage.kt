@@ -67,30 +67,34 @@ class AntaresPage {
 					paragraph = true)
 
 				styledTable {
-					styledTr {
-						styledTh { mTypography("Addition") }
-						styledTh { mTypography("Result") }
-						styledTh { mTypography("Carry") }
+					styledThead {
+						styledTr {
+							styledTh { mTypography("Addition") }
+							styledTh { mTypography("Result") }
+							styledTh { mTypography("Carry") }
+						}
 					}
-					styledTr {
-						styledTd { mTypography("0 + 0") }
-						styledTd { mTypography("0") }
-						styledTd { mTypography("0") }
-					}
-					styledTr {
-						styledTd { mTypography("0 + 1") }
-						styledTd { mTypography("1") }
-						styledTd { mTypography("0") }
-					}
-					styledTr {
-						styledTd { mTypography("1 + 0") }
-						styledTd { mTypography("1") }
-						styledTd { mTypography("0") }
-					}
-					styledTr {
-						styledTd { mTypography("1 + 1") }
-						styledTd { mTypography("0") }
-						styledTd { mTypography("1") }
+					styledTbody {
+						styledTr {
+							styledTd { mTypography("0 + 0") }
+							styledTd { mTypography("0") }
+							styledTd { mTypography("0") }
+						}
+						styledTr {
+							styledTd { mTypography("0 + 1") }
+							styledTd { mTypography("1") }
+							styledTd { mTypography("0") }
+						}
+						styledTr {
+							styledTd { mTypography("1 + 0") }
+							styledTd { mTypography("1") }
+							styledTd { mTypography("0") }
+						}
+						styledTr {
+							styledTd { mTypography("1 + 1") }
+							styledTd { mTypography("0") }
+							styledTd { mTypography("1") }
+						}
 					}
 				}
 
