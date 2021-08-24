@@ -186,7 +186,6 @@ class CanvasJs(
 		if (bridge == null) {
 			bridge = KeyEventBridge(l, canvas)
 			canvas.addEventListener("keydown", bridge)
-			canvas.addEventListener("keypress", bridge)
 			canvas.addEventListener("keyup", bridge)
 		}
 	}
@@ -195,7 +194,6 @@ class CanvasJs(
 		val bridge = keyEventBridgeOf(l)
 		if (bridge != null) {
 			canvas.removeEventListener("keydown", bridge)
-			canvas.removeEventListener("keypress", bridge)
 			canvas.removeEventListener("keyup", bridge)
 			keyListeners.remove(bridge)
 		}

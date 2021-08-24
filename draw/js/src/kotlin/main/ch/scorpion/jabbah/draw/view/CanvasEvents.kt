@@ -181,7 +181,7 @@ internal class KeyEventJs(
 
 	private fun convertEventType(): KeyEventType {
 		return when(event.type) {
-			"keydown", "keypress" -> KeyEventType.PRESSED
+			"keydown" -> KeyEventType.PRESSED
 			"keyup" -> KeyEventType.RELEASED
 			else -> KeyEventType.TYPED
 		}
