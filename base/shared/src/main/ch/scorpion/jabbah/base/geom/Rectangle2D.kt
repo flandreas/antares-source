@@ -13,4 +13,14 @@ data class Rectangle2D(
     constructor(x: Int, y: Int, w: Int, h: Int): this(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
     constructor(rect: RectangularShape) : this(rect.x, rect.y, rect.width, rect.height)
     constructor(location: Point2D, width: Double, height: Double) : this(location.x, location.y, width, height)
+
+	companion object {
+
+		/** Mutable object, cannot use singe instance.*/
+		val ZERO: Rectangle2D get() =  Rectangle2D(0, 0, 0, 0)
+
+		fun pointLike(point: Point2D): Rectangle2D = Rectangle2D(point, 0.0, 0.0)
+
+		fun withCenter(center: Point2D, w: Double, h: Double): Rectangle2D = Rectangle2D(center.x - w / 2, center.y - h / 2, w, h)
+	}
 }

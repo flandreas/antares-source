@@ -433,6 +433,10 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun modelToView(p: Point2D): Point2D = transform.transform(p)
 
+	override fun modelToViewX(x: Double): Double = modelToView(Point2D(x, 0.0)).x
+
+	override fun modelToViewY(y: Double): Double = modelToView(Point2D(0.0, y)).y
+
 	override fun modelToView(p: Point2D, zoomFactor: Double): Point2D =
 		createViewGeometry(zoomFactor).transform.transform(p)
 

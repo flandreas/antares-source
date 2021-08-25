@@ -269,7 +269,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portView != null) {
 			return portView.getTooltip(x, y)
 		}
-		return tooltip?.also { it.location = Point2D(plainBoundingBox.centerX, plainBoundingBox.maxY) }
+		return tooltip?.also { it.sourceRect = plainBoundingBox }
 	}
 
 	override fun draw(context: DrawContext) {
@@ -312,7 +312,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		return executionTooltip?.also { it.location = Point2D(plainBoundingBox.centerX, plainBoundingBox.maxY) }
+		return executionTooltip?.also { it.sourceRect = plainBoundingBox }
 	}
 
 	protected open val executionTooltipSubtext: String? get() = description.value

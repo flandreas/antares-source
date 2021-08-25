@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.FormattedText
@@ -110,7 +111,7 @@ abstract class AbstractPortView<T : Any>(
 	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
 	private val tooltip: Tooltip? by lazy {
 		ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)?.let {
-			Tooltip(it, owner!!.getPortConnectionPoint(this.port))
+			Tooltip(it, Rectangle2D.pointLike(owner!!.getPortConnectionPoint(this.port)))
 		}
 	}
 
@@ -153,7 +154,7 @@ abstract class AbstractPortView<T : Any>(
 			content.append("${Translations.getString("graph.currentValue.name")}: $valueText")
 		}
 		return ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), content.toString(), null)?.let {
-			Tooltip(it, owner!!.getPortConnectionPoint(port))
+			Tooltip(it, Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)))
 		}
 	}
 
@@ -272,7 +273,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		tooltip?.also { it.location = owner!!.getPortConnectionPoint(port) }
+		tooltip?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
 
 	/** ---- [Storable] interface */
 

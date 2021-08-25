@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.Drawable
@@ -83,7 +84,9 @@ class OscilloscopeProbeView(
 	/** ---- [OscilloscopeProbeView] */
 
 	private fun createTooltip(x: Double, y: Double): Tooltip =
-		Tooltip(StyledTextBuilder().append(Translations.getString("graph.action.oscilloscope.dragProbe.name")).build(), toAbsoluteLocation(Point2D(x, y)))
+		Tooltip(
+			StyledTextBuilder().append(Translations.getString("graph.action.oscilloscope.dragProbe.name")).build(),
+			Rectangle2D.pointLike(toAbsoluteLocation(Point2D(x, y))))
 
 	fun handleProbeViewRemovedFromDrawing() {
 		invalidate()

@@ -6,14 +6,13 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.drawable.ArrowBubble
-import ch.scorpion.jabbah.draw.drawable.MultilineText
-import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -122,8 +121,6 @@ class TooltipHandler(
 
 	companion object {
 
-		private val LOG by logger(TooltipHandler::class)
-
 		/** The name of the [Boolean] property in [Properties] that decides if textual HTML tooltips are to be displayed.*/
 		const val PROP_TOOLTIPS_ENABLED = "draw.view.tooltipsEnabled"
 	}
@@ -142,7 +139,7 @@ class TooltipHandler(
 
 	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
-	private var lastTooltipLocation: Point2D? = null
+	private var lastTooltipSourceRect: RectangularShape? = null
 
 	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
 
@@ -176,9 +173,9 @@ class TooltipHandler(
 		if (drawable !== lastTooltipDrawable
 			|| tooltip?.text != lastTooltipText
 			|| explanation?.explanation !== lastExplanation?.explanation
-			|| lastTooltipLocation != tooltip?.location
+			|| lastTooltipSourceRect != tooltip?.sourceRect
 		) {
-			setLastTargets(drawable, tooltip?.text, explanation, tooltip?.location)
+			setLastTargets(drawable, tooltip?.text, explanation, tooltip?.sourceRect)
 			eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
 		}
 	}
@@ -202,14 +199,19 @@ class TooltipHandler(
 		lastTooltipDrawable = null
 		lastTooltipText = null
 		lastExplanation = null
-		lastTooltipLocation = null
+		lastTooltipSourceRect = null
 	}
 
-	private fun setLastTargets(drawable: Drawable, tooltipText: StyledText?, explanation: DrawableExplanation<RectangularDrawable>?, location: Point2D?) {
+	private fun setLastTargets(
+		drawable: Drawable,
+		tooltipText: StyledText?,
+	    explanation: DrawableExplanation<RectangularDrawable>?,
+		sourceRect: RectangularShape?
+	) {
 		lastTooltipDrawable = drawable
 		lastTooltipText = tooltipText
 		lastExplanation = explanation
-		lastTooltipLocation = location
+		lastTooltipSourceRect = sourceRect
 	}
 }
 
@@ -370,20 +372,19 @@ object TooltipManager {
 
 		return ArrowBubble(
 			multilineText,
-			view.modelToView(calculateTextBubbleLocation(tooltip.location)),
-			true,
+			ArrowBubblePositioner.position(multilineText, tooltip.sourceRect, view),
 			StyleType.TOOLTIP,
 			styleProvider
 		)
 	}
 
-	private fun calculateTextBubbleLocation(location: Point2D): Point2D = Point2D(location.x, location.y + Y_DIST)
-
 	private fun createExplanationArrowBubble(explanation: DrawableExplanation<RectangularDrawable>, view: View<*>): ArrowBubble {
 		return ArrowBubble(
 			explanation.explanation,
-			view.modelToView(calculateExplanationBubbleLocation(explanation.location)),
-			false,
+			ArrowBubblePosition(
+				view.modelToView(calculateExplanationBubbleLocation(explanation.location)),
+				belowLocation = false,
+				rightOfLocation = false),
 			StyleType.TOOLTIP,
 			styleProvider
 		)

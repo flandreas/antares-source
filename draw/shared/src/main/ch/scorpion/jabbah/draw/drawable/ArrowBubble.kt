@@ -11,24 +11,40 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
+ * Defines the position of an [ArrowBubble] relative to its location.
+ *
+ * @property location the [Point2D] at the tip of the arrow path in view coordinates
+ * @property belowLocation `true` if the [ArrowBubble] is to be positioned below [location]
+ * @property rightOfLocation `true` if the major part of the [ArrowBubble] is to be positioned to the right side of [location],
+ * which also means that the [ArrowBubble]'s arrow tip is located at the left side of the [ArrowBubble]
+ */
+data class ArrowBubblePosition(
+	val location: Point2D,
+	val belowLocation: Boolean,
+	val rightOfLocation: Boolean
+)
+
+/**
  * A [ArrowBubble] is a [Drawable] that draws a [RectangularDrawable] inside a [Path] consisting of
  * a rounded rectangle and an arrow tip pointing upwards.
  *
  * @property content the content to be drawn inside the [Path]
- * @property location the [Point2D] at the tip of the arrow path
+ * @param position defined the position of this [ArrowBubble]
  */
 class ArrowBubble(
 	private val content: RectangularDrawable,
-	private val location: Point2D,
-	private val isBelow: Boolean = true,
-	styleType: StyleType,
+	private val position: ArrowBubblePosition,
+	styleType: StyleType = StyleType.TOOLTIP,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider) {
 
 	companion object {
 
 		/** The inset between the content and the border path.*/
-		private const val INSET = 8.0
+		const val INSET = 8.0
+
+		/** The height of the arrow tip.*/
+		const val TIP_HEIGHT = 15.0
 
 		/** The size of the rounded corner arcs.*/
 		private const val ARC_SIZE = 5.0
@@ -36,45 +52,32 @@ class ArrowBubble(
 		/** The base width of the arrow tip.*/
 		private const val TIP_WIDTH = 15.0
 
-		/** The height of the arrow tip.*/
-		private const val TIP_HEIGHT = 15.0
-
-		/** The width of the area from the path's left edge to the arrow's tip.*/
-		private const val LEFT_WIDTH = TIP_WIDTH / 2 + 20
-
+		/** The width of the area from the path's narrower edge (left edge in case of [ArrowBubblePosition.rightOfLocation]) to the arrow's tip.*/
+		const val NARROW_WIDTH = TIP_WIDTH / 2 + 20
 	}
 
 	/** The border path with the arrow tip pointing upwards. Expressed in relative coordinates with origin (0,0) at the arrow tip. */
-	private val path: Path = createPath()
+	private val path: Path = createPath(position)
 
 	/** The overall width of the path.*/
 	private val width: Double get() = content.width + 2 * INSET
 
 	private val height: Double get() = content.height + 2 * INSET + TIP_HEIGHT
 
-	/** The width of the area from the path's right edge to the arrow's tip.*/
-	private val rightWidth: Double get() = width - LEFT_WIDTH
-
-	/** The upper-left corner of [content] in the local, relative coordinate system. */
-	private val contentLocation: Point2D
-		get() =
-			if (isBelow) {
-				Point2D(-LEFT_WIDTH + INSET, TIP_HEIGHT + INSET)
-			} else {
-				Point2D(-LEFT_WIDTH + INSET, -height + INSET)
-			}
+	/** The width of the area from the path's wider edge (right edge in case of [ArrowBubblePosition.rightOfLocation]) to the arrow's tip.*/
+	private val wideWidth: Double get() = width - NARROW_WIDTH
 
 	init {
-		content.location = contentLocation
+		content.location = calculateContentLocation(position)
 		DrawableOwner(this, content)
 	}
 
 	/** ----  [AbstractDrawable] */
 
-	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble()).moveBy(location)
+	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble()).moveBy(position.location)
 
 	override fun draw(context: DrawContext) {
-		context.g.translate(location.x, location.y)
+		context.g.translate(position.location.x, position.location.y)
 
 		context.g.color = style.color.backgroundColor
 		context.g.fill(path)
@@ -86,44 +89,100 @@ class ArrowBubble(
 		context.g.font = style.font
 		content.draw(context)
 
-		context.g.translate(-location.x, -location.y)
+		context.g.translate(-position.location.x, -position.location.y)
 	}
 
-	override fun contains(x: Double, y: Double): Boolean = path.contains(x - location.x, y - location.y)
+	override fun contains(x: Double, y: Double): Boolean = path.contains(x - position.location.x, y - position.location.y)
 
 	/** ---- [ArrowBubble] */
 
-	private fun createPath(): Path = if (isBelow) createBelowPath() else createAbovePath()
+	/** The upper-left corner of [content] in the local, relative coordinate system. */
+	private fun calculateContentLocation(position: ArrowBubblePosition): Point2D =
+		if (position.belowLocation) {
+			if (position.rightOfLocation) {
+				Point2D(-NARROW_WIDTH + INSET, TIP_HEIGHT + INSET)
+			} else {
+				Point2D(-wideWidth + INSET, TIP_HEIGHT + INSET)
+			}
+		} else {
+			if (position.rightOfLocation) {
+				Point2D(-NARROW_WIDTH + INSET, -height + INSET)
+			} else {
+				Point2D(-wideWidth + INSET, -height + INSET)
+			}
+		}
 
-	private fun createBelowPath(): Path {
-		return System.createPath()
+	private fun createPath(position: ArrowBubblePosition): Path = if (position.belowLocation) {
+		if (position.rightOfLocation) {
+			createBelowRightPath()
+		} else {
+			createBelowLeftPath()
+		}
+	} else {
+		if (position.rightOfLocation) {
+			createAboveRightPath()
+		} else {
+			createAboveLeftPath()
+		}
+	}
+
+	private fun createBelowRightPath(): Path =
+		System.createPath()
 			.moveTo(0, 0)
 			.lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
-			.lineTo(rightWidth - ARC_SIZE, TIP_HEIGHT)
-			.quadTo(rightWidth, TIP_HEIGHT, rightWidth, TIP_HEIGHT + ARC_SIZE)
-			.lineTo(rightWidth, height - ARC_SIZE)
-			.quadTo(rightWidth, height, rightWidth - ARC_SIZE, height)
-			.lineTo(-LEFT_WIDTH + ARC_SIZE, height)
-			.quadTo(-LEFT_WIDTH, height, -LEFT_WIDTH, height - ARC_SIZE)
-			.lineTo(-LEFT_WIDTH, TIP_HEIGHT + ARC_SIZE)
-			.quadTo(-LEFT_WIDTH, TIP_HEIGHT, -LEFT_WIDTH + ARC_SIZE, TIP_HEIGHT)
+			.lineTo(wideWidth - ARC_SIZE, TIP_HEIGHT)
+			.quadTo(wideWidth, TIP_HEIGHT, wideWidth, TIP_HEIGHT + ARC_SIZE)
+			.lineTo(wideWidth, height - ARC_SIZE)
+			.quadTo(wideWidth, height, wideWidth - ARC_SIZE, height)
+			.lineTo(-NARROW_WIDTH + ARC_SIZE, height)
+			.quadTo(-NARROW_WIDTH, height, -NARROW_WIDTH, height - ARC_SIZE)
+			.lineTo(-NARROW_WIDTH, TIP_HEIGHT + ARC_SIZE)
+			.quadTo(-NARROW_WIDTH, TIP_HEIGHT, -NARROW_WIDTH + ARC_SIZE, TIP_HEIGHT)
 			.lineTo(-TIP_WIDTH / 2, TIP_HEIGHT)
 			.close()
-	}
 
-	private fun createAbovePath(): Path {
-		return System.createPath()
+	private fun createBelowLeftPath(): Path =
+		System.createPath()
+			.moveTo(0, 0)
+			.lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
+			.lineTo(NARROW_WIDTH - ARC_SIZE, TIP_HEIGHT)
+			.quadTo(NARROW_WIDTH, TIP_HEIGHT, NARROW_WIDTH, TIP_HEIGHT + ARC_SIZE)
+			.lineTo(NARROW_WIDTH, height - ARC_SIZE)
+			.quadTo(NARROW_WIDTH, height, NARROW_WIDTH - ARC_SIZE, height)
+			.lineTo(-wideWidth + ARC_SIZE, height)
+			.quadTo(-wideWidth, height, -wideWidth, height - ARC_SIZE)
+			.lineTo(-wideWidth, TIP_HEIGHT + ARC_SIZE)
+			.quadTo(-wideWidth, TIP_HEIGHT, -wideWidth + ARC_SIZE, TIP_HEIGHT)
+			.lineTo(-TIP_WIDTH / 2, TIP_HEIGHT)
+			.close()
+
+	private fun createAboveRightPath(): Path =
+		System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
-			.lineTo(-LEFT_WIDTH + ARC_SIZE, -TIP_HEIGHT)
-			.quadTo(-LEFT_WIDTH, -TIP_HEIGHT, -LEFT_WIDTH, -TIP_HEIGHT - ARC_SIZE)
-			.lineTo(-LEFT_WIDTH, -height + ARC_SIZE)
-			.quadTo(-LEFT_WIDTH, -height, -LEFT_WIDTH + ARC_SIZE, -height)
-			.lineTo(rightWidth - ARC_SIZE, -height)
-			.quadTo(rightWidth, -height, rightWidth, -height + ARC_SIZE)
-			.lineTo(rightWidth, -TIP_HEIGHT - ARC_SIZE)
-			.quadTo(rightWidth, -TIP_HEIGHT, rightWidth - ARC_SIZE, -TIP_HEIGHT)
+			.lineTo(-NARROW_WIDTH + ARC_SIZE, -TIP_HEIGHT)
+			.quadTo(-NARROW_WIDTH, -TIP_HEIGHT, -NARROW_WIDTH, -TIP_HEIGHT - ARC_SIZE)
+			.lineTo(-NARROW_WIDTH, -height + ARC_SIZE)
+			.quadTo(-NARROW_WIDTH, -height, -NARROW_WIDTH + ARC_SIZE, -height)
+			.lineTo(wideWidth - ARC_SIZE, -height)
+			.quadTo(wideWidth, -height, wideWidth, -height + ARC_SIZE)
+			.lineTo(wideWidth, -TIP_HEIGHT - ARC_SIZE)
+			.quadTo(wideWidth, -TIP_HEIGHT, wideWidth - ARC_SIZE, -TIP_HEIGHT)
 			.lineTo(TIP_WIDTH / 2, -TIP_HEIGHT)
 			.close()
-	}
+
+	private fun createAboveLeftPath(): Path =
+		System.createPath()
+			.moveTo(0, 0)
+			.lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
+			.lineTo(-wideWidth + ARC_SIZE, -TIP_HEIGHT)
+			.quadTo(-wideWidth, -TIP_HEIGHT, -wideWidth, -TIP_HEIGHT - ARC_SIZE)
+			.lineTo(-wideWidth, -height + ARC_SIZE)
+			.quadTo(-wideWidth, -height, -wideWidth + ARC_SIZE, -height)
+			.lineTo(NARROW_WIDTH - ARC_SIZE, -height)
+			.quadTo(NARROW_WIDTH, -height, NARROW_WIDTH, -height + ARC_SIZE)
+			.lineTo(NARROW_WIDTH, -TIP_HEIGHT - ARC_SIZE)
+			.quadTo(NARROW_WIDTH, -TIP_HEIGHT, NARROW_WIDTH - ARC_SIZE, -TIP_HEIGHT)
+			.lineTo(TIP_WIDTH / 2, -TIP_HEIGHT)
+			.close()
 }

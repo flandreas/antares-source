@@ -304,7 +304,7 @@ abstract class RectangularComponent(
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
 		if (text.isNotEmpty && label.contains(Point2D(x, y).subtract(location))) {
 			return buildToolTipText(title = null, text = description.value, subText = null)?.let {
-				Tooltip(it, label.boundingBox.bottomCenter.add(location))
+				Tooltip(it, Rectangle2D(label.boundingBox).moveBy(location))
 			}
 		}
 		return null

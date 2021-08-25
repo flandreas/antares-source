@@ -577,7 +577,7 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? = tooltip.value?.also { it.location = Point2D(x, y) }
+	override fun getTooltip(x: Double, y: Double): Tooltip? = tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
@@ -775,7 +775,7 @@ open class EdgeViewImpl<T : Any>(
 
 	private fun createTooltip(): Tooltip? {
 		if (model.designError != null) {
-			return Tooltip(StyledTextBuilder().append(model.designError!!.description).build(), Point2D.ZERO)
+			return Tooltip(StyledTextBuilder().append(model.designError!!.description).build(), Rectangle2D.ZERO)
 		}
 
 		val text = StyledTextBuilder()
@@ -793,7 +793,7 @@ open class EdgeViewImpl<T : Any>(
 		return if (text.empty) {
 			null
 		} else {
-			Tooltip(text.build(), Point2D.ZERO)
+			Tooltip(text.build(), Rectangle2D.ZERO)
 		}
 	}
 }

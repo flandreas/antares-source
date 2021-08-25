@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.text.StyledText
 
 /**
@@ -18,6 +20,6 @@ const val PROP_BEGINNER_HELP_TOOLTIP = "base.beginnerHelpTooltip"
  * location beneath it as long as the mouse is inside the source.
  * [location] is variable to support updates of cached [Tooltip] instances
  */
-data class Tooltip(val text: StyledText, var location: Point2D) {
-    constructor(text: StyledText, x: Double, y: Double): this(text, Point2D(x, y))
+data class Tooltip(val text: StyledText, var sourceRect: RectangularShape) {
+    constructor(text: StyledText, x: Double, y: Double): this(text, Rectangle2D.pointLike(Point2D(x, y)))
 }
