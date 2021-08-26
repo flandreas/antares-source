@@ -131,4 +131,4 @@ interface Drawable {
  * A location-sensitive, graphical description of an object that can be displayed as popup in a view
  * when the user hovers over the object with the mouse.
  */
-data class DrawableExplanation<out T : RectangularDrawable>(val explanation: T, var location: Point2D)
+data class DrawableExplanation<out T : RectangularDrawable>(val explanation: T, var sourceRect: RectangularShape)

@@ -33,7 +33,7 @@ data class ArrowBubblePosition(
  */
 class ArrowBubble(
 	private val content: RectangularDrawable,
-	private val position: ArrowBubblePosition,
+	val position: ArrowBubblePosition,
 	styleType: StyleType = StyleType.TOOLTIP,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider) {

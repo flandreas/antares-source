@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
@@ -25,7 +24,7 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	private val explanation = resettableLazy {
 		if (model.inputCount == 2) {
 			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
-			DrawableExplanation(truthTableView, Point2D(boundingBox.centerX, boundingBox.minY))
+			DrawableExplanation(truthTableView, boundingBox)
 		} else null
 	}
 
@@ -78,11 +77,10 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 		drawMnemonics(context, foregroundColor, backgroundColor)
 	}
 
-	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-		return explanation.value?.also {
-			it.location = Point2D(boundingBox.centerX, boundingBox.minY)
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? =
+		explanation.value?.also {
+			it.sourceRect = boundingBox
 		}
-	}
 
 	protected abstract fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color)
 

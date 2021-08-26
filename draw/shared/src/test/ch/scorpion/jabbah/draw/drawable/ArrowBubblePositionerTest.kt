@@ -24,7 +24,7 @@ class ArrowBubblePositionerTest {
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(500, 500), 100.0, 100.0)
 
-		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view)
+		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view, preferredBelow = true)
 
 		assertTrue(position.belowLocation)
 		assertTrue(position.rightOfLocation)
@@ -36,7 +36,7 @@ class ArrowBubblePositionerTest {
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(500, 900), 100.0, 100.0)
 
-		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view)
+		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view, preferredBelow = true)
 
 		assertFalse(position.belowLocation)
 		assertTrue(position.rightOfLocation)
@@ -48,7 +48,7 @@ class ArrowBubblePositionerTest {
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(900, 500), 100.0, 100.0)
 
-		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view)
+		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view, preferredBelow = true)
 
 		assertTrue(position.belowLocation)
 		assertFalse(position.rightOfLocation)

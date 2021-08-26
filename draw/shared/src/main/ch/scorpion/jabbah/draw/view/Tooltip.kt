@@ -337,7 +337,11 @@ object TooltipManager {
 			}
 			if (it.explanation != null) {
 				explanationTooltip = TooltipView(createExplanationArrowBubble(it.explanation, it.view), it.view)
-				it.view.overlayContainer.add(explanationTooltip!!.arrowBubble)
+
+				// Don't show both TooltipViews above each other
+				if (textTooltip == null || textTooltip!!.arrowBubble.position.belowLocation != explanationTooltip!!.arrowBubble.position.belowLocation) {
+					it.view.overlayContainer.add(explanationTooltip!!.arrowBubble)
+				}
 			}
 			it.view.overlayContainer.validate()
 			zoomPanListener = it.view.addPropertyChangeListener { event->
@@ -372,7 +376,7 @@ object TooltipManager {
 
 		return ArrowBubble(
 			multilineText,
-			ArrowBubblePositioner.position(multilineText, tooltip.sourceRect, view),
+			ArrowBubblePositioner.position(multilineText, tooltip.sourceRect, view, preferredBelow = true),
 			StyleType.TOOLTIP,
 			styleProvider
 		)
@@ -381,15 +385,9 @@ object TooltipManager {
 	private fun createExplanationArrowBubble(explanation: DrawableExplanation<RectangularDrawable>, view: View<*>): ArrowBubble {
 		return ArrowBubble(
 			explanation.explanation,
-			ArrowBubblePosition(
-				view.modelToView(calculateExplanationBubbleLocation(explanation.location)),
-				belowLocation = false,
-				rightOfLocation = false),
+			ArrowBubblePositioner.position(explanation.explanation, explanation.sourceRect, view, preferredBelow = false),
 			StyleType.TOOLTIP,
 			styleProvider
 		)
 	}
-
-	private fun calculateExplanationBubbleLocation(location: Point2D): Point2D =
-		Point2D(location.x, location.y - Y_DIST)
 }
