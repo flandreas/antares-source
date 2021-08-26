@@ -59,12 +59,12 @@ class SwitchView(
 		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
-		private val TOGGLE_TYPE = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
-		private val TOGGLE_TYPE_DESC = Translations.getOptionalString("$TOGGLE_BASE_RESOURCE_KEY.desc")
+		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
+		private val TOGGLE_TYPE_DESC get() = Translations.getOptionalString("$TOGGLE_BASE_RESOURCE_KEY.desc")
 
 		private const val SWITCH_BASE_RESOURCE_KEY = "library.element.Switch"
-		private val SWITCH_TYPE = Translations.getString("$SWITCH_BASE_RESOURCE_KEY.name")
-		private val SWITCH_TYPE_DESC = Translations.getOptionalString("$SWITCH_BASE_RESOURCE_KEY.desc")
+		private val SWITCH_TYPE get() = Translations.getString("$SWITCH_BASE_RESOURCE_KEY.name")
+		private val SWITCH_TYPE_DESC get() = Translations.getOptionalString("$SWITCH_BASE_RESOURCE_KEY.desc")
 
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
 		private const val SIZE = 4 * SCALE

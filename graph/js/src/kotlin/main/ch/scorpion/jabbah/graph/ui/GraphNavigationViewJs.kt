@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.ui.canvasWithToolbar
 import kotlinx.css.marginBottom
+import kotlinx.css.marginLeft
 import kotlinx.css.px
 import react.*
 import styled.css
@@ -39,6 +40,7 @@ private class GraphNavigationViewJs(
 	override fun RBuilder.render() {
 		styledDiv {
 			css {
+				marginLeft = 40.px
 				marginBottom = 20.px
 			}
 			navigationStackView {

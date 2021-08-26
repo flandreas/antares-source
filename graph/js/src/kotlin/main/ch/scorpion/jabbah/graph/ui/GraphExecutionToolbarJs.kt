@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.mreact.jmToggleButton
-import ch.scorpion.jabbah.execution.PauseExecutionAction
-import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.systemSpeedSlider
@@ -19,6 +18,8 @@ external interface GraphExecutionToolbarJsProps : RProps {
 	var scheduler: Scheduler
 	var eventBus: EventBus
 	var toggleApplicationModeAction: ToggleApplicationModeAction
+	var pauseAction: Action
+	var resumeAction: Action
 }
 
 fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit): ReactElement {
@@ -35,16 +36,8 @@ class GraphExecutionToolbarJs(
 	props: GraphExecutionToolbarJsProps
 ) : RComponent<GraphExecutionToolbarJsProps, RState>(props) {
 
-	private val pauseAction = PauseExecutionAction(props.scheduler, props.eventBus)
-	private val resumeAction = ResumeExecutionAction(props.scheduler, props.eventBus)
-
 	override fun componentDidMount() {
 		props.toggleApplicationModeAction.enabled = true
-	}
-
-	override fun componentWillUnmount() {
-		pauseAction.dispose()
-		resumeAction.dispose()
 	}
 
 	override fun RBuilder.render() {
@@ -59,11 +52,11 @@ class GraphExecutionToolbarJs(
 						iconName = "play_arrow"
 					}
 					jmToggleButton {
-						action = pauseAction
+						action = props.pauseAction
 						iconName = "pause"
 					}
 					jmToggleButton {
-						action = resumeAction
+						action = props.resumeAction
 						iconName = "skip_next"
 					}
 				}

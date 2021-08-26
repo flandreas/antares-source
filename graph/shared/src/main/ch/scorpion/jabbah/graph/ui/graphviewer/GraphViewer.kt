@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.PauseExecutionAction
+import ch.scorpion.jabbah.execution.ResumeExecutionAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -56,6 +58,8 @@ class GraphViewerController(
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
+	val pauseAction = PauseExecutionAction(applicationContextHolder.scheduler, eventBus)
+	val resumeAction = ResumeExecutionAction(applicationContextHolder.scheduler, eventBus)
 
 	init {
 		// Cyclic dependency

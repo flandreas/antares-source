@@ -19,8 +19,6 @@ import com.ccfraser.muirwik.components.styles.Breakpoint
 import kotlinx.browser.document
 import kotlinx.css.Color
 import kotlinx.css.backgroundColor
-import react.dom.h2
-import react.dom.p
 import react.dom.render
 import styled.*
 
@@ -147,7 +145,6 @@ class AntaresPage {
 					|bit from the previous addition. This is done by a circuit called "Full Adder", which consists
 					|of two "Half Adders". The second "Half Adder" adds the result of the addition to the carry
 					|of the previous addition.
-					|
 					""".trimMargin(),
 					paragraph = true)
 
@@ -156,6 +153,20 @@ class AntaresPage {
 					metaGraphUuid = UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300")
 					size = Dimension2D(500, 400)
 				}
+
+				mTypography("""
+					Now that we've represented binary 1-bit addition using a full adder, we can chain multiple
+					full adders together to implement n-bit addition. Note how the "carry out" of each less
+					significant bit gets forwarded to the "carry in" of the next more significant bit.
+				""".trimIndent(),
+					paragraph = true)
+
+				mTypography("""
+					The circuit below implements 4-bit addition using 4 full adders. Start the simulation,
+					click on the inputs "A", "B" and "CI, enter values using the keyboard, and observe
+					the calculated results at the outputs "S" and "CO".
+				""".trimIndent(),
+					paragraph = true)
 
 				graphViewer {
 					canvasId = "canvas4"
