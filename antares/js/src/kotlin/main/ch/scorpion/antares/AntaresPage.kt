@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.ui.GraphViewerJs
 import ch.scorpion.jabbah.graph.ui.graphViewer
 import com.ccfraser.muirwik.components.MTypographyVariant
 import com.ccfraser.muirwik.components.mContainer
+import com.ccfraser.muirwik.components.mCssBaseline
 import com.ccfraser.muirwik.components.mTypography
 import com.ccfraser.muirwik.components.styles.Breakpoint
 import kotlinx.browser.document
@@ -52,6 +53,8 @@ class AntaresPage {
 
 	private fun display() {
 		render(document.getElementById("root")) {
+			mCssBaseline()
+
 			mContainer(maxWidth = Breakpoint.md) {
 				css {
 					backgroundColor = Color.white

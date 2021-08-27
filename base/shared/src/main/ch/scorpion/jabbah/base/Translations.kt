@@ -28,6 +28,8 @@ expect object Translations {
 	 */
 	fun hasBundle(name: String): Boolean
 
+	fun hasAllBundles(): Boolean
+
 	fun addKey(key: String, value: String)
 
 	/**

@@ -60,6 +60,8 @@ class GraphViewerFrameSwing(
 		eventBus.unregister(closeRequestHandler)
 	}
 
+	override fun notifyAllResourcesLoaded() { }
+
 	private fun buildUI() {
 		graphNavigationView.preferredSize = Dimension(1000, 800)
 		layout = BorderLayout()

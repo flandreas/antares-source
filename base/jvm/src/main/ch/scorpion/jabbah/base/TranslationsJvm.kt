@@ -39,6 +39,8 @@ actual object Translations {
 	actual fun hasBundle(name: String): Boolean =
 		bundleNames.contains(name)
 
+	actual fun hasAllBundles(): Boolean = true
+
 	actual fun addKey(key: String, value: String) { }
 
     /** ---- [Translations] */

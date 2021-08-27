@@ -6,12 +6,23 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
+import com.ccfraser.muirwik.components.MCircularProgressColor
+import com.ccfraser.muirwik.components.mBackdrop
+import com.ccfraser.muirwik.components.mCircularProgress
+import com.ccfraser.muirwik.components.themeContext
+import kotlinx.css.*
 import react.*
+import styled.css
+import styled.styledDiv
 
 external interface GraphViewerJsProps : RProps {
 	var canvasId: String
 	var metaGraphUuid: UUID
 	var size: Dimension2D
+}
+
+external interface GraphViewerJsState : RState {
+	var isLoading: Boolean
 }
 
 fun RBuilder.graphViewer(handler: GraphViewerJsProps.() -> Unit): ReactElement =
@@ -21,37 +32,67 @@ fun RBuilder.graphViewer(handler: GraphViewerJsProps.() -> Unit): ReactElement =
 
 class GraphViewerJs(
 	props: GraphViewerJsProps
-) : RComponent<GraphViewerJsProps, RState>(props), GraphViewerView {
+) : RComponent<GraphViewerJsProps, GraphViewerJsState>(props), GraphViewerView {
 
 	private val controller = GraphViewerController()
 
 	init {
 		controller.view = this
 		controller.applicationContextHolder.scheduler.isSoftBreakpointsEnabled = true
+		state.isLoading = true
 	}
 
-	override fun componentDidMount() {
-		val metaGraph = GraphModelModule.metaGraphRepository.getMetaGraph(props.metaGraphUuid)
-		controller.setGraphView(metaGraph.graph.graphView)
+	override fun componentDidUpdate(prevProps: GraphViewerJsProps, prevState: GraphViewerJsState, snapshot: Any) {
+		if (!state.isLoading) {
+			val metaGraph = GraphModelModule.metaGraphRepository.getMetaGraph(props.metaGraphUuid)
+			controller.setGraphView(metaGraph.graph.graphView)
+		}
 	}
 
 	override fun RBuilder.render() {
-			graphNavigationView {
-				canvasId = props.canvasId
-				controller = this@GraphViewerJs.controller.graphNavigationViewController
-				size = props.size
-				canvasToolbarRenderer = {
-					it.graphExecutionToolbar {
-						currentSystemSpeedCategory = this@GraphViewerJs.controller.applicationContextHolder.currentSystemSpeedCategory
-						scheduler = this@GraphViewerJs.controller.applicationContextHolder.scheduler
-						eventBus = BaseModule.eventBus
-						toggleApplicationModeAction = this@GraphViewerJs.controller.toggleApplicationModeAction
-						pauseAction = this@GraphViewerJs.controller.pauseAction
-						resumeAction = this@GraphViewerJs.controller.resumeAction
+		themeContext.Consumer { theme ->
+			if (state.isLoading) {
+				styledDiv {
+					css {
+						position = Position.relative
+						width = props.size.width.toInt().px
+						height = props.size.height.toInt().px
+						marginLeft = 40.px
+						marginBottom = 20.px
+					}
+					mBackdrop(open = true, className = "backdrop") {
+						css {
+							position = Position.absolute
+							height = 100.pct
+							zIndex = theme.zIndex.drawer -1
+							color = Color("#fff")
+						}
+						mCircularProgress(color = MCircularProgressColor.inherit)
+					}
+				}
+			} else {
+				graphNavigationView {
+					canvasId = props.canvasId
+					controller = this@GraphViewerJs.controller.graphNavigationViewController
+					size = props.size
+					canvasToolbarRenderer = {
+						it.graphExecutionToolbar {
+							currentSystemSpeedCategory = this@GraphViewerJs.controller.applicationContextHolder.currentSystemSpeedCategory
+							scheduler = this@GraphViewerJs.controller.applicationContextHolder.scheduler
+							eventBus = BaseModule.eventBus
+							toggleApplicationModeAction = this@GraphViewerJs.controller.toggleApplicationModeAction
+							pauseAction = this@GraphViewerJs.controller.pauseAction
+							resumeAction = this@GraphViewerJs.controller.resumeAction
+						}
+					}
 				}
 			}
 		}
 	}
 
 	override fun dispose() { }
+
+	override fun notifyAllResourcesLoaded() {
+		setState { isLoading = false }
+	}
 }
