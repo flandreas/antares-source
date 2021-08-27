@@ -176,6 +176,15 @@ class AntaresPage {
 					metaGraphUuid = UUID("e2252451-b870-4541-ac11-1ffe2aca72ca")
 					size = Dimension2D(800, 400)
 				}
+
+				mTypography("""
+					When you reduce the simulation speed down to the "Explore" category, you can observe
+					the bits flowing through the circuit. If you add 7 + 8 and then set the "Carry In" to 1,
+					you can observe the carry bit rippling through all 4 full adders. That's why this
+					adding circuit is also known as "Ripple Carry Adder".
+				""".trimIndent(),
+					paragraph = true)
+
 			}
 		}
 	}
