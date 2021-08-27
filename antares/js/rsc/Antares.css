@@ -32,7 +32,7 @@ td {
   display: none;
 }
 
-canvas:hover + .toolbarOverCanvas, .toolbarOverCanvas:hover {
+canvas:hover + .toolbarOverCanvas, canvas:focus + .toolbarOverCanvas, .toolbarOverCanvas:hover {
   display: block
 }
 
