@@ -28,5 +28,6 @@ object BaseModule : AbstractModule() {
 		properties.set(Language.PROP_LANGUAGE, Language.English.code)
 		properties.set(LogSystem.PROP_LOG_LEVEL, LogLevel.Info.name)
 		properties.set(PROP_BEGINNER_HELP_TOOLTIP, true)
+		properties.set(DataLocation.PROP_DATA_LOCATION, DataLocation.Local.customName)
 	}
 }

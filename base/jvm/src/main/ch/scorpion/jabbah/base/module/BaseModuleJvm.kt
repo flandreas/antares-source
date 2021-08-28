@@ -57,6 +57,7 @@ object BaseModuleJvm : AbstractModule() {
 
 		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
+		root.getGroup(PREF_TREE_GENERAL).add(DataLocationPreference())
 
 		// Needs restart because ToolTips are usually cached
 		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
