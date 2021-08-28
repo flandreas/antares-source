@@ -22,7 +22,7 @@ import kotlin.random.nextULong
  * Produces a random value of a specifiable [BitWidth] when the trigger input value changes to 1.
  */
 class Random(
-	private val valueProvider: (ULong) -> ULong = { kotlin.random.Random.nextULong(0UL, it) }
+	private val valueProvider: (ULong) -> ULong = { kotlin.random.Random.nextULong(0UL, it + 1UL) }
 ) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
 	companion object {
