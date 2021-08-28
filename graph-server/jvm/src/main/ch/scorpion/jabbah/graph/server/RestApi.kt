@@ -2,9 +2,12 @@ package ch.scorpion.jabbah.graph.server
 
 import org.apache.commons.cli.*
 import org.slf4j.LoggerFactory
-import spark.Spark.*
 import java.nio.file.Files
 import java.nio.file.Paths
+import spark.Spark.*
+import java.lang.IllegalArgumentException
+import java.nio.file.FileSystems
+import kotlin.system.exitProcess
 
 /**
  * The server that implements the REST API using spark.
@@ -13,8 +16,10 @@ class RestApi(private val cmdLine: CommandLine) {
 
     companion object {
 
-        val LOG = LoggerFactory.getLogger(RestApi::class.java)!!
+        private val LOG = LoggerFactory.getLogger(RestApi::class.java)
 
+	    private const val DEFAULT_LIBRARY_DIRECTORY = "libraries"
+	    private const val DEFAULT_PROJECT_DIRECTORY = "projects"
         private const val BASE_URL = "/jabbah-graph"
         private const val LIBRARY_FILE_NAME = "library.lib"
 
@@ -25,7 +30,7 @@ class RestApi(private val cmdLine: CommandLine) {
             } catch (x: ParseException) {
                 LOG.error("Error while parsing options: '${x.message}'")
                 HelpFormatter().printHelp("jabbah.graph REST API", options)
-                System.exit(1)
+                exitProcess(1)
             }
         }
 
@@ -33,29 +38,43 @@ class RestApi(private val cmdLine: CommandLine) {
             val options = Options()
 
             options.addOption(Option.builder("d")
-                    .required()
-                    .longOpt("drawingDir")
-                    .desc("Drawing directory")
+                    .required(false)
+                    .longOpt("dataDir")
+                    .desc("Data directory")
                     .hasArg()
                     .build())
 
             options.addOption(Option.builder("l")
-                    .required()
+                    .required(false)
                     .longOpt("libraryDir")
                     .desc("Library directory")
                     .hasArg()
                     .build())
 
+	        options.addOption(Option.builder("p")
+		        .required(false)
+		        .longOpt("projectDir")
+		        .desc("Project directory")
+		        .hasArg()
+		        .build())
+
             return options
         }
     }
 
+	private val libraryDirectory: String
+	private val projectDirectory: String
+
     init {
         LOG.info("Jabbah Graph REST API server started")
+
+	    libraryDirectory = determineLibraryDirectory()
+	    projectDirectory = determineProjectDirectory()
+
         LOG.info("Accessing drawings in directory '${cmdLine.getOptionValue("d")}'")
         LOG.info("Accessing library in directory '${cmdLine.getOptionValue("l")}'")
 
-        staticFiles.externalLocation("/Users/andreas/Documents/scorpion2/jabbah")
+        //staticFiles.externalLocation("/Users/andreas/Documents/scorpion2/jabbah")
 
         /** Returns a GraphView with a given name as an XML string.*/
         get("$BASE_URL/graphView/:name") { request, result ->
@@ -84,4 +103,26 @@ class RestApi(private val cmdLine: CommandLine) {
         LOG.info("Returning contents of '$path'")
         return String(Files.readAllBytes(path))
     }
+
+	private fun determineLibraryDirectory(): String {
+		return when {
+			cmdLine.hasOption("l") -> cmdLine.getOptionValue("l")
+			cmdLine.hasOption("d") -> FileSystems.getDefault().getPath(cmdLine.getOptionValue("d"), DEFAULT_LIBRARY_DIRECTORY).toString()
+			else -> {
+				LOG.error("Either option 'l' or 'd' have to be specified")
+				throw IllegalArgumentException("Illegal options")
+			}
+		}
+	}
+
+	private fun determineProjectDirectory(): String {
+		return when {
+			cmdLine.hasOption("p") -> cmdLine.getOptionValue("p")
+			cmdLine.hasOption("d") -> FileSystems.getDefault().getPath(cmdLine.getOptionValue("d"), DEFAULT_PROJECT_DIRECTORY).toString()
+			else -> {
+				LOG.error("Either option 'p' or 'd' have to be specified")
+				throw IllegalArgumentException("Illegal options")
+			}
+		}
+	}
 }
