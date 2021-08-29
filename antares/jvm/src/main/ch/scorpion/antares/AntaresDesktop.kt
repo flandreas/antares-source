@@ -6,7 +6,9 @@ import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_PROJECT_DIRECTOR
 import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL
 import ch.scorpion.antares.AntaresApplication.Companion.FILE_EXTENSION_NAME
 import ch.scorpion.jabbah.app.DesktopApplication
+import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.graph.library.Library
+import java.net.URL
 import java.nio.file.FileSystems
 
 interface AntaresDesktop : AntaresApplication, DesktopApplication {
@@ -35,5 +37,10 @@ interface AntaresDesktop : AntaresApplication, DesktopApplication {
 	val systemLibraryDirectoryPath: String?
 
 	val libraryFileName: String get() = DEFAULT_LIB_FILENAME
+
+	val dataLocation: DataLocation
+
+	/** The [URL] for [DataLocation.Remote].*/
+	val dataUrl: URL?
 
 }

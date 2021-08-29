@@ -18,9 +18,8 @@ plugins {
 allprojects {
 
 	repositories {
-		//maven("https://dl.bintray.com/kotlin/kotlin-eap")
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
-		//maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
+		maven("https://jitpack.io")
 		mavenCentral()
 		jcenter()
 		flatDir {
@@ -57,7 +56,7 @@ subprojects {
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 	configure<KotlinMultiplatformExtension> {
-		jvm() {
+		jvm {
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
 				kotlinOptions {
@@ -75,7 +74,7 @@ subprojects {
 			}
 		}
 
-		js() {
+		js {
 			browser()
 		}
 
@@ -104,6 +103,7 @@ subprojects {
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("mind:exml:7.0.0")
 					implementation("com.formdev:flatlaf:0.43")
+					implementation("com.github.jkcclemens:khttp:-SNAPSHOT")
 				}
 			}
 			val jvmTest by getting {

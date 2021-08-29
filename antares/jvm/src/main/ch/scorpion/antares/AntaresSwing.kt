@@ -33,6 +33,8 @@ import java.awt.Taskbar
 import java.awt.Toolkit
 import java.io.FileInputStream
 import java.lang.System
+import java.net.MalformedURLException
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -61,6 +63,7 @@ class AntaresSwing(
 
 		private const val SYSTEM_LIB_OPTION = "l"
 		private const val PROJECTS_OPTION = "p"
+		private const val URL_OPTION = "url"
 
 		private fun defineOptions(options: Options): Options {
 			AbstractDesktopApplication.defineOptions(options)
@@ -76,6 +79,13 @@ class AntaresSwing(
 				.required(false)
 				.longOpt("projects")
 				.desc("Projects location")
+				.hasArg()
+				.build())
+
+			options.addOption(Option.builder(URL_OPTION)
+				.required(false)
+				.longOpt("url")
+				.desc("Server URL")
 				.hasArg()
 				.build())
 
@@ -165,6 +175,11 @@ class AntaresSwing(
 
 	override val projectsDirectoryPath: String get() = customProjectsDirectoryPath ?: super.projectsDirectoryPath
 
+	override val dataLocation: DataLocation get() = DataLocation.withName(BaseModule.properties.getString(DataLocation.PROP_DATA_LOCATION))
+
+	override var dataUrl: URL? = null
+		private set
+
 	/** ---- [AbstractApplication] */
 
 	override val aboutInfo: AboutInfo get() = AboutInfo(
@@ -205,6 +220,9 @@ class AntaresSwing(
 		if (commandLine.hasOption(PROJECTS_OPTION)) {
 			consumeCustomProjectsDirectoryPath(commandLine.getOptionValue(PROJECTS_OPTION))
 		}
+		if (commandLine.hasOption(URL_OPTION)) {
+			consumeUrl(commandLine.getOptionValue(URL_OPTION))
+		}
 	}
 
 	private fun consumeSystemLibraryDirectoryPath(path: String) {
@@ -221,6 +239,14 @@ class AntaresSwing(
 			return
 		}
 		customProjectsDirectoryPath = path
+	}
+
+	private fun consumeUrl(url: String) {
+		try {
+			dataUrl = URL(url)
+		} catch (e: MalformedURLException) {
+			println("Invalid URL $url")
+		}
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {

@@ -25,6 +25,7 @@ import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -68,17 +69,22 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(
-			directoryPath = app.userLibraryDirectoryPath,
-			metaGraphFileExtension = app.fileExtension,
-			libraryFileName = app.libraryFileName
-		)
+		LibraryModule.userLibraryPersistenceService = if (app.dataLocation == DataLocation.Local) {
+			FileLibraryPersistenceService(
+				directoryPath = app.userLibraryDirectoryPath,
+				metaGraphFileExtension = app.fileExtension,
+				libraryFileName = app.libraryFileName)
+		} else {
+			RestLibraryPersistenceService(
+				baseUrl = app.dataUrl!!,
+				projects = false)
+		}
+
 		LibraryModule.systemLibraryPersistenceService = if (app.systemLibraryDirectoryPath != null) {
 			FileLibraryPersistenceService(
 				directoryPath = app.systemLibraryDirectoryPath!!,
 				metaGraphFileExtension = app.fileExtension,
-				libraryFileName = app.libraryFileName
-			)
+				libraryFileName = app.libraryFileName)
 		} else {
 			ResourceLibraryPersistenceService(
 				metaGraphFileExtension = app.fileExtension,
@@ -104,11 +110,16 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		ProjectModule.projectDictionaryService = LibraryDictionaryService((FileLibraryDictionaryPersistenceService(
 			app.projectsDirectoryPath)))
 
-		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
-			directoryPath = app.projectsDirectoryPath,
-			metaGraphFileExtension = app.fileExtension,
-			libraryFileName = app.libraryFileName
-		)
+		ProjectModule.projectLibraryPersistenceService = if (app.dataLocation == DataLocation.Local) {
+			FileLibraryPersistenceService(
+				directoryPath = app.projectsDirectoryPath,
+				metaGraphFileExtension = app.fileExtension,
+				libraryFileName = app.libraryFileName)
+		} else {
+			RestLibraryPersistenceService(
+				baseUrl = app.dataUrl!!,
+				projects = true)
+		}
 
 		ProjectModule.projectManagementService = ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown")
