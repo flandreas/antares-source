@@ -8,11 +8,12 @@ import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
-import java.net.URL
 import khttp.get
 import khttp.post
+import khttp.put
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.net.URL
 
 /**
  * Calls the Graph REST API for working with stored [Libraries][Library].
@@ -37,11 +38,21 @@ class RestLibraryPersistenceService(
 	/** ---- [LibraryPersistenceService] */
 
 	override fun loadLibrary(uuid: UUID): Library {
-		val url = "${buildLibraryFilePath(uuid)}/contents"
+		val url = "${buildLibraryFilePath(uuid)}"
 		LOG.trace("GET $url")
 		val response = get(url)
 
 		return StoreXmlReader(ElectricXmlReader(ByteArrayInputStream(response.text.toByteArray()))).readStorable()
+	}
+
+	override fun storeLibrary(library: Library) {
+		val url = "${buildLibraryFilePath(library.uuid)}"
+		LOG.trace("PUT $url")
+		val buffer = ByteArrayOutputStream()
+		StoreXmlWriter(ElectricXmlWriter(buffer)).writeStorable(library)
+		val data = buffer.toString()
+
+		put(url, data = ByteArrayInputStream(data.toByteArray()))
 	}
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
@@ -63,10 +74,6 @@ class RestLibraryPersistenceService(
 	}
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun storeLibrary(library: Library) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

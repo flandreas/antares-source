@@ -43,6 +43,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -96,8 +97,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 		LibraryModule.libraryService = LibraryService()
 
-		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
-			app.userLibraryDirectoryPath))
+		LibraryModule.userLibraryDictionaryService = if (app.dataLocation == DataLocation.Local) {
+			LibraryDictionaryService(
+				FileLibraryDictionaryPersistenceService(app.userLibraryDirectoryPath))
+		} else {
+			LibraryDictionaryService(
+				RestLibraryDictionaryPersistenceService(baseUrl = app.dataUrl!!, projects = false))
+		}
 
 		LibraryModule.systemLibraryDictionaryService = if (app.systemLibraryDirectoryPath != null) {
 			LibraryDictionaryService(FileLibraryDictionaryPersistenceService(app.systemLibraryDirectoryPath!!))
@@ -107,8 +113,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
-		ProjectModule.projectDictionaryService = LibraryDictionaryService((FileLibraryDictionaryPersistenceService(
-			app.projectsDirectoryPath)))
+		ProjectModule.projectDictionaryService = if (app.dataLocation == DataLocation.Local) {
+			LibraryDictionaryService(
+				(FileLibraryDictionaryPersistenceService(app.projectsDirectoryPath)))
+		} else {
+			LibraryDictionaryService(
+				RestLibraryDictionaryPersistenceService(baseUrl = app.dataUrl!!, projects = true))
+		}
 
 		ProjectModule.projectLibraryPersistenceService = if (app.dataLocation == DataLocation.Local) {
 			FileLibraryPersistenceService(

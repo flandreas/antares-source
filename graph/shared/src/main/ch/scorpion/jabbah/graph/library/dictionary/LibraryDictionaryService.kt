@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 
 /**
@@ -21,10 +20,6 @@ class LibraryDictionaryService(
 
 	/** Determines whether the directory for storing the [LibraryDictionary] already exists.*/
 	val directoryExists: Boolean get() = persistenceService.directoryExists
-
-	fun getNames(): ImmutableList<String> {
-		return dictionary.getLibraryNames()
-	}
 
 	fun existsName(name: TranslatableText, except: UUID? = null): Boolean = dictionary.existsName(name, except)
 

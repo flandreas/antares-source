@@ -21,6 +21,7 @@ class RestApi(private val cmdLine: CommandLine) {
 	    private const val DEFAULT_LIBRARY_DIRECTORY = "libraries"
 	    private const val DEFAULT_PROJECT_DIRECTORY = "projects"
         private const val LIBRARY_FILE_NAME = "library.xml"
+	    private const val DICTIONARY_FILE_NAME = "dictionary.xml"
 
         @JvmStatic fun main(args: Array<String>) {
             val options = defineOptions()
@@ -83,56 +84,84 @@ class RestApi(private val cmdLine: CommandLine) {
         LOG.info("Accessing drawings in directory '${cmdLine.getOptionValue("d")}'")
         LOG.info("Accessing library in directory '${cmdLine.getOptionValue("l")}'")
 
-        //staticFiles.externalLocation("/Users/andreas/Documents/scorpion2/jabbah")
+	    /** ---- LibraryDirectory */
+
+	    /** Returns the LibraryDictionary file as an XML string. */
+	    get("$baseUrl/libraries") { _, response ->
+		    response.type("text/xml")
+		    getFile(libraryBaseDirectory, DICTIONARY_FILE_NAME)
+	    }
+
+	    /** Returns the ProjectDictionary file as an XML string. */
+	    get("$baseUrl/projects") { _, response ->
+		    response.type("text/xml")
+		    getFile(projectBaseDirectory, DICTIONARY_FILE_NAME)
+	    }
+
+	    /** Stores the received XML string as LibraryDictionary file. */
+	    put("$baseUrl/libraries") { request, _ ->
+	    	putFile(libraryBaseDirectory, DICTIONARY_FILE_NAME, request.body())
+	    }
+
+	    /** Stores the received XML string as ProjectDictionary file. */
+	    put("$baseUrl/projects") { request, _ ->
+		    putFile(projectBaseDirectory, DICTIONARY_FILE_NAME, request.body())
+	    }
+
+	    /** ---- Library and Project */
 
 	    /** Returns the Library file as an XML string. */
-	    get("$baseUrl/libraries/:uuid/contents") { request, response ->
-		    val uuid = request.params(":uuid")
-		    println("Serving Library $uuid")
+	    get("$baseUrl/libraries/:uuid") { request, response ->
 		    response.type("text/xml")
-		    getFile(buildLibraryDirectoryPath(uuid), LIBRARY_FILE_NAME)
+		    getFile(buildLibraryDirectoryPath(request.params(":uuid")), LIBRARY_FILE_NAME)
 	    }
 
 	    /** Returns the Project file as an XML string. */
-	    get("$baseUrl/projects/:uuid/contents") { request, response ->
-		    val uuid = request.params(":uuid")
-		    println("Serving Project $uuid")
+	    get("$baseUrl/projects/:uuid") { request, response ->
 		    response.type("text/xml")
-		    getFile(buildProjectDirectoryPath(uuid), LIBRARY_FILE_NAME)
+		    getFile(buildProjectDirectoryPath(request.params(":uuid")), LIBRARY_FILE_NAME)
 	    }
+
+	    /** Stores the received XML string as Library file. */
+	    put("$baseUrl/libraries/:uuid") { request, _ ->
+		    val uuid = request.params(":uuid")
+		    ensureLibraryDirectory(uuid)
+		    putFile(buildLibraryDirectoryPath(uuid), LIBRARY_FILE_NAME, request.body())
+	    }
+
+	    /** Stores the received XML string as Project file. */
+	    put("$baseUrl/projects/:uuid") { request, _ ->
+		    val uuid = request.params(":uuid")
+		    ensureProjectDirectory(uuid)
+		    putFile(buildProjectDirectoryPath(uuid), LIBRARY_FILE_NAME, request.body())
+	    }
+
+	    /** ---- MetaGraph */
 
 	    /** Returns the MetaGraph of a Library as an XML string. */
 	    get("$baseUrl/libraries/:uuid/:metaGraphUuid") { request, response ->
-		    val uuid = request.params(":uuid")
 		    val metaGraphUuid = request.params(":metaGraphUuid")
-		    println("Serving MetaGraph $metaGraphUuid in Library $uuid")
 		    response.type("text/xml")
-		    getFile(buildLibraryDirectoryPath(uuid), "$metaGraphUuid.cir")
+		    getFile(buildLibraryDirectoryPath(request.params(":uuid")), "$metaGraphUuid.cir")
 	    }
 
 	    /** Returns the MetaGraph of a Project as an XML string. */
 	    get("$baseUrl/projects/:uuid/:metaGraphUuid") { request, response ->
-		    val uuid = request.params(":uuid")
 		    val metaGraphUuid = request.params(":metaGraphUuid")
-		    println("Serving MetaGraph $metaGraphUuid in Project $uuid")
 		    response.type("text/xml")
-		    getFile(buildProjectDirectoryPath(uuid), "$metaGraphUuid.cir")
+		    getFile(buildProjectDirectoryPath(request.params(":uuid")), "$metaGraphUuid.cir")
 	    }
 
 	    /** Stores the received XML string as MetaGraph in a Library. */
-	    post("$baseUrl/libraries/:uuid/:metaGraphUuid") { request, response ->
-		    val uuid = request.params(":uuid")
+	    post("$baseUrl/libraries/:uuid/:metaGraphUuid") { request, _ ->
 		    val metaGraphUuid = request.params(":metaGraphUuid")
-		    println("Saving MetaGraph $metaGraphUuid in Library $uuid")
-		    putFile(buildLibraryDirectoryPath(uuid), "$metaGraphUuid.cir", request.body())
+		    putFile(buildLibraryDirectoryPath(request.params(":uuid")), "$metaGraphUuid.cir", request.body())
 	    }
 
 	    /** Stores the received XML string as MetaGraph in a Project. */
-	    post("$baseUrl/projects/:uuid/:metaGraphUuid") { request, response ->
-		    val uuid = request.params(":uuid")
+	    post("$baseUrl/projects/:uuid/:metaGraphUuid") { request, _ ->
 		    val metaGraphUuid = request.params(":metaGraphUuid")
-		    println("Saving MetaGraph $metaGraphUuid in Project $uuid")
-		    putFile(buildProjectDirectoryPath(uuid), "$metaGraphUuid.cir", request.body())
+		    putFile(buildProjectDirectoryPath(request.params(":uuid")), "$metaGraphUuid.cir", request.body())
 	    }
     }
 
@@ -174,6 +203,20 @@ class RestApi(private val cmdLine: CommandLine) {
 				LOG.error("Either option 'p' or 'd' have to be specified")
 				throw IllegalArgumentException("Illegal options")
 			}
+		}
+	}
+
+	private fun ensureProjectDirectory(projectUuid: String) {
+		val path = Paths.get(buildProjectDirectoryPath(projectUuid))
+		if (!Files.exists(path)) {
+			Files.createDirectories(path)
+		}
+	}
+
+	private fun ensureLibraryDirectory(libraryUuid: String) {
+		val path = Paths.get(buildLibraryDirectoryPath(libraryUuid))
+		if (!Files.exists(path)) {
+			Files.createDirectories(path)
 		}
 	}
 }
