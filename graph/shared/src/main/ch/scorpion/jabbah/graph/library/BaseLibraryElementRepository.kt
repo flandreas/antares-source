@@ -21,7 +21,7 @@ class BaseLibraryElementRepository(
 
 	private val entries = mutableMapOf<String,Entry>()
 
-	fun register(entry: Entry) {
+	private fun register(entry: Entry) {
 		if (entries[entry.id] != null) {
 			LOG.warn("entry with ID '${entry.id}' already present, will be replaced")
 		}
@@ -31,7 +31,7 @@ class BaseLibraryElementRepository(
 	fun register(
 		id: String,
 		translationKey: String,
-		iconPath: String?,
+		iconPath: () -> String?,
 		clazz: KClass<out GraphElementView<*>>
 	) {
 		register(Entry(id, translationKey, iconPath, clazz))
@@ -40,7 +40,7 @@ class BaseLibraryElementRepository(
 	fun register(
 		id: String,
 		translationKey: String,
-		iconPath: String?,
+		iconPath: () -> String?,
 		supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)
 	) {
 		register(Entry(id, translationKey, iconPath, null, supplier))
@@ -58,18 +58,14 @@ class BaseLibraryElementRepository(
 		return storableCreator.create(entry.clazz!!) as GraphElementView<T>
 	}
 
-	fun getIconPath(id: String): String? {
-		return entries[id]?.iconPath
-	}
+	fun getIconPath(id: String): String? = entries[id]?.iconPath?.invoke()
 
-	fun getTranslationKey(id: String): String? {
-		return entries[id]?.translationKey
-	}
+	fun getTranslationKey(id: String): String? = entries[id]?.translationKey
 
-	data class Entry(
+	private data class Entry(
 		val id: String,
 		val translationKey: String,
-		val iconPath: String?,
+		val iconPath: () -> String?,
 		val clazz: KClass<out GraphElementView<*>>?,
 		val supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)? = null
 	) {

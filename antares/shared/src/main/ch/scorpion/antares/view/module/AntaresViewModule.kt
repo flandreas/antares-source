@@ -26,6 +26,8 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewFactory
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
+import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyleToString
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
@@ -350,53 +352,77 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {
-		repository.register(CONSTANT, "library.element.Constant", "/img/constant.png", ConstantView::class)
-		repository.register(SPLITTER, "library.element.Splitter", "/img/splitter.png", SplitterView::class)
-		repository.register(CONCENTRATOR, "library.element.Concentrator", "/img/concentrator.png", ConcentratorView::class)
-		repository.register(PROBE, "library.element.Probe", "/img/probe.png", ProbeView::class)
-		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
-		repository.register(BREAK, "library.element.Break", "/img/break.png", BreakView::class)
-		repository.register(PULL_RESISTOR, "library.element.PullResistor", "/img/pull-resistor.png", PullResistorView::class)
-		repository.register(TRANSISTOR, "library.element.Transistor", "/img/transistor.png", TransistorView::class)
-		repository.register(GROUND, "library.element.Ground", "/img/ground.png", GroundView::class)
-		repository.register(POWER, "library.element.Power", "/img/power.png", PowerView::class)
-		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", "/img/splitter.png", BidirectionalSplitterView::class)
+		repository.register(CONSTANT, "library.element.Constant", { "/img/constant.png" }, ConstantView::class)
+		repository.register(SPLITTER, "library.element.Splitter", { "/img/splitter.png" }, SplitterView::class)
+		repository.register(CONCENTRATOR, "library.element.Concentrator", { "/img/concentrator.png" }, ConcentratorView::class)
+		repository.register(PROBE, "library.element.Probe", { "/img/probe.png" }, ProbeView::class)
+		repository.register(TUNNEL, "library.element.Tunnel", { "/img/tunnel.png" }, TunnelView::class)
+		repository.register(BREAK, "library.element.Break", { "/img/break.png" }, BreakView::class)
+		repository.register(PULL_RESISTOR, "library.element.PullResistor", { "/img/pull-resistor.png" }, PullResistorView::class)
+		repository.register(TRANSISTOR, "library.element.Transistor", { "/img/transistor.png" }, TransistorView::class)
+		repository.register(GROUND, "library.element.Ground", { "/img/ground.png" }, GroundView::class)
+		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
+		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
 
-		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
-		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)
-		repository.register(NOT, "library.element.NotGate", "/img/not.png", NotGateView::class)
-		repository.register(NAND, "library.element.NandGate", "/img/nand.png", NandGateView::class)
-		repository.register(NOR, "library.element.NorGate", "/img/nor.png", NorGateView::class)
-		repository.register(XOR, "library.element.XorGate", "/img/xor.png", XorGateView::class)
-		repository.register(XNOR, "library.element.XnorGate", "/img/xnor.png", XnorGateView::class)
-		repository.register(BUFFER, "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
-		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", "/img/tristate-buffer.png", TriStateBufferGateView::class)
-		repository.register(DELAY, "library.element.Delay", "/img/delay.png", DelayGateView::class)
-		repository.register(INPUT, "library.element.CircuitInput", "/img/input.png") {
+		repository.register(AND,
+			"library.element.AndGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/and.png", SymbolStyle.EUROPEAN to "/img/and-iec.png"))::evaluate,
+			AndGateView::class)
+		repository.register(OR,
+			"library.element.OrGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/or.png", SymbolStyle.EUROPEAN to "/img/or-iec.png"))::evaluate,
+			OrGateView::class)
+		repository.register(NOT,
+			"library.element.NotGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/not.png", SymbolStyle.EUROPEAN to "/img/not-iec.png"))::evaluate,
+			NotGateView::class)
+		repository.register(NAND,
+			"library.element.NandGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/nand.png", SymbolStyle.EUROPEAN to "/img/nand-iec.png"))::evaluate,
+			NandGateView::class)
+		repository.register(NOR,
+			"library.element.NorGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/nor.png", SymbolStyle.EUROPEAN to "/img/nor-iec.png"))::evaluate,
+			NorGateView::class)
+		repository.register(XOR,
+			"library.element.XorGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/xor.png", SymbolStyle.EUROPEAN to "/img/xor-iec.png"))::evaluate,
+			XorGateView::class)
+		repository.register(XNOR,
+			"library.element.XnorGate",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/xnor.png", SymbolStyle.EUROPEAN to "/img/xnor-iec.png"))::evaluate,
+			XnorGateView::class)
+		repository.register(BUFFER,
+			"library.element.Buffer",
+			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/buffer.png", SymbolStyle.EUROPEAN to "/img/buffer-iec.png"))::evaluate,
+			BufferGateView::class)
+		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
+		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
+		repository.register(INPUT, "library.element.CircuitInput", { "/img/input.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
 
-		repository.register(SWITCH, "library.element.Toggle", "/img/switch.png", SwitchView::class)
-		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
-		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
-		repository.register(KEYBOARD, "library.element.Keyboard", "/img/keyboard.png", KeyboardView::class)
-		repository.register(TERMINAL, "library.element.Terminal", "/img/terminal.png", TerminalView::class)
-		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
+		repository.register(SWITCH, "library.element.Toggle", { "/img/switch.png" }, SwitchView::class)
+		repository.register(DIP_SWITCH, "library.element.DipSwitch", { "/img/dip-switch.png" }, DipSwitchView::class)
+		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
+		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
+		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
+		repository.register(OUTPUT, "library.element.CircuitOutput", { "/img/output.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
-		repository.register(JOYSTICK, "library.element.Joystick", "/img/joystick.png", JoystickView::class)
-		repository.register(REAL_SWITCH, "library.element.RealSwitch", "/img/real-switch.png", RealSwitchView::class)
+		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
+		repository.register(REAL_SWITCH, "library.element.RealSwitch", { "/img/real-switch.png" }, RealSwitchView::class)
 
-		repository.register(LED, "library.element.LED", "/img/led.png", LEDView::class)
-		repository.register(RGB_LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
-		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
-		repository.register(LED_MATRIX, "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
+		repository.register(LED, "library.element.LED", { "/img/led.png" }, LEDView::class)
+		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
+		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", { "/img/7segment.png" }, SevenSegmentDisplayView::class)
+		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
 
-		repository.register(ROM, "library.element.ROM", "/img/rom.png", ROMView::class)
-		repository.register(RAM, "library.element.RAM", "/img/ram.png", RAMView::class)
+		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
+		repository.register(RAM, "library.element.RAM", { "/img/ram.png" }, RAMView::class)
 
-		repository.register(RANDOM, "library.element.Random", "/img/random.png", RandomView::class)
-		repository.register(BIT_EXTENDER, "library.element.BitExtender", "/img/bitextender.png", BitExtenderView::class)
+		repository.register(RANDOM, "library.element.Random", { "/img/random.png" }, RandomView::class)
+		repository.register(BIT_EXTENDER, "library.element.BitExtender", { "/img/bitextender.png" }, BitExtenderView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

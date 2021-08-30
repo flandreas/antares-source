@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.symbolstyle
 
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -25,3 +26,8 @@ class CurrentSymbolStyle(
 }
 
 data class CurrentSymbolStyleChangedEvent(val symbolStyle: SymbolStyle)
+
+class CurrentSymbolStyleToString(val map: Map<SymbolStyle, String>) {
+	fun evaluate(): String =
+		map[AntaresViewModule.currentSymbolStyle.symbolStyle] ?: throw IllegalStateException("unmapped SymbolStyle")
+}

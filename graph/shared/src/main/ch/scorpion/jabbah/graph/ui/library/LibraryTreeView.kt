@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -79,6 +80,7 @@ class LibraryTreeViewController (
 		private val LOG by logger(LibraryTreeViewController::class)
 	}
 
+	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { view.refresh() }
 
 	private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = {
 		if (displaysLibrary(it.item.library)) { view.handle(it) }
@@ -167,6 +169,7 @@ class LibraryTreeViewController (
 		}
 
 	init {
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 		eventBus.register(LibraryItemAddedEvent::class, libraryItemAddedHandler)
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
 		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
@@ -180,6 +183,7 @@ class LibraryTreeViewController (
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(preferencesChangedHandler)
 		eventBus.unregister(libraryItemAddedHandler)
 		eventBus.unregister(libraryItemRemovedHandler)
 		eventBus.unregister(libraryItemUpdatedHandler)
