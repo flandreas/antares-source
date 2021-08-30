@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -215,6 +216,13 @@ enum class SymbolStyle(val customName: String) {
 			}
 
 			context.g.translate(-x, -y - vOffset)
+		}
+	}
+
+	override fun toString(): String {
+		return when (this) {
+			EUROPEAN -> Translations.getString("antares.action.symbolStyle.european.name")
+			AMERICAN -> Translations.getString("antares.action.symbolStyle.american.name")
 		}
 	}
 

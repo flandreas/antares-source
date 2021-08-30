@@ -199,8 +199,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
 
+		root.getGroup(PREF_TREE_CIRCUIT).add(SymbolStylePreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(UndefinedGateInputBehaviorPreference())
-
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = AndGateView.PROP_DATA_FLOW_ENABLED,
 			nameKey = "antares.preferences.AndGateDataFlow"

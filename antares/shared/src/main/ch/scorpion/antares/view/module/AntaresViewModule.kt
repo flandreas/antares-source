@@ -116,7 +116,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val RANDOM = "Random"
 	private const val BIT_EXTENDER = "BitExtender"
 
-	val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
+	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
 	override fun initialize() {
 		Translations.addBundle("antares")
@@ -219,6 +219,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(TunnelViewFace.PROP_TUNNEL_FACE, TunnelViewFace.ARROW.customName)
 
 		properties.set(DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
+		properties.set(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

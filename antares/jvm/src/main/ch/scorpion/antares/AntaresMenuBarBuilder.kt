@@ -2,8 +2,6 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
-import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
-import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -16,7 +14,10 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import javax.swing.*
+import javax.swing.JCheckBoxMenuItem
+import javax.swing.JMenu
+import javax.swing.JMenuBar
+import javax.swing.JMenuItem
 
 /**
  * Adds [ch.scorpion.antares] related menus to the [GraphMenuBarBuilder].
@@ -35,21 +36,6 @@ class AntaresMenuBarBuilder(
 
     override fun fillViewMenu(menu: JMenu) {
         super.fillViewMenu(menu)
-
-        val symbolStyleMenu = JMenu(Translations.getString("antares.action.symbolStyle"))
-
-        val americanMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(AmericanSymbolStyleAction()))
-        val europeanMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(EuropeanSymbolStyleAction()))
-        val group = ButtonGroup()
-        group.add(americanMenuItem)
-        group.add(europeanMenuItem)
-
-        symbolStyleMenu.add(americanMenuItem)
-        symbolStyleMenu.add(europeanMenuItem)
-
-        menu.addSeparator()
-        menu.add(symbolStyleMenu)
-
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GateMnemonicAction(eventBus))))
     }
 
