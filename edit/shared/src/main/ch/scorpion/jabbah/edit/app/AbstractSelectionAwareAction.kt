@@ -19,7 +19,7 @@ abstract class AbstractSelectionAwareAction(
 
 	init {
 		eventBus.register(SelectionChangeEvent::class) { updateEnabled() }
-		enabled = false
+		enabled = calculateEnabled()
 	}
 
 	protected val selection: Collection<Component> get() = drawingView!!.selectionManager.selection
