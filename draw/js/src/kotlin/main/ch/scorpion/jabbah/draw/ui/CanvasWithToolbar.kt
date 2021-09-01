@@ -7,10 +7,14 @@ import react.*
 import styled.css
 import styled.styledDiv
 
+/**
+ * @property size the size of the canvas in view coordinates (used for "portlet" scenarios),
+ * or `null` if the canvas should adjust to the available size (used for "iframe" or "desktop" scenarios)
+ */
 external interface CanvasWithToolbarProps : RProps {
 	var canvasId: String
 	var view: View<*>
-	var size: Dimension2D
+	var size: Dimension2D?
 	var toolbarRenderer: (RBuilder) -> Unit
 }
 
@@ -27,22 +31,40 @@ class CanvasWithToolbar(
 		styledDiv {
 			css {
 				position = Position.relative
-			}
-			jCanvas {
-				canvasId = props.canvasId
-				view = props.view
-				size = props.size
-			}
+				display = Display.flex
+				flexDirection = FlexDirection.column
+				flex(1.0)
 
-			styledDiv {
-				css {
-					position = Position.absolute
-					top = 1.px
-					left = 1.px
-					width = props.size.width.px - 2.px
-					classes = mutableListOf("toolbarOverCanvas")
+			}
+			if (props.size == null) {
+				jCanvas {
+					canvasId = props.canvasId
+					view = props.view
 				}
-				props.toolbarRenderer(this)
+				styledDiv {
+					css {
+						position = Position.absolute
+						width = 100.pct
+						classes = mutableListOf("toolbarOverCanvas")
+					}
+					props.toolbarRenderer(this)
+				}
+			} else {
+				jCanvas {
+					canvasId = props.canvasId
+					view = props.view
+					size = props.size!!
+				}
+				styledDiv {
+					css {
+						position = Position.absolute
+						top = 1.px
+						left = 1.px
+						width = props.size!!.width.px - 2.px
+						classes = mutableListOf("toolbarOverCanvas")
+					}
+					props.toolbarRenderer(this)
+				}
 			}
 		}
 	}

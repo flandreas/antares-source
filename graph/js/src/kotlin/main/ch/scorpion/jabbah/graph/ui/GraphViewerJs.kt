@@ -15,10 +15,15 @@ import react.*
 import styled.css
 import styled.styledDiv
 
+/**
+ * @property size the size of the canvas in view coordinates (used for "portlet" scenarios),
+ * or `null` if the canvas should adjust to the available size (used for "iframe" or "desktop" scenarios)
+ */
 external interface GraphViewerJsProps : RProps {
 	var canvasId: String
 	var metaGraphUuid: UUID
-	var size: Dimension2D
+	var size: Dimension2D?
+	var addMargins: Boolean?
 }
 
 external interface GraphViewerJsState : RState {
@@ -55,10 +60,12 @@ class GraphViewerJs(
 				styledDiv {
 					css {
 						position = Position.relative
-						width = props.size.width.toInt().px
-						height = props.size.height.toInt().px
-						marginLeft = 40.px
-						marginBottom = 20.px
+						width = props.size?.width?.toInt()?.px ?: 200.px
+						height = props.size?.height?.toInt()?.px ?: 200.px
+						if (props.addMargins == true) {
+							marginLeft = 40.px
+							marginBottom = 20.px
+						}
 					}
 					mBackdrop(open = true, className = "backdrop") {
 						css {
@@ -75,6 +82,7 @@ class GraphViewerJs(
 					canvasId = props.canvasId
 					controller = this@GraphViewerJs.controller.graphNavigationViewController
 					size = props.size
+					addMargins = props.addMargins
 					canvasToolbarRenderer = {
 						it.graphExecutionToolbar {
 							currentSystemSpeedCategory = this@GraphViewerJs.controller.applicationContextHolder.currentSystemSpeedCategory

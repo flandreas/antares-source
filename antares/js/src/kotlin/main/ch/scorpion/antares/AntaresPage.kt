@@ -115,6 +115,7 @@ class AntaresPage {
 					canvasId = "canvas0"
 					metaGraphUuid = UUID("440b10dc-0999-4426-aa0f-c22c5221f641")
 					size = Dimension2D(500, 400)
+					addMargins = true
 				}
 
 				mTypography("""
@@ -128,6 +129,7 @@ class AntaresPage {
 					canvasId = "canvas1"
 					metaGraphUuid = UUID("ae8e1d4c-5201-489d-9494-8eec9f54380d")
 					size = Dimension2D(500, 400)
+					addMargins = true
 				}
 
 				mTypography("""
@@ -140,6 +142,7 @@ class AntaresPage {
 					canvasId = "canvas2"
 					metaGraphUuid = UUID("52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82")
 					size = Dimension2D(500, 400)
+					addMargins = true
 				}
 
 				mTypography("""
@@ -155,6 +158,7 @@ class AntaresPage {
 					canvasId = "canvas3"
 					metaGraphUuid = UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300")
 					size = Dimension2D(500, 400)
+					addMargins = true
 				}
 
 				mTypography("""
@@ -175,6 +179,7 @@ class AntaresPage {
 					canvasId = "canvas4"
 					metaGraphUuid = UUID("e2252451-b870-4541-ac11-1ffe2aca72ca")
 					size = Dimension2D(800, 400)
+					addMargins = true
 				}
 
 				mTypography("""

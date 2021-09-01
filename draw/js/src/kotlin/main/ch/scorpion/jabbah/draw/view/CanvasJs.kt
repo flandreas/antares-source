@@ -20,7 +20,7 @@ import org.w3c.dom.HTMLCanvasElement
 class CanvasJs(
 	id: String,
 	override val view: View<out InputEventContext>,
-	size: Dimension2D,
+	size: Dimension2D?,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
@@ -42,7 +42,7 @@ class CanvasJs(
 
 	override val devicePixelRatio: Int get() = window.devicePixelRatio.toInt()
 
-	override val dimension: Dimension2D = size
+	override val dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
 
 	override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 

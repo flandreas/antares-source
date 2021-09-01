@@ -2,9 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.ui.canvasWithToolbar
-import kotlinx.css.marginBottom
-import kotlinx.css.marginLeft
-import kotlinx.css.px
+import kotlinx.css.*
 import react.*
 import styled.css
 import styled.styledDiv
@@ -14,6 +12,7 @@ external interface GraphNavigationViewJsProps : RProps {
 	var controller: GraphNavigationViewController
 	var size: Dimension2D?
 	var canvasToolbarRenderer: (RBuilder) -> Unit
+	var addMargins: Boolean?
 }
 
 fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit): ReactElement {
@@ -40,8 +39,16 @@ private class GraphNavigationViewJs(
 	override fun RBuilder.render() {
 		styledDiv {
 			css {
-				marginLeft = 40.px
-				marginBottom = 20.px
+				if (props.addMargins == true) {
+					marginLeft = 40.px
+					marginBottom = 20.px
+				}
+				if (props.size == null) {
+					display = Display.flex
+					height = 100.pct
+					flexDirection = FlexDirection.column
+					overflow = Overflow.hidden
+				}
 			}
 			navigationStackView {
 				controller = props.controller.navigationStackViewController
@@ -49,7 +56,7 @@ private class GraphNavigationViewJs(
 			canvasWithToolbar {
 				canvasId = props.canvasId
 				view = props.controller.drawingView
-				size = props.size!!
+				size = props.size
 				toolbarRenderer = props.canvasToolbarRenderer
 			}
 		}
