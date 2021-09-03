@@ -74,7 +74,11 @@ private class StyledTextImpl(
 		for (chunk in chunks) {
 			if (chunk.text.contains('\n')) {
 				chunk.text.split('\n').forEach { text ->
-					chunkLines.add(mutableListOf(ChunkImpl(text, chunk.bold)))
+					if (chunkLines.isEmpty()) {
+						chunkLines.add(mutableListOf())
+					}
+					chunkLines.last().add(ChunkImpl(text, chunk.bold))
+					chunkLines.add(mutableListOf())
 				}
 			} else {
 				if (chunkLines.isEmpty()) {
@@ -82,6 +86,9 @@ private class StyledTextImpl(
 				}
 				chunkLines.last().add(chunk)
 			}
+		}
+		if (chunkLines.isNotEmpty() && chunkLines.last().isEmpty()) {
+			chunkLines.removeLast()
 		}
 		return chunkLines.map { StyledTextImpl(it) }
 	}

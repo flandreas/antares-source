@@ -74,7 +74,21 @@ class StyledTextTest {
 	}
 
 	@Test
-	fun shouldNotSplitSingleLineWithStyle() {
+	fun shouldNotSplitSingleLineWithStyleAtStart() {
+		val styledText = StyledTextBuilder()
+			.appendBold("Hello, ")
+			.append("Jabbah!")
+			.build()
+
+		val split = styledText.splitLines()
+
+		assertEquals(1, split.size)
+		assertEquals(2, split[0].chunkCount)
+	}
+
+
+	@Test
+	fun shouldNotSplitSingleLineWithStyleAtEnd() {
 		val styledText = StyledTextBuilder()
 			.append("Hello, ")
 			.appendBold("Jabbah!")
@@ -84,6 +98,24 @@ class StyledTextTest {
 
 		assertEquals(1, split.size)
 		assertEquals(2, split[0].chunkCount)
+	}
+
+	@Test
+	fun shouldSplitLines() {
+		val styledText = StyledTextBuilder()
+			.appendBold("Title: ")
+			.append("Short Description")
+			.appendLine()
+			.appendLine()
+			.append("Long Description")
+			.build()
+
+		val split = styledText.splitLines()
+
+		assertEquals(3, split.size)
+		assertEquals(2, split[0].chunkCount)
+		assertEquals(1, split[1].chunkCount)
+		assertEquals(1, split[2].chunkCount)
 	}
 
 	@Test

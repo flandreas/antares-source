@@ -85,4 +85,31 @@ class MultilineTextTest {
 			font, 15.0 * FONT_SIZE, textMeasurer = textMeasurer)
 		assertEquals(3 * (FONT_SIZE + MultilineText.LINE_DIST), text.height)
 	}
+
+	@Test
+	fun shouldRenderBoldTitleAndNormalTextOnSameLine() {
+		val styledText = StyledTextBuilder()
+			.appendBold("Title: ")
+			.append("Short Description")
+			.build()
+
+		val text = MultilineText(styledText, font, Double.MAX_VALUE, textMeasurer = textMeasurer)
+
+		assertEquals(1 * (FONT_SIZE + MultilineText.LINE_DIST), text.height)
+	}
+
+	@Test
+	fun shouldRenderBoldTitleAndNormalTextFollowedByNewlinesOnDifferentLines() {
+		val styledText = StyledTextBuilder()
+			.appendBold("Title: ")
+			.append("Short Description")
+			.appendLine()
+			.appendLine()
+			.append("Long Description")
+			.build()
+
+		val text = MultilineText(styledText, font, Double.MAX_VALUE, textMeasurer = textMeasurer)
+
+		assertEquals(3 * (FONT_SIZE + MultilineText.LINE_DIST), text.height)
+	}
 }

@@ -49,9 +49,9 @@ class DescriptionIntegrationTest {
 		assertEquals(TestVertice.TYPE_DESC, vv.typeDesc)
 		assertEquals("Custom Description", vv.description.value)
 		assertEquals(
-			"${TestVertice.TYPE}: ${TestVertice.TYPE_DESC}."
+			"${TestVertice.TYPE}: Custom Description."
 				+ "\n\n"
-				+ "Custom Description.",
+				+ "${TestVertice.TYPE_DESC}.",
 			tooltipText(vv))
 	}
 
@@ -78,9 +78,9 @@ class DescriptionIntegrationTest {
 		subGraphVerticeView.description = Description("Custom Description")
 
 		assertEquals(
-			"${TestLibraryBuilder.INNER_CUSTOM_COMP}: Graph Description."
+			"${TestLibraryBuilder.INNER_CUSTOM_COMP}: Custom Description."
 				+ "\n\n"
-				+ "Custom Description.",
+				+ "Graph Description.",
 			tooltipText(subGraphVerticeView))
 	}
 
