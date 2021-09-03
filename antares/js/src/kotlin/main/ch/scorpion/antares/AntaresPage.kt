@@ -100,15 +100,15 @@ class AntaresPage {
 				}
 
 				mTypography("""
-					|Let's first look at calculating the 'Result' value. You notice immediately that the result value
-					|is 1 only if the two added values are different. This is exactly what is the calculation result
-					|of an XOR gate.
-					""".trimMargin(),
+					Let's first look at calculating the 'Result' value. You notice immediately that the result value
+					is 1 only if the two added values are different. This is exactly the same as the calculation
+					result of an XOR gate.
+					""".trimIndent(),
 					paragraph = true)
 
 				mTypography("""
-					|Play around with the XOR gate in the circuit below and try different input values.
-					""".trimMargin(),
+					Play around with the XOR gate in the circuit below and try different input values.
+					""".trimIndent(),
 					paragraph = true)
 
 				graphViewer {
@@ -119,10 +119,10 @@ class AntaresPage {
 				}
 
 				mTypography("""
-					|Now let's look at calculating the 'Carry' value. The truth table tells you that the carry value
-					|is 1 only if both added values are 1. This is exactly what is the calculation result
-					|of an AND gate.
-					""".trimMargin(),
+					Now let's look at calculating the 'Carry' value. The truth table tells you that the carry value
+					is 1 only if both added values are 1. This is exactly the same as the calculation result
+					of an AND gate.
+					""".trimIndent(),
 					paragraph = true)
 
 				graphViewer {
@@ -133,9 +133,9 @@ class AntaresPage {
 				}
 
 				mTypography("""
-					|Now let's combine the calculation of the result bit and the carry into a single circuit.
-					|We call this combined circuit "Half Adder". It produces a "Sum" (or result) bit and a "Carry" bit.
-					""".trimMargin(),
+					Now let's combine the calculation of the result bit and the carry into a single circuit.
+					We call this combined circuit "Half Adder". It produces a "Sum" (or result) bit and a "Carry" bit.
+					""".trimIndent(),
 					paragraph = true)
 
 				graphViewer {
@@ -146,12 +146,12 @@ class AntaresPage {
 				}
 
 				mTypography("""
-					|Up to now, we can only add 2 bits. If you want to add numbers consisting of multiple bits,
-					|you add the two corresponding bits of each number, but you also have to respect the carry
-					|bit from the previous addition. This is done by a circuit called "Full Adder", which consists
-					|of two "Half Adders". The second "Half Adder" adds the result of the addition to the carry
-					|of the previous addition.
-					""".trimMargin(),
+					Up to now, we can only add 2 bits. If you want to add numbers consisting of multiple bits,
+					you add the two corresponding bits of each number, but you also have to respect the carry
+					bit from the previous addition. This is done by a circuit called "Full Adder", which consists
+					of two "Half Adders". The second "Half Adder" adds the result of the addition to the carry
+					of the previous addition.
+					""".trimIndent(),
 					paragraph = true)
 
 				graphViewer {
@@ -189,7 +189,6 @@ class AntaresPage {
 					adding circuit is also known as "Ripple Carry Adder".
 				""".trimIndent(),
 					paragraph = true)
-
 			}
 		}
 	}
