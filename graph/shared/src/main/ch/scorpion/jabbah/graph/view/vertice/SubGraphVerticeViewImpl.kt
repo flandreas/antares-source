@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -154,6 +155,15 @@ class SubGraphVerticeViewImpl(
 		get() = Direction.of(rotation)
 		set(value) {
 			rotation = value.rotation
+		}
+
+	override var customColor: PredefinedColor?
+		get() = super.customColor
+		set(value) {
+			if (value != super.customColor) {
+				super.customColor = value
+				updateCustomColor(value)
+			}
 		}
 
 	/** ---- [Transparent] */
@@ -452,6 +462,8 @@ class SubGraphVerticeViewImpl(
 		}
 		rotationChanged(rotation)
 
+		updateCustomColor(customColor)
+
 		updateBoxes()
 	}
 
@@ -494,6 +506,16 @@ class SubGraphVerticeViewImpl(
 		if (isVerticallyMirrored) {
 			drawable.mirrorVertically(location.y)
 		}
+	}
+
+	private fun updateCustomColor(customColor: PredefinedColor?) {
+		invalidate()
+		drawableBag.drawables.forEach {
+			if (it is Stylable) {
+				it.customColor = customColor
+			}
+		}
+		validate()
 	}
 
 	private fun requestOpenSubGraph(event: InputEvent) {
