@@ -18,6 +18,7 @@ import java.awt.Component
 import java.awt.font.TextAttribute
 import javax.swing.*
 import javax.swing.tree.*
+import kotlin.math.min
 
 class LibraryTreeViewSwing(
 	private val controller: LibraryTreeViewController,
@@ -96,10 +97,16 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun handle(event: LibraryItemMovedEvent) {
-		findOptionalTreeNode(event.parent)?.let {
-			findTreeNode(event.item).removeFromParent()
-			it.insert(DefaultMutableTreeNode(event.item), event.index)
-			(model as DefaultTreeModel).nodeStructureChanged(it)
+		findOptionalTreeNode(event.oldDirectory)?.let { oldDirectoryNode ->
+			val itemNode = findTreeNode(event.item)
+			itemNode.removeFromParent()
+			(model as DefaultTreeModel).nodeStructureChanged(oldDirectoryNode)
+
+			findOptionalTreeNode(event.newDirectory)?.let {
+				it.insert(itemNode, min(event.index, it.childCount))
+				(model as DefaultTreeModel).nodeStructureChanged(it)
+				selectionPath = getPath(itemNode)
+			}
 		}
 	}
 
@@ -110,7 +117,7 @@ class LibraryTreeViewSwing(
 
 	override fun expandTo(element: ContainerLibraryElement) {
 		SwingUtilities.invokeLater {
-			val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject == element }
+			val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject === element }
 			if (node != null) {
 				selectionPath = getPath(node)
 			}

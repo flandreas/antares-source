@@ -47,12 +47,32 @@ class LibraryServiceTest {
 			.back()
 			.addDirectory("Elem3")
 
-		service.move(library, library.getRecursively("Elem1")!!, 2)
+		service.move(library, library.getRecursively("Elem1")!!, library.getRecursively("Folder") as LibraryFolder, 2)
 
 		val folder = library.getRecursively("Folder") as LibraryDirectory
 		assertEquals(0, folder.indexOf(library.getRecursively("Elem2")!!))
 		assertEquals(1, folder.indexOf(library.getRecursively("Elem3")!!))
 		assertEquals(2, folder.indexOf(library.getRecursively("Elem1")!!))
+	}
+
+	@Test
+	fun shouldMoveFolderToOtherFolder() {
+		libraryBuilder
+			.addDirectory("DestinationFolder")
+			.addContainerLibraryElement("Item1")
+			.back()
+			.addDirectory("MovedFolder")
+			.addContainerLibraryElement("Item2")
+
+		service.move(library, library.getRecursively("MovedFolder")!!, library.getRecursively("DestinationFolder") as LibraryDirectory, 1)
+
+		val destinationFolder = library.getRecursively("DestinationFolder") as LibraryDirectory
+		assertEquals(2, destinationFolder.size)
+		assertEquals(0, destinationFolder.indexOf(destinationFolder.get("Item1")!!))
+		assertEquals(1, destinationFolder.indexOf(destinationFolder.get("MovedFolder")!!))
+
+		val origFolder = library
+		assertEquals(1, origFolder.size)
 	}
 
 	@Test

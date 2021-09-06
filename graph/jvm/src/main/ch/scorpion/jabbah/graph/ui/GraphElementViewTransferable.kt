@@ -15,7 +15,8 @@ class GraphElementViewTransferable(
 ) : Transferable {
 
     companion object {
-        val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${String::class.java.name}\"")
+        val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${GraphElementViewTransferable::class.java.name}\"")
+
 	    fun of(graphElementView: GraphElementView<GraphElement>, libraryElement: LibraryElement): GraphElementViewTransferable {
 		    return GraphElementViewTransferable(GraphElementViewTransferableData(graphElementView, libraryElement))
 	    }
@@ -23,13 +24,9 @@ class GraphElementViewTransferable(
 
     /** ---- [Transferable] */
 
-    override fun getTransferDataFlavors(): Array<DataFlavor> {
-        return arrayOf(FLAVOR)
-    }
+    override fun getTransferDataFlavors(): Array<DataFlavor> = arrayOf(FLAVOR)
 
-    override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean {
-        return flavor == FLAVOR
-    }
+    override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean = flavor == FLAVOR
 
     override fun getTransferData(flavor: DataFlavor?): Any {
         if (flavor != FLAVOR) {

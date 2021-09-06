@@ -42,6 +42,9 @@ open class ComponentTransferHandler(
         (editor.view.canvas as JComponent).dropTarget = object : DropTarget() {
             override fun dragEnter(dtde: DropTargetDragEvent) {
                 super.dragEnter(dtde)
+	            if (!dtde.isDataFlavorSupported(flavour)) {
+	            	return
+	            }
                 try {
                     val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
                     if (transferData is Component) {
@@ -62,10 +65,12 @@ open class ComponentTransferHandler(
 
             override fun dragOver(dtde: DropTargetDragEvent) {
                 super.dragOver(dtde)
-                val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
-                if (transferData is Component) {
-	                setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
-                }
+	            if (dtde.isDataFlavorSupported(flavour)) {
+		            val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
+		            if (transferData is Component) {
+			            setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
+		            }
+	            }
             }
 
             override fun drop(dtde: DropTargetDropEvent) {

@@ -209,6 +209,17 @@ class LibraryTreeViewController (
 	fun isDefaultElement(element: ContainerLibraryElement): Boolean =
 		element.library?.defaultElementUUID == element.uuid
 
+	fun allowMove(item: LibraryItem, destination: LibraryDirectory): Boolean {
+		if (item is LibraryElement) {
+			return true
+		}
+		if (item is LibraryFolder) {
+			// Moving LibraryFolders between Libraries not yet supported
+			return item !== destination && item.library === destination.library
+		}
+		return false
+	}
+
 	/**
 	 * Creates a new [GraphElementView] instance from the currently selected [LibraryElement]
 	 * to be dragged and dropped

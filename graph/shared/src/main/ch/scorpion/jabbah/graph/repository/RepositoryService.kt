@@ -72,8 +72,8 @@ class RepositoryServiceImpl(
 		destDir: LibraryDirectory,
 		destPos: Int
 	) {
-		if (origDir == destDir) {
-			origService.move(origService.currentLibrary!!, elem, destPos)
+		if (origService.currentLibrary === destService.currentLibrary) {
+			origService.move(origService.currentLibrary!!, elem, destDir, destPos)
 		} else {
 			val metaGraph = elem.metaGraph!!
 			origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
+import kotlin.math.min
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
 data class LibraryItemAddedEvent(
@@ -36,10 +37,11 @@ data class LibraryItemUpdatedEvent(
 	val item: LibraryItem
 )
 
-/** Posted on [EventBus] when a [LibraryImpl] hast been moved within its [LibraryDirectory].*/
+/** Posted on [EventBus] when a [LibraryImpl] has been within the same or to another [LibraryDirectory].*/
 data class LibraryItemMovedEvent(
-	val parent: LibraryDirectory,
+	val oldDirectory: LibraryDirectory,
 	val item: LibraryItem,
+	val newDirectory: LibraryDirectory,
 	val index: Int
 )
 
@@ -190,16 +192,18 @@ class LibraryService(
 	}
 
 	/**
-	 * Moves a [LibraryItem] to a new position within its [LibraryDirectory].
-	 * @param item the [LibraryItem] to be moved within its [LibraryDirectory]
-	 * @param newIndex the new index of `item` within its [LibraryDirectory] after it has been moved
-	 *
+	 * Moves a [LibraryItem] (which can also be a [LibraryFolder]) to another [LibraryDirectory].
 	 */
-	fun move(library: Library, item: LibraryItem, newIndex: Int) {
-		val directory = getDirectoryOf(library, item)
-		directory.move(item, newIndex)
+	fun move(library: Library, item: LibraryItem, destination: LibraryDirectory, newIndex: Int?) {
+		val origDirectory = getDirectoryOf(library, item)
+
+		origDirectory.remove(item)
+
+		val effNewIndex = newIndex?.let { min(it, destination.size) } ?: destination.size
+		destination.add(effNewIndex, item)
+
+		eventBus.post(LibraryItemMovedEvent(origDirectory, item, destination, effNewIndex))
 		storeLibrary(library)
-		eventBus.post(LibraryItemMovedEvent(directory, item, newIndex))
 	}
 
 	/**
