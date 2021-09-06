@@ -114,7 +114,7 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	protected open fun createMainFrame(): AbstractApplicationFrame {
-		val canvas = CanvasJvm(EditModule.drawingViewFactory.invoke(DrawingImpl(), null))
+		val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, displayGlobalMessages = true))
 
 		@Suppress("UNCHECKED_CAST")
 		val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)

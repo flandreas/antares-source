@@ -8,7 +8,13 @@ import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
-typealias DrawingViewFactory<T> = (drawing:T, contextHolder:ApplicationContextHolder?) -> DrawingView<T>
+fun interface DrawingViewFactory<T : Drawing<*>> {
+	fun create(
+		drawing: T,
+		contextHolder: ApplicationContextHolder?,
+		displayGlobalMessages: Boolean
+	): DrawingView<T>
+}
 
 /**
  * Enhances [View] with functionality needed for editing [Drawing]s.

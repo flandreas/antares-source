@@ -17,11 +17,8 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -83,9 +80,6 @@ class GraphNavigationViewController(
 
 	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
 
-	private val globalMessageDisplayer: ComponentMessageDisplayer<Drawing<Component>>? =
-		if (isRoot) ComponentMessageDisplayer(drawingView as DrawingView<Drawing<Component>>, true, eventBus, animator) else null
-
 	private val extension = extensionFactory.invoke(this)
 
 	private val graphViewExecutionController = GraphViewExecutionController(
@@ -126,7 +120,6 @@ class GraphNavigationViewController(
 		graphView.dispose()
 
 		scenarioDetector?.dispose()
-		globalMessageDisplayer?.dispose()
 
 		graphViewExecutionController.dispose()
 

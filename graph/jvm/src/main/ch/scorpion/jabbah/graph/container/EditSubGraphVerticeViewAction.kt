@@ -46,7 +46,7 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
-		val containerDrawingView = EditModule.drawingViewFactory.invoke(ContainerDrawing(), applicationContextHolder)
+		val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages = false)
 		val containerPanel = ContainerPanel(
 			GraphViewModule.containerEditorFactory.invoke(containerDrawingView),
 			EditModuleJvm.propertySheetPanelFactory,

@@ -19,7 +19,7 @@ class SelectionToolImplEventDelegationTest {
 		}
 	}
 
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.invoke(DrawingImpl(), null))
+	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false))
 	private val editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
 	private val toolUtil = ToolTestUtil(SelectionToolImpl(editor, RubberBandHandler(RectangularRubberBand()), BaseModule.eventBus), editor)
 	private val handler = InputEventHandlerMockBuilder()

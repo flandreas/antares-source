@@ -62,9 +62,10 @@ class AntaresViewJs(
 	init {
 		console.info("AntaresViewJs.init")
 
-		val drawingView = EditModule.drawingViewFactory.invoke(
+		val drawingView = EditModule.drawingViewFactory.create(
 			GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
-			applicationContextHolder)
+			applicationContextHolder,
+			displayGlobalMessages = true)
 
 		val editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
 

@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.DrawingViewFactory
 import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
@@ -122,8 +123,8 @@ object AntaresViewModule : AbstractModule() {
 		Translations.addBundle("antares")
 
 		// Overwritten in order to change the [DrawableDrawer]
-		EditModule.drawingViewFactory = { drawing, contextHolder ->
-			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder)
+		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
+			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}

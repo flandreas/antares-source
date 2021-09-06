@@ -14,8 +14,6 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
@@ -74,7 +72,6 @@ interface GraphFrameActions {
 open class GraphFrameController<T: GraphFrame>(
 	applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val properties: Properties = BaseModule.properties
 ) : AbstractUIController<T>(), GraphFrameActions {
 
@@ -99,9 +96,10 @@ open class GraphFrameController<T: GraphFrame>(
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = systemSpeedCategory)
 
-	private val drawingView = EditModule.drawingViewFactory.invoke(
+	private val drawingView = EditModule.drawingViewFactory.create(
 		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
-		applicationContextHolder
+		applicationContextHolder,
+		displayGlobalMessages = true
 	)
 
 	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)

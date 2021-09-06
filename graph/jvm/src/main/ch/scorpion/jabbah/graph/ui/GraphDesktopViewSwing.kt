@@ -181,8 +181,8 @@ class GraphDesktopViewSwing(
 		viewManager: ViewManager
 	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
-		val drawingView = EditModule.drawingViewFactory.invoke(
-			subGraphView as Drawing<Component>, controller.applicationContextHolder
+		val drawingView = EditModule.drawingViewFactory.create(
+			subGraphView as Drawing<Component>, controller.applicationContextHolder, displayGlobalMessages = false
 		) as DrawingView<GraphView>
 
 		val controller = GraphNavigationViewController(

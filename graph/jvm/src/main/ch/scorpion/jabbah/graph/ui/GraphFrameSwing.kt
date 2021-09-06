@@ -43,7 +43,7 @@ open class GraphFrameSwing(
 
 	val graphPanel = GraphPanelViewSwing(controller.graphPanelViewController, viewManager = viewManager, application = application)
 
-	private val containerDrawingView = EditModule.drawingViewFactory.invoke(ContainerDrawing(), controller.applicationContextHolder)
+	private val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), controller.applicationContextHolder, displayGlobalMessages = true)
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(containerDrawingView), viewManager)
 

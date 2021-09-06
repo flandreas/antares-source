@@ -44,7 +44,7 @@ class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewContro
 
 	private fun createGraphNavigationViewDesktopItem(verticeView: SubGraphVerticeView<*>, isParentDetached: Boolean): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
-		val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, controller.applicationContextHolder) as DrawingView<GraphView>
+		val drawingView = EditModule.drawingViewFactory.create(subGraphView as Drawing<Component>, controller.applicationContextHolder, false) as DrawingView<GraphView>
 
 		val controller = GraphNavigationViewController(
 			isRoot = false,
