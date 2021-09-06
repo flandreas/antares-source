@@ -235,8 +235,8 @@ class SidebarPane(
 	private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
 	private fun activate(entry: Entry?) {
-		LOG.trace("activate entry ${entry?.name}")
-		val changed = current != entry
+		LOG.debug(entry?.let { "Open SideBarPane '${it.name}'" } ?: "Close SideBarPane '${current?.name}'")
+		val oldOpen = isOpen
 
 		if (current != null) {
 			contentPanel.remove(current!!.headerPanel)
@@ -251,15 +251,16 @@ class SidebarPane(
 
 			current!!.label.background = background
 		}
-		if (changed) {
+		if (oldOpen != isOpen) {
 			isOpenChangeHandler.invoke()
 		}
+
 		revalidate()
 		repaint()
 	}
 
 	private fun collapse() {
-		LOG.trace("collapse")
+		LOG.debug("Collapse SideBarPane")
 		activate(null)
 	}
 
@@ -277,15 +278,11 @@ class SidebarPane(
 	private inner class VerticalLabelListener : MouseAdapter() {
 
 		override fun mouseEntered(e: MouseEvent?) {
-			if (!isCurrent(e!!)) {
-				(e.source as JComponent).background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
-			}
+			hover(e!!.source as JComponent)
 		}
 
 		override fun mouseExited(e: MouseEvent?) {
-			if (!isCurrent(e!!)) {
-				(e.source as JComponent).background = this@SidebarPane.background
-			}
+			(e!!.source as JComponent).background = this@SidebarPane.background
 		}
 
 		override fun mouseClicked(e: MouseEvent?) {
@@ -295,10 +292,11 @@ class SidebarPane(
 			} else {
 				activate(clickedEntry)
 			}
+			hover(e!!.source as JComponent)
 		}
 
-		private fun isCurrent(e: MouseEvent): Boolean {
-			return current != null && current!!.label === e.source
+		private fun hover(component: JComponent) {
+			component.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
 		}
 	}
 }

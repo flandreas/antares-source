@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.Settings
+import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -21,6 +22,8 @@ class SidebarSplitPane(
 ) : JPanel() {
 
 	companion object {
+
+		private val LOG by logger(SidebarSplitPane::class)
 
 		/** The name in [Settings] (extending `propertyBaseName`) of the [JSplitPane] divider position.*/
 		private const val SPLIT_POS = "splitPos"
@@ -49,13 +52,13 @@ class SidebarSplitPane(
 
 	private val sidebarPane = SidebarPane(location) { sidebarPaneChanged() }
 
-	private val sidebarSplitPane = JSplitPane(getSplitPaneOrientation(location))
+	private val splitPane = JSplitPane(getSplitPaneOrientation(location))
 
 	private val dividerLocationSettingName = "$settingBaseName.$SPLIT_POS"
 
 	private val openIndexSettingName = "$settingBaseName.$OPEN_INDEX"
 
-	/** Holds the location of [sidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+	/** Holds the location of [splitPane]'s divider for re-establishing it the next time it opens.*/
 	private var sidebarDividerLocation: Int = BaseModule.settings.getInt(dividerLocationSettingName, -1)
 
 	private var initialOpenIndex: Int = if (providedInitialOpenIndex >= 0) providedInitialOpenIndex else BaseModule.settings.getInt(openIndexSettingName, -1)
@@ -67,14 +70,18 @@ class SidebarSplitPane(
 	}
 
 	fun dispose() {
-		BaseModule.settings.set(dividerLocationSettingName, sidebarSplitPane.dividerLocation)
+		BaseModule.settings.set(dividerLocationSettingName, splitPane.dividerLocation)
 		BaseModule.settings.set(openIndexSettingName, sidebarPane.openIndex)
 	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
 
-		sidebarSplitPane.border = null
+		splitPane.border = null
+		splitPane.resizeWeight = when (location) {
+			SidebarPane.Location.Right, SidebarPane.Location.Bottom -> 1.0
+			SidebarPane.Location.Left -> 0.0
+		}
 
 		add(sidebarPane, getSidebarDirection(location))
 		add(mainContent, BorderLayout.CENTER)
@@ -84,14 +91,12 @@ class SidebarSplitPane(
 	private fun fillSplitPane() {
 		when (location) {
 			SidebarPane.Location.Right, SidebarPane.Location.Bottom -> {
-				sidebarSplitPane.add(mainContent)
-				sidebarSplitPane.add(sidebarPane)
-				sidebarSplitPane.resizeWeight = 1.0
+				splitPane.add(mainContent)
+				splitPane.add(sidebarPane)
 			}
 			SidebarPane.Location.Left -> {
-				sidebarSplitPane.add(sidebarPane)
-				sidebarSplitPane.add(mainContent)
-				sidebarSplitPane.resizeWeight = 0.0
+				splitPane.add(sidebarPane)
+				splitPane.add(mainContent)
 			}
 		}
 	}
@@ -115,23 +120,25 @@ class SidebarSplitPane(
 	private fun sidebarPaneChanged() {
 		if (sidebarPane.isOpen) {
 			removeAll()
-			sidebarSplitPane.remove(sidebarPane)
-			sidebarSplitPane.remove(mainContent)
+			splitPane.remove(sidebarPane)
+			splitPane.remove(mainContent)
 			fillSplitPane()
-			sidebarSplitPane.dividerLocation = getDividerLocation()
-			sidebarDividerLocation = sidebarSplitPane.dividerLocation
-			add(sidebarSplitPane, BorderLayout.CENTER)
+			add(splitPane, BorderLayout.CENTER)
+			splitPane.dividerLocation = getDividerLocation()
 		} else {
-			sidebarDividerLocation = sidebarSplitPane.dividerLocation
+			sidebarDividerLocation = splitPane.dividerLocation
 			removeAll()
-			sidebarSplitPane.remove(sidebarPane)
-			sidebarSplitPane.remove(mainContent)
+			splitPane.remove(sidebarPane)
+			splitPane.remove(mainContent)
 			add(mainContent, BorderLayout.CENTER)
 			add(sidebarPane, getSidebarDirection(location))
 		}
-		isOpenChangeHandler?.invoke()
 
-		revalidate()
-		repaint()
+		if (isOpenChangeHandler != null) {
+			isOpenChangeHandler.invoke()
+		} else {
+			revalidate()
+			repaint()
+		}
 	}
 }
