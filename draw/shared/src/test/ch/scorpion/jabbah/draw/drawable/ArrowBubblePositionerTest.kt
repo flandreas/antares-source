@@ -5,14 +5,14 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.drawable.ArrowBubblePositioner.DISTANCE
+import ch.scorpion.jabbah.draw.drawable.ArrowBubblePositioner.MIN_VIEW_DISTANCE
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlin.test.*
 
 class ArrowBubblePositionerTest {
-
-	private val content = createContent(Dimension2D(200, 200))
 
 	@BeforeTest
 	fun beforeTest() {
@@ -21,6 +21,7 @@ class ArrowBubblePositionerTest {
 
 	@Test
 	fun shouldPositionBelowRightByDefault() {
+		val content = createContent(Dimension2D(200, 200))
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(500, 500), 100.0, 100.0)
 
@@ -28,11 +29,12 @@ class ArrowBubblePositionerTest {
 
 		assertTrue(position.belowLocation)
 		assertTrue(position.rightOfLocation)
-		assertEquals(Point2D(500, 550 + ArrowBubblePositioner.DISTANCE), position.location)
+		assertEquals(Point2D(500, 550 + DISTANCE), position.location)
 	}
 
 	@Test
 	fun shouldPositionAboveRightNearBottomViewBorder() {
+		val content = createContent(Dimension2D(200, 200))
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(500, 900), 100.0, 100.0)
 
@@ -40,11 +42,12 @@ class ArrowBubblePositionerTest {
 
 		assertFalse(position.belowLocation)
 		assertTrue(position.rightOfLocation)
-		assertEquals(Point2D(500, 850 - ArrowBubblePositioner.DISTANCE), position.location)
+		assertEquals(Point2D(500, 850 - DISTANCE), position.location)
 	}
 
 	@Test
 	fun shouldPositionLeftNearRightBorder() {
+		val content = createContent(Dimension2D(200, 200))
 		val view = createView(Dimension2D(1_000, 1_000))
 		val describable = Rectangle2D.withCenter(Point2D(900, 500), 100.0, 100.0)
 
@@ -52,7 +55,20 @@ class ArrowBubblePositionerTest {
 
 		assertTrue(position.belowLocation)
 		assertFalse(position.rightOfLocation)
-		assertEquals(Point2D(900, 550 + ArrowBubblePositioner.DISTANCE), position.location)
+		assertEquals(Point2D(900, 550 + DISTANCE), position.location)
+	}
+
+	@Test
+	fun shouldFineTuneLeftNearRightBorder() {
+		val content = createContent(Dimension2D(600, 200))
+		val view = createView(Dimension2D(1_000, 1_000))
+		val describable = Rectangle2D.withCenter(Point2D(550, 500), 100.0, 100.0)
+
+		val position: ArrowBubblePosition = ArrowBubblePositioner.position(content, describable, view, preferredBelow = true)
+
+		assertTrue(position.belowLocation)
+		assertFalse(position.rightOfLocation)
+		assertTrue(position.location.x > 550.0 + MIN_VIEW_DISTANCE)
 	}
 
 	private fun createView(dimension: Dimension2D, zoom: Double = 1.0): View<*> {
