@@ -6,9 +6,17 @@ import ch.scorpion.antares.dsl.TokenType.*
  * Parses sentences of the following grammar and creates a corresponding AST.
  *
  * <pre>
- *     term : factor (("*" | "/") factor)*
+ *     statementList : statement
+ *               | statement ";" statementList
+ *     statement : expr
+ *               | empty
+ *     empty : ""
  *     expr : term (("+" | "-") term)*
- *     factor : "+" factor | "-" factor | INTEGER | "(" expr ")"
+ *     term : factor (("*" | "/") factor)*
+ *     factor : "+" factor
+ *            | "-" factor
+ *            | INTEGER
+ *            | "(" expr ")"
  * </pre>
  */
 class Parser(private val lexer: Lexer) {
@@ -27,7 +35,33 @@ class Parser(private val lexer: Lexer) {
 	 * Parses the sentence this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
-	fun parse(): Node = expr()
+	fun parse(): Node = Compound(statementList())
+
+	private fun statementList(): List<Node> {
+		val node = statement()
+		val list = mutableListOf(node)
+		while (currentToken!!.type == SEMICOLON) {
+			eat(SEMICOLON)
+			list.add(statement())
+		}
+		list.lastOrNull()?.let {
+			if (it is NoOp) {
+				list.removeLast()
+			}
+		}
+		return list
+	}
+
+	private fun statement(): Node {
+		return when (currentToken!!.type) {
+			EOF -> empty()
+			else -> expr()
+		}
+	}
+
+	private fun empty(): Node {
+		return NoOp()
+	}
 
 	private fun expr(): Node {
 		var node = term()

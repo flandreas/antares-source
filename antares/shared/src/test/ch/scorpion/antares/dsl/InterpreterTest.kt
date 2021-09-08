@@ -21,4 +21,31 @@ class InterpreterTest {
 		assertEquals(20, Interpreter("(1 + 4) * (7 - 3)").interpret())
 		assertEquals(12, Interpreter("2 * (2 + 8 / (1 + 1))").interpret())
 	}
+
+	@Test
+	fun shouldInterpretEmptyStatementList() {
+		val result = Interpreter("").interpret()
+
+		assertEquals(0, result)
+	}
+
+	@Test
+	fun shouldInterpretStatementList() {
+		val result = Interpreter("""
+			4 + 7;
+			5 * 10;
+		""".trimIndent()).interpret()
+
+		assertEquals(50, result)
+	}
+
+	@Test
+	fun shouldNotNeedSemicolonForLastStatement() {
+		val result = Interpreter("""
+			4 + 7;
+			5 * 10
+		""".trimIndent()).interpret()
+
+		assertEquals(50, result)
+	}
 }

@@ -14,3 +14,7 @@ data class BinaryOperation(
 ) : Node
 
 data class Number(val token: Token<Int>) : Node
+
+class NoOp : Node
+
+class Compound(val children: List<Node>): Node

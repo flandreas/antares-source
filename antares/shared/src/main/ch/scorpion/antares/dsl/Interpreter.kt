@@ -16,11 +16,19 @@ class Interpreter(private val node: Node) {
 
 	private fun interpret(node: Node): Int {
 		return when (node) {
+			is Compound -> interpret(node)
+			is NoOp -> 0
 			is UnaryOperation -> interpret(node)
 			is BinaryOperation -> interpret(node)
 			is Number -> interpret(node)
-			else -> throw SyntaxError("Unknown node '${node::class.simpleName}'")
+			else -> throw SyntaxError("Unknown AST node '${node::class.simpleName}'")
 		}
+	}
+
+	private fun interpret(node: Compound): Int {
+		var result = 0
+		node.children.forEach { result = interpret(it) }
+		return result
 	}
 
 	private fun interpret(node: BinaryOperation): Int {

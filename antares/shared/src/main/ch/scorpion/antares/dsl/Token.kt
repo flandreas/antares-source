@@ -8,7 +8,8 @@ enum class TokenType {
 	DIVIDE,
 	LPAREN,
 	RPAREN,
-	EOF
+	EOF,
+	SEMICOLON
 }
 
 /**

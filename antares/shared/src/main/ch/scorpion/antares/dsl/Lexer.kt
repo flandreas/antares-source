@@ -26,6 +26,7 @@ class Lexer(private val text: String) {
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
 		private val EOF_TOKEN = Token<Unit>(EOF)
+		private val SEMICOLON_TOKEN = Token<Unit>(SEMICOLON)
 
 		private fun plus() = PLUS_TOKEN
 		private fun minus() = MINUS_TOKEN
@@ -34,6 +35,7 @@ class Lexer(private val text: String) {
 		private fun lparen() = LPAREN_TOKEN
 		private fun rparen() = RPAREN_TOKEN
 		private fun eof() = EOF_TOKEN
+		private fun semicolon() = SEMICOLON_TOKEN
 
 		// Factory methods for [Token]s with values
 		private fun integer(value: Int) = Token(INTEGER, value)
@@ -92,7 +94,13 @@ class Lexer(private val text: String) {
 					advance()
 					return rparen()
 				}
+				';' -> {
+					advance()
+					return semicolon()
+				}
 			}
+
+			throw SyntaxError("Invalid character '$currentChar'")
 		}
 		return eof()
 	}
