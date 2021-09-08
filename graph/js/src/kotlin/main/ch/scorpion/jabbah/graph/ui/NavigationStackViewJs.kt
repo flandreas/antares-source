@@ -4,11 +4,14 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import com.ccfraser.muirwik.components.mBreadcrumbs
 import com.ccfraser.muirwik.components.mLink
 import com.ccfraser.muirwik.components.mTypography
+import kotlinx.css.background
 import org.w3c.dom.events.MouseEvent
 import react.*
+import styled.css
 
 external interface NavigationStackViewJsProps : RProps {
 	var controller: NavigationStackViewController
+	var backgroundColor: String
 }
 
 fun RBuilder.navigationStackView(handler: NavigationStackViewJsProps.() -> Unit): ReactElement {
@@ -27,6 +30,9 @@ class NavigationStackViewJs(
 
 	override fun RBuilder.render() {
 		mBreadcrumbs(">") {
+			css {
+				background = props.backgroundColor
+			}
 			val iter = props.controller.navigationStack.iterator()
 			iter.forEach { entry ->
 				if (iter.hasNext()) {

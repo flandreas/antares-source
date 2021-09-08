@@ -13,6 +13,7 @@ external interface GraphNavigationViewJsProps : RProps {
 	var size: Dimension2D?
 	var canvasToolbarRenderer: (RBuilder) -> Unit
 	var addMargins: Boolean?
+	var toolbarBackgroundColor: String
 }
 
 fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit): ReactElement {
@@ -50,14 +51,17 @@ private class GraphNavigationViewJs(
 					overflow = Overflow.hidden
 				}
 			}
-			navigationStackView {
-				controller = props.controller.navigationStackViewController
-			}
 			canvasWithToolbar {
 				canvasId = props.canvasId
 				view = props.controller.drawingView
 				size = props.size
-				toolbarRenderer = props.canvasToolbarRenderer
+				toolbarRenderer = {
+					it.navigationStackView {
+						controller = props.controller.navigationStackViewController
+						backgroundColor = props.toolbarBackgroundColor
+					}
+					props.canvasToolbarRenderer(it)
+				}
 			}
 		}
 	}

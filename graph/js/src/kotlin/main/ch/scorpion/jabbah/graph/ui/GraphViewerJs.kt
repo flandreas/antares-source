@@ -39,6 +39,7 @@ class GraphViewerJs(
 	props: GraphViewerJsProps
 ) : RComponent<GraphViewerJsProps, GraphViewerJsState>(props), GraphViewerView {
 
+	private val toolbarBackgroundColor = "#f5f5f5f0"
 	private val controller = GraphViewerController()
 
 	init {
@@ -83,6 +84,7 @@ class GraphViewerJs(
 					controller = this@GraphViewerJs.controller.graphNavigationViewController
 					size = props.size
 					addMargins = props.addMargins
+					toolbarBackgroundColor = this@GraphViewerJs.toolbarBackgroundColor
 					canvasToolbarRenderer = {
 						it.graphExecutionToolbar {
 							currentSystemSpeedCategory = this@GraphViewerJs.controller.applicationContextHolder.currentSystemSpeedCategory
@@ -91,6 +93,7 @@ class GraphViewerJs(
 							toggleApplicationModeAction = this@GraphViewerJs.controller.toggleApplicationModeAction
 							pauseAction = this@GraphViewerJs.controller.pauseAction
 							resumeAction = this@GraphViewerJs.controller.resumeAction
+							backgroundColor = this@GraphViewerJs.toolbarBackgroundColor
 						}
 					}
 				}

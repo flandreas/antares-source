@@ -47,7 +47,9 @@ class CanvasElement(
 			styledCanvas {
 				css {
 					flex(1.0)
-					width = 100.pct
+					width = 100.pct - 12.px
+					margin(6.px)
+					border = "1px solid gray"
 				}
 				attrs {
 					id = props.canvasId

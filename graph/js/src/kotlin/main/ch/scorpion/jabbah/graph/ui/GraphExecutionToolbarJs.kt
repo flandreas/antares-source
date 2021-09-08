@@ -7,7 +7,10 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.systemSpeedSlider
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.MGridAlignItems
+import com.ccfraser.muirwik.components.MGridSize
+import com.ccfraser.muirwik.components.mGridContainer
+import com.ccfraser.muirwik.components.mGridItem
 import kotlinx.css.background
 import react.*
 import styled.css
@@ -20,6 +23,7 @@ external interface GraphExecutionToolbarJsProps : RProps {
 	var toggleApplicationModeAction: ToggleApplicationModeAction
 	var pauseAction: Action
 	var resumeAction: Action
+	var backgroundColor: String
 }
 
 fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit): ReactElement {
@@ -43,7 +47,7 @@ class GraphExecutionToolbarJs(
 	override fun RBuilder.render() {
 		styledDiv {
 			css {
-				background = "#f5f5f5f0"
+				background = props.backgroundColor
 			}
 			mGridContainer(alignItems = MGridAlignItems.center) {
 				mGridItem {
