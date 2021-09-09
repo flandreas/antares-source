@@ -70,7 +70,7 @@ class Parser(private val lexer: Lexer) {
 			when (token.type) {
 				PLUS -> eat(PLUS)
 				MINUS -> eat(MINUS)
-				else -> throw SyntaxError("Unexpected token ${token.type.name}")
+				else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
 			}
 			node = BinaryOperation(left = node, op = token, right = term())
 		}
@@ -84,7 +84,7 @@ class Parser(private val lexer: Lexer) {
 			when (token.type) {
 				MULTIPLY -> eat(MULTIPLY)
 				DIVIDE -> eat(DIVIDE)
-				else -> throw SyntaxError("Unexpected token ${token.type.name}")
+				else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
 			}
 			node = BinaryOperation(left = node, op = token, right = factor())
 		}
@@ -112,7 +112,7 @@ class Parser(private val lexer: Lexer) {
 				eat(RPAREN)
 				node
 			}
-			else -> throw SyntaxError("Unexpected token ${token.type.name}")
+			else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
 		}
 	}
 
@@ -125,7 +125,7 @@ class Parser(private val lexer: Lexer) {
 		if (currentToken!!.type == type) {
 			currentToken = lexer.nextToken()
 		} else {
-			throw SyntaxError("Expected ${type.name}")
+			throw SyntaxError("Expected ${type.name} at ${lexer.currentLocation}")
 		}
 	}
 }

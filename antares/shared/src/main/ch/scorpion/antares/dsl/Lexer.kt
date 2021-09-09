@@ -47,6 +47,12 @@ class Lexer(private val text: String) {
 	/** Contains the [Char] in [text] at position [pos], or `null` if the end of [text] has been reached.*/
 	private var currentChar: Char? = if (text.isEmpty()) null else text.first()
 
+	/** Counts the processed number of rows (lines) for syntax error location indication.*/
+	private var rowCounter = 1
+
+	/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
+	private var columnCounter = 0
+
 	/**
 	 * Scans more text and returns the next [Token].
 	 * @throws [SyntaxError] if a syntax error was detected
@@ -100,10 +106,12 @@ class Lexer(private val text: String) {
 				}
 			}
 
-			throw SyntaxError("Invalid character '$currentChar'")
+			throw SyntaxError("Invalid character '$currentChar' at $currentLocation")
 		}
 		return eof()
 	}
+
+	val currentLocation: String get() = "$rowCounter:${columnCounter + 1}"
 
 	/** Determines whether the current character is the begin of a comment.*/
 	private fun isComment(): Boolean {
@@ -130,7 +138,12 @@ class Lexer(private val text: String) {
 
 	/** Advances [pos] one position and updates [currentChar].*/
 	private fun advance() {
-		pos += 1
+		if (currentChar == '\n') {
+			rowCounter++
+			columnCounter = 0
+		}
+		columnCounter++
+		pos++
 		currentChar = if (pos > text.length - 1) null else text[pos]
 	}
 
