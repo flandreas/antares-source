@@ -9,7 +9,9 @@ enum class TokenType {
 	LPAREN,
 	RPAREN,
 	EOF,
-	SEMICOLON
+	SEMICOLON,
+	ASSIGN,
+	ID
 }
 
 /**

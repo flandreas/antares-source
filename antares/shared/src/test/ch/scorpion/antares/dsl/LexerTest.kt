@@ -60,12 +60,37 @@ class LexerTest {
 		assertEof(lexer.nextToken())
 	}
 
+	@Test
+	fun shouldScanAssignment() {
+		val lexer = Lexer("a = 17")
+
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		assertInt(17, lexer.nextToken())
+	}
+
+	@Test
+	fun shouldPeekNextToken() {
+		val lexer = Lexer("a = 17")
+
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.peekNextToken().type)
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		assertEquals(INTEGER, lexer.peekNextToken().type)
+		assertInt(17, lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}
 
 	private fun assertInt(value: Int, token: Token<Any>) {
 		assertEquals(INTEGER, token.type)
+		assertEquals(value, token.value)
+	}
+
+	private fun assertId(value: String, token: Token<Any>) {
+		assertEquals(ID, token.type)
 		assertEquals(value, token.value)
 	}
 }

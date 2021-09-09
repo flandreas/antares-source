@@ -27,6 +27,7 @@ class Lexer(private val text: String) {
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
 		private val EOF_TOKEN = Token<Unit>(EOF)
 		private val SEMICOLON_TOKEN = Token<Unit>(SEMICOLON)
+		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
 
 		private fun plus() = PLUS_TOKEN
 		private fun minus() = MINUS_TOKEN
@@ -36,82 +37,112 @@ class Lexer(private val text: String) {
 		private fun rparen() = RPAREN_TOKEN
 		private fun eof() = EOF_TOKEN
 		private fun semicolon() = SEMICOLON_TOKEN
+		private fun assign() = ASSIGN_TOKEN
 
 		// Factory methods for [Token]s with values
 		private fun integer(value: Int) = Token(INTEGER, value)
+		private fun id(value: String) = Token(ID, value)
 	}
 
-	/** An index into [text].*/
-	private var pos = 0
+	private inner class State {
+		/** An index into [text].*/
+		var pos = 0
 
-	/** Contains the [Char] in [text] at position [pos], or `null` if the end of [text] has been reached.*/
-	private var currentChar: Char? = if (text.isEmpty()) null else text.first()
+		/** Contains the [Char] in [text] at position [pos], or `null` if the end of [text] has been reached.*/
+		var currentChar: Char? = if (text.isEmpty()) null else text.first()
 
-	/** Counts the processed number of rows (lines) for syntax error location indication.*/
-	private var rowCounter = 1
+		/** Counts the processed number of rows (lines) for syntax error location indication.*/
+		var rowCounter = 1
 
-	/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
-	private var columnCounter = 0
+		/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
+		var columnCounter = 0
+
+		val currentLocation: String get() = "$rowCounter:${columnCounter + 1}"
+
+		fun applyFrom(other: State): State {
+			this.pos = other.pos
+			this.currentChar = other.currentChar
+			this.rowCounter = other.rowCounter
+			this.columnCounter = other.columnCounter
+			return this
+		}
+	}
+
+	private val state = State()
+
+	private val peekState = State()
+
+	val currentLocation: String get() = state.currentLocation
 
 	/**
 	 * Scans more text and returns the next [Token].
 	 * @throws [SyntaxError] if a syntax error was detected
 	 */
-	fun nextToken(): Token<Any> {
-		while (currentChar != null) {
+	fun nextToken(): Token<Any> = nextToken(state)
 
-			if (currentChar!!.isWhitespace()) {
-				skipWhitespace()
+	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
+
+	private fun nextToken(state: State): Token<Any> {
+		while (state.currentChar != null) {
+
+			if (state.currentChar!!.isWhitespace()) {
+				skipWhitespace(state)
 				continue
 			}
 
 			if (isComment()) {
-				advance()
+				advance(state)
 				skipComment()
 				continue
 			}
 
-			if (currentChar!!.isDigit()) {
-				return number()
+			if (state.currentChar!!.isDigit()) {
+				return number(state)
 			}
 
-			when (currentChar!!) {
+			if (state.currentChar!!.isLetter()) {
+				return id(state)
+			}
+
+			when (state.currentChar!!) {
 				'/' -> {
-					advance()
+					advance(state)
 					return divide()
 				}
 				'+' -> {
-					advance()
+					advance(state)
 					return plus()
 				}
 				'-' -> {
-					advance()
+					advance(state)
 					return minus()
 				}
 				'*' -> {
-					advance()
+					advance(state)
 					return multiply()
 				}
 				'(' -> {
-					advance()
+					advance(state)
 					return lparen()
 				}
 				')' -> {
-					advance()
+					advance(state)
 					return rparen()
 				}
 				';' -> {
-					advance()
+					advance(state)
 					return semicolon()
+				}
+				'=' -> {
+					advance(state)
+					return assign()
 				}
 			}
 
-			throw SyntaxError("Invalid character '$currentChar' at $currentLocation")
+			throw SyntaxError("Invalid character '${state.currentChar}' at ${state.currentLocation}")
 		}
 		return eof()
 	}
-
-	val currentLocation: String get() = "$rowCounter:${columnCounter + 1}"
 
 	/** Determines whether the current character is the begin of a comment.*/
 	private fun isComment(): Boolean {
@@ -123,44 +154,55 @@ class Lexer(private val text: String) {
 	}
 
 	/** Returns an [Int] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
-	private fun number(): Token<Any> {
-		return Companion.integer(integer())
-	}
+	private fun number(state: State): Token<Any> = Companion.integer(integer(state))
 
-	/** Returns the next [Char] (if any) without incrementing [pos].*/
-	private fun peek(): Char? {
-		val peekPos = pos + 1
+	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
+	private fun peek(state: State): Char? {
+		val peekPos = state.pos + 1
 		if (peekPos > text.length - 1) {
 			return null
 		}
 		return text[peekPos]
 	}
 
-	/** Advances [pos] one position and updates [currentChar].*/
-	private fun advance() {
-		if (currentChar == '\n') {
-			rowCounter++
-			columnCounter = 0
+	/** Advances [State.pos] one position and updates [State.currentChar].*/
+	private fun advance(state: State) {
+		if (state.currentChar == '\n') {
+			state.rowCounter++
+			state.columnCounter = 0
 		}
-		columnCounter++
-		pos++
-		currentChar = if (pos > text.length - 1) null else text[pos]
+		state.columnCounter++
+		state.pos++
+		state.currentChar = if (state.pos > text.length - 1) null else text[state.pos]
 	}
 
-	/** Advances until non-whitespace [currentChar] is non-whitespace.*/
-	private fun skipWhitespace() {
-		while (currentChar != null && currentChar!!.isWhitespace()) {
-			advance()
+	/** Advances until non-whitespace [State.currentChar] is non-whitespace.*/
+	private fun skipWhitespace(state: State) {
+		while (state.currentChar != null && state.currentChar!!.isWhitespace()) {
+			advance(state)
 		}
 	}
 
 	/** Returns a multi-digit [Int] consumed from the input text.*/
-	private fun integer(): Int {
+	private fun integer(state: State): Int {
 		val result = StringBuilder()
-		while (currentChar != null && currentChar!!.isDigit()) {
-			result.append(currentChar!!)
-			advance()
+		while (state.currentChar != null && state.currentChar!!.isDigit()) {
+			result.append(state.currentChar!!)
+			advance(state)
 		}
-		return result.toString().toInt()
+		try {
+			return result.toString().toInt()
+		} catch (e: NumberFormatException) {
+			throw SyntaxError("Illegal integer '${result}' at ${state.currentLocation}")
+		}
+	}
+
+	private fun id(state: State): Token<String> {
+		val result = StringBuilder()
+		while (state.currentChar != null && state.currentChar!!.isLetterOrDigit()) {
+			result.append(state.currentChar)
+			advance(state)
+		}
+		return Companion.id(result.toString())
 	}
 }

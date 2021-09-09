@@ -2,6 +2,8 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.dsl.TokenType.*
 
+class InterpreterError(msg: String) : Throwable(msg)
+
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
  */
@@ -9,6 +11,8 @@ class Interpreter(private val node: Node) {
 
 	constructor(parser: Parser): this(parser.parse())
 	constructor(text: String): this(Parser(text))
+
+	private val globalScope = mutableMapOf<String, Int>()
 
 	fun interpret(): Int {
 		return interpret(node)
@@ -21,6 +25,8 @@ class Interpreter(private val node: Node) {
 			is UnaryOperation -> interpret(node)
 			is BinaryOperation -> interpret(node)
 			is Number -> interpret(node)
+			is Assignment -> interpret(node)
+			is Variable -> interpret(node)
 			else -> throw SyntaxError("Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -49,5 +55,17 @@ class Interpreter(private val node: Node) {
 			MINUS -> -interpret(node.expr)
 			else -> throw SyntaxError("Unknown unary operation '${node.op.type.name}'")
 		}
+	}
+
+	private fun interpret(node: Assignment): Int {
+		val name = node.left.token.value!!
+		val value = interpret(node.right)
+		globalScope[name] = value
+		return value
+	}
+
+	private fun interpret(node: Variable): Int {
+		val name = node.token.value!!
+		return globalScope[name] ?: throw InterpreterError("Variable '$name' not found")
 	}
 }

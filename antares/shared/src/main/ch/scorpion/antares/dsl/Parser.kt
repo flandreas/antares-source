@@ -9,7 +9,9 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     statementList : statement
  *               | statement ";" statementList
  *     statement : expr
+ *               | assignment
  *               | empty
+ *     assignment : variable "=" expr
  *     empty : ""
  *     expr : term (("+" | "-") term)*
  *     term : factor (("*" | "/") factor)*
@@ -17,6 +19,8 @@ import ch.scorpion.antares.dsl.TokenType.*
  *            | "-" factor
  *            | INTEGER
  *            | "(" expr ")"
+ *            | variable
+ *     variable : ID
  * </pre>
  */
 class Parser(private val lexer: Lexer) {
@@ -55,13 +59,31 @@ class Parser(private val lexer: Lexer) {
 	private fun statement(): Node {
 		return when (currentToken!!.type) {
 			EOF -> empty()
+			ID -> {
+				when (lexer.peekNextToken().type) {
+					ASSIGN -> assignment()
+					else -> expr()
+				}
+			}
 			else -> expr()
 		}
 	}
 
-	private fun empty(): Node {
-		return NoOp()
+	private fun assignment(): Node {
+		val left = variable()
+		val token = currentToken as Token<Assignment>
+		eat(ASSIGN)
+		val right = expr()
+		return Assignment(left, token, right)
 	}
+
+	private fun variable(): Variable {
+		val node = Variable(currentToken as Token<String>)
+		eat(ID)
+		return node
+	}
+
+	private fun empty(): Node = NoOp()
 
 	private fun expr(): Node {
 		var node = term()
@@ -111,6 +133,9 @@ class Parser(private val lexer: Lexer) {
 				val node = expr()
 				eat(RPAREN)
 				node
+			}
+			ID -> {
+				variable()
 			}
 			else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
 		}

@@ -48,4 +48,15 @@ class InterpreterTest {
 
 		assertEquals(50, result)
 	}
+
+	@Test
+	fun shouldInterpretAssignments() {
+		val result = Interpreter("""
+			a = 5;
+			b = 7 * a;
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(35, result)
+	}
 }
