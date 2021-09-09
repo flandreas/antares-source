@@ -30,6 +30,8 @@ class Lexer(private val text: String) {
 		private val EOF_TOKEN = Token<Unit>(EOF)
 		private val EOL_TOKEN = Token<Unit>(EOL)
 		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
+		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
+		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 
 		private fun plus() = PLUS_TOKEN
 		private fun minus() = MINUS_TOKEN
@@ -40,6 +42,8 @@ class Lexer(private val text: String) {
 		private fun eof() = EOF_TOKEN
 		private fun eol() = EOL_TOKEN
 		private fun assign() = ASSIGN_TOKEN
+		private fun lcurley() = LCURLEY_TOKEN
+		private fun rcurley() = RCURLEY_TOKEN
 
 		// Factory methods for [Token]s with values
 		private fun integer(value: Int) = Token(INTEGER, value)
@@ -139,6 +143,14 @@ class Lexer(private val text: String) {
 				'=' -> {
 					advance(state)
 					return assign()
+				}
+				'{' -> {
+					advance(state)
+					return lcurley()
+				}
+				'}' -> {
+					advance(state)
+					return rcurley()
 				}
 			}
 

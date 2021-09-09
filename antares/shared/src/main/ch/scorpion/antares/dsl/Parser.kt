@@ -7,12 +7,14 @@ import ch.scorpion.antares.dsl.TokenType.*
  *
  * <pre>
  *     statementList : statement
- *               | statement "\n" statementList
+ *               | statement EOL (EOL)* statementList
  *     statement : expr
  *               | assignment
+ *               | block
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
+ *     block : "{" (EOL)* statementList (EOL)* "}"
  *     expr : term (("+" | "-") term)*
  *     term : factor (("*" | "/") factor)*
  *     factor : "+" factor
@@ -46,6 +48,7 @@ class Parser(private val lexer: Lexer) {
 		val list = mutableListOf(node)
 		while (currentToken!!.type == EOL) {
 			eat(EOL)
+			eatNewlines()
 			list.add(statement())
 		}
 		list.lastOrNull()?.let {
@@ -65,6 +68,8 @@ class Parser(private val lexer: Lexer) {
 					else -> expr()
 				}
 			}
+			LCURLEY -> block()
+			RCURLEY -> empty()
 			else -> expr()
 		}
 	}
@@ -81,6 +86,16 @@ class Parser(private val lexer: Lexer) {
 		val node = Variable(currentToken as Token<String>)
 		eat(ID)
 		return node
+	}
+
+	private fun block(): Node {
+		eat(LCURLEY)
+		eatNewlines()
+		val statementList = statementList()
+		eatNewlines()
+		eat(RCURLEY)
+		eatNewlines()
+		return Compound(statementList)
 	}
 
 	private fun empty(): Node = NoOp()
@@ -151,6 +166,12 @@ class Parser(private val lexer: Lexer) {
 			currentToken = lexer.nextToken()
 		} else {
 			throw SyntaxError("Expected ${type.name} at ${lexer.currentLocation}")
+		}
+	}
+
+	private fun eatNewlines() {
+		while (currentToken != null && currentToken!!.type == EOL) {
+			eat(EOL)
 		}
 	}
 }

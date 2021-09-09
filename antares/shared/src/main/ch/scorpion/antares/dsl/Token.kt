@@ -11,7 +11,9 @@ enum class TokenType {
 	EOL,
 	EOF,
 	ASSIGN,
-	ID
+	ID,
+	LCURLEY,
+	RCURLEY
 }
 
 /**

@@ -104,6 +104,23 @@ class LexerTest {
 		assertEquals(EOF, lexer.nextToken().type)
 	}
 
+	@Test
+	fun shouldScanBlock() {
+		val lexer = Lexer("""
+			{
+				a = 12
+			}
+		""".trimIndent())
+
+		assertEquals(LCURLEY, lexer.nextToken().type)
+		assertEquals(EOL, lexer.nextToken().type)
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		assertInt(12, lexer.nextToken())
+		assertEquals(EOL, lexer.nextToken().type)
+		assertEquals(RCURLEY, lexer.nextToken().type)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

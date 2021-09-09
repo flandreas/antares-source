@@ -28,4 +28,47 @@ class ParserTest {
 		val parser = Parser("a * (7 - b)")
 		parser.parse()
 	}
+
+	@Test
+	fun shouldParseEmptyLinesBetweenStatements() {
+		val parser = Parser("""
+			a = 5
+			
+			b = 12
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- =
+			-- a
+			-- 5
+			- =
+			-- b
+			-- 12
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseBlock() {
+		val parser = Parser("""
+			{
+				b = 5
+			}
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- Compound
+			-- =
+			--- b
+			--- 5
+		""".trimIndent())
+	}
+
+	private fun assertAST(node: Node, ast: String) {
+		val printer = SyntaxTreePrinter()
+		node.accept(printer)
+
+		assertEquals(ast, printer.result)
+	}
 }
