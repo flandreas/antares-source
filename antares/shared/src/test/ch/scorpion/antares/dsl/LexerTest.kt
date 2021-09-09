@@ -121,6 +121,14 @@ class LexerTest {
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 
+	@Test
+	fun shouldScanVar() {
+		val lexer = Lexer("var a")
+
+		assertEquals(VAR, lexer.nextToken().type)
+		assertId("a", lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

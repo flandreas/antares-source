@@ -13,7 +13,8 @@ enum class TokenType {
 	ASSIGN,
 	ID,
 	LCURLEY,
-	RCURLEY
+	RCURLEY,
+	VAR
 }
 
 /**

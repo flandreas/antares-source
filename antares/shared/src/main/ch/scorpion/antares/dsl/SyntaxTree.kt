@@ -91,3 +91,15 @@ data class Assignment(val left: Variable, val op: Token<Assignment>, val right: 
 		return visitor.visitLeave(this)
 	}
 }
+
+data class Declaration(val left: Variable, val right: Node?) : AbstractNode() {
+	override fun toString(): String = "Var"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			right?.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}

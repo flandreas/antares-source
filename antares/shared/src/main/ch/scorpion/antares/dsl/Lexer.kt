@@ -32,6 +32,7 @@ class Lexer(private val text: String) {
 		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
+		private val VAR_TOKEN = Token<String>(VAR)
 
 		private fun plus() = PLUS_TOKEN
 		private fun minus() = MINUS_TOKEN
@@ -44,6 +45,10 @@ class Lexer(private val text: String) {
 		private fun assign() = ASSIGN_TOKEN
 		private fun lcurley() = LCURLEY_TOKEN
 		private fun rcurley() = RCURLEY_TOKEN
+
+		private val RESERVED_KEYWORDS = mapOf(
+			"var" to VAR_TOKEN
+		)
 
 		// Factory methods for [Token]s with values
 		private fun integer(value: Int) = Token(INTEGER, value)
@@ -223,6 +228,7 @@ class Lexer(private val text: String) {
 			result.append(state.currentChar)
 			advance(state)
 		}
-		return Companion.id(result.toString())
+		val name = result.toString()
+		return RESERVED_KEYWORDS.getOrElse(name) { Companion.id(name) }
 	}
 }

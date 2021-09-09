@@ -27,6 +27,7 @@ class Interpreter(private val node: Node) {
 			is Number -> interpret(node)
 			is Assignment -> interpret(node)
 			is Variable -> interpret(node)
+			is Declaration -> interpret(node)
 			else -> throw SyntaxError("Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -67,5 +68,17 @@ class Interpreter(private val node: Node) {
 	private fun interpret(node: Variable): Int {
 		val name = node.token.value!!
 		return globalScope[name] ?: throw InterpreterError("Variable '$name' not found")
+	}
+
+	private fun interpret(node: Declaration): Int {
+		val name = node.left.token.value!!
+		val value = node.right?.let { interpret(it) } ?: 0
+
+		if (globalScope[name] != null) {
+			throw InterpreterError("Variable '$name' already defined")
+		}
+
+		globalScope[name] = value
+		return value
 	}
 }

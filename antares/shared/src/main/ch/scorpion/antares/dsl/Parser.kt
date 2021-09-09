@@ -11,10 +11,12 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     statement : expr
  *               | assignment
  *               | block
+ *               | declaration
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
  *     block : "{" (EOL)* statementList (EOL)* "}"
+ *     declaration : VAR (variable | assignment)
  *     expr : term (("+" | "-") term)*
  *     term : factor (("*" | "/") factor)*
  *     factor : "+" factor
@@ -70,11 +72,12 @@ class Parser(private val lexer: Lexer) {
 			}
 			LCURLEY -> block()
 			RCURLEY -> empty()
+			VAR -> declaration()
 			else -> expr()
 		}
 	}
 
-	private fun assignment(): Node {
+	private fun assignment(): Assignment {
 		val left = variable()
 		val token = currentToken as Token<Assignment>
 		eat(ASSIGN)
@@ -96,6 +99,16 @@ class Parser(private val lexer: Lexer) {
 		eat(RCURLEY)
 		eatNewlines()
 		return Compound(statementList)
+	}
+
+	private fun declaration(): Node {
+		eat(VAR)
+		return if (lexer.peekNextToken().type == ASSIGN) {
+			val assignment = assignment()
+			Declaration(assignment.left, assignment.right)
+		} else {
+			Declaration(variable(), null)
+		}
 	}
 
 	private fun empty(): Node = NoOp()

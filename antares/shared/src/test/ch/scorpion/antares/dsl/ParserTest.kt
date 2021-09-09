@@ -65,6 +65,41 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseDeclarationWithoutExpression() {
+		val parser = Parser("""
+			var a
+			a = 5
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- Var
+			-- a
+			- =
+			-- a
+			-- 5
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseDeclarationWithExpression() {
+		val parser = Parser("""
+			var a = 5
+			b = a
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- Var
+			-- a
+			-- 5
+			- =
+			-- b
+			-- a
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

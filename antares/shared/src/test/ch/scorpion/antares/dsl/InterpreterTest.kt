@@ -2,6 +2,7 @@ package ch.scorpion.antares.dsl
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class InterpreterTest {
 
@@ -70,5 +71,25 @@ class InterpreterTest {
 		""".trimIndent()).interpret()
 
 		assertEquals(35, result)
+	}
+
+	@Test
+	fun shouldInterpretDeclaration() {
+		val result = Interpreter("""
+			var a = 5
+			b = 2 * a
+		""".trimIndent()).interpret()
+
+		assertEquals(10, result)
+	}
+
+	@Test
+	fun shouldNotRedeclare() {
+		assertFailsWith(InterpreterError::class) {
+			Interpreter("""
+				var a = 5
+				var a = 6
+			""".trimIndent()).interpret()
+		}
 	}
 }
