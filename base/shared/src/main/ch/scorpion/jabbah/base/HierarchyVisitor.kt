@@ -11,7 +11,7 @@ package ch.scorpion.jabbah.base
  *
  * The `accept` method of a composite node should be implemented as follows:
  *
- *      boolean accept(HierarchyVisitor v) {
+ *      fun accept(HierarchyVisitor v): Boolean {
  *          if (v.visitEnter(this)) {
  *              Iterator<Child> iter = children.iterator();
  *              while (iter.hasNext() {
@@ -25,7 +25,7 @@ package ch.scorpion.jabbah.base
  *
  * The `accept` method of a leaf node should be implemented as follows:
  *
- *      boolean accept(HierarchyVisitor v) {
+ *      fun accept(HierarchyVisitor v): Boolean {
  *          return v.visit(this);
  *      }
  *

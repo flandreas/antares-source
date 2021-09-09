@@ -1,24 +1,93 @@
 package ch.scorpion.antares.dsl
 
-interface Node
+import ch.scorpion.jabbah.base.HierarchyVisitor
+
+interface Node {
+	fun accept(visitor: HierarchyVisitor): Boolean
+}
+
+abstract class AbstractNode : Node {
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		return visitor.visit(this)
+	}
+}
 
 data class UnaryOperation(
 	val op: Token<Any>,
 	val expr: Node
-) : Node
+) : AbstractNode() {
+
+	override fun toString(): String {
+		return when (op.type) {
+			TokenType.PLUS -> "Unary +"
+			TokenType.MINUS -> "Unary -"
+			else -> throw IllegalStateException("unsupported unary op ${op.type}")
+		}
+	}
+}
 
 data class BinaryOperation(
 	val left: Node,
 	val op: Token<Any>,
 	val right: Node
-) : Node
+) : AbstractNode() {
 
-data class Number(val token: Token<Int>) : Node
+	override fun toString(): String {
+		return when (op.type) {
+			TokenType.PLUS -> "+"
+			TokenType.MINUS -> "-"
+			TokenType.MULTIPLY -> "*"
+			TokenType.DIVIDE -> "/"
+			else -> throw IllegalStateException("unsupported binary op ${op.type}")
+		}
+	}
 
-class NoOp : Node
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			right.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
 
-class Compound(val children: List<Node>): Node
+data class Number(val token: Token<Int>) : AbstractNode() {
+	override fun toString(): String = token.value!!.toString()
+}
 
-data class Variable(val token: Token<String>) : Node
+class NoOp : AbstractNode() {
+	override fun toString(): String = "NoOp"
+}
 
-data class Assignment(val left: Variable, val op: Token<Assignment>, val right: Node) : Node
+class Compound(val children: List<Node>): AbstractNode() {
+
+	override fun toString(): String = "Compound"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			for (child in children) {
+				if (!child.accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+data class Variable(val token: Token<String>) : AbstractNode() {
+	override fun toString(): String = token.value!!
+}
+
+data class Assignment(val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode() {
+
+	override fun toString(): String = "="
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			right.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
