@@ -80,6 +80,30 @@ class LexerTest {
 		assertInt(17, lexer.nextToken())
 	}
 
+	@Test
+	fun shouldSkipStartLineComment() {
+		val lexer = Lexer("""
+			a = 5;
+			// a = 12;
+			a
+		""".trimIndent())
+
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		assertInt(5, lexer.nextToken())
+		assertEquals(SEMICOLON, lexer.nextToken().type)
+		assertId("a", lexer.nextToken())
+	}
+
+	@Test
+	fun shouldSkipMidLineComment() {
+		val lexer = Lexer("a = 5 // + 7")
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		assertInt(5, lexer.nextToken())
+		assertEquals(EOF, lexer.nextToken().type)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

@@ -12,6 +12,8 @@ class SyntaxError(msg: String) : Throwable(msg)
  * Inspects the [Char] at the current position, advances the current position, and
  * returns the [Token] that corresponds with the consumed [Char].
  *
+ * Line comments start with // and eliminate everything to the next newline character.
+ *
  * @property text the text to be scanned
  */
 class Lexer(private val text: String) {
@@ -90,9 +92,10 @@ class Lexer(private val text: String) {
 				continue
 			}
 
-			if (isComment()) {
+			if (isComment(state)) {
 				advance(state)
-				skipComment()
+				advance(state)
+				skipComment(state)
 				continue
 			}
 
@@ -145,12 +148,14 @@ class Lexer(private val text: String) {
 	}
 
 	/** Determines whether the current character is the begin of a comment.*/
-	private fun isComment(): Boolean {
-		return false
-	}
+	private fun isComment(state: State): Boolean =
+		state.currentChar == '/' && peek(state) == '/'
 
-	private fun skipComment() {
-		// empty
+	private fun skipComment(state: State) {
+		while (state.currentChar != null && state.currentChar != '\n') {
+			advance(state)
+		}
+		advance(state)
 	}
 
 	/** Returns an [Int] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
