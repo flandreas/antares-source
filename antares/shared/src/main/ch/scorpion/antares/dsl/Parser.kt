@@ -7,7 +7,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *
  * <pre>
  *     statementList : statement
- *               | statement ";" statementList
+ *               | statement "\n" statementList
  *     statement : expr
  *               | assignment
  *               | empty
@@ -44,8 +44,8 @@ class Parser(private val lexer: Lexer) {
 	private fun statementList(): List<Node> {
 		val node = statement()
 		val list = mutableListOf(node)
-		while (currentToken!!.type == SEMICOLON) {
-			eat(SEMICOLON)
+		while (currentToken!!.type == EOL) {
+			eat(EOL)
 			list.add(statement())
 		}
 		list.lastOrNull()?.let {

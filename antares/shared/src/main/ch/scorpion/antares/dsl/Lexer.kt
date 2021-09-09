@@ -28,7 +28,7 @@ class Lexer(private val text: String) {
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
 		private val EOF_TOKEN = Token<Unit>(EOF)
-		private val SEMICOLON_TOKEN = Token<Unit>(SEMICOLON)
+		private val EOL_TOKEN = Token<Unit>(EOL)
 		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
 
 		private fun plus() = PLUS_TOKEN
@@ -38,7 +38,7 @@ class Lexer(private val text: String) {
 		private fun lparen() = LPAREN_TOKEN
 		private fun rparen() = RPAREN_TOKEN
 		private fun eof() = EOF_TOKEN
-		private fun semicolon() = SEMICOLON_TOKEN
+		private fun eol() = EOL_TOKEN
 		private fun assign() = ASSIGN_TOKEN
 
 		// Factory methods for [Token]s with values
@@ -87,7 +87,7 @@ class Lexer(private val text: String) {
 	private fun nextToken(state: State): Token<Any> {
 		while (state.currentChar != null) {
 
-			if (state.currentChar!!.isWhitespace()) {
+			if (isWhitespace(state)) {
 				skipWhitespace(state)
 				continue
 			}
@@ -132,9 +132,9 @@ class Lexer(private val text: String) {
 					advance(state)
 					return rparen()
 				}
-				';' -> {
+				'\n' -> {
 					advance(state)
-					return semicolon()
+					return eol()
 				}
 				'=' -> {
 					advance(state)
@@ -181,9 +181,12 @@ class Lexer(private val text: String) {
 		state.currentChar = if (state.pos > text.length - 1) null else text[state.pos]
 	}
 
+	private fun isWhitespace(state: State): Boolean =
+		state.currentChar != null && state.currentChar!!.isWhitespace() && state.currentChar != '\n'
+
 	/** Advances until non-whitespace [State.currentChar] is non-whitespace.*/
 	private fun skipWhitespace(state: State) {
-		while (state.currentChar != null && state.currentChar!!.isWhitespace()) {
+		while (isWhitespace(state)) {
 			advance(state)
 		}
 	}

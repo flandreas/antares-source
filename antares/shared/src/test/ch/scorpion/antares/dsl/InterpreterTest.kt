@@ -32,8 +32,8 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretStatementList() {
 		val result = Interpreter("""
-			4 + 7;
-			5 * 10;
+			4 + 7
+			5 * 10
 		""".trimIndent()).interpret()
 
 		assertEquals(50, result)
@@ -42,7 +42,7 @@ class InterpreterTest {
 	@Test
 	fun shouldNotNeedSemicolonForLastStatement() {
 		val result = Interpreter("""
-			4 + 7;
+			4 + 7
 			5 * 10
 		""".trimIndent()).interpret()
 
@@ -52,8 +52,8 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretAssignments() {
 		val result = Interpreter("""
-			a = 5;
-			b = 7 * a;
+			a = 5
+			b = 7 * a
 			b
 		""".trimIndent()).interpret()
 

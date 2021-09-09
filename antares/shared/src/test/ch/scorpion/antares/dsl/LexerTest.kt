@@ -83,15 +83,15 @@ class LexerTest {
 	@Test
 	fun shouldSkipStartLineComment() {
 		val lexer = Lexer("""
-			a = 5;
-			// a = 12;
+			a = 5
+			// a = 12
 			a
 		""".trimIndent())
 
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
 		assertInt(5, lexer.nextToken())
-		assertEquals(SEMICOLON, lexer.nextToken().type)
+		assertEquals(EOL, lexer.nextToken().type)
 		assertId("a", lexer.nextToken())
 	}
 
