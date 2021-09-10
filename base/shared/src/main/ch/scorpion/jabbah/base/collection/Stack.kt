@@ -19,6 +19,9 @@ class Stack<T> {
     }
 
     fun pop(): T {
+	    if (items.isEmpty()) {
+		    throw EmptyStackException()
+	    }
         val obj = peek()
         items.removeAt(items.size - 1)
         return obj

@@ -10,7 +10,7 @@ class Interpreter(private val node: Node) {
 	constructor(parser: Parser): this(parser.parse())
 	constructor(text: String): this(Parser(text))
 
-	private val globalScope = mutableMapOf<String, Int>()
+	private val memory = Memory()
 
 	fun interpret(): Int {
 		return interpret(node)
@@ -18,6 +18,7 @@ class Interpreter(private val node: Node) {
 
 	private fun interpret(node: Node): Int {
 		return when (node) {
+			is Block -> block(node)
 			is Compound -> compound(node)
 			is NoOp -> 0
 			is UnaryOperation -> unaryOperation(node)
@@ -33,6 +34,13 @@ class Interpreter(private val node: Node) {
 	private fun compound(node: Compound): Int {
 		var result = 0
 		node.children.forEach { result = interpret(it) }
+		return result
+	}
+
+	private fun block(node: Block): Int {
+		memory.enterScope("block")
+		val result = compound(node)
+		memory.exitScope()
 		return result
 	}
 
@@ -56,22 +64,25 @@ class Interpreter(private val node: Node) {
 		}
 	}
 
+	/** Also supports implicit declaration. */
 	private fun assignment(node: Assignment): Int {
-		val name = node.left.token.value!!
+		if (!memory.isDefined(node.left)) {
+			memory.define(node.left)
+		}
 		val value = interpret(node.right)
-		globalScope[name] = value
+		memory.setValue(node.left, value)
 		return value
 	}
 
-	private fun variable(node: Variable): Int {
-		val name = node.token.value!!
-		return globalScope[name] ?: throw RuntimeError(node.location, "Variable '$name' not found")
-	}
+	private fun variable(node: Variable): Int =
+		memory.getValue(node) as Int
 
 	private fun declaration(node: Declaration): Int {
-		val name = node.left.token.value!!
-		val value = node.right?.let { interpret(it) } ?: 0
-		globalScope[name] = value
-		return value
+		if (!memory.isLocallyDefined(node.left)) {
+			memory.define(node.left)
+		}
+		val value = node.right?.let { interpret(it) }
+		value?.let { memory.setValue(node.left, value) }
+		return value ?: 0
 	}
 }

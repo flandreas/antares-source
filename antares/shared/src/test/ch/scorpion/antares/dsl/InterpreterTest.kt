@@ -85,7 +85,7 @@ class InterpreterTest {
 
 	@Test
 	fun shouldNotRedeclare() {
-		assertFailsWith(RuntimeError::class) {
+		assertFailsWith(SemanticError::class) {
 			try {
 				Interpreter("""
 				var a = 5
@@ -102,12 +102,12 @@ class InterpreterTest {
 		val result = Interpreter("""
 			a = 5
 			{
-				a = 0
+				a = 2
 			}
 			a
 		""".trimIndent()).interpret()
 
-		assertEquals(0, result)
+		assertEquals(2, result)
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class InterpreterTest {
 		val result = Interpreter("""
 			a = 5
 			{
-				var a = 0
+				var a = 2
 			}
 			a
 		""".trimIndent()).interpret()

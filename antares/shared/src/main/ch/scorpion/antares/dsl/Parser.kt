@@ -105,7 +105,6 @@ class Parser(private val lexer: Lexer) {
 			val statementList = statementList()
 			eatNewlines()
 			eat(RCURLEY)
-			eatNewlines()
 			return Block(location, statementList)
 		}
 	}

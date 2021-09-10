@@ -53,6 +53,9 @@ class SemanticAnalyser : EmptyHierarchyVisitor() {
 		val varName = declaration.left.token.value as String
 		val typeSymbol = null as BuiltInTypeSymbol?
 		val varSymbol = VariableSymbol(varName, typeSymbol)
+		if (scope.lookup(varName, currentScopeOnly = true) != null) {
+			throw SemanticError(declaration.location, "Variable '$varName' already declared")
+		}
 		scope.define(varSymbol)
 	}
 
@@ -77,7 +80,7 @@ class SemanticAnalyser : EmptyHierarchyVisitor() {
 
 	private fun variable(variable: Variable) {
 		val name = variable.token.value as String
-		if (scope.lookup(name, currentScopeOnly = true) == null && currentlyDeclaredVariableName != name) {
+		if (scope.lookup(name) == null && currentlyDeclaredVariableName != name) {
 			throw SemanticError(variable.location, "Variable '$name' not defined")
 		}
 	}

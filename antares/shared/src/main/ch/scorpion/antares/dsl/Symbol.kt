@@ -13,8 +13,10 @@ class ScopedSymbolTable(val name: String, val level: Int, val enclosingScope: Sc
 	val size: Int get() = symbols.size
 
 	init {
-		Lexer.getReservedWords().forEach {
-			define(BuiltInTypeSymbol(it))
+		if (level <= 1) {
+			Lexer.getReservedWords().forEach {
+				define(BuiltInTypeSymbol(it))
+			}
 		}
 	}
 
