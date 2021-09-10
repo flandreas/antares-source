@@ -24,7 +24,7 @@ class SymbolTableBuilderTest {
 
 	@Test
 	fun shouldThrowNameErrorWithUndefinedVariable() {
-		assertFailsWith(NameError::class) {
+		assertFailsWith(SemanticError::class) {
 			val ast = Parser("""
 			var a = 5
 			b = c

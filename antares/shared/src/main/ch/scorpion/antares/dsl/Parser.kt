@@ -43,7 +43,12 @@ class Parser(private val lexer: Lexer) {
 	 * Parses the sentence this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
-	fun parse(): Node = Compound(statementList())
+	fun parse(): Node {
+		return Compound(lexer.location, statementList()).also {
+			// Semantic analysis
+			it.accept(SymbolTableBuilder())
+		}
+	}
 
 	private fun statementList(): List<Node> {
 		val node = statement()
@@ -78,51 +83,59 @@ class Parser(private val lexer: Lexer) {
 	}
 
 	private fun assignment(): Assignment {
-		val left = variable()
-		val token = currentToken as Token<Assignment>
-		eat(ASSIGN)
-		val right = expr()
-		return Assignment(left, token, right)
+		lexer.location.let { location ->
+			val left = variable()
+			val token = currentToken as Token<Assignment>
+			eat(ASSIGN)
+			val right = expr()
+			return Assignment(location, left, token, right)
+		}
 	}
 
 	private fun variable(): Variable {
-		val node = Variable(currentToken as Token<String>)
+		val node = Variable(lexer.location, currentToken as Token<String>)
 		eat(ID)
 		return node
 	}
 
 	private fun block(): Node {
-		eat(LCURLEY)
-		eatNewlines()
-		val statementList = statementList()
-		eatNewlines()
-		eat(RCURLEY)
-		eatNewlines()
-		return Compound(statementList)
-	}
-
-	private fun declaration(): Node {
-		eat(VAR)
-		return if (lexer.peekNextToken().type == ASSIGN) {
-			val assignment = assignment()
-			Declaration(assignment.left, assignment.right)
-		} else {
-			Declaration(variable(), null)
+		lexer.location.let { location ->
+			eat(LCURLEY)
+			eatNewlines()
+			val statementList = statementList()
+			eatNewlines()
+			eat(RCURLEY)
+			eatNewlines()
+			return Compound(location, statementList)
 		}
 	}
 
-	private fun empty(): Node = NoOp()
+	private fun declaration(): Node {
+		lexer.location.let { location ->
+			eat(VAR)
+			return if (lexer.peekNextToken().type == ASSIGN) {
+				val assignment = assignment()
+				Declaration(location, assignment.left, assignment.right)
+			} else {
+				Declaration(location, variable(), null)
+			}
+		}
+	}
+
+	private fun empty(): Node = NoOp(lexer.location)
 
 	private fun expr(): Node {
 		var node = term()
 		while (currentToken!!.type in TERM_OPERATORS) {
-			val token = currentToken!!
-			when (token.type) {
-				PLUS -> eat(PLUS)
-				MINUS -> eat(MINUS)
-				else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
+			lexer.location.let { location ->
+				val token = currentToken!!
+				when (token.type) {
+					PLUS -> eat(PLUS)
+					MINUS -> eat(MINUS)
+					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
+				}
+				node = BinaryOperation(location, left = node, op = token, right = term())
 			}
-			node = BinaryOperation(left = node, op = token, right = term())
 		}
 		return node
 	}
@@ -130,42 +143,46 @@ class Parser(private val lexer: Lexer) {
 	private fun term(): Node {
 		var node = factor()
 		while (currentToken!!.type in FACTOR_OPERATORS) {
-			val token = currentToken!!
-			when (token.type) {
-				MULTIPLY -> eat(MULTIPLY)
-				DIVIDE -> eat(DIVIDE)
-				else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
+			lexer.location.let { location ->
+				val token = currentToken!!
+				when (token.type) {
+					MULTIPLY -> eat(MULTIPLY)
+					DIVIDE -> eat(DIVIDE)
+					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
+				}
+				node = BinaryOperation(location, left = node, op = token, right = factor())
 			}
-			node = BinaryOperation(left = node, op = token, right = factor())
 		}
 		return node
 	}
 
 	private fun factor(): Node {
-		val token = currentToken!!
-		return when (token.type) {
-			PLUS -> {
-				eat(PLUS)
-				return UnaryOperation(token, factor())
+		lexer.location.let { location ->
+			val token = currentToken!!
+			return when (token.type) {
+				PLUS -> {
+					eat(PLUS)
+					return UnaryOperation(location, token, factor())
+				}
+				MINUS -> {
+					eat(MINUS)
+					return UnaryOperation(location, token, factor())
+				}
+				INTEGER -> {
+					eat(INTEGER)
+					return Number(location, token as Token<Int>)
+				}
+				LPAREN -> {
+					eat(LPAREN)
+					val node = expr()
+					eat(RPAREN)
+					node
+				}
+				ID -> {
+					variable()
+				}
+				else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
 			}
-			MINUS -> {
-				eat(MINUS)
-				return UnaryOperation(token, factor())
-			}
-			INTEGER -> {
-				eat(INTEGER)
-				return Number(token as Token<Int>)
-			}
-			LPAREN -> {
-				eat(LPAREN)
-				val node = expr()
-				eat(RPAREN)
-				node
-			}
-			ID -> {
-				variable()
-			}
-			else -> throw SyntaxError("Unexpected token ${token.type.name} at ${lexer.currentLocation}")
 		}
 	}
 
@@ -178,7 +195,7 @@ class Parser(private val lexer: Lexer) {
 		if (currentToken!!.type == type) {
 			currentToken = lexer.nextToken()
 		} else {
-			throw SyntaxError("Expected ${type.name} at ${lexer.currentLocation}")
+			throw SyntaxError(lexer.location, "Expected ${type.name}")
 		}
 	}
 

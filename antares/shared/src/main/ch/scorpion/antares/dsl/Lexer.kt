@@ -2,8 +2,10 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.dsl.TokenType.*
 
-/** Thrown by [Lexer.nextToken] if a syntax error is detected.*/
-class SyntaxError(msg: String) : Throwable(msg)
+/** Identifies a location in the code to identify error locations.*/
+data class CodeLocation(val row: Int, val column: Int) {
+	override fun toString(): String = "$row:$column"
+}
 
 /**
  * Lexical analyser, also known as scanner or tokenizer.
@@ -70,7 +72,11 @@ class Lexer(private val text: String) {
 		/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
 		var columnCounter = 0
 
-		val currentLocation: String get() = "$rowCounter:${columnCounter + 1}"
+		var rowAtTokenStart = 1
+
+		var columnAtTokenStart = 0
+
+		val location: CodeLocation get() = CodeLocation(rowAtTokenStart,columnAtTokenStart + 1)
 
 		fun applyFrom(other: State): State {
 			this.pos = other.pos
@@ -85,7 +91,7 @@ class Lexer(private val text: String) {
 
 	private val peekState = State()
 
-	val currentLocation: String get() = state.currentLocation
+	val location: CodeLocation get() = state.location
 
 	/**
 	 * Scans more text and returns the next [Token].
@@ -96,6 +102,9 @@ class Lexer(private val text: String) {
 	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
 
 	private fun nextToken(state: State): Token<Any> {
+		state.rowAtTokenStart = state.rowCounter
+		state.columnAtTokenStart = state.columnAtTokenStart
+
 		while (state.currentChar != null) {
 
 			if (isWhitespace(state)) {
@@ -161,7 +170,7 @@ class Lexer(private val text: String) {
 				}
 			}
 
-			throw SyntaxError("Invalid character '${state.currentChar}' at ${state.currentLocation}")
+			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
 		}
 		return eof()
 	}
@@ -220,7 +229,7 @@ class Lexer(private val text: String) {
 		try {
 			return result.toString().toInt()
 		} catch (e: NumberFormatException) {
-			throw SyntaxError("Illegal integer '${result}' at ${state.currentLocation}")
+			throw SyntaxError(state.location, "Illegal integer '${result}'")
 		}
 	}
 

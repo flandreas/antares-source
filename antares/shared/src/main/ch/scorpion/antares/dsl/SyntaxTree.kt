@@ -3,19 +3,21 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.jabbah.base.HierarchyVisitor
 
 interface Node {
+	val location: CodeLocation
 	fun accept(visitor: HierarchyVisitor): Boolean
 }
 
-abstract class AbstractNode : Node {
+abstract class AbstractNode(override val location: CodeLocation) : Node {
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
 	}
 }
 
-data class UnaryOperation(
+class UnaryOperation(
+	location: CodeLocation,
 	val op: Token<Any>,
 	val expr: Node
-) : AbstractNode() {
+) : AbstractNode(location) {
 
 	override fun toString(): String {
 		return when (op.type) {
@@ -26,11 +28,12 @@ data class UnaryOperation(
 	}
 }
 
-data class BinaryOperation(
+class BinaryOperation(
+	location: CodeLocation,
 	val left: Node,
 	val op: Token<Any>,
 	val right: Node
-) : AbstractNode() {
+) : AbstractNode(location) {
 
 	override fun toString(): String {
 		return when (op.type) {
@@ -51,15 +54,15 @@ data class BinaryOperation(
 	}
 }
 
-data class Number(val token: Token<Int>) : AbstractNode() {
+class Number(location: CodeLocation, val token: Token<Int>) : AbstractNode(location) {
 	override fun toString(): String = token.value!!.toString()
 }
 
-class NoOp : AbstractNode() {
+class NoOp(location: CodeLocation) : AbstractNode(location) {
 	override fun toString(): String = "NoOp"
 }
 
-class Compound(val children: List<Node>): AbstractNode() {
+class Compound(location: CodeLocation, val children: List<Node>): AbstractNode(location) {
 
 	override fun toString(): String = "Compound"
 
@@ -75,13 +78,13 @@ class Compound(val children: List<Node>): AbstractNode() {
 	}
 }
 
-data class Variable(val token: Token<String>) : AbstractNode() {
+class Variable(location: CodeLocation, val token: Token<String>) : AbstractNode(location) {
 	override fun toString(): String = token.value!!
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 }
 
-data class Assignment(val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode() {
+class Assignment(location: CodeLocation, val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode(location) {
 
 	override fun toString(): String = "="
 
@@ -94,7 +97,7 @@ data class Assignment(val left: Variable, val op: Token<Assignment>, val right: 
 	}
 }
 
-data class Declaration(val left: Variable, val right: Node?) : AbstractNode() {
+class Declaration(location: CodeLocation, val left: Variable, val right: Node?) : AbstractNode(location) {
 	override fun toString(): String = "Var"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {

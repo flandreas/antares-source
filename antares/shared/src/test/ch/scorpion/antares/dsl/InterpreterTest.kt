@@ -85,11 +85,15 @@ class InterpreterTest {
 
 	@Test
 	fun shouldNotRedeclare() {
-		assertFailsWith(InterpreterError::class) {
-			Interpreter("""
+		assertFailsWith(RuntimeError::class) {
+			try {
+				Interpreter("""
 				var a = 5
 				var a = 6
 			""".trimIndent()).interpret()
+			} catch (e: Throwable) {
+				throw e
+			}
 		}
 	}
 }

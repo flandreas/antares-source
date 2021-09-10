@@ -1,13 +1,9 @@
 package ch.scorpion.antares.dsl
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.antares.dsl.TokenType.*
-
-class InterpreterError(msg: String) : Throwable(msg)
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
- * TODO: Implement using [HierarchyVisitor]
  */
 class Interpreter(private val node: Node) {
 
@@ -30,7 +26,7 @@ class Interpreter(private val node: Node) {
 			is Assignment -> interpret(node)
 			is Variable -> interpret(node)
 			is Declaration -> interpret(node)
-			else -> throw SyntaxError("Unknown AST node '${node::class.simpleName}'")
+			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
 
@@ -46,7 +42,7 @@ class Interpreter(private val node: Node) {
 			MINUS -> interpret(node.left) - interpret(node.right)
 			MULTIPLY -> interpret(node.left) * interpret(node.right)
 			DIVIDE -> interpret(node.left) / interpret(node.right)
-			else -> throw SyntaxError("Unknown binary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
 
@@ -56,7 +52,7 @@ class Interpreter(private val node: Node) {
 		return when (node.op.type) {
 			PLUS -> +interpret(node.expr)
 			MINUS -> -interpret(node.expr)
-			else -> throw SyntaxError("Unknown unary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
 		}
 	}
 
@@ -69,7 +65,7 @@ class Interpreter(private val node: Node) {
 
 	private fun interpret(node: Variable): Int {
 		val name = node.token.value!!
-		return globalScope[name] ?: throw InterpreterError("Variable '$name' not found")
+		return globalScope[name] ?: throw RuntimeError(node.location, "Variable '$name' not found")
 	}
 
 	private fun interpret(node: Declaration): Int {
@@ -77,7 +73,7 @@ class Interpreter(private val node: Node) {
 		val value = node.right?.let { interpret(it) } ?: 0
 
 		if (globalScope[name] != null) {
-			throw InterpreterError("Variable '$name' already defined")
+			throw RuntimeError(node.location, "Variable '$name' already defined")
 		}
 
 		globalScope[name] = value

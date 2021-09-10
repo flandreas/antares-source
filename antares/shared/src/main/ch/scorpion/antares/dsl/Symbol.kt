@@ -2,8 +2,6 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 
-class NameError(msg: String): Throwable(msg)
-
 open class Symbol(val name: String, val type: Symbol? = null)
 
 class BuiltInTypeSymbol(name: String) : Symbol(name)
@@ -71,7 +69,7 @@ class SymbolTableBuilder : EmptyHierarchyVisitor() {
 	private fun visitVariable(variable: Variable) {
 		val name = variable.token.value as String
 		if (symbolTable.lookup(name) == null && currentlyDeclaredVariableName != name) {
-			throw NameError("Variable $name not defined")
+			throw SemanticError(variable.location, "Variable '$name' not defined")
 		}
 	}
 

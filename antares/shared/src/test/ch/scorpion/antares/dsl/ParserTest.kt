@@ -25,7 +25,11 @@ class ParserTest {
 
 	@Test
 	fun shouldParseExpressionWithVariables() {
-		val parser = Parser("a * (7 - b)")
+		val parser = Parser("""
+			var a
+			var b
+			b = a * (7 - b)
+		""".trimIndent())
 		parser.parse()
 	}
 
