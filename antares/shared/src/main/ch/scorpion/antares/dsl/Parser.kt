@@ -46,7 +46,7 @@ class Parser(private val lexer: Lexer) {
 	fun parse(): Node {
 		return Compound(lexer.location, statementList()).also {
 			// Semantic analysis
-			it.accept(SymbolTableBuilder())
+			it.accept(SemanticAnalyser())
 		}
 	}
 
@@ -106,7 +106,7 @@ class Parser(private val lexer: Lexer) {
 			eatNewlines()
 			eat(RCURLEY)
 			eatNewlines()
-			return Compound(location, statementList)
+			return Block(location, statementList)
 		}
 	}
 

@@ -96,4 +96,30 @@ class InterpreterTest {
 			}
 		}
 	}
+
+	@Test
+	fun shouldAccessEnclosedScope() {
+		val result = Interpreter("""
+			a = 5
+			{
+				a = 0
+			}
+			a
+		""".trimIndent()).interpret()
+
+		assertEquals(0, result)
+	}
+
+	@Test
+	fun shouldShadowEnclosedScope() {
+		val result = Interpreter("""
+			a = 5
+			{
+				var a = 0
+			}
+			a
+		""".trimIndent()).interpret()
+
+		assertEquals(5, result)
+	}
 }

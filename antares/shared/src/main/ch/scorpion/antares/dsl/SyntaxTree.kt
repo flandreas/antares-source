@@ -62,7 +62,7 @@ class NoOp(location: CodeLocation) : AbstractNode(location) {
 	override fun toString(): String = "NoOp"
 }
 
-class Compound(location: CodeLocation, val children: List<Node>): AbstractNode(location) {
+open class Compound(location: CodeLocation, val children: List<Node>) : AbstractNode(location) {
 
 	override fun toString(): String = "Compound"
 
@@ -76,6 +76,10 @@ class Compound(location: CodeLocation, val children: List<Node>): AbstractNode(l
 		}
 		return visitor.visitLeave(this)
 	}
+}
+
+class Block(location: CodeLocation, children: List<Node>) : Compound(location, children) {
+	override fun toString(): String = "Block"
 }
 
 class Variable(location: CodeLocation, val token: Token<String>) : AbstractNode(location) {

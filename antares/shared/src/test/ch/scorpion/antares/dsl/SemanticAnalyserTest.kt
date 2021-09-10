@@ -2,7 +2,7 @@ package ch.scorpion.antares.dsl
 
 import kotlin.test.*
 
-class SymbolTableBuilderTest {
+class SemanticAnalyserTest {
 
 	@Test
 	fun shouldBuildSymbolTable() {
@@ -11,10 +11,10 @@ class SymbolTableBuilderTest {
 			b = a
 		""".trimIndent()).parse()
 
-		val builder = SymbolTableBuilder()
-		ast.accept(builder)
+		val analyser = SemanticAnalyser()
+		ast.accept(analyser)
 
-		val symbolTable = builder.build()
+		val symbolTable = analyser.scope
 
 		assertEquals(3, symbolTable.size)
 		assertIs<BuiltInTypeSymbol>(symbolTable.lookup("var"))
@@ -30,8 +30,8 @@ class SymbolTableBuilderTest {
 			b = c
 		""".trimIndent()).parse()
 
-			val builder = SymbolTableBuilder()
-			ast.accept(builder)
+			val analyser = SemanticAnalyser()
+			ast.accept(analyser)
 		}
 	}
 }

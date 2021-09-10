@@ -62,7 +62,7 @@ class ParserTest {
 
 		assertAST(parser.parse(), """
 			Compound
-			- Compound
+			- Block
 			-- =
 			--- b
 			--- 5
