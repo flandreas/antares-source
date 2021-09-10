@@ -77,6 +77,8 @@ class Compound(val children: List<Node>): AbstractNode() {
 
 data class Variable(val token: Token<String>) : AbstractNode() {
 	override fun toString(): String = token.value!!
+
+	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 }
 
 data class Assignment(val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode() {

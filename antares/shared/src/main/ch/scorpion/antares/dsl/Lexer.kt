@@ -53,6 +53,8 @@ class Lexer(private val text: String) {
 		// Factory methods for [Token]s with values
 		private fun integer(value: Int) = Token(INTEGER, value)
 		private fun id(value: String) = Token(ID, value)
+
+		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
 	}
 
 	private inner class State {

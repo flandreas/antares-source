@@ -1,11 +1,13 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.antares.dsl.TokenType.*
 
 class InterpreterError(msg: String) : Throwable(msg)
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
+ * TODO: Implement using [HierarchyVisitor]
  */
 class Interpreter(private val node: Node) {
 

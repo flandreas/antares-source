@@ -25,7 +25,9 @@ class SyntaxTreePrinter : EmptyHierarchyVisitor() {
 	}
 
 	override fun visitLeave(node: Any): Boolean {
-		indent--
+		if (node is Node) {
+			indent--
+		}
 		return true
 	}
 
