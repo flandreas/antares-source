@@ -16,6 +16,8 @@ enum class TokenType {
 	VAR,
 	EQUAL,
 	DIFF,
+	SMALLER,
+	GREATER,
 	IF,
 	ELSE,
 	AND,

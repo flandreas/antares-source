@@ -54,7 +54,9 @@ class Interpreter(private val node: Node) {
 			EQUAL -> if (interpret(node.left) == interpret(node.right)) 1 else 0
 			DIFF -> if (interpret(node.left) != interpret(node.right)) 1 else 0
 			AND -> interpret(node.left).and(interpret(node.right))
-			OR ->interpret(node.left).or(interpret(node.right))
+			OR -> interpret(node.left).or(interpret(node.right))
+			SMALLER -> if (interpret(node.left) < interpret(node.right)) 1 else 0
+			GREATER -> if (interpret(node.left) > interpret(node.right)) 1 else 0
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}

@@ -136,6 +136,18 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldParseSmaller() {
+		assertEquals(1, Interpreter("2 < 3").interpret())
+		assertEquals(0, Interpreter("3 < 2").interpret())
+	}
+
+	@Test
+	fun shouldParseGreater() {
+		assertEquals(1, Interpreter("3 > 2").interpret())
+		assertEquals(0, Interpreter("2 > 3").interpret())
+	}
+
+	@Test
 	fun shouldExecuteThenForTrueIfCondition() {
 		val result = Interpreter("""
 			a = 5

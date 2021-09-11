@@ -20,7 +20,8 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     declaration : VAR (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
- *     term : factor (("*" | "/" | "==" | "!=") factor)*
+ *     term : factor (("*" | "/" | comparisonOperator) factor)*
+ *     comparisonOperator : "==" | "!=" | "<" | ">"
  *     factor : "+" factor
  *            | "-" factor
  *            | "not"
@@ -37,7 +38,8 @@ class Parser(private val lexer: Lexer) {
 
 	companion object {
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
-		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, EQUAL, DIFF)
+		private val COMPARISON_OPERATORS = setOf(EQUAL, DIFF, SMALLER, GREATER)
+		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE) + COMPARISON_OPERATORS
 		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
 	}
 
@@ -146,13 +148,12 @@ class Parser(private val lexer: Lexer) {
 		while (currentToken!!.type in TERM_OPERATORS) {
 			lexer.location.let { location ->
 				val token = currentToken!!
-				when (token.type) {
-					PLUS -> eat(PLUS)
-					MINUS -> eat(MINUS)
-					AND -> eat(AND)
-					OR -> eat(OR)
-					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
+				if (TERM_OPERATORS.contains(token.type)) {
+					eat(token.type)
+				} else {
+					throw SyntaxError(location, "Unexpected token ${token.type.name}")
 				}
+
 				node = BinaryOperation(location, left = node, op = token, right = term())
 			}
 		}
@@ -164,12 +165,10 @@ class Parser(private val lexer: Lexer) {
 		while (currentToken!!.type in FACTOR_OPERATORS) {
 			lexer.location.let { location ->
 				val token = currentToken!!
-				when (token.type) {
-					MULTIPLY -> eat(MULTIPLY)
-					DIVIDE -> eat(DIVIDE)
-					EQUAL -> eat(EQUAL)
-					DIFF -> eat(DIFF)
-					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
+				if (FACTOR_OPERATORS.contains(token.type)) {
+					eat(token.type)
+				} else {
+					throw SyntaxError(location, "Unexpected token ${token.type.name}")
 				}
 				node = BinaryOperation(location, left = node, op = token, right = factor())
 			}
