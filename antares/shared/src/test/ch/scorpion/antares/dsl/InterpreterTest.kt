@@ -122,4 +122,10 @@ class InterpreterTest {
 
 		assertEquals(5, result)
 	}
+
+	@Test
+	fun shouldInterpretEquality() {
+		assertEquals(0, Interpreter("3 == 2").interpret())
+		assertEquals(1, Interpreter("34 == 34").interpret())
+	}
 }

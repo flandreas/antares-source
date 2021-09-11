@@ -50,6 +50,7 @@ class Interpreter(private val node: Node) {
 			MINUS -> interpret(node.left) - interpret(node.right)
 			MULTIPLY -> interpret(node.left) * interpret(node.right)
 			DIVIDE -> interpret(node.left) / interpret(node.right)
+			EQUAL -> if (interpret(node.left) == interpret(node.right)) 1 else 0
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}

@@ -18,7 +18,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     block : "{" (EOL)* statementList (EOL)* "}"
  *     declaration : VAR (variable | assignment)
  *     expr : term (("+" | "-") term)*
- *     term : factor (("*" | "/") factor)*
+ *     term : factor (("*" | "/" | "==") factor)*
  *     factor : "+" factor
  *            | "-" factor
  *            | INTEGER
@@ -32,7 +32,7 @@ class Parser(private val lexer: Lexer) {
 	constructor(text: String): this(Lexer(text))
 
 	companion object {
-		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE)
+		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, EQUAL)
 		private val TERM_OPERATORS = setOf(PLUS, MINUS)
 	}
 
@@ -147,6 +147,7 @@ class Parser(private val lexer: Lexer) {
 				when (token.type) {
 					MULTIPLY -> eat(MULTIPLY)
 					DIVIDE -> eat(DIVIDE)
+					EQUAL -> eat(EQUAL)
 					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
 				}
 				node = BinaryOperation(location, left = node, op = token, right = factor())

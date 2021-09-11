@@ -129,6 +129,14 @@ class LexerTest {
 		assertId("a", lexer.nextToken())
 	}
 
+	@Test
+	fun shouldScanEqual() {
+		val lexer = Lexer("a == b")
+		assertId("a", lexer.nextToken())
+		assertEquals(EQUAL, lexer.nextToken().type)
+		assertId("b", lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

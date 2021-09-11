@@ -35,6 +35,7 @@ class Lexer(private val text: String) {
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 		private val VAR_TOKEN = Token<String>(VAR)
+		private val EQUAL_TOKEN = Token<String>(EQUAL)
 
 		private fun plus() = PLUS_TOKEN
 		private fun minus() = MINUS_TOKEN
@@ -47,6 +48,7 @@ class Lexer(private val text: String) {
 		private fun assign() = ASSIGN_TOKEN
 		private fun lcurley() = LCURLEY_TOKEN
 		private fun rcurley() = RCURLEY_TOKEN
+		private fun equal() = EQUAL_TOKEN
 
 		private val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN
@@ -127,47 +129,21 @@ class Lexer(private val text: String) {
 				return id(state)
 			}
 
+			if (isEqual(state)) {
+				return equal(state)
+			}
+
 			when (state.currentChar!!) {
-				'/' -> {
-					advance(state)
-					return divide()
-				}
-				'+' -> {
-					advance(state)
-					return plus()
-				}
-				'-' -> {
-					advance(state)
-					return minus()
-				}
-				'*' -> {
-					advance(state)
-					return multiply()
-				}
-				'(' -> {
-					advance(state)
-					return lparen()
-				}
-				')' -> {
-					advance(state)
-					return rparen()
-				}
-				'\n' -> {
-					advance(state)
-					return eol()
-				}
-				'=' -> {
-					advance(state)
-					return assign()
-				}
-				'{' -> {
-					advance(state)
-					return lcurley()
-				}
-				'}' -> {
-					advance(state)
-					return rcurley()
-				}
+				'/' -> return advanceWith(state, divide())
+				'+' -> return advanceWith(state, plus())
+				'-' -> return advanceWith(state, minus())
+				'*' -> return advanceWith(state, multiply())
+				'(' -> return advanceWith(state, lparen())
+				')' -> return advanceWith(state, rparen())
+				'\n' -> return advanceWith(state, eol())
+				'=' -> return advanceWith(state, assign())
+				'{' -> return advanceWith(state, lcurley())
+				'}' -> return advanceWith(state, rcurley())
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
@@ -178,6 +154,9 @@ class Lexer(private val text: String) {
 	/** Determines whether the current character is the begin of a comment.*/
 	private fun isComment(state: State): Boolean =
 		state.currentChar == '/' && peek(state) == '/'
+
+	private fun isEqual(state: State): Boolean =
+		state.currentChar == '=' && peek(state) == '='
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -207,6 +186,11 @@ class Lexer(private val text: String) {
 		state.columnCounter++
 		state.pos++
 		state.currentChar = if (state.pos > text.length - 1) null else text[state.pos]
+	}
+
+	private fun advanceWith(state: State, token: Token<Any>): Token<Any> {
+		advance(state)
+		return token
 	}
 
 	private fun isWhitespace(state: State): Boolean =
@@ -241,5 +225,11 @@ class Lexer(private val text: String) {
 		}
 		val name = result.toString()
 		return RESERVED_KEYWORDS.getOrElse(name) { Companion.id(name) }
+	}
+
+	private fun equal(state: State): Token<Any> {
+		advance(state)
+		advance(state)
+		return Companion.equal()
 	}
 }
