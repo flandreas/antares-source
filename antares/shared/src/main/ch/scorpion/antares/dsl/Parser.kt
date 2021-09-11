@@ -20,7 +20,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     declaration : VAR (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
- *     term : factor (("*" | "/" | comparisonOperator | shiftOperator) factor)*
+ *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
  *     factor : "+" factor
  *            | "-" factor
@@ -41,7 +41,7 @@ class Parser(private val lexer: Lexer) {
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
 		private val COMPARISON_OPERATORS = setOf(EQUAL, DIFF, SMALLER, GREATER, SMALLER_EQUAL, GREATER_EQUAL)
 		private val SHIFT_OPERATORS = setOf(SHIFT_LEFT, SHIFT_RIGHT)
-		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE) + COMPARISON_OPERATORS + SHIFT_OPERATORS
+		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, MOD) + COMPARISON_OPERATORS + SHIFT_OPERATORS
 		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
 	}
 

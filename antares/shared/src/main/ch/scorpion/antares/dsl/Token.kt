@@ -26,7 +26,8 @@ enum class TokenType {
 	OR,
 	NOT,
 	SHIFT_LEFT,
-	SHIFT_RIGHT
+	SHIFT_RIGHT,
+	MOD
 }
 
 /**

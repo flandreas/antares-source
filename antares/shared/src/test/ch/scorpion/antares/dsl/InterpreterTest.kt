@@ -244,6 +244,13 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretMod() {
+		assertEquals(1, Interpreter("5 % 2").interpret())
+		assertEquals(0, Interpreter("6 % 2").interpret())
+		assertEquals(3, Interpreter("7 % 4").interpret())
+	}
+
+	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {
 		val result = Interpreter("""
 			a = 5

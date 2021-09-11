@@ -47,6 +47,7 @@ class Lexer(private val text: String) {
 		private val SMALLER_EQUAL_TOKEN = Token<Unit>(SMALLER_EQUAL)
 		private val SHIFT_LEFT_TOKEN = Token<Unit>(SHIFT_LEFT)
 		private val SHIFT_RIGHT_TOKEN = Token<Unit>(SHIFT_RIGHT)
+		private val MOD_TOKEN = Token<String>(MOD)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -168,6 +169,7 @@ class Lexer(private val text: String) {
 				'}' -> return advanceWith(state, RCURLEY_TOKEN)
 				'<' -> return advanceWith(state, SMALLER_TOKEN)
 				'>' -> return advanceWith(state, GREATER_TOKEN)
+				'%' -> return advanceWith(state, MOD_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")

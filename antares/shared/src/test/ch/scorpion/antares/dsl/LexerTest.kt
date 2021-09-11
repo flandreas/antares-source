@@ -240,6 +240,14 @@ class LexerTest {
 		assertInt(1, lexer.nextToken())
 	}
 
+	@Test
+	fun shouldScanMod() {
+		val lexer = Lexer("5 % 2")
+		assertInt(5, lexer.nextToken())
+		assertEquals(MOD, lexer.nextToken().type)
+		assertInt(2, lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}
