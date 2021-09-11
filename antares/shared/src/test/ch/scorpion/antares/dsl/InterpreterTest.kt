@@ -251,6 +251,12 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretHexLiteral() {
+		val result = Interpreter("a = 0xFF").interpret()
+		assertEquals(255, result)
+	}
+
+	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {
 		val result = Interpreter("""
 			a = 5

@@ -17,7 +17,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     assignment : variable "=" expr
  *     empty : ""
  *     block : "{" statementList "}"
- *     declaration : VAR (variable | assignment)
+ *     declaration : "var" (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
@@ -25,11 +25,13 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     factor : "+" factor
  *            | "-" factor
  *            | "not"
- *            | INTEGER
+ *            | number
  *            | "(" expr ")"
  *            | variable
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
+ *     number : INTEGER | hexLiteral
+ *     hexLiteral : "0x" INTEGER
  *     variable : ID
  * </pre>
  */

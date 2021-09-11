@@ -9,7 +9,7 @@ import kotlin.math.pow
  */
 object BitOperation {
 
-    private val HEX = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
+    val HEX_CHAR = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
 	private val POWER = Array(63 + 1) {
 		2.0.pow(it).toULong()
 	}
@@ -81,7 +81,7 @@ object BitOperation {
      */
     fun hexDigitToWord(bitWidth: BitWidth, hex: Char): DigitalSignal? {
 	    val uppercaseHex = hex.uppercaseChar()
-        if (!HEX.contains(uppercaseHex)) {
+        if (!HEX_CHAR.contains(uppercaseHex)) {
             return null
         }
 	    if (uppercaseHex == Bit.ALL_UNDEFINED_CHAR) {
@@ -137,7 +137,7 @@ object BitOperation {
         val hex = StringBuilder()
         var num = value
         while (num > 0UL) {
-            hex.append(HEX[(num % 16UL).toInt()])
+            hex.append(HEX_CHAR[(num % 16UL).toInt()])
             num /= 16UL
         }
         return hex.toString().reversed()

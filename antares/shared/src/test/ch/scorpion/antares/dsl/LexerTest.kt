@@ -248,6 +248,22 @@ class LexerTest {
 		assertInt(2, lexer.nextToken())
 	}
 
+	@Test
+	fun shouldScanHexLiteral() {
+		assertHexLiteral(255, "0xFF")
+		assertHexLiteral(255, "0xff")
+		assertHexLiteral(7006, "0x1B5E")
+	}
+
+	private fun assertHexLiteral(expected: Int, literal: String) {
+		val lexer = Lexer("a = $literal")
+		assertId("a", lexer.nextToken())
+		assertEquals(ASSIGN, lexer.nextToken().type)
+		val token = lexer.nextToken()
+		assertEquals(INTEGER, token.type)
+		assertEquals(expected, token.value)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

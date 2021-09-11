@@ -1,6 +1,7 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.dsl.TokenType.*
+import ch.scorpion.antares.model.signal.BitOperation
 
 /** Identifies a location in the code to identify error locations.*/
 data class CodeLocation(val row: Int, val column: Int) {
@@ -59,8 +60,8 @@ class Lexer(private val text: String) {
 		)
 
 		// Factory methods for [Token]s with values
-		private fun integer(value: Int) = Token(INTEGER, value)
-		private fun id(value: String) = Token(ID, value)
+		private fun idToken(value: String) = Token(ID, value)
+		private fun integerToken(value: Int) = Token(INTEGER, value)
 
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
 	}
@@ -125,7 +126,7 @@ class Lexer(private val text: String) {
 				continue
 			}
 
-			if (state.currentChar!!.isDigit()) {
+			if (isNumber(state)) {
 				return number(state)
 			}
 
@@ -192,6 +193,12 @@ class Lexer(private val text: String) {
 
 	private fun isShiftRight(state: State): Boolean = state.currentChar == '>' && peek(state) == '>'
 
+	private fun isInteger(state: State): Boolean = state.currentChar!!.isDigit() && !isHexLiteral(state)
+
+	private fun isHexLiteral(state: State): Boolean = state.currentChar == '0' && peek(state) == 'x'
+
+	private fun isNumber(state: State): Boolean = isHexLiteral(state) || isInteger(state)
+
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
 			advance(state)
@@ -200,7 +207,12 @@ class Lexer(private val text: String) {
 	}
 
 	/** Returns an [Int] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
-	private fun number(state: State): Token<Any> = Companion.integer(integer(state))
+	private fun number(state: State): Token<Int> =
+		when {
+			isHexLiteral(state) -> integerToken(hexLiteral(state))
+			isInteger(state) -> integerToken(integer(state))
+			else -> throw SyntaxError(state.location, "Expected a number")
+		}
 
 	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
 	private fun peek(state: State): Char? {
@@ -247,8 +259,19 @@ class Lexer(private val text: String) {
 		try {
 			return result.toString().toInt()
 		} catch (e: NumberFormatException) {
-			throw SyntaxError(state.location, "Illegal integer '${result}'")
+			throw SyntaxError(state.location, "Illegal integer '${result.ifEmpty { state.currentChar }}'")
 		}
+	}
+
+	private fun hexLiteral(state: State): Int {
+		advance(state)
+		advance(state)
+		val result = StringBuilder()
+		while (state.currentChar != null && BitOperation.HEX_CHAR.contains(state.currentChar!!.uppercaseChar())) {
+			result.append(state.currentChar!!)
+			advance(state)
+		}
+		return BitOperation.hexToLong(result.toString()).toInt()
 	}
 
 	private fun id(state: State): Token<String> {
@@ -258,7 +281,7 @@ class Lexer(private val text: String) {
 			advance(state)
 		}
 		val name = result.toString()
-		return RESERVED_KEYWORDS.getOrElse(name) { Companion.id(name) }
+		return RESERVED_KEYWORDS.getOrElse(name) { Companion.idToken(name) }
 	}
 
 	private fun equal(state: State): Token<Unit> {
