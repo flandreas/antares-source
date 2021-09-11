@@ -30,7 +30,6 @@ class Lexer(private val text: String) {
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
 		private val EOF_TOKEN = Token<Unit>(EOF)
-		private val EOL_TOKEN = Token<Unit>(EOL)
 		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
@@ -135,7 +134,6 @@ class Lexer(private val text: String) {
 				'*' -> return advanceWith(state, MULTIPLY_TOKEN)
 				'(' -> return advanceWith(state, LPAREN_TOKEN)
 				')' -> return advanceWith(state, RPAREN_TOKEN)
-				'\n' -> return advanceWith(state, EOL_TOKEN)
 				'=' -> return advanceWith(state, ASSIGN_TOKEN)
 				'{' -> return advanceWith(state, LCURLEY_TOKEN)
 				'}' -> return advanceWith(state, RCURLEY_TOKEN)
@@ -189,7 +187,7 @@ class Lexer(private val text: String) {
 	}
 
 	private fun isWhitespace(state: State): Boolean =
-		state.currentChar != null && state.currentChar!!.isWhitespace() && state.currentChar != '\n'
+		state.currentChar != null && state.currentChar!!.isWhitespace()
 
 	/** Advances until non-whitespace [State.currentChar] is non-whitespace.*/
 	private fun skipWhitespace(state: State) {

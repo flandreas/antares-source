@@ -91,7 +91,6 @@ class LexerTest {
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
 		assertInt(5, lexer.nextToken())
-		assertEquals(EOL, lexer.nextToken().type)
 		assertId("a", lexer.nextToken())
 	}
 
@@ -113,11 +112,9 @@ class LexerTest {
 		""".trimIndent())
 
 		assertEquals(LCURLEY, lexer.nextToken().type)
-		assertEquals(EOL, lexer.nextToken().type)
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
 		assertInt(12, lexer.nextToken())
-		assertEquals(EOL, lexer.nextToken().type)
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 

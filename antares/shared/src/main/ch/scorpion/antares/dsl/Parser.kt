@@ -7,7 +7,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *
  * <pre>
  *     statementList : statement
- *               | statement EOL (EOL)* statementList
+ *               | statement statementList
  *     statement : expr
  *               | assignment
  *               | block
@@ -16,9 +16,9 @@ import ch.scorpion.antares.dsl.TokenType.*
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
- *     block : "{" (EOL)* statementList (EOL)* "}"
+ *     block : "{" statementList "}"
  *     declaration : VAR (variable | assignment)
- *     ifStatement : "if" "(" expr ")" statement (EOL)* [ "else" statement ]
+ *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "==") factor)*
  *     factor : "+" factor
@@ -57,9 +57,7 @@ class Parser(private val lexer: Lexer) {
 	private fun statementList(): List<Node> {
 		val node = statement()
 		val list = mutableListOf(node)
-		while (currentToken!!.type == EOL) {
-			eat(EOL)
-			eatNewlines()
+		while (currentToken!!.type != EOF && currentToken!!.type != RCURLEY) {
 			list.add(statement())
 		}
 		list.lastOrNull()?.let {
@@ -106,9 +104,7 @@ class Parser(private val lexer: Lexer) {
 	private fun block(): Node {
 		lexer.location.let { location ->
 			eat(LCURLEY)
-			eatNewlines()
 			val statementList = statementList()
-			eatNewlines()
 			eat(RCURLEY)
 			return Block(location, statementList)
 		}
@@ -134,7 +130,6 @@ class Parser(private val lexer: Lexer) {
 			eat(RPAREN)
 			val thenStatement = statement()
 			var elseStatement: Node? = null
-			eatNewlines()
 			if (currentToken!!.type == ELSE) {
 				eat(ELSE)
 				elseStatement = statement()
@@ -220,12 +215,6 @@ class Parser(private val lexer: Lexer) {
 			currentToken = lexer.nextToken()
 		} else {
 			throw SyntaxError(lexer.location, "Expected ${type.name}")
-		}
-	}
-
-	private fun eatNewlines() {
-		while (currentToken != null && currentToken!!.type == EOL) {
-			eat(EOL)
 		}
 	}
 }
