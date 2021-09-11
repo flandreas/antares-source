@@ -234,6 +234,16 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldShiftLeft() {
+		assertEquals(2, Interpreter("1 << 1").interpret())
+	}
+
+	@Test
+	fun shouldShiftRight() {
+		assertEquals(1, Interpreter("2 >> 1").interpret())
+	}
+
+	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {
 		val result = Interpreter("""
 			a = 5

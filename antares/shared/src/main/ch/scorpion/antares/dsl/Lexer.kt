@@ -45,6 +45,8 @@ class Lexer(private val text: String) {
 		private val GREATER_EQUAL_TOKEN = Token<Unit>(GREATER_EQUAL)
 		private val SMALLER_TOKEN = Token<Unit>(SMALLER)
 		private val SMALLER_EQUAL_TOKEN = Token<Unit>(SMALLER_EQUAL)
+		private val SHIFT_LEFT_TOKEN = Token<Unit>(SHIFT_LEFT)
+		private val SHIFT_RIGHT_TOKEN = Token<Unit>(SHIFT_RIGHT)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -146,6 +148,14 @@ class Lexer(private val text: String) {
 				return greaterEqual(state)
 			}
 
+			if (isShiftLeft(state)) {
+				return shiftLeft(state)
+			}
+
+			if (isShiftRight(state)) {
+				return shiftRight(state)
+			}
+
 			when (state.currentChar!!) {
 				'/' -> return advanceWith(state, DIVIDE_TOKEN)
 				'+' -> return advanceWith(state, PLUS_TOKEN)
@@ -166,20 +176,19 @@ class Lexer(private val text: String) {
 	}
 
 	/** Determines whether the current character is the begin of a comment.*/
-	private fun isComment(state: State): Boolean =
-		state.currentChar == '/' && peek(state) == '/'
+	private fun isComment(state: State): Boolean = state.currentChar == '/' && peek(state) == '/'
 
-	private fun isEqual(state: State): Boolean =
-		state.currentChar == '=' && peek(state) == '='
+	private fun isEqual(state: State): Boolean = state.currentChar == '=' && peek(state) == '='
 
-	private fun isDifferent(state: State): Boolean =
-		state.currentChar == '!' && peek(state) == '='
+	private fun isDifferent(state: State): Boolean = state.currentChar == '!' && peek(state) == '='
 
-	private fun isSmallerEqual(state: State): Boolean =
-		state.currentChar == '<' && peek(state) == '='
+	private fun isSmallerEqual(state: State): Boolean = state.currentChar == '<' && peek(state) == '='
 
-	private fun isGreaterEqual(state: State): Boolean =
-		state.currentChar == '>' && peek(state) == '='
+	private fun isGreaterEqual(state: State): Boolean = state.currentChar == '>' && peek(state) == '='
+
+	private fun isShiftLeft(state: State): Boolean = state.currentChar == '<' && peek(state) == '<'
+
+	private fun isShiftRight(state: State): Boolean = state.currentChar == '>' && peek(state) == '>'
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -272,5 +281,17 @@ class Lexer(private val text: String) {
 		advance(state)
 		advance(state)
 		return GREATER_EQUAL_TOKEN
+	}
+
+	private fun shiftLeft(state: State): Token<Unit> {
+		advance(state)
+		advance(state)
+		return SHIFT_LEFT_TOKEN
+	}
+
+	private fun shiftRight(state: State): Token<Unit> {
+		advance(state)
+		advance(state)
+		return SHIFT_RIGHT_TOKEN
 	}
 }

@@ -224,6 +224,22 @@ class LexerTest {
 		assertInt(2, lexer.nextToken())
 	}
 
+	@Test
+	fun shouldScanShiftLeft() {
+		val lexer = Lexer("4 << 1")
+		assertInt(4, lexer.nextToken())
+		assertEquals(SHIFT_LEFT, lexer.nextToken().type)
+		assertInt(1, lexer.nextToken())
+	}
+
+	@Test
+	fun shouldScanShiftRight() {
+		val lexer = Lexer("4 >> 1")
+		assertInt(4, lexer.nextToken())
+		assertEquals(SHIFT_RIGHT, lexer.nextToken().type)
+		assertInt(1, lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}
