@@ -10,9 +10,9 @@ class LexerTest {
 	fun shouldScanMultiplyTerm() {
 		val lexer = Lexer("7*12")
 
-		assertInt(7, lexer.nextToken())
+		assertLong(7, lexer.nextToken())
 		assertEquals(MULTIPLY, lexer.nextToken().type)
-		assertInt(12, lexer.nextToken())
+		assertLong(12, lexer.nextToken())
 		assertEof(lexer.nextToken())
 	}
 
@@ -20,9 +20,9 @@ class LexerTest {
 	fun shouldScanDivideTerm() {
 		val lexer = Lexer("48/6")
 
-		assertInt(48, lexer.nextToken())
+		assertLong(48, lexer.nextToken())
 		assertEquals(DIVIDE, lexer.nextToken().type)
-		assertInt(6, lexer.nextToken())
+		assertLong(6, lexer.nextToken())
 		assertEof(lexer.nextToken())
 	}
 
@@ -30,9 +30,9 @@ class LexerTest {
 	fun shouldScanPlusExpression() {
 		val lexer = Lexer("12+8")
 
-		assertInt(12, lexer.nextToken())
+		assertLong(12, lexer.nextToken())
 		assertEquals(PLUS, lexer.nextToken().type)
-		assertInt(8, lexer.nextToken())
+		assertLong(8, lexer.nextToken())
 		assertEof(lexer.nextToken())
 	}
 
@@ -40,9 +40,9 @@ class LexerTest {
 	fun shouldScanMinusExpression() {
 		val lexer = Lexer("23-11")
 
-		assertInt(23, lexer.nextToken())
+		assertLong(23, lexer.nextToken())
 		assertEquals(MINUS, lexer.nextToken().type)
-		assertInt(11, lexer.nextToken())
+		assertLong(11, lexer.nextToken())
 		assertEof(lexer.nextToken())
 	}
 
@@ -50,12 +50,12 @@ class LexerTest {
 	fun shouldScanTermWithParentheses() {
 		val lexer = Lexer("3 * (15 - 7)")
 
-		assertInt(3, lexer.nextToken())
+		assertLong(3, lexer.nextToken())
 		assertEquals(MULTIPLY, lexer.nextToken().type)
 		assertEquals(LPAREN, lexer.nextToken().type)
-		assertInt(15, lexer.nextToken())
+		assertLong(15, lexer.nextToken())
 		assertEquals(MINUS, lexer.nextToken().type)
-		assertInt(7, lexer.nextToken())
+		assertLong(7, lexer.nextToken())
 		assertEquals(RPAREN, lexer.nextToken().type)
 		assertEof(lexer.nextToken())
 	}
@@ -66,7 +66,7 @@ class LexerTest {
 
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
-		assertInt(17, lexer.nextToken())
+		assertLong(17, lexer.nextToken())
 	}
 
 	@Test
@@ -76,8 +76,8 @@ class LexerTest {
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.peekNextToken().type)
 		assertEquals(ASSIGN, lexer.nextToken().type)
-		assertEquals(INTEGER, lexer.peekNextToken().type)
-		assertInt(17, lexer.nextToken())
+		assertEquals(LONG, lexer.peekNextToken().type)
+		assertLong(17, lexer.nextToken())
 	}
 
 	@Test
@@ -90,7 +90,7 @@ class LexerTest {
 
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertId("a", lexer.nextToken())
 	}
 
@@ -99,7 +99,7 @@ class LexerTest {
 		val lexer = Lexer("a = 5 // + 7")
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(EOF, lexer.nextToken().type)
 	}
 
@@ -114,7 +114,7 @@ class LexerTest {
 		assertEquals(LCURLEY, lexer.nextToken().type)
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
-		assertInt(12, lexer.nextToken())
+		assertLong(12, lexer.nextToken())
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 
@@ -179,7 +179,7 @@ class LexerTest {
 		val lexer = Lexer("if (5) {}")
 		assertEquals(IF, lexer.nextToken().type)
 		assertEquals(LPAREN, lexer.nextToken().type)
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(RPAREN, lexer.nextToken().type)
 		assertEquals(LCURLEY, lexer.nextToken().type)
 		assertEquals(RCURLEY, lexer.nextToken().type)
@@ -190,62 +190,62 @@ class LexerTest {
 		val lexer = Lexer("if (5) { 17 } else { 42 }")
 		assertEquals(IF, lexer.nextToken().type)
 		assertEquals(LPAREN, lexer.nextToken().type)
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(RPAREN, lexer.nextToken().type)
 		assertEquals(LCURLEY, lexer.nextToken().type)
-		assertInt(17, lexer.nextToken())
+		assertLong(17, lexer.nextToken())
 		assertEquals(RCURLEY, lexer.nextToken().type)
 		assertEquals(ELSE, lexer.nextToken().type)
 		assertEquals(LCURLEY, lexer.nextToken().type)
-		assertInt(42, lexer.nextToken())
+		assertLong(42, lexer.nextToken())
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 
 	@Test
 	fun shouldScanAnd() {
 		val lexer = Lexer("5 and 7")
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(AND, lexer.nextToken().type)
-		assertInt(7, lexer.nextToken())
+		assertLong(7, lexer.nextToken())
 	}
 
 	@Test
 	fun shouldScanOr() {
 		val lexer = Lexer("5 or 7")
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(OR, lexer.nextToken().type)
-		assertInt(7, lexer.nextToken())
+		assertLong(7, lexer.nextToken())
 	}
 
 	@Test
 	fun shouldScanNot() {
 		val lexer = Lexer("not 2")
 		assertEquals(NOT, lexer.nextToken().type)
-		assertInt(2, lexer.nextToken())
+		assertLong(2, lexer.nextToken())
 	}
 
 	@Test
 	fun shouldScanShiftLeft() {
 		val lexer = Lexer("4 << 1")
-		assertInt(4, lexer.nextToken())
+		assertLong(4, lexer.nextToken())
 		assertEquals(SHIFT_LEFT, lexer.nextToken().type)
-		assertInt(1, lexer.nextToken())
+		assertLong(1, lexer.nextToken())
 	}
 
 	@Test
 	fun shouldScanShiftRight() {
 		val lexer = Lexer("4 >> 1")
-		assertInt(4, lexer.nextToken())
+		assertLong(4, lexer.nextToken())
 		assertEquals(SHIFT_RIGHT, lexer.nextToken().type)
-		assertInt(1, lexer.nextToken())
+		assertLong(1, lexer.nextToken())
 	}
 
 	@Test
 	fun shouldScanMod() {
 		val lexer = Lexer("5 % 2")
-		assertInt(5, lexer.nextToken())
+		assertLong(5, lexer.nextToken())
 		assertEquals(MOD, lexer.nextToken().type)
-		assertInt(2, lexer.nextToken())
+		assertLong(2, lexer.nextToken())
 	}
 
 	@Test
@@ -255,12 +255,12 @@ class LexerTest {
 		assertHexLiteral(7006, "0x1B5E")
 	}
 
-	private fun assertHexLiteral(expected: Int, literal: String) {
+	private fun assertHexLiteral(expected: Long, literal: String) {
 		val lexer = Lexer("a = $literal")
 		assertId("a", lexer.nextToken())
 		assertEquals(ASSIGN, lexer.nextToken().type)
 		val token = lexer.nextToken()
-		assertEquals(INTEGER, token.type)
+		assertEquals(LONG, token.type)
 		assertEquals(expected, token.value)
 	}
 
@@ -268,8 +268,8 @@ class LexerTest {
 		assertEquals(EOF, token.type)
 	}
 
-	private fun assertInt(value: Int, token: Token<Any>) {
-		assertEquals(INTEGER, token.type)
+	private fun assertLong(value: Long, token: Token<Any>) {
+		assertEquals(LONG, token.type)
 		assertEquals(value, token.value)
 	}
 

@@ -196,9 +196,9 @@ class Parser(private val lexer: Lexer) {
 					eat(NOT)
 					return UnaryOperation(location, token, factor())
 				}
-				INTEGER -> {
-					eat(INTEGER)
-					return Number(location, token as Token<Int>)
+				LONG -> {
+					eat(LONG)
+					return Number(location, token as Token<Long>)
 				}
 				LPAREN -> {
 					eat(LPAREN)

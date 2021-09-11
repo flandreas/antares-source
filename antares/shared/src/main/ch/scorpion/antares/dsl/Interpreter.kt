@@ -12,11 +12,11 @@ class Interpreter(private val node: Node) {
 
 	private val memory = Memory()
 
-	fun interpret(): Int {
+	fun interpret(): Long {
 		return interpret(node)
 	}
 
-	private fun interpret(node: Node): Int {
+	private fun interpret(node: Node): Long {
 		return when (node) {
 			is Block -> block(node)
 			is Compound -> compound(node)
@@ -32,20 +32,20 @@ class Interpreter(private val node: Node) {
 		}
 	}
 
-	private fun compound(node: Compound): Int {
-		var result = 0
+	private fun compound(node: Compound): Long {
+		var result = 0L
 		node.children.forEach { result = interpret(it) }
 		return result
 	}
 
-	private fun block(node: Block): Int {
+	private fun block(node: Block): Long {
 		memory.enterScope("block")
 		val result = compound(node)
 		memory.exitScope()
 		return result
 	}
 
-	private fun binaryOperation(node: BinaryOperation): Int {
+	private fun binaryOperation(node: BinaryOperation): Long {
 		return when (node.op.type) {
 			PLUS -> interpret(node.left) + interpret(node.right)
 			MINUS -> interpret(node.left) - interpret(node.right)
@@ -59,16 +59,16 @@ class Interpreter(private val node: Node) {
 			GREATER -> if (interpret(node.left) > interpret(node.right)) 1 else 0
 			SMALLER_EQUAL -> if (interpret(node.left) <= interpret(node.right)) 1 else 0
 			GREATER_EQUAL -> if (interpret(node.left) >= interpret(node.right)) 1 else 0
-			SHIFT_LEFT -> interpret(node.left).shl(interpret(node.right))
-			SHIFT_RIGHT -> interpret(node.left).shr(interpret(node.right))
+			SHIFT_LEFT -> interpret(node.left).shl(interpret(node.right).toInt())
+			SHIFT_RIGHT -> interpret(node.left).shr(interpret(node.right).toInt())
 			MOD -> interpret(node.left).mod(interpret(node.right))
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
 
-	private fun number(node: Number): Int = node.token.value!!
+	private fun number(node: Number): Long = node.token.value!!
 
-	private fun unaryOperation(node: UnaryOperation): Int {
+	private fun unaryOperation(node: UnaryOperation): Long {
 		return when (node.op.type) {
 			PLUS -> +interpret(node.expr)
 			MINUS -> -interpret(node.expr)
@@ -78,7 +78,7 @@ class Interpreter(private val node: Node) {
 	}
 
 	/** Also supports implicit declaration. */
-	private fun assignment(node: Assignment): Int {
+	private fun assignment(node: Assignment): Long {
 		if (!memory.isDefined(node.left)) {
 			memory.define(node.left)
 		}
@@ -87,10 +87,10 @@ class Interpreter(private val node: Node) {
 		return value
 	}
 
-	private fun variable(node: Variable): Int =
-		memory.getValue(node) as Int
+	private fun variable(node: Variable): Long =
+		memory.getValue(node) as Long
 
-	private fun declaration(node: Declaration): Int {
+	private fun declaration(node: Declaration): Long {
 		if (!memory.isLocallyDefined(node.left)) {
 			memory.define(node.left)
 		}
@@ -99,10 +99,10 @@ class Interpreter(private val node: Node) {
 		return value ?: 0
 	}
 
-	private fun ifStatement(node: IfStatement): Int {
-		if (interpret(node.condition) != 0) {
+	private fun ifStatement(node: IfStatement): Long {
+		if (interpret(node.condition) != 0L) {
 			return interpret(node.thenStatement)
 		}
-		return node.elseStatement?.let { interpret(it) } ?: 0
+		return node.elseStatement?.let { interpret(it) } ?: 0L
 	}
 }

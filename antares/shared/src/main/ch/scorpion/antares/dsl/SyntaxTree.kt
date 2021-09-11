@@ -66,7 +66,7 @@ class BinaryOperation(
 	}
 }
 
-class Number(location: CodeLocation, val token: Token<Int>) : AbstractNode(location) {
+class Number(location: CodeLocation, val token: Token<Long>) : AbstractNode(location) {
 	override fun toString(): String = token.value!!.toString()
 }
 

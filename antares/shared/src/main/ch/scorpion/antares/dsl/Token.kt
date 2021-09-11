@@ -1,7 +1,7 @@
 package ch.scorpion.antares.dsl
 
 enum class TokenType {
-	INTEGER,
+	LONG,
 	PLUS,
 	MINUS,
 	MULTIPLY,

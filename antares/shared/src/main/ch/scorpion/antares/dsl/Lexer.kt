@@ -61,7 +61,7 @@ class Lexer(private val text: String) {
 
 		// Factory methods for [Token]s with values
 		private fun idToken(value: String) = Token(ID, value)
-		private fun integerToken(value: Int) = Token(INTEGER, value)
+		private fun longToken(value: Long) = Token(LONG, value)
 
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
 	}
@@ -206,11 +206,11 @@ class Lexer(private val text: String) {
 		advance(state)
 	}
 
-	/** Returns an [Int] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
-	private fun number(state: State): Token<Int> =
+	/** Returns an [Long] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
+	private fun number(state: State): Token<Long> =
 		when {
-			isHexLiteral(state) -> integerToken(hexLiteral(state))
-			isInteger(state) -> integerToken(integer(state))
+			isHexLiteral(state) -> longToken(hexLiteral(state))
+			isInteger(state) -> longToken(long(state))
 			else -> throw SyntaxError(state.location, "Expected a number")
 		}
 
@@ -249,21 +249,21 @@ class Lexer(private val text: String) {
 		}
 	}
 
-	/** Returns a multi-digit [Int] consumed from the input text.*/
-	private fun integer(state: State): Int {
+	/** Returns a multi-digit [Long] consumed from the input text.*/
+	private fun long(state: State): Long {
 		val result = StringBuilder()
 		while (state.currentChar != null && state.currentChar!!.isDigit()) {
 			result.append(state.currentChar!!)
 			advance(state)
 		}
 		try {
-			return result.toString().toInt()
+			return result.toString().toLong()
 		} catch (e: NumberFormatException) {
-			throw SyntaxError(state.location, "Illegal integer '${result.ifEmpty { state.currentChar }}'")
+			throw SyntaxError(state.location, "Illegal long '${result.ifEmpty { state.currentChar }}'")
 		}
 	}
 
-	private fun hexLiteral(state: State): Int {
+	private fun hexLiteral(state: State): Long {
 		advance(state)
 		advance(state)
 		val result = StringBuilder()
@@ -271,7 +271,7 @@ class Lexer(private val text: String) {
 			result.append(state.currentChar!!)
 			advance(state)
 		}
-		return BitOperation.hexToLong(result.toString()).toInt()
+		return BitOperation.hexToLong(result.toString()).toLong()
 	}
 
 	private fun id(state: State): Token<String> {
