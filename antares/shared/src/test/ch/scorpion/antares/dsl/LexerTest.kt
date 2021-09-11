@@ -159,6 +159,22 @@ class LexerTest {
 	}
 
 	@Test
+	fun shouldScanSmallerEqual() {
+		val lexer = Lexer("a <= b")
+		assertId("a", lexer.nextToken())
+		assertEquals(SMALLER_EQUAL, lexer.nextToken().type)
+		assertId("b", lexer.nextToken())
+	}
+
+	@Test
+	fun shouldScanGreaterEqual() {
+		val lexer = Lexer("a >= b")
+		assertId("a", lexer.nextToken())
+		assertEquals(GREATER_EQUAL, lexer.nextToken().type)
+		assertId("b", lexer.nextToken())
+	}
+
+	@Test
 	fun shouldScanIfThen() {
 		val lexer = Lexer("if (5) {}")
 		assertEquals(IF, lexer.nextToken().type)

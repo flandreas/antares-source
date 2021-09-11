@@ -130,21 +130,35 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldParseDiff() {
+	fun shouldInterpretDiff() {
 		assertEquals(1, Interpreter("3 != 2").interpret())
 		assertEquals(0, Interpreter("34 != 34").interpret())
 	}
 
 	@Test
-	fun shouldParseSmaller() {
+	fun shouldInterpretSmaller() {
 		assertEquals(1, Interpreter("2 < 3").interpret())
 		assertEquals(0, Interpreter("3 < 2").interpret())
 	}
 
 	@Test
-	fun shouldParseGreater() {
+	fun shouldInterpretGreater() {
 		assertEquals(1, Interpreter("3 > 2").interpret())
 		assertEquals(0, Interpreter("2 > 3").interpret())
+	}
+
+	@Test
+	fun shouldInterpretSmallerEqual() {
+		assertEquals(1, Interpreter("2 <= 3").interpret())
+		assertEquals(0, Interpreter("3 <= 2").interpret())
+		assertEquals(1, Interpreter("3 <= 3").interpret())
+	}
+
+	@Test
+	fun shouldInterpretGreaterEqual() {
+		assertEquals(1, Interpreter("3 >= 2").interpret())
+		assertEquals(1, Interpreter("3 >= 3").interpret())
+		assertEquals(0, Interpreter("2 >= 3").interpret())
 	}
 
 	@Test

@@ -42,7 +42,9 @@ class Lexer(private val text: String) {
 		private val OR_TOKEN = Token<String>(OR)
 		private val NOT_TOKEN = Token<String>(NOT)
 		private val GREATER_TOKEN = Token<Unit>(GREATER)
+		private val GREATER_EQUAL_TOKEN = Token<Unit>(GREATER_EQUAL)
 		private val SMALLER_TOKEN = Token<Unit>(SMALLER)
+		private val SMALLER_EQUAL_TOKEN = Token<Unit>(SMALLER_EQUAL)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -136,6 +138,14 @@ class Lexer(private val text: String) {
 				return diff(state)
 			}
 
+			if (isSmallerEqual(state)) {
+				return smallerEqual(state)
+			}
+
+			if (isGreaterEqual(state)) {
+				return greaterEqual(state)
+			}
+
 			when (state.currentChar!!) {
 				'/' -> return advanceWith(state, DIVIDE_TOKEN)
 				'+' -> return advanceWith(state, PLUS_TOKEN)
@@ -164,6 +174,12 @@ class Lexer(private val text: String) {
 
 	private fun isDifferent(state: State): Boolean =
 		state.currentChar == '!' && peek(state) == '='
+
+	private fun isSmallerEqual(state: State): Boolean =
+		state.currentChar == '<' && peek(state) == '='
+
+	private fun isGreaterEqual(state: State): Boolean =
+		state.currentChar == '>' && peek(state) == '='
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -244,5 +260,17 @@ class Lexer(private val text: String) {
 		advance(state)
 		advance(state)
 		return DIFF_TOKEN
+	}
+
+	private fun smallerEqual(state: State): Token<Unit> {
+		advance(state)
+		advance(state)
+		return SMALLER_EQUAL_TOKEN
+	}
+
+	private fun greaterEqual(state: State): Token<Unit> {
+		advance(state)
+		advance(state)
+		return GREATER_EQUAL_TOKEN
 	}
 }
