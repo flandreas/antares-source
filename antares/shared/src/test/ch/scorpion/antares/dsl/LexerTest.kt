@@ -164,6 +164,22 @@ class LexerTest {
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 
+	@Test
+	fun shouldScanAnd() {
+		val lexer = Lexer("5 and 7")
+		assertInt(5, lexer.nextToken())
+		assertEquals(AND, lexer.nextToken().type)
+		assertInt(7, lexer.nextToken())
+	}
+
+	@Test
+	fun shouldScanOr() {
+		val lexer = Lexer("5 or 7")
+		assertInt(5, lexer.nextToken())
+		assertEquals(OR, lexer.nextToken().type)
+		assertInt(7, lexer.nextToken())
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

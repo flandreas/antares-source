@@ -17,7 +17,9 @@ enum class TokenType {
 	VAR,
 	EQUAL,
 	IF,
-	ELSE
+	ELSE,
+	AND,
+	OR
 }
 
 /**

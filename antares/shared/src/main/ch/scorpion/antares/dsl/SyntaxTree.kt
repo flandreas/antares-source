@@ -41,6 +41,9 @@ class BinaryOperation(
 			TokenType.MINUS -> "-"
 			TokenType.MULTIPLY -> "*"
 			TokenType.DIVIDE -> "/"
+			TokenType.EQUAL -> "=="
+			TokenType.AND -> "and"
+			TokenType.OR -> "or"
 			else -> throw IllegalStateException("unsupported binary op ${op.type}")
 		}
 	}

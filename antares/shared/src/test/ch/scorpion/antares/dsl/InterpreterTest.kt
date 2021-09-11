@@ -188,4 +188,30 @@ class InterpreterTest {
 
 		assertEquals(42, result)
 	}
+
+	@Test
+	fun shouldCalculateAnd() {
+		assertEquals(5, Interpreter("5 and 5").interpret())
+		assertEquals(0, Interpreter("0 and 5").interpret())
+	}
+
+	@Test
+	fun shouldCalculateOr() {
+		assertEquals(3, Interpreter("1 or 2").interpret())
+		assertEquals(5, Interpreter("0 or 5").interpret())
+	}
+
+	@Test
+	fun shouldExecuteIfStatementWithAndCondition() {
+		val result = Interpreter("""
+			a = 5
+			b = 17
+			if (a == 5 and b == 17) {
+				b = 42
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(42, result)
+	}
 }

@@ -38,11 +38,15 @@ class Lexer(private val text: String) {
 		private val EQUAL_TOKEN = Token<Unit>(EQUAL)
 		private val IF_TOKEN = Token<String>(IF)
 		private val ELSE_TOKEN = Token<String>(ELSE)
+		private val AND_TOKEN = Token<String>(AND)
+		private val OR_TOKEN = Token<String>(OR)
 
-		private val RESERVED_KEYWORDS = mapOf(
+		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
 			"if" to IF_TOKEN,
-			"else" to ELSE_TOKEN
+			"else" to ELSE_TOKEN,
+			"and" to AND_TOKEN,
+			"or" to OR_TOKEN
 		)
 
 		// Factory methods for [Token]s with values

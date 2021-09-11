@@ -124,8 +124,22 @@ class ParserTest {
 				17
 			}
 		""".trimIndent())
+	}
 
-		parser.parse()
+	@Test
+	fun shouldParseExpressionWithLogicOperator() {
+		val parser = Parser("5 == 5 and 13 == 27")
+
+		assertAST(parser.parse(), """
+			Compound
+			- and
+			-- ==
+			--- 5
+			--- 5
+			-- ==
+			--- 13
+			--- 27
+		""".trimIndent())
 	}
 
 	private fun assertAST(node: Node, ast: String) {
