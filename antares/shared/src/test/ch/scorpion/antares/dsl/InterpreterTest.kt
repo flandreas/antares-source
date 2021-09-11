@@ -128,4 +128,32 @@ class InterpreterTest {
 		assertEquals(0, Interpreter("3 == 2").interpret())
 		assertEquals(1, Interpreter("34 == 34").interpret())
 	}
+
+	@Test
+	fun shouldExecuteThenForTrueIfCondition() {
+		val result = Interpreter("""
+			a = 5
+			b = 17
+			if (a == 5) {
+				b = 42
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(42, result)
+	}
+
+	@Test
+	fun shouldNotExecuteThenForFalseIfCondition() {
+		val result = Interpreter("""
+			a = 5
+			b = 17
+			if (a == 4) {
+				b = 42
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(17, result)
+	}
 }

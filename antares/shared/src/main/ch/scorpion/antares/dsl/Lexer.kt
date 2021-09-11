@@ -35,23 +35,12 @@ class Lexer(private val text: String) {
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 		private val VAR_TOKEN = Token<String>(VAR)
-		private val EQUAL_TOKEN = Token<String>(EQUAL)
-
-		private fun plus() = PLUS_TOKEN
-		private fun minus() = MINUS_TOKEN
-		private fun multiply() = MULTIPLY_TOKEN
-		private fun divide() = DIVIDE_TOKEN
-		private fun lparen() = LPAREN_TOKEN
-		private fun rparen() = RPAREN_TOKEN
-		private fun eof() = EOF_TOKEN
-		private fun eol() = EOL_TOKEN
-		private fun assign() = ASSIGN_TOKEN
-		private fun lcurley() = LCURLEY_TOKEN
-		private fun rcurley() = RCURLEY_TOKEN
-		private fun equal() = EQUAL_TOKEN
+		private val EQUAL_TOKEN = Token<Unit>(EQUAL)
+		private val IF_TOKEN = Token<String>(IF)
 
 		private val RESERVED_KEYWORDS = mapOf(
-			"var" to VAR_TOKEN
+			"var" to VAR_TOKEN,
+			"if" to IF_TOKEN
 		)
 
 		// Factory methods for [Token]s with values
@@ -134,21 +123,21 @@ class Lexer(private val text: String) {
 			}
 
 			when (state.currentChar!!) {
-				'/' -> return advanceWith(state, divide())
-				'+' -> return advanceWith(state, plus())
-				'-' -> return advanceWith(state, minus())
-				'*' -> return advanceWith(state, multiply())
-				'(' -> return advanceWith(state, lparen())
-				')' -> return advanceWith(state, rparen())
-				'\n' -> return advanceWith(state, eol())
-				'=' -> return advanceWith(state, assign())
-				'{' -> return advanceWith(state, lcurley())
-				'}' -> return advanceWith(state, rcurley())
+				'/' -> return advanceWith(state, DIVIDE_TOKEN)
+				'+' -> return advanceWith(state, PLUS_TOKEN)
+				'-' -> return advanceWith(state, MINUS_TOKEN)
+				'*' -> return advanceWith(state, MULTIPLY_TOKEN)
+				'(' -> return advanceWith(state, LPAREN_TOKEN)
+				')' -> return advanceWith(state, RPAREN_TOKEN)
+				'\n' -> return advanceWith(state, EOL_TOKEN)
+				'=' -> return advanceWith(state, ASSIGN_TOKEN)
+				'{' -> return advanceWith(state, LCURLEY_TOKEN)
+				'}' -> return advanceWith(state, RCURLEY_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
 		}
-		return eof()
+		return EOF_TOKEN
 	}
 
 	/** Determines whether the current character is the begin of a comment.*/
@@ -230,6 +219,6 @@ class Lexer(private val text: String) {
 	private fun equal(state: State): Token<Any> {
 		advance(state)
 		advance(state)
-		return Companion.equal()
+		return EQUAL_TOKEN
 	}
 }

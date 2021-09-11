@@ -112,3 +112,15 @@ class Declaration(location: CodeLocation, val left: Variable, val right: Node?) 
 		return visitor.visitLeave(this)
 	}
 }
+
+class IfStatement(location: CodeLocation, val condition: Node, val thenStatement: Node) : AbstractNode(location) {
+	override fun toString(): String = "If"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			condition.accept(visitor)
+			thenStatement.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}

@@ -27,6 +27,7 @@ class Interpreter(private val node: Node) {
 			is Assignment -> assignment(node)
 			is Variable -> variable(node)
 			is Declaration -> declaration(node)
+			is IfStatement -> ifStatement(node)
 			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -85,5 +86,12 @@ class Interpreter(private val node: Node) {
 		val value = node.right?.let { interpret(it) }
 		value?.let { memory.setValue(node.left, value) }
 		return value ?: 0
+	}
+
+	private fun ifStatement(node: IfStatement): Int {
+		if (interpret(node.condition) != 0) {
+			return interpret(node.thenStatement)
+		}
+		return 0
 	}
 }

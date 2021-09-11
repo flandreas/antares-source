@@ -104,6 +104,17 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseIfThenStatement() {
+		val parser = Parser("""
+			if (3 == 5) {
+				42
+			}
+		""".trimIndent())
+
+		parser.parse()
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

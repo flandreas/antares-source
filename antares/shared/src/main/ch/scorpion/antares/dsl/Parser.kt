@@ -12,11 +12,13 @@ import ch.scorpion.antares.dsl.TokenType.*
  *               | assignment
  *               | block
  *               | declaration
+ *               | ifStatement
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
  *     block : "{" (EOL)* statementList (EOL)* "}"
  *     declaration : VAR (variable | assignment)
+ *     ifStatement : "if" "(" expr ")" statement
  *     expr : term (("+" | "-") term)*
  *     term : factor (("*" | "/" | "==") factor)*
  *     factor : "+" factor
@@ -77,6 +79,7 @@ class Parser(private val lexer: Lexer) {
 			}
 			LCURLEY -> block()
 			RCURLEY -> empty()
+			IF -> ifStatement()
 			VAR -> declaration()
 			else -> expr()
 		}
@@ -118,6 +121,17 @@ class Parser(private val lexer: Lexer) {
 			} else {
 				Declaration(location, variable(), null)
 			}
+		}
+	}
+
+	private fun ifStatement(): Node {
+		lexer.location.let { location ->
+			eat(IF)
+			eat(LPAREN)
+			val condition = expr()
+			eat(RPAREN)
+			val thenStatement = statement()
+			return IfStatement(location, condition, thenStatement)
 		}
 	}
 
