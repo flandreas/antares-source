@@ -35,17 +35,20 @@ class Lexer(private val text: String) {
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 		private val VAR_TOKEN = Token<String>(VAR)
 		private val EQUAL_TOKEN = Token<Unit>(EQUAL)
+		private val DIFF_TOKEN = Token<Unit>(DIFF)
 		private val IF_TOKEN = Token<String>(IF)
 		private val ELSE_TOKEN = Token<String>(ELSE)
 		private val AND_TOKEN = Token<String>(AND)
 		private val OR_TOKEN = Token<String>(OR)
+		private val NOT_TOKEN = Token<String>(NOT)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
 			"if" to IF_TOKEN,
 			"else" to ELSE_TOKEN,
 			"and" to AND_TOKEN,
-			"or" to OR_TOKEN
+			"or" to OR_TOKEN,
+			"not" to NOT_TOKEN
 		)
 
 		// Factory methods for [Token]s with values
@@ -127,6 +130,10 @@ class Lexer(private val text: String) {
 				return equal(state)
 			}
 
+			if (isDifferent(state)) {
+				return diff(state)
+			}
+
 			when (state.currentChar!!) {
 				'/' -> return advanceWith(state, DIVIDE_TOKEN)
 				'+' -> return advanceWith(state, PLUS_TOKEN)
@@ -150,6 +157,9 @@ class Lexer(private val text: String) {
 
 	private fun isEqual(state: State): Boolean =
 		state.currentChar == '=' && peek(state) == '='
+
+	private fun isDifferent(state: State): Boolean =
+		state.currentChar == '!' && peek(state) == '='
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -220,9 +230,15 @@ class Lexer(private val text: String) {
 		return RESERVED_KEYWORDS.getOrElse(name) { Companion.id(name) }
 	}
 
-	private fun equal(state: State): Token<Any> {
+	private fun equal(state: State): Token<Unit> {
 		advance(state)
 		advance(state)
 		return EQUAL_TOKEN
+	}
+
+	private fun diff(state: State): Token<Unit> {
+		advance(state)
+		advance(state)
+		return DIFF_TOKEN
 	}
 }

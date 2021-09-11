@@ -124,9 +124,15 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldInterpretEquality() {
+	fun shouldInterpretEqual() {
 		assertEquals(0, Interpreter("3 == 2").interpret())
 		assertEquals(1, Interpreter("34 == 34").interpret())
+	}
+
+	@Test
+	fun shouldParseDiff() {
+		assertEquals(1, Interpreter("3 != 2").interpret())
+		assertEquals(0, Interpreter("34 != 34").interpret())
 	}
 
 	@Test
@@ -213,5 +219,11 @@ class InterpreterTest {
 		""".trimIndent()).interpret()
 
 		assertEquals(42, result)
+	}
+
+	@Test
+	fun shouldCalculateNot() {
+		// Result of signed integer calculation
+		assertEquals(-3, Interpreter("not 2").interpret())
 	}
 }

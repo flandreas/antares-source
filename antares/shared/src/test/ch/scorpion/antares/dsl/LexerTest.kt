@@ -135,6 +135,14 @@ class LexerTest {
 	}
 
 	@Test
+	fun shouldScanDiff() {
+		val lexer = Lexer("a != b")
+		assertId("a", lexer.nextToken())
+		assertEquals(DIFF, lexer.nextToken().type)
+		assertId("b", lexer.nextToken())
+	}
+
+	@Test
 	fun shouldScanIfThen() {
 		val lexer = Lexer("if (5) {}")
 		assertEquals(IF, lexer.nextToken().type)
@@ -175,6 +183,13 @@ class LexerTest {
 		assertInt(5, lexer.nextToken())
 		assertEquals(OR, lexer.nextToken().type)
 		assertInt(7, lexer.nextToken())
+	}
+
+	@Test
+	fun shouldScanNot() {
+		val lexer = Lexer("not 2")
+		assertEquals(NOT, lexer.nextToken().type)
+		assertInt(2, lexer.nextToken())
 	}
 
 	private fun assertEof(token: Token<Any>) {

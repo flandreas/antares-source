@@ -52,6 +52,7 @@ class Interpreter(private val node: Node) {
 			MULTIPLY -> interpret(node.left) * interpret(node.right)
 			DIVIDE -> interpret(node.left) / interpret(node.right)
 			EQUAL -> if (interpret(node.left) == interpret(node.right)) 1 else 0
+			DIFF -> if (interpret(node.left) != interpret(node.right)) 1 else 0
 			AND -> interpret(node.left).and(interpret(node.right))
 			OR ->interpret(node.left).or(interpret(node.right))
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
@@ -64,6 +65,7 @@ class Interpreter(private val node: Node) {
 		return when (node.op.type) {
 			PLUS -> +interpret(node.expr)
 			MINUS -> -interpret(node.expr)
+			NOT -> interpret(node.expr).inv()
 			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
 		}
 	}

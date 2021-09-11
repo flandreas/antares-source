@@ -124,6 +124,8 @@ class ParserTest {
 				17
 			}
 		""".trimIndent())
+
+		parser.parse()
 	}
 
 	@Test
@@ -139,6 +141,17 @@ class ParserTest {
 			-- ==
 			--- 13
 			--- 27
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseUnaryNot() {
+		val parser = Parser("not 3")
+
+		assertAST(parser.parse(), """
+			Compound
+			- not
+			-- 3
 		""".trimIndent())
 	}
 

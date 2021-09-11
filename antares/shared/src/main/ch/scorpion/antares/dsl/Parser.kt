@@ -20,9 +20,10 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     declaration : VAR (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
- *     term : factor (("*" | "/" | "==") factor)*
+ *     term : factor (("*" | "/" | "==" | "!=") factor)*
  *     factor : "+" factor
  *            | "-" factor
+ *            | "not"
  *            | INTEGER
  *            | "(" expr ")"
  *            | variable
@@ -36,7 +37,7 @@ class Parser(private val lexer: Lexer) {
 
 	companion object {
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
-		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, EQUAL)
+		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, EQUAL, DIFF)
 		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
 	}
 
@@ -167,6 +168,7 @@ class Parser(private val lexer: Lexer) {
 					MULTIPLY -> eat(MULTIPLY)
 					DIVIDE -> eat(DIVIDE)
 					EQUAL -> eat(EQUAL)
+					DIFF -> eat(DIFF)
 					else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
 				}
 				node = BinaryOperation(location, left = node, op = token, right = factor())
@@ -185,6 +187,10 @@ class Parser(private val lexer: Lexer) {
 				}
 				MINUS -> {
 					eat(MINUS)
+					return UnaryOperation(location, token, factor())
+				}
+				NOT -> {
+					eat(NOT)
 					return UnaryOperation(location, token, factor())
 				}
 				INTEGER -> {

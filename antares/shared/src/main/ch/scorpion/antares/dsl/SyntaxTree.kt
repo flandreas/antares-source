@@ -23,8 +23,16 @@ class UnaryOperation(
 		return when (op.type) {
 			TokenType.PLUS -> "Unary +"
 			TokenType.MINUS -> "Unary -"
+			TokenType.NOT -> "not"
 			else -> throw IllegalStateException("unsupported unary op ${op.type}")
 		}
+	}
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expr.accept(visitor)
+		}
+		return visitor.visitLeave(this)
 	}
 }
 
@@ -42,6 +50,7 @@ class BinaryOperation(
 			TokenType.MULTIPLY -> "*"
 			TokenType.DIVIDE -> "/"
 			TokenType.EQUAL -> "=="
+			TokenType.DIFF -> "!="
 			TokenType.AND -> "and"
 			TokenType.OR -> "or"
 			else -> throw IllegalStateException("unsupported binary op ${op.type}")

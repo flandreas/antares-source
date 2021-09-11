@@ -15,10 +15,12 @@ enum class TokenType {
 	RCURLEY,
 	VAR,
 	EQUAL,
+	DIFF,
 	IF,
 	ELSE,
 	AND,
-	OR
+	OR,
+	NOT
 }
 
 /**
