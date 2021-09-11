@@ -113,7 +113,7 @@ class Declaration(location: CodeLocation, val left: Variable, val right: Node?) 
 	}
 }
 
-class IfStatement(location: CodeLocation, val condition: Node, val thenStatement: Node) : AbstractNode(location) {
+class IfStatement(location: CodeLocation, val condition: Node, val thenStatement: Node, val elseStatement: Node?) : AbstractNode(location) {
 	override fun toString(): String = "If"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {

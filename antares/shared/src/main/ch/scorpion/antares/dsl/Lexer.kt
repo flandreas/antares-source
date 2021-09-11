@@ -37,10 +37,12 @@ class Lexer(private val text: String) {
 		private val VAR_TOKEN = Token<String>(VAR)
 		private val EQUAL_TOKEN = Token<Unit>(EQUAL)
 		private val IF_TOKEN = Token<String>(IF)
+		private val ELSE_TOKEN = Token<String>(ELSE)
 
 		private val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
-			"if" to IF_TOKEN
+			"if" to IF_TOKEN,
+			"else" to ELSE_TOKEN
 		)
 
 		// Factory methods for [Token]s with values

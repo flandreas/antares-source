@@ -148,6 +148,22 @@ class LexerTest {
 		assertEquals(RCURLEY, lexer.nextToken().type)
 	}
 
+	@Test
+	fun shouldScanIfThenElse() {
+		val lexer = Lexer("if (5) { 17 } else { 42 }")
+		assertEquals(IF, lexer.nextToken().type)
+		assertEquals(LPAREN, lexer.nextToken().type)
+		assertInt(5, lexer.nextToken())
+		assertEquals(RPAREN, lexer.nextToken().type)
+		assertEquals(LCURLEY, lexer.nextToken().type)
+		assertInt(17, lexer.nextToken())
+		assertEquals(RCURLEY, lexer.nextToken().type)
+		assertEquals(ELSE, lexer.nextToken().type)
+		assertEquals(LCURLEY, lexer.nextToken().type)
+		assertInt(42, lexer.nextToken())
+		assertEquals(RCURLEY, lexer.nextToken().type)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

@@ -92,6 +92,6 @@ class Interpreter(private val node: Node) {
 		if (interpret(node.condition) != 0) {
 			return interpret(node.thenStatement)
 		}
-		return 0
+		return node.elseStatement?.let { interpret(it) } ?: 0
 	}
 }

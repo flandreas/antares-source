@@ -18,7 +18,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     empty : ""
  *     block : "{" (EOL)* statementList (EOL)* "}"
  *     declaration : VAR (variable | assignment)
- *     ifStatement : "if" "(" expr ")" statement
+ *     ifStatement : "if" "(" expr ")" statement (EOL)* [ "else" statement ]
  *     expr : term (("+" | "-") term)*
  *     term : factor (("*" | "/" | "==") factor)*
  *     factor : "+" factor
@@ -131,7 +131,13 @@ class Parser(private val lexer: Lexer) {
 			val condition = expr()
 			eat(RPAREN)
 			val thenStatement = statement()
-			return IfStatement(location, condition, thenStatement)
+			var elseStatement: Node? = null
+			eatNewlines()
+			if (currentToken!!.type == ELSE) {
+				eat(ELSE)
+				elseStatement = statement()
+			}
+			return IfStatement(location, condition, thenStatement, elseStatement)
 		}
 	}
 

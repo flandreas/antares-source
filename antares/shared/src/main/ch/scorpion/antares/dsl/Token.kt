@@ -16,7 +16,8 @@ enum class TokenType {
 	RCURLEY,
 	VAR,
 	EQUAL,
-	IF
+	IF,
+	ELSE
 }
 
 /**

@@ -156,4 +156,36 @@ class InterpreterTest {
 
 		assertEquals(17, result)
 	}
+
+	@Test
+	fun shouldExecuteElseStatementForFalseIfCondition() {
+		val result = Interpreter("""
+			a = 5
+			b = 17
+			if (a == 4) {
+				b = 42
+			} else {
+				b = 9
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(9, result)
+	}
+
+	@Test
+	fun shouldExecuteStatementForTrueIfCondition() {
+		val result = Interpreter("""
+			a = 5
+			b = 17
+			if (a == 5) {
+				b = 42
+			} else {
+				b = 9
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(42, result)
+	}
 }
