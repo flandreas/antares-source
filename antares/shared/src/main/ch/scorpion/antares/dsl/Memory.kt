@@ -11,16 +11,16 @@ import ch.scorpion.jabbah.base.collection.Stack
  *
  * [Variable] values cannot be `null`.
  */
-class Memory {
+class Memory(rootActivationRecord: ActivationRecord = StoringActivationRecord("global", null)) {
 
 	private val callStack = Stack<ActivationRecord>()
 
 	init {
-		enterScope("global")
+		callStack.push(rootActivationRecord)
 	}
 
 	fun enterScope(name: String) {
-		callStack.push(ActivationRecord(name, callStack.optionalPeek()))
+		callStack.push(StoringActivationRecord(name, callStack.optionalPeek()))
 	}
 
 	fun exitScope() {
@@ -66,53 +66,5 @@ class Memory {
 		if (callStack.empty) {
 			throw RuntimeError(location, "No activation record")
 		}
-	}
-
-	/**
-	 * Holds [Variable] definitions and values of a particular scope.
-	 */
-	private class ActivationRecord(val name: String, val parent: ActivationRecord?) {
-
-		/** Defined variables have at least a key with value `null`. */
-		private val values = mutableMapOf<String, Any?>()
-
-		fun isLocallyDefined(name: String) = values.containsKey(name)
-
-		fun isDefined(name: String): Boolean =
-			isLocallyDefined(name) || parent?.isDefined(name) == true
-
-		fun preset(name: String, value: Any) {
-			values[name] = value
-		}
-
-		fun define(variable: Variable) {
-			if (isLocallyDefined(variable.token.value!!)) {
-				throw RuntimeError(variable.location, "Variable '${variable.token.value}' already defined in '$name'")
-			}
-			values[variable.token.value] = null
-		}
-
-		fun setValue(variable: Variable, value: Any) {
-			when {
-				isLocallyDefined(variable.token.value!!) ->
-					values[variable.token.value] = value
-				parent != null ->
-					parent.setValue(variable, value)
-				else ->
-					throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
-			}
-		}
-
-		fun getValue(variable: Variable): Any =
-			when {
-				isLocallyDefined(variable.token.value!!) -> {
-					values[variable.token.value]
-						?: throw RuntimeError(variable.location, "No value for variable '${variable.token.value}' available")
-				}
-				parent != null ->
-					parent.getValue(variable)
-				else ->
-					throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
-			}
 	}
 }
