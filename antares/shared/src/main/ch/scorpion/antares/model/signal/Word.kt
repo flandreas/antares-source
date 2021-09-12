@@ -183,7 +183,11 @@ internal data class Word(
 			if (it == index) bitAt(it).not() else bitAt(it)
 		})
 
-	override fun and(signal: DigitalSignal): DigitalSignal = Word((0 until bitWidth.width).map { bitAt(it).and(signal.bitAt(it)) })
+	override fun and(signal: DigitalSignal): DigitalSignal =
+		Word((0 until bitWidth.width).map { bitAt(it).and(signal.bitAt(it)) })
+
+	override fun or(signal: DigitalSignal): DigitalSignal =
+		Word((0 until bitWidth.width).map { bitAt(it).or(signal.bitAt(it)) })
 
 	override fun bitAt(index: Int): Bit = bits[index]
 

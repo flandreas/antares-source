@@ -92,6 +92,8 @@ enum class Bit(private val value: Int?) {
 
 	fun and(bit: Bit): Bit = of(this.isSet && bit.isSet)
 
+	fun or(bit: Bit): Bit = of(this.isSet || bit.isSet)
+
 	/** Returns the inverse of this [Bit], if requested by the parameter.*/
 	fun invert(invert: Boolean = true): Bit = if (invert) not() else this
 

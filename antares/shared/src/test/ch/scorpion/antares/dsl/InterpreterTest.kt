@@ -9,26 +9,26 @@ class InterpreterTest {
 
 	@Test
 	fun shouldCalculateTerms() {
-		assertEquals(84, Interpreter("7*12").interpret())
-		assertEquals(-24, Interpreter("-3*8").interpret())
-		assertEquals(3, Interpreter("12/4").interpret())
-		assertEquals(-8, Interpreter("-8").interpret())
-		assertEquals(10, Interpreter("1 + 2 + 3 + 4").interpret())
+		assertEquals(84L, Interpreter("7*12").interpret())
+		assertEquals(-24L, Interpreter("-3*8").interpret())
+		assertEquals(3L, Interpreter("12/4").interpret())
+		assertEquals(-8L, Interpreter("-8").interpret())
+		assertEquals(10L, Interpreter("1 + 2 + 3 + 4").interpret())
 	}
 
 	@Test
 	fun shouldCalculateExpressions() {
-		assertEquals(3, Interpreter("1+2").interpret())
-		assertEquals(8, Interpreter("17 - 9").interpret())
-		assertEquals(20, Interpreter("(1 + 4) * (7 - 3)").interpret())
-		assertEquals(12, Interpreter("2 * (2 + 8 / (1 + 1))").interpret())
+		assertEquals(3L, Interpreter("1+2").interpret())
+		assertEquals(8L, Interpreter("17 - 9").interpret())
+		assertEquals(20L, Interpreter("(1 + 4) * (7 - 3)").interpret())
+		assertEquals(12L, Interpreter("2 * (2 + 8 / (1 + 1))").interpret())
 	}
 
 	@Test
 	fun shouldInterpretEmptyStatementList() {
 		val result = Interpreter("").interpret()
 
-		assertEquals(0, result)
+		assertEquals(0L, result)
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class InterpreterTest {
 			5 * 10
 		""".trimIndent()).interpret()
 
-		assertEquals(50, result)
+		assertEquals(50L, result)
 	}
 
 	@Test
@@ -48,7 +48,7 @@ class InterpreterTest {
 			5 * 10
 		""".trimIndent()).interpret()
 
-		assertEquals(50, result)
+		assertEquals(50L, result)
 	}
 
 	@Test
@@ -59,7 +59,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(35, result)
+		assertEquals(35L, result)
 	}
 
 	@Test
@@ -71,7 +71,7 @@ class InterpreterTest {
 			}
 		""".trimIndent()).interpret()
 
-		assertEquals(35, result)
+		assertEquals(35L, result)
 	}
 
 	@Test
@@ -81,7 +81,7 @@ class InterpreterTest {
 			b = 2 * a
 		""".trimIndent()).interpret()
 
-		assertEquals(10, result)
+		assertEquals(10L, result)
 	}
 
 	@Test
@@ -108,7 +108,7 @@ class InterpreterTest {
 			a
 		""".trimIndent()).interpret()
 
-		assertEquals(2, result)
+		assertEquals(2L, result)
 	}
 
 	@Test
@@ -121,45 +121,45 @@ class InterpreterTest {
 			a
 		""".trimIndent()).interpret()
 
-		assertEquals(5, result)
+		assertEquals(5L, result)
 	}
 
 	@Test
 	fun shouldInterpretEqual() {
-		assertEquals(0, Interpreter("3 == 2").interpret())
-		assertEquals(1, Interpreter("34 == 34").interpret())
+		assertEquals(0L, Interpreter("3 == 2").interpret())
+		assertEquals(1L, Interpreter("34 == 34").interpret())
 	}
 
 	@Test
 	fun shouldInterpretDiff() {
-		assertEquals(1, Interpreter("3 != 2").interpret())
-		assertEquals(0, Interpreter("34 != 34").interpret())
+		assertEquals(1L, Interpreter("3 != 2").interpret())
+		assertEquals(0L, Interpreter("34 != 34").interpret())
 	}
 
 	@Test
 	fun shouldInterpretSmaller() {
-		assertEquals(1, Interpreter("2 < 3").interpret())
-		assertEquals(0, Interpreter("3 < 2").interpret())
+		assertEquals(1L, Interpreter("2 < 3").interpret())
+		assertEquals(0L, Interpreter("3 < 2").interpret())
 	}
 
 	@Test
 	fun shouldInterpretGreater() {
-		assertEquals(1, Interpreter("3 > 2").interpret())
-		assertEquals(0, Interpreter("2 > 3").interpret())
+		assertEquals(1L, Interpreter("3 > 2").interpret())
+		assertEquals(0L, Interpreter("2 > 3").interpret())
 	}
 
 	@Test
 	fun shouldInterpretSmallerEqual() {
-		assertEquals(1, Interpreter("2 <= 3").interpret())
-		assertEquals(0, Interpreter("3 <= 2").interpret())
-		assertEquals(1, Interpreter("3 <= 3").interpret())
+		assertEquals(1L, Interpreter("2 <= 3").interpret())
+		assertEquals(0L, Interpreter("3 <= 2").interpret())
+		assertEquals(1L, Interpreter("3 <= 3").interpret())
 	}
 
 	@Test
 	fun shouldInterpretGreaterEqual() {
-		assertEquals(1, Interpreter("3 >= 2").interpret())
-		assertEquals(1, Interpreter("3 >= 3").interpret())
-		assertEquals(0, Interpreter("2 >= 3").interpret())
+		assertEquals(1L, Interpreter("3 >= 2").interpret())
+		assertEquals(1L, Interpreter("3 >= 3").interpret())
+		assertEquals(0L, Interpreter("2 >= 3").interpret())
 	}
 
 	@Test
@@ -173,7 +173,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(42, result)
+		assertEquals(42L, result)
 	}
 
 	@Test
@@ -187,7 +187,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(17, result)
+		assertEquals(17L, result)
 	}
 
 	@Test
@@ -203,7 +203,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(9, result)
+		assertEquals(9L, result)
 	}
 
 	@Test
@@ -219,42 +219,42 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(42, result)
+		assertEquals(42L, result)
 	}
 
 	@Test
 	fun shouldCalculateAnd() {
-		assertEquals(5, Interpreter("5 and 5").interpret())
-		assertEquals(0, Interpreter("0 and 5").interpret())
+		assertEquals(5L, Interpreter("5 and 5").interpret())
+		assertEquals(0L, Interpreter("0 and 5").interpret())
 	}
 
 	@Test
 	fun shouldCalculateOr() {
-		assertEquals(3, Interpreter("1 or 2").interpret())
-		assertEquals(5, Interpreter("0 or 5").interpret())
+		assertEquals(3L, Interpreter("1 or 2").interpret())
+		assertEquals(5L, Interpreter("0 or 5").interpret())
 	}
 
 	@Test
 	fun shouldShiftLeft() {
-		assertEquals(2, Interpreter("1 << 1").interpret())
+		assertEquals(2L, Interpreter("1 << 1").interpret())
 	}
 
 	@Test
 	fun shouldShiftRight() {
-		assertEquals(1, Interpreter("2 >> 1").interpret())
+		assertEquals(1L, Interpreter("2 >> 1").interpret())
 	}
 
 	@Test
 	fun shouldInterpretMod() {
-		assertEquals(1, Interpreter("5 % 2").interpret())
-		assertEquals(0, Interpreter("6 % 2").interpret())
-		assertEquals(3, Interpreter("7 % 4").interpret())
+		assertEquals(1L, Interpreter("5 % 2").interpret())
+		assertEquals(0L, Interpreter("6 % 2").interpret())
+		assertEquals(3L, Interpreter("7 % 4").interpret())
 	}
 
 	@Test
 	fun shouldInterpretHexLiteral() {
 		val result = Interpreter("a = 0xFF").interpret()
-		assertEquals(255, result)
+		assertEquals(255L, result)
 	}
 
 	@Test
@@ -268,7 +268,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(42, result)
+		assertEquals(42L, result)
 	}
 
 	@Test
@@ -285,7 +285,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(22, result)
+		assertEquals(22L, result)
 	}
 
 	@Test
@@ -302,7 +302,7 @@ class InterpreterTest {
 			b
 		""".trimIndent()).interpret()
 
-		assertEquals(99, result)
+		assertEquals(99L, result)
 	}
 
 	@Test
@@ -315,7 +315,7 @@ class InterpreterTest {
 			a
 		""".trimIndent()).interpret()
 
-		assertEquals(6, result)
+		assertEquals(6L, result)
 	}
 
 	@Test
@@ -328,12 +328,12 @@ class InterpreterTest {
 			a
 		""".trimIndent()).interpret()
 
-		assertEquals(6, result)
+		assertEquals(6L, result)
 	}
 
 	@Test
 	fun shouldCalculateNot() {
 		// Result of signed integer calculation
-		assertEquals(-3, Interpreter("not 2").interpret())
+		assertEquals(-3L, Interpreter("not 2").interpret())
 	}
 }

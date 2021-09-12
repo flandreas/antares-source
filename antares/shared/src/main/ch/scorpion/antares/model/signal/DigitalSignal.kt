@@ -33,6 +33,9 @@ interface DigitalSignal {
     /** Returns the bitwise 'and' of this [DigitalSignal] and the specified one.*/
     fun and(signal: DigitalSignal): DigitalSignal
 
+	/** Returns the bitwise 'or' of this [DigitalSignal] and the specified one.*/
+    fun or(signal: DigitalSignal): DigitalSignal
+
     fun bitAt(index: Int): Bit
 
     fun flip(index: Int): DigitalSignal

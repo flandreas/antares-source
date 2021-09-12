@@ -1,6 +1,8 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +27,7 @@ class InterpreterSignalTest {
 
 		val result = interpreter.interpret()
 
-		assertEquals(6, result)
+		assertEquals(6L, result)
 	}
 
 	@Test
@@ -42,7 +44,22 @@ class InterpreterSignalTest {
 
 		val result = interpreter.interpret()
 
-		assertEquals(6, result)
+		assertEquals(6L, result)
 	}
 
+	@Test
+	fun shouldInvertSignal() {
+		val program = """
+			O = not I
+		""".trimIndent()
+
+		val parser = Parser(Lexer(program), EmptyHierarchyVisitor())
+
+		val interpreter = Interpreter(parser.parse())
+		interpreter.memory.preset("I", Word.of(BitWidth.BW_4, 2UL))
+
+		val result = interpreter.interpret()
+
+		assertEquals(Word.of(BitWidth.BW_4, 13UL), result)
+	}
 }
