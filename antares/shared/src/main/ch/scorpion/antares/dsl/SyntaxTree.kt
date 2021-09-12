@@ -114,7 +114,7 @@ class Assignment(location: CodeLocation, val left: Variable, val op: Token<Assig
 }
 
 class Declaration(location: CodeLocation, val left: Variable, val right: Node?) : AbstractNode(location) {
-	override fun toString(): String = "Var"
+	override fun toString(): String = "var"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -126,12 +126,43 @@ class Declaration(location: CodeLocation, val left: Variable, val right: Node?) 
 }
 
 class IfStatement(location: CodeLocation, val condition: Node, val thenStatement: Node, val elseStatement: Node?) : AbstractNode(location) {
-	override fun toString(): String = "If"
+	override fun toString(): String = "if"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
 			condition.accept(visitor)
 			thenStatement.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+/**
+ * @property condition `null` only for 'else' case
+ */
+class WhenClause(location: CodeLocation, val condition: Node?, val then: Node) : AbstractNode(location) {
+	override fun toString(): String = condition?.let { ":" } ?: "else"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			condition?.accept(visitor)
+			then.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class WhenStatement(location: CodeLocation, val expression: Node, val clauses: List<WhenClause>): AbstractNode(location) {
+	override fun toString(): String = "when"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expression.accept(visitor)
+			for (clause in clauses) {
+				if (!clause.accept(visitor)) {
+					break
+				}
+			}
 		}
 		return visitor.visitLeave(this)
 	}

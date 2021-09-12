@@ -78,7 +78,7 @@ class ParserTest {
 
 		assertAST(parser.parse(), """
 			Compound
-			- Var
+			- var
 			-- a
 			- =
 			-- a
@@ -95,7 +95,7 @@ class ParserTest {
 
 		assertAST(parser.parse(), """
 			Compound
-			- Var
+			- var
 			-- a
 			-- 5
 			- =
@@ -152,6 +152,47 @@ class ParserTest {
 			Compound
 			- not
 			-- 3
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseWhenStatement() {
+		val parser = Parser("""
+			a = 2
+			var b = 0
+			when (a) {
+				1 : b = 11
+				2 : b = 22
+				else : b = 99
+			}
+			b
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- =
+			-- a
+			-- 2
+			- var
+			-- b
+			-- 0
+			- when
+			-- a
+			-- :
+			--- 1
+			--- =
+			---- b
+			---- 11
+			-- :
+			--- 2
+			--- =
+			---- b
+			---- 22
+			-- else
+			--- =
+			---- b
+			---- 99
+			- b
 		""".trimIndent())
 	}
 

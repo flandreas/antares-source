@@ -49,6 +49,8 @@ class Lexer(private val text: String) {
 		private val SHIFT_LEFT_TOKEN = Token<Unit>(SHIFT_LEFT)
 		private val SHIFT_RIGHT_TOKEN = Token<Unit>(SHIFT_RIGHT)
 		private val MOD_TOKEN = Token<String>(MOD)
+		private val WHEN_TOKEN = Token<String>(WHEN)
+		private val COLON_TOKEN = Token<String>(COLON)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -56,7 +58,8 @@ class Lexer(private val text: String) {
 			"else" to ELSE_TOKEN,
 			"and" to AND_TOKEN,
 			"or" to OR_TOKEN,
-			"not" to NOT_TOKEN
+			"not" to NOT_TOKEN,
+			"when" to WHEN_TOKEN
 		)
 
 		// Factory methods for [Token]s with values
@@ -171,6 +174,7 @@ class Lexer(private val text: String) {
 				'<' -> return advanceWith(state, SMALLER_TOKEN)
 				'>' -> return advanceWith(state, GREATER_TOKEN)
 				'%' -> return advanceWith(state, MOD_TOKEN)
+				':' -> return advanceWith(state, COLON_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")

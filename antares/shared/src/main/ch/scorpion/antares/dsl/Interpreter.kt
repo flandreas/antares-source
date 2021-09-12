@@ -28,6 +28,7 @@ class Interpreter(private val node: Node) {
 			is Variable -> variable(node)
 			is Declaration -> declaration(node)
 			is IfStatement -> ifStatement(node)
+			is WhenStatement -> whenStatement(node)
 			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -104,5 +105,15 @@ class Interpreter(private val node: Node) {
 			return interpret(node.thenStatement)
 		}
 		return node.elseStatement?.let { interpret(it) } ?: 0L
+	}
+
+	private fun whenStatement(node: WhenStatement): Long {
+		val expr = interpret(node.expression)
+		for (clause in node.clauses) {
+			if (clause.condition == null || expr == interpret(clause.condition)) {
+				return interpret(clause.then)
+			}
+		}
+		return 0
 	}
 }

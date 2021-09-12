@@ -13,12 +13,16 @@ import ch.scorpion.antares.dsl.TokenType.*
  *               | block
  *               | declaration
  *               | ifStatement
+ *               | whenStatement
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
  *     block : "{" statementList "}"
  *     declaration : "var" (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
+ *     whenStatement : "when" "(" expr ")" "{" ( whenThen )* [ whenElse ] "}"
+ *     whenThen : expr ":" statement
+ *     whenElse : "else" ":" statement
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
@@ -87,6 +91,7 @@ class Parser(private val lexer: Lexer) {
 			LCURLEY -> block()
 			RCURLEY -> empty()
 			IF -> ifStatement()
+			WHEN -> whenStatement()
 			VAR -> declaration()
 			else -> expr()
 		}
@@ -142,6 +147,44 @@ class Parser(private val lexer: Lexer) {
 				elseStatement = statement()
 			}
 			return IfStatement(location, condition, thenStatement, elseStatement)
+		}
+	}
+
+	private fun whenStatement(): Node {
+		lexer.location.let { location ->
+			val clauses = mutableListOf<WhenClause>()
+			eat(WHEN)
+			eat(LPAREN)
+			val expr = expr()
+			eat(RPAREN)
+			eat(LCURLEY)
+			while (currentToken!!.type != EOF && currentToken!!.type != RCURLEY) {
+				if (currentToken!!.type == ELSE) {
+					clauses.add(whenElse())
+					break
+				} else {
+					clauses.add(whenThen())
+				}
+			}
+			eat(RCURLEY)
+
+			return WhenStatement(location, expr, clauses)
+		}
+	}
+
+	private fun whenThen(): WhenClause {
+		lexer.location.let { location ->
+			val condition = expr()
+			eat(COLON)
+			return WhenClause(location, condition, statement())
+		}
+	}
+
+	private fun whenElse(): WhenClause {
+		lexer.location.let { location ->
+			eat(ELSE)
+			eat(COLON)
+			return WhenClause(location, null, statement())
 		}
 	}
 

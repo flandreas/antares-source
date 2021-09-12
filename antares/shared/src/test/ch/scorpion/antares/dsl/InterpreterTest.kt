@@ -271,6 +271,40 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretWhenStatement() {
+		val result = Interpreter("""
+			a = 2
+			var b = 0
+			when (a) {
+				1 : b = 11
+				2 : b = 22
+				3 : b = 33
+				else : b = 99
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(22, result)
+	}
+
+	@Test
+	fun shouldInterpretWhenStatementByElse() {
+		val result = Interpreter("""
+			a = 4
+			var b = 0
+			when (a) {
+				1 : b = 11
+				2 : b = 22
+				3 : b = 33
+				else : b = 99
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(99, result)
+	}
+
+	@Test
 	fun shouldCalculateNot() {
 		// Result of signed integer calculation
 		assertEquals(-3, Interpreter("not 2").interpret())
