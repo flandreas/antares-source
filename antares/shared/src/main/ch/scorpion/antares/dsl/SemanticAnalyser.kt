@@ -29,6 +29,10 @@ class SemanticAnalyser : EmptyHierarchyVisitor() {
 				enterAssignment(node)
 			}
 			is Block -> enterBlock(node)
+			is ForStatement -> {
+				currentlyDeclaredVariableName = node.variable.token.value
+				enterForStatement(node)
+			}
 		}
 		return true
 	}
@@ -45,16 +49,20 @@ class SemanticAnalyser : EmptyHierarchyVisitor() {
 			is Declaration -> currentlyDeclaredVariableName = null
 			is Assignment -> currentlyDeclaredVariableName = null
 			is Block -> leaveBlock(node)
+			is ForStatement -> currentlyDeclaredVariableName = null
 		}
 		return true
 	}
 
 	private fun enterDeclaration(declaration: Declaration) {
-		val varName = declaration.left.token.value as String
+		declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
+	}
+
+	private fun declareVariableInLocalScope(name: String, location: CodeLocation) {
 		val typeSymbol = null as BuiltInTypeSymbol?
-		val varSymbol = VariableSymbol(varName, typeSymbol)
-		if (scope.lookup(varName, currentScopeOnly = true) != null) {
-			throw SemanticError(declaration.location, "Variable '$varName' already declared")
+		val varSymbol = VariableSymbol(name, typeSymbol)
+		if (scope.lookup(name, currentScopeOnly = true) != null) {
+			throw SemanticError(location, "Variable '$name' already declared")
 		}
 		scope.define(varSymbol)
 	}
@@ -68,6 +76,10 @@ class SemanticAnalyser : EmptyHierarchyVisitor() {
 			val varSymbol = VariableSymbol(varName, typeSymbol)
 			scope.define(varSymbol)
 		}
+	}
+
+	private fun enterForStatement(forStatement: ForStatement) {
+		declareVariableInLocalScope(forStatement.variable.token.value as String, forStatement.location)
 	}
 
 	private fun enterBlock(block: Block) {

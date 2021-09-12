@@ -51,6 +51,9 @@ class Lexer(private val text: String) {
 		private val MOD_TOKEN = Token<String>(MOD)
 		private val WHEN_TOKEN = Token<String>(WHEN)
 		private val COLON_TOKEN = Token<String>(COLON)
+		private val FOR_TOKEN = Token<String>(FOR)
+		private val IN_TOKEN = Token<String>(IN)
+		private val TO_TOKEN = Token<String>(TO)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -59,7 +62,10 @@ class Lexer(private val text: String) {
 			"and" to AND_TOKEN,
 			"or" to OR_TOKEN,
 			"not" to NOT_TOKEN,
-			"when" to WHEN_TOKEN
+			"when" to WHEN_TOKEN,
+			"for" to FOR_TOKEN,
+			"in" to IN_TOKEN,
+			"to" to TO_TOKEN
 		)
 
 		// Factory methods for [Token]s with values
@@ -113,7 +119,7 @@ class Lexer(private val text: String) {
 
 	private fun nextToken(state: State): Token<Any> {
 		state.rowAtTokenStart = state.rowCounter
-		state.columnAtTokenStart = state.columnAtTokenStart
+		state.columnAtTokenStart = state.columnCounter
 
 		while (state.currentChar != null) {
 

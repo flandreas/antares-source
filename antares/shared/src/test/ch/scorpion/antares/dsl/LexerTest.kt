@@ -282,6 +282,27 @@ class LexerTest {
 		assertToken(RCURLEY, lexer)
 	}
 
+	@Test
+	fun shouldScanFor() {
+		val lexer = Lexer("""
+			for (a in 1 to 10) {
+				b
+			}
+		""".trimIndent())
+
+		assertToken(FOR, lexer)
+		assertToken(LPAREN, lexer)
+		assertId("a", lexer)
+		assertToken(IN, lexer)
+		assertLong(1, lexer)
+		assertToken(TO, lexer)
+		assertLong(10, lexer)
+		assertToken(RPAREN, lexer)
+		assertToken(LCURLEY, lexer)
+		assertId("b", lexer)
+		assertToken(RCURLEY, lexer)
+	}
+
 	private fun assertHexLiteral(expected: Long, literal: String) {
 		val lexer = Lexer("a = $literal")
 		assertId("a", lexer)

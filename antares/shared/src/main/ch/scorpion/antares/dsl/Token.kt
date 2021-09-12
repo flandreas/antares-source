@@ -29,7 +29,10 @@ enum class TokenType {
 	SHIFT_RIGHT,
 	MOD,
 	WHEN,
-	COLON
+	COLON,
+	FOR,
+	IN,
+	TO
 }
 
 /**

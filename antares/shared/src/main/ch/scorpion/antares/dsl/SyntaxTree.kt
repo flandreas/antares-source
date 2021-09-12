@@ -167,3 +167,17 @@ class WhenStatement(location: CodeLocation, val expression: Node, val clauses: L
 		return visitor.visitLeave(this)
 	}
 }
+
+class ForStatement(location: CodeLocation, val variable: Variable, val inExpr: Node, val toExpr: Node, val statement: Node): AbstractNode(location) {
+	override fun toString(): String = "for"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			variable.accept(visitor)
+			inExpr.accept(visitor)
+			toExpr.accept(visitor)
+			statement.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}

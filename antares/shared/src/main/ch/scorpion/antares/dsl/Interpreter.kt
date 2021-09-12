@@ -29,6 +29,7 @@ class Interpreter(private val node: Node) {
 			is Declaration -> declaration(node)
 			is IfStatement -> ifStatement(node)
 			is WhenStatement -> whenStatement(node)
+			is ForStatement -> forStatement(node)
 			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -114,6 +115,29 @@ class Interpreter(private val node: Node) {
 				return interpret(clause.then)
 			}
 		}
+		return 0
+	}
+
+	private fun forStatement(node: ForStatement): Long {
+		var startValue = interpret(node.inExpr)
+		val endValue = interpret(node.toExpr)
+
+		memory.enterScope("for")
+		memory.define(node.variable)
+
+		if (startValue <= endValue) {
+			for (value in startValue..endValue) {
+				memory.setValue(node.variable, value)
+				interpret(node.statement)
+			}
+		} else {
+			for (value in startValue downTo endValue) {
+				memory.setValue(node.variable, value)
+				interpret(node.statement)
+			}
+		}
+
+		memory.exitScope()
 		return 0
 	}
 }

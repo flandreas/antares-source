@@ -305,6 +305,32 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretForAscending() {
+		val result = Interpreter("""
+			a = 0
+			for (i in 1 to 3) {
+				a = a + i
+			}
+			a
+		""".trimIndent()).interpret()
+
+		assertEquals(6, result)
+	}
+
+	@Test
+	fun shouldInterpretForDescending() {
+		val result = Interpreter("""
+			a = 0
+			for (i in 3 to 1) {
+				a = a + i
+			}
+			a
+		""".trimIndent()).interpret()
+
+		assertEquals(6, result)
+	}
+
+	@Test
 	fun shouldCalculateNot() {
 		// Result of signed integer calculation
 		assertEquals(-3, Interpreter("not 2").interpret())

@@ -14,6 +14,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *               | declaration
  *               | ifStatement
  *               | whenStatement
+ *               | forStatement
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
@@ -23,6 +24,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     whenStatement : "when" "(" expr ")" "{" ( whenThen )* [ whenElse ] "}"
  *     whenThen : expr ":" statement
  *     whenElse : "else" ":" statement
+ *     forStatement : "for" "(" variable "in" expr "to" expr ")" statement
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
@@ -92,6 +94,7 @@ class Parser(private val lexer: Lexer) {
 			RCURLEY -> empty()
 			IF -> ifStatement()
 			WHEN -> whenStatement()
+			FOR -> forStatement()
 			VAR -> declaration()
 			else -> expr()
 		}
@@ -185,6 +188,21 @@ class Parser(private val lexer: Lexer) {
 			eat(ELSE)
 			eat(COLON)
 			return WhenClause(location, null, statement())
+		}
+	}
+
+	private fun forStatement(): Node {
+		lexer.location.let { location ->
+			eat(FOR)
+			eat(LPAREN)
+			val variable = variable()
+			eat(IN)
+			val inExpr = expr()
+			eat(TO)
+			val toExpr = expr()
+			eat(RPAREN)
+			val statement = statement()
+			return ForStatement(location, variable, inExpr, toExpr, statement)
 		}
 	}
 

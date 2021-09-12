@@ -196,6 +196,25 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseForStatement() {
+		val parser = Parser("""
+			for (a in 1 to 10) {
+				1
+			}
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- for
+			-- a
+			-- 1
+			-- 10
+			-- Block
+			--- 1
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)
