@@ -6,7 +6,11 @@ class BuiltInTypeSymbol(name: String) : Symbol(name)
 
 class VariableSymbol(name: String, type: BuiltInTypeSymbol?) : Symbol(name, type)
 
-class ScopedSymbolTable(val name: String, val level: Int, val enclosingScope: ScopedSymbolTable?) {
+class ScopedSymbolTable(
+	val name: String,
+	val level: Int,
+	val enclosingScope: ScopedSymbolTable?
+) {
 
 	private val symbols = mutableMapOf<String, Symbol>()
 

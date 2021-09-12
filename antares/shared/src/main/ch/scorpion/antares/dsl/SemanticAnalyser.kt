@@ -11,9 +11,12 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
  *
  * @throws SemanticError for semantic errors found during analysis
  */
-class SemanticAnalyser : EmptyHierarchyVisitor() {
+class SemanticAnalyser(
+	symbolTable: ScopedSymbolTable = ScopedSymbolTable("global", level = 1, enclosingScope = null)
+) : EmptyHierarchyVisitor() {
 
-	var scope: ScopedSymbolTable = ScopedSymbolTable("global", level = 1, enclosingScope = null)
+	// Visible for testing
+	var scope: ScopedSymbolTable = symbolTable
 		private set
 
 	private var currentlyDeclaredVariableName: String? = null

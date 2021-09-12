@@ -1,5 +1,7 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.antares.dsl.TokenType.*
 
 /**
@@ -40,8 +42,15 @@ import ch.scorpion.antares.dsl.TokenType.*
  *     hexLiteral : "0x" INTEGER
  *     variable : ID
  * </pre>
+ *
+ * @property lexer the [Lexer] set up with the program code to scan
+ * @property semanticAnalyser the [HierarchyVisitor] to perform semantic analysis. Provide
+ * [EmptyHierarchyVisitor] to skip semantic analysis
  */
-class Parser(private val lexer: Lexer) {
+class Parser(
+	private val lexer: Lexer,
+	private val semanticAnalyser: HierarchyVisitor = SemanticAnalyser()
+) {
 
 	constructor(text: String): this(Lexer(text))
 
@@ -60,12 +69,8 @@ class Parser(private val lexer: Lexer) {
 	 * Parses the sentence this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
-	fun parse(): Node {
-		return Compound(lexer.location, statementList()).also {
-			// Semantic analysis
-			it.accept(SemanticAnalyser())
-		}
-	}
+	fun parse(): Node =
+		Compound(lexer.location, statementList()).also { it.accept(semanticAnalyser) }
 
 	private fun statementList(): List<Node> {
 		val node = statement()

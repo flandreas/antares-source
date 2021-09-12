@@ -10,11 +10,9 @@ class Interpreter(private val node: Node) {
 	constructor(parser: Parser): this(parser.parse())
 	constructor(text: String): this(Parser(text))
 
-	private val memory = Memory()
+	val memory = Memory()
 
-	fun interpret(): Long {
-		return interpret(node)
-	}
+	fun interpret(): Long = interpret(node)
 
 	private fun interpret(node: Node): Long {
 		return when (node) {
