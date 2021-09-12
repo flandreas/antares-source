@@ -4,11 +4,12 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.dsl.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Unit tests for [Interpreter] using [DigitalSignal] values.*/
-class InterpreterSignalTest {
+/** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
+class AntaresInterpreterSignalTest {
 
 	@Test
 	fun presetGlobalVariableWithSemanticAnalysis() {
@@ -20,9 +21,9 @@ class InterpreterSignalTest {
 		val analyser = SemanticAnalyser()
 		analyser.scope.define(Symbol("a"))
 
-		val parser = Parser(Lexer(program), analyser)
+		val parser = AntaresParser(AntaresLexer(program), analyser)
 
-		val interpreter = Interpreter(parser.parse())
+		val interpreter = AntaresInterpreter(parser.parse())
 		interpreter.memory.preset("a", 5L)
 
 		val result = interpreter.interpret()
@@ -37,9 +38,9 @@ class InterpreterSignalTest {
 			b = a + 1
 		""".trimIndent()
 
-		val parser = Parser(Lexer(program), EmptyHierarchyVisitor())
+		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
 
-		val interpreter = Interpreter(parser.parse())
+		val interpreter = AntaresInterpreter(parser.parse())
 		interpreter.memory.preset("a", 5L)
 
 		val result = interpreter.interpret()
@@ -53,9 +54,9 @@ class InterpreterSignalTest {
 			O = not I
 		""".trimIndent()
 
-		val parser = Parser(Lexer(program), EmptyHierarchyVisitor())
+		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
 
-		val interpreter = Interpreter(parser.parse())
+		val interpreter = AntaresInterpreter(parser.parse())
 		interpreter.memory.preset("I", Word.of(BitWidth.BW_4, 2UL))
 
 		val result = interpreter.interpret()

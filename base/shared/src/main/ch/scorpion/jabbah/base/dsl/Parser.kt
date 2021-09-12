@@ -1,8 +1,8 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.antares.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /**
  * Parses sentences of the following grammar and creates a corresponding AST.
@@ -38,8 +38,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  *            | variable
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
- *     number : INTEGER | hexLiteral
- *     hexLiteral : "0x" INTEGER
+ *     number : LONG
  *     variable : ID
  * </pre>
  *
@@ -47,7 +46,7 @@ import ch.scorpion.antares.dsl.TokenType.*
  * @property semanticAnalyser the [HierarchyVisitor] to perform semantic analysis. Provide
  * [EmptyHierarchyVisitor] to skip semantic analysis
  */
-class Parser(
+open class Parser(
 	private val lexer: Lexer,
 	private val semanticAnalyser: HierarchyVisitor = SemanticAnalyser()
 ) {

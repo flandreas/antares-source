@@ -1,4 +1,4 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
@@ -31,7 +31,7 @@ class SemanticAnalyser(
 				currentlyDeclaredVariableName = node.left.token.value
 				enterAssignment(node)
 			}
-			is Block -> enterBlock(node)
+			is Block -> enterBlock()
 			is ForStatement -> {
 				currentlyDeclaredVariableName = node.variable.token.value
 				enterForStatement(node)
@@ -51,7 +51,7 @@ class SemanticAnalyser(
 		when (node) {
 			is Declaration -> currentlyDeclaredVariableName = null
 			is Assignment -> currentlyDeclaredVariableName = null
-			is Block -> leaveBlock(node)
+			is Block -> leaveBlock()
 			is ForStatement -> currentlyDeclaredVariableName = null
 		}
 		return true
@@ -85,11 +85,11 @@ class SemanticAnalyser(
 		declareVariableInLocalScope(forStatement.variable.token.value as String, forStatement.location)
 	}
 
-	private fun enterBlock(block: Block) {
+	private fun enterBlock() {
 		scope = ScopedSymbolTable("block", level = scope.level + 1, enclosingScope = scope)
 	}
 
-	private fun leaveBlock(block: Block) {
+	private fun leaveBlock() {
 		scope.enclosingScope?.let { scope = it }
 	}
 

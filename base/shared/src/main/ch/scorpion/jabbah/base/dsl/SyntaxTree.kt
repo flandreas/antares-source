@@ -1,4 +1,4 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 

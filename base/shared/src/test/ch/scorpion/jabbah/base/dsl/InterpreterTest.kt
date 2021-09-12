@@ -1,4 +1,4 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -251,11 +251,13 @@ class InterpreterTest {
 		assertEquals(3L, Interpreter("7 % 4").interpret())
 	}
 
+	/*
 	@Test
 	fun shouldInterpretHexLiteral() {
 		val result = Interpreter("a = 0xFF").interpret()
 		assertEquals(255L, result)
 	}
+	*/
 
 	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {

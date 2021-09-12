@@ -1,4 +1,4 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 open class Symbol(val name: String, val type: Symbol? = null)
 

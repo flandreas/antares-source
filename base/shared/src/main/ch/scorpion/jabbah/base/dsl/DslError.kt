@@ -1,11 +1,11 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 open class DslError(location: CodeLocation, msg: String) : Throwable("$msg at $location")
 
 /** Thrown by [Lexer] and [Parser] if a syntax error is detected.*/
 class SyntaxError(location: CodeLocation, msg: String) : DslError(location, msg)
 
-/** Thrown during semantic analysis by [SymbolTableBuilder].*/
+/** Thrown during semantic analysis by [SemanticAnalyser].*/
 class SemanticError(location: CodeLocation, msg: String) : DslError(location, msg)
 
 /** Thrown by [Interpreter] during program execution. */

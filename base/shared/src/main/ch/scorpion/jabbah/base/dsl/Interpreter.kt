@@ -1,21 +1,20 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.antares.dsl.TokenType.*
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
  */
-class Interpreter(private val node: Node) {
+open class Interpreter(private val node: Node) {
 
 	constructor(parser: Parser): this(parser.parse())
-	constructor(text: String): this(Parser(text))
+	constructor(program: String): this(Parser(program))
 
 	val memory = Memory()
 
 	fun interpret(): Any = interpret(node)
 
-	private fun interpret(node: Node): Any {
+	protected fun interpret(node: Node): Any {
 		return when (node) {
 			is Block -> block(node)
 			is Compound -> compound(node)
@@ -33,7 +32,7 @@ class Interpreter(private val node: Node) {
 		}
 	}
 
-	private fun interpretAsLong(node: Node): Long {
+	protected fun interpretAsLong(node: Node): Long {
 		val result = interpret(node)
 		if (result !is Long) {
 			throw RuntimeError(node.location, "Not a number")
@@ -62,69 +61,82 @@ class Interpreter(private val node: Node) {
 			DIVIDE -> interpretAsLong(node.left) / interpretAsLong(node.right)
 			EQUAL -> if (interpret(node.left) == interpret(node.right)) 1L else 0L
 			DIFF -> if (interpret(node.left) != interpret(node.right)) 1L else 0L
-			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r) })
-			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) })
+			AND -> typedBinaryOp(node)
+			OR -> typedBinaryOp(node)
 			SMALLER -> if (interpretAsLong(node.left) < interpretAsLong(node.right)) 1L else 0L
 			GREATER -> if (interpretAsLong(node.left) > interpretAsLong(node.right)) 1L else 0L
 			SMALLER_EQUAL -> if (interpretAsLong(node.left) <= interpretAsLong(node.right)) 1L else 0L
 			GREATER_EQUAL -> if (interpretAsLong(node.left) >= interpretAsLong(node.right)) 1L else 0L
-			SHIFT_LEFT -> binaryOpWithRightInt(node, { l, r -> l.shl(r) }, { l, r -> l.shiftLeft(r) })
-			SHIFT_RIGHT -> binaryOpWithRightInt(node, { l, r -> l.shr(r) }, { l, r -> l.shiftRight(r) })
+			SHIFT_LEFT -> typedBinaryOpWithRightInt(node)
+			SHIFT_RIGHT -> typedBinaryOpWithRightInt(node)
 			MOD -> interpretAsLong(node.left).mod(interpretAsLong(node.right))
+			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
+		}
+	}
+
+	protected open fun typedBinaryOp(node: BinaryOperation): Any {
+		return when (node.op.type) {
+			AND -> binaryOp(node) { l, r -> l.and(r) }
+			OR -> binaryOp(node) { l, r -> l.or(r) }
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
 
 	private fun binaryOp(
 		node: BinaryOperation,
-		longOp: (Long, Long) -> Long,
-		signalOp: (DigitalSignal,DigitalSignal) -> DigitalSignal
+		longOp: (Long, Long) -> Long
 	): Any {
 		val left = interpret(node.left)
 		val right = interpret(node.right)
 		return if (left is Long && right is Long) {
 			longOp(left, right)
-		} else if (left is DigitalSignal && right is DigitalSignal) {
-			signalOp(left, right)
 		} else {
 			throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
 		}
 	}
 
+	protected open fun typedBinaryOpWithRightInt(node: BinaryOperation): Any =
+		when (node.op.type) {
+			SHIFT_LEFT -> binaryOpWithRightInt(node) { l, r -> l.shl(r) }
+			SHIFT_RIGHT -> binaryOpWithRightInt(node)  { l, r -> l.shr(r) }
+			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
+		}
+
 	private fun binaryOpWithRightInt(
 		node: BinaryOperation,
 		longOp: (Long, Int) -> Long,
-		signalOp: (DigitalSignal, Int) -> DigitalSignal
 	): Any {
 		val left = interpret(node.left)
 		val right = interpretAsLong(node.right)
 		return when (left) {
 			is Long -> longOp(left, right.toInt())
-			is DigitalSignal -> signalOp(left, right.toInt())
 			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
 		}
 	}
 
 	private fun number(node: Number): Long = node.token.value!!
 
-	private fun unaryOperation(node: UnaryOperation): Any {
-		return when (node.op.type) {
+	private fun unaryOperation(node: UnaryOperation): Any =
+		when (node.op.type) {
 			PLUS -> +interpretAsLong(node.expr)
 			MINUS -> -interpretAsLong(node.expr)
-			NOT -> unaryOp(node, { it.inv() }, { it.not() })
+			NOT -> typedUnaryOp(node)
 			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
 		}
-	}
+
+	protected open fun typedUnaryOp(node: UnaryOperation): Any =
+		when (node.op.type) {
+			NOT -> unaryOp(node) { it.inv() }
+			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
+		}
 
 	private fun unaryOp(
 		node: UnaryOperation,
 		longOp: (Long) -> Long,
-		signalOp: (DigitalSignal) -> DigitalSignal
 	): Any {
 		val value = interpret(node.expr)
 		return when (value) {
 			is Long -> longOp(value)
-			is DigitalSignal -> signalOp(value)
 			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
 		}
 	}
@@ -169,7 +181,7 @@ class Interpreter(private val node: Node) {
 	}
 
 	private fun forStatement(node: ForStatement): Any {
-		var startValue = interpretAsLong(node.inExpr)
+		val startValue = interpretAsLong(node.inExpr)
 		val endValue = interpretAsLong(node.toExpr)
 
 		memory.enterScope("for")

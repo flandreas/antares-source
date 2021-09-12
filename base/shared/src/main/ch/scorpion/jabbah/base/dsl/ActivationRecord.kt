@@ -1,4 +1,4 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
 /**
  * Constituent of [Memory] to hold variable values in a stacked way.

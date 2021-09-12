@@ -1,6 +1,6 @@
-package ch.scorpion.antares.dsl
+package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.antares.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.TokenType.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -249,13 +249,6 @@ class LexerTest {
 	}
 
 	@Test
-	fun shouldScanHexLiteral() {
-		assertHexLiteral(255, "0xFF")
-		assertHexLiteral(255, "0xff")
-		assertHexLiteral(7006, "0x1B5E")
-	}
-
-	@Test
 	fun shouldScanWhen() {
 		val lexer = Lexer("""
 			when (a) {
@@ -303,6 +296,7 @@ class LexerTest {
 		assertToken(RCURLEY, lexer)
 	}
 
+	/*
 	private fun assertHexLiteral(expected: Long, literal: String) {
 		val lexer = Lexer("a = $literal")
 		assertId("a", lexer)
@@ -311,6 +305,7 @@ class LexerTest {
 		assertEquals(LONG, token.type)
 		assertEquals(expected, token.value)
 	}
+	*/
 
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
