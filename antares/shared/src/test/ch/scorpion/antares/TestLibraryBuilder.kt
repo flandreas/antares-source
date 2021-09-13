@@ -29,6 +29,7 @@ class TestLibraryBuilder(
 		const val CUSTOM_NAND = "CustomNAND"
 		const val INOUT_TO_OUT = "InOutToOut"
 		const val INOUT_TO_INOUT = "InOutToInOut"
+		const val BINARY_FUNCTION = "BinaryFunction"
 	}
 
 	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
@@ -76,6 +77,13 @@ class TestLibraryBuilder(
 	fun addInOutToInOut(library: Library): MetaGraph {
 		val inOutToInOut = TestCircuitBuilder(INOUT_TO_INOUT).buildInOutToInOut()
 		val metaGraph = MetaGraph(GraphStorable(inOutToInOut), createContainerDrawing(inOutToInOut))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
+	fun addScriptedBinaryFunction(library: Library, input1Name: String, input2Name: String, outputName: String, script: String): MetaGraph {
+		val binaryFunction = TestCircuitBuilder(BINARY_FUNCTION).buildScriptedBinaryFunction(input1Name, input2Name, outputName, script)
+		val metaGraph = MetaGraph(GraphStorable(binaryFunction), createContainerDrawing(binaryFunction))
 		libraryService.addContainerLibraryElement(library, metaGraph, library)
 		return metaGraph
 	}

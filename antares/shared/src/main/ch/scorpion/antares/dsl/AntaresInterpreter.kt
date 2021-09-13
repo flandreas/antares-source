@@ -3,6 +3,7 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.graph.model.GraphActorData
 
 class AntaresInterpreter(
 	node: Node,
@@ -11,6 +12,15 @@ class AntaresInterpreter(
 
 	constructor(parser: AntaresParser): this(parser.parse())
 	constructor(program: String): this(AntaresParser(program))
+
+	private val data: GraphActorData? get() = if (params is GraphActorData) params as GraphActorData else null
+
+	override fun interpret(node: Node): Any {
+		return when (node) {
+			is RaisedInput -> raisedInput(node)
+			else -> super.interpret(node)
+		}
+	}
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
@@ -76,5 +86,14 @@ class AntaresInterpreter(
 			is DigitalSignal -> signalOp(value)
 			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
 		}
+	}
+
+	private fun raisedInput(node: RaisedInput): Any {
+		val portName = node.variable.token.value as String
+		return data?.let {
+			if (it.changedPort?.name == portName
+				&& it.getSignal<DigitalSignal>(it.changedPort!!.portId)?.bitAt(0)?.isSet == true
+			) 1L else 0L
+		} ?: 0L
 	}
 }

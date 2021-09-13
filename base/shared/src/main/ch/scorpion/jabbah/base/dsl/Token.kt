@@ -32,7 +32,8 @@ enum class TokenType {
 	COLON,
 	FOR,
 	IN,
-	TO
+	TO,
+	CARET
 }
 
 /**

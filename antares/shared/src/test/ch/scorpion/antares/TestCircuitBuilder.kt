@@ -82,6 +82,17 @@ class TestCircuitBuilder(
 		return graphView
 	}
 
+	/**
+	 * Builds a [graphView] with 2 inputs and 1 output, no content circuitry, but a DSL execution script.
+	 */
+	fun buildScriptedBinaryFunction(input1Name: String, input2Name: String, outputName: String, script: String): GraphView {
+		addInput(input1Name)
+		addInput(input2Name)
+		addOutput(outputName)
+		graphView.graph!!.script = script
+		return graphView
+	}
+
 	fun addInput(name: String? = null): CircuitInOutView = addInOut(name, PortType.INPUT)
 
 	fun addOutput(name: String? = null): CircuitInOutView = addInOut(name, PortType.OUTPUT)

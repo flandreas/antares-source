@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -22,7 +21,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
@@ -47,16 +45,9 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
-					vertice.interpreter?.interpret()
+					vertice.interpreter?.interpret(params = data)
 				}
 			}
-		}
-
-		private fun wrappedScript(vertice: SubGraphVerticeRef): Script {
-			return Script(
-				code = vertice.getGraphIfPresent()!!.script!!,
-				origin = vertice.type,
-				context = Translations.getString("graph.property.GraphViewImpl.script.name"))
 		}
 
 		/** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
@@ -171,6 +162,10 @@ class SubGraphVerticeRef(
 		}
 	}
 
+	/**
+	 * Adds a global context [SubGraphVerticeRefActivationRecord] to the created [Interpreter] that
+	 * allows scripts to access input and output values as variables.
+	 */
 	private fun createInterpreter(signalHandler: SignalHandler) {
 		if (graph != null && graph!!.scriptAST != null) {
 			interpreter = BaseModule.interpreterFactory(

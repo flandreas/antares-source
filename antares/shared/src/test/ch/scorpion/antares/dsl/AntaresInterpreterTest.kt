@@ -1,9 +1,16 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.AntaresTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AntaresInterpreterTest {
+
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
 
 	@Test
 	fun shouldInterpretHexLiteral() {

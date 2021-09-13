@@ -13,9 +13,20 @@ open class Interpreter(
 	constructor(parser: Parser): this(parser.parse())
 	constructor(program: String): this(Parser(program))
 
-	fun interpret(): Any = interpret(node)
+	protected var params: Any? = null
+		private set
 
-	protected fun interpret(node: Node): Any {
+	/**
+	 * Runs the program defined by the AST in [node].
+	 * @param params the optional parameters on which execution logic might depend on. The
+	 * values of these parameters might be different for every call of [interpret].
+	 */
+	fun interpret(params: Any? = null): Any {
+		this.params = params
+		return interpret(node)
+	}
+
+	protected open fun interpret(node: Node): Any {
 		return when (node) {
 			is Block -> block(node)
 			is Compound -> compound(node)

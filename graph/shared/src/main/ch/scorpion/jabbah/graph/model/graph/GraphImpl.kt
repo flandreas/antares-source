@@ -46,7 +46,7 @@ open class GraphImpl(
 		script?.let {
 			// TODO Incorporate semantic analysis
 			try {
-				BaseModule.parserFactory(it, EmptyHierarchyVisitor()).parse()
+				BaseModule.parserFactory(it, null).parse()
 			} catch (e: DslError) {
 				eventBus.post(IssueImpl(
 					severity = IssueSeverity.Error,

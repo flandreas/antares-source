@@ -48,8 +48,8 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  * [EmptyHierarchyVisitor] to skip semantic analysis
  */
 open class Parser(
-	private val lexer: Lexer,
-	private val semanticAnalyser: HierarchyVisitor = SemanticAnalyser()
+	protected val lexer: Lexer,
+	private val semanticAnalyser: SemanticAnalyser? = SemanticAnalyser()
 ) {
 
 	constructor(program: String): this(Lexer(program))
@@ -63,14 +63,15 @@ open class Parser(
 	}
 
 	/** Contains the current [Token] as determined by [Lexer.nextToken].*/
-	private var currentToken: Token<Any>? = lexer.nextToken()
+	protected var currentToken: Token<Any>? = lexer.nextToken()
+		private set
 
 	/**
 	 * Parses the sentence this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
 	fun parse(): Node =
-		Compound(lexer.location, statementList()).also { it.accept(semanticAnalyser) }
+		Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
 
 	private fun statementList(): List<Node> {
 		val node = statement()
@@ -115,7 +116,7 @@ open class Parser(
 		}
 	}
 
-	private fun variable(): Variable {
+	protected fun variable(): Variable {
 		val node = Variable(lexer.location, currentToken as Token<String>)
 		eat(ID)
 		return node
@@ -246,7 +247,7 @@ open class Parser(
 		return node
 	}
 
-	private fun factor(): Node {
+	protected open fun factor(): Node {
 		lexer.location.let { location ->
 			val token = currentToken!!
 			return when (token.type) {
@@ -285,7 +286,7 @@ open class Parser(
 	 * then "eats" the current [Token] and assigns the next [Token] to [currentToken],
 	 * otherwise throws [SyntaxError].
 	 */
-	private fun eat(type: TokenType) {
+	protected fun eat(type: TokenType) {
 		if (currentToken!!.type == type) {
 			currentToken = lexer.nextToken()
 		} else {

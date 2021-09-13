@@ -13,48 +13,57 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
  */
 class SemanticAnalyser(
 	symbolTable: ScopedSymbolTable = ScopedSymbolTable("global", level = 1, enclosingScope = null)
-) : EmptyHierarchyVisitor() {
+) {
 
 	// Visible for testing
 	var scope: ScopedSymbolTable = symbolTable
 		private set
 
+	private val visitor = Visitor()
+
+	fun analyse(program: Node) {
+		program.accept(visitor)
+	}
+
 	private var currentlyDeclaredVariableName: String? = null
 
-	override fun visitEnter(node: Any): Boolean {
-		when (node) {
-			is Declaration -> {
-				currentlyDeclaredVariableName = node.left.token.value
-				enterDeclaration(node)
-			}
-			is Assignment -> {
-				currentlyDeclaredVariableName = node.left.token.value
-				enterAssignment(node)
-			}
-			is Block -> enterBlock()
-			is ForStatement -> {
-				currentlyDeclaredVariableName = node.variable.token.value
-				enterForStatement(node)
-			}
-		}
-		return true
-	}
+	inner class Visitor : EmptyHierarchyVisitor() {
 
-	override fun visit(node: Any): Boolean {
-		when (node) {
-			is Variable -> variable(node)
+		override fun visitEnter(node: Any): Boolean {
+			when (node) {
+				is Declaration -> {
+					currentlyDeclaredVariableName = node.left.token.value
+					enterDeclaration(node)
+				}
+				is Assignment -> {
+					currentlyDeclaredVariableName = node.left.token.value
+					enterAssignment(node)
+				}
+				is Block -> enterBlock()
+				is ForStatement -> {
+					currentlyDeclaredVariableName = node.variable.token.value
+					enterForStatement(node)
+				}
+			}
+			return true
 		}
-		return true
-	}
 
-	override fun visitLeave(node: Any): Boolean {
-		when (node) {
-			is Declaration -> currentlyDeclaredVariableName = null
-			is Assignment -> currentlyDeclaredVariableName = null
-			is Block -> leaveBlock()
-			is ForStatement -> currentlyDeclaredVariableName = null
+		override fun visit(node: Any): Boolean {
+			when (node) {
+				is Variable -> variable(node)
+			}
+			return true
 		}
-		return true
+
+		override fun visitLeave(node: Any): Boolean {
+			when (node) {
+				is Declaration -> currentlyDeclaredVariableName = null
+				is Assignment -> currentlyDeclaredVariableName = null
+				is Block -> leaveBlock()
+				is ForStatement -> currentlyDeclaredVariableName = null
+			}
+			return true
+		}
 	}
 
 	private fun enterDeclaration(declaration: Declaration) {

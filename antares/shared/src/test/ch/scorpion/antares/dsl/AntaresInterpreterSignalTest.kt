@@ -3,8 +3,9 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.Symbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -39,7 +40,7 @@ class AntaresInterpreterSignalTest {
 			b = a + 1
 		""".trimIndent()
 
-		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
+		val parser = AntaresParser(AntaresLexer(program), null)
 
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
@@ -56,7 +57,7 @@ class AntaresInterpreterSignalTest {
 			O = not I
 		""".trimIndent()
 
-		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
+		val parser = AntaresParser(AntaresLexer(program), null)
 
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)

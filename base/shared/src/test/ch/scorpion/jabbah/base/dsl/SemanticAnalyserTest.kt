@@ -12,7 +12,7 @@ class SemanticAnalyserTest {
 		""".trimIndent()).parse()
 
 		val analyser = SemanticAnalyser()
-		ast.accept(analyser)
+		analyser.analyse(ast)
 
 		val symbolTable = analyser.scope
 
@@ -31,7 +31,7 @@ class SemanticAnalyserTest {
 		""".trimIndent()).parse()
 
 			val analyser = SemanticAnalyser()
-			ast.accept(analyser)
+			analyser.analyse(ast)
 		}
 	}
 }

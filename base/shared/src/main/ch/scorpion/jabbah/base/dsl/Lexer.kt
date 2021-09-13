@@ -53,6 +53,7 @@ open class Lexer(private val text: String) {
 		private val FOR_TOKEN = Token<String>(FOR)
 		private val IN_TOKEN = Token<String>(IN)
 		private val TO_TOKEN = Token<String>(TO)
+		private val CARET_TOKEN = Token<String>(CARET)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -184,6 +185,7 @@ open class Lexer(private val text: String) {
 				'>' -> return advanceWith(state, GREATER_TOKEN)
 				'%' -> return advanceWith(state, MOD_TOKEN)
 				':' -> return advanceWith(state, COLON_TOKEN)
+				'^' -> return advanceWith(state, CARET_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
@@ -295,7 +297,11 @@ open class Lexer(private val text: String) {
 		} else {
 			throw SyntaxError(state.location, "Expected \'")
 		}
-		return idToken(result.toString())
+		val id = result.toString()
+		if (id.isBlank()) {
+			throw SyntaxError(state.location, "Empty identifier not allowed")
+		}
+		return idToken(id)
 	}
 
 	private fun equal(state: State): Token<Unit> {

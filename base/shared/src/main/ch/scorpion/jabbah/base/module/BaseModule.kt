@@ -22,7 +22,7 @@ object BaseModule : AbstractModule() {
 
 	var lexerFactory: (program: String) -> Lexer = { Lexer(it) }
 
-	var parserFactory: (program: String, semanticAnalyser: HierarchyVisitor) -> Parser = { p, s -> Parser(lexerFactory(p), s) }
+	var parserFactory: (program: String, semanticAnalyser: SemanticAnalyser?) -> Parser = { p, s -> Parser(lexerFactory(p), s) }
 
 	var interpreterFactory: (node: Node, memory: Memory) -> Interpreter = { n, m -> Interpreter(n, m) }
 

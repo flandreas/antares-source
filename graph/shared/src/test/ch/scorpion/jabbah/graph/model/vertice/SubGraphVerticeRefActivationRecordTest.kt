@@ -58,7 +58,7 @@ class SubGraphVerticeRefActivationRecordTest {
 		// Use a Parser without semantic analysis, because SemanticAnalyser must also deal with the challenge
 		// of predefining GraphPorts names as variables in the symbol table, but to test that is the
 		// responsibility of another test
-		val parser = Parser(Lexer("O = 2 * I"), semanticAnalyser = EmptyHierarchyVisitor())
+		val parser = Parser(Lexer("O = 2 * I"), null)
 		val interpreter = Interpreter(parser.parse(), memory)
 
 		val result = interpreter.interpret()
