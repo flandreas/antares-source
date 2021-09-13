@@ -1,5 +1,8 @@
 package ch.scorpion.antares.model.module
 
+import ch.scorpion.antares.dsl.AntaresInterpreter
+import ch.scorpion.antares.dsl.AntaresLexer
+import ch.scorpion.antares.dsl.AntaresParser
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
@@ -30,6 +33,11 @@ object AntaresModelModule : AbstractModule() {
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
+
+		BaseModule.lexerFactory = { AntaresLexer(it) }
+		BaseModule.parserFactory = { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
+		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
+
 		GraphModelModule.portFactory = DigitalPortFactory()
 		GraphModelModule.graphFactory = { DigitalGraph(name = it) }
 	}

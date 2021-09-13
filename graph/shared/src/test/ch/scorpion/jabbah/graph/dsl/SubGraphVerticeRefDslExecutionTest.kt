@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -35,21 +34,19 @@ class SubGraphVerticeRefDslExecutionTest {
 	}
 
 
-	// TODO: Doesn't work yet, SubGraphVertice still uses the old (unsupported) GraphScriptGateway
-	@Ignore
 	@Test
 	fun shouldAddGraphPortsToMemoryContext() {
 		val libraryElement = createScriptedMetaGraph(
 			inputName = "I",
 			outputName = "O",
-			script = "O = not I")
+			script = "O = I")
 
 		val vv = libraryElement.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView
 		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 
-		vv.model.getInput<Boolean>().setIncomingSignal(false, signalHandler)
+		vv.model.getInput<Boolean>().setIncomingSignal(true, signalHandler)
 		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
 
 		assertTrue(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
@@ -57,7 +54,7 @@ class SubGraphVerticeRefDslExecutionTest {
 
 	private fun createScriptedMetaGraph(inputName: String, outputName: String, script: String): ContainerLibraryElement {
 		val library = LibraryModule.libraryHolder.library
-		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library, inputName, outputName)
+		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library, inputName = inputName, outputName = outputName)
 		metaGraph.graph.model!!.script = script
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
 		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)

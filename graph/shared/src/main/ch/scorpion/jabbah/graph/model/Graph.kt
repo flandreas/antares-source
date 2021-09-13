@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -37,6 +38,9 @@ interface Graph : Namable, Describable, Storable {
 
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
+
+    /** Returns the abstract syntax tree for the program in [script].*/
+    val scriptAST: Node?
 
     /** If 'true', [script] is always used for execution, even if execution mode is deep.*/
     var purelyScripted: Boolean

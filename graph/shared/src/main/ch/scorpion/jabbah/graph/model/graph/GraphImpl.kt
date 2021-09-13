@@ -2,12 +2,16 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
@@ -38,6 +42,23 @@ open class GraphImpl(
 		}
 	}
 
+	private val scriptASTCache = resettableLazy {
+		script?.let {
+			// TODO Incorporate semantic analysis
+			try {
+				BaseModule.parserFactory(it, EmptyHierarchyVisitor()).parse()
+			} catch (e: DslError) {
+				eventBus.post(IssueImpl(
+					severity = IssueSeverity.Error,
+					name = "Script",
+					description = e.message,
+					origin = name,
+					context = Translations.getString("graph.property.GraphViewImpl.script.name")))
+				null
+			}
+		}
+	}
+
 	init {
 		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
 	}
@@ -59,6 +80,12 @@ open class GraphImpl(
 	override var propagationDelay: Long? = null
 
 	override var script: String? = null
+		set(value) {
+			field = value
+			scriptASTCache.reset()
+		}
+
+	override val scriptAST: Node? get() = scriptASTCache.value
 
 	override var purelyScripted: Boolean = false
 

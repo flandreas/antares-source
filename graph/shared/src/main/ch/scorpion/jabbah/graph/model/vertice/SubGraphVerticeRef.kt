@@ -5,7 +5,10 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -44,7 +47,7 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
-					vertice.scriptGateway.runVerticeExecutionScript(vertice.graphUUID!!, data, vertice.execParams)
+					vertice.interpreter?.interpret()
 				}
 			}
 		}
@@ -68,17 +71,6 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	override fun actImpl(signalHandler: SignalHandler, data: ActorData) {
-		if ((data as GraphActorData).isInput && !isDeepExecution(signalHandler)) {
-			super.actImpl(signalHandler, data)
-		}
-		// With deep execution, no execution logic by the [SubGraphVerticeRef] has to take place.
-		// In particular, the OutputPort must NOT be flushed, because that would lead to outgoing signal animations
-		// even before the inner Graph has been executed.
-		// Note however that acting MUST have been requested by inputChanged() even if it supposed to do nothing, because
-		// only this triggers execution animations of the [SubGraphVerticeRef] on the view level.
-	}
-
 	private var graph: Graph? = null
 
 	/** Can be set during [read] if reference to [MetaGraph] is broken. */
@@ -86,7 +78,8 @@ class SubGraphVerticeRef(
 
 	private val hasDesignError: Boolean get() = designError != null
 
-	private lateinit var execParams: Any
+	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
+	private var interpreter: Interpreter? = null
 
 	override val designError: DesignError? get() = _designError
 
@@ -171,11 +164,30 @@ class SubGraphVerticeRef(
 			} else {
 				// This will define the same script for all SubGraphVerticeRef instances of the same Graph
 				// which is unnecessary, but so be it for the moment
-				execParams = scriptGateway.defineVerticeExecutionScript(graphUUID!!, wrappedScript(this), this, signalHandler)
 
+				createInterpreter(signalHandler)
 				requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
 			}
 		}
+	}
+
+	private fun createInterpreter(signalHandler: SignalHandler) {
+		if (graph != null && graph!!.scriptAST != null) {
+			interpreter = BaseModule.interpreterFactory(
+				graph!!.scriptAST!!,
+				Memory(SubGraphVerticeRefActivationRecord(this, signalHandler)))
+		}
+	}
+
+	override fun actImpl(signalHandler: SignalHandler, data: ActorData) {
+		if ((data as GraphActorData).isInput && !isDeepExecution(signalHandler)) {
+			super.actImpl(signalHandler, data)
+		}
+		// With deep execution, no execution logic by the [SubGraphVerticeRef] has to take place.
+		// In particular, the OutputPort must NOT be flushed, because that would lead to outgoing signal animations
+		// even before the inner Graph has been executed.
+		// Note however that acting MUST have been requested by inputChanged() even if it supposed to do nothing, because
+		// only this triggers execution animations of the [SubGraphVerticeRef] on the view level.
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

@@ -21,8 +21,8 @@ class TestGraphPortView(
 
 	companion object {
 
-		fun input(name: String): TestGraphPortView = TestGraphPortView(model = GraphInputImpl(PortImpl.createOutput(name = name)))
-		fun output(name: String): TestGraphPortView = TestGraphPortView(model = GraphOutputImpl(PortImpl.createInput(name = name)))
+		fun input(name: String): TestGraphPortView = TestGraphPortView(model = GraphInputImpl(PortImpl.createOutput(name = name), name = name))
+		fun output(name: String): TestGraphPortView = TestGraphPortView(model = GraphOutputImpl(PortImpl.createInput(name = name), name = name))
 	}
 
 	init {

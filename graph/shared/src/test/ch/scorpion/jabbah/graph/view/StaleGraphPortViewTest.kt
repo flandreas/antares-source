@@ -40,7 +40,7 @@ class StaleGraphPortViewTest {
 			LibraryModule.libraryHolder.library,
 			element)
 
-		assertNotNull(element.metaGraph!!.graph.graphView.getGraphPortView("O1")!!.model.getPort<Boolean>().net!!.designError)
+		assertNotNull(element.metaGraph!!.graph.graphView.getGraphPortView("O")!!.model.getPort<Boolean>().net!!.designError)
 	}
 
 	private fun removeInputPortFromInner(inner: MetaGraph) {
@@ -48,10 +48,10 @@ class StaleGraphPortViewTest {
 		// ContainerEditor and ContainerTree. This should be done on the model layer. i.e. in MetaGraph itself
 
 		with(inner.graph.graphView) {
-			remove(getGraphPortView("I1")!!)
+			remove(getGraphPortView("I")!!)
 		}
 		with(inner.containerDrawing) {
-			remove(getPortViewComponent("I1")!!)
+			remove(getPortViewComponent("I")!!)
 		}
 
 		LibraryModule.libraryService.updateContainerLibraryElement(

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
@@ -18,6 +19,12 @@ object BaseModule : AbstractModule() {
     var eventBus: EventBus = EventBusImpl()
 
     var timeService: TimeService = ControlledTimeService()
+
+	var lexerFactory: (program: String) -> Lexer = { Lexer(it) }
+
+	var parserFactory: (program: String, semanticAnalyser: HierarchyVisitor) -> Parser = { p, s -> Parser(lexerFactory(p), s) }
+
+	var interpreterFactory: (node: Node, memory: Memory) -> Interpreter = { n, m -> Interpreter(n, m) }
 
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")
