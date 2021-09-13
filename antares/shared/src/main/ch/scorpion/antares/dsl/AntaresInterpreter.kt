@@ -4,7 +4,10 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
-class AntaresInterpreter(node: Node) : Interpreter(node) {
+class AntaresInterpreter(
+	node: Node,
+	memory: Memory = Memory()
+) : Interpreter(node, memory) {
 
 	constructor(parser: AntaresParser): this(parser.parse())
 	constructor(program: String): this(AntaresParser(program))

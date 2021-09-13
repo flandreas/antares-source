@@ -23,8 +23,9 @@ class AntaresInterpreterSignalTest {
 
 		val parser = AntaresParser(AntaresLexer(program), analyser)
 
-		val interpreter = AntaresInterpreter(parser.parse())
-		interpreter.memory.preset("a", 5L)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("a", 5L)
 
 		val result = interpreter.interpret()
 
@@ -40,8 +41,9 @@ class AntaresInterpreterSignalTest {
 
 		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
 
-		val interpreter = AntaresInterpreter(parser.parse())
-		interpreter.memory.preset("a", 5L)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("a", 5L)
 
 		val result = interpreter.interpret()
 
@@ -56,8 +58,9 @@ class AntaresInterpreterSignalTest {
 
 		val parser = AntaresParser(AntaresLexer(program), EmptyHierarchyVisitor())
 
-		val interpreter = AntaresInterpreter(parser.parse())
-		interpreter.memory.preset("I", Word.of(BitWidth.BW_4, 2UL))
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("I", Word.of(BitWidth.BW_4, 2UL))
 
 		val result = interpreter.interpret()
 

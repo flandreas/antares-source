@@ -51,7 +51,7 @@ open class Parser(
 	private val semanticAnalyser: HierarchyVisitor = SemanticAnalyser()
 ) {
 
-	constructor(text: String): this(Lexer(text))
+	constructor(program: String): this(Lexer(program))
 
 	companion object {
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)

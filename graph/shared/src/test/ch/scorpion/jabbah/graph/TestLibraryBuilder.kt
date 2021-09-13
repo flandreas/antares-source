@@ -25,11 +25,16 @@ class TestLibraryBuilder(
 	 * Adds a custom component (as of [CompositeTestGraphViewBuilder.buildInnerCustomComponent] to the specified [Library].
 	 * @return the created [MetaGraph] that contains the created custom component
 	 */
-	fun addInnerCustomComponent(library: Library, label: String? = null): MetaGraph {
+	fun addInnerCustomComponent(
+		library: Library,
+		label: String? = null,
+		inputName: String = "I",
+		outputName: String = "O"
+	): MetaGraph {
 		val builder = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP, portFactory, portViewFactory)
 		return libraryService.addContainerLibraryElement(
 			library,
-			builder.buildMetaGraph(builder.buildInnerCustomComponent(), label),
+			builder.buildMetaGraph(builder.buildInnerCustomComponent(inputName, outputName), label),
 			library
 		).metaGraph!!
 	}

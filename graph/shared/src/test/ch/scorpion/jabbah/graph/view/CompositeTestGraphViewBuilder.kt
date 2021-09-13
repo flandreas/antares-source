@@ -28,11 +28,11 @@ class CompositeTestGraphViewBuilder(
 	 * Builds a [GraphView] that contains a [TestVerticeView] and a [TestControlVerticeView],
 	 * along with two [TestGraphPortView]s for input and output.
 	 */
-	fun buildInnerCustomComponent(): GraphView {
+	fun buildInnerCustomComponent(inputName: String = "I", outputName: String = "O"): GraphView {
 		val comp = addVerticeView(TestVerticeView())
 		val control = addVerticeView(TestControlVerticeView())
-		connect(addInput(), comp)
-		split(connect(comp, addOutput()), 0, Point2D.ZERO, control)
+		connect(addInput(inputName), comp)
+		split(connect(comp, addOutput(outputName)), 0, Point2D.ZERO, control)
 		graph.name = Name(graphName)
 		return graphView
 	}

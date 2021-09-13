@@ -5,12 +5,13 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
  */
-open class Interpreter(private val node: Node) {
+open class Interpreter(
+	private val node: Node,
+	private val memory: Memory = Memory()
+) {
 
 	constructor(parser: Parser): this(parser.parse())
 	constructor(program: String): this(Parser(program))
-
-	val memory = Memory()
 
 	fun interpret(): Any = interpret(node)
 
