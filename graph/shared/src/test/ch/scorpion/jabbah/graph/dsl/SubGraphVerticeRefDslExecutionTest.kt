@@ -41,15 +41,35 @@ class SubGraphVerticeRefDslExecutionTest {
 			outputName = "O",
 			script = "O = I")
 
-		val vv = libraryElement.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView
-		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
-		vv.model.executionInitialize(signalHandler)
-		vv.model.executionStart(signalHandler)
+		val vv = createAndStart(libraryElement)
 
 		vv.model.getInput<Boolean>().setIncomingSignal(true, signalHandler)
 		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
 
 		assertTrue(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
+	}
+
+	@Test
+	fun shouldQuotePortNames() {
+		val libraryElement = createScriptedMetaGraph(
+			inputName = "In I",
+			outputName = "!O",
+			script = "\'!O\' = \'In I\'")
+
+		val vv = createAndStart(libraryElement)
+
+		vv.model.getInput<Boolean>().setIncomingSignal(true, signalHandler)
+		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
+
+		assertTrue(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
+	}
+
+	private fun createAndStart(libraryElement: ContainerLibraryElement): SubGraphVerticeView<SubGraphVerticeRef> {
+		val vv = libraryElement.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView
+		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.executionInitialize(signalHandler)
+		vv.model.executionStart(signalHandler)
+		return vv
 	}
 
 	private fun createScriptedMetaGraph(inputName: String, outputName: String, script: String): ContainerLibraryElement {

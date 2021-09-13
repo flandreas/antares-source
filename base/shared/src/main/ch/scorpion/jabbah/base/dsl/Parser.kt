@@ -39,7 +39,8 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
  *     number : LONG
- *     variable : ID
+ *     variable : identifier | "'" CHAR (CHAR)* "'"
+ *     identifier : LETTER (LETTER | DIGIT)*
  * </pre>
  *
  * @property lexer the [Lexer] set up with the program code to scan

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class LexerTest {
 
@@ -296,16 +297,34 @@ class LexerTest {
 		assertToken(RCURLEY, lexer)
 	}
 
-	/*
-	private fun assertHexLiteral(expected: Long, literal: String) {
-		val lexer = Lexer("a = $literal")
-		assertId("a", lexer)
-		assertToken(ASSIGN, lexer)
-		val token = lexer.nextToken()
-		assertEquals(LONG, token.type)
-		assertEquals(expected, token.value)
+	@Test
+	fun shouldScanQuotedId() {
+		assertId("!Q", Lexer("'!Q'"))
+		assertId("ID with blanks", Lexer("'ID with blanks'"))
 	}
-	*/
+
+	@Test
+	fun shouldContinueAfterQuotedId() {
+		val lexer = Lexer("a 'A B' c")
+
+		assertId("a", lexer)
+		assertId("A B", lexer)
+		assertId("c", lexer)
+	}
+
+	@Test
+	fun shouldExpectClosingSingleQuote() {
+		assertFailsWith(SyntaxError::class) {
+			Lexer("'A").nextToken()
+		}
+	}
+
+	@Test
+	fun shouldNotAcceptEmptyQuotedId() {
+		assertFailsWith(SyntaxError::class) {
+			Lexer("''").nextToken()
+		}
+	}
 
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)

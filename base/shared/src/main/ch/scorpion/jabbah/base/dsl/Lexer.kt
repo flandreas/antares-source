@@ -138,6 +138,10 @@ open class Lexer(private val text: String) {
 				return number(state)
 			}
 
+			if (state.currentChar!! == '\'') {
+				return quotedId(state)
+			}
+
 			if (state.currentChar!!.isLetter()) {
 				return id(state)
 			}
@@ -216,7 +220,6 @@ open class Lexer(private val text: String) {
 	/** Returns an [Long] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
 	protected open fun number(state: State): Token<Long> =
 		when {
-			//isHexLiteral(state) -> longToken(hexLiteral(state))
 			isLong(state) -> longToken(long(state))
 			else -> throw SyntaxError(state.location, "Expected a number")
 		}
@@ -270,19 +273,6 @@ open class Lexer(private val text: String) {
 		}
 	}
 
-	/*
-	private fun hexLiteral(state: State): Long {
-		advance(state)
-		advance(state)
-		val result = StringBuilder()
-		while (state.currentChar != null && BitOperation.HEX_CHAR.contains(state.currentChar!!.uppercaseChar())) {
-			result.append(state.currentChar!!)
-			advance(state)
-		}
-		return BitOperation.hexToLong(result.toString()).toLong()
-	}
-	*/
-
 	private fun id(state: State): Token<String> {
 		val result = StringBuilder()
 		while (state.currentChar != null && state.currentChar!!.isLetterOrDigit()) {
@@ -291,6 +281,21 @@ open class Lexer(private val text: String) {
 		}
 		val name = result.toString()
 		return RESERVED_KEYWORDS.getOrElse(name) { idToken(name) }
+	}
+
+	private fun quotedId(state: State): Token<String> {
+		val result = StringBuilder()
+		advance(state)
+		while (state.currentChar != null && state.currentChar != '\'') {
+			result.append(state.currentChar)
+			advance(state)
+		}
+		if (state.currentChar == '\'') {
+			advance(state)
+		} else {
+			throw SyntaxError(state.location, "Expected \'")
+		}
+		return idToken(result.toString())
 	}
 
 	private fun equal(state: State): Token<Unit> {
