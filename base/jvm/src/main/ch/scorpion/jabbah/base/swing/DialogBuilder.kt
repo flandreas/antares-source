@@ -21,7 +21,7 @@ import javax.swing.*
 class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	private val dialog = JDialog(parent, true)
-	private lateinit var content: T
+	lateinit var content: T
 
 	fun content(factory: (JDialog) -> T): DialogBuilder<T> {
 		content = factory.invoke(dialog)

@@ -10,7 +10,11 @@ import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
 /** A [JPanel] for editing a [TextProperty] value in a multi-line text area of a popup-dialog.*/
-class TextPropertyPanel(text: String, font: Font? = null, editable: Boolean = true) : JPanel() {
+open class TextPropertyPanel(
+	text: String,
+	font: Font? = null,
+	editable: Boolean = true
+) : JPanel() {
 
 	companion object {
 

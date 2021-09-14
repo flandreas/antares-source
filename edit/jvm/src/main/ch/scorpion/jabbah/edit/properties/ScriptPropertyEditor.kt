@@ -4,48 +4,22 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
-import ch.scorpion.jabbah.edit.model.text.TextPropertyPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.Font
 import javax.swing.*
-import javax.swing.table.DefaultTableCellRenderer
-
-class ScriptPropertyRenderer : DefaultTableCellRenderer() {
-
-	companion object {
-		val LABEL_TEXT = Translations.getString("edit.property.script.name")
-
-		fun getText(property: ScriptProperty): String {
-			return if (property.isEmpty()) {
-				""
-			} else {
-				LABEL_TEXT
-			}
-		}
-	}
-
-	override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-		val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-		label.text = getText(value as ScriptProperty)
-		return label
-	}
-}
 
 /**
  * An editor that provides more space for editing a [ScriptProperty] by using a multi-row [JTextArea].
  * Additionally contains a button to open a non-modal dialog that provides even more space.
  */
-class ScriptPropertyEditor(private val propertyName: String, private val editable: Boolean) : AbstractPropertyEditor() {
+class ScriptPropertyEditor(
+	private val propertyName: String,
+	private val editable: Boolean
+) : AbstractPropertyEditor() {
 
 	companion object {
 		private val LOG by logger(ScriptPropertyEditor::class)
-
-		// Holds the single [JDialog] instance across all [ScriptPropertyEditor] instances.
-		//private var dialog: JDialog? = null
-
-		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 	}
 
 	private val label = JLabel()
@@ -86,7 +60,11 @@ class ScriptPropertyEditor(private val propertyName: String, private val editabl
 	}
 
 	private fun showDialog() {
-		TextPropertyPanel.showAsDialog(title = propertyName, text = script.scriptOrEmpty, font = FONT, editable = editable)?.let {
+		ScriptPropertyPanel.showAsDialog(
+			script = script.scriptOrEmpty,
+			editable = editable,
+			propertyName = propertyName
+		) ?.let {
 			script = ScriptProperty(it)
 		}
 	}
