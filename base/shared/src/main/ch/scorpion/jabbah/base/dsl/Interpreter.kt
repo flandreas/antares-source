@@ -38,7 +38,7 @@ open class Interpreter(
 			is NoOp -> 0L
 			is UnaryOperation -> unaryOperation(node)
 			is BinaryOperation -> binaryOperation(node)
-			is Number -> number(node)
+			is Literal -> literal(node)
 			is Assignment -> assignment(node)
 			is Variable -> variable(node)
 			is Declaration -> declaration(node)
@@ -131,7 +131,7 @@ open class Interpreter(
 		}
 	}
 
-	private fun number(node: Number): Long = node.token.value!!
+	private fun literal(node: Literal): Any = node.token.value!!
 
 	private fun unaryOperation(node: UnaryOperation): Any =
 		when (node.op.type) {

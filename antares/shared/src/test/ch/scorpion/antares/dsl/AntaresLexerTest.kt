@@ -1,5 +1,7 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.dsl.Lexer
 import ch.scorpion.jabbah.base.dsl.TokenType
 import kotlin.test.Test
@@ -14,12 +16,22 @@ class AntaresLexerTest {
 		assertHexLiteral(7006, "0x1B5E")
 	}
 
+	@Test
+	fun shouldScanUndefinedHexLiteral() {
+		val lexer = AntaresLexer("a = 0x?4")
+		assertId("a", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		val token = lexer.nextToken()
+		assertEquals(TokenType.LITERAL, token.type)
+		assertEquals(Word.undefined(BitWidth.BW_4), token.value)
+	}
+
 	private fun assertHexLiteral(expected: Long, literal: String) {
 		val lexer = AntaresLexer("a = $literal")
 		assertId("a", lexer)
 		assertToken(TokenType.ASSIGN, lexer)
 		val token = lexer.nextToken()
-		assertEquals(TokenType.LONG, token.type)
+		assertEquals(TokenType.LITERAL, token.type)
 		assertEquals(expected, token.value)
 	}
 

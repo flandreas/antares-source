@@ -57,6 +57,7 @@ open class Lexer(private val text: String) {
 		private val CARET_TOKEN = Token<String>(CARET)
 		private val LEFT_BRACKET = Token<Unit>(TokenType.LEFT_BRACKET)
 		private val RIGHT_BRACKET = Token<Unit>(TokenType.RIGHT_BRACKET)
+		private val QUESTION_MARK = Token<Unit>(TokenType.QUESTION_MARK)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -111,7 +112,7 @@ open class Lexer(private val text: String) {
 
 	// Factory methods for [Token]s with values
 	private fun idToken(value: String) = Token(ID, value)
-	protected fun longToken(value: Long) = Token(LONG, value)
+	protected fun literalToken(value: Any) = Token(LITERAL, value)
 
 	/**
 	 * Scans more text and returns the next [Token].
@@ -139,8 +140,8 @@ open class Lexer(private val text: String) {
 				continue
 			}
 
-			if (isNumber(state)) {
-				return number(state)
+			if (isLiteral(state)) {
+				return literal(state)
 			}
 
 			if (state.currentChar!! == '\'') {
@@ -192,6 +193,7 @@ open class Lexer(private val text: String) {
 				'^' -> return advanceWith(state, CARET_TOKEN)
 				'[' -> return advanceWith(state, LEFT_BRACKET)
 				']' -> return advanceWith(state, RIGHT_BRACKET)
+				'?' -> return advanceWith(state, QUESTION_MARK)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
@@ -214,9 +216,11 @@ open class Lexer(private val text: String) {
 
 	private fun isShiftRight(state: State): Boolean = state.currentChar == '>' && peek(state) == '>'
 
-	private fun isLong(state: State): Boolean = state.currentChar!!.isDigit() //&& !isHexLiteral(state)
+	private fun isLong(state: State): Boolean = state.currentChar!!.isDigit()
 
-	protected open fun isNumber(state: State): Boolean = /*isHexLiteral(state) ||*/ isLong(state)
+	protected open fun isNumber(state: State): Boolean = isLong(state)
+
+	protected open fun isLiteral(state: State): Boolean = isNumber(state)
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -225,16 +229,19 @@ open class Lexer(private val text: String) {
 		advance(state)
 	}
 
-	/** Returns an [Long] consumed from the input. Subclasses might override this method to return other number types, such as [Double]s.*/
-	protected open fun number(state: State): Token<Long> =
+	protected open fun literal(state: State): Token<Any> = number(state)
+
+	protected open fun number(state: State): Token<Any> =
 		when {
-			isLong(state) -> longToken(long(state))
+			isLong(state) -> literalToken(long(state))
 			else -> throw SyntaxError(state.location, "Expected a number")
 		}
 
 	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
-	protected fun peek(state: State): Char? {
-		val peekPos = state.pos + 1
+	protected fun peek(state: State): Char? = peek(state, 1)
+
+	protected fun peek(state: State, count: Int): Char? {
+		val peekPos = state.pos + count
 		if (peekPos > text.length - 1) {
 			return null
 		}
@@ -268,7 +275,7 @@ open class Lexer(private val text: String) {
 	}
 
 	/** Returns a multi-digit [Long] consumed from the input text.*/
-	private fun long(state: State): Long {
+	protected fun long(state: State): Long {
 		val result = StringBuilder()
 		while (state.currentChar != null && state.currentChar!!.isDigit()) {
 			result.append(state.currentChar!!)

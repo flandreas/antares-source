@@ -35,11 +35,12 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     factor : "+" factor
  *            | "-" factor
  *            | "not" factor
- *            | number
+ *            | literal
  *            | "(" expr ")"
  *            | variable
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
+ *     literal : number
  *     number : LONG
  *     variable : scalarVariable | assocArray
  *     scalarVariable : identifier | "'" CHAR (CHAR)* "'"
@@ -291,21 +292,24 @@ open class Parser(
 					eat(NOT)
 					return UnaryOperation(location, token, factor())
 				}
-				LONG -> {
-					eat(LONG)
-					return Number(location, token as Token<Long>)
-				}
+				LITERAL -> literal()
 				LPAREN -> {
 					eat(LPAREN)
 					val node = expr()
 					eat(RPAREN)
 					node
 				}
-				ID -> {
-					variable()
-				}
+				ID -> variable()
 				else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
 			}
+		}
+	}
+
+	protected open fun literal(): Node {
+		lexer.location.let { location ->
+			val literal = Literal(location, currentToken!!)
+			eat(LITERAL)
+			return literal
 		}
 	}
 

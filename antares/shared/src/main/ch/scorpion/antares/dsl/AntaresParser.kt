@@ -12,8 +12,10 @@ import ch.scorpion.jabbah.base.dsl.TokenType
  *     factor : super.factor
  *            | raisedInput
  *     raisedInput : "^" variable
- *     number : LONG | hexLiteral
- *     hexLiteral : "0x" LONG
+ *     literal : number | hexLiteral
+ *     hexLiteral : definedHexLiteral | undefinedHexLiteral
+ *     definedHexLiteral : "0x" LONG
+ *     undefinedHexLiteral : "0x?" LONG
  * </pre>
  */
 class AntaresParser(

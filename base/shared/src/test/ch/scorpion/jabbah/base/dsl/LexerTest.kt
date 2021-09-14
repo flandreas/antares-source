@@ -77,7 +77,7 @@ class LexerTest {
 		assertId("a", lexer)
 		assertEquals(ASSIGN, lexer.peekNextToken().type)
 		assertToken(ASSIGN, lexer)
-		assertEquals(LONG, lexer.peekNextToken().type)
+		assertEquals(LITERAL, lexer.peekNextToken().type)
 		assertLong(17, lexer)
 	}
 
@@ -349,7 +349,7 @@ class LexerTest {
 
 	private fun assertLong(value: Long, lexer: Lexer) {
 		val token = lexer.nextToken()
-		assertEquals(LONG, token.type)
+		assertEquals(LITERAL, token.type)
 		assertEquals(value, token.value)
 	}
 

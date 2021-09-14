@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
 enum class TokenType {
-	LONG,
+	LITERAL,
 	PLUS,
 	MINUS,
 	MULTIPLY,
@@ -36,7 +36,8 @@ enum class TokenType {
 	TO,
 	CARET,
 	LEFT_BRACKET,
-	RIGHT_BRACKET
+	RIGHT_BRACKET,
+	QUESTION_MARK
 }
 
 /**

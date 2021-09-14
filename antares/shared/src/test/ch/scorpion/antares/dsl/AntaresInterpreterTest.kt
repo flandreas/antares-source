@@ -1,6 +1,8 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,5 +18,11 @@ class AntaresInterpreterTest {
 	fun shouldInterpretHexLiteral() {
 		val result = AntaresInterpreter("a = 0xFF").interpret()
 		assertEquals(255L, result)
+	}
+
+	@Test
+	fun shouldInterpretUndefinedHexLiteral() {
+		val result = AntaresInterpreter("a = 0x?2").interpret()
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_2), result)
 	}
 }
