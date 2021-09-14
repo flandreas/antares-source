@@ -338,4 +338,15 @@ class InterpreterTest {
 		// Result of signed integer calculation
 		assertEquals(-3L, Interpreter("not 2").interpret())
 	}
+
+	@Test
+	fun shouldInterpretAssocArray() {
+		val result = Interpreter("""
+			a[27] = 15
+			a[28] = 11
+			a[27]
+		""".trimIndent()).interpret()
+
+		assertEquals(15L, result)
+	}
 }

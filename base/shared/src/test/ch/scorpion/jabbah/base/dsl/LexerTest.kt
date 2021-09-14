@@ -326,6 +326,15 @@ class LexerTest {
 		}
 	}
 
+	@Test
+	fun shouldScanAssocArrayValue() {
+		val lexer = Lexer("a[0]")
+		assertId("a", lexer)
+		assertToken(LEFT_BRACKET, lexer)
+		assertLong(0, lexer)
+		assertToken(RIGHT_BRACKET, lexer)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

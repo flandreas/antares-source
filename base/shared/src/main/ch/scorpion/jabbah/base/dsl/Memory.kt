@@ -62,6 +62,11 @@ class Memory(rootActivationRecord: ActivationRecord = StoringActivationRecord("g
 		return callStack.peek().getValue(variable)
 	}
 
+	fun getOptionalValue(variable: Variable): Any? {
+		ensureStackNotEmpty(variable.location)
+		return callStack.peek().getOptionalValue(variable)
+	}
+
 	private fun ensureStackNotEmpty(location: CodeLocation) {
 		if (callStack.empty) {
 			throw RuntimeError(location, "No activation record")

@@ -32,14 +32,16 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
  *     factor : "+" factor
  *            | "-" factor
- *            | "not"
+ *            | "not" factor
  *            | number
  *            | "(" expr ")"
  *            | variable
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
  *     number : LONG
- *     variable : identifier | "'" CHAR (CHAR)* "'"
+ *     variable : scalarVariable | assocArray
+ *     scalarVariable : identifier | "'" CHAR (CHAR)* "'"
+ *     assocArray : scalarVariable "[" factor "]"
  *     identifier : LETTER (LETTER | DIGIT)*
  * </pre>
  *
@@ -93,6 +95,14 @@ open class Parser(
 			ID -> {
 				when (lexer.peekNextToken().type) {
 					ASSIGN -> assignment()
+					LEFT_BRACKET -> {
+						val assocArray = assocArray()
+						if (currentToken!!.type == ASSIGN) {
+							assignment(assocArray)
+						} else {
+							assocArray
+						}
+					}
 					else -> expr()
 				}
 			}
@@ -106,13 +116,14 @@ open class Parser(
 		}
 	}
 
-	private fun assignment(): Assignment {
+	private fun assignment(): Assignment = assignment(variable())
+
+	private fun assignment(variable: Variable): Assignment {
 		lexer.location.let { location ->
-			val left = variable()
 			val token = currentToken as Token<Assignment>
 			eat(ASSIGN)
 			val right = expr()
-			return Assignment(location, left, token, right)
+			return Assignment(location, variable, token, right)
 		}
 	}
 
@@ -120,6 +131,16 @@ open class Parser(
 		val node = Variable(lexer.location, currentToken as Token<String>)
 		eat(ID)
 		return node
+	}
+
+	private fun assocArray(): AssocArray {
+		lexer.location.let { location ->
+			val variable = variable()
+			eat(LEFT_BRACKET)
+			val factor = factor()
+			eat(RIGHT_BRACKET)
+			return AssocArray(location, variable.token, factor)
+		}
 	}
 
 	private fun block(): Node {

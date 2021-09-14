@@ -215,6 +215,39 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseAssocArray() {
+		val parser = Parser(Lexer("""
+			a[27] = 15
+			a[28] = 11
+		""".trimIndent()), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- =
+			-- a[]
+			--- 27
+			-- 15
+			- =
+			-- a[]
+			--- 28
+			-- 11
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseAssocArrayAssignments() {
+		val parser = Parser(Lexer("a[0] = 1"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- =
+			-- a[]
+			--- 0
+			-- 1
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

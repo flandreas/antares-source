@@ -153,18 +153,39 @@ open class Interpreter(
 		}
 	}
 
+	private fun storeValue(variable: Variable, value: Any): Any {
+		if (variable is AssocArray) {
+			var assocArray = memory.getOptionalValue(variable) as MutableMap<Any, Any>?
+			if (assocArray == null) {
+				memory.setValue(variable, mutableMapOf(variable.token.value to value))
+			} else {
+				assocArray[variable.key] = value
+			}
+		} else {
+			memory.setValue(variable, value)
+		}
+		return value
+	}
+
+	private fun loadValue(variable: Variable): Any {
+		return if (variable is AssocArray) {
+			val assocArray = memory.getValue(variable) as MutableMap<Any, Any>
+			assocArray[variable.token.value!!] ?: throw RuntimeError(node.location, "No value for key")
+		} else {
+			memory.getValue(variable)
+		}
+	}
+
 	/** Also supports implicit declaration. */
 	private fun assignment(node: Assignment): Any {
 		if (!memory.isDefined(node.left)) {
 			memory.define(node.left)
 		}
-		val value = interpret(node.right)
-		memory.setValue(node.left, value)
-		return value
+		return storeValue(node.left, interpret(node.right))
 	}
 
 	private fun variable(node: Variable): Any =
-		memory.getValue(node)
+		loadValue(node)
 
 	private fun declaration(node: Declaration): Any {
 		if (!memory.isLocallyDefined(node.left)) {

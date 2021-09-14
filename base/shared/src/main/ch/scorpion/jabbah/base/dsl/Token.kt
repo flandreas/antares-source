@@ -33,7 +33,9 @@ enum class TokenType {
 	FOR,
 	IN,
 	TO,
-	CARET
+	CARET,
+	LEFT_BRACKET,
+	RIGHT_BRACKET
 }
 
 /**

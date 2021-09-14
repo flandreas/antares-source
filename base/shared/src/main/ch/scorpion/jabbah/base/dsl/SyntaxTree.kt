@@ -94,10 +94,21 @@ class Block(location: CodeLocation, children: List<Node>) : Compound(location, c
 	override fun toString(): String = "Block"
 }
 
-class Variable(location: CodeLocation, val token: Token<String>) : AbstractNode(location) {
+open class Variable(location: CodeLocation, val token: Token<String>) : AbstractNode(location) {
 	override fun toString(): String = token.value!!
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
+}
+
+class AssocArray(location: CodeLocation, token: Token<String>, val key: Node): Variable(location, token) {
+	override fun toString(): String = "${super.toString()}[]"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			key.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
 }
 
 class Assignment(location: CodeLocation, val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode(location) {

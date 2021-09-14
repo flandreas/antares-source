@@ -35,6 +35,8 @@ interface ActivationRecord {
 	fun setValue(variable: Variable, value: Any)
 
 	fun getValue(variable: Variable): Any
+
+	fun getOptionalValue(variable: Variable): Any?
 }
 
 /**
@@ -83,4 +85,12 @@ class StoringActivationRecord(val name: String, val parent: ActivationRecord?) :
 			else ->
 				throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
 		}
+
+	override fun getOptionalValue(variable: Variable): Any? {
+		return if (isLocallyDefined(variable.token.value!!)) {
+			values[variable.token.value]
+		} else {
+			parent?.getOptionalValue(variable)
+		}
+	}
 }
