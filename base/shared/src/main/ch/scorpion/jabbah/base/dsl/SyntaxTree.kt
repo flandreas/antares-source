@@ -124,8 +124,8 @@ class Assignment(location: CodeLocation, val left: Variable, val op: Token<Assig
 	}
 }
 
-class Declaration(location: CodeLocation, val left: Variable, val right: Node?) : AbstractNode(location) {
-	override fun toString(): String = "var"
+class Declaration(location: CodeLocation, val left: Variable, val right: Node?, val store: Boolean) : AbstractNode(location) {
+	override fun toString(): String = if (store) "store" else "var"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

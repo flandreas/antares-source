@@ -14,6 +14,7 @@ enum class TokenType {
 	LCURLEY,
 	RCURLEY,
 	VAR,
+	STORE,
 	EQUAL,
 	DIFF,
 	SMALLER,

@@ -9,21 +9,56 @@ import ch.scorpion.jabbah.base.collection.Stack
  * which is used to decide whether a [Variable] is available in the current scope,
  * or must otherwise be fetched from the parent scope.
  *
+ * [ActivationRecord] stacking:
+ * - "Context" (optional): Provided from outside to gain access to context variables
+ * - "Store": Stores variables that must survive multiple runs of [Interpreter.interpret]. Doesn't apply to [clear].
+ * - "Global": Stores variables in the global, outermost context. Applies to [clear].
+ * - "<Name1>": Inner scope 1 created by [enterScope]. Applies to [clear].
+ * - "<Name2>": Inner scope 2 created by [enterScope]. Applies to [clear].
+ * - etc.
+ *
  * [Variable] values cannot be `null`.
  */
-class Memory(rootActivationRecord: ActivationRecord = StoringActivationRecord("global", null)) {
+class Memory(private val context: ActivationRecord? = null) {
+
+	/**
+	 * Stores [Variable] values persistently, i.e. they are NOT removed by [clear].
+	 * This is used for storing values that must survive multiple runs of [Interpreter.interpret].
+	 */
+	private val store = StoringActivationRecord("Store", context)
+
+	/**
+	 * The global, outermost scope always present.
+	 */
+	private val global = StoringActivationRecord("Global", store)
 
 	private val callStack = Stack<ActivationRecord>()
 
 	init {
-		callStack.push(rootActivationRecord)
+		context?.let { callStack.push(it) }
+		callStack.push(store)
+		callStack.push(global)
+	}
+
+	/**
+	 * Clears this [Memory] by removing all but the root [ActivationRecord] from the call stack
+	 * and clearing the root [ActivationRecord].
+	 */
+	fun clear() {
+		global.clear()
+		callStack.clear()
+		context?.let { callStack.push(it) }
+		callStack.push(global)
 	}
 
 	fun enterScope(name: String) {
 		callStack.push(StoringActivationRecord(name, callStack.optionalPeek()))
 	}
 
-	fun exitScope() {
+	fun exitScope(node: Node) {
+		if (callStack.peek() === global) {
+			throw RuntimeError(node.location, "Cannot exit global scope")
+		}
 		callStack.pop()
 	}
 
@@ -37,39 +72,31 @@ class Memory(rootActivationRecord: ActivationRecord = StoringActivationRecord("g
 		callStack.peek().preset(name, value)
 	}
 
-	fun define(variable: Variable) {
-		ensureStackNotEmpty(variable.location)
-		callStack.peek().define(variable)
+	fun define(variable: Variable, inStore: Boolean = false) {
+		if (inStore) {
+			// Redefinitions will naturally occur when running program multiple times on global store,
+			// so just ignore them
+			if (!store.isDefined(variable.token.value!!)) {
+				store.define(variable)
+			}
+		} else {
+			callStack.peek().define(variable)
+		}
 	}
 
-	fun isDefined(variable: Variable): Boolean {
-		ensureStackNotEmpty(variable.location)
-		return callStack.peek().isDefined(variable.token.value!!)
-	}
+	fun isDefined(variable: Variable): Boolean =
+		callStack.peek().isDefined(variable.token.value!!)
 
-	fun isLocallyDefined(variable: Variable): Boolean {
-		ensureStackNotEmpty(variable.location)
-		return callStack.peek().isLocallyDefined(variable.token.value!!)
-	}
+	fun isLocallyDefined(variable: Variable): Boolean =
+		callStack.peek().isLocallyDefined(variable.token.value!!)
 
 	fun setValue(variable: Variable, value: Any) {
-		ensureStackNotEmpty(variable.location)
 		callStack.peek().setValue(variable, value)
 	}
 
-	fun getValue(variable: Variable): Any {
-		ensureStackNotEmpty(variable.location)
-		return callStack.peek().getValue(variable)
-	}
+	fun getValue(variable: Variable): Any =
+		callStack.peek().getValue(variable)
 
-	fun getOptionalValue(variable: Variable): Any? {
-		ensureStackNotEmpty(variable.location)
-		return callStack.peek().getOptionalValue(variable)
-	}
-
-	private fun ensureStackNotEmpty(location: CodeLocation) {
-		if (callStack.empty) {
-			throw RuntimeError(location, "No activation record")
-		}
-	}
+	fun getOptionalValue(variable: Variable): Any? =
+		callStack.peek().getOptionalValue(variable)
 }

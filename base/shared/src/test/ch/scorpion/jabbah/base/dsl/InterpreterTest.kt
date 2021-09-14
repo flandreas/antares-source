@@ -251,14 +251,6 @@ class InterpreterTest {
 		assertEquals(3L, Interpreter("7 % 4").interpret())
 	}
 
-	/*
-	@Test
-	fun shouldInterpretHexLiteral() {
-		val result = Interpreter("a = 0xFF").interpret()
-		assertEquals(255L, result)
-	}
-	*/
-
 	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {
 		val result = Interpreter("""
@@ -348,5 +340,31 @@ class InterpreterTest {
 		""".trimIndent()).interpret()
 
 		assertEquals(15L, result)
+	}
+
+	@Test
+	fun shouldStoreVariablesBetweenInterpretations() {
+		val memory = Memory()
+		val interpreter = Interpreter(Parser(Lexer("""
+			store a
+			var out = 0
+			if (doStore) {
+				a = 42
+			}
+			if (doLoad) {
+				out = a
+			}
+			out
+		""".trimIndent()), semanticAnalyser = null).parse(), memory)
+
+		// Do store
+		memory.preset("doStore", 1L)
+		memory.preset("doLoad", 0L)
+		assertEquals(0L, interpreter.interpret())
+
+		// Use from store
+		memory.preset("doStore", 0L)
+		memory.preset("doLoad", 1L)
+		assertEquals(42L, interpreter.interpret())
 	}
 }

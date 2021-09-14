@@ -34,6 +34,7 @@ open class Lexer(private val text: String) {
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 		private val VAR_TOKEN = Token<String>(VAR)
+		private val STORE_TOKEN = Token<String>(STORE)
 		private val EQUAL_TOKEN = Token<Unit>(EQUAL)
 		private val DIFF_TOKEN = Token<Unit>(DIFF)
 		private val IF_TOKEN = Token<String>(IF)
@@ -59,6 +60,7 @@ open class Lexer(private val text: String) {
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
+			"store" to STORE_TOKEN,
 			"if" to IF_TOKEN,
 			"else" to ELSE_TOKEN,
 			"and" to AND_TOKEN,

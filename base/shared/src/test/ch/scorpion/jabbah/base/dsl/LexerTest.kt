@@ -128,6 +128,14 @@ class LexerTest {
 	}
 
 	@Test
+	fun shouldScanStore() {
+		val lexer = Lexer("store a")
+
+		assertToken(STORE, lexer)
+		assertId("a", lexer)
+	}
+
+	@Test
 	fun shouldScanEqual() {
 		val lexer = Lexer("a == b")
 		assertId("a", lexer)

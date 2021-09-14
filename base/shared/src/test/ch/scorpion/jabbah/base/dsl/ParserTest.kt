@@ -70,7 +70,7 @@ class ParserTest {
 	}
 
 	@Test
-	fun shouldParseDeclarationWithoutExpression() {
+	fun shouldParseVarDeclarationWithoutExpression() {
 		val parser = Parser("""
 			var a
 			a = 5
@@ -87,7 +87,7 @@ class ParserTest {
 	}
 
 	@Test
-	fun shouldParseDeclarationWithExpression() {
+	fun shouldParseVarDeclarationWithExpression() {
 		val parser = Parser("""
 			var a = 5
 			b = a
@@ -96,6 +96,41 @@ class ParserTest {
 		assertAST(parser.parse(), """
 			Compound
 			- var
+			-- a
+			-- 5
+			- =
+			-- b
+			-- a
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseStoreDeclarationWithoutExpression() {
+		val parser = Parser("""
+			store a
+			a = 5
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- store
+			-- a
+			- =
+			-- a
+			-- 5
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseStoreDeclarationWithExpression() {
+		val parser = Parser("""
+			store a = 5
+			b = a
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- store
 			-- a
 			-- 5
 			- =

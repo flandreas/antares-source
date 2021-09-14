@@ -21,7 +21,9 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     assignment : variable "=" expr
  *     empty : ""
  *     block : "{" statementList "}"
- *     declaration : "var" (variable | assignment)
+ *     declaration : varDeclaration | storeDeclaration
+ *     varDeclaration : "var" (variable | assignment)
+ *     storeDeclaration : "store" (variable | assignment)
  *     ifStatement : "if" "(" expr ")" statement [ "else" statement ]
  *     whenStatement : "when" "(" expr ")" "{" ( whenThen )* [ whenElse ] "}"
  *     whenThen : expr ":" statement
@@ -111,7 +113,8 @@ open class Parser(
 			IF -> ifStatement()
 			WHEN -> whenStatement()
 			FOR -> forStatement()
-			VAR -> declaration()
+			VAR -> varDeclaration()
+			STORE -> storeDeclaration()
 			else -> expr()
 		}
 	}
@@ -152,14 +155,18 @@ open class Parser(
 		}
 	}
 
-	private fun declaration(): Node {
+	private fun varDeclaration(): Node = declaration(VAR, store = false)
+
+	private fun storeDeclaration(): Node = declaration(STORE, store = true)
+
+	private fun declaration(tokenType: TokenType, store: Boolean): Node {
 		lexer.location.let { location ->
-			eat(VAR)
+			eat(tokenType)
 			return if (lexer.peekNextToken().type == ASSIGN) {
 				val assignment = assignment()
-				Declaration(location, assignment.left, assignment.right)
+				Declaration(location, assignment.left, assignment.right, store = store)
 			} else {
-				Declaration(location, variable(), null)
+				Declaration(location, variable(), null, store = store)
 			}
 		}
 	}

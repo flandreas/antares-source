@@ -54,7 +54,7 @@ class MemoryTest {
 		memory.enterScope("block")
 		memory.define(localA)
 		memory.setValue(localA, 99)
-		memory.exitScope()
+		memory.exitScope(globalA)
 
 		assertEquals(42, memory.getValue(globalA))
 	}

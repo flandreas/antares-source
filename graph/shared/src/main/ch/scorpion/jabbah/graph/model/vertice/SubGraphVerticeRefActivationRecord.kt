@@ -18,6 +18,8 @@ class SubGraphVerticeRefActivationRecord(
 	private val signalHandler: SignalHandler
 ) : ActivationRecord {
 
+	override fun clear() { }
+
 	override fun isLocallyDefined(name: String): Boolean = verticeRef.hasPort(name)
 
 	override fun isDefined(name: String): Boolean = verticeRef.hasPort(name)

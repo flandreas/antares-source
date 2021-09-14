@@ -5,6 +5,8 @@ package ch.scorpion.jabbah.base.dsl
  */
 interface ActivationRecord {
 
+	fun clear()
+
 	/**
 	 * Checks if a variable name is defined specifically in this [ActivationRecord],
 	 * i.e. not considering value definitions of its parent [ActivationRecord], if any.
@@ -46,6 +48,10 @@ class StoringActivationRecord(val name: String, val parent: ActivationRecord?) :
 
 	/** Defined variables have at least a key with value `null`. */
 	private val values = mutableMapOf<String, Any?>()
+
+	override fun clear() {
+		values.clear()
+	}
 
 	override fun isLocallyDefined(name: String) = values.containsKey(name)
 

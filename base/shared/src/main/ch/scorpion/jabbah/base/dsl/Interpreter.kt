@@ -23,7 +23,12 @@ open class Interpreter(
 	 */
 	fun interpret(params: Any? = null): Any {
 		this.params = params
-		return interpret(node)
+		try {
+			return interpret(node)
+		} finally {
+			// Don't clear memory BEFORE interpretation in order not to break Memory.preset()
+			memory.clear()
+		}
 	}
 
 	protected open fun interpret(node: Node): Any {
@@ -61,7 +66,7 @@ open class Interpreter(
 	private fun block(node: Block): Any {
 		memory.enterScope("block")
 		val result = compound(node)
-		memory.exitScope()
+		memory.exitScope(node)
 		return result
 	}
 
@@ -179,7 +184,7 @@ open class Interpreter(
 	/** Also supports implicit declaration. */
 	private fun assignment(node: Assignment): Any {
 		if (!memory.isDefined(node.left)) {
-			memory.define(node.left)
+			memory.define(node.left, inStore = false)
 		}
 		return storeValue(node.left, interpret(node.right))
 	}
@@ -188,11 +193,26 @@ open class Interpreter(
 		loadValue(node)
 
 	private fun declaration(node: Declaration): Any {
+		return if (node.store) {
+			declarationInStore(node)
+		} else {
+			declarationInScope(node)
+		}
+	}
+
+	private fun declarationInStore(node: Declaration): Any {
+		memory.define(node.left, inStore = true)
+		val value = node.right?.let { interpret(it) }
+		value?.let { storeValue(node.left, it) }
+		return value ?: 0L
+	}
+
+	private fun declarationInScope(node: Declaration): Any {
 		if (!memory.isLocallyDefined(node.left)) {
-			memory.define(node.left)
+			memory.define(node.left, inStore = false)
 		}
 		val value = node.right?.let { interpret(it) }
-		value?.let { memory.setValue(node.left, value) }
+		value?.let { storeValue(node.left, it) }
 		return value ?: 0L
 	}
 
@@ -218,7 +238,7 @@ open class Interpreter(
 		val endValue = interpretAsLong(node.toExpr)
 
 		memory.enterScope("for")
-		memory.define(node.variable)
+		memory.define(node.variable, inStore = false)
 
 		if (startValue <= endValue) {
 			for (value in startValue..endValue) {
@@ -232,7 +252,7 @@ open class Interpreter(
 			}
 		}
 
-		memory.exitScope()
+		memory.exitScope(node)
 		return 0L
 	}
 }
