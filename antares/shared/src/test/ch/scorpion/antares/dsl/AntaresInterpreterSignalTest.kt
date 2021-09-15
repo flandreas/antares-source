@@ -92,4 +92,60 @@ class AntaresInterpreterSignalTest {
 
 		assertEquals(Word.of(BitWidth.BW_4, 5UL), result)
 	}
+
+	@Test
+	fun shouldBeEqualToWord() {
+		val parser = AntaresParser(AntaresLexer("A == B"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("B", Word.of(BitWidth.BW_4, 3UL))
+		assertEquals(1L, interpreter.interpret())
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		memory.preset("B", Word.of(BitWidth.BW_4, 4UL))
+		assertEquals(0L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldBeEqualToLong() {
+		val parser = AntaresParser(AntaresLexer("A == 3"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		assertEquals(1L, interpreter.interpret())
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		assertEquals(0L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldDifferFromLong() {
+		val parser = AntaresParser(AntaresLexer("A != 3"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		assertEquals(0L, interpreter.interpret())
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		assertEquals(1L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldDifferFromWord() {
+		val parser = AntaresParser(AntaresLexer("A != B"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("B", Word.of(BitWidth.BW_4, 3UL))
+		assertEquals(0L, interpreter.interpret())
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		memory.preset("B", Word.of(BitWidth.BW_4, 4UL))
+		assertEquals(1L, interpreter.interpret())
+	}
 }

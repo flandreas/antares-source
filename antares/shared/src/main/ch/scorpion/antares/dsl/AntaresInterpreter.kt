@@ -27,6 +27,14 @@ class AntaresInterpreter(
 			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r)}, { l, r -> l.and(r.toULong()) })
 			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) }, { l, r -> l.or(r.toULong()) })
 			PLUS -> binaryOp(node, { l, r -> l + r}, { l, r -> l.add(r) }, { l, r -> l.add(r.toUInt()) })
+			EQUAL -> binaryOp(node,
+				{ l, r -> if (l == r) 1L else 0L},
+				{ l, r -> if (l == r) 1L else 0L },
+				{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L })
+			DIFF -> binaryOp(node,
+				{ l, r -> if (l != r) 1L else 0L},
+				{ l, r -> if (l != r) 1L else 0L },
+				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L })
 			else -> super.typedBinaryOp(node)
 		}
 	}
@@ -41,9 +49,9 @@ class AntaresInterpreter(
 
 	private fun binaryOp(
 		node: BinaryOperation,
-		longOp: (Long, Long) -> Long,
-		signalOp: (DigitalSignal, DigitalSignal) -> DigitalSignal,
-		mixedOp: (DigitalSignal, Long) -> DigitalSignal
+		longOp: (Long, Long) -> Any,
+		signalOp: (DigitalSignal, DigitalSignal) -> Any,
+		mixedOp: (DigitalSignal, Long) -> Any
 	): Any {
 		val left = interpret(node.left)
 		val right = interpret(node.right)

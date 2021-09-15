@@ -76,8 +76,8 @@ open class Interpreter(
 			MINUS -> interpretAsLong(node.left) - interpretAsLong(node.right)
 			MULTIPLY -> interpretAsLong(node.left) * interpretAsLong(node.right)
 			DIVIDE -> interpretAsLong(node.left) / interpretAsLong(node.right)
-			EQUAL -> if (interpret(node.left) == interpret(node.right)) 1L else 0L
-			DIFF -> if (interpret(node.left) != interpret(node.right)) 1L else 0L
+			EQUAL -> typedBinaryOp(node)
+			DIFF -> typedBinaryOp(node)
 			AND -> typedBinaryOp(node)
 			OR -> typedBinaryOp(node)
 			SMALLER -> if (interpretAsLong(node.left) < interpretAsLong(node.right)) 1L else 0L
@@ -96,6 +96,8 @@ open class Interpreter(
 			AND -> binaryOp(node) { l, r -> l.and(r) }
 			OR -> binaryOp(node) { l, r -> l.or(r) }
 			PLUS -> binaryOp(node) { l, r -> l + r }
+			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
+			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
