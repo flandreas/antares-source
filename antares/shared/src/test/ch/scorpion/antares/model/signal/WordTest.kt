@@ -238,4 +238,14 @@ class WordTest {
 		assertEquals(Word(listOf(True, True)), Word(listOf(True, True)).defineSubword(DigitalSignalFactory.of(False), 1))
 		assertEquals(Word(listOf(False, True, Undefined, Undefined)), Word(listOf(False, True, Undefined, Undefined)).defineSubword(Word(listOf(False, Undefined, Undefined, Undefined)), 0))
 	}
+	
+	@Test
+	fun shouldAddWord() {
+		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(Word.of(BW_4, 14UL)))
+	}
+
+	@Test
+	fun shouldAddUUInt() {
+		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(14U))
+	}
 }

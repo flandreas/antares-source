@@ -67,4 +67,29 @@ class AntaresInterpreterSignalTest {
 
 		assertEquals(Word.of(BitWidth.BW_4, 13UL), result)
 	}
+
+	@Test
+	fun shouldAddSignals() {
+		val parser = AntaresParser(AntaresLexer("O = A + B"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("B", Word.of(BitWidth.BW_2, 1UL))
+
+		val result = interpreter.interpret()
+
+		assertEquals(Word.of(BitWidth.BW_4, 3UL), result)
+	}
+
+	@Test
+	fun shouldAddLongToSignal() {
+		val parser = AntaresParser(AntaresLexer("O = A + 3"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", Word.of(BitWidth.BW_4, 2UL))
+
+		val result = interpreter.interpret()
+
+		assertEquals(Word.of(BitWidth.BW_4, 5UL), result)
+	}
 }

@@ -60,5 +60,5 @@ class MemoryTest {
 	}
 
 	private fun variable(name: String): Variable =
-		Variable(CodeLocation(0, 0), Token(TokenType.VAR, name))
+		Variable(CodeLocation(0, 0, 0), Token(TokenType.VAR, name))
 }

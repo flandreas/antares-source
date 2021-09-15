@@ -53,4 +53,6 @@ enum class BitWidth(
     override val customName: String get() = width.toString()
 
     override fun toString(): String = customName
+
+	fun max(other: BitWidth): BitWidth = of(kotlin.math.max(width, other.width))
 }

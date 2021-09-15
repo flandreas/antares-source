@@ -186,8 +186,12 @@ internal data class Word(
 	override fun and(signal: DigitalSignal): DigitalSignal =
 		Word((0 until bitWidth.width).map { bitAt(it).and(signal.bitAt(it)) })
 
+	override fun and(value: ULong): DigitalSignal = and(of(bitWidth, value))
+
 	override fun or(signal: DigitalSignal): DigitalSignal =
 		Word((0 until bitWidth.width).map { bitAt(it).or(signal.bitAt(it)) })
+
+	override fun or(value: ULong): DigitalSignal = or(of(bitWidth, value))
 
 	override fun bitAt(index: Int): Bit = bits[index]
 
@@ -337,5 +341,23 @@ internal data class Word(
 			}
 		}
 		return true
+	}
+
+	override fun add(other: DigitalSignal): DigitalSignal {
+		val sum = if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot add non fully defined digital signal")
+		} else {
+			longValue!! + other.toLong()!!
+		}
+		return of(bitWidth.max(other.bitWidth), sum)
+	}
+
+	override fun add(other: UInt): DigitalSignal {
+		val sum = if (longValue == null) {
+			throw IllegalArgumentException("cannot add non fully defined digital signal")
+		} else {
+			longValue!! + other
+		}
+		return of(bitWidth, sum)
 	}
 }

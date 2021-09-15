@@ -72,7 +72,7 @@ open class Interpreter(
 
 	private fun binaryOperation(node: BinaryOperation): Any {
 		return when (node.op.type) {
-			PLUS -> interpretAsLong(node.left) + interpretAsLong(node.right)
+			PLUS -> typedBinaryOp(node)
 			MINUS -> interpretAsLong(node.left) - interpretAsLong(node.right)
 			MULTIPLY -> interpretAsLong(node.left) * interpretAsLong(node.right)
 			DIVIDE -> interpretAsLong(node.left) / interpretAsLong(node.right)
@@ -95,6 +95,7 @@ open class Interpreter(
 		return when (node.op.type) {
 			AND -> binaryOp(node) { l, r -> l.and(r) }
 			OR -> binaryOp(node) { l, r -> l.or(r) }
+			PLUS -> binaryOp(node) { l, r -> l + r }
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}

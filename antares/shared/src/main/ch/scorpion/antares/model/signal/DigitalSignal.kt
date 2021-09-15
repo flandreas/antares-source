@@ -33,8 +33,12 @@ interface DigitalSignal {
     /** Returns the bitwise 'and' of this [DigitalSignal] and the specified one.*/
     fun and(signal: DigitalSignal): DigitalSignal
 
+    fun and(value: ULong): DigitalSignal
+
 	/** Returns the bitwise 'or' of this [DigitalSignal] and the specified one.*/
     fun or(signal: DigitalSignal): DigitalSignal
+
+    fun or(value: ULong): DigitalSignal
 
     fun bitAt(index: Int): Bit
 
@@ -105,4 +109,16 @@ interface DigitalSignal {
 	fun isAllOf(bit: Bit): Boolean
 
 	fun nibbleToHexChar(index: Int): Char
+
+	/**
+	 * Creates a new [DigitalSignal] with the sum of both [DigitalSignal]s and the maximum [BitWidth] of both.
+	 * Sums that don't fit in that [BitWidth] get truncated.
+	 */
+	fun add(other: DigitalSignal): DigitalSignal
+
+	/**
+	 * Creates a new [DigitalSignal] with the sum of this [DigitalSignal] and [other] with this [DigitalSignal]'s [BitWidth].
+	 * Sums that don't fit in that [BitWidth] get truncated.
+	 */
+	fun add(other: UInt): DigitalSignal
 }

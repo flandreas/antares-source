@@ -24,8 +24,9 @@ class AntaresInterpreter(
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
-			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r) })
-			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) })
+			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r)}, { l, r -> l.and(r.toULong()) })
+			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) }, { l, r -> l.or(r.toULong()) })
+			PLUS -> binaryOp(node, { l, r -> l + r}, { l, r -> l.add(r) }, { l, r -> l.add(r.toUInt()) })
 			else -> super.typedBinaryOp(node)
 		}
 	}
@@ -41,7 +42,8 @@ class AntaresInterpreter(
 	private fun binaryOp(
 		node: BinaryOperation,
 		longOp: (Long, Long) -> Long,
-		signalOp: (DigitalSignal, DigitalSignal) -> DigitalSignal
+		signalOp: (DigitalSignal, DigitalSignal) -> DigitalSignal,
+		mixedOp: (DigitalSignal, Long) -> DigitalSignal
 	): Any {
 		val left = interpret(node.left)
 		val right = interpret(node.right)
@@ -49,6 +51,8 @@ class AntaresInterpreter(
 			longOp(left, right)
 		} else if (left is DigitalSignal && right is DigitalSignal) {
 			signalOp(left, right)
+		} else if (left is DigitalSignal && right is Long) {
+			mixedOp(left, right)
 		} else {
 			throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
 		}
