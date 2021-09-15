@@ -170,7 +170,7 @@ class SubGraphVerticeRef(
 		if (graph != null && graph!!.scriptAST != null) {
 			interpreter = BaseModule.interpreterFactory(
 				graph!!.scriptAST!!,
-				Memory(SubGraphVerticeRefActivationRecord(this, signalHandler)))
+				Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(this, signalHandler)))
 		}
 	}
 

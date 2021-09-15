@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
@@ -18,6 +19,8 @@ import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
@@ -54,6 +57,10 @@ object GraphModelModule : AbstractModule() {
 	var portFactory: PortFactory = UndefinedPortFactory()
 
 	var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
+
+	/** More specific modules can register other implementations for [GraphPort] value type adjustments. */
+	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory =
+		SubGraphVerticeRefActivationRecordFactory { v, s -> SubGraphVerticeRefActivationRecord(v, s)}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", GraphImpl::class)

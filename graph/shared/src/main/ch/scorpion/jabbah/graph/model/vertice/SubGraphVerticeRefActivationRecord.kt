@@ -6,14 +6,18 @@ import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.GraphOutput
 
+
+fun interface SubGraphVerticeRefActivationRecordFactory {
+	fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord
+}
 /**
  * An [ActivationRecord] implements that allows a DSL script to access
  * a [SubGraphVerticeRef]'s [GraphPort]'s values as global context variables
  * for reading ([GraphInput]) and writing [GraphOutput].
  */
-class SubGraphVerticeRefActivationRecord(
-	private val verticeRef: SubGraphVerticeRef,
-	private val signalHandler: SignalHandler
+open class SubGraphVerticeRefActivationRecord(
+	protected val verticeRef: SubGraphVerticeRef,
+	protected val signalHandler: SignalHandler
 ) : ActivationRecord {
 
 	override fun clear() { }

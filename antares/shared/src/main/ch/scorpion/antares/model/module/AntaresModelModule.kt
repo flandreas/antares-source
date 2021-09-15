@@ -17,12 +17,14 @@ import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.output.RgbLED
 import ch.scorpion.antares.model.output.SevenSegmentDisplay
 import ch.scorpion.antares.model.port.SubCircuitPort
+import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -41,6 +43,8 @@ object AntaresModelModule : AbstractModule() {
 
 		GraphModelModule.portFactory = DigitalPortFactory()
 		GraphModelModule.graphFactory = { DigitalGraph(name = it) }
+		GraphModelModule.subGraphVerticeRefActivationRecordFactory =
+			SubGraphVerticeRefActivationRecordFactory { v, s -> DigitalSubGraphVerticeRefActivationRecord(v, s) }
 	}
 
 	private fun customizeProperties(properties: Properties) {
