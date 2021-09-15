@@ -5,15 +5,19 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslError
-import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Font
+import java.awt.Frame
 import javax.swing.*
 
 class ScriptPropertyPanel(
 	script: String,
 	editable: Boolean = true,
+	private val parserFactory: ParserFactory = BaseModule.parserFactory,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -29,9 +33,10 @@ class ScriptPropertyPanel(
 			script: String,
 			propertyName: String,
 			editable: Boolean = true,
+			parserFactory: ParserFactory = BaseModule.parserFactory
 		): String? {
 			val builder = DialogBuilder<ScriptPropertyPanel>(parent)
-				.content { dialog -> ScriptPropertyPanel(script, editable) { dialog.dispose() } }
+				.content { dialog -> ScriptPropertyPanel(script, editable, parserFactory) { dialog.dispose() } }
 				.title(propertyName)
 				.preferredSize(Dimension(600, 500))
 				.defaultButton { if (editable) it.okButton else it.closeButton }
@@ -139,12 +144,10 @@ class ScriptPropertyPanel(
 	private inner class CheckAction : AbstractAction("edit.dsl.check.action") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			try {
-				BaseModule.parserFactory(scriptTextField.text, SemanticAnalyser()).parse()
+				parserFactory.create(scriptTextField.text, null)
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
-				messageTextField.foreground = Color.GREEN.darker()
 			} catch (e: DslError) {
 				messageTextField.text = e.message
-				messageTextField.foreground = Color.RED.darker()
 			}
 		}
 	}

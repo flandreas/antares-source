@@ -2,8 +2,7 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.dsl.DslError
-import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
@@ -46,7 +45,7 @@ open class GraphImpl(
 		script?.let {
 			// TODO Incorporate semantic analysis
 			try {
-				BaseModule.parserFactory(it, null).parse()
+				BaseModule.parserFactory.create(it, null).parse()
 			} catch (e: DslError) {
 				eventBus.post(IssueImpl(
 					severity = IssueSeverity.Error,
@@ -207,6 +206,20 @@ open class GraphImpl(
 			return output as GraphOutput<T>
 		}
 		return getGraphInputOutput(name) as GraphOutput<T>?
+	}
+
+	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser {
+		var analyser = semanticAnalyser
+		if (analyser == null) {
+			analyser = SemanticAnalyser(createSymbolTable())
+		}
+		return BaseModule.parserFactory.create(program, analyser)
+	}
+
+	private fun createSymbolTable(): ScopedSymbolTable {
+		val symbolTable = ScopedSymbolTable("Context", level = 0, enclosingScope = null)
+		graphPorts.forEach { symbolTable.define(Symbol(it.name!!)) }
+		return symbolTable
 	}
 
 	/** ---- [Storable] interface */

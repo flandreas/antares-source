@@ -16,13 +16,13 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
-	    private val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", beanProvider = drawingBeanProvider)
 	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
+	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean.graph!!::createParser)
 	    val ids = listOf<Int>()
 
 	    properties.add(name.bind(editor, ids, filter = { false }))

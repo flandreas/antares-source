@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -117,6 +119,18 @@ interface Graph : Namable, Describable, Storable {
     /** Returns the [GraphOutput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphOutput(name: String): GraphOutput<T>?
 
+	/**
+	 * Creates a [Parser] for parsing the [Graph] execution program in [program].
+	 *
+	 * Should ignore [semanticAnalyser] and rather provide a [SemanticAnalyser] implementation
+	 * that predefines all [GraphPort] names of this [Graph] in the created [SemanticAnalyser]'s
+	 * symbol table.
+	 *
+	 * Note that [program] corresponds with [script], but doesn't have the same value,
+	 * because this method can be called while [script] is edited by the user, in which
+	 * case [program] represent the most current version that must be parsed.
+	 */
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 }
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)

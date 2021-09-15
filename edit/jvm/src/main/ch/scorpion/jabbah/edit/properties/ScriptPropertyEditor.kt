@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
@@ -15,7 +17,8 @@ import javax.swing.*
  */
 class ScriptPropertyEditor(
 	private val propertyName: String,
-	private val editable: Boolean
+	private val editable: Boolean,
+	private val parserFactory: ParserFactory = BaseModule.parserFactory
 ) : AbstractPropertyEditor() {
 
 	companion object {
@@ -63,7 +66,8 @@ class ScriptPropertyEditor(
 		ScriptPropertyPanel.showAsDialog(
 			script = script.scriptOrEmpty,
 			editable = editable,
-			propertyName = propertyName
+			propertyName = propertyName,
+			parserFactory = parserFactory
 		) ?.let {
 			script = ScriptProperty(it)
 		}

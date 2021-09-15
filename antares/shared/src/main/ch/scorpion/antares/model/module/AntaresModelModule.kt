@@ -20,6 +20,7 @@ import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.io.IOModule
@@ -35,7 +36,7 @@ object AntaresModelModule : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 
 		BaseModule.lexerFactory = { AntaresLexer(it) }
-		BaseModule.parserFactory = { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
+		BaseModule.parserFactory = ParserFactory { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
 		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
 
 		GraphModelModule.portFactory = DigitalPortFactory()

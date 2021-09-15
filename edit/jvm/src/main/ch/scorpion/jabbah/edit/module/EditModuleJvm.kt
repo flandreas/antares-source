@@ -93,8 +93,9 @@ object EditModuleJvm : AbstractModule() {
 		}
 		registry.register(ScriptProperty::class.java) {
 			ScriptPropertyEditor(
-				propertyName = (it as CommandPropertySwing<String>).displayName,
-				editable = it.editable)
+				propertyName = (it as ScriptPropertySwing).displayName,
+				editable = it.editable,
+				parserFactory = it.parserFactory)
 		}
 		registry.register(TranslatableText::class.java) {
 			TranslatablePropertyEditor(
