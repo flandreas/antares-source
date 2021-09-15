@@ -65,6 +65,7 @@ class ScriptPropertyPanel(
 		scriptTextField.wrapStyleWord = true
 		scriptTextField.isEditable = editable
 		scriptTextField.font = FONT
+		scriptTextField.tabSize = 4
 
 		messageTextField.isEditable = false
 
