@@ -144,7 +144,7 @@ class ScriptPropertyPanel(
 	private inner class CheckAction : AbstractAction("edit.dsl.check.action") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			try {
-				parserFactory.create(scriptTextField.text, null)
+				parserFactory.create(scriptTextField.text, null).parse()
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
 			} catch (e: DslError) {
 				messageTextField.text = e.message
