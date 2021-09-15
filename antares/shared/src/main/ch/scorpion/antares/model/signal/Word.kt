@@ -315,9 +315,19 @@ internal data class Word(
 	 */
 	override fun ofWidth(bitWidth: BitWidth): DigitalSignal = of(bitWidth, getValue())
 
-	override fun shiftLeft(bitCount: Int): DigitalSignal = of(bitWidth, getValue().shl(bitCount))
+	override fun shiftLeft(bitCount: Int): DigitalSignal {
+		val newBits = bits.toMutableList()
+		newBits.add(0, Bit.False)
+		newBits.removeLast()
+		return Word(newBits)
+	}
 
-	override fun shiftRight(bitCount: Int): DigitalSignal = of(bitWidth, getValue().shr(bitCount))
+	override fun shiftRight(bitCount: Int): DigitalSignal {
+		val newBits = bits.toMutableList()
+		newBits.removeFirst()
+		newBits.add(Bit.False)
+		return Word(newBits)
+	}
 
 	override fun replaceBy(replacement: Bit, filter: (Int, Bit) -> Boolean): Word {
 		val resultBits = mutableListOf<Bit>()
