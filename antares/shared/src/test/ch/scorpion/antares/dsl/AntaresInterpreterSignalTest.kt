@@ -242,4 +242,54 @@ class AntaresInterpreterSignalTest {
 		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
 		assertEquals(0L, interpreter.interpret())
 	}
+
+	@Test
+	fun shouldEvaluateTrueSignalInIfCondition() {
+		val parser = AntaresParser(AntaresLexer("""
+			A = 0
+			if (B) {
+				A = 1
+			}
+			A
+		""".trimIndent()), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("B", Word.of(BitWidth.BW_4, 1UL))
+		assertEquals(1L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldEvaluateFalseSignalInIfCondition() {
+		val parser = AntaresParser(AntaresLexer("""
+			A = 0
+			if (B) {
+				A = 1
+			}
+			A
+		""".trimIndent()), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("B", Word.of(BitWidth.BW_4, 0UL))
+		assertEquals(0L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldEvaluateSignalInWhenCondition() {
+		val parser = AntaresParser(AntaresLexer("""
+			A = 0
+			when (B) {
+				1 : A = 11
+				2 : A = 22
+				else : A = 99
+			}
+			A
+		""".trimIndent()), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		assertEquals(22L, interpreter.interpret())
+	}
 }

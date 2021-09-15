@@ -225,21 +225,25 @@ open class Interpreter(
 	}
 
 	private fun ifStatement(node: IfStatement): Any {
-		if (interpret(node.condition) != 0L) {
+		if (evaluateTrueCondition(interpret(node.condition))) {
 			return interpret(node.thenStatement)
 		}
 		return node.elseStatement?.let { interpret(it) } ?: 0L
 	}
 
+	protected open fun evaluateTrueCondition(value: Any): Boolean = value != 0L
+
 	private fun whenStatement(node: WhenStatement): Any {
 		val expr = interpret(node.expression)
 		for (clause in node.clauses) {
-			if (clause.condition == null || expr == interpret(clause.condition)) {
+			if (clause.condition == null || evaluateTrueCondition(evaluateEqualCondition(clause, expr, interpret(clause.condition) ))) {
 				return interpret(clause.then)
 			}
 		}
 		return 0L
 	}
+
+	protected open fun evaluateEqualCondition(node: Node, left: Any, right: Any): Long = if (left == right) 1L else 0L
 
 	private fun forStatement(node: ForStatement): Any {
 		val startValue = interpretAsLong(node.inExpr)

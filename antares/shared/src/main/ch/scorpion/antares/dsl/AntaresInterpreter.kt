@@ -15,11 +15,28 @@ class AntaresInterpreter(
 
 	private val data: GraphActorData? get() = if (params is GraphActorData) params as GraphActorData else null
 
-	override fun interpret(node: Node): Any {
-		return when (node) {
+	override fun interpret(node: Node): Any =
+		when (node) {
 			is RaisedInput -> raisedInput(node)
 			else -> super.interpret(node)
 		}
+
+	override fun evaluateTrueCondition(value: Any): Boolean =
+		when (value) {
+			is DigitalSignal -> value.toLong() != null && value.toLong() != 0UL
+			else -> super.evaluateTrueCondition(value)
+		}
+
+	override fun evaluateEqualCondition(node: Node, left: Any, right: Any): Long {
+		return binaryOpInterpreted(
+			node,
+			EQUAL,
+			left,
+			right,
+			{ l, r -> if (l == r) 1L else 0L},
+			{ l, r -> if (l == r) 1L else 0L },
+			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L })
+		as Long
 	}
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
@@ -27,10 +44,7 @@ class AntaresInterpreter(
 			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r)}, { l, r -> l.and(r.toULong()) })
 			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) }, { l, r -> l.or(r.toULong()) })
 			PLUS -> binaryOp(node, { l, r -> l + r}, { l, r -> l.add(r) }, { l, r -> l.add(r.toUInt()) })
-			EQUAL -> binaryOp(node,
-				{ l, r -> if (l == r) 1L else 0L},
-				{ l, r -> if (l == r) 1L else 0L },
-				{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L })
+			EQUAL -> evaluateEqualCondition(node, interpret(node.left), interpret(node.right))
 			DIFF -> binaryOp(node,
 				{ l, r -> if (l != r) 1L else 0L},
 				{ l, r -> if (l != r) 1L else 0L },
@@ -56,13 +70,12 @@ class AntaresInterpreter(
 		}
 	}
 
-	override fun typedBinaryOpWithRightInt(node: BinaryOperation): Any {
-		return when (node.op.type) {
+	override fun typedBinaryOpWithRightInt(node: BinaryOperation): Any =
+		when (node.op.type) {
 			SHIFT_LEFT -> binaryOpWithRightInt(node, { l, r -> l.shl(r) }, { l, r -> l.shiftLeft(r) })
 			SHIFT_RIGHT -> binaryOpWithRightInt(node, { l, r -> l.shr(r) }, { l, r -> l.shiftRight(r) })
 			else -> super.typedBinaryOpWithRightInt(node)
 		}
-	}
 
 	private fun binaryOp(
 		node: BinaryOperation,
@@ -72,6 +85,18 @@ class AntaresInterpreter(
 	): Any {
 		val left = interpret(node.left)
 		val right = interpret(node.right)
+		return binaryOpInterpreted(node, node.op.type, left, right, longOp, signalOp, mixedOp)
+	}
+
+	private fun binaryOpInterpreted(
+		node: Node,
+		op: TokenType,
+		left: Any,
+		right: Any,
+		longOp: (Long, Long) -> Any,
+		signalOp: (DigitalSignal, DigitalSignal) -> Any,
+		mixedOp: (DigitalSignal, Long) -> Any
+	): Any {
 		return if (left is Long && right is Long) {
 			longOp(left, right)
 		} else if (left is DigitalSignal && right is DigitalSignal) {
@@ -79,7 +104,7 @@ class AntaresInterpreter(
 		} else if (left is DigitalSignal && right is Long) {
 			mixedOp(left, right)
 		} else {
-			throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
+			throw RuntimeError(node.location, "Incompatible types for '${op}'")
 		}
 	}
 
@@ -97,12 +122,11 @@ class AntaresInterpreter(
 		}
 	}
 
-	override fun typedUnaryOp(node: UnaryOperation): Any {
-		return when (node.op.type) {
+	override fun typedUnaryOp(node: UnaryOperation): Any =
+		when (node.op.type) {
 			NOT -> unaryOp(node, { it.inv() }, { it.not() })
 			else -> super.typedUnaryOp(node)
 		}
-	}
 
 	private fun unaryOp(
 		node: UnaryOperation,
