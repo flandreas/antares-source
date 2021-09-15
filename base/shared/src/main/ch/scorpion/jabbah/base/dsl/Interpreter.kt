@@ -80,10 +80,10 @@ open class Interpreter(
 			DIFF -> typedBinaryOp(node)
 			AND -> typedBinaryOp(node)
 			OR -> typedBinaryOp(node)
-			SMALLER -> if (interpretAsLong(node.left) < interpretAsLong(node.right)) 1L else 0L
-			GREATER -> if (interpretAsLong(node.left) > interpretAsLong(node.right)) 1L else 0L
-			SMALLER_EQUAL -> if (interpretAsLong(node.left) <= interpretAsLong(node.right)) 1L else 0L
-			GREATER_EQUAL -> if (interpretAsLong(node.left) >= interpretAsLong(node.right)) 1L else 0L
+			SMALLER -> typedBinaryOp(node)
+			GREATER -> typedBinaryOp(node)
+			SMALLER_EQUAL -> typedBinaryOp(node)
+			GREATER_EQUAL -> typedBinaryOp(node)
 			SHIFT_LEFT -> typedBinaryOpWithRightInt(node)
 			SHIFT_RIGHT -> typedBinaryOpWithRightInt(node)
 			MOD -> typedBinaryOp(node)
@@ -95,6 +95,10 @@ open class Interpreter(
 		return when (node.op.type) {
 			AND -> binaryOp(node) { l, r -> l.and(r) }
 			OR -> binaryOp(node) { l, r -> l.or(r) }
+			SMALLER -> binaryOp(node) { l, r -> if (l < r) 1L else 0L }
+			SMALLER_EQUAL -> binaryOp(node) { l, r -> if (l <= r) 1L else 0L }
+			GREATER -> binaryOp(node) { l, r -> if (l > r) 1L else 0L }
+			GREATER_EQUAL -> binaryOp(node) { l, r -> if (l >= r) 1L else 0L }
 			PLUS -> binaryOp(node) { l, r -> l + r }
 			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
 			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }

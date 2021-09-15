@@ -126,4 +126,17 @@ interface DigitalSignal {
 	fun mod(other: DigitalSignal): DigitalSignal
 
 	fun mod(value: ULong): DigitalSignal
+
+	fun isGreaterThan(other: DigitalSignal): Boolean
+	fun isGreaterThan(value: ULong): Boolean
+
+	fun isGreaterEqualThan(other: DigitalSignal): Boolean
+	fun isGreaterEqualThan(value: ULong): Boolean
+
+	fun isSmallerThan(other: DigitalSignal): Boolean
+	fun isSmallerThan(value: ULong): Boolean
+
+	fun isSmallerEqualThan(other: DigitalSignal): Boolean
+	fun isSmallerEqualThan(value: ULong): Boolean
+
 }

@@ -36,6 +36,22 @@ class AntaresInterpreter(
 				{ l, r -> if (l != r) 1L else 0L },
 				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L })
 			MOD -> binaryOp(node, { l, r -> l.mod(r) }, { l, r -> l.mod(r) }, { l, r -> l.mod(r.toULong()) })
+			GREATER -> binaryOp(node,
+				{ l, r -> if (l > r) 1L else 0L },
+				{ l, r -> if (l.isGreaterThan(r)) 1L else 0L },
+				{ l, r -> if (l.isGreaterThan(r.toULong())) 1L else 0L })
+			GREATER_EQUAL -> binaryOp(node,
+				{ l, r -> if (l >= r) 1L else 0L },
+				{ l, r -> if (l.isGreaterEqualThan(r)) 1L else 0L },
+				{ l, r -> if (l.isGreaterEqualThan(r.toULong())) 1L else 0L })
+			SMALLER -> binaryOp(node,
+				{ l, r -> if (l < r) 1L else 0L },
+				{ l, r -> if (l.isSmallerThan(r)) 1L else 0L },
+				{ l, r -> if (l.isSmallerThan(r.toULong())) 1L else 0L })
+			SMALLER_EQUAL -> binaryOp(node,
+				{ l, r -> if (l <= r) 1L else 0L },
+				{ l, r -> if (l.isSmallerEqualThan(r)) 1L else 0L },
+				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L })
 			else -> super.typedBinaryOp(node)
 		}
 	}

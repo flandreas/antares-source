@@ -382,10 +382,74 @@ internal data class Word(
 
 	override fun mod(value: ULong): DigitalSignal {
 		val mod = if (longValue == null) {
-			throw IllegalArgumentException("cannot divide fully defined digital signal")
+			throw IllegalArgumentException("cannot divide non fully defined digital signal")
 		} else {
 			longValue!!.mod(value)
 		}
 		return of(bitWidth, mod)
+	}
+
+	override fun isGreaterThan(other: DigitalSignal): Boolean {
+		return if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! > other.toLong()!!
+		}
+	}
+
+	override fun isGreaterThan(other: ULong): Boolean {
+		return if (longValue == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! > other
+		}
+	}
+
+	override fun isGreaterEqualThan(other: DigitalSignal): Boolean {
+		return if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! >= other.toLong()!!
+		}
+	}
+
+	override fun isGreaterEqualThan(other: ULong): Boolean {
+		return if (longValue == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! >= other
+		}
+	}
+
+	override fun isSmallerThan(other: DigitalSignal): Boolean {
+		return if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! < other.toLong()!!
+		}
+	}
+
+	override fun isSmallerThan(other: ULong): Boolean {
+		return if (longValue == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! < other
+		}
+	}
+
+	override fun isSmallerEqualThan(other: DigitalSignal): Boolean {
+		return if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! <= other.toLong()!!
+		}
+	}
+
+	override fun isSmallerEqualThan(other: ULong): Boolean {
+		return if (longValue == null) {
+			throw IllegalArgumentException("cannot order non fully defined digital signal")
+		} else {
+			longValue!! <= other
+		}
 	}
 }

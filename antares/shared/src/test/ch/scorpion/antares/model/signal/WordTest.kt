@@ -255,4 +255,60 @@ class WordTest {
 	fun shouldCalculateModulo() {
 		assertEquals(Word.of(BW_4, 1UL), Word.of(BW_4, 3UL).mod(2UL))
 	}
+
+	@Test
+	fun shouldBeGreaterThanWord() {
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_4, 6UL)))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_8, 1UL)))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_4, 7UL)))
+	}
+
+	@Test
+	fun shouldBeGreaterThanULong() {
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterThan(7UL))
+	}
+
+	@Test
+	fun shouldBeGreaterEqualThanWord() {
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_4, 6UL)))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_8, 1UL)))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_4, 8UL)))
+	}
+
+	@Test
+	fun shouldBeGreaterEqualThanULong() {
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterEqualThan(8UL))
+	}
+
+	@Test
+	fun shouldBeSmallerThanWord() {
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 6UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_8, 1UL)))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 7UL)))
+	}
+
+	@Test
+	fun shouldBeSmallerThanULong() {
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(7UL))
+	}
+
+	@Test
+	fun shouldBeSmallerEqualThanWord() {
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 6UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_8, 1UL)))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 8UL)))
+	}
+
+	@Test
+	fun shouldBeSmallerEqualThanULong() {
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(8UL))
+	}
 }
