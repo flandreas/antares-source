@@ -120,6 +120,11 @@ class ScriptPropertyPanel(
 
 	private fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
 
+	private fun highlightError(error: DslError) {
+		scriptTextField.requestFocus()
+		scriptTextField.select(error.location.pos, error.location.pos + 1)
+	}
+
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			textToReturn = scriptTextField.text
@@ -148,6 +153,7 @@ class ScriptPropertyPanel(
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
 			} catch (e: DslError) {
 				messageTextField.text = e.message
+				highlightError(e)
 			}
 		}
 	}

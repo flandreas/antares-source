@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /** Identifies a location in the code to identify error locations.*/
-data class CodeLocation(val row: Int, val column: Int) {
+data class CodeLocation(val pos: Int, val row: Int, val column: Int) {
 	override fun toString(): String = "$row:$column"
 }
 
@@ -89,15 +89,18 @@ open class Lexer(private val text: String) {
 		/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
 		var columnCounter = 0
 
+		var posAtTokenStart = 0
+
 		var rowAtTokenStart = 1
 
 		var columnAtTokenStart = 0
 
-		val location: CodeLocation get() = CodeLocation(rowAtTokenStart,columnAtTokenStart + 1)
+		val location: CodeLocation get() = CodeLocation(posAtTokenStart, rowAtTokenStart,columnAtTokenStart + 1)
 
 		fun applyFrom(other: State): State {
 			this.pos = other.pos
 			this.currentChar = other.currentChar
+			this.posAtTokenStart = other.posAtTokenStart
 			this.rowCounter = other.rowCounter
 			this.columnCounter = other.columnCounter
 			return this
@@ -123,6 +126,7 @@ open class Lexer(private val text: String) {
 	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
 
 	private fun nextToken(state: State): Token<Any> {
+		state.posAtTokenStart = state.pos
 		state.rowAtTokenStart = state.rowCounter
 		state.columnAtTokenStart = state.columnCounter
 
