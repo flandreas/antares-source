@@ -148,4 +148,14 @@ class AntaresInterpreterSignalTest {
 		memory.preset("B", Word.of(BitWidth.BW_4, 4UL))
 		assertEquals(1L, interpreter.interpret())
 	}
+
+	@Test
+	fun shouldModSignal() {
+		val parser = AntaresParser(AntaresLexer("A % 2"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		assertEquals(1L, interpreter.interpret())
+	}
 }

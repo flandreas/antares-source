@@ -35,6 +35,7 @@ class AntaresInterpreter(
 				{ l, r -> if (l != r) 1L else 0L},
 				{ l, r -> if (l != r) 1L else 0L },
 				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L })
+			MOD -> binaryOp(node, { l, r -> l.mod(r) }, { l, r -> l.mod(r) }, { l, r -> l.mod(r.toULong()) })
 			else -> super.typedBinaryOp(node)
 		}
 	}

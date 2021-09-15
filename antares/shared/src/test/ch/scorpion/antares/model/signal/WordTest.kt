@@ -248,4 +248,9 @@ class WordTest {
 	fun shouldAddUUInt() {
 		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(14U))
 	}
+
+	@Test
+	fun shouldCalculateModulo() {
+		assertEquals(Word.of(BW_4, 1UL), Word.of(BW_4, 3UL).mod(2UL))
+	}
 }

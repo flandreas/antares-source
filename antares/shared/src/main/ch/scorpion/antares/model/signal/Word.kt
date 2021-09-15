@@ -360,4 +360,22 @@ internal data class Word(
 		}
 		return of(bitWidth, sum)
 	}
+
+	override fun mod(other: DigitalSignal): DigitalSignal {
+		val mod = if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot divide non fully defined digital signal")
+		} else {
+			longValue!!.mod(other.toLong()!!)
+		}
+		return of(bitWidth.max(other.bitWidth), mod)
+	}
+
+	override fun mod(value: ULong): DigitalSignal {
+		val mod = if (longValue == null) {
+			throw IllegalArgumentException("cannot divide fully defined digital signal")
+		} else {
+			longValue!!.mod(value)
+		}
+		return of(bitWidth, mod)
+	}
 }

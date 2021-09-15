@@ -86,7 +86,7 @@ open class Interpreter(
 			GREATER_EQUAL -> if (interpretAsLong(node.left) >= interpretAsLong(node.right)) 1L else 0L
 			SHIFT_LEFT -> typedBinaryOpWithRightInt(node)
 			SHIFT_RIGHT -> typedBinaryOpWithRightInt(node)
-			MOD -> interpretAsLong(node.left).mod(interpretAsLong(node.right))
+			MOD -> typedBinaryOp(node)
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
@@ -98,6 +98,7 @@ open class Interpreter(
 			PLUS -> binaryOp(node) { l, r -> l + r }
 			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
 			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }
+			MOD -> binaryOp(node) { l, r -> l.mod(r) }
 			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
 		}
 	}
