@@ -93,6 +93,10 @@ abstract class AbstractVertice(
 		return ports.first { it.portId == id } as Port<T>
 	}
 
+	override fun hasInput(name: String?): Boolean {
+		return getInputs().any { name != null && it.name == name }
+	}
+
 	override fun <T : Any> getInput(): InputPort<T> {
 		@Suppress("UNCHECKED_CAST")
 		return getInputs()[0] as InputPort<T>
@@ -110,6 +114,10 @@ abstract class AbstractVertice(
 	override fun <T : Any> getInput(id: Int): InputPort<T> {
 		@Suppress("UNCHECKED_CAST")
 		return getInputs().first { it.portId == id } as InputPort<T>
+	}
+
+	override fun hasOutput(name: String?): Boolean {
+		return getOutputs().any { name != null && it.name == name }
 	}
 
 	override fun <T : Any> getOutput(): OutputPort<T> {

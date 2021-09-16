@@ -35,12 +35,18 @@ open class SubGraphVerticeRefActivationRecord(
 	}
 
 	override fun setValue(variable: Variable, value: Any) {
+		if (!verticeRef.hasOutput(variable.token.value!!)) {
+			throw RuntimeError(variable.location, "Output '${variable.token.value!!}' not defined")
+		}
 		verticeRef.getOutput<Any>(variable.token.value!!).setOutgoingSignalBuffered(value, signalHandler)
 	}
 
-	override fun getValue(variable: Variable): Any =
-		verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()
-			?: throw RuntimeError(variable.location, "Port ${variable.token.value!!} not defined")
+	override fun getValue(variable: Variable): Any {
+		if (!verticeRef.hasInput(variable.token.value!!)) {
+			throw RuntimeError(variable.location, "Input '${variable.token.value!!}' not defined")
+		}
+		return verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()!!
+	}
 
 	override fun getOptionalValue(variable: Variable): Any? =
 		if (isDefined(variable.token.value!!)) {

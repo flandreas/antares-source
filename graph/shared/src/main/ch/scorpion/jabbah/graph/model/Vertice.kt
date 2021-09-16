@@ -83,6 +83,8 @@ interface Vertice : GraphElement, Describable {
      */
     fun <T: Any> getPort(id: Int): Port<T>
 
+    fun hasInput(name: String?): Boolean
+
     /**
      * Returns the first [InputPort] of this [Vertice]. Convenience method for [Vertice]s that only contain a single [InputPort].
      * @throws NoSuchElementException if this [Vertice] doesn't contain an [InputPort]
@@ -104,6 +106,8 @@ interface Vertice : GraphElement, Describable {
      * @throws NoSuchElementException if no [InputPort] with the specified ID was found
      */
     fun <T: Any> getInput(id: Int): InputPort<T>
+
+    fun hasOutput(name: String?): Boolean
 
     /**
      * Returns the first [OutputPort] of this [Vertice]. Convenience method for [Vertice]s that only contain a single [OutputPort].
