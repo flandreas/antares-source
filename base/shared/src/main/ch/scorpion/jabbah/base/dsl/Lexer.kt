@@ -59,6 +59,7 @@ open class Lexer(private val text: String) {
 		private val RIGHT_BRACKET_TOKEN = Token<Unit>(RIGHT_BRACKET)
 		private val QUESTION_MARK_TOKEN = Token<Unit>(QUESTION_MARK)
 		private val RETURN_TOKEN = Token<String>(RETURN)
+		private val INIT_TOKEN = Token<String>(INIT)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -72,7 +73,8 @@ open class Lexer(private val text: String) {
 			"for" to FOR_TOKEN,
 			"in" to IN_TOKEN,
 			"to" to TO_TOKEN,
-			"return" to RETURN_TOKEN
+			"return" to RETURN_TOKEN,
+			"init" to INIT_TOKEN
 		)
 
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys

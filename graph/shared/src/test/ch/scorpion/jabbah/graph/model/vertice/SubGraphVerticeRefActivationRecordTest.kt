@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Lexer
 import ch.scorpion.jabbah.base.dsl.Memory

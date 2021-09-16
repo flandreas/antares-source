@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -48,18 +49,7 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
-					try {
-						vertice.interpreter?.interpret(params = data)
-					} catch (e: DslError) {
-						// TODO I18N
-						BaseModule.eventBus.post(IssueImpl(
-							severity = IssueSeverity.Error,
-							name = "Script",
-							description = e.message,
-							origin = vertice.type,
-							context = null
-						))
-					}
+					vertice.runExecutionScript(data)
 				}
 			}
 		}
@@ -171,6 +161,9 @@ class SubGraphVerticeRef(
 				// which is unnecessary, but so be it for the moment
 
 				createInterpreter(signalHandler)
+				if (interpreter is GraphDslInterpreter) {
+					(interpreter as GraphDslInterpreter).executionStarted()
+				}
 				requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
 			}
 		}
@@ -210,6 +203,21 @@ class SubGraphVerticeRef(
 			if (isDeepExecution(signalHandler)) {
 				graph?.formNet(signalHandler)
 			}
+		}
+	}
+
+	private fun runExecutionScript(data: GraphActorData?) {
+		try {
+			interpreter?.interpret(params = data)
+		} catch (e: DslError) {
+			// TODO I18N
+			BaseModule.eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = "Script",
+				description = e.message,
+				origin = type,
+				context = null
+			))
 		}
 	}
 

@@ -3,12 +3,13 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.GraphActorData
 
 class AntaresInterpreter(
 	node: Node,
 	memory: Memory = Memory()
-) : Interpreter(node, memory) {
+) : GraphDslInterpreter(node, memory) {
 
 	constructor(parser: AntaresParser): this(parser.parse())
 	constructor(program: String): this(AntaresParser(program))

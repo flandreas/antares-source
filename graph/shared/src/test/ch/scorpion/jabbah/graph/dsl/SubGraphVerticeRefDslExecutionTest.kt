@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -32,7 +33,6 @@ class SubGraphVerticeRefDslExecutionTest {
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
-
 
 	@Test
 	fun shouldAddGraphPortsToMemoryContext() {
@@ -62,6 +62,43 @@ class SubGraphVerticeRefDslExecutionTest {
 		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
 
 		assertTrue(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
+	}
+
+	@Test
+	fun shouldExecuteInitBlockOnExecutionStart() {
+		val libraryElement = createScriptedMetaGraph(
+			inputName = "I",
+			outputName = "O",
+			script = """
+				init {
+					O = 1
+				}
+				O = 666
+			""".trimIndent())
+
+		val vv = createAndStart(libraryElement)
+		val o = vv.model.getOutput<Long>().getOutgoingSignal()
+
+		assertEquals(1L, o)
+	}
+
+	@Test
+	fun shouldNotExecuteInitBLockOnActing() {
+		val libraryElement = createScriptedMetaGraph(
+			inputName = "I",
+			outputName = "O",
+			script = """
+				init {
+					O = 1
+				}
+				O = 42
+			""".trimIndent())
+
+		val vv = createAndStart(libraryElement)
+		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
+
+		val o = vv.model.getOutput<Long>().getOutgoingSignal()
+		assertEquals(42L, o)
 	}
 
 	private fun createAndStart(libraryElement: ContainerLibraryElement): SubGraphVerticeView<SubGraphVerticeRef> {

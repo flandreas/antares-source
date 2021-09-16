@@ -34,11 +34,14 @@ enum class TokenType {
 	FOR,
 	IN,
 	TO,
-	CARET,
 	LEFT_BRACKET,
 	RIGHT_BRACKET,
 	QUESTION_MARK,
-	RETURN
+	RETURN,
+
+	// TokenTypes needed by higher level modules
+	CARET,
+	INIT
 }
 
 /**

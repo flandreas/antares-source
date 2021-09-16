@@ -1,13 +1,12 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.TokenType
 import ch.scorpion.jabbah.base.dsl.TokenType.CARET
+import ch.scorpion.jabbah.graph.dsl.GraphDslParser
 
 /**
- * Extends the grammar in [Parser] by the following productions.
+ * Extends the grammar in [GraphDslParser] by the following productions.
  *
  * <pre>
  *     factor : super.factor
@@ -22,7 +21,7 @@ import ch.scorpion.jabbah.base.dsl.TokenType.CARET
 class AntaresParser(
 	lexer: AntaresLexer,
 	semanticAnalyser: SemanticAnalyser? = SemanticAnalyser()
-) : Parser(lexer, semanticAnalyser) {
+) : GraphDslParser(lexer, semanticAnalyser) {
 
 	constructor(text: String): this(AntaresLexer(text))
 

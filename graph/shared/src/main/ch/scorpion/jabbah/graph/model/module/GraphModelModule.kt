@@ -3,9 +3,12 @@ package ch.scorpion.jabbah.graph.model.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.*
+import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
+import ch.scorpion.jabbah.graph.dsl.GraphDslParser
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -51,6 +54,9 @@ object GraphModelModule : AbstractModule() {
 
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
+
+		BaseModule.parserFactory = ParserFactory { p, s -> GraphDslParser(BaseModule.lexerFactory(p), s) }
+		BaseModule.interpreterFactory = { n, m -> GraphDslInterpreter(n, m) }
 	}
 
 	/** Must be specified by higher application layers.*/

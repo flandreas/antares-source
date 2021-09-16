@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  * Interprets an AST according to the grammar parsed by [Parser].
  */
 open class Interpreter(
-	private val node: Node,
+	protected val node: Node,
 	private val memory: Memory = Memory()
 ) {
 
@@ -278,7 +278,8 @@ open class Interpreter(
 		return 0L
 	}
 
-	private fun returnStatement(node: ReturnStatement) {
+	private fun returnStatement(node: ReturnStatement): Any {
 		returnValue = node.expr?.let { interpret(it) } ?: 0
+		return returnValue!!
 	}
 }

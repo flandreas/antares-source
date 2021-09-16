@@ -106,7 +106,7 @@ open class Parser(
 		return list
 	}
 
-	private fun statement(): Node {
+	protected open fun statement(): Node {
 		return when (currentToken!!.type) {
 			EOF -> empty()
 			ID -> {
@@ -162,7 +162,7 @@ open class Parser(
 		}
 	}
 
-	private fun block(): Node {
+	protected fun block(): Block {
 		lexer.location.let { location ->
 			eat(LCURLEY)
 			val statementList = statementList()
