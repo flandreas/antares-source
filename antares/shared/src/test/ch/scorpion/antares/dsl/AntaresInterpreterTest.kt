@@ -25,4 +25,32 @@ class AntaresInterpreterTest {
 		val result = AntaresInterpreter("a = 0x?2").interpret()
 		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_2), result)
 	}
+
+	@Test
+	fun shouldGetBitOfLongVariable() {
+		val result = AntaresInterpreter("""
+			// Defined hex literals get converted to Long
+			a = 0xF
+			a@0
+		""".trimIndent()).interpret()
+		assertEquals(1L, result)
+	}
+
+	@Test
+	fun shouldGetBitOfLongVariableWithTerm() {
+		val result = AntaresInterpreter("""
+			a = 0xF
+			a@(1 + 1)
+		""".trimIndent()).interpret()
+		assertEquals(1L, result)
+	}
+
+	@Test
+	fun shouldSetBitInLongVariable() {
+		val result = AntaresInterpreter("""
+			a = 0xF
+			a@0 = 0
+		""".trimIndent()).interpret()
+		assertEquals(14L, result)
+	}
 }

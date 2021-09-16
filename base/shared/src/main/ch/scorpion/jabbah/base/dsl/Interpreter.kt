@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  */
 open class Interpreter(
 	protected val node: Node,
-	private val memory: Memory = Memory()
+	protected val memory: Memory = Memory()
 ) {
 
 	constructor(parser: Parser): this(parser.parse())
@@ -174,7 +174,7 @@ open class Interpreter(
 		}
 	}
 
-	private fun storeValue(variable: Variable, value: Any): Any {
+	protected open fun storeValue(variable: Variable, value: Any): Any {
 		if (variable is AssocArray) {
 			var assocArray = memory.getOptionalValue(variable) as MutableMap<Any, Any>?
 			if (assocArray == null) {
@@ -188,7 +188,7 @@ open class Interpreter(
 		return value
 	}
 
-	private fun loadValue(variable: Variable): Any {
+	protected open fun loadValue(variable: Variable): Any {
 		return if (variable is AssocArray) {
 			val assocArray = memory.getValue(variable) as MutableMap<Any, Any>
 			assocArray[variable.token.value!!] ?: throw RuntimeError(node.location, "No value for key")

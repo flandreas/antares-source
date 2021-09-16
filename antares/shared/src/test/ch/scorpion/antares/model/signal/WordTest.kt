@@ -286,29 +286,29 @@ class WordTest {
 
 	@Test
 	fun shouldBeSmallerThanWord() {
-		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 6UL)))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_8, 1UL)))
 		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 7UL)))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_8, 1UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 8UL)))
 	}
 
 	@Test
 	fun shouldBeSmallerThanULong() {
-		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(6UL))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(1UL))
 		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(7UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(1UL))
+		assertTrue(Word.of(BW_4, 6UL).isSmallerThan(7UL))
 	}
 
 	@Test
 	fun shouldBeSmallerEqualThanWord() {
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 6UL)))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_8, 1UL)))
-		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 8UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 7UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_8, 8UL)))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 6UL)))
 	}
 
 	@Test
 	fun shouldBeSmallerEqualThanULong() {
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(6UL))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(1UL))
-		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(8UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(6UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(1UL))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(8UL))
 	}
 }

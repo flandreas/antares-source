@@ -109,20 +109,7 @@ open class Parser(
 	protected open fun statement(): Node {
 		return when (currentToken!!.type) {
 			EOF -> empty()
-			ID -> {
-				when (lexer.peekNextToken().type) {
-					ASSIGN -> assignment()
-					LEFT_BRACKET -> {
-						val assocArray = assocArray()
-						if (currentToken!!.type == ASSIGN) {
-							assignment(assocArray)
-						} else {
-							assocArray
-						}
-					}
-					else -> expr()
-				}
-			}
+			ID -> lookAheadFromId()
 			LCURLEY -> block()
 			RCURLEY -> empty()
 			IF -> ifStatement()
@@ -135,9 +122,25 @@ open class Parser(
 		}
 	}
 
+	protected open fun lookAheadFromId(): Node =
+		when (lexer.peekNextToken().type) {
+			ASSIGN -> assignment()
+			LEFT_BRACKET -> lookAheadFromLeftBracket()
+			else -> expr()
+		}
+
+	private fun lookAheadFromLeftBracket(): Node {
+		val assocArray = assocArray()
+		return if (currentToken!!.type == ASSIGN) {
+			assignment(assocArray)
+		} else {
+			assocArray
+		}
+	}
+
 	private fun assignment(): Assignment = assignment(variable())
 
-	private fun assignment(variable: Variable): Assignment {
+	protected fun assignment(variable: Variable): Assignment {
 		lexer.location.let { location ->
 			val token = currentToken as Token<Assignment>
 			eat(ASSIGN)

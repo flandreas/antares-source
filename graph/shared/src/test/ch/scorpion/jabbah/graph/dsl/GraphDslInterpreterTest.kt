@@ -15,12 +15,10 @@ class GraphDslInterpreterTest {
 	@Test
 	fun shouldInterpretInitStatement() {
 		val result = GraphDslInterpreter("""
-			a = 0
 			init {
 				a = 42
 			}
-			a
-		""".trimIndent()).interpret()
+		""".trimIndent()).executionStarted()
 		assertEquals(42L, result)
 	}
 }

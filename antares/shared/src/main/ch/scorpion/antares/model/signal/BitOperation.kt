@@ -22,6 +22,14 @@ object BitOperation {
         return value or (1UL shl index)
     }
 
+	fun setBitAt(value: ULong, bit: Int, index: Int): ULong {
+		return if (bit.mod(2) == 0) {
+			clearBitAt(value, index)
+		} else {
+			setBitAt(value, index)
+		}
+	}
+
     fun clearBitAt(value: ULong, index: Int): ULong {
         return value and (1UL shl index).inv()
     }

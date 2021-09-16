@@ -2,7 +2,8 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.TokenType.CARET
+import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.Variable
 import ch.scorpion.jabbah.graph.dsl.GraphDslParser
 
 /**
@@ -12,6 +13,9 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslParser
  *     factor : super.factor
  *            | raisedInput
  *     raisedInput : "^" variable
+ *     variable : super.variable
+ *            | bitAccess
+ *     bitAccess : scalarVariable "@" factor
  *     literal : number | hexLiteral
  *     hexLiteral : definedHexLiteral | undefinedHexLiteral
  *     definedHexLiteral : "0x" LONG
@@ -24,6 +28,29 @@ class AntaresParser(
 ) : GraphDslParser(lexer, semanticAnalyser) {
 
 	constructor(text: String): this(AntaresLexer(text))
+
+	override fun lookAheadFromId(): Node =
+		when (lexer.peekNextToken().type) {
+			AT -> lookAheadFromAt()
+			else -> super.lookAheadFromId()
+		}
+
+	private fun lookAheadFromAt(): Node {
+		val bitAccess = bitAccess()
+		return if (currentToken!!.type == ASSIGN) {
+			assignment(bitAccess)
+		} else {
+			bitAccess
+		}
+	}
+
+	private fun bitAccess(): Variable {
+		lexer.location.let { location ->
+			val variable = variable()
+			eat(AT)
+			return BitAccess(location, variable.token, factor())
+		}
+	}
 
 	override fun factor(): Node {
 		lexer.location.let { location ->

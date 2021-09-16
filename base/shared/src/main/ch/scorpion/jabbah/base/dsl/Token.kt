@@ -41,7 +41,8 @@ enum class TokenType {
 
 	// TokenTypes needed by higher level modules
 	CARET,
-	INIT
+	INIT,
+	AT
 }
 
 /**

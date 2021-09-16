@@ -16,11 +16,11 @@ open class GraphDslInterpreter(
 
 	private val initStatementFinder = InitStatementFinder()
 
-	fun executionStarted() {
+	fun executionStarted(): Any {
 		// Execute only InitStatement (if any) on execution start
-		initStatementFinder.findIn(node)?.let {
+		return initStatementFinder.findIn(node)?.let {
 			init(it)
-		}
+		} ?: 0
 	}
 
 	override fun interpret(node: Node): Any =
@@ -30,10 +30,7 @@ open class GraphDslInterpreter(
 			else -> super.interpret(node)
 		}
 
-	private fun init(node: InitStatement): Any {
-		interpret(node.block)
-		return interpret(ReturnStatement(node.location, null))
-	}
+	private fun init(node: InitStatement): Any = interpret(node.block)
 
 	private class InitStatementFinder : EmptyHierarchyVisitor() {
 		private var initStatement: InitStatement? = null

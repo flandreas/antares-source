@@ -60,6 +60,7 @@ open class Lexer(private val text: String) {
 		private val QUESTION_MARK_TOKEN = Token<Unit>(QUESTION_MARK)
 		private val RETURN_TOKEN = Token<String>(RETURN)
 		private val INIT_TOKEN = Token<String>(INIT)
+		private val AT_TOKEN = Token<Unit>(AT)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -202,6 +203,7 @@ open class Lexer(private val text: String) {
 				'[' -> return advanceWith(state, LEFT_BRACKET_TOKEN)
 				']' -> return advanceWith(state, RIGHT_BRACKET_TOKEN)
 				'?' -> return advanceWith(state, QUESTION_MARK_TOKEN)
+				'@' -> return advanceWith(state, AT_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")

@@ -1,6 +1,9 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
@@ -38,6 +41,70 @@ class AntaresInterpreter(
 			{ l, r -> if (l == r) 1L else 0L },
 			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L })
 		as Long
+	}
+
+	override fun storeValue(variable: Variable, value: Any): Any {
+		return when (variable) {
+			is BitAccess -> setBit(variable, value)
+			else -> super.storeValue(variable, value)
+		}
+	}
+
+	override fun loadValue(variable: Variable): Any =
+		when (variable) {
+			is BitAccess -> getBit(variable)
+			else -> super.loadValue(variable)
+		}
+
+	private fun getBit(bitAccess: BitAccess): Any {
+		val value = memory.getValue(bitAccess)
+		val index = getBitAccessIndex(bitAccess)
+		return when (value) {
+			is DigitalSignal -> {
+				if (index >= value.bitWidth.width) {
+					throw RuntimeError(bitAccess.location, "Index 'index' out of range")
+				}
+				DigitalSignalFactory.of(value.bitAt(index))
+			}
+			is Long -> value.shr(index).mod(2).toLong()
+			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+		}
+	}
+
+	private fun setBit(bitAccess: BitAccess, value: Any): Any {
+		val index = getBitAccessIndex(bitAccess)
+		val bitToSet = getBitAccessSetValue(bitAccess, value)
+		val oldValue = super.loadValue(bitAccess)
+		val newValue = when (oldValue) {
+			is DigitalSignal -> {
+				if (index >= oldValue.bitWidth.width) {
+					throw RuntimeError(bitAccess.location, "Index 'index' out of range")
+				}
+				oldValue.withBit(index, Bit.of(bitToSet))
+			}
+			is Long -> {
+				BitOperation.setBitAt(oldValue.toULong(), bitToSet, index).toLong()
+			}
+			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+		}
+		memory.setValue(bitAccess, newValue)
+		return newValue
+	}
+
+	private fun getBitAccessIndex(bitAccess: BitAccess): Int {
+		val index = interpret(bitAccess.index)
+		if (index !is Long) {
+			throw RuntimeError(bitAccess.location, "Expected numerical index")
+		}
+		return index.toInt()
+	}
+
+	private fun getBitAccessSetValue(bitAccess: BitAccess, value: Any): Int {
+		return when (value) {
+			is DigitalSignal -> if (value.bitAt(0).isSet) 1 else 0
+			is Long -> value.mod(2)
+			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+		}
 	}
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
