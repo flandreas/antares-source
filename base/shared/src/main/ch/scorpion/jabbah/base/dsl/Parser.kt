@@ -276,7 +276,7 @@ open class Parser(
 				if (TERM_OPERATORS.contains(token.type)) {
 					eat(token.type)
 				} else {
-					throw SyntaxError(location, "Unexpected token ${token.type.name}")
+					throw SyntaxError(location, "Unexpected token '${token.type.id}'")
 				}
 
 				node = BinaryOperation(location, left = node, op = token, right = term())
@@ -295,7 +295,7 @@ open class Parser(
 				if (FACTOR_OPERATORS.contains(token.type)) {
 					eat(token.type)
 				} else {
-					throw SyntaxError(location, "Unexpected token ${token.type.name}")
+					throw SyntaxError(location, "Unexpected token '${token.type.id}'")
 				}
 				node = BinaryOperation(location, left = node, op = token, right = factor())
 			}
@@ -329,7 +329,7 @@ open class Parser(
 					node
 				}
 				ID -> variable()
-				else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
+				else -> throw SyntaxError(location, "Unexpected token '${token.type.id}'")
 			}
 		}
 	}
@@ -363,7 +363,7 @@ open class Parser(
 		if (currentToken!!.type == type) {
 			currentToken = lexer.nextToken()
 		} else {
-			throw SyntaxError(lexer.location, "Expected ${type.name}")
+			throw SyntaxError(lexer.location, "Expected '${type.id}'")
 		}
 	}
 }
