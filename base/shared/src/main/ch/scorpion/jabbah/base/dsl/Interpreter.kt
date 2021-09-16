@@ -16,12 +16,16 @@ open class Interpreter(
 	protected var params: Any? = null
 		private set
 
+	/** Set by "return" statement to the expression to be returned and immediately quit interpretation.*/
+	private var returnValue: Any? = null
+
 	/**
 	 * Runs the program defined by the AST in [node].
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
 	fun interpret(params: Any? = null): Any {
+		returnValue = null
 		this.params = params
 		try {
 			return interpret(node)
@@ -45,6 +49,7 @@ open class Interpreter(
 			is IfStatement -> ifStatement(node)
 			is WhenStatement -> whenStatement(node)
 			is ForStatement -> forStatement(node)
+			is ReturnStatement -> returnStatement(node)
 			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -59,7 +64,10 @@ open class Interpreter(
 
 	private fun compound(node: Compound): Any {
 		var result: Any = 0L
-		node.children.forEach { result = interpret(it) }
+		node.children.forEach { child ->
+			result = interpret(child)
+			returnValue?.let { return it }
+		}
 		return result
 	}
 
@@ -256,15 +264,21 @@ open class Interpreter(
 			for (value in startValue..endValue) {
 				memory.setValue(node.variable, value)
 				interpret(node.statement)
+				returnValue?.let { return it }
 			}
 		} else {
 			for (value in startValue downTo endValue) {
 				memory.setValue(node.variable, value)
 				interpret(node.statement)
+				returnValue?.let { return it }
 			}
 		}
 
 		memory.exitScope(node)
 		return 0L
+	}
+
+	private fun returnStatement(node: ReturnStatement) {
+		returnValue = node.expr?.let { interpret(it) } ?: 0
 	}
 }

@@ -163,7 +163,7 @@ class WhenClause(location: CodeLocation, val condition: Node?, val then: Node) :
 	}
 }
 
-class WhenStatement(location: CodeLocation, val expression: Node, val clauses: List<WhenClause>): AbstractNode(location) {
+class WhenStatement(location: CodeLocation, val expression: Node, val clauses: List<WhenClause>) : AbstractNode(location) {
 	override fun toString(): String = "when"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -179,7 +179,7 @@ class WhenStatement(location: CodeLocation, val expression: Node, val clauses: L
 	}
 }
 
-class ForStatement(location: CodeLocation, val variable: Variable, val inExpr: Node, val toExpr: Node, val statement: Node): AbstractNode(location) {
+class ForStatement(location: CodeLocation, val variable: Variable, val inExpr: Node, val toExpr: Node, val statement: Node) : AbstractNode(location) {
 	override fun toString(): String = "for"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -188,6 +188,17 @@ class ForStatement(location: CodeLocation, val variable: Variable, val inExpr: N
 			inExpr.accept(visitor)
 			toExpr.accept(visitor)
 			statement.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class ReturnStatement(location: CodeLocation, val expr: Node?) : AbstractNode(location) {
+	override fun toString(): String = "return"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expr?.accept(visitor)
 		}
 		return visitor.visitLeave(this)
 	}

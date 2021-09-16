@@ -367,4 +367,31 @@ class InterpreterTest {
 		memory.preset("doLoad", 1L)
 		assertEquals(42L, interpreter.interpret())
 	}
+
+	@Test
+	fun shouldReturnFromIf() {
+		val result = Interpreter("""
+			if (1) {
+				return 42
+			}
+			1
+		""".trimIndent()).interpret()
+
+		assertEquals(42L, result)
+	}
+
+	@Test
+	fun shouldReturnFromFor() {
+		val result = Interpreter("""
+			a = 0
+			for (i in 1 to 10) {
+				a = i
+				return 99
+			}
+			a
+		""".trimIndent()).interpret()
+
+		assertEquals(99L, result)
+	}
+
 }

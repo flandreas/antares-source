@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.dsl.TokenType.CARET
 
 /**
  * Extends the grammar in [Parser] by the following productions.
@@ -29,12 +30,19 @@ class AntaresParser(
 		lexer.location.let { location ->
 			val token = currentToken!!
 			return when (token.type) {
-				TokenType.CARET -> {
-					eat(TokenType.CARET)
+				CARET -> {
+					eat(CARET)
 					return RaisedInput(location, variable())
 				}
 				else -> super.factor()
 			}
+		}
+	}
+
+	override fun isFactor(): Boolean {
+		return when(currentToken!!.type) {
+			CARET -> true
+			else -> super.isFactor()
 		}
 	}
 }

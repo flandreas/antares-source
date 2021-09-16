@@ -29,6 +29,7 @@ fun interface ParserFactory {
  *               | ifStatement
  *               | whenStatement
  *               | forStatement
+ *               | returnStatement
  *               | empty
  *     assignment : variable "=" expr
  *     empty : ""
@@ -41,6 +42,7 @@ fun interface ParserFactory {
  *     whenThen : expr ":" statement
  *     whenElse : "else" ":" statement
  *     forStatement : "for" "(" variable "in" expr "to" expr ")" statement
+ *     returnStatement : "return" [ expr ]
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
@@ -126,6 +128,7 @@ open class Parser(
 			IF -> ifStatement()
 			WHEN -> whenStatement()
 			FOR -> forStatement()
+			RETURN -> returnStatement()
 			VAR -> varDeclaration()
 			STORE -> storeDeclaration()
 			else -> expr()
@@ -253,6 +256,13 @@ open class Parser(
 		}
 	}
 
+	private fun returnStatement(): Node {
+		lexer.location.let { location ->
+			eat(RETURN)
+			return ReturnStatement(location, if (isExpr()) expr() else null)
+		}
+	}
+
 	private fun empty(): Node = NoOp(lexer.location)
 
 	private fun expr(): Node {
@@ -272,6 +282,8 @@ open class Parser(
 		return node
 	}
 
+	private fun isExpr(): Boolean = isTerm()
+
 	private fun term(): Node {
 		var node = factor()
 		while (currentToken!!.type in FACTOR_OPERATORS) {
@@ -287,6 +299,8 @@ open class Parser(
 		}
 		return node
 	}
+
+	private fun isTerm(): Boolean = isFactor()
 
 	protected open fun factor(): Node {
 		lexer.location.let { location ->
@@ -314,6 +328,18 @@ open class Parser(
 				ID -> variable()
 				else -> throw SyntaxError(location, "Unexpected token ${token.type.name}")
 			}
+		}
+	}
+
+	protected open fun isFactor(): Boolean {
+		return when (currentToken!!.type) {
+			PLUS -> true
+			MINUS -> true
+			NOT -> true
+			LITERAL -> true
+			LPAREN -> true
+			ID -> true
+			else -> false
 		}
 	}
 

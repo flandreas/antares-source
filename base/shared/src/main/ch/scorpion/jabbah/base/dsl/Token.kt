@@ -37,7 +37,8 @@ enum class TokenType {
 	CARET,
 	LEFT_BRACKET,
 	RIGHT_BRACKET,
-	QUESTION_MARK
+	QUESTION_MARK,
+	RETURN
 }
 
 /**

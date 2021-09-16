@@ -55,9 +55,10 @@ open class Lexer(private val text: String) {
 		private val IN_TOKEN = Token<String>(IN)
 		private val TO_TOKEN = Token<String>(TO)
 		private val CARET_TOKEN = Token<String>(CARET)
-		private val LEFT_BRACKET = Token<Unit>(TokenType.LEFT_BRACKET)
-		private val RIGHT_BRACKET = Token<Unit>(TokenType.RIGHT_BRACKET)
-		private val QUESTION_MARK = Token<Unit>(TokenType.QUESTION_MARK)
+		private val LEFT_BRACKET_TOKEN = Token<Unit>(LEFT_BRACKET)
+		private val RIGHT_BRACKET_TOKEN = Token<Unit>(RIGHT_BRACKET)
+		private val QUESTION_MARK_TOKEN = Token<Unit>(QUESTION_MARK)
+		private val RETURN_TOKEN = Token<String>(RETURN)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -70,7 +71,8 @@ open class Lexer(private val text: String) {
 			"when" to WHEN_TOKEN,
 			"for" to FOR_TOKEN,
 			"in" to IN_TOKEN,
-			"to" to TO_TOKEN
+			"to" to TO_TOKEN,
+			"return" to RETURN_TOKEN
 		)
 
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
@@ -195,9 +197,9 @@ open class Lexer(private val text: String) {
 				'%' -> return advanceWith(state, MOD_TOKEN)
 				':' -> return advanceWith(state, COLON_TOKEN)
 				'^' -> return advanceWith(state, CARET_TOKEN)
-				'[' -> return advanceWith(state, LEFT_BRACKET)
-				']' -> return advanceWith(state, RIGHT_BRACKET)
-				'?' -> return advanceWith(state, QUESTION_MARK)
+				'[' -> return advanceWith(state, LEFT_BRACKET_TOKEN)
+				']' -> return advanceWith(state, RIGHT_BRACKET_TOKEN)
+				'?' -> return advanceWith(state, QUESTION_MARK_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
