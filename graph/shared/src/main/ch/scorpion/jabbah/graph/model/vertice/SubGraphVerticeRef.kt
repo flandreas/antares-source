@@ -213,10 +213,10 @@ class SubGraphVerticeRef(
 			// TODO I18N
 			BaseModule.eventBus.post(IssueImpl(
 				severity = IssueSeverity.Error,
-				name = "Script",
+				name = "Runtime Error",
 				description = e.message,
 				origin = type,
-				context = null
+				context = "Subcircuit Logic"
 			))
 		}
 	}

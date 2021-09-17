@@ -44,15 +44,16 @@ open class GraphImpl(
 	private val scriptASTCache = resettableLazy {
 		script?.let {
 			// TODO Incorporate semantic analysis
+			// TODO I18N
 			try {
 				BaseModule.parserFactory.create(it, null).parse()
 			} catch (e: DslError) {
 				eventBus.post(IssueImpl(
 					severity = IssueSeverity.Error,
-					name = "Script",
+					name = "Parse Error",
 					description = e.message,
-					origin = name,
-					context = Translations.getString("graph.property.GraphViewImpl.script.name")))
+					origin = this@GraphImpl.name.value,
+					context = "Subcircuit Logic"))
 				null
 			}
 		}

@@ -343,6 +343,16 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldUseExpressionAsArrayIndex() {
+		val result = Interpreter("""
+			a[1+1] = 42
+			a[2]
+		""".trimIndent()).interpret()
+
+		assertEquals(42L, result)
+	}
+
+	@Test
 	fun shouldInterpretAssocArrayInAssignment() {
 		val result = Interpreter("""
 			a[0] = 12
@@ -405,4 +415,29 @@ class InterpreterTest {
 		assertEquals(99L, result)
 	}
 
+	@Test
+	fun bla() {
+		val result = Interpreter("""
+			i = 3
+			a[i] = 2 * i
+			a[3]
+		""".trimIndent()).interpret()
+
+		assertEquals(6L, result)
+	}
+
+	@Test
+	fun shouldSetArrayValuesInLoop() {
+		val interpreter = Interpreter("""
+			var a
+			for (i in 1 to 3) {
+				a[i] = 2 * i
+			}
+			a[3]
+		""".trimIndent())
+
+		val result = interpreter.interpret()
+
+		assertEquals(6L, result)
+	}
 }

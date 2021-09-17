@@ -57,7 +57,7 @@ fun interface ParserFactory {
  *     literal : number
  *     number : LONG
  *     variable : identifier | assocArray
- *     assocArray : scalarVariable "[" factor "]"
+ *     assocArray : scalarVariable "[" expr "]"
  *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
  * </pre>
  *
@@ -165,9 +165,9 @@ open class Parser(
 		lexer.location.let { location ->
 			val variable = identifier()
 			eat(LEFT_BRACKET)
-			val factor = factor()
+			val expr = expr()
 			eat(RIGHT_BRACKET)
-			return AssocArray(location, variable, factor)
+			return AssocArray(location, variable, expr)
 		}
 	}
 

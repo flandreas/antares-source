@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.ReturnStatement
 
 open class GraphDslInterpreter(
 	node: Node,

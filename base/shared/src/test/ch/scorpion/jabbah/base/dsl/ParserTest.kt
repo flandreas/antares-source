@@ -283,6 +283,32 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseAssocArrayWithExpressionIndex() {
+		val parser = Parser(Lexer("a[1+2]"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- a[]
+			-- +
+			--- 1
+			--- 2
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseAssocArrayWithVariableIndex() {
+		val parser = Parser(Lexer("""
+			a[b]
+		""".trimIndent()), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- a[]
+			-- b
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

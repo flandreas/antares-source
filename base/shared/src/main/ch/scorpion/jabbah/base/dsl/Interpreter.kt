@@ -176,11 +176,15 @@ open class Interpreter(
 
 	protected open fun storeValue(variable: Variable, value: Any): Any {
 		if (variable is AssocArray) {
-			var assocArray = memory.getOptionalValue(variable) as MutableMap<Any, Any>?
+			val assocArray = memory.getOptionalValue(variable)
+			val key = interpret(variable.key)
 			if (assocArray == null) {
-				memory.setValue(variable, mutableMapOf(variable.token.value to value))
+				memory.setValue(variable, mutableMapOf(key to value))
 			} else {
-				assocArray[variable.key] = value
+				if (assocArray !is MutableMap<*, *>) {
+					throw RuntimeError(node.location, "Expected variable '${variable.token.value}' to be array")
+				}
+				(assocArray as MutableMap<Any, Any>)[key] = value
 			}
 		} else {
 			memory.setValue(variable, value)
@@ -190,8 +194,12 @@ open class Interpreter(
 
 	protected open fun loadValue(variable: Variable): Any {
 		return if (variable is AssocArray) {
-			val assocArray = memory.getValue(variable) as MutableMap<Any, Any>
-			assocArray[variable.token.value!!] ?: throw RuntimeError(node.location, "No value for key")
+			val assocArray = memory.getValue(variable)
+			if (assocArray !is MutableMap<*,*>) {
+				throw RuntimeError(node.location, "Expected variable '${variable.token.value}' to be array")
+			}
+			val key = interpret(variable.key)
+			assocArray[key] ?: throw RuntimeError(node.location, "No value for key")
 		} else {
 			memory.getValue(variable)
 		}
