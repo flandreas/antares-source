@@ -177,7 +177,7 @@ open class Interpreter(
 	protected open fun storeValue(variable: Variable, value: Any): Any {
 		if (variable is AssocArray) {
 			val assocArray = memory.getOptionalValue(variable)
-			val key = interpret(variable.key)
+			val key = interpretAssocArrayKey(variable)
 			if (assocArray == null) {
 				memory.setValue(variable, mutableMapOf(key to value))
 			} else {
@@ -198,11 +198,23 @@ open class Interpreter(
 			if (assocArray !is MutableMap<*,*>) {
 				throw RuntimeError(node.location, "Expected variable '${variable.token.value}' to be array")
 			}
-			val key = interpret(variable.key)
+			val key = interpretAssocArrayKey(variable)
 			assocArray[key] ?: throw RuntimeError(node.location, "No value for key")
 		} else {
 			memory.getValue(variable)
 		}
+	}
+
+	/**
+	 * Currently only [Long] supported as assoc array keys to avoid problems with
+	 * seemingly equal values, but different classes.
+	 */
+	protected open fun interpretAssocArrayKey(variable: AssocArray): Long {
+		val key = interpret(variable.key)
+		if (key !is Long) {
+			throw RuntimeError(variable.location, "Array index must be a number")
+		}
+		return key
 	}
 
 	/** Also supports implicit declaration. */

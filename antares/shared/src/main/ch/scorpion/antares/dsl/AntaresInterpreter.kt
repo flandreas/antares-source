@@ -56,6 +56,14 @@ class AntaresInterpreter(
 			else -> super.loadValue(variable)
 		}
 
+	override fun interpretAssocArrayKey(variable: AssocArray): Long {
+		val key = interpret(variable.key)
+		return when (key) {
+			is DigitalSignal -> key.toLong()?.toLong() ?: throw RuntimeError(variable.location, "Array index must be fully defined")
+			else -> super.interpretAssocArrayKey(variable)
+		}
+	}
+
 	private fun getBit(bitAccess: BitAccess): Any {
 		val value = memory.getValue(bitAccess)
 		val index = getBitAccessIndex(bitAccess)
