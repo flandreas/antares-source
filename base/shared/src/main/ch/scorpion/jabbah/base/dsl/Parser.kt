@@ -56,10 +56,9 @@ fun interface ParserFactory {
  *     shiftOperator : "<<" | ">>"
  *     literal : number
  *     number : LONG
- *     variable : scalarVariable | assocArray
- *     scalarVariable : identifier | "'" CHAR (CHAR)* "'"
+ *     variable : identifier | assocArray
  *     assocArray : scalarVariable "[" factor "]"
- *     identifier : LETTER (LETTER | DIGIT)*
+ *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
  * </pre>
  *
  * @property lexer the [Lexer] set up with the program code to scan
@@ -142,26 +141,33 @@ open class Parser(
 
 	protected fun assignment(variable: Variable): Assignment {
 		lexer.location.let { location ->
-			val token = currentToken as Token<Assignment>
+			val op = currentToken as Token<Assignment>
 			eat(ASSIGN)
 			val right = expr()
-			return Assignment(location, variable, token, right)
+			return Assignment(location, variable, op, right)
 		}
 	}
 
-	protected fun variable(): Variable {
-		val node = Variable(lexer.location, currentToken as Token<String>)
+	protected fun identifier(): Token<String> {
+		val identifier = currentToken as Token<String>
 		eat(ID)
-		return node
+		return identifier
+	}
+
+	protected open fun variable(): Variable {
+		return when (lexer.peekNextToken().type) {
+			LEFT_BRACKET -> assocArray()
+			else -> Variable(lexer.location, identifier())
+		}
 	}
 
 	private fun assocArray(): AssocArray {
 		lexer.location.let { location ->
-			val variable = variable()
+			val variable = identifier()
 			eat(LEFT_BRACKET)
 			val factor = factor()
 			eat(RIGHT_BRACKET)
-			return AssocArray(location, variable.token, factor)
+			return AssocArray(location, variable, factor)
 		}
 	}
 

@@ -295,9 +295,7 @@ class AntaresInterpreterSignalTest {
 
 	@Test
 	fun shouldGetBitOfWordVariable() {
-		val parser = AntaresParser(AntaresLexer("""
-			A@1
-		""".trimIndent()), null)
+		val parser = AntaresParser(AntaresLexer("A@1"), null)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
@@ -314,6 +312,19 @@ class AntaresInterpreterSignalTest {
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
 		memory.preset("A", Word.of(BitWidth.BW_4, 0UL))
-		assertEquals(Word.of(BitWidth.BW_4, 2uL), interpreter.interpret())
+		assertEquals(Word.of(BitWidth.BW_4, 2UL), interpreter.interpret())
+	}
+
+	@Test
+	fun shouldGetBitOfWordInAssignment() {
+		val parser = AntaresParser(AntaresLexer("""
+			B = A@1
+			B
+		""".trimIndent()), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 15UL))
+		assertEquals(Word.of(BitWidth.BW_1, 1UL), interpreter.interpret())
 	}
 }

@@ -343,6 +343,17 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretAssocArrayInAssignment() {
+		val result = Interpreter("""
+			a[0] = 12
+			a[1] = a[0]
+			a[1]
+		""".trimIndent()).interpret()
+
+		assertEquals(12L, result)
+	}
+
+	@Test
 	fun shouldStoreVariablesBetweenInterpretations() {
 		val memory = Memory()
 		val interpreter = Interpreter(Parser(Lexer("""

@@ -44,11 +44,18 @@ class AntaresParser(
 		}
 	}
 
+	override fun variable(): Variable {
+		return when (lexer.peekNextToken().type) {
+			AT -> bitAccess()
+			else -> super.variable()
+		}
+	}
+
 	private fun bitAccess(): Variable {
 		lexer.location.let { location ->
-			val variable = variable()
+			val variable = identifier()
 			eat(AT)
-			return BitAccess(location, variable.token, factor())
+			return BitAccess(location, variable, factor())
 		}
 	}
 
