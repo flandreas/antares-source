@@ -2,10 +2,9 @@ package ch.scorpion.antares.model.inout
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
 import io.mockk.mockk
@@ -30,7 +29,7 @@ class CircuitInOutImplTest {
 		inout.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		assertFalse(inout.enabled)
 
-		inout.act(signalHandler, GraphActorDataImpl(null, DigitalSignalFactory.of(true)))
+		inout.act(signalHandler, StoringGraphActorData(null, DigitalSignalFactory.of(true)))
 		assertTrue(inout.enabled)
 	}
 

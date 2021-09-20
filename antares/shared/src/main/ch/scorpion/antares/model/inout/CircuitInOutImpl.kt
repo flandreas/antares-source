@@ -116,7 +116,7 @@ class CircuitInOutImpl(
 		if (differs) {
 			this.signal = signal
 			enabled = false
-			requestActingAfter(signalHandler, delay, GraphActorDataImpl(null, this.signal))
+			requestActingAfter(signalHandler, delay, StoringGraphActorData(null, this.signal))
 		}
 	}
 
@@ -163,10 +163,10 @@ class CircuitInOutImpl(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
+		requestActingAfter(signalHandler, propagationDelay, StoringGraphActorData(null, signal))
 		if (portType.isInput && subGraphInputPort == null) {
 			// A GraphInput at the top level acts like a Switch and actively establishes it default value
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
+			requestActingAfter(signalHandler, propagationDelay, StoringGraphActorData(null, signal))
 		}
 	}
 

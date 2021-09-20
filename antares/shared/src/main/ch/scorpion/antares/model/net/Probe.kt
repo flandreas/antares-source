@@ -111,7 +111,7 @@ class Probe(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, VerticeActorData(null))
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 	}
 
 	/** ---- [Storable] interface */

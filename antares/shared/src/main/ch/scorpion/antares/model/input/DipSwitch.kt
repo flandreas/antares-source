@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -39,7 +38,7 @@ class DipSwitch(
 		private class Calculator : VerticeCalculator<DipSwitch> {
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				val output = vertice.getOutput<DigitalSignal>()
-				output.setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+				output.setOutgoingSignalBuffered(vertice.value, signalHandler)
 				vertice.enabled = true
 			}
 		}
@@ -92,7 +91,7 @@ class DipSwitch(
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -126,7 +125,7 @@ class DipSwitch(
 		if (enabled) {
 			value = value.withBit(index, bit)
 			enabled = false
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
+			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 		}
 	}
 

@@ -144,5 +144,5 @@ class RealSwitch(
 		super.setState(signalHandler, on)
 	}
 
-	override fun createSignal(): DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.Companion.of(isOn))
+	override fun createSignal(): DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.of(isOn))
 }

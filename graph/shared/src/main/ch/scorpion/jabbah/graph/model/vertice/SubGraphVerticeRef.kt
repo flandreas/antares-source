@@ -173,7 +173,7 @@ class SubGraphVerticeRef(
 				// which is unnecessary, but so be it for the moment
 				execParams = scriptGateway.defineVerticeExecutionScript(graphUUID!!, wrappedScript(this), this, signalHandler)
 
-				requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
+				requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 			}
 		}
 	}

@@ -5,12 +5,10 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -32,7 +30,7 @@ class Ground(
 
 		private class Calculator : VerticeCalculator<Ground> {
 			override fun calculate(vertice: Ground, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.getOutput<DigitalSignal>().setOutgoingSignal(data.getSignal(1), signalHandler)
+				vertice.getOutput<DigitalSignal>().setOutgoingSignal(DigitalSignalFactory.falseValue(vertice.bitWidth), signalHandler)
 			}
 		}
 	}
@@ -63,7 +61,7 @@ class Ground(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), DigitalSignalFactory.falseValue(bitWidth)))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
 	/** ---- [Storable] interface */

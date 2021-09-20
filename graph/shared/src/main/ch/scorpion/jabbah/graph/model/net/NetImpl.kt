@@ -78,7 +78,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler) {
 		signalBuffer = signal
-		val data = NetActorData(signal, origin, true)
+		val data = StoringGraphActorData(origin, signal)
 		requestActingAfter(signalHandler, 0, data)
 	}
 

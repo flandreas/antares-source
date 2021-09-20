@@ -22,13 +22,13 @@ interface GraphActorData : ActorData {
 }
 
 /** A [GraphActorData] implementation that stores the single [Port] signal.*/
-class GraphActorDataImpl(
+class StoringGraphActorData(
 	override val changedPort: Port<*>?,
 	val signal: Any?,
 	override val isInput: Boolean = true
 ) : GraphActorData {
 
-	override fun dataToString(): String? = "${changedPort?.name}:$signal"
+	override fun dataToString(): String = "${changedPort?.name}:$signal"
 
 	override fun <T : Any> getSignal(portId: Int): T = signal as T
 }

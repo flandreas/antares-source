@@ -2,11 +2,9 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -84,7 +82,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		isOn = on
 		enabled = false
 		stateChanged(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, createSignal()))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
 	protected open fun createSignal(): DigitalSignal = DigitalSignalFactory.of(isOn)
