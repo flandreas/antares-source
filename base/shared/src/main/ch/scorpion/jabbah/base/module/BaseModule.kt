@@ -24,6 +24,8 @@ object BaseModule : AbstractModule() {
 
 	var parserFactory: ParserFactory = ParserFactory { p, s -> Parser(lexerFactory(p), s) }
 
+	var storingActivationRecordFactory: ActivationRecordFactory = ActivationRecordFactory { n, p -> StoringActivationRecord(n, p) }
+
 	var interpreterFactory: (node: Node, memory: Memory) -> Interpreter = { n, m -> Interpreter(n, m) }
 
     override fun initialize() {

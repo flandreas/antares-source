@@ -1,5 +1,9 @@
 package ch.scorpion.jabbah.base.dsl
 
+fun interface ActivationRecordFactory {
+	fun create(name: String, parent: ActivationRecord?) : ActivationRecord
+}
+
 /**
  * Constituent of [Memory] to hold variable values in a stacked way.
  */
@@ -44,7 +48,7 @@ interface ActivationRecord {
 /**
  * Holds [Variable] definitions and values of a particular scope.
  */
-class StoringActivationRecord(val name: String, val parent: ActivationRecord?) : ActivationRecord {
+open class StoringActivationRecord(val name: String, val parent: ActivationRecord?) : ActivationRecord {
 
 	/** Defined variables have at least a key with value `null`. */
 	private val values = mutableMapOf<String, Any?>()
@@ -71,13 +75,15 @@ class StoringActivationRecord(val name: String, val parent: ActivationRecord?) :
 
 	override fun setValue(variable: Variable, value: Any) {
 		when {
-			isLocallyDefined(variable.token.value!!) ->
-				values[variable.token.value] = value
-			parent != null ->
-				parent.setValue(variable, value)
+			isLocallyDefined(variable.token.value!!) -> store(variable, value)
+			parent != null -> parent.setValue(variable, value)
 			else ->
 				throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
 		}
+	}
+
+	protected open fun store(variable: Variable, value: Any) {
+		values[variable.token.value!!] = value
 	}
 
 	override fun getValue(variable: Variable): Any =

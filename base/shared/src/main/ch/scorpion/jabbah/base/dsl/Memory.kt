@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.collection.Stack
+import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Stores [Variable] values in nested scopes during execution of an [Interpreter].
@@ -25,12 +26,12 @@ class Memory(private val context: ActivationRecord? = null) {
 	 * Stores [Variable] values persistently, i.e. they are NOT removed by [clear].
 	 * This is used for storing values that must survive multiple runs of [Interpreter.interpret].
 	 */
-	private val store = StoringActivationRecord("Store", context)
+	private val store = BaseModule.storingActivationRecordFactory.create("Store", context)
 
 	/**
 	 * The global, outermost scope always present.
 	 */
-	private val global = StoringActivationRecord("Global", store)
+	private val global = BaseModule.storingActivationRecordFactory.create("Global", store)
 
 	private val callStack = Stack<ActivationRecord>()
 
@@ -52,7 +53,7 @@ class Memory(private val context: ActivationRecord? = null) {
 	}
 
 	fun enterScope(name: String) {
-		callStack.push(StoringActivationRecord(name, callStack.optionalPeek()))
+		callStack.push(BaseModule.storingActivationRecordFactory.create(name, callStack.optionalPeek()))
 	}
 
 	fun exitScope(node: Node) {

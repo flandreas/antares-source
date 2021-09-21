@@ -1,10 +1,12 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import io.mockk.every
@@ -15,7 +17,13 @@ import kotlin.test.assertIs
 
 class AntaresInterpreterComplexTest {
 
-	private val context = StoringActivationRecord("context", null)
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
+
+	private val context = BaseModule.storingActivationRecordFactory.create("context", null)
 
 	/** See "Register File" circuit in Tanenbaum example project.*/
 	@Test
