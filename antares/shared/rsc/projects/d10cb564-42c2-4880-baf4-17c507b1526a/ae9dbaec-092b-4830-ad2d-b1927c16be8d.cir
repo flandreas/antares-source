@@ -2,97 +2,48 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var c = elem.inputWord(&quot;C&quot;);
-var fc = elem.inputWord(&quot;FC&quot;).toInt();
-
-if (elem.inputBit(&quot;ENC&quot;) &amp;&amp; elem.portRaised(&quot;CLK&quot;)) {
-  if (fc == 10 || fc &lt;= 4) {
-    elem.store(fc.toString(), c);
-  }
+        <graph _id='2' script='init {
+	store fcStore
+	for (i in 0 to 15) {
+		fcStore[i] = 0
+	}
 }
 
-var fa = elem.inputWord(&quot;FA&quot;).toInt();
-var outA;
-switch (fa) {
-  case 0:
-    outA = elem.load(&quot;0&quot;);
-    break;
-  case 1:
-    outA = elem.load(&quot;1&quot;);
-    break;
-  case 2:
-    outA = elem.load(&quot;2&quot;);
-    break;
-  case 3:
-    outA = elem.load(&quot;3&quot;);
-    break;
-  case 4:
-    outA = elem.load(&quot;4&quot;);
-    break;
-  case 5:
-    outA = elem.hexWord(&quot;0&quot;, 16);
-    break;
-  case 6:
-    outA = elem.hexWord(&quot;1&quot;, 16);
-    break;
-  case 7:
-    outA = elem.hexWord(&quot;FFFF&quot;, 16);
-    break;
-  case 8:
-    outA = elem.hexWord(&quot;0FFF&quot;, 16);
-    break;
-  case 9:
-    outA = elem.hexWord(&quot;00FF&quot;, 16);
-    break;
-  case 10:
-    outA = elem.load(&quot;10&quot;);
-    break;
-  default:
-    outA = elem.undefinedWord(16);	
+if (ENC and ^CLK) {
+	if (FC == 10 or FC &lt;= 4) {
+		fcStore[FC] = C
+	}
 }
 
-var fb = elem.inputWord(&quot;FB&quot;).toInt();
-var outB;
-switch (fb) {
-  case 0:
-    outB = elem.load(&quot;0&quot;);
-    break;
-  case 1:
-    outB = elem.load(&quot;1&quot;);
-    break;
-  case 2:
-    outB = elem.load(&quot;2&quot;);
-    break;
-  case 3:
-    outB = elem.load(&quot;3&quot;);
-    break;
-  case 4:
-    outB = elem.load(&quot;4&quot;);
-    break;
-  case 5:
-    outB = elem.hexWord(&quot;0&quot;, 16);
-    break;
-  case 6:
-    outB = elem.hexWord(&quot;1&quot;, 16);
-    break;
-  case 7:
-    outB = elem.hexWord(&quot;FFFF&quot;, 16);
-    break;
-  case 8:
-    outB = elem.hexWord(&quot;0FFF&quot;, 16);
-    break;
-  case 9:
-    outB = elem.hexWord(&quot;00FF&quot;, 16);
-    break;
-  case 10:
-    outB = elem.load(&quot;10&quot;);
-    break;
-  default:
-    outB = elem.undefinedWord(16);	
+when (FA) {
+	0 : A = fcStore[0]
+	1 : A = fcStore[1]
+	2 : A = fcStore[2]
+	3 : A = fcStore[3]
+	4 : A = fcStore[4]
+	5 : A = 0
+	6 : A = 1
+	7 : A = 0xFFFF
+	8 : A = 0x0FFF
+	9 : A = 0x00FF
+	10 : A = fcStore[10]
+	else : A = 0x?16	
 }
 
-elem.setOutputWord(&quot;A&quot;, outA);
-elem.setOutputWord(&quot;B&quot;, outB);' propDelay='240'>
+when (FB) {
+	0 : B = fcStore[0]
+	1 : B = fcStore[1]
+	2 : B = fcStore[2]
+	3 : B = fcStore[3]
+	4 : B = fcStore[4]
+	5 : B = 0
+	6 : B = 1
+	7 : B = 0xFFFF
+	8 : B = 0x0FFF
+	9 : B = 0x00FF
+	10 : B = fcStore[10]
+	else : B = 0x?16
+}' propDelay='240'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'/>
             <circuitInOut _id='4' id='2' name='FA' type='input' bitWidth='4'/>
@@ -2006,11 +1957,11 @@ elem.setOutputWord(&quot;B&quot;, outB);' propDelay='240'>
             <translation lang='de' text='Register File'/>
           </name>
           <ports>
-            <subCircuitPort _id='677' portId='1' name='FA' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='680' portId='2' name='FB' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='683' portId='3' name='FC' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='677' portId='1' name='FA' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='680' portId='2' name='FB' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='683' portId='3' name='FC' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='686' portId='4' name='ENC' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='689' portId='5' name='C' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='689' portId='5' name='C' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='692' portId='6' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='695' portId='7' name='A' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='698' portId='8' name='B' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>

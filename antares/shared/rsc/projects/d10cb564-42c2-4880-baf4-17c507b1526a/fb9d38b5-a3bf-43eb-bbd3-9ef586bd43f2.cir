@@ -2,19 +2,10 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var f = elem.inputWord(&quot;F&quot;).toInt();
-var d = elem.inputWord(&quot;D&quot;);
-
-switch(f) {
-  case 0:
-    elem.setOutputWord(&quot;O&quot;, d);
-    break;
-  case 1:
-    elem.setOutputWord(&quot;O&quot;, d.shiftRight(1));
-    break;
-  case 2:
-    elem.setOutputWord(&quot;O&quot;, d.shiftLeft(1));
-    break; 
+        <graph _id='2' script='when (F) {
+	0 : O = D
+	1 : O = D &gt;&gt; 1
+	2 : O = D &lt;&lt; 1
 }' propDelay='160'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='80' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'>
