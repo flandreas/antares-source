@@ -219,7 +219,8 @@ abstract class AbstractVertice(
 	 */
 	private inner class ActualPortValueActorData(
 		override val changedPort: Port<*>?,
-		override val isInput: Boolean = true
+		override val isInput: Boolean = true,
+		override val immediatePort: Port<*>? = changedPort
 	) : GraphActorData {
 
 		override fun <T : Any> getSignal(portId: Int): T? =

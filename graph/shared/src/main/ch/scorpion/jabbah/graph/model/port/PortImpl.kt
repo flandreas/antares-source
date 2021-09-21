@@ -276,7 +276,7 @@ open class PortImpl<T : Any>(
 		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
 			val replacement = replaceOwnUndefinedSignals(signalHandler)
-			net!!.setSignal(replacement.signal, replacement.originPort, signalHandler)
+			net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler)
 			return
 		}
 
@@ -284,7 +284,7 @@ open class PortImpl<T : Any>(
 		if (!isOutputFullyUndefined) {
 			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
 			resetExecutionError()
-			net!!.setSignal(_outgoingSignal, this, signalHandler)
+			net!!.setSignal(_outgoingSignal, this, this, signalHandler)
 			return
 		}
 
@@ -292,7 +292,7 @@ open class PortImpl<T : Any>(
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		val replacement = replaceOwnUndefinedSignals(signalHandler)
 		resetExecutionError()
-		net!!.setSignal(replacement.signal, replacement.originPort, signalHandler)
+		net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {
