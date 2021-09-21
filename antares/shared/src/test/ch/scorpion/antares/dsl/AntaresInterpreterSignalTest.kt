@@ -3,11 +3,13 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
 class AntaresInterpreterSignalTest {
@@ -326,5 +328,19 @@ class AntaresInterpreterSignalTest {
 
 		memory.preset("A", Word.of(BitWidth.BW_4, 15UL))
 		assertEquals(Word.of(BitWidth.BW_1, 1UL), interpreter.interpret())
+	}
+
+	@Test
+	fun shouldThrowDslErrorWhenAddingUndefinedSignals() {
+		val parser = AntaresParser(AntaresLexer("A + B"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", Word.of(BitWidth.BW_4, 1UL))
+		memory.preset("B", Word.undefined(BitWidth.BW_4))
+
+		assertFailsWith(DslError::class) {
+			interpreter.interpret()
+		}
 	}
 }

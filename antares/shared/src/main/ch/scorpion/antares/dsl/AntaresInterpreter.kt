@@ -173,14 +173,22 @@ class AntaresInterpreter(
 		signalOp: (DigitalSignal, DigitalSignal) -> Any,
 		mixedOp: (DigitalSignal, Long) -> Any
 	): Any {
-		return if (left is Long && right is Long) {
-			longOp(left, right)
-		} else if (left is DigitalSignal && right is DigitalSignal) {
-			signalOp(left, right)
-		} else if (left is DigitalSignal && right is Long) {
-			mixedOp(left, right)
-		} else {
-			throw RuntimeError(node.location, "Incompatible types for '${op}'")
+		try {
+			return if (left is Long && right is Long) {
+				longOp(left, right)
+			} else if (left is DigitalSignal && right is DigitalSignal) {
+				signalOp(left, right)
+			} else if (left is DigitalSignal && right is Long) {
+				mixedOp(left, right)
+			} else {
+				throw RuntimeError(node.location, "Incompatible types for '${op}'")
+			}
+		} catch (e: Throwable) {
+			if (e.message != null) {
+				throw RuntimeError(node.location, "Operation execution (${e.message})")
+			} else {
+				throw RuntimeError(node.location, "Operation execution")
+			}
 		}
 	}
 
