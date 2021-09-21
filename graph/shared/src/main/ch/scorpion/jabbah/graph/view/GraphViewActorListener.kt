@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawableContainerEvent
-import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -30,26 +27,16 @@ class GraphViewActorListener(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ActorListener {
 
-	companion object {
-		private val LOG by logger(GraphViewActorListener::class)
-	}
-
-	/**
-	 * Listens for add/remove of [GraphElementView]s in order to add/remove this [GraphViewActorListener]
-	 * as [ActorListener].
-	 */
-	private val graphViewListener = GraphViewListener()
-
 	private val animatorProxy = AnimatorProxy(GraphViewExecutionAnimator(this, drawingView, applicationContextHolder))
 
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
 
 	/** Listen for exchanges of the current GraphView in order to be an ActorListener on all GraphElements of its Graph */
-	private val addRemoveListener = AddRemoveListener()
+	private val graphViewExchangeListener = GraphViewExchangeListener()
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		drawingView.addPropertyChangeListener(addRemoveListener)
+		drawingView.addPropertyChangeListener(graphViewExchangeListener)
 
 		if (applicationContextHolder.scheduler.isActive) {
 			registerActorListener(drawingView.drawing.graph!!)
@@ -59,7 +46,7 @@ class GraphViewActorListener(
 	fun dispose() {
 		drawingView.drawing.graph?.let { unregisterActorListener(it) }
 		eventBus.unregister(schedulerActivationStateHandler)
-		drawingView.removePropertyChangeListener(addRemoveListener)
+		drawingView.removePropertyChangeListener(graphViewExchangeListener)
 	}
 
 	override fun actingRequested(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
@@ -82,49 +69,26 @@ class GraphViewActorListener(
 
 	private fun handleGraphViewChanged(oldGraphView: GraphView?, newGraphView: GraphView?) {
 		if (oldGraphView != null) {
-			oldGraphView.removeDrawableContainerListener(graphViewListener)
 			unregisterActorListener(oldGraphView.graph!!)
 		}
 		if (newGraphView != null) {
-			newGraphView.addDrawableContainerListener(graphViewListener)
 			registerActorListener(newGraphView.graph!!)
 		}
 	}
 
 	private fun registerActorListener(graph: Graph) {
-		LOG.trace("adding as ActorListener on all GraphElements")
 		graph.elements.forEach { it.addActorListener(this) }
 	}
 
 
 	private fun unregisterActorListener(graph: Graph) {
-		LOG.trace("removing as ActorListener from all GraphElements")
 		graph.elements.forEach { it.removeActorListener(this) }
 	}
 
-	private inner class AddRemoveListener : PropertyChangeListener<Any> {
+	private inner class GraphViewExchangeListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == DrawingView.PROP_DRAWING) {
 				handleGraphViewChanged(e.oldValue as GraphView, e.newValue as GraphView)
-			}
-		}
-	}
-
-	/**
-	 * Listens for adding and removing [GraphElementView]s in the current [GraphView] and adds or removes
-	 * this [GraphViewActorListener] as [ActorListener] accordingly.
-	 */
-	private inner class GraphViewListener : DrawableContainerAdapter<GraphElementView<*>>() {
-
-		override fun drawableAdded(event: DrawableContainerEvent<GraphElementView<*>>) {
-			if (event.child is GraphElementView<*>) {
-				(event.child as GraphElementView<*>).model.addActorListener(this@GraphViewActorListener)
-			}
-		}
-
-		override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
-			if (event.child is GraphElementView<*>) {
-				(event.child as GraphElementView<*>).model.removeActorListener(this@GraphViewActorListener)
 			}
 		}
 	}

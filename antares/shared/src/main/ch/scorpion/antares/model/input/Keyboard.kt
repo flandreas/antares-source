@@ -57,7 +57,7 @@ class Keyboard(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	private val buffer: MutableList<Byte> by lazy { mutableListOf<Byte>() }
+	private val buffer: MutableList<Byte> by lazy { mutableListOf() }
 
 	var bufferSize: Int = bufferSize
 		set(value) {
@@ -133,7 +133,7 @@ class Keyboard(
 		if (bufferItemsCount < bufferSize) {
 			buffer.add(byte)
 			stateChanged(signalHandler)
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null))
+			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 		}
 	}
 

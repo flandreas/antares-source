@@ -111,7 +111,7 @@ class GraphViewExecutionAnimator(
 
 		applicationContextHolder.scheduler.logActorTrace(net) { "handleNetActingRequested" }
 
-		val changedPort = actorData.changedPort!!
+		val changedPort = actorData.immediatePort!!
 
 		if (!requireEdgeViewAnimation()) {
 			return

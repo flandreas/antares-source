@@ -134,6 +134,6 @@ class PullResistor(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, preferredOutputSignal))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 }

@@ -17,18 +17,26 @@ interface GraphActorData : ActorData {
 	/** Determines whether the signal change occurred on an input.*/
 	val isInput: Boolean
 
+	/**
+	 * The [OutputPort] that sends this [GraphActorData] into a [Graph]. Usually the same as [changedPort],
+	 * but might be different if the originating [changedPort] lies behind a [SubGraphPort]. UI related
+	 * classes will use [immediatePort] to find UI representations of objects to which this [immediatePort] belongs.
+	 */
+	val immediatePort: Port<*>?
+
 	/** Returns the current signal of a particular [Port] at the beginning of an execution step.*/
 	fun <T : Any> getSignal(portId: Int): T?
 }
 
 /** A [GraphActorData] implementation that stores the single [Port] signal.*/
-class GraphActorDataImpl(
+class StoringGraphActorData(
 	override val changedPort: Port<*>?,
 	val signal: Any?,
-	override val isInput: Boolean = true
+	override val isInput: Boolean = true,
+	override val immediatePort: Port<*>? = changedPort
 ) : GraphActorData {
 
-	override fun dataToString(): String? = "${changedPort?.name}:$signal"
+	override fun dataToString(): String = "${changedPort?.name}:$signal"
 
 	override fun <T : Any> getSignal(portId: Int): T = signal as T
 }

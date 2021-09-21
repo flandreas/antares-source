@@ -3,12 +3,10 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -39,7 +37,7 @@ class Constant(
 
 		private class Calculator : VerticeCalculator<Constant> {
 			override fun calculate(vertice: Constant, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.getOutput<DigitalSignal>().setOutgoingSignal(data.getSignal(1), signalHandler)
+				vertice.getOutput<DigitalSignal>().setOutgoingSignal(vertice.value, signalHandler)
 			}
 		}
 	}
@@ -69,7 +67,7 @@ class Constant(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), value))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
 	/** ---- [Storable] interface */

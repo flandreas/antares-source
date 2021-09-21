@@ -188,11 +188,9 @@ abstract class AbstractVertice(
 
 	/** ---- [AbstractVertice] */
 
-	/**
-	 * Visible for testing.
-	 */
+	/** Visible for testing. */
 	open fun createActorData(inputPort: InputPort<*>?): GraphActorData =
-		VerticeActorData(inputPort, true)
+		ActualPortValueActorData(inputPort, true)
 
 	/**
 	 * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
@@ -222,8 +220,16 @@ abstract class AbstractVertice(
 		return s.toString()
 	}
 
-	/** A "virtual" [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port].*/
-	inner class VerticeActorData(override val changedPort: Port<*>?, override val isInput: Boolean = true) : GraphActorData {
+	/**
+	 * A [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port],
+	 * hence using the actual [Port] values at this very moment, instead of using values as they were
+	 * when this [Vertice] requested calculation.
+	 */
+	private inner class ActualPortValueActorData(
+		override val changedPort: Port<*>?,
+		override val isInput: Boolean = true,
+		override val immediatePort: Port<*>? = changedPort
+	) : GraphActorData {
 
 		override fun <T : Any> getSignal(portId: Int): T? =
 			getInput<T>(portId).getIncomingSignal()

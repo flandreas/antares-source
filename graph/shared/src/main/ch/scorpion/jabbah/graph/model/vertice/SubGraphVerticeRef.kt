@@ -157,14 +157,11 @@ class SubGraphVerticeRef(
 			if (isDeepExecution(signalHandler)) {
 				graph?.executionStart(signalHandler)
 			} else {
-				// This will define the same script for all SubGraphVerticeRef instances of the same Graph
-				// which is unnecessary, but so be it for the moment
-
 				createInterpreter(signalHandler)
 				if (interpreter is GraphDslInterpreter) {
 					(interpreter as GraphDslInterpreter).executionStarted()
 				}
-				requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
+				requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 			}
 		}
 	}

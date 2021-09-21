@@ -72,11 +72,11 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 		}
 	}
 
-	override fun setSignal(signal: DigitalSignal?, origin: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
+	override fun setSignal(signal: DigitalSignal?, origin: OutputPort<DigitalSignal>, immediatePort: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
 		if (signal?.hasError == true) {
 			raiseError(signal, origin, signalHandler)
 		} else {
-			super.setSignal(signal, origin, signalHandler)
+			super.setSignal(signal, origin, immediatePort, signalHandler)
 		}
 	}
 
