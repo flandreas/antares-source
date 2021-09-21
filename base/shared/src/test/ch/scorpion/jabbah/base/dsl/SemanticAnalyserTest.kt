@@ -34,4 +34,21 @@ class SemanticAnalyserTest {
 			analyser.analyse(ast)
 		}
 	}
+
+	@Test
+	fun shouldNotAllowStoreDeclarationInInnerScope() {
+		assertFailsWith(SemanticError::class) {
+			val ast = Parser("""
+			var a = 1
+			if (a) {
+				store b = 0
+			}
+		""".trimIndent()).parse()
+
+			val analyser = SemanticAnalyser(null)
+			assertFailsWith(SemanticError::class) {
+				analyser.analyse(ast)
+			}
+		}
+	}
 }

@@ -75,6 +75,9 @@ open class SemanticAnalyser(
 	}
 
 	private fun enterDeclaration(declaration: Declaration) {
+		if (declaration.store && scope.level > 1) {
+			throw SemanticError(declaration.location, "'store' declaration only allowed in global scope")
+		}
 		declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
 	}
 
