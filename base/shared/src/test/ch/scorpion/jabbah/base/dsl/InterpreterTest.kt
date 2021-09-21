@@ -416,17 +416,6 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun bla() {
-		val result = Interpreter("""
-			i = 3
-			a[i] = 2 * i
-			a[3]
-		""".trimIndent()).interpret()
-
-		assertEquals(6L, result)
-	}
-
-	@Test
 	fun shouldSetArrayValuesInLoop() {
 		val interpreter = Interpreter("""
 			var a

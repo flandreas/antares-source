@@ -39,7 +39,8 @@ class AntaresInterpreter(
 			right,
 			{ l, r -> if (l == r) 1L else 0L},
 			{ l, r -> if (l == r) 1L else 0L },
-			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L })
+			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L },
+			{ l, r -> if (l == r.getValue().toLong()) 1L else 0L })
 		as Long
 	}
 
@@ -101,10 +102,13 @@ class AntaresInterpreter(
 
 	private fun getBitAccessIndex(bitAccess: BitAccess): Int {
 		val index = interpret(bitAccess.index)
-		if (index !is Long) {
-			throw RuntimeError(bitAccess.location, "Expected numerical index")
+		return when (index) {
+			is Long -> index.toInt()
+			is DigitalSignal -> {
+				index.toLong()?.toInt() ?: throw RuntimeError(bitAccess.location, "Signal index in bit access is partially undefined")
+			}
+			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
 		}
-		return index.toInt()
 	}
 
 	private fun getBitAccessSetValue(bitAccess: BitAccess, value: Any): Int {
@@ -115,33 +119,72 @@ class AntaresInterpreter(
 		}
 	}
 
+	private fun signalToLong(signal: DigitalSignal): Long =
+		signal.toLong()?.toLong() ?: throw RuntimeError(node.location, "Undefined signal")
+
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
-			AND -> binaryOp(node, { l, r -> l.and(r) }, { l, r -> l.and(r)}, { l, r -> l.and(r.toULong()) })
-			OR -> binaryOp(node, { l, r -> l.or(r) }, { l, r -> l.or(r) }, { l, r -> l.or(r.toULong()) })
-			PLUS -> binaryOp(node, { l, r -> l + r}, { l, r -> l.add(r) }, { l, r -> l.add(r.toUInt()) })
 			EQUAL -> evaluateEqualCondition(node, interpret(node.left), interpret(node.right))
+			AND -> binaryOp(node,
+				{ l, r -> l.and(r) },
+				{ l, r -> l.and(r)},
+				{ l, r -> l.and(r.toULong()) },
+				{ l, r -> l.and(signalToLong(r)) })
+			OR -> binaryOp(node,
+				{ l, r -> l.or(r) },
+				{ l, r -> l.or(r) },
+				{ l, r -> l.or(r.toULong()) },
+				{ l, r -> l.or(signalToLong(r)) })
+			PLUS -> binaryOp(node,
+				{ l, r -> l + r},
+				{ l, r -> l.add(r) },
+				{ l, r -> l.add(r.toUInt()) },
+				{ l, r -> l.and(signalToLong(r)) })
+			MINUS -> binaryOp(node,
+				{ l, r -> l - r },
+				{ l, r -> l.subtract(r)},
+				{ l, r -> l.subtract(r.toUInt()) },
+				{ l, r -> l.minus(signalToLong(r)) })
+			MULTIPLY -> binaryOp(node,
+				{ l, r -> l * r},
+				{ l, r -> l.multiply(r) },
+				{ l, r -> l.multiply(r.toUInt()) },
+				{ l, r -> l * signalToLong(r) })
+			DIVIDE -> binaryOp(node,
+				{ l, r -> l.div(r)},
+				{ l, r -> l.divide(r) },
+				{ l, r -> l.divide(r.toUInt()) },
+				{ l, r -> l.div(signalToLong(r)) })
 			DIFF -> binaryOp(node,
 				{ l, r -> if (l != r) 1L else 0L},
 				{ l, r -> if (l != r) 1L else 0L },
-				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L })
-			MOD -> binaryOp(node, { l, r -> l.mod(r) }, { l, r -> l.mod(r) }, { l, r -> l.mod(r.toULong()) })
+				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L },
+				{ l, r -> if (l != signalToLong(r)) 1L else 0L })
+			MOD -> binaryOp(node,
+				{ l, r -> l.mod(r) },
+				{ l, r -> l.mod(r) },
+				{ l, r -> l.mod(r.toULong()) },
+				{ l, r -> l.mod(signalToLong(r)) })
 			GREATER -> binaryOp(node,
 				{ l, r -> if (l > r) 1L else 0L },
 				{ l, r -> if (l.isGreaterThan(r)) 1L else 0L },
-				{ l, r -> if (l.isGreaterThan(r.toULong())) 1L else 0L })
+				{ l, r -> if (l.isGreaterThan(r.toULong())) 1L else 0L },
+				{ l, r -> if (l > signalToLong(r)) 1L else 0L })
 			GREATER_EQUAL -> binaryOp(node,
 				{ l, r -> if (l >= r) 1L else 0L },
 				{ l, r -> if (l.isGreaterEqualThan(r)) 1L else 0L },
-				{ l, r -> if (l.isGreaterEqualThan(r.toULong())) 1L else 0L })
+				{ l, r -> if (l.isGreaterEqualThan(r.toULong())) 1L else 0L },
+				{ l, r -> if (l >= signalToLong(r)) 1L else 0L })
 			SMALLER -> binaryOp(node,
 				{ l, r -> if (l < r) 1L else 0L },
 				{ l, r -> if (l.isSmallerThan(r)) 1L else 0L },
-				{ l, r -> if (l.isSmallerThan(r.toULong())) 1L else 0L })
+				{ l, r -> if (l.isSmallerThan(r.toULong())) 1L else 0L },
+				{ l, r -> if (l < signalToLong(r)) 1L else 0L})
 			SMALLER_EQUAL -> binaryOp(node,
 				{ l, r -> if (l <= r) 1L else 0L },
 				{ l, r -> if (l.isSmallerEqualThan(r)) 1L else 0L },
-				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L })
+				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L },
+				{ l, r -> if (l <= signalToLong(r)) 1L else 0L })
 			else -> super.typedBinaryOp(node)
 		}
 	}
@@ -157,11 +200,12 @@ class AntaresInterpreter(
 		node: BinaryOperation,
 		longOp: (Long, Long) -> Any,
 		signalOp: (DigitalSignal, DigitalSignal) -> Any,
-		mixedOp: (DigitalSignal, Long) -> Any
+		mixedOp1: (DigitalSignal, Long) -> Any,
+		mixedOp2: (Long, DigitalSignal) -> Any
 	): Any {
 		val left = interpret(node.left)
 		val right = interpret(node.right)
-		return binaryOpInterpreted(node, node.op.type, left, right, longOp, signalOp, mixedOp)
+		return binaryOpInterpreted(node, node.op.type, left, right, longOp, signalOp, mixedOp1, mixedOp2)
 	}
 
 	private fun binaryOpInterpreted(
@@ -171,7 +215,8 @@ class AntaresInterpreter(
 		right: Any,
 		longOp: (Long, Long) -> Any,
 		signalOp: (DigitalSignal, DigitalSignal) -> Any,
-		mixedOp: (DigitalSignal, Long) -> Any
+		mixedOp1: (DigitalSignal, Long) -> Any,
+		mixedOp2: (Long, DigitalSignal) -> Any
 	): Any {
 		try {
 			return if (left is Long && right is Long) {
@@ -179,7 +224,9 @@ class AntaresInterpreter(
 			} else if (left is DigitalSignal && right is DigitalSignal) {
 				signalOp(left, right)
 			} else if (left is DigitalSignal && right is Long) {
-				mixedOp(left, right)
+				mixedOp1(left, right)
+			} else if (left is Long && right is DigitalSignal) {
+				mixedOp2(left, right)
 			} else {
 				throw RuntimeError(node.location, "Incompatible types for '${op}'")
 			}

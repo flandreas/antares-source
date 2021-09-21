@@ -1,8 +1,9 @@
 package ch.scorpion.antares.dsl
 
-import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidth.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.Word.Companion.of
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
@@ -63,36 +64,77 @@ class AntaresInterpreterSignalTest {
 
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
-		memory.preset("I", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("I", of(BW_4, 2UL))
 
 		val result = interpreter.interpret()
 
-		assertEquals(Word.of(BitWidth.BW_4, 13UL), result)
+		assertEquals(of(BW_4, 13UL), result)
 	}
 
 	@Test
 	fun shouldAddSignals() {
-		val parser = AntaresParser(AntaresLexer("O = A + B"), null)
-		val memory = Memory()
-		val interpreter = AntaresInterpreter(parser.parse(), memory)
-		memory.preset("A", Word.of(BitWidth.BW_4, 2UL))
-		memory.preset("B", Word.of(BitWidth.BW_2, 1UL))
-
-		val result = interpreter.interpret()
-
-		assertEquals(Word.of(BitWidth.BW_4, 3UL), result)
+		assertEquals(of(BW_2, 3UL), operation("A + B", of(BW_4, 2UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), of(BW_2, 1UL)))
 	}
 
 	@Test
 	fun shouldAddLongToSignal() {
-		val parser = AntaresParser(AntaresLexer("O = A + 3"), null)
+		assertEquals(of(BW_2, 3UL), operation("A + B", of(BW_4, 2UL), 1L))
+		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), 1L))
+	}
+
+	@Test
+	fun shouldSubtractSignals() {
+		assertEquals(of(BW_2, 2UL), operation("A - B", of(BW_4, 3UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), of(BW_2, 1UL)))
+	}
+
+	@Test
+	fun shouldSubtractLongFromSignal() {
+		assertEquals(of(BW_2, 2UL), operation("A - B", of(BW_4, 3UL), 1L))
+		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), 1L))
+	}
+
+	@Test
+	fun shouldMultiplySignals() {
+		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_8, 28UL), operation("A * B", of(BW_4, 14UL), of(BW_2, 2UL)))
+	}
+
+	@Test
+	fun shouldMultiplyLongWithSignal() {
+		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), 2L))
+		assertEquals(of(BW_8, 28UL), operation("A * B", of(BW_4, 14UL), 2L))
+	}
+
+	@Test
+	fun shouldDivideSignals() {
+		assertEquals(of(BW_2, 3UL), operation("A / B", of(BW_4, 6UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_4, 6UL), operation("A / B", of(BW_8, 24UL), of(BW_4, 4UL)))
+	}
+
+	@Test
+	fun shouldDivideSignalByLong() {
+		assertEquals(of(BW_2, 3UL), operation("A / B", of(BW_4, 6UL), 2L))
+		assertEquals(of(BW_4, 6UL), operation("A / B", of(BW_8, 24UL), 4L))
+	}
+
+	private fun operation(statement: String, a: DigitalSignal, b: DigitalSignal): DigitalSignal {
+		val parser = AntaresParser(AntaresLexer(statement), null)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
-		memory.preset("A", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("A", a)
+		memory.preset("B", b)
+		return interpreter.interpret() as DigitalSignal
+	}
 
-		val result = interpreter.interpret()
-
-		assertEquals(Word.of(BitWidth.BW_4, 5UL), result)
+	private fun operation(statement: String, a: DigitalSignal, b: Long): DigitalSignal {
+		val parser = AntaresParser(AntaresLexer(statement), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", a)
+		memory.preset("B", b)
+		return interpreter.interpret() as DigitalSignal
 	}
 
 	@Test
@@ -101,12 +143,12 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 3UL))
 		assertEquals(1L, interpreter.interpret())
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 4UL))
+		memory.preset("A", of(BW_4, 5UL))
+		memory.preset("B", of(BW_4, 4UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -116,10 +158,10 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(1L, interpreter.interpret())
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		memory.preset("A", of(BW_4, 5UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -129,10 +171,10 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(0L, interpreter.interpret())
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
+		memory.preset("A", of(BW_4, 5UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -142,12 +184,12 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 3UL))
 		assertEquals(0L, interpreter.interpret())
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 5UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 4UL))
+		memory.preset("A", of(BW_4, 5UL))
+		memory.preset("B", of(BW_4, 4UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -157,8 +199,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		assertEquals(Word.of(BitWidth.BW_4, 1UL), interpreter.interpret())
+		memory.preset("A", of(BW_4, 3UL))
+		assertEquals(of(BW_4, 1UL), interpreter.interpret())
 	}
 
 	@Test
@@ -167,8 +209,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 2UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -178,7 +220,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -188,8 +230,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 2UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -199,7 +241,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -209,8 +251,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 2UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -220,7 +262,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -230,8 +272,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
-		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_4, 2UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -241,7 +283,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 3UL))
+		memory.preset("A", of(BW_4, 3UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -257,7 +299,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("B", Word.of(BitWidth.BW_4, 1UL))
+		memory.preset("B", of(BW_4, 1UL))
 		assertEquals(1L, interpreter.interpret())
 	}
 
@@ -273,7 +315,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("B", Word.of(BitWidth.BW_4, 0UL))
+		memory.preset("B", of(BW_4, 0UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -291,7 +333,7 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("B", Word.of(BitWidth.BW_4, 2UL))
+		memory.preset("B", of(BW_4, 2UL))
 		assertEquals(22L, interpreter.interpret())
 	}
 
@@ -301,8 +343,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 15UL))
-		assertEquals(Word.of(true), interpreter.interpret())
+		memory.preset("A", of(BW_4, 15UL))
+		assertEquals(of(true), interpreter.interpret())
 	}
 
 	@Test
@@ -313,8 +355,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 0UL))
-		assertEquals(Word.of(BitWidth.BW_4, 2UL), interpreter.interpret())
+		memory.preset("A", of(BW_4, 0UL))
+		assertEquals(of(BW_4, 2UL), interpreter.interpret())
 	}
 
 	@Test
@@ -326,8 +368,32 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 15UL))
-		assertEquals(Word.of(BitWidth.BW_1, 1UL), interpreter.interpret())
+		memory.preset("A", of(BW_4, 15UL))
+		assertEquals(of(BW_1, 1UL), interpreter.interpret())
+	}
+
+	@Test
+	fun shouldGetBitOfWordWithNumericVariableIndex() {
+		val parser = AntaresParser(AntaresLexer("A@i"), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_4, 15UL))
+		memory.preset("i", 2L)
+		assertEquals(of(BW_1, 1UL), interpreter.interpret())
+	}
+
+	@Test
+	fun shouldGetBitOfWordWithSignalVariableIndex() {
+		val parser = AntaresParser(AntaresLexer("A@i"), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_4, 15UL))
+		memory.preset("i", of(BW_4, 1UL))
+		assertEquals(of(BW_1, 1UL), interpreter.interpret())
 	}
 
 	@Test
@@ -336,8 +402,8 @@ class AntaresInterpreterSignalTest {
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
-		memory.preset("A", Word.of(BitWidth.BW_4, 1UL))
-		memory.preset("B", Word.undefined(BitWidth.BW_4))
+		memory.preset("A", of(BW_4, 1UL))
+		memory.preset("B", Word.undefined(BW_4))
 
 		assertFailsWith(DslError::class) {
 			interpreter.interpret()

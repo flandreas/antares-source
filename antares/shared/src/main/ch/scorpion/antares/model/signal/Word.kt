@@ -84,6 +84,11 @@ internal data class Word(
 			return Word((0 until bitWidth.width).map { Bit.of(BitOperation.getBitAt(value, it)) })
 		}
 
+		fun ofMinimalBitWidth(value: ULong): Word =
+			of(
+				BitWidth.values().firstOrNull { it.maxValue >= value }  ?: throw IllegalArgumentException(""),
+				value)
+
 		/** Combines the specified [Word]s into a single [Word].*/
 		fun of(words: List<DigitalSignal>): Word {
 			val list = ArrayList<Bit>()
@@ -354,21 +359,75 @@ internal data class Word(
 	}
 
 	override fun add(other: DigitalSignal): DigitalSignal {
-		val sum = if (longValue == null || other.toLong() == null) {
+		val result = if (longValue == null || other.toLong() == null) {
 			throw IllegalArgumentException("cannot add non fully defined digital signal")
 		} else {
 			longValue!! + other.toLong()!!
 		}
-		return of(bitWidth.max(other.bitWidth), sum)
+		return ofMinimalBitWidth(result)
 	}
 
 	override fun add(other: UInt): DigitalSignal {
-		val sum = if (longValue == null) {
+		val result = if (longValue == null) {
 			throw IllegalArgumentException("cannot add non fully defined digital signal")
 		} else {
 			longValue!! + other
 		}
-		return of(bitWidth, sum)
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun subtract(other: UInt): DigitalSignal {
+		val result = if (longValue == null) {
+			throw IllegalArgumentException("cannot subtract non fully defined digital signal")
+		} else {
+			longValue!! - other
+		}
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun subtract(other: DigitalSignal): DigitalSignal {
+		val result = if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot subtract non fully defined digital signal")
+		} else {
+			longValue!! - other.toLong()!!
+		}
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun multiply(other: UInt): DigitalSignal {
+		val result = if (longValue == null) {
+			throw IllegalArgumentException("cannot multiply non fully defined digital signal")
+		} else {
+			longValue!! * other
+		}
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun multiply(other: DigitalSignal): DigitalSignal {
+		val result = if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot multiply non fully defined digital signal")
+		} else {
+			longValue!! * other.toLong()!!
+		}
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun divide(other: UInt): DigitalSignal {
+		val result = if (longValue == null) {
+			throw IllegalArgumentException("cannot divide non fully defined digital signal")
+		} else {
+			longValue!! / other
+		}
+		return ofMinimalBitWidth(result)
+	}
+
+	override fun divide(other: DigitalSignal): DigitalSignal {
+		val result = if (longValue == null || other.toLong() == null) {
+			throw IllegalArgumentException("cannot divide non fully defined digital signal")
+		} else {
+			longValue!! / other.toLong()!!
+		}
+		return ofMinimalBitWidth(result)
 	}
 
 	override fun mod(other: DigitalSignal): DigitalSignal {

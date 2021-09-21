@@ -311,4 +311,11 @@ class WordTest {
 		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(1UL))
 		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(8UL))
 	}
+
+	@Test
+	fun shouldReturnWordOfMinimalBitWidth() {
+		assertEquals(Word.of(BW_1, 1UL), Word.ofMinimalBitWidth(1UL))
+		assertEquals(Word.of(BW_4, 13UL), Word.ofMinimalBitWidth(13UL))
+		assertEquals(Word.of(BW_12, 4095UL), Word.ofMinimalBitWidth(4095UL))
+	}
 }

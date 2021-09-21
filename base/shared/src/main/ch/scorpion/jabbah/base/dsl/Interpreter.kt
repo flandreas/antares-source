@@ -81,9 +81,9 @@ open class Interpreter(
 	private fun binaryOperation(node: BinaryOperation): Any {
 		return when (node.op.type) {
 			PLUS -> typedBinaryOp(node)
-			MINUS -> interpretAsLong(node.left) - interpretAsLong(node.right)
-			MULTIPLY -> interpretAsLong(node.left) * interpretAsLong(node.right)
-			DIVIDE -> interpretAsLong(node.left) / interpretAsLong(node.right)
+			MINUS -> typedBinaryOp(node)
+			MULTIPLY -> typedBinaryOp(node)
+			DIVIDE -> typedBinaryOp(node)
 			EQUAL -> typedBinaryOp(node)
 			DIFF -> typedBinaryOp(node)
 			AND -> typedBinaryOp(node)
@@ -102,6 +102,9 @@ open class Interpreter(
 	protected open fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
 			AND -> binaryOp(node) { l, r -> l.and(r) }
+			MINUS -> binaryOp(node) { l, r -> l - r }
+			MULTIPLY -> binaryOp(node) { l, r -> l * r }
+			DIVIDE -> binaryOp(node) { l, r -> l.div(r) }
 			OR -> binaryOp(node) { l, r -> l.or(r) }
 			SMALLER -> binaryOp(node) { l, r -> if (l < r) 1L else 0L }
 			SMALLER_EQUAL -> binaryOp(node) { l, r -> if (l <= r) 1L else 0L }

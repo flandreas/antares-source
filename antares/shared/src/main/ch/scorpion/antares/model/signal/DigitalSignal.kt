@@ -120,7 +120,16 @@ interface DigitalSignal {
 	 * Creates a new [DigitalSignal] with the sum of this [DigitalSignal] and [other] with this [DigitalSignal]'s [BitWidth].
 	 * Sums that don't fit in that [BitWidth] get truncated.
 	 */
-	fun add(value: UInt): DigitalSignal
+	fun add(other: UInt): DigitalSignal
+
+	fun subtract(other: DigitalSignal): DigitalSignal
+	fun subtract(other: UInt): DigitalSignal
+
+	fun multiply(other: DigitalSignal): DigitalSignal
+	fun multiply(other: UInt): DigitalSignal
+
+	fun divide(other: DigitalSignal): DigitalSignal
+	fun divide(other: UInt): DigitalSignal
 
 	/** Modulo operation. */
 	fun mod(other: DigitalSignal): DigitalSignal
