@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.module.BaseModule
 
 fun interface ParserFactory {
 
@@ -67,7 +68,7 @@ fun interface ParserFactory {
  */
 open class Parser(
 	protected val lexer: Lexer,
-	private val semanticAnalyser: SemanticAnalyser? = SemanticAnalyser()
+	private val semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
 ) {
 
 	constructor(program: String): this(Lexer(program))

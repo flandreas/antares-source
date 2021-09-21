@@ -4,11 +4,13 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ParserFactory
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.dsl.GraphDslParser
+import ch.scorpion.jabbah.graph.dsl.GraphDslSemanticAnalyser
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -55,6 +57,7 @@ object GraphModelModule : AbstractModule() {
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 
+		BaseModule.semanticAnalyserFactory = SemanticAnalyserFactory { st -> GraphDslSemanticAnalyser(st) }
 		BaseModule.parserFactory = ParserFactory { p, s -> GraphDslParser(BaseModule.lexerFactory(p), s) }
 		BaseModule.interpreterFactory = { n, m -> GraphDslInterpreter(n, m) }
 	}

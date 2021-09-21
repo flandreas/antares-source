@@ -212,7 +212,7 @@ open class GraphImpl(
 	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser {
 		var analyser = semanticAnalyser
 		if (analyser == null) {
-			analyser = SemanticAnalyser(createSymbolTable())
+			analyser = BaseModule.semanticAnalyserFactory.create(createSymbolTable())
 		}
 		return BaseModule.parserFactory.create(program, analyser)
 	}

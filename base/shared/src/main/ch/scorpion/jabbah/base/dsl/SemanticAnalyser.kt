@@ -1,33 +1,41 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.HierarchyVisitor
+
+fun interface SemanticAnalyserFactory {
+	fun create(symbolTable: ScopedSymbolTable?): SemanticAnalyser
+}
 
 /**
  * Performs semantic analysis on an Abstract Syntax Tree and produces
  * a [ScopedSymbolTable] as a side effect.
  *
- * Use it as [HierarchyVisitor] by [Node.accept(analyser)].
- *
  * @throws SemanticError for semantic errors found during analysis
  */
-class SemanticAnalyser(
-	symbolTable: ScopedSymbolTable = ScopedSymbolTable("global", level = 1, enclosingScope = null)
+open class SemanticAnalyser(
+	symbolTable: ScopedSymbolTable?
 ) {
 
 	// Visible for testing
-	var scope: ScopedSymbolTable = symbolTable
+	var scope: ScopedSymbolTable = symbolTable ?: ScopedSymbolTable("global", level = 1, enclosingScope = null)
 		private set
 
-	private val visitor = Visitor()
+	private val visitor = createVisitor()
 
+	/**
+	 * Analyses the Abstract Syntax Tree in [program].
+	 * @throws SemanticError in case of a semantic error
+	 */
 	fun analyse(program: Node) {
 		program.accept(visitor)
 	}
 
+	protected open fun createVisitor(): HierarchyVisitor = Visitor()
+
 	private var currentlyDeclaredVariableName: String? = null
 
-	inner class Visitor : EmptyHierarchyVisitor() {
+	protected open inner class Visitor : EmptyHierarchyVisitor() {
 
 		override fun visitEnter(node: Any): Boolean {
 			when (node) {

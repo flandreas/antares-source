@@ -22,6 +22,8 @@ object BaseModule : AbstractModule() {
 
 	var lexerFactory: (program: String) -> Lexer = { Lexer(it) }
 
+	var semanticAnalyserFactory: SemanticAnalyserFactory = SemanticAnalyserFactory { st -> SemanticAnalyser(st) }
+
 	var parserFactory: ParserFactory = ParserFactory { p, s -> Parser(lexerFactory(p), s) }
 
 	var storingActivationRecordFactory: ActivationRecordFactory = ActivationRecordFactory { n, p -> StoringActivationRecord(n, p) }

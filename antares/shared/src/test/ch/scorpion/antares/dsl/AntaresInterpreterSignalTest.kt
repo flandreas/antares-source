@@ -22,7 +22,7 @@ class AntaresInterpreterSignalTest {
 			b = a + 1
 		""".trimIndent()
 
-		val analyser = SemanticAnalyser()
+		val analyser = SemanticAnalyser(null)
 		analyser.scope.define(Symbol("a"))
 
 		val parser = AntaresParser(AntaresLexer(program), analyser)

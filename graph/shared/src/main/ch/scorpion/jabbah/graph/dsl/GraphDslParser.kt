@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Extends the grammar in [Parser] by the following productions.
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.base.dsl.*
  */
 open class GraphDslParser(
 	lexer: Lexer,
-	semanticAnalyser: SemanticAnalyser? = SemanticAnalyser()
+	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
 ) : Parser(lexer, semanticAnalyser) {
 
 	constructor(program: String): this(Lexer(program))

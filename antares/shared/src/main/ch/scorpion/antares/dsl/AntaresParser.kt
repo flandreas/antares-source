@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.dsl.Variable
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.dsl.GraphDslParser
 
 /**
@@ -24,7 +25,7 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslParser
  */
 class AntaresParser(
 	lexer: AntaresLexer,
-	semanticAnalyser: SemanticAnalyser? = SemanticAnalyser()
+	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
 ) : GraphDslParser(lexer, semanticAnalyser) {
 
 	constructor(text: String): this(AntaresLexer(text))
