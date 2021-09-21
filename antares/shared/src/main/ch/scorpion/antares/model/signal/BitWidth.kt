@@ -42,6 +42,9 @@ enum class BitWidth(
             }
             throw IllegalArgumentException("Unknown BitWidth '$customName'")
         }
+
+	    fun forValue(maxValue: ULong): BitWidth =
+		    values().firstOrNull { it.maxValue >= maxValue } ?: throw IllegalArgumentException("value too large")
     }
 
 	val maxValue: ULong = if (width == 64) {

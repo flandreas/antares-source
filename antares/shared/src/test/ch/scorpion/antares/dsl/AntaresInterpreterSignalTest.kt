@@ -73,50 +73,50 @@ class AntaresInterpreterSignalTest {
 
 	@Test
 	fun shouldAddSignals() {
-		assertEquals(of(BW_2, 3UL), operation("A + B", of(BW_4, 2UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 3UL), operation("A + B", of(BW_4, 2UL), of(BW_2, 1UL)))
 		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), of(BW_2, 1UL)))
 	}
 
 	@Test
 	fun shouldAddLongToSignal() {
-		assertEquals(of(BW_2, 3UL), operation("A + B", of(BW_4, 2UL), 1L))
+		assertEquals(of(BW_4, 3UL), operation("A + B", of(BW_4, 2UL), 1L))
 		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), 1L))
 	}
 
 	@Test
 	fun shouldSubtractSignals() {
-		assertEquals(of(BW_2, 2UL), operation("A - B", of(BW_4, 3UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 2UL), operation("A - B", of(BW_4, 3UL), of(BW_2, 1UL)))
 		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), of(BW_2, 1UL)))
 	}
 
 	@Test
 	fun shouldSubtractLongFromSignal() {
-		assertEquals(of(BW_2, 2UL), operation("A - B", of(BW_4, 3UL), 1L))
+		assertEquals(of(BW_4, 2UL), operation("A - B", of(BW_4, 3UL), 1L))
 		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), 1L))
 	}
 
 	@Test
 	fun shouldMultiplySignals() {
 		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), of(BW_2, 2UL)))
-		assertEquals(of(BW_8, 28UL), operation("A * B", of(BW_4, 14UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_4, 28UL), operation("A * B", of(BW_4, 14UL), of(BW_2, 2UL)))
 	}
 
 	@Test
 	fun shouldMultiplyLongWithSignal() {
 		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), 2L))
-		assertEquals(of(BW_8, 28UL), operation("A * B", of(BW_4, 14UL), 2L))
+		assertEquals(of(BW_4, 28UL), operation("A * B", of(BW_4, 14UL), 2L))
 	}
 
 	@Test
 	fun shouldDivideSignals() {
-		assertEquals(of(BW_2, 3UL), operation("A / B", of(BW_4, 6UL), of(BW_2, 2UL)))
-		assertEquals(of(BW_4, 6UL), operation("A / B", of(BW_8, 24UL), of(BW_4, 4UL)))
+		assertEquals(of(BW_4, 3UL), operation("A / B", of(BW_4, 6UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_8, 6UL), operation("A / B", of(BW_8, 24UL), of(BW_4, 4UL)))
 	}
 
 	@Test
 	fun shouldDivideSignalByLong() {
-		assertEquals(of(BW_2, 3UL), operation("A / B", of(BW_4, 6UL), 2L))
-		assertEquals(of(BW_4, 6UL), operation("A / B", of(BW_8, 24UL), 4L))
+		assertEquals(of(BW_4, 3UL), operation("A / B", of(BW_4, 6UL), 2L))
+		assertEquals(of(BW_8, 6UL), operation("A / B", of(BW_8, 24UL), 4L))
 	}
 
 	private fun operation(statement: String, a: DigitalSignal, b: DigitalSignal): DigitalSignal {
@@ -162,6 +162,21 @@ class AntaresInterpreterSignalTest {
 		assertEquals(1L, interpreter.interpret())
 
 		memory.preset("A", of(BW_4, 5UL))
+		assertEquals(0L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldWordsOfDifferentWidthBeEqual() {
+		val parser = AntaresParser(AntaresLexer("A == B"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_4, 3UL))
+		memory.preset("B", of(BW_2, 3UL))
+		assertEquals(1L, interpreter.interpret())
+
+		memory.preset("A", of(BW_4, 5UL))
+		memory.preset("B", of(BW_2, 2UL))
 		assertEquals(0L, interpreter.interpret())
 	}
 
@@ -394,6 +409,17 @@ class AntaresInterpreterSignalTest {
 		memory.preset("A", of(BW_4, 15UL))
 		memory.preset("i", of(BW_4, 1UL))
 		assertEquals(of(BW_1, 1UL), interpreter.interpret())
+	}
+
+	@Test
+	fun shouldGetBitAsZeroBeyondBitWidth() {
+		val parser = AntaresParser(AntaresLexer("A@7"), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_4, 15UL))
+		assertEquals(of(BW_1, 0UL), interpreter.interpret())
 	}
 
 	@Test

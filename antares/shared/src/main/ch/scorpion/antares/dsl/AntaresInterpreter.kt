@@ -38,7 +38,7 @@ class AntaresInterpreter(
 			left,
 			right,
 			{ l, r -> if (l == r) 1L else 0L},
-			{ l, r -> if (l == r) 1L else 0L },
+			{ l, r -> if (l.toLong() == r.toLong()) 1L else 0L },
 			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L },
 			{ l, r -> if (l == r.getValue().toLong()) 1L else 0L })
 		as Long
@@ -71,9 +71,10 @@ class AntaresInterpreter(
 		return when (value) {
 			is DigitalSignal -> {
 				if (index >= value.bitWidth.width) {
-					throw RuntimeError(bitAccess.location, "Index 'index' out of range")
+					DigitalSignalFactory.of(Bit.False)
+				} else {
+					DigitalSignalFactory.of(value.bitAt(index))
 				}
-				DigitalSignalFactory.of(value.bitAt(index))
 			}
 			is Long -> value.shr(index).mod(2).toLong()
 			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")

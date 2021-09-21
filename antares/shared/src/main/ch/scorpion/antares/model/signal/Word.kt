@@ -364,7 +364,7 @@ internal data class Word(
 		} else {
 			longValue!! + other.toLong()!!
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth.max(other.bitWidth), result)
 	}
 
 	override fun add(other: UInt): DigitalSignal {
@@ -373,7 +373,7 @@ internal data class Word(
 		} else {
 			longValue!! + other
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun subtract(other: UInt): DigitalSignal {
@@ -382,7 +382,7 @@ internal data class Word(
 		} else {
 			longValue!! - other
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun subtract(other: DigitalSignal): DigitalSignal {
@@ -391,7 +391,7 @@ internal data class Word(
 		} else {
 			longValue!! - other.toLong()!!
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun multiply(other: UInt): DigitalSignal {
@@ -400,7 +400,7 @@ internal data class Word(
 		} else {
 			longValue!! * other
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun multiply(other: DigitalSignal): DigitalSignal {
@@ -409,7 +409,7 @@ internal data class Word(
 		} else {
 			longValue!! * other.toLong()!!
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth.max(other.bitWidth), result)
 	}
 
 	override fun divide(other: UInt): DigitalSignal {
@@ -418,7 +418,7 @@ internal data class Word(
 		} else {
 			longValue!! / other
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun divide(other: DigitalSignal): DigitalSignal {
@@ -427,7 +427,7 @@ internal data class Word(
 		} else {
 			longValue!! / other.toLong()!!
 		}
-		return ofMinimalBitWidth(result)
+		return of(bitWidth, result)
 	}
 
 	override fun mod(other: DigitalSignal): DigitalSignal {
