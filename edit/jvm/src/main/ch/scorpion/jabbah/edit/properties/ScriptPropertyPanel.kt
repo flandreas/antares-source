@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.*
 import javax.swing.*
@@ -47,7 +48,7 @@ class ScriptPropertyPanel(
 		}
 	}
 
-	private val scriptTextField = JTextArea(script)
+	private val scriptTextArea = LineNumberTextArea(editable, script, FONT)
 	private val messageTextField = JLabel("", SwingConstants.LEADING)
 
 	private var textToReturn: String? = null
@@ -60,13 +61,6 @@ class ScriptPropertyPanel(
 	private val closeButton = createButton(closeAction)
 
 	init {
-		scriptTextField.wrapStyleWord = true
-		scriptTextField.lineWrap = true
-		scriptTextField.wrapStyleWord = true
-		scriptTextField.isEditable = editable
-		scriptTextField.font = FONT
-		scriptTextField.tabSize = 4
-
 		messageTextField.background = Color.yellow
 
 		buildUI(editable)
@@ -79,13 +73,9 @@ class ScriptPropertyPanel(
 		val textsPanel = JPanel()
 		textsPanel.layout = BoxLayout(textsPanel, BoxLayout.PAGE_AXIS)
 
-		val scriptScrollPane = JScrollPane()
-		scriptScrollPane.setViewportView(scriptTextField)
-		scriptScrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-		scriptScrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-		scriptScrollPane.preferredSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
-		scriptScrollPane.alignmentX = Component.LEFT_ALIGNMENT
-		textsPanel.add(scriptScrollPane)
+		scriptTextArea.alignmentX = Component.LEFT_ALIGNMENT
+		textsPanel.add(scriptTextArea)
+
 		textsPanel.add(Box.createVerticalStrut(8))
 
 		messageTextField.alignmentX = Component.LEFT_ALIGNMENT
@@ -123,13 +113,13 @@ class ScriptPropertyPanel(
 	private fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
 
 	private fun highlightError(error: DslError) {
-		scriptTextField.requestFocus()
-		scriptTextField.select(error.location.pos, error.location.pos + 1)
+		scriptTextArea.mainTextArea.requestFocus()
+		scriptTextArea.mainTextArea. select(error.location.pos, error.location.pos + 1)
 	}
 
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-			textToReturn = scriptTextField.text
+			textToReturn = scriptTextArea.text
 			closeHandler()
 		}
 	}
@@ -151,7 +141,8 @@ class ScriptPropertyPanel(
 	private inner class CheckAction : AbstractAction("edit.dsl.check.action") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			try {
-				parserFactory.create(scriptTextField.text, null).parse()
+				parserFactory.create(scriptTextArea.text, null).parse()
+
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
 				messageTextField.icon = null
 			} catch (e: DslError) {
