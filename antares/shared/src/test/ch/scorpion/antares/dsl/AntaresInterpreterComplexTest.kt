@@ -1,29 +1,14 @@
 package ch.scorpion.antares.dsl
 
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.dsl.*
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.InputPort
-import io.mockk.every
-import io.mockk.mockk
+import ch.scorpion.jabbah.base.dsl.Memory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class AntaresInterpreterComplexTest {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val context = BaseModule.storingActivationRecordFactory.create("context", null)
+class AntaresInterpreterComplexTest : AbstractAntaresInterpreterPortTest() {
 
 	/** See "Register File" circuit in Tanenbaum example project.*/
 	@Test
@@ -88,8 +73,6 @@ class AntaresInterpreterComplexTest {
 		assertEquals(Word.of(BitWidth.BW_16, 17UL), memory.getValue(variable("A")))
 	}
 
-	private fun variable(name: String): Variable = Variable(CodeLocation(0, 0, 0), Token(TokenType.ID, name))
-
 	private fun setC(value: ULong, interpreter: AntaresInterpreter) {
 		setInput("C", Word.of(BitWidth.BW_16, value), interpreter)
 	}
@@ -112,17 +95,5 @@ class AntaresInterpreterComplexTest {
 
 	private fun setFC(value: ULong, interpreter: AntaresInterpreter) {
 		setInput("FC", Word.of(BitWidth.BW_4, value), interpreter)
-	}
-
-	private fun setInput(name: String, signal: DigitalSignal, interpreter: AntaresInterpreter) {
-		val port = mockk<InputPort<DigitalSignal>>()
-		every { port.name } returns name
-		every { port.portId } returns 1
-		val data = mockk<GraphActorData>()
-		every { data.changedPort } returns port
-		every { data.getSignal<DigitalSignal>(any()) } returns signal
-
-		context.setValue(variable(name), signal)
-		interpreter.interpret(data)
 	}
 }

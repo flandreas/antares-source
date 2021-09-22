@@ -1,5 +1,6 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -277,7 +278,7 @@ class AntaresInterpreter(
 		val portName = node.variable.token.value as String
 		return data?.let {
 			if (it.changedPort?.name == portName
-				&& it.getSignal<DigitalSignal>(it.changedPort!!.portId)?.bitAt(0)?.isSet == true
+				&& (it.changedPort as DigitalPort).logic.evaluate(it.getSignal<DigitalSignal>(it.changedPort!!.portId)!!.bitAt(0)).isSet
 			) 1L else 0L
 		} ?: 0L
 	}
