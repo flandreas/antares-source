@@ -296,7 +296,7 @@ class ContainerTreeTest {
 		}
 
 		fun addGraphInputPortViewToGraphView(name: String = "I1"): Setup {
-			graphViewBuilder.addVerticeView(TestGraphPortView.input(name))
+			graphViewBuilder.addVerticeView(TestGraphPortView.input<Boolean>(name))
 			return this
 		}
 

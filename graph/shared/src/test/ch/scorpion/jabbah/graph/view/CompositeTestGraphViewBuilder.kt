@@ -52,14 +52,14 @@ class CompositeTestGraphViewBuilder(
 	fun buildMetaGraph(graphView: GraphView, containerLabel: String? = null): MetaGraph =
 		MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView, containerLabel))
 
-	private fun addInput(name: String = "I"): TestGraphPortView {
-		val input = TestGraphPortView.input(name)
+	private fun addInput(name: String = "I"): TestGraphPortView<Boolean> {
+		val input = TestGraphPortView.input<Boolean>(name)
 		graphView.add(input)
 		return input
 	}
 
-	private fun addOutput(name: String = "O"): TestGraphPortView {
-		val output = TestGraphPortView.output(name)
+	private fun addOutput(name: String = "O"): TestGraphPortView<Boolean> {
+		val output = TestGraphPortView.output<Boolean>(name)
 		graphView.add(output)
 		return output
 	}

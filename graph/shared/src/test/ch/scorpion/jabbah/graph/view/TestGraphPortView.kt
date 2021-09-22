@@ -14,15 +14,15 @@ import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 /** An implementation of the [GraphPortView] interface used for testing.*/
-class TestGraphPortView(
+class TestGraphPortView<T : Any>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: GraphPort<Boolean> = GraphInputImpl()
-) : AbstractVerticeView<GraphPort<Boolean>>(styleProvider, model), GraphPortView<GraphPort<Boolean>> {
+	model: GraphPort<T> = GraphInputImpl()
+) : AbstractVerticeView<GraphPort<T>>(styleProvider, model), GraphPortView<GraphPort<T>> {
 
 	companion object {
 
-		fun input(name: String): TestGraphPortView = TestGraphPortView(model = GraphInputImpl(PortImpl.createOutput(name = name), name = name))
-		fun output(name: String): TestGraphPortView = TestGraphPortView(model = GraphOutputImpl(PortImpl.createInput(name = name), name = name))
+		fun <T : Any> input(name: String): TestGraphPortView<T> = TestGraphPortView(model = GraphInputImpl(PortImpl.createOutput(name = name), name = name))
+		fun <T : Any> output(name: String): TestGraphPortView<T> = TestGraphPortView(model = GraphOutputImpl(PortImpl.createInput(name = name), name = name))
 	}
 
 	init {
