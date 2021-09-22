@@ -8,10 +8,8 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.Font
-import java.awt.Frame
+import ch.scorpion.jabbah.base.swing.UiUtil
+import java.awt.*
 import javax.swing.*
 
 class ScriptPropertyPanel(
@@ -23,6 +21,8 @@ class ScriptPropertyPanel(
 
 	companion object {
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
+
+		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 
 		/**
 		 * Allows the user to edit a script in a popup dialog.
@@ -48,7 +48,7 @@ class ScriptPropertyPanel(
 	}
 
 	private val scriptTextField = JTextArea(script)
-	private val messageTextField = JTextArea()
+	private val messageTextField = JLabel("", SwingConstants.LEADING)
 
 	private var textToReturn: String? = null
 
@@ -67,7 +67,7 @@ class ScriptPropertyPanel(
 		scriptTextField.font = FONT
 		scriptTextField.tabSize = 4
 
-		messageTextField.isEditable = false
+		messageTextField.background = Color.yellow
 
 		buildUI(editable)
 	}
@@ -84,10 +84,12 @@ class ScriptPropertyPanel(
 		scriptScrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
 		scriptScrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 		scriptScrollPane.preferredSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
+		scriptScrollPane.alignmentX = Component.LEFT_ALIGNMENT
 		textsPanel.add(scriptScrollPane)
-		textsPanel.add(Box.createVerticalStrut(5))
+		textsPanel.add(Box.createVerticalStrut(8))
 
-		messageTextField.rows = 2
+		messageTextField.alignmentX = Component.LEFT_ALIGNMENT
+		messageTextField.border = null
 		textsPanel.add(messageTextField)
 
 		add(textsPanel, BorderLayout.CENTER)
@@ -110,7 +112,6 @@ class ScriptPropertyPanel(
 		panel.add(createButton(cancelAction))
 		panel.add(Box.createHorizontalStrut(2))
 		panel.add(okButton)
-
 	}
 
 	private fun buildNonEditableButtonPanel(panel: JPanel) {
@@ -152,8 +153,10 @@ class ScriptPropertyPanel(
 			try {
 				parserFactory.create(scriptTextField.text, null).parse()
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
+				messageTextField.icon = null
 			} catch (e: DslError) {
 				messageTextField.text = e.message
+				messageTextField.icon = ERROR_ICON
 				highlightError(e)
 			}
 		}
