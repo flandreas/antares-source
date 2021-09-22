@@ -25,8 +25,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -38,8 +36,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class SubGraphVerticeRef(
 	graphUUID: UUID? = null,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
+	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
 
 	companion object {
@@ -57,10 +54,9 @@ class SubGraphVerticeRef(
 		/** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
 		fun fromSubGraphVertice(
 			subGraphVertice: SubGraphVertice,
-			repository: MetaGraphRepository,
-			scriptGateway: ScriptGateway
+			repository: MetaGraphRepository
 		): SubGraphVerticeRef {
-			val verticeRef = SubGraphVerticeRef(null, repository, scriptGateway)
+			val verticeRef = SubGraphVerticeRef(null, repository)
 			verticeRef.fillFrom(subGraphVertice)
 			return verticeRef
 		}
@@ -171,10 +167,12 @@ class SubGraphVerticeRef(
 	 * allows scripts to access input and output values as variables.
 	 */
 	private fun createInterpreter(signalHandler: SignalHandler) {
-		if (graph != null && graph!!.scriptAST != null) {
-			interpreter = BaseModule.interpreterFactory(
-				graph!!.scriptAST!!,
-				Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(this, signalHandler)))
+		repository.getContainerLibraryElement(graphUUID!!).let { cle ->
+			cle?.executionScriptAST?.let { ast ->
+				interpreter = BaseModule.interpreterFactory(
+					ast,
+					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(this, signalHandler)))
+			}
 		}
 	}
 

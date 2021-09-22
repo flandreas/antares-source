@@ -28,8 +28,6 @@ import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -44,7 +42,6 @@ class ContainerDrawing(
 	name: String = Translations.getString("graph.name.unknown"),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>(), Bean {
@@ -172,7 +169,7 @@ class ContainerDrawing(
 	}
 
 	fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
-		val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository, scriptGateway)
+		val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository)
 		val view = SubGraphVerticeViewImpl(model, styleProvider, storableCreator, repository, eventBus)
 		fillSubGraphVerticeView(view)
 		return view

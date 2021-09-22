@@ -48,9 +48,6 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	 */
 	val libraryService: LibraryService
 
-	/** Returns the [ContainerLibraryElement] with the specified [UUID].*/
-	fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement?
-
     /** Replaces the contents of this [Library] with the content of the specified [LibraryFolder].*/
     fun replaceContentsWith(libraryFolder: LibraryFolder)
 

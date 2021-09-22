@@ -250,7 +250,6 @@ object GraphViewModule : AbstractModule() {
 			name,
 			IOModule.storableCreator,
 			BaseModule.eventBus,
-			ScriptModule.scriptGateway,
 			GraphModelModule.metaGraphRepository,
 			DrawStyleModule.styleProvider)
 	}

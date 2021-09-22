@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
@@ -20,6 +21,9 @@ import ch.scorpion.jabbah.io.StorableCreator
  * [MetaGraph] that is referenced by the [SubGraphVertice].
  */
 interface MetaGraphRepository {
+
+	/** Returns the [ContainerLibraryElement] for the [MetaGraph] with the specified [uuid].*/
+	fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement?
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
 	fun getMetaGraph(uuid: UUID): MetaGraph
@@ -47,6 +51,11 @@ interface MetaGraphRepository {
 class CombinedMetaGraphRepository(
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) : MetaGraphRepository {
+
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
+		return LibraryModule.libraryHolder.library.getContainerLibraryElement(uuid)
+			?: ProjectModule.projectHolder.project!!.getContainerLibraryElement(uuid)
+	}
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
 	override fun getMetaGraph(uuid: UUID): MetaGraph =

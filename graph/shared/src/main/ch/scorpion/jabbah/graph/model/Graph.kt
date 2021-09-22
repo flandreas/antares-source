@@ -41,9 +41,6 @@ interface Graph : Namable, Describable, Storable {
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
 
-    /** Returns the abstract syntax tree for the program in [script].*/
-    val scriptAST: Node?
-
     /** If 'true', [script] is always used for execution, even if execution mode is deep.*/
     var purelyScripted: Boolean
 
