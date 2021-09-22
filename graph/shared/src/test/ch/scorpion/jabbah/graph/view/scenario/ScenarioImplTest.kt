@@ -1,10 +1,19 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.graph.model.GraphInput
+import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import ch.scorpion.jabbah.graph.view.TestGraphPortView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import io.mockk.mockk
+import kotlin.test.*
 
 /** Unit tests for [ScenarioImpl]. */
 class ScenarioImplTest {
@@ -87,4 +96,41 @@ class ScenarioImplTest {
 		assertEquals(1, scenario.indexOf(step3))
 		assertEquals(2, scenario.indexOf(step2))
 	}
+
+	@Test
+	fun shouldEvaluateConditionScriptToTrue() {
+		val signalHandler = mockk<SignalHandler>()
+
+		val graphView = GraphViewImpl()
+		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
+		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "I"))
+		graphView.add(graphPortView)
+		(graphPortView.model as GraphInput).setIncomingSignal(42L, signalHandler)
+
+		val scenario = ScenarioImpl()
+		scenario.conditionProperty = ScriptProperty("I == 42")
+
+		val result = scenario.condition(drawingView as DrawingView<GraphView>, mockk())
+
+		assertTrue(result)
+	}
+
+	@Test
+	fun shouldEvaluateConditionScriptToFalse() {
+		val signalHandler = mockk<SignalHandler>()
+
+		val graphView = GraphViewImpl()
+		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
+		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "I"))
+		graphView.add(graphPortView)
+		(graphPortView.model as GraphInput).setIncomingSignal(99L, signalHandler)
+
+		val scenario = ScenarioImpl()
+		scenario.conditionProperty = ScriptProperty("I == 42")
+
+		val result = scenario.condition(drawingView as DrawingView<GraphView>, mockk())
+
+		assertFalse(result)
+	}
+
 }

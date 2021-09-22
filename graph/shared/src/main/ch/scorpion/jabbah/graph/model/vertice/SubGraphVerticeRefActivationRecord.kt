@@ -2,18 +2,17 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.GraphInput
-import ch.scorpion.jabbah.graph.model.GraphOutput
-
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
 
 fun interface SubGraphVerticeRefActivationRecordFactory {
 	fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord
 }
 /**
- * An [ActivationRecord] implements that allows a DSL script to access
- * a [SubGraphVerticeRef]'s [GraphPort]'s values as global context variables
- * for reading ([GraphInput]) and writing [GraphOutput].
+ * An [ActivationRecord] implementation that allows a DSL script to access
+ * a [SubGraphVerticeRef]'s [Port]'s values as global context variables
+ * for reading ([InputPort]) and writing ([OutputPort]).
  */
 open class SubGraphVerticeRefActivationRecord(
 	protected val verticeRef: SubGraphVerticeRef,

@@ -60,7 +60,7 @@ class ContainerLibraryElement(
 			// TODO I18N
 			try {
 				LOG.trace("Parsing script of '${metaGraph!!.name}'")
-				metaGraph!!.graph!!.model!!.createParser(it, null).parse()
+				metaGraph!!.graph.model!!.createParser(it, null).parse()
 			} catch (e: DslError) {
 				eventBus.post(IssueImpl(
 					severity = IssueSeverity.Error,

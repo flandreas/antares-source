@@ -1,14 +1,20 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
-import ch.scorpion.jabbah.graph.script.Script
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
@@ -23,6 +29,10 @@ class ScenarioImpl(
 	private var conditionScript: String = ""
 ) : Scenario, Namable, Describable, Bean {
 
+	companion object {
+		private val LOG by logger(ScenarioImpl::class)
+	}
+
 	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf() }
 
 	private var isLoading: Boolean = false
@@ -32,7 +42,23 @@ class ScenarioImpl(
 		get() = ScriptProperty(conditionScript)
 		set(value) {
 			conditionScript = value.script!!
+			conditionScriptASTCache.reset()
 		}
+
+	private val conditionScriptASTCache = resettableLazy {
+		try {
+			LOG.trace("Parsing condition script of '${name.value}'")
+			BaseModule.parserFactory.create(conditionScript, null).parse()
+		} catch (e: DslError) {
+			BaseModule.eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = "Parse Error",
+				description = e.message,
+				origin = name.value,
+				context = "Scenario Condition"))
+			null
+		}
+	}
 
 	/** ---- [Any] */
 
@@ -55,17 +81,15 @@ class ScenarioImpl(
 		steps.clear()
 	}
 
-	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
-		get() = { view, sg ->
-			sg.condition(
-				Script(
-					code = conditionScript,
-					origin = "${Translations.getString("scenario.issueOrigin.name")} '$name'",
-					context = Translations.getString("graph.property.scenario.condition.name")
-				),
-				view
+	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean get() = { view, _ ->
+		conditionScriptASTCache.value?.let { ast ->
+			val interpreter = BaseModule.interpreterFactory(
+				ast,
+				Memory(GraphActivationRecord(view.drawing.graph!!))
 			)
-		}
+			interpreter.interpret(view.drawing.graph!!) != 0L
+		} ?: false
+	}
 
 	override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
 

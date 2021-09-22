@@ -10,14 +10,13 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
- * @property graph the [Graph] whose [GraphElements][GraphElement] are accessed as property,
- * or `null` if this [GraphDslInterpreter] doesn't run in the context of a [Graph]
+ * Expects the [Graph] to be provided as "params in [interpret] whose [GraphElements][GraphElement]
+ * are accessed as property, or `null` if this [GraphDslInterpreter] doesn't run in the context of a [Graph]
  * (for example when executing a [SubGraphVerticeRef]'s execution script).
  */
 open class GraphDslInterpreter(
 	node: Node,
-	memory: Memory = Memory(),
-	private val graph: Graph? = null
+	memory: Memory = Memory()
 ) : Interpreter(node, memory) {
 
 	constructor(parser: GraphDslParser): this(parser.parse())
@@ -48,10 +47,10 @@ open class GraphDslInterpreter(
 			throw RuntimeError(node.id.location, "Expected number")
 		}
 		val name = node.name.token.value!!
-		if (graph == null) {
+		if (params == null || params !is Graph) {
 			throw RuntimeError(node.location, "No graph elements available")
 		}
-		val graphElement = graph.getGraphPort<Any>(name)
+		val graphElement = (params as Graph).getGraphPort<Any>(name)
 			?: throw RuntimeError(node.name.location, "Graph element '$name' not found")
 
 		if (graphElement.signal == null) {

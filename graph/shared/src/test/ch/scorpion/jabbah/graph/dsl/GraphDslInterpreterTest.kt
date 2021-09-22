@@ -38,9 +38,8 @@ class GraphDslInterpreterTest {
 		input.setIncomingSignal(42L, signalHandler)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(Lexer("#1.I"), null).parse(),
-			graph = graph
-		).interpret()
+			node = GraphDslParser(Lexer("#1.I"), null).parse()
+		).interpret(graph)
 
 		assertEquals(42L, result)
 	}
@@ -53,9 +52,8 @@ class GraphDslInterpreterTest {
 		output.setOutgoingSignal(17L, signalHandler)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(Lexer("#1.O"), null).parse(),
-			graph = graph
-		).interpret()
+			node = GraphDslParser(Lexer("#1.O"), null).parse()
+		).interpret(graph)
 
 		assertEquals(17L, result)
 	}
@@ -68,9 +66,8 @@ class GraphDslInterpreterTest {
 		input.setIncomingSignal(42L, signalHandler)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(Lexer("#1.'I + Bla'"), null).parse(),
-			graph = graph
-		).interpret()
+			node = GraphDslParser(Lexer("#1.'I + Bla'"), null).parse()
+		).interpret(graph)
 
 		assertEquals(42L, result)
 	}
