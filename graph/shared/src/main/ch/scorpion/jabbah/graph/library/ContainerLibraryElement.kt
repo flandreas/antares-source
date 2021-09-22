@@ -58,10 +58,9 @@ class ContainerLibraryElement(
 	private val executionScriptASTCache = resettableLazy {
 		metaGraph?.graph?.model?.script?.let {
 			// TODO I18N
-			// TODO Incorporate semantic analysis
 			try {
 				LOG.trace("Parsing script of '${metaGraph!!.name}'")
-				BaseModule.parserFactory.create(it, null).parse()
+				metaGraph!!.graph!!.model!!.createParser(it, null).parse()
 			} catch (e: DslError) {
 				eventBus.post(IssueImpl(
 					severity = IssueSeverity.Error,

@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.event.EventBus
