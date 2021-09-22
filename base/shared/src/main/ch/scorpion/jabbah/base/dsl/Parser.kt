@@ -58,7 +58,7 @@ fun interface ParserFactory {
  *     literal : number
  *     number : LONG
  *     variable : identifier | assocArray
- *     assocArray : scalarVariable "[" expr "]"
+ *     assocArray : identifier "[" expr "]"
  *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
  * </pre>
  *
@@ -353,7 +353,7 @@ open class Parser(
 		}
 	}
 
-	protected open fun literal(): Node {
+	protected open fun literal(): Literal {
 		lexer.location.let { location ->
 			val literal = Literal(location, currentToken!!)
 			eat(LITERAL)

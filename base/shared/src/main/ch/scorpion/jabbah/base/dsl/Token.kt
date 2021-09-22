@@ -42,7 +42,9 @@ enum class TokenType(val id: String) {
 	// TokenTypes needed by higher level modules
 	CARET("^"),
 	INIT("init"),
-	AT("@")
+	AT("@"),
+	HASH("#"),
+	DOT(".")
 }
 
 /**

@@ -17,4 +17,15 @@ class GraphDslParserTest {
 
 		// SyntaxTreePrinter from base module not yet available in other modules
 	}
+
+	@Test
+	fun shouldParseProperty() {
+		val parser = GraphDslParser(Lexer("""
+			#1.OUT
+		""".trimIndent()), null)
+
+		parser.parse()
+
+		// SyntaxTreePrinter from base module not yet available in other modules
+	}
 }

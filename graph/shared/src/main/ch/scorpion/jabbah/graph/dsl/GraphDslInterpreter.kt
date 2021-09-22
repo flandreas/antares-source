@@ -4,10 +4,20 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.RuntimeError
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
+/**
+ * @property graph the [Graph] whose [GraphElements][GraphElement] are accessed as property,
+ * or `null` if this [GraphDslInterpreter] doesn't run in the context of a [Graph]
+ * (for example when executing a [SubGraphVerticeRef]'s execution script).
+ */
 open class GraphDslInterpreter(
 	node: Node,
-	memory: Memory = Memory()
+	memory: Memory = Memory(),
+	private val graph: Graph? = null
 ) : Interpreter(node, memory) {
 
 	constructor(parser: GraphDslParser): this(parser.parse())
@@ -26,10 +36,29 @@ open class GraphDslInterpreter(
 		when (node) {
 			// Skip InitStatement on acting
 			is InitStatement -> { }
+			is Property -> property(node)
 			else -> super.interpret(node)
 		}
 
 	private fun init(node: InitStatement): Any = interpret(node.block)
+
+	private fun property(node: Property): Any {
+		val id = interpret(node.id)
+		if (id !is Long) {
+			throw RuntimeError(node.id.location, "Expected number")
+		}
+		val name = node.name.token.value!!
+		if (graph == null) {
+			throw RuntimeError(node.location, "No graph elements available")
+		}
+		val graphElement = graph.getGraphPort<Any>(name)
+			?: throw RuntimeError(node.name.location, "Graph element '$name' not found")
+
+		if (graphElement.signal == null) {
+			throw RuntimeError(node.location, "No signal at graph element '$name'")
+		}
+		return graphElement.signal!!
+	}
 
 	private class InitStatementFinder : EmptyHierarchyVisitor() {
 		private var initStatement: InitStatement? = null
