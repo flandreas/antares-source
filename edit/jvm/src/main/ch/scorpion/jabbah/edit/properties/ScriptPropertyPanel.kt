@@ -24,6 +24,7 @@ class ScriptPropertyPanel(
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
+		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
 
 		/**
 		 * Allows the user to edit a script in a popup dialog.
@@ -144,7 +145,7 @@ class ScriptPropertyPanel(
 				parserFactory.create(scriptTextArea.text, null).parse()
 
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
-				messageTextField.icon = null
+				messageTextField.icon = CORRECT_ICON
 			} catch (e: DslError) {
 				messageTextField.text = e.message
 				messageTextField.icon = ERROR_ICON
