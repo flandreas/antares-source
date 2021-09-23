@@ -47,7 +47,8 @@ class SubGraphVerticeRefActivationRecordTest {
 		every { output.setOutgoingSignalBuffered(capture(outputSlot), any()) } returns Unit
 
 		val vv = mockk<SubGraphVerticeRef>()
-		every { vv.hasPort(any()) } returns true
+		every { vv.hasPort(any<String>()) } returns true
+		every { vv.hasPort(any<Int>()) } returns true
 		every { vv.hasInput(any()) } returns true
 		every { vv.hasOutput(any()) } returns true
 		every { vv.getInput<Long>(any<String>()) } returns input

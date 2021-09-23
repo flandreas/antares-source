@@ -83,6 +83,8 @@ interface Vertice : GraphElement, Describable {
      */
     fun <T: Any> getPort(id: Int): Port<T>
 
+    fun hasPort(id: Int): Boolean
+
     fun hasInput(name: String?): Boolean
 
     /**

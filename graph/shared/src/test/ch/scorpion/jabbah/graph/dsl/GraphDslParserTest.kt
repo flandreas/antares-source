@@ -19,9 +19,20 @@ class GraphDslParserTest {
 	}
 
 	@Test
-	fun shouldParseProperty() {
+	fun shouldParsePropertyWithPortName() {
 		val parser = GraphDslParser(Lexer("""
 			#1.OUT
+		""".trimIndent()), null)
+
+		parser.parse()
+
+		// SyntaxTreePrinter from base module not yet available in other modules
+	}
+
+	@Test
+	fun shouldParsePropertyWithPortId() {
+		val parser = GraphDslParser(Lexer("""
+			#1.1
 		""".trimIndent()), null)
 
 		parser.parse()

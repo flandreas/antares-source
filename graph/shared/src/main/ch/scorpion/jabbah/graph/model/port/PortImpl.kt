@@ -205,6 +205,19 @@ open class PortImpl<T : Any>(
 		}
 	}
 
+	/** ---- [BidirectionalPort] */
+
+	override var isOutputDominant: Boolean = true
+
+	override val dominantSignal: T
+		get() {
+			return if (isOutputDominant) {
+				getOutgoingSignal()!!
+			} else {
+				getIncomingSignal()!!
+			}
+		}
+
 	/** ---- [PortImpl] */
 
 	/**

@@ -5,8 +5,7 @@ import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.RuntimeError
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
@@ -35,28 +34,71 @@ open class GraphDslInterpreter(
 		when (node) {
 			// Skip InitStatement on acting
 			is InitStatement -> { }
-			is Property -> property(node)
+			is PropertyPortName -> propertyPortName(node)
+			is PropertyPortId -> propertyPortId(node)
 			else -> super.interpret(node)
 		}
 
 	private fun init(node: InitStatement): Any = interpret(node.block)
 
-	private fun property(node: Property): Any {
-		val id = interpret(node.id)
-		if (id !is Long) {
-			throw RuntimeError(node.id.location, "Expected number")
+	private fun propertyPortName(node: PropertyPortName): Any {
+		val elemId = interpret(node.elemId)
+		if (elemId !is Long) {
+			throw RuntimeError(node.elemId.location, "Expected number")
 		}
-		val name = node.name.token.value!!
+		val portName = node.portName.token.value!!
 		if (params == null || params !is Graph) {
-			throw RuntimeError(node.location, "No graph elements available")
+			throw RuntimeError(node.location, "No elements available")
 		}
-		val graphElement = (params as Graph).getGraphPort<Any>(name)
-			?: throw RuntimeError(node.name.location, "Graph element '$name' not found")
+		val graphElement = (params as Graph).withId(elemId.toInt())
+			?: throw RuntimeError(node.elemId.location, "Element with ID $elemId not found")
 
-		if (graphElement.signal == null) {
-			throw RuntimeError(node.location, "No signal at graph element '$name'")
+		if (graphElement !is Vertice) {
+			throw RuntimeError(node.elemId.location, "Element has no ports")
 		}
-		return graphElement.signal!!
+
+		if (!graphElement.hasPort(portName)) {
+			throw RuntimeError(node.portName.location, "Port '$portName' not found")
+		}
+		val port = graphElement.getPort<Any>(portName)
+		val signal = when (port.portType) {
+			PortType.INPUT -> (port as InputPort).getIncomingSignal()
+			PortType.OUTPUT -> (port as OutputPort).getOutgoingSignal()
+			PortType.INOUT -> (port as BidirectionalPort).dominantSignal
+		}
+
+		return signal ?: RuntimeError(node.location, "No signal at port '$portName'")
+	}
+
+	private fun propertyPortId(node: PropertyPortId): Any {
+		val elemId = interpret(node.elemId)
+		if (elemId !is Long) {
+			throw RuntimeError(node.elemId.location, "Expected number")
+		}
+		val portId = node.portId.token.value!!
+		if (portId !is Long) {
+			throw RuntimeError(node.portId.location, "Expected number")
+		}
+		if (params == null || params !is Graph) {
+			throw RuntimeError(node.location, "No elements available")
+		}
+		val graphElement = (params as Graph).withId(elemId.toInt())
+			?: throw RuntimeError(node.elemId.location, "Element with ID $elemId not found")
+
+		if (graphElement !is Vertice) {
+			throw RuntimeError(node.elemId.location, "Element has no ports")
+		}
+		if (!graphElement.hasPort(portId.toInt())) {
+			throw RuntimeError(node.portId.location, "Port '$portId' not found")
+		}
+		val port = graphElement.getPort<Any>(portId.toInt())
+		val signal = when (port.portType) {
+			PortType.INPUT -> (port as InputPort).getIncomingSignal()
+			PortType.OUTPUT -> (port as OutputPort).getOutgoingSignal()
+			PortType.INOUT -> (port as BidirectionalPort).dominantSignal
+		}
+
+		return signal ?: RuntimeError(node.location, "No signal at port $portId")
 	}
 
 	private class InitStatementFinder : EmptyHierarchyVisitor() {

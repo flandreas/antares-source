@@ -7,16 +7,13 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
 /**
  * Represents a [Port] that produces or consumes [DigitalSignal]s.
  */
-interface DigitalPort : InputPort<DigitalSignal>, OutputPort<DigitalSignal> {
+interface DigitalPort : BidirectionalPort<DigitalSignal> {
 
 	companion object {
 		const val PROP_LOGIC = "logic"
@@ -48,17 +45,4 @@ interface DigitalPort : InputPort<DigitalSignal>, OutputPort<DigitalSignal> {
 	 * is in [OscilloscopeProbeVertice], which must probe signals of any [BitWidth].
 	 */
 	var isAdaptive: Boolean
-
-	/**
-	 * Determines for [DigitalPort]s with [PortType.INOUT] whether [InputPort] or the [OutputPort]
-	 * is dominant for rendering the state of this [DigitalPort]
-	 */
-	var isOutputDominant: Boolean
-
-	/**
-	 * Returns for [DigitalPort]s with [PortType.INOUT] the relevant [DigitalSignal], which depends
-	 * on the current value of [isOutputDominant].
-	 */
-	val dominantSignal: DigitalSignal
-
 }

@@ -14,13 +14,25 @@ class InitStatement(location: CodeLocation, val block: Block) : AbstractNode(loc
 	}
 }
 
-class Property(location: CodeLocation, val id: Literal, val name: Variable) : AbstractNode(location) {
+class PropertyPortName(location: CodeLocation, val elemId: Literal, val portName: Variable) : AbstractNode(location) {
 	override fun toString(): String = TokenType.HASH.id
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
-			id.accept(visitor)
-			name.accept(visitor)
+			elemId.accept(visitor)
+			portName.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class PropertyPortId(location: CodeLocation, val elemId: Literal, val portId: Literal) : AbstractNode(location) {
+	override fun toString(): String = TokenType.HASH.id
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			elemId.accept(visitor)
+			portId.accept(visitor)
 		}
 		return visitor.visitLeave(this)
 	}

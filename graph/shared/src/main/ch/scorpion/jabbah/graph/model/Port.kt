@@ -178,7 +178,20 @@ interface OutputPort<T : Any> : Port<T> {
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/
-interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T>
+interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T> {
+
+	/**
+	 * Determines for [BidirectionalPort]s with [PortType.INOUT] whether [InputPort] or the [OutputPort]
+	 * is dominant for rendering the state of this [BidirectionalPort]
+	 */
+	var isOutputDominant: Boolean
+
+	/**
+	 * Returns for [BidirectionalPort]s with [PortType.INOUT] the relevant signal, which depends
+	 * on the current value of [isOutputDominant].
+	 */
+	val dominantSignal: T
+}
 
 /** Enumerates the type of a [Port] regarding signal flow direction.*/
 enum class PortType(override val customName: String) : EnumProperty<PortType> {

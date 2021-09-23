@@ -163,17 +163,6 @@ open class DigitalPortImpl(
 		return defaultDigitalSignal
 	}
 
-	override var isOutputDominant: Boolean = true
-
-	override val dominantSignal: DigitalSignal
-		get() {
-			return if (isOutputDominant) {
-				getOutgoingSignal()!!
-			} else {
-				getIncomingSignal()!!
-			}
-		}
-
 	override var isAdaptive: Boolean = false
 
 	/** ---- [Port] interface */

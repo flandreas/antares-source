@@ -79,6 +79,10 @@ abstract class AbstractVertice(
 		return ports.any { name != null && it.name == name}
 	}
 
+	override fun hasPort(id: Int): Boolean {
+		return ports.any { it.portId == id }
+	}
+
 	override fun getPorts(): ImmutableList<Port<*>> {
 		return ImmutableList(ports)
 	}
