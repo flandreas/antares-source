@@ -1,12 +1,12 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.model.net.DigitalNet
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.AbstractExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.OutputPort
 
 /** Set on a [DigitalNet] if the [DigitalSignal] to be forwarded contains a [Bit.Error].*/

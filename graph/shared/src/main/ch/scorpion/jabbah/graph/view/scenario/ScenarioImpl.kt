@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
@@ -15,8 +14,6 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -49,18 +46,10 @@ class ScenarioImpl(
 		}
 
 	private val conditionScriptASTCache = resettableLazy {
-		try {
-			LOG.trace("Parsing condition script of '${name.value}'")
-			BaseModule.parserFactory.create(conditionScript, null).parse()
-		} catch (e: DslError) {
-			BaseModule.eventBus.post(IssueImpl(
-				severity = IssueSeverity.Error,
-				name = "Parse Error",
-				description = e.message,
-				origin = name.value,
-				context = "Scenario Condition"))
-			null
-		}
+		LOG.trace("Parsing condition script of '${name.value}'")
+		BaseModule.parserFactory
+			.create(conditionScript, null)
+			.parseCatching(name.value, "Scenario Condition")
 	}
 
 	private var interpreter: Interpreter? = null

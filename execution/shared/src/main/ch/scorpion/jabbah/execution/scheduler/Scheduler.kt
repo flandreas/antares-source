@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.execution.issue.Issue
 
 /**
  * A [Scheduler] receives requests of [Actor]s that want to be acting at a specific time in the future.

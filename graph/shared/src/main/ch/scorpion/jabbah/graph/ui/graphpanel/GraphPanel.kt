@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.graphpanel
 
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -28,7 +29,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent

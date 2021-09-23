@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 
 /**

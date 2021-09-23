@@ -2,6 +2,10 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.Issue
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
 
@@ -86,11 +90,29 @@ open class Parser(
 		private set
 
 	/**
-	 * Parses the sentence this [Parser] was created with and returns the corresponding AST.
+	 * Parses the program this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
-	fun parse(): Node =
-		Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
+	fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
+
+	/**
+	 * Calls [parse] and catches [DslError] by posting an [Issue] on the system's [EventBus].
+	 * @param origin the value for [Issue.origin]
+	 * @param context the value for [Issue.context]
+	 */
+	fun parseCatching(origin: String, context: String): Node? {
+		return try {
+			parse()
+		} catch (e: DslError) {
+			BaseModule.eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = "Parse Error",
+				description = e.message,
+				origin = origin,
+				context = context))
+			null
+		}
+	}
 
 	private fun statementList(): List<Node> {
 		val node = statement()

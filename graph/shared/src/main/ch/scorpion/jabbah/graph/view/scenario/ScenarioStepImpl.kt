@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
@@ -15,12 +13,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
-import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
@@ -29,7 +23,6 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [ScenarioStep] interface.
  */
 class ScenarioStepImpl(
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	initialName: String = ""
 ) : ScenarioStep, Namable, Describable, Bean {
 
@@ -44,33 +37,45 @@ class ScenarioStepImpl(
 			conditionScriptASTCache.reset()
 		}
 
-	/** The JavaScript expressions to be executed when this [ScenarioStep] is activated. */
-	private var onEntryScript: String? = null
-
-	/** The JavaScript expressions to be executed when this [ScenarioStep] is passivated. */
-	private var onExitScript: String? = null
-
-	/** Caches the parsed highlight IDs of `highlightIds' as [Int].*/
-	private var highlightIntIdsCache: List<Int>? = null
-
 	private val conditionScriptASTCache = resettableLazy {
 		conditionScript?.let {
-			try {
-				LOG.trace("Parsing condition script of '${name.value}'")
-				BaseModule.parserFactory.create(it, null).parse()
-			} catch (e: DslError) {
-				BaseModule.eventBus.post(IssueImpl(
-					severity = IssueSeverity.Error,
-					name = "Parse Error",
-					description = e.message,
-					origin = name.value,
-					context = "Scenario Step Condition"))
-				null
-			}
+			LOG.trace("Parsing condition script of '${name.value}'")
+			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Condition")
 		}
 	}
 
 	private var conditionInterpreter: Interpreter? = null
+
+	/** The JavaScript expressions to be executed when this [ScenarioStep] is activated. */
+	private var onEntryScript: String? = null
+		set(value) {
+			field = value
+			onEntryScriptASTCache.reset()
+		}
+
+	private val onEntryScriptASTCache = resettableLazy {
+		onEntryScript?.let {
+			LOG.trace("Parsing onEntry script of '${name.value}'")
+			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Entry Action")
+		}
+	}
+
+	private var onEntryInterpreter: Interpreter? = null
+
+	/** The JavaScript expressions to be executed when this [ScenarioStep] is passivated. */
+	private var onExitScript: String? = null
+
+	private val onExitScriptASTCache = resettableLazy {
+		onExitScript?.let {
+			LOG.trace("Parsing onExit script of '${name.value}'")
+			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Exit Action")
+		}
+	}
+
+	private var onExitInterpreter: Interpreter? = null
+
+	/** Caches the parsed highlight IDs of `highlightIds' as [Int].*/
+	private var highlightIntIdsCache: List<Int>? = null
 
 	/** ---- [Any] */
 
@@ -84,18 +89,21 @@ class ScenarioStepImpl(
 
 	/** ---- UI editable properties */
 
+	@Suppress("unused")
 	var conditionProperty: ScriptProperty
 		get() = ScriptProperty(conditionScript)
 		set(value) {
 			conditionScript = value.script
 		}
 
+	@Suppress("unused")
 	var onEntryProperty: ScriptProperty
 		get() = ScriptProperty(onEntryScript)
 		set(value) {
 			onEntryScript = value.script
 		}
 
+	@Suppress("unused")
 	var onExitProperty: ScriptProperty
 		get() = ScriptProperty(onExitScript)
 		set(value) {
@@ -122,45 +130,23 @@ class ScenarioStepImpl(
 
 	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
 		conditionScriptASTCache.value?.let {
-			conditionInterpreter = createConditionInterpreter(graphView, it)
+			conditionInterpreter = createInterpreter(graphView, it)
+		}
+		onEntryScriptASTCache.value?.let {
+			onEntryInterpreter = createInterpreter(graphView, it)
+		}
+		onExitScriptASTCache.value?.let {
+			onExitInterpreter = createInterpreter(graphView, it)
 		}
 	}
 
 	override fun activate(view: DrawingView<GraphView>) {
-		if (StringUtils.isNotEmpty(onEntryScript)) {
-			try {
-				LOG.trace("Activate ScenarioStep '$name'")
-				scriptGateway.exec(wrappedOnEntryScript, view)
-			} catch (e: Throwable) {
-				LOG.error("Error in onEntry script of ScenarioStep '$name'")
-			}
-		}
+		onEntryInterpreter?.interpret(view.drawing.graph!!)
 	}
-
-	private val wrappedOnEntryScript: Script
-		get() =
-			Script(
-				code = onEntryScript!!,
-				origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
-				context = Translations.getString("graph.property.scenario.onEntry.name"))
 
 	override fun passivate(view: DrawingView<GraphView>) {
-		if (StringUtils.isNotEmpty(onExitScript)) {
-			try {
-				LOG.trace("Passivate ScenarioStep '$name'")
-				scriptGateway.exec(wrappedOnExitScript, view)
-			} catch (e: Throwable) {
-				LOG.error("Error in onExit script of ScenarioStep '$name'")
-			}
-		}
+		onExitInterpreter?.interpret(view.drawing.graph)
 	}
-
-	private val wrappedOnExitScript: Script
-		get() =
-			Script(
-				code = onExitScript!!,
-				origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
-				context = Translations.getString("graph.property.scenario.onExit.name"))
 
 	override val highlightIdsAsInt: List<Int>
 		get() {
@@ -204,6 +190,6 @@ class ScenarioStepImpl(
 
 	/** ---- [ScenarioStepImpl] */
 
-	private fun createConditionInterpreter(graphView: GraphView, ast: Node): Interpreter =
+	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 }

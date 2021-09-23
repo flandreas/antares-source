@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -10,8 +9,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -58,18 +55,10 @@ class ContainerLibraryElement(
 	private val executionScriptASTCache = resettableLazy {
 		metaGraph?.graph?.model?.script?.let {
 			// TODO I18N
-			try {
-				LOG.trace("Parsing script of '${metaGraph!!.name}'")
-				metaGraph!!.graph.model!!.createParser(it, null).parse()
-			} catch (e: DslError) {
-				eventBus.post(IssueImpl(
-					severity = IssueSeverity.Error,
-					name = "Parse Error",
-					description = e.message,
-					origin = metaGraph!!.name,
-					context = "Subcircuit Logic"))
-				null
-			}
+			LOG.trace("Parsing script of '${metaGraph!!.name}'")
+			metaGraph!!.graph.model!!
+				.createParser(it, null)
+				.parseCatching(metaGraph!!.name, "Subcircuit Logic")
 		}
 	}
 
