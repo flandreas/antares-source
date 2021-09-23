@@ -309,6 +309,28 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseProcedureCallWithParameters() {
+		val parser = Parser(Lexer("f(1, 2)"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- f()
+			-- 1
+			-- 2
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseProcedureCallWithoutParameters() {
+		val parser = Parser(Lexer("f()"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- f()
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

@@ -52,6 +52,7 @@ open class SemanticAnalyser(
 					currentlyDeclaredVariableName = node.variable.token.value
 					enterForStatement(node)
 				}
+				is FunctionCall -> enterFunctionCall(node)
 			}
 			return true
 		}
@@ -107,6 +108,19 @@ open class SemanticAnalyser(
 
 	private fun enterBlock() {
 		scope = ScopedSymbolTable("block", level = scope.level + 1, enclosingScope = scope)
+	}
+
+	private fun enterFunctionCall(functionCall: FunctionCall) {
+		val name = functionCall.name.value!!
+		val functionSymbol = scope.lookup(name)
+			?: throw SemanticError(functionCall.location, "Function '$name' not defined")
+		if (functionSymbol !is ExternalFunctionSymbol) {
+			throw SemanticError(functionCall.location, "Expecting '$name' being a function")
+		}
+		if (functionCall.params.size != functionSymbol.paramsCount) {
+			throw SemanticError(functionCall.location, "Function '$name' expects ${functionSymbol.paramsCount} parameters")
+		}
+		functionCall.function = functionSymbol
 	}
 
 	private fun leaveBlock() {

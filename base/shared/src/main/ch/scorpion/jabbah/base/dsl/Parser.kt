@@ -48,6 +48,7 @@ fun interface ParserFactory {
  *     whenElse : "else" ":" statement
  *     forStatement : "for" "(" variable "in" expr "to" expr ")" statement
  *     returnStatement : "return" [ expr ]
+ *     functionCall : identifier "(" { expr ("," expr)* } ")"
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">"
@@ -57,6 +58,7 @@ fun interface ParserFactory {
  *            | literal
  *            | "(" expr ")"
  *            | variable
+ *            | procedureCall
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
  *     literal : number
@@ -295,6 +297,24 @@ open class Parser(
 		}
 	}
 
+	private fun functionCall(): Node {
+		lexer.location.let { location ->
+			val name = identifier()
+			val params = mutableListOf<Node>()
+			eat(LPAREN)
+			if (currentToken!!.type != RPAREN) {
+				params.add(expr())
+			}
+			while (currentToken!!.type == COMMA) {
+				eat(COMMA)
+				params.add(expr())
+			}
+			eat(RPAREN)
+
+			return FunctionCall(location, name, params)
+		}
+	}
+
 	private fun empty(): Node = NoOp(lexer.location)
 
 	private fun expr(): Node {
@@ -357,7 +377,13 @@ open class Parser(
 					eat(RPAREN)
 					node
 				}
-				ID -> variable()
+				ID -> {
+					if (lexer.peekNextToken().type == LPAREN) {
+						functionCall()
+					} else {
+						variable()
+					}
+				}
 				else -> throw SyntaxError(location, "Unexpected token '${token.type.id}'")
 			}
 		}

@@ -122,7 +122,7 @@ class AntaresInterpreter(
 	}
 
 	private fun signalToLong(signal: DigitalSignal): Long =
-		signal.toLong()?.toLong() ?: throw RuntimeError(node.location, "Undefined signal")
+		signal.toLong()?.toLong() ?: throw RuntimeError(rootNode.location, "Undefined signal")
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {

@@ -179,7 +179,13 @@ class WhenStatement(location: CodeLocation, val expression: Node, val clauses: L
 	}
 }
 
-class ForStatement(location: CodeLocation, val variable: Variable, val inExpr: Node, val toExpr: Node, val statement: Node) : AbstractNode(location) {
+class ForStatement(
+	location: CodeLocation,
+	val variable: Variable,
+	val inExpr: Node,
+	val toExpr: Node,
+	val statement: Node
+) : AbstractNode(location) {
 	override fun toString(): String = "for"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -199,6 +205,34 @@ class ReturnStatement(location: CodeLocation, val expr: Node?) : AbstractNode(lo
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
 			expr?.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+/**
+ * A call of a function defined outside the program being parsed.
+ *
+ * @property function used by [Interpreter] to actually call the function. Set by [SemanticAnalyser].
+ * External functions are defined in the [ScopedSymbolTable] and are resolved by [SemanticAnalyser].
+ * [Interpreter]s that want to call such functions must therefore use an AST that has been processed
+ * by a [SemanticAnalyser].
+ */
+class FunctionCall(
+	location: CodeLocation,
+	val name: Token<String>,
+	val params: List<Node>,
+	var function: ExternalFunctionSymbol? = null
+) : AbstractNode(location) {
+	override fun toString(): String = "${name.value}()"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			for (param in params) {
+				if (!param.accept(visitor)) {
+					break
+				}
+			}
 		}
 		return visitor.visitLeave(this)
 	}

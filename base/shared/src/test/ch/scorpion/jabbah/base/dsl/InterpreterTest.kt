@@ -429,4 +429,18 @@ class InterpreterTest {
 
 		assertEquals(6L, result)
 	}
+
+	@Test
+	fun shouldInterpretFunctionCall() {
+		val symbolTable = ScopedSymbolTable("global", 1, null)
+		val function = ExternalFunction { (it[0] as Long) * (it[0] as Long) }
+		symbolTable.define(ExternalFunctionSymbol("square", 1, function))
+
+		val semanticAnalyser = SemanticAnalyser(symbolTable)
+		val interpreter = Interpreter(Parser(Lexer("square(4)"), semanticAnalyser).parse())
+
+		val result = interpreter.interpret()
+
+		assertEquals(16L, result)
+	}
 }

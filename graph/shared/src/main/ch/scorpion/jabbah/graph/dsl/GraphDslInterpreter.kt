@@ -25,7 +25,7 @@ open class GraphDslInterpreter(
 
 	fun executionStarted(): Any {
 		// Execute only InitStatement (if any) on execution start
-		return initStatementFinder.findIn(node)?.let {
+		return initStatementFinder.findIn(rootNode)?.let {
 			init(it)
 		} ?: 0
 	}

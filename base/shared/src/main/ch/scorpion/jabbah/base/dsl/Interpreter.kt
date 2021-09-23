@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  * Interprets an AST according to the grammar parsed by [Parser].
  */
 open class Interpreter(
-	protected val node: Node,
+	protected val rootNode: Node,
 	protected val memory: Memory = Memory()
 ) {
 
@@ -20,7 +20,7 @@ open class Interpreter(
 	private var returnValue: Any? = null
 
 	/**
-	 * Runs the program defined by the AST in [node].
+	 * Runs the program defined by the AST in [rootNode].
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
@@ -28,7 +28,7 @@ open class Interpreter(
 		returnValue = null
 		this.params = params
 		try {
-			return interpret(node)
+			return interpret(rootNode)
 		} finally {
 			// Don't clear memory BEFORE interpretation in order not to break Memory.preset()
 			memory.clear()
@@ -50,6 +50,7 @@ open class Interpreter(
 			is WhenStatement -> whenStatement(node)
 			is ForStatement -> forStatement(node)
 			is ReturnStatement -> returnStatement(node)
+			is FunctionCall -> functionCall(node)
 			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
 		}
 	}
@@ -185,7 +186,7 @@ open class Interpreter(
 				memory.setValue(variable, mutableMapOf(key to value))
 			} else {
 				if (assocArray !is MutableMap<*, *>) {
-					throw RuntimeError(node.location, "Expected variable '${variable.token.value}' to be array")
+					throw RuntimeError(rootNode.location, "Expected variable '${variable.token.value}' to be array")
 				}
 				(assocArray as MutableMap<Any, Any>)[key] = value
 			}
@@ -199,10 +200,10 @@ open class Interpreter(
 		return if (variable is AssocArray) {
 			val assocArray = memory.getValue(variable)
 			if (assocArray !is MutableMap<*,*>) {
-				throw RuntimeError(node.location, "Expected variable '${variable.token.value}' to be array")
+				throw RuntimeError(rootNode.location, "Expected variable '${variable.token.value}' to be array")
 			}
 			val key = interpretAssocArrayKey(variable)
-			assocArray[key] ?: throw RuntimeError(node.location, "No value for key")
+			assocArray[key] ?: throw RuntimeError(rootNode.location, "No value for key")
 		} else {
 			memory.getValue(variable)
 		}
@@ -304,5 +305,12 @@ open class Interpreter(
 	private fun returnStatement(node: ReturnStatement): Any {
 		returnValue = node.expr?.let { interpret(it) } ?: 0
 		return returnValue!!
+	}
+
+	private fun functionCall(node: FunctionCall): Any {
+		if (node.function == null) {
+			throw RuntimeError(node.location, "No implementation for function '${node.name.value}'")
+		}
+		return node.function!!.function.execute(node.params.map { interpret(it) })
 	}
 }

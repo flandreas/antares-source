@@ -44,7 +44,8 @@ enum class TokenType(val id: String) {
 	INIT("init"),
 	AT("@"),
 	HASH("#"),
-	DOT(".")
+	DOT("."),
+	COMMA(",")
 }
 
 /**

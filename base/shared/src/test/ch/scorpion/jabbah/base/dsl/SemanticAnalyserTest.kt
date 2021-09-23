@@ -51,4 +51,35 @@ class SemanticAnalyserTest {
 			}
 		}
 	}
+
+	@Test
+	fun shouldNotAllowUndefinedFunctionName() {
+		assertFailsWith(SemanticError::class) {
+			val symbolTable = ScopedSymbolTable("global", 1, null)
+			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+			val semanticAnalyser = SemanticAnalyser(symbolTable)
+
+			Parser(Lexer("g(1)"), semanticAnalyser).parse()
+		}
+	}
+
+	@Test
+	fun shouldAllowDefinedFunctionName() {
+		val symbolTable = ScopedSymbolTable("global", 1, null)
+		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+		val semanticAnalyser = SemanticAnalyser(symbolTable)
+
+		Parser(Lexer("f(1)"), semanticAnalyser).parse()
+	}
+
+	@Test
+	fun shouldRejectTooManyFunctionParams() {
+		assertFailsWith(SemanticError::class) {
+			val symbolTable = ScopedSymbolTable("global", 1, null)
+			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+			val semanticAnalyser = SemanticAnalyser(symbolTable)
+
+			Parser(Lexer("f(1, 2)"), semanticAnalyser).parse()
+		}
+	}
 }
