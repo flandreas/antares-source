@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -52,6 +53,8 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 * [Graph] models in terms of [Graph.bind]; this is the responsibility of other classes.
 	 */
 	fun bind()
+
+	fun executionStart(signalHandler: SignalHandler)
 
 	/**
 	 * Checks for design errors in the [Graph] and posts an [Issue] on this [GraphView]'s [EventBus] for every

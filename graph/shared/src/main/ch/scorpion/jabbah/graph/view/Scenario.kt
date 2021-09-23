@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
@@ -27,6 +28,8 @@ interface Scenario : Namable, Describable, Storable {
 	val stepCount: Int
 
 	fun dispose()
+
+	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
 
 	/**
 	 * Returns the condition that determines whether this [Scenario] is triggered depending on the current state

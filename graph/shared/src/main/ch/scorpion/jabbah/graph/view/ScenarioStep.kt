@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
@@ -37,6 +38,8 @@ interface ScenarioStep : Namable, Describable, Storable {
 	val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
 
 	fun dispose()
+
+	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
 
 	/**
 	 * Notifies this [ScenarioStep] that it has become the active [ScenarioStep] in a [GraphView]'s

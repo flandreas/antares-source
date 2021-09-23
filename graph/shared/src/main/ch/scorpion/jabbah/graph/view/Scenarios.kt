@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
  * Encapsulates the [Scenario]s of a [GraphView] and the corresponding management methods
@@ -15,6 +16,8 @@ interface Scenarios : Storable {
 	val isEmpty: Boolean
 
 	fun dispose()
+
+	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
 
 	fun getScenarios(): Iterable<Scenario>
 

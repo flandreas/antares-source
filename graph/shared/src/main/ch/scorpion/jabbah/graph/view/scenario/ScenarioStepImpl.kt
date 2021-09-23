@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -12,6 +14,7 @@ import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
@@ -67,6 +70,8 @@ class ScenarioStepImpl(
 		}
 	}
 
+	private var conditionInterpreter: Interpreter? = null
+
 	/** ---- [Any] */
 
 	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
@@ -110,17 +115,15 @@ class ScenarioStepImpl(
 		}
 
 	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean get() = { view, _ ->
-		conditionScriptASTCache.value?.let { ast ->
-			val interpreter = BaseModule.interpreterFactory(
-				ast,
-				Memory(GraphActivationRecord(view.drawing.graph!!))
-			)
-			interpreter.interpret(view.drawing.graph!!) != 0L
-		} ?: false
+		conditionInterpreter?.let { it.interpret(view.drawing.graph!!) != 0L } ?: false
 	}
 
-	override fun dispose() {
-		// empty
+	override fun dispose() { }
+
+	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
+		conditionScriptASTCache.value?.let {
+			conditionInterpreter = createConditionInterpreter(graphView, it)
+		}
 	}
 
 	override fun activate(view: DrawingView<GraphView>) {
@@ -198,4 +201,9 @@ class ScenarioStepImpl(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}
+
+	/** ---- [ScenarioStepImpl] */
+
+	private fun createConditionInterpreter(graphView: GraphView, ast: Node): Interpreter =
+		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 }

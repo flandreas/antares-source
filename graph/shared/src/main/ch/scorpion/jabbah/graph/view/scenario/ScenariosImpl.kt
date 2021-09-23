@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.io.*
 
@@ -15,7 +16,7 @@ class ScenariosImpl(
 ) : Scenarios {
 
 	private var isLoading: Boolean = false
-	private val scenarios: MutableList<Scenario> by lazy { mutableListOf<Scenario>() }
+	private val scenarios: MutableList<Scenario> by lazy { mutableListOf() }
 
 	/** ---- [Scenarios] interface */
 
@@ -24,6 +25,10 @@ class ScenariosImpl(
 	override fun dispose() {
 		scenarios.forEach { it.dispose() }
 		scenarios.clear()
+	}
+
+	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
+		scenarios.forEach { it.executionStart(graphView, signalHandler) }
 	}
 
 	override fun getScenarios(): Iterable<Scenario> {

@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
@@ -143,6 +144,10 @@ open class GraphViewImpl(
 		for (graphElementView in drawables) {
 			graphElementView.bind(graph!!)
 		}
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		scenarios.executionStart(this, signalHandler)
 	}
 
 	override fun checkDesign(): Boolean {

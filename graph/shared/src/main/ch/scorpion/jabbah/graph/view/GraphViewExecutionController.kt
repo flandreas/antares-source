@@ -96,7 +96,10 @@ class GraphViewExecutionController(
 					if (isRoot) {
 						bind(repository, storableCreator)
 					}
-					graphViewsProvider.invoke().forEach { it.bind() }
+					graphViewsProvider.invoke().forEach {
+						it.bind()
+						it.executionStart(event.scheduler)
+					}
 					formNet(event.scheduler)
 					executionInitialize(event.scheduler)
 					executionStart(event.scheduler)

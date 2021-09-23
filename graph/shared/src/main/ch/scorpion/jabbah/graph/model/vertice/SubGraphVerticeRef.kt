@@ -153,7 +153,7 @@ class SubGraphVerticeRef(
 			if (isDeepExecution(signalHandler)) {
 				graph?.executionStart(signalHandler)
 			} else {
-				createInterpreter(signalHandler)
+				interpreter = createInterpreter(signalHandler)
 				if (interpreter is GraphDslInterpreter) {
 					(interpreter as GraphDslInterpreter).executionStarted()
 				}
@@ -166,10 +166,10 @@ class SubGraphVerticeRef(
 	 * Adds a global context [SubGraphVerticeRefActivationRecord] to the created [Interpreter] that
 	 * allows scripts to access input and output values as variables.
 	 */
-	private fun createInterpreter(signalHandler: SignalHandler) {
-		repository.getContainerLibraryElement(graphUUID!!).let { cle ->
+	private fun createInterpreter(signalHandler: SignalHandler): Interpreter? {
+		return repository.getContainerLibraryElement(graphUUID!!).let { cle ->
 			cle?.executionScriptAST?.let { ast ->
-				interpreter = BaseModule.interpreterFactory(
+				BaseModule.interpreterFactory(
 					ast,
 					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(this, signalHandler)))
 			}

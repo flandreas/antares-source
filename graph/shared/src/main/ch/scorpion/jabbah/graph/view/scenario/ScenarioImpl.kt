@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -12,6 +14,7 @@ import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
@@ -60,6 +63,8 @@ class ScenarioImpl(
 		}
 	}
 
+	private var interpreter: Interpreter? = null
+
 	/** ---- [Any] */
 
 	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
@@ -81,14 +86,15 @@ class ScenarioImpl(
 		steps.clear()
 	}
 
+	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
+		steps.forEach { it.executionStart(graphView, signalHandler) }
+		conditionScriptASTCache.value?.let {
+			interpreter = createInterpreter(graphView, it)
+		}
+	}
+
 	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean get() = { view, _ ->
-		conditionScriptASTCache.value?.let { ast ->
-			val interpreter = BaseModule.interpreterFactory(
-				ast,
-				Memory(GraphActivationRecord(view.drawing.graph!!))
-			)
-			interpreter.interpret(view.drawing.graph!!) != 0L
-		} ?: false
+		interpreter?.let { it.interpret(view.drawing.graph!!) != 0L } ?: false
 	}
 
 	override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
@@ -158,4 +164,7 @@ class ScenarioImpl(
 		}
 		return steps.maxByOrNull { it.id }!!.id
 	}
+
+	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =
+		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 }
