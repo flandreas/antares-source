@@ -9,11 +9,11 @@ import ch.scorpion.jabbah.graph.model.PortType
 class TestPortFactory : PortFactory {
 
 	override fun <T : Any> createPort(portType: PortType): Port<T> {
-		return PortImpl(portType, Boolean::class) as Port<T>
+		return PortImpl(portType)
 	}
 
 	override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>): Port<T> {
-		return SubGraphPortImpl(graphPort.portType, Boolean::class, graphPort.name!!) as Port<T>
+		return SubGraphPortImpl(graphPort.portType, graphPort.name!!)
 	}
 
 	override fun <T : Any> createOscilloscopeProbePort(name: String?): InputPort<T> {

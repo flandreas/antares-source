@@ -28,7 +28,7 @@ class TestControlVertice : CalculatingVertice(CALCULATOR) {
 
 	init {
 		propagationDelay = 0
-		addPort(PortImpl.createInput(Boolean::class))
+		addPort(PortImpl.createInput())
 	}
 
 	override val type: String get() = "Test"

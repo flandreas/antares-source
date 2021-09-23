@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
 import ch.scorpion.jabbah.graph.model.net.*
-import kotlin.reflect.KClass
 
 /**
  * A standard [Port] implementation that can act both as an input and as an output.
@@ -23,28 +22,27 @@ import kotlin.reflect.KClass
  */
 open class PortImpl<T : Any>(
 	portType: PortType,
-	override val signalClass: KClass<T>? = null,
 	name: String?,
 	description: TranslatableText = TranslatableText(),
 	override var canBeUndefined: Boolean = false,
 	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null
 ) : BidirectionalPort<T>, Describable {
 
-	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
+	constructor(portType: PortType) : this(portType, null)
 
 	companion object {
 
 		val LOG by logger(PortImpl::class)
 
-		fun <T : Any> createInput(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> =
-			PortImpl(PortType.INPUT, signalClass, name)
+		fun <T : Any> createInput(name: String? = null): PortImpl<T> =
+			PortImpl(PortType.INPUT, name)
 
-		fun <T : Any> createOutput(signalClass: KClass<T>? = null, name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
-			PortImpl(PortType.OUTPUT, signalClass, name, canBeUndefined = canBeUndefined)
+		fun <T : Any> createOutput(name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
+			PortImpl(PortType.OUTPUT, name, canBeUndefined = canBeUndefined)
 
 		@Suppress("unused")
-		fun <T : Any> createInOut(signalClass: KClass<T>? = null, name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
-			PortImpl(PortType.INOUT, signalClass, name, canBeUndefined = canBeUndefined)
+		fun <T : Any> createInOut(name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
+			PortImpl(PortType.INOUT, name, canBeUndefined = canBeUndefined)
 	}
 
 	protected val changeSupport = PropertyChangeSupport<Any>(this)

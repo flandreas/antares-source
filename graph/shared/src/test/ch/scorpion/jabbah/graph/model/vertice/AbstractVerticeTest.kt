@@ -70,9 +70,9 @@ class AbstractVerticeTest {
 		assertNotEquals(vertice.getPort<Boolean>("B").portId, vertice.getPort<Boolean>("C").portId)
 	}
 
-	private fun input(name: String): Port<Boolean> = PortImpl.createInput(Boolean::class, name)
+	private fun input(name: String): Port<Boolean> = PortImpl.createInput(name)
 
-	private fun output(name: String): Port<Boolean> = PortImpl.createOutput(Boolean::class, name)
+	private fun output(name: String): Port<Boolean> = PortImpl.createOutput(name)
 
 	private class MyVertice : AbstractVertice("graph.property.label") {
 		override val type: String get() = "MyVertice"

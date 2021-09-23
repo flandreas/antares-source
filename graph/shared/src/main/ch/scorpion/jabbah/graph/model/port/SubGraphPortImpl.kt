@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.*
-import kotlin.reflect.KClass
 
 /**
  * A [SubGraphPortImpl] is used as a [Port] in [SubGraphVertice]s and maintains a named link to the
@@ -14,9 +13,8 @@ import kotlin.reflect.KClass
  */
 class SubGraphPortImpl<T: Any>(
 	portType: PortType = PortType.INPUT,
-	signalClass: KClass<T>? = null,
 	name: String? = null
-) : PortImpl<T>(portType, signalClass, name), SubGraphInputPort<T>, SubGraphOutputPort<T> {
+) : PortImpl<T>(portType, name), SubGraphInputPort<T>, SubGraphOutputPort<T> {
 
     /** ---- [SubGraphInputPort] */
 

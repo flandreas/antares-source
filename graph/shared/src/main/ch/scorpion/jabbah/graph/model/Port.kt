@@ -1,16 +1,15 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
-import kotlin.reflect.KClass
 
 /**
  * A [Port] is an object in a [Vertice] to which [Net]s are attached.
@@ -31,9 +30,6 @@ interface Port<T : Any> : Describable, Bean {
 
 	/** The ID of this [Port] that is unique within the owning [Vertice].*/
 	var portId: Int
-
-	/** The class of signal this [Port] can handle. Used to support type inference at runtime.*/
-	val signalClass: KClass<T>?
 
 	/**
 	 * The displayable name of this [Port] that can help the user to distinguish different [Port]s in a [Vertice].

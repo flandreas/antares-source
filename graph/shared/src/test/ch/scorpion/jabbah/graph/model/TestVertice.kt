@@ -33,8 +33,8 @@ class TestVertice(
 	override val typeDesc: String get() = TYPE_DESC
 
     init {
-        addPort(PortImpl.createInput(Boolean::class))
-        addPort(if (inOut) PortImpl.createInOut(Boolean::class, canBeUndefined = true) else PortImpl.createOutput(Boolean::class, canBeUndefined = canBeUndefined))
+        addPort(PortImpl.createInput())
+        addPort(if (inOut) PortImpl.createInOut(canBeUndefined = true) else PortImpl.createOutput(canBeUndefined = canBeUndefined))
     }
 
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {

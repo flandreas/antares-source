@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.mockk
 import kotlin.test.*
@@ -90,9 +89,9 @@ class GraphImplTest {
 	fun shouldCreateUniqueGraphInputName() {
 		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		val in1 = GraphInputImpl(PortImpl.createOutput())
 		testGraph.add(in1)
-		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		val in2 = GraphInputImpl(PortImpl.createOutput())
 		testGraph.add(in2)
 
 		assertEquals("I1", in1.name)
@@ -103,9 +102,9 @@ class GraphImplTest {
 	fun shouldCreateUniqueGraphInputNameForExisting() {
 		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
+		val in1 = GraphInputImpl(PortImpl.createOutput(), "I1")
 		testGraph.add(in1)
-		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
+		val in2 = GraphInputImpl(PortImpl.createOutput(), "I1")
 		testGraph.add(in2)
 
 		assertEquals("I1", in1.name)
@@ -116,9 +115,9 @@ class GraphImplTest {
 	fun shouldCreateUniqueGraphOutputName() {
 		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-		val out1 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		val out1 = GraphOutputImpl(PortImpl.createInput())
 		testGraph.add(out1)
-		val out2 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		val out2 = GraphOutputImpl(PortImpl.createInput())
 		testGraph.add(out2)
 
 		assertEquals("O1", out1.name)
@@ -129,9 +128,9 @@ class GraphImplTest {
 	fun shouldCreateUniqueGraphInputOutputName() {
 		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		val `in` = GraphInputImpl(PortImpl.createOutput())
 		testGraph.add(`in`)
-		val out = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		val out = GraphOutputImpl(PortImpl.createInput())
 		testGraph.add(out)
 
 		assertEquals("I1", `in`.name)
@@ -141,7 +140,7 @@ class GraphImplTest {
 	@Test
 	fun shouldNotChangeUniqueInputName() {
 		val testGraph = GraphImpl(eventBus = EventBusImpl())
-		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I99")
+		val `in` = GraphInputImpl(PortImpl.createOutput(), "I99")
 
 		testGraph.add(`in`)
 
@@ -151,7 +150,7 @@ class GraphImplTest {
 	@Test
 	fun shouldNotChangeUniqueOutputName() {
 		val testGraph = GraphImpl(eventBus = EventBusImpl())
-		val out = GraphInputImpl(PortImpl.createInput(Boolean::class), "O99")
+		val out = GraphInputImpl(PortImpl.createInput(), "O99")
 
 		testGraph.add(out)
 
@@ -161,7 +160,7 @@ class GraphImplTest {
 	@Test
 	fun shouldNotChangeUniqueInOutName() {
 		val testGraph = GraphImpl(eventBus = EventBusImpl())
-		val inout = GraphInputImpl(PortImpl.createInOut(Boolean::class), "IO99")
+		val inout = GraphInputImpl(PortImpl.createInOut(), "IO99")
 
 		testGraph.add(inout)
 
@@ -172,8 +171,8 @@ class GraphImplTest {
 	fun shouldAllowUniquePortNameChange() {
 		val eventBus = EventBusImpl()
 		val testGraph = GraphImpl(eventBus = eventBus)
-		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
-		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
+		testGraph.add(GraphInputImpl(PortImpl.createOutput(), "I1", eventBus))
+		val in2 = GraphInputImpl(PortImpl.createOutput(), "I2", eventBus)
 		testGraph.add(in2)
 
 		in2.name = "I3"
@@ -185,8 +184,8 @@ class GraphImplTest {
 	fun shouldPreventNonUniquePortNameChange() {
 		val eventBus = EventBusImpl()
 		val testGraph = GraphImpl(eventBus = eventBus)
-		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
-		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
+		testGraph.add(GraphInputImpl(PortImpl.createOutput(), "I1", eventBus))
+		val in2 = GraphInputImpl(PortImpl.createOutput(), "I2", eventBus)
 		testGraph.add(in2)
 
 		assertFailsWith(IllegalArgumentException::class) {

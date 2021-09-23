@@ -43,8 +43,8 @@ class TestVerticeView(
 
 	override fun modelExchanged(oldModel: TestVertice?) {
 		super.modelExchanged(oldModel)
-		addPortView(TestPortView(model.getInput<Boolean>(), inputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D.ZERO))
-		addPortView(TestPortView(model.getOutput<Boolean>(), outputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D(width, 0.0)))
+		addPortView(TestPortView(model.getInput(), inputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D.ZERO))
+		addPortView(TestPortView(model.getOutput(), outputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D(width, 0.0)))
 	}
 
 	override fun write(writer: StoreWriter) {

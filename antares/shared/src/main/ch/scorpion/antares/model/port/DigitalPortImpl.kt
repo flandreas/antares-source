@@ -34,7 +34,7 @@ open class DigitalPortImpl(
 	canBeUndefined: Boolean = portType == PortType.INOUT,
 	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null,
 	defaultBit: Bit? = null
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour), DigitalPort {
+) : PortImpl<DigitalSignal>(portType, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
 	companion object {
 
