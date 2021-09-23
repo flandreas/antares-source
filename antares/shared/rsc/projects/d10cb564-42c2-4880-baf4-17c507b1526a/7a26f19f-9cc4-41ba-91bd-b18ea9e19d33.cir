@@ -196,28 +196,45 @@ when (F0 + 2 * F1) {
           <scenarios>
             <scenarios _id='107'>
               <scenarios>
-                <scenario _id='108' id='1' condition='return circuit.input(&quot;F0&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;F1&quot;) == &quot;0&quot;;'>
+                <scenario _id='108' id='1' condition='F0 == 0 and F1 == 0'>
                   <name>
                     <translation lang='de' text='Addition'/>
+                    <translation lang='en' text='Addition'/>
                   </name>
+                  <desc>
+                    <translation lang='de' text='Addition A + B'/>
+                    <translation lang='en' text='Addition A + B'/>
+                  </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='109' id='2' condition='return circuit.input(&quot;F0&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;F1&quot;) == &quot;0&quot;;'>
+                <scenario _id='109' id='2' condition='F0 == 1 and F1 == 0'>
                   <name>
                     <translation lang='de' text='AND'/>
                   </name>
+                  <desc>
+                    <translation lang='de' text='AND-Operation &quot;A AND B&quot;'/>
+                    <translation lang='en' text='AND &quot;A AND B&quot;'/>
+                  </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='110' id='3' condition='return circuit.input(&quot;F0&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;F1&quot;) == &quot;1&quot;;'>
+                <scenario _id='110' id='3' condition='F0 == 0 and F1 == 1'>
                   <name>
                     <translation lang='de' text='A'/>
                   </name>
+                  <desc>
+                    <translation lang='de' text='Lediglich A an O weitergeben'/>
+                    <translation lang='en' text='Simply forward A to O'/>
+                  </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='111' id='4' condition='return circuit.input(&quot;F0&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;F1&quot;) == &quot;1&quot;;'>
+                <scenario _id='111' id='4' condition='F0 == 1 and F1 == 1'>
                   <name>
                     <translation lang='de' text='Negation'/>
                   </name>
+                  <desc>
+                    <translation lang='de' text='Negation von A'/>
+                    <translation lang='en' text='Negation of A'/>
+                  </desc>
                   <steps/>
                 </scenario>
               </scenarios>
