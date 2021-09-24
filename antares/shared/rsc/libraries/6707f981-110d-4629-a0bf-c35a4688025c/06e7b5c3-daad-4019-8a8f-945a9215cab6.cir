@@ -188,7 +188,7 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='76'>
+    <containerDrawing _id='76' execDrawScript='if (S) drawDataFlow(&quot;B&quot;, &quot;O&quot;) else drawDataFlow(&quot;A&quot;, &quot;O&quot;)'>
       <components>
         <originIndicator _id='77'>
           <location>

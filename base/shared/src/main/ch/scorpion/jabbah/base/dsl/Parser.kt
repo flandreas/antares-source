@@ -61,8 +61,9 @@ fun interface ParserFactory {
  *            | procedureCall
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
- *     literal : number
+ *     literal : number | string
  *     number : LONG
+ *     string : """ { CHAR }"""
  *     variable : identifier | assocArray
  *     assocArray : identifier "[" expr "]"
  *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
@@ -370,7 +371,7 @@ open class Parser(
 					eat(NOT)
 					return UnaryOperation(location, token, factor())
 				}
-				LITERAL -> literal()
+				LITERAL, DOUBLE_QUOTE -> literal()
 				LPAREN -> {
 					eat(LPAREN)
 					val node = expr()
@@ -402,11 +403,24 @@ open class Parser(
 	}
 
 	protected open fun literal(): Literal {
-		lexer.location.let { location ->
-			val literal = Literal(location, currentToken!!)
-			eat(LITERAL)
-			return literal
+		return when (currentToken!!.type) {
+			DOUBLE_QUOTE -> string()
+			else -> number()
 		}
+	}
+
+	private fun number(): Literal {
+		val literal = Literal(lexer.location, currentToken!!)
+		eat(LITERAL)
+		return literal
+	}
+
+	private fun string(): Literal {
+		eat(DOUBLE_QUOTE)
+		val string = Literal(lexer.location, currentToken!!)
+		eat(ID)
+		eat(DOUBLE_QUOTE)
+		return string
 	}
 
 	/**

@@ -293,6 +293,7 @@ class SubGraphVerticeRef(
 
 		type = subGraphVertice.graphName.value
 		_typeDesc = subGraphVertice.description.value
+		graphName = subGraphVertice.graphName
 
 		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)

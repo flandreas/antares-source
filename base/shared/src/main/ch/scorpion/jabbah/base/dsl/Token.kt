@@ -45,7 +45,8 @@ enum class TokenType(val id: String) {
 	AT("@"),
 	HASH("#"),
 	DOT("."),
-	COMMA(",")
+	COMMA(","),
+	DOUBLE_QUOTE("\"")
 }
 
 /**

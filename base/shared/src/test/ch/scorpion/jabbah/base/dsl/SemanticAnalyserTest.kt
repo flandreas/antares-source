@@ -82,4 +82,21 @@ class SemanticAnalyserTest {
 			Parser(Lexer("f(1, 2)"), semanticAnalyser).parse()
 		}
 	}
+
+	@Test
+	fun shouldResolveMultipleFunctionCalls() {
+		val symbolTable = ScopedSymbolTable("global", 1, null)
+		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+		val semanticAnalyser = SemanticAnalyser(symbolTable)
+
+		val ast = Parser(Lexer("""
+			if (1 == 1) {
+				f(1)
+			} else {
+				f(2)
+			}
+		""".trimIndent()), semanticAnalyser).parse()
+
+		assertEquals(2, filterNodes(ast) { it is FunctionCall}.size)
+	}
 }

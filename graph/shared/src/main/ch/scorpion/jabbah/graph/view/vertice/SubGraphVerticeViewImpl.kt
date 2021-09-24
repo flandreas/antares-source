@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
@@ -27,18 +27,21 @@ import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ActorViewBag
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
+import ch.scorpion.jabbah.graph.container.DrawExecSymbolFunctions
+import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.script.Script
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -53,8 +56,7 @@ class SubGraphVerticeViewImpl(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-	private val eventBus: EventBus = BaseModule.eventBus,
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
 	styleProvider,
 	graphElement
@@ -75,6 +77,8 @@ class SubGraphVerticeViewImpl(
 	private val containsBox = Rectangle2D()
 
 	private val _boundingBox = Rectangle2D()
+
+	private var drawExecScriptInterpreter: Interpreter? = null
 
 	override var location: Point2D = Point2D.ZERO
 		set(value) {
@@ -198,18 +202,20 @@ class SubGraphVerticeViewImpl(
 
 	override fun drawImpl(context: DrawContext) {
 		drawableBag.drawables.forEach { it.draw(context) }
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && StringUtils.isNotEmpty(drawExecScript)) {
-			scriptGateway.exec(wrappedDrawExecScript, this, context)
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute /*&& StringUtils.isNotEmpty(drawExecScript)*/) {
+			drawExecScriptInterpreter?.let {
+				DrawExecSymbolFunctions.bind(this, context)
+				try {
+					it.interpretCatching(this.model.graphName.value, "Draw Symbol", rethrow = true)
+				} catch (e: Throwable) {
+					// Reset Interpreter in case of an error to avoid cascading errors
+					// when the View is redrawn
+					drawExecScriptInterpreter = null
+				}
+			}
 		}
 		super.drawImpl(context)
 	}
-
-	private val wrappedDrawExecScript: Script
-		get() =
-			Script(
-				code = drawExecScript!!,
-				origin = Translations.getString("graph.property.ContainerDrawing", StringUtils.orElse(model.name, "?")),
-				context = Translations.getString("graph.property.ContainerDrawing.execDrawScript.name"))
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) { c ->
@@ -349,6 +355,13 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
+	override fun handleExecutionStarted(signalHandler: SignalHandler) {
+		drawExecScriptInterpreter = createDrawScriptInterpreter(signalHandler)
+		if (drawExecScriptInterpreter is GraphDslInterpreter) {
+			(drawExecScriptInterpreter as GraphDslInterpreter).executionStarted()
+		}
+	}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun addPortView(portView: PortView<*>) {
@@ -364,8 +377,6 @@ class SubGraphVerticeViewImpl(
 	/** ---- [SubGraphVerticeView] */
 
 	override val subGraphVertice: SubGraphVertice get() = model
-
-	override var drawExecScript: String? = null
 
 	override val hasCustomizedContainerDrawing: Boolean get() = customizedContainerDrawing != null
 
@@ -404,6 +415,16 @@ class SubGraphVerticeViewImpl(
 		invalidate()
 		validate()
 		update()
+	}
+
+	private fun createDrawScriptInterpreter(signalHandler: SignalHandler): Interpreter? {
+		return repository.getContainerLibraryElement(model.graphUUID!!).let { cle ->
+			cle?.drawSymbolAST?.let { ast ->
+				BaseModule.interpreterFactory(
+					ast,
+					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(model, signalHandler)))
+			}
+		}
 	}
 
 	/** ---- [ActorView] */

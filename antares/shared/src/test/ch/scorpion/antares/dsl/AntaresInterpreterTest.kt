@@ -53,4 +53,10 @@ class AntaresInterpreterTest {
 		""".trimIndent()).interpret()
 		assertEquals(14L, result)
 	}
+
+	@Test
+	fun shouldInterpretStringLiteral() {
+		val result = AntaresInterpreter("a = \"test\"").interpret()
+		assertEquals("test", result)
+	}
 }

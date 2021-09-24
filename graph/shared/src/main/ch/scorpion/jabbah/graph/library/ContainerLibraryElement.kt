@@ -49,6 +49,7 @@ class ContainerLibraryElement(
 				field?.dispose()
 				field = value
 				executionScriptASTCache.reset()
+				drawSymbolScriptASTCache.reset()
 			}
 		}
 
@@ -62,8 +63,20 @@ class ContainerLibraryElement(
 		}
 	}
 
-	/** Returns the abstract syntax tree for the execution script of this [ContainerLibraryElement]'s [Graph].*/
+	/** Returns the abstract syntax tree of the script for executing this [ContainerLibraryElement]'s [Graph].*/
 	val executionScriptAST: Node? get() = executionScriptASTCache.value
+
+	private val drawSymbolScriptASTCache = resettableLazy {
+		metaGraph?.containerDrawing?.execDrawScript?.script?.let {
+			LOG.trace("Parsing symbol drawing script of '${metaGraph!!.name}'")
+			metaGraph!!.containerDrawing.
+				createDrawSymbolScriptParser(it)
+				.parseCatching(metaGraph!!.name, "Draw Symbol")
+		}
+	}
+
+	/** Returns the abstract syntax tree of the script for enhancing drawing this [ContainerLibraryElement]'s symbol. */
+	val drawSymbolAST: Node? get() = drawSymbolScriptASTCache.value
 
 	/** ---- [LibraryItem] */
 

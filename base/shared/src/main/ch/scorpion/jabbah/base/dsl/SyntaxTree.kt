@@ -1,10 +1,24 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
 
 interface Node {
 	val location: CodeLocation
 	fun accept(visitor: HierarchyVisitor): Boolean
+}
+
+fun filterNodes(node: Node, condition: (Node) -> Boolean): Collection<Node> {
+	val result = mutableSetOf<Node>()
+	node.accept(object : EmptyHierarchyVisitor() {
+		override fun visitEnter(node: Any): Boolean {
+			if (node is Node && condition(node)) {
+				result.add(node)
+			}
+			return true
+		}
+	})
+	return result
 }
 
 abstract class AbstractNode(override val location: CodeLocation) : Node {
@@ -143,6 +157,7 @@ class IfStatement(location: CodeLocation, val condition: Node, val thenStatement
 		if (visitor.visitEnter(this)) {
 			condition.accept(visitor)
 			thenStatement.accept(visitor)
+			elseStatement?.accept(visitor)
 		}
 		return visitor.visitLeave(this)
 	}

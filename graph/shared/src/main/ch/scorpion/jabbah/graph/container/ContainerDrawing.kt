@@ -1,8 +1,12 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -196,8 +200,6 @@ class ContainerDrawing(
 		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator)
 		val origin = clonedDrawing.getOriginIndicator().location
 
-		view.drawExecScript = execDrawScript.script
-
 		for (comp in clonedDrawing.drawables) {
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)
 			if (comp is PortViewComponent<*>) {
@@ -213,6 +215,25 @@ class ContainerDrawing(
 				view.addDrawable(comp)
 			}
 		}
+	}
+
+	fun createDrawSymbolScriptParser(program: String): Parser =
+		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createDrawExecSymbolParserSymbolTable()))
+
+	private fun createDrawExecSymbolParserSymbolTable(): ScopedSymbolTable =
+		ScopedSymbolTable("Context", level = 0, enclosingScope = null).also {
+			definePortNames(it)
+			defineContextFunctions(it)
+		}
+
+	private fun definePortNames(symbolTable: ScopedSymbolTable) {
+		getPortViewComponents()
+			.filter { StringUtils.isNotBlank(it.port.name) }
+			.forEach { symbolTable.define(Symbol(it.port.name!!)) }
+	}
+
+	private fun defineContextFunctions(symbolTable: ScopedSymbolTable) {
+		DrawExecSymbolFunctions.defineIn(symbolTable)
 	}
 
 	private fun getPortViewComponents(): ImmutableList<PortViewComponent<*>> {

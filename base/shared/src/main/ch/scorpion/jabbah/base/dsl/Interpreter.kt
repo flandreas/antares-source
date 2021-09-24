@@ -1,6 +1,11 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Issue
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
@@ -21,6 +26,7 @@ open class Interpreter(
 
 	/**
 	 * Runs the program defined by the AST in [rootNode].
+	 *
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
@@ -32,6 +38,32 @@ open class Interpreter(
 		} finally {
 			// Don't clear memory BEFORE interpretation in order not to break Memory.preset()
 			memory.clear()
+		}
+	}
+
+	/**
+	 * Calls [interpret] and catches [DslError] by posting an [Issue] on the system's [EventBus].
+	 *
+	 * @param origin the value for [Issue.origin]
+	 * @param context the value for [Issue.context]
+	 * @param params the optional parameters on which execution logic might depend on. The
+	 * values of these parameters might be different for every call of [interpret].
+	 */
+	fun interpretCatching(origin: String, context: String, params: Any? = null, rethrow: Boolean = false): Any {
+		return try {
+			interpret(params)
+		} catch (e: DslError) {
+			BaseModule.eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = "Runtime Error",
+				description = e.message,
+				origin = origin,
+				context = context
+			))
+			if (rethrow) {
+				throw e
+			}
+			Unit
 		}
 	}
 

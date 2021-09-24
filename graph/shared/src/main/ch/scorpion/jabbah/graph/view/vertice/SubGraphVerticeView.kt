@@ -1,14 +1,13 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.library.Library
 
 /**
  * A graphical representation of a [SubGraphVertice] that can be added to a [GraphView].
@@ -17,9 +16,6 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 
 	/** Returns the model of this [SubGraphVerticeView].*/
 	val subGraphVertice: SubGraphVertice?
-
-	/** Contains the script code that customized the visual look while execution mode.*/
-	var drawExecScript: String?
 
 	val hasCustomizedContainerDrawing: Boolean
 

@@ -343,6 +343,14 @@ class LexerTest {
 		assertToken(RIGHT_BRACKET, lexer)
 	}
 
+	@Test
+	fun shouldScanString() {
+		val lexer = Lexer("\"text\"")
+		assertToken(DOUBLE_QUOTE, lexer)
+		assertId("text", lexer)
+		assertToken(DOUBLE_QUOTE, lexer)
+	}
+
 	private fun assertEof(token: Token<Any>) {
 		assertEquals(EOF, token.type)
 	}

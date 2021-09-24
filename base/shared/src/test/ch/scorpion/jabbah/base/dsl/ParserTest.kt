@@ -331,6 +331,18 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseStringLiteral() {
+		val parser = Parser(Lexer("a = \"text\""), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- =
+			-- a
+			-- text
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

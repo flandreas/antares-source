@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /** Identifies a location in the code to identify error locations.*/
 data class CodeLocation(val pos: Int, val row: Int, val column: Int) {
+	companion object {
+		val UNDEFINED = CodeLocation(0, 0, 0)
+	}
 	override fun toString(): String = "$row:$column"
 }
 
@@ -64,6 +67,7 @@ open class Lexer(private val text: String) {
 		private val HASH_TOKEN = Token<Unit>(HASH)
 		private val DOT_TOKEN = Token<Unit>(DOT)
 		private val COMMA_TOKEN = Token<Unit>(COMMA)
+		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(DOUBLE_QUOTE)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -210,6 +214,7 @@ open class Lexer(private val text: String) {
 				'#' -> return advanceWith(state, HASH_TOKEN)
 				'.' -> return advanceWith(state, DOT_TOKEN)
 				',' -> return advanceWith(state, COMMA_TOKEN)
+				'"' -> return advanceWith(state, DOUBLE_QUOTE_TOKEN)
 			}
 
 			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
