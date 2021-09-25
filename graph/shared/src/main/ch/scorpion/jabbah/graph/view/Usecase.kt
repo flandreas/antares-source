@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.base.Language
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [Usecase] is a representation of a single way the user can use a [GraphView].
@@ -28,6 +26,10 @@ interface Usecase : Namable, Describable, Storable {
 	var testScript: String?
 
 	val hasTest: Boolean get() = testScript?.isNotBlank() ?: false
+
+	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
+
+	fun run()
 
 	fun dispose()
 }

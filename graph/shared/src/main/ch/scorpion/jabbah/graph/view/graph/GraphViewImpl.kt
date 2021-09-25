@@ -144,6 +144,7 @@ open class GraphViewImpl(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		scenarios.executionStart(this, signalHandler)
+		usecases.executionStart(this, signalHandler)
 	}
 
 	override fun checkDesign(): Boolean {

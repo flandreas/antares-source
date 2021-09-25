@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
  * Encapsulates the [Usecase]s of a [GraphView] and the corresponding management methods
@@ -21,6 +22,8 @@ interface Usecases : Storable {
 	val hasTest: Boolean get() = getUsecases().any { it.hasTest }
 
 	fun dispose()
+
+	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
 
 	fun getUsecases(): Iterable<Usecase>
 

@@ -1,7 +1,5 @@
-package ch.scorpion.antares
+package ch.scorpion.jabbah.graph
 
-import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
-import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -11,7 +9,6 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
@@ -21,29 +18,29 @@ import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 
 /**
- * A test base class for testing Antares circuit simulations.
- * TODO Eliminate copy/paste from corresponding class in graph module
+ * TODO Eliminate copy/paste from corresponding class in antares module.
  */
-abstract class AbstractCircuitTest {
+abstract class AbstractGraphViewExecutionTest {
 
 	companion object {
 		init {
-			AntaresTestRule.configure()
+			GraphViewTestRule.configure()
 		}
 	}
 
-	private lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	protected lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	protected lateinit var styleProvider: StyleProvider
 	protected lateinit var eventBus: EventBus
 	protected lateinit var timeService: ControlledTimeService
-	private lateinit var timer: Timer
+	protected lateinit var timer: Timer
 	protected lateinit var scheduler: SchedulerImpl
-	private lateinit var task: TimedSchedulerTask
+	protected lateinit var task: TimedSchedulerTask
 
 	@BeforeTest
 	open fun setup() {
@@ -54,18 +51,17 @@ abstract class AbstractCircuitTest {
 		timer = ControlledTimer(timeService)
 		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), ControlledTimer(timeService))
 		scheduler = SchedulerImpl(currentSystemSpeedCategory, timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
-		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 	}
 
-	abstract fun getCircuitView(): GraphView
+	abstract fun getGraphView(): GraphView
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
-		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(it, IOModule.storableCreator) }
-		getCircuitView().graph!!.formNet(scheduler)
-		getCircuitView().graph!!.executionInitialize(scheduler)
-		getCircuitView().graph!!.executionStart(scheduler)
-		getCircuitView().executionStart(scheduler)
+		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(it, IOModule.storableCreator) }
+		getGraphView().graph!!.formNet(scheduler)
+		getGraphView().graph!!.executionInitialize(scheduler)
+		getGraphView().graph!!.executionStart(scheduler)
+		getGraphView().executionStart(scheduler)
 		if (proceedTo > 0) {
 			proceedToNanos(proceedTo)
 		}
@@ -73,7 +69,7 @@ abstract class AbstractCircuitTest {
 
 	protected fun stopSimulation() {
 		scheduler.isActive = false
-		getCircuitView().graph!!.executionStopped(scheduler)
+		getGraphView().graph!!.executionStopped(scheduler)
 	}
 
 	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk()) {

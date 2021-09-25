@@ -10,10 +10,10 @@ import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 
@@ -29,9 +29,8 @@ import ch.scorpion.jabbah.graph.view.Usecase
 class UsecaseRunner(
 	private val usecase: Usecase,
 	val graphView: GraphView,
-	private val scheduler: Scheduler,
-	private val applicationModeHolder: ApplicationModeHolder,
-	private val gateway: ScriptGateway = ScriptModule.scriptGateway,
+	val scheduler: Scheduler,
+	private val applicationModeHolder: ApplicationModeHolder
 ) {
 
 	companion object {
@@ -51,7 +50,8 @@ class UsecaseRunner(
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
 		applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
-			gateway.usecaseAction(script, this, scheduler)
+			GraphDslModule.usecaseExternalFunctions.bind(this, usecase.name.value, "Usecase logic")
+			usecase.run()
 		}
 		didRun = true
 	}

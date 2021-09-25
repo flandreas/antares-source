@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.io.*
 
@@ -18,6 +19,10 @@ class UsecasesImpl(
 	/** ---- [Usecases] interface */
 
 	override val isEmpty: Boolean get() = usecases.isEmpty()
+
+	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
+		usecases.forEach { it.executionStart(graphView, signalHandler) }
+	}
 
 	override fun dispose() {
 		usecases.forEach { it.dispose() }

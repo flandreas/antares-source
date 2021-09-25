@@ -1,17 +1,14 @@
 package ch.scorpion.antares.model.module
 
-import ch.scorpion.antares.dsl.AntaresInterpreter
-import ch.scorpion.antares.dsl.AntaresLexer
-import ch.scorpion.antares.dsl.AntaresParser
-import ch.scorpion.antares.dsl.AntaresStoringActivationRecord
+import ch.scorpion.antares.dsl.AntaresDslModule
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.addressable.RAM
+import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
-import ch.scorpion.antares.model.addressable.RAM
-import ch.scorpion.antares.model.addressable.ROM
-import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.model.output.LEDMatrix
@@ -22,8 +19,6 @@ import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationReco
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.dsl.ActivationRecordFactory
-import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory
@@ -39,10 +34,7 @@ object AntaresModelModule : AbstractModule() {
 		customizeProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 
-		BaseModule.lexerFactory = { AntaresLexer(it) }
-		BaseModule.parserFactory = ParserFactory { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
-		BaseModule.storingActivationRecordFactory = ActivationRecordFactory { n, p -> AntaresStoringActivationRecord(n, p) }
-		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
+		AntaresDslModule.require()
 
 		GraphModelModule.portFactory = DigitalPortFactory()
 		GraphModelModule.graphFactory = { DigitalGraph(name = it) }

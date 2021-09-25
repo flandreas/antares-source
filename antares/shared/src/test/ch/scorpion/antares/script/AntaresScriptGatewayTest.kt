@@ -32,6 +32,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.*
 
+@Ignore
 class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 	companion object {
@@ -57,6 +58,8 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	private val gateway = AntaresScriptGateway()
 
 	private val applicationModeHolder = DummyApplicationModeHolder()
+
+	override fun getCircuitView(): GraphView = circuitView
 
 	@BeforeTest
 	override fun setup() {
@@ -87,8 +90,6 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
 	}
-
-	override fun getCircuitView(): GraphView = circuitView
 
 	/** ---- [CircuitViewBridge] */
 

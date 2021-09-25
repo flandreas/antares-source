@@ -16,6 +16,8 @@ object DigitalSignalFactory {
 
 	fun ofBits(bits: List<Bit>): DigitalSignal = Word(bits)
 
+	fun ofMinimalBitWidth(value: ULong): DigitalSignal = Word.ofMinimalBitWidth(value)
+
 	fun undefined(bitWidth: BitWidth): DigitalSignal = Word.undefined(bitWidth)
 
 	fun error(bitWidth: BitWidth): DigitalSignal = Word.error(bitWidth)
