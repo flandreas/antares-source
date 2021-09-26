@@ -25,6 +25,7 @@ class UsecaseImpl(
 		private val LOG by logger(UsecaseImpl::class)
 	}
 
+	@Suppress("MemberVisibilityCanBePrivate")
 	var executionScriptProperty: ScriptProperty
 		get() = ScriptProperty(executionScript)
 		set(value) {
@@ -36,13 +37,13 @@ class UsecaseImpl(
 	private val executionScriptASTCache = resettableLazy {
 		executionScriptProperty.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(this.name.value, "Usecase Logic")
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, "Usecase Logic"))
 		}
 	}
 
-	var executionScriptInterpreter: Interpreter? = null
-		private set
+	private var executionScriptInterpreter: Interpreter? = null
 
+	@Suppress("MemberVisibilityCanBePrivate")
 	var testScriptProperty: ScriptProperty
 		get() = ScriptProperty(testScript)
 		set(value) {
@@ -52,11 +53,11 @@ class UsecaseImpl(
 	private val testScriptASTCache = resettableLazy {
 		testScriptProperty.script?.let {
 			LOG.trace("Parsing test script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(this.name.value, "Usecase Test")
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, "Usecase Test"))
 		}
 	}
 
-	var testScriptInterpreter: Interpreter? = null
+	private var testScriptInterpreter: Interpreter? = null
 
 	/** ---- [Any] */
 
@@ -82,11 +83,11 @@ class UsecaseImpl(
 	}
 
 	override fun run() {
-		executionScriptInterpreter?.interpretCatching(name.value, "Usecase Logic")
+		executionScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, "Usecase Logic"))
 	}
 
 	override fun runTest() {
-		testScriptInterpreter?.interpretCatching(name.value, "Usecase Test")
+		testScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, "Usecase Test"))
 	}
 
 	override fun dispose() {}

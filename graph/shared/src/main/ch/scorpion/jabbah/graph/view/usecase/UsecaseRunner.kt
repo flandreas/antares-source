@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
+import ch.scorpion.jabbah.graph.dsl.UsecaseTestExternalFunctions
 import ch.scorpion.jabbah.graph.model.GraphInput
-import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 
@@ -36,8 +36,6 @@ class UsecaseRunner(
 		private val LOG by logger(UsecaseRunner::class)
 	}
 
-	val script = Script(usecase.executionScript, usecase.name.value, Translations.getString("usecases.issueContext.name"))
-
 	private var didRun = false
 
 	/**
@@ -59,14 +57,14 @@ class UsecaseRunner(
 
 	/**
 	 * Request to execute the specified [action] after [time] nanoseconds.
-	 * This method is typically called by [ScriptGateway.usecaseAction].
+	 * This method is typically called by [UsecaseTestExternalFunctions].
 	 */
 	fun executeAt(time: Long, action: () -> Unit) {
 		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())
 	}
 
 	fun <T : Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
-		scheduler.requestActingAfter(UsecaseClock<T>(input, firstValue, secondValue, period), 1, SimpleActorData())
+		scheduler.requestActingAfter(UsecaseClock(input, firstValue, secondValue, period), 1, SimpleActorData())
 	}
 
 	private fun delay(time: Long): Long {

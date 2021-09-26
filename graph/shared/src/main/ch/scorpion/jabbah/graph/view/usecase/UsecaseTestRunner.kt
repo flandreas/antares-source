@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
-import ch.scorpion.jabbah.graph.script.Script
+import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import kotlin.math.max
@@ -33,8 +33,7 @@ class UsecaseTestRunner(
 
 	private var _usecase: Usecase? = null
 
-	private var _script: Script? = null
-	val script get() = _script!!
+	private lateinit var scriptMetaData: ScriptMetaData
 
 	private var maxAssertionTime: Long = 0
 
@@ -54,7 +53,7 @@ class UsecaseTestRunner(
 			LOG.trace("Running test of usecase '${usecase.name.value}'")
 
 			_usecase = usecase
-			_script = Script(usecase.testScript!!, usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
+			scriptMetaData = ScriptMetaData(usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
 
 			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, applicationModeHolder)
 			applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
@@ -115,8 +114,8 @@ class UsecaseTestRunner(
 			severity = IssueSeverity.Warning,
 			name = Translations.getString("usecaseTest.dsl.testFailed.name"),
 			description = description,
-			origin = script.origin,
-			context = script.context
+			origin = scriptMetaData.origin,
+			context = scriptMetaData.context
 		))
 	}
 

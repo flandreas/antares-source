@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -48,7 +49,7 @@ class ScenarioImpl(
 		LOG.trace("Parsing condition script of '${name.value}'")
 		BaseModule.parserFactory
 			.create(conditionScript, null)
-			.parseCatching(name.value, "Scenario Condition")
+			.parseCatching(ScriptMetaData(name.value, "Scenario Condition"))
 	}
 
 	private var interpreter: Interpreter? = null

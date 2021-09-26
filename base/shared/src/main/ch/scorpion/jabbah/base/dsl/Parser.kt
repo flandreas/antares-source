@@ -100,10 +100,9 @@ open class Parser(
 
 	/**
 	 * Calls [parse] and catches [DslError] by posting an [Issue] on the system's [EventBus].
-	 * @param origin the value for [Issue.origin]
-	 * @param context the value for [Issue.context]
+	 * @param metaData used for describing the [Issue]
 	 */
-	fun parseCatching(origin: String, context: String): Node? {
+	fun parseCatching(metaData: ScriptMetaData): Node? {
 		return try {
 			parse()
 		} catch (e: DslError) {
@@ -111,8 +110,8 @@ open class Parser(
 				severity = IssueSeverity.Error,
 				name = "Parse Error",
 				description = e.message,
-				origin = origin,
-				context = context))
+				origin = metaData.origin,
+				context = metaData.context))
 			null
 		}
 	}

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
@@ -206,7 +207,7 @@ class SubGraphVerticeViewImpl(
 			drawExecScriptInterpreter?.let {
 				DrawExecSymbolFunctions.bind(this, context)
 				try {
-					it.interpretCatching(this.model.graphName.value, "Draw Symbol", rethrow = true)
+					it.interpretCatching(ScriptMetaData(this.model.graphName.value, "Draw Symbol"), rethrow = true)
 				} catch (e: Throwable) {
 					// Reset Interpreter in case of an error to avoid cascading errors
 					// when the View is redrawn

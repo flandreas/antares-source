@@ -49,7 +49,7 @@ open class Interpreter(
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
-	fun interpretCatching(origin: String, context: String, params: Any? = null, rethrow: Boolean = false): Any {
+	fun interpretCatching(metaData: ScriptMetaData, params: Any? = null, rethrow: Boolean = false): Any {
 		return try {
 			interpret(params)
 		} catch (e: DslError) {
@@ -57,8 +57,8 @@ open class Interpreter(
 				severity = IssueSeverity.Error,
 				name = "Runtime Error",
 				description = e.message,
-				origin = origin,
-				context = context
+				origin = metaData.origin,
+				context = metaData.context
 			))
 			if (rethrow) {
 				throw e

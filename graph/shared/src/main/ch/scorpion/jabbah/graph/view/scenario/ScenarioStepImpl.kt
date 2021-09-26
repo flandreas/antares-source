@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -39,7 +40,9 @@ class ScenarioStepImpl(
 	private val conditionScriptASTCache = resettableLazy {
 		conditionScript?.let {
 			LOG.trace("Parsing condition script of '${name.value}'")
-			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Condition")
+			BaseModule.parserFactory
+				.create(it, null)
+				.parseCatching(ScriptMetaData(name.value, "Scenario Step Condition"))
 		}
 	}
 
@@ -55,7 +58,9 @@ class ScenarioStepImpl(
 	private val onEntryScriptASTCache = resettableLazy {
 		onEntryScript?.let {
 			LOG.trace("Parsing onEntry script of '${name.value}'")
-			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Entry Action")
+			BaseModule.parserFactory
+				.create(it, null)
+				.parseCatching(ScriptMetaData(name.value, "Scenario Step Entry Action"))
 		}
 	}
 
@@ -67,7 +72,9 @@ class ScenarioStepImpl(
 	private val onExitScriptASTCache = resettableLazy {
 		onExitScript?.let {
 			LOG.trace("Parsing onExit script of '${name.value}'")
-			BaseModule.parserFactory.create(it, null).parseCatching(name.value, "Scenario Step Exit Action")
+			BaseModule.parserFactory
+				.create(it, null)
+				.parseCatching(ScriptMetaData(name.value, "Scenario Step Exit Action"))
 		}
 	}
 
