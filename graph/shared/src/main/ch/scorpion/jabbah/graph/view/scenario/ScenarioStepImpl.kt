@@ -130,7 +130,11 @@ class ScenarioStepImpl(
 		}
 
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
-		conditionInterpreter?.let { it.interpret(view.drawing.graph!!) != 0L } ?: false
+		conditionInterpreter?.let {
+			it.interpretCatching(
+				ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepCondition.text")),
+				view.drawing.graph!!) != 0L
+		} ?: false
 	}
 
 	override fun dispose() { }
@@ -148,11 +152,15 @@ class ScenarioStepImpl(
 	}
 
 	override fun activate(view: DrawingView<GraphView>) {
-		onEntryInterpreter?.interpret(view.drawing.graph!!)
+		onEntryInterpreter?.interpretCatching(
+			ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepEntryAction.text")),
+			view.drawing.graph)
 	}
 
 	override fun passivate(view: DrawingView<GraphView>) {
-		onExitInterpreter?.interpret(view.drawing.graph)
+		onExitInterpreter?.interpretCatching(
+			ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepExitAction.text")),
+			view.drawing.graph)
 	}
 
 	override val highlightIdsAsInt: List<Int>

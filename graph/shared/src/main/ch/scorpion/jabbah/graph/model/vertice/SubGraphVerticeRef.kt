@@ -1,11 +1,14 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.ScriptMetaData
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -198,18 +201,9 @@ class SubGraphVerticeRef(
 	}
 
 	private fun runExecutionScript(data: GraphActorData?) {
-		try {
-			interpreter?.interpret(params = data)
-		} catch (e: DslError) {
-			// TODO I18N
-			BaseModule.eventBus.post(IssueImpl(
-				severity = IssueSeverity.Error,
-				name = "Runtime Error",
-				description = e.message,
-				origin = type,
-				context = "Subcircuit Logic"
-			))
-		}
+		interpreter?.interpretCatching(
+			ScriptMetaData(type, Translations.getString("graph.dsl.subgraphLogic.text")),
+			params = data)
 	}
 
 	/** ---- [AbstractVertice] */

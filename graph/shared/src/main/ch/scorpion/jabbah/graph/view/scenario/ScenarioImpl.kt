@@ -84,7 +84,11 @@ class ScenarioImpl(
 	}
 
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
-		interpreter?.let { it.interpret(view.drawing.graph!!) != 0L } ?: false
+		interpreter?.let {
+			it.interpretCatching(
+				ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioCondition.text")),
+				view.drawing.graph!!) != 0L
+		} ?: false
 	}
 
 	override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
