@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
@@ -42,7 +43,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing condition script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, "Scenario Step Condition"))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepCondition.text")))
 		}
 	}
 
@@ -60,7 +61,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing onEntry script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, "Scenario Step Entry Action"))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepEntryAction.text")))
 		}
 	}
 
@@ -74,7 +75,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing onExit script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, "Scenario Step Exit Action"))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepExitAction.text")))
 		}
 	}
 

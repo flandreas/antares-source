@@ -38,15 +38,15 @@ class CircuitInOutImpl(
 
 	companion object {
 
-		private const val INPUT_BASE_RESOURCE_KEY = "library.element.CircuitInput"
+		private const val INPUT_BASE_RESOURCE_KEY = "library.element.GraphInput"
 		private val INPUT_TYPE get() = Translations.getString("$INPUT_BASE_RESOURCE_KEY.name")
 		private val INPUT_TYPE_DESC get() = Translations.getOptionalString("$INPUT_BASE_RESOURCE_KEY.desc")
 
-		private const val OUTPUT_BASE_RESOURCE_KEY = "library.element.CircuitOutput"
+		private const val OUTPUT_BASE_RESOURCE_KEY = "library.element.GraphOutput"
 		private val OUTPUT_TYPE get() = Translations.getString("$OUTPUT_BASE_RESOURCE_KEY.name")
 		private val OUTPUT_TYPE_DESC get() = Translations.getOptionalString("$OUTPUT_BASE_RESOURCE_KEY.desc")
 
-		private const val INOUT_BASE_RESOURCE_KEY = "library.element.CircuitInOut"
+		private const val INOUT_BASE_RESOURCE_KEY = "library.element.GraphInOut"
 		private val INOUT_TYPE get() = Translations.getString("$INOUT_BASE_RESOURCE_KEY.name")
 		private val INOUT_TYPE_DESC get() = Translations.getOptionalString("$INOUT_BASE_RESOURCE_KEY.desc")
 

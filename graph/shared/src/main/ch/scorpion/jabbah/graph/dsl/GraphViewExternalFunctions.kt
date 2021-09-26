@@ -57,7 +57,7 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 			return null
 		}
 		if (!input.model.portType.isInput) {
-			postTypeIssue(inputName, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.output"))
+			postTypeIssue(inputName, Translations.getString("library.element.GraphInOut.name"), Translations.getString("graph.property.portType.output"))
 			return null
 		}
 		return input as GraphPortView<GraphInput<Any>>
@@ -71,7 +71,7 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 			return null
 		}
 		if (!output.model.portType.isOutput) {
-			postTypeIssue(outputName, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.input"))
+			postTypeIssue(outputName, Translations.getString("library.element.GraphInOut.name"), Translations.getString("graph.property.portType.input"))
 			return null
 		}
 		return output as GraphPortView<GraphOutput<Any>>

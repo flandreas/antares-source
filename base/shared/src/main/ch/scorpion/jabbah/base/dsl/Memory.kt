@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.module.BaseModule
 
@@ -58,7 +59,7 @@ class Memory(private val context: ActivationRecord? = null) {
 
 	fun exitScope(node: Node) {
 		if (callStack.peek() === global) {
-			throw RuntimeError(node.location, "Cannot exit global scope")
+			throw RuntimeError(node.location, Translations.getString("base.dsl.cannotExitGlobalScope.msg"))
 		}
 		callStack.pop()
 	}

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SemanticError
@@ -25,10 +26,10 @@ class GraphDslSemanticAnalyser(
 
 	private fun visitInitStatement(node: InitStatement) {
 		if (initVisited) {
-			throw SemanticError(node.location, "At most one 'init' block allowed")
+			throw SemanticError(node.location, Translations.getString("graph.dsl.atMostOneInitBlock.msg"))
 		}
 		if (scope.level > 1) {
-			throw SemanticError(node.location, "'init' block only allowed in outermost scope")
+			throw SemanticError(node.location, Translations.getString("graph.dsl.unexpectedInitBlock.msg"))
 		}
 		initVisited = true
 	}

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
 
 fun interface SemanticAnalyserFactory {
 	fun create(symbolTable: ScopedSymbolTable?): SemanticAnalyser
@@ -77,7 +78,7 @@ open class SemanticAnalyser(
 
 	private fun enterDeclaration(declaration: Declaration) {
 		if (declaration.store && scope.level > 1) {
-			throw SemanticError(declaration.location, "'store' declaration only allowed in global scope")
+			throw SemanticError(declaration.location, Translations.getString("base.dsl.unexpectedStore.msg"))
 		}
 		declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
 	}
@@ -86,7 +87,7 @@ open class SemanticAnalyser(
 		val typeSymbol = null as BuiltInTypeSymbol?
 		val varSymbol = VariableSymbol(name, typeSymbol)
 		if (scope.lookup(name, currentScopeOnly = true) != null) {
-			throw SemanticError(location, "Variable '$name' already declared")
+			throw SemanticError(location, Translations.getString("base.dsl.variableAlreadyDeclared.msg", name))
 		}
 		scope.define(varSymbol)
 	}
@@ -113,12 +114,12 @@ open class SemanticAnalyser(
 	private fun enterFunctionCall(functionCall: FunctionCall) {
 		val name = functionCall.name.value!!
 		val functionSymbol = scope.lookup(name)
-			?: throw SemanticError(functionCall.location, "Function '$name' not defined")
+			?: throw SemanticError(functionCall.location, Translations.getString("base.dsl.functionNotDefined.msg", name))
 		if (functionSymbol !is ExternalFunctionSymbol) {
-			throw SemanticError(functionCall.location, "Expecting '$name' being a function")
+			throw SemanticError(functionCall.location, Translations.getString("base.dsl.expectedFunction.msg", name))
 		}
 		if (functionCall.params.size != functionSymbol.paramsCount) {
-			throw SemanticError(functionCall.location, "Function '$name' expects ${functionSymbol.paramsCount} parameters")
+			throw SemanticError(functionCall.location, Translations.getString("base.dsl.functionParamCount.msg", functionSymbol.paramsCount))
 		}
 		functionCall.function = functionSymbol
 	}
@@ -130,7 +131,7 @@ open class SemanticAnalyser(
 	private fun variable(variable: Variable) {
 		val name = variable.token.value as String
 		if (scope.lookup(name) == null && currentlyDeclaredVariableName != name) {
-			throw SemanticError(variable.location, "Variable '$name' not defined")
+			throw SemanticError(variable.location, Translations.getString("base.dsl.variableNotDefined.msg", name))
 		}
 	}
 }

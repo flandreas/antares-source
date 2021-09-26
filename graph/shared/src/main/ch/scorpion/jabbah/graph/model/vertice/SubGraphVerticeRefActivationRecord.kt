@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Port
@@ -35,14 +36,14 @@ open class SubGraphVerticeRefActivationRecord(
 
 	override fun setValue(variable: Variable, value: Any) {
 		if (!verticeRef.hasOutput(variable.token.value!!)) {
-			throw RuntimeError(variable.location, "Output '${variable.token.value!!}' not defined")
+			throw RuntimeError(variable.location, Translations.getString("graph.dsl.outputNotFound.msg", variable.token.value!!))
 		}
 		verticeRef.getOutput<Any>(variable.token.value!!).setOutgoingSignalBuffered(value, signalHandler)
 	}
 
 	override fun getValue(variable: Variable): Any {
 		if (!verticeRef.hasInput(variable.token.value!!)) {
-			throw RuntimeError(variable.location, "Input '${variable.token.value!!}' not defined")
+			throw RuntimeError(variable.location, Translations.getString("graph.dsl.inputNotFound.msg", variable.token.value!!))
 		}
 		return verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()!!
 	}

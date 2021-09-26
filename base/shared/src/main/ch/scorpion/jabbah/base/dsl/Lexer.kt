@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /** Identifies a location in the code to identify error locations.*/
@@ -217,7 +218,7 @@ open class Lexer(private val text: String) {
 				'"' -> return advanceWith(state, DOUBLE_QUOTE_TOKEN)
 			}
 
-			throw SyntaxError(state.location, "Invalid character '${state.currentChar}'")
+			throw SyntaxError(state.location, Translations.getString("base.dsl.invalidCharacter.msg", "${state.currentChar}"))
 		}
 		return EOF_TOKEN
 	}
@@ -255,7 +256,7 @@ open class Lexer(private val text: String) {
 	protected open fun number(state: State): Token<Any> =
 		when {
 			isLong(state) -> literalToken(long(state))
-			else -> throw SyntaxError(state.location, "Expected a number")
+			else -> throw SyntaxError(state.location, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 
 	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
@@ -305,7 +306,7 @@ open class Lexer(private val text: String) {
 		try {
 			return result.toString().toLong()
 		} catch (e: NumberFormatException) {
-			throw SyntaxError(state.location, "Illegal long '${result.ifEmpty { state.currentChar }}'")
+			throw SyntaxError(state.location, Translations.getString("base.dsl.illegalNumber.msg", "${result.ifEmpty { state.currentChar }}"))
 		}
 	}
 
@@ -329,11 +330,11 @@ open class Lexer(private val text: String) {
 		if (state.currentChar == '\'') {
 			advance(state)
 		} else {
-			throw SyntaxError(state.location, "Expected \'")
+			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedSingleQuote.msg"))
 		}
 		val id = result.toString()
 		if (id.isBlank()) {
-			throw SyntaxError(state.location, "Empty identifier not allowed")
+			throw SyntaxError(state.location, Translations.getString("base.dsl.emptyIdentifier.msg"))
 		}
 		return idToken(id)
 	}

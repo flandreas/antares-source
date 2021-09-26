@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
@@ -61,7 +62,7 @@ class AntaresInterpreter(
 	override fun interpretAssocArrayKey(variable: AssocArray): Long {
 		val key = interpret(variable.key)
 		return when (key) {
-			is DigitalSignal -> key.toLong()?.toLong() ?: throw RuntimeError(variable.location, "Array index must be fully defined")
+			is DigitalSignal -> key.toLong()?.toLong() ?: throw RuntimeError(variable.location, Translations.getString("antares.dsl.arrayIndexNotFullyDefined.msg"))
 			else -> super.interpretAssocArrayKey(variable)
 		}
 	}
@@ -78,7 +79,7 @@ class AntaresInterpreter(
 				}
 			}
 			is Long -> value.shr(index).mod(2).toLong()
-			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+			else -> throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 		}
 	}
 
@@ -89,14 +90,14 @@ class AntaresInterpreter(
 		val newValue = when (oldValue) {
 			is DigitalSignal -> {
 				if (index >= oldValue.bitWidth.width) {
-					throw RuntimeError(bitAccess.location, "Index 'index' out of range")
+					throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.indexOutOfRange.msg"))
 				}
 				oldValue.withBit(index, Bit.of(bitToSet))
 			}
 			is Long -> {
 				BitOperation.setBitAt(oldValue.toULong(), bitToSet, index).toLong()
 			}
-			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+			else -> throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 		}
 		memory.setValue(bitAccess, newValue)
 		return newValue
@@ -107,9 +108,9 @@ class AntaresInterpreter(
 		return when (index) {
 			is Long -> index.toInt()
 			is DigitalSignal -> {
-				index.toLong()?.toInt() ?: throw RuntimeError(bitAccess.location, "Signal index in bit access is partially undefined")
+				index.toLong()?.toInt() ?: throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 			}
-			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+			else -> throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 		}
 	}
 
@@ -117,12 +118,12 @@ class AntaresInterpreter(
 		return when (value) {
 			is DigitalSignal -> if (value.bitAt(0).isSet) 1 else 0
 			is Long -> value.mod(2)
-			else -> throw RuntimeError(bitAccess.location, "Type doesn't support bit access")
+			else -> throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 		}
 	}
 
 	private fun signalToLong(signal: DigitalSignal): Long =
-		signal.toLong()?.toLong() ?: throw RuntimeError(rootNode.location, "Undefined signal")
+		signal.toLong()?.toLong() ?: throw RuntimeError(rootNode.location, Translations.getString("antares.dsl.undefinedSignal.msg"))
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
@@ -230,13 +231,13 @@ class AntaresInterpreter(
 			} else if (left is Long && right is DigitalSignal) {
 				mixedOp2(left, right)
 			} else {
-				throw RuntimeError(node.location, "Incompatible types for '${op}'")
+				throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", op.id))
 			}
 		} catch (e: Throwable) {
 			if (e.message != null) {
-				throw RuntimeError(node.location, "Operation execution (${e.message})")
+				throw RuntimeError(node.location, Translations.getString("antares.dsl.operationExecutionErrorMsg.msg", e.message!!))
 			} else {
-				throw RuntimeError(node.location, "Operation execution")
+				throw RuntimeError(node.location, Translations.getString("antares.dsl.operationExecutionError.msg"))
 			}
 		}
 	}
@@ -251,7 +252,7 @@ class AntaresInterpreter(
 		return when (left) {
 			is Long -> longOp(left, right.toInt())
 			is DigitalSignal -> signalOp(left, right.toInt())
-			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
+			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 
@@ -270,7 +271,7 @@ class AntaresInterpreter(
 		return when (value) {
 			is Long -> longOp(value)
 			is DigitalSignal -> signalOp(value)
-			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
+			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 

@@ -396,7 +396,7 @@ object AntaresViewModule : AbstractModule() {
 			BufferGateView::class)
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
-		repository.register(INPUT, "library.element.CircuitInput", { "/img/input.png" }) {
+		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
 
@@ -405,7 +405,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
-		repository.register(OUTPUT, "library.element.CircuitOutput", { "/img/output.png" }) {
+		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)

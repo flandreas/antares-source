@@ -1,13 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -60,7 +57,7 @@ class ContainerLibraryElement(
 			LOG.trace("Parsing script of '${metaGraph!!.name}'")
 			metaGraph!!.graph.model!!
 				.createParser(it, null)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, "Subcircuit Logic"))
+				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.dsl.subgraphLogic.text")))
 		}
 	}
 
@@ -72,7 +69,7 @@ class ContainerLibraryElement(
 			LOG.trace("Parsing symbol drawing script of '${metaGraph!!.name}'")
 			metaGraph!!.containerDrawing.
 				createDrawSymbolScriptParser(it)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, "Draw Symbol"))
+				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.dsl.drawSymbol.text")))
 		}
 	}
 

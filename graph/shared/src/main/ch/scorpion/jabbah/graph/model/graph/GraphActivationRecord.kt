@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ActivationRecord
 import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.Variable
@@ -31,7 +32,7 @@ class GraphActivationRecord(private val graph: Graph) : ActivationRecord {
 	}
 
 	override fun getValue(variable: Variable): Any =
-		getOptionalValue(variable) ?: throw RuntimeError(variable.location, "No value in port ${variable.token.value}")
+		getOptionalValue(variable) ?: throw RuntimeError(variable.location, Translations.getString("antares.dsl.noValueAtPort.msg", variable.token.value!!))
 
 	override fun getOptionalValue(variable: Variable): Any? {
 		val name = variable.token.value!!

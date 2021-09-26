@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.Variable
 
@@ -24,7 +25,7 @@ class DigitalSubGraphVerticeRefActivationRecord(
 		val effValue = when (value) {
 			is DigitalSignal -> value
 			is Long -> DigitalSignalFactory.of(port.bitWidth, value)
-			else -> throw RuntimeError(variable.location, "Cannot set port value of type ${value::class.simpleName}")
+			else -> throw RuntimeError(variable.location, Translations.getString("graph.dsl.cannotSetPortValue.msg"))
 		}
 		port.setOutgoingSignalBuffered(effValue, signalHandler)
 	}

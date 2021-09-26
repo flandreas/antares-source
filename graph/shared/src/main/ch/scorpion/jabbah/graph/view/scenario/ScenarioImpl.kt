@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
@@ -49,7 +50,7 @@ class ScenarioImpl(
 		LOG.trace("Parsing condition script of '${name.value}'")
 		BaseModule.parserFactory
 			.create(conditionScript, null)
-			.parseCatching(ScriptMetaData(name.value, "Scenario Condition"))
+			.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioCondition.text")))
 	}
 
 	private var interpreter: Interpreter? = null

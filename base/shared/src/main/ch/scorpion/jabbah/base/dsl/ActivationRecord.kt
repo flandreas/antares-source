@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
+
 fun interface ActivationRecordFactory {
 	fun create(name: String, parent: ActivationRecord?) : ActivationRecord
 }
@@ -68,7 +70,7 @@ open class StoringActivationRecord(val name: String, val parent: ActivationRecor
 
 	override fun define(variable: Variable) {
 		if (isLocallyDefined(variable.token.value!!)) {
-			throw RuntimeError(variable.location, "Variable '${variable.token.value}' already defined in '$name'")
+			throw RuntimeError(variable.location, Translations.getString("base.dsl.variableAlreadyDeclared.msg", variable.token.value))
 		}
 		values[variable.token.value] = null
 	}
@@ -78,7 +80,7 @@ open class StoringActivationRecord(val name: String, val parent: ActivationRecor
 			isLocallyDefined(variable.token.value!!) -> store(variable, value)
 			parent != null -> parent.setValue(variable, value)
 			else ->
-				throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
+				throw RuntimeError(variable.location, Translations.getString("base.dsl.variableNotDefined.msg", variable.token.value))
 		}
 	}
 
@@ -90,12 +92,12 @@ open class StoringActivationRecord(val name: String, val parent: ActivationRecor
 		when {
 			isLocallyDefined(variable.token.value!!) -> {
 				values[variable.token.value]
-					?: throw RuntimeError(variable.location, "No value for variable '${variable.token.value}' available")
+					?: throw RuntimeError(variable.location, Translations.getString("base.dsl.noValueForVariable.msg = No value for variable ''{0}'' available", variable.token.value))
 			}
 			parent != null ->
 				parent.getValue(variable)
 			else ->
-				throw RuntimeError(variable.location, "Variable '${variable.token.value}' not defined in '$name'")
+				throw RuntimeError(variable.location, Translations.getString("base.dsl.variableNotDefined.msg", variable.token.value))
 		}
 
 	override fun getOptionalValue(variable: Variable): Any? {

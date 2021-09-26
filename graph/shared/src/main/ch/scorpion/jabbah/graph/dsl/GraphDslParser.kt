@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.dsl
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -56,7 +57,7 @@ open class GraphDslParser(
 			return when (currentToken!!.type) {
 				ID -> propertyPortName(id)
 				LITERAL -> propertyPortId(id)
-				else -> throw SyntaxError(location, "Expected port ID or port name")
+				else -> throw SyntaxError(location, Translations.getString("graph.dsl.expectedPort.msg"))
 			}
 		}
 	}

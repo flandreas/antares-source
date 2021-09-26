@@ -1,10 +1,6 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.jabbah.base.Issue
-import ch.scorpion.jabbah.base.IssueImpl
-import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -325,7 +321,7 @@ open class Parser(
 				if (TERM_OPERATORS.contains(token.type)) {
 					eat(token.type)
 				} else {
-					throw SyntaxError(location, "Unexpected token '${token.type.id}'")
+					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 				}
 
 				node = BinaryOperation(location, left = node, op = token, right = term())
@@ -344,7 +340,7 @@ open class Parser(
 				if (FACTOR_OPERATORS.contains(token.type)) {
 					eat(token.type)
 				} else {
-					throw SyntaxError(location, "Unexpected token '${token.type.id}'")
+					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 				}
 				node = BinaryOperation(location, left = node, op = token, right = factor())
 			}
@@ -384,7 +380,7 @@ open class Parser(
 						variable()
 					}
 				}
-				else -> throw SyntaxError(location, "Unexpected token '${token.type.id}'")
+				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 			}
 		}
 	}
@@ -431,7 +427,7 @@ open class Parser(
 		if (currentToken!!.type == type) {
 			currentToken = lexer.nextToken()
 		} else {
-			throw SyntaxError(lexer.location, "Expected '${type.id}'")
+			throw SyntaxError(lexer.location, Translations.getString("base.dsl.expectedToken.msg", type.id))
 		}
 	}
 }

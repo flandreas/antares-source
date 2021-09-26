@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -44,8 +45,7 @@ open class Interpreter(
 	/**
 	 * Calls [interpret] and catches [DslError] by posting an [Issue] on the system's [EventBus].
 	 *
-	 * @param origin the value for [Issue.origin]
-	 * @param context the value for [Issue.context]
+	 * @param metaData used to describe [Issue]
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
@@ -83,14 +83,14 @@ open class Interpreter(
 			is ForStatement -> forStatement(node)
 			is ReturnStatement -> returnStatement(node)
 			is FunctionCall -> functionCall(node)
-			else -> throw SyntaxError(node.location, "Unknown AST node '${node::class.simpleName}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownASTNode.msg", "${node::class.simpleName}"))
 		}
 	}
 
 	protected fun interpretAsLong(node: Node): Long {
 		val result = interpret(node)
 		if (result !is Long) {
-			throw RuntimeError(node.location, "Not a number")
+			throw RuntimeError(node.location, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 		return result
 	}
@@ -128,7 +128,7 @@ open class Interpreter(
 			SHIFT_LEFT -> typedBinaryOpWithRightInt(node)
 			SHIFT_RIGHT -> typedBinaryOpWithRightInt(node)
 			MOD -> typedBinaryOp(node)
-			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 	}
 
@@ -147,7 +147,7 @@ open class Interpreter(
 			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
 			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }
 			MOD -> binaryOp(node) { l, r -> l.mod(r) }
-			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 	}
 
@@ -160,7 +160,8 @@ open class Interpreter(
 		return if (left is Long && right is Long) {
 			longOp(left, right)
 		} else {
-			throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
+			//throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
+			throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 
@@ -168,7 +169,7 @@ open class Interpreter(
 		when (node.op.type) {
 			SHIFT_LEFT -> binaryOpWithRightInt(node) { l, r -> l.shl(r) }
 			SHIFT_RIGHT -> binaryOpWithRightInt(node)  { l, r -> l.shr(r) }
-			else -> throw SyntaxError(node.location, "Unknown binary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 
 	private fun binaryOpWithRightInt(
@@ -179,7 +180,7 @@ open class Interpreter(
 		val right = interpretAsLong(node.right)
 		return when (left) {
 			is Long -> longOp(left, right.toInt())
-			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
+			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 
@@ -190,13 +191,13 @@ open class Interpreter(
 			PLUS -> +interpretAsLong(node.expr)
 			MINUS -> -interpretAsLong(node.expr)
 			NOT -> typedUnaryOp(node)
-			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 
 	protected open fun typedUnaryOp(node: UnaryOperation): Any =
 		when (node.op.type) {
 			NOT -> unaryOp(node) { it.inv() }
-			else -> throw SyntaxError(node.location, "Unknown unary operation '${node.op.type.name}'")
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 
 	private fun unaryOp(
@@ -206,7 +207,7 @@ open class Interpreter(
 		val value = interpret(node.expr)
 		return when (value) {
 			is Long -> longOp(value)
-			else -> throw RuntimeError(node.location, "Incompatible type for '${node.op.type}'")
+			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 
@@ -218,7 +219,7 @@ open class Interpreter(
 				memory.setValue(variable, mutableMapOf(key to value))
 			} else {
 				if (assocArray !is MutableMap<*, *>) {
-					throw RuntimeError(rootNode.location, "Expected variable '${variable.token.value}' to be array")
+					throw RuntimeError(rootNode.location, Translations.getString("base.dsl.expectedArray.msg", variable.token.value!!))
 				}
 				(assocArray as MutableMap<Any, Any>)[key] = value
 			}
@@ -232,10 +233,10 @@ open class Interpreter(
 		return if (variable is AssocArray) {
 			val assocArray = memory.getValue(variable)
 			if (assocArray !is MutableMap<*,*>) {
-				throw RuntimeError(rootNode.location, "Expected variable '${variable.token.value}' to be array")
+				throw RuntimeError(rootNode.location, Translations.getString("base.dsl.expectedArray.msg", variable.token.value!!))
 			}
 			val key = interpretAssocArrayKey(variable)
-			assocArray[key] ?: throw RuntimeError(rootNode.location, "No value for key")
+			assocArray[key] ?: throw RuntimeError(rootNode.location, Translations.getString("base.dsl.noArrayKeyValue.msg"))
 		} else {
 			memory.getValue(variable)
 		}
@@ -248,7 +249,7 @@ open class Interpreter(
 	protected open fun interpretAssocArrayKey(variable: AssocArray): Long {
 		val key = interpret(variable.key)
 		if (key !is Long) {
-			throw RuntimeError(variable.location, "Array index must be a number")
+			throw RuntimeError(variable.location, Translations.getString("base.dsl.arrayIndexMustBeNumeric.msg"))
 		}
 		return key
 	}
@@ -341,7 +342,7 @@ open class Interpreter(
 
 	private fun functionCall(node: FunctionCall): Any {
 		if (node.function == null) {
-			throw RuntimeError(node.location, "No implementation for function '${node.name.value}'")
+			throw RuntimeError(node.location, Translations.getString("base.dsl.noImplementationOfFunction.msg", node.name.value!!))
 		}
 		return node.function!!.function.execute(node.params.map { interpret(it) })
 	}

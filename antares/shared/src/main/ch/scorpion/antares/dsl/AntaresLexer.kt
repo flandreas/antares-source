@@ -1,6 +1,7 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Lexer
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.Token
@@ -50,7 +51,7 @@ class AntaresLexer(text: String) : Lexer(text) {
 		if (state.currentChar!!.isDigit()) {
 			return DigitalSignalFactory.undefined(BitWidth.of(long(state).toInt()))
 		} else {
-			throw SyntaxError(state.location, "Expected bit width as number")
+			throw SyntaxError(state.location, Translations.getString("antares.dsl.expectedBitWidthNumber.msg"))
 		}
 	}
 }

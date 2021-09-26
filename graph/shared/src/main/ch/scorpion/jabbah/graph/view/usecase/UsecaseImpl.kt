@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -37,7 +38,7 @@ class UsecaseImpl(
 	private val executionScriptASTCache = resettableLazy {
 		executionScriptProperty.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, "Usecase Logic"))
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.dsl.usecaseLogic.text")))
 		}
 	}
 
@@ -53,7 +54,7 @@ class UsecaseImpl(
 	private val testScriptASTCache = resettableLazy {
 		testScriptProperty.script?.let {
 			LOG.trace("Parsing test script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, "Usecase Test"))
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.dsl.usecaseTest.text")))
 		}
 	}
 
@@ -83,11 +84,11 @@ class UsecaseImpl(
 	}
 
 	override fun run() {
-		executionScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, "Usecase Logic"))
+		executionScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.usecaseLogic.text")))
 	}
 
 	override fun runTest() {
-		testScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, "Usecase Test"))
+		testScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.usecaseTest.text")))
 	}
 
 	override fun dispose() {}

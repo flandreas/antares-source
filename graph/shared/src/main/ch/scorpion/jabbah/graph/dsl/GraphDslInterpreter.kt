@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.Node
@@ -44,21 +45,21 @@ open class GraphDslInterpreter(
 	private fun propertyPortName(node: PropertyPortName): Any {
 		val elemId = interpret(node.elemId)
 		if (elemId !is Long) {
-			throw RuntimeError(node.elemId.location, "Expected number")
+			throw RuntimeError(node.elemId.location, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 		val portName = node.portName.token.value!!
 		if (params == null || params !is Graph) {
-			throw RuntimeError(node.location, "No elements available")
+			throw RuntimeError(node.location, Translations.getString("graph.dsl.noElementsAvailable.msg"))
 		}
 		val graphElement = (params as Graph).withId(elemId.toInt())
-			?: throw RuntimeError(node.elemId.location, "Element with ID $elemId not found")
+			?: throw RuntimeError(node.elemId.location, Translations.getString("graph.dsl.elementIdNotFound.msg", elemId))
 
 		if (graphElement !is Vertice) {
-			throw RuntimeError(node.elemId.location, "Element has no ports")
+			throw RuntimeError(node.elemId.location, Translations.getString("graph.dsl.elementHasNoPorts.msg"))
 		}
 
 		if (!graphElement.hasPort(portName)) {
-			throw RuntimeError(node.portName.location, "Port '$portName' not found")
+			throw RuntimeError(node.portName.location, Translations.getString("graph.dsl.elementNameNotFound.msg", portName))
 		}
 		val port = graphElement.getPort<Any>(portName)
 		val signal = when (port.portType) {
@@ -67,29 +68,29 @@ open class GraphDslInterpreter(
 			PortType.INOUT -> (port as BidirectionalPort).dominantSignal
 		}
 
-		return signal ?: RuntimeError(node.location, "No signal at port '$portName'")
+		return signal ?: RuntimeError(node.location, Translations.getString("graph.dsl.noSignalAtPort.msg", portName))
 	}
 
 	private fun propertyPortId(node: PropertyPortId): Any {
 		val elemId = interpret(node.elemId)
 		if (elemId !is Long) {
-			throw RuntimeError(node.elemId.location, "Expected number")
+			throw RuntimeError(node.elemId.location, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 		val portId = node.portId.token.value!!
 		if (portId !is Long) {
-			throw RuntimeError(node.portId.location, "Expected number")
+			throw RuntimeError(node.portId.location, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 		if (params == null || params !is Graph) {
-			throw RuntimeError(node.location, "No elements available")
+			throw RuntimeError(node.location, Translations.getString("graph.dsl.noElementsAvailable.msg"))
 		}
 		val graphElement = (params as Graph).withId(elemId.toInt())
-			?: throw RuntimeError(node.elemId.location, "Element with ID $elemId not found")
+			?: throw RuntimeError(node.elemId.location, Translations.getString("graph.dsl.elementIdNotFound.msg", elemId))
 
 		if (graphElement !is Vertice) {
-			throw RuntimeError(node.elemId.location, "Element has no ports")
+			throw RuntimeError(node.elemId.location, Translations.getString("graph.dsl.elementHasNoPorts.msg"))
 		}
 		if (!graphElement.hasPort(portId.toInt())) {
-			throw RuntimeError(node.portId.location, "Port '$portId' not found")
+			throw RuntimeError(node.portId.location, Translations.getString("graph.dsl.portIdNotFound.msg", portId))
 		}
 		val port = graphElement.getPort<Any>(portId.toInt())
 		val signal = when (port.portType) {
@@ -98,7 +99,7 @@ open class GraphDslInterpreter(
 			PortType.INOUT -> (port as BidirectionalPort).dominantSignal
 		}
 
-		return signal ?: RuntimeError(node.location, "No signal at port $portId")
+		return signal ?: RuntimeError(node.location, Translations.getString("graph.dsl.noSignalAtPort.msg", portId))
 	}
 
 	private class InitStatementFinder : EmptyHierarchyVisitor() {
