@@ -48,7 +48,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		pressButtonAtImpl(
 			delegate.longParam(0, params),
 			delegate.longParam(1, params))
-		return 0
+		return 0L
 	}
 
 	private fun pressButtonAtImpl(time: Long, buttonId: Long) {
@@ -68,7 +68,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		applyClockImpl(
 			cvDelegate.stringParam(0, params),
 			cvDelegate.longParam(1, params))
-		return 0
+		return 0L
 	}
 
 	private fun applyClockImpl(inputName: String, period: Long) {

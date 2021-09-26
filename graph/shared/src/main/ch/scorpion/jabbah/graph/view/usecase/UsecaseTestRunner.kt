@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -58,10 +59,12 @@ class UsecaseTestRunner(
 			_usecase = usecase
 			_script = Script(usecase.testScript!!, usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
 
-			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, applicationModeHolder, gateway)
+			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, applicationModeHolder)
 			applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
-				gateway.usecaseAction(usecaseActionRunner.script, usecaseActionRunner, scheduler)
-				gateway.usecaseTest(script, this)
+				GraphDslModule.usecaseActionExternalFunctions.bind(usecaseActionRunner, _usecase!!.name.value, "Usecase Logic")
+				GraphDslModule.usecaseTestExternalFunctions.bind(this, _usecase!!.name.value, "Usecase Test")
+				_usecase!!.run()
+				_usecase!!.runTest()
 				scheduler.requestActingAfter(FinishTestActor(), maxAssertionTime + 1, SimpleActorData())
 			}
 		}
@@ -69,7 +72,7 @@ class UsecaseTestRunner(
 
 	/** ---- Methods used by the DSL gateway */
 
-	fun assert(time: Long, condition: () -> Boolean, description: String? = null) {
+	fun assert(time: Long, description: String? = null, condition: () -> Boolean) {
 		maxAssertionTime = max(maxAssertionTime, time)
 		scheduler.requestActingAfter(UsecaseTestActor(_usecase!!, condition), delay(time), SimpleActorData(description))
 	}

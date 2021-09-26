@@ -36,7 +36,7 @@ class UsecaseImpl(
 	private val executionScriptASTCache = resettableLazy {
 		executionScriptProperty.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
-			createExecutionScriptParser(it).parseCatching(this.name.value, "Usecase Logic")
+			createScriptParser(it).parseCatching(this.name.value, "Usecase Logic")
 		}
 	}
 
@@ -48,6 +48,15 @@ class UsecaseImpl(
 		set(value) {
 			testScript = value.script!!
 		}
+
+	private val testScriptASTCache = resettableLazy {
+		testScriptProperty.script?.let {
+			LOG.trace("Parsing test script of Usecase '${this.name.value}'")
+			createScriptParser(it).parseCatching(this.name.value, "Usecase Test")
+		}
+	}
+
+	var testScriptInterpreter: Interpreter? = null
 
 	/** ---- [Any] */
 
@@ -65,12 +74,19 @@ class UsecaseImpl(
 
 	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
 		executionScriptASTCache.value?.let {
-			executionScriptInterpreter = createExecutionScriptInterpreter(graphView, it)
+			executionScriptInterpreter = createScriptInterpreter(graphView, it)
+		}
+		testScriptASTCache.value?.let {
+			testScriptInterpreter = createScriptInterpreter(graphView, it)
 		}
 	}
 
 	override fun run() {
 		executionScriptInterpreter?.interpretCatching(name.value, "Usecase Logic")
+	}
+
+	override fun runTest() {
+		testScriptInterpreter?.interpretCatching(name.value, "Usecase Test")
 	}
 
 	override fun dispose() {}
@@ -100,18 +116,19 @@ class UsecaseImpl(
 
 	/** ---- [UsecaseImpl] */
 
-	private fun createExecutionScriptParser(program: String): Parser =
-		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createExecutionScriptParserSymbolTable()))
+	private fun createScriptParser(program: String): Parser =
+		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createParserSymbolTable()))
 
-	private fun createExecutionScriptParserSymbolTable(): ScopedSymbolTable =
+	private fun createScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =
+		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
+
+	private fun createParserSymbolTable(): ScopedSymbolTable =
 		ScopedSymbolTable("Context", level = 0, enclosingScope = null).also {
 			defineContextFunctions(it)
 		}
 
 	private fun defineContextFunctions(symbolTable: ScopedSymbolTable) {
-		GraphDslModule.usecaseExternalFunctions.defineIn(symbolTable)
+		GraphDslModule.usecaseActionExternalFunctions.defineIn(symbolTable)
+		GraphDslModule.usecaseTestExternalFunctions.defineIn(symbolTable)
 	}
-
-	private fun createExecutionScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =
-		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 }

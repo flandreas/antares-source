@@ -167,7 +167,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 		proceedToNanos(10_001)
 		assertFalse(switch.model.isOn)
-		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 	}
 
 	@Test
@@ -177,13 +177,13 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(10_000)
-		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 
 		proceedToNanos(10_500)
-		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 
 		proceedToNanos(11_000)
-		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 	}
 
 	/** ---- [UsecaseTestBridge] */

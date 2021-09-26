@@ -8,7 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 object GraphDslModule : AbstractModule() {
 
 	var graphViewExternalFunctionsFactory: () -> GraphViewExternalFunctions = { GraphViewExternalFunctions() }
-	var usecaseExternalFunctions: UsecaseActionExternalFunctions = GraphUsecaseActionExternalFunctions
+	var usecaseActionExternalFunctions: UsecaseActionExternalFunctions = GraphUsecaseActionExternalFunctions
+	var usecaseTestExternalFunctions: UsecaseTestExternalFunctions = GraphUsecaseTestExternalFunctions
 
 	override fun initialize() {
 		BaseModule.require()
@@ -16,6 +17,5 @@ object GraphDslModule : AbstractModule() {
 		BaseModule.semanticAnalyserFactory = SemanticAnalyserFactory { st -> GraphDslSemanticAnalyser(st) }
 		BaseModule.parserFactory = ParserFactory { p, s -> GraphDslParser(BaseModule.lexerFactory(p), s) }
 		BaseModule.interpreterFactory = { n, m -> GraphDslInterpreter(n, m) }
-
 	}
 }

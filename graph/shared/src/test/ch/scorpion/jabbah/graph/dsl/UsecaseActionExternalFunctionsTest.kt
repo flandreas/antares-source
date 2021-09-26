@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.AbstractGraphViewExecutionTest
-import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -41,24 +39,5 @@ class UsecaseActionExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
 		assertEquals(0, issueCollector.size)
 		assertEquals(42L, input.model.getOutput<Long>().getOutgoingSignal())
-	}
-
-	private inner class DummyApplicationModeHolder : ApplicationModeHolder {
-
-		private var _currentMode: ApplicationMode = ApplicationMode.EDIT
-		override val currentMode: ApplicationMode get() = _currentMode
-
-		override fun dispose() { }
-
-		override fun setMode(mode: ApplicationMode, after: () -> Unit) {
-			if (mode.isExecute()) {
-				startSimulation()
-			} else {
-				stopSimulation()
-			}
-			after.invoke()
-		}
-
-		override fun updateEditorEditability() { }
 	}
 }

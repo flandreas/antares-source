@@ -10,7 +10,8 @@ object AntaresDslModule : AbstractModule() {
 
 	override fun initialize() {
 		GraphDslModule.graphViewExternalFunctionsFactory = { AntaresGraphViewExternalFunctions() }
-		GraphDslModule.usecaseExternalFunctions = AntaresUsecaseActionExternalFunctions
+		GraphDslModule.usecaseActionExternalFunctions = AntaresUsecaseActionExternalFunctions
+		GraphDslModule.usecaseTestExternalFunctions = AntaresUsecaseTestExternalFunctions
 
 		GraphDslModule.require()
 

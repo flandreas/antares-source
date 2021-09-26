@@ -50,7 +50,7 @@ class UsecaseRunner(
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
 		applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
-			GraphDslModule.usecaseExternalFunctions.bind(this, usecase.name.value, "Usecase logic")
+			GraphDslModule.usecaseActionExternalFunctions.bind(this, usecase.name.value, "Usecase logic")
 			usecase.run()
 		}
 		didRun = true

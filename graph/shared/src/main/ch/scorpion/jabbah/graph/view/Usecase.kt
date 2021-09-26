@@ -31,5 +31,7 @@ interface Usecase : Namable, Describable, Storable {
 
 	fun run()
 
+	fun runTest()
+
 	fun dispose()
 }

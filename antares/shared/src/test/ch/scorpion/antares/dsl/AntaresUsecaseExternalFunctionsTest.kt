@@ -24,14 +24,13 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestFailureException
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
-class AntaresUsecaseActionExternalFunctionsTest : AbstractCircuitTest() {
+class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 	private val issueCollector = IssueCollector()
 
@@ -106,13 +105,43 @@ class AntaresUsecaseActionExternalFunctionsTest : AbstractCircuitTest() {
 		proceedToNanos(10_000)
 		assertEquals(0, issueCollector.size)
 
-		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 
 		proceedToNanos(10_500)
-		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 
 		proceedToNanos(11_000)
-		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
+	}
+
+	@Test
+	fun shouldAssertLedOn() {
+		val usecase = UsecaseImpl(
+			"AssertLedOn",
+			"pressButtonAt(10000, 1)",
+			"assertLedOnAt(20000, 4)")
+		getCircuitView().usecases.add(usecase)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, applicationModeHolder, throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+		assertEquals(0, issueCollector.size)
+	}
+
+	@Test
+	fun shouldFailToAssertLedOn() {
+		val usecase = UsecaseImpl(
+			"AssertLedOn",
+			"pressButtonAt(30000, 1)",
+			"assertLedOnAt(20000, 4)")
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, applicationModeHolder, throwFailureException = true)
+		getCircuitView().usecases.add(usecase)
+		runner.run()
+
+		assertFailsWith<UsecaseTestFailureException> {
+			proceedToNanos(20_000)
+			assertEquals(0, issueCollector.size)
+		}
 	}
 
 	private inner class DummyApplicationModeHolder : ApplicationModeHolder {

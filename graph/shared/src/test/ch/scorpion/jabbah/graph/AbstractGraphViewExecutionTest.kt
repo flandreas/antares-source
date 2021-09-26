@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -100,5 +102,24 @@ abstract class AbstractGraphViewExecutionTest {
 	protected fun proceedFrozenTimeToNanos(time: Long) {
 		timeService.setTimeMillis(time / MILLION)
 		timeService.setTimeMillis((time + timer.interval + 1) / MILLION)
+	}
+
+	protected inner class DummyApplicationModeHolder : ApplicationModeHolder {
+
+		private var _currentMode: ApplicationMode = ApplicationMode.EDIT
+		override val currentMode: ApplicationMode get() = _currentMode
+
+		override fun dispose() { }
+
+		override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+			if (mode.isExecute()) {
+				startSimulation()
+			} else {
+				stopSimulation()
+			}
+			after.invoke()
+		}
+
+		override fun updateEditorEditability() { }
 	}
 }

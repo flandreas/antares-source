@@ -99,7 +99,7 @@ class ScenarioImplTest {
 
 	@Test
 	fun shouldEvaluateConditionScriptToTrue() {
-		val signalHandler = mockk<SignalHandler>()
+		val signalHandler = mockk<SignalHandler>(relaxed = true)
 
 		val graphView = GraphViewImpl()
 		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
@@ -118,7 +118,7 @@ class ScenarioImplTest {
 
 	@Test
 	fun shouldEvaluateConditionScriptToFalse() {
-		val signalHandler = mockk<SignalHandler>()
+		val signalHandler = mockk<SignalHandler>(relaxed = true)
 
 		val graphView = GraphViewImpl()
 		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()

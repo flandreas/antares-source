@@ -4,11 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.GraphInput
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.SubGraphInputPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
@@ -18,12 +14,20 @@ class GraphInputImpl<T: Any>(
 	outputPort: OutputPort<T> = PortImpl(PortType.OUTPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
+) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus, calculator = CALCULATOR), GraphInput<T> {
 
 	companion object {
 		private const val baseResourceKey = "graph.element.input"
 		private val type = Translations.getString("$baseResourceKey.name")
 		private val typeDesc = Translations.getString("$baseResourceKey.desc")
+
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<GraphInputImpl<Any>> {
+			override fun calculate(vertice: GraphInputImpl<Any>, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.getOutput<Any>().setOutgoingSignalBuffered((data as StoringGraphActorData).signal, signalHandler)
+			}
+		}
 	}
 
 	override val type: String get() = GraphInputImpl.type
@@ -31,7 +35,7 @@ class GraphInputImpl<T: Any>(
 
     /** ---- [GraphPort] interface */
 
-    override val signal: T? get() = getOutput<T>().getOutgoingSignal()
+    override var signal: T? = null
 
     @Suppress("UNUSED_PARAMETER")
     override var portType: PortType
@@ -45,6 +49,7 @@ class GraphInputImpl<T: Any>(
     override var subGraphInputPort: SubGraphInputPort<T>? = null
 
     override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler) {
-        getOutput<T>().setOutgoingSignalBuffered(signal, signalHandler)
+	    this.signal = signal
+    	requestActingAfter(signalHandler, propagationDelay, StoringGraphActorData(null, signal))
     }
 }

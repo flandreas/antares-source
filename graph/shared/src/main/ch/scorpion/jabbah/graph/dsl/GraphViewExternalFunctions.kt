@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.GraphInput
+import ch.scorpion.jabbah.graph.model.GraphOutput
 import ch.scorpion.jabbah.graph.script.ScriptErrorHandler
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphPortView
@@ -54,7 +55,7 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions(), ScriptError
 		_errorHandled = false
 	}
 
-	// TODO Generalize and move resources to graph module
+	// TODO Move resources to graph module
 	fun getInputGraphPortView(inputName: String): GraphPortView<GraphInput<Any>>? {
 		val input = graphView.getGraphPortView(inputName)
 		if (input == null) {
@@ -66,6 +67,20 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions(), ScriptError
 			return null
 		}
 		return input as GraphPortView<GraphInput<Any>>
+	}
+
+	// TODO Move resources to graph module
+	fun getOutputGraphPortView(outputName: String): GraphPortView<GraphOutput<Any>>? {
+		val output = graphView.getGraphPortView(outputName)
+		if (output == null) {
+			postNotFoundIssue(outputName)
+			return null
+		}
+		if (!output.model.portType.isOutput) {
+			postTypeIssue(outputName, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.input"))
+			return null
+		}
+		return output as GraphPortView<GraphOutput<Any>>
 	}
 
 	fun getComponent(id: Int): Component? {

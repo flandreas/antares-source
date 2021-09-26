@@ -13,22 +13,25 @@ class UsecaseTestBridge(
 
 	@Suppress("unused")
 	fun assertLedOnAt(time: Long, id: Int) {
-		runner.assert(time, { getLED(id)?.model!!.isOn }, Translations.getString("antares.usecaseDSL.assertLedOn.text", id))
+		runner.assert(time, Translations.getString("antares.usecaseDSL.assertLedOn.text", id)) {
+			getLED(id)?.model!!.isOn
+		}
 	}
 
 	@Suppress("unused")
 	fun assertLedOffAt(time: Long, id: Int) {
-		runner.assert(time, { !getLED(id)?.model!!.isOn }, Translations.getString("antares.usecaseDSL.assertLedOff.text", id))
+		runner.assert(time, Translations.getString("antares.usecaseDSL.assertLedOff.text", id)) {
+			!getLED(id)?.model!!.isOn
+		}
 	}
 
 	@Suppress("unused")
 	fun assertOutputAt(time: Long, id: Int, hexValue: String) {
 		getOutput(id)?.let { component ->
-			runner.assert(
-				time, {
-					val value = component.model.getInput<DigitalSignal>().getIncomingSignal()
-					value!!.hexString == hexValue },
-				"Expected value of output $id to be '$hexValue'")
+			runner.assert(time, "Expected value of output $id to be '$hexValue'") {
+				val value = component.model.getInput<DigitalSignal>().getIncomingSignal()
+				value!!.hexString == hexValue
+			}
 		}
 	}
 }
