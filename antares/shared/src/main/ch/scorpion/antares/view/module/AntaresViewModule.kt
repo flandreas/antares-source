@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
-import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
@@ -57,7 +56,6 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -164,8 +162,6 @@ object AntaresViewModule : AbstractModule() {
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 		configureDragDestinationHighlights(EditDragModule.dragDestinationHighlightFactoryRegistry)
-
-		ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
 
 		registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
 	}

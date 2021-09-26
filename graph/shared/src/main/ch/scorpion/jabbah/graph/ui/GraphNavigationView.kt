@@ -20,8 +20,6 @@ import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
@@ -49,7 +47,6 @@ class GraphNavigationViewController(
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.constantSpeedAnimator,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
 ) : AbstractUIController<GraphNavigationView>(), GraphViewUI {
 
@@ -177,7 +174,6 @@ class GraphNavigationViewController(
 		scenarioDetector = ScenarioDetector(
 			drawingView,
 			drawingView.applicationContextHolder as GraphApplicationContextHolder,
-			scriptGateway,
 			eventBus)
 
 		graphViewExecutionController.updateDetachedUI()

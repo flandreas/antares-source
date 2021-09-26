@@ -32,9 +32,6 @@ import ch.scorpion.jabbah.graph.GraphAuthorizations
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.script.GraphScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptEngine
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationControllerExtension
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
@@ -131,7 +128,6 @@ object GraphViewModule : AbstractModule() {
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
-		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptEngine(BaseModule.eventBus)) }
 		EditEditorModule.dragManagerFactory = { editor ->
 			if (editor is GraphEditor) {
 				DragManagerImpl(editor, plugins = setOf(AutoConnector))

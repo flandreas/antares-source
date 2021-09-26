@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
@@ -36,7 +35,6 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 class ScenarioDetector(
 	private val view: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	private val scriptGateway: ScriptGateway,
 	private val eventBus: EventBus
 ) {
 
@@ -68,10 +66,10 @@ class ScenarioDetector(
 		}
 	}
 
-	private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
-		if (it.graphView === view.drawing) {
+	private val scenarioEventHandler: EventHandler<ScenarioEvent> = { event ->
+		if (event.graphView === view.drawing) {
 			hideScenarioDesc()
-			it.scenario?.let { displayScenarioDesc(it) }
+			event.scenario?.let { displayScenarioDesc(it) }
 			view.repaint()
 		}
 	}
@@ -81,9 +79,9 @@ class ScenarioDetector(
 			it.oldStep?.passivate(view)
 			unhighlightScenarioStep()
 			hideScenarioStepDesc()
-			it.newStep?.let {
-				displayScenarioStepDesc(it)
-				highlightScenarioStep(it)
+			it.newStep?.let { step ->
+				displayScenarioStepDesc(step)
+				highlightScenarioStep(step)
 			}
 			it.newStep?.activate(view)
 			view.repaint()
@@ -122,7 +120,7 @@ class ScenarioDetector(
 	private fun detect() {
 		if (isActive) {
 			val detectedScenario = view.drawing.scenarios.getScenarios().firstOrNull {
-				it.condition.invoke(view, scriptGateway)
+				it.condition.invoke(view)
 			}
 			setCurrentScenario(detectedScenario)
 		}
@@ -132,7 +130,7 @@ class ScenarioDetector(
 			val scenario = view.drawing.currentScenario
 			if (scenario != null) {
 				setCurrentScenarioStep(scenario.getScenarioSteps().firstOrNull {
-					it.condition.invoke(view, scriptGateway)
+					it.condition.invoke(view)
 				})
 			} else {
 				setCurrentScenarioStep(null)
@@ -142,8 +140,7 @@ class ScenarioDetector(
 
 	private fun updateActive() {
 		val oldValue = isActive
-		isActive = scriptGateway.isSupported
-			&& applicationContextHolder.scheduler.isActive
+		isActive = applicationContextHolder.scheduler.isActive
 			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
 		if (isActive != oldValue) {
 			LOG.trace("active = '$isActive'")

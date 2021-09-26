@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
-import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
@@ -122,7 +121,7 @@ class ScenarioStepImpl(
 			}
 		}
 
-	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean get() = { view, _ ->
+	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
 		conditionInterpreter?.let { it.interpret(view.drawing.graph!!) != 0L } ?: false
 	}
 

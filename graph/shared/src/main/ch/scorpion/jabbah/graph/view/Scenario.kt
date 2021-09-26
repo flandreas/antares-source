@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -35,7 +34,7 @@ interface Scenario : Namable, Describable, Storable {
 	 * Returns the condition that determines whether this [Scenario] is triggered depending on the current state
 	 * of a [DrawingView] and its GraphView.
 	 */
-	val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
+	val condition: (DrawingView<GraphView>) -> Boolean
 
 	/** Returns the [ScenarioStep]s of this [Scenario].*/
 	fun getScenarioSteps(): ImmutableList<ScenarioStep>

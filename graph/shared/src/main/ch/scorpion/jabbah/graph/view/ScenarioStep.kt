@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -35,7 +34,7 @@ interface ScenarioStep : Namable, Describable, Storable {
 	 * client classes that evaluate the return condition. Hence, it's not necessary that the returned condition contains
 	 * terms that check the [Scenario] condition as well.
 	 */
-	val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
+	val condition: (DrawingView<GraphView>) -> Boolean
 
 	fun dispose()
 

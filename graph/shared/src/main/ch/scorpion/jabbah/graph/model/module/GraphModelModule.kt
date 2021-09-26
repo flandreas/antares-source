@@ -23,7 +23,6 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
@@ -46,7 +45,6 @@ object GraphModelModule : AbstractModule() {
 		IOModule.require()
 		ExecutionModule.require()
 		RepositoryModule.require()
-		ScriptModule.require()
 		GraphDslModule.require()
 
 		Translations.addBundle("jabbah-graph")

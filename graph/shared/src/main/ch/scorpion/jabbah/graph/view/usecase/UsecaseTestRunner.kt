@@ -14,8 +14,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.script.Script
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import kotlin.math.max
@@ -25,7 +23,6 @@ class UsecaseTestRunner(
 	val graphView: GraphView,
 	private val scheduler: Scheduler,
 	private val applicationModeHolder: ApplicationModeHolder,
-	private val gateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val throwFailureException: Boolean = false
 ) {
@@ -126,7 +123,6 @@ class UsecaseTestRunner(
 	private fun postIssues() {
 		issues.forEach { eventBus.post(it) }
 	}
-
 }
 
 data class UsecaseTestFailureException(val usecase: Usecase) : Throwable()
