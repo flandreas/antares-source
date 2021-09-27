@@ -47,7 +47,7 @@ fun interface ParserFactory {
  *     functionCall : identifier "(" { expr ("," expr)* } ")"
  *     expr : term (("+" | "-" | binaryLogicOperator) term)*
  *     term : factor (("*" | "/" | "%" | comparisonOperator | shiftOperator) factor)*
- *     comparisonOperator : "==" | "!=" | "<" | ">"
+ *     comparisonOperator : "==" | "!=" | "<" | ">" | "<=" | ">="
  *     factor : "+" factor
  *            | "-" factor
  *            | "not" factor
@@ -104,7 +104,7 @@ open class Parser(
 		} catch (e: DslError) {
 			BaseModule.eventBus.post(IssueImpl(
 				severity = IssueSeverity.Error,
-				name = "Parse Error",
+				name = Translations.getString("base.dsl.scriptError.msg"),
 				description = e.message,
 				origin = metaData.origin,
 				context = metaData.context))

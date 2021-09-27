@@ -39,19 +39,25 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 	override fun defineIn(symbolTable: ScopedSymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
-			define(ExternalFunctionSymbol("pressButtonAt", 2, ::pressButtonAt))
-			define(ExternalFunctionSymbol("applyClock", 2, ::applyClock))
+			define(ExternalFunctionSymbol("pressButtonAt", 2, ::pressButtonAtImpl))
+			define(ExternalFunctionSymbol("applyClock", 2, ::applyClockImpl))
 		}
 	}
 
-	private fun pressButtonAt(params: List<Any>): Any {
-		pressButtonAtImpl(
+	private fun pressButtonAtImpl(params: List<Any>): Any {
+		pressButtonAt(
 			delegate.longParam(0, params),
 			delegate.longParam(1, params))
 		return 0L
 	}
 
-	private fun pressButtonAtImpl(time: Long, buttonId: Long) {
+	/**
+	 * Press a button at a particular simulation time.
+	 *
+	 * @param time the simulation time (ns) at which the button is to be pressed
+	 * @param buttonId the ID of the button to be pressed
+	 */
+	private fun pressButtonAt(time: Long, buttonId: Long) {
 		LOG.trace("pressButton $buttonId at $time")
 		cvDelegate.getButton(buttonId.toInt())?.let { button ->
 			runner.executeAt(time) {
@@ -64,14 +70,21 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		}
 	}
 
-	private fun applyClock(params: List<Any>): Any {
-		applyClockImpl(
+	private fun applyClockImpl(params: List<Any>): Any {
+		applyClock(
 			cvDelegate.stringParam(0, params),
 			cvDelegate.longParam(1, params))
 		return 0L
 	}
 
-	private fun applyClockImpl(inputName: String, period: Long) {
+	/**
+	 * Applies an oscillating clock signal to an input pin. Can be used in
+	 * subcircuits that received a clock signal from the surrounding circuit.
+	 *
+	 * @param inputName the name of the input pin to apply the clock signal to
+	 * @param period the period (ns) of the clock signal to apply
+	 */
+	private fun applyClock(inputName: String, period: Long) {
 		LOG.trace("applyClock with period $period to input '$inputName'")
 		if (clockApplications.contains(inputName)) {
 			postMultipleClockIssue(inputName)

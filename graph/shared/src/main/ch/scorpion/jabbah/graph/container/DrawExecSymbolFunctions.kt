@@ -22,15 +22,23 @@ object DrawExecSymbolFunctions : AbstractExternalFunctions() {
 	}
 
 	override fun defineIn(symbolTable: ScopedSymbolTable) {
-		symbolTable.define(ExternalFunctionSymbol("drawDataFlow", 2, ::drawDataFlow))
+		symbolTable.define(ExternalFunctionSymbol("drawDataFlow", 2, ::drawDataFlowImpl))
 	}
 
 	/** Maps to [VerticeView.drawDataFlow]. */
-	private fun drawDataFlow(params: List<Any>): Any {
-		view.drawDataFlow(
+	private fun drawDataFlowImpl(params: List<Any>): Any {
+		drawDataFlow(
 			stringParam(0, params),
-			stringParam(1, params),
-			context)
+			stringParam(1, params))
 		return 0L
+	}
+
+	/**
+	 * Draws a line in the correct signal color from an input pin to an output pin.
+	 * @param inputName the name of the input pin
+	 * @param outputName the name of the output pin
+	 */
+	private fun drawDataFlow(inputName: String, outputName: String) {
+		view.drawDataFlow(inputName, outputName, context)
 	}
 }

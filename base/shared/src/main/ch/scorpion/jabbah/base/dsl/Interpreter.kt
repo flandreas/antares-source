@@ -55,7 +55,7 @@ open class Interpreter(
 		} catch (e: DslError) {
 			BaseModule.eventBus.post(IssueImpl(
 				severity = IssueSeverity.Error,
-				name = "Runtime Error",
+				name = Translations.getString("base.dsl.scriptError.msg"),
 				description = e.message,
 				origin = metaData.origin,
 				context = metaData.context

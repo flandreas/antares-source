@@ -26,19 +26,27 @@ open class UsecaseTestExternalFunctions(
 
 	override fun defineIn(symbolTable: ScopedSymbolTable) {
 		with(symbolTable) {
-			define(ExternalFunctionSymbol("assertOutputAt", 3, ::assertOutputAt))
+			define(ExternalFunctionSymbol("assertOutputAt", 3, ::assertOutputAtImpl))
 		}
 	}
 
-	private fun assertOutputAt(params: List<Any>): Any {
-		assertOutputAtImpl(
+	private fun assertOutputAtImpl(params: List<Any>): Any {
+		assertOutputAt(
 			delegate.longParam(0, params),
 			delegate.stringParam(1, params),
 			delegate.anyParam(2, params))
 		return 0L
 	}
 
-	private fun assertOutputAtImpl(time: Long, outputName: String, signal: Any) {
+	/**
+	 * Asserts (checks) that an output pin has a particular value.
+	 *
+	 * @param time the simulation time (ns) at which the output pin
+	 * is supposed to have value [signal]
+	 * @param outputName the name of the output pin
+	 * @param signal the expected value
+	 */
+	private fun assertOutputAt(time: Long, outputName: String, signal: Any) {
 		delegate.getOutputGraphPortView(outputName)?.let { graphPortView ->
 			runner.assert(time, "Expected value of output '$outputName' to be '$signal'") {
 				signal == convertSignal(graphPortView.model.signal)

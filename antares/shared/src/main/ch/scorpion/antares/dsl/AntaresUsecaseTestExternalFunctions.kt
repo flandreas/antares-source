@@ -15,19 +15,25 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 	override fun defineIn(symbolTable: ScopedSymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
-			define(ExternalFunctionSymbol("assertLedOnAt", 2, ::assertLedOnAt))
-			define(ExternalFunctionSymbol("assertLedOffAt", 2, ::assertLedOffAt))
+			define(ExternalFunctionSymbol("assertLedOnAt", 2, ::assertLedOnAtImpl))
+			define(ExternalFunctionSymbol("assertLedOffAt", 2, ::assertLedOffAtImpl))
 		}
 	}
 
-	private fun assertLedOnAt(params: List<Any>): Any {
-		assertLedOnAtImpl(
+	private fun assertLedOnAtImpl(params: List<Any>): Any {
+		assertLedOnAt(
 			delegate.longParam(0, params),
 			delegate.longParam(1, params).toInt())
 		return 0L
 	}
 
-	private fun assertLedOnAtImpl(time: Long, id: Int) {
+	/**
+	 * Checks if an LED is on.
+	 *
+	 * @param time the simulation time (ns) at which the LED must be on
+	 * @param id the ID of the LED to check
+	 */
+	private fun assertLedOnAt(time: Long, id: Int) {
 		cvDelegate.getLED(id)?.let {
 			runner.assert(time, Translations.getString("antares.usecaseDSL.assertLedOn.text") ){
 				it.model.isOn
@@ -35,14 +41,20 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 		}
 	}
 
-	private fun assertLedOffAt(params: List<Any>): Any {
-		assertLedOffAtImpl(
+	private fun assertLedOffAtImpl(params: List<Any>): Any {
+		assertLedOffAt(
 			delegate.longParam(0, params),
 			delegate.longParam(1, params).toInt())
 		return 0L
 	}
 
-	private fun assertLedOffAtImpl(time: Long, id: Int) {
+	/**
+	 * Checks if an LED is off.
+	 *
+	 * @param time the simulation time (ns) at which the LED must be off
+	 * @param id the ID of the LED to check
+	 */
+	private fun assertLedOffAt(time: Long, id: Int) {
 		cvDelegate.getLED(id)?.let {
 			runner.assert(time, Translations.getString("antares.usecaseDSL.assertLedOff.text") ){
 				it.model.isOn

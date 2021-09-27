@@ -112,7 +112,7 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 	open fun postIssue(name: String, description: String) {
 		eventBus.post(IssueImpl(
 			severity = IssueSeverity.Error,
-			name = name,
+			name = Translations.getString("base.dsl.scriptError.msg"),
 			description = description,
 			origin = origin,
 			context = context

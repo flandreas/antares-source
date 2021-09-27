@@ -35,20 +35,27 @@ open class UsecaseActionExternalFunctions(
 
 	override fun defineIn(symbolTable: ScopedSymbolTable) {
 		with(symbolTable) {
-			define(ExternalFunctionSymbol("setInputAt", 3, ::setInputAt))
-			define(ExternalFunctionSymbol("pauseAt", 1, ::pauseAt))
+			define(ExternalFunctionSymbol("setInputAt", 3, ::setInputAtImpl))
+			define(ExternalFunctionSymbol("pauseAt", 1, ::pauseAtImpl))
 		}
 	}
 
-	private fun setInputAt(params: List<Any>): Any {
-		setInputAtImpl(
+	private fun setInputAtImpl(params: List<Any>): Any {
+		setInputAt(
 			delegate.longParam(0, params),
 			delegate.stringParam(1, params),
 			delegate.anyParam(2, params))
 		return 0
 	}
 
-	private fun setInputAtImpl(time: Long, inputName: String, signal: Any) {
+	/**
+	 * Sets the signal of a particular input pin.
+	 *
+	 * @param time the simulation time (ns) at which the input is to be set
+	 * @param inputName the name of the input pin whose signal is to be set
+	 * @param signal the signal to set on the specified input pin
+	 */
+	private fun setInputAt(time: Long, inputName: String, signal: Any) {
 		val convertedSignal = convertSignal(signal)
 		LOG.trace("setInput of '$inputName' to '$convertedSignal' at $time")
 		delegate.getInputGraphPortView(inputName)?.let { graphPortView ->
@@ -58,12 +65,19 @@ open class UsecaseActionExternalFunctions(
 
 	protected open fun convertSignal(signal: Any): Any = signal
 
-	private fun pauseAt(params: List<Any>): Any {
-		pauseAtImpl(delegate.longParam(0, params))
+	private fun pauseAtImpl(params: List<Any>): Any {
+		pauseAt(delegate.longParam(0, params))
 		return 0
 	}
 
-	private fun pauseAtImpl(time: Long) {
+	/**
+	 * Pause simulation at a particular simulation time. Can be used to drive
+	 * the simulation into a particular state and then pause the simulation
+	 * to let the user take over.
+	 *
+	 * @param time the time (ns) at which the simulation is to be paused
+	 */
+	private fun pauseAt(time: Long) {
 		LOG.trace("pause at $time")
 		runner.executeAt(time) { runner.scheduler.isPaused = true }
 	}
