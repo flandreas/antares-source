@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
@@ -295,6 +296,11 @@ class DigitalPortView(
 
 	override fun buildToolTipContent(): String {
 		val content = StringBuilder(super.buildToolTipContent())
+		if (StringUtils.isEmpty(port.name)) {
+			content.appendLine()
+			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
+		}
+
 		if (getDigitalPort().bitWidth != BitWidth.BW_1) {
 			content.appendLine()
 			content.append("${Translations.getString("${BitWidth.BASE_KEY}.name")}: ${getDigitalPort().bitWidth.width}")

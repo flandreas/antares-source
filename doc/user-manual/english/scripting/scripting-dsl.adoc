@@ -376,8 +376,7 @@ There are two ways how to find out the ID of a port in a circuit component.
 To avoid the need to go to the property window every time to need a port ID of a built-in component, you can also use the following rules of thumb to figure it out by yourself.
 
 * Port IDs start with 1
-* Inputs usually come before outputs
-* In logic gates, it's the inverse: The output has ID 1, the inputs start with ID 2 (which is the topmost input if the gate's output is facing east)
+* Inputs come before outputs
 ====
 
 == Example
