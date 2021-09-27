@@ -38,7 +38,7 @@ class UsecaseImpl(
 	private val executionScriptASTCache = resettableLazy {
 		executionScriptProperty.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.dsl.usecaseLogic.text")))
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.execScript.name")))
 		}
 	}
 
@@ -54,7 +54,7 @@ class UsecaseImpl(
 	private val testScriptASTCache = resettableLazy {
 		testScriptProperty.script?.let {
 			LOG.trace("Parsing test script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.dsl.usecaseTest.text")))
+			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.testScript.name")))
 		}
 	}
 
@@ -84,11 +84,11 @@ class UsecaseImpl(
 	}
 
 	override fun run() {
-		executionScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.usecaseLogic.text")))
+		executionScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.property.usecase.execScript.name")))
 	}
 
 	override fun runTest() {
-		testScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.usecaseTest.text")))
+		testScriptInterpreter?.interpretCatching(ScriptMetaData(name.value, Translations.getString("graph.property.usecase.testScript.name")))
 	}
 
 	override fun dispose() {}

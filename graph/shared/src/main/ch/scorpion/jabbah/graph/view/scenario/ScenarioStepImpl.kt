@@ -43,7 +43,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing condition script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepCondition.text")))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
 		}
 	}
 
@@ -61,7 +61,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing onEntry script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepEntryAction.text")))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onEntry.name")))
 		}
 	}
 
@@ -75,7 +75,7 @@ class ScenarioStepImpl(
 			LOG.trace("Parsing onExit script of '${name.value}'")
 			BaseModule.parserFactory
 				.create(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepExitAction.text")))
+				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onExit.name")))
 		}
 	}
 
@@ -132,7 +132,7 @@ class ScenarioStepImpl(
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
 		conditionInterpreter?.let {
 			it.interpretCatching(
-				ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepCondition.text")),
+				ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")),
 				view.drawing.graph!!) != 0L
 		} ?: false
 	}
@@ -153,13 +153,13 @@ class ScenarioStepImpl(
 
 	override fun activate(view: DrawingView<GraphView>) {
 		onEntryInterpreter?.interpretCatching(
-			ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepEntryAction.text")),
+			ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onEntry.name")),
 			view.drawing.graph)
 	}
 
 	override fun passivate(view: DrawingView<GraphView>) {
 		onExitInterpreter?.interpretCatching(
-			ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioStepExitAction.text")),
+			ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onExit.name")),
 			view.drawing.graph)
 	}
 

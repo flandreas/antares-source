@@ -50,7 +50,7 @@ class ScenarioImpl(
 		LOG.trace("Parsing condition script of '${name.value}'")
 		BaseModule.parserFactory
 			.create(conditionScript, null)
-			.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioCondition.text")))
+			.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
 	}
 
 	private var interpreter: Interpreter? = null
@@ -86,7 +86,7 @@ class ScenarioImpl(
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
 		interpreter?.let {
 			it.interpretCatching(
-				ScriptMetaData(name.value, Translations.getString("graph.dsl.scenarioCondition.text")),
+				ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")),
 				view.drawing.graph!!) != 0L
 		} ?: false
 	}

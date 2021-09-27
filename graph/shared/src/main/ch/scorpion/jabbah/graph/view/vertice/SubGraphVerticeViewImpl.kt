@@ -208,7 +208,7 @@ class SubGraphVerticeViewImpl(
 			drawExecScriptInterpreter?.let {
 				DrawExecSymbolFunctions.bind(this, context)
 				try {
-					it.interpretCatching(ScriptMetaData(this.model.graphName.value, Translations.getString("graph.dsl.drawSymbol.text")), rethrow = true)
+					it.interpretCatching(ScriptMetaData(this.model.graphName.value, Translations.getString("graph.property.ContainerDrawing.execDrawScript.name")), rethrow = true)
 				} catch (e: Throwable) {
 					// Reset Interpreter in case of an error to avoid cascading errors
 					// when the View is redrawn

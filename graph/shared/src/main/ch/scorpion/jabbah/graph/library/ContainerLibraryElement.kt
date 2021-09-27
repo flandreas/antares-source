@@ -53,11 +53,10 @@ class ContainerLibraryElement(
 
 	private val executionScriptASTCache = resettableLazy {
 		metaGraph?.graph?.model?.script?.let {
-			// TODO I18N
 			LOG.trace("Parsing script of '${metaGraph!!.name}'")
 			metaGraph!!.graph.model!!
 				.createParser(it, null)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.dsl.subgraphLogic.text")))
+				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.GraphViewImpl.script.name")))
 		}
 	}
 
@@ -69,7 +68,7 @@ class ContainerLibraryElement(
 			LOG.trace("Parsing symbol drawing script of '${metaGraph!!.name}'")
 			metaGraph!!.containerDrawing.
 				createDrawSymbolScriptParser(it)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.dsl.drawSymbol.text")))
+				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.ContainerDrawing.execDrawScript.name")))
 		}
 	}
 

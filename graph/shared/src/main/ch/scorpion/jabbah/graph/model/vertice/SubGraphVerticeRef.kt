@@ -202,7 +202,7 @@ class SubGraphVerticeRef(
 
 	private fun runExecutionScript(data: GraphActorData?) {
 		interpreter?.interpretCatching(
-			ScriptMetaData(type, Translations.getString("graph.dsl.subgraphLogic.text")),
+			ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name")),
 			params = data)
 	}
 
