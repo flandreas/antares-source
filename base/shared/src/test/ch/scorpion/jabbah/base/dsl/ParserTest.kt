@@ -1,10 +1,14 @@
 package ch.scorpion.jabbah.base.dsl
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import ch.scorpion.jabbah.base.Translations
+import kotlin.test.*
 
 class ParserTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldParseExpressionWithParentheses() {
@@ -21,6 +25,15 @@ class ParserTest {
 		assertEquals("a", assignment.left.token.value)
 		assertEquals(TokenType.ASSIGN, assignment.op.type)
 		assertIs<Literal>(assignment.right)
+	}
+
+	@Test
+	fun shouldRejectKeywordVariableName() {
+		assertFailsWith(SyntaxError::class) {
+			val ast = Parser(Lexer("""
+				in = 42				
+			""".trimIndent())).parse()
+		}
 	}
 
 	@Test

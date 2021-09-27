@@ -1,8 +1,14 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
 import kotlin.test.*
 
 class SemanticAnalyserTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldBuildSymbolTable() {
