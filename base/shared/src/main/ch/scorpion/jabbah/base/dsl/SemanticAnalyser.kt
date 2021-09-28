@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 
 fun interface SemanticAnalyserFactory {
-	fun create(symbolTable: ScopedSymbolTable?): SemanticAnalyser
+	fun create(symbolTable: SymbolTable?): SemanticAnalyser
 }
 
 /**
@@ -15,11 +15,11 @@ fun interface SemanticAnalyserFactory {
  * @throws SemanticError for semantic errors found during analysis
  */
 open class SemanticAnalyser(
-	symbolTable: ScopedSymbolTable?
+	context: SymbolTable?
 ) {
 
 	// Visible for testing
-	var scope: ScopedSymbolTable = symbolTable ?: ScopedSymbolTable("global", level = 1, enclosingScope = null)
+	var scope: SymbolTable = ScopedSymbolTable("global", scopeLevel = 1, enclosingScope = context)
 		private set
 
 	private val visitor = createVisitor()
@@ -77,16 +77,18 @@ open class SemanticAnalyser(
 	}
 
 	private fun enterDeclaration(declaration: Declaration) {
-		if (declaration.store && scope.level > 1) {
+		if (declaration.store && !allowStoreDeclaration) {
 			throw SemanticError(declaration.location, Translations.getString("base.dsl.unexpectedStore.msg"))
 		}
 		declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
 	}
 
+	protected open val allowStoreDeclaration: Boolean get() = scope.scopeLevel <= 1
+
 	private fun declareVariableInLocalScope(name: String, location: CodeLocation) {
 		val typeSymbol = null as BuiltInTypeSymbol?
 		val varSymbol = VariableSymbol(name, typeSymbol)
-		if (scope.lookup(name, currentScopeOnly = true) != null) {
+		if (scope.hasSymbol(name, currentScopeOnly = true)) {
 			throw SemanticError(location, Translations.getString("base.dsl.variableAlreadyDeclared.msg", name))
 		}
 		scope.define(varSymbol)
@@ -97,7 +99,7 @@ open class SemanticAnalyser(
 		// whether the variable is already declared, and if not, throw an error
 		val varName = assignment.left.token.value as String
 		val typeSymbol = null as BuiltInTypeSymbol?
-		if (scope.lookup(varName) == null) {
+		if (!scope.hasSymbol(varName)) {
 			val varSymbol = VariableSymbol(varName, typeSymbol)
 			scope.define(varSymbol)
 		}
@@ -108,7 +110,7 @@ open class SemanticAnalyser(
 	}
 
 	private fun enterBlock() {
-		scope = ScopedSymbolTable("block", level = scope.level + 1, enclosingScope = scope)
+		scope = ScopedSymbolTable("block", scopeLevel = scope.scopeLevel + 1, enclosingScope = scope)
 	}
 
 	private fun enterFunctionCall(functionCall: FunctionCall) {
@@ -130,7 +132,7 @@ open class SemanticAnalyser(
 
 	private fun variable(variable: Variable) {
 		val name = variable.token.value as String
-		if (scope.lookup(name) == null && currentlyDeclaredVariableName != name) {
+		if (!scope.hasSymbol(name) && currentlyDeclaredVariableName != name) {
 			throw SemanticError(variable.location, Translations.getString("base.dsl.variableNotDefined.msg", name))
 		}
 	}

@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
  * that access a [GraphView] and its [GraphElementView]s.
  *
  * Can be used as delegate by other [DslExternalFunctions] implementations
- * that enhance the DSL with more specific functions
+ * that enhance the DSL with more specific functions.
  */
 open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 
@@ -49,7 +49,6 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 		this.eventBus = eventBus
 	}
 
-	// TODO Move resources to graph module
 	fun getInputGraphPortView(inputName: String): GraphPortView<GraphInput<Any>>? {
 		val input = graphView.getGraphPortView(inputName)
 		if (input == null) {
@@ -63,7 +62,6 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 		return input as GraphPortView<GraphInput<Any>>
 	}
 
-	// TODO Move resources to graph module
 	fun getOutputGraphPortView(outputName: String): GraphPortView<GraphOutput<Any>>? {
 		val output = graphView.getGraphPortView(outputName)
 		if (output == null) {

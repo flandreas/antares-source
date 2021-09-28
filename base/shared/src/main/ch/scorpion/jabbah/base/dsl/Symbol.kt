@@ -16,31 +16,47 @@ class ExternalFunctionSymbol(
 	val function: ExternalFunction
 ) : Symbol(name)
 
+interface SymbolTable {
+	val scopeLevel: Int
+	val enclosingScope: SymbolTable?
+	val symbolsCount: Int
+	fun define(symbol: Symbol)
+	fun hasSymbol(name: String, currentScopeOnly: Boolean = false): Boolean
+	fun lookup(name: String, currentScopeOnly: Boolean = false): Symbol?
+}
+
 class ScopedSymbolTable(
 	val name: String,
-	val level: Int,
-	val enclosingScope: ScopedSymbolTable?
-) {
+	override val scopeLevel: Int,
+	override val enclosingScope: SymbolTable?
+) : SymbolTable {
 
 	private val symbols = mutableMapOf<String, Symbol>()
 
-	val size: Int get() = symbols.size
-
 	init {
-		if (level <= 1) {
+		if (scopeLevel <= 1) {
 			Lexer.getReservedWords().forEach {
 				define(BuiltInTypeSymbol(it))
 			}
 		}
 	}
 
-	override fun toString(): String = "Scope $name at level $level"
+	override val symbolsCount: Int get() = symbols.size
 
-	fun define(symbol: Symbol) {
+	override fun toString(): String = "Scope $name at level $scopeLevel"
+
+	override fun define(symbol: Symbol) {
 		symbols[symbol.name] = symbol
 	}
 
-	fun lookup(name: String, currentScopeOnly: Boolean = false): Symbol? {
+	override fun hasSymbol(name: String, currentScopeOnly: Boolean): Boolean {
+		if (currentScopeOnly) {
+			return symbols.containsKey(name)
+		}
+		return symbols.containsKey(name) || enclosingScope?.hasSymbol(name) == true
+	}
+
+	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? {
 		if (currentScopeOnly) {
 			return symbols[name]
 		}

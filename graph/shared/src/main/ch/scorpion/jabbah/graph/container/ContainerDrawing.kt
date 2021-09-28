@@ -221,7 +221,7 @@ class ContainerDrawing(
 		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createDrawExecSymbolParserSymbolTable()))
 
 	private fun createDrawExecSymbolParserSymbolTable(): ScopedSymbolTable =
-		ScopedSymbolTable("Context", level = 0, enclosingScope = null).also {
+		ScopedSymbolTable("Context", scopeLevel = 0, enclosingScope = null).also {
 			definePortNames(it)
 			defineContextFunctions(it)
 		}

@@ -3,6 +3,10 @@ package ch.scorpion.jabbah.graph.view.graph
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.Symbol
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
@@ -135,7 +139,6 @@ open class GraphViewImpl(
 			eventBus.post(ScenarioStepEvent(this, oldValue, value))
 		}
 
-
 	override fun bind() {
 		for (graphElementView in drawables) {
 			graphElementView.bind(graph!!)
@@ -210,8 +213,32 @@ open class GraphViewImpl(
 	override fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>> {
 		return getDrawables { it.model == element }
 	}
+
 	override fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>> {
 		return getDrawables { it is SubGraphVerticeView<*> }.map { it as SubGraphVerticeView<*> }.toImmutableList()
+	}
+
+	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		BaseModule.parserFactory.create(
+			program,
+			BaseModule.semanticAnalyserFactory.create(this))
+
+	/** ---- [SymbolTable] interface */
+
+	override val scopeLevel: Int get() = 0
+
+	override val symbolsCount: Int get() = graph!!.graphPorts.size
+
+	override val enclosingScope: SymbolTable? get() = null
+
+	override fun hasSymbol(name: String, currentScopeOnly: Boolean): Boolean =
+		graph!!.graphPorts.any { it.name == name }
+
+	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? =
+		graph!!.graphPorts.firstOrNull { it.name == name }?.let { Symbol(it.name!!) }
+
+	override fun define(symbol: Symbol) {
+		throw UnsupportedOperationException("Cannot define additional symbols in GraphView SymbolTable")
 	}
 
 	/** ---- [Storable] interface */

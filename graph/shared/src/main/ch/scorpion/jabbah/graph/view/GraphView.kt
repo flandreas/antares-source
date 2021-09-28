@@ -2,6 +2,10 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.Symbol
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
@@ -20,8 +24,11 @@ import ch.scorpion.jabbah.io.StorableCreator
  *
  * Disposing a [GraphView] detaches it and all contained [GraphElementView]s from their models,
  * and releases held resources.
+ *
+ * Extends [SymbolTable] in order to confirm to [SemanticAnalyser]s that names of this [GraphView]'s
+ * [GraphPort]s are implicitly defined as DSL [Symbol]s.
  */
-interface GraphView : Drawing<GraphElementView<*>> {
+interface GraphView : Drawing<GraphElementView<*>>, SymbolTable {
 
 	/** The [Graph] that this [GraphView] displays. Only `null` during deserialization.*/
 	var graph: Graph?
@@ -43,6 +50,13 @@ interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
 	var currentScenarioStep: ScenarioStep?
+
+	/**
+	 * Creates a [Parser] for parsing the [Graph]'s execution script.
+	 * The created [Parser] contains a [SemanticAnalyser] that uses this [GraphView] as
+	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
+	 */
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 
 	/**
 	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
@@ -103,12 +117,4 @@ interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** Returns all [SubGraphVerticeView] that this [GraphView] contains.*/
 	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>>
-
-	// TODO Add Scenario methods
 }
-
-/**
- * Posted on the [EventBus] of a [GraphView] when its [OscilloscopeView] changes its visibility.
- * TODO Delete, not needed any more
- */
-data class OscilloscopeDisplayedEvent(val graphView: GraphView)

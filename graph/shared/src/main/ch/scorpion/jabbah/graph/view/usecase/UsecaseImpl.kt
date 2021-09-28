@@ -125,7 +125,7 @@ class UsecaseImpl(
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 
 	private fun createParserSymbolTable(): ScopedSymbolTable =
-		ScopedSymbolTable("Context", level = 0, enclosingScope = null).also {
+		ScopedSymbolTable("Context", scopeLevel = 0, enclosingScope = null).also {
 			defineContextFunctions(it)
 		}
 

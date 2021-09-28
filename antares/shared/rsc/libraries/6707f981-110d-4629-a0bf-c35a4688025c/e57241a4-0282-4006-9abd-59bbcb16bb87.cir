@@ -7,7 +7,7 @@
 	&apos;!Q&apos; = 1
 }
 
-if (not I and not R) {
+if (not S and not R) {
 	return
 }
 if (S and R) {

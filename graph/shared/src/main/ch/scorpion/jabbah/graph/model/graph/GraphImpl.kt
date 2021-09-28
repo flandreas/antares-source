@@ -2,10 +2,6 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.dsl.Parser
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
-import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
@@ -184,20 +180,6 @@ open class GraphImpl(
 			return output as GraphOutput<T>
 		}
 		return getGraphInputOutput(name) as GraphOutput<T>?
-	}
-
-	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser {
-		var analyser = semanticAnalyser
-		if (analyser == null) {
-			analyser = BaseModule.semanticAnalyserFactory.create(createSymbolTable())
-		}
-		return BaseModule.parserFactory.create(program, analyser)
-	}
-
-	private fun createSymbolTable(): ScopedSymbolTable {
-		val symbolTable = ScopedSymbolTable("Context", level = 0, enclosingScope = null)
-		graphPorts.forEach { symbolTable.define(Symbol(it.name!!)) }
-		return symbolTable
 	}
 
 	/** ---- [Storable] interface */

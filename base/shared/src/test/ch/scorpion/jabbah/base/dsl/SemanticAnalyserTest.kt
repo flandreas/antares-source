@@ -22,7 +22,7 @@ class SemanticAnalyserTest {
 
 		val symbolTable = analyser.scope
 
-		assertEquals(2 + Lexer.RESERVED_KEYWORDS.size, symbolTable.size)
+		assertEquals(2 + Lexer.RESERVED_KEYWORDS.size, symbolTable.symbolsCount)
 		assertIs<BuiltInTypeSymbol>(symbolTable.lookup("var"))
 		assertIs<VariableSymbol>(symbolTable.lookup("a"))
 		assertIs<VariableSymbol>(symbolTable.lookup("b"))

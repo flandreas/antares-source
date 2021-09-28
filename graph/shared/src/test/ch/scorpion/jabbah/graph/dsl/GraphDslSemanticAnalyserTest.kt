@@ -1,13 +1,17 @@
 package ch.scorpion.jabbah.graph.dsl
 
-import ch.scorpion.jabbah.base.dsl.Lexer
-import ch.scorpion.jabbah.base.dsl.SemanticError
-import ch.scorpion.jabbah.base.dsl.Symbol
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.*
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class GraphDslSemanticAnalyserTest {
 
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldAllowInitBlockInGlobalScope() {
@@ -59,4 +63,17 @@ class GraphDslSemanticAnalyserTest {
 			analyser.analyse(ast)
 		}
 	}
+
+	@Test
+	fun shouldAllowStoreDeclarationInInitBlock() {
+		val ast = GraphDslParser(Lexer("""
+			init {
+				store a
+			}
+		""".trimIndent()), null).parse()
+
+		val analyser = GraphDslSemanticAnalyser(null)
+		analyser.analyse(ast)
+	}
+
 }
