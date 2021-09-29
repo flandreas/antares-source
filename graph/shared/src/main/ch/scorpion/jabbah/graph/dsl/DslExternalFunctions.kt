@@ -4,13 +4,14 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.CodeLocation
 import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 
 /**
  * Registers external definitions in a [ScopedSymbolTable] of functions to be called
  * by DSL scripts.
  */
 interface DslExternalFunctions {
-	fun defineIn(symbolTable: ScopedSymbolTable)
+	fun defineIn(symbolTable: SymbolTable)
 }
 
 /**
@@ -43,7 +44,6 @@ abstract class AbstractExternalFunctions : DslExternalFunctions {
 		}
 		val param = params[index]
 		if (param !is String) {
-			//throw RuntimeError(CodeLocation.UNDEFINED, "Expected string in parameter ${index + 1}")
 			throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("base.dsl.expectedStringParameter.msg", index + 1))
 		}
 		return param

@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -18,6 +20,13 @@ interface Usecase : Namable, Describable, Storable {
 
 	/** The identification of this [Usecase] that is unique within a [GraphView]. */
 	var id: Int
+
+	/**
+	 * The [GraphView] to which this [Usecase] belongs.
+	 * Maintained only to be able to create a [SemanticAnalyser] on the scripts that knows all
+	 * [GraphPort]s of [GraphView].
+	 */
+	var graphView: GraphView?
 
 	/** The JavaScript script to be executed when this [Usecase] is executed.*/
 	var executionScript: String

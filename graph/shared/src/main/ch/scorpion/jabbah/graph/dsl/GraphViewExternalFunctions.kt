@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.dsl
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -33,7 +33,7 @@ open class GraphViewExternalFunctions : AbstractExternalFunctions() {
 	private lateinit var context: String
 	private lateinit var eventBus: EventBus
 
-	override fun defineIn(symbolTable: ScopedSymbolTable) {
+	override fun defineIn(symbolTable: SymbolTable) {
 		// Empty, no particular functions so far
 	}
 

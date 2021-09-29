@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.dsl.UsecaseActionExternalFunctions
@@ -36,7 +36,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		}
 	}
 
-	override fun defineIn(symbolTable: ScopedSymbolTable) {
+	override fun defineIn(symbolTable: SymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("pressButtonAt", 2, ::pressButtonAtImpl))

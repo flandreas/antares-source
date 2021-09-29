@@ -24,11 +24,8 @@ import ch.scorpion.jabbah.io.StorableCreator
  *
  * Disposing a [GraphView] detaches it and all contained [GraphElementView]s from their models,
  * and releases held resources.
- *
- * Extends [SymbolTable] in order to confirm to [SemanticAnalyser]s that names of this [GraphView]'s
- * [GraphPort]s are implicitly defined as DSL [Symbol]s.
  */
-interface GraphView : Drawing<GraphElementView<*>>, SymbolTable {
+interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** The [Graph] that this [GraphView] displays. Only `null` during deserialization.*/
 	var graph: Graph?
@@ -50,6 +47,12 @@ interface GraphView : Drawing<GraphElementView<*>>, SymbolTable {
 
 	/** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
 	var currentScenarioStep: ScenarioStep?
+
+	/**
+	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [GraphView]'s [Graph]
+	 * as variable definitions.
+	 */
+	val portSymbolTable: SymbolTable
 
 	/**
 	 * Creates a [Parser] for parsing the [Graph]'s execution script.

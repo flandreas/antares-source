@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -39,7 +38,7 @@ import ch.scorpion.jabbah.io.*
  */
 open class GraphViewImpl(
 	override var graph: Graph?,
-	protected val eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus,
 ) : DrawingImpl<GraphElementView<*>>(), GraphView, Bean {
 
 	constructor() : this(Translations.getString("graph.name.unknown"))
@@ -55,6 +54,8 @@ open class GraphViewImpl(
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
+	override val portSymbolTable: SymbolTable by lazy { GraphViewPortSymbolTable(this) }
+
 	/** ---- [Any] */
 
 	override fun toString(): String {
@@ -69,6 +70,7 @@ open class GraphViewImpl(
 			graph!!.name = Name(value)
 		}
 
+	@Suppress("unused")
 	var translatableName: TranslatableText
 		get() = graph!!.name.translation
 		set(value) {
@@ -93,6 +95,7 @@ open class GraphViewImpl(
 			graph!!.script = value.script
 		}
 
+	@Suppress("unused")
 	var purelyScripted: Boolean
 		get() = graph!!.purelyScripted
 		set(value) {
@@ -221,25 +224,7 @@ open class GraphViewImpl(
 	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
 		BaseModule.parserFactory.create(
 			program,
-			BaseModule.semanticAnalyserFactory.create(this))
-
-	/** ---- [SymbolTable] interface */
-
-	override val scopeLevel: Int get() = 0
-
-	override val symbolsCount: Int get() = graph!!.graphPorts.size
-
-	override val enclosingScope: SymbolTable? get() = null
-
-	override fun hasSymbol(name: String, currentScopeOnly: Boolean): Boolean =
-		graph!!.graphPorts.any { it.name == name }
-
-	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? =
-		graph!!.graphPorts.firstOrNull { it.name == name }?.let { Symbol(it.name!!) }
-
-	override fun define(symbol: Symbol) {
-		throw UnsupportedOperationException("Cannot define additional symbols in GraphView SymbolTable")
-	}
+			BaseModule.semanticAnalyserFactory.create(portSymbolTable))
 
 	/** ---- [Storable] interface */
 

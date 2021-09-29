@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.dsl.AbstractExternalFunctions
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -21,7 +21,7 @@ object DrawExecSymbolFunctions : AbstractExternalFunctions() {
 		this.context = context
 	}
 
-	override fun defineIn(symbolTable: ScopedSymbolTable) {
+	override fun defineIn(symbolTable: SymbolTable) {
 		symbolTable.define(ExternalFunctionSymbol("drawDataFlow", 2, ::drawDataFlowImpl))
 	}
 

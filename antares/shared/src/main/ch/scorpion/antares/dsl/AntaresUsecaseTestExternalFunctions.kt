@@ -3,7 +3,7 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.dsl.UsecaseTestExternalFunctions
 
@@ -12,7 +12,7 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 
 	private val cvDelegate: AntaresGraphViewExternalFunctions get() = delegate as AntaresGraphViewExternalFunctions
 
-	override fun defineIn(symbolTable: ScopedSymbolTable) {
+	override fun defineIn(symbolTable: SymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("assertLedOnAt", 2, ::assertLedOnAtImpl))

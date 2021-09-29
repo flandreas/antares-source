@@ -16,12 +16,15 @@ class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 
 		private val name = EditProperties.name(baseKey = "graph.property.usecase.name", beanProvider = usecaseBeanProvider)
 		private val description = EditProperties.description(beanProvider = usecaseBeanProvider)
-		private val execScript = EditProperties.script("executionScriptProperty", "graph.property.usecase.execScript", beanProvider = usecaseBeanProvider)
-		private val testScript = EditProperties.script("testScriptProperty", "graph.property.usecase.testScript", beanProvider = usecaseBeanProvider)
 	}
 
 	override fun addProperties(bean: UsecaseImpl, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
+
+		val execScript = EditProperties.script("executionScriptProperty", "graph.property.usecase.execScript",
+			beanProvider = usecaseBeanProvider, bean::createParser)
+		val testScript = EditProperties.script("testScriptProperty", "graph.property.usecase.testScript",
+			beanProvider = usecaseBeanProvider, bean::createParser)
 
 		properties.add(name.bind(editor, bean.id))
 		properties.add(description.bind(editor, bean.id))

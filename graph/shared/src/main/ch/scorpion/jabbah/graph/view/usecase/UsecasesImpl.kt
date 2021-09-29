@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.io.*
 
 /** A standard implementation of the [Usecases] interface.*/
 class UsecasesImpl(
-	override var graphView: GraphView? = null,
+	graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Usecases {
 
@@ -19,6 +19,12 @@ class UsecasesImpl(
 	/** ---- [Usecases] interface */
 
 	override val isEmpty: Boolean get() = usecases.isEmpty()
+
+	override var graphView: GraphView? = graphView
+		set(value) {
+			field = value
+			usecases.forEach { it.graphView = value }
+		}
 
 	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
 		usecases.forEach { it.executionStart(graphView, signalHandler) }
@@ -49,11 +55,13 @@ class UsecasesImpl(
 		if (!isLoading) {
 			usecase.id = getMaxId() + 1
 		}
+		usecase.graphView = graphView
 		usecases.add(index, usecase)
 		eventBus.post(UsecaseAddedEvent(graphView!!, usecase))
 	}
 
 	override fun remove(usecase: Usecase) {
+		usecase.graphView = null
 		usecases.remove(usecase)
 		eventBus.post(UsecaseRemovedEvent(graphView!!, usecase))
 	}

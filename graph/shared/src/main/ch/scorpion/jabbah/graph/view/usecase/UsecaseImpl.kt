@@ -19,7 +19,8 @@ import ch.scorpion.jabbah.io.*
 class UsecaseImpl(
 	name: String = "",
 	override var executionScript: String = "",
-	override var testScript: String? = null
+	override var testScript: String? = null,
+	graphView: GraphView? = null,
 ) : Usecase, Namable, Describable, Bean {
 
 	companion object {
@@ -38,7 +39,8 @@ class UsecaseImpl(
 	private val executionScriptASTCache = resettableLazy {
 		executionScriptProperty.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.execScript.name")))
+			createParser(it, null)
+				.parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.execScript.name")))
 		}
 	}
 
@@ -54,7 +56,8 @@ class UsecaseImpl(
 	private val testScriptASTCache = resettableLazy {
 		testScriptProperty.script?.let {
 			LOG.trace("Parsing test script of Usecase '${this.name.value}'")
-			createScriptParser(it).parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.testScript.name")))
+			createParser(it, null)
+				.parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.testScript.name")))
 		}
 	}
 
@@ -73,6 +76,8 @@ class UsecaseImpl(
 	/** ---- [Usecase] interface */
 
 	override var id: Int = 0
+
+	override var graphView: GraphView? = graphView
 
 	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
 		executionScriptASTCache.value?.let {
@@ -118,19 +123,21 @@ class UsecaseImpl(
 
 	/** ---- [UsecaseImpl] */
 
-	private fun createScriptParser(program: String): Parser =
-		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createParserSymbolTable()))
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createSymbolTable()))
 
 	private fun createScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 
-	private fun createParserSymbolTable(): ScopedSymbolTable =
-		ScopedSymbolTable("Context", scopeLevel = 0, enclosingScope = null).also {
-			defineContextFunctions(it)
+	private fun createSymbolTable(): SymbolTable {
+		val portSymbolTable = graphView!!.portSymbolTable
+		return ScopedSymbolTable(
+			name = "ExternalFunctions",
+			scopeLevel = portSymbolTable.scopeLevel,
+			enclosingScope = portSymbolTable
+		).also {
+			GraphDslModule.usecaseActionExternalFunctions.defineIn(it)
+			GraphDslModule.usecaseTestExternalFunctions.defineIn(it)
 		}
-
-	private fun defineContextFunctions(symbolTable: ScopedSymbolTable) {
-		GraphDslModule.usecaseActionExternalFunctions.defineIn(symbolTable)
-		GraphDslModule.usecaseTestExternalFunctions.defineIn(symbolTable)
 	}
 }

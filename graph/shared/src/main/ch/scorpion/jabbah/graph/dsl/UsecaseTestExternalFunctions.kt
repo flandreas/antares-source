@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
@@ -24,7 +24,7 @@ open class UsecaseTestExternalFunctions(
 		this.runner = runner
 	}
 
-	override fun defineIn(symbolTable: ScopedSymbolTable) {
+	override fun defineIn(symbolTable: SymbolTable) {
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("assertOutputAt", 3, ::assertOutputAtImpl))
 		}
