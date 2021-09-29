@@ -67,7 +67,7 @@ class ContainerLibraryElement(
 		metaGraph?.containerDrawing?.execDrawScript?.script?.let {
 			LOG.trace("Parsing symbol drawing script of '${metaGraph!!.name}'")
 			metaGraph!!.containerDrawing.
-				createDrawSymbolScriptParser(it)
+				createDrawSymbolScriptParser(it, null)
 				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.ContainerDrawing.execDrawScript.name")))
 		}
 	}

@@ -9,13 +9,12 @@ import com.l2fprod.common.propertysheet.Property
 @Suppress("unused")
 class ContainerDrawingBeanInfo : AbstractBeanInfo<ContainerDrawing>() {
 
-	companion object {
-		private val execDrawScript = EditProperties.script("execDrawScript", "graph.property.ContainerDrawing.execDrawScript", beanProvider = drawingBeanProvider)
-
-	}
-
 	override fun addProperties(bean: ContainerDrawing, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
+
+		val execDrawScript = EditProperties.script("execDrawScript", "graph.property.ContainerDrawing.execDrawScript",
+			beanProvider = drawingBeanProvider, bean::createDrawSymbolScriptParser)
+
 		properties.add(execDrawScript.bind(editor, listOf()))
 	}
 }
