@@ -17,11 +17,13 @@ class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioBeanProvider)
 		private val description = EditProperties.description(beanProvider = scenarioBeanProvider)
-		private val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition", beanProvider = scenarioBeanProvider)
 	}
 
 	override fun addProperties(bean: ScenarioImpl, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
+
+		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
+			beanProvider = scenarioBeanProvider, bean::createParser)
 
 		properties.add(name.bind(editor, bean.id, filter = { false }))
 		properties.add(description.bind(editor, bean.id))

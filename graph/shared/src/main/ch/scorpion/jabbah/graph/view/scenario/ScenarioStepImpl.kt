@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.ScriptMetaData
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -24,7 +21,8 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [ScenarioStep] interface.
  */
 class ScenarioStepImpl(
-	initialName: String = ""
+	initialName: String = "",
+	graphView: GraphView? = null
 ) : ScenarioStep, Namable, Describable, Bean {
 
 	companion object {
@@ -41,8 +39,7 @@ class ScenarioStepImpl(
 	private val conditionScriptASTCache = resettableLazy {
 		conditionScript?.let {
 			LOG.trace("Parsing condition script of '${name.value}'")
-			BaseModule.parserFactory
-				.create(it, null)
+			createParser(it, null)
 				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
 		}
 	}
@@ -59,8 +56,7 @@ class ScenarioStepImpl(
 	private val onEntryScriptASTCache = resettableLazy {
 		onEntryScript?.let {
 			LOG.trace("Parsing onEntry script of '${name.value}'")
-			BaseModule.parserFactory
-				.create(it, null)
+			createParser(it, null)
 				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onEntry.name")))
 		}
 	}
@@ -73,8 +69,7 @@ class ScenarioStepImpl(
 	private val onExitScriptASTCache = resettableLazy {
 		onExitScript?.let {
 			LOG.trace("Parsing onExit script of '${name.value}'")
-			BaseModule.parserFactory
-				.create(it, null)
+			createParser(it, null)
 				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onExit.name")))
 		}
 	}
@@ -120,6 +115,8 @@ class ScenarioStepImpl(
 	/** ---- [ScenarioStep] interface */
 
 	override var id: Int = 0
+
+	override var graphView: GraphView? = graphView
 
 	override var highlightIds: String? = null
 		set(value) {
@@ -204,6 +201,10 @@ class ScenarioStepImpl(
 	}
 
 	/** ---- [ScenarioStepImpl] */
+
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		graphView?.createParser(program, semanticAnalyser)
+			?: BaseModule.parserFactory.create(program, semanticAnalyser)
 
 	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))

@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
  */
 interface Scenarios : Storable {
 
-	/** Can be `null` in order to be instantiated by deserialization. */
 	var graphView: GraphView?
 
 	val isEmpty: Boolean

@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -22,6 +24,13 @@ interface Scenario : Namable, Describable, Storable {
 
 	/** Returns the identification of this [Scenario] that is unique within a [GraphView].*/
 	var id: Int
+
+	/**
+	 * The [GraphView] to which this [Scenario] belongs.
+	 * Maintained only to be able to create a [SemanticAnalyser] on [condition] that knows all
+	 * [GraphPort]s of [GraphView].
+	 */
+	var graphView: GraphView?
 
 	/** Returns the number of [ScenarioStep]s of this [Scenario].*/
 	val stepCount: Int

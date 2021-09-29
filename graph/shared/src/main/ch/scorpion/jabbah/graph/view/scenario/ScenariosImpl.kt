@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.io.*
  * A standard implementation of the [Scenarios] interface.
  */
 class ScenariosImpl(
-	override var graphView: GraphView? = null,
+	graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Scenarios {
 
@@ -22,6 +22,12 @@ class ScenariosImpl(
 
 	override val isEmpty: Boolean get() = scenarios.isEmpty()
 
+	override var graphView: GraphView? = graphView
+		set(value) {
+			field = value
+			scenarios.forEach { it.graphView = value }
+		}
+
 	override fun dispose() {
 		scenarios.forEach { it.dispose() }
 		scenarios.clear()
@@ -31,13 +37,9 @@ class ScenariosImpl(
 		scenarios.forEach { it.executionStart(graphView, signalHandler) }
 	}
 
-	override fun getScenarios(): Iterable<Scenario> {
-		return scenarios.toImmutableList()
-	}
+	override fun getScenarios(): Iterable<Scenario> = scenarios.toImmutableList()
 
-	override fun get(id: Int): Scenario {
-		return scenarios.first { it.id == id }
-	}
+	override fun get(id: Int): Scenario = scenarios.first { it.id == id }
 
 	override fun add(name: String) {
 		add(ScenarioImpl(name))
@@ -51,11 +53,13 @@ class ScenariosImpl(
 		if (!isLoading) {
 			scenario.id = getMaxId() + 1
 		}
+		scenario.graphView = graphView
 		scenarios.add(index, scenario)
 		eventBus.post(ScenarioAddedEvent(graphView!!, scenario))
 	}
 
 	override fun remove(scenario: Scenario) {
+		scenario.graphView = null
 		scenarios.remove(scenario)
 		eventBus.post(ScenarioRemovedEvent(graphView!!, scenario))
 	}

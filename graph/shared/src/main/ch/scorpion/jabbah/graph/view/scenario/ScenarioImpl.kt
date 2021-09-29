@@ -3,10 +3,7 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.ScriptMetaData
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
@@ -27,6 +24,7 @@ import ch.scorpion.jabbah.io.*
  */
 class ScenarioImpl(
 	initialName: String = "",
+	graphView: GraphView? = null,
 	private var conditionScript: String = ""
 ) : Scenario, Namable, Describable, Bean {
 
@@ -48,8 +46,7 @@ class ScenarioImpl(
 
 	private val conditionScriptASTCache = resettableLazy {
 		LOG.trace("Parsing condition script of '${name.value}'")
-		BaseModule.parserFactory
-			.create(conditionScript, null)
+		createParser(conditionScript, null)
 			.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
 	}
 
@@ -68,6 +65,12 @@ class ScenarioImpl(
 	/** ---- [Scenario] interface */
 
 	override var id: Int = 0
+
+	override var graphView: GraphView? = graphView
+		set(value) {
+			field = value
+			steps.forEach { it.graphView = value }
+		}
 
 	override val stepCount: Int get() = steps.size
 
@@ -104,11 +107,13 @@ class ScenarioImpl(
 			if (!isLoading) {
 				step.id = getMaxId() + 1
 			}
+			step.graphView = graphView
 			steps.add(index, step)
 		}
 	}
 
 	override fun removeStep(step: ScenarioStep) {
+		step.graphView = null
 		steps.remove(step)
 	}
 
@@ -151,6 +156,10 @@ class ScenarioImpl(
 	}
 
 	/** ---- [ScenariosImpl] */
+
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		graphView?.createParser(program, semanticAnalyser)
+			?: BaseModule.parserFactory.create(program, semanticAnalyser)
 
 	private fun getMaxId(): Int {
 		if (steps.size == 0) {
