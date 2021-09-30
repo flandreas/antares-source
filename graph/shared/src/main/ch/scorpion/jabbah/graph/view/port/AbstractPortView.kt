@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
@@ -140,14 +140,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		val valueText = when (port.portType) {
-			PortType.INPUT -> (port as InputPort<*>).incomingSignalDescription
-			PortType.OUTPUT -> (port as OutputPort<*>).outgoingSignalDescription
-			PortType.INOUT -> {
-				val p = port as BidirectionalPort<*>
-				"${Translations.getString("graph.property.portType.input")}:${p.incomingSignalDescription ?: ""}, ${Translations.getString("graph.property.portType.output")}:${p.outgoingSignalDescription ?: ""}"
-			}
-		}
+		val valueText = port.signalDescription
 		val content = StringBuilder(buildToolTipContent())
 		if (StringUtils.isNotEmpty(valueText)) {
 			content.appendLine()

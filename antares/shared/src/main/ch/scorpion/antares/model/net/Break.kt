@@ -19,7 +19,6 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-
 class Break(
 	logic: Logic = Logic.POSITIVE,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -41,7 +40,7 @@ class Break(
 	}
 
 	init {
-		addPort(DigitalPortImpl.createInOut(logic, null, BitWidth.BW_1))
+		addPort(DigitalPortImpl.createInput(logic, null, BitWidth.BW_1))
 	}
 
 	var logic: Logic = logic

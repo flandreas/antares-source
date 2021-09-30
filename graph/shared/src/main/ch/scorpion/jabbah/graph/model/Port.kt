@@ -49,6 +49,8 @@ interface Port<T : Any> : Describable, Bean {
 	/** Determines whether this [Port] is currently connected to a [Net].*/
 	val isConnected: Boolean get() = net != null
 
+	val signalDescription: String?
+
 	fun accept(visitor: HierarchyVisitor)
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
@@ -79,8 +81,6 @@ interface Port<T : Any> : Describable, Bean {
  * @param T the type of signal accepted by this [InputPort]
  */
 interface InputPort<T : Any> : Port<T> {
-
-	val incomingSignalDescription: String? get() = getIncomingSignal()?.toString()
 
 	fun getIncomingSignal(): T?
 
@@ -162,8 +162,6 @@ interface OutputPort<T : Any> : Port<T> {
 	 * only if the [Net]'s signal is undefined. Otherwise, it asserts "undefined" to the [Net].
 	 */
 	val weakBehaviour: WeakOutputPortBehaviour<T>?
-
-	val outgoingSignalDescription: String? get() = getOutgoingSignal()?.toString()
 
 	fun getOutgoingSignal(): T?
 

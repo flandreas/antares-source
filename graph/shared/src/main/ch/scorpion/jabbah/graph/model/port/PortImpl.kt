@@ -88,6 +88,8 @@ open class PortImpl<T : Any>(
 
 	override var net: Net<T>? = null
 
+	override val signalDescription: String? get() = _signal?.toString()
+
 	override fun accept(visitor: HierarchyVisitor) {
 		visitor.visit(this)
 	}

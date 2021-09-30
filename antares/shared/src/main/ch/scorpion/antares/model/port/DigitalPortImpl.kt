@@ -167,13 +167,8 @@ open class DigitalPortImpl(
 
 	/** ---- [Port] interface */
 
-	override val incomingSignalDescription: String? get() =
-		getIncomingSignal()?.let {
-			CurrentDigitalSignalNotation.notation.notate(it, signalRepresentation)
-		} ?: ""
-
-	override val outgoingSignalDescription: String?
-		get() = getOutgoingSignal()?.let {
+	override val signalDescription: String?
+		get() = getIncomingSignal()?.let {
 			CurrentDigitalSignalNotation.notation.notate(it, signalRepresentation)
 		} ?: ""
 
