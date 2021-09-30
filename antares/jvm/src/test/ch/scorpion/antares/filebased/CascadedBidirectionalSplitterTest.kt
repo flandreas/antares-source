@@ -8,10 +8,12 @@ import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
@@ -127,19 +129,6 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
 		assertNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
 		assertEquals(DigitalSignalFactory.of(True), inoutIO1.signal)
-	}
-
-	@Test
-	fun shouldSetExecutionErrorForConflictingSignals() {
-		proceedUntilQueueIsEmpty()
-
-		inoutIO1.setIncomingSignal(DigitalSignalFactory.of(True), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		inoutA.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Undefined, False, Undefined, Undefined)), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		assertNotNull(inoutA.getOutput<DigitalSignal>().net?.executionError)
 	}
 
 	@Test

@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.net.*
-import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -58,13 +57,6 @@ class RealSwitch(
 				val port2 = vertice.getPort<DigitalSignal>(2) as DigitalPort
 				port1.setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
 				port2.setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
-
-				if (vertice.isOn) {
-					// Make sure that re-propagation from origin OutputPort is not blocked at InputPort
-					// of this RealSwitch because incoming signal is already set
-					(port1 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
-					(port2 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
-				}
 			}
 		}
 	}

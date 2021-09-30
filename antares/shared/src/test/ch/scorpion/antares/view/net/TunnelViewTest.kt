@@ -5,7 +5,6 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
@@ -45,6 +44,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 	@Test
 	fun shouldForwardSignal() {
 		startSimulation(1100L)
+		proceedToMillis(2200L)
 
 		switchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()

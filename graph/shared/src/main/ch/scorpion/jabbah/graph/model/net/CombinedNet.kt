@@ -47,7 +47,9 @@ open class CombinedNetAccess<T : Any>(
 	open val assertedSignal: T? get() = port.getOutgoingSignal()
 
 	open fun isConsistentWith(signal: T?): Boolean =
-		port.isOutputFullyUndefined || SignalUtil.equals(port.getOutgoingSignal(), signal)
+		port.isOutputFullyUndefined
+			|| (port.portType == PortType.INOUT && port.owner is NetCombiner)
+			|| SignalUtil.equals(port.getOutgoingSignal(), signal)
 
 	open val isFullyUndefined: Boolean get() = port.isOutputFullyUndefined
 

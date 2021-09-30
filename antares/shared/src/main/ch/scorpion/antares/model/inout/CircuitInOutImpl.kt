@@ -157,7 +157,7 @@ class CircuitInOutImpl(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		enabled = true
-		signal = getDigitalPort().dominantSignal
+		signal = getDigitalPort().getOutgoingSignal()
 		stateChanged(signalHandler)
 	}
 

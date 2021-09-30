@@ -4,10 +4,11 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 
 /**
  * A [CombinedNetAccess] that can access subword of [DigitalSignal]s. Needed as a consequence of bus splitting.
@@ -22,7 +23,9 @@ class DigitalCombinedNetAccess(
 		get() = port.getOutgoingSignal()?.getSubword(width, index)
 
 	override fun isConsistentWith(signal: DigitalSignal?): Boolean =
-		port.isOutputFullyUndefined || assertedSignal?.isConsistentWith(signal) ?: false
+		port.isOutputFullyUndefined
+			|| (port.portType == PortType.INOUT && port.owner is NetCombiner)
+			|| assertedSignal?.isConsistentWith(signal) ?: false
 
 	override val isFullyUndefined: Boolean get() = assertedSignal?.isFullyUndefined ?: true
 

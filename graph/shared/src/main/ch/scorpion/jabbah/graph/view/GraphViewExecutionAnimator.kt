@@ -117,7 +117,8 @@ class GraphViewExecutionAnimator(
 			return
 		}
 
-		val edgeView = drawingView.drawing.getEdgeView(changedPort)!!
+		val edgeView = drawingView.drawing.getEdgeView(changedPort) ?: return
+
 		val signal = edgeView.model.signalBuffer
 
 		// Creating the EdgeViewNetAnimation will make it visible in the View, but the animation

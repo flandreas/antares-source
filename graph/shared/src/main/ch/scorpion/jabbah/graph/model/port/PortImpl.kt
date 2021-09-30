@@ -142,16 +142,14 @@ open class PortImpl<T : Any>(
 		_combinedNets.clear()
 	}
 
+	private var _signal: T? = null
+
 	/** ---- [InputPort] interface */
 
-	private var _incomingSignal: T? = null
-
-	override fun getIncomingSignal(): T? {
-		return _incomingSignal ?: getDefaultSignal()
-	}
+	override fun getIncomingSignal(): T? = _signal ?: getDefaultSignal()
 
 	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler) {
-		if (signal != _incomingSignal) {
+		if (signal != _signal) {
 			storeIncomingSignal(signal)
 			owner?.inputChanged(this, signalHandler)
 		} else {
@@ -161,8 +159,6 @@ open class PortImpl<T : Any>(
 
 	/** ---- [OutputPort] interface */
 
-	private var _outgoingSignal: T? = null
-
 	private val _combinedNets = mutableListOf<CombinedNet<T>>()
 
 	/** Created on-demand in [formNet]. Used to redo net formation during execution after net topology has changed.*/
@@ -171,20 +167,20 @@ open class PortImpl<T : Any>(
 	override val combinedNets: Collection<CombinedNet<T>> get() = _combinedNets
 
 	override fun getOutgoingSignal(): T? {
-		return _outgoingSignal ?: getDefaultSignal()
+		return _signal ?: getDefaultSignal()
 	}
 
 	override val isOutputFullyUndefined: Boolean
-		get() = _outgoingSignal == null
+		get() = _signal == null
 
 	override val isOutputPartiallyUndefined: Boolean
-		get() = _outgoingSignal == null
+		get() = _signal == null
 
 	override fun createAccess(): CombinedNetAccess<T> =
 		CombinedNetAccess(this)
 
 	override fun isOutgoingSignalConsistentWith(signal: T?): Boolean =
-		isOutputFullyUndefined || SignalUtil.equals(_outgoingSignal, signal)
+		isOutputFullyUndefined || SignalUtil.equals(_signal, signal)
 
 	override fun setOutgoingSignalBuffered(signal: T?, signalHandler: SignalHandler) {
 		storeOutgoingSignal(signal)
@@ -199,14 +195,6 @@ open class PortImpl<T : Any>(
 		forwardSignal(signalHandler)
 	}
 
-	fun syncIncomingSignalWithNegotiatedOutgoingSignal(always: Boolean = false) {
-		// Don't synchronize with Net signal, as that one is not available before the
-		// next simulation cycle
-		if (always || !isOutputFullyUndefined) {
-			storeIncomingSignal(_outgoingSignal)
-		}
-	}
-
 	/** ---- [PortImpl] */
 
 	/**
@@ -216,11 +204,11 @@ open class PortImpl<T : Any>(
 	protected open fun getDefaultSignal(): T? = null
 
 	protected fun storeIncomingSignal(signal: T?) {
-		_incomingSignal = signal
+		_signal = signal
 	}
 
 	protected fun storeOutgoingSignal(signal: T?) {
-		_outgoingSignal = signal
+		_signal = signal
 	}
 
 	protected fun clear() {
@@ -282,9 +270,9 @@ open class PortImpl<T : Any>(
 
 		// Net has become consistent and has to recover from execution error
 		if (!isOutputFullyUndefined) {
-			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
+			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_signal into net '${net!!.id}'" }
 			resetExecutionError()
-			net!!.setSignal(_outgoingSignal, this, this, signalHandler)
+			net!!.setSignal(_signal, this, this, signalHandler)
 			return
 		}
 
@@ -310,7 +298,7 @@ open class PortImpl<T : Any>(
 	)
 
 	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): SignalReplacement<T> {
-		var replacement = SignalReplacement(_outgoingSignal, this)
+		var replacement = SignalReplacement(_signal, this)
 		combinedNets.forEach { combinedNet ->
 			val thisAccess = combinedNet.accessOf(this)!!
 			if (thisAccess.isPartiallyUndefined) {

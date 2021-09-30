@@ -2,9 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -17,7 +15,6 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 
 /**
@@ -79,21 +76,5 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), a.model.signal)
-	}
-
-	@Test
-	fun shouldSetErrorOnCombinedNet() {
-		startSimulation()
-		proceedUntilQueueIsEmpty()
-
-		b.model.setIncomingSignal(DigitalSignalFactory.of(true), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		a.model.setIncomingSignal(DigitalSignalFactory.of(false), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		assertNotNull(b.model.getPort<DigitalSignal>().net?.executionError)
-		assertNotNull(a.model.getPort<DigitalSignal>().net?.executionError)
-		assertNotNull(subGraphVV.model.getGraphIfPresent()!!.graphInOuts.first().getOutput<Boolean>().net?.executionError)
 	}
 }

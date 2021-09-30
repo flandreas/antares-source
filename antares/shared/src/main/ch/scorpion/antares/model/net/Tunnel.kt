@@ -37,7 +37,6 @@ class Tunnel(
 
 		private class Calculator : VerticeCalculator<Tunnel> {
 			override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
-				(vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true
 				if (data.changedPort === vertice.getPort<DigitalSignal>(1)) {
 					vertice.getOutput<DigitalSignal>(2).setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
 				} else if (data.changedPort === vertice.getPort<DigitalSignal>(2)) {

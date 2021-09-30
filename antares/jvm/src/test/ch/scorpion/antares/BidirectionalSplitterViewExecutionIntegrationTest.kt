@@ -97,37 +97,6 @@ class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest
 	}
 
 	@Test
-	fun shouldPropagateConflictErrorBeyondConcentrator() {
-		startSimulation()
-		proceedUntilQueueIsEmpty()
-		a.model.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_2, 2), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		b2.model.setIncomingSignal(DigitalSignalFactory.of(Bit.False), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		assertNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(a.model.getOutput<DigitalSignal>().net?.executionError)
-	}
-
-	@Test
-	fun shouldPropagateConflictErrorBeyondSplitter() {
-		startSimulation()
-		proceedUntilQueueIsEmpty()
-
-		b1.model.setIncomingSignal(DigitalSignalFactory.of(Bit.True), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		a.model.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.False, Bit.Undefined)), scheduler)
-		proceedUntilQueueIsEmpty()
-
-		assertNotNull(b1.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNull(b2.model.getOutput<DigitalSignal>().net?.executionError)
-		assertNotNull(a.model.getOutput<DigitalSignal>().net?.executionError)
-	}
-
-	@Test
 	fun shouldBeBidirectionalAtTheSameTime() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()

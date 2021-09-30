@@ -51,6 +51,16 @@
             <translation lang='en' text='Bug 84'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='11' uuid='2fb72f0f-0a80-4ef8-8db6-80b6cccf4db9'>
+          <name>
+            <translation lang='en' text='Bug 227 Inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='12' uuid='453dfbb1-aa3b-45d6-ab40-f0856fb02767'>
+          <name>
+            <translation lang='en' text='Bug 227 Outer'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

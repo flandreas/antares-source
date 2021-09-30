@@ -195,7 +195,7 @@ class DigitalPortView(
 		return if (getDigitalPort().net != null) {
 			getDigitalPort().net!!.signal!!
 		} else {
-			getDigitalPort().dominantSignal
+			getDigitalPort().getOutgoingSignal()!!
 		}
 	}
 

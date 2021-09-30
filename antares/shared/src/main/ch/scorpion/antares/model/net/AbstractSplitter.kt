@@ -1,7 +1,10 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -9,7 +12,6 @@ import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -194,13 +196,11 @@ abstract class AbstractSplitter(
 	private fun flushNarrowSide(signalHandler: SignalHandler) {
 		narrowSidePorts.forEach {
 			it.flush(signalHandler)
-			(it as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 		}
 	}
 
 	private fun flushWideSide(signalHandler: SignalHandler) {
 		wideSidePort.flush(signalHandler)
-		(wideSidePort as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 	}
 
 	/** ---- [AbstractSplitter] */
