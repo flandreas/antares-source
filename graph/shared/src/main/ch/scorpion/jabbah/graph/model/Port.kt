@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import kotlin.reflect.KClass
 
 /**
@@ -180,7 +181,23 @@ interface OutputPort<T : Any> : Port<T> {
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/
-interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T>
+interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T> {
+
+	/**
+	 * Determines whether a [BidirectionalPort] currently doesn't actively send a signal.
+	 *
+	 * Needed in [Net] signal negotiation: If a [BidirectionalPort] doesn't actively send a signal,
+	 * [Net]'s to which that [BidirectionalPort] is connected can safely apply a different value.
+	 * If this [BidirectionalPort]'s owner is a [NetCombiner], this property will typically be `false`,
+	 * because [NetCombiner]s simply forward any incoming signal to other [Net].
+	 *
+	 * Also used by some build-in [Vertice]s that contain [BidirectionalPort]s whose direction is
+	 * determined by the signals at other [InputPort]s, often called "Enable" or "Send" ports.
+	 * Such [Vertice] will denote this [BidirectionalPort] as "output not dominant" if the
+	 * [Vertice] is either not "enabled" or not "sending" data to the other world.
+	 */
+	val isOutputNotDominant: Boolean
+}
 
 /** Enumerates the type of a [Port] regarding signal flow direction.*/
 enum class PortType(override val customName: String) : EnumProperty<PortType> {

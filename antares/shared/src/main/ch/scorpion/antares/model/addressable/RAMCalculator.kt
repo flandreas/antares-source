@@ -85,7 +85,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
             read(ram, signalHandler)
         }
 
-        if (ram.isChipSelected) {
+	    if (!ram.isChipSelected) {
             undefinedOutput(ram, signalHandler)
             return
         }

@@ -75,8 +75,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(false)
-	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != DigitalSignalFactory.of(true)
-	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(false)
+	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
+	val isChipNotSelected: Boolean get() = !isChipSelected
 
 	init {
 		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
@@ -84,7 +84,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_PORT_NAME, description = WRITE_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, description = CLEAR_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
+
+		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC,
+			outputNotDominantCondition = { isChipNotSelected || isWrite }))
 
 		this.hasClock = hasClock
 	}

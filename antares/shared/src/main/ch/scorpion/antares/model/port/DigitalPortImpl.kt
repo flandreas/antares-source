@@ -33,8 +33,9 @@ open class DigitalPortImpl(
 	description: TranslatableText = TranslatableText(),
 	canBeUndefined: Boolean = portType == PortType.INOUT,
 	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null,
-	defaultBit: Bit? = null
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour), DigitalPort {
+	defaultBit: Bit? = null,
+	outputNotDominantCondition: (() -> Boolean)? = null
+) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description, canBeUndefined, weakBehaviour, outputNotDominantCondition), DigitalPort {
 
 	companion object {
 

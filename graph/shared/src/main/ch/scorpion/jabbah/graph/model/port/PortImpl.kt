@@ -27,7 +27,8 @@ open class PortImpl<T : Any>(
 	name: String?,
 	description: TranslatableText = TranslatableText(),
 	override var canBeUndefined: Boolean = false,
-	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null
+	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null,
+	private val outputNotDominantCondition: (() -> Boolean)? = null
 ) : BidirectionalPort<T>, Describable {
 
 	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
@@ -196,6 +197,11 @@ open class PortImpl<T : Any>(
 	override fun flush(signalHandler: SignalHandler) {
 		forwardSignal(signalHandler)
 	}
+
+	/** ---- [BidirectionalPort] */
+
+	override val isOutputNotDominant: Boolean get() =
+		portType == PortType.INOUT && (outputNotDominantCondition?.invoke() ?: (owner is NetCombiner))
 
 	/** ---- [PortImpl] */
 
