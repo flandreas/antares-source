@@ -16,7 +16,7 @@ elem.setOutputBit(&quot;O3&quot;, en &amp;&amp; val == 3);
 elem.setOutputBit(&quot;O4&quot;, en &amp;&amp; val == 4);
 elem.setOutputBit(&quot;O5&quot;, en &amp;&amp; val == 5);
 elem.setOutputBit(&quot;O6&quot;, en &amp;&amp; val == 6);
-elem.setOutputBit(&quot;O7&quot;, en &amp;&amp; val == 7);' propDelay='43'>
+elem.setOutputBit(&quot;O7&quot;, en &amp;&amp; val == 7);' propDelay='40'>
           <elements>
             <circuitInOut _id='3' id='1' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='1'/>

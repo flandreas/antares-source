@@ -66,7 +66,7 @@ switch (input) {
 		break;
 	default:
 		elem.setOutput(&quot;0&quot;);
-}'>
+}' propDelay='80'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='1'/>

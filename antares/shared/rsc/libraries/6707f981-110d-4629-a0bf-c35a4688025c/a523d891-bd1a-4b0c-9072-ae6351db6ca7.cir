@@ -4,7 +4,7 @@
       <model>
         <graph _id='2' script='var a = parseInt(elem.input(&quot;A&quot;), &quot;16&quot;);
 var b = parseInt(elem.input(&quot;B&quot;), &quot;16&quot;);
-elem.setOutputBit(&quot;O&quot;, a == b);'>
+elem.setOutputBit(&quot;O&quot;, a == b);' propDelay='40'>
           <elements>
             <xorGate _id='3' id='1' delay='20' inputCount='2'>
               <desc>

@@ -6,7 +6,7 @@
 if (elem.portRaised(&quot;C&quot;)) {
    elem.setOutputBit(&quot;Q&quot;, d);
    elem.setOutputBit(&quot;!Q&quot;, !d);
-}' propDelay='110'>
+}' propDelay='90'>
           <elements>
             <norGate _id='3' id='1' delay='7' inputCount='2'/>
             <norGate _id='4' id='2' delay='10' inputCount='2'/>

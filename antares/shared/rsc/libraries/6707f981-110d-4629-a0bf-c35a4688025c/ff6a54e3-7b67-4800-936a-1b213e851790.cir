@@ -25,10 +25,10 @@ elem.setOutputBit(&quot;O11&quot;, en &amp;&amp; val == 11);
 elem.setOutputBit(&quot;O12&quot;, en &amp;&amp; val == 12);
 elem.setOutputBit(&quot;O13&quot;, en &amp;&amp; val == 13);
 elem.setOutputBit(&quot;O14&quot;, en &amp;&amp; val == 14);
-elem.setOutputBit(&quot;O15&quot;, en &amp;&amp; val == 15);' propDelay='90'>
+elem.setOutputBit(&quot;O15&quot;, en &amp;&amp; val == 15);' propDelay='80'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
-            <subGraphVerticeRef _id='4' id='2' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
+            <subGraphVerticeRef _id='3' id='1' delay='40' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
+            <subGraphVerticeRef _id='4' id='2' delay='40' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
             <circuitInOut _id='5' id='3' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='I2' type='input' bitWidth='1'/>

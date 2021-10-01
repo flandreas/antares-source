@@ -23,7 +23,7 @@ if (s) {
 
 elem.setOutputBit(&quot;Q&quot;, false);
 elem.setOutputBit(&quot;!Q&quot;, true);
-'>
+' propDelay='20'>
           <elements>
             <norGate _id='3' id='1' delay='8' inputCount='2'/>
             <norGate _id='4' id='2' delay='11' inputCount='2'/>
