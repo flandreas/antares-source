@@ -1,4 +1,4 @@
-<project _id='0' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='453dfbb1-aa3b-45d6-ab40-f0856fb02767' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -49,6 +49,16 @@
         <containerLibraryElement _id='10' uuid='1edd94d0-0f5c-467d-aace-b5e80638e431'>
           <name>
             <translation lang='en' text='Bug 84'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='11' uuid='2fb72f0f-0a80-4ef8-8db6-80b6cccf4db9'>
+          <name>
+            <translation lang='en' text='Bug 227 Inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='12' uuid='453dfbb1-aa3b-45d6-ab40-f0856fb02767'>
+          <name>
+            <translation lang='en' text='Bug 227 Outer'/>
           </name>
         </containerLibraryElement>
       </items>

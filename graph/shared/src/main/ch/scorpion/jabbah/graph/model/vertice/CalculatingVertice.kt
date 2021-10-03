@@ -46,9 +46,11 @@ abstract class CalculatingVertice(
 				// Don't flush OutputPorts that triggered execution to avoid shooting back signals
 				port.flush(signalHandler)
 
+				/*
 				if (port.portType.isInput && port is PortImpl) {
 					port.syncIncomingSignalWithNegotiatedOutgoingSignal()
 				}
+				*/
 			}
 		}
 	}
