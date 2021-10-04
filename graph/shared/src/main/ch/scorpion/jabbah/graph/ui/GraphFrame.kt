@@ -127,6 +127,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	override fun dispose() {
 		super.dispose()
+		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
 	}
 
