@@ -199,6 +199,15 @@ class CombinedNet<T : Any> {
 		_nets.forEach { it.executionError = error }
 	}
 
+	fun revokeSignal() {
+		_nets.forEach { net ->
+			net.ports
+				.filter { it.portType.isInput }
+				.map { it as InputPort<*> }
+				.forEach { it.revokeSignal() }
+		}
+	}
+
 	val hasExecutionError: Boolean get() = _nets.any { it.executionError != null }
 
 	/**

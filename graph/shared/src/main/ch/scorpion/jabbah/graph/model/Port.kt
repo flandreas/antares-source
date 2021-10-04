@@ -93,6 +93,17 @@ interface InputPort<T : Any> : Port<T> {
 	 * @param signalHandler the [SignalHandler] to be used during execution.
 	 */
 	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
+
+	/**
+	 * Revokes the signal that has previously been set using [setIncomingSignal], giving this
+	 * [InputPort] a chance to reset the stored outgoing signal.
+	 *
+	 * This is needed when the signal on a connected [Net] is set to "undefined" immediately prior
+	 * to setting a new, defined signal by an [OutputPort] in the same [Net]. If [InputPort] would
+	 * not reset its stored outgoing signal, chances are the [Net] would NOT propagate the following
+	 * defined signal to this [InputPort] because it would differ from the old, still stored signal.
+	 */
+	fun revokeSignal()
 }
 
 interface WeakOutputPortBehaviour<T : Any> {
