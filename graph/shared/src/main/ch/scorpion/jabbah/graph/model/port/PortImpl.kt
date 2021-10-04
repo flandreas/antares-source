@@ -157,6 +157,10 @@ open class PortImpl<T : Any>(
 		}
 	}
 
+	override fun revokeSignal() {
+		_incomingSignal = null
+	}
+
 	/** ---- [OutputPort] interface */
 
 	private var _outgoingSignal: T? = null
@@ -343,6 +347,8 @@ open class PortImpl<T : Any>(
 						)
 					}
 				}
+
+				combinedNet.revokeSignal()
 			}
 		}
 		return replacement

@@ -76,7 +76,6 @@ open class ViewImpl<C : InputEventContext>(
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
 		_canvas?.removePropertyChangeListener(propertyChangeHandler)
-		applicationContextHolder?.dispose()
 	}
 
 	override val applicationContextHolder: ApplicationContextHolder? = applicationContextHolder
