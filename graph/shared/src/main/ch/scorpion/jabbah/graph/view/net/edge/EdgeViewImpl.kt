@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.LineTerminator
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
@@ -132,6 +133,8 @@ open class EdgeViewImpl<T : Any>(
 	override val layout: EdgeViewLayout = EdgeViewLayoutImpl(this)
 
 	override var polyline: PolylineShape = PolylineShapeFactory.create(null)
+
+	override val executionStroke: Stroke get() = stroke
 
 	final override var origin: Connection<T>? = null
 		private set(value) {

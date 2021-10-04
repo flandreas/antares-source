@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -52,6 +53,15 @@ class DigitalEdgeView(
 		const val PROP_WIDE_BUS_STROKE = "antares.DigitalEdgeView.wideBusStroke"
 	}
 
+	private val wideBus: Boolean get() = (model as DigitalNet).bitWidth.width > 1 && BaseModule.properties.getBoolean(PROP_WIDE_BUS_STROKE)
+
+	override val executionStroke: Stroke get() =
+		if (wideBus) {
+			(style as EdgeStyle).busStroke
+		} else {
+			(style as EdgeStyle).executionStroke
+		}
+
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
@@ -72,11 +82,11 @@ class DigitalEdgeView(
 			context.choose(color)
 		}
 
-		if ((model as DigitalNet).bitWidth.width > 1 && BaseModule.properties.getBoolean(PROP_WIDE_BUS_STROKE)) {
-			context.g.stroke = (style as EdgeStyle).busStroke
+		context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			executionStroke
 		} else {
-			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				(style as EdgeStyle).executionStroke
+			if (wideBus) {
+				(style as EdgeStyle).busStroke
 			} else {
 				stroke
 			}

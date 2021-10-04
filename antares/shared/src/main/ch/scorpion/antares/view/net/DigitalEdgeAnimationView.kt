@@ -99,14 +99,16 @@ class DigitalEdgeAnimationView(
 		}
 
 	override fun draw(context: DrawContext) {
-		context.g.color = signalView.signal.color.foregroundColor
-		context.g.stroke = (edgeView.style as EdgeStyle).executionStroke
+		if (edgeView.netView!!.style == NetViewStyle.LINE) {
+			context.g.color = signalView.signal.color.foregroundColor
+			context.g.stroke = edgeView.executionStroke
 
-		val polyline = signalView.orthoPolyline
-		for (i in 0..polyline.size - 2) {
-			val begin = polyline.get(i)
-			val end = polyline.get(i + 1)
-			context.g.drawLine(begin.x.toInt(), begin.y.toInt(), end.x.toInt(), end.y.toInt())
+			val polyline = signalView.orthoPolyline
+			for (i in 0..polyline.size - 2) {
+				val begin = polyline.get(i)
+				val end = polyline.get(i + 1)
+				context.g.drawLine(begin.x.toInt(), begin.y.toInt(), end.x.toInt(), end.y.toInt())
+			}
 		}
 
 		if (drawSignalView) {

@@ -103,6 +103,12 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	 */
 	var underConstruction: Boolean
 
+	/**
+	 * Returns the [Stroke] this [EdgeView] uses in execution mode.
+	 * Used by other objects that have to draw [EdgeView] alike overlays.
+	 */
+	val executionStroke: Stroke
+
     /**
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].
