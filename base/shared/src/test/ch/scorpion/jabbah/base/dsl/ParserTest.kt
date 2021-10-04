@@ -18,10 +18,13 @@ class ParserTest {
 
 	@Test
 	fun shouldParseAssignment() {
-		val parser = Parser("a = 5")
+		val parser = Parser("""
+			var a
+			a = 5
+		""".trimIndent())
 		val ast = parser.parse()
 
-		val assignment = (ast as Compound).children.first() as Assignment
+		val assignment = (ast as Compound).children.first { it is Assignment } as Assignment
 		assertEquals("a", assignment.left.token.value)
 		assertEquals(TokenType.ASSIGN, assignment.op.type)
 		assertIs<Literal>(assignment.right)
@@ -30,7 +33,7 @@ class ParserTest {
 	@Test
 	fun shouldRejectKeywordVariableName() {
 		assertFailsWith(SyntaxError::class) {
-			val ast = Parser(Lexer("""
+			Parser(Lexer("""
 				in = 42				
 			""".trimIndent())).parse()
 		}
@@ -49,17 +52,17 @@ class ParserTest {
 	@Test
 	fun shouldParseEmptyLinesBetweenStatements() {
 		val parser = Parser("""
-			a = 5
+			var a = 5
 			
-			b = 12
+			var b = 12
 		""".trimIndent())
 
 		assertAST(parser.parse(), """
 			Compound
-			- =
+			- var
 			-- a
 			-- 5
-			- =
+			- var
 			-- b
 			-- 12
 		""".trimIndent())
@@ -69,14 +72,14 @@ class ParserTest {
 	fun shouldParseBlock() {
 		val parser = Parser("""
 			{
-				b = 5
+				var b = 5
 			}
 		""".trimIndent())
 
 		assertAST(parser.parse(), """
 			Compound
 			- Block
-			-- =
+			-- var
 			--- b
 			--- 5
 		""".trimIndent())
@@ -103,7 +106,7 @@ class ParserTest {
 	fun shouldParseVarDeclarationWithExpression() {
 		val parser = Parser("""
 			var a = 5
-			b = a
+			var b = a
 		""".trimIndent())
 
 		assertAST(parser.parse(), """
@@ -111,7 +114,7 @@ class ParserTest {
 			- var
 			-- a
 			-- 5
-			- =
+			- var
 			-- b
 			-- a
 		""".trimIndent())
@@ -138,7 +141,7 @@ class ParserTest {
 	fun shouldParseStoreDeclarationWithExpression() {
 		val parser = Parser("""
 			store a = 5
-			b = a
+			store b = a
 		""".trimIndent())
 
 		assertAST(parser.parse(), """
@@ -146,7 +149,7 @@ class ParserTest {
 			- store
 			-- a
 			-- 5
-			- =
+			- store
 			-- b
 			-- a
 		""".trimIndent())
@@ -206,7 +209,7 @@ class ParserTest {
 	@Test
 	fun shouldParseWhenStatement() {
 		val parser = Parser("""
-			a = 2
+			var a = 2
 			var b = 0
 			when (a) {
 				1 : b = 11
@@ -218,7 +221,7 @@ class ParserTest {
 
 		assertAST(parser.parse(), """
 			Compound
-			- =
+			- var
 			-- a
 			-- 2
 			- var

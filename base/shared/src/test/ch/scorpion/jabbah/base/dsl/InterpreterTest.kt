@@ -1,11 +1,18 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 /** Basic unit tests using [Int] values.*/
 class InterpreterTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldCalculateTerms() {
@@ -54,8 +61,8 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretAssignments() {
 		val result = Interpreter("""
-			a = 5
-			b = 7 * a
+			var a = 5
+			var b = 7 * a
 			b
 		""".trimIndent()).interpret()
 
@@ -65,9 +72,9 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretBlocks() {
 		val result = Interpreter("""
-			a = 5
+			var a = 5
 			{
-				b = 7 * a
+				var b = 7 * a
 			}
 		""".trimIndent()).interpret()
 
@@ -78,7 +85,7 @@ class InterpreterTest {
 	fun shouldInterpretDeclaration() {
 		val result = Interpreter("""
 			var a = 5
-			b = 2 * a
+			var b = 2 * a
 		""".trimIndent()).interpret()
 
 		assertEquals(10L, result)
@@ -101,7 +108,7 @@ class InterpreterTest {
 	@Test
 	fun shouldAccessEnclosedScope() {
 		val result = Interpreter("""
-			a = 5
+			var a = 5
 			{
 				a = 2
 			}
@@ -114,7 +121,7 @@ class InterpreterTest {
 	@Test
 	fun shouldShadowEnclosedScope() {
 		val result = Interpreter("""
-			a = 5
+			var a = 5
 			{
 				var a = 2
 			}
@@ -165,8 +172,8 @@ class InterpreterTest {
 	@Test
 	fun shouldExecuteThenForTrueIfCondition() {
 		val result = Interpreter("""
-			a = 5
-			b = 17
+			var a = 5
+			var b = 17
 			if (a == 5) {
 				b = 42
 			}
@@ -179,8 +186,8 @@ class InterpreterTest {
 	@Test
 	fun shouldNotExecuteThenForFalseIfCondition() {
 		val result = Interpreter("""
-			a = 5
-			b = 17
+			var a = 5
+			var b = 17
 			if (a == 4) {
 				b = 42
 			}
@@ -193,8 +200,8 @@ class InterpreterTest {
 	@Test
 	fun shouldExecuteElseStatementForFalseIfCondition() {
 		val result = Interpreter("""
-			a = 5
-			b = 17
+			var a = 5
+			var b = 17
 			if (a == 4) {
 				b = 42
 			} else {
@@ -209,8 +216,8 @@ class InterpreterTest {
 	@Test
 	fun shouldExecuteStatementForTrueIfCondition() {
 		val result = Interpreter("""
-			a = 5
-			b = 17
+			var a = 5
+			var b = 17
 			if (a == 5) {
 				b = 42
 			} else {
@@ -254,8 +261,8 @@ class InterpreterTest {
 	@Test
 	fun shouldExecuteIfStatementWithAndCondition() {
 		val result = Interpreter("""
-			a = 5
-			b = 17
+			var a = 5
+			var b = 17
 			if (a == 5 and b == 17) {
 				b = 42
 			}
@@ -268,7 +275,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretWhenStatement() {
 		val result = Interpreter("""
-			a = 2
+			var a = 2
 			var b = 0
 			when (a) {
 				1 : b = 11
@@ -285,7 +292,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretWhenStatementByElse() {
 		val result = Interpreter("""
-			a = 4
+			var a = 4
 			var b = 0
 			when (a) {
 				1 : b = 11
@@ -302,7 +309,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretForAscending() {
 		val result = Interpreter("""
-			a = 0
+			var a = 0
 			for (i in 1 to 3) {
 				a = a + i
 			}
@@ -315,7 +322,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretForDescending() {
 		val result = Interpreter("""
-			a = 0
+			var a = 0
 			for (i in 3 to 1) {
 				a = a + i
 			}
@@ -334,6 +341,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretAssocArray() {
 		val result = Interpreter("""
+			var a
 			a[27] = 15
 			a[28] = 11
 			a[27]
@@ -345,6 +353,7 @@ class InterpreterTest {
 	@Test
 	fun shouldUseExpressionAsArrayIndex() {
 		val result = Interpreter("""
+			var a
 			a[1+1] = 42
 			a[2]
 		""".trimIndent()).interpret()
@@ -355,6 +364,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretAssocArrayInAssignment() {
 		val result = Interpreter("""
+			var a
 			a[0] = 12
 			a[1] = a[0]
 			a[1]
@@ -404,7 +414,7 @@ class InterpreterTest {
 	@Test
 	fun shouldReturnFromFor() {
 		val result = Interpreter("""
-			a = 0
+			var a = 0
 			for (i in 1 to 10) {
 				a = i
 				return 99

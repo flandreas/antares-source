@@ -14,7 +14,7 @@ class SemanticAnalyserTest {
 	fun shouldBuildSymbolTable() {
 		val ast = Parser("""
 			var a = 5
-			b = a
+			var b = a
 		""".trimIndent()).parse()
 
 		val analyser = SemanticAnalyser(null)

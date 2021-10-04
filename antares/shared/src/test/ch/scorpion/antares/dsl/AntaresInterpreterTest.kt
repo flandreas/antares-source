@@ -16,13 +16,13 @@ class AntaresInterpreterTest {
 
 	@Test
 	fun shouldInterpretHexLiteral() {
-		val result = AntaresInterpreter("a = 0xFF").interpret()
+		val result = AntaresInterpreter("var a = 0xFF").interpret()
 		assertEquals(255L, result)
 	}
 
 	@Test
 	fun shouldInterpretUndefinedHexLiteral() {
-		val result = AntaresInterpreter("a = 0x?2").interpret()
+		val result = AntaresInterpreter("var a = 0x?2").interpret()
 		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_2), result)
 	}
 
@@ -30,7 +30,7 @@ class AntaresInterpreterTest {
 	fun shouldGetBitOfLongVariable() {
 		val result = AntaresInterpreter("""
 			// Defined hex literals get converted to Long
-			a = 0xF
+			var a = 0xF
 			a@0
 		""".trimIndent()).interpret()
 		assertEquals(1L, result)
@@ -39,7 +39,7 @@ class AntaresInterpreterTest {
 	@Test
 	fun shouldGetBitOfLongVariableWithTerm() {
 		val result = AntaresInterpreter("""
-			a = 0xF
+			var a = 0xF
 			a@(1 + 1)
 		""".trimIndent()).interpret()
 		assertEquals(1L, result)
@@ -48,7 +48,7 @@ class AntaresInterpreterTest {
 	@Test
 	fun shouldSetBitInLongVariable() {
 		val result = AntaresInterpreter("""
-			a = 0xF
+			var a = 0xF
 			a@0 = 0
 		""".trimIndent()).interpret()
 		assertEquals(14L, result)
@@ -56,7 +56,7 @@ class AntaresInterpreterTest {
 
 	@Test
 	fun shouldInterpretStringLiteral() {
-		val result = AntaresInterpreter("a = \"test\"").interpret()
+		val result = AntaresInterpreter("var a = \"test\"").interpret()
 		assertEquals("test", result)
 	}
 }

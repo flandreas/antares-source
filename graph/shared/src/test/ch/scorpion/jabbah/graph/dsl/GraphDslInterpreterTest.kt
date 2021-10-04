@@ -23,7 +23,7 @@ class GraphDslInterpreterTest {
 	fun shouldInterpretInitStatement() {
 		val result = GraphDslInterpreter("""
 			init {
-				a = 42
+				var a = 42
 			}
 		""".trimIndent()).executionStarted()
 		assertEquals(42L, result)

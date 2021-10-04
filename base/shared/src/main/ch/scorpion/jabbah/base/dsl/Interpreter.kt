@@ -254,10 +254,9 @@ open class Interpreter(
 		return key
 	}
 
-	/** Also supports implicit declaration. */
 	private fun assignment(node: Assignment): Any {
 		if (!memory.isDefined(node.left)) {
-			memory.define(node.left, inStore = false)
+			throw RuntimeError(node.left.location, Translations.getString("base.dsl.variableNotDefined.msg", node.left.token.value!!))
 		}
 		return storeValue(node.left, interpret(node.right))
 	}

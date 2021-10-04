@@ -76,4 +76,16 @@ class GraphDslSemanticAnalyserTest {
 		analyser.analyse(ast)
 	}
 
+	@Test
+	fun shouldUseStoreDeclarationFromInitBlock() {
+		val ast = GraphDslParser(Lexer("""
+			init {
+				store a = 0
+			}
+			var b = a
+		""".trimIndent()), null).parse()
+
+		val analyser = GraphDslSemanticAnalyser(null)
+		analyser.analyse(ast)
+	}
 }

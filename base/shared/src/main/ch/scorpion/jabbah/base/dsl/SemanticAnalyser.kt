@@ -18,8 +18,10 @@ open class SemanticAnalyser(
 	context: SymbolTable?
 ) {
 
+	private val globalScope = ScopedSymbolTable("global", scopeLevel = 1, enclosingScope = context)
+
 	// Visible for testing
-	var scope: SymbolTable = ScopedSymbolTable("global", scopeLevel = 1, enclosingScope = context)
+	var scope: SymbolTable = globalScope
 		private set
 
 	private val visitor = createVisitor()
@@ -80,28 +82,36 @@ open class SemanticAnalyser(
 		if (declaration.store && !allowStoreDeclaration) {
 			throw SemanticError(declaration.location, Translations.getString("base.dsl.unexpectedStore.msg"))
 		}
-		declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
+		if (declaration.store) {
+			declareVariableInGlobalScope(declaration.left.token.value as String, declaration.location)
+		} else {
+			declareVariableInLocalScope(declaration.left.token.value as String, declaration.location)
+		}
 	}
 
 	protected open val allowStoreDeclaration: Boolean get() = scope.scopeLevel <= 1
 
 	private fun declareVariableInLocalScope(name: String, location: CodeLocation) {
+		declareVariable(name, scope, location)
+	}
+
+	private fun declareVariableInGlobalScope(name: String, location: CodeLocation) {
+		declareVariable(name, globalScope, location)
+	}
+
+	private fun declareVariable(name: String, destinationScope: SymbolTable, location: CodeLocation) {
 		val typeSymbol = null as BuiltInTypeSymbol?
 		val varSymbol = VariableSymbol(name, typeSymbol)
-		if (scope.hasSymbol(name, currentScopeOnly = true)) {
+		if (destinationScope.hasSymbol(name, currentScopeOnly = true)) {
 			throw SemanticError(location, Translations.getString("base.dsl.variableAlreadyDeclared.msg", name))
 		}
-		scope.define(varSymbol)
+		destinationScope.define(varSymbol)
 	}
 
 	private fun enterAssignment(assignment: Assignment) {
-		// If implicit declaration wouldn't be supported, we would check here
-		// whether the variable is already declared, and if not, throw an error
 		val varName = assignment.left.token.value as String
-		val typeSymbol = null as BuiltInTypeSymbol?
 		if (!scope.hasSymbol(varName)) {
-			val varSymbol = VariableSymbol(varName, typeSymbol)
-			scope.define(varSymbol)
+			throw SemanticError(assignment.left.location, Translations.getString("base.dsl.variableNotDefined.msg", varName))
 		}
 	}
 

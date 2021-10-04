@@ -1,5 +1,6 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -15,11 +16,17 @@ import kotlin.test.assertFailsWith
 /** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
 class AntaresInterpreterSignalTest {
 
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
+
 	@Test
 	fun presetGlobalVariableWithSemanticAnalysis() {
 		val program = """
 			// a is preset by environment to 5
-			b = a + 1
+			var b = a + 1
 		""".trimIndent()
 
 		val analyser = SemanticAnalyser(null)
@@ -40,7 +47,7 @@ class AntaresInterpreterSignalTest {
 	fun presetGlobalVariableWithoutSemanticAnalysis() {
 		val program = """
 			// a is preset by environment to 5
-			b = a + 1
+			var b = a + 1
 		""".trimIndent()
 
 		val parser = AntaresParser(AntaresLexer(program), null)
@@ -57,7 +64,7 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldInvertSignal() {
 		val program = """
-			O = not I
+			var O = not I
 		""".trimIndent()
 
 		val parser = AntaresParser(AntaresLexer(program), null)
@@ -305,7 +312,7 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldEvaluateTrueSignalInIfCondition() {
 		val parser = AntaresParser(AntaresLexer("""
-			A = 0
+			var A = 0
 			if (B) {
 				A = 1
 			}
@@ -321,7 +328,7 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldEvaluateFalseSignalInIfCondition() {
 		val parser = AntaresParser(AntaresLexer("""
-			A = 0
+			var A = 0
 			if (B) {
 				A = 1
 			}
@@ -337,7 +344,7 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldEvaluateSignalInWhenCondition() {
 		val parser = AntaresParser(AntaresLexer("""
-			A = 0
+			var A = 0
 			when (B) {
 				1 : A = 11
 				2 : A = 22
@@ -377,7 +384,7 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldGetBitOfWordInAssignment() {
 		val parser = AntaresParser(AntaresLexer("""
-			B = A@1
+			var B = A@1
 			B
 		""".trimIndent()), null)
 		val memory = Memory()

@@ -8,8 +8,8 @@ class SyntaxTreePrinterTest {
 	@Test
 	fun shouldPrintSyntaxTree() {
 		val ast = Parser("""
-			a = 5 * (10 - 7)
-			b = a
+			var a = 5 * (10 - 7)
+			var b = a
 		""".trimIndent()).parse()
 
 		val printer = SyntaxTreePrinter()
@@ -17,14 +17,14 @@ class SyntaxTreePrinterTest {
 
 		assertEquals("""
 			Compound
-			- =
+			- var
 			-- a
 			-- *
 			--- 5
 			--- -
 			---- 10
 			---- 7
-			- =
+			- var
 			-- b
 			-- a
 		""".trimIndent(), printer.result)

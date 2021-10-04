@@ -1,11 +1,18 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class LexerTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldScanMultiplyTerm() {

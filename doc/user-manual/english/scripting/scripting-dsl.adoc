@@ -146,22 +146,26 @@ A@(I + 1)
 
 === Variables and Assignments
 
-As in any other programming language, you can use named variables to store values. Variable names must start with a character. Use the assignment operator "=" to assign a value to a variable.
+As in any other programming language, you can use named variables to store values. Variables must be explicitly declared using `var`.
+
+Variable are case-sensitive; their names must start with a character.
+
+Use the assignment operator "=" to assign a value to a variable.
 
 [source,javascript]
 ----
-A = 42
-B1 = A * (C + 1)
+var A = 42
+var B1 = A * (C + 1)
 ----
 
-Variable names are case-sensitive.
 
-Variable declaration is optional in _Antares DSL_. If you assign a value to a variable that hasn't been used yet, it gets implicitly declared. However, you can use the "var" keyword to declare a variable explicitly. This is particularly useful within a block of code.
+Variables are accessible from the scope they are declared in, or in any nested scope. Variables can be redeclared
+within a deeper scope.
 
 [source,javascript]
 ----
-A = 42
-B = 17
+var A = 42
+var B = 17
 if (B == 17) {
     // This creates a another instance of A within this scope.
     // The outer A is not changed.
@@ -250,10 +254,10 @@ _Antares DSL_ supports calling functions that consume argument values and return
 
 [source,javascript]
 ----
-val A = 0
+var A = 0
 hello(A, 42)
 
-val B = hello(A, 0) + hello(A, 1)
+var B = hello(A, 0) + hello(A, 1)
 ----
 
 The functions you can call are implicitly defined by Antares and depend on the context the script is running in. For example, when writing action script for Antares "Usecases", Antares provides the function `setInputAt(time, inputName, signal)` that allows to set the input of a circuit at a particular simulation time.

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='val = I0 + 2 * I1 + 4 * I2 + 8 * I3
+        <graph _id='2' script='var val = I0 + 2 * I1 + 4 * I2 + 8 * I3
 O0 = EN and val == 0
 O1 = EN and val == 1
 O2 = EN and val == 2
