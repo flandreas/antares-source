@@ -86,7 +86,7 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 		assertEquals(0, scheduler.numberOfRemainingSlots)
-		scheduler.isPaused = false
+		scheduler.isSingleStepMode = false
 
 		switchView.model.on(scheduler)
 		// 2_400 Switch

@@ -10,6 +10,7 @@ abstract class AbstractAnimationTask<T>(
     private val sequence: Sequence<T>,
     override val duration: Double,
     override val dependsOnSystemSpeed: Boolean = false,
+    override val isPausable: Boolean = false,
     override val key: String? = null
 ) : AnimationTask {
 

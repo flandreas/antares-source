@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
+import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.ExecutionErrorHandler
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -19,6 +21,7 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.ACTIVE
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.PASSIVE
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.reflect.KClass
 
@@ -51,15 +54,6 @@ class SchedulerImpl(
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
 
-	/** Determines whether this [Scheduler] is currently running or paused (single step mode).*/
-	private var runningState: SchedulerRunningState = SchedulerRunningState.RUNNING
-		set(value) {
-			if (field != value) {
-				field = value
-				eventBus.post(SchedulerRunningStateEvent(this))
-			}
-		}
-
 	/** The relative time [in ns] since execution has been started. */
 	private var relativeTime: Long = 0
 
@@ -68,9 +62,15 @@ class SchedulerImpl(
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
 
+	/** The time (ns) when execution has been paused. Used to "freeze" real time while [isPaused] is `true`.*/
+	private var pauseTime: Long = 0
+
+	/** The duration (ns) while execution was paused. Used to "freeze" real time while [isPaused] is `true` */
+	private var accumulatedPauseTime: Long = 0
+
 	private val issueCollectorListener: EventHandler<IssueCollectorEvent> = {
 		if (isActive && isStopOnIssue && it.issue != null) {
-			isPaused = true
+			isSingleStepMode = true
 			System.invokeLater {
 				LOG.trace("execution stopped due to Issue '${it.issue.name}'")
 				eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
@@ -78,23 +78,40 @@ class SchedulerImpl(
 		}
 	}
 
-	private val breakListener: EventHandler<BreakEvent> = { hardBreakpointReceived = true }
+	private val breakListener: EventHandler<BreakEvent> = {
+		hardBreakpointReceived = true
+		systemSpeed.pause()
+	}
+
+	private val pauseEventListener: EventHandler<SystemSpeedPauseEvent> = {
+		if (isActive && it.source === currentSystemSpeedCategory.systemSpeed) {
+			if (it.isPaused) {
+				handlePaused()
+			} else {
+				handleResumed()
+			}
+		}
+	}
 
 	init {
 		task.bind(this)
 
 		eventBus.register(IssueCollectorEvent::class, issueCollectorListener)
 		eventBus.register(BreakEvent::class, breakListener)
+		eventBus.register(SystemSpeedPauseEvent::class, pauseEventListener)
 	}
 
 	override fun dispose() {
 		eventBus.unregister(issueCollectorListener)
 		eventBus.unregister(breakListener)
+		eventBus.unregister(pauseEventListener)
 	}
 
 	/** ---- [Scheduler] interface */
 
 	override val signalHandler: SignalHandler get() = this
+
+	override val systemSpeed: SystemSpeed get() = currentSystemSpeedCategory.systemSpeed
 
 	override val numberOfRemainingSlots: Int get() = queue.size
 
@@ -114,14 +131,13 @@ class SchedulerImpl(
 			Status.set(StatusType.Small, null)
 		}
 
-	override var isPaused: Boolean
-		get() = runningState == SchedulerRunningState.PAUSED
+	override var isSingleStepMode: Boolean = false
 		set(value) {
-			if (value == isPaused) {
-				return
+			if (value != field) {
+				field = value
+				eventBus.post(SchedulerSingleStepModeEvent(this))
+				startTaskIfNeeded()
 			}
-			runningState = SchedulerRunningState.ofPausedFlag(value)
-			task.startIfNeeded()
 		}
 
 	override var isInBreakpoint: Boolean = false
@@ -130,6 +146,9 @@ class SchedulerImpl(
 				return
 			}
 			field = value
+			if (field) {
+				systemSpeed.pause()
+			}
 			LOG.trace("isInBreakpoint is $field")
 			eventBus.post(BreakpointEvent(this))
 		}
@@ -169,18 +188,6 @@ class SchedulerImpl(
 			BaseModule.settings.set(SETTING_ENABLE_SOFT_BREAKPOINTS, field)
 			eventBus.post(EnableSoftBreakpointsEvent(this))
 		}
-
-	override fun resume() {
-		if (!isActive) {
-			throw IllegalStateException("cannot resume when not active")
-		}
-		if (!isPaused) {
-			throw IllegalStateException("cannot resume when not paused")
-		}
-		executeImpl(resume = true)
-		hardBreakpointReceived = false
-		task.startIfNeeded()
-	}
 
 	override fun execute(): ExecutionStepResult {
 		return executeImpl(resume = false)
@@ -288,12 +295,27 @@ class SchedulerImpl(
 			addSlot(Slot(schedulingTime, actor, data))
 			postSchedulerStateEvent()
 		}
-		task.startIfNeeded()
+		startTaskIfNeeded()
 
 		postSchedulerEvent(actor, SchedulerEvent.Type.REQUESTED)
 	}
 
 	/** ---- [SchedulerImpl] */
+
+	private fun handlePaused() {
+		task.stop()
+		pauseTime = timeService.nowNanos()
+	}
+
+	private fun handleResumed() {
+		if (!isActive) {
+			return
+		}
+		accumulatedPauseTime += (timeService.nowNanos() - pauseTime)
+		executeImpl(resume = true)
+		hardBreakpointReceived = false
+		startTaskIfNeeded()
+	}
 
 	/**
 	 * Proceeds the pushing time further and completing waiting [Actor]s until the queue is empty.
@@ -322,7 +344,7 @@ class SchedulerImpl(
 	}
 
 	private fun postSchedulerStateEvent() {
-		if (isSimulationTimeStatusEnabled || runningState == SchedulerRunningState.PAUSED) {
+		if (isSimulationTimeStatusEnabled || isSingleStepMode) {
 			publishSimulationTimeStatus()
 		}
 	}
@@ -371,10 +393,17 @@ class SchedulerImpl(
 		LOG.trace("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
+		accumulatedPauseTime = 0
 		activationState = ACTIVE
 		isInBreakpoint = false
 		eventBus.post(SchedulerActivationStateEvent(this))
-		task.startIfNeeded()
+		startTaskIfNeeded()
+	}
+
+	private fun startTaskIfNeeded() {
+		if (!systemSpeed.isPaused) {
+			task.startIfNeeded()
+		}
 	}
 
 	private fun stop() {
@@ -387,17 +416,15 @@ class SchedulerImpl(
 	}
 
 	private fun updateRelativeTime(relativeTime: Long) {
-		if (relativeTime < this.relativeTime) {
-			LOG.error("--- ERROR: time is running backwards from $formattedRelativeTime to ${StringUtils.formatLong(relativeTime)}")
-		}
-		if (relativeTime > this.relativeTime) {
-			this.relativeTime = relativeTime
+		val newRelativeTime = max(relativeTime, this.relativeTime)
+		if (newRelativeTime > this.relativeTime) {
+			this.relativeTime = newRelativeTime
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
 			executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 		}
 	}
 
-	private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime
+	private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime - accumulatedPauseTime
 
 	/**
 	 * Executes all [Request]s of the next executable [Slot] if not suspended by a breakpoint.
@@ -420,7 +447,7 @@ class SchedulerImpl(
 
 		LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
 
-		// Resynchronize relative time with real time
+		// Resynchronize relative time with real time (if simulation is faster that real time)
 		updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
 
 		var recalculated = false
@@ -429,7 +456,7 @@ class SchedulerImpl(
 		// real time has reached the simulation time, so that [Actors] like slow timers have a chance
 		// to seem to behave in real time.
 
-		if (isPaused || slot.relativeTime <= relativeTime) {
+		if (isSingleStepMode || slot.relativeTime <= relativeTime) {
 			updateRelativeTime(slot.relativeTime)
 
 			// Check for a breakpoint. If any of the Actors requests a break, skip the entire
@@ -460,7 +487,7 @@ class SchedulerImpl(
 	}
 
 	private fun checkForBreakpoint(slot: Slot): Boolean =
-		isPaused
+		isSingleStepMode
 			&& executionTime > 0
 			&&(hardBreakpointReceived || isSoftBreakpointsEnabled && slot.getRequests().any { it.isActable && it.actor.isBreakpoint })
 

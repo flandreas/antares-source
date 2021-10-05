@@ -129,7 +129,7 @@ class DigitalEdgeViewNetAnimation(
 		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
 		val remainingTime = (overallLength - oldVisitedLength) / overallLength * DURATION_MS
 
-		val bitAnimationTask: AnimationTask = MoveLocatableAnimation(animationView, sequence, remainingTime)
+		val bitAnimationTask: AnimationTask = MoveLocatableAnimation(animationView, sequence, remainingTime, isPausable = true)
 		bitAnimationTask.addListener(animationSplitter)
 
 		val animationInfo = AnimationInfo(

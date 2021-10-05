@@ -11,13 +11,10 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [AnimatorImpl].
- */
 class AnimatorImplTest {
 
-	lateinit var timeService: ControlledTimeService
-	lateinit var animator: AnimatorImpl
+	private lateinit var timeService: ControlledTimeService
+	private lateinit var animator: AnimatorImpl
 
 	@BeforeTest
 	fun init() {
@@ -90,18 +87,58 @@ class AnimatorImplTest {
 		assertEquals(0, animator.taskCount)
 	}
 
-	private fun createTask(duration: Double, size: Double): AnimationTask {
+	@Test
+	fun shouldPausePausableTask() {
+		val task = createTask(1000.0, 100.0, pausable = true)
+		animator.schedule(task)
+		task.start()
+		timeService.setTimeMillis(150)
+		verify(exactly = 1) { task.animate(any()) }
+
+		animator.systemSpeed.pause()
+		timeService.setTimeMillis(250)
+
+		verify(exactly = 1) { task.animate(any()) }
+	}
+
+	@Test
+	fun shouldResumePausableTask() {
+		val task = createTask(1000.0, 100.0, pausable = true)
+		animator.schedule(task)
+		task.start()
+		timeService.setTimeMillis(150)
+		verify(exactly = 1) { task.animate(any()) }
+
+		animator.systemSpeed.pause()
+		timeService.setTimeMillis(250)
+
+		animator.systemSpeed.resume()
+		timeService.setTimeMillis(350)
+
+		verify(exactly = 2) { task.animate(any()) }
+	}
+
+	@Test
+	fun shouldNotPauseNonPausableTask() {
+		val task = createTask(1000.0, 100.0, pausable = false)
+		animator.schedule(task)
+		task.start()
+		timeService.setTimeMillis(150)
+		verify(exactly = 1) { task.animate(any()) }
+
+		animator.systemSpeed.pause()
+		timeService.setTimeMillis(250)
+
+		verify(exactly = 2) { task.animate(any()) }
+	}
+
+	private fun createTask(duration: Double, size: Double, pausable: Boolean = false): AnimationTask {
 		val task = spyk<TestTask>()
 
 		every { task.duration } returns duration
 		every { task.size } returns size
 		every { task.dependsOnSystemSpeed } returns false
-
-		/*
-		`doCallRealMethod`().`when`(task).start()
-		`doCallRealMethod`().`when`(task).stop()
-		`doCallRealMethod`().`when`(task).addListener(animator.taskListener)
-		*/
+		every { task.isPausable } returns pausable
 
 		return task
 	}

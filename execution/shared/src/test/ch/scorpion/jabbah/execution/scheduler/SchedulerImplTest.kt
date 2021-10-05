@@ -18,9 +18,6 @@ import io.mockk.spyk
 import io.mockk.verify
 import kotlin.test.*
 
-/**
- * Unit tests for [SchedulerImpl].
- */
 class SchedulerImplTest {
 
 	private val timeService: ControlledTimeService
@@ -108,28 +105,10 @@ class SchedulerImplTest {
 	/** ---- Stepping tests */
 
 	@Test
-	fun shouldNotAllowResumeWhenNotActive() {
-		assertFailsWith<IllegalStateException> {
-			scheduler.isPaused = true
-			scheduler.isActive = false
-			scheduler.resume()
-		}
-	}
-
-	@Test
-	fun shouldNotAllowResumeWhenNotPaused() {
-		assertFailsWith<IllegalStateException> {
-			scheduler.isPaused = false
-			scheduler.isActive = true
-			scheduler.resume()
-		}
-	}
-
-	@Test
 	fun shouldWaitInBreakpoint() {
 		val actor = createActor()
 		scheduler.isSoftBreakpointsEnabled = true
-		scheduler.isPaused = true
+		scheduler.isSingleStepMode = true
 		scheduler.isActive = true
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
@@ -144,7 +123,7 @@ class SchedulerImplTest {
 	fun shouldWaitInBreakpointWhenPausedDuringExecution() {
 		val actor = createActor()
 		scheduler.isSoftBreakpointsEnabled = true
-		scheduler.isPaused = false
+		scheduler.isSingleStepMode = false
 		scheduler.isActive = true
 
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
@@ -152,7 +131,7 @@ class SchedulerImplTest {
 		verify(exactly = 1) { actor.act(any(), any()) }
 		assertNull(breakpointEvent)
 
-		scheduler.isPaused = true
+		scheduler.isSingleStepMode = true
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(250)
@@ -163,22 +142,22 @@ class SchedulerImplTest {
 	}
 
 	@Test
-	fun shouldResume() {
+	fun shouldResumeFromBreakpoint() {
 		val actor1 = createActor()
 		val actor2 = createActor()
 		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
-		scheduler.isPaused = true
+		scheduler.isSingleStepMode = true
 		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
-		scheduler.resume()
+		scheduler.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(250)
-		scheduler.resume()
+		scheduler.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
 	}
@@ -189,19 +168,46 @@ class SchedulerImplTest {
 		val actor2 = createActor()
 		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
-		scheduler.isPaused = true
+		scheduler.isSingleStepMode = true
 		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(50)
-		scheduler.resume()
+		scheduler.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(80)
-		scheduler.resume()
+		scheduler.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
+	}
+
+	@Test
+	fun shouldPause() {
+		val actor = createActor()
+		scheduler.isActive = true
+		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+
+		scheduler.systemSpeed.pause()
+		timeService.setTimeMillis(150)
+
+		verify(exactly = 0) { actor.act(any(), any()) }
+	}
+
+	@Test
+	fun shouldResume() {
+		val actor = createActor()
+		scheduler.isActive = true
+		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+
+		scheduler.systemSpeed.pause()
+		timeService.setTimeMillis(150)
+		verify(exactly = 0) { actor.act(any(), any()) }
+
+		scheduler.systemSpeed.resume()
+		timeService.setTimeMillis(250)
+		verify(exactly = 1) { actor.act(any(), any()) }
 	}
 
 	/** ---- Animation tests */

@@ -90,7 +90,7 @@ open class GraphMenuBarBuilder(
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(ResumeExecutionAction(scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(PauseOrResumeAction(scheduler))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction(scheduler))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction(scheduler))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction(scheduler))))

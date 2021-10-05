@@ -35,8 +35,8 @@ class GraphViewUsecaseExecutionHandler(
 
 		override fun keyPressed(e: KeyEvent) {
 			if (e.key == ' '.code) {
-				if (applicationContextHolder.scheduler.isPaused) {
-					applicationContextHolder.scheduler.resume()
+				if (applicationContextHolder.scheduler.isSingleStepMode) {
+					applicationContextHolder.scheduler.systemSpeed.resume()
 				}
 			}
 		}

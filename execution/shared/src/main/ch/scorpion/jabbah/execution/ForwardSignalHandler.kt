@@ -16,7 +16,7 @@ class ForwardSignalHandler : SignalHandler {
 			// empty
 		}
 
-	override val isPaused: Boolean get() = false
+	override val isSingleStepMode: Boolean get() = false
 
 	override val executionTime: Long get() = 0
 

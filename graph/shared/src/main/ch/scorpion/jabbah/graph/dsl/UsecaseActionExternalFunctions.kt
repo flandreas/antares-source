@@ -79,6 +79,6 @@ open class UsecaseActionExternalFunctions(
 	 */
 	private fun pauseAt(time: Long) {
 		LOG.trace("pause at $time")
-		runner.executeAt(time) { runner.scheduler.isPaused = true }
+		runner.executeAt(time) { runner.scheduler.isSingleStepMode = true }
 	}
 }

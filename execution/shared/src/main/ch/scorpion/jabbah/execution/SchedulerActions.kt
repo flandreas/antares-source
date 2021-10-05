@@ -2,10 +2,12 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.scheduler.*
 
 /**
@@ -16,61 +18,86 @@ abstract class AbstractSchedulerAction(
 	protected val eventBus: EventBus
 ) : AbstractAction(name)
 
-/** Toggles the [SchedulerActivationState] of a [Scheduler]. */
-class PauseExecutionAction(
+/** Toggles property [Scheduler.isSingleStepMode]. */
+class SingleStepModeAction(
 	val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("execution.action.pause", eventBus) {
+) : AbstractSchedulerAction("execution.action.singleStepMode", eventBus) {
 
-	private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = { updateState() }
+	private val schedulerSingleStepModeHandler: EventHandler<SchedulerSingleStepModeEvent> = { updateState() }
 
 	init {
-		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		eventBus.register(SchedulerSingleStepModeEvent::class, schedulerSingleStepModeHandler)
 		updateState()
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(schedulerRunningStateHandler)
+		eventBus.unregister(schedulerSingleStepModeHandler)
 	}
 
 	private fun updateState() {
-		selected = scheduler.isPaused
+		selected = scheduler.isSingleStepMode
 	}
 
 	override fun execute(event: ActionEvent) {
-		scheduler.isPaused = !scheduler.isPaused
+		scheduler.isSingleStepMode = !scheduler.isSingleStepMode
 	}
 }
 
-/** Resumes execution of a [Scheduler] after it has been suspended by a breakpoint.*/
-class ResumeExecutionAction(
+/**
+ * Pauses the running [Scheduler], or resumes it if already paused.
+ */
+class PauseOrResumeAction(
 	val scheduler: Scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("execution.action.resume", eventBus) {
+) : AbstractSchedulerAction("execution.action.pause", eventBus) {
 
-	private val handler: EventHandler<BreakpointEvent> = {
+	private val pausedHandler: EventHandler<SystemSpeedPauseEvent> = {
+		if (it.source === scheduler.systemSpeed) {
+			updateSelected()
+		}
+	}
+
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
 		if (it.scheduler === scheduler) {
-			updateEnabledness()
+			updateState()
 		}
 	}
 
 	init {
-		eventBus.register(BreakpointEvent::class, handler)
-		updateEnabledness()
+		eventBus.register(SystemSpeedPauseEvent::class, pausedHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+
+		updateState()
+		updateSelected()
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(handler)
+		eventBus.unregister(pausedHandler)
+		eventBus.unregister(schedulerActivationStateHandler)
 	}
 
 	override fun execute(event: ActionEvent) {
-		scheduler.resume()
+		if (scheduler.systemSpeed.isPaused) {
+			scheduler.systemSpeed.resume()
+		} else {
+			scheduler.systemSpeed.pause()
+		}
 	}
 
-	private fun updateEnabledness() {
-		enabled = scheduler.isInBreakpoint
+	private fun updateSelected() {
+		selected = scheduler.systemSpeed.isPaused
+		description = if (selected) {
+			Translations.getString("execution.action.resume.desc")
+		} else {
+			Translations.getString("execution.action.pause.desc")
+		}
+	}
+
+	private fun updateState() {
+		enabled = scheduler.isActive
 	}
 }
 
@@ -85,6 +112,7 @@ class ExecutionDepthAction(
 			updateState()
 		}
 	}
+
 	private val executionDepthHandler: EventHandler<ExecutionDepthEvent> = {
 		if (it.scheduler === scheduler) {
 			updateState()

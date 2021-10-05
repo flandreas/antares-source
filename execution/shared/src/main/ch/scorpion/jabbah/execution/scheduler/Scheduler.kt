@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 
@@ -9,16 +12,20 @@ import ch.scorpion.jabbah.execution.actor.Actor
  * A [Scheduler] receives requests of [Actor]s that want to be acting at a specific time in the future.
  * A [Scheduler] stores these requests in a time-based queue and schedules the [Actor]s for acting when their
  * time has come.
+ *
+ * Listens for [SystemSpeedPauseEvent]s from the [SystemSpeed] to pause and resume this [Scheduler].
  */
 interface Scheduler : SignalHandler {
 
-    val signalHandler: SignalHandler
+	val systemSpeed: SystemSpeed
+
+	val signalHandler: SignalHandler
 
     val numberOfRemainingSlots: Int
 
     var isActive: Boolean
 
-    override var isPaused: Boolean
+    override var isSingleStepMode: Boolean
 
 	val isInBreakpoint: Boolean
 
@@ -39,9 +46,6 @@ interface Scheduler : SignalHandler {
 	var isSoftBreakpointsEnabled: Boolean
 
 	fun dispose()
-
-	/** Resumes simulation after it has been suspended by a breakpoint. */
-	fun resume()
 
 	/** Repeatedly called by a [SchedulerTask] to drive the execution. */
 	fun execute(): ExecutionStepResult
@@ -75,6 +79,12 @@ class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor)
         DONE
     }
 }
+
+/**
+ * An event being posted on a [Scheduler]'s [EventBus] whenever its
+ * [Scheduler.isSingleStepMode] property changes.
+ */
+data class SchedulerSingleStepModeEvent(val scheduler: Scheduler)
 
 /** Posted by an executed system to temporarily suspend execution. */
 class BreakEvent

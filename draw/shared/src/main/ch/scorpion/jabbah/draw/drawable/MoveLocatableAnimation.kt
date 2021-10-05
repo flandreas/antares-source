@@ -10,10 +10,12 @@ import ch.scorpion.jabbah.base.geom.Point2D
 class MoveLocatableAnimation(
 	locatable: Locatable,
 	sequence: Sequence<Point2D>,
-	duration: Double
+	duration: Double,
+	isPausable: Boolean = true
 ) : AbstractAnimationTask<Point2D>(
 	target = locatable,
 	consumer = { locatable.location = it; locatable.validate() },
 	sequence = sequence,
 	duration = duration,
-	dependsOnSystemSpeed = true)
+	dependsOnSystemSpeed = true,
+	isPausable = isPausable)

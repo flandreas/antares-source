@@ -30,6 +30,9 @@ interface AnimationTask {
     /** An optional identifying key allowing for example to retrieve all running [AnimationTask]s of the same type.*/
     val key: String?
 
+    /** Determines whether this [AnimationTask] can be paused. */
+    val isPausable: Boolean
+
     /** Adds [listener] to be informed about life cycle changed of this [AnimationTask].*/
     fun addListener(listener: AnimationTaskListener)
 

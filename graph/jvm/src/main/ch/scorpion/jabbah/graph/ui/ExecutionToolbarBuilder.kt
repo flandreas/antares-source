@@ -5,20 +5,16 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.execution.PauseExecutionAction
-import ch.scorpion.jabbah.execution.ResumeExecutionAction
+import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.execution.SingleStepModeAction
 import ch.scorpion.jabbah.execution.SystemSpeedSliderSwing
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import java.awt.Dimension
-import javax.swing.ImageIcon
-import javax.swing.JButton
 import javax.swing.JToggleButton
 
 class ExecutionToolbarBuilder(
@@ -37,11 +33,11 @@ class ExecutionToolbarBuilder(
 		modeToggleButton.icon = UiUtil.themedIcon("/img/play24.png")
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
-		val pauseAction = PauseExecutionAction(scheduler, eventBus)
-		val pauseToggleButton = JToggleButton(ActionWrapperSwing(pauseAction))
-		pauseToggleButton.text = null
-		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
-		pauseToggleButton.toolTipText = pauseAction.name
+		val singleStepModeAction = SingleStepModeAction(scheduler, eventBus)
+		val singleStepModeButton = JToggleButton(ActionWrapperSwing(singleStepModeAction))
+		singleStepModeButton.text = null
+		singleStepModeButton.icon = UiUtil.themedIcon("/img/singleStepMode24.png")
+		singleStepModeButton.toolTipText = singleStepModeAction.name
 
 		val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
@@ -53,32 +49,26 @@ class ExecutionToolbarBuilder(
 		mainToolBar.isRollover = true
 		mainToolBar.addSeparator()
 		mainToolBar.add(modeToggleButton)
-		mainToolBar.add(pauseToggleButton)
-		mainToolBar.add(createStepButton(ResumeExecutionAction(scheduler, eventBus)))
+		mainToolBar.add(createPauseOrResumeButton(PauseOrResumeAction(scheduler, eventBus)))
+		mainToolBar.add(singleStepModeButton)
 		mainToolBar.add(speedSlider)
 		mainToolBar.add(usecaseSelector)
 
 		return mainToolBar
 	}
 
-	private fun createStepButton(action: Action): JButton {
-		val inactiveIcon = UiUtil.themedIcon("/img/resume24.png")
-		val activeIcon = ImageIcon(GraphPanelViewSwing::class.java.getResource("/img/resume-active24.png"))
-		val button = JButton(ActionWrapperSwing(action))
+	private fun createPauseOrResumeButton(action: Action): JToggleButton {
+		val inactiveIcon = UiUtil.themedIcon("/img/pause24.png")
+		val activeIcon = UiUtil.themedIcon("/img/pause-active24.png")
+		val button = JToggleButton(ActionWrapperSwing(action))
 		button.text = null
 		button.icon = inactiveIcon
 
-		action.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == Action.PROP_ENABLED) {
-					button.icon = if (action.enabled) {
-						activeIcon
-					} else {
-						inactiveIcon
-					}
-				}
+		action.addPropertyChangeListener { e ->
+			if (e.name == Action.PROP_SELECTED) {
+				button.icon = if (action.selected) activeIcon else inactiveIcon
 			}
-		})
+		}
 
 		return button
 	}

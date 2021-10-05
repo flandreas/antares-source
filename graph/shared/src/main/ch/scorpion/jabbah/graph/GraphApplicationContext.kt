@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.ApplicationContextHolder
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerSingleStepModeEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -49,7 +49,7 @@ class GraphApplicationContextHolder(
 			updateApplicationContext()
 		}
 	}
-	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { updateApplicationContext() }
+	private val schedulerRunningStateHandler: (SchedulerSingleStepModeEvent) -> Unit = { updateApplicationContext() }
 
 	/** Variable due to cyclic redundancy.*/
 	lateinit var applicationModeHolder: ApplicationModeHolder
@@ -57,14 +57,15 @@ class GraphApplicationContextHolder(
 	init {
 		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
-		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
-		applicationContext = GraphApplicationContext(currentSystemSpeedCategory, ApplicationMode.EDIT, scheduler.isPaused)
+		eventBus.register(SchedulerSingleStepModeEvent::class, schedulerRunningStateHandler)
+		applicationContext = GraphApplicationContext(currentSystemSpeedCategory, ApplicationMode.EDIT, scheduler.isSingleStepMode)
 	}
 
 	override fun dispose() {
+		animator.dispose()
 		eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
-		eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		eventBus.unregister(SchedulerSingleStepModeEvent::class, schedulerRunningStateHandler)
 	}
 
 	private fun updateApplicationContext() {
@@ -72,5 +73,5 @@ class GraphApplicationContextHolder(
 	}
 
 	private fun createApplicationContext(): GraphApplicationContext =
-		GraphApplicationContext(currentSystemSpeedCategory, applicationMode,  scheduler.isPaused)
+		GraphApplicationContext(currentSystemSpeedCategory, applicationMode,  scheduler.isSingleStepMode)
 }

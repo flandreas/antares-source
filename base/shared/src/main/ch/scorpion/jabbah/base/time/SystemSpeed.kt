@@ -31,7 +31,26 @@ class SystemSpeed(
 		}
 
 	val isMaximum: Boolean get() = speed == MAX_SPEED
+
+	var isPaused: Boolean = false
+		private set
+
+	fun pause() {
+		if (!isPaused) {
+			isPaused = true
+			eventBus.post(SystemSpeedPauseEvent(this, isPaused))
+		}
+	}
+
+	fun resume() {
+		if (isPaused) {
+			isPaused = false
+			eventBus.post(SystemSpeedPauseEvent(this, isPaused))
+		}
+	}
 }
 
 /** Posted by [SystemSpeed] when the current value of [SystemSpeed] has changed. */
 data class SystemSpeedEvent(val source: SystemSpeed, val oldSpeed: Int, val newSpeed: Int)
+
+data class SystemSpeedPauseEvent(val source: SystemSpeed, val isPaused: Boolean)

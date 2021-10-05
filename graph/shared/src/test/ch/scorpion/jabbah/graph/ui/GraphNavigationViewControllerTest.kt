@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerSingleStepModeEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -112,10 +112,10 @@ class GraphNavigationViewControllerTest {
 	@Test
 	fun shouldPropagateContextWithSchedulerRunningState() {
 		every { scheduler.isActive } returns true
-		every { scheduler.isPaused } returns true
+		every { scheduler.isSingleStepMode } returns true
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 
-		eventBus.post(SchedulerRunningStateEvent(scheduler))
+		eventBus.post(SchedulerSingleStepModeEvent(scheduler))
 
 		assertTrue((drawingView.applicationContext as GraphApplicationContext).isPausing)
 	}

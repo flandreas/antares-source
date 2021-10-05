@@ -70,7 +70,7 @@ class GraphViewExecutionAnimator(
 		}
 	}
 
-	private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = {
+	private val schedulerSingleStepModeHandler: EventHandler<SchedulerSingleStepModeEvent> = {
 		if (it.scheduler === applicationContextHolder.scheduler) {
 			stopAllVerticeViewActingAnimations()
 		}
@@ -78,12 +78,12 @@ class GraphViewExecutionAnimator(
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		eventBus.register(SchedulerSingleStepModeEvent::class, schedulerSingleStepModeHandler)
 	}
 
 	fun dispose() {
 		eventBus.unregister(schedulerActivationStateHandler)
-		eventBus.unregister(schedulerRunningStateHandler)
+		eventBus.unregister(schedulerSingleStepModeHandler)
 	}
 
 	fun actingRequested(actor: Actor, data: ActorData) {
@@ -231,5 +231,5 @@ class GraphViewExecutionAnimator(
 			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
 
 	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
-	private fun requireVerticeViewGlowAnimation(): Boolean = applicationContextHolder.scheduler.isPaused
+	private fun requireVerticeViewGlowAnimation(): Boolean = applicationContextHolder.scheduler.isSingleStepMode
 }
