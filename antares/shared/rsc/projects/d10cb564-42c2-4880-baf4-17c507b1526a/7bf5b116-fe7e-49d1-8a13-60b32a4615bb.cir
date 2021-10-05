@@ -566,8 +566,8 @@ N = result@15' propDelay='1800'>
             <translation lang='de' text='ALU 16-Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='207' portId='1' name='A' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='210' portId='2' name='B' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='207' portId='1' name='A' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='210' portId='2' name='B' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='216' portId='3' name='F' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='213' portId='4' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='219' portId='5' name='N' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>

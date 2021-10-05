@@ -260,11 +260,11 @@ if (CS and A == 2 and (^W or ^A or ^CS)) {
           </name>
           <ports>
             <subCircuitPort _id='80' portId='1' name='A' logic='positive' bitWidth='2' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='86' portId='3' name='D' logic='positive' bitWidth='16' trigger='level' type='inout' representation='binary'/>
+            <subCircuitPort _id='86' portId='3' name='D' logic='positive' bitWidth='16' trigger='level' type='inout' representation='hex'/>
             <subCircuitPort _id='89' portId='4' name='CS' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='92' portId='5' name='W' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='95' portId='6' name='R' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='83' portId='2' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='83' portId='2' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
           </ports>
         </subGraphVertice>
       </model>

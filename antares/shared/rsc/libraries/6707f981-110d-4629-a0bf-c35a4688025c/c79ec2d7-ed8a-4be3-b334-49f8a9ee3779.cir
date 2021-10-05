@@ -392,7 +392,7 @@
             <translation lang='de' text='Shifter 16-Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='100' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='100' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='103' portId='2' name='CIR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='115' portId='3' name='CIL' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='118' portId='4' name='F' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
