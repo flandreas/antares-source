@@ -32,16 +32,13 @@ abstract class AbstractVertice(
 			}
 		}
 
-	override val portsCount: Int
-		get() = ports.size
+	override val portsCount: Int get() = ports.size
 
-	override val inputCount: Int
-		get() = getInputs().size
+	override val inputCount: Int get() = getInputs().size
 
 	override val outputCount: Int get() = ports.count { it.portType.isOutput }
 
-	override val isConnected: Boolean
-		get() = ports.any { it.isConnected }
+	override val isConnected: Boolean get() = ports.any { it.isConnected }
 
 	override val hasAnyOutput: Boolean get() = ports.any { it.portType.isOutput }
 
@@ -76,73 +73,57 @@ abstract class AbstractVertice(
 		return ports[0] as Port<T>
 	}
 
-	override fun hasPort(name: String?): Boolean {
-		return ports.any { name != null && it.name == name}
-	}
+	override fun hasPort(name: String?): Boolean =
+		ports.any { name != null && it.name == name}
 
-	override fun hasPort(id: Int): Boolean {
-		return ports.any { it.portId == id }
-	}
+	override fun hasPort(id: Int): Boolean =
+		ports.any { it.portId == id }
 
-	override fun getPorts(): ImmutableList<Port<*>> {
-		return ImmutableList(ports)
-	}
+	override fun getPorts(): ImmutableList<Port<*>> = ImmutableList(ports)
 
-	override fun <T : Any> getPort(name: String): Port<T> {
-		@Suppress("UNCHECKED_CAST")
-		return ports.first { it.name == name } as Port<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getPort(name: String): Port<T> =
+		ports.first { it.name == name } as Port<T>
 
-	override fun <T : Any> getPort(id: Int): Port<T> {
-		@Suppress("UNCHECKED_CAST")
-		return ports.first { it.portId == id } as Port<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getPort(id: Int): Port<T> =
+		ports.first { it.portId == id } as Port<T>
 
-	override fun hasInput(name: String?): Boolean {
-		return getInputs().any { name != null && it.name == name }
-	}
+	override fun hasInput(name: String?): Boolean =
+		ports.any { it.portType.isInput && name != null && it.name == name }
 
-	override fun <T : Any> getInput(): InputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getInputs()[0] as InputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getInput(): InputPort<T> =
+		ports.first { it.portType.isInput } as InputPort<T>
 
-	override fun getInputs(): ImmutableList<InputPort<*>> {
-		return ImmutableList(ports.filter { it.portType.isInput }.map { it as InputPort<*> })
-	}
+	override fun getInputs(): ImmutableList<InputPort<*>> =
+		ImmutableList(ports.filter { it.portType.isInput }.map { it as InputPort<*> })
 
-	override fun <T : Any> getInput(name: String): InputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getInputs().first { it.name == name } as InputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getInput(name: String): InputPort<T> =
+		ports.first { it.portType.isInput && it.name == name } as InputPort<T>
 
-	override fun <T : Any> getInput(id: Int): InputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getInputs().first { it.portId == id } as InputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getInput(id: Int): InputPort<T> =
+		ports.first { it.portType.isInput && it.portId == id } as InputPort<T>
 
-	override fun hasOutput(name: String?): Boolean {
-		return getOutputs().any { name != null && it.name == name }
-	}
+	override fun hasOutput(name: String?): Boolean =
+		ports.any { it.portType.isOutput && name != null && it.name == name }
 
-	override fun <T : Any> getOutput(): OutputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getOutputs()[0] as OutputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getOutput(): OutputPort<T> =
+		ports.first { it.portType.isOutput } as OutputPort<T>
 
-	override fun getOutputs(): ImmutableList<OutputPort<*>> {
-		return ImmutableList(ports.filter { it.portType.isOutput }.map { it as OutputPort<*> })
-	}
+	override fun getOutputs(): ImmutableList<OutputPort<*>> =
+		ImmutableList(ports.filter { it.portType.isOutput }.map { it as OutputPort<*> })
 
-	override fun <T : Any> getOutput(name: String): OutputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getOutputs().first { it.name == name } as OutputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getOutput(name: String): OutputPort<T> =
+		ports.first { it.portType.isOutput && it.name == name } as OutputPort<T>
 
-	override fun <T : Any> getOutput(id: Int): OutputPort<T> {
-		@Suppress("UNCHECKED_CAST")
-		return getOutputs().first { it.portId == id } as OutputPort<T>
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getOutput(id: Int): OutputPort<T> =
+		ports.first { it.portType.isOutput && it.portId == id } as OutputPort<T>
 
 	override fun <T : Any> replaceUndefinedOutput(signal: T?) { }
 
