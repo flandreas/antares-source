@@ -40,6 +40,8 @@ interface Vertice : GraphElement, Describable {
     /** Determines whether any of this [Vertice]' [Port]s is connected to a [Net].*/
     val isConnected: Boolean
 
+    val hasAnyOutput: Boolean
+
     /** Notifies this [Vertice] that one of its [InputPort]s has changed its signal.*/
     fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler)
 

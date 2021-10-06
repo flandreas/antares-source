@@ -38,11 +38,12 @@ abstract class AbstractVertice(
 	override val inputCount: Int
 		get() = getInputs().size
 
-	override val outputCount: Int
-		get() = getOutputs().size
+	override val outputCount: Int get() = ports.count { it.portType.isOutput }
 
 	override val isConnected: Boolean
 		get() = ports.any { it.isConnected }
+
+	override val hasAnyOutput: Boolean get() = ports.any { it.portType.isOutput }
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" }
@@ -189,6 +190,8 @@ abstract class AbstractVertice(
 			}
 		}
 	}
+
+	override val isBreakpoint: Boolean get() = super.isBreakpoint && hasAnyOutput
 
 	/** ---- [AbstractVertice] */
 
