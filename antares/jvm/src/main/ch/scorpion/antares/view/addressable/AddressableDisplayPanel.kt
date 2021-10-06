@@ -2,13 +2,19 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableCellChange
+import ch.scorpion.antares.model.addressable.AddressableCellChangeCommand
 import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
+import ch.scorpion.jabbah.base.swing.SelectAllCellEditor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import java.awt.BorderLayout
 import java.awt.Component
@@ -22,11 +28,16 @@ import javax.swing.text.JTextComponent
 
 /**
  * Displays the value of the individual cells of an [Addressable] using a [JTable].
+ *
+ * Allows the user to choose from different table layouts.
+ * Creates [AddressableCellChangeCommand]s when the user manually edits cell.
  */
 class AddressableDisplayPanel(
 	private val addressable: Addressable,
 	editable: Boolean,
-	private val applicationContextHolder: GraphApplicationContextHolder
+	private val applicationContextHolder: GraphApplicationContextHolder,
+	private val controller: ApplicationDataViewController,
+	private val cmdManager: CommandManager = EditModule.commandManager
 ) : JPanel() {
 
 	companion object {
@@ -40,21 +51,27 @@ class AddressableDisplayPanel(
 		FixedWidthLayout(16, addressable, editable, applicationContextHolder.scheduler)
 	)
 
-    private val table = JTable(layouts[1].createTableModel())
+    private val table = FocusJTable(layouts[1].createTableModel())
 	private val scrollPane = JScrollPane(table)
 	private val layoutComboBox = JComboBox(layouts)
 	private val addressableDisplayLayout: AddressableDisplayLayout get() = layoutComboBox.selectedItem as AddressableDisplayLayout
 	private val changeCollector = ChangeCollector()
-
-	val changes: Collection<AddressableCellChange> get() {
-		return changeCollector.changes.values
-	}
 
     init {
         buildUI()
 	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout) }
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
     }
+
+	fun dispose() {
+		disposeTableModel()
+	}
+
+	private fun disposeTableModel() {
+		if (table.model is AbstractAddressableTableModel) {
+			(table.model as AbstractAddressableTableModel).dispose()
+		}
+	}
 
 	fun refresh() {
 		table.invalidate()
@@ -79,6 +96,7 @@ class AddressableDisplayPanel(
 
 	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout) {
 		table.model.removeTableModelListener(changeCollector)
+		disposeTableModel()
 		table.model = addressableDisplayLayout.createTableModel()
 		table.model.addTableModelListener(changeCollector)
 
@@ -93,9 +111,9 @@ class AddressableDisplayPanel(
 
 			val textField = JTextField()
 			textField.horizontalAlignment = SwingConstants.RIGHT
-			textField.inputVerifier = HexNumberInputVerifier(addressable.dataWidth)
+			textField.inputVerifier = HexNumberInputVerifier()
 			textField.font = table.font
-			it.cellEditor = DefaultCellEditor(textField)
+			it.cellEditor = SelectAllCellEditor(textField)
 		}
 	}
 
@@ -117,12 +135,20 @@ class AddressableDisplayPanel(
 		}
 	}
 
-	private class HexNumberInputVerifier(private val bitWidth: BitWidth) : InputVerifier() {
+	/** Holds the [Command] being created after manual cell editing.*/
+	private var changeCommand: Command? = null
+
+	private inner class HexNumberInputVerifier : InputVerifier() {
 
 		override fun verify(input: JComponent?): Boolean {
 			val text = (input as JTextComponent).text
-			val result = BitOperation.normalizeHex(text.trim(), bitWidth) != null
-			LOG.trace("verifying '$text': $result")
+			val result = BitOperation.normalizeHex(text.trim(), addressable.dataWidth) != null
+			if (result) {
+				changeCommand?.let {
+					cmdManager.register(it)
+					changeCommand == null
+				}
+			}
 			return result
 		}
 	}
@@ -137,7 +163,12 @@ class AddressableDisplayPanel(
 				LOG.trace("cell at ${e.firstRow},${e.column} changed")
 				val address = addressableDisplayLayout.getCellAddress(e.firstRow, e.column)
 				val newValue = getCurrentValue(e.firstRow, e.column)
-				changes[address] = AddressableCellChange(address, newValue, getOrigValue(address, e.oldValue))
+				if (addressable.storesCells && newValue != e.oldValue) {
+					changeCommand = AddressableCellChangeCommand(
+						controller,
+						addressable.id,
+						listOf(AddressableCellChange(address, newValue, getOrigValue(address, e.oldValue))))
+				}
 			}
 		}
 

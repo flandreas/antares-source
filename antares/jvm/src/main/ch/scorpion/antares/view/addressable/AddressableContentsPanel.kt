@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableCellChangeCommand
 import ch.scorpion.antares.model.addressable.AddressableClearCommand
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.jabbah.app.ApplicationDataViewController
@@ -113,7 +112,7 @@ class AddressableContentsPanel(
 		}
 	}
 
-	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly, applicationContextHolder)
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly, applicationContextHolder, controller)
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
@@ -131,6 +130,7 @@ class AddressableContentsPanel(
 
 	fun dispose() {
 		addressable.removeGraphElementListener(addressableListener)
+		memoryDisplayPanel.dispose()
 	}
 
 	/** ---- [AddressableContentsPanel] */
@@ -167,12 +167,6 @@ class AddressableContentsPanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
-	private fun registerCommand(command: Command) {
-		if (addressable.storesCells) {
-			cmdManager.register(command)
-		}
-	}
-
 	private fun executeCommand(command: Command) {
 		if (addressable.storesCells) {
 			cmdManager.execute(command)
@@ -183,11 +177,6 @@ class AddressableContentsPanel(
 
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			val changes = memoryDisplayPanel.changes
-			if (changes.isNotEmpty()) {
-				LOG.debug("User has changed ${changes.size} memory cells")
-				registerCommand(AddressableCellChangeCommand(controller, addressable.id, changes))
-			}
 			closeHandler?.invoke(this@AddressableContentsPanel)
 		}
 	}

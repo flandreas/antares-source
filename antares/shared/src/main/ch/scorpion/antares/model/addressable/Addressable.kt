@@ -7,6 +7,21 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
+ * Sent to [AddressableDataListener] if a cell value in [Addressable] has changed.
+ * Properties are `null` if ALL values have been changed.
+ */
+data class AddressableDataEvent(
+	val address: Int?,
+	val oldValue: ULong?,
+	val newValue: ULong?
+)
+
+/** Listens for cell values changes in [Addressable]. */
+fun interface AddressableDataListener {
+	fun dataChanged(event: AddressableDataEvent)
+}
+
+/**
  * An [Addressable] is a [Vertice] that consists of addressable cells, each containing data content
  * of a particular [BitWidth].
  */
@@ -45,6 +60,10 @@ interface Addressable : Vertice {
 
 	/** Determines whether this [Addressable] stores the cell values in [Vertice.write].*/
 	val storesCells: Boolean
+
+	fun addDataListener(listener: AddressableDataListener)
+
+	fun removeDataListener(listener: AddressableDataListener)
 
 	/** Clears all content in this [Addressable].*/
 	fun clear()

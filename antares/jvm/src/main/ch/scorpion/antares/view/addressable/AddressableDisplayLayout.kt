@@ -1,12 +1,15 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.AddressableDataListener
+import ch.scorpion.antares.model.addressable.AddressableDataEvent
 import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import java.util.*
 import javax.swing.JLabel
+import javax.swing.JTable
 import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.TableModel
@@ -16,13 +19,13 @@ import kotlin.math.max
 /**
  * Specified how the individual cells of an [Addressable] are to be represented as a [TableModel],
  * by for example specifying how many columns are to be displayed.
- * */
+ **/
 interface AddressableDisplayLayout {
 
 	val cellsPerRow: Int
 
 	/** Creates a [TableModel] that displays the specified [Memory] contents according to this specific layout. */
-	fun createTableModel(): TableModel
+	fun createTableModel(): AbstractAddressableTableModel
 
 	/** Returns the text alignment of the specified column in terms of [JLabel.RIGHT] or [JLabel.LEFT].*/
 	fun columnAlignment(columnIndex: Int): Int
@@ -61,7 +64,7 @@ class FixedWidthLayout(
 		}
 	}
 
-	override fun createTableModel(): TableModel {
+	override fun createTableModel(): AbstractAddressableTableModel {
 		return when (cellsPerRow) {
 			1 -> SingleColumnTableModel(addressable, rowCount, editable, signalHandler)
 			else -> AddressableTableModel(cellsPerRow, addressable, rowCount, editable, signalHandler)
@@ -89,13 +92,39 @@ class FixedWidthLayout(
 	}
 }
 
-private abstract class AbstractAddressableTableModel(
-	protected val cellsPerRow: Int,
+/**
+ * Wraps an [Addressable] as a [TableModel] for displaying and editing.
+ *
+ * Listens for [AddressableDataEvent]s from [Addressable] and fires [AddressableTableModelEvent]
+ * to initiate redrawing of the [JTable] that displays this [AbstractAddressableTableModel].
+ */
+abstract class AbstractAddressableTableModel(
+	private val cellsPerRow: Int,
 	protected val addressable: Addressable,
 	private val rowCount: Int
 ) : AbstractTableModel() {
 
 	private val format: String = "%${max(2, addressable.dataWidth.width / 4)}s"
+
+	private val dataChangeListener = AddressableDataListener { event ->
+		if (event.address != null && event.oldValue != null) {
+			fireTableChanged(AddressableTableModelEvent(
+				this@AbstractAddressableTableModel,
+				rowOf(event.address),
+				columnOf(event.address),
+				event.oldValue))
+		} else {
+			fireTableDataChanged()
+		}
+	}
+
+	init {
+		addressable.addDataListener(dataChangeListener)
+	}
+
+	fun dispose() {
+		addressable.removeDataListener(dataChangeListener)
+	}
 
 	override fun getRowCount(): Int = rowCount
 
@@ -111,6 +140,10 @@ private abstract class AbstractAddressableTableModel(
 
 	protected fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
 		addressable.dataAt(getCellAddress(rowIndex, columnIndex))
+
+	private fun rowOf(address: Int): Int = address / cellsPerRow
+
+	private fun columnOf(address: Int): Int = address.mod(cellsPerRow)
 }
 
 private open class AddressableTableModel(
@@ -127,16 +160,16 @@ private open class AddressableTableModel(
 		getMemoryValue(rowIndex, columnIndex)
 
 	override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-		val oldValue = getCellValue(rowIndex, columnIndex)
 		setMemoryValue(aValue as String, rowIndex, columnIndex)
-		fireTableChanged(AddressableTableModelEvent(this, rowIndex, columnIndex, oldValue))
 	}
 
 	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable
 
 	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
 		try {
-			addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(value.trim()), signalHandler)
+			BitOperation.normalizeHex(value.trim(), addressable.dataWidth)?.let {
+				addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(it), signalHandler)
+			}
 		} catch (e: IllegalArgumentException) {
 			// empty
 		}

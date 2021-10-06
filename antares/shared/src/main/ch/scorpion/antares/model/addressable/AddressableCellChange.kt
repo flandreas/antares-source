@@ -19,10 +19,10 @@ class AddressableCellChangeCommand(
 	private val addressable: Addressable get() = graphView.graph!!.withId(addressableId) as Addressable
 
 	override fun execute() {
-		changes.forEach { addressable.memory.write(it.address, it.newValue) }
+		changes.forEach { addressable.setDataAt(it.address, it.newValue, null) }
 	}
 
 	override fun undo() {
-		changes.forEach { addressable.memory.write(it.address, it.origValue) }
+		changes.forEach { addressable.setDataAt(it.address, it.origValue, null) }
 	}
 }

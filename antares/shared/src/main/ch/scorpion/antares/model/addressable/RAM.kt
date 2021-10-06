@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -28,7 +27,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * The content of a [RAM] is cleared when execution is started, which is why a [RAM] is not editable
  * in edit mode.
  */
-class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addressable {
+class RAM(
+	hasClock: Boolean = true
+) : AbstractAddressable<RAM>(RAMCalculator()) {
 
 	companion object {
 
@@ -138,8 +139,10 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	override fun dataAt(address: Int): ULong = memory.read(address)
 
 	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
+		val oldValue = memory.read(address)
 		memory.write(address, value)
 		update()
+		notifyDataChanged(address, oldValue, value)
 		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
 	}
 

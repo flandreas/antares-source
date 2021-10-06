@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -27,7 +26,7 @@ import kotlin.math.max
 /**
  * A read-only memory whose address width and data width can be specified.
  */
-class ROM : CalculatingVertice(CALCULATOR), Addressable {
+class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 
 	companion object {
 
@@ -135,6 +134,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 		memory.clear()
 		resetDisassembly()
 		update()
+		notifyDataChanged(null, null, null)
 	}
 
 	override fun update() {
@@ -145,8 +145,10 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 	override fun dataAt(address: Int): ULong = memory.read(address)
 
 	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
+		val oldValue = memory.read(address)
 		memory.write(address, value)
 		update()
+		notifyDataChanged(address, oldValue, value)
 	}
 
 	override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address) { "" }
