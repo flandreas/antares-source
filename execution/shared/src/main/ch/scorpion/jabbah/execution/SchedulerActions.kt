@@ -53,6 +53,11 @@ class PauseOrResumeAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.pause", eventBus) {
 
+	companion object {
+		private const val INACTIVE_ICON = "/img/pause24.png"
+		private const val ACTIVE_ICON = "/img/pause-active24.png"
+	}
+
 	private val pausedHandler: EventHandler<SystemSpeedPauseEvent> = {
 		if (it.source === scheduler.systemSpeed) {
 			updateSelected()
@@ -65,18 +70,27 @@ class PauseOrResumeAction(
 		}
 	}
 
+	private val breakpointHandler: EventHandler<BreakpointEvent> = {
+		if (it.scheduler === scheduler) {
+			updateIcon()
+		}
+	}
+
 	init {
 		eventBus.register(SystemSpeedPauseEvent::class, pausedHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(BreakpointEvent::class, breakpointHandler)
 
 		updateState()
 		updateSelected()
+		updateIcon()
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(pausedHandler)
 		eventBus.unregister(schedulerActivationStateHandler)
+		eventBus.unregister(breakpointHandler)
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -98,6 +112,13 @@ class PauseOrResumeAction(
 
 	private fun updateState() {
 		enabled = scheduler.isActive
+	}
+
+	private fun updateIcon() {
+		val newImagePath = if (scheduler.isInBreakpoint) ACTIVE_ICON else INACTIVE_ICON
+		if (newImagePath != imagePath) {
+			imagePath = newImagePath
+		}
 	}
 }
 

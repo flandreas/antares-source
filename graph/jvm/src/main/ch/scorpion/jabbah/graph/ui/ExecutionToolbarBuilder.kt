@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ToolBar
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -39,6 +38,10 @@ class ExecutionToolbarBuilder(
 		singleStepModeButton.icon = UiUtil.themedIcon("/img/singleStepMode24.png")
 		singleStepModeButton.toolTipText = singleStepModeAction.name
 
+		val pauseOrResumeAction = PauseOrResumeAction(scheduler, eventBus)
+		val pauseOrResumeButton = JToggleButton(ActionWrapperSwing(pauseOrResumeAction))
+		pauseOrResumeButton.text = null
+
 		val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
@@ -49,27 +52,11 @@ class ExecutionToolbarBuilder(
 		mainToolBar.isRollover = true
 		mainToolBar.addSeparator()
 		mainToolBar.add(modeToggleButton)
-		mainToolBar.add(createPauseOrResumeButton(PauseOrResumeAction(scheduler, eventBus)))
+		mainToolBar.add(pauseOrResumeButton)
 		mainToolBar.add(singleStepModeButton)
 		mainToolBar.add(speedSlider)
 		mainToolBar.add(usecaseSelector)
 
 		return mainToolBar
-	}
-
-	private fun createPauseOrResumeButton(action: Action): JToggleButton {
-		val inactiveIcon = UiUtil.themedIcon("/img/pause24.png")
-		val activeIcon = UiUtil.themedIcon("/img/pause-active24.png")
-		val button = JToggleButton(ActionWrapperSwing(action))
-		button.text = null
-		button.icon = inactiveIcon
-
-		action.addPropertyChangeListener { e ->
-			if (e.name == Action.PROP_SELECTED) {
-				button.icon = if (action.selected) activeIcon else inactiveIcon
-			}
-		}
-
-		return button
 	}
 }
