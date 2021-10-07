@@ -41,6 +41,8 @@ class UsecaseTestRunner(
 
 	private val issues = mutableListOf<Issue>()
 
+	private val totalUsecaseCount = usecases.size
+
 	fun run() {
 		runNext()
 	}
@@ -50,7 +52,7 @@ class UsecaseTestRunner(
 			val usecase = nextUsecases.first()
 			nextUsecases.removeAt(0)
 
-			LOG.trace("Running test of usecase '${usecase.name.value}'")
+			LOG.debug("Running test of usecase '${usecase.name.value}'")
 
 			_usecase = usecase
 			scriptMetaData = ScriptMetaData(usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
@@ -98,10 +100,19 @@ class UsecaseTestRunner(
 			scheduler.isActive = false
 			if (nextUsecases.isEmpty()) {
 				if (issues.isEmpty()) {
-					eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "usecaseTest.dsl.testSucceeded.name"))
+					val messageKey = if (totalUsecaseCount == 1) "usecaseTest.dsl.testSucceeded.name" else "usecaseTest.dsl.allTestsSucceeded.name"
+					val messageParam = if (totalUsecaseCount == 1) null else totalUsecaseCount
+					eventBus.post(ComponentMessage(
+						type = ComponentMessageType.Info,
+						source = null,
+						messageKey = messageKey,
+						messageParam = messageParam))
 				} else {
 					postIssues()
-					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "usecaseTest.dsl.testFailed.name"))
+					eventBus.post(ComponentMessage(
+						type = ComponentMessageType.Error,
+						source = null,
+						messageKey = "usecaseTest.dsl.testFailed.name"))
 				}
 			} else {
 				runNext()

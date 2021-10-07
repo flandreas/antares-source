@@ -56,7 +56,11 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 			return
 		}
 
-		val text = Translations.getString(msg.messageKey)
+		val text = if (msg.messageParam == null) {
+			Translations.getString(msg.messageKey)
+		} else {
+			Translations.getString(msg.messageKey, msg.messageParam)
+		}
 		val messageView = FlexibleTextView(
 			text = text,
 			anchor = calculateAnchorPoint(msg),

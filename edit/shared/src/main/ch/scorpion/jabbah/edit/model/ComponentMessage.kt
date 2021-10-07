@@ -15,7 +15,8 @@ import ch.scorpion.jabbah.edit.Component
 data class ComponentMessage(
     val type: ComponentMessageType = ComponentMessageType.Info,
     val source: Component?,
-    val messageKey: String)
+    val messageKey: String,
+	val messageParam: Any? = null)
 
 enum class ComponentMessageType {
     Info,
