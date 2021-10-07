@@ -81,6 +81,12 @@ class UsecaseImpl(
 
 	override var graphView: GraphView? = graphView
 
+	override fun duplicate(newName: String): Usecase {
+		val duplicate = StorableCloner.clone(this)
+		duplicate.name = Name(newName)
+		return duplicate
+	}
+
 	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
 		executionScriptASTCache.value?.let {
 			executionScriptInterpreter = createScriptInterpreter(graphView, it)

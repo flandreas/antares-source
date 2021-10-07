@@ -36,6 +36,8 @@ interface Usecase : Namable, Describable, Storable {
 
 	val hasTest: Boolean get() = testScript?.isNotBlank() ?: false
 
+	fun duplicate(newName: String): Usecase
+
 	fun executionStart(graphView: GraphView, signalHandler: SignalHandler)
 
 	fun run()

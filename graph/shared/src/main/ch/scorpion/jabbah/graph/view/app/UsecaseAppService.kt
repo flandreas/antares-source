@@ -25,7 +25,7 @@ class UsecaseAppService(
 	 * @return the ID of the cloned [Usecase]
 	 */
 	fun addUsecase(application: Application, usecase: Usecase): Int {
-		LOG.trace("Add new Usecase to GraphView ${graphView(application).graph?.uuid}")
+		LOG.debug("Add new Usecase to GraphView ${graphView(application).graph?.uuid}")
 		val command = AddUsecaseCommand(application.controller, usecase)
 		commandManager.execute(command)
 		return command.addedUsecaseId
@@ -33,7 +33,16 @@ class UsecaseAppService(
 
 	/** Deletes the [Usecase] with the specified ID from the [GraphView] in the [ApplicationData] of [application]. */
 	fun deleteUsecase(application: Application, usecaseId: Int) {
-		LOG.trace("Delete Usecase $usecaseId from GraphView ${graphView(application).graph?.uuid}")
+		LOG.debug("Delete Usecase $usecaseId from GraphView ${graphView(application).graph?.uuid}")
 		commandManager.execute(DeleteUsecaseCommand(application.controller, usecaseId))
+	}
+
+	/** Duplicates the [Usecase] with the specified ID from the [GraphView] in the [ApplicationData] of [application]. */
+	fun duplicateUsecase(application: Application, usecaseId: Int, newName: String): Int {
+		LOG.debug("Duplicate Usecase in GraphView ${graphView(application).graph?.uuid}")
+		val duplicate = graphView(application).usecases.get(usecaseId).duplicate(newName)
+		val command = AddUsecaseCommand(application.controller, duplicate)
+		commandManager.execute(command)
+		return command.addedUsecaseId
 	}
 }

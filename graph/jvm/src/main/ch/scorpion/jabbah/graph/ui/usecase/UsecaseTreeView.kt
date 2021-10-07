@@ -75,6 +75,7 @@ class UsecaseTreeView(
 		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 
 		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application)))
+		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application)))
 		usecasePopupMenu.addSeparator()
 		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))

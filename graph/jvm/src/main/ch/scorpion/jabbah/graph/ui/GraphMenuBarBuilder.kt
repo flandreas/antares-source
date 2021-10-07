@@ -111,6 +111,7 @@ open class GraphMenuBarBuilder(
 		val applicationModeHolder = graphFrame.controller.applicationModeHolder
 		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application))))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
