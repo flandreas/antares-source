@@ -51,6 +51,8 @@ class UsecaseImpl(
 		get() = ScriptProperty(testScript)
 		set(value) {
 			testScript = value.script!!
+			testScriptASTCache.reset()
+			testScriptInterpreter = null
 		}
 
 	private val testScriptASTCache = resettableLazy {
