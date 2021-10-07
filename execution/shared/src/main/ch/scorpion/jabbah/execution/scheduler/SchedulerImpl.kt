@@ -80,7 +80,9 @@ class SchedulerImpl(
 
 	private val breakListener: EventHandler<BreakEvent> = {
 		hardBreakpointReceived = true
-		systemSpeed.pause()
+		if (isSingleStepMode) {
+			systemSpeed.pause()
+		}
 	}
 
 	private val pauseEventListener: EventHandler<SystemSpeedPauseEvent> = {
