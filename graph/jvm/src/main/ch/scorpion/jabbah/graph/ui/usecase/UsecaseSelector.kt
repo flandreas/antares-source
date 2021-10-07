@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
@@ -9,6 +10,8 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
+import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
+import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
 import java.awt.Component
 import javax.swing.DefaultComboBoxModel
@@ -27,10 +30,20 @@ class UsecaseSelector(
 ) : JComboBox<Usecase>() {
 
 	private var graphView: GraphView? = null
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { handle(it) }
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
+	private val usecaseAddedHandler: EventHandler<UsecaseAddedEvent> = {
+		if (it.graphView === graphView) { fillUsecases() }
+	}
+	private val usecaseDeletedHandler: EventHandler<UsecaseRemovedEvent> = {
+		if (it.graphView === graphView) { fillUsecases() }
+	}
 
 	init {
-		eventBus.register(EditedGraphViewEvent::class) { handle(it) }
-		eventBus.register(SchedulerActivationStateEvent::class) { handle(it) }
+		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(UsecaseAddedEvent::class, usecaseAddedHandler)
+		eventBus.register(UsecaseRemovedEvent::class, usecaseDeletedHandler)
 
 		renderer = UsecaseModelRenderer()
 		addActionListener {
@@ -44,7 +57,14 @@ class UsecaseSelector(
 	}
 
 	fun dispose() {
+		eventBus.unregister(editedGraphViewHandler)
+		eventBus.unregister(schedulerActivationStateHandler)
+		eventBus.unregister(usecaseAddedHandler)
+		eventBus.unregister(usecaseDeletedHandler)
+	}
 
+	private fun fillUsecases() {
+		graphView?.let { fillUsecases(it.usecases.getUsecases()) }
 	}
 
 	private fun fillUsecases(usecases: Iterable<Usecase>) {
