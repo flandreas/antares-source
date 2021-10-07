@@ -53,6 +53,7 @@ class ExecutionToolbarSwing(
 		add(pauseOrResumeButton)
 		add(singleStepModeButton)
 		add(speedSlider)
+		addGap()
 		add(usecaseSelector)
 	}
 

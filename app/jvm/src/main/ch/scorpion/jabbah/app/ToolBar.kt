@@ -17,7 +17,7 @@ import javax.swing.*
 open class ToolBar(val editor: Editor? = null) : JToolBar() {
 
 	companion object {
-		private const val SEPARATOR_WIDTH = 15
+		private const val GAP_WIDTH = 5
 	}
 
 	private val toolGroup = ButtonGroup()
@@ -38,6 +38,10 @@ open class ToolBar(val editor: Editor? = null) : JToolBar() {
 		editor.view.addPropertyChangeListener(toolListener)
 		toolGroup.add(button)
 		add(button)
+	}
+
+	fun addGap() {
+		add(Box.createHorizontalStrut(GAP_WIDTH))
 	}
 
 	private fun createButton(imgPath: String, tooltipText: String): JToggleButton {
