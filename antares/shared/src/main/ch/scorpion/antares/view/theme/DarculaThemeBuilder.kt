@@ -30,7 +30,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val SUBSYSTEM_COLOR = CompositeColor(
 		foregroundColor = MAIN_COLOR.foregroundColor,
-		backgroundColor = Color(64, 64, 64)
+		backgroundColor = Color(36, 36, 36)
 	)
 
 	private val SCREEN_COLOR = CompositeColor(
