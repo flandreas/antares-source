@@ -42,7 +42,7 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 					Action.PROP_ACCELERATOR -> if (e.newValue != null) putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(e.newValue as String))
 					Action.PROP_ENABLED -> isEnabled = e.newValue as Boolean
 					Action.PROP_SELECTED -> putValue(javax.swing.Action.SELECTED_KEY, e.newValue)
-					Action.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.SMALL_ICON, UiUtil.themedIcon(e.newValue as String))
+					Action.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(e.newValue as String))
 				}
 			}
 		})
@@ -60,7 +60,7 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 			putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(action.accelerator))
 		}
 		if (action.imagePath != null) {
-			putValue(javax.swing.Action.SMALL_ICON, UiUtil.themedIcon(action.imagePath!!))
+			putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(action.imagePath!!))
 		}
 		isEnabled = action.enabled
 		putValue(javax.swing.Action.SELECTED_KEY, action.selected)

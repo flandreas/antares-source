@@ -67,6 +67,7 @@ class PauseOrResumeAction(
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
 		if (it.scheduler === scheduler) {
 			updateState()
+			updateSelected()
 		}
 	}
 
@@ -102,7 +103,7 @@ class PauseOrResumeAction(
 	}
 
 	private fun updateSelected() {
-		selected = scheduler.systemSpeed.isPaused
+		selected = scheduler.isActive && scheduler.systemSpeed.isPaused
 		description = if (selected) {
 			Translations.getString("execution.action.resume.desc")
 		} else {
