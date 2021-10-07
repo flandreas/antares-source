@@ -50,7 +50,9 @@ class UsecaseRunner(
 			GraphDslModule.usecaseActionExternalFunctions.bind(this, usecase.name.value, "Usecase logic")
 			usecase.run()
 		}
+
 		didRun = true
+		applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 	}
 
 	/** ---- Methods used by the DSL gateway */
