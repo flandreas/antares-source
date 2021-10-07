@@ -70,6 +70,12 @@ In addition to the variables Antares automatically declares to access all pins o
  * @param outputName the name of the output pin
  */
 private fun drawDataFlow(inputName: String, outputName: String)
+
+/**
+ * Sets the label of the symbol during execution. Only applicable if the symbol contains a label component.
+ * @param label the current label text
+ */
+private fun setLabel(label: String)
 ----
 
 === Examples
@@ -81,4 +87,25 @@ The example shows the representation logic of a multiplexer with two 4-bit input
 [source,javascript]
 ----
 if (S) drawDataFlow("B", "O") else drawDataFlow("A", "O")
+----
+
+==== Setting Labels
+
+Changing symbol labels during simulation can be useful for complex subcircuits that perform a particular function
+depending on some control inputs. Examples of such circuits are ALUs or shifters.
+
+During simulation, a user can more easily follow what a circuit is doing if such subcircuits indicate by their label
+what function they are currently performing.
+
+The following example was taken from the ALU in the Tanenbaum example project. It supports 4 different arithmetic operations
+depending on the value of the control inputs F0 and F1.
+
+[source,javascript]
+----
+when (2 * F1 + F0) {
+    0 : setLabel("A+B")
+    1 : setLabel("A and B")
+    2 : setLabel("A")
+    3 : setLabel("not A")
+}
 ----

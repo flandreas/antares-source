@@ -560,7 +560,13 @@ when (F0 + 2 * F1) {
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='199'>
+    <containerDrawing _id='199' execDrawScript='var f = 2 * F1 + F0
+when (f) {
+	0 : setLabel(&quot;A+B&quot;)
+	1 : setLabel(&quot;A and B&quot;)
+	2 : setLabel(&quot;A&quot;)
+	3 : setLabel(&quot;not A&quot;)
+}'>
       <components>
         <originIndicator _id='200'>
           <location>
@@ -613,9 +619,17 @@ when (F0 + 2 * F1) {
             <digitalPortView _id='227' x='294.0' y='238.0' dir='east' textPos='internal' portId='228'/>
           </portView>
         </digitalPortViewComp>
+        <label _id='229'>
+          <text>
+            <translation lang='en' text='ALU'/>
+          </text>
+          <location>
+            <point x='259.0' y='196.0'/>
+          </location>
+        </label>
       </components>
       <model>
-        <subGraphVertice _id='229' id='0' delay='0' uuid='fa141b2b-57a3-43fc-8d9b-dac278ea74d0'>
+        <subGraphVertice _id='230' id='0' delay='0' uuid='fa141b2b-57a3-43fc-8d9b-dac278ea74d0'>
           <desc>
             <translation lang='en' text='Arithmetic-logic unit for 4-bit operations'/>
             <translation lang='de' text='Arithmetisch-Logische Einheit für 4-Bit-Operationen'/>

@@ -1,11 +1,14 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
+import io.mockk.mockk
 import kotlin.test.*
 
 class SubGraphVerticeViewImplIntegrationTest {
@@ -15,6 +18,8 @@ class SubGraphVerticeViewImplIntegrationTest {
 			GraphViewTestRule.configure()
 		}
 	}
+
+	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 
 	@BeforeTest
 	fun setup() {
@@ -83,6 +88,31 @@ class SubGraphVerticeViewImplIntegrationTest {
 
 		assertEquals(" ", clone.label!!.getTranslation())
 		assertEquals(" ", clone.getLabelComponent()!!.text.getTranslation())
+	}
+
+	@Test
+	fun shouldUseExecutionLabel() {
+		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
+		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.executionInitialize(signalHandler)
+		vv.model.executionStart(signalHandler)
+
+		vv.executionLabel = TranslatableText("EXEC")
+
+		assertEquals("EXEC", vv.getLabelComponent()!!.label.text)
+	}
+
+	@Test
+	fun shouldResetExecutionLabel() {
+		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
+		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.executionInitialize(signalHandler)
+		vv.model.executionStart(signalHandler)
+		vv.executionLabel = TranslatableText("EXEC")
+
+		vv.model.executionStopped(signalHandler)
+
+		assertEquals("TEST", vv.getLabelComponent()!!.label.text)
 	}
 
 	private fun createLibraryElementWithLabel(label: String): ContainerLibraryElement {

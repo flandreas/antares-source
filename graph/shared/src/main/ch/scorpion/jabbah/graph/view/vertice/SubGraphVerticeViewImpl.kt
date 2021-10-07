@@ -126,12 +126,7 @@ class SubGraphVerticeViewImpl(
 	 */
 	private var _label: Translatable? = null
 
-	/**
-	 * The text to be used to overwrite the first [LabelComponent], if any. If `null` no overwriting
-	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
-	 * Returns the standard value from the [ContainerDrawing] if not overwritten. Used by the UI.
-	 */
-	var label: Translatable? = null
+	override var label: Translatable? = null
 		get() {
 			val labelComponent = getLabelComponent() ?: return null
 			if (field != null) {
@@ -144,16 +139,34 @@ class SubGraphVerticeViewImpl(
 			if (labelComponent != null) {
 				field = value
 				_label = field
-
-				if (field?.isEmpty == true) {
-					resetLabel()
-				}
-
 				invalidate()
-				field?.let {
-					labelComponent.text =it
-				}
+				updateLabelComponent(field)
 				invalidate()
+			}
+		}
+
+	private val effectiveLabelText: Translatable? get() = _label ?: defaultLabelText
+
+	private val defaultLabelText: Translatable? get() = repository
+		.getMetaGraph(model.graphUUID!!)
+		.containerDrawing.drawables.filterIsInstance<LabelComponent>()
+		.firstOrNull()?.text
+
+	private fun updateLabelComponent(label: Translatable?) {
+		getLabelComponent()?.let { labelComponent ->
+			if (label?.isEmpty == true) {
+				resetLabel()
+			} else {
+				label?.let { labelComponent.text = it }
+			}
+		}
+	}
+
+	override var executionLabel: Translatable? = null
+		set(value) {
+			if (value != field) {
+				field = value
+				getLabelComponent()?.let { it.text = value ?: TranslatableText("") }
 			}
 		}
 
@@ -358,9 +371,22 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun handleExecutionStarted(signalHandler: SignalHandler) {
+		super.handleExecutionStarted(signalHandler)
 		drawExecScriptInterpreter = createDrawScriptInterpreter(signalHandler)
 		if (drawExecScriptInterpreter is GraphDslInterpreter) {
 			(drawExecScriptInterpreter as GraphDslInterpreter).executionStarted()
+		}
+		executionLabel?.let { execLabel ->
+			getLabelComponent()?.let { it.text = execLabel }
+		}
+	}
+
+	override fun handleExecutionStopped(signalHandler: SignalHandler) {
+		super.handleExecutionStopped(signalHandler)
+		getLabelComponent()?.let {
+			labelComponent -> effectiveLabelText?.let {
+				labelComponent.text = it
+			}
 		}
 	}
 
@@ -419,6 +445,9 @@ class SubGraphVerticeViewImpl(
 		update()
 	}
 
+	override fun getLabelComponent(): LabelComponent? =
+		drawableBag.drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
+
 	private fun createDrawScriptInterpreter(signalHandler: SignalHandler): Interpreter? {
 		return repository.getContainerLibraryElement(model.graphUUID!!).let { cle ->
 			cle?.drawSymbolAST?.let { ast ->
@@ -467,9 +496,6 @@ class SubGraphVerticeViewImpl(
 
 	private fun getGraph(): Graph =
 		subGraphVertice.getGraph(repository, storableCreator)
-
-	fun getLabelComponent(): LabelComponent? =
-		drawableBag.drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
 
 	// Visible for testing
 	fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {

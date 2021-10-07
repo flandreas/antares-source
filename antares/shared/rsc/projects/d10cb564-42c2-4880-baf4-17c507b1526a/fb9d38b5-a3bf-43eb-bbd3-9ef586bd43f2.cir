@@ -216,7 +216,12 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='82'>
+    <containerDrawing _id='82' execDrawScript='when (F) {
+	0 : setLabel(&quot;No Shift&quot;)
+	1 : setLabel(&quot;Shift Right&quot;)
+	2 : setLabel(&quot;Shift Left&quot;)
+	else : setLabel(&quot;???&quot;)
+}'>
       <components>
         <rectangle _id='83' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='126.0' h='63.0'/>
         <originIndicator _id='84'>

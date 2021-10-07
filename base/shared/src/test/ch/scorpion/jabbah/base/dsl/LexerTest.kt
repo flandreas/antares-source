@@ -353,9 +353,13 @@ class LexerTest {
 	@Test
 	fun shouldScanString() {
 		val lexer = Lexer("\"text\"")
-		assertToken(DOUBLE_QUOTE, lexer)
-		assertId("text", lexer)
-		assertToken(DOUBLE_QUOTE, lexer)
+		assertString("text", lexer)
+	}
+
+	@Test
+	fun shouldScanStringWithOperators() {
+		val lexer = Lexer("\"A+B\"")
+		assertString("A+B", lexer)
 	}
 
 	private fun assertEof(token: Token<Any>) {
@@ -363,6 +367,12 @@ class LexerTest {
 	}
 
 	private fun assertLong(value: Long, lexer: Lexer) {
+		val token = lexer.nextToken()
+		assertEquals(LITERAL, token.type)
+		assertEquals(value, token.value)
+	}
+
+	private fun assertString(value: String, lexer: Lexer) {
 		val token = lexer.nextToken()
 		assertEquals(LITERAL, token.type)
 		assertEquals(value, token.value)

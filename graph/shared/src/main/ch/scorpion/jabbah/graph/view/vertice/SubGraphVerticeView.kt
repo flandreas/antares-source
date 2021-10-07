@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.Library
@@ -18,6 +20,15 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	val subGraphVertice: SubGraphVertice?
 
 	val hasCustomizedContainerDrawing: Boolean
+
+	/**
+	 * The text to be used to overwrite the first [LabelComponent], if any. If `null` no overwriting
+	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
+	 * Returns the standard value from the [ContainerDrawing] if not overwritten. Used by the UI.
+	 */
+	var label: Translatable?
+
+	var executionLabel: Translatable?
 
 	/** Creates a new [GraphView] of the references sub [Graph].*/
 	fun createSubGraphView(): GraphView
@@ -39,4 +50,10 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	 */
 	fun setEditedContainerDrawing(containerDrawing: ContainerDrawing?)
 
+	/**
+	 * Returns the designating [LabelComponent] of this [SubGraphVerticeView]'s [ContainerDrawing].
+	 * This is the one (if any) the user can overwrite with a custom text that is more
+	 * appropriate (or more precise) in the [GraphView] where this [SubGraphVerticeView] is used.
+	 */
+	fun getLabelComponent(): LabelComponent?
 }

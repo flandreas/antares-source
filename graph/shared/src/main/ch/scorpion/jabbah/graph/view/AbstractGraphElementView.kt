@@ -110,7 +110,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 
 	/**
 	 * Called by this class whenever the underlying model [GraphElement] has been exchanged, for example during
-	 * deserialising from persistent store (which must use the default constructor).
+	 * deserializing from persistent store (which must use the default constructor).
 	 * @param oldModel the former [GraphElement] model instance.
 	 */
 	protected open fun modelExchanged(oldModel: T?) {

@@ -516,7 +516,12 @@ N = result@15' propDelay='1800'>
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='202'>
+    <containerDrawing _id='202' execDrawScript='when (F) {
+	0 : setLabel(&quot;A+B&quot;)
+	1 : setLabel(&quot;A and B&quot;)
+	2 : setLabel(&quot;A&quot;)
+	3 : setLabel(&quot;not A&quot;)
+}'>
       <components>
         <originIndicator _id='203'>
           <location>
@@ -554,9 +559,17 @@ N = result@15' propDelay='1800'>
             <digitalPortView _id='221' x='259.0' y='231.0' dir='east' textPos='internal' portId='222'/>
           </portView>
         </digitalPortViewComp>
+        <label _id='223'>
+          <text>
+            <translation lang='en' text='ALU'/>
+          </text>
+          <location>
+            <point x='217.0' y='217.0'/>
+          </location>
+        </label>
       </components>
       <model>
-        <subGraphVertice _id='223' id='0' delay='0' uuid='7bf5b116-fe7e-49d1-8a13-60b32a4615bb'>
+        <subGraphVertice _id='224' id='0' delay='0' uuid='7bf5b116-fe7e-49d1-8a13-60b32a4615bb'>
           <desc>
             <translation lang='en' text='Arithmetic-logic unit for 16-bit operations'/>
             <translation lang='de' text='Arithmethisch-Logische Einheit für 16-Bit-Operationen'/>

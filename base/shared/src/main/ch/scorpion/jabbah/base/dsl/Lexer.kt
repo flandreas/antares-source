@@ -240,9 +240,11 @@ open class Lexer(private val text: String) {
 
 	private fun isLong(state: State): Boolean = state.currentChar!!.isDigit()
 
+	private fun isString(state: State): Boolean = state.currentChar!! == '\"'
+
 	protected open fun isNumber(state: State): Boolean = isLong(state)
 
-	protected open fun isLiteral(state: State): Boolean = isNumber(state)
+	protected open fun isLiteral(state: State): Boolean = isNumber(state) || isString(state)
 
 	private fun skipComment(state: State) {
 		while (state.currentChar != null && state.currentChar != '\n') {
@@ -256,7 +258,8 @@ open class Lexer(private val text: String) {
 	protected open fun number(state: State): Token<Any> =
 		when {
 			isLong(state) -> literalToken(long(state))
-			else -> throw SyntaxError(state.location, Translations.getString("base.dsl.expectedNumber.msg"))
+			isString(state) -> literalToken(string(state))
+			else -> throw SyntaxError(state.location, Translations.getString("base.dsl.unknownLiteral.msg"))
 		}
 
 	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
@@ -337,6 +340,21 @@ open class Lexer(private val text: String) {
 			throw SyntaxError(state.location, Translations.getString("base.dsl.emptyIdentifier.msg"))
 		}
 		return idToken(id)
+	}
+
+	private fun string(state: State): String {
+		val result = StringBuilder()
+		advance(state)
+		while (state.currentChar != null && state.currentChar != '\"') {
+			result.append(state.currentChar)
+			advance(state)
+		}
+		if (state.currentChar == '\"') {
+			advance(state)
+		} else {
+			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedDoubleQuote.msg"))
+		}
+		return result.toString()
 	}
 
 	private fun equal(state: State): Token<Unit> {

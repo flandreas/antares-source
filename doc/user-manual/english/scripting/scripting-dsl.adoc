@@ -144,6 +144,45 @@ A@(I + 1)
 4@0 = 1
 ----
 
+=== Mixing Types in Operations
+
+Since Antares supports arithmetic operations on both numbers and signals signals, you can mix values of
+different types in an operation.
+
+[source,javascript]
+----
+F0 + 2 + F1
+----
+
+In this example, F0 and F1 are the names of input pins and are therefore mapped to variables holding
+a digital signal.
+
+The first thing to be aware of is that operations on digital signals try to produce results
+[.underline]#with the same bit width#. If you add two 1-bit digital signals, the result is still a 1-bit signal,
+although this might lead to an overflow and therefore to a result different from what you've might expected. The
+reason for this behaviour is that its results are closer to the signals produced by your circuit when simulated
+in "deep simulation" mode.
+
+If you mix types in an operation, the term of the [.underline]#left side# determines the type of the result. Therefore, the result of
+
+[source,javascript]
+----
+2 + F1
+----
+
+is a number and not a digital signal, because 2 is a number. Adding digital signals to numbers doesn't limit the
+result to a particular size other than the maximum length of numbers.
+
+Therefore, when your script needs to avoid data truncation by overflow, the above example should be formulated as
+
+[source,javascript]
+----
+2 * F1 + F0
+----
+
+Since expressions are evaluated from left to right, the first term `2 * F1` evaluates to a number, and then adding that
+number to `F0` still evaluates to a number.
+
 === Variables and Assignments
 
 As in any other programming language, you can use named variables to store values. Variables must be explicitly declared using `var`.

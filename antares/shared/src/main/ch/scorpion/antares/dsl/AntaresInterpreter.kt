@@ -142,7 +142,7 @@ class AntaresInterpreter(
 				{ l, r -> l + r},
 				{ l, r -> l.add(r) },
 				{ l, r -> l.add(r.toUInt()) },
-				{ l, r -> l.and(signalToLong(r)) })
+				{ l, r -> l.plus(signalToLong(r)) })
 			MINUS -> binaryOp(node,
 				{ l, r -> l - r },
 				{ l, r -> l.subtract(r)},

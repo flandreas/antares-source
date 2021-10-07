@@ -326,7 +326,7 @@ class ParserTest {
 	}
 
 	@Test
-	fun shouldParseProcedureCallWithParameters() {
+	fun shouldParseFunctionCallWithParameters() {
 		val parser = Parser(Lexer("f(1, 2)"), null)
 
 		assertAST(parser.parse(), """
@@ -338,7 +338,7 @@ class ParserTest {
 	}
 
 	@Test
-	fun shouldParseProcedureCallWithoutParameters() {
+	fun shouldParseFunctionCallWithoutParameters() {
 		val parser = Parser(Lexer("f()"), null)
 
 		assertAST(parser.parse(), """
@@ -356,6 +356,17 @@ class ParserTest {
 			- =
 			-- a
 			-- text
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseFunctionCallWithStringParam() {
+		val parser = Parser(Lexer("f(\"A+B\")"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- f()
+			-- A+B
 		""".trimIndent())
 	}
 

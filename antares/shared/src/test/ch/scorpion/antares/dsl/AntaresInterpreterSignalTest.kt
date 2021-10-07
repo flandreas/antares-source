@@ -442,4 +442,18 @@ class AntaresInterpreterSignalTest {
 			interpreter.interpret()
 		}
 	}
+
+	@Test
+	fun shouldLeftAssociateTypeInOperation() {
+		val parser = AntaresParser(AntaresLexer("""
+			2 * F1 + F0
+		""".trimIndent()), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("F0", of(true))
+		memory.preset("F1", of(true))
+		assertEquals(3L, interpreter.interpret())
+	}
 }
