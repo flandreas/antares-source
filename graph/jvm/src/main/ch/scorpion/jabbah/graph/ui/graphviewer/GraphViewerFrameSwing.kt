@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.graph.ui.ExecutionToolbarBuilder
+import ch.scorpion.jabbah.graph.ui.ExecutionToolbarSwing
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -22,6 +22,8 @@ class GraphViewerFrameSwing(
 ) : JFrame(), GraphViewerView {
 
 	private val controller = GraphViewerController()
+
+	private val executionToolbar = createExecutionToolbar()
 
 	private val graphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
@@ -58,6 +60,7 @@ class GraphViewerFrameSwing(
 
 	override fun dispose() {
 		eventBus.unregister(closeRequestHandler)
+		executionToolbar.dispose()
 	}
 
 	override fun notifyAllResourcesLoaded() { }
@@ -65,15 +68,17 @@ class GraphViewerFrameSwing(
 	private fun buildUI() {
 		graphNavigationView.preferredSize = Dimension(1000, 800)
 		layout = BorderLayout()
-		add(BorderLayout.NORTH, ExecutionToolbarBuilder(
+		add(BorderLayout.NORTH, executionToolbar)
+		add(BorderLayout.CENTER, graphNavigationView)
+	}
+
+	private fun createExecutionToolbar(): ExecutionToolbarSwing =
+		ExecutionToolbarSwing(
 			controller.applicationContextHolder.scheduler,
 			controller.applicationContextHolder.systemSpeed,
 			controller,
 			controller.toggleApplicationModeAction,
-			eventBus
-		).build())
-		add(BorderLayout.CENTER, graphNavigationView)
-	}
+			eventBus)
 
 	private fun handle(event: CloseViewRequest) {
 		if (event.view === controller.drawingView) {

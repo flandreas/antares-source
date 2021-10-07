@@ -14,7 +14,7 @@ import javax.swing.*
 /**
  * Contains a list of [JButton]s that allows the user to select an [Editor]'s current [Tool].
  */
-class ToolBar(val editor: Editor? = null) : JToolBar() {
+open class ToolBar(val editor: Editor? = null) : JToolBar() {
 
 	companion object {
 		private const val SEPARATOR_WIDTH = 15

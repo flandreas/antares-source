@@ -65,8 +65,10 @@ class GraphPanelViewSwing(
 	/** Contains the errors view.*/
 	private val bottomSidebarPane = SidebarPane(SidebarPane.Location.Bottom) { bottomSidebarPaneChanged() }
 
+	private val executionToolbar: ExecutionToolbarSwing = createExecutionToolBar(controller)
+
 	val toolbars: List<ToolBar> = listOf(
-		createExecutionToolBar(controller),
+		executionToolbar,
 		drawingToolBar,
 		settingsToolBar).onEach { it.isFloatable = false }
 
@@ -126,6 +128,7 @@ class GraphPanelViewSwing(
 		issuesPanel.dispose()
 		logPanel.dispose()
 		propertyPanel.dispose()
+		executionToolbar.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
@@ -192,13 +195,12 @@ class GraphPanelViewSwing(
 		repaint()
 	}
 
-	private fun createExecutionToolBar(controller: GraphPanelViewController): ToolBar =
-		ExecutionToolbarBuilder(
+	private fun createExecutionToolBar(controller: GraphPanelViewController): ExecutionToolbarSwing =
+		ExecutionToolbarSwing(
 			controller.applicationContextHolder.scheduler,
 			controller.applicationContextHolder.systemSpeed,
 			controller.applicationModeHolder,
-			controller.toggleApplicationModeAction, eventBus
-		).build()
+			controller.toggleApplicationModeAction, eventBus)
 
 	private fun createDrawingToolBar(controller: GraphPanelViewController): ToolBar {
 		val toolbar = ToolBar(controller.editor)

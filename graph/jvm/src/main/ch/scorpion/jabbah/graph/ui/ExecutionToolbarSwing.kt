@@ -16,47 +16,50 @@ import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import java.awt.Dimension
 import javax.swing.JToggleButton
 
-class ExecutionToolbarBuilder(
-	private val scheduler: Scheduler,
-	private val systemSpeed: SystemSpeed,
-	private val applicationModeHolder: ApplicationModeHolder,
-	private val toggleApplicationModeAction: ToggleApplicationModeAction,
-	private val eventBus: EventBus
-) {
+class ExecutionToolbarSwing(
+	scheduler: Scheduler,
+	systemSpeed: SystemSpeed,
+	applicationModeHolder: ApplicationModeHolder,
+	toggleApplicationModeAction: ToggleApplicationModeAction,
+	eventBus: EventBus
+) : ToolBar() {
 
-	fun build(): ToolBar {
-		val modeToggleAction = ActionWrapperSwing(toggleApplicationModeAction)
-		val modeToggleButton = JToggleButton(modeToggleAction)
+	private val singleStepModeAction = SingleStepModeAction(scheduler, eventBus)
+	private val pauseOrResumeAction = PauseOrResumeAction(scheduler, eventBus)
+	private val speedSlider = SystemSpeedSliderSwing(systemSpeed)
+	private val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)
+
+	init {
+		val modeToggleButton = JToggleButton(ActionWrapperSwing(toggleApplicationModeAction))
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
 		modeToggleButton.icon = UiUtil.themedIcon("/img/play24.png")
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
-		val singleStepModeAction = SingleStepModeAction(scheduler, eventBus)
 		val singleStepModeButton = JToggleButton(ActionWrapperSwing(singleStepModeAction))
 		singleStepModeButton.text = null
 		singleStepModeButton.icon = UiUtil.themedIcon("/img/singleStepMode24.png")
 		singleStepModeButton.toolTipText = singleStepModeAction.name
 
-		val pauseOrResumeAction = PauseOrResumeAction(scheduler, eventBus)
 		val pauseOrResumeButton = JToggleButton(ActionWrapperSwing(pauseOrResumeAction))
 		pauseOrResumeButton.text = null
 
-		val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
-		val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)
+		isFloatable = false
+		isRollover = true
+		addSeparator()
+		add(modeToggleButton)
+		add(pauseOrResumeButton)
+		add(singleStepModeButton)
+		add(speedSlider)
+		add(usecaseSelector)
+	}
 
-		val mainToolBar = ToolBar()
-		mainToolBar.isFloatable = false
-		mainToolBar.isRollover = true
-		mainToolBar.addSeparator()
-		mainToolBar.add(modeToggleButton)
-		mainToolBar.add(pauseOrResumeButton)
-		mainToolBar.add(singleStepModeButton)
-		mainToolBar.add(speedSlider)
-		mainToolBar.add(usecaseSelector)
-
-		return mainToolBar
+	fun dispose() {
+		singleStepModeAction.dispose()
+		pauseOrResumeAction.dispose()
+		speedSlider.dispose()
+		usecaseSelector.dispose()
 	}
 }

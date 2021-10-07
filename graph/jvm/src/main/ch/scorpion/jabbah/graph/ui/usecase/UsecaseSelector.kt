@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui.usecase
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -24,7 +23,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer
 class UsecaseSelector(
 	private val scheduler: Scheduler,
 	private val applicationModeHolder: ApplicationModeHolder,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JComboBox<Usecase>() {
 
 	private var graphView: GraphView? = null
@@ -42,6 +41,10 @@ class UsecaseSelector(
 
 
 		fillUsecases(listOf())
+	}
+
+	fun dispose() {
+
 	}
 
 	private fun fillUsecases(usecases: Iterable<Usecase>) {
