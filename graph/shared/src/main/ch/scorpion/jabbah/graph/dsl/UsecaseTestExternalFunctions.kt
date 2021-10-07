@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.model.SignalUtil
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 
 object GraphUsecaseTestExternalFunctions : UsecaseTestExternalFunctions()
@@ -41,15 +42,16 @@ open class UsecaseTestExternalFunctions(
 	/**
 	 * Asserts (checks) that an output pin has a particular value.
 	 *
-	 * @param time the simulation time (ns) at which the output pin
-	 * is supposed to have value [signal]
+	 * @param time the simulation time (ns) at which the output pin is supposed to have value [value]
 	 * @param outputName the name of the output pin
-	 * @param signal the expected value
+	 * @param value the expected value
 	 */
-	private fun assertOutputAt(time: Long, outputName: String, signal: Any) {
+	private fun assertOutputAt(time: Long, outputName: String, value: Any) {
 		delegate.getOutputGraphPortView(outputName)?.let { graphPortView ->
-			runner.assert(time, "Expected value of output '$outputName' to be '$signal'") {
-				signal == convertSignal(graphPortView.model.signal)
+			val expected = convertSignal(value)
+			runner.assert(time, "Expected output '$outputName' to be '$expected'") {
+				val actual = graphPortView.model.signal
+				SignalUtil.equals(actual, expected)
 			}
 		}
 	}
