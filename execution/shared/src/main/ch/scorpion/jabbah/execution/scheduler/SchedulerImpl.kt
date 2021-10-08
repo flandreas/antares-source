@@ -142,6 +142,14 @@ class SchedulerImpl(
 			}
 		}
 
+	/**
+	 * Set to `true` if an [Actor] requests a breakpoint, but the system has to defer the breakpoint
+	 * until all running signal flow animations of the current [Slot] have been completed. Otherwise,
+	 * slight differences in the duration of these animations would lead to pausing slower animations
+	 * on their way, which is not desired.
+	 */
+	private var isInBreakpointPending: Boolean = false
+
 	override var isInBreakpoint: Boolean = false
 		private set(value) {
 			if (field == value) {
@@ -149,6 +157,7 @@ class SchedulerImpl(
 			}
 			field = value
 			if (field) {
+				isInBreakpointPending = false
 				systemSpeed.pause()
 			}
 			LOG.trace("isInBreakpoint is $field")
@@ -269,6 +278,11 @@ class SchedulerImpl(
 					actor.actingDone(this, request.actorData)
 				}
 				slot.actingDone(actor)
+
+				if (isInBreakpointPending && !slot.isActing) {
+					isInBreakpoint = true
+				}
+
 				if (slot.empty) {
 					removeSlot(slot)
 					postSchedulerStateEvent()
@@ -466,7 +480,12 @@ class SchedulerImpl(
 			if (!resume && checkForBreakpoint(slot)) {
 				LOG.trace("Stop task because breakpoint detected")
 				task.stop()
-				isInBreakpoint = true
+				if (slot.isActing) {
+					// Defer pausing until all acting Actors are done
+					isInBreakpointPending = true
+				} else {
+					isInBreakpoint = true
+				}
 				return ExecutionStepResult(recalculated = false, breakpoint = true)
 			}
 
@@ -510,6 +529,8 @@ class SchedulerImpl(
 	) : Comparable<Slot> {
 
 		val isExecutable: Boolean get() = requests.any { it.isActable }
+
+		val isActing: Boolean get() = requests.any { it.isActing }
 
 		val empty: Boolean get() = requests.isEmpty()
 
