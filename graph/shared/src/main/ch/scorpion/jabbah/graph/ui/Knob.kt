@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -279,6 +280,10 @@ class KnobView(
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
 		return null
 	}
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	private fun removeFromParent(container: DrawableContainer<Drawable>) {
 		container.remove(this)

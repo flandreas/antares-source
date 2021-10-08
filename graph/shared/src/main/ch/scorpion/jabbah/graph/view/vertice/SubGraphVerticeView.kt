@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.vertice
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.Translatable
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.Library
@@ -30,8 +31,11 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 
 	var executionLabel: Translatable?
 
-	/** Creates a new [GraphView] of the references sub [Graph].*/
-	fun createSubGraphView(): GraphView
+	/**
+	 * Creates a new [GraphView] of the references sub [Graph].
+	 * @param signalHandler the [SignalHandler] required if the [GraphView] is currently being executed
+	 */
+	fun createSubGraphView(signalHandler: SignalHandler?): GraphView
 
 	/** Adds a [Drawable] to be part of the graphical representation of this [SubGraphVerticeView] */
 	fun addDrawable(drawable: Drawable)

@@ -71,7 +71,16 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 */
 	fun bind()
 
+	/**
+	 * Called when execution on this [GraphView] has been started, or when this [GraphView] is opened
+	 * while the execution has already been running.
+	 */
 	fun executionStart(signalHandler: SignalHandler)
+
+	/**
+	 * Called when execution on this [GraphView] has been stopped.
+	 */
+	fun executionStop(signalHandler: SignalHandler)
 
 	/**
 	 * Checks for design errors in the [Graph] and posts an [Issue] on this [GraphView]'s [EventBus] for every

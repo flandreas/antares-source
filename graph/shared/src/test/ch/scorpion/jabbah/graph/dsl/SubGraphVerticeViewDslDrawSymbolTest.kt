@@ -71,6 +71,7 @@ class SubGraphVerticeViewDslDrawSymbolTest {
 		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
+		vv.executionStarted(signalHandler)
 		return vv
 	}
 

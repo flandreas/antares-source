@@ -104,6 +104,9 @@ class GraphViewExecutionController(
 					executionInitialize(event.scheduler)
 					executionStart(event.scheduler)
 				} else {
+					graphViewsProvider.invoke().forEach {
+						it.executionStop(event.scheduler)
+					}
 					executionStopped(event.scheduler)
 				}
 			}

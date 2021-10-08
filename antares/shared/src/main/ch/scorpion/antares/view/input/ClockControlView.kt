@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -92,6 +93,10 @@ class ClockControlView(
 		_model = model
 		this.subGraphVerticeView = subGraphVerticeView
 	}
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Clock>) { }
 

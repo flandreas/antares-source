@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphGlobalIdentityProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -149,8 +150,13 @@ open class GraphViewImpl(
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
+		drawables.filterIsInstance<ActorView>().forEach { it.executionStarted(signalHandler) }
 		scenarios.executionStart(this, signalHandler)
 		usecases.executionStart(this, signalHandler)
+	}
+
+	override fun executionStop(signalHandler: SignalHandler) {
+		drawables.filterIsInstance<ActorView>().forEach { it.executionStopped(signalHandler) }
 	}
 
 	override fun checkDesign(): Boolean {

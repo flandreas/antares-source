@@ -18,13 +18,13 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.port.PortFactory
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -186,16 +186,16 @@ class OscilloscopeView(
 		return container.getActorInteractionHandler(context)
 	}
 
-	/** ---- [AbstractGraphElementView] */
+	/** ---- [ActorView] */
 
-	override fun handleExecutionStarted(signalHandler: SignalHandler) {
-		super.handleExecutionStarted(signalHandler)
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
 		rows.forEach { it.bindDrawer() }
 		scaleRow.bindDrawer()
 	}
 
-	override fun handleExecutionStopped(signalHandler: SignalHandler) {
-		super.handleExecutionStopped(signalHandler)
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
 		rows.forEach { it.unbindDrawer() }
 		scaleRow.unbindDrawer()
 	}

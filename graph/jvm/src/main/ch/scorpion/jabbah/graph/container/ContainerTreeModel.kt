@@ -256,7 +256,7 @@ class ContainerTreeModel(
 	}
 
 	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<*>, link: DeepVerticeLink): MutableTreeNode {
-		val subGraphView = vv.createSubGraphView()
+		val subGraphView = vv.createSubGraphView(null)
 		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(subGraphView, vv, link))
 		treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), initializer, treeModel, true))
 		treeNode.add(DynamicTreeNode(SubGraphsFolderItem(subGraphView, link), initializer, treeModel, true))

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
+import ch.scorpion.jabbah.execution.SignalHandler
 
 open class ActorViewContainer<T: Drawable>(
 	location: Point2D = Point2D.ZERO,
@@ -27,6 +28,14 @@ open class ActorViewContainer<T: Drawable>(
 			return getActorViewAt(p)?.getExecutionTooltip(p.subtract(this.location))
 		}
 		return getActorViewAt(p)?.getExecutionTooltip(p)
+	}
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		drawables.filterIsInstance<ActorView>().forEach { it.executionStarted(signalHandler) }
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		drawables.filterIsInstance<ActorView>().forEach { it.executionStopped(signalHandler) }
 	}
 
 	/** ---- [ActorViewContainer] */

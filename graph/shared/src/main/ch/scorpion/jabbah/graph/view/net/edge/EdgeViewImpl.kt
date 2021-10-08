@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -125,6 +126,10 @@ open class EdgeViewImpl<T : Any>(
 
 		return Tooltip(StyledTextBuilder().append(content.toString()).build(), x, y)
 	}
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	/** ---- [EdgeView] interface */
 

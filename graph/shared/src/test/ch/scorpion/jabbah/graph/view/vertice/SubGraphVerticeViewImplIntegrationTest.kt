@@ -96,6 +96,7 @@ class SubGraphVerticeViewImplIntegrationTest {
 		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
+		vv.executionStarted(signalHandler)
 
 		vv.executionLabel = TranslatableText("EXEC")
 
@@ -108,9 +109,11 @@ class SubGraphVerticeViewImplIntegrationTest {
 		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
+		vv.executionStarted(signalHandler)
 		vv.executionLabel = TranslatableText("EXEC")
 
 		vv.model.executionStopped(signalHandler)
+		vv.executionStopped(signalHandler)
 
 		assertEquals("TEST", vv.getLabelComponent()!!.label.text)
 	}

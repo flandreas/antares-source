@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractIconButton
 import ch.scorpion.jabbah.draw.graphics.Icon
+import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
  * Base class for implementing buttons whose [handleClicked] method is called when the user clicks
@@ -21,6 +22,10 @@ abstract class AbstractActorIconButton(
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = actorInteractionHandler
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = getTooltip(x, y)
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	protected abstract fun handleClicked(context: ActorInteractionContext)
 

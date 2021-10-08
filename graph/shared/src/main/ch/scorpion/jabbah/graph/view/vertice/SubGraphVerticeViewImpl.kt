@@ -370,8 +370,8 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
-	override fun handleExecutionStarted(signalHandler: SignalHandler) {
-		super.handleExecutionStarted(signalHandler)
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
 		drawExecScriptInterpreter = createDrawScriptInterpreter(signalHandler)
 		if (drawExecScriptInterpreter is GraphDslInterpreter) {
 			(drawExecScriptInterpreter as GraphDslInterpreter).executionStarted()
@@ -381,10 +381,10 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
-	override fun handleExecutionStopped(signalHandler: SignalHandler) {
-		super.handleExecutionStopped(signalHandler)
-		getLabelComponent()?.let {
-			labelComponent -> effectiveLabelText?.let {
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		getLabelComponent()?.let { labelComponent ->
+			effectiveLabelText?.let {
 				labelComponent.text = it
 			}
 		}
@@ -422,10 +422,13 @@ class SubGraphVerticeViewImpl(
 		containsBox.add(drawable.boundingBox)
 	}
 
-	override fun createSubGraphView(): GraphView {
+	override fun createSubGraphView(signalHandler: SignalHandler?): GraphView {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
 		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
 		graphView.bind()
+		signalHandler?.let {
+			graphView.executionStart(it)
+		}
 		return graphView
 	}
 

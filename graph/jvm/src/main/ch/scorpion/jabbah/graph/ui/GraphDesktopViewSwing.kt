@@ -180,7 +180,7 @@ class GraphDesktopViewSwing(
 		isParentDetached: Boolean,
 		viewManager: ViewManager
 	): GraphDesktopViewItem {
-		val subGraphView = verticeView.createSubGraphView()
+		val subGraphView = verticeView.createSubGraphView(controller.applicationContextHolder.signalHandlerIfActive)
 		val drawingView = EditModule.drawingViewFactory.create(
 			subGraphView as Drawing<Component>, controller.applicationContextHolder, displayGlobalMessages = false
 		) as DrawingView<GraphView>

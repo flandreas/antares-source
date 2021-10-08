@@ -272,7 +272,7 @@ class ContainerTreeTest {
 		/** Adds a [ControlViewComponent] with a [ControlView] to the [ContainerDrawing].*/
 		fun addDeepControlViewToContainer(): Setup {
 			val subGraphVerticeView = graphView.getSubGraphVerticeViews()[0]
-			val source = subGraphVerticeView.createSubGraphView().getControlViewSources()[0]
+			val source = subGraphVerticeView.createSubGraphView(null).getControlViewSources()[0]
 			val link = DeepVerticeLink(subGraphVerticeView.id)
 			containerDrawing.add(ControlViewComponent(source = source, baseLink = link))
 			return this

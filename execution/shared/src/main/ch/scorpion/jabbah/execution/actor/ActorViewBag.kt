@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableBagImpl
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
+import ch.scorpion.jabbah.execution.SignalHandler
 
 open class ActorViewBag<T : Drawable>(
 	location: Point2D = Point2D.ZERO,
@@ -28,6 +29,10 @@ open class ActorViewBag<T : Drawable>(
 		}
 		return getActorViewAt(p)?.getExecutionTooltip(p)
 	}
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	/** ---- [ActorViewBag] */
 

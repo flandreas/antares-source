@@ -79,12 +79,15 @@ class GraphNavigationViewController(
 
 	private val extension = extensionFactory.invoke(this)
 
+	private val graphApplicationContextHolder: GraphApplicationContextHolder get() =
+		drawingView.applicationContextHolder as GraphApplicationContextHolder
+
 	private val graphViewExecutionController = GraphViewExecutionController(
 		this,
 		isRoot,
 		rootGraphProvider = { rootEntry?.content?.drawing?.graph },
 		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
-		(drawingView.applicationContextHolder as GraphApplicationContextHolder),
+		graphApplicationContextHolder,
 		eventBus = eventBus
 	)
 
@@ -171,10 +174,7 @@ class GraphNavigationViewController(
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
 
 		scenarioDetector?.dispose()
-		scenarioDetector = ScenarioDetector(
-			drawingView,
-			drawingView.applicationContextHolder as GraphApplicationContextHolder,
-			eventBus)
+		scenarioDetector = ScenarioDetector(drawingView, graphApplicationContextHolder, eventBus)
 
 		graphViewExecutionController.updateDetachedUI()
 	}
@@ -235,7 +235,7 @@ class GraphNavigationViewController(
 			descender = {
 				navigationStackViewController.navigationStack.push(NavigationStackEntry(
 					subGraphVerticeView = vv,
-					content = drawingView.createContent(vv.createSubGraphView())))
+					content = drawingView.createContent(vv.createSubGraphView(graphApplicationContextHolder.signalHandlerIfActive))))
 			},
 			terminator = {
 				navigationStackViewController.view.active = true
@@ -248,7 +248,7 @@ class GraphNavigationViewController(
 		System.invokeLater {
 			navigationStackViewController.navigationStack.push(NavigationStackEntry(
 				subGraphVerticeView = vv,
-				content = drawingView.createContent(vv.createSubGraphView())))
+				content = drawingView.createContent(vv.createSubGraphView(graphApplicationContextHolder.signalHandlerIfActive))))
 			System.invokeLater {
 				drawingView.navigator.fitMaxNormal()
 				navigationStackViewController.view.active = true

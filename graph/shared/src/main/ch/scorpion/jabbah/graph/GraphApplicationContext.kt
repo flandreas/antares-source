@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.ApplicationContextHolder
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerSingleStepModeEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -37,6 +38,8 @@ class GraphApplicationContextHolder(
 	val currentSystemSpeedCategory: CurrentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed),
 	val animator: Animator = AnimatorImpl(systemSpeed)
 ) : ApplicationContextHolder() {
+
+	val signalHandlerIfActive: SignalHandler? get() = if (scheduler.isActive) scheduler else null
 
 	private val applicationMode: ApplicationMode get() = applicationModeHolder.currentMode
 	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = {

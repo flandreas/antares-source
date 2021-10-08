@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -162,6 +163,14 @@ class ControlViewComponent(
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = controlView.getActorInteractionHandler(context)
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		controlView.executionStarted(signalHandler)
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		controlView.executionStopped(signalHandler)
+	}
 
 	/** ---- [ControlViewComponent] */
 

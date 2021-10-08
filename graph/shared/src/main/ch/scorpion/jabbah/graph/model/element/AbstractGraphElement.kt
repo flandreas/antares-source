@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.DesignError
@@ -87,20 +86,6 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 		description = Description.read("desc", reader)
 		// Add an artificial resolution request so that views can request to be resolved AFTER this model
 		reader.requestResolution(this, Reference(name = "modelId"))
-	}
-
-	/** ---- [Actor] interface */
-
-	override fun executionInitialize(signalHandler: SignalHandler) { }
-
-	override fun executionStart(signalHandler: SignalHandler) {
-		super.executionStart(signalHandler)
-		listeners?.forEach { it.executionStarted(signalHandler) }
-	}
-
-	override fun executionStopped(signalHandler: SignalHandler) {
-		super.executionStopped(signalHandler)
-		listeners?.forEach { it.executionStopped(signalHandler) }
 	}
 
 	/** ---- [AbstractGraphElement] */

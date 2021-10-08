@@ -4,8 +4,10 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.GraphElementAdapter
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -125,25 +127,9 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		validate()
 	}
 
-	protected open fun handleExecutionStarted(signalHandler: SignalHandler) {
-		// empty
-	}
-
-	protected open fun handleExecutionStopped(signalHandler: SignalHandler) {
-		// empty
-	}
-
 	private inner class ModelListener : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
 			handleStateChanged(e)
-		}
-
-		override fun executionStarted(signalHandler: SignalHandler) {
-			handleExecutionStarted(signalHandler)
-		}
-
-		override fun executionStopped(signalHandler: SignalHandler) {
-			handleExecutionStopped(signalHandler)
 		}
 	}
 }

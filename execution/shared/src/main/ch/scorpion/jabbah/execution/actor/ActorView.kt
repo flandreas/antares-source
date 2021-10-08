@@ -31,6 +31,10 @@ interface ActorView {
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 
 	fun getExecutionTooltip(p: Point2D): Tooltip? = getExecutionTooltip(p.x, p.y)
+
+	fun executionStarted(signalHandler: SignalHandler)
+
+	fun executionStopped(signalHandler: SignalHandler)
 }
 
 open class ActorInteractionContext(

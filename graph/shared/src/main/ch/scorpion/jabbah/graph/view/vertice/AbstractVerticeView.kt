@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -322,6 +323,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this
 		return CANNOT_OPEN_ACTOR_CLICK_HANDLER
 	}
+
+	override fun executionStarted(signalHandler: SignalHandler) { }
+
+	override fun executionStopped(signalHandler: SignalHandler) { }
 
 	/** ---- [AbstractVerticeView] */
 
