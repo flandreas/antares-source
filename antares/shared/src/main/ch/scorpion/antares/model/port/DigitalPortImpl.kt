@@ -28,8 +28,7 @@ open class DigitalPortImpl(
 	logic: Logic = Logic.POSITIVE,
 	trigger: Trigger = Trigger.LEVEL,
 	bitWidth: BitWidth = BitWidth.BW_1,
-	signalRepresentation: DigitalSignalRepresentation =
-		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
+	signalRepresentation: DigitalSignalRepresentation? = null,
 	description: TranslatableText = TranslatableText(),
 	canBeUndefined: Boolean = portType == PortType.INOUT,
 	weakBehaviour: WeakOutputPortBehaviour<DigitalSignal>? = null,
@@ -37,6 +36,9 @@ open class DigitalPortImpl(
 ) : PortImpl<DigitalSignal>(portType, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
 	companion object {
+
+		private fun defaultSignalRepresentation(bitWidth: BitWidth): DigitalSignalRepresentation =
+			if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY
 
 		fun createPort(portType: PortType): DigitalPort {
 			return DigitalPortImpl(portType)
@@ -152,10 +154,18 @@ open class DigitalPortImpl(
 			}
 		}
 
-	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
+	private var dynamicSignalRepresentation: Boolean = signalRepresentation == null
+
+	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation ?: defaultSignalRepresentation(bitWidth)
+		get() = if (dynamicSignalRepresentation) {
+			defaultSignalRepresentation(bitWidth)
+		} else {
+			field
+		}
 		set(value) {
 			val oldValue = field
 			field = value
+			dynamicSignalRepresentation = false
 			changeSupport.fire(PROP_SIGNAL_REPRESENTATION, oldValue, field)
 		}
 
