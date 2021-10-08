@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.Storable
  * - [Component]s can be selected
  * - [Component]s can be manipulated by an [Editor]
  */
-interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Component>, Bean {
+interface Component : Movable, Snappable, Storable, Stylable, Focusable, Cloneable<Component>, Bean {
 
 	companion object {
 		const val BASE_KEY_ID = "edit.property.id"
@@ -96,27 +96,6 @@ interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Componen
 	 * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
 	 */
 	var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-
-	/** Controls whether this [Component] can receive the focus.*/
-	var isFocusable: Boolean
-
-	/** Determines whether this [Component] currently has the focus.*/
-	val isFocusOwner: Boolean
-
-	/** Requests the focus for this [Component].*/
-	fun requestFocus()
-
-	/**
-	 * Informs this [Component] that is has gained the focus. Implementing classes should update their
-	 * graphical representation. This method is typically only called by the [FocusManager].
-	 */
-	fun focusGained()
-
-	/**
-	 * Informs this [Component] that is has lost the focus. Implementing classes should update their
-	 * graphical representation.  This method is typically only called by the [FocusManager].
-	 */
-	fun focusLost()
 
 	/**
 	 * Increases the current [Rotation] of this [Component] counterclockwise by 90 degrees.

@@ -145,6 +145,9 @@ class GraphViewExecutionHandler(
 
 			if (target != null) {
 				target = target?.mouseReleased(context)
+				if (target != null) {
+					return
+				}
 			}
 			target = null
 			if (getActorViewAt(p.x, p.y) == null) {
@@ -190,7 +193,7 @@ class GraphViewExecutionHandler(
 
 			// Try to forward KeyEvent to the focus ActorView
 			if (FocusManager.focusOwner is ActorView) {
-				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyPressed(context)
+				target = (FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyPressed(context)
 				return
 			}
 
@@ -211,7 +214,7 @@ class GraphViewExecutionHandler(
 			val context = keyEventContext(e)
 
 			if (FocusManager.focusOwner is ActorView) {
-				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyReleased(context)
+				target = (FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyReleased(context)
 				return
 			}
 

@@ -61,6 +61,8 @@ interface RectangularShape : Shape {
 
 	val topCenter: Point2D get() = Point2D(centerX, minY)
 
+	val bottomLeft: Point2D get() = Point2D(minX, maxY)
+
 	/** Contains the bottom-right edge of this [RectangularShape].*/
 	val bottomRight: Point2D get() = Point2D(maxX, maxY)
 

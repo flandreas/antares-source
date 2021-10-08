@@ -21,35 +21,30 @@ interface KeyEvent : InputEvent {
          * The codes given here are completely arbitrary and only used for testing of 'common' code.
          */
 
-        /** Key code of the non-numpad left arrow key */
         var VK_LEFT = 0x01
-
-        /** Key code of the non-numpad right arrow key. */
         var VK_RIGHT = 0x02
-
-	    /** Key code of the non-numpad up arrow key. */
 	    var VK_UP = 0x03
-
-	    /** Key code of the non-numpad down arrow key. */
 	    var VK_DOWN = 0x04
-
-        /** Key code of the escape key.*/
         var VK_ESCAPE = 0x05
-
-	    /** Key code of the ENTER key.*/
         var VK_ENTER = 0x06
-
-	    /** Key code of the ALT key.*/
 	    var VK_ALT = 0x07
-
-	    /** Key code of the DELETE key.*/
 	    var VK_DELETE = 0x08
-
-	    /** Key code for the 0 key.*/
 	    var VK_0 = 0x09
-
-	    /** Key code for the 1 key.*/
 	    var VK_1 = 0x0A
+	    var VK_2 = 0x0B
+	    var VK_3 = 0x0C
+	    var VK_4 = 0x0D
+	    var VK_5 = 0x0E
+	    var VK_6 = 0x0F
+	    var VK_7 = 0x10
+	    var VK_8 = 0x11
+	    var VK_9 = 0x12
+	    var VK_A = 0x13
+	    var VK_B = 0x14
+	    var VK_C = 0x15
+	    var VK_D = 0x16
+	    var VK_E = 0x17
+	    var VK_F = 0x18
     }
 }
 

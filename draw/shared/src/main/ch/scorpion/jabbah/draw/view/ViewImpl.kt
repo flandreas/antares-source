@@ -498,11 +498,13 @@ open class ViewImpl<C : InputEventContext>(
 		}
 
 		override fun keyPressed(context: T): InputEventHandler<T>? {
-			return target?.keyPressed(context)
+			target = target?.keyPressed(context)
+			return target
 		}
 
 		override fun keyReleased(context: T): InputEventHandler<T>? {
-			return target?.keyReleased(context)
+			target = target?.keyReleased(context)
+			return target
 		}
 	}
 }

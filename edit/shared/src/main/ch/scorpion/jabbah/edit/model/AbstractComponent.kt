@@ -144,16 +144,10 @@ abstract class AbstractComponent(
 		// empty
 	}
 
-	/** ---- Focus management */
+	/** ---- [Focusable] interface */
 
 	/** [Component]s are by default not focusable. */
 	override var isFocusable: Boolean = false
-
-	override val isFocusOwner: Boolean get() = FocusManager.focusOwner == this
-
-	override fun requestFocus() {
-		FocusManager.requestFocus(this)
-	}
 
 	override fun focusGained() {
 		invalidate()
@@ -175,5 +169,4 @@ abstract class AbstractComponent(
 	protected open fun rotationChanged(newRotation: Rotation) {
 		// empty
 	}
-
 }

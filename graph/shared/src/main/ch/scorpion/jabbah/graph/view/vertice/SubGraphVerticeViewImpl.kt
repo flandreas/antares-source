@@ -371,7 +371,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
+		super<AbstractVerticeView>.executionStarted(signalHandler)
 		drawExecScriptInterpreter = createDrawScriptInterpreter(signalHandler)
 		if (drawExecScriptInterpreter is GraphDslInterpreter) {
 			(drawExecScriptInterpreter as GraphDslInterpreter).executionStarted()
@@ -382,7 +382,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
-		super.executionStopped(signalHandler)
+		super<AbstractVerticeView>.executionStopped(signalHandler)
 		getLabelComponent()?.let { labelComponent ->
 			effectiveLabelText?.let {
 				labelComponent.text = it

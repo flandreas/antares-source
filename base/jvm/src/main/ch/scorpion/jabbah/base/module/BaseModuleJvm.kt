@@ -50,6 +50,20 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_DELETE = java.awt.event.KeyEvent.VK_DELETE
 		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0
 		KeyEvent.VK_1 = java.awt.event.KeyEvent.VK_1
+		KeyEvent.VK_2 = java.awt.event.KeyEvent.VK_2
+		KeyEvent.VK_3 = java.awt.event.KeyEvent.VK_3
+		KeyEvent.VK_4 = java.awt.event.KeyEvent.VK_4
+		KeyEvent.VK_5 = java.awt.event.KeyEvent.VK_5
+		KeyEvent.VK_6 = java.awt.event.KeyEvent.VK_6
+		KeyEvent.VK_7 = java.awt.event.KeyEvent.VK_7
+		KeyEvent.VK_8 = java.awt.event.KeyEvent.VK_8
+		KeyEvent.VK_9 = java.awt.event.KeyEvent.VK_9
+		KeyEvent.VK_A = java.awt.event.KeyEvent.VK_A
+		KeyEvent.VK_B = java.awt.event.KeyEvent.VK_B
+		KeyEvent.VK_C = java.awt.event.KeyEvent.VK_C
+		KeyEvent.VK_D = java.awt.event.KeyEvent.VK_D
+		KeyEvent.VK_E = java.awt.event.KeyEvent.VK_E
+		KeyEvent.VK_F = java.awt.event.KeyEvent.VK_F
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

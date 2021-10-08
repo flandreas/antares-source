@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.Alignment
@@ -325,12 +326,12 @@ class CircuitInOutView(
 
 	override fun focusGained() {
 		numberView!!.focusGained()
-		super.focusGained()
+		super<AbstractVerticeView>.focusGained()
 	}
 
 	override fun focusLost() {
 		numberView!!.focusLost()
-		super.focusLost()
+		super<AbstractVerticeView>.focusLost()
 	}
 
 	override fun rotateCounterClockwise() {
@@ -502,6 +503,44 @@ class CircuitInOutView(
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
 	}
 
+	fun consumeKey(key: Int, signalHandler: SignalHandler) {
+		invalidate()
+		if (key == KeyEvent.VK_LEFT) {
+			numberView!!.transferFocusLeft()
+		} else if (key == KeyEvent.VK_RIGHT) {
+			numberView!!.transferFocusRight()
+		} else if (key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
+			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+				toggleFocusBitWithEnter(signalHandler)
+			}
+		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
+			val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
+			val newWord = signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)
+			model.setSignalManually(newWord, signalHandler)
+			numberView!!.transferFocusRight()
+		} else {
+			val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar())
+			if (digitWord != null && checkTopLevelKey()) {
+				val newWord = signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)
+				model.setSignalManually(newWord, signalHandler)
+				numberView!!.transferFocusRight()
+			}
+		}
+		validate()
+	}
+
+	private fun checkTopLevelKey(): Boolean {
+		if (!model.isToplevel) {
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
+			return false
+		}
+		return true
+	}
+
+	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
+		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
+	}
+
 	/**
 	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
 	 * individual digits with the keyboard.
@@ -523,31 +562,36 @@ class CircuitInOutView(
 					messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return null
 			}
-			toggle(context.mouseEvent?.isAltDown ?: false, context.signalHandler, context.x, context.y)
 			// Don't consume event so that Canvas can gain focus
-			return this
+			return toggle(context.mouseEvent?.isAltDown ?: false, context) ?: this
 		}
 
 		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler = this
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
-				toggle(false, context.signalHandler, context.x, context.y)
 				context.mouseEvent?.consume()
+				return toggle(false, context)
 			}
 			return null
 		}
 
-		private fun toggle(undefine: Boolean, signalHandler: SignalHandler, x: Double, y: Double) {
-			val digitIndex = getDigitIndexAt(x, y)
+		private fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
+			var handler: ActorInteractionHandler? = null
+			val digitIndex = getDigitIndexAt(context.x, context.y)
 			if (digitIndex != null) {
 				if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-					model.toggleBit(digitIndex, undefine, signalHandler)
+					model.toggleBit(digitIndex, undefine, context.signalHandler)
 				} else if (numberView!!.focusIndex == digitIndex) {
-					eventBus.post(ComponentMessage(
-						type = ComponentMessageType.Info,
-						source = this@CircuitInOutView,
-						messageKey = "antares.msg.HexInputManipulation"))
+					if (context.view is DrawingView<*>) {
+						context.mouseEvent?.consume()
+						handler = displayKeyboard(context)
+					} else {
+						eventBus.post(ComponentMessage(
+							type = ComponentMessageType.Info,
+							source = this@CircuitInOutView,
+							messageKey = "antares.msg.HexInputManipulation"))
+					}
 				}
 
 				// Set the focus on the selected digit
@@ -555,36 +599,26 @@ class CircuitInOutView(
 				requestFocus()
 				numberView!!.setFocusTo(digitIndex)
 				validate()
+
 			}
+			return handler
+		}
+
+		private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
+			val keyboard = CircuitInOutKeyboard(
+				this@CircuitInOutView,
+				context.view as DrawingView<*>,
+				context.signalHandler,
+				boundingBox.bottomLeft)
+			(context.view as DrawingView<*>).animationContainer.add(keyboard)
+			(context.view as DrawingView<*>).animationContainer.validate()
+
+			return keyboard.getActorInteractionHandler(context)
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
-
-				invalidate()
-				if (context.keyEvent!!.key == KeyEvent.VK_LEFT) {
-					numberView!!.transferFocusLeft()
-				} else if (context.keyEvent!!.key == KeyEvent.VK_RIGHT) {
-					numberView!!.transferFocusRight()
-				} else if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
-					if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-						toggleFocusBitWithEnter(context.signalHandler)
-					}
-				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
-					val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
-					val newWord = signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)
-					model.setSignalManually(newWord, context.signalHandler)
-					numberView!!.transferFocusRight()
-				} else {
-					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), context.keyEvent!!.key.toChar())
-					if (digitWord != null && checkTopLevelKey()) {
-						val newWord = signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)
-						model.setSignalManually(newWord, context.signalHandler)
-						numberView!!.transferFocusRight()
-					}
-				}
-				validate()
+				consumeKey(context.keyEvent!!.key, context.signalHandler)
 			}
 			return null
 		}
@@ -599,18 +633,6 @@ class CircuitInOutView(
 				}
 			}
 			return null
-		}
-
-		private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
-			model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
-		}
-
-		private fun checkTopLevelKey(): Boolean {
-			if (!model.isToplevel) {
-				eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
-				return false
-			}
-			return true
 		}
 	}
 }

@@ -36,7 +36,7 @@ interface InputEventHandler<in T : InputEventContext> {
  * @param successor the optional successor to which events are forwarded
  */
 open class InputEventHandlerAdapter<in T : InputEventContext>(
-    val successor: InputEventHandler<T>? = null
+	private val successor: InputEventHandler<T>? = null
 ) : InputEventHandler<T> {
 
     companion object {

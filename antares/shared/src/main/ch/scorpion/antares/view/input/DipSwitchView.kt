@@ -221,12 +221,12 @@ class DipSwitchView(
 
 	override fun focusGained() {
 		updateFocusIndex(bitsCount - 1)
-		super.focusGained()
+		super<DigitalComponentView>.focusGained()
 	}
 
 	override fun focusLost() {
 		updateFocusIndex(null)
-		super.focusLost()
+		super<DigitalComponentView>.focusLost()
 	}
 
 	fun transferFocusRight() {

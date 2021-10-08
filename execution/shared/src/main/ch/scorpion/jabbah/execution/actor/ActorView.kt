@@ -28,13 +28,13 @@ interface ActorView {
      * @param y the y-coordinate of the mouse position
      * @return the tool tip text of this [ActorView].
      */
-    fun getExecutionTooltip(x: Double, y: Double): Tooltip?
+    fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
 	fun getExecutionTooltip(p: Point2D): Tooltip? = getExecutionTooltip(p.x, p.y)
 
-	fun executionStarted(signalHandler: SignalHandler)
+	fun executionStarted(signalHandler: SignalHandler) {}
 
-	fun executionStopped(signalHandler: SignalHandler)
+	fun executionStopped(signalHandler: SignalHandler) {}
 }
 
 open class ActorInteractionContext(
