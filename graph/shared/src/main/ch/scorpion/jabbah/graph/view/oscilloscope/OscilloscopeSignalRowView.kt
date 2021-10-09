@@ -4,9 +4,11 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
-import ch.scorpion.jabbah.draw.drawable.IconButton
+import ch.scorpion.jabbah.draw.drawable.DrawableButton
+import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 
@@ -31,14 +33,15 @@ class OscilloscopeSignalRowView(
 	private val probeView = OscilloscopeProbeView(
 		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 		name = name,
-		color = color.onBackground,
+		probeColor = color.onBackground,
 		origLocSource = { oscilloscopeView.location.add(location) })
 
-	private val removeButton = IconButton<EditInputEventContext>(
-		icon = RemoveIcon(Dimension2D(OscilloscopeView.ICON_BUTTON_SIZE, OscilloscopeView.ICON_BUTTON_SIZE)),
+	private val removeButton = DrawableButton<EditInputEventContext>(
+		renderer = IconDrawableButtonRenderer(RemoveIcon(Dimension2D(OscilloscopeView.ICON_BUTTON_SIZE, OscilloscopeView.ICON_BUTTON_SIZE))),
 		tooltipKey = "graph.action.oscilloscope.removeRow.name",
 		location = Point2D(OscilloscopeView.ROW_INSET, factory.rowHeight / 2 - OscilloscopeView.ICON_BUTTON_SIZE / 2),
-		action = { service.removeRow(it.drawingView(), probeView.name, oscilloscopeView) })
+		action = { service.removeRow(it.drawingView(), probeView.name, oscilloscopeView) },
+		styleType = StyleType.ANNOTATION)
 
 	init {
 		add(removeButton)

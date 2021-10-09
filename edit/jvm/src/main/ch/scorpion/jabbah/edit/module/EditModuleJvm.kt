@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType

@@ -152,7 +152,11 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
-		invalidate(region)
+		if (useLocation) {
+			invalidate(region.add(location))
+		} else {
+			invalidate(region)
+		}
 	}
 
 	override fun handleDrawableRequestRedraw(drawable: Drawable) {
@@ -168,6 +172,14 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	/** ---- [DrawableContainerImpl] */
 
+	private fun childBoundingBox(child: Drawable): RectangularShape {
+		return if (useLocation) {
+			Rectangle2D(child.boundingBox).add(location)
+		} else {
+			child.boundingBox
+		}
+	}
+
 	protected open fun provideInputEventHandler(): DrawableBagInputEventHandler<T, InputEventContext> =
 		DrawableBagInputEventHandler()
 
@@ -177,9 +189,9 @@ open class DrawableContainerImpl<T : Drawable>(
 	 */
 	protected fun updateBoundingBox() {
 		children.firstOrNull { it.visible }
-			?.let { boundingBox.setFrame(it.boundingBox) }
+			?.let { boundingBox.setFrame(childBoundingBox(it)) }
 			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		children.filter { it.visible }.forEach { boundingBox.add(it.boundingBox) }
+		children.filter { it.visible }.forEach { boundingBox.add(childBoundingBox(it)) }
 	}
 
 	private fun notifyDrawableAdded(drawable: T) {

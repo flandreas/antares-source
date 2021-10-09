@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.module.DrawModule

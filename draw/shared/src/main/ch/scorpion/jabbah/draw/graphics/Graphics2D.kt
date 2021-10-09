@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.geom.AffineTransform
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
 
@@ -38,6 +39,8 @@ interface Graphics2D {
 
     /** Concatenates the current [AffineTransform] with a translation transformation.*/
     fun translate(tx: Double, ty: Double)
+
+    fun translate(p: Point2D) = translate(p.x, p.y)
 
     /** Concatenates the current [AffineTransform] with a rotation transformation according to the given angle in radians.*/
     fun rotate(theta: Double)

@@ -10,10 +10,13 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.drawable.IconButton
+import ch.scorpion.jabbah.draw.drawable.DrawableButton
+import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Stylable
+import ch.scorpion.jabbah.draw.style.StylableImpl
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -22,20 +25,22 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * for picking the [OscilloscopeProbeViewIcon] and dragging it as [OscilloscopeProbeVerticeView]
  * into the [GraphView].
  *
- * @param color the color of the [OscilloscopeProbeViewIcon]
+ * @param probeColor the color of the [OscilloscopeProbeViewIcon]
  * @param location the location relative to the [DrawableContainer] containing this [OscilloscopeProbeView]
  * @param origLocSource returns the location relative to which the new [OscilloscopeProbeVerticeView] is inserted
  */
 class OscilloscopeProbeView(
 	location: Point2D,
 	name: String,
-	private val color: CompositeColor,
+	private val probeColor: CompositeColor,
 	private val origLocSource: () -> Point2D,
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : IconButton<EditInputEventContext>(
-	icon = OscilloscopeProbeViewIcon(name, color),
+	stylable: Stylable = StylableImpl(styleProvider = DrawStyleModule.styleProvider, styleType = StyleType.ANNOTATION)
+) : DrawableButton<EditInputEventContext>(
+	renderer = IconDrawableButtonRenderer(OscilloscopeProbeViewIcon(name, probeColor)),
 	action = {},
 	location = location,
+	stylable = stylable,
+	specialColor = probeColor
 ) {
 
 	companion object {
@@ -66,7 +71,7 @@ class OscilloscopeProbeView(
 			}
 		}
 
-	private val probeIcon get() = icon as OscilloscopeProbeViewIcon
+	private val probeIcon get() = (renderer as IconDrawableButtonRenderer).icon as OscilloscopeProbeViewIcon
 
 	/** Set to `false` if [verticeView] has been dragged into the [GraphView].*/
 	private var verticeViewPresent = true
@@ -130,7 +135,7 @@ class OscilloscopeProbeView(
 			isHovering = false
 			verticeViewPresent = false
 
-			val vv = OscilloscopeProbeVerticeView<Any>(name = name, color = color, styleProvider = styleProvider).let {
+			val vv = OscilloscopeProbeVerticeView<Any>(name = name, color = probeColor, styleProvider = styleProvider).let {
 				it.location = origLocSource.invoke().add(location)
 					.add(Point2D(0.0, height)) // origin is at the tip of the bubble, i.e. the BOTTOM of the icon rectangle
 					.add(Point2D(DRAG_DISPLACEMENT, DRAG_DISPLACEMENT))

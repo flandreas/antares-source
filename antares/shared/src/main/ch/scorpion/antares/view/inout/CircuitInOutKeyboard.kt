@@ -5,10 +5,15 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Focusable
+import ch.scorpion.jabbah.edit.model.text.CharacterDrawableButtonRenderer
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
@@ -23,17 +28,21 @@ class CircuitInOutKeyboard(
 	private val circuitInOutView: CircuitInOutView,
 	private val view: DrawingView<*>,
 	private val signalHandler: SignalHandler,
-	location: Point2D
+	location: Point2D,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val styleType: StyleType = StyleType.FIGURE
 ) : ActorViewContainer<Drawable>(location, useLocation = true), Focusable {
 
 	companion object {
 		private const val INSET = 5
 		private const val BUTTON_DISTANCE = 3
-		private const val BUTTON_SIZE = 20
+		private const val BUTTON_SIZE = 25
 		private const val KEYBOARD_SIZE = 2 * INSET + 4 * BUTTON_SIZE + 3 * BUTTON_DISTANCE
 	}
 
 	private val bounds = Rectangle2D(location.x, location.y, KEYBOARD_SIZE.toDouble(), KEYBOARD_SIZE.toDouble())
+
+	private val style = styleProvider.getStyle(styleType)
 
 	/** ---- [DrawableContainer] */
 
@@ -42,9 +51,13 @@ class CircuitInOutKeyboard(
 	override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 
 	override fun draw(context: DrawContext) {
-		super.draw(context)
-		context.g.color = Color.GREEN
+		context.g.color = style.color.backgroundColor
+		context.g.fill(bounds)
+		context.g.color = style.color.foregroundColor
+		context.g.stroke = style.stroke
 		context.g.draw(bounds)
+
+		super.draw(context)
 	}
 
 	override val boundingBox: RectangularShape get() = Rectangle2D(bounds)
@@ -68,7 +81,15 @@ class CircuitInOutKeyboard(
 		var x = INSET
 		var y = INSET
 		for (i in 1..16) {
-			add(KeyButton(Point2D(x, y), BitOperation.HEX_CHAR[i - 1], BitOperation.HEY_KEY[i - 1], BUTTON_SIZE, ::buttonClickHandler))
+			add(ActorDrawableButton<EditInputEventContext>(
+				location = Point2D(x, y),
+				styleType = styleType,
+				renderer = CharacterDrawableButtonRenderer(
+					character = BitOperation.HEX_CHAR[i - 1],
+					size = BUTTON_SIZE,
+					style = styleProvider.getStyle(styleType)),
+				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1]) }
+			))
 			x += BUTTON_SIZE + BUTTON_DISTANCE
 			if (i.mod(4) == 0) {
 				x = INSET
@@ -88,6 +109,8 @@ class CircuitInOutKeyboard(
 
 	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 
+		private var hoverHandler: ActorInteractionHandler? = null
+
 		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			if (!bounds.contains(context.x, context.y)) {
 				removeFromView()
@@ -101,6 +124,9 @@ class CircuitInOutKeyboard(
 		}
 
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
+			// Delegate to possible buttons, but keep "modal" control
+			hoverHandler = hoverHandler?.mouseMoved(context)
+				?: super@CircuitInOutKeyboard.getActorInteractionHandler(context).mouseMoved(context)
 			return this
 		}
 

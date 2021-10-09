@@ -8,17 +8,19 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
+import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
@@ -106,16 +108,15 @@ class ClockControlView(
 
 	private inner class IconButton(
 		location: Point2D
-	) : AbstractActorIconButton(
-		icon = KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
-		location = location
+	) : ActorDrawableButton<EditInputEventContext>(
+		renderer = IconDrawableButtonRenderer(KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
+		location = location,
+		actorAction = {}
 	) {
 
 		override fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = MouseMoveHandler()
 
-		override fun handleClicked(context: ActorInteractionContext) { }
-
-		private inner class MouseMoveHandler : Handler() {
+		private inner class MouseMoveHandler : ActorHandler() {
 
 			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 				// Hover highlighting

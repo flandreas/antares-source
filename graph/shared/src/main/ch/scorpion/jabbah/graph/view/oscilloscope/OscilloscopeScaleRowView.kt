@@ -4,11 +4,13 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.drawable.IconButton
+import ch.scorpion.jabbah.draw.drawable.DrawableButton
+import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.AddIcon
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
+import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
@@ -35,10 +37,12 @@ class OscilloscopeScaleRowView(
 	private val factory: OscilloscopeViewFactory
 ) : ActorViewContainer<Drawable>(location = location, useLocation = true) {
 
-	private val addButton = IconButton<EditInputEventContext>(
-		icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+	private val addButton = DrawableButton<EditInputEventContext>(
+		renderer = IconDrawableButtonRenderer(AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
 		action = { service.addRow(it.drawingView(), oscilloscopeView) },
-		location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+		location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
+		styleType = StyleType.ANNOTATION
+	)
 
 
 	private val scaleButton = ScaleButton(
@@ -77,17 +81,16 @@ class OscilloscopeScaleRowView(
 	/** Displays a [KnobView] to be used for changing the [SignalHistoryTimeline]'s scale.*/
 	private inner class ScaleButton(
 		location: Point2D
-	) : AbstractActorIconButton(
-		icon = KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+	) : ActorDrawableButton<EditInputEventContext>(
+		renderer = IconDrawableButtonRenderer(KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
 		location = location,
 		tooltipKey = "graph.action.oscilloscope.scale.name",
+		actorAction = {}
 	) {
 
 		override fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = MouseMoveHandler()
 
-		override fun handleClicked(context: ActorInteractionContext) { }
-
-		private inner class MouseMoveHandler : Handler() {
+		private inner class MouseMoveHandler : ActorHandler() {
 			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 
 				// Hover highlighting

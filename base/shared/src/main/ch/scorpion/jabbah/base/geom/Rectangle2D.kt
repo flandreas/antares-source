@@ -13,6 +13,7 @@ data class Rectangle2D(
     constructor(x: Int, y: Int, w: Int, h: Int): this(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
     constructor(rect: RectangularShape) : this(rect.x, rect.y, rect.width, rect.height)
     constructor(location: Point2D, width: Double, height: Double) : this(location.x, location.y, width, height)
+	constructor(location: Point2D, dimension: Dimension2D): this(location.x, location.y, dimension.width, dimension.height)
 
 	companion object {
 
