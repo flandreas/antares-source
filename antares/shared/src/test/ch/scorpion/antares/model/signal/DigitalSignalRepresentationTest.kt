@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.model.signal.BitWidth.*
+import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -71,6 +72,16 @@ class DigitalSignalRepresentationTest {
 	fun shouldReplaceDecimalSubWord() {
 		assertEquals(of(BW_8, 129L), DECIMAL.withDigit(of(BW_8, 123L), of(BW_4, 9L), 0))
 		assertEquals(of(BW_8, 193L), DECIMAL.withDigit(of(BW_8, 123L), of(BW_4, 9L), 1))
+	}
+
+	@Test
+	fun shouldNotReplaceDecimalUndefinedDigit() {
+		assertEquals(of(BW_8, 123L), DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Undefined), 0))
+	}
+
+	@Test
+	fun shouldNotReplaceDecimalErrorDigit() {
+		assertEquals(of(BW_8, 123L), DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Error), 0))
 	}
 
 	@Test

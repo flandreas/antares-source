@@ -11,4 +11,7 @@ class RoundRectangle2D(
     val arcW: Double,
     val arcH: Double
 ) : AbstractRectangularShape(x, y, width, height) {
+
+	constructor(location: Point2D, dimension: Dimension2D, arc: Double):
+		this(location.x, location.y, dimension.width, dimension.height, arc, arc)
 }

@@ -64,6 +64,8 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_D = java.awt.event.KeyEvent.VK_D
 		KeyEvent.VK_E = java.awt.event.KeyEvent.VK_E
 		KeyEvent.VK_F = java.awt.event.KeyEvent.VK_F
+		KeyEvent.VK_X = java.awt.event.KeyEvent.VK_X
+		KeyEvent.VK_Z = java.awt.event.KeyEvent.VK_Z
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

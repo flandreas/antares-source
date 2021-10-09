@@ -42,16 +42,16 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.decimalString)
 		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.decimalDigitToWord(bitWidth, digit)
 		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal {
-			var s = word.getValue().toString().padStart(index + 1, '0')
-			val sIndex = s.length - 1 - index
-			s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
 			try {
+				var s = word.getValue().toString().padStart(index + 1, '0')
+				val sIndex = s.length - 1 - index
+				s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
 				val value = s.toULong()
 				if (value <= word.bitWidth.maxValue) {
 					return DigitalSignalFactory.of(word.bitWidth, value)
 				}
 			} catch (e: Throwable) {
-				// overflow, ignore and return original word
+				// overflow or invalid, ignore and return original word
 			}
 			return word
 		}
@@ -112,7 +112,6 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 
 	/**
 	 * Creates a copy of [word] and sets the specified [digitWord] in the copy.
-	 * TODO: This should rather be 'withDigit(word: Word, digit: Int, index: Int): Word'
 	 *
 	 * @param word the [DigitalSignal] to be changed
 	 * @param digitWord the [DigitalSignal] to be set in the copy of this [DigitalSignal]

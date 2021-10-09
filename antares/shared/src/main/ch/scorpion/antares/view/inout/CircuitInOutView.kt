@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.signal.NumberView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -104,6 +105,18 @@ class CircuitInOutView(
 
 	/** Initialized in [updateView] */
 	private var numberView: NumberView? = null
+
+	/** Opened when user clicks on digit if [DigitalSignalRepresentation] is not binary.*/
+	private var popupKeyboard: CircuitInOutKeyboard? = null
+
+	/** The [DrawingView] in which [popupKeyboard] is displayed.*/
+	private var popupKeyboardView: DrawingView<*>? = null
+
+	private val numberViewFocusListener: PropertyChangeListener<Any> = PropertyChangeListener {
+		if (numberView?.focusIndex == null) {
+			hideKeyboard()
+		}
+	}
 
 	override fun modelExchanged(oldModel: CircuitInOut?) {
 		super.modelExchanged(oldModel)
@@ -351,7 +364,23 @@ class CircuitInOutView(
 		super.handleStateChanged(event)
 	}
 
+	/** ---- [AbstractVerticeView] */
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		numberView?.addPropertyChangeListener(numberViewFocusListener)
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		numberView?.removePropertyChangeListener(numberViewFocusListener)
+		hideKeyboard()
+	}
+
 	/** ---- [CircuitInOutView] */
+
+	fun clearByUser(signalHandler: SignalHandler) {
+		model.setSignalManually(DigitalSignalFactory.of(bitWidth, 0), signalHandler)
+
+	}
 
 	/**
 	 * Returns the translation vector to be applied to the [ArrowPath] for drawing and bounding box calculation.
@@ -504,7 +533,9 @@ class CircuitInOutView(
 
 	fun consumeKey(key: Int, signalHandler: SignalHandler) {
 		invalidate()
-		if (key == KeyEvent.VK_LEFT) {
+		if (key == KeyEvent.VK_ESCAPE) {
+			hideKeyboard()
+		} else if (key == KeyEvent.VK_LEFT) {
 			numberView!!.transferFocusLeft()
 		} else if (key == KeyEvent.VK_RIGHT) {
 			numberView!!.transferFocusRight()
@@ -540,6 +571,53 @@ class CircuitInOutView(
 		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
 	}
 
+	private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
+		hideKeyboard()
+
+		with(context.view as DrawingView<*>) {
+			popupKeyboardView = this
+			popupKeyboard = CircuitInOutKeyboard(
+				this@CircuitInOutView,
+				context.signalHandler
+			).also { keyboard ->
+				animationContainer.add(keyboard)
+				animationContainer.validate()
+			}
+		}
+		return popupKeyboard!!.getActorInteractionHandler(context)
+	}
+
+	fun hideKeyboard() {
+		popupKeyboard?.let { keyboard ->
+			popupKeyboardView?.animationContainer?.remove(keyboard)
+		}
+		popupKeyboard
+		popupKeyboardView = null
+	}
+
+	private fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
+		var handler: ActorInteractionHandler? = null
+		val digitIndex = getDigitIndexAt(context.x, context.y)
+		if (digitIndex != null) {
+			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+				model.toggleBit(digitIndex, undefine, context.signalHandler)
+			} else {
+				if (context.view is DrawingView<*>) {
+					context.mouseEvent?.consume()
+					handler = displayKeyboard(context)
+				}
+			}
+
+			// Set the focus on the selected digit
+			invalidate()
+			requestFocus()
+			numberView!!.setFocusTo(digitIndex)
+			validate()
+
+		}
+		return handler
+	}
+
 	/**
 	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
 	 * individual digits with the keyboard.
@@ -561,6 +639,7 @@ class CircuitInOutView(
 					messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return null
 			}
+
 			// Don't consume event so that Canvas can gain focus
 			return toggle(context.mouseEvent?.isAltDown ?: false, context) ?: this
 		}
@@ -573,46 +652,6 @@ class CircuitInOutView(
 				return toggle(false, context)
 			}
 			return null
-		}
-
-		private fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
-			var handler: ActorInteractionHandler? = null
-			val digitIndex = getDigitIndexAt(context.x, context.y)
-			if (digitIndex != null) {
-				if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-					model.toggleBit(digitIndex, undefine, context.signalHandler)
-				} else if (numberView!!.focusIndex == digitIndex) {
-					if (context.view is DrawingView<*>) {
-						context.mouseEvent?.consume()
-						handler = displayKeyboard(context)
-					} else {
-						eventBus.post(ComponentMessage(
-							type = ComponentMessageType.Info,
-							source = this@CircuitInOutView,
-							messageKey = "antares.msg.HexInputManipulation"))
-					}
-				}
-
-				// Set the focus on the selected digit
-				invalidate()
-				requestFocus()
-				numberView!!.setFocusTo(digitIndex)
-				validate()
-
-			}
-			return handler
-		}
-
-		private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
-			val keyboard = CircuitInOutKeyboard(
-				this@CircuitInOutView,
-				context.view as DrawingView<*>,
-				context.signalHandler,
-				boundingBox.bottomLeft)
-			(context.view as DrawingView<*>).animationContainer.add(keyboard)
-			(context.view as DrawingView<*>).animationContainer.validate()
-
-			return keyboard.getActorInteractionHandler(context)
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {

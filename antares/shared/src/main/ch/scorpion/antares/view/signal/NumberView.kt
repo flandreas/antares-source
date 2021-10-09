@@ -3,6 +3,8 @@ package ch.scorpion.antares.view.signal
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
@@ -25,13 +27,17 @@ class NumberView(
 	representation: DigitalSignalRepresentation,
 	bitWidth: BitWidth,
 	drawDigitBorder: Boolean = true,
-	drawBox: Boolean = true
-) : AbstractRectangle(), Transparent {
+	drawBox: Boolean = true,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+) : AbstractRectangle(), Transparent, PropertyOwner<Any> by propertyOwner {
 
 	companion object {
 		private const val DIGIT_GROUP_GAP = 5
 		private const val BYTE_LABEL_HOR_GAP = 1
 		private const val SIGNAL_NOTATION_LABEL_GAP = 1
+
+		/** The name of the [focusIndex] property as of [PropertyOwner].*/
+		const val PROP_FOCUS_INDEX = "PROP_FOCUS_INDEX"
 	}
 
 	/** Contains the individual digit views, starting with the lowest priority bit at index 0. */
@@ -44,9 +50,16 @@ class NumberView(
 
 	/** The index of the [digitViews] that has the focus, or `null` if none has the focus. */
 	var focusIndex: Int? = null
-		private set
+		private set(value) {
+			if (field != value) {
+				val oldValue = field
+				field = value
+				propertyOwner.fire(PROP_FOCUS_INDEX, oldValue, value)
+			}
+		}
 
 	init {
+		propertyOwner.source = this
 		buildUI(representation, bitWidth, drawDigitBorder, drawBox)
 	}
 

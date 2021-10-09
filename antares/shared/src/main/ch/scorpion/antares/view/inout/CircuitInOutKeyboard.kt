@@ -1,17 +1,17 @@
 package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Focusable
-import ch.scorpion.jabbah.edit.model.text.CharacterDrawableButtonRenderer
+import ch.scorpion.jabbah.edit.model.text.TextDrawableButtonRenderer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -26,23 +26,29 @@ import ch.scorpion.jabbah.execution.actor.ActorViewContainer
  */
 class CircuitInOutKeyboard(
 	private val circuitInOutView: CircuitInOutView,
-	private val view: DrawingView<*>,
 	private val signalHandler: SignalHandler,
-	location: Point2D,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val styleType: StyleType = StyleType.FIGURE
-) : ActorViewContainer<Drawable>(location, useLocation = true), Focusable {
+) : ActorViewContainer<Drawable>(calculateLocation(circuitInOutView), useLocation = true), Focusable {
 
 	companion object {
-		private const val INSET = 5
-		private const val BUTTON_DISTANCE = 3
+		private const val VERTICAL_DISTANCE = 0
+		private const val MARGIN = 10
+		private const val PADDING = 5
+		private const val BUTTON_GAP = 3
 		private const val BUTTON_SIZE = 25
-		private const val KEYBOARD_SIZE = 2 * INSET + 4 * BUTTON_SIZE + 3 * BUTTON_DISTANCE
+		private const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
+		private const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
+
+		fun calculateLocation(circuitInOutView: CircuitInOutView): Point2D {
+			val bottomCenter = circuitInOutView.boundingBox.bottomCenter.add(Point2D(0, VERTICAL_DISTANCE))
+			return Point2D(bottomCenter.x - KEYBOARD_WIDTH / 2, bottomCenter.y)
+		}
 	}
 
-	private val bounds = Rectangle2D(location.x, location.y, KEYBOARD_SIZE.toDouble(), KEYBOARD_SIZE.toDouble())
+	private val bounds = Rectangle2D(location.x, location.y, KEYBOARD_WIDTH.toDouble(), KEYBOARD_HEIGHT.toDouble())
 
-	private val style = styleProvider.getStyle(styleType)
+	private val style: Style get() = styleProvider.getStyle(styleType)
 
 	/** ---- [DrawableContainer] */
 
@@ -51,11 +57,17 @@ class CircuitInOutKeyboard(
 	override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 
 	override fun draw(context: DrawContext) {
-		context.g.color = style.color.backgroundColor
+		// Draw margin area
+		context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor
 		context.g.fill(bounds)
+
+		// Draw keyboard background
+		context.g.color = style.color.backgroundColor
+		context.g.fillRect(location.xInt + MARGIN, location.yInt + MARGIN, KEYBOARD_WIDTH - 2 * MARGIN, KEYBOARD_HEIGHT - 2 * MARGIN)
+
 		context.g.color = style.color.foregroundColor
 		context.g.stroke = style.stroke
-		context.g.draw(bounds)
+		context.g.drawRect(location.xInt + MARGIN, location.yInt + MARGIN, KEYBOARD_WIDTH - 2 * MARGIN, KEYBOARD_HEIGHT - 2 * MARGIN)
 
 		super.draw(context)
 	}
@@ -78,46 +90,52 @@ class CircuitInOutKeyboard(
 	/** ---- [CircuitInOutKeyboard] */
 
 	private fun buildHexadecimalUI() {
-		var x = INSET
-		var y = INSET
-		for (i in 1..16) {
-			add(ActorDrawableButton<EditInputEventContext>(
+		var x = MARGIN + PADDING
+		var y = MARGIN + PADDING
+		for (i in 1..18) {
+			val button = ActorDrawableButton<EditInputEventContext>(
 				location = Point2D(x, y),
 				styleType = styleType,
-				renderer = CharacterDrawableButtonRenderer(
-					character = BitOperation.HEX_CHAR[i - 1],
-					size = BUTTON_SIZE,
+				renderer = TextDrawableButtonRenderer(
+					text = BitOperation.HEX_CHAR[i - 1].toString(),
+					dimension = Dimension2D(BUTTON_SIZE, BUTTON_SIZE),
 					style = styleProvider.getStyle(styleType)),
-				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1]) }
-			))
-			x += BUTTON_SIZE + BUTTON_DISTANCE
+				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1]) },
+				round = true
+			)
+			button.enabled = circuitInOutView.signalRepresentation == DigitalSignalRepresentation.HEXADECIMAL || i <= 10
+			add(button)
+
+			x += BUTTON_SIZE + BUTTON_GAP
 			if (i.mod(4) == 0) {
-				x = INSET
-				y += BUTTON_SIZE + BUTTON_DISTANCE
+				x = MARGIN + PADDING
+				y += BUTTON_SIZE + BUTTON_GAP
 			}
 		}
+		val clearButton = ActorDrawableButton<EditInputEventContext>(
+			location = Point2D(x, y),
+			styleType = styleType,
+			renderer = TextDrawableButtonRenderer(
+				text = "Clear",
+				dimension = Dimension2D(2 * BUTTON_SIZE + BUTTON_GAP, BUTTON_SIZE),
+				style = styleProvider.getStyle(styleType)),
+			actorAction = { clearHandler() },
+			round = true
+		)
+		add(clearButton)
 	}
 
 	private fun buttonClickHandler(key: Int) {
 		circuitInOutView.consumeKey(key, signalHandler)
 	}
 
-	private fun removeFromView() {
-		view.animationContainer.remove(this)
-		view.animationContainer.validate()
+	private fun clearHandler() {
+		circuitInOutView.clearByUser(signalHandler)
 	}
 
 	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 		private var hoverHandler: ActorInteractionHandler? = null
-
-		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			if (!bounds.contains(context.x, context.y)) {
-				removeFromView()
-				return null
-			}
-			return this
-		}
 
 		override fun mouseReleased(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
 			return this

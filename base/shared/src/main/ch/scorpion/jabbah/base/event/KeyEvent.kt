@@ -29,22 +29,24 @@ interface KeyEvent : InputEvent {
         var VK_ENTER = 0x06
 	    var VK_ALT = 0x07
 	    var VK_DELETE = 0x08
-	    var VK_0 = 0x09
-	    var VK_1 = 0x0A
-	    var VK_2 = 0x0B
-	    var VK_3 = 0x0C
-	    var VK_4 = 0x0D
-	    var VK_5 = 0x0E
-	    var VK_6 = 0x0F
-	    var VK_7 = 0x10
-	    var VK_8 = 0x11
-	    var VK_9 = 0x12
-	    var VK_A = 0x13
-	    var VK_B = 0x14
-	    var VK_C = 0x15
-	    var VK_D = 0x16
-	    var VK_E = 0x17
-	    var VK_F = 0x18
+	    var VK_0 = 48
+	    var VK_1 = 49
+	    var VK_2 = 50
+	    var VK_3 = 51
+	    var VK_4 = 52
+	    var VK_5 = 52
+	    var VK_6 = 54
+	    var VK_7 = 55
+	    var VK_8 = 56
+	    var VK_9 = 57
+	    var VK_A = 65
+	    var VK_B = 66
+	    var VK_C = 67
+	    var VK_D = 68
+	    var VK_E = 69
+	    var VK_F = 70
+	    var VK_X = 88
+	    var VK_Z = 90
     }
 }
 

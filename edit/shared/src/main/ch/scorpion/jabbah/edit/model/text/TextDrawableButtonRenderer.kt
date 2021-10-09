@@ -6,22 +6,19 @@ import ch.scorpion.jabbah.draw.drawable.AbstractIconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.drawable.DrawableButton
 import ch.scorpion.jabbah.draw.style.Style
 
-class CharacterDrawableButtonRenderer(
-	character: Char,
-	size: Int,
+class TextDrawableButtonRenderer(
+	text: String,
+	override val dimension: Dimension2D,
 	private val style: Style
 ) : AbstractIconDrawableButtonRenderer() {
 
 	private val label = Label(
-		text = character.toString(),
+		text = text,
 		font = style.font,
 		color = null
 	)
 
-	override val dimension: Dimension2D = Dimension2D(size, size)
-
 	override fun draw(button: DrawableButton<*>, context: DrawContext) {
-		//val color = determineColor(button)
 		establishColor(button, context)
 
 		context.g.color = context.color!!.foregroundColor

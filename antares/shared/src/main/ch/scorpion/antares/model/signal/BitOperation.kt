@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_0
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_1
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_2
@@ -18,6 +17,8 @@ import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_C
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_D
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_E
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_F
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_X
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_Z
 import kotlin.math.max
 import kotlin.math.pow
 
@@ -27,7 +28,7 @@ import kotlin.math.pow
 object BitOperation {
 
     val HEX_CHAR = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
-	val HEY_KEY = listOf(VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_F)
+	val HEY_KEY = listOf(VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_F, VK_X, VK_Z)
 	private val POWER = Array(63 + 1) {
 		2.0.pow(it).toULong()
 	}

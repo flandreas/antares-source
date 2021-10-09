@@ -2,8 +2,7 @@ package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
@@ -29,8 +28,9 @@ open class DrawableButton<C: InputEventContext>(
 	stylable: Stylable,
 	private val action: ButtonAction<C>,
 	val renderer: DrawableButtonRenderer,
-	private val specialColor: CompositeColor? = null
-) : AbstractRectangle(Rectangle2D(location, renderer.dimension)), Stylable by stylable {
+	private val specialColor: CompositeColor? = null,
+	round: Boolean = false
+) : AbstractRectangle(createShape(location, renderer.dimension, round)), Stylable by stylable {
 
 	constructor(
 		location: Point2D,
@@ -43,6 +43,15 @@ open class DrawableButton<C: InputEventContext>(
 
 	companion object {
 		private val LOG by logger(DrawableButton::class)
+		private const val CORNER_ARC = 6.0
+
+		private fun createShape(location: Point2D, dimension: Dimension2D, round: Boolean): RectangularShape {
+			return if (round) {
+				RoundRectangle2D(location, dimension, CORNER_ARC)
+			} else {
+				Rectangle2D(location, dimension)
+			}
+		}
 	}
 
 	val buttonColor: CompositeColor get() = specialColor ?: color
@@ -125,7 +134,6 @@ open class DrawableButton<C: InputEventContext>(
 		override fun mouseClicked(context: C): InputEventHandler<C>? {
 			if (enabled) {
 				context.mouseEvent?.consume()
-				isHovering = false
 				action.execute(context)
 			}
 			return null

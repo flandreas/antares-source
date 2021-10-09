@@ -18,8 +18,9 @@ open class ActorDrawableButton<C: InputEventContext>(
 	tooltipKey: String? = null,
 	stylable: Stylable,
 	private val actorAction: ButtonAction<ActorInteractionContext>,
-	renderer: DrawableButtonRenderer
-) : DrawableButton<C>(location, tooltipKey, stylable, {}, renderer), ActorView {
+	renderer: DrawableButtonRenderer,
+	round: Boolean = false
+) : DrawableButton<C>(location, tooltipKey, stylable, {}, renderer, round = round), ActorView {
 
 	constructor(
 		location: Point2D,
@@ -27,8 +28,9 @@ open class ActorDrawableButton<C: InputEventContext>(
 		styleType: StyleType = StyleType.ANNOTATION,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 		actorAction: ButtonAction<ActorInteractionContext>,
-		renderer: DrawableButtonRenderer
-	) : this(location, tooltipKey, StylableImpl(styleType = styleType, styleProvider = styleProvider), actorAction, renderer)
+		renderer: DrawableButtonRenderer,
+		round: Boolean = false
+	) : this(location, tooltipKey, StylableImpl(styleType = styleType, styleProvider = styleProvider), actorAction, renderer, round)
 
 	private val actorInteractionHandler = createActorInteractionHandler()
 
@@ -45,7 +47,6 @@ open class ActorDrawableButton<C: InputEventContext>(
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (enabled) {
-				isHovering = false
 				actorAction.execute(context)
 			}
 			return null
