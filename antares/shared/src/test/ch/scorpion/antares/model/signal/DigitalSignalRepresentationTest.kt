@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 
 /**
@@ -76,18 +77,18 @@ class DigitalSignalRepresentationTest {
 
 	@Test
 	fun shouldNotReplaceDecimalUndefinedDigit() {
-		assertEquals(of(BW_8, 123L), DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Undefined), 0))
+		assertNull(DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Undefined), 0))
 	}
 
 	@Test
 	fun shouldNotReplaceDecimalErrorDigit() {
-		assertEquals(of(BW_8, 123L), DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Error), 0))
+		assertNull(DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Error), 0))
 	}
 
 	@Test
 	fun shouldNotReplaceDecimalSubWordOutsideRange() {
 		// Value 923 cannot be represented with 8 bit, outside range of 255
-		assertEquals(of(BW_8, 123L), DECIMAL.withDigit(of(BW_8, 123L), of(BW_4, 9L), 2))
+		assertNull(DECIMAL.withDigit(of(BW_8, 123L), of(BW_4, 9L), 2))
 	}
 
 	@Test

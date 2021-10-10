@@ -545,15 +545,17 @@ class CircuitInOutView(
 			}
 		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 			val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
-			val newWord = signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)
-			model.setSignalManually(newWord, signalHandler)
-			numberView!!.transferFocusRight()
+			signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)?.let {
+				model.setSignalManually(it, signalHandler)
+				numberView!!.transferFocusRight()
+			}
 		} else {
 			val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar())
 			if (digitWord != null && checkTopLevelKey()) {
-				val newWord = signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)
-				model.setSignalManually(newWord, signalHandler)
-				numberView!!.transferFocusRight()
+				signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)?.let {
+					model.setSignalManually(it, signalHandler)
+					numberView!!.transferFocusRight()
+				}
 			}
 		}
 		validate()

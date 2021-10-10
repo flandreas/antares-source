@@ -41,19 +41,22 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		}
 		override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.decimalString)
 		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.decimalDigitToWord(bitWidth, digit)
-		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal {
-			try {
+		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal? {
+			return try {
 				var s = word.getValue().toString().padStart(index + 1, '0')
 				val sIndex = s.length - 1 - index
 				s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
 				val value = s.toULong()
 				if (value <= word.bitWidth.maxValue) {
-					return DigitalSignalFactory.of(word.bitWidth, value)
+					DigitalSignalFactory.of(word.bitWidth, value)
+				} else {
+					null
 				}
 			} catch (e: Throwable) {
-				// overflow or invalid, ignore and return original word
+				// overflow or invalid
+				null
 			}
-			return word
+			//return word
 		}
 	},
 
@@ -117,8 +120,9 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	 * @param digitWord the [DigitalSignal] to be set in the copy of this [DigitalSignal]
 	 * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of
 	 * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7)
+	 * @return the copied and adjusted [DigitalSignal], or `null` if replacement was not possible
 	 */
-	abstract fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal
+	abstract fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal?
 
     override fun toString(): String {
         return when (this) {
