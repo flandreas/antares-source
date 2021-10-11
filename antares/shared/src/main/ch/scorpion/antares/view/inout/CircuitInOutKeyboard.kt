@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.DrawableAttendantPositioner
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Focusable
@@ -26,10 +27,11 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
  */
 class CircuitInOutKeyboard(
 	private val circuitInOutView: CircuitInOutView,
+	view: View<*>,
 	private val contextHolder: GraphApplicationContextHolder,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val styleType: StyleType = StyleType.FIGURE
-) : ActorViewContainer<Drawable>(calculateLocation(circuitInOutView), useLocation = true), Focusable {
+) : ActorViewContainer<Drawable>(useLocation = true), Focusable {
 
 	companion object {
 		private const val VERTICAL_DISTANCE = 0
@@ -39,16 +41,20 @@ class CircuitInOutKeyboard(
 		private const val BUTTON_SIZE = 25
 		private const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
 		private const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
-
-		fun calculateLocation(circuitInOutView: CircuitInOutView): Point2D {
-			val bottomCenter = circuitInOutView.boundingBox.bottomCenter.add(Point2D(0, VERTICAL_DISTANCE))
-			return Point2D(bottomCenter.x - KEYBOARD_WIDTH / 2, bottomCenter.y)
-		}
 	}
 
-	private val bounds = Rectangle2D(location.x, location.y, KEYBOARD_WIDTH.toDouble(), KEYBOARD_HEIGHT.toDouble())
+	private val bounds: Rectangle2D
 
 	private val style: Style get() = styleProvider.getStyle(styleType)
+
+	init {
+		location = DrawableAttendantPositioner.position(
+			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT), circuitInOutView.boundingBox,
+			view,
+			preferredBelow = true,
+			VERTICAL_DISTANCE)
+		bounds = Rectangle2D(location, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
+	}
 
 	/** ---- [DrawableContainer] */
 

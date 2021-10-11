@@ -29,10 +29,6 @@ open class ViewImpl<C : InputEventContext>(
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
 
-	companion object {
-		private val LOG by logger(ViewImpl::class)
-	}
-
 	private val controller: ZoomPanController = ZoomPanController(this)
 
 	// Contains the [Drawable]s drawn by this [View]. The topmost [Drawable] is stored at index 0.
@@ -430,6 +426,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun viewToModel(p: Point2D): Point2D = transform.inverseTransform(p)
 
+	override fun viewToModelLength(length: Double): Double = length / zoomFactor
+
 	override fun modelToView(p: Point2D): Point2D = transform.transform(p)
 
 	override fun modelToViewX(x: Double): Double = modelToView(Point2D(x, 0.0)).x
@@ -438,6 +436,9 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun modelToView(p: Point2D, zoomFactor: Double): Point2D =
 		createViewGeometry(zoomFactor).transform.transform(p)
+
+	override fun modelToViewLength(length: Double): Double { return length * zoomFactor
+	}
 
 	/** ---- [ViewImpl] */
 

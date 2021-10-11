@@ -602,6 +602,7 @@ class CircuitInOutView(
 			popupKeyboardView = this
 			popupKeyboard = CircuitInOutKeyboard(
 				this@CircuitInOutView,
+				context.view,
 				applicationContextHolder as GraphApplicationContextHolder
 			).also { keyboard ->
 				animationContainer.add(keyboard)
