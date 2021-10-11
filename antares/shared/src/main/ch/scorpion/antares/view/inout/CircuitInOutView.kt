@@ -537,7 +537,7 @@ class CircuitInOutView(
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
 	}
 
-	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder) {
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
 		invalidate()
 		if (key == KeyEvent.VK_ESCAPE) {
 			hideKeyboard()
@@ -557,27 +557,30 @@ class CircuitInOutView(
 			if (checkTopLevelKey()) {
 				consumeSignal(
 					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar()),
-					contextHolder)
+					contextHolder,
+					skipAnimation)
 			} else {
-				rejectSignal(contextHolder)
+				rejectSignal(contextHolder, skipAnimation)
 			}
 		}
 		validate()
 	}
 
-	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder) {
+	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
 		signal?.let {
 			signalRepresentation.withDigit(model.signal!!, it, numberView!!.focusIndex!!)
 		}?.let {
 			model.setSignalManually(it, contextHolder.scheduler)
 			numberView!!.transferFocusRight()
-		} ?: rejectSignal(contextHolder)
+		} ?: rejectSignal(contextHolder, skipAnimation)
 	}
 
-	private fun rejectSignal(contextHolder: GraphApplicationContextHolder) {
-		contextHolder.animator
-			.schedule(ShakeLocatableAnimation(numberView!!))
-			.start()
+	private fun rejectSignal(contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean) {
+		if (!skipAnimation) {
+			contextHolder.animator
+				.schedule(ShakeLocatableAnimation(numberView!!))
+				.start()
+		}
 	}
 
 	private fun checkTopLevelKey(): Boolean {

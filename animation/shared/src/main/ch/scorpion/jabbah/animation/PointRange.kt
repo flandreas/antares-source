@@ -10,6 +10,8 @@ class PointRange(val begin: Point2D, val end: Point2D) : Sequence<Point2D> {
 
     private val _size: Double = begin.distance(end)
 
+	private var lastReached: Boolean = false
+
     /** Holds the value to be returned next.*/
     private var value: Point2D? = begin
 
@@ -42,7 +44,13 @@ class PointRange(val begin: Point2D, val end: Point2D) : Sequence<Point2D> {
 
     private fun calculateNext(distance: Double) {
         checkArgument(distance >= 0, "distance must not be negative")
-        if (size == 0.0) {
+
+	    if (lastReached) {
+	    	value = null
+		    return
+	    }
+
+	    if (size == 0.0) {
             value = null
             return
         }
@@ -51,8 +59,9 @@ class PointRange(val begin: Point2D, val end: Point2D) : Sequence<Point2D> {
         val dy = (end.y - begin.y) / size * distance
 
         value = Point2D(value!!.x + dx, value!!.y + dy)
-        if (value!!.distance(begin) > size) {
-            value = null
+        if (value!!.distance(begin) >= size) {
+        	lastReached = true
+            value = end
         }
     }
 }

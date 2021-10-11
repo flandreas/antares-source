@@ -48,4 +48,14 @@ class PointRangeTest {
 		assertEquals(Point2D(10, 10), range.getNext(1.09))
 		assertFalse(range.hasNext())
 	}
+
+	@Test
+	fun shouldAlwaysGetLast() {
+		val range = PointRange(Point2D(0, 0), Point2D(0, 3))
+
+		assertEquals(Point2D(0.0, 0.0), range.getNext(1.2))
+		assertEquals(Point2D(0.0, 1.2), range.getNext(1.2))
+		assertEquals(Point2D(0.0, 2.4), range.getNext(1.2))
+		assertEquals(Point2D(0.0, 3.0), range.getNext(1.2))
+	}
 }

@@ -44,7 +44,7 @@ class CircuitInOutViewTest {
 		val input = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_8))
 		input.signalRepresentation = DigitalSignalRepresentation.DECIMAL
 		input.focusGained()
-		input.consumeKey(KeyEvent.VK_Z, signalHandler)
+		input.consumeKey(KeyEvent.VK_Z, mockk(), skipAnimation = true)
 	}
 
 	@Test
