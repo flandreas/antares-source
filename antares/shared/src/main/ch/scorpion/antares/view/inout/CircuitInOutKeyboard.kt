@@ -58,7 +58,7 @@ class CircuitInOutKeyboard(
 
 	override fun draw(context: DrawContext) {
 		// Draw margin area
-		context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor
+		context.g.color = Themes.get<AntaresTheme>().background.color.foregroundColor
 		context.g.fill(bounds)
 
 		// Draw keyboard background
