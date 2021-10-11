@@ -72,7 +72,7 @@ class OscilloscopeSignalRowView(
 
 	fun bindDrawer() {
 		drawer.bind(
-			oscilloscopeView.model.getSignalHistory(name)!!,
+			oscilloscopeView.model.getSignalHistory(name),
 			oscilloscopeView.signalRowViews.firstOrNull()?.let { oscilloscopeView.model.getSignalHistory(it.name) },
 			oscilloscopeView.timeline,
 			color.onDark.withAlpha(164)
