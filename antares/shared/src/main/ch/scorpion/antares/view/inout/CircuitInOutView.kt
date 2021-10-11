@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.ShakeLocatableAnimation
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
@@ -40,6 +41,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.PortType
@@ -106,6 +108,9 @@ class CircuitInOutView(
 	/** Initialized in [updateView] */
 	private var numberView: NumberView? = null
 
+	/** Redirects validation requests from [NumberView] during shake animation by [rejectSignal]. */
+	private var numberViewOwner: DrawableOwner? = null
+
 	/** Opened when user clicks on digit if [DigitalSignalRepresentation] is not binary.*/
 	private var popupKeyboard: CircuitInOutKeyboard? = null
 
@@ -129,14 +134,12 @@ class CircuitInOutView(
 	var name: String?
 		get() = model.name
 		set(value) {
-			println("Setting name of CircuitInOut to '$value'")
 			model.name = value
 		}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
 		set(value) {
-			println("Setting bitWidth to '$value'")
 			invalidate()
 			model.bitWidth = value
 			updateView()
@@ -487,6 +490,9 @@ class CircuitInOutView(
 		isFocusable = model.portType.isInput
 
 		numberView = NumberView(signalRepresentation, bitWidth, drawBox = bitWidth.width > 1)
+		numberViewOwner?.dispose()
+		numberViewOwner = DrawableOwner(this, numberView!!)
+
 		numberView!!.setSignal(model.signal!!)
 
 		arrowPath = ArrowPath.Companion.Builder(
@@ -531,7 +537,7 @@ class CircuitInOutView(
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
 	}
 
-	fun consumeKey(key: Int, signalHandler: SignalHandler) {
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder) {
 		invalidate()
 		if (key == KeyEvent.VK_ESCAPE) {
 			hideKeyboard()
@@ -541,24 +547,37 @@ class CircuitInOutView(
 			numberView!!.transferFocusRight()
 		} else if (key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-				toggleFocusBitWithEnter(signalHandler)
+				toggleFocusBitWithEnter(contextHolder.scheduler)
 			}
 		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
-			val undefined = DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount))
-			signalRepresentation.withDigit(model.signal!!, undefined, numberView!!.focusIndex!!)?.let {
-				model.setSignalManually(it, signalHandler)
-				numberView!!.transferFocusRight()
-			}
+			consumeSignal(
+				DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount)),
+				contextHolder)
 		} else {
-			val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar())
-			if (digitWord != null && checkTopLevelKey()) {
-				signalRepresentation.withDigit(model.signal!!, digitWord, numberView!!.focusIndex!!)?.let {
-					model.setSignalManually(it, signalHandler)
-					numberView!!.transferFocusRight()
-				}
+			if (checkTopLevelKey()) {
+				consumeSignal(
+					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar()),
+					contextHolder)
+			} else {
+				rejectSignal(contextHolder)
 			}
 		}
 		validate()
+	}
+
+	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder) {
+		signal?.let {
+			signalRepresentation.withDigit(model.signal!!, it, numberView!!.focusIndex!!)
+		}?.let {
+			model.setSignalManually(it, contextHolder.scheduler)
+			numberView!!.transferFocusRight()
+		} ?: rejectSignal(contextHolder)
+	}
+
+	private fun rejectSignal(contextHolder: GraphApplicationContextHolder) {
+		contextHolder.animator
+			.schedule(ShakeLocatableAnimation(numberView!!))
+			.start()
 	}
 
 	private fun checkTopLevelKey(): Boolean {
@@ -580,7 +599,7 @@ class CircuitInOutView(
 			popupKeyboardView = this
 			popupKeyboard = CircuitInOutKeyboard(
 				this@CircuitInOutView,
-				context.signalHandler
+				applicationContextHolder as GraphApplicationContextHolder
 			).also { keyboard ->
 				animationContainer.add(keyboard)
 				animationContainer.validate()
@@ -589,7 +608,7 @@ class CircuitInOutView(
 		return popupKeyboard!!.getActorInteractionHandler(context)
 	}
 
-	fun hideKeyboard() {
+	private fun hideKeyboard() {
 		popupKeyboard?.let { keyboard ->
 			popupKeyboardView?.animationContainer?.remove(keyboard)
 		}
@@ -658,7 +677,7 @@ class CircuitInOutView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				consumeKey(context.keyEvent!!.key, context.signalHandler)
+				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder)
 			}
 			return null
 		}

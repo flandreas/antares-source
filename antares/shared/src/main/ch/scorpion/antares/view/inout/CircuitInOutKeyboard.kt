@@ -12,11 +12,11 @@ import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Focusable
 import ch.scorpion.jabbah.edit.model.text.TextDrawableButtonRenderer
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 
 /**
  * Displays a keyboard for entering digits into a [CircuitInOutView] during simulation.
@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.execution.actor.ActorViewContainer
  */
 class CircuitInOutKeyboard(
 	private val circuitInOutView: CircuitInOutView,
-	private val signalHandler: SignalHandler,
+	private val contextHolder: GraphApplicationContextHolder,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val styleType: StyleType = StyleType.FIGURE
 ) : ActorViewContainer<Drawable>(calculateLocation(circuitInOutView), useLocation = true), Focusable {
@@ -126,11 +126,11 @@ class CircuitInOutKeyboard(
 	}
 
 	private fun buttonClickHandler(key: Int) {
-		circuitInOutView.consumeKey(key, signalHandler)
+		circuitInOutView.consumeKey(key, contextHolder)
 	}
 
 	private fun clearHandler() {
-		circuitInOutView.clearByUser(signalHandler)
+		circuitInOutView.clearByUser(contextHolder.scheduler)
 	}
 
 	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {

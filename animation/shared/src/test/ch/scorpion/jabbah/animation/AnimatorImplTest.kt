@@ -154,8 +154,9 @@ class AnimatorImplTest {
 			listener!!.ended(this)
 		}
 
-		override fun addListener(listener: AnimationTaskListener) {
+		override fun addListener(listener: AnimationTaskListener): AnimationTask {
 			this.listener = listener
+			return this
 		}
 	}
 }

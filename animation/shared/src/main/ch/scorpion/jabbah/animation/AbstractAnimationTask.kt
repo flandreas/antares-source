@@ -21,10 +21,11 @@ abstract class AbstractAnimationTask<T>(
     override val size: Double
         get() = sequence.size
 
-    override fun addListener(listener: AnimationTaskListener) {
+    override fun addListener(listener: AnimationTaskListener): AnimationTask {
         if (!listeners.contains(listener)) {
             listeners.add(listener)
         }
+	    return this
     }
 
     override fun removeListener(listener: AnimationTaskListener) {
@@ -32,16 +33,18 @@ abstract class AbstractAnimationTask<T>(
     }
 
     override fun start() {
+	    handleStarted()
         listeners.forEach { it.started(this) }
     }
 
     override fun stop() {
-        end()
+	    handleStopped()
+	    listeners.toList().forEach { it.ended(this) }
     }
 
     override fun animate(distance: Double) {
         if (!sequence.hasNext()) {
-            end()
+            stop()
         } else {
             consumer.invoke(sequence.getNext(distance))
         }
@@ -53,9 +56,9 @@ abstract class AbstractAnimationTask<T>(
 
     /** ---- [AbstractAnimationTask] */
 
-    private fun end() {
-        listeners.toList().forEach { it.ended(this) }
-    }
+    protected open fun handleStarted() {}
+
+	protected open fun handleStopped() {}
 }
 
 class AnimationTaskImpl<T>(

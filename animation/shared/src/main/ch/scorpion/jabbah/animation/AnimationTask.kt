@@ -34,7 +34,7 @@ interface AnimationTask {
     val isPausable: Boolean
 
     /** Adds [listener] to be informed about life cycle changed of this [AnimationTask].*/
-    fun addListener(listener: AnimationTaskListener)
+    fun addListener(listener: AnimationTaskListener): AnimationTask
 
     /** Removes [listener] to stop being informed about life cycle changed of this [AnimationTask].*/
     fun removeListener(listener: AnimationTaskListener)
