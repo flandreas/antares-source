@@ -23,9 +23,7 @@ fun RBuilder.jmMenuItem(handler: JMMenuItemProps.() -> Unit) {
 /** Wraps a Jabbah [Action] in a React Material menu item.*/
 class JabbahMaterialMenuItem : RComponent<JMMenuItemProps, State>() {
 
-	private val actionListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) { forceUpdate() }
-	}
+	private val actionListener = PropertyChangeListener<Any> { forceUpdate() }
 
 	override fun componentDidMount() {
 		props.action.addPropertyChangeListener(actionListener)

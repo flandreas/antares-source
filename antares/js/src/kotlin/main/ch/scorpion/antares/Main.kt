@@ -1,5 +1,9 @@
 package ch.scorpion.antares
 
+import com.ccfraser.muirwik.components.styles.mStylesProvider
+import kotlinx.browser.document
+import react.dom.render
+
 external fun encodeURI(uri: String): String
 
 fun main() {
