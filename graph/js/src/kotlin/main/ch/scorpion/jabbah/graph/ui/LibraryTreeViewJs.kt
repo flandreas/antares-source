@@ -23,21 +23,21 @@ import org.w3c.dom.events.MouseEvent
 import react.*
 import styled.css
 
-external interface LibraryTreeViewJsProps : RProps {
+external interface LibraryTreeViewJsProps : Props {
 	var application: Application
 	var controller: LibraryTreeViewController
 	var onDoubleClick: (node: LibraryTreeNode) -> Unit
 }
 
-fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit): ReactElement {
-	return child(LibraryTreeViewJs::class) {
+fun RBuilder.libraryTreeView(handler: LibraryTreeViewJsProps.() -> Unit) {
+	child(LibraryTreeViewJs::class) {
 		this.attrs(handler)
 	}
 }
 
 class LibraryTreeViewJs(
 	props: LibraryTreeViewJsProps
-) : RComponent<LibraryTreeViewJsProps, RState>(props), LibraryTreeView {
+) : RComponent<LibraryTreeViewJsProps, State>(props), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewJs::class)
@@ -184,19 +184,19 @@ class LibraryTreeViewJs(
 		}
 	}
 
-	private fun createExpandIcon(): ReactElement = RBuilder().mIcon("chevron_right")
+	private fun createExpandIcon(): ReactElement = buildElement { RBuilder().mIcon("chevron_right") }
 
-	private fun createCollapseIcon(): ReactElement = RBuilder().mIcon("expand_more")
+	private fun createCollapseIcon(): ReactElement = buildElement {RBuilder().mIcon("expand_more") }
 
-	private fun createDesktopIcon(): ReactElement = RBuilder().mIcon("chrome_reader_mode", className = "material-icons-outlined")
+	private fun createDesktopIcon(): ReactElement = buildElement { RBuilder().mIcon("chrome_reader_mode", className = "material-icons-outlined") }
 
-	private fun createFolderIcon(): ReactElement = RBuilder().mIcon("folder", className = "material-icons-outlined")
+	private fun createFolderIcon(): ReactElement = buildElement { RBuilder().mIcon("folder", className = "material-icons-outlined") }
 
-	private fun createProjectIcon(): ReactElement = RBuilder().mIcon("assignment", className = "material-icons-outlined")
+	private fun createProjectIcon(): ReactElement = buildElement { RBuilder().mIcon("assignment", className = "material-icons-outlined") }
 
-	private fun createLibraryIcon(): ReactElement = RBuilder().mIcon("local_library", className = "material-icons-outlined")
+	private fun createLibraryIcon(): ReactElement = buildElement { RBuilder().mIcon("local_library", className = "material-icons-outlined") }
 
-	private fun createLabel(text: String): ReactElement = RBuilder().mTypography(text)
+	private fun createLabel(text: String): ReactElement = buildElement { RBuilder().mTypography(text) }
 
 	private fun onLabelClick(event: MouseEvent, node: LibraryTreeNode) {
 		props.controller.selectedItem = node.item

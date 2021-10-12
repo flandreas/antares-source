@@ -9,20 +9,20 @@ import org.w3c.dom.events.MouseEvent
 import react.*
 import styled.css
 
-external interface NavigationStackViewJsProps : RProps {
+external interface NavigationStackViewJsProps : Props {
 	var controller: NavigationStackViewController
 	var backgroundColor: String
 }
 
-fun RBuilder.navigationStackView(handler: NavigationStackViewJsProps.() -> Unit): ReactElement {
-	return child(NavigationStackViewJs::class) {
+fun RBuilder.navigationStackView(handler: NavigationStackViewJsProps.() -> Unit) {
+	child(NavigationStackViewJs::class) {
 		this.attrs(handler)
 	}
 }
 
 class NavigationStackViewJs(
 	props: NavigationStackViewJsProps
-) : RComponent<NavigationStackViewJsProps, RState>(props), NavigationStackView {
+) : RComponent<NavigationStackViewJsProps, State>(props), NavigationStackView {
 
 	override fun componentDidMount() {
 		props.controller.view = this

@@ -11,21 +11,22 @@ import styled.styledDiv
  * @property size the size of the canvas in view coordinates (used for "portlet" scenarios),
  * or `null` if the canvas should adjust to the available size (used for "iframe" or "desktop" scenarios)
  */
-external interface CanvasWithToolbarProps : RProps {
+external interface CanvasWithToolbarProps : Props {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D?
 	var toolbarRenderer: (RBuilder) -> Unit
 }
 
-fun RBuilder.canvasWithToolbar(handler: CanvasWithToolbarProps.() -> Unit): ReactElement =
+fun RBuilder.canvasWithToolbar(handler: CanvasWithToolbarProps.() -> Unit) {
 	child(CanvasWithToolbar::class) {
 		this.attrs(handler)
 	}
+}
 
 class CanvasWithToolbar(
 	props: CanvasWithToolbarProps
-) : RComponent<CanvasWithToolbarProps, RState>(props) {
+) : RComponent<CanvasWithToolbarProps, State>(props) {
 
 	override fun RBuilder.render() {
 		styledDiv {
@@ -47,7 +48,7 @@ class CanvasWithToolbar(
 						top = 7.px
 						left = 7.px
 						width = 100.pct - 14.px
-						classes = mutableListOf("toolbarOverCanvas")
+						classes.add("toolbarOverCanvas")
 					}
 					props.toolbarRenderer(this)
 				}
@@ -63,7 +64,7 @@ class CanvasWithToolbar(
 						top = 1.px
 						left = 1.px
 						width = props.size!!.width.px - 2.px
-						classes = mutableListOf("toolbarOverCanvas")
+						classes.add("toolbarOverCanvas")
 					}
 					props.toolbarRenderer(this)
 				}

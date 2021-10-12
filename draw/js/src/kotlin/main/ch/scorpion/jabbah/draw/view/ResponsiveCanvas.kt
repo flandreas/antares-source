@@ -5,22 +5,20 @@ import ch.scorpion.jabbah.base.mreact.useResizeDetector
 import kotlinx.css.*
 import kotlinx.html.id
 import org.w3c.dom.HTMLCanvasElement
-import react.RMutableRef
-import react.RProps
+import react.*
 import react.dom.attrs
-import react.functionalComponent
 import styled.css
 import styled.styledCanvas
 import styled.styledDiv
 
-external interface ResponsiveCanvasProps : RProps {
+external interface ResponsiveCanvasProps : Props {
 	var canvasId: String
 	var canvasJsProvider: () -> CanvasJs?
 }
 
 data class ResizeDetectorFunctionPropsObj(
 	override var onResize: ((Int, Int) -> Unit)?,
-	override var targetRef: RMutableRef<HTMLCanvasElement>?
+	override var targetRef: MutableRefObject<HTMLCanvasElement>?
 ) : ResizeDetectorFunctionProps<HTMLCanvasElement>
 
 /**

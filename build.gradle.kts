@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("multiplatform") version "1.5.10" apply false
+	kotlin("multiplatform") version "1.5.30" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
@@ -133,8 +133,8 @@ subprojects {
 
 					//implementation(npm("react-hot-loader", "^4.12.20"))
 					//implementation("org.jetbrains:kotlin-styled:5.3.0-pre.204-kotlin-1.5.0")
-					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.0-pre.204-kotlin-1.5.0")
-					implementation("com.ccfraser.muirwik:muirwik-components:0.8.2")
+					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.0-pre.236-kotlin-1.5.30")
+					implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
 					implementation(npm("react-resize-detector", "6.7.0"))
 					implementation(npm("react-split-pane", "0.1.92"))
 				}
@@ -182,7 +182,15 @@ tasks {
 	}
 }
 
+/*
 // jsBrowserDevelopmentRun fails with webPack 5: Workaround https://youtrack.jetbrains.com/issue/KT-48273
 rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
 	rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.webpackDevServer.version = "4.0.0-rc.0"
+}
+*/
+
+afterEvaluate {
+	rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+		versions.webpackDevServer.version = "4.0.0"
+	}
 }

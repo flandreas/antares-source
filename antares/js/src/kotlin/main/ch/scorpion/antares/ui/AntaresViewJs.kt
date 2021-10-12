@@ -29,7 +29,7 @@ import react.*
 import styled.css
 import styled.styledDiv
 
-external interface AntaresViewJsProps : RProps {
+external interface AntaresViewJsProps : Props {
 	var application: Application
 	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String

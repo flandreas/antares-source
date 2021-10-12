@@ -3,47 +3,48 @@ package ch.scorpion.antares.ui
 import ch.scorpion.jabbah.base.mreact.IconProviderRegistry
 import react.RBuilder
 import react.ReactElement
+import react.buildElement
 import react.dom.img
 
 private const val size = "28"
 
-fun RBuilder.sevenSegment(): ReactElement = img(src="img/7segment.svg") { attrs.width = size }
-fun RBuilder.andGate(): ReactElement = img(src="img/and.svg") { attrs.width = size }
-fun RBuilder.breakComponent(): ReactElement = img(src="img/break.svg") { attrs.width = size }
-fun RBuilder.buffer(): ReactElement = img(src="img/buffer.svg") { attrs.width = size }
-fun RBuilder.clock(): ReactElement = img(src="img/clock.svg") { attrs.width = size }
-fun RBuilder.concentrator(): ReactElement = img(src="img/concentrator.svg") { attrs.width = size }
-fun RBuilder.constant(): ReactElement = img(src="img/constant.svg") { attrs.width = size }
-fun RBuilder.delay(): ReactElement = img(src="img/delay.svg") { attrs.width = size }
-fun RBuilder.dipSwitch(): ReactElement = img(src="img/dip-switch.svg") { attrs.width = size }
-fun RBuilder.inout(): ReactElement = img(src="img/inout.svg") { attrs.width = size }
-fun RBuilder.input(): ReactElement = img(src="img/input.svg") { attrs.width = size }
-fun RBuilder.keyboard(): ReactElement = img(src="img/keyboard.svg") { attrs.width = size }
-fun RBuilder.ledMatrix(): ReactElement = img(src="img/led-matrix.svg") { attrs.width = size }
-fun RBuilder.led(): ReactElement = img(src="img/led.svg") { attrs.width = size }
-fun RBuilder.nandGate(): ReactElement = img(src="img/nand.svg") { attrs.width = size }
-fun RBuilder.norGate(): ReactElement = img(src="img/nor.svg") { attrs.width = size }
-fun RBuilder.notGate(): ReactElement = img(src="img/not.svg") { attrs.width = size }
-fun RBuilder.orGate(): ReactElement = img(src="img/or.svg") { attrs.width = size }
-fun RBuilder.output(): ReactElement = img(src="img/output.svg") { attrs.width = size }
-fun RBuilder.probe(): ReactElement = img(src="img/probe.svg") { attrs.width = size }
-fun RBuilder.ram(): ReactElement = img(src="img/ram.svg") { attrs.width = size }
-fun RBuilder.random(): ReactElement = img(src="img/random.svg") { attrs.width = size }
-fun RBuilder.rgbLed(): ReactElement = img(src="img/rgb-led.svg") { attrs.width = size }
-fun RBuilder.rom(): ReactElement = img(src="img/rom.svg") { attrs.width = size }
-fun RBuilder.splitter(): ReactElement = img(src="img/splitter.svg") { attrs.width = size }
-fun RBuilder.switch(): ReactElement = img(src="img/switch.svg") { attrs.width = size }
-fun RBuilder.terminal(): ReactElement = img(src="img/terminal.svg") { attrs.width = size }
-fun RBuilder.tristateBuffer(): ReactElement = img(src="img/tristate-buffer.svg") { attrs.width = size }
-fun RBuilder.tunnel(): ReactElement = img(src="img/tunnel.svg") { attrs.width = size }
-fun RBuilder.xnorGate(): ReactElement = img(src="img/xnor.svg") { attrs.width = size }
-fun RBuilder.xorGate(): ReactElement = img(src="img/xor.svg") { attrs.width = size }
-fun RBuilder.pullResistor(): ReactElement = img(src="img/pull-resistor.svg") { attrs.width = size }
-fun RBuilder.transistor(): ReactElement = img(src="img/transistor.svg") { attrs.width = size }
-fun RBuilder.ground(): ReactElement = img(src="img/ground.svg") { attrs.width = size }
-fun RBuilder.power(): ReactElement = img(src="img/power.svg") { attrs.width = size }
-fun RBuilder.realSwitch(): ReactElement = img(src="img/real-switch.svg") { attrs.width = size }
-fun RBuilder.joystick(): ReactElement = img(src="img/joystick.svg") { attrs.width = size }
+fun RBuilder.sevenSegment(): ReactElement = buildElement { img(src="img/7segment.svg") { attrs.width = size } }
+fun RBuilder.andGate(): ReactElement = buildElement { img(src="img/and.svg") { attrs.width = size } }
+fun RBuilder.breakComponent(): ReactElement = buildElement { img(src="img/break.svg") { attrs.width = size } }
+fun RBuilder.buffer(): ReactElement = buildElement { img(src="img/buffer.svg") { attrs.width = size } }
+fun RBuilder.clock(): ReactElement = buildElement { img(src="img/clock.svg") { attrs.width = size } }
+fun RBuilder.concentrator(): ReactElement = buildElement { img(src="img/concentrator.svg") { attrs.width = size } }
+fun RBuilder.constant(): ReactElement = buildElement { img(src="img/constant.svg") { attrs.width = size } }
+fun RBuilder.delay(): ReactElement = buildElement { img(src="img/delay.svg") { attrs.width = size } }
+fun RBuilder.dipSwitch(): ReactElement = buildElement { img(src="img/dip-switch.svg") { attrs.width = size } }
+fun RBuilder.inout(): ReactElement = buildElement { img(src="img/inout.svg") { attrs.width = size } }
+fun RBuilder.input(): ReactElement = buildElement { img(src="img/input.svg") { attrs.width = size } }
+fun RBuilder.keyboard(): ReactElement = buildElement { img(src="img/keyboard.svg") { attrs.width = size } }
+fun RBuilder.ledMatrix(): ReactElement = buildElement { img(src="img/led-matrix.svg") { attrs.width = size } }
+fun RBuilder.led(): ReactElement = buildElement { img(src="img/led.svg") { attrs.width = size } }
+fun RBuilder.nandGate(): ReactElement = buildElement { img(src="img/nand.svg") { attrs.width = size } }
+fun RBuilder.norGate(): ReactElement = buildElement { img(src="img/nor.svg") { attrs.width = size } }
+fun RBuilder.notGate(): ReactElement = buildElement { img(src="img/not.svg") { attrs.width = size } }
+fun RBuilder.orGate(): ReactElement = buildElement { img(src="img/or.svg") { attrs.width = size } }
+fun RBuilder.output(): ReactElement = buildElement { img(src="img/output.svg") { attrs.width = size } }
+fun RBuilder.probe(): ReactElement = buildElement { img(src="img/probe.svg") { attrs.width = size } }
+fun RBuilder.ram(): ReactElement = buildElement { img(src="img/ram.svg") { attrs.width = size } }
+fun RBuilder.random(): ReactElement = buildElement { img(src="img/random.svg") { attrs.width = size } }
+fun RBuilder.rgbLed(): ReactElement = buildElement { img(src="img/rgb-led.svg") { attrs.width = size } }
+fun RBuilder.rom(): ReactElement = buildElement { img(src="img/rom.svg") { attrs.width = size } }
+fun RBuilder.splitter(): ReactElement = buildElement { img(src="img/splitter.svg") { attrs.width = size } }
+fun RBuilder.switch(): ReactElement = buildElement { img(src="img/switch.svg") { attrs.width = size } }
+fun RBuilder.terminal(): ReactElement = buildElement { img(src="img/terminal.svg") { attrs.width = size } }
+fun RBuilder.tristateBuffer(): ReactElement = buildElement { img(src="img/tristate-buffer.svg") { attrs.width = size } }
+fun RBuilder.tunnel(): ReactElement = buildElement { img(src="img/tunnel.svg") { attrs.width = size } }
+fun RBuilder.xnorGate(): ReactElement = buildElement { img(src="img/xnor.svg") { attrs.width = size } }
+fun RBuilder.xorGate(): ReactElement = buildElement { img(src="img/xor.svg") { attrs.width = size } }
+fun RBuilder.pullResistor(): ReactElement = buildElement { img(src="img/pull-resistor.svg") { attrs.width = size } }
+fun RBuilder.transistor(): ReactElement = buildElement { img(src="img/transistor.svg") { attrs.width = size } }
+fun RBuilder.ground(): ReactElement = buildElement { img(src="img/ground.svg") { attrs.width = size } }
+fun RBuilder.power(): ReactElement = buildElement { img(src="img/power.svg") { attrs.width = size } }
+fun RBuilder.realSwitch(): ReactElement = buildElement { img(src="img/real-switch.svg") { attrs.width = size } }
+fun RBuilder.joystick(): ReactElement = buildElement { img(src="img/joystick.svg") { attrs.width = size } }
 
 fun registerAntaresIconsInProvider() {
 	IconProviderRegistry.register("/img/7segment.png") { RBuilder().sevenSegment() }

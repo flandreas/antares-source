@@ -2,18 +2,15 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 
-external interface LogViewJsProps : RProps {
+external interface LogViewJsProps : Props {
 	var controller: LogViewController
 }
 
 class LogViewJs(
 	props: LogViewJsProps
-) : RComponent<LogViewJsProps, RState>(props), LogView {
+) : RComponent<LogViewJsProps, State>(props), LogView {
 
 	init {
 		props.controller.view = this

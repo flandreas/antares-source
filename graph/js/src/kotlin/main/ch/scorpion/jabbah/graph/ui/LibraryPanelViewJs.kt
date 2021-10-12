@@ -7,20 +7,20 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView
 import react.*
 
-external interface LibraryPanelViewJsProps : RProps {
+external interface LibraryPanelViewJsProps : Props {
 	var application: Application
 	var controller: LibraryPanelController
 }
 
-fun RBuilder.libraryPanelView(handler: LibraryPanelViewJsProps.() -> Unit): ReactElement {
-	return child(LibraryPanelViewJs::class) {
+fun RBuilder.libraryPanelView(handler: LibraryPanelViewJsProps.() -> Unit) {
+	child(LibraryPanelViewJs::class) {
 		this.attrs(handler)
 	}
 }
 
 class LibraryPanelViewJs(
 	props: LibraryPanelViewJsProps
-) : RComponent<LibraryPanelViewJsProps, RState>(props), LibraryPanelView {
+) : RComponent<LibraryPanelViewJsProps, State>(props), LibraryPanelView {
 
 	override fun componentDidMount() {
 		props.controller.view = this

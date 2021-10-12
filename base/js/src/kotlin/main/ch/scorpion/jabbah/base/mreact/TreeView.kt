@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.base.mreact
 
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
-import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
-import org.w3c.dom.events.MouseEvent
 import react.*
 import styled.StyledHandler
 
@@ -12,7 +10,7 @@ import styled.StyledHandler
 private external val treeViewModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val treeViewComponent: RComponent<JMTreeViewProps, RState> = treeViewModule.default
+private val treeViewComponent: ComponentType<JMTreeViewProps> = treeViewModule.default
 
 interface JMTreeViewProps : StyledPropsWithCommonAttributes {
 	var defaultExpandIcon: ReactElement?
@@ -22,11 +20,9 @@ interface JMTreeViewProps : StyledPropsWithCommonAttributes {
 fun RBuilder.jmTreeView(
 	defaultExpandIcon: ReactElement,
 	defaultCollapseIcon: ReactElement,
-	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<JMTreeViewProps>? = null
-) = createStyled(treeViewComponent, addAsChild) {
+) = createStyled(treeViewComponent, className, handler) {
 	attrs.defaultExpandIcon = defaultExpandIcon
 	attrs.defaultCollapseIcon = defaultCollapseIcon
-	setStyledPropsAndRunHandler(className, handler)
 }

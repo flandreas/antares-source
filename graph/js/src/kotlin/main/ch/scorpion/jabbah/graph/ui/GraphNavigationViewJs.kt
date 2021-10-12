@@ -7,7 +7,7 @@ import react.*
 import styled.css
 import styled.styledDiv
 
-external interface GraphNavigationViewJsProps : RProps {
+external interface GraphNavigationViewJsProps : Props {
 	var canvasId: String
 	var controller: GraphNavigationViewController
 	var size: Dimension2D?
@@ -16,8 +16,8 @@ external interface GraphNavigationViewJsProps : RProps {
 	var toolbarBackgroundColor: String
 }
 
-fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit): ReactElement {
-	return child(GraphNavigationViewJs::class) {
+fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit) {
+	child(GraphNavigationViewJs::class) {
 		this.attrs(handler)
 	}
 }
@@ -27,7 +27,7 @@ fun RBuilder.graphNavigationView(handler: GraphNavigationViewJsProps.() -> Unit)
  */
 private class GraphNavigationViewJs(
 	props: GraphNavigationViewJsProps
-) : RComponent<GraphNavigationViewJsProps, RState>(props), GraphNavigationView {
+) : RComponent<GraphNavigationViewJsProps, State>(props), GraphNavigationView {
 
 	init {
 		props.controller.view = this

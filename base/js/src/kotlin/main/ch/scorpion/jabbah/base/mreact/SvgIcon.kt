@@ -5,7 +5,7 @@ import react.*
 import react.dom.RDOMBuilder
 import react.dom.svg
 
-open class SvgPathProps(val d: String, val stroke: String = "black"): RProps
+open class SvgPathProps(val d: String, val stroke: String = "black"): Props
 
 fun RBuilder.svgIcon(
 	width: Int,
@@ -13,15 +13,17 @@ fun RBuilder.svgIcon(
 	viewBox: String,
 	fill: String = "none",
 	handler: (RDOMBuilder<SVG>) -> Unit
-): ReactElement {
-	return svg {
-		attrs["width"] = width.toString()
-		attrs["height"] = height.toString()
-		attrs["viewBox"] = viewBox
-		attrs["fill"] = fill
-		attrs["xmlns"] = "http://www.w3.org/2000/svg"
+) {
+	buildElement {
+		svg {
+			attrs["width"] = width.toString()
+			attrs["height"] = height.toString()
+			attrs["viewBox"] = viewBox
+			attrs["fill"] = fill
+			attrs["xmlns"] = "http://www.w3.org/2000/svg"
 
-		apply(handler)
+			apply(handler)
+		}
 	}
 }
 

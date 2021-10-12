@@ -13,14 +13,14 @@ import react.*
 private external val sliderModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val sliderComponent: RComponent<SystemSpeedSliderProps, RState> = sliderModule.default
+private val sliderComponent: ComponentType<SystemSpeedSliderProps> = sliderModule.default
 
 fun RBuilder.systemSpeedSlider(
 	systemSpeedCategory: CurrentSystemSpeedCategory,
 	eventBus: EventBus = BaseModule.eventBus,
 	handler: SystemSpeedSliderProps.() -> Unit
-): ReactElement {
-	return child(SystemSpeedSlider::class) {
+) {
+	child(SystemSpeedSlider::class) {
 		this.attrs.systemSpeedCategory = systemSpeedCategory
 		this.attrs.eventBus = eventBus
 		this.attrs(handler)
@@ -33,7 +33,7 @@ interface SystemSpeedSliderProps : MSliderProps {
 }
 
 /** A slider that allows to change the current [SystemSpeed]. */
-class SystemSpeedSlider : RComponent<SystemSpeedSliderProps, RState>() {
+class SystemSpeedSlider : RComponent<SystemSpeedSliderProps, State>() {
 
 	override fun RBuilder.render() {
 		mTooltip("${Translations.getString("execution.action.speed.name")}: ${props.systemSpeedCategory.systemSpeedCategory}") {

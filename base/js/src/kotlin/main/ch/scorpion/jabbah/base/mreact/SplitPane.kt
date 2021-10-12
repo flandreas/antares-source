@@ -2,8 +2,8 @@ package ch.scorpion.jabbah.base.mreact
 
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
-import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
-import react.*
+import react.ComponentType
+import react.RBuilder
 import styled.StyledHandler
 
 @JsModule("react-split-pane")
@@ -11,9 +11,9 @@ import styled.StyledHandler
 private external val splitPaneModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val splitPane: RComponent<SplitPaneProps, RState> = splitPaneModule.default
+private val splitPane: ComponentType<SplitPaneProps> = splitPaneModule.default
 
-interface SplitPaneProps : StyledPropsWithCommonAttributes {
+external interface SplitPaneProps : StyledPropsWithCommonAttributes {
 	var split: String
 	var defaultSize: Int?
 	var minSize: Int?
@@ -31,14 +31,14 @@ fun RBuilder.splitPane(
 	minSize: Int? = null,
 	maxSize: Int? = null,
 	primary: String? = null,
-	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<SplitPaneProps>? = null
-) = createStyled(splitPane, addAsChild) {
-	attrs.split = split
-	attrs.defaultSize = defaultSize
-	attrs.minSize = minSize
-	attrs.maxSize = maxSize
-	primary?.let { attrs.primary = it }
-	setStyledPropsAndRunHandler(className, handler)
+) {
+	createStyled(splitPane, className, handler) {
+		attrs.split = split
+		attrs.defaultSize = defaultSize
+		attrs.minSize = minSize
+		attrs.maxSize = maxSize
+		primary?.let { attrs.primary = it }
+	}
 }

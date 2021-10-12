@@ -9,19 +9,19 @@ import react.*
 import styled.css
 import styled.styledDiv
 
-external interface ComponentPropertyPanelJsProps : RProps {
+external interface ComponentPropertyPanelJsProps : Props {
 	var controller: ComponentPropertyPanelController
 }
 
-fun RBuilder.componentPropertyPanel(handler: ComponentPropertyPanelJsProps.() -> Unit): ReactElement {
-	return child(ComponentPropertyPanelJs::class) {
+fun RBuilder.componentPropertyPanel(handler: ComponentPropertyPanelJsProps.() -> Unit) {
+	child(ComponentPropertyPanelJs::class) {
 		this.attrs(handler)
 	}
 }
 
 class ComponentPropertyPanelJs(
 	props: ComponentPropertyPanelJsProps
-) : RComponent<ComponentPropertyPanelJsProps, RState>(props), ComponentPropertyPanel {
+) : RComponent<ComponentPropertyPanelJsProps, State>(props), ComponentPropertyPanel {
 
 	override fun componentDidMount() {
 		props.controller.view = this

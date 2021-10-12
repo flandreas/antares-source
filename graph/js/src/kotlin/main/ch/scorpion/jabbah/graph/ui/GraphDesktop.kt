@@ -5,20 +5,20 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import react.*
 
-external interface GraphDesktopViewJsProps : RProps {
+external interface GraphDesktopViewJsProps : Props {
 	var controller: GraphDesktopViewController
 	var graphEditView: ReactElement
 }
 
-fun RBuilder.graphDesktopView(handler: GraphDesktopViewJsProps.() -> Unit): ReactElement {
-	return child(GraphDesktopViewJs::class) {
+fun RBuilder.graphDesktopView(handler: GraphDesktopViewJsProps.() -> Unit) {
+	child(GraphDesktopViewJs::class) {
 		this.attrs(handler)
 	}
 }
 
 class GraphDesktopViewJs(
 	props: GraphDesktopViewJsProps
-) : RComponent<GraphDesktopViewJsProps, RState>(props), GraphDesktopView {
+) : RComponent<GraphDesktopViewJsProps, State>(props), GraphDesktopView {
 
 	init {
 		console.log("Setting View in GraphDesktopController")

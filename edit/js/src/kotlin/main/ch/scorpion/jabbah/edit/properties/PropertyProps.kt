@@ -4,9 +4,9 @@ import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyGetter
 import ch.scorpion.jabbah.edit.PropertySetter
-import react.RProps
+import react.Props
 
-external interface PropertyProps<T> : RProps {
+external interface PropertyProps<T> : Props {
 	var editor: Editor
 	var propertyBaseKey: String
 	var beanProvider: BeanProvider

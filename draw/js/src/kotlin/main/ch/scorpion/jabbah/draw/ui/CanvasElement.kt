@@ -14,20 +14,21 @@ import react.dom.attrs
 import styled.css
 import styled.styledCanvas
 
-external interface CanvasElementProps : RProps {
+external interface CanvasElementProps : Props {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D?
 }
 
-fun RBuilder.jCanvas(handler: CanvasElementProps.() -> Unit): ReactElement =
+fun RBuilder.jCanvas(handler: CanvasElementProps.() -> Unit) {
 	child(CanvasElement::class) {
 		this.attrs(handler)
 	}
+}
 
 class CanvasElement(
 	props: CanvasElementProps
-) : RPureComponent<CanvasElementProps, RState>(props) {
+) : RPureComponent<CanvasElementProps, State>(props) {
 
 	override fun componentDidMount() {
 		val canvasElement = document.getElementById(props.canvasId) as HTMLCanvasElement

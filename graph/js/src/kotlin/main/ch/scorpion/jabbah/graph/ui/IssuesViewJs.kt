@@ -2,18 +2,15 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 
-external interface IssuesViewJsProps : RProps {
+external interface IssuesViewJsProps : Props {
 	var controller: IssuesViewController
 }
 
 class IssuesViewJs(
 	props: IssuesViewJsProps
-) : RComponent<IssuesViewJsProps, RState>(props), IssuesView {
+) : RComponent<IssuesViewJsProps, State>(props), IssuesView {
 
 	init {
 		props.controller.view = this

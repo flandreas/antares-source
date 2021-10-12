@@ -8,10 +8,7 @@ import com.ccfraser.muirwik.components.button.MButtonProps
 import com.ccfraser.muirwik.components.button.color
 import com.ccfraser.muirwik.components.button.variant
 import com.ccfraser.muirwik.components.createStyled
-import react.RBuilder
-import react.RComponent
-import react.RState
-import react.ReactElement
+import react.*
 
 
 @JsModule("@material-ui/core/Button")
@@ -19,22 +16,25 @@ import react.ReactElement
 private external val buttonModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val buttonComponent: RComponent<JMButtonProps, RState> = buttonModule.default
+private val buttonComponent: ComponentType<JMButtonProps> = buttonModule.default
 
 interface JMButtonProps : MButtonProps {
 	var action: Action
 }
 
-fun RBuilder.jmButton(handler: JMButtonProps.() -> Unit): ReactElement =
+fun RBuilder.jmButton(handler: JMButtonProps.() -> Unit) {
 	child(JabbahMaterialButton::class) {
 		this.attrs(handler)
 	}
+}
 
 /** Wraps a Jabbah [Action] in a React Material Button.*/
-class JabbahMaterialButton : RComponent<JMButtonProps, RState>() {
+class JabbahMaterialButton : RComponent<JMButtonProps, State>() {
 
 	private val actionListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) { forceUpdate() }
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			forceUpdate()
+		}
 	}
 
 	override fun componentDidMount() {
@@ -54,8 +54,7 @@ class JabbahMaterialButton : RComponent<JMButtonProps, RState>() {
 
 			// TODO This should really use the 'name' instead of the 'description'
 			// Currently needed to ToggleApplicationModeAction work (which is really a ToggleAction)
-			childList.add(props.action.description ?: "Button")
+			childList.add(ReactNode(props.action.description ?: "Button"))
 		}
 	}
 }
-

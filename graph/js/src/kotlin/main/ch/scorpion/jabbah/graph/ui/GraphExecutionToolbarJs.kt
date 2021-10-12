@@ -16,7 +16,7 @@ import react.*
 import styled.css
 import styled.styledDiv
 
-external interface GraphExecutionToolbarJsProps : RProps {
+external interface GraphExecutionToolbarJsProps : Props {
 	var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	var scheduler: Scheduler
 	var eventBus: EventBus
@@ -26,8 +26,8 @@ external interface GraphExecutionToolbarJsProps : RProps {
 	var backgroundColor: String
 }
 
-fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit): ReactElement {
-	return child(GraphExecutionToolbarJs::class) {
+fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit) {
+	child(GraphExecutionToolbarJs::class) {
 		this.attrs(handler)
 	}
 }
@@ -38,7 +38,7 @@ fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> U
  */
 class GraphExecutionToolbarJs(
 	props: GraphExecutionToolbarJsProps
-) : RComponent<GraphExecutionToolbarJsProps, RState>(props) {
+) : RComponent<GraphExecutionToolbarJsProps, State>(props) {
 
 	override fun componentDidMount() {
 		props.toggleApplicationModeAction.enabled = true

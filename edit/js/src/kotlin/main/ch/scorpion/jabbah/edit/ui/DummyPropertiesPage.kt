@@ -7,14 +7,15 @@ import kotlinx.html.InputType
 import react.*
 import react.dom.br
 
-external interface DummyPropertiesPageProps : RProps
+external interface DummyPropertiesPageProps : Props
 
-fun RBuilder.dummyPropertiesPage(handler: DummyPropertiesPageProps.() -> Unit): ReactElement =
+fun RBuilder.dummyPropertiesPage(handler: DummyPropertiesPageProps.() -> Unit) {
 	child(DummyPropertiesPage::class) {
 		this.attrs(handler)
 	}
+}
 
-class DummyPropertiesPage : RComponent<DummyPropertiesPageProps, RState>() {
+class DummyPropertiesPage : RComponent<DummyPropertiesPageProps, State>() {
 
 	override fun RBuilder.render() {
 		mTextField("ID", "36", type = InputType.number, disabled = true)
@@ -23,7 +24,7 @@ class DummyPropertiesPage : RComponent<DummyPropertiesPageProps, RState>() {
 		br {  }
 		mTextField("Propagation Delay", defaultValue = "0", type = InputType.number, disabled = false)
 		br {  }
-		mFormControlLabel("Shadow", mCheckbox(true))
+		mFormControlLabel("Shadow", buildElement { mCheckbox(true) })
 		br {  }
 		mTextField("Name", defaultValue = "This is a name")
 		br {  }

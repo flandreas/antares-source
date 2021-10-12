@@ -3,18 +3,15 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.view.GraphView
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 
-external interface ScenarioViewJsProps : RProps {
+external interface ScenarioViewJsProps : Props {
 	var controller: ScenarioViewController
 }
 
 class ScenarioViewJs(
 	props: ScenarioViewJsProps
-) : RComponent<ScenarioViewJsProps, RState>(props), ScenarioView {
+) : RComponent<ScenarioViewJsProps, State>(props), ScenarioView {
 
 	init {
 		props.controller.view = this

@@ -2,18 +2,18 @@
 @file:JsNonModule
 package ch.scorpion.jabbah.base.mreact
 
-import react.RMutableRef
+import react.MutableRefObject
 
 external interface ResizeDetectorProps {
 	var onResize: ((Int, Int) -> Unit)?
 }
 
 external interface ResizeDetectorFunctionProps<T : Any> : ResizeDetectorProps {
-	var targetRef: RMutableRef<T>?
+	var targetRef: MutableRefObject<T>?
 }
 
 external interface UseResizeDetectorResult<T : Any> {
-	val ref: RMutableRef<T>
+	val ref: MutableRefObject<T>
 	val width: Int
 	val height: Int
 }

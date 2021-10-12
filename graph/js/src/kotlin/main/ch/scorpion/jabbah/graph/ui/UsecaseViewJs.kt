@@ -3,18 +3,15 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewController
 import ch.scorpion.jabbah.graph.view.GraphView
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 
-external interface UsecaseViewJsProps : RProps {
+external interface UsecaseViewJsProps : Props {
 	var controller: UsecaseViewController
 }
 
 class UsecaseViewJs(
 	props: UsecaseViewJsProps
-) : RComponent<UsecaseViewJsProps, RState>(props), UsecaseView {
+) : RComponent<UsecaseViewJsProps, State>(props), UsecaseView {
 
 	init {
 		props.controller.view = this

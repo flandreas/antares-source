@@ -19,21 +19,22 @@ import styled.styledDiv
  * @property size the size of the canvas in view coordinates (used for "portlet" scenarios),
  * or `null` if the canvas should adjust to the available size (used for "iframe" or "desktop" scenarios)
  */
-external interface GraphViewerJsProps : RProps {
+external interface GraphViewerJsProps : Props {
 	var canvasId: String
 	var metaGraphUuid: UUID
 	var size: Dimension2D?
 	var addMargins: Boolean?
 }
 
-external interface GraphViewerJsState : RState {
+external interface GraphViewerJsState : State {
 	var isLoading: Boolean
 }
 
-fun RBuilder.graphViewer(handler: GraphViewerJsProps.() -> Unit): ReactElement =
+fun RBuilder.graphViewer(handler: GraphViewerJsProps.() -> Unit) {
 	child(GraphViewerJs::class) {
 		this.attrs(handler)
 	}
+}
 
 class GraphViewerJs(
 	props: GraphViewerJsProps

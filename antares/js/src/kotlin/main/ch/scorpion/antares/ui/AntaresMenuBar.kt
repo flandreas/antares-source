@@ -15,17 +15,17 @@ import react.dom.div
 import styled.css
 import styled.styledDiv
 
-interface AntaresMenuBarJsProps : RProps {
+interface AntaresMenuBarJsProps : Props {
 
 }
 
-fun RBuilder.antaresMenuBar(handler: AntaresMenuBarJsProps.() -> Unit): ReactElement {
-	return child(AntaresMenuBar::class) {
+fun RBuilder.antaresMenuBar(handler: AntaresMenuBarJsProps.() -> Unit) {
+	child(AntaresMenuBar::class) {
 		this.attrs(handler)
 	}
 }
 
-class AntaresMenuBar : RComponent<AntaresMenuBarJsProps , RState>() {
+class AntaresMenuBar : RComponent<AntaresMenuBarJsProps , State>() {
 	private var anchorElement: Node? = null
 	private var selectedMenuIndex: Int? = null
 	private val undoAction = UndoAction()

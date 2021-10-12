@@ -2,22 +2,24 @@ package ch.scorpion.jabbah.base.mreact
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.MIconFontSize
 import com.ccfraser.muirwik.components.button.MButtonProps
+import com.ccfraser.muirwik.components.createStyled
+import com.ccfraser.muirwik.components.mIcon
+import com.ccfraser.muirwik.components.mTooltip
 import org.w3c.dom.events.MouseEvent
+import react.ComponentType
 import react.RBuilder
 import react.RComponent
-import react.RState
-import react.ReactElement
+import react.State
 
 @JsModule("@material-ui/lab/ToggleButton")
 @JsNonModule
 private external val toggleButtonModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val toggleButtonComponent: RComponent<JMToggleButtonProps, RState> = toggleButtonModule.default
+private val toggleButtonComponent: ComponentType<JMToggleButtonProps> = toggleButtonModule.default
 
 interface JMToggleButtonProps : MButtonProps {
 	var action: Action
@@ -26,14 +28,14 @@ interface JMToggleButtonProps : MButtonProps {
 	var value: Any
 }
 
-fun RBuilder.jmToggleButton(handler: JMToggleButtonProps.() -> Unit): ReactElement {
-	return child(JabbahMaterialToggleButton::class) {
+fun RBuilder.jmToggleButton(handler: JMToggleButtonProps.() -> Unit) {
+	child(JabbahMaterialToggleButton::class) {
 		this.attrs(handler)
 	}
 }
 
 /** Wraps a Jabbah [Action] in a React Material ToggleButton.*/
-class JabbahMaterialToggleButton : RComponent<JMToggleButtonProps, RState>() {
+class JabbahMaterialToggleButton : RComponent<JMToggleButtonProps, State>() {
 
 	private val actionListener = PropertyChangeListener<Any> { forceUpdate() }
 

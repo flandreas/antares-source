@@ -14,13 +14,14 @@ interface JMMenuItemProps : MMenuItemProps {
 	var parentClickHandler: () -> Unit
 }
 
-fun RBuilder.jmMenuItem(handler: JMMenuItemProps.() -> Unit): ReactElement =
+fun RBuilder.jmMenuItem(handler: JMMenuItemProps.() -> Unit) {
 	child(JabbahMaterialMenuItem::class) {
 		this.attrs(handler)
 	}
+}
 
 /** Wraps a Jabbah [Action] in a React Material menu item.*/
-class JabbahMaterialMenuItem : RComponent<JMMenuItemProps, RState>() {
+class JabbahMaterialMenuItem : RComponent<JMMenuItemProps, State>() {
 
 	private val actionListener = object : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) { forceUpdate() }

@@ -4,12 +4,8 @@ import ch.scorpion.jabbah.base.event.DragEventHandler
 import ch.scorpion.jabbah.base.event.MouseEventHandler
 import com.ccfraser.muirwik.components.StyledPropsWithCommonAttributes
 import com.ccfraser.muirwik.components.createStyled
-import com.ccfraser.muirwik.components.setStyledPropsAndRunHandler
 import org.w3c.dom.events.MouseEvent
-import react.RBuilder
-import react.RComponent
-import react.RState
-import react.ReactElement
+import react.*
 import styled.StyledHandler
 
 @JsModule("@material-ui/lab/TreeItem")
@@ -17,7 +13,7 @@ import styled.StyledHandler
 private external val treeItemModule: dynamic
 
 @Suppress("UnsafeCastFromDynamic")
-private val treeItemComponent: RComponent<JMTreeItemProps, RState> = treeItemModule.default
+private val treeItemComponent: ComponentType<JMTreeItemProps> = treeItemModule.default
 
 interface JMTreeItemProps : StyledPropsWithCommonAttributes {
 	var label: ReactElement
@@ -34,10 +30,9 @@ fun RBuilder.jmTreeItem(
 	onDoubleClick: MouseEventHandler? = null,
 	onDragStart: DragEventHandler? = null,
 	onDragEnd: DragEventHandler? = null,
-	addAsChild: Boolean = true,
 	className: String? = null,
 	handler: StyledHandler<JMTreeItemProps>? = null
-) = createStyled(treeItemComponent, addAsChild) {
+) = createStyled(treeItemComponent, className, handler) {
 	attrs.label = label
 	attrs.nodeId = nodeId
 	attrs.icon = icon
@@ -46,5 +41,4 @@ fun RBuilder.jmTreeItem(
 	attrs.draggable = onDragStart != null
 	attrs.onDragStart = onDragStart
 	attrs.onDragEnd = onDragEnd
-	setStyledPropsAndRunHandler(className, handler)
 }

@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import react.*
 
-external interface GraphPanelViewJsProps : RProps {
+external interface GraphPanelViewJsProps : Props {
 	var controller: GraphPanelViewController
 	var application: Application
 	var canvasId: String
@@ -22,8 +22,8 @@ external interface GraphPanelViewJsProps : RProps {
 	var metaGraph: MetaGraph
 }
 
-fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit): ReactElement {
-	return child(GraphPanelViewJs::class) {
+fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit) {
+	child(GraphPanelViewJs::class) {
 		this.attrs(handler)
 	}
 }
@@ -34,7 +34,7 @@ fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit): ReactEle
  */
 class GraphPanelViewJs(
 	props: GraphPanelViewJsProps
-) : RComponent<GraphPanelViewJsProps, RState>(props), GraphPanelView {
+) : RComponent<GraphPanelViewJsProps, State>(props), GraphPanelView {
 
 	init {
 		props.controller.view = this

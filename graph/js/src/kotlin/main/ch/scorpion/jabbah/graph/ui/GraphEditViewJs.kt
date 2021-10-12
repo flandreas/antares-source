@@ -7,14 +7,14 @@ import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewController
 import react.*
 
-external interface GraphEditViewJsProps : RProps {
+external interface GraphEditViewJsProps : Props {
 	var canvasId: String
 	var controller: GraphEditViewController
 	var size: Dimension2D?
 }
 
-fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit): ReactElement {
-	return child(GraphEditViewJs::class) {
+fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit) {
+	child(GraphEditViewJs::class) {
 		this.attrs(handler)
 	}
 }
@@ -25,7 +25,7 @@ fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit): ReactEleme
  */
 class GraphEditViewJs(
 	props: GraphEditViewJsProps
-) : RComponent<GraphEditViewJsProps, RState>(props), GraphEditView {
+) : RComponent<GraphEditViewJsProps, State>(props), GraphEditView {
 
 	// Not used so for, but needed to satisfy controllers
 	private val scenarioView = ScenarioViewJs(object : ScenarioViewJsProps {
