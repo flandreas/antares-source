@@ -166,7 +166,9 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			if (value != field) {
 				field = value
+				invalidate()
 				getLabelComponent()?.let { it.text = value ?: TranslatableText("") }
+				validate()
 			}
 		}
 
