@@ -24,6 +24,7 @@ class GraphViewerFrameSwing(
 	private val controller = GraphViewerController()
 
 	private val executionToolbar = createExecutionToolbar()
+	private val menuBar = GraphViewerMenuBar(controller)
 
 	private val graphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
@@ -49,7 +50,7 @@ class GraphViewerFrameSwing(
 		setLocationRelativeTo(Frame.getFrames()[0])
 
 		title = "$applicationName - ${metaGraph.graph.model!!.name.value}"
-		jMenuBar = GraphViewerMenuBarBuilder().build()
+		jMenuBar = GraphViewerMenuBar(controller)
 		SwingUtilities.invokeLater {
 			// Must be set after JFrame has been realized to calculate default zoom factor
 			controller.setMetaGraph(metaGraph)
@@ -61,6 +62,7 @@ class GraphViewerFrameSwing(
 	override fun dispose() {
 		eventBus.unregister(closeRequestHandler)
 		executionToolbar.dispose()
+		menuBar.dispose()
 	}
 
 	override fun notifyAllResourcesLoaded() { }

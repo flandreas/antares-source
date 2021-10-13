@@ -52,7 +52,7 @@ class GraphViewerJs(
 	override fun componentDidUpdate(prevProps: GraphViewerJsProps, prevState: GraphViewerJsState, snapshot: Any) {
 		if (!state.isLoading) {
 			val metaGraph = GraphModelModule.metaGraphRepository.getMetaGraph(props.metaGraphUuid)
-			controller.setGraphView(metaGraph.graph.graphView)
+			controller.setMetaGraph(metaGraph)
 		}
 	}
 

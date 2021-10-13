@@ -39,15 +39,21 @@ open class GraphMenuBarBuilder(
 	eventBus: EventBus
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
+	companion object {
+		fun createExecutionMenu() = JMenu(Translations.getString("application.menu.simulation"))
+		fun createScenariosMenu() = JMenu(Translations.getString("application.menu.scenarios"))
+		fun createUsecasesMenu() = JMenu(Translations.getString("application.menu.usecases"))
+	}
+
 	private val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
 
 	private val scheduler: Scheduler get() = graphFrame.controller.applicationContextHolder.scheduler
 
 	override fun fillMenuBar(menuBar: JMenuBar) {
 		super.fillMenuBar(menuBar)
-		menuBar.add(fillScenariosMenu(JMenu(Translations.getString("application.menu.scenarios"))))
-		menuBar.add(fillUsecasesMenu(JMenu(Translations.getString("application.menu.usecases"))))
-		menuBar.add(fillExecutionMenu(JMenu(Translations.getString("application.menu.simulation"))))
+		menuBar.add(fillExecutionMenu(createExecutionMenu()))
+		menuBar.add(fillScenariosMenu(createScenariosMenu()))
+		menuBar.add(fillUsecasesMenu(createUsecasesMenu()))
 	}
 
 	override fun fillFileMenu(menu: JMenu) {

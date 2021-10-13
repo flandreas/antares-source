@@ -36,7 +36,7 @@ class ExecutionToolbarSwing(
 		modeToggleButton.icon = UiUtil.themedIcon("/img/play24.png")
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
-		val singleStepModeButton = JToggleButton()
+		val singleStepModeButton = JToggleButton(singleStepModeWrapper)
 		singleStepModeButton.text = null
 		singleStepModeButton.icon = UiUtil.themedIcon("/img/singleStepMode24.png")
 		singleStepModeButton.toolTipText = singleStepModeAction.name
