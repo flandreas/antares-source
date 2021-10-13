@@ -13,14 +13,6 @@ val win_jpackage_home: String by extra
 repositories {
 	mavenCentral()
 	jcenter()
-	/*
-	maven {
-		url = uri("https://dl.bintray.com/kotlin/kotlinx")
-	}
-	maven {
-		url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
-	}
-	*/
 }
 
 plugins {
@@ -56,15 +48,6 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
-			}
-		}
-
-		val jsMain by getting {
-			dependencies {
-				implementation(project(":base"))
-				implementation(project(":animation"))
-				implementation(project(":draw"))
-				implementation(project(":edit"))
 			}
 		}
 	}

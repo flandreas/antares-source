@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
@@ -59,8 +60,15 @@ object GraphModelModule : AbstractModule() {
 	var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
 
 	/** More specific modules can register other implementations for [GraphPort] value type adjustments. */
+	// Proguard doesn't seem to be happy with SAML lambdas
+	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory = object : SubGraphVerticeRefActivationRecordFactory {
+		override fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord =
+			SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+	}
+	/*
 	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory =
 		SubGraphVerticeRefActivationRecordFactory { v, s -> SubGraphVerticeRefActivationRecord(v, s)}
+	*/
 
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", GraphImpl::class)

@@ -6,7 +6,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath("net.sf.proguard:proguard-gradle:6.2.2")
+		classpath("com.guardsquare:proguard-gradle:7.2.0-beta2")
 	}
 }
 
@@ -119,23 +119,11 @@ subprojects {
 				resources.srcDir("js/rsc")
 
 				dependencies {
-
-					//React, React DOM + Wrappers (chapter 3)
-					//implementation("org.jetbrains:kotlin-react:17.0.2-pre.154-kotlin-1.5.0")
-					//implementation("org.jetbrains:kotlin-react-dom:17.0.2-pre.154-kotlin-1.5.0")
-					//implementation(npm("react", "17.0.2"))
-					//implementation(npm("react-dom", "17.0.2"))
-
-					//Kotlin Styled (chapter 3)
-					//implementation("org.jetbrains:kotlin-styled:5.2.3-pre.154-kotlin-1.5.0")
-					//implementation(npm("styled-components", "~5.2.3"))
-					//implementation(npm("inline-style-prefixer", "~6.0.0"))
-
 					implementation(npm("react-hot-loader", "^4.12.20"))
 					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.0-pre.236-kotlin-1.5.30")
 					implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
-					implementation(npm("react-resize-detector", "6.7.6"))
-					implementation(npm("react-split-pane", "0.1.92"))
+					implementation(npm("react-resize-detector", "~6.7.0"))
+					implementation(npm("react-split-pane", "~0.1.92"))
 				}
 			}
 			val jsTest by getting {
