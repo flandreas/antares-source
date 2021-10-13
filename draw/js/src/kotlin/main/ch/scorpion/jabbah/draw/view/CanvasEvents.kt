@@ -140,6 +140,37 @@ internal class MouseWheelEventBridge(
 	}
 }
 
+private val keyboardEventKeyMap = mapOf<String, Int>(
+	"arrowleft" to KeyEvent.VK_LEFT,
+	"arrowright" to KeyEvent.VK_RIGHT,
+	"arrowup" to KeyEvent.VK_UP,
+	"arrowdown" to KeyEvent.VK_DOWN,
+	"arrowdown" to KeyEvent.VK_DOWN,
+	"escape" to KeyEvent.VK_ESCAPE,
+	"alt" to KeyEvent.VK_ALT,
+	"enter" to KeyEvent.VK_ENTER,
+	"delete" to KeyEvent.VK_DELETE,
+	" " to KeyEvent.VK_SPACE,
+	"0" to KeyEvent.VK_0,
+	"1" to KeyEvent.VK_1,
+	"2" to KeyEvent.VK_2,
+	"3" to KeyEvent.VK_3,
+	"4" to KeyEvent.VK_4,
+	"5" to KeyEvent.VK_5,
+	"6" to KeyEvent.VK_6,
+	"7" to KeyEvent.VK_7,
+	"8" to KeyEvent.VK_8,
+	"9" to KeyEvent.VK_9,
+	"a" to KeyEvent.VK_A,
+	"b" to KeyEvent.VK_B,
+	"c" to KeyEvent.VK_C,
+	"d" to KeyEvent.VK_D,
+	"e" to KeyEvent.VK_E,
+	"f" to KeyEvent.VK_F,
+	"x" to KeyEvent.VK_X,
+	"z" to KeyEvent.VK_Z,
+)
+
 internal class KeyEventJs(
 	private val canvas: HTMLCanvasElement,
 	override val event: org.w3c.dom.events.KeyboardEvent
@@ -147,7 +178,7 @@ internal class KeyEventJs(
 
 	override val type: KeyEventType get() = convertEventType()
 
-	override val key: Int get() = event.keyCode
+	override val key: Int get() = keyboardEventKeyMap[event.key.lowercase()] ?: 0
 
 	override val keyChar: Char get() = event.charCode.toChar()
 

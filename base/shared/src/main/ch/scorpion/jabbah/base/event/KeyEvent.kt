@@ -35,7 +35,7 @@ interface KeyEvent : InputEvent {
 	    var VK_2 = 50
 	    var VK_3 = 51
 	    var VK_4 = 52
-	    var VK_5 = 52
+	    var VK_5 = 53
 	    var VK_6 = 54
 	    var VK_7 = 55
 	    var VK_8 = 56

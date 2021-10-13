@@ -21,8 +21,8 @@ external interface GraphExecutionToolbarJsProps : Props {
 	var scheduler: Scheduler
 	var eventBus: EventBus
 	var toggleApplicationModeAction: ToggleApplicationModeAction
-	var pauseAction: Action
-	var resumeAction: Action
+	var singleStepModeAction: Action
+	var pauseOrResumeAction: Action
 	var backgroundColor: String
 }
 
@@ -56,11 +56,11 @@ class GraphExecutionToolbarJs(
 						iconName = "play_arrow"
 					}
 					jmToggleButton {
-						action = props.pauseAction
+						action = props.pauseOrResumeAction
 						iconName = "pause"
 					}
 					jmToggleButton {
-						action = props.resumeAction
+						action = props.singleStepModeAction
 						iconName = "skip_next"
 					}
 				}

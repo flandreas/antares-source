@@ -92,8 +92,8 @@ class GraphViewerJs(
 							scheduler = this@GraphViewerJs.controller.applicationContextHolder.scheduler
 							eventBus = BaseModule.eventBus
 							toggleApplicationModeAction = this@GraphViewerJs.controller.toggleApplicationModeAction
-							pauseAction = this@GraphViewerJs.controller.pauseAction
-							resumeAction = this@GraphViewerJs.controller.resumeAction
+							singleStepModeAction = this@GraphViewerJs.controller.singleStepModeAction
+							pauseOrResumeAction = this@GraphViewerJs.controller.pauseOrResumeAction
 							backgroundColor = this@GraphViewerJs.toolbarBackgroundColor
 						}
 					}
