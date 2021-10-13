@@ -54,7 +54,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		drawable.handleAdded(this)
 
 		if (drawable.visible) {
-			val drawableBBox = drawable.boundingBox
+			val drawableBBox = childBoundingBox(drawable)
 			if (drawables.size == 1) {
 				boundingBox.setFrame(drawableBBox)
 			} else {
@@ -153,7 +153,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
 		if (useLocation) {
-			invalidate(region.add(location))
+			invalidate(region.moveBy(location))
 		} else {
 			invalidate(region)
 		}
@@ -174,7 +174,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	private fun childBoundingBox(child: Drawable): RectangularShape {
 		return if (useLocation) {
-			Rectangle2D(child.boundingBox).add(location)
+			Rectangle2D(child.boundingBox).moveBy(location)
 		} else {
 			child.boundingBox
 		}
@@ -214,7 +214,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		if (last) {
 			updateBoundingBox()
 		}
-		invalidate(drawable.boundingBox)
+		invalidate(childBoundingBox(drawable))
 		notifyDrawableRemoved(drawable)
 	}
 }
