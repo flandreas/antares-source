@@ -20,11 +20,13 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode.*
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.io.StorableCloner
 
 interface GraphViewerView : UIView {
 
@@ -91,9 +93,10 @@ class GraphViewerController(
 		systemSpeedCategory.dispose()
 	}
 
-	fun setGraphView(graphView: GraphView) {
-		LOG.debug("Show '${graphView.graph!!.name.value}' in separate viewer")
-		graphNavigationViewController.setRootGraphView(graphView, editable = false)
+	fun setMetaGraph(metaGraph: MetaGraph) {
+		val clone = StorableCloner.clone(metaGraph.graph)
+		LOG.debug("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
+		graphNavigationViewController.setRootGraphView(clone.graphView, editable = false)
 	}
 
 	/** ---- [ApplicationModeHolder] interface */

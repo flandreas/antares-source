@@ -4,9 +4,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.ExecutionToolbarSwing
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewSwing
-import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities
 
 class GraphViewerFrameSwing(
 	applicationName: String,
-	graphView: GraphView,
+	metaGraph: MetaGraph,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JFrame(), GraphViewerView {
 
@@ -48,11 +48,11 @@ class GraphViewerFrameSwing(
 		pack()
 		setLocationRelativeTo(Frame.getFrames()[0])
 
-		title = "$applicationName - ${graphView.graph!!.name.value}"
+		title = "$applicationName - ${metaGraph.graph.model!!.name.value}"
 		jMenuBar = GraphViewerMenuBarBuilder().build()
 		SwingUtilities.invokeLater {
 			// Must be set after JFrame has been realized to calculate default zoom factor
-			controller.setGraphView(graphView)
+			controller.setMetaGraph(metaGraph)
 		}
 
 		isVisible = true

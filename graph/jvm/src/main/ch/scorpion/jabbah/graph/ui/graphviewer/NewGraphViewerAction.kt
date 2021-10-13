@@ -20,7 +20,7 @@ class NewGraphViewerAction(
 	eventBus
 ) {
 	override fun execute(event: ActionEvent) {
-		val graphView = (controller.selectedItem as ContainerLibraryElement).metaGraph!!.graph.graphView
-		GraphViewerFrameSwing(applicationName, graphView)
+		val metaGraph = (controller.selectedItem as ContainerLibraryElement).metaGraph
+		GraphViewerFrameSwing(applicationName, metaGraph!!)
 	}
 }
