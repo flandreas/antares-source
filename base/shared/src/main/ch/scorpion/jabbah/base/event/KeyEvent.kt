@@ -29,6 +29,7 @@ interface KeyEvent : InputEvent {
         var VK_ENTER = 0x06
 	    var VK_ALT = 0x07
 	    var VK_DELETE = 0x08
+	    var VK_SPACE = 0x09
 	    var VK_0 = 48
 	    var VK_1 = 49
 	    var VK_2 = 50

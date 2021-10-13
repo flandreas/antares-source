@@ -537,10 +537,14 @@ class CircuitInOutView(
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
 	}
 
+	/** Consumes a key the user pressed during simulation while this [CircuitInOutView] has focus.*/
 	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
 		invalidate()
 		if (key == KeyEvent.VK_ESCAPE) {
 			hideKeyboard()
+		} else if (key == KeyEvent.VK_SPACE) {
+			// Ignore. This triggers PauseOrResumeAction. A key that triggers the KeyAccelerator of a MenuItem
+			// shouldn't be forwarded to the focus component, but didn't find out why it is.
 		} else if (key == KeyEvent.VK_LEFT) {
 			numberView!!.transferFocusLeft()
 		} else if (key == KeyEvent.VK_RIGHT) {

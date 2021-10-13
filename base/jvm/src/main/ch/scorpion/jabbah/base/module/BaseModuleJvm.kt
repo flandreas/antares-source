@@ -48,6 +48,7 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_ALT = java.awt.event.KeyEvent.VK_ALT
 		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
 		KeyEvent.VK_DELETE = java.awt.event.KeyEvent.VK_DELETE
+		KeyEvent.VK_SPACE = java.awt.event.KeyEvent.VK_SPACE
 		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0
 		KeyEvent.VK_1 = java.awt.event.KeyEvent.VK_1
 		KeyEvent.VK_2 = java.awt.event.KeyEvent.VK_2

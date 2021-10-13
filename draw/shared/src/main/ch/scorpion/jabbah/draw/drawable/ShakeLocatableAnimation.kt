@@ -21,8 +21,8 @@ class ShakeLocatableAnimation(
 ) {
 
 	companion object {
-		private const val DEF_DURATION = 300.0
-		private const val DEF_RANGE = 5.0
+		private const val DEF_DURATION = 200.0
+		private const val DEF_RANGE = 4.0
 		private const val DEF_CYCLE_COUNT = 2
 
 		private fun createShakeSequence(start: Point2D, range: Double, cycleCount: Int): Sequence<Point2D> {
