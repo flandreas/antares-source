@@ -32,25 +32,29 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 				time = e.`when`)
 	}
 
+	private val actionPropertyListener = PropertyChangeListener<Any> { e ->
+		when (e.name) {
+			Action.PROP_NAME -> putValue(javax.swing.Action.NAME, e.newValue)
+			Action.PROP_DESCRIPTION -> putValue(javax.swing.Action.SHORT_DESCRIPTION, e.newValue)
+			Action.PROP_ACCELERATOR -> if (e.newValue != null) putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(e.newValue as String))
+			Action.PROP_ENABLED -> isEnabled = e.newValue as Boolean
+			Action.PROP_SELECTED -> putValue(javax.swing.Action.SELECTED_KEY, e.newValue)
+			Action.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(e.newValue as String))
+		}
+	}
+
 	init {
 		update()
-		action.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				when (e.name) {
-					Action.PROP_NAME -> putValue(javax.swing.Action.NAME, e.newValue)
-					Action.PROP_DESCRIPTION -> putValue(javax.swing.Action.SHORT_DESCRIPTION, e.newValue)
-					Action.PROP_ACCELERATOR -> if (e.newValue != null) putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(e.newValue as String))
-					Action.PROP_ENABLED -> isEnabled = e.newValue as Boolean
-					Action.PROP_SELECTED -> putValue(javax.swing.Action.SELECTED_KEY, e.newValue)
-					Action.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(e.newValue as String))
-				}
-			}
-		})
+		action.addPropertyChangeListener(actionPropertyListener)
 		addPropertyChangeListener {
 			when (it.propertyName) {
 				javax.swing.Action.SELECTED_KEY -> action.selected = it.newValue as Boolean
 			}
 		}
+	}
+
+	fun dispose() {
+		action.removePropertyChangeListener(actionPropertyListener)
 	}
 
 	private fun update() {

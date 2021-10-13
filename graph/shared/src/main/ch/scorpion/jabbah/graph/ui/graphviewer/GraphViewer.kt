@@ -74,6 +74,8 @@ class GraphViewerController(
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
+	val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
+	val pauseOrResumeAction = PauseOrResumeAction(applicationContextHolder.scheduler, eventBus)
 	val pauseAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
 	val resumeAction = PauseOrResumeAction(applicationContextHolder.scheduler, eventBus)
 
@@ -90,6 +92,8 @@ class GraphViewerController(
 		applicationContextHolder.scheduler.dispose()
 		graphNavigationViewController.dispose()
 		toggleApplicationModeAction.dispose()
+		singleStepModeAction.dispose()
+		pauseOrResumeAction.dispose()
 		systemSpeedCategory.dispose()
 	}
 
