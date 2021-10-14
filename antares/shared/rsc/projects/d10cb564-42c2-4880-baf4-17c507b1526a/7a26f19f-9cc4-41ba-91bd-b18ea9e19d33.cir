@@ -4,7 +4,7 @@
       <model>
         <graph _id='2' script='var result
 
-when (F0 + 2 * F1) {
+when (2 * F1 + F0) {
 	0 : {
 		O = (A + B + CI) % 2
 		CO = (A + B + CI) &gt;= 2
