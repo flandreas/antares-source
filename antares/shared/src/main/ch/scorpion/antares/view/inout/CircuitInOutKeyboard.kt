@@ -30,7 +30,8 @@ class CircuitInOutKeyboard(
 	view: View<*>,
 	private val contextHolder: GraphApplicationContextHolder,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val styleType: StyleType = StyleType.FIGURE
+	private val styleType: StyleType = StyleType.FIGURE,
+	positioner: DrawableAttendantPositioner = DrawableAttendantPositioner
 ) : ActorViewContainer<Drawable>(useLocation = true), Focusable {
 
 	companion object {
@@ -39,8 +40,8 @@ class CircuitInOutKeyboard(
 		private const val PADDING = 5
 		private const val BUTTON_GAP = 3
 		private const val BUTTON_SIZE = 25
-		private const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
-		private const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
+		const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
+		const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
 	}
 
 	private val bounds: Rectangle2D
@@ -48,12 +49,14 @@ class CircuitInOutKeyboard(
 	private val style: Style get() = styleProvider.getStyle(styleType)
 
 	init {
-		location = DrawableAttendantPositioner.position(
-			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT), circuitInOutView.boundingBox,
+		location = positioner.position(
+			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT),
+			circuitInOutView.boundingBox,
 			view,
 			preferredBelow = true,
 			VERTICAL_DISTANCE)
 		bounds = Rectangle2D(location, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
+		buildHexadecimalUI()
 	}
 
 	/** ---- [DrawableContainer] */
@@ -79,10 +82,6 @@ class CircuitInOutKeyboard(
 	}
 
 	override val boundingBox: RectangularShape get() = Rectangle2D(bounds)
-
-	init {
-		buildHexadecimalUI()
-	}
 
 	/** ---- [ActorViewContainer] */
 
