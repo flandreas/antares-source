@@ -14,8 +14,9 @@ import ch.scorpion.jabbah.io.*
 interface Project : Library {
 
 	/**
-	 * The [UUID] of the [Library] imported by this [Library], i.e. the [Library] from which this [Library]
-	 * imports [MetaGraph]s. This is currently only used by projects.
+	 * The [UUID] of the [Library] imported by this [Project], i.e. the [Library] from which this [Project]
+	 * imports [MetaGraph]s. This is currently only used by [Project]s, since [Libraries][Library] cannot
+	 * yet be based on other [Libraries][Library].
 	 */
 	var importedLibrary: UUID?
 }
