@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
@@ -24,7 +25,7 @@ import javax.swing.*
  * [ContainerDrawing] using a [ContainerEditor].
  */
 class EditSubGraphVerticeViewPanel(
-	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val metaGraphRepository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val containerPanel: ContainerPanel,
 	private val subGraphVerticeView: SubGraphVerticeView<*>,
 	private val closeHandler: (Boolean) -> Unit

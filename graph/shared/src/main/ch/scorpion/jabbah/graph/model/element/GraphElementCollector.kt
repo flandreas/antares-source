@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -19,7 +20,7 @@ data class GraphElementCollectorResult(
  * Can be used for debugging, for gathering statistical information, or for any other funny purpose.
  */
 class GraphElementCollector(
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) {
 

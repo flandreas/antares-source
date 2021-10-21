@@ -56,6 +56,7 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -152,7 +153,7 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
 
-		GraphViewModule.require()
+		GraphModule.require()
 		AnimationModule.require()
 		AntaresModelModule.require()
 

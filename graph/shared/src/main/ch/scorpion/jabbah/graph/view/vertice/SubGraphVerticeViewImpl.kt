@@ -44,6 +44,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -57,7 +58,7 @@ class SubGraphVerticeViewImpl(
 	graphElement: SubGraphVerticeRef = SubGraphVerticeRef(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
 	styleProvider,

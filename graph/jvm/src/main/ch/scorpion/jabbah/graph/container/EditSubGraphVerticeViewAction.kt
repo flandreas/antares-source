@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action
@@ -26,7 +27,7 @@ class EditSubGraphVerticeViewAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
-	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository
+	private val metaGraphRepository: MetaGraphRepository = GraphModule.metaGraphRepository
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
 
 	companion object {

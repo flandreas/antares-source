@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -35,7 +36,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class SubGraphVerticeRef(
 	graphUUID: UUID? = null,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
 
 	companion object {

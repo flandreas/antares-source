@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -15,7 +16,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  * all its [ContainerLibraryElement]s.
  */
 class ContainerLibraryElementCollector(
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) {
 

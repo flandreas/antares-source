@@ -28,17 +28,16 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.SubGraphPort
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
-
 
 /**
  * A [Drawing] that contains the graphical representation of a [SubGraphVertice]' outside view.
@@ -47,7 +46,7 @@ class ContainerDrawing(
 	name: String = Translations.getString("graph.name.unknown"),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>(), Bean {
 

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
 import com.ccfraser.muirwik.components.MCircularProgressColor
@@ -51,7 +52,7 @@ class GraphViewerJs(
 
 	override fun componentDidUpdate(prevProps: GraphViewerJsProps, prevState: GraphViewerJsState, snapshot: Any) {
 		if (!state.isLoading) {
-			val metaGraph = GraphModelModule.metaGraphRepository.getMetaGraph(props.metaGraphUuid)
+			val metaGraph = GraphModule.metaGraphRepository.getMetaGraph(props.metaGraphUuid)
 			controller.setMetaGraph(metaGraph)
 		}
 	}

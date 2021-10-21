@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
@@ -350,7 +351,7 @@ class LibraryService(
 	 */
 	fun exportMetaGraphBundle(element: ContainerLibraryElement, outputPath: String) {
 		ensureMetaGraph(element.library!!, element)
-		val bundle = GraphModelModule.metaGraphRepository.createBundle(element.metaGraph!!)
+		val bundle = GraphModule.metaGraphRepository.createBundle(element.metaGraph!!)
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
 	}
 
@@ -387,7 +388,7 @@ class LibraryService(
 	}
 
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
-		bundle.metaGraphs.any { GraphModelModule.metaGraphRepository.containsMetaGraph(it.uuid) }
+		bundle.metaGraphs.any { GraphModule.metaGraphRepository.containsMetaGraph(it.uuid) }
 
 	private fun checkBundleLibrary(bundle: MetaGraphBundle, destination: Library): Boolean {
 		if (bundle.referencedSystemLibrary == null) {

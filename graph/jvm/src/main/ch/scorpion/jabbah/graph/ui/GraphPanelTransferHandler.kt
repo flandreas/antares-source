@@ -9,8 +9,8 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -20,7 +20,6 @@ import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import javax.swing.JOptionPane
 
-
 /**
  * A [ComponentTransferHandler] that prevents cyclic [Graph] structures.
  */
@@ -29,7 +28,7 @@ class GraphPanelTransferHandler(
 	editor: Editor,
 	eventBus: EventBus,
 	flavour: DataFlavor,
-	private val repository: CombinedMetaGraphRepository = GraphModelModule.metaGraphRepository
+	private val repository: CombinedMetaGraphRepository = GraphModule.metaGraphRepository
 ) : ComponentTransferHandler(editor, eventBus, flavour) {
 
 	companion object {

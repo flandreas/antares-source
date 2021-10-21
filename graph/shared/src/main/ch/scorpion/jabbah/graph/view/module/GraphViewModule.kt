@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.graph.GraphAuthorizations
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationControllerExtension
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
@@ -246,7 +247,7 @@ object GraphViewModule : AbstractModule() {
 			name,
 			IOModule.storableCreator,
 			BaseModule.eventBus,
-			GraphModelModule.metaGraphRepository,
+			GraphModule.metaGraphRepository,
 			DrawStyleModule.styleProvider)
 	}
 }

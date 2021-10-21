@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModule
 
 /**
  * Checks whether a [Graph] structure recursively contains a [SubGraphVertice] with a particular [UUID].
@@ -15,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
  */
 class SubGraphVerticeLocator(
 	private val graph: Graph,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) {
 	private var contains: Boolean = false

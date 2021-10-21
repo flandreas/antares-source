@@ -37,8 +37,6 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphModelModule : AbstractModule() {
 
-	val metaGraphRepository = CombinedMetaGraphRepository()
-
 	val signalConflictBehaviourHolder by lazy { SignalConflictBehaviourHolder() }
 
 	override fun initialize() {
