@@ -2,9 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -17,14 +15,11 @@ import javax.swing.SwingUtilities
  */
 class DeleteLibraryElementAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractLibraryAction(
 	BASE_RESOURCE_NAME,
-	controller.applicationModeHolder,
 	operation = Operation.Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	companion object {

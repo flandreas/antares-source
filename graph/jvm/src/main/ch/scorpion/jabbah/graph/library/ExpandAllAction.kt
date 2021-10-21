@@ -9,14 +9,11 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /** Expands all child nodes (recursively) of the selected [LibraryDirectory].*/
 class ExpandAllAction(
-	controller: LibraryTreeViewController,
-	eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractLibraryAction(
 	actionBaseName = "library.action.expandAll",
-	controller.applicationModeHolder,
 	operation = View,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override fun calculateEnabledness(): Boolean {
@@ -32,14 +29,11 @@ class ExpandAllAction(
 
 /** Collapses all child nodes (recursively) of the selected [LibraryDirectory].*/
 class CollapseAllAction(
-	controller: LibraryTreeViewController,
-	eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractLibraryAction(
 	"library.action.collapseAll",
-	controller.applicationModeHolder,
 	operation = Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override fun calculateEnabledness(): Boolean {

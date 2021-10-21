@@ -3,9 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -16,14 +14,11 @@ import javax.swing.SwingUtilities
 /** An [Action] for deleting the currently selected [LibraryDirectory].*/
 class DeleteLibraryFolderAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "graph.action.deleteLibraryDirectory",
-	controller.applicationModeHolder,
 	operation = Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	companion object {

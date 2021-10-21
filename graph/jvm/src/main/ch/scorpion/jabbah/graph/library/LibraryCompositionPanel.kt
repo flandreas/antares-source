@@ -26,16 +26,12 @@ import javax.swing.event.TreeSelectionListener
 /** An [Action] for editing a [Library] by using [LibraryCompositionPanel].*/
 class EditLibraryAction(
 	controller: LibraryTreeViewController,
-	private val application: Application,
-	eventBus: EventBus = BaseModule.eventBus
+	private val application: Application
 ) : AbstractLibraryAction(
 	actionBaseName = "library.composition.action",
-	controller.applicationModeHolder,
 	operation = Change,
-	controller,
-	eventBus
+	controller
 ) {
-
 	override fun execute(event: ActionEvent) {
 		LibraryCompositionPanel.showAsDialog(controller.library, Frame.getFrames()[0], application, eventBus)
 	}

@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -21,14 +19,11 @@ import javax.swing.SwingUtilities
  */
 class DuplicateGraphAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.duplicateGraph",
-	controller.applicationModeHolder,
 	operation = Operation.Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override val operationAuthorized: Boolean

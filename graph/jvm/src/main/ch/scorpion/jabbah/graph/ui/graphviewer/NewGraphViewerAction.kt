@@ -10,14 +10,11 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 class NewGraphViewerAction(
 	private val applicationName: String,
-	controller: LibraryTreeViewController,
-	eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "graph.action.newGraphViewer",
-	controller.applicationModeHolder,
 	operation = Operation.View,
-	controller,
-	eventBus
+	controller
 ) {
 	override fun execute(event: ActionEvent) {
 		val metaGraph = (controller.selectedItem as ContainerLibraryElement).metaGraph

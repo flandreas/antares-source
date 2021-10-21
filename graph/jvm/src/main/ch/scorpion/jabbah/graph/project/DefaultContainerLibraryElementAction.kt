@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
@@ -16,14 +14,11 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  */
 class DefaultContainerLibraryElementAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.setDefaultElement",
-	controller.applicationModeHolder,
 	operation = Operation.Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override val operationAuthorized: Boolean

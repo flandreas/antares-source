@@ -73,7 +73,7 @@ class LibraryTreeViewController (
 	library: Library,
 	project: Project? = null,
 	val applicationModeHolder: ApplicationModeHolder,
-	private val eventBus: EventBus = BaseModule.eventBus
+	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryTreeView>() {
 
 	companion object {

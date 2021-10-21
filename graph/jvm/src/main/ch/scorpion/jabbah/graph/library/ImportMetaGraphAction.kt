@@ -2,15 +2,13 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.library.MetaGraphBundleImportResult.*
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import org.apache.commons.io.FilenameUtils
 import java.awt.Frame
 import javax.swing.JFileChooser
@@ -21,14 +19,11 @@ import javax.swing.JOptionPane
  */
 class ImportMetaGraphAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractLibraryFolderAction(
 	"library.action.importMetaGraph",
-	controller.applicationModeHolder,
 	Operation.Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	companion object {

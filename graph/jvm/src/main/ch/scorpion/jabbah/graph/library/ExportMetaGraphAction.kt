@@ -18,14 +18,11 @@ import javax.swing.JOptionPane
  * to an external ZIP file.
  */
 class ExportMetaGraphAction(
-	controller: LibraryTreeViewController,
-	eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.exportMetaGraph",
-	controller.applicationModeHolder,
 	operation = Operation.View,
-	controller,
-	eventBus
+	controller
 ) {
 
 	companion object {

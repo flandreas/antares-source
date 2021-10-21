@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -18,14 +16,11 @@ import ch.scorpion.jabbah.graph.ui.GraphDataViewController
  */
 class OpenContainerLibraryElementAction(
 	private val graphDataViewController: GraphDataViewController,
-	controller: LibraryTreeViewController,
-	eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "graph.action.openContainerLibraryElement",
-	controller.applicationModeHolder,
 	operation = Operation.View,
-	controller,
-	eventBus
+	controller
 ) {
 
 	init {

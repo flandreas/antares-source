@@ -2,13 +2,11 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import java.awt.Dimension
@@ -18,14 +16,11 @@ import javax.swing.*
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.editFolderProperties",
-	controller.applicationModeHolder,
 	operation = Operation.View,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override val operationAuthorized: Boolean

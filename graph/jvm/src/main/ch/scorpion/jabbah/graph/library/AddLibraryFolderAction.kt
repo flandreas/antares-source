@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -19,14 +17,11 @@ import javax.swing.SwingUtilities
  */
 class AddLibraryFolderAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
-	eventBus: EventBus = BaseModule.eventBus
+	private val operationTarget: () -> Any?
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.addFolder",
-	controller.applicationModeHolder,
 	operation = Change,
-	controller,
-	eventBus
+	controller
 ) {
 
 	override val operationAuthorized: Boolean
