@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -29,7 +29,7 @@ class GraphPanelTransferHandler(
 	editor: Editor,
 	eventBus: EventBus,
 	flavour: DataFlavor,
-	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository
+	private val repository: CombinedMetaGraphRepository = GraphModelModule.metaGraphRepository
 ) : ComponentTransferHandler(editor, eventBus, flavour) {
 
 	companion object {

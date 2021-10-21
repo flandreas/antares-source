@@ -25,13 +25,11 @@ class ProjectImpl(
 	name: TranslatableText = TranslatableText(),
 	description: TranslatableText = TranslatableText(),
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	storableCreator: StorableCreator = IOModule.storableCreator,
 	objectTypeKey: String = "project.project.name"
 ) : LibraryImpl(
 	name = name,
 	description = description,
 	libraryService = libraryService,
-	storableCreator = storableCreator,
 	objectTypeKey = objectTypeKey
 ), Project {
 

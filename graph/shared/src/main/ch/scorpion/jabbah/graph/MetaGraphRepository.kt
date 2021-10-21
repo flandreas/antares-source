@@ -33,24 +33,14 @@ interface MetaGraphRepository {
 
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	fun containsMetaGraph(uuid: UUID): Boolean
-
-	/**
-	 * Determines whether a [Graph] contains directly or recursively a [GraphElement]
-	 * with the specified UUID.
-	 */
-	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean
-
-	/**
-	 * Creates a [MetaGraphBundle] for [metaGraph] containing [metaGraph] and all [MetaGraph]s directly
-	 * or indirectly referenced by [metaGraph].
-	 */
-	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle
 }
 
 /** Combines the current [Library] and the current [Project] (if any) to a single [MetaGraphRepository].*/
 class CombinedMetaGraphRepository(
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) : MetaGraphRepository {
+
+	/** ---- [MetaGraphRepository] */
 
 	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
 		return LibraryModule.libraryHolder.library.getContainerLibraryElement(uuid)
@@ -71,7 +61,13 @@ class CombinedMetaGraphRepository(
 	override fun containsMetaGraph(uuid: UUID): Boolean =
 		LibraryModule.libraryHolder.library.containsMetaGraph(uuid) || ProjectModule.projectHolder.project?.containsMetaGraph(uuid) == true
 
-	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+	/** ---- [CombinedMetaGraphRepository] */
+
+	/**
+	 * Determines whether a [Graph] contains directly or recursively a [GraphElement]
+	 * with the specified UUID.
+	 */
+	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
 		val metaGraph = getMetaGraph(graphUUID)
 		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
 			return true
@@ -83,7 +79,11 @@ class CombinedMetaGraphRepository(
 		).contains(graphElementUUID)
 	}
 
-	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+	/**
+	 * Creates a [MetaGraphBundle] for [metaGraph] containing [metaGraph] and all [MetaGraph]s directly
+	 * or indirectly referenced by [metaGraph].
+	 */
+	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
 		var referencesSystemLibrary = false
 		return MetaGraphBundle()
 			.add(metaGraph)

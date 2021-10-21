@@ -10,11 +10,9 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
-import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -23,7 +21,6 @@ import ch.scorpion.jabbah.io.*
 open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val objectTypeKey: String = "library.library.name",
 	userHolder: UserHolder = EditAuthModule.userHolder
 ) : Library, LibraryDirectory, Describable {
@@ -31,11 +28,10 @@ open class LibraryImpl(
 	constructor(
 		name: TranslatableText = TranslatableText(),
 		libraryService: LibraryService = LibraryModule.libraryService,
-		storableCreator: StorableCreator = IOModule.storableCreator,
 		objectTypeKey: String = "library.library.name",
 		description: TranslatableText = TranslatableText(),
 		userHolder: UserHolder = EditAuthModule.userHolder
-	) : this(LibraryProperties(name, description), libraryService, storableCreator, objectTypeKey, userHolder)
+	) : this(LibraryProperties(name, description), libraryService, objectTypeKey, userHolder)
 
 	constructor(
 		name: String,
@@ -130,19 +126,6 @@ open class LibraryImpl(
 
 	/** ---- [MetaGraphRepository] */
 
-	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
-		// TODO This should never be called, use MetaGraphRepository instead!
-		val metaGraph = getMetaGraph(graphUUID)
-		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
-			return true
-		}
-		return SubGraphVerticeLocator(
-			graph = metaGraph.graph.model!!,
-			repository = this,
-			storableCreator = storableCreator
-		).contains(graphElementUUID)
-	}
-
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
 		val metaGraph = libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
 		LOG.trace("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
@@ -154,13 +137,8 @@ open class LibraryImpl(
 		return libraryService.getMetaGraph(this, element)
 	}
 
-	override fun containsMetaGraph(uuid: UUID): Boolean {
-		return findContainerLibraryElementFor(uuid) != null
-	}
-
-	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun containsMetaGraph(uuid: UUID): Boolean =
+		findContainerLibraryElementFor(uuid) != null
 
 	/** ---- [Storable] interface */
 
@@ -190,9 +168,7 @@ open class LibraryImpl(
 		}
 	}
 
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		// empty
-	}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	/** ---- [Library] interface */
 
@@ -251,15 +227,6 @@ open class LibraryImpl(
 	override fun createSavable(element: ContainerLibraryElement): Savable = LibrarySavable(element)
 
 	/** ---- [LibraryImpl] */
-
-	/** Determines whether this [Library] contains the specified [LibraryDirectory].*/
-	private fun containsLibraryDirectory(directory: LibraryDirectory): Boolean {
-		return accept(object : EmptyHierarchyVisitor() {
-			override fun visitEnter(node: Any): Boolean {
-				return node != directory
-			}
-		})
-	}
 
 	/**
 	 * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
