@@ -4,7 +4,6 @@ import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Unit tests for [LibraryImpl].*/
 class LibraryImplTest {
 
 	companion object {
@@ -14,7 +13,7 @@ class LibraryImplTest {
 	}
 
 	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
-	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
+	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 

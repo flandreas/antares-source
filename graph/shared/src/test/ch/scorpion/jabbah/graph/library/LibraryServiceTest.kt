@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.*
 
-
-/** Unit tests for [LibraryService].*/
 class LibraryServiceTest {
 
 	companion object {
@@ -15,7 +13,7 @@ class LibraryServiceTest {
 	}
 
 	private val libraryPersistenceService = MemoryLibraryPersistenceService()
-	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
+	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 

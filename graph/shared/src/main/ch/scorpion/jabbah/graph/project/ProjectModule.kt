@@ -17,11 +17,7 @@ object ProjectModule : AbstractModule() {
 
 	var projectLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
-	var projectLibraryService: () -> LibraryService = {
-		LibraryService(
-			libraryAccessor = { projectHolder.project },
-			userLibraryPersister = projectLibraryPersistenceService)
-	}
+	var projectLibraryService: () -> LibraryService = { LibraryService(userLibraryPersister = projectLibraryPersistenceService) }
 
 	var projectDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 

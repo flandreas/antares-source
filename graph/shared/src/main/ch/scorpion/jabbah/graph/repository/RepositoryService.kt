@@ -45,14 +45,14 @@ class RepositoryServiceImpl(
 		val origService = getOwningLibraryService(elem)
 		val destService = getOwningLibraryService(destination)
 
-		LOG.debug("Move '${elem.name}' in '${origService.currentLibrary?.name}' "
-			+ "to '${destination.name}' at $index in '${destService.currentLibrary?.name}'")
+		LOG.debug("Move '${elem.name}' in '${elem.library?.name}' "
+			+ "to '${destination.name}' at $index in '${destination.library?.name}'")
 
 		if (isMoveFromProjectToLibrary(elem, destination)) {
 			checkLibraryDependency(elem)
 		}
 
-		val origDir = origService.getDirectoryOf(origService.currentLibrary!!, elem)
+		val origDir = origService.getDirectoryOf(elem.library!!, elem)
 
 		var newIndex = index
 		if (index != null && origDir == destination && origDir.indexOf(elem) < index) {
@@ -72,12 +72,12 @@ class RepositoryServiceImpl(
 		destDir: LibraryDirectory,
 		destPos: Int
 	) {
-		if (origService.currentLibrary === destService.currentLibrary) {
-			origService.move(origService.currentLibrary!!, elem, destDir, destPos)
+		if (origService === destService) {
+			origService.move(elem.library!!, elem, destDir, destPos)
 		} else {
 			val metaGraph = elem.metaGraph!!
-			origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)
-			destService.addContainerLibraryElement(destService.currentLibrary!!, metaGraph, destDir, destPos)
+			origService.removeLibraryItem(origDir.library!!, elem, origDir)
+			destService.addContainerLibraryElement(destDir.library!!, metaGraph, destDir, destPos)
 		}
 	}
 
@@ -88,14 +88,15 @@ class RepositoryServiceImpl(
 	private fun checkLibraryDependency(elem: ContainerLibraryElement) {
 		val projectSubGraphVertice = elem.metaGraph!!.graph.model!!.elements
 			.filterIsInstance<SubGraphVertice>()
-			.firstOrNull { projectLibraryService.currentLibrary!!.containsMetaGraph(it.graphUUID!!) }
+			.firstOrNull { elem.library!!.containsMetaGraph(it.graphUUID!!) }
 		if (projectSubGraphVertice != null) {
 			throw LibraryDependencyException(projectSubGraphVertice)
 		}
 	}
 
 	private fun isMoveFromProjectToLibrary(elem: ContainerLibraryElement, destination: LibraryDirectory): Boolean =
-		elem.library === projectLibraryService.currentLibrary && destination.library === libraryService.currentLibrary
+		//elem.library === projectLibraryService.currentLibrary && destination.library === libraryService.currentLibrary
+		elem.library is Project && destination.library !is Project
 
 	/**
 	 * Returns the [LibraryService] to be used for accessing the [Library] that currently
@@ -106,12 +107,12 @@ class RepositoryServiceImpl(
 		if (item.library == null) {
 			throw IllegalStateException("item doesn't belong to a Library")
 		}
-		if (item.library === libraryService.currentLibrary) {
-			return libraryService
-		}
-		if (item.library === projectLibraryService.currentLibrary) {
+		if (item.library is Project) {
 			return projectLibraryService
 		}
-		throw IllegalStateException("neither current Library nor current Project own item")
+		if (item.library !is Project) {
+			return libraryService
+		}
+		throw IllegalStateException("Cannot determine LibraryService for LibraryItem")
 	}
 }

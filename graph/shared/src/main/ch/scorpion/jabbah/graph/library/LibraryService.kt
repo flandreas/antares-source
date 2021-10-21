@@ -72,7 +72,6 @@ enum class MetaGraphBundleImportResult {
  * Implementations will use a [LibraryPersistenceService] to make these manipulations persistent.
  */
 class LibraryService(
-	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
@@ -85,9 +84,6 @@ class LibraryService(
 	}
 
 	/** ---- [LibraryService] interface */
-
-	/** Returns the current [Library].*/
-	val currentLibrary: Library? get() = libraryAccessor.invoke()
 
 	private fun persister(system: Boolean): LibraryPersistenceService =
 		if (system) systemLibraryPersister else userLibraryPersister
