@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.AbstractModule
  */
 object EditAuthModule : AbstractModule() {
 
-	val userHolder: UserHolder = UserHolder()
+	val userHolder: UserHolder = UserHolderImpl()
 
 	override fun initialize() {
 		// empty
