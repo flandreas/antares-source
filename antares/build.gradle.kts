@@ -66,6 +66,20 @@ tasks {
 		)
 		into(file("$buildDir/processedResources/js/main"))
 	}
+
+	val combinedJar by creating(ShadowJar::class) {
+		dependsOn(assemble)
+		archiveClassifier.set("combined")
+		from(kotlin.jvm().compilations.getByName("main").output)
+		configurations =
+			mutableListOf(kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration)
+		dependencies {
+			exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.5.30"))
+			exclude(dependency("org.jetbrains.kotlin:kotlin-reflect:1.5.30"))
+		}
+	}
+
+
 	val shadowCreate by creating(ShadowJar::class) {
 		dependsOn(assemble)
 		manifest {
