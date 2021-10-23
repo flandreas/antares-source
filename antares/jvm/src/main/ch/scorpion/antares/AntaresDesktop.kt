@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.graph.library.Library
 import java.net.URL
-import java.nio.file.FileSystems
 
 interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
@@ -22,19 +21,23 @@ interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
 	/** ---- [AntaresDesktop] */
 
-	val projectsDirectoryPath: String get() = FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), DEFAULT_PROJECT_DIRECTORY).toString()
+	val fileStoreBasePath: String get() = userDataDirectoryPath.toString()
 
-	val userLibraryDirectoryPath: String get() = FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), DEFAULT_LIB_DIRECTORY).toString()
+	val projectDirectoryName: String get() = DEFAULT_PROJECT_DIRECTORY
+
+	val userLibraryDirectoryName: String get() = DEFAULT_LIB_DIRECTORY
 
 	/**
-	 * Returns the optional path to the file system directory where the system [Libraries][Library] are stored.
+	 * Returns the optional path to the file system base directory containing the [Libraries][Library] directory.
+	 * Will be expanded by the default [Library] directory name.
+	 *
 	 * If `null`, the system [Libraries][Library] are read from the program's resource folder, which is the default
 	 * for user installations. Because the resource folder is read-only, a developer who wants to edit the system
 	 * [Libraries][Library] with the UI, he can set this property to point to the library directory under
 	 * source control (git). The module system will the use the corresponding persistence services that allow to
 	 * edit all relevant system library files.
 	 */
-	val systemLibraryDirectoryPath: String?
+	val systemLibraryBasePath: String?
 
 	val libraryFileName: String get() = DEFAULT_LIB_FILENAME
 

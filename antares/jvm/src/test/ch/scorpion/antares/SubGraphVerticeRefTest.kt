@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.IOModule
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,8 +24,9 @@ class SubGraphVerticeRefTest {
 
 	@BeforeTest
 	fun setup() {
-		val file = File.createTempFile("library", ".lib")
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		val dir = Files.createTempDirectory(null)
+		File.createTempFile("library", ".lib", dir.toFile())
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(dir.parent.absolutePathString(), dir.name)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}

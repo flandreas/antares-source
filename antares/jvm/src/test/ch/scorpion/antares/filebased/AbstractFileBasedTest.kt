@@ -21,7 +21,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 		@JvmStatic
 		protected fun configure() {
-			val path = Paths.get("jvm/rsc/test/projects").toAbsolutePath().toString()
+			val path = Paths.get("jvm/rsc/test/projects").toAbsolutePath()
 			AntaresTestRule.configure()
 
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
@@ -29,8 +29,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 			LibraryModule.libraryManagementService = LibraryManagementService()
 			LibraryModule.libraryService = LibraryService()
 
-			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(path))
-			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path)
+			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(path.toString()))
+			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path.parent.toString(), "projects")
 			ProjectModule.projectManagementService = ProjectManagementService()
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)

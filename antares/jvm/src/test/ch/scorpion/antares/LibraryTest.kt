@@ -6,13 +6,14 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.LibraryModule.libraryHolder
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import java.io.File
 import java.nio.file.Files
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.test.*
 
 /**
@@ -30,25 +31,25 @@ class LibraryTest {
 
 	@BeforeTest
 	fun setup() {
-		val dir = Files.createTempDirectory("library")
-		val file = File.createTempFile("library", ".lib", dir.toFile())
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parent)
+		val dir = Files.createTempDirectory(null)
+		File.createTempFile("library", ".lib", dir.toFile())
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(dir.parent.absolutePathString(), dir.name)
 		LibraryModule.libraryService = LibraryService(userLibraryPersister = LibraryModule.userLibraryPersistenceService)
-		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
+		libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}
 
 	@Test
 	fun shouldStoreAndLoadLibraryWithSubGraph() {
-		val customNot = TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
-		val restoredLibrary = storeAndLoad(LibraryModule.libraryHolder.library as LibraryImpl, LibraryModule.libraryService)
+		val customNot = TestLibraryBuilder().addCustomNot(libraryHolder.library)
+		val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl, LibraryModule.libraryService)
 		assertNotSame(libraryHolder.library, restoredLibrary)
-		LibraryModule.libraryHolder.l = restoredLibrary
+		libraryHolder.l = restoredLibrary
 		restoredLibrary.getMetaGraph(customNot.uuid)
 	}
 
 	@Test
 	fun shouldInstantiateSubCircuit() {
-		TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
+		TestLibraryBuilder().addCustomNot(libraryHolder.library)
 
 		val item = libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement
 		val vvr = item.getNewInstance<SubGraphVertice>() as SubGraphVerticeView

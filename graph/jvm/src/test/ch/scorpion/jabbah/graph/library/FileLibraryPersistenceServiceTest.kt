@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.test.*
 
 class FileLibraryPersistenceServiceTest {
@@ -22,7 +24,7 @@ class FileLibraryPersistenceServiceTest {
 	}
 
 	private val directory = Files.createTempDirectory(null)
-	private val persistenceService = FileLibraryPersistenceService(directory.toAbsolutePath().toString())
+	private val persistenceService = FileLibraryPersistenceService(directory.parent.absolutePathString(), directory.name)
 
 	@BeforeTest
 	fun setup() {

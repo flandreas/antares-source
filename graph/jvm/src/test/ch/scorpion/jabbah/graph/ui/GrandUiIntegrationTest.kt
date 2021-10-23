@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import java.nio.file.Files
+import kotlin.io.path.absolutePathString
 import kotlin.test.*
 
 class GrandUiIntegrationTest {
@@ -31,7 +32,7 @@ class GrandUiIntegrationTest {
 			val tempDir = Files.createTempDirectory(null)
 
 			val librariesDir = "${tempDir}/libraries"
-			LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(librariesDir)
+			LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "libraries")
 			LibraryModule.libraryService = LibraryService()
 			LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
 			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
@@ -39,7 +40,7 @@ class GrandUiIntegrationTest {
 			LibraryModule.libraryManagementService = LibraryManagementService()
 
 			val projectsDir = "${tempDir}/projects"
-			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(projectsDir)
+			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "projects")
 			ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService )}
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(projectsDir))
 			ProjectModule.projectManagementService = ProjectManagementService()

@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import java.nio.file.Files
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -19,7 +21,7 @@ class FileLibraryServiceTest {
 	}
 
 	private val directory = Files.createTempDirectory(null)
-	private val libraryPersistenceService = FileLibraryPersistenceService(directory.toAbsolutePath().toString())
+	private val libraryPersistenceService = FileLibraryPersistenceService(directory.parent.absolutePathString(), directory.name)
 	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library

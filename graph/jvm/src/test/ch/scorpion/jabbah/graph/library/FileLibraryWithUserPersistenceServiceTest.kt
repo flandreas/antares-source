@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.name
 import kotlin.test.*
 
 
@@ -26,7 +27,8 @@ class FileLibraryWithUserPersistenceServiceTest {
 
 	private val directory = Files.createTempDirectory(null)
 	private val persistenceService = FileLibraryPersistenceService(
-		directory.toAbsolutePath().toString(),
+		dataPath = directory.parent.toAbsolutePath().toString(),
+		directoryName = directory.name,
 		userHolder = EditAuthModule.userHolder)
 
 	@BeforeTest
@@ -53,8 +55,9 @@ class FileLibraryWithUserPersistenceServiceTest {
 		libraryUUID: UUID = LibraryModule.libraryHolder.library.uuid
 	): Path =
 		FileSystems.getDefault().getPath(
-			directory.toAbsolutePath().toString(),
+			directory.parent.toAbsolutePath().toString(),
 			user.uuid.toString(),
+			directory.name,
 			libraryUUID.toString(),
 			"${metaGraph.uuid}.cir"
 		)

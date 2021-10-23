@@ -18,13 +18,15 @@ import java.util.zip.ZipOutputStream
 /**
  * Persists a [Library] in a user's local file system directory.
  *
- * @property directoryPath the absolute path of the file system directory where the [Libraries][Library] are located
+ * @property dataPath the absolute path of the file system directory where the data is stored
+ * @property directoryName the name of the directory within [dataPath] that holds the [Library] files (e.g. "libraries")
  * @property metaGraphFileExtension the file name extension of [MetaGraph] files
  * @property libraryFileName the name of the [Library] file
  * @property userHolder if provided, the identification of the [User] is part of the file system path
  */
 class FileLibraryPersistenceService(
-	private val directoryPath: String,
+	private val dataPath: String,
+	private val directoryName: String,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
 	private val userHolder: UserHolder? = null
@@ -185,21 +187,24 @@ class FileLibraryPersistenceService(
 
 	/** ---- [FileLibraryPersistenceService] */
 
-	private val baseBase: String get() = if (userHolder == null) {
-		directoryPath
-	} else {
-		"$directoryPath${FileSystems.getDefault().separator}${userHolder.user.uuid}"
+	private val baseName: String get() {
+		val sep = FileSystems.getDefault().separator
+		return if (userHolder == null) {
+			"$dataPath$sep$directoryName"
+		} else {
+			"$dataPath$sep${userHolder.user.uuid}$sep$directoryName"
+		}
 	}
 
 	private fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
-		FileSystems.getDefault().getPath(baseBase, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
+		FileSystems.getDefault().getPath(baseName, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =
-		buildLibraryFilePath(baseBase, libraryUuid.toString())
+		buildLibraryFilePath(baseName, libraryUuid.toString())
 
 	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =
 		FileSystems.getDefault().getPath(directoryPath, libraryDirName, libraryFileName).toString()
 
 	private fun buildLibraryDirectoryPath(libraryUuid: UUID): String =
-		FileSystems.getDefault().getPath(baseBase, libraryUuid.toString()).toString()
+		FileSystems.getDefault().getPath(baseName, libraryUuid.toString()).toString()
 }

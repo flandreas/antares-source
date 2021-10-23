@@ -20,8 +20,11 @@ import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import java.io.File
+import java.nio.file.Files
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreeNode
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 import kotlin.test.*
 
 /** Unit tests for [ContainerTree].*/
@@ -44,8 +47,9 @@ class ContainerTreeTest {
 
 	@BeforeTest
 	fun setup() {
-		val file = File.createTempFile("library", ".lib")
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		val dir = Files.createTempDirectory(null)
+		File.createTempFile("library", ".lib", dir.toFile())
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(dir.parent.absolutePathString(), dir.name)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"), libraryService = LibraryModule.libraryService)
 		GraphModelModule.portFactory = TestPortFactory()
