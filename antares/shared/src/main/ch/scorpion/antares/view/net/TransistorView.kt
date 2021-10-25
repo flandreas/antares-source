@@ -11,17 +11,24 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.LineCap
 import ch.scorpion.jabbah.draw.graphics.LineJoin
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -40,6 +47,7 @@ class TransistorView(
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
 
 		private val BAR_STROKE = Stroke(1.5f, LineCap.BUTT, LineJoin.ROUND)
+		private const val LABEL_DIST = SCALE
 		private val DEFAULT_HANDEDNESS = RIGHT
 		private const val WIDTH = 6 * SCALE
 		private const val HEIGHT = 6 * SCALE
@@ -89,6 +97,11 @@ class TransistorView(
 		set(value) {
 			model.bitWidth = value
 		}
+
+	private val label = HorizontalLabel(
+		owner = this,
+		relLocation = Point2D.ZERO,
+		font = font)
 
 	init {
 		modelExchanged(null)
@@ -149,6 +162,13 @@ class TransistorView(
 		drain.setPortName("D")
 		drain.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(drain)
+
+		label.relLocation = Point2D(
+			DigitalPortView.LENGTH + WIDTH + LABEL_DIST,
+			when (handedness) {
+				RIGHT -> -2 * SCALE
+				LEFT -> 2 * SCALE
+			})
 	}
 
 	/** ---- UI properties */
@@ -160,6 +180,15 @@ class TransistorView(
 				invalidate()
 				model.transistorType = value
 				invalidate()
+			}
+		}
+
+	var name: String?
+		get() = model.name
+		set(value) {
+			if (value != name) {
+				model.name = value
+				updateLabel()
 			}
 		}
 
@@ -179,7 +208,33 @@ class TransistorView(
 		}
 	}
 
+	override fun resolutionDone() {
+		label.text = StringUtils.orEmpty(name)
+	}
+
+	/** ---- [AbstractDrawable] */
+
+	override val boundingBox: Rectangle2D
+		get() {
+			val bb = Rectangle2D(super.boundingBox)
+			val lbb = label.boundingBox.moveBy(location)
+			bb.add(lbb)
+			return bb
+		}
+
+	/** ---- [AbstractComponent] */
+
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		label.rotationChanged()
+	}
+
 	/** ---- [AbstractVerticeView] */
+
+	override fun draw(context: DrawContext) {
+		super.draw(context)
+		drawLabel(context)
+	}
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
@@ -198,6 +253,21 @@ class TransistorView(
 				drawNorthSignalPort(context, getPortView(model.getSourcePort()) as DigitalPortView)
 			}
 		}
+	}
+
+	private fun drawLabel(context: DrawContext) {
+		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+		label.draw(context)
+	}
+
+	/** ---- [TransistorView] */
+
+	private fun updateLabel() {
+		invalidate()
+		label.text = StringUtils.orEmpty(name)
+		label.rotationChanged()
+		invalidate()
+		update()
 	}
 
 	private fun drawBody(context: DrawContext) {
