@@ -38,5 +38,5 @@ class StoringGraphActorData(
 
 	override fun dataToString(): String = "${changedPort?.name}:$signal"
 
-	override fun <T : Any> getSignal(portId: Int): T = signal as T
+	override fun <T : Any> getSignal(portId: Int): T? = signal as T?
 }
