@@ -1,0 +1,21 @@
+<project _id='0' defaultElement='67f91a27-32da-4c8d-a081-f5b705c99618' uuid='a445e8d3-9aa8-4e84-91e9-04ec98ede249' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='Logic Gates from Transistors'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='67f91a27-32da-4c8d-a081-f5b705c99618'>
+          <name>
+            <translation lang='en' text='Transistors'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='c6b5c866-031b-4c7e-baea-508c0bf9153c'>
+          <name>
+            <translation lang='en' text='Inverter'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>

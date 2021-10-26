@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.input.JoystickDeflection
+import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.ColorIcon
@@ -130,6 +131,13 @@ class TransistorTypeEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(TransistorType.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<TransistorType>()
+	}
+}
+
+class TransistorSymbolEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(TransistorViewSymbol.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<TransistorViewSymbol>()
 	}
 }
 

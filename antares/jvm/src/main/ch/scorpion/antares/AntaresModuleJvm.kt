@@ -15,9 +15,7 @@ import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.antares.view.net.DigitalEdgeView
-import ch.scorpion.antares.view.net.TransistorView
-import ch.scorpion.antares.view.net.TunnelViewFacePreference
+import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
@@ -174,6 +172,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PullDirection::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TransistorType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(TransistorViewSymbol::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(JoystickDeflectionEditor::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(DigitalPortViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PortViewSpacing::class.java, EnumRenderer::class.java)
@@ -193,6 +192,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 		registry.registerEditor(PullDirection::class.java, PullDirectionEditor::class.java)
 		registry.registerEditor(TransistorType::class.java, TransistorTypeEditor::class.java)
+		registry.registerEditor(TransistorViewSymbol::class.java, TransistorSymbolEditor::class.java)
 		registry.registerEditor(JoystickDeflectionEditor::class.java, JoystickDeflectionEditor::class.java)
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
@@ -217,6 +217,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
 
+		root.getGroup(PREF_TREE_CIRCUIT).add(TransistorSymbolPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = TransistorView.PROP_TRANSISTOR_CIRCLE,
 			nameKey = "antares.preference.TransistorCircle"

@@ -221,6 +221,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
 		properties.set(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)
+		properties.set(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL, TransistorViewSymbol.Bulk.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

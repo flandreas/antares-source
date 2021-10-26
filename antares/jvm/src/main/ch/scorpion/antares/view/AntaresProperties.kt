@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -31,6 +32,9 @@ object AntaresProperties {
 
 	fun transistorType(name: String = "transistorType", baseKey: String = "element.property.transistorType"): CommandPropertySwing<TransistorType> =
 		CommandPropertySwing(name, baseKey, TransistorType::class.java, componentBeanProvider)
+
+	fun transistorSymbol(name: String = "symbol", baseKey: String = "element.property.transistorSymbol"): CommandPropertySwing<TransistorViewSymbol> =
+		CommandPropertySwing(name, baseKey, TransistorViewSymbol::class.java, componentBeanProvider)
 
 	fun ledSquare(name: String = "square", baseKey: String = "element.property.LED.square"): CommandPropertySwing<Boolean> =
 		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)

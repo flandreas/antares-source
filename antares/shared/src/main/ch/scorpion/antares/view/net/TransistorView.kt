@@ -44,6 +44,8 @@ class TransistorView(
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
 
+		//private val SYMBOL = TransistorViewSymbol.configured
+
 		private const val LABEL_DIST = SCALE
 		private val DEFAULT_HANDEDNESS = RIGHT
 		private const val WIDTH = 6 * SCALE
@@ -63,6 +65,17 @@ class TransistorView(
 	var handedness: Handedness = handedness
 		set(value) {
 			if (field != value) {
+				invalidate()
+				field = value
+				updateGeometry()
+				invalidate()
+				update()
+			}
+		}
+
+	var symbol: TransistorViewSymbol = TransistorViewSymbol.configured
+		set(value) {
+			if (value != field) {
 				invalidate()
 				field = value
 				updateGeometry()
@@ -156,12 +169,16 @@ class TransistorView(
 		if (handedness != DEFAULT_HANDEDNESS) {
 			writer.writeString("handedness", handedness.customName)
 		}
+		writer.writeString("symbol", symbol.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("handedness")) {
 			handedness = Handedness.withName(reader.readString("handedness"))
+		}
+		if (reader.hasAttribute("symbol")) {
+			symbol = TransistorViewSymbol.withName(reader.readString("symbol"))
 		}
 	}
 
@@ -197,7 +214,7 @@ class TransistorView(
 		super.drawImpl(context)
 
 		drawBody(context)
-		TransistorViewRenderer.Custom.render(this, context)
+		symbol.render(this, context)
 	}
 
 	private fun drawLabel(context: DrawContext) {
@@ -211,10 +228,7 @@ class TransistorView(
 		getPortView(model.getGatePort())?.apply {
 			setLocation(
 				DigitalPortView.LENGTH,
-				when (handedness) {
-					RIGHT -> 0
-					LEFT -> -4 * SCALE
-				})
+				symbol.getGatePositionY(this@TransistorView))
 		}
 		getPortView(model.getSourcePort())?.apply {
 			setLocation(
