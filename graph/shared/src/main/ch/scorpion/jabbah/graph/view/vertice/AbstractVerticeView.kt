@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -104,8 +105,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
 
-	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
-	private val tooltip: Tooltip? by lazy {
+	/** Caches the [Tooltip] (if any) created by [getTooltip]. */
+	protected val tooltip = resettableLazy {
 		buildVerticeViewTooltipText()?.let {
 			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
 		}
@@ -271,7 +272,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portView != null) {
 			return portView.getTooltip(x, y)
 		}
-		return tooltip?.also { it.sourceRect = plainBoundingBox }
+		return tooltip.value?.also { it.sourceRect = plainBoundingBox }
 	}
 
 	override fun draw(context: DrawContext) {

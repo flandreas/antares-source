@@ -179,6 +179,7 @@ class TransistorView(
 			if (value != model.transistorType) {
 				invalidate()
 				model.transistorType = value
+				tooltip.reset()
 				invalidate()
 			}
 		}
