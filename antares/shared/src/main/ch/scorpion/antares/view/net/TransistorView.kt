@@ -86,7 +86,7 @@ class TransistorView(
 			if (field != value) {
 				invalidate()
 				field = value
-				modelExchanged(model)
+				updateGeometry()
 				invalidate()
 				update()
 			}
@@ -115,11 +115,7 @@ class TransistorView(
 		val gate = DigitalPortView(
 			styleProvider,
 			model.getGatePort(),
-			DigitalPortView.LENGTH,
-			when (handedness) {
-				RIGHT -> 0
-				LEFT -> -4 * SCALE
-			},
+			0, 0,
 			WEST,
 			showLogicAnnotation = false
 		)
@@ -131,15 +127,8 @@ class TransistorView(
 		val source = DigitalPortView(
 			styleProvider,
 			model.getSourcePort(),
-			DigitalPortView.LENGTH + 4 * SCALE,
-			when (handedness) {
-				RIGHT -> SCALE
-				LEFT -> -5 * SCALE
-			},
-			when (handedness) {
-				RIGHT -> SOUTH
-				LEFT -> NORTH
-			}
+			0, 0,
+			NORTH
 		)
 		source.setPortName("S")
 		source.portLabelPosition = PortLabelPosition.HIDE
@@ -149,20 +138,49 @@ class TransistorView(
 		val drain = DigitalPortView(
 			styleProvider,
 			model.getDrainPort(),
-			DigitalPortView.LENGTH + 4 * SCALE,
-			when (handedness) {
-				RIGHT -> -5 * SCALE
-				LEFT -> SCALE
-			},
-			when (handedness) {
-				RIGHT -> NORTH
-				LEFT -> SOUTH
-			}
+			0, 0,
+			SOUTH
 		)
 		drain.setPortName("D")
 		drain.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(drain)
 
+		updateGeometry()
+	}
+
+	private fun updateGeometry() {
+		getPortView(model.getGatePort())?.apply {
+			setLocation(
+				DigitalPortView.LENGTH,
+				when (handedness) {
+					RIGHT -> 0
+					LEFT -> -4 * SCALE
+				})
+		}
+		getPortView(model.getSourcePort())?.apply {
+			setLocation(
+			DigitalPortView.LENGTH + 4 * SCALE,
+				when (handedness) {
+					RIGHT -> SCALE
+					LEFT -> -5 * SCALE
+				})
+			direction = when (handedness) {
+				RIGHT -> SOUTH
+				LEFT -> NORTH
+			}
+		}
+		getPortView(model.getDrainPort())?.apply {
+			setLocation(
+				DigitalPortView.LENGTH + 4 * SCALE,
+				when (handedness) {
+					RIGHT -> -5 * SCALE
+					LEFT -> SCALE
+				})
+			direction = when (handedness) {
+				RIGHT -> NORTH
+				LEFT -> SOUTH
+			}
+		}
 		label.relLocation = Point2D(
 			DigitalPortView.LENGTH + WIDTH + LABEL_DIST,
 			when (handedness) {
