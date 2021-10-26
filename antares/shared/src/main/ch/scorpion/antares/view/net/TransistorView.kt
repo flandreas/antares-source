@@ -33,9 +33,12 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class TransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: Transistor = Transistor()
+	model: Transistor = Transistor(),
+	handedness: Handedness = DEFAULT_HANDEDNESS
 ) : DigitalComponentView<Transistor>(styleProvider, model)
 {
+	constructor(type: TransistorType): this(model = Transistor(type), handedness = defaultHandedness(type))
+
 	companion object {
 
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
@@ -47,10 +50,17 @@ class TransistorView(
 		private const val HEIGHT = 6 * SCALE
 
 		private val hasCircle: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_CIRCLE)
+
+		private fun defaultHandedness(type: TransistorType): Handedness {
+			return when (type) {
+				TransistorType.P -> LEFT
+				TransistorType.N -> RIGHT
+			}
+		}
 	}
 
 	/** [Handedness.RIGHT] means that gate and source are in [Direction.SOUTH].*/
-	var handedness: Handedness = DEFAULT_HANDEDNESS
+	var handedness: Handedness = handedness
 		set(value) {
 			if (field != value) {
 				invalidate()

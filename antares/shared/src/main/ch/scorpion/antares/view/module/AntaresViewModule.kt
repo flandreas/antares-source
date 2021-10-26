@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.module
 
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.view.*
@@ -81,6 +82,8 @@ object AntaresViewModule : AbstractModule() {
 	private const val BREAK = "Break"
 	private const val PULL_RESISTOR = "PullResistor"
 	private const val TRANSISTOR = "Transistor"
+	private const val TRANSISTOR_N = "TransistorN"
+	private const val TRANSISTOR_P = "TransistorP"
 	private const val GROUND = "Ground"
 	private const val POWER = "Power"
 
@@ -358,7 +361,14 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TUNNEL, "library.element.Tunnel", { "/img/tunnel.png" }, TunnelView::class)
 		repository.register(BREAK, "library.element.Break", { "/img/break.png" }, BreakView::class)
 		repository.register(PULL_RESISTOR, "library.element.PullResistor", { "/img/pull-resistor.png" }, PullResistorView::class)
+		// Backward compatibility
 		repository.register(TRANSISTOR, "library.element.Transistor", { "/img/transistor.png" }, TransistorView::class)
+		repository.register(TRANSISTOR_N, "library.element.Transistor.nType", { "/img/transistor.png" }) {
+			TransistorView(TransistorType.N)
+		}
+		repository.register(TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }) {
+			TransistorView(TransistorType.P)
+		}
 		repository.register(GROUND, "library.element.Ground", { "/img/ground.png" }, GroundView::class)
 		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
 		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
@@ -443,7 +453,8 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
 		addLibraryItem(library, BaseLibraryElement(BREAK), net)
 		addLibraryItem(library, BaseLibraryElement(PULL_RESISTOR), net)
-		addLibraryItem(library, BaseLibraryElement(TRANSISTOR), net)
+		addLibraryItem(library, BaseLibraryElement(TRANSISTOR_P), net)
+		addLibraryItem(library, BaseLibraryElement(TRANSISTOR_N), net)
 		addLibraryItem(library, BaseLibraryElement(GROUND), net)
 		addLibraryItem(library, BaseLibraryElement(POWER), net)
 		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
