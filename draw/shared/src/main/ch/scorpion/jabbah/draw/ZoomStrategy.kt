@@ -8,6 +8,9 @@ data class ZoomStrategy(val type: ZoomStrategyType, val zoomFactor: Double? = nu
 
 	companion object {
 		val NONE = ZoomStrategy(ZoomStrategyType.NONE)
+		val NORMAL = ZoomStrategy(ZoomStrategyType.NORMAL)
+		val FIT = ZoomStrategy(ZoomStrategyType.FIT)
+		val CENTER = ZoomStrategy(ZoomStrategyType.CENTER)
 	}
 
     /** Applies this [ZoomStrategy] to a particular [ViewNavigator].*/

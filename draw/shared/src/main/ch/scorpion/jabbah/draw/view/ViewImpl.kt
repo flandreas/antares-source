@@ -341,6 +341,13 @@ open class ViewImpl<C : InputEventContext>(
 
 	override var defaultZoomStrategy: ZoomStrategy = ZoomStrategy(ZoomStrategyType.FIT_MAX_NORMAL)
 
+	override var zoomStrategy: ZoomStrategy = defaultZoomStrategy
+		set(value) {
+			// Execute even if equal
+			field = value
+			field.apply(navigator)
+		}
+
 	private var _zoomPan: ZoomPan = ZoomPan(this)
 	override var zoomPan: ZoomPan
 		get() = _zoomPan
@@ -379,6 +386,10 @@ open class ViewImpl<C : InputEventContext>(
 
 	protected fun applyDefaultZoomStrategy() {
 		defaultZoomStrategy.apply(navigator)
+	}
+
+	protected fun applyZoomStrategy() {
+		zoomStrategy.apply(navigator)
 	}
 
 	/** Creates a new [ViewGeometry] for the specified zoom factor, while keeping the pan origin and zoom center.*/
@@ -456,9 +467,9 @@ open class ViewImpl<C : InputEventContext>(
 			when (e.name) {
 				Canvas.PROP_DIMENSION -> {
 					space.viewDimension = canvas.dimension
-					applyDefaultZoomStrategy()
+					applyZoomStrategy()
 				}
-				ViewSpace.PROP_AREA -> applyDefaultZoomStrategy()
+				ViewSpace.PROP_AREA -> applyZoomStrategy()
 				ApplicationContextHolder.PROP_APPLICATION_CONTEXT -> {
 					invalidate()
 					repaint()

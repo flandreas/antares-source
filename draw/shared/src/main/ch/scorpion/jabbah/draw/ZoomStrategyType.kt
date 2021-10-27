@@ -8,7 +8,7 @@ enum class ZoomStrategyType {
 
     /** Zooms the [View] to normal size, i.e. to 100 percent. */
     NORMAL {
-        override fun apply(navigator: ViewNavigator, zoomFactor: Double?) = navigator.panCenter()
+        override fun apply(navigator: ViewNavigator, zoomFactor: Double?) = navigator.panCenterDefault()
     },
 
     /** Zooms the [View] so that the [Drawable]s entirely fill the available [View] space. */
@@ -23,6 +23,10 @@ enum class ZoomStrategyType {
     FIT_MAX_NORMAL {
         override fun apply(navigator: ViewNavigator, zoomFactor: Double?) = navigator.fitMaxNormal()
     },
+
+	CENTER {
+		override fun apply(navigator: ViewNavigator, zoomFactor: Double?) = navigator.panCenter()
+	},
 
     /** Zooms the [View] to a particular zoom factor. */
     VALUE {

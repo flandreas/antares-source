@@ -206,6 +206,12 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 	var defaultZoomStrategy: ZoomStrategy
 
 	/**
+	 * The [ZoomStrategy] requested most recently by the user. Initialized by [defaultZoomStrategy].
+	 * When setting [zoomStrategy], its [ZoomStrategy.apply] method gets invoked by this [View].
+	 */
+	var zoomStrategy: ZoomStrategy
+
+	/**
 	 * Determines whether the user can manually change the [ZoomPan] of this [View]. While this is typically allowed,
 	 * there are situations when it isn't allowed, for example during zoom animations.
 	 * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_USER_ZOOM_ENABLED] has changed.

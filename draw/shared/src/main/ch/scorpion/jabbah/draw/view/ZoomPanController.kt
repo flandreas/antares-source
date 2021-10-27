@@ -2,13 +2,16 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.MouseAdapter
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.MouseEventImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomStrategy
 
 /**
  * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] by dragging with the
@@ -27,11 +30,9 @@ class ZoomPanController(val view: View<*>) {
 		/** The name of the 'wheel pan step' [Float] property in [Properties].*/
 		const val PROP_WHEEL_PAN_STEP = "view.ZoomPanController.wheelPanStep"
 
-		private val LOG by logger(ZoomPanController::class)
 		private const val AUTO_PAN_TIMER_DELAY = 50
 		private const val AUTO_PAN_SIZE = 10
 		private const val AUTO_PAN_REGION = 50
-		private const val MOUSE_WHEEL_PAN_FACTOR = 5
 	}
 
 	var enabled: Boolean = false
@@ -102,13 +103,6 @@ class ZoomPanController(val view: View<*>) {
 			startPan(e.location)
 		}
 
-		override fun mouseReleased(e: MouseEvent) {
-			isMousePressed = false
-			if (e.button != Button.BUTTON3) {
-				autoPanning.deactivate()
-			}
-		}
-
 		override fun mouseDragged(e: MouseEvent) {
 			if (e.isLeftButtonDown || e.isMiddleButtonDown) {
 				autoPanning.activate()
@@ -117,6 +111,16 @@ class ZoomPanController(val view: View<*>) {
 				return
 			}
 			pan(e.location)
+		}
+
+		override fun mouseReleased(e: MouseEvent) {
+			isMousePressed = false
+			if (e.button != Button.BUTTON3) {
+				autoPanning.deactivate()
+			}
+			if (e.isMiddleButtonDown) {
+				view.zoomStrategy = ZoomStrategy.NONE
+			}
 		}
 
 		override fun mouseWheelRotated(e: MouseEvent) {
@@ -134,6 +138,7 @@ class ZoomPanController(val view: View<*>) {
 			} else {
 				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
 			}
+			view.zoomStrategy = ZoomStrategy.NONE
 
 			e.consume()
 		}

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
