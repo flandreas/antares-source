@@ -14,6 +14,9 @@ import ch.scorpion.jabbah.draw.style.*
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.MouseInfo
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.event.ComponentListener
 import java.awt.event.MouseWheelEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -61,6 +64,12 @@ class CanvasJvm(
 			override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
 				val mousePos = view.viewToModel(Point2D(mousePosition.getX(), mousePosition.getY()))
 				DrawModuleJvm.contextMenuProvider.fillContextMenu(view, mousePos.x, mousePos.y, contextMenu)
+			}
+		})
+
+		this.addComponentListener(object : ComponentAdapter() {
+			override fun componentResized(e: ComponentEvent?) {
+				propertyOwner.fire(Canvas.PROP_DIMENSION, dimension, dimension)
 			}
 		})
 	}

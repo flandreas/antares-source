@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
@@ -43,6 +42,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	private val propertyChangeHandler = PropertyChangeHandler()
 
+	override lateinit var space: ViewSpace
+
 	// Backing property as alternative to 'lateinit' with custom setter.
 	protected var _canvas: Canvas? = null
 
@@ -54,6 +55,10 @@ open class ViewImpl<C : InputEventContext>(
 			}
 			_canvas = value
 			canvas.addPropertyChangeListener(propertyChangeHandler)
+
+			space = ViewSpace(canvas.dimension)
+			space.addPropertyChangeListener(propertyChangeHandler)
+
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
 		}
 
@@ -72,6 +77,7 @@ open class ViewImpl<C : InputEventContext>(
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
 		_canvas?.removePropertyChangeListener(propertyChangeHandler)
+		space.removePropertyChangeListener(propertyChangeHandler)
 	}
 
 	override val applicationContextHolder: ApplicationContextHolder? = applicationContextHolder
@@ -437,8 +443,7 @@ open class ViewImpl<C : InputEventContext>(
 	override fun modelToView(p: Point2D, zoomFactor: Double): Point2D =
 		createViewGeometry(zoomFactor).transform.transform(p)
 
-	override fun modelToViewLength(length: Double): Double { return length * zoomFactor
-	}
+	override fun modelToViewLength(length: Double): Double { return length * zoomFactor }
 
 	/** ---- [ViewImpl] */
 
@@ -449,7 +454,11 @@ open class ViewImpl<C : InputEventContext>(
 	private inner class PropertyChangeHandler : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			when (e.name) {
-				Canvas.PROP_DIMENSION -> applyDefaultZoomStrategy()
+				Canvas.PROP_DIMENSION -> {
+					space.viewDimension = canvas.dimension
+					applyDefaultZoomStrategy()
+				}
+				ViewSpace.PROP_AREA -> applyDefaultZoomStrategy()
 				ApplicationContextHolder.PROP_APPLICATION_CONTEXT -> {
 					invalidate()
 					repaint()

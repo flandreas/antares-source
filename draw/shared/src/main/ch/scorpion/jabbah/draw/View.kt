@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.view.ViewSpace
 
 /**
  * Represents a user's request to close the specified view.
@@ -49,6 +50,9 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 	 */
 	var canvas: Canvas
 
+	/** Controls the rectangular area that is free to display content to the user. Can be reduced from outside.*/
+	val space: ViewSpace
+
 	/** ---- Life cycle */
 
 	val applicationContextHolder: ApplicationContextHolder?
@@ -68,10 +72,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	/** ----  Geometry */
 
-	/** The width of this [View] in view space.*/
+	/** The width of this [View] in view coordinates.*/
 	val width: Int
 
-	/** The height of this [View] in view space.*/
+	/** The height of this [View] in view coordinates.*/
 	val height: Int
 
 	/** The bounds in model space of the primary content that this [View] displays.*/

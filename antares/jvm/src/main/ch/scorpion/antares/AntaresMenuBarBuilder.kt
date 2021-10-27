@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.view.DummyViewSpaceReductionAction
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -49,6 +50,7 @@ class AntaresMenuBarBuilder(
     private fun fillDevelopmentMenu(menu: JMenu): JMenu {
 	    menu.add(ActionWrapperSwing(TestAction()))
 	    menu.add(ActionWrapperSwing(DebugGraphicsAction()))
+	    menu.add(JCheckBoxMenuItem(ActionWrapperSwing(DummyViewSpaceReductionAction())))
 	    menu.addSeparator()
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableRepaintingObserverAction())))
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(RunRepaintingObserverAction())))

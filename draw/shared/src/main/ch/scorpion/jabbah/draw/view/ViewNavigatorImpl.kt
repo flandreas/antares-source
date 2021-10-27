@@ -90,10 +90,10 @@ class ViewNavigatorImpl(
 
 	private fun calculateContentCenterPan(zoomFactor: Double): Point2D {
 		val bounds = view.contentBounds
-		val newCenter = view.modelToView(Point2D(bounds.centerX, bounds.centerY), zoomFactor)
+		val newCenter = view.modelToView(Point2D(bounds.centerX, bounds.centerY), zoomFactor).subtract(view.space.area.topLeft)
 		val result = Point2D(
-			view.zoomPan.panOrigin.x + (newCenter.x - view.width / 2.0) / zoomFactor,
-			view.zoomPan.panOrigin.y + (newCenter.y - view.height / 2.0) / zoomFactor)
+			view.zoomPan.panOrigin.x + (newCenter.x - view.space.area.width / 2.0) / zoomFactor,
+			view.zoomPan.panOrigin.y + (newCenter.y - view.space.area.height / 2.0) / zoomFactor)
 
 		LOG.trace("center Pan for content $bounds in view ${view.canvas.dimension} is $result")
 
@@ -105,13 +105,13 @@ class ViewNavigatorImpl(
 		if (bounds.width == 0.0 || bounds.height == 0.0) {
 			return defaultZoomFactor
 		}
-		if (view.width == 0 || view.height == 0) {
+		if (view.space.area.widthInt == 0 || view.space.area.heightInt == 0) {
 			return defaultZoomFactor
 		}
 
 		return min(
-			(view.width - 2 * FIT_ZOOM_INSET) / bounds.width,
-			(view.height - 2 * FIT_ZOOM_INSET) / bounds.height)
+			(view.space.area.widthInt - 2 * FIT_ZOOM_INSET) / bounds.width,
+			(view.space.area.heightInt - 2 * FIT_ZOOM_INSET) / bounds.height)
 	}
 
 	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean {

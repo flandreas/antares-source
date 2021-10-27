@@ -30,6 +30,9 @@ interface RectangularShape : Shape {
     val width: Double
     val height: Double
 
+	val widthInt: Int get() = width.toInt()
+	val heightInt: Int get() = height.toInt()
+
     /** Determines whether this [RectangularShape]'s geometry property are all zero.*/
     val isInitial: Boolean get() = isEmpty && x == 0.0 && y == 0.0
 
