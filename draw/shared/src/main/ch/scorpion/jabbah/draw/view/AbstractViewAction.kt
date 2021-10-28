@@ -23,7 +23,7 @@ abstract class AbstractViewAction(
 	val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractAction(baseName) {
 
-	private val activeViewHandler: EventHandler<ActiveViewChangedEvent> = {activeViewChanged(it.oldView, it.newView) }
+	private val activeViewHandler: EventHandler<ActiveViewChangedEvent> = { activeViewChanged(it.oldView, it.newView) }
 
 	init {
 		eventBus.register(ActiveViewChangedEvent::class, activeViewHandler)

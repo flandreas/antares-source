@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.draw.ZoomStrategy
  * It is only enabled if [View.userZoomEnabled] is `true`.
  */
 abstract class AbstractZoomPanAction(
+	private val zoomStrategy: ZoomStrategy,
 	baseName: String,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager
@@ -22,15 +24,29 @@ abstract class AbstractZoomPanAction(
 		const val PROP_ZOOM_STEP = "view.command.zoom.step"
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && viewManager.activeView!!.userZoomEnabled
+	override fun execute(event: ActionEvent) {
+		viewManager.activeView!!.zoomStrategy = zoomStrategy
 	}
+
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && viewManager.activeView?.userZoomEnabled == true
 
 	override fun handleViewPropertyChanged(e: PropertyChangeEvent<Any>) {
 		super.handleViewPropertyChanged(e)
-		if (View.PROP_USER_ZOOM_ENABLED == e.name) {
-			updateEnabled()
+		when (e.name) {
+			View.PROP_USER_ZOOM_ENABLED -> updateEnabled()
+			View.PROP_ZOOM_STRATEGY -> updateSelected()
 		}
+	}
+
+	override fun notifyActiveViewChanged() {
+		updateSelected()
+	}
+
+	protected open fun calculateSelected(): Boolean = viewManager.activeView?.zoomStrategy == zoomStrategy
+
+	private fun updateSelected() {
+		selected = calculateSelected()
 	}
 }
 
@@ -38,24 +54,18 @@ abstract class AbstractZoomPanAction(
 class ZoomNormalAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractZoomPanAction("view.action.zoomNormal", eventBus, viewManager) {
-
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		viewManager.activeView!!.zoomStrategy = ZoomStrategy.NORMAL
-	}
-}
+) : AbstractZoomPanAction(ZoomStrategy.NORMAL,"view.action.zoomNormal", eventBus, viewManager)
 
 /** An action for zooming into the currently active [View] .*/
 class ZoomInAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractZoomPanAction("view.action.zoomIn", eventBus, viewManager) {
+) : AbstractZoomPanAction(ZoomStrategy.NONE, "view.action.zoomIn", eventBus, viewManager) {
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	override fun execute(event: ActionEvent) {
 		val view = viewManager.activeView!!
 		view.navigator.multiplyZoomFactor(BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
 		view.zoomStrategy = ZoomStrategy.NONE
-
 	}
 }
 
@@ -63,9 +73,9 @@ class ZoomInAction(
 class ZoomOutAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractZoomPanAction("view.action.zoomOut", eventBus, viewManager) {
+) : AbstractZoomPanAction(ZoomStrategy.NONE,"view.action.zoomOut", eventBus, viewManager) {
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	override fun execute(event: ActionEvent) {
 		val view = viewManager.activeView!!
 		view.navigator.multiplyZoomFactor(1 / BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
 		view.zoomStrategy = ZoomStrategy.NONE
@@ -79,20 +89,19 @@ class ZoomOutAction(
 class ZoomFitAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractZoomPanAction("view.action.zoomFit", eventBus, viewManager) {
+) : AbstractZoomPanAction(ZoomStrategy.FIT, "view.action.zoomFit", eventBus, viewManager)
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		viewManager.activeView!!.zoomStrategy = ZoomStrategy.FIT
-	}
-}
+/**
+ * An action for zooming and panning the currently active [View] such that the content fills the entire
+ * available view space, but not larger than normal zoom.
+ */
+class ZoomFitMaxNormalAction(
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractZoomPanAction(ZoomStrategy.FIT_MAX_NORMAL, "view.action.zoomFitMaxNormal", eventBus, viewManager)
 
 /** An action for centering the currently active [View] without changing the zoom factor.*/
 class ZoomCenterAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractZoomPanAction("view.action.zoomCenter", eventBus, viewManager) {
-
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		viewManager.activeView!!.zoomStrategy = ZoomStrategy.CENTER
-	}
-}
+) : AbstractZoomPanAction(ZoomStrategy.CENTER, "view.action.zoomCenter", eventBus, viewManager)

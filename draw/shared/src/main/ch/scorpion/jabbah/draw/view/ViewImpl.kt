@@ -346,8 +346,12 @@ open class ViewImpl<C : InputEventContext>(
 
 	override var zoomStrategy: ZoomStrategy = defaultZoomStrategy
 		set(value) {
+			if (field != value) {
+				val oldValue = field
+				field = value
+				firePropertyChange(View.PROP_ZOOM_STRATEGY, oldValue, field)
+			}
 			// Execute even if equal
-			field = value
 			field.apply(navigator)
 		}
 

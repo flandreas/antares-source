@@ -39,6 +39,9 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 		/** The name of the [userZoomEnabled] property in [PropertyChangeEvent]s.*/
 		const val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
 
+		/** The name of the [zoomStrategy] property in [PropertyChangeEvent]s. */
+		const val PROP_ZOOM_STRATEGY = "draw.view.zoomStrategy"
+
 		/** The name of the [canvas] property in [PropertyChangeEvent]s.*/
 		const val PROP_CANVAS = "PROP_CANVAS"
 	}

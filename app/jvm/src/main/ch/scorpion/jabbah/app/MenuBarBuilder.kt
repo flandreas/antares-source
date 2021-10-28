@@ -32,8 +32,9 @@ open class MenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
 			menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
 			menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomCenterAction())))
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomFitAction())))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomCenterAction())))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomFitAction())))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomFitMaxNormalAction())))
 		}
 	}
 

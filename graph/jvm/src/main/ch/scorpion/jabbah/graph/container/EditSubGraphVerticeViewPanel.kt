@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -33,7 +32,6 @@ class EditSubGraphVerticeViewPanel(
 
 	companion object {
 
-		private val LOG by logger(EditSubGraphVerticeViewPanel::class)
 		private val actions = mutableListOf<Action>()
 
 		/**
@@ -104,8 +102,9 @@ class EditSubGraphVerticeViewPanel(
 			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomInAction()))))
 			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomNormalAction()))))
 			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomOutAction()))))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomCenterAction()))))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomFitAction()))))
+			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomCenterAction()))))
+			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomFitAction()))))
+			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomFitMaxNormalAction()))))
 			viewMenu.addSeparator()
 			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(GridAction()))))
 			menuBar.add(viewMenu)

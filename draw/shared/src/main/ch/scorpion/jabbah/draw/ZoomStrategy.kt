@@ -10,6 +10,7 @@ data class ZoomStrategy(val type: ZoomStrategyType, val zoomFactor: Double? = nu
 		val NONE = ZoomStrategy(ZoomStrategyType.NONE)
 		val NORMAL = ZoomStrategy(ZoomStrategyType.NORMAL)
 		val FIT = ZoomStrategy(ZoomStrategyType.FIT)
+		val FIT_MAX_NORMAL = ZoomStrategy(ZoomStrategyType.FIT_MAX_NORMAL)
 		val CENTER = ZoomStrategy(ZoomStrategyType.CENTER)
 	}
 
