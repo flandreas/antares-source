@@ -44,6 +44,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	override lateinit var space: ViewSpace
 
+	override val contentBounds: ViewContentBounds = createViewContentBounds()
+
 	// Backing property as alternative to 'lateinit' with custom setter.
 	protected var _canvas: Canvas? = null
 
@@ -65,6 +67,7 @@ open class ViewImpl<C : InputEventContext>(
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
 		applicationContextHolder?.addPropertyChangeListener(propertyChangeHandler)
+		contentBounds.addPropertyChangeListener(propertyChangeHandler)
 	}
 
 	/** ---- Life cycle */
@@ -78,6 +81,7 @@ open class ViewImpl<C : InputEventContext>(
 		eventBus.unregister(ThemeEvent::class, themeListener)
 		_canvas?.removePropertyChangeListener(propertyChangeHandler)
 		space.removePropertyChangeListener(propertyChangeHandler)
+		contentBounds.removePropertyChangeListener(propertyChangeHandler)
 	}
 
 	override val applicationContextHolder: ApplicationContextHolder? = applicationContextHolder
@@ -139,8 +143,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	override val height: Int get() = canvas.dimension.height.toInt()
 
-	override val contentBounds: RectangularShape
-		get() = calculateCombinedBoundingBox()
+	protected open fun createViewContentBounds(): ViewContentBounds = ViewContentBounds(mainBoundsAccessor = ::calculateCombinedBoundingBox)
 
 	private fun calculateCombinedBoundingBox(): Rectangle2D {
 		val bbox = Rectangle2D()
@@ -474,6 +477,7 @@ open class ViewImpl<C : InputEventContext>(
 					invalidate()
 					repaint()
 				}
+				ViewContentBounds.PROP_TOTAL -> applyZoomStrategy()
 			}
 		}
 	}

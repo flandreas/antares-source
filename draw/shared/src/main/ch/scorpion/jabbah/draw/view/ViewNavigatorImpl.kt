@@ -90,7 +90,9 @@ class ViewNavigatorImpl(
 
 	private fun calculateContentCenterPan(zoomFactor: Double): Point2D {
 		val bounds = view.contentBounds
-		val newCenter = view.modelToView(Point2D(bounds.centerX, bounds.centerY), zoomFactor).subtract(view.space.area.topLeft)
+		val newCenter = view
+			.modelToView(Point2D(bounds.main.centerX, bounds.main.centerY), zoomFactor)
+			.subtract(view.space.area.topLeft)
 		val result = Point2D(
 			view.zoomPan.panOrigin.x + (newCenter.x - view.space.area.width / 2.0) / zoomFactor,
 			view.zoomPan.panOrigin.y + (newCenter.y - view.space.area.height / 2.0) / zoomFactor)
@@ -101,7 +103,7 @@ class ViewNavigatorImpl(
 	}
 
 	private fun calculateFitZoomFactor(): Double {
-		val bounds = view.contentBounds
+		val bounds = view.contentBounds.total
 		if (bounds.width == 0.0 || bounds.height == 0.0) {
 			return defaultZoomFactor
 		}

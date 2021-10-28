@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.View
 
 /**
- * [ViewSpace] defined the [Rectangle2D] area that is visible to the user and therefore
+ * [ViewSpace] defines the [Rectangle2D] area that is visible to the user and therefore
  * available to display content.
  *
  * The [ViewSpace] can be temporarily reduced by overlays (or similar things) being displayed
@@ -29,6 +29,12 @@ class ViewSpace(
 		const val PROP_AREA = "ViewSpace.area"
 	}
 
+	private var topReductions = mutableListOf<Int>()
+
+	/**
+	 * Reflects the size of the [View] (e.g. the [Canvas]). Must be updated whenever
+	 * the [View]'s size changes.
+	 */
 	var viewDimension: Dimension2D = viewDimension
 		set(value) {
 			if (field != value) {
@@ -37,8 +43,11 @@ class ViewSpace(
 			}
 		}
 
-	private var topReductions = mutableListOf<Int>()
 
+	/**
+	 * Returns the entire area of this [ViewSpace], which is [viewDimension] reduced by
+	 * all sizes that have been registed using one of the "reduce" methods.
+	 */
 	var area: Rectangle2D = Rectangle2D(0, 0, viewDimension.widthInt, viewDimension.heightInt)
 		private set
 
@@ -50,11 +59,13 @@ class ViewSpace(
 		updateArea()
 	}
 
+	/** Reduce the current [area] by [height] at the top of this [ViewSpace].*/
 	fun reduceTop(height: Int) {
 		topReductions.add(height)
 		updateArea()
 	}
 
+	/** Removes a reduction previously added by [reduceTop]. */
 	fun removeTopReduction(height: Int) {
 		topReductions.indexOfFirstOrNull { it == height }?.let { topReductions.removeAt(it) }
 		updateArea()

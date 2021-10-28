@@ -173,8 +173,7 @@ class ScenarioDetector(
 				DESC_UNZOOMABLE,
 				view.canvas.devicePixelRatio,
 				GraphStyleType.EXPLANATION)
-			if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioDesc!!) else view.animationContainer.add(scenarioDesc!!)
-			scenarioDesc!!.validate()
+			displayDesc(scenarioDesc!!)
 		}
 	}
 
@@ -188,20 +187,34 @@ class ScenarioDetector(
 				DESC_UNZOOMABLE,
 				view.canvas.devicePixelRatio,
 				GraphStyleType.EXPLANATION)
-			if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioStepDesc!!) else view.animationContainer.add(scenarioStepDesc!!)
-			scenarioStepDesc!!.validate()
+			displayDesc(scenarioStepDesc!!)
 		}
+	}
+
+	private fun displayDesc(desc: FlexibleTextView) {
+		if (DESC_UNZOOMABLE) {
+			view.ghostContainer.add(desc)
+		} else {
+			view.animationContainer.add(desc)
+		}
+		view.contentBounds.expandBy(desc)
+		desc.validate()
+	}
+
+	private fun hideDesc(desc: FlexibleTextView) {
+		if (DESC_UNZOOMABLE) {
+			view.ghostContainer.remove(desc)
+			view.ghostContainer.validate()
+		} else {
+			view.animationContainer.remove(desc)
+			view.animationContainer.validate()
+		}
+		view.contentBounds.removeExpansion(desc)
 	}
 
 	private fun hideScenarioDesc() {
 		if (scenarioDesc != null) {
-			if (DESC_UNZOOMABLE) {
-				view.ghostContainer.remove(scenarioDesc!!)
-				view.ghostContainer.validate()
-			} else {
-				view.animationContainer.remove(scenarioDesc!!)
-				view.animationContainer.validate()
-			}
+			hideDesc(scenarioDesc!!)
 			scenarioDesc = null
 		}
 	}
@@ -240,11 +253,11 @@ class ScenarioDetector(
 
 	private fun calculateScenarioDescAnchor(): Point2D {
 		val bounds = view.contentBounds
-		return Point2D(bounds.centerX, bounds.minY - DESC_DISTANCE)
+		return Point2D(bounds.main.centerX, bounds.main.minY - DESC_DISTANCE)
 	}
 
 	private fun calculateScenarioStepDescAnchor(): Point2D {
 		val bounds = view.contentBounds
-		return Point2D(bounds.centerX, bounds.maxY + DESC_DISTANCE)
+		return Point2D(bounds.main.centerX, bounds.main.maxY + DESC_DISTANCE)
 	}
 }

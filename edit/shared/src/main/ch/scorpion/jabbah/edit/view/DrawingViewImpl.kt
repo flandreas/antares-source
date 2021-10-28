@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
@@ -156,9 +155,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
         return component.preferredSelectionDrawingStrategy ?: defaultSelectionDrawingStrategy
     }
 
-    /** ---- [View] interface */
+	/** ---- [View] interface */
 
-    override val contentBounds: RectangularShape get() = drawing.boundingBox
+	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds { drawing.boundingBox }
 
 	override fun removeDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers
