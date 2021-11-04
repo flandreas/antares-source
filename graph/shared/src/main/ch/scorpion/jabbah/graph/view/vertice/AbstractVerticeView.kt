@@ -262,7 +262,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		get() {
 			val bbox = plainBoundingBox
 			if (isExecutionInfoDrawn(requiredBySystemSpeed = true, isPausing = true)) {
-				bbox.add(executionInfoLabel.boundingBox)
+				bbox.add(executionInfoLabel.boundingBox.moveBy(location))
 			}
 			return bbox
 		}
