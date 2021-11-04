@@ -237,10 +237,10 @@ enum class TransistorViewSymbol(val customName: String) {
 				// Connection
 				drawLine(signalPortX, -5.0 * SCALE, signalPortX, -3.5 * SCALE)
 				drawLine(signalPortX, -3.5 * SCALE, signalLineX, -3.5 * SCALE)
-				// Bar
-				drawLine(signalLineX, -4.0 * SCALE, signalLineX, -2.0 * SCALE)
 				// Arrow
 				if (isSource) {
+					// Bar
+					drawLine(signalLineX, -4.0 * SCALE, signalLineX, -2.0 * SCALE)
 					when (view.transistorType) {
 						P -> {
 							translate(signalLineX, -3.5 * SCALE)
@@ -253,6 +253,15 @@ enum class TransistorViewSymbol(val customName: String) {
 							translate(-signalPortX, 3.5 * SCALE)
 						}
 					}
+				} else {
+					// Bar
+					if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
+						// Switched off
+						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -3.5 * SCALE)
+						drawLine(signalLineX, -3.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)
+					} else {
+						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -2.0 * SCALE)
+					}
 				}
 			}
 		}
@@ -263,10 +272,11 @@ enum class TransistorViewSymbol(val customName: String) {
 				// Connection
 				drawLine(signalPortX, 1.0 * SCALE, signalPortX, -0.5 * SCALE)
 				drawLine(signalPortX, -0.5 * SCALE, signalLineX, -0.5 * SCALE)
-				// Bar
-				drawLine(signalLineX, 0.0, signalLineX, -2.0 * SCALE)
+
 				// Arrow
 				if (isSource) {
+					// Bar
+					drawLine(signalLineX, 0.0, signalLineX, -2.0 * SCALE)
 					when (view.transistorType) {
 						P -> {
 							translate(signalLineX, -0.5 * SCALE)
@@ -278,6 +288,15 @@ enum class TransistorViewSymbol(val customName: String) {
 							fill(nArrowPath)
 							translate(-signalPortX, 0.5 * SCALE)
 						}
+					}
+				} else {
+					// Bar
+					if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
+						// Switched off
+						drawLine(signalLineX, 0.0, signalLineX, -0.5 * SCALE)
+						drawLine(signalLineX, -0.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)
+					} else {
+						drawLine(signalLineX, 0.0, signalLineX, -2.0 * SCALE)
 					}
 				}
 			}
