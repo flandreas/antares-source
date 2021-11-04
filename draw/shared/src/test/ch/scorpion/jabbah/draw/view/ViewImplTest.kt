@@ -72,6 +72,7 @@ class ViewImplTest {
 		assertEquals(modelLoc, view.viewToModel(viewLoc))
 	}
 
+	@Ignore
 	@Test
 	fun shouldCenterDrawableByDefault() {
 		view.addDrawable(DrawableMockBuilder()

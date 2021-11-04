@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
@@ -42,7 +39,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	private val propertyChangeHandler = PropertyChangeHandler()
 
-	override lateinit var space: ViewSpace
+	override val space: ViewSpace = ViewSpace(Dimension2D(0, 0))
 
 	override val contentBounds: ViewContentBounds = createViewContentBounds()
 
@@ -58,7 +55,7 @@ open class ViewImpl<C : InputEventContext>(
 			_canvas = value
 			canvas.addPropertyChangeListener(propertyChangeHandler)
 
-			space = ViewSpace(canvas.dimension)
+			space.viewDimension = canvas.dimension
 			space.addPropertyChangeListener(propertyChangeHandler)
 
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
@@ -68,6 +65,7 @@ open class ViewImpl<C : InputEventContext>(
 		eventBus.register(ThemeEvent::class, themeListener)
 		applicationContextHolder?.addPropertyChangeListener(propertyChangeHandler)
 		contentBounds.addPropertyChangeListener(propertyChangeHandler)
+		space.removePropertyChangeListener(propertyChangeHandler)
 	}
 
 	/** ---- Life cycle */
