@@ -346,8 +346,11 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 
-		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class) { BoundingBoxBelowSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+
+		factory.register(SelectionDrawingStrategy.BELOW, PullResistorView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, TransistorView::class) { TransistorViewBelowSelectionModel(it as TransistorView, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private fun configureDragDestinationHighlights(registry: DragDestinationHighlightFactoryRegistry) {

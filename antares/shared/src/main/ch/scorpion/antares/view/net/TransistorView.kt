@@ -44,12 +44,10 @@ class TransistorView(
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
 
-		//private val SYMBOL = TransistorViewSymbol.configured
-
 		private const val LABEL_DIST = SCALE
 		private val DEFAULT_HANDEDNESS = RIGHT
-		private const val WIDTH = 6 * SCALE
-		private const val HEIGHT = 6 * SCALE
+		const val WIDTH = 6 * SCALE
+		const val HEIGHT = 6 * SCALE
 
 		private val hasCircle: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_CIRCLE)
 
