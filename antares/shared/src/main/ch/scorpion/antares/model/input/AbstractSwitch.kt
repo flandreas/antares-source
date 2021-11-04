@@ -81,7 +81,6 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	protected open fun setState(signalHandler: SignalHandler, on: Boolean) {
 		isOn = on
 		enabled = false
-		stateChanged(signalHandler)
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
