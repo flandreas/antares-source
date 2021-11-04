@@ -7,12 +7,37 @@
       <items>
         <containerLibraryElement _id='2' uuid='67f91a27-32da-4c8d-a081-f5b705c99618'>
           <name>
-            <translation lang='en' text='Transistors'/>
+            <translation lang='en' text='Transistor N-Type'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='3' uuid='c6b5c866-031b-4c7e-baea-508c0bf9153c'>
+        <containerLibraryElement _id='3' uuid='b33f254e-73c4-443d-87cc-5668bf6ca202'>
           <name>
-            <translation lang='en' text='Inverter'/>
+            <translation lang='en' text='Transistor P-Type'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='c6b5c866-031b-4c7e-baea-508c0bf9153c'>
+          <name>
+            <translation lang='en' text='NOT Gate'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='4469886a-ec82-4080-acd5-4f2f6cc230bf'>
+          <name>
+            <translation lang='en' text='NAND Gate'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='9c66f498-bf48-4be1-ac40-35ca3584eac6'>
+          <name>
+            <translation lang='en' text='AND Gate'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='2fd1f19f-515d-47ed-ba65-08392564cc38'>
+          <name>
+            <translation lang='en' text='NOR Gate'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='390a6f49-407c-4b6e-b4c8-401b8a03a5a4'>
+          <name>
+            <translation lang='en' text='OR Gate'/>
           </name>
         </containerLibraryElement>
       </items>
