@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -37,7 +38,7 @@ class TransistorView(
 	handedness: Handedness = DEFAULT_HANDEDNESS
 ) : DigitalComponentView<Transistor>(styleProvider, model)
 {
-	constructor(type: TransistorType): this(model = Transistor(type), handedness = defaultHandedness(type))
+	constructor(type: TransistorType): this(model = Transistor(type), handedness = DEFAULT_HANDEDNESS)
 
 	companion object {
 
@@ -50,14 +51,13 @@ class TransistorView(
 		const val HEIGHT = 6 * SCALE
 
 		private val hasCircle: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_CIRCLE)
-
-		private fun defaultHandedness(type: TransistorType): Handedness {
-			return when (type) {
-				TransistorType.P -> LEFT
-				TransistorType.N -> RIGHT
-			}
-		}
 	}
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			model.bitWidth = value
+		}
 
 	/** [Handedness.RIGHT] means that gate and source are in [Direction.SOUTH].*/
 	var handedness: Handedness = handedness
@@ -82,12 +82,6 @@ class TransistorView(
 			}
 		}
 
-	var bitWidth: BitWidth
-		get() = model.bitWidth
-		set(value) {
-			model.bitWidth = value
-		}
-
 	private val label = HorizontalLabel(
 		owner = this,
 		relLocation = Point2D.ZERO,
@@ -104,34 +98,31 @@ class TransistorView(
 		// Gate
 		val gate = DigitalPortView(
 			styleProvider,
-			model.getGatePort(),
+			model.gatePort,
 			0, 0,
 			WEST,
 			showLogicAnnotation = false
 		)
-		gate.setPortName("G")
 		gate.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(gate)
 
 		// Source
 		val source = DigitalPortView(
 			styleProvider,
-			model.getSourcePort(),
+			model.sourcePort,
 			0, 0,
 			NORTH
 		)
-		source.setPortName("S")
 		source.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(source)
 
 		// Drain
 		val drain = DigitalPortView(
 			styleProvider,
-			model.getDrainPort(),
+			model.drainPort,
 			0, 0,
 			SOUTH
 		)
-		drain.setPortName("D")
 		drain.portLabelPosition = PortLabelPosition.HIDE
 		addPortView(drain)
 
@@ -146,6 +137,7 @@ class TransistorView(
 			if (value != model.transistorType) {
 				invalidate()
 				model.transistorType = value
+				updateGeometry()
 				tooltip.reset()
 				invalidate()
 			}
@@ -222,35 +214,45 @@ class TransistorView(
 
 	/** ---- [TransistorView] */
 
+	val northPortView: PortView<*> get() =
+		if (handedness == DEFAULT_HANDEDNESS) {
+			when (transistorType) {
+				TransistorType.N -> getPortView(model.drainPort)!!
+				TransistorType.P -> getPortView(model.sourcePort)!!
+			}
+		} else {
+			when (transistorType) {
+				TransistorType.N -> getPortView(model.sourcePort)!!
+				TransistorType.P -> getPortView(model.drainPort)!!
+			}
+		}
+
+	val southPortView: PortView<*> get() =
+		if (handedness == DEFAULT_HANDEDNESS) {
+			when (transistorType) {
+				TransistorType.N -> getPortView(model.sourcePort)!!
+				TransistorType.P -> getPortView(model.drainPort)!!
+			}
+		} else {
+			when (transistorType) {
+				TransistorType.N -> getPortView(model.drainPort)!!
+				TransistorType.P -> getPortView(model.sourcePort)!!
+			}
+		}
+
 	private fun updateGeometry() {
-		getPortView(model.getGatePort())?.apply {
+		getPortView(model.gatePort)?.apply {
 			setLocation(
 				DigitalPortView.LENGTH,
 				symbol.getGatePositionY(this@TransistorView))
 		}
-		getPortView(model.getSourcePort())?.apply {
-			setLocation(
-				DigitalPortView.LENGTH + 4 * SCALE,
-				when (handedness) {
-					RIGHT -> SCALE
-					LEFT -> -5 * SCALE
-				})
-			direction = when (handedness) {
-				RIGHT -> SOUTH
-				LEFT -> NORTH
-			}
+		northPortView.apply {
+			setLocation(DigitalPortView.LENGTH + 4 * SCALE, -5 * SCALE)
+			direction = NORTH
 		}
-		getPortView(model.getDrainPort())?.apply {
-			setLocation(
-				DigitalPortView.LENGTH + 4 * SCALE,
-				when (handedness) {
-					RIGHT -> -5 * SCALE
-					LEFT -> SCALE
-				})
-			direction = when (handedness) {
-				RIGHT -> NORTH
-				LEFT -> SOUTH
-			}
+		southPortView.apply {
+			setLocation(DigitalPortView.LENGTH + 4 * SCALE, SCALE)
+			direction = SOUTH
 		}
 		label.relLocation = Point2D(
 			DigitalPortView.LENGTH + WIDTH + LABEL_DIST,

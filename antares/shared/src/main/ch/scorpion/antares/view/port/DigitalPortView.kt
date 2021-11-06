@@ -154,10 +154,10 @@ class DigitalPortView(
 		}
 
 	override fun modelChanged() {
-		super.modelChanged()
 		buildPortLabel()
 		buildBitWidthAnnotation()
 		updateLength()
+		super.modelChanged()
 	}
 
 	/** ---- [Storable] */

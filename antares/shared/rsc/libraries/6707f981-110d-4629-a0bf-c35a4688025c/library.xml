@@ -35,8 +35,8 @@
             <baseLibraryElement _id='16' id='Tunnel'/>
             <baseLibraryElement _id='17' id='Break'/>
             <baseLibraryElement _id='18' id='PullResistor'/>
-            <baseLibraryElement _id='19' id='TransistorP'/>
             <baseLibraryElement _id='112' id='TransistorN'/>
+            <baseLibraryElement _id='19' id='TransistorP'/>
             <baseLibraryElement _id='20' id='Ground'/>
             <baseLibraryElement _id='21' id='Power'/>
             <baseLibraryElement _id='22' id='RealSwitch'/>

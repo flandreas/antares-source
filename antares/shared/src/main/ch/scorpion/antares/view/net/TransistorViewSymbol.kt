@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.LineCap
 import ch.scorpion.jabbah.draw.graphics.LineJoin
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 enum class TransistorViewSymbol(val customName: String) {
 
@@ -51,12 +52,12 @@ enum class TransistorViewSymbol(val customName: String) {
 			view.apply {
 				when (handedness) {
 					RIGHT -> {
-						drawSouthSignalPort(view, context, getPortView(model.getSourcePort()) as DigitalPortView)
-						drawNorthSignalPort(view, context, getPortView(model.getDrainPort()) as DigitalPortView)
+						drawSouthSignalPort(view, context, getPortView(model.sourcePort) as DigitalPortView)
+						drawNorthSignalPort(view, context, getPortView(model.drainPort) as DigitalPortView)
 					}
 					LEFT -> {
-						drawSouthSignalPort(view, context, getPortView(model.getDrainPort()) as DigitalPortView)
-						drawNorthSignalPort(view, context, getPortView(model.getSourcePort()) as DigitalPortView)
+						drawSouthSignalPort(view, context, getPortView(model.drainPort) as DigitalPortView)
+						drawNorthSignalPort(view, context, getPortView(model.sourcePort) as DigitalPortView)
 					}
 				}
 			}
@@ -71,7 +72,7 @@ enum class TransistorViewSymbol(val customName: String) {
 
 		private fun drawGate(view: TransistorView, context: DrawContext) {
 			view.apply {
-				(getPortView(model.getGatePort()) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.gatePort) as DigitalPortView).prepareConnectionDrawContext(context)
 
 				// Gate connection
 				val gateConnectionY = when(handedness) {
@@ -123,7 +124,7 @@ enum class TransistorViewSymbol(val customName: String) {
 
 		private fun drawBulk(view: TransistorView, context: DrawContext) {
 			view.apply {
-				(getPortView(model.getDrainPort()) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.drainPort) as DigitalPortView).prepareConnectionDrawContext(context)
 
 				val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 					0.5 * SCALE
@@ -131,7 +132,7 @@ enum class TransistorViewSymbol(val customName: String) {
 					0.0
 				}
 
-				(getPortView(model.getDrainPort()) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.drainPort) as DigitalPortView).prepareConnectionDrawContext(context)
 
 				context.g.translate(dx, 0.0)
 
@@ -198,24 +199,18 @@ enum class TransistorViewSymbol(val customName: String) {
 		override fun render(view: TransistorView, context: DrawContext) {
 			drawGate(view, context)
 
-			view.apply {
-				when (handedness) {
-					RIGHT -> {
-						drawSouthSignalPort(view, context, getPortView(model.getSourcePort()) as DigitalPortView, isSource = true)
-						drawNorthSignalPort(view, context, getPortView(model.getDrainPort()) as DigitalPortView, isSource = false)
-					}
-					LEFT -> {
-						drawSouthSignalPort(view, context, getPortView(model.getDrainPort()) as DigitalPortView, isSource = false)
-						drawNorthSignalPort(view, context, getPortView(model.getSourcePort()) as DigitalPortView, isSource = true)
-					}
-				}
+			view.northPortView.apply {
+				drawNorthSignalPort(view, context, this, this.port === view.model.sourcePort)
+			}
+			view.southPortView.apply {
+				drawSouthSignalPort(view, context, this, this.port === view.model.sourcePort)
 			}
 		}
 
 		private fun drawGate(view: TransistorView, context: DrawContext) {
 			val gatePositionY = getGatePositionY(view).toDouble()
 			view.apply {
-				(getPortView(model.getGatePort()) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.gatePort) as DigitalPortView).prepareConnectionDrawContext(context)
 				when (model.transistorType) {
 					P -> {
 						context.g.drawOval(DigitalPortView.LENGTH.toDouble() + SCALE, getGatePositionY(this) - 0.5 * SCALE, circleSize, circleSize)
@@ -226,12 +221,11 @@ enum class TransistorViewSymbol(val customName: String) {
 					}
 				}
 				// Gate bar
-				//context.g.stroke = barStroke
 				context.g.drawLine(gateLineX, -3.5 * SCALE, gateLineX, -0.5 * SCALE)
 			}
 		}
 
-		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView, isSource: Boolean) {
+		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
 			context.g.apply {
 				// Connection
@@ -266,7 +260,7 @@ enum class TransistorViewSymbol(val customName: String) {
 			}
 		}
 
-		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView, isSource: Boolean) {
+		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
 			context.g.apply {
 				// Connection

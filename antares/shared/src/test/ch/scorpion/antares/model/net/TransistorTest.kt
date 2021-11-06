@@ -70,8 +70,8 @@ class TransistorTest {
 	}
 
 	private fun assert(control: Bit, data: Bit, result: Bit) {
-		transistor.getGatePort().setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
-		transistor.getSourcePort().setIncomingSignal(DigitalSignalFactory.of(data), signalHandler)
-		assertEquals(result, transistor.getDrainPort().getOutgoingSignal()!!.bitAt(0))
+		transistor.gatePort.setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
+		transistor.inputPort.setIncomingSignal(DigitalSignalFactory.of(data), signalHandler)
+		assertEquals(result, transistor.outputPort.getOutgoingSignal()!!.bitAt(0))
 	}
 }

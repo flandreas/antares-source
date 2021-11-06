@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -109,7 +110,7 @@ abstract class AbstractPortView<T : Any>(
 	private val connectionPointY: Double get() = location.y + length * direction.dy
 
 	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
-	private val tooltip: Tooltip? by lazy {
+	private val tooltip = resettableLazy {
 		ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)?.let {
 			Tooltip(it, Rectangle2D.pointLike(owner!!.getPortConnectionPoint(this.port)))
 		}
@@ -273,7 +274,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		tooltip?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
+		tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
 
 	/** ---- [Storable] interface */
 
@@ -317,7 +318,7 @@ abstract class AbstractPortView<T : Any>(
 	 * and validation is handled by the calling method in [PortView]. This implementation does nothing.
 	 */
 	protected open fun modelChanged() {
-		// empty
+		tooltip.reset()
 	}
 
 	protected open fun ownerRotationChanged() {
