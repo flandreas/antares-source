@@ -10,6 +10,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Port
@@ -153,6 +154,13 @@ class Transistor(
 		if (reader.hasAttribute("type")) {
 			transistorType = TransistorType.withName(reader.readString("type"))
 		}
+	}
+
+	/** ---- [Actor] */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 	}
 
 	/** ---- [Transistor] */
