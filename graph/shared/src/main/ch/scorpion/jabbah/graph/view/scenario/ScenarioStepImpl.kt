@@ -122,7 +122,7 @@ class ScenarioStepImpl(
 		set(value) {
 			if (field != value) {
 				field = value
-				highlightIntIdsCache = null
+				highlightIntIdsCache = parseHighlightIds(field)
 			}
 		}
 
@@ -163,16 +163,26 @@ class ScenarioStepImpl(
 	override val highlightIdsAsInt: List<Int>
 		get() {
 			if (highlightIntIdsCache == null) {
-				highlightIntIdsCache = mutableListOf()
-				if (StringUtils.isNotEmpty(highlightIds)) {
-					highlightIds!!
-						.split(delimiters = charArrayOf(','))
-						.map { it.trim().toInt() }
-						.forEach { (highlightIntIdsCache as MutableList<Int>).add(it) }
-				}
+				highlightIntIdsCache = parseHighlightIds(highlightIds)
 			}
 			return highlightIntIdsCache!!
 		}
+
+	private fun parseHighlightIds(s: String?): List<Int> {
+		try {
+			val result = mutableListOf<Int>()
+			if (StringUtils.isNotEmpty(s)) {
+				s!!
+					.split(delimiters = charArrayOf(','))
+					.map { it.trim().toInt() }
+					.forEach { result.add(it) }
+			}
+			return result
+		} catch (e: Throwable) {
+			println("Error while parsing Highlight IDs")
+			throw IllegalArgumentException("Illegal Format")
+		}
+	}
 
 	/** ---- [Storable] interface */
 
