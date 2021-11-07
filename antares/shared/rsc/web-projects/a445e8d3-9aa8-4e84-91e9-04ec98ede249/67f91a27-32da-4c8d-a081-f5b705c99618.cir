@@ -4,13 +4,13 @@
       <model>
         <graph _id='2'>
           <elements>
-            <transistor _id='3' id='1' delay='20' bitWidth='1' logic='positive'/>
+            <transistor _id='3' id='1' delay='20' bitWidth='1' type='n'/>
             <switch _id='4' id='2' delay='1000'/>
             <power _id='5' id='4' delay='1' bitWidth='1'/>
             <digitalNet _id='6' id='5' delay='0'>
               <ports>
                 <netPortRef _id='7' verticeId='5' portId='1'/>
-                <netPortRef _id='8' verticeId='3' portId='1'/>
+                <netPortRef _id='8' verticeId='3' portId='3'/>
               </ports>
             </digitalNet>
             <digitalNet _id='9' id='6' delay='0'>
@@ -22,12 +22,12 @@
             <pullResistor _id='12' id='7' delay='0' bitWidth='1' pullDir='low'/>
             <digitalNet _id='13' id='8' delay='0'>
               <ports>
-                <netPortRef _id='14' verticeId='3' portId='3'/>
-                <netPortRef _id='15' verticeId='12' portId='1'/>
-                <netPortRef _id='16' verticeId='17' portId='1'/>
+                <netPortRef _id='14' verticeId='12' portId='1'/>
+                <netPortRef _id='15' verticeId='16' portId='1'/>
+                <netPortRef _id='17' verticeId='3' portId='1'/>
               </ports>
             </digitalNet>
-            <led _id='17' id='9' delay='0'/>
+            <led _id='16' id='9' delay='0'/>
           </elements>
         </graph>
       </model>
@@ -75,10 +75,10 @@
             </scenarios>
           </scenarios>
           <components>
-            <transistorView _id='27' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-224.0' y='-203.0' handedness='left' symbol='inverterCircle'/>
+            <transistorView _id='27' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-224.0' y='-203.0' symbol='inverterCircle'/>
             <switchView _id='28' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-245.0' y='-217.0'/>
             <powerView _id='29' id='4' rot='270' filled='true' stroked='true' modelId='5' x='-182.0' y='-280.0'/>
-            <digitalEdgeView _id='30' id='5' filled='true' stroked='true' modelId='6' layout='ortho' orig='29' origPort='1' origPortOutput='true' dest='27' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='30' id='5' filled='true' stroked='true' modelId='6' layout='ortho' orig='29' origPort='1' origPortOutput='true' dest='27' destPort='3' adjusted='false'>
               <shape>
                 <polylineShape points='-182.0,-294.0 -182.0,-238.0'/>
               </shape>
@@ -89,12 +89,12 @@
               </shape>
             </digitalEdgeView>
             <pullResistorView _id='32' id='7' rot='90' filled='true' stroked='true' modelId='12' x='-182.0' y='-140.0'/>
-            <digitalEdgeView _id='33' id='8' filled='true' stroked='true' modelId='13' layout='ortho' orig='27' origPort='3' origPortOutput='true' dest='34' adjusted='false'>
+            <digitalEdgeView _id='33' id='8' filled='true' stroked='true' modelId='13' layout='ortho' orig='27' origPort='1' origPortOutput='true' dest='34' adjusted='false'>
               <shape>
                 <polylineShape points='-182.0,-196.0 -182.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='35' id='9' rot='0' filled='true' stroked='true' modelId='17' x='-119.0' y='-168.0' size='large' lightColor='red'/>
+            <ledView _id='35' id='9' rot='0' filled='true' stroked='true' modelId='16' x='-119.0' y='-168.0' size='large' lightColor='red'/>
             <digitalNodeView _id='34' id='10' filled='true' stroked='true' modelId='13'>
               <location>
                 <point x='-182.0' y='-168.0'/>
