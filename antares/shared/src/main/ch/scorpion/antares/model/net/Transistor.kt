@@ -184,6 +184,8 @@ class Transistor(
 
 	private fun handleTransistorTypeChanged() {
 		sourcePort.portType = sourcePortType(transistorType)
+		sourcePort.canBeUndefined = sourcePort.portType == PortType.OUTPUT
 		drainPort.portType = drainPortType(transistorType)
+		drainPort.canBeUndefined = drainPort.portType == PortType.OUTPUT
 	}
 }
