@@ -68,7 +68,6 @@ abstract class AbstractPortViewStartConnector(
 			ignoreEvent { it.keyEvent != null }
 
 			state("sense") {
-				onEntry { it.view.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStartDrag") {
 					given { it.mouseEvent?.isAltDown != true && mouseMoved(it) && insideStartPortView(it.location) }
 				}

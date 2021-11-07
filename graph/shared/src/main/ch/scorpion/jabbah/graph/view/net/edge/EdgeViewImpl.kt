@@ -591,10 +591,8 @@ open class EdgeViewImpl<T : Any>(
 		return visitor.visit(this)
 	}
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		LOG.trace("getInputEventHandler at " + Point2D(context.x, context.y))
-		return layout.type.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
-	}
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		layout.type.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
 
 	override fun draw(context: DrawContext) {
 		styling.draw(context)

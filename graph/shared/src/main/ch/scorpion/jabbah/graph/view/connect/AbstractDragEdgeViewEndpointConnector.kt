@@ -28,7 +28,6 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		stateMachine<EditInputEventContext>(Unhandled) {
 
 			state("sense") {
-				onEntry { it.view.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStart") {
 					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location)}
 				}
