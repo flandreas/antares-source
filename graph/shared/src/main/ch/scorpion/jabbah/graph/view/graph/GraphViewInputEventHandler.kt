@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
@@ -25,37 +24,30 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 	private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector
 ) : DrawableBagInputEventHandler<T, EditInputEventContext>() {
 
-	companion object {
-		private val LOG by logger(GraphViewInputEventHandler::class)
-	}
-
 	fun graphElementViewRemoved(graphElementView: GraphElementView<*>) {
 		ConnectionPointHighlighter.removePortViewHighlight()
 	}
 
 	override fun handlerOfDrawable(drawable: Drawable, context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 		if (drawable is VerticeView<*>) {
-			val portView = drawable.getPortViewAtConnectionPoint(context.x, context.y)
-			if (portView != null && portView.connectable) {
-				if (portView.port.portType.isOutput) {
-					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
-						LOG.trace("delegating mouseMoved to ReconnectOriginConnector")
-						reconnectOriginConnector.useFor((drawableBag as GraphView).getEdgeView(portView.port)!!, context)
-						reconnectOriginConnector.handler
-					} else {
-						LOG.trace("delegating mouseMoved to OutputToInputConnector")
-						dslOutputToInputConnector.useFor(drawable, context)
-						dslOutputToInputConnector.handler
+
+			drawable.getPortViewAtConnectionPoint(context.x, context.y)?.let { portView ->
+				if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
+					val edgeView = (drawableBag as GraphView).getEdgeView(portView.port)
+					if (edgeView?.origin?.portView === portView) {
+						reconnectOriginConnector.useFor(edgeView, context)
+						return reconnectOriginConnector.handler
+					} else if (edgeView?.destination?.portView === portView) {
+						reconnectDestinationConnector.useFor(edgeView, context)
+						return reconnectDestinationConnector.handler
 					}
-				} else if (portView.port.portType.isInput) {
-					return if (portView.port.isConnected && context.mouseEvent?.isAltDown == true) {
-						LOG.trace("delegating mouseMoved to ReconnectDestinationConnector")
-						reconnectDestinationConnector.useFor((drawableBag as GraphView).getEdgeView(portView.port)!!, context)
-						reconnectDestinationConnector.handler
-					} else {
-						LOG.trace("delegating mouseMoved to InputToOutputOrEdgeConnector")
+				} else {
+					if (portView.port.portType.isOutput) {
+						dslOutputToInputConnector.useFor(drawable, context)
+						return dslOutputToInputConnector.handler
+					} else if (portView.port.portType.isInput) {
 						dslInputToOutputOrEdgeConnector.useFor(drawable, context)
-						dslInputToOutputOrEdgeConnector.handler
+						return dslInputToOutputOrEdgeConnector.handler
 					}
 				}
 			}
