@@ -116,7 +116,9 @@ class Transistor(
 
 		addPort(DigitalPortImpl(sourcePortType(transistorType), "S", bitWidth = bitWidth))
 		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth))
-		addPort(DigitalPortImpl(drainPortType(transistorType), "D", bitWidth = bitWidth))
+		addPort(DigitalPortImpl(drainPortType(transistorType), "D", bitWidth = bitWidth, canBeUndefined = true))
+
+		handleTransistorTypeChanged()
 	}
 
 	/** ---- [GraphElement] interface */
