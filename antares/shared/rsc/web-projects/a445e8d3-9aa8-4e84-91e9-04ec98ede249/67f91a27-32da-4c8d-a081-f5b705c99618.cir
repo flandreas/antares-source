@@ -6,37 +6,37 @@
           <elements>
             <transistor _id='3' id='1' delay='20' bitWidth='1' type='n'/>
             <switch _id='4' id='2' delay='1000'/>
-            <power _id='5' id='4' delay='1' bitWidth='1'/>
-            <digitalNet _id='6' id='5' delay='0'>
+            <digitalNet _id='5' id='6' delay='0'>
               <ports>
-                <netPortRef _id='7' verticeId='5' portId='1'/>
-                <netPortRef _id='8' verticeId='3' portId='3'/>
+                <netPortRef _id='6' verticeId='4' portId='1'/>
+                <netPortRef _id='7' verticeId='3' portId='2'/>
               </ports>
             </digitalNet>
-            <digitalNet _id='9' id='6' delay='0'>
+            <pullResistor _id='8' id='7' delay='0' bitWidth='1' pullDir='high'/>
+            <led _id='9' id='9' delay='0'/>
+            <digitalNet _id='10' id='10' delay='0'>
               <ports>
-                <netPortRef _id='10' verticeId='4' portId='1'/>
-                <netPortRef _id='11' verticeId='3' portId='2'/>
+                <netPortRef _id='11' verticeId='8' portId='1'/>
+                <netPortRef _id='12' verticeId='3' portId='3'/>
+                <netPortRef _id='13' verticeId='9' portId='1'/>
               </ports>
             </digitalNet>
-            <pullResistor _id='12' id='7' delay='0' bitWidth='1' pullDir='low'/>
-            <digitalNet _id='13' id='8' delay='0'>
+            <ground _id='14' id='11' delay='1' bitWidth='1'/>
+            <digitalNet _id='15' id='12' delay='0'>
               <ports>
-                <netPortRef _id='14' verticeId='12' portId='1'/>
-                <netPortRef _id='15' verticeId='16' portId='1'/>
+                <netPortRef _id='16' verticeId='14' portId='1'/>
                 <netPortRef _id='17' verticeId='3' portId='1'/>
               </ports>
             </digitalNet>
-            <led _id='16' id='9' delay='0'/>
           </elements>
         </graph>
       </model>
       <view>
         <graphView _id='18'>
           <netViews>
-            <netView _id='19' modelId='6' style='line'/>
-            <netView _id='20' modelId='9' style='line'/>
-            <netView _id='21' modelId='13' style='line'/>
+            <netView _id='19' modelId='5' style='line'/>
+            <netView _id='20' modelId='10' style='line'/>
+            <netView _id='21' modelId='15' style='line'/>
           </netViews>
           <scenarios>
             <scenarios _id='22'>
@@ -49,7 +49,7 @@
                     <translation lang='en' text='Input is 0'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='24' id='1' highlightIds='7,11,12' condition='#1.2 == 0'>
+                    <scenarioStep _id='24' id='1' highlightIds='7,10,17' condition='#1.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 0 Step'/>
                       </name>
@@ -64,7 +64,7 @@
                     <translation lang='en' text='Input is 1'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='26' id='1' highlightIds='1,5,6,8,12' condition='#1.2 == 1'>
+                    <scenarioStep _id='26' id='1' highlightIds='1,11,14,16,17' condition='#1.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 1 Step'/>
                       </name>
@@ -77,37 +77,37 @@
           <components>
             <transistorView _id='27' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-224.0' y='-203.0' symbol='inverterCircle'/>
             <switchView _id='28' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-245.0' y='-217.0'/>
-            <powerView _id='29' id='4' rot='270' filled='true' stroked='true' modelId='5' x='-182.0' y='-280.0'/>
-            <digitalEdgeView _id='30' id='5' filled='true' stroked='true' modelId='6' layout='ortho' orig='29' origPort='1' origPortOutput='true' dest='27' destPort='3' adjusted='false'>
-              <shape>
-                <polylineShape points='-182.0,-294.0 -182.0,-238.0'/>
-              </shape>
-            </digitalEdgeView>
-            <digitalEdgeView _id='31' id='6' filled='true' stroked='true' modelId='9' layout='ortho' orig='28' origPort='1' origPortOutput='true' dest='27' destPort='2' adjusted='false'>
+            <digitalEdgeView _id='29' id='6' filled='true' stroked='true' modelId='5' layout='ortho' orig='28' origPort='1' origPortOutput='true' dest='27' destPort='2' adjusted='false'>
               <shape>
                 <polylineShape points='-259.0,-217.0 -210.0,-217.0'/>
               </shape>
             </digitalEdgeView>
-            <pullResistorView _id='32' id='7' rot='90' filled='true' stroked='true' modelId='12' x='-182.0' y='-140.0'/>
-            <digitalEdgeView _id='33' id='8' filled='true' stroked='true' modelId='13' layout='ortho' orig='27' origPort='1' origPortOutput='true' dest='34' adjusted='false'>
+            <pullResistorView _id='30' id='7' rot='270' filled='true' stroked='true' modelId='8' x='-182.0' y='-287.0'/>
+            <ledView _id='31' id='9' rot='0' filled='true' stroked='true' modelId='9' x='-126.0' y='-266.0' size='large' lightColor='red'/>
+            <digitalEdgeView _id='32' id='10' filled='true' stroked='true' modelId='10' layout='ortho' orig='30' origPort='1' origPortOutput='true' dest='33' adjusted='false'>
               <shape>
-                <polylineShape points='-182.0,-196.0 -182.0,-168.0'/>
+                <polylineShape points='-182.0,-301.0 -182.0,-266.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='35' id='9' rot='0' filled='true' stroked='true' modelId='16' x='-119.0' y='-168.0' size='large' lightColor='red'/>
-            <digitalNodeView _id='34' id='10' filled='true' stroked='true' modelId='13'>
+            <groundView _id='34' id='11' rot='90' filled='true' stroked='true' modelId='14' x='-182.0' y='-161.0'/>
+            <digitalEdgeView _id='35' id='14' filled='true' stroked='true' modelId='15' layout='ortho' orig='34' origPort='1' origPortOutput='true' dest='27' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-182.0,-147.0 -182.0,-196.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalNodeView _id='33' id='15' filled='true' stroked='true' modelId='10'>
               <location>
-                <point x='-182.0' y='-168.0'/>
+                <point x='-182.0' y='-266.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='36' id='11' filled='true' stroked='true' modelId='13' layout='ortho' orig='34' dest='32' destPort='1' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='36' id='16' filled='true' stroked='true' modelId='10' layout='ortho' orig='33' dest='27' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-182.0,-168.0 -182.0,-126.0'/>
+                <polylineShape points='-182.0,-266.0 -182.0,-238.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='37' id='12' filled='true' stroked='true' modelId='13' layout='ortho' orig='34' dest='35' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='37' id='17' filled='true' stroked='true' modelId='10' layout='ortho' orig='33' dest='31' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='-182.0,-168.0 -105.0,-168.0'/>
+                <polylineShape points='-182.0,-266.0 -112.0,-266.0'/>
               </shape>
             </digitalEdgeView>
           </components>

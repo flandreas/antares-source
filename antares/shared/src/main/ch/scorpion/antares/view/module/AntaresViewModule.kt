@@ -351,6 +351,8 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, PullResistorView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TransistorView::class) { TransistorViewBelowSelectionModel(it as TransistorView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, GroundView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, PowerView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private fun configureDragDestinationHighlights(registry: DragDestinationHighlightFactoryRegistry) {

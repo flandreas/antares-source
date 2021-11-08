@@ -34,7 +34,7 @@ class TransistorCalculator : VerticeCalculator<Transistor> {
 				}
 			}
 		}
-		vertice.getOutput<DigitalSignal>(vertice.outputPortId).setOutgoingSignalBuffered(result, signalHandler)
+		vertice.outputPort.setOutgoingSignalBuffered(result, signalHandler)
 	}
 
 	private fun calculateOutputValue(inputValue: DigitalSignal): DigitalSignal {
@@ -79,18 +79,6 @@ class Transistor(
 				Logic.POSITIVE -> TransistorType.N
 				Logic.NEGATIVE -> TransistorType.P
 			}
-
-		private fun sourcePortType(transistorType: TransistorType): PortType =
-			when (transistorType) {
-				TransistorType.N -> PortType.OUTPUT
-				TransistorType.P -> PortType.INPUT
-			}
-
-		private fun drainPortType(transistorType: TransistorType): PortType =
-			when (transistorType) {
-				TransistorType.N -> PortType.INPUT
-				TransistorType.P -> PortType.OUTPUT
-			}
 	}
 
 	var bitWidth: BitWidth = bitWidth
@@ -107,7 +95,6 @@ class Transistor(
 		set(value) {
 			if (field != value) {
 				field = value
-				handleTransistorTypeChanged()
 				stateChanged()
 			}
 		}
@@ -115,11 +102,9 @@ class Transistor(
 	init {
 		propagationDelay = 10
 
-		addPort(DigitalPortImpl(sourcePortType(transistorType), "S", bitWidth = bitWidth))
+		addPort(DigitalPortImpl(PortType.INPUT, "S", bitWidth = bitWidth))
 		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth))
-		addPort(DigitalPortImpl(drainPortType(transistorType), "D", bitWidth = bitWidth, canBeUndefined = true))
-
-		handleTransistorTypeChanged()
+		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, canBeUndefined = true))
 	}
 
 	/** ---- [GraphElement] interface */
@@ -169,20 +154,12 @@ class Transistor(
 	val gatePort: DigitalPort get() = getPort<DigitalSignal>(GATE_PORT_ID) as DigitalPort
 	val drainPort: DigitalPort get() = getPort<DigitalSignal>(DRAIN_PORT_ID) as DigitalPort
 
-	val inputPortId: Int get() =
-		when (transistorType) {
-			TransistorType.N -> DRAIN_PORT_ID
-			TransistorType.P -> SOURCE_PORT_ID
-		}
+	val inputPortId: Int get() = SOURCE_PORT_ID
 
-	val outputPortId: Int get() =
-		when (transistorType) {
-			TransistorType.N -> SOURCE_PORT_ID
-			TransistorType.P -> DRAIN_PORT_ID
-		}
+	val outputPortId: Int get() = DRAIN_PORT_ID
 
-	val inputPort: DigitalPort get() = getPort<DigitalSignal>(inputPortId) as DigitalPort
-	val outputPort: DigitalPort get() = getPort<DigitalSignal>(outputPortId) as DigitalPort
+	val inputPort: DigitalPort get() = sourcePort
+	val outputPort: DigitalPort get() = drainPort
 
 	val isOn: Boolean get() = isOn(effectiveGateInputBit(gatePort.getIncomingSignal()!!.bitAt(0)), this)
 
@@ -191,11 +168,4 @@ class Transistor(
 			TransistorType.N -> bit.isSet
 			TransistorType.P -> bit.isNotSet
 		}
-
-	private fun handleTransistorTypeChanged() {
-		sourcePort.portType = sourcePortType(transistorType)
-		sourcePort.canBeUndefined = sourcePort.portType == PortType.OUTPUT
-		drainPort.portType = drainPortType(transistorType)
-		drainPort.canBeUndefined = drainPort.portType == PortType.OUTPUT
-	}
 }

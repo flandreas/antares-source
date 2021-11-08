@@ -8,8 +8,8 @@
             <transistor _id='4' id='2' delay='20' bitWidth='1' type='n'/>
             <digitalNet _id='5' id='3' delay='0'>
               <ports>
-                <netPortRef _id='6' verticeId='3' portId='3'/>
-                <netPortRef _id='7' verticeId='4' portId='1'/>
+                <netPortRef _id='6' verticeId='4' portId='3'/>
+                <netPortRef _id='7' verticeId='3' portId='1'/>
               </ports>
             </digitalNet>
             <switch _id='8' id='4' delay='1000' name='A'/>
@@ -18,7 +18,7 @@
             <digitalNet _id='11' id='7' delay='0'>
               <ports>
                 <netPortRef _id='12' verticeId='10' portId='1'/>
-                <netPortRef _id='13' verticeId='4' portId='3'/>
+                <netPortRef _id='13' verticeId='4' portId='1'/>
               </ports>
             </digitalNet>
             <transistor _id='14' id='8' delay='20' bitWidth='1' type='p'/>
@@ -28,7 +28,7 @@
                 <netPortRef _id='17' verticeId='18' portId='1'/>
                 <netPortRef _id='19' verticeId='14' portId='3'/>
                 <netPortRef _id='20' verticeId='15' portId='3'/>
-                <netPortRef _id='21' verticeId='3' portId='1'/>
+                <netPortRef _id='21' verticeId='3' portId='3'/>
               </ports>
             </digitalNet>
             <digitalNet _id='22' id='11' delay='0'>
@@ -87,7 +87,7 @@
                     <translation lang='en' text='Input 0,0'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='50' id='1' highlightIds='8,9,10,12,14,16,18,21,23,29,25,13' condition='#8.2 == 0 and #9.2 == 0'>
+                    <scenarioStep _id='50' id='1' highlightIds='8,9,10,12,22,23,24,29,25,13' condition='#8.2 == 0 and #9.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 0,0 Step'/>
                       </name>
@@ -102,7 +102,7 @@
                     <translation lang='en' text='Input 1,0'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='52' id='1' highlightIds='9,12,13,18,21,25,29' condition='#8.2 == 1 and #9.2 == 0'>
+                    <scenarioStep _id='52' id='1' highlightIds='9,12,13,24,25,29' condition='#8.2 == 1 and #9.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 1,0 Step'/>
                       </name>
@@ -117,7 +117,7 @@
                     <translation lang='en' text='Input 0,1'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='54' id='1' highlightIds='8,10,12,14,16,23,29' condition='#8.2 == 0 and #9.2 == 1'>
+                    <scenarioStep _id='54' id='1' highlightIds='8,10,12,22,23,29' condition='#8.2 == 0 and #9.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 0,1 Step'/>
                       </name>
@@ -132,7 +132,7 @@
                     <translation lang='en' text='Input 1,1'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='56' id='1' highlightIds='1,2,3,7,14,17,18,20,28,29' condition='#8.2 == 1 and #9.2 == 1'>
+                    <scenarioStep _id='56' id='1' highlightIds='1,2,3,6,7,28,29' condition='#8.2 == 1 and #9.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 1,1 Step'/>
                       </name>
@@ -161,9 +161,9 @@
                 </rectangle>
               </component>
             </graphElement>
-            <transistorView _id='61' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-42.0' y='56.0' handedness='left' symbol='inverterCircle'/>
-            <transistorView _id='62' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-42.0' y='140.0' handedness='left' symbol='inverterCircle'/>
-            <digitalEdgeView _id='63' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='62' origPort='1' origPortOutput='true' dest='61' destPort='3' adjusted='false'>
+            <transistorView _id='61' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-42.0' y='56.0' symbol='inverterCircle'/>
+            <transistorView _id='62' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-42.0' y='140.0' symbol='inverterCircle'/>
+            <digitalEdgeView _id='63' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='62' origPort='3' origPortOutput='true' dest='61' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,105.0 0.0,63.0'/>
               </shape>
@@ -171,7 +171,7 @@
             <switchView _id='64' id='4' rot='0' filled='true' stroked='true' modelId='8' x='-168.0' y='-126.0'/>
             <switchView _id='65' id='5' rot='0' filled='true' stroked='true' modelId='9' x='-168.0' y='-28.0'/>
             <groundView _id='66' id='6' rot='90' filled='true' stroked='true' modelId='10' x='0.0' y='154.0'/>
-            <digitalEdgeView _id='67' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='66' origPort='1' origPortOutput='true' dest='62' destPort='3' adjusted='false'>
+            <digitalEdgeView _id='67' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='66' origPort='1' origPortOutput='true' dest='62' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,168.0 0.0,147.0'/>
               </shape>
@@ -256,7 +256,7 @@
                 <point x='0.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='88' id='28' filled='true' stroked='true' modelId='16' layout='ortho' orig='73' dest='61' destPort='1' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='88' id='28' filled='true' stroked='true' modelId='16' layout='ortho' orig='73' dest='61' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,-28.0 0.0,21.0'/>
               </shape>

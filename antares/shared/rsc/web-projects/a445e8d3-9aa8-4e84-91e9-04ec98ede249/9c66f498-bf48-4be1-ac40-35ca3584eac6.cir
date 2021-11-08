@@ -114,7 +114,7 @@
                     <translation lang='en' text='Input 0,0'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='68' id='1' highlightIds='8,9,10,12,14,16,18,21,23,29,25,13,33,45,37,41,42' condition='#8.2 == 0 and #9.2 == 0'>
+                    <scenarioStep _id='68' id='1' highlightIds='8,9,10,12,14,16,18,21,22,23,24,29,25,13,33,36,45,37,41,42' condition='#8.2 == 0 and #9.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 0,0 Step'/>
                       </name>
@@ -129,7 +129,7 @@
                     <translation lang='en' text='Input 1,0'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='70' id='1' highlightIds='9,12,13,18,21,25,29,33,45,37,41,42' condition='#8.2 == 1 and #9.2 == 0'>
+                    <scenarioStep _id='70' id='1' highlightIds='9,12,13,18,21,24,25,29,33,36,45,37,41,42' condition='#8.2 == 1 and #9.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 1,0 Step'/>
                       </name>
@@ -144,7 +144,7 @@
                     <translation lang='en' text='Input 0,1'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='72' id='1' highlightIds='8,10,12,14,16,23,29,33,45,37,41,42' condition='#8.2 == 0 and #9.2 == 1'>
+                    <scenarioStep _id='72' id='1' highlightIds='8,10,12,14,16,22,23,29,33,36,45,37,41,42' condition='#8.2 == 0 and #9.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 0,1 Step'/>
                       </name>
@@ -159,7 +159,7 @@
                     <translation lang='en' text='Input 1,1'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='74' id='1' highlightIds='1,2,3,7,14,17,18,20,28,29,32,35,38,42,44' condition='#8.2 == 1 and #9.2 == 1'>
+                    <scenarioStep _id='74' id='1' highlightIds='1,2,3,6,7,14,17,18,20,28,29,32,34,35,38,42,44' condition='#8.2 == 1 and #9.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 1,1 Step'/>
                       </name>
@@ -190,7 +190,7 @@
             </graphElement>
             <transistorView _id='79' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-42.0' y='56.0' symbol='inverterCircle'/>
             <transistorView _id='80' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-42.0' y='140.0' symbol='inverterCircle'/>
-            <digitalEdgeView _id='81' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='80' origPort='3' dest='79' destPort='1' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='81' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='80' origPort='3' origPortOutput='true' dest='79' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,105.0 0.0,63.0'/>
               </shape>
@@ -198,7 +198,7 @@
             <switchView _id='82' id='4' rot='0' filled='true' stroked='true' modelId='8' x='-168.0' y='-126.0'/>
             <switchView _id='83' id='5' rot='0' filled='true' stroked='true' modelId='9' x='-168.0' y='-28.0'/>
             <groundView _id='84' id='6' rot='90' filled='true' stroked='true' modelId='10' x='0.0' y='154.0'/>
-            <digitalEdgeView _id='85' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='80' destPort='1' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='85' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='80' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,168.0 0.0,147.0'/>
               </shape>
@@ -282,7 +282,7 @@
                 <point x='0.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='105' id='28' filled='true' stroked='true' modelId='16' layout='ortho' orig='91' dest='79' destPort='3' adjusted='false'>
+            <digitalEdgeView _id='105' id='28' filled='true' stroked='true' modelId='16' layout='ortho' orig='91' dest='79' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='0.0,-28.0 0.0,21.0'/>
               </shape>
@@ -301,7 +301,7 @@
               </shape>
             </digitalEdgeView>
             <groundView _id='112' id='36' rot='90' filled='true' stroked='true' modelId='46' x='238.0' y='56.0'/>
-            <digitalEdgeView _id='113' id='37' filled='true' stroked='true' modelId='47' layout='ortho' orig='112' origPort='1' origPortOutput='true' dest='109' destPort='1' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='113' id='37' filled='true' stroked='true' modelId='47' layout='ortho' orig='112' origPort='1' origPortOutput='true' dest='109' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='238.0,70.0 238.0,42.0'/>
               </shape>
@@ -317,7 +317,7 @@
                 <point x='238.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='117' id='41' filled='true' stroked='true' modelId='50' layout='ortho' orig='115' dest='109' destPort='3' adjusted='false'>
+            <digitalEdgeView _id='117' id='41' filled='true' stroked='true' modelId='50' layout='ortho' orig='115' dest='109' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='238.0,-28.0 238.0,0.0'/>
               </shape>
