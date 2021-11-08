@@ -18,7 +18,7 @@ abstract class AbstractBelowSelectionModel<T: Component>(
 	companion object {
 
 		/** The number of pixels to add to the [Component]'s bounding box at each side. */
-		const val DEF_OUTSET = 10
+		const val DEF_OUTSET = 5
 
 		/** The arc size of the rounded rectangle.*/
 		const val ARC_SIZE = 15
