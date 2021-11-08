@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.TransistorType.N
 import ch.scorpion.antares.model.net.TransistorType.P
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look.SCALE
@@ -94,6 +95,7 @@ enum class TransistorViewSymbol(val customName: String) {
 		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView) {
 			view.apply {
 				portView.prepareConnectionDrawContext(context)
+				prepareDrainExecutionDrawContext(view, context, portView)
 
 				// connection
 				context.g.draw(southSignalPath)
@@ -109,6 +111,7 @@ enum class TransistorViewSymbol(val customName: String) {
 		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView) {
 			view.apply {
 				portView.prepareConnectionDrawContext(context)
+				prepareDrainExecutionDrawContext(view, context, portView)
 
 				// connection
 				context.g.draw(northSignalPath)
@@ -227,6 +230,7 @@ enum class TransistorViewSymbol(val customName: String) {
 
 		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
+			prepareDrainExecutionDrawContext(view, context, portView)
 			context.g.apply {
 				// Connection
 				drawLine(signalPortX, -5.0 * SCALE, signalPortX, -3.5 * SCALE)
@@ -262,6 +266,7 @@ enum class TransistorViewSymbol(val customName: String) {
 
 		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
+			prepareDrainExecutionDrawContext(view, context, portView)
 			context.g.apply {
 				// Connection
 				drawLine(signalPortX, 1.0 * SCALE, signalPortX, -0.5 * SCALE)
@@ -307,6 +312,12 @@ enum class TransistorViewSymbol(val customName: String) {
 
 		val configured: TransistorViewSymbol get() =
 			withName(BaseModule.properties.getString(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL))
+
+		fun prepareDrainExecutionDrawContext(view: TransistorView, context: DrawContext, portView: PortView<*>) {
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && portView.port == view.model.drainPort && portView.port.isConnected) {
+				context.g.color = (portView.port.net!!.signal!! as DigitalSignal).color.foregroundColor
+			}
+		}
 	}
 
 
