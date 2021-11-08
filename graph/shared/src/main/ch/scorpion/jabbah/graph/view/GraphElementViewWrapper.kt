@@ -6,7 +6,9 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -75,6 +77,14 @@ class GraphElementViewWrapper(
 	override val snappableX: Array<SnappableX> get() = _component!!.snappableX
 
 	override val snappableY: Array<SnappableY> get() = _component!!.snappableY
+
+	/** ---- [Stylable] interface */
+
+	override var styleType: StyleType
+		get() = _component!!.styleType
+		set(value) {
+			_component?.let { it.styleType = value }
+		}
 
 	/** ---- [Drawable] */
 

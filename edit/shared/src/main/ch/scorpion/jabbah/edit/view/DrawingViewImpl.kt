@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.edit.*
@@ -183,6 +184,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         super.addDrawable(drawing)
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         super.addDrawable(highlightContainer)
+	    super.addDrawable(content.backdropDrawer)
     }
 
     private fun replaceContent(newContent: DrawingViewContent<T>) {
@@ -194,6 +196,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         replaceDrawable(content.drawing, newContent.drawing)
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         replaceDrawable(content.highlightContainer, newContent.highlightContainer)
+	    replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
         zoomPan = newContent.zoomPan
         repaint()
     }
@@ -218,21 +221,25 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private inner class DrawingDrawer : AbstractDrawableDrawer<Component>() {
         override fun process(context: DrawContext, drawable: Component) {
 
-	        content.highlighter.getHighlightFor(drawable)?.draw(context)
-
 	        if (selectionManager.isSelected(drawable)) {
 	        	val replacingSelectionModel = content.getReplacingSelectionModel(drawable)
 		        if (replacingSelectionModel != null) {
 		        	replacingSelectionModel.draw(context)
 		        } else {
-		        	drawable.draw(context)
+					draw(drawable, context)
 		        }
 
 	        } else {
-	        	drawable.draw(context)
+				draw(drawable, context)
 	        }
 
 	        nextProcessor(context, drawable)
         }
+
+	    private fun draw(drawable: Drawable, context: DrawContext) {
+			if (drawable !is Stylable || !drawable.styleType.isBackdrop) {
+				drawable.draw(context)
+			}
+		}
     }
 }

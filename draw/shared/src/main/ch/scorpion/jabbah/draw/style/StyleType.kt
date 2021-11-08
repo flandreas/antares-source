@@ -11,7 +11,12 @@ import ch.scorpion.jabbah.base.Translations
  * @property descriptionKey the translation key of this [StyleType]. Used when offered in the UI to be chosen by user.
  * @property isSystem `true` if only used by system and should not be offered in the UI to be chosen by user.
  */
-open class StyleType(val name: String, val descriptionKey: String, val isSystem: Boolean = false) {
+open class StyleType(
+	val name: String,
+	val descriptionKey: String,
+	val isSystem: Boolean = false,
+	val isBackdrop: Boolean = false
+) {
 
     companion object {
         val FIGURE = StyleType("figure", "draw.styleType.figure.name")
