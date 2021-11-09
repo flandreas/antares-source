@@ -284,7 +284,7 @@
       <model>
         <subGraphVertice _id='93' id='0' delay='0' uuid='2fd1f19f-515d-47ed-ba65-08392564cc38'>
           <name>
-            <translation lang='en' text='NOR Gate'/>
+            <translation lang='en' text='CMOS NOR Gate'/>
           </name>
           <ports/>
         </subGraphVertice>

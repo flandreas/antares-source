@@ -284,7 +284,7 @@
       <model>
         <subGraphVertice _id='93' id='0' delay='0' uuid='4469886a-ec82-4080-acd5-4f2f6cc230bf'>
           <name>
-            <translation lang='en' text='NAND Gate'/>
+            <translation lang='en' text='CMOS NAND Gate'/>
           </name>
           <ports/>
         </subGraphVertice>

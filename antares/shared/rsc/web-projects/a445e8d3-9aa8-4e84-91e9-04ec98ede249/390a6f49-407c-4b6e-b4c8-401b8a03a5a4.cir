@@ -360,7 +360,7 @@
       <model>
         <subGraphVertice _id='124' id='0' delay='0' uuid='390a6f49-407c-4b6e-b4c8-401b8a03a5a4'>
           <name>
-            <translation lang='en' text='OR Gate'/>
+            <translation lang='en' text='CMOS OR Gate'/>
           </name>
           <ports/>
         </subGraphVertice>
