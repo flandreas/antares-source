@@ -61,6 +61,11 @@
             <translation lang='en' text='Bug 227 Outer'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='13' uuid='27b806ad-d3bb-4fb7-aaef-1cc193dbf78e'>
+          <name>
+            <translation lang='en' text='NMOS NOR Gate'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
