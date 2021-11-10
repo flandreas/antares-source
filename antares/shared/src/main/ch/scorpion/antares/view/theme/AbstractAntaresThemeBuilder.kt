@@ -44,7 +44,7 @@ abstract class AbstractAntaresThemeBuilder(protected val name: String) {
 			textColor = Color.WHITE)
 		val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
-		val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
+		val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 
 		// Signal colors
 
