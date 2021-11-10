@@ -102,18 +102,26 @@ class Graphics2DJs(
 	override var color: Color = Color(0, 0, 0, 255)
 		set(value) {
 			field = value
-			val alpha =
-				if (value.alpha == 255) 1.0
-				else if (value.alpha == 0) 0.0
-				else value.alpha / 255.0
-			val rgba = "rgba(${value.red},${value.green},${value.blue},$alpha)"
-			ctx.fillStyle = rgba
-			ctx.strokeStyle = rgba
+			toJsColor(value).also {
+				ctx.fillStyle = it
+				ctx.strokeStyle = it
+			}
 		}
 
-	override var paint: Paint
-		get() = TODO("not implemented")
-		set(value) {}
+	override var paint: Paint = LinearColorGradient(Point2D.ZERO, Color.BLACK, Point2D.ZERO, Color.BLACK)
+		set(value) {
+			when (value) {
+				is Color -> color = value
+				is LinearColorGradient -> {
+					field = value
+					toJsGradient(value).also {
+						ctx.fillStyle = it
+						ctx.strokeStyle = it
+					}
+				}
+				else -> throw IllegalArgumentException("unsupported Paint implementation")
+			}
+		}
 
 	override var stroke: Stroke
 		get() {
@@ -262,6 +270,22 @@ class Graphics2DJs(
 	}
 
 	/** ---- [Graphics2DJs] */
+
+	private fun toJsColor(color: Color): String {
+		val alpha = when (color.alpha) {
+			255 -> 1.0
+			0 -> 0.0
+			else -> color.alpha / 255.0
+		}
+		return "rgba(${color.red},${color.green},${color.blue},$alpha)"
+	}
+
+	private fun toJsGradient(gradient: LinearColorGradient): CanvasGradient {
+		val jsGradient = ctx.createLinearGradient(gradient.p1.x, gradient.p1.y, gradient.p2.x, gradient.p2.y)
+		jsGradient.addColorStop(0.0, toJsColor(gradient.color1))
+		jsGradient.addColorStop(1.0, toJsColor(gradient.color2))
+		return jsGradient
+	}
 
 	private fun forwardTransform() {
 		val matrix = transform.getMatrix()
