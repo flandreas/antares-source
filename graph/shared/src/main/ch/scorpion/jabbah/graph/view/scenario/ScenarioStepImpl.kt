@@ -173,14 +173,13 @@ class ScenarioStepImpl(
 			val result = mutableListOf<Int>()
 			if (StringUtils.isNotEmpty(s)) {
 				s!!
-					.split(delimiters = charArrayOf(','))
+					.split(',')
 					.map { it.trim().toInt() }
 					.forEach { result.add(it) }
 			}
 			return result
 		} catch (e: Throwable) {
-			println("Error while parsing Highlight IDs")
-			throw IllegalArgumentException("Illegal Format")
+			throw IllegalArgumentException("Illegal Highlight ID format in '$s'", e)
 		}
 	}
 
