@@ -96,7 +96,7 @@ class GraphViewerController(
 	}
 
 	fun setMetaGraph(metaGraph: MetaGraph) {
-		val clone = StorableCloner.clone(metaGraph.graph)
+		val clone = metaGraph.cloneGraphGraphStorable()
 		LOG.debug("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
 		graphNavigationViewController.setRootGraphView(clone.graphView, editable = false)
 	}

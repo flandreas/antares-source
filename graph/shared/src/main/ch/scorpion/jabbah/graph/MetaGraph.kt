@@ -153,6 +153,13 @@ class MetaGraph(
 		return duplicate
 	}
 
+	fun cloneGraphGraphStorable(): GraphStorable =
+		StorableCloner
+			.clone(graph)
+			.also {
+				Companion.copyGraphDataFromContainerModel(it.graphView.graph!!, containerDrawing)
+			}
+
 	fun cloneGraphModel(storableCreator: StorableCreator): Graph {
 		val clone = StorableCloner.clonePreservingIdentities(graph.model!!, storableCreator)
 		copyGraphDataFromContainerModel(clone)
