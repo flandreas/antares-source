@@ -68,12 +68,16 @@ object Themes {
 				current = get(storedThemeName!!)!!
 			} else {
 				current = get(this.themes.first().name)!!
-				BaseModule.properties.set(PROP_THEME, current.name)
+				store(current.name)
 			}
 		}
 	}
 
 	fun allThemes(): Iterator<Theme> = themes.iterator()
+
+	fun store(themeName: String) {
+		BaseModule.properties.set(PROP_THEME, themeName)
+	}
 
 }
 

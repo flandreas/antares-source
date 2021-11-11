@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.draw.graphics.*
 /**
  * Defines [Theme] property values suggested to be used by all [AntaresTheme]s.
  */
-abstract class AbstractAntaresThemeBuilder(protected val name: String) {
+abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 	companion object {
 

@@ -8,7 +8,9 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  */
 object AntaresThemes {
 
-	fun install() {
+	fun install(themeToUse: String? = null) {
+		themeToUse?.let { Themes.store(it) }
+
 		Themes.register(
 			WinterThemeBuilder.build(),
 			BlackAndWhiteThemeBuilder.build(),

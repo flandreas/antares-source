@@ -21,12 +21,14 @@ class AntaresIFrame {
 	companion object {
 		private const val PROJECT_UUID_PARAM = "project"
 		private const val CIRCUIT_UUID_PARAM = "circuit"
+		private const val THEME_PARAM = "theme"
 	}
 
 	fun show() {
 		val params = URLSearchParams(kotlinx.browser.window.location.search)
 		val projectUuid = params.get(PROJECT_UUID_PARAM)
 		val circuitUuid = params.get(CIRCUIT_UUID_PARAM)
+		val themeName = params.get(THEME_PARAM)
 
 		if (projectUuid == null) {
 			return displayError("Missing parameter '$PROJECT_UUID_PARAM'")
@@ -35,18 +37,18 @@ class AntaresIFrame {
 			return displayError("Missing parameter '$CIRCUIT_UUID_PARAM'")
 		}
 
-		initialize(projectUuid)
+		initialize(projectUuid, themeName)
 		displayCircuit(circuitUuid)
 	}
 
-	private fun initialize(projectUuid: String) {
+	private fun initialize(projectUuid: String, themeName: String? = null) {
 		AntaresModuleJs.require()
 		EditAuthModule.userHolder.u = User.developer
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 
 		loadProject(projectUuid)
 
-		AntaresThemes.install()
+		AntaresThemes.install(themeName)
 		LogSystem.level = LogLevel.Info
 	}
 
