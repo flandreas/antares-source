@@ -1,9 +1,5 @@
 package ch.scorpion.antares
 
-import com.ccfraser.muirwik.components.styles.mStylesProvider
-import kotlinx.browser.document
-import react.dom.render
-
 external fun encodeURI(uri: String): String
 
 fun main() {
@@ -12,7 +8,8 @@ fun main() {
 	when (path) {
 		encodeURI("/iframe.html"), encodeURI("/docs/web/iframe.html") -> AntaresIFrame().show()
 		encodeURI("/desktop.html") -> AntaresJs().start()
-		else -> AntaresPage().show()
+		//else -> AntaresPage().show()
+		else -> TestPage().show()
 	}
 }
 

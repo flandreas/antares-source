@@ -64,13 +64,16 @@
                     <translation lang='en' text='Input 0,0'/>
                   </name>
                   <desc>
-                    <translation lang='en' text='Input 0,0'/>
+                    <translation lang='en' text='The output of the NOR gate is 1 if both inputs are 0.'/>
                   </desc>
                   <steps>
                     <scenarioStep _id='36' id='1' highlightIds='11,12,15,19' condition='#1.2 == 0 and #2.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 0,0 Step'/>
                       </name>
+                      <desc>
+                        <translation lang='en' text='Since both transistors are off, both connections from the LED to ground are interrupted, and the 1 from the power supply flows into the LED, turning it on.'/>
+                      </desc>
                     </scenarioStep>
                   </steps>
                 </scenario>
@@ -79,13 +82,16 @@
                     <translation lang='en' text='Input 1,0'/>
                   </name>
                   <desc>
-                    <translation lang='en' text='Input 1,0'/>
+                    <translation lang='en' text='The output of the NOR gate is 0 if at least one input is 1.'/>
                   </desc>
                   <steps>
                     <scenarioStep _id='38' id='1' highlightIds='1,5,6,14,15,19' condition='#1.2 == 1 and #2.2 == 0'>
                       <name>
                         <translation lang='en' text='Input 1,0 Step'/>
                       </name>
+                      <desc>
+                        <translation lang='en' text='Since &quot;NMOS 1&quot; is on, the LED is connected to ground, which turns the LED off.'/>
+                      </desc>
                     </scenarioStep>
                   </steps>
                 </scenario>
@@ -94,13 +100,16 @@
                     <translation lang='en' text='Input 0,1'/>
                   </name>
                   <desc>
-                    <translation lang='en' text='Input 0,1'/>
+                    <translation lang='en' text='The output of the NOR gate is 0 if at least one input is 1.'/>
                   </desc>
                   <steps>
                     <scenarioStep _id='40' id='1' highlightIds='2,7,8,18,19' condition='#1.2 == 0 and #2.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 1,0 Step'/>
                       </name>
+                      <desc>
+                        <translation lang='en' text='Since &quot;NMOS 2&quot; is on, the LED is connected to ground, which turns the LED off.'/>
+                      </desc>
                     </scenarioStep>
                   </steps>
                 </scenario>
@@ -109,13 +118,16 @@
                     <translation lang='en' text='Input 1,1'/>
                   </name>
                   <desc>
-                    <translation lang='en' text='Input 1,1'/>
+                    <translation lang='en' text='The output of the NOR gate is 0 if both inputs are 1.'/>
                   </desc>
                   <steps>
                     <scenarioStep _id='42' id='1' highlightIds='1,2,5,6,7,8,14,15,18,19' condition='#1.2 == 1 and #2.2 == 1'>
                       <name>
                         <translation lang='en' text='Input 1,1 Step'/>
                       </name>
+                      <desc>
+                        <translation lang='en' text='Since both transistors are on, the LED is connected to ground, which turns the LED off.'/>
+                      </desc>
                     </scenarioStep>
                   </steps>
                 </scenario>
