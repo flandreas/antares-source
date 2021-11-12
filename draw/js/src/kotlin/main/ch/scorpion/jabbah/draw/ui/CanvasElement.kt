@@ -18,6 +18,7 @@ external interface CanvasElementProps : Props {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D?
+	var ref: RefObject<*>?
 }
 
 fun RBuilder.jCanvas(handler: CanvasElementProps.() -> Unit) {
@@ -55,6 +56,9 @@ class CanvasElement(
 				attrs {
 					id = props.canvasId
 					tabIndex = "1"
+					if (props.ref != null) {
+						ref = props.ref!!
+					}
 				}
 			}
 		} else {
@@ -67,6 +71,9 @@ class CanvasElement(
 				attrs {
 					id = props.canvasId
 					tabIndex = "1"
+					if (props.ref != null) {
+						ref = props.ref!!
+					}
 				}
 			}
 		}

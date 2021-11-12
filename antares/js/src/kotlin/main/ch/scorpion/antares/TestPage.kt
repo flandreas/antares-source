@@ -62,7 +62,7 @@ class TestPage {
 				graphViewer {
 					canvasId = "canvas1"
 					metaGraphUuid = UUID("67f91a27-32da-4c8d-a081-f5b705c99618")
-					size = Dimension2D(600, 700)
+					size = Dimension2D(600, 400)
 					addMargins = true
 				}
 
