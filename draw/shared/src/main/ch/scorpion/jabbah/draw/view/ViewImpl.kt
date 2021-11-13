@@ -459,7 +459,9 @@ open class ViewImpl<C : InputEventContext>(
 	override fun modelToView(p: Point2D, zoomFactor: Double): Point2D =
 		createViewGeometry(zoomFactor).transform.transform(p)
 
-	override fun modelToViewLength(length: Double): Double { return length * zoomFactor }
+	override fun modelToViewLength(length: Double): Double = length * zoomFactor
+
+	override fun modelToViewLength(length: Double, zoomFactor: Double): Double = length * zoomFactor
 
 	/** ---- [ViewImpl] */
 

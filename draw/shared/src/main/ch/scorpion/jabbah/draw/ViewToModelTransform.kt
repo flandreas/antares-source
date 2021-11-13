@@ -35,6 +35,8 @@ interface ViewToModelTransform {
     fun modelToView(p: Point2D, zoomFactor: Double): Point2D
 
     fun modelToViewLength(length: Double): Double
+
+	fun modelToViewLength(length: Double, zoomFactor: Double): Double
 }
 
 object IdentityViewToModelTransform : ViewToModelTransform {
@@ -56,4 +58,6 @@ object IdentityViewToModelTransform : ViewToModelTransform {
     override fun modelToView(p: Point2D, zoomFactor: Double): Point2D = p
 
 	override fun modelToViewLength(length: Double): Double = length
+
+	override fun modelToViewLength(length: Double, zoomFactor: Double): Double = length
 }
