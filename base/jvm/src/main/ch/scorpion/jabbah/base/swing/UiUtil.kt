@@ -19,7 +19,7 @@ import kotlin.math.min
 object UiUtil {
 
 	private const val DIVERT = 24
-	private val VARIANT_QUALIFIERS = listOf("", "@150pct", "@2x")
+	private val VARIANT_QUALIFIERS = listOf("", "@125pct", "@150pct", "@2x")
 
 
 	/**
