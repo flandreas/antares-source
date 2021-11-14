@@ -96,7 +96,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 	}
 
 	override fun getReplacingSelectionModel(component: Component): SelectionModel<Component>? =
-		selectionContainers[SelectionDrawingStrategy.REPLACE]!!.drawables.firstOrNull { it.component === component }
+		selectionContainers[SelectionDrawingStrategy.REPLACE]!!.drawables.firstOrNull { it.component === component.selectableComponent }
 
 	override fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>? {
 		return selectionContainers[strategy]
