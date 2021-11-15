@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
@@ -34,6 +36,7 @@ class LibraryManagementService(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
+	private val userHolder: UserHolder = EditAuthModule.userHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
 
@@ -88,7 +91,7 @@ class LibraryManagementService(
 			libraryService.storeLibrary(library)
 			library
 		} else {
-			libraryService.duplicateLibrary(loadLibrary(templateLibraryUuid), properties.name)
+			libraryService.duplicateLibrary(loadLibrary(templateLibraryUuid), properties.name, userHolder.user.identity)
 		}
 
 		library.bindLibraryItems()
