@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -46,7 +47,7 @@ open class LibraryImpl(
 
 	override var isSystem: Boolean = false
 
-	override var author: UUID = userHolder.user.uuid
+	override var author: UserIdentity = userHolder.user.identity
 
 	override var defaultElementUUID: UUID? = null
 
@@ -161,7 +162,7 @@ open class LibraryImpl(
 		}
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
 		uuid = System.createUUID(reader.readString("uuid"))
-		author = System.createUUID(reader.readString("author"))
+		author = UserIdentity(reader.readString("author"))
 		description = Description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")

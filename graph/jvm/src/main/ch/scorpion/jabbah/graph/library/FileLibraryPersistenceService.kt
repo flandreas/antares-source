@@ -192,7 +192,7 @@ class FileLibraryPersistenceService(
 		return if (userHolder == null) {
 			"$dataPath$sep$directoryName"
 		} else {
-			"$dataPath$sep${userHolder.user.uuid}$sep$directoryName"
+			"$dataPath$sep${userHolder.user.identity}$sep$directoryName"
 		}
 	}
 

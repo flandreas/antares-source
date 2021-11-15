@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
@@ -310,7 +309,7 @@ class LibraryService(
 		newLibrary.uuid = newUuid
 		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
-		newLibrary.author = userHolder.user.uuid
+		newLibrary.author = userHolder.user.identity
 
 		storeLibrary(newLibrary)
 

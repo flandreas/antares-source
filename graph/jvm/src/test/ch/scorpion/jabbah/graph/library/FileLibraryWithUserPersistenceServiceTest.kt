@@ -56,7 +56,7 @@ class FileLibraryWithUserPersistenceServiceTest {
 	): Path =
 		FileSystems.getDefault().getPath(
 			directory.parent.toAbsolutePath().toString(),
-			user.uuid.toString(),
+			user.identity.toString(),
 			directory.name,
 			libraryUUID.toString(),
 			"${metaGraph.uuid}.cir"

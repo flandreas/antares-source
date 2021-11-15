@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -26,10 +27,10 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	var isSystem: Boolean
 
 	/**
-	 * The [UUID] of the [User] that is the author (and therefore owner) of this [Library].
+	 * The identity of the [User] that is the author (and therefore owner) of this [Library].
 	 * A [Library] and its elements can only be edited by the author of the [Library].
 	 */
-	var author: UUID
+	var author: UserIdentity
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
