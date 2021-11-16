@@ -70,9 +70,9 @@ class LibraryTreeViewJs(
 				overflow = Overflow.auto
 			}
 			jmTreeItem(
-				label = buildElement { mTypography { Translations.getString("graph.desktop.name") }},
+				label = buildElement { mTypography(Translations.getString("graph.desktop.name")) },
 				nodeId = nextNodeId(),
-				icon = buildElement { mIcon("chrome_reader_mode", className = "material-icons-outlined") },
+				icon = buildElement { mIcon("table_restaurant", className = "material-icons-outlined") },
 				onLabelClick = { props.controller.selectedItem = null }
 			) {
 				props.controller.project?.let {
@@ -159,9 +159,21 @@ class LibraryTreeViewJs(
 		jmTreeItem(
 			label = buildElement { mTypography(node.item.toString()) },
 			nodeId = nextNodeId(),
-			icon = getIcon(node.item, this),
+			icon = if (node.item === props.controller.library) {
+				buildElement { mIcon("account_balance", className = "material-icons-outlined") }
+			} else if (node.item === props.controller.project) {
+				buildElement { mIcon("assignment", className = "material-icons-outlined") }
+			} else {
+				if (node.item is LibraryFolder) {
+					buildElement { mIcon("folder", className = "material-icons-outlined") }
+				} else if (node.item.iconPath == null) {
+					buildElement { mIcon("fiber_manual_record", className = "material-icons-outlined") }
+				} else {
+					node.item.iconPath?.let { IconProviderRegistry.getIcon(it) }
+				}
+			},
 			onLabelClick = { onLabelClick(it, node) },
-			onDoubleClick = props.onDoubleClick?.let {
+			onDoubleClick = props.onDoubleClick.let {
 				handler -> {
 					handler.invoke(node)
 					it.preventDefault()
@@ -173,14 +185,6 @@ class LibraryTreeViewJs(
 			for (node in node.children) {
 				addItems(node)
 			}
-		}
-	}
-
-	private fun getIcon(item: LibraryItem, builder: RBuilder): ReactElement? {
-		return if (item === props.controller.library) {
-			buildElement(builder) { builder.mIcon("local_library", className = "material-icons-outlined") }
-		} else {
-			item.iconPath?.let { IconProviderRegistry.getIcon(it) }
 		}
 	}
 
