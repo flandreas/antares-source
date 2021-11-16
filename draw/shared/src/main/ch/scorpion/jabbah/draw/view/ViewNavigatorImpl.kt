@@ -83,19 +83,26 @@ class ViewNavigatorImpl(
 
 	override fun fitMaxNormal() {
 		val zoomFactor = min(defaultZoomFactor, calculateFitZoomFactor())
-		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true)))
 	}
 
 	/** ---- [ViewNavigatorImpl] */
 
-	private fun calculateContentCenterPan(zoomFactor: Double): Point2D {
+	private fun calculateContentCenterPan(zoomFactor: Double, fixMaxNormal: Boolean = false): Point2D {
 		val bounds = view.contentBounds
-		val newCenter = view
+		var newCenter = view
 			.modelToView(Point2D(bounds.main.centerX, bounds.main.centerY), zoomFactor)
-			.subtract(view.space.area.topLeft)
+
+		if (fixMaxNormal) {
+			val overlapY = view.space.area.minY + FIT_ZOOM_INSET - view.modelToView(Point2D(0.0, bounds.main.minY), zoomFactor).y
+			if (overlapY > 0) {
+				newCenter = newCenter.subtract(Point2D(0.0, overlapY))
+			}
+		}
+
 		val result = Point2D(
-			view.zoomPan.panOrigin.x + (newCenter.x - view.space.area.width / 2.0) / zoomFactor,
-			view.zoomPan.panOrigin.y + (newCenter.y - view.space.area.height / 2.0) / zoomFactor)
+			view.zoomPan.panOrigin.x + (newCenter.x - view.space.viewDimension.width / 2.0) / zoomFactor,
+			view.zoomPan.panOrigin.y + (newCenter.y - view.space.viewDimension.height / 2.0) / zoomFactor)
 
 		LOG.trace("center Pan for content $bounds in view ${view.canvas.dimension} is $result")
 
