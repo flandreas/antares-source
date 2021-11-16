@@ -24,7 +24,7 @@ class AntaresFrameSwing(
 ) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, eventBus, viewManager, actions), AntaresFrame {
 
 	init {
-		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource("img/Logo64.png"))
+		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
 	}
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem {

@@ -132,15 +132,15 @@ object UiUtil {
 	 * Also tries to load multiple resolution variants whose file names contain a resolution variant
 	 * like `@2x`, e.g. `example@2x.png` or `example-dark@2x.png`.
 	 */
-	fun themedIcon(path: String): ImageIcon {
+	fun themedIcon(path: String, clazz: Class<*> = UiUtil::class.java): ImageIcon {
 		return if (UI.isDark) {
 			try {
-				getMultiResolutionIcon(path, ::getDarkVariantPath)
+				getMultiResolutionIcon(path, ::getDarkVariantPath, clazz)
 			} catch (e: IllegalArgumentException) {
-				getMultiResolutionIcon(path, ::getVariantPath)
+				getMultiResolutionIcon(path, ::getVariantPath, clazz)
 			}
 		} else {
-			getMultiResolutionIcon(path, ::getVariantPath)
+			getMultiResolutionIcon(path, ::getVariantPath, clazz)
 		}
 	}
 
@@ -151,11 +151,15 @@ object UiUtil {
 
 	private fun getDarkVariantPath(path: String, variant: String): String = path.replace(".", "-dark$variant.")
 
-	private fun getMultiResolutionIcon(path: String, pathResolver: (path: String, variant: String) -> String): ImageIcon {
+	private fun getMultiResolutionIcon(
+		path: String,
+		pathResolver: (path: String, variant: String) -> String,
+		clazz: Class<*>
+	): ImageIcon {
 		val variants = mutableListOf<ImageIcon>()
 		VARIANT_QUALIFIERS.forEach { variant ->
 			try {
-				variants.add(ImageIcon(UiUtil::class.java.getResource(pathResolver(path, variant))))
+				variants.add(ImageIcon(clazz.getResource(pathResolver(path, variant))))
 			} catch (t: Throwable) {}
 		}
 		return when(variants.size) {

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
@@ -49,7 +50,8 @@ class AboutPanel(
 	}
 
 	private fun addIcon(iconPath: String) {
-		add(JLabel(ImageIcon(AboutPanel::class.java.getResource(iconPath))))
+		//add(JLabel(ImageIcon(AboutPanel::class.java.getResource(iconPath))))
+		add(JLabel(UiUtil.themedIcon(iconPath)))
 	}
 
 	private fun addText(info: AboutInfo) {

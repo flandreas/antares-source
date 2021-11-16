@@ -67,6 +67,8 @@ class AntaresSwing(
 		private const val USER_LIBRARY_DIR_OPTION = "l"
 		private const val URL_OPTION = "url"
 
+		const val ICON_PATH = "img/Logo.png"
+
 		private fun defineOptions(options: Options): Options {
 			AbstractDesktopApplication.defineOptions(options)
 
@@ -174,11 +176,10 @@ class AntaresSwing(
 			AntaresSwing(commandLine).start()
 		}
 	}
-	private val iconPath = "img/Logo64.png"
 
 	init {
 		if (SystemUtils.IS_OS_MAC) {
-			Taskbar.getTaskbar().iconImage = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource("img/Logo64.png"))
+			Taskbar.getTaskbar().iconImage = UiUtil.themedIcon("/$ICON_PATH", AntaresSwing::class.java).image
 		}
 	}
 
@@ -209,7 +210,7 @@ class AntaresSwing(
 	/** ---- [AbstractApplication] */
 
 	override val aboutInfo: AboutInfo get() = AboutInfo(
-		iconPath = "/$iconPath",
+		iconPath = "/$ICON_PATH",
 		name = displayName,
 		claim = Translations.getString("antares.claim"),
 		version = readVersion())
@@ -219,7 +220,8 @@ class AntaresSwing(
 
 	/** ---- [AbstractDesktopApplication] */
 
-	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(iconPath))
+	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(ICON_PATH))
+	//override val taskbarIcon: Image get() = UiUtil.themedIcon(ICON_PATH)
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
