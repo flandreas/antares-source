@@ -390,7 +390,8 @@ open class ViewImpl<C : InputEventContext>(
 		}
 
 	protected fun applyDefaultZoomStrategy() {
-		defaultZoomStrategy.apply(navigator)
+		zoomStrategy = defaultZoomStrategy
+		applyZoomStrategy()
 	}
 
 	protected fun applyZoomStrategy() {
