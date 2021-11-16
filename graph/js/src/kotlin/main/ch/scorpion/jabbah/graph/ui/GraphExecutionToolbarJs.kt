@@ -23,7 +23,7 @@ external interface GraphExecutionToolbarJsProps : Props {
 	var toggleApplicationModeAction: ToggleApplicationModeAction
 	var singleStepModeAction: Action
 	var pauseOrResumeAction: Action
-	var backgroundColor: String
+	var backgroundColor: String?
 }
 
 fun RBuilder.graphExecutionToolbar(handler: GraphExecutionToolbarJsProps.() -> Unit) {
@@ -47,7 +47,7 @@ class GraphExecutionToolbarJs(
 	override fun RBuilder.render() {
 		styledDiv {
 			css {
-				background = props.backgroundColor
+				props.backgroundColor?.let { background = it }
 			}
 			mGridContainer(alignItems = MGridAlignItems.center) {
 				mGridItem {

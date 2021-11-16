@@ -59,8 +59,8 @@ class LibraryTreeViewJs(
 		nodeId = 0
 
 		jmTreeView(
-			defaultExpandIcon = createExpandIcon(),
-			defaultCollapseIcon = createCollapseIcon(),
+			defaultExpandIcon = buildElement { mIcon("chevron_right") },
+			defaultCollapseIcon = buildElement { mIcon("expand_more") },
 		) {
 			css {
 				paddingLeft = 2.spacingUnits
@@ -70,9 +70,9 @@ class LibraryTreeViewJs(
 				overflow = Overflow.auto
 			}
 			jmTreeItem(
-				label = createLabel(Translations.getString("graph.desktop.name")),
+				label = buildElement { mTypography { Translations.getString("graph.desktop.name") }},
 				nodeId = nextNodeId(),
-				icon = createDesktopIcon(),
+				icon = buildElement { mIcon("chrome_reader_mode", className = "material-icons-outlined") },
 				onLabelClick = { props.controller.selectedItem = null }
 			) {
 				props.controller.project?.let {
@@ -157,9 +157,9 @@ class LibraryTreeViewJs(
 
 	private fun RBuilder.addItems(node: LibraryTreeNode) {
 		jmTreeItem(
-			label = createLabel(node.item.toString()),
+			label = buildElement { mTypography(node.item.toString()) },
 			nodeId = nextNodeId(),
-			icon = getIcon(node.item),
+			icon = getIcon(node.item, this),
 			onLabelClick = { onLabelClick(it, node) },
 			onDoubleClick = props.onDoubleClick?.let {
 				handler -> {
@@ -176,27 +176,13 @@ class LibraryTreeViewJs(
 		}
 	}
 
-	private fun getIcon(item: LibraryItem): ReactElement? {
+	private fun getIcon(item: LibraryItem, builder: RBuilder): ReactElement? {
 		return if (item === props.controller.library) {
-			createLibraryIcon()
+			buildElement(builder) { builder.mIcon("local_library", className = "material-icons-outlined") }
 		} else {
 			item.iconPath?.let { IconProviderRegistry.getIcon(it) }
 		}
 	}
-
-	private fun createExpandIcon(): ReactElement = buildElement { RBuilder().mIcon("chevron_right") }
-
-	private fun createCollapseIcon(): ReactElement = buildElement {RBuilder().mIcon("expand_more") }
-
-	private fun createDesktopIcon(): ReactElement = buildElement { RBuilder().mIcon("chrome_reader_mode", className = "material-icons-outlined") }
-
-	private fun createFolderIcon(): ReactElement = buildElement { RBuilder().mIcon("folder", className = "material-icons-outlined") }
-
-	private fun createProjectIcon(): ReactElement = buildElement { RBuilder().mIcon("assignment", className = "material-icons-outlined") }
-
-	private fun createLibraryIcon(): ReactElement = buildElement { RBuilder().mIcon("local_library", className = "material-icons-outlined") }
-
-	private fun createLabel(text: String): ReactElement = buildElement { RBuilder().mTypography(text) }
 
 	private fun onLabelClick(event: MouseEvent, node: LibraryTreeNode) {
 		props.controller.selectedItem = node.item

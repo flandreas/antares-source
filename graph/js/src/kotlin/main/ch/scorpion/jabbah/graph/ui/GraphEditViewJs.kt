@@ -11,6 +11,7 @@ external interface GraphEditViewJsProps : Props {
 	var canvasId: String
 	var controller: GraphEditViewController
 	var size: Dimension2D?
+	var canvasToolbarRenderer: (RBuilder) -> Unit
 }
 
 fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit) {
@@ -46,6 +47,7 @@ class GraphEditViewJs(
 			canvasId = props.canvasId
 			controller = props.controller.graphNavigationViewController
 			size = props.size
+			canvasToolbarRenderer = props.canvasToolbarRenderer
 		}
 	}
 

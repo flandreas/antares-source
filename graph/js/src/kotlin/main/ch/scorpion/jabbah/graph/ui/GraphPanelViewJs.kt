@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.mreact.splitPane
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -44,6 +45,17 @@ class GraphPanelViewJs(
 		canvasId = props.canvasId
 		controller = props.controller.editViewController
 		size = props.size
+		canvasToolbarRenderer = {
+			it.graphExecutionToolbar {
+				currentSystemSpeedCategory = props.controller.applicationContextHolder.currentSystemSpeedCategory
+				scheduler = props.controller.applicationContextHolder.scheduler
+				eventBus =  BaseModule.eventBus
+				toggleApplicationModeAction = props.controller.toggleApplicationModeAction
+				singleStepModeAction = props.controller.singleStepModeAction
+				pauseOrResumeAction = props.controller.pauseOrResumeAction
+				backgroundColor = null
+			}
+		}
 	} }.childList[0] as ReactElement
 
 	// Not used so for, but needed to satisfy controllers

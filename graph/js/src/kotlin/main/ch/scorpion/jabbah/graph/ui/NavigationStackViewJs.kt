@@ -11,7 +11,7 @@ import styled.css
 
 external interface NavigationStackViewJsProps : Props {
 	var controller: NavigationStackViewController
-	var backgroundColor: String
+	var backgroundColor: String?
 }
 
 fun RBuilder.navigationStackView(handler: NavigationStackViewJsProps.() -> Unit) {
@@ -31,7 +31,7 @@ class NavigationStackViewJs(
 	override fun RBuilder.render() {
 		mBreadcrumbs(">") {
 			css {
-				background = props.backgroundColor
+				props.backgroundColor?.let { background = it }
 			}
 			val iter = props.controller.navigationStack.iterator()
 			iter.forEach { entry ->

@@ -146,10 +146,13 @@ class AntaresViewJs(
 				} else {
 					antaresMenuBar {  }
 					graphExecutionToolbar {
+						currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
 						scheduler = applicationContextHolder.scheduler
 						eventBus = BaseModule.eventBus
 						toggleApplicationModeAction = controller.toggleApplicationModeAction
-						currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
+						singleStepModeAction = controller.singleStepModeAction
+						pauseOrResumeAction = controller.pauseOrResumeAction
+						backgroundColor = null
 					}
 
 					styledDiv {
