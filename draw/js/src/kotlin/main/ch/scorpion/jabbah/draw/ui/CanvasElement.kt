@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.ui
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.draw.view.responsiveCanvas
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.css.*
@@ -13,6 +14,7 @@ import react.*
 import react.dom.attrs
 import styled.css
 import styled.styledCanvas
+import styled.styledDiv
 
 external interface CanvasElementProps : Props {
 	var canvasId: String
@@ -31,6 +33,8 @@ class CanvasElement(
 	props: CanvasElementProps
 ) : RPureComponent<CanvasElementProps, State>(props) {
 
+	private var canvasJs: CanvasJs? = null
+
 	override fun componentDidMount() {
 		val canvasElement = document.getElementById(props.canvasId) as HTMLCanvasElement
 
@@ -40,25 +44,22 @@ class CanvasElement(
 		canvasElement.width = width * window.devicePixelRatio.toInt()
 		canvasElement.height = height * window.devicePixelRatio.toInt()
 
-		val canvasJs = CanvasJs(props.canvasId, props.view, props.size)
-		canvasJs.repaint()
+		canvasJs = CanvasJs(props.canvasId, props.view, props.size)
+		canvasJs!!.repaint()
 	}
 
 	override fun RBuilder.render() {
 		if (props.size == null) {
-			styledCanvas {
+			styledDiv {
 				css {
+					display = Display.flex
+					flexDirection = FlexDirection.column
 					flex(1.0)
-					width = 100.pct - 12.px
-					margin(6.px)
-					border = "1px solid gray"
 				}
-				attrs {
-					id = props.canvasId
-					tabIndex = "1"
-					if (props.ref != null) {
-						ref = props.ref!!
-					}
+				child(responsiveCanvas) {
+					attrs.canvasId = props.canvasId
+					attrs.canvasJsProvider = { canvasJs }
+					attrs.ref = props.ref
 				}
 			}
 		} else {

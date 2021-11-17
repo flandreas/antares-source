@@ -42,7 +42,8 @@ class CanvasJs(
 
 	override val devicePixelRatio: Int get() = window.devicePixelRatio.toInt()
 
-	override val dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
+	override var dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
+		private set
 
 	override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
@@ -70,6 +71,15 @@ class CanvasJs(
 		view.canvas = this
 		view.initialize()
 		initalizing = false
+	}
+
+	fun resize(w: Int, h: Int) {
+		val oldDimension = dimension
+		dimension = Dimension2D(w, h)
+		canvas.width = dimension.widthInt * devicePixelRatio
+		canvas.height = dimension.heightInt * devicePixelRatio
+		repaint()
+		propertyOwner.fire(Canvas.PROP_DIMENSION, oldDimension, dimension)
 	}
 
 	override fun requestViewFocus() {
