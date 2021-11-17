@@ -8,8 +8,7 @@ fun main() {
 	when (path) {
 		encodeURI("/iframe.html"), encodeURI("/docs/web/iframe.html") -> AntaresIFrame().show()
 		encodeURI("/desktop.html") -> AntaresJs().start()
-		//else -> AntaresPage().show()
-		else -> TestPage().show()
+		else -> AntaresPage().show()
 	}
 }
 
