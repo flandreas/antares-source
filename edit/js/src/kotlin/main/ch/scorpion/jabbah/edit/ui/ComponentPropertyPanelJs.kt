@@ -31,12 +31,14 @@ class ComponentPropertyPanelJs(
 		styledDiv {
 			css {
 				paddingLeft = 2.spacingUnits
+				width = 100.pct
+				height = 100.pct
 				maxHeight = LinearDimension.fillAvailable
 				maxWidth = LinearDimension.fillAvailable
 				flexGrow = 1.0
 				overflow = Overflow.auto
 			}
-			mTypography(props.controller.title, MTypographyVariant.h5)
+			mTypography(props.controller.title, MTypographyVariant.h6)
 			props.controller.bean?.let {
 				EditModuleJs.propertyPageRendererRegistry.render(it, props.controller.editor, this)
 			}
