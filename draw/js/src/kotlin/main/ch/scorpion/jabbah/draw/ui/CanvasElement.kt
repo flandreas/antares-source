@@ -20,6 +20,7 @@ external interface CanvasElementProps : Props {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D?
+	var responsive: Boolean
 	var ref: RefObject<*>?
 }
 
@@ -49,17 +50,34 @@ class CanvasElement(
 	}
 
 	override fun RBuilder.render() {
-		if (props.size == null) {
+		if (props.responsive) {
 			styledDiv {
 				css {
 					display = Display.flex
 					flexDirection = FlexDirection.column
 					flex(1.0)
 				}
+				console.log("Creating responsive canvas")
 				child(responsiveCanvas) {
 					attrs.canvasId = props.canvasId
 					attrs.canvasJsProvider = { canvasJs }
 					attrs.ref = props.ref
+				}
+			}
+		} else if (props.size == null) {
+			styledCanvas {
+				css {
+					flex(1.0)
+					width = 100.pct - 12.px
+					margin(6.px)
+					border = "1px solid gray"
+				}
+				attrs {
+					id = props.canvasId
+					tabIndex = "1"
+					if (props.ref != null) {
+						ref = props.ref!!
+					}
 				}
 			}
 		} else {

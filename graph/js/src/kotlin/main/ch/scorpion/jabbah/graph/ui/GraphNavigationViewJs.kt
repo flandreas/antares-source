@@ -11,6 +11,7 @@ external interface GraphNavigationViewJsProps : Props {
 	var canvasId: String
 	var controller: GraphNavigationViewController
 	var size: Dimension2D?
+	var responsive: Boolean
 	var canvasToolbarRenderer: (RBuilder) -> Unit
 	var addMargins: Boolean?
 	var toolbarBackgroundColor: String
@@ -55,6 +56,7 @@ private class GraphNavigationViewJs(
 				canvasId = props.canvasId
 				view = props.controller.drawingView
 				size = props.size
+				responsive = props.responsive
 				toolbarRenderer = {
 					it.navigationStackView {
 						controller = props.controller.navigationStackViewController

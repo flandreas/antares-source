@@ -20,6 +20,7 @@ external interface CanvasWithToolbarProps : Props {
 	var canvasId: String
 	var view: View<*>
 	var size: Dimension2D?
+	var responsive: Boolean
 	var toolbarRenderer: (RBuilder) -> Unit
 }
 
@@ -75,10 +76,11 @@ class CanvasWithToolbar(
 				flex(1.0)
 
 			}
-			if (props.size == null) {
+			if (props.size == null || props.responsive) {
 				jCanvas {
 					canvasId = props.canvasId
 					view = props.view
+					responsive = props.responsive
 					ref = canvasRef
 				}
 				styledDiv {
@@ -97,6 +99,7 @@ class CanvasWithToolbar(
 					canvasId = props.canvasId
 					view = props.view
 					size = props.size!!
+					responsive = props.responsive
 					ref = canvasRef
 				}
 				styledDiv {

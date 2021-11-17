@@ -47,6 +47,7 @@ class GraphEditViewJs(
 			canvasId = props.canvasId
 			controller = props.controller.graphNavigationViewController
 			size = props.size
+			responsive = true
 			canvasToolbarRenderer = props.canvasToolbarRenderer
 		}
 	}

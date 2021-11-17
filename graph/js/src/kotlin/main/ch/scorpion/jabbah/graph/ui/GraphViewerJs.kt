@@ -85,6 +85,7 @@ class GraphViewerJs(
 					canvasId = props.canvasId
 					controller = this@GraphViewerJs.controller.graphNavigationViewController
 					size = props.size
+					responsive = false
 					addMargins = props.addMargins
 					toolbarBackgroundColor = this@GraphViewerJs.toolbarBackgroundColor
 					canvasToolbarRenderer = {
