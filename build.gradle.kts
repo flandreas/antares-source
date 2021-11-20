@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
 	kotlin("multiplatform") version "1.5.30" apply false
+	kotlin("plugin.serialization") version "1.5.30" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
@@ -36,6 +37,7 @@ allprojects {
 	buildDir = File(rootProject.projectDir, "build/${project.name}")
 }
 
+val kotlinWrappersVersion: String by extra
 val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
@@ -54,6 +56,7 @@ subprojects {
 	}
 
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
+	apply(plugin = "kotlinx-serialization")
 
 	configure<KotlinMultiplatformExtension> {
 		jvm {
@@ -82,6 +85,9 @@ subprojects {
 			val commonMain by getting {
 				kotlin.srcDir("shared/src/main")
 				resources.srcDir("shared/rsc")
+				dependencies {
+					implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+				}
 			}
 			val commonTest by getting {
 				kotlin.srcDir("shared/src/test")
@@ -119,11 +125,14 @@ subprojects {
 				resources.srcDir("js/rsc")
 
 				dependencies {
+					implementation("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}")
 					implementation(npm("react-hot-loader", "^4.12.20"))
-					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.0-pre.236-kotlin-1.5.30")
+					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 					implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
 					implementation(npm("react-resize-detector", "~6.7.0"))
 					implementation(npm("react-split-pane", "~0.1.92"))
+					implementation(npm("@auth0/auth0-react", "~1.8.0"))
 				}
 			}
 			val jsTest by getting {

@@ -12,7 +12,10 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.button.MButtonSize
+import com.ccfraser.muirwik.components.button.mButton
 import com.ccfraser.muirwik.components.card.mCard
+import com.ccfraser.muirwik.components.card.mCardActions
 import com.ccfraser.muirwik.components.card.mCardContent
 import com.ccfraser.muirwik.components.card.mCardHeader
 import kotlinx.browser.document
@@ -29,6 +32,7 @@ import org.w3c.fetch.RequestInit
 import react.Props
 import react.dom.render
 import react.fc
+import react.router.dom.*
 import react.useEffectOnce
 import react.useState
 import styled.css
@@ -167,6 +171,9 @@ val projectCard = fc<ProjectCardProps> { props ->
 		mCardHeader(props.project.name.getText())
 		mCardContent {
 			mTypography(props.project.description?.getText())
+		}
+		mCardActions {
+			mButton("Open", size = MButtonSize.small, onClick = { window.location.href = "/desktopMock.html" })
 		}
 	}
 }
