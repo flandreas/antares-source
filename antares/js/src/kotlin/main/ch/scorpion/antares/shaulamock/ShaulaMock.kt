@@ -32,7 +32,6 @@ import org.w3c.fetch.RequestInit
 import react.Props
 import react.dom.render
 import react.fc
-import react.router.dom.*
 import react.useEffectOnce
 import react.useState
 import styled.css

@@ -14,9 +14,19 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import kotlinx.browser.document
+import kotlinx.browser.window
+import org.w3c.dom.url.URLSearchParams
 import react.dom.*
 
+/**
+ * Displays the Antares Editor Workbench as a standalone React application.
+ * Specify the UUID of the project to display in the URL's query parameter "project".
+ */
 class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresApplication {
+
+	companion object {
+		private const val PROJECT_UUID_PARAM = "project"
+	}
 
 	override val logLevel get() = LogLevel.Info
 
@@ -39,19 +49,25 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 	}
 
 	override fun openInitialSavable() {
-		val initialProjectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
-		(controller as GraphDataViewController).openProject(initialProjectUuid)
+		extractProjectUuidFromUrl()?.let { projectUuid ->
+			(controller as GraphDataViewController).openProject(projectUuid)
 
-		// The above would normally result in triggering OpenContainerLibraryElementAction,
-		// which is part of LibraryTreeView. In JS, LibraryTreeView has not yet been created at this point,
-		// therefore we have to load the default circuit below
+			// The above would normally result in triggering OpenContainerLibraryElementAction,
+			// which is part of LibraryTreeView. In JS, LibraryTreeView has not yet been created at this point,
+			// therefore we have to load the default circuit below
 
-		ProjectModule.projectHolder.project!!.run {
-			defaultElementUUID?.let { uuid ->
-				val element = getContainerLibraryElement(uuid)
-				controller.openAsSavable(element!!, "Initial circuit")
+			ProjectModule.projectHolder.project!!.run {
+				defaultElementUUID?.let { uuid ->
+					val element = getContainerLibraryElement(uuid)
+					controller.openAsSavable(element!!, "Initial circuit")
+				}
 			}
 		}
+	}
+
+	private fun extractProjectUuidFromUrl(): UUID? {
+		val params = URLSearchParams(window.location.search)
+		return params.get(PROJECT_UUID_PARAM)?.let { UUID(it) }
 	}
 
 	private fun display() {
@@ -61,7 +77,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 				attrs.applicationDataHolder = controller
 				attrs.canvasId = "kotlinCanvas"
 				attrs.size = null
-				attrs.metaGraph = controller.data!!.content as MetaGraph
+				attrs.metaGraph = controller.data?.content as MetaGraph?
 			}
 		}
 	}

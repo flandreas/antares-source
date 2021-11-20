@@ -34,7 +34,7 @@ external interface AntaresViewJsProps : Props {
 	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String
 	var size: Dimension2D?
-	var metaGraph: MetaGraph
+	var metaGraph: MetaGraph?
 }
 
 external interface AntaresCanvasState : RState {

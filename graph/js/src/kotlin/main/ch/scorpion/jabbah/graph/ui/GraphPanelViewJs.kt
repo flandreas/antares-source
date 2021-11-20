@@ -20,7 +20,7 @@ external interface GraphPanelViewJsProps : Props {
 	var application: Application
 	var canvasId: String
 	var size: Dimension2D?
-	var metaGraph: MetaGraph
+	var metaGraph: MetaGraph?
 }
 
 fun RBuilder.graphPanelView(handler: GraphPanelViewJsProps.() -> Unit) {
@@ -75,7 +75,9 @@ class GraphPanelViewJs(
 	/** ---- [RComponent] */
 
 	override fun componentDidMount() {
-		props.controller.setApplicationData(props.metaGraph.graph.graphView, editable = true)
+		if (props.metaGraph != null) {
+			props.controller.setApplicationData(props.metaGraph!!.graph.graphView, editable = true)
+		}
 		DrawViewModule.viewManager.activeView = props.controller.editor.view
 
 		(props.controller.editor.view.canvas as CanvasJs).dragTargetHandler =
