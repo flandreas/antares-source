@@ -3,6 +3,7 @@ package ch.scorpion.antares.ui
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.ApplicationDataViewJs
+import ch.scorpion.jabbah.base.util.decodeURI
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -24,6 +25,10 @@ import ch.scorpion.jabbah.graph.ui.graphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import com.ccfraser.muirwik.components.*
+import com.ccfraser.muirwik.components.button.MButtonSize
+import com.ccfraser.muirwik.components.button.MButtonVariant
+import com.ccfraser.muirwik.components.button.mButton
+import kotlinx.browser.window
 import kotlinx.css.*
 import react.*
 import styled.css
@@ -34,10 +39,12 @@ external interface AntaresViewJsProps : Props {
 	var applicationDataHolder: ApplicationDataHolder
 	var canvasId: String
 	var size: Dimension2D?
+	var projectName: String?
 	var metaGraph: MetaGraph?
+	var returnUri: String?
 }
 
-external interface AntaresCanvasState : RState {
+external interface AntaresCanvasState : State {
 	var isLoading: Boolean
 }
 
@@ -129,7 +136,15 @@ class AntaresViewJs(
 
 			mAppBar(position = MAppBarPosition.static) {
 				mToolbar {
-					mToolbarTitle("Antares")
+					if (props.projectName != null) {
+						mToolbarTitle("Antares Desktop - ${props.projectName}")
+					} else {
+						mToolbarTitle("Antares Desktop")
+					}
+					props.returnUri?.let { returnUri ->
+						mButton("Close", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
+							onClick = { window.location.href = decodeURI(returnUri) })
+					}
 				}
 			}
 

@@ -26,6 +26,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 	companion object {
 		private const val PROJECT_UUID_PARAM = "project"
+		private const val RETURN_URI_PARAM = "returnUrl"
 	}
 
 	override val logLevel get() = LogLevel.Info
@@ -70,6 +71,11 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 		return params.get(PROJECT_UUID_PARAM)?.let { UUID(it) }
 	}
 
+	private fun extractReturnUriFromUrl(): String? {
+		val params = URLSearchParams(window.location.search)
+		return params.get(RETURN_URI_PARAM)
+	}
+
 	private fun display() {
 		render(document.getElementById("root")) {
 			child(AntaresViewJs::class) {
@@ -77,6 +83,8 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 				attrs.applicationDataHolder = controller
 				attrs.canvasId = "kotlinCanvas"
 				attrs.size = null
+				attrs.projectName = ProjectModule.projectHolder.project?.name?.getTranslation()
+				attrs.returnUri = extractReturnUriFromUrl()
 				attrs.metaGraph = controller.data?.content as MetaGraph?
 			}
 		}

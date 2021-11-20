@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.auth0.Auth0ContextInterface
 import ch.scorpion.jabbah.base.auth0.useAuth0
+import ch.scorpion.jabbah.base.util.encodeURI
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -167,12 +168,18 @@ external interface ProjectCardProps : Props {
 
 val projectCard = fc<ProjectCardProps> { props ->
 	mCard {
+		val href = """
+			/desktop.html?
+			project=532f0477-722c-4c88-ada3-c419a386d06a
+			&returnUrl=${encodeURI(window.location.href)}
+		""".trimIndent()
 		mCardHeader(props.project.name.getText())
 		mCardContent {
 			mTypography(props.project.description?.getText())
 		}
 		mCardActions {
-			mButton("Open", size = MButtonSize.small, onClick = { window.location.href = "/desktopMock.html" })
+			mButton("Open", size = MButtonSize.small,
+				onClick = { window.location.href = href })
 		}
 	}
 }

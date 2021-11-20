@@ -26,7 +26,7 @@ actual object Translations {
 	actual fun withAnyKey() { }
 
 	actual fun addBundle(name: String) {
-		LOG.info("Adding translation bundle '$name'")
+		LOG.trace("Adding translation bundle '$name'")
 		requestedBundleNames.add(name)
 		BaseModuleJs.translationService.load(name)
 			.then {
