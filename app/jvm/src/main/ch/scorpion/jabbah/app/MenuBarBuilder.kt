@@ -43,7 +43,7 @@ open class MenuBarBuilder(
     private val editMenu = createEditMenu()
     private val viewMenu = createViewMenu()
 	private val helpMenu = createHelpMenu()
-    protected val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
+    protected val openRecentMenu by lazy { createOpenRecentMenu() }
 
     init {
         fillFileMenu(fileMenu)
@@ -54,14 +54,6 @@ open class MenuBarBuilder(
 
 	    // Make sure that "Help" menu is always the last one
 	    menuBar.add(helpMenu)
-
-	    eventBus.register(SavableHistoryEvent::class) { updateOpenRecentMenu() }
-	    eventBus.register(CurrentSavableEvent::class) {
-		    // Make a [Savable] that has just been closed visible in the menu
-		    if (it.savable == null) {
-			    updateOpenRecentMenu()
-		    }
-	    }
     }
 
     protected open fun fillMenuBar(menuBar: JMenuBar) {
@@ -123,13 +115,5 @@ open class MenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(DocumentationAction(frame.application))))
 	}
 
-    private fun updateOpenRecentMenu() {
-        openRecentMenu.removeAll()
-        frame.application.controller.mostRecentSavables.savables.forEach {
-            if (it != frame.application.controller.data?.savable) {
-	            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, frame.application))))
-            }
-        }
-        openRecentMenu.isEnabled = frame.application.controller.mostRecentSavables.size > 0
-    }
+	protected open fun createOpenRecentMenu(): JMenu = OpenRecentMenu(frame.application, eventBus)
 }

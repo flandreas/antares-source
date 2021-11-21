@@ -124,4 +124,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		return menu
 	}
+
+	override fun createOpenRecentMenu(): JMenu =
+		OpenRecentGraphMenu(frame.application, graphFrame.controller.applicationModeHolder)
 }
