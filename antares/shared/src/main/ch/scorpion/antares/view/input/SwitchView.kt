@@ -286,6 +286,8 @@ class SwitchView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
 		this.model = model
 	}

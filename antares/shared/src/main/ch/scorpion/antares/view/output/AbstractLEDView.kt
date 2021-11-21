@@ -158,6 +158,8 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractLEDView) {
 			copyControlViewProperties(source, this)

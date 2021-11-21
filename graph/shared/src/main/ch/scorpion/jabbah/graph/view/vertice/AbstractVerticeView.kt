@@ -38,10 +38,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ConnectableView
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -486,9 +483,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-	private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {
-		return requiredBySystemSpeed && model.waiting && isPausing
-	}
+	private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean =
+		requiredBySystemSpeed && model.waiting && isPausing && (this !is ControlView<*> || !this.isActiveControlView)
 
 	/**
 	 * Configures and updates the [Label] that displays the execution info text above the bounding box.

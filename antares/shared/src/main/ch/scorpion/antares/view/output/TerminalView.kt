@@ -253,6 +253,7 @@ class TerminalView(
 
 	/** ---- [ControlViewSource] */
 
+
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override val controlId: String get() = "terminal:" + model.id
@@ -268,6 +269,8 @@ class TerminalView(
 	}
 
 	/** ---- [ControlView] */
+
+	override var isActiveControlView: Boolean = false
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Terminal) {
 		this.model = model

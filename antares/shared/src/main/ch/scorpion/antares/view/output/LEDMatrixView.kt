@@ -122,6 +122,8 @@ class LEDMatrixView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override val controlId: String
 		get() = "ledMatrix:${model.id}"
 

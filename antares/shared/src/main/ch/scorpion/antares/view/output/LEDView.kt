@@ -43,7 +43,7 @@ class LEDView(
 
     /** ---- [ControlView] */
 
-    override val controlId: String
+	override val controlId: String
         get() {
             // Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
             // when ControlViews (event as part of a wrapping Component) are added to a Drawing

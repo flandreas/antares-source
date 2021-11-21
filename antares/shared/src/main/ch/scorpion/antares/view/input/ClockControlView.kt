@@ -87,6 +87,8 @@ class ClockControlView(
 
 	override var isShowPortViews: Boolean = false
 
+	override var isActiveControlView: Boolean = false
+
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = iconButton.getActorInteractionHandler(context)
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null

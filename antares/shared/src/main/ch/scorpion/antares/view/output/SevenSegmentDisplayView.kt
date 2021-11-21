@@ -189,6 +189,8 @@ class SevenSegmentDisplayView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override val controlId: String get() = "7seg:" + model.id
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: SevenSegmentDisplay) {

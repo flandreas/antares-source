@@ -35,6 +35,12 @@ interface ControlView<T : Vertice> : Component, Transparent, ActorView {
 	var isShowPortViews: Boolean
 
 	/**
+	 * Objects that effectively operate as [ControlView] return `true`.
+	 * [VerticeView] that also implement [ControlView] will return `false` by default.
+	 */
+	var isActiveControlView: Boolean
+
+	/**
      * Binds this [ControlView] to the corresponding [Vertice] of the [Graph] that is contained in the
      * [SubGraphVerticeView] that owns this [ControlView]. Used for establishing a process to update this [ControlView]
      * whenever the corresponding [Vertice] changes.

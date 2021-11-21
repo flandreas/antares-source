@@ -41,6 +41,8 @@ class TestControlVerticeView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override val controlId: String get() = "$type \"${model.name}\""
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: TestControlVertice) {

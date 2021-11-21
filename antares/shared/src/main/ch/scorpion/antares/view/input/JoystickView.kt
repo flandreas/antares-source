@@ -188,6 +188,8 @@ class JoystickView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Joystick) {
 		this.model = model
 	}

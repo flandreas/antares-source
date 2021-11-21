@@ -33,7 +33,8 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
 /**
- * A [Component] that wraps a [ControlView] in order to allow deferred reference to a [SubGraphVerticeView]'s model.
+ * A [Component] that wraps a [ControlView] in order to allow deferred reference
+ * to a [SubGraphVerticeView]'s model.
  */
 class ControlViewComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -42,8 +43,8 @@ class ControlViewComponent(
 ) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent {
 
 	/**
-	 * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
-	 * to the model when the underlying [Graph] gets bound.
+	 * The ID of the model displayed by [controlView]. This ID is made persistent
+	 * and is used to resolve the link to the model when the underlying [Graph] gets bound.
 	 */
 	var controlModelLink: DeepVerticeLink
 		private set
@@ -52,13 +53,17 @@ class ControlViewComponent(
 
 	private var drawableOwner: DrawableOwner? = null
 
-	/** Will be displayed instead of [controlView] if [controlModelLink] is broken, which isn't detected before [bindControlView] is called.*/
+	/**
+	 * Will be displayed instead of [controlView] if [controlModelLink] is broken,
+	 * which isn't detected before [bindControlView] is called.
+	 */
 	private var brokenView: BrokenDeepLinkView? = null
 
 	init {
 		if (source != null) {
 			controlView = source.createControlView()
 			controlView.id = source.id
+			controlView.isActiveControlView = true
 			controlModelLink = baseLink.append(controlView.model.id)
 			drawableOwner = DrawableOwner(this, controlView)
 		} else {
@@ -106,6 +111,7 @@ class ControlViewComponent(
 		controlView.readModelProperties(reader)
 		super.read(reader)
 		controlView.isShowPortViews = false
+		controlView.isActiveControlView = true
 	}
 
 	/** ---- [Drawable] */

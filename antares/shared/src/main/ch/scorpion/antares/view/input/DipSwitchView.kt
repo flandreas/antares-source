@@ -275,6 +275,8 @@ class DipSwitchView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: DipSwitch) {
 		this.model = model
 	}

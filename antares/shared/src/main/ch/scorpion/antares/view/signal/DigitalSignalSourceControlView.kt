@@ -72,6 +72,8 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     /** ---- [ControlView] interface */
 
+    override var isActiveControlView: Boolean = false
+
     override val controlName: String
 	    get() {
 		    if (StringUtils.isEmpty(model.name)) {

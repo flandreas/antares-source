@@ -171,6 +171,8 @@ class KeyboardView(
 
 	/** ---- [ControlView] */
 
+	override var isActiveControlView: Boolean = false
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Keyboard) {
 		this.model = model
 	}
