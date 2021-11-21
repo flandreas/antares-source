@@ -249,39 +249,65 @@ class LEDMatrixView(
 
 		super.drawImpl(context)
 
+		val isExecute = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
-		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
+		context.g.color = if (isExecute) {
+			Themes.get<AntaresTheme>().screen.backgroundColor
+		} else {
+			backgroundColor
+		}
 		context.g.fillRect(0, 0, width.toInt(), height.toInt())
 
+		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 		var x = width - inset - DOT_SIZE * factor
 		for (column in 0 until model.columnWidth.width) {
 			var y = height - inset - DOT_SIZE * factor
 			for (row in 0 until model.rowWidth.width) {
-				if (model.isOn(column, row)) {
-					context.g.color = lightColor.onColor
+				context.g.color = if (isExecute) {
+					if (model.isOn(column, row)) {
+						lightColor.onColor
+					} else {
+						lightColor.offColor
+					}
 				} else {
-					context.g.color = lightColor.offColor
+					foregroundColor
 				}
 
 				if (isCircleDots) {
-					context.g.fillOval(
-						x.toInt() + 1,
-						y.toInt() + 1,
-						(DOT_SIZE * factor).toInt() - 2,
-						(DOT_SIZE * factor).toInt() - 2)
+					if (isExecute) {
+						context.g.fillOval(
+							x.toInt() + 1,
+							y.toInt() + 1,
+							(DOT_SIZE * factor).toInt() - 2,
+							(DOT_SIZE * factor).toInt() - 2
+						)
+					} else {
+						context.g.drawOval(
+							x.toInt() + 1,
+							y.toInt() + 1,
+							(DOT_SIZE * factor).toInt() - 2,
+							(DOT_SIZE * factor).toInt() - 2
+						)
+					}
 				} else {
-					context.g.fillRect(
-						x.toInt(),
-						y.toInt(),
-						ceil(DOT_SIZE * factor).toInt(),
-						ceil(DOT_SIZE * factor).toInt())
-					context.g.drawRect(
-						x.toInt(),
-						y.toInt(),
-						ceil(DOT_SIZE * factor).toInt(),
-						ceil(DOT_SIZE * factor).toInt())
+					if (isExecute) {
+						context.g.fillRect(
+							x.toInt(),
+							y.toInt(),
+							ceil(DOT_SIZE * factor).toInt(),
+							ceil(DOT_SIZE * factor).toInt()
+						)
+					} else {
+						context.g.drawRect(
+							x.toInt(),
+							y.toInt(),
+							ceil(DOT_SIZE * factor).toInt(),
+							ceil(DOT_SIZE * factor).toInt()
+						)
+					}
 				}
 
 				if (isDebug) {

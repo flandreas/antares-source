@@ -1,15 +1,11 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.RgbLED
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 
@@ -45,16 +41,7 @@ class RgbLEDView(
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-	/** ---- [RgbLEDView] */
+	/** ---- [AbstractLEDView] */
 
 	override fun getBulbColor(): Color = model.color
-
-	override fun drawBulb(context: DrawContext) {
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			super.drawBulb(context)
-		} else {
-			drawBulb(context, Themes.get<AntaresTheme>().screen.backgroundColor)
-		}
-	}
-
 }

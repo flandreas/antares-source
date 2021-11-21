@@ -262,7 +262,11 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** Draws the bulb in the color returned by [getBulbColor].*/
 	protected open fun drawBulb(context: DrawContext) {
-		drawBulb(context, transparent.applyTo(getBulbColor()))
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawBulb(context, transparent.applyTo(getBulbColor()))
+		} else {
+			drawBulb(context, transparent.applyTo(backgroundColor))
+		}
 	}
 
 	/** Draws the bulb using the specified [Color].*/
@@ -271,12 +275,8 @@ abstract class AbstractLEDView<T: Vertice>(
 		if (square) {
 			context.g.fillRect(xInt + borderOfSize, yInt + borderOfSize,
 				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
-			context.g.drawRect(xInt + borderOfSize, yInt + borderOfSize,
-				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 		} else {
 			context.g.fillOval(xInt + borderOfSize, yInt + borderOfSize,
-				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
-			context.g.drawOval(xInt + borderOfSize, yInt + borderOfSize,
 				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 		}
 	}

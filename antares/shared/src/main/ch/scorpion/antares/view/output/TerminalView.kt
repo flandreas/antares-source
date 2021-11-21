@@ -220,7 +220,11 @@ class TerminalView(
 	}
 
 	private fun drawScreen(context: DrawContext) {
-		val contentColor = Themes.get<AntaresTheme>().screen
+		val contentColor = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			Themes.get<AntaresTheme>().screen
+		} else {
+			Themes.get<AntaresTheme>().background.color
+		}
 		context.g.color = transparent.applyTo(context.choose(contentColor).backgroundColor)
 		context.g.fillRect(
 			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,

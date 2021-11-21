@@ -1,12 +1,17 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.io.Storable
@@ -84,11 +89,23 @@ class LEDView(
 
     /** ---- [LEDView] */
 
-
     override fun getBulbColor(): Color {
         if (model.isOn) {
             return lightColor.onColor
         }
         return lightColor.offColor
     }
+
+	override fun drawBulb(context: DrawContext) {
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			super.drawBulb(context)
+		} else {
+			drawBulb(context, transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor))
+			if (Themes.get<DrawTheme>().dark) {
+				drawBulb(context, transparent.applyTo(lightColor.offColor))
+			} else {
+				drawBulb(context, transparent.applyTo(lightColor.onColor.withAlpha(64)))
+			}
+		}
+	}
 }

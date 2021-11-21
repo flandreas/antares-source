@@ -257,44 +257,54 @@ class SevenSegmentDisplayView(
 		}
 		super.drawImpl(context)
 
-		context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().screen.backgroundColor)
+		val isExecute = context.castedAppContext<GraphApplicationContext>()!!.isExecute
+
+		context.g.color = if (isExecute) {
+			transparent.applyTo(Themes.get<AntaresTheme>().screen.backgroundColor)
+		} else {
+			backgroundColor
+		}
 		context.g.fillRect(0, 0, geom.width, geom.height)
 
 		if (hasBorder) {
 			context.g.stroke = stroke
-			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().screen.foregroundColor)
+			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				transparent.applyTo(Themes.get<AntaresTheme>().screen.foregroundColor)
+			} else {
+				foregroundColor
+			}
 			context.g.drawRect(0, 0, geom.width, geom.height)
 		}
 
-		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "a"),
+		drawHorizontalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "a"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "b"),
+		drawVerticalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "b"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "c"),
+		drawVerticalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "c"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "d"),
+		drawHorizontalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "d"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "e"),
+		drawVerticalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "e"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "f"),
+		drawVerticalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "f"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			1 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "g"),
+		drawHorizontalSegment(context.g, isExecute, model.portScheme.inputValueOf(model, "g"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawDot(context.g, model.portScheme.inputValueOf(model, "p"),
+		drawDot(context.g, isExecute, model.portScheme.inputValueOf(model, "p"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.scaledFactor,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 
@@ -338,38 +348,39 @@ class SevenSegmentDisplayView(
 		}
 	}
 
-	private fun drawHorizontalSegment(g: Graphics2D, value: Boolean, relX: Float, relY: Float) {
+	private fun drawHorizontalSegment(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
 		g.translate(relX.toDouble(), relY.toDouble())
-		g.color = getColor(value)
+		g.color = getColor(value, isExecute)
 		g.fill(geom.path)
 		g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	private fun drawVerticalSegment(g: Graphics2D, value: Boolean, relX: Float, relY: Float) {
+	private fun drawVerticalSegment(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
 		g.translate(relX.toDouble(), relY.toDouble())
 		g.rotate(PI / 2)
 
-		g.color = getColor(value)
+		g.color = getColor(value, isExecute)
 		g.fill(geom.path)
 
 		g.rotate(-PI / 2)
 		g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	private fun drawDot(g: Graphics2D, value: Boolean, relX: Float, relY: Float) {
+	private fun drawDot(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
 		g.translate(relX.toDouble(), relY.toDouble())
-		g.color = getColor(value)
+		g.color = getColor(value, isExecute)
 		g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
 		g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	private fun getColor(value: Boolean): Color {
-		return transparent.applyTo(if (value) {
-			lightColor.onColor
-		} else {
-			lightColor.offColor
-		})
-	}
+	private fun getColor(value: Boolean, isExecute: Boolean): Color =
+		transparent.applyTo(
+			if (isExecute) {
+				if (value) lightColor.onColor else lightColor.offColor
+			} else {
+				foregroundColor
+			}
+	)
 }
 
 class SevenSegmentDisplayViewSelectionModel(c: SevenSegmentDisplayView) : AbstractSelectionModel<SevenSegmentDisplayView>(c) {
