@@ -247,9 +247,11 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Snappable] interface */
 
-	override val snappableX: Array<SnappableX> get() = getPortViews().toTypedArray()
+	override val snappableX: Array<SnappableX> get() =
+		if (portViews.isEmpty()) super.snappableX else portViews.toTypedArray()
 
-	override val snappableY: Array<SnappableY> get() = getPortViews().toTypedArray()
+	override val snappableY: Array<SnappableY> get() =
+		if (portViews.isEmpty()) super.snappableY else portViews.toTypedArray()
 
 	/** ---- [Drawable] */
 
