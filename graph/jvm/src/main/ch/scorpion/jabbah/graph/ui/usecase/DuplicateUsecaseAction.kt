@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.Frame
@@ -13,9 +14,10 @@ import javax.swing.JOptionPane
 
 class DuplicateUsecaseAction(
 	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecases.action.duplicate", application, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.duplicate", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val newUsecaseName = JOptionPane.showInputDialog(

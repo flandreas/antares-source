@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.*
@@ -33,6 +34,7 @@ import javax.swing.tree.*
 class ScenarioTreeView(
 	private val application: Application,
 	private val applicationContextHolder: GraphApplicationContextHolder,
+	applicationModeHolder: ApplicationModeHolder,
 	private val service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
@@ -124,10 +126,10 @@ class ScenarioTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, activationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(application)))
-		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(application)))
-		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(application)))
-		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(application)))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(application, applicationModeHolder)))
+		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(application, applicationModeHolder)))
+		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(application, applicationModeHolder)))
+		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(application, applicationModeHolder)))
 	}
 
 	fun dispose() {

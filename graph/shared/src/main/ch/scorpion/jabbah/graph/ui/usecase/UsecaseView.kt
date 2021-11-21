@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 
@@ -30,6 +31,7 @@ interface UsecaseView : UIView {
 class UsecaseViewController(
 	editor: Editor,
 	val applicationContextHolder: GraphApplicationContextHolder,
+	val applicationModeHolder: ApplicationModeHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<UsecaseView>() {
 

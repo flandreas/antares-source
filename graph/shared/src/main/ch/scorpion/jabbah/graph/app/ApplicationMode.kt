@@ -48,7 +48,7 @@ interface ApplicationModeHolder {
 	fun updateEditorEditability()
 }
 
-class ConstantApplicationModeHolder(private val applicationMode: ApplicationMode) : ApplicationModeHolder {
+class ConstantApplicationModeHolder(applicationMode: ApplicationMode) : ApplicationModeHolder {
 
 	override val currentMode: ApplicationMode = applicationMode
 

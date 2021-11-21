@@ -27,7 +27,7 @@ class ScenarioViewSwing(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = ScenarioTreeView(application, controller.applicationContextHolder)
+	private val treeView = ScenarioTreeView(application, controller.applicationContextHolder, controller.applicationModeHolder)
 
 	private val propertyPanel = ScenarioPropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 

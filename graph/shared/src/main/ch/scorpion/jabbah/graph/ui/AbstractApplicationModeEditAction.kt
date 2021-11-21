@@ -18,9 +18,7 @@ abstract class AbstractApplicationModeEditAction(
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
 		if (it.source === applicationModeHolder) {
-			if (it.applicationMode != applicationModeHolder.currentMode) {
-				updateEnabledness()
-			}
+			updateEnabledness()
 		}
 	}
 

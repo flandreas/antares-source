@@ -106,18 +106,18 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		return menu
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
 		val applicationModeHolder = graphFrame.controller.applicationModeHolder
-		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
-		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))

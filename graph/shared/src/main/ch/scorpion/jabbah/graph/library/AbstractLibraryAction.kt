@@ -92,13 +92,3 @@ abstract class AbstractContainerLibraryElementAction(
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is ContainerLibraryElement
 }
-
-/** An [Action] that is only enabled if the selected item is a [BaseLibraryElement].*/
-abstract class AbstractBaseLibraryElementAction(
-	actionBaseName: String,
-	operation: Operation,
-	controller: LibraryTreeViewController
-) : AbstractLibraryAction(actionBaseName, operation, controller) {
-
-	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is BaseLibraryElement
-}

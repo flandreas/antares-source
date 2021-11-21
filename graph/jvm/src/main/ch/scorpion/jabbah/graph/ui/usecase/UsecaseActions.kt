@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.action.AbstractApplicationDataEditAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -11,6 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.ui.AbstractApplicationDataEditModeAction
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
@@ -24,9 +24,10 @@ import javax.swing.JOptionPane
 abstract class AbstractUsecaseAction(
 	baseName: String,
 	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
 	protected val service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditAction(baseName, application, eventBus) {
+) : AbstractApplicationDataEditModeAction(baseName, application, applicationModeHolder, eventBus) {
 
 	protected var usecase: Usecase? = null
 
@@ -50,9 +51,10 @@ abstract class AbstractUsecaseAction(
 /** Asks the user for the name of a new [Usecase] and adds it to the current [GraphView].*/
 class AddUsecaseAction(
 	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecases.action.addUsecase", application, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.addUsecase", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -68,17 +70,17 @@ class AddUsecaseAction(
 		service.addUsecase(application, UsecaseImpl(name))
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && usecase == null
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase == null
 }
 
 /** Deletes the currently selected [Usecase].*/
 class DeleteUsecaseAction(
 	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecases.action.deleteUsecase", application, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.deleteUsecase", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
@@ -92,9 +94,8 @@ class DeleteUsecaseAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && usecase != null
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase != null
 }
 
 class RunUsecaseAction(
@@ -102,8 +103,8 @@ class RunUsecaseAction(
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecases.action.runUsecase", application, service, eventBus) {
+	applicationModeHolder: ApplicationModeHolder
+) : AbstractUsecaseAction("usecases.action.runUsecase", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
@@ -111,9 +112,8 @@ class RunUsecaseAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && usecase != null
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase != null
 }
 
 /** Executes the test script of the currently selected [Usecase].*/
@@ -122,8 +122,8 @@ class RunSingleUsecaseTestAction(
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", application, service, eventBus) {
+	applicationModeHolder: ApplicationModeHolder
+) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
@@ -131,9 +131,8 @@ class RunSingleUsecaseTestAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && usecase != null && usecase!!.testScript != null
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase != null && usecase!!.testScript != null
 }
 
 class RunAllTestsAction(
@@ -141,14 +140,13 @@ class RunAllTestsAction(
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, service, eventBus) {
+	applicationModeHolder: ApplicationModeHolder
+) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		UsecaseTestRunner(graphView.usecases.withTests(), graphView, scheduler, applicationModeHolder).run()
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && graphView.usecases.hasTest
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && graphView.usecases.hasTest
 }
