@@ -143,7 +143,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == View.PROP_ZOOM_PAN && properties.getBoolean(PROP_AUTO_SWITCH)) {
+			if (e.name == View.PROP_ZOOM_PAN && properties.getBoolean(PROP_AUTO_SWITCH) && applicationModeHolder.currentMode == ApplicationMode.EDIT) {
 				if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {
 					if (view.desktopView.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)) {
 						view.showContainer()
