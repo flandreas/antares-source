@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import org.apache.commons.io.FilenameUtils
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
@@ -26,6 +27,10 @@ class FileLibraryServiceTest {
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 
+	init {
+		LibraryModule.libraryHolder.l = library
+	}
+
 	@Test
 	fun shouldDuplicateContainerLibraryElement() {
 		libraryBuilder.addContainerLibraryElement("Element")
@@ -38,5 +43,20 @@ class FileLibraryServiceTest {
 		assertNotEquals(orig.uuid, duplicate.uuid)
 		assertEquals("Element", orig.metaGraph!!.name)
 		assertEquals("NewName", duplicate.metaGraph!!.name)
+	}
+
+	@Test
+	fun shouldExportImportMetaGraphBundle() {
+		libraryBuilder.addContainerLibraryElement("Element")
+		val orig = library.get("Element") as ContainerLibraryElement
+		libraryBuilder.addDirectory("Directory")
+
+		val tempDir = Files.createTempDirectory(null)
+		val tempFile = Files.createTempFile(tempDir, "Test", "zip")
+		service.exportMetaGraphBundle(orig, tempFile.absolutePathString())
+
+		val importResult = service.importMetaGraphBundle(tempFile.absolutePathString(), FilenameUtils.getBaseName(tempFile.absolutePathString()), libraryBuilder.peek(), replaceIfUuidExists = true)
+
+		assertEquals(MetaGraphBundleImportResult.Success, importResult)
 	}
 }

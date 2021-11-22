@@ -24,6 +24,8 @@ class LibraryBuilder(
 		return this
 	}
 
+	fun peek(): LibraryDirectory = stack.peek()
+
 	/** Creates a new [LibraryDirectory] in the current one and makes it the new current one.*/
 	fun addDirectory(name: String): LibraryBuilder {
 		val directory =library.libraryService.addFolder(library, TranslatableText(name), stack.peek())

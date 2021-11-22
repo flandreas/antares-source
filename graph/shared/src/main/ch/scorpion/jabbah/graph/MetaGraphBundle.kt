@@ -45,7 +45,7 @@ class MetaGraphBundle : Storable {
 	override fun read(reader: StoreReader) {
 		_metaGraphs.clear()
 		if (reader.hasAttribute("systemLib")) {
-			referencedSystemLibrary = System.createUUID(reader.readString("uuid"))
+			referencedSystemLibrary = System.createUUID(reader.readString("systemLib"))
 		}
 		for (metaGraph in reader.readStorables<MetaGraph>("metaGraphs")) {
 			reader.requestResolution(this, Reference(

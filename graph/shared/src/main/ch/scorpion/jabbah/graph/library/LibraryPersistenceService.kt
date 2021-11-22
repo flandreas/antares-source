@@ -40,7 +40,9 @@ interface LibraryPersistenceService {
 	 */
 	fun exportLibraryTemporarily(uuid: UUID): String
 
-	/** Exports [bundle] as a ZIP file to the specified location [outputPath]. */
+	/**
+	 * Exports [bundle] as a ZIP file to the specified location [outputPath].
+	 */
 	fun exportMetaGraphBundle(bundle: MetaGraphBundle, outputPath: String)
 
 	/** Imports a [MetaGraphBundle] from a ZIP file at location [inputPath]. */

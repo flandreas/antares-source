@@ -394,13 +394,10 @@ class LibraryService(
 		if (bundle.referencedSystemLibrary == null) {
 			return true
 		}
-		if (destination is Project && bundle.referencedSystemLibrary != destination.importedLibrary) {
-			return false
+		if (destination is Project) {
+			return bundle.referencedSystemLibrary == destination.importedLibrary
 		}
-		if (bundle.referencedSystemLibrary != destination.uuid) {
-			return false
-		}
-		return true
+		return bundle.referencedSystemLibrary == destination.uuid
 	}
 
 	private fun importMetaGraphBundle(bundle: MetaGraphBundle, bundleName: String, destination: LibraryDirectory) {
