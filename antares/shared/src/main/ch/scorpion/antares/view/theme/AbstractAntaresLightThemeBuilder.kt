@@ -21,6 +21,12 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 
 		val BACKGROUND_STYLE = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT,)
 
+		private val TEXT_COLOR = CompositeColor(
+			foregroundColor = Color.BLACK,
+			backgroundColor = BACKGROUND_COLOR.backgroundColor)
+
+		private val TEXT_STYLE = BasicStyle(color = TEXT_COLOR, stroke = ANNOTATION_STROKE, font = TEXT_FONT)
+
 		val TOOLTIP_COLOR = CompositeColor(
 			foregroundColor = Color(252, 205, 90),
 			backgroundColor = Color(255, 255, 223),
@@ -81,6 +87,7 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 			name = name,
 			dark = false,
 			background = BACKGROUND_STYLE,
+			text = TEXT_STYLE,
 			figure = BasicStyle(color = color, stroke = BOX_STROKE, font = FONT, shadow = true),
 			tooltip = TOOLTIP_STYLE,
 			highlight = HIGHLIGHT_STYLE,

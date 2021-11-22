@@ -19,6 +19,7 @@ open class StyleType(
 ) {
 
     companion object {
+        val TEXT = StyleType("text", "draw.styleType.text.name")
         val FIGURE = StyleType("figure", "draw.styleType.figure.name")
 	    val ANNOTATION = StyleType("annotation", "draw.styleType.annotation.name")
         val BACKGROUND = StyleType("background", "draw.styleType.background.name", true)

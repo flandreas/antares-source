@@ -16,7 +16,7 @@ class GraphStyleType(
     companion object {
         val VERTICE = GraphStyleType("vertice", "graph.styleType.vertice.name")
         val EDGE = GraphStyleType("edge", "graph.styleType.edge.name")
-        val EXPLANATION = GraphStyleType("explanation", "graph.styleType.explanation.name")
+        val EXPLANATION = GraphStyleType("explanation", "graph.styleType.explanation.name", isSystem = true)
         val SUBSYSTEM = GraphStyleType("subsystem", "graph.styleType.subsystem.name", isBackdrop = true)
     }
 }

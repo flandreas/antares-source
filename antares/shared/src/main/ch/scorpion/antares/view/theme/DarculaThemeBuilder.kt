@@ -19,6 +19,12 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 		textColor = MAIN_COLOR.textColor
 	)
 
+	private val TEXT_COLOR = CompositeColor(
+		foregroundColor = BACKGROUND_FOREGROUND,
+		backgroundColor = BACKGROUND_BACKGROUND,
+		textColor = MAIN_COLOR.textColor
+	)
+
 	private val TOOLTIP_COLOR = DrawGraphicsModule.YELLOW_ON_DARK
 
 	val SHADOW_COLOR = MAIN_COLOR.foregroundColor.darker()
@@ -64,6 +70,8 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val BACKGROUND_STYLE = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT)
 
+	private val TEXT_STYLE = BasicStyle(color = TEXT_COLOR, stroke = ANNOTATION_STROKE, font = TEXT_FONT)
+
 	private val FIGURE_STYLE = BasicStyle(color = MAIN_COLOR, stroke = BOX_STROKE, font = FONT, shadow = true)
 
 	private val VERTICE_STYLE = BasicStyle(color = MAIN_COLOR, stroke = BOX_STROKE, font = FONT, shadow = true)
@@ -93,6 +101,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			referenceColors = REFERENCE_COLORS,
 			predefinedColors = PREDEFINED_COLORS,
 			background = BACKGROUND_STYLE,
+			text = TEXT_STYLE,
 			figure = FIGURE_STYLE,
 			tooltip = TOOLTIP_STYLE,
 			highlight = HIGHLIGHT_STYLE,

@@ -119,7 +119,13 @@ abstract class AbstractComponent(
 			rotation = Rotation.withName(reader.readString("rot"))
 		}
 		if (!fixStyleType && reader.hasAttribute("style")) {
-			styleType = styleProvider.getStyleType(reader.readString("style"))
+			var storedStyle = reader.readString("style")
+			if (storedStyle == "explanation") {
+				// Backward compatibility: StyleType 'explanation' has been made a system StyleType.
+				// Existing usages are replaced by 'text'.
+				storedStyle = StyleType.TEXT.name
+			}
+			styleType = styleProvider.getStyleType(storedStyle)
 		}
 		if (reader.hasAttribute("color")) {
 			customColor = styleProvider.predefinedColorProvider.withIdName(reader.readString("color"))

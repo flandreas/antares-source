@@ -19,6 +19,12 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 		textColor = MAIN_COLOR.textColor
 	)
 
+	private val TEXT_COLOR = CompositeColor(
+		foregroundColor = BACKGROUND_FOREGROUND,
+		backgroundColor = BACKGROUND_BACKGROUND,
+		textColor = MAIN_COLOR.textColor
+	)
+
 	val SHADOW_COLOR = Color(22, 54, 49)
 
 	private val VERY_DARK_GREEN = Color(2, 46, 8)
@@ -38,6 +44,8 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 		foregroundColor = Color(13, 116, 15),
 		backgroundColor = BACKGROUND_BACKGROUND.greener()
 	)
+
+	private val TEXT_STYLE = BasicStyle(color = TEXT_COLOR, stroke = ANNOTATION_STROKE, font = TEXT_FONT)
 
 	private val TOOLTIP_STYLE = BasicStyle(color = EXPLANATION_COLOR, stroke = TOOLTIP_STROKE, font = TOOLTIP_FONT)
 
@@ -95,6 +103,7 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 			referenceColors = REFERENCE_COLORS,
 			predefinedColors = PREDEFINED_COLORS,
 			background = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT),
+			text = TEXT_STYLE,
 			figure = BasicStyle(color = MAIN_COLOR, stroke = BOX_STROKE, font = FONT, shadow = true),
 			tooltip = TOOLTIP_STYLE,
 			highlight = HIGHLIGHT_STYLE,

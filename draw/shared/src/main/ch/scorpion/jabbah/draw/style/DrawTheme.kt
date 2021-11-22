@@ -9,6 +9,7 @@ open class DrawTheme(
 	private val referenceColors: List<ReferenceColor> = DEF_REF_COLORS,
 	private val predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	val background: Style = DEF_BACKGROUND,
+	val text: Style = DEF_TEXT,
 	val figure: Style = DEF_FIGURE,
 	val annotation: Style = DEF_ANNOTATION,
 	val tooltip: Style = DEF_TOOLTIP,
@@ -20,6 +21,7 @@ open class DrawTheme(
 		const val DEF_NAME = "default"
 		const val DEF_DARK = false
 		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color(240, 240, 240), Color.WHITE, Color.BLACK))
+		val DEF_TEXT = BasicStyle()
 		val DEF_FIGURE = BasicStyle()
 		val DEF_ANNOTATION = BasicStyle(stroke = DEF_FIGURE.stroke.thinner)
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
@@ -61,6 +63,7 @@ open class DrawTheme(
 			referenceColorSequenceProvider.replaceColors(referenceColors)
 			predefinedColors.forEach { PredefinedColorRepository.register(it) }
 		}
+		styleRepository.registerStyle(StyleType.TEXT, text)
 		styleRepository.registerStyle(StyleType.BACKGROUND, background)
 		styleRepository.registerStyle(StyleType.FIGURE, figure)
 		styleRepository.registerStyle(StyleType.ANNOTATION, annotation)

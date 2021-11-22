@@ -14,6 +14,8 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 		val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 
+		val TEXT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
+
 		val SELECTION_FOREGROUND_COLOR = Color.ORANGE
 
 		val ANNOTATION_STROKE = Stroke(1.0f)

@@ -26,20 +26,23 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class LabelComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	override val label: Label = createLabel(DEFAULT_TEXT)
+	override val label: Label = createLabel(DEFAULT_TEXT, styleProvider)
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent, Labeled {
 
-	constructor(text: String): this(label = createLabel(text))
+	constructor(
+		text: String,
+		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	): this(label = createLabel(text, styleProvider))
 
 	companion object {
 		private val TYPE = Translations.getString("edit.component.label")
 		const val DEFAULT_TEXT = "text"
 		private val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
 
-		private fun createLabel(text: String): Label {
+		private fun createLabel(text: String, styleProvider: StyleProvider): Label {
 			return Label(
 				text = text,
-				font = DEFAULT_FONT,
+				font = styleProvider.getStyle(StyleType.TEXT).font,
 				horizontalAlignment = HorizontalAlignment.CENTER,
 				verticalAlignment = VerticalAlignment.CENTER,
 				location = Point2D.ZERO,

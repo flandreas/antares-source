@@ -41,7 +41,7 @@ class TextComponentFactoryJvm : TextComponentFactory {
 open class TextComponentJvm(
 	text: TranslatableText = TranslatableText(""),
 	location: Point2D = Point2D.ZERO,
-	styleType: StyleType = StyleType.FIGURE,
+	styleType: StyleType = StyleType.TEXT,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
 	Transparent, TextComponent {
