@@ -97,7 +97,7 @@ class BitExtenderView(
 
 	private fun drawShape(context: DrawContext) {
 		context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
-		context.g.color = getApplicableBackgroudColor(context)
+		context.g.color = getApplicableBackgroundColor(context)
 		context.g.fill(SHAPE)
 		context.g.color = getApplicableForegroundColor(context)
 		context.g.stroke = stroke

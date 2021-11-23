@@ -108,6 +108,7 @@
             <baseLibraryElement _id='49' id='SevenSegmentDisplay'/>
             <baseLibraryElement _id='50' id='LEDMatrix'/>
             <baseLibraryElement _id='51' id='Terminal'/>
+            <baseLibraryElement _id='113' id='Buzzer'/>
             <containerLibraryElement _id='52' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'>
               <name>
                 <translation lang='en' text='8x8 LED Matrix with Ctrl'/>

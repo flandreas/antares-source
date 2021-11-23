@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
@@ -176,6 +177,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(JoystickDeflectionEditor::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(DigitalPortViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PortViewSpacing::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(WaveformType::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -196,6 +198,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(JoystickDeflectionEditor::class.java, JoystickDeflectionEditor::class.java)
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
+		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

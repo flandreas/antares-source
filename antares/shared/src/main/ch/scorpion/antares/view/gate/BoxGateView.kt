@@ -128,7 +128,7 @@ open class BoxGateView<T : Vertice>(
 		val oldColor = context.g.color
 
 		drawImplBeforeBorder(context)
-		drawShape(context, getApplicableForegroundColor(context), getApplicableBackgroudColor(context), stroke)
+		drawShape(context, getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke)
 		drawImplAfterBorder(context)
 
 		context.g.color = oldColor

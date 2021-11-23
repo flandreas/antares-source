@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -159,6 +160,13 @@ class PortViewSpacingEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(PortViewSpacing.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<PortViewSpacing>()
+	}
+}
+
+class WaveformTypeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(WaveformType.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<WaveformType>()
 	}
 }
 
