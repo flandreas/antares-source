@@ -8,11 +8,11 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
@@ -76,8 +76,7 @@ class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val eventBus: EventBus = BaseModule.eventBus,
-	private val userHolder: UserHolder = EditAuthModule.userHolder
+	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
 	companion object {
@@ -297,8 +296,11 @@ class LibraryService(
 	/**
 	 * Duplicates the specified [Library] (either user or system [Library]) and store the duplicate with
 	 * the given new name as user [Library].
+	 * @param library the [Library] to duplicate
+	 * @param newName the name of the duplicate [Library]
+	 * @param author the [UserIdentity] of the user who owns the duplicated [Library]
 	 */
-	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
+	fun duplicateLibrary(library: Library, newName: TranslatableText, author: UserIdentity): Library {
 		val newUuid = System.createUUID()
 		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getOptionalTranslation()}' and UUID $newUuid")
 
@@ -310,7 +312,7 @@ class LibraryService(
 		newLibrary.uuid = newUuid
 		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
-		newLibrary.author = userHolder.user.uuid
+		newLibrary.author = author
 
 		storeLibrary(newLibrary)
 

@@ -163,13 +163,11 @@ class LibraryPersistencePanel(
 		libraryDictionaryEntries.cellRenderer = LibraryListRenderer()
 	}
 
-	private fun createButton(action: Action): JButton {
-		return JButton(ActionWrapperSwing(action))
-	}
+	private fun createButton(action: Action): JButton =
+		JButton(ActionWrapperSwing(action))
 
-	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean {
-		return entry.author != userHolder.user.uuid
-	}
+	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean =
+		entry.author != userHolder.user.identity
 
 	private fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
 		val list = DefaultListModel<LibraryDictionaryEntry>()

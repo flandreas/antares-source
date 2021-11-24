@@ -61,7 +61,7 @@ object Authorizer {
 }
 
 private fun currentUserCondition(user: User) =
-	user.uuid == EditAuthModule.userHolder.user.uuid
+	user.identity == EditAuthModule.userHolder.user.identity
 
 
 

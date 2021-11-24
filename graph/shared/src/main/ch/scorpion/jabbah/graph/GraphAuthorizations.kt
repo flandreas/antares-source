@@ -20,10 +20,10 @@ object GraphAuthorizations {
 	private fun anyLibrary(data: Any): Boolean = data is Library
 
 	private fun libraryOwnedByHim(data: Any): Boolean =
-		if (data is Library) data.author == EditAuthModule.userHolder.user.uuid else false
+		if (data is Library) data.author == EditAuthModule.userHolder.user.identity else false
 
 	private fun anyProject(data: Any): Boolean = data is Project
 
 	private fun projectOwnedByHim(data: Any): Boolean =
-		if (data is Project) data.author == EditAuthModule.userHolder.user.uuid else false
+		if (data is Project) data.author == EditAuthModule.userHolder.user.identity else false
 }
