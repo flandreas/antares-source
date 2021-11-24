@@ -26,13 +26,13 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 
 	protected abstract fun ensureLibraryDirectory(libraryUuid: UUID)
 
-	protected abstract fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream
+	abstract fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream
 
-	protected abstract fun createMetaGraphOutputStream(libraryUuid: UUID, metaGraphUuid: UUID): OutputStream
+	abstract fun createMetaGraphOutputStream(libraryUuid: UUID, metaGraphUuid: UUID): OutputStream
 
-	protected abstract fun createLibraryFileInputStream(libraryUuid: UUID): InputStream
+	abstract fun createLibraryFileInputStream(libraryUuid: UUID): InputStream
 
-	protected abstract fun createLibraryFileOutputStream(libraryUuid: UUID): OutputStream
+	abstract fun createLibraryFileOutputStream(libraryUuid: UUID): OutputStream
 
 	/** ---- [LibraryPersistenceService] */
 
