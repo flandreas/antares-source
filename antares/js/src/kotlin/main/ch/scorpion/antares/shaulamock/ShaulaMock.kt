@@ -2,7 +2,7 @@ package ch.scorpion.antares.shaulamock
 
 import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.akrabapi.ProjectTO
-import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.antares.module.AntaresAkrabModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
@@ -50,7 +50,7 @@ class ShaulaMock {
 	private fun initialize() {
 		console.info("Initializing AntaresPage")
 
-		AntaresModuleJs.require()
+		AntaresAkrabModuleJs.require()
 
 		EditAuthModule.userHolder.u = User.developer
 
@@ -170,7 +170,7 @@ val projectCard = fc<ProjectCardProps> { props ->
 	mCard {
 		val href = """
 			/desktop.html?
-			project=532f0477-722c-4c88-ada3-c419a386d06a
+			project=${props.project.uuid}
 			&returnUrl=${encodeURI(window.location.href)}
 		""".trimIndent()
 		mCardHeader(props.project.name.getText())

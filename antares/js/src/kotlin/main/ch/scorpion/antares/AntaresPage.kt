@@ -48,7 +48,7 @@ class AntaresPage {
 
 	private fun loadProject() {
 		val projectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.load(projectUuid)
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectUuid)
 	}
 
 	private fun display() {

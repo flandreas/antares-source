@@ -53,7 +53,7 @@ class AntaresIFrame {
 	}
 
 	private fun loadProject(projectUuid: String) {
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.load(UUID(projectUuid))
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(UUID(projectUuid))
 	}
 
 	private fun displayError(msg: String) {

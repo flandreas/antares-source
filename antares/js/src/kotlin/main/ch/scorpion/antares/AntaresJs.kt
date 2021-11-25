@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
-import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.antares.module.AntaresAkrabModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
@@ -34,7 +34,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 	override fun init() {
 		console.info("Initializing AntaresJs")
 
-		AntaresModuleJs.require()
+		AntaresAkrabModuleJs.require()
 
 		EditAuthModule.userHolder.u = User.developer
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)

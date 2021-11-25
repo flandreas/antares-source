@@ -47,7 +47,7 @@ class TestPage {
 
 	private fun loadProject() {
 		val projectUuid = UUID("a445e8d3-9aa8-4e84-91e9-04ec98ede249")
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.load(projectUuid)
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectUuid)
 	}
 
 	private fun display() {

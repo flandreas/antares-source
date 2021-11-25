@@ -38,7 +38,7 @@ class ShowProjectsDialogAction(
  * Displays a list of all existing project names and allows the user to open a project.
  */
 class ProjectPersistencePanel(
-	private val managementService: ProjectManagementService = ProjectModule.projectManagementService,
+	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val closeHandler: () -> Unit
 ) : AbstractLibraryPersistencePanel(managementService, "project") {

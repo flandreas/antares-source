@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.graph.library.LibraryManagementService
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.RestLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.property.EdgeViewPropertyPage
@@ -48,15 +50,23 @@ object AntaresModuleJs : AbstractModule() {
 
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
+		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(RestLibraryDictionaryPersistenceService(
+			baseUrl = "..",
+			libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
+			dictionaryFileName = "dictionary.xml",
+			directoryExists = true
+		))
+
+		LibraryModule.libraryManagementService = LibraryManagementService()
+
 		ProjectModule.projectLibraryPersistenceService = RestLibraryPersistenceService(
 			baseUrl = "..",
-			//libraryDirectoryName = AntaresApplication.DEFAULT_PROJECT_DIRECTORY,
 			libraryDirectoryName = "web-projects",
 			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
 		)
 
-		ProjectModule.projectManagementService = ProjectManagementService(
-			newMetaGraphNameTranslationKey = "graph.name.unknown")
+		ProjectModule.projectManagementService = { ProjectManagementService(
+			newMetaGraphNameTranslationKey = "graph.name.unknown")}
 
 
 		registerAntaresIconsInProvider()

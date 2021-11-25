@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * Closes the currently open [Project].
  */
 class CloseProjectAction(
-	private val managementService: ProjectManagementService = ProjectModule.projectManagementService,
+	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("project.action.close") {

@@ -84,7 +84,7 @@ class GraphDataViewController(
 	}
 
 	fun openProject(uuid: UUID) {
-		System.invokeLater { ProjectModule.projectManagementService.open(uuid) }
+		System.invokeLater { ProjectModule.projectManagementService.invoke().open(uuid) }
 	}
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
