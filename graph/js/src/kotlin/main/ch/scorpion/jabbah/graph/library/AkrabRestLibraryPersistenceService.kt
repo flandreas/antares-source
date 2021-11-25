@@ -14,13 +14,18 @@ import org.w3c.xhr.XMLHttpRequest
  * TODO: Add authorization
  */
 class AkrabRestLibraryPersistenceService(
-	private val baseUrl: String
+	private val baseUrl: String,
+	private val dictionaryName: String
 ) : LibraryPersistenceService {
 
 	/** ---- [LibraryPersistenceService] interface. */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-		throw UnsupportedOperationException("loadMetaGraph not implemented")
+		val request = XMLHttpRequest()
+		request.open("GET", buildMetaGraphPath(library.uuid, uuid), async = false)
+		request.overrideMimeType("text/xml")
+		request.send()
+		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
@@ -74,8 +79,11 @@ class AkrabRestLibraryPersistenceService(
 	/** ---- [AkrabRestLibraryPersistenceService] */
 
 	private fun buildLibraryDictionaryPath(libraryId: UUID): String =
-		"${buildLLibraryBasePath(libraryId)}/dictionary"
+		"${buildLibraryBasePath(libraryId)}/$dictionaryName"
 
-	private fun buildLLibraryBasePath(libraryId: UUID): String =
+	private fun buildLibraryBasePath(libraryId: UUID): String =
 		"$baseUrl/${libraryId.id}"
+
+	private fun buildMetaGraphPath(libraryId: UUID, metaGraphUuid: UUID): String =
+		"${buildLibraryBasePath(libraryId)}/$dictionaryName/${metaGraphUuid.id}"
 }
