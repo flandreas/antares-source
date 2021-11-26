@@ -435,7 +435,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
 		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", { "/img/7segment.png" }, SevenSegmentDisplayView::class)
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
-		repository.register(BUZZER, "library.element.Buzzer", { "/img/bitextender.png" }, BuzzerView::class)
+		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
 
 
 		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
