@@ -141,6 +141,8 @@ class AntaresViewJs(
 					} else {
 						mToolbarTitle("Antares Desktop")
 					}
+					mButton("Save", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
+						onClick = { props.application.controller.save() })
 					props.returnUri?.let { returnUri ->
 						mButton("Close", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
 							onClick = { window.location.href = decodeURI(returnUri) })

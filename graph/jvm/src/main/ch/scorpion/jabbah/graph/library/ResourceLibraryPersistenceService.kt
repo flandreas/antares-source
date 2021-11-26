@@ -89,6 +89,9 @@ class ResourceLibraryPersistenceService(
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
+	override fun buildMetaGraphFilePath(libraryUuid: UUID, metaGraphUuid: UUID): String =
+		"${buildResourceLibraryDirectoryPath(libraryUuid)}/$metaGraphUuid.$metaGraphFileExtension"
+
 	override fun ensureLibraryDirectory(libraryUuid: UUID) {
 		val path = Paths.get(buildResourceLibraryDirectoryPath(libraryUuid))
 		if (!Files.exists(path)) {
@@ -112,9 +115,6 @@ class ResourceLibraryPersistenceService(
 		FileOutputStream(File(ResourceLibraryPersistenceService::class.java.getResource(buildLibraryFilePath(libraryUuid)).toURI()))
 
 	/** ---- [ResourceLibraryPersistenceService] */
-
-	private fun buildMetaGraphFilePath(libraryUuid: UUID, metaGraphUuid: UUID): String =
-		"${buildResourceLibraryDirectoryPath(libraryUuid)}/$metaGraphUuid.$metaGraphFileExtension"
 
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =
 		"${buildResourceLibraryDirectoryPath(libraryUuid)}/$libraryFileName"

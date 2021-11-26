@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.io.DomXmlReader
+import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StoreXmlReader
 import org.w3c.xhr.XMLHttpRequest
 
@@ -29,7 +30,12 @@ class AkrabRestLibraryPersistenceService(
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-		throw UnsupportedOperationException("storeMetaGraph not implemented")
+		val request = XMLHttpRequest()
+		request.open("PUT", buildMetaGraphPath(library.uuid, metaGraph.uuid), async = false)
+		request.overrideMimeType("text/xml")
+		request.send(
+			StorableCloner.serialize(metaGraph)
+		)
 	}
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
