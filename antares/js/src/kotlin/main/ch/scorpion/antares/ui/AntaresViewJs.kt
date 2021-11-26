@@ -3,13 +3,15 @@ package ch.scorpion.antares.ui
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.ApplicationDataViewJs
-import ch.scorpion.jabbah.base.util.decodeURI
+import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.mreact.jmButton
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.util.decodeURI
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -66,6 +68,8 @@ class AntaresViewJs(
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = currentSystemSpeedCategory)
 
+	private var saveAction: SaveFileAction? = null
+
 	init {
 		console.info("AntaresViewJs.init")
 
@@ -87,7 +91,9 @@ class AntaresViewJs(
 	}
 
 	fun dispose() {
+		props.application.controller.dispose()
 		controller.dispose()
+		saveAction?.dispose()
 		BaseModule.eventBus.unregister(translationEventHandler)
 	}
 
@@ -120,7 +126,7 @@ class AntaresViewJs(
 	}
 
 	override fun componentWillUnmount() {
-		props.application.controller.dispose()
+		dispose()
 	}
 
 	override fun RBuilder.render() {
@@ -134,22 +140,6 @@ class AntaresViewJs(
 				flexDirection = FlexDirection.column
 			}
 
-			mAppBar(position = MAppBarPosition.static) {
-				mToolbar {
-					if (props.projectName != null) {
-						mToolbarTitle("Antares Desktop - ${props.projectName}")
-					} else {
-						mToolbarTitle("Antares Desktop")
-					}
-					mButton("Save", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
-						onClick = { props.application.controller.save() })
-					props.returnUri?.let { returnUri ->
-						mButton("Close", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
-							onClick = { window.location.href = decodeURI(returnUri) })
-					}
-				}
-			}
-
 			styledDiv {
 				css {
 					display = Display.flex
@@ -161,6 +151,26 @@ class AntaresViewJs(
 						mCircularProgress(color = MCircularProgressColor.inherit)
 					}
 				} else {
+					mAppBar(position = MAppBarPosition.static) {
+						mToolbar {
+							if (props.projectName != null) {
+								mToolbarTitle("Antares Desktop - ${props.projectName}")
+							} else {
+								mToolbarTitle("Antares Desktop")
+							}
+							saveAction = SaveFileAction(props.application, applicationContextHolder.eventBus)
+							jmButton(saveAction!!)
+							props.returnUri?.let { returnUri ->
+								mButton("Close", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
+									onClick = { window.location.href = decodeURI(returnUri) }) {
+									css {
+										marginLeft = 10.px
+									}
+								}
+							}
+						}
+					}
+
 					antaresMenuBar {  }
 					graphExecutionToolbar {
 						currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory

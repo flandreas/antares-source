@@ -33,7 +33,7 @@ data class GraphApplicationContext(
 
 class GraphApplicationContextHolder(
 	val scheduler: Scheduler,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	val eventBus: EventBus = BaseModule.eventBus,
 	val systemSpeed: SystemSpeed = SystemSpeed(eventBus = eventBus),
 	val currentSystemSpeedCategory: CurrentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed),
 	val animator: Animator = AnimatorImpl(systemSpeed)
