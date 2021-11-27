@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.sound
 
 import ch.scorpion.jabbah.base.logger
 import java.io.ByteArrayInputStream
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
@@ -20,6 +22,8 @@ private fun interface ToneAmplitude {
 	fun value(i: Double, hz: Double, pw: Double): Double
 }
 
+// Used by reflection
+@Suppress("unused")
 private enum class ToneWaveform(
 	val waveformType: WaveformType,
 	val amplitude: ToneAmplitude
@@ -37,18 +41,17 @@ private enum class ToneWaveform(
 }
 
 private class ToneImpl(
-	params: ToneParams
+	private var params: ToneParams
 ) : Tone, Runnable {
 
 	companion object {
 		private val LOG by logger(ToneImpl::class)
+		private val executor: ThreadPoolExecutor by lazy { Executors.newCachedThreadPool() as ThreadPoolExecutor }
 	}
 
 	private val isOn = AtomicBoolean(false)
 	private val isUpdateRequired = AtomicBoolean(true)
-	private var thread: Thread? = null
 
-	private var params: ToneParams = params
 	private var sampleRate: Int = calculateSampleRate(params)
 	private var clipHolder: ClipHolder? = null
 
@@ -57,7 +60,7 @@ private class ToneImpl(
 	override fun play() {
 		LOG.trace("Play tone")
 		isOn.set(true)
-		startThread()
+		executor.submit(::run)
 	}
 
 	override fun update(params: ToneParams) {
@@ -117,7 +120,6 @@ private class ToneImpl(
 	private fun createClipHolder(): ClipHolder {
 		var audioInputStream: AudioInputStream? = null
 		try {
-			LOG.trace("Calculate audio clip")
 			audioInputStream = createAudioInputStream()
 			val clip = AudioSystem.getClip()
 			clip.open(audioInputStream)
@@ -142,9 +144,11 @@ private class ToneImpl(
 			waveform.amplitude.value(it / sampleRate.toDouble(), params.frequency.toDouble(), 0.5)
 		}
 
+		/*
 		if (waveform !== ToneWaveform.Sine && params.smoothLevel > 0 && params.smoothWidth > 0) {
-			// TODO (Optional): Smooth
+			// (Optional): Smooth
 		}
+		*/
 
 		val rvalues = Array(sampleRate) { 0.0 }
 		for (i in 0 until sampleRate step cycle) {
@@ -169,14 +173,5 @@ private class ToneImpl(
 		}
 
 		return AudioInputStream(ByteArrayInputStream(buf), audioFormat, buf.size.toLong())
-	}
-
-	private fun startThread() {
-		if (Thread.activeCount() > 100) {
-			return
-		}
-		LOG.trace("Starting new Tone Thread")
-		thread = Thread(this, "Tone Thread")
-		thread!!.start()
 	}
 }
