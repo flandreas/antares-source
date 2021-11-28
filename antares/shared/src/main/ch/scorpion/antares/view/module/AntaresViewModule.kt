@@ -112,6 +112,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val RGB_LED = "RgbLED"
 	private const val SEVEN_SEGMENT_DISPLAY = "SevenSegmentDisplay"
 	private const val LED_MATRIX = "LEDMatrix"
+	private const val BUZZER = "Buzzer"
 
 	private const val ROM = "ROM"
 	private const val RAM = "RAM"
@@ -270,6 +271,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("joystickView", JoystickView::class)
 		typeMap.register("realSwitchView", RealSwitchView::class)
 		typeMap.register("bitExtenderView", BitExtenderView::class)
+		typeMap.register("buzzerView", BuzzerView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -320,6 +322,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BuzzerView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
@@ -432,6 +435,8 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
 		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", { "/img/7segment.png" }, SevenSegmentDisplayView::class)
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
+		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
+
 
 		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
 		repository.register(RAM, "library.element.RAM", { "/img/ram.png" }, RAMView::class)

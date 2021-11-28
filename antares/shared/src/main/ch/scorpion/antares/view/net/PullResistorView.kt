@@ -88,7 +88,7 @@ class PullResistorView(
 			this,
 			context,
 			getColorGradient(context) ?: context.g.color,
-			getApplicableBackgroudColor(context),
+			getApplicableBackgroundColor(context),
 			STROKE)
 	}
 

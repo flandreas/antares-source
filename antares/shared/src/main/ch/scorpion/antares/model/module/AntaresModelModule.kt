@@ -10,10 +10,7 @@ import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.net.*
-import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.model.output.LEDMatrix
-import ch.scorpion.antares.model.output.RgbLED
-import ch.scorpion.antares.model.output.SevenSegmentDisplay
+import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.DigitalPortFactory
@@ -101,5 +98,6 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("joystick", Joystick::class)
 		typeMap.register("realSwitch", RealSwitch::class)
 		typeMap.register("bitExtender", BitExtender::class)
+		typeMap.register("buzzer", Buzzer::class)
 	}
 }

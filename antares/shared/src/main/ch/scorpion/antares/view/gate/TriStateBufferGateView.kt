@@ -105,7 +105,7 @@ class TriStateBufferGateView(
 		super.drawImpl(context)
 
 		SymbolStyle.drawAmericanGate(this, x, y, bounds.height, SymbolStyle.NOT_PATH, context,
-			getApplicableForegroundColor(context), getApplicableBackgroudColor(context), stroke, false, transparency)
+			getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke, false, transparency)
 		GateMnemonic.drawTriStateBuffer(this, context, getApplicableForegroundColor(context))
 
 		context.g.color = oldColor
