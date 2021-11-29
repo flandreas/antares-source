@@ -187,7 +187,7 @@
                 <polylineShape points='70.0,15.0 70.0,-112.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='96' id='14' rot='0' filled='true' stroked='true' modelId='28' representation='binary' orientation='east'>
+            <circuitInOutView _id='96' id='14' rot='0' filled='true' stroked='true' modelId='28' representation='hex' orientation='east'>
               <location>
                 <point x='504.0' y='-238.0'/>
               </location>
@@ -348,9 +348,14 @@
             <digitalPortView _id='138' x='196.0' y='245.0' dir='south' textPos='internal' portId='139'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='140' id='6' style='figure' filled='true' stroked='true' controlModelId='11' name='Circuit Output O'>
+          <controlView>
+            <digitalSignalSourceCV _id='141' id='14' filled='true' stroked='true' modelId='28' x='182.0' y='203.0' representation='hex' orientation='east' controlId='circuitInOut:14' bitWidth='2' name='Circuit Output O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='140' id='0' delay='0' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'>
+        <subGraphVertice _id='142' id='0' delay='0' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'>
           <desc>
             <translation lang='de' text='Wenn Eingang S gesetzt ist, wird der 2-Bit-Wert am Eingang A zum Ausgang übertragen, sonst der Wert am Eingang B'/>
             <translation lang='en' text='If input S is asserted, the 2 bit value at input A is forwarded to the output, else the value at input B'/>
@@ -362,7 +367,7 @@
           <ports>
             <subCircuitPort _id='130' portId='1' name='A' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='133' portId='2' name='B' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='136' portId='3' name='O' logic='positive' bitWidth='2' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='136' portId='3' name='O' logic='positive' bitWidth='2' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='139' portId='4' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>

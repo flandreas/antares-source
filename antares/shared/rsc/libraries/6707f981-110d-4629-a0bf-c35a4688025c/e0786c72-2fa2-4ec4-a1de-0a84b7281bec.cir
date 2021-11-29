@@ -221,9 +221,14 @@
             <digitalPortView _id='80' x='196.0' y='210.0' dir='east' textPos='internal' portId='81'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='82' id='5' style='figure' filled='true' stroked='true' controlModelId='15' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='83' id='18' filled='true' stroked='true' modelId='22' x='154.0' y='203.0' representation='binary' orientation='east' controlId='circuitInOut:18' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='82' id='0' delay='0' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'>
+        <subGraphVertice _id='84' id='0' delay='0' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'>
           <desc>
             <translation lang='en' text='Changes its output value with every clock pulse'/>
             <translation lang='de' text='Wechselt seinen Ausgangszustand mit jedem Taktimpuls'/>

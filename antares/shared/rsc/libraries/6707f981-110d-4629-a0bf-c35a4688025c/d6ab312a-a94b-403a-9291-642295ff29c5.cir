@@ -250,9 +250,14 @@ if (^C) {
             <digitalPortView _id='93' x='196.0' y='210.0' dir='east' textPos='internal' portId='94'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='95' id='7' style='figure' filled='true' stroked='true' controlModelId='5' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='96' id='5' filled='true' stroked='true' modelId='7' x='154.0' y='189.0' representation='binary' orientation='east' controlId='circuitInOut:5' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='95' id='0' delay='0' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
+        <subGraphVertice _id='97' id='0' delay='0' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
           <desc>
             <translation lang='en' text='Edge-triggered flip-flop with data input'/>
             <translation lang='de' text='Taktflanken-gesteuertes Flipflop mit einem Dateneingang (D)'/>

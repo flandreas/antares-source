@@ -92,8 +92,8 @@
             <netView _id='53' modelId='40' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='54' id='1' rot='0' filled='true' stroked='true' modelId='3' x='448.0' y='147.0'/>
-            <subGraphVerticeViewRef _id='55' id='2' rot='0' filled='true' stroked='true' modelId='4' x='448.0' y='315.0'/>
+            <subGraphVerticeViewRef _id='54' id='1' rot='0' filled='true' stroked='true' modelId='3' x='448.0' y='147.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='55' id='2' rot='0' filled='true' stroked='true' modelId='4' x='448.0' y='315.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='56' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
               <location>
                 <point x='266.0' y='154.0'/>

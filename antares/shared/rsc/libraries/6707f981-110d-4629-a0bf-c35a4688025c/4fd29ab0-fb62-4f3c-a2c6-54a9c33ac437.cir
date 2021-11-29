@@ -436,9 +436,14 @@ when (s) {
             <digitalPortView _id='155' x='196.0' y='266.0' dir='south' textPos='internal' portId='156'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='157' id='9' style='figure' filled='true' stroked='true' controlModelId='29' name='Circuit Output O'>
+          <controlView>
+            <digitalSignalSourceCV _id='158' id='59' filled='true' stroked='true' modelId='58' x='189.0' y='217.0' representation='binary' orientation='east' controlId='circuitInOut:59' bitWidth='1' name='Circuit Output O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='157' id='0' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'>
+        <subGraphVertice _id='159' id='0' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'>
           <desc>
             <translation lang='en' text='Selects one of 4 inputs'/>
             <translation lang='de' text='Wählt aus 4 Eingängen einen aus'/>

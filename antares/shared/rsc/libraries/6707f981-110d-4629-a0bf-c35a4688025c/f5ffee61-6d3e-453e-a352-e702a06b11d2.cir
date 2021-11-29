@@ -274,9 +274,14 @@
             <digitalPortView _id='106' x='168.0' y='224.0' dir='south' textPos='internal' portId='107'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='108' id='8' style='figure' filled='true' stroked='true' controlModelId='21' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='109' id='27' filled='true' stroked='true' modelId='35' x='154.0' y='196.0' representation='binary' orientation='east' controlId='circuitInOut:27' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='108' id='0' delay='0' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2'>
+        <subGraphVertice _id='110' id='0' delay='0' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2'>
           <name>
             <translation lang='de' text='D-Flipflop PRE/CRL (Neg)'/>
             <translation lang='en' text='D Flip-Flop PRE/CRL (Neg)'/>

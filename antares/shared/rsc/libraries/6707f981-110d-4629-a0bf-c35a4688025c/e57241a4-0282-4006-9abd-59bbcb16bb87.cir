@@ -274,9 +274,14 @@ Q = 0
             <digitalPortView _id='67' x='196.0' y='210.0' dir='east' textPos='internal' portId='68'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='69' id='6' style='figure' filled='true' stroked='true' controlModelId='5' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='70' id='5' filled='true' stroked='true' modelId='7' x='154.0' y='196.0' representation='binary' orientation='east' controlId='circuitInOut:5' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='69' id='0' delay='0' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'>
+        <subGraphVertice _id='71' id='0' delay='0' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'>
           <desc>
             <translation lang='en' text='Level-triggered NOR latch mit set input S and reset input R'/>
             <translation lang='de' text='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>

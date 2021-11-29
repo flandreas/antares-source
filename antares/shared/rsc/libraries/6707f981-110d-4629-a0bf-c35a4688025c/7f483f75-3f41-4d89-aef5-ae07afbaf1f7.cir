@@ -208,9 +208,14 @@
             <digitalPortView _id='78' x='154.0' y='224.0' dir='west' textPos='internal' portId='79'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='80' id='8' style='figure' filled='true' stroked='true' controlModelId='12' name='Circuit Output O'>
+          <controlView>
+            <digitalSignalSourceCV _id='81' id='15' filled='true' stroked='true' modelId='23' x='168.0' y='210.0' representation='binary' orientation='east' controlId='circuitInOut:15' bitWidth='1' name='Circuit Output O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='80' id='0' delay='0' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'>
+        <subGraphVertice _id='82' id='0' delay='0' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'>
           <desc>
             <translation lang='en' text='Selects one of two 1-bit inputs'/>
             <translation lang='de' text='Wählt aus 2 1-Bit-Eingängen einen aus'/>

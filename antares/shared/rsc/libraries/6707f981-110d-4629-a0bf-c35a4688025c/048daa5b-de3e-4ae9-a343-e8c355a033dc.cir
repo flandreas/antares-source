@@ -493,9 +493,14 @@
             <digitalPortView _id='191' x='168.0' y='224.0' dir='south' textPos='internal' portId='192'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='193' id='10' style='figure' filled='true' stroked='true' controlModelId='27' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='194' id='36' filled='true' stroked='true' modelId='56' x='154.0' y='196.0' representation='binary' orientation='east' controlId='circuitInOut:36' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='193' id='0' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
+        <subGraphVertice _id='195' id='0' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
           <desc>
             <translation lang='en' text='JK Master-Slave Flip-Flip with preset and clear input'/>
             <translation lang='de' text='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'/>

@@ -544,9 +544,14 @@
             <digitalPortView _id='216' x='224.0' y='259.0' dir='south' textPos='internal' portId='217'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='218' id='6' style='figure' filled='true' stroked='true' controlModelId='32' name='Circuit Output O'>
+          <controlView>
+            <digitalSignalSourceCV _id='219' id='59' filled='true' stroked='true' modelId='65' x='210.0' y='217.0' representation='hex' orientation='east' controlId='circuitInOut:59' bitWidth='4' name='Circuit Output O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='218' id='0' delay='0' uuid='83ba937d-5277-45f2-adff-1abab9207e33'>
+        <subGraphVertice _id='220' id='0' delay='0' uuid='83ba937d-5277-45f2-adff-1abab9207e33'>
           <desc>
             <translation lang='en' text='Selects one of two 4-Bit connections'/>
             <translation lang='de' text='Wählt aus zwei 4-Bit-Datenleitungen eine aus'/>

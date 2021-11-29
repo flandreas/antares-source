@@ -268,9 +268,14 @@
             <digitalPortView _id='102' x='196.0' y='210.0' dir='east' textPos='internal' portId='103'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='104' id='8' style='figure' filled='true' stroked='true' controlModelId='13' name='Circuit Output Q'>
+          <controlView>
+            <digitalSignalSourceCV _id='105' id='13' filled='true' stroked='true' modelId='26' x='154.0' y='196.0' representation='binary' orientation='east' controlId='circuitInOut:13' bitWidth='1' name='Circuit Output Q'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='104' id='0' delay='0' uuid='204aeecf-cdca-4678-8c36-f8a834922966'>
+        <subGraphVertice _id='106' id='0' delay='0' uuid='204aeecf-cdca-4678-8c36-f8a834922966'>
           <name>
             <translation lang='en' text='JK Flip-Flop'/>
             <translation lang='de' text='JK-Flipflop'/>
