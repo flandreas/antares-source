@@ -12,12 +12,14 @@ import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
@@ -33,6 +35,7 @@ object AntaresModelModule : AbstractModule() {
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
+		registerGraphParamTypes()
 
 		AntaresDslModule.require()
 
@@ -44,9 +47,6 @@ object AntaresModelModule : AbstractModule() {
 			override fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord =
 				DigitalSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 		}
-		/*
-			SubGraphVerticeRefActivationRecordFactory { v, s -> DigitalSubGraphVerticeRefActivationRecord(v, s) }
-		 */
 	}
 
 	private fun customizeProperties(properties: Properties) {
@@ -99,5 +99,9 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("realSwitch", RealSwitch::class)
 		typeMap.register("bitExtender", BitExtender::class)
 		typeMap.register("buzzer", Buzzer::class)
+	}
+
+	private fun registerGraphParamTypes() {
+		GraphParamTypeRegistry.register(BitWidthGraphParamType.name) { BitWidthGraphParamType }
 	}
 }

@@ -3,8 +3,10 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -44,6 +46,13 @@ object GraphProperties {
 
 	fun controlViewVisibility(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<ControlViewVisibility> =
 		CommandPropertySwing("controlViewVisibility", baseKey = ControlViewVisibility.BASE_KEY, ControlViewVisibility::class.java, beanProvider)
+
+	fun graphParamDefinitions(
+		name: String = "graph.parameterDefinitions",
+		baseKey: String = "graph.property.graphParams",
+		beanProvider: BeanProvider = drawingBeanProvider
+	): CommandPropertySwing<GraphParamDefinitions> =
+		CommandPropertySwing(name, baseKey, GraphParamDefinitions::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {

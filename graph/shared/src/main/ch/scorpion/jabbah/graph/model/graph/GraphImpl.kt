@@ -65,6 +65,8 @@ open class GraphImpl(
 	override val elementsCount: Int
 		get() = _elements.size
 
+	override var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
+
 	override val elements: ImmutableList<GraphElement>
 		get() = ImmutableList(_elements)
 
@@ -194,6 +196,9 @@ open class GraphImpl(
 			writer.writeBoolean("purelyScripted", purelyScripted)
 		}
 		propagationDelay?.let { writer.writeLong("propDelay", it) }
+		if (parameterDefinitions.isNotEmpty) {
+			writer.writeStorable("params", parameterDefinitions)
+		}
 		writer.writeStorables("elements", _elements.iterator())
 	}
 
@@ -206,6 +211,9 @@ open class GraphImpl(
 		}
 		if (reader.hasAttribute("propDelay")) {
 			propagationDelay = reader.readLong("propDelay")
+		}
+		if (reader.hasElement("params")) {
+			parameterDefinitions = reader.readStorable("params")
 		}
 		_elements.clear()
 		reader.readStorables<GraphElement>("elements").forEach {

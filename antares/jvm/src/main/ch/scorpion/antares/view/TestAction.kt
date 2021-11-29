@@ -1,22 +1,39 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.antares.view.net.DigitalNodeView
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.model.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.view.GraphProperties
 import java.awt.Frame
 import javax.swing.JOptionPane
 
-class TestAction : AbstractViewAction("view.action.test") {
+class TestAction(
+	private val editor: Editor
+) : AbstractViewAction("view.action.test") {
 
 	override fun execute(event: ActionEvent) {
-		val nodeView = DigitalNodeView()
-		val drawing = (view as DrawingView<Drawing<GraphElementView<*>>>).drawing
+		setBitWidthGraphParam()
+	}
 
-		drawing.add(nodeView)
-		drawing.validate()
+	private fun setBitWidthGraphParam() {
+		val property = GraphProperties.graphParamDefinitions()
+		property.bind(editor, listOf())
+
+		val param = GraphParamDefinition.create(
+			name = "test",
+			type = BitWidthGraphParamType,
+			defaultValue = BitWidth.BW_4
+		)
+
+		val paramDefs = GraphParamDefinitions()
+		paramDefs.add(param)
+
+		property.value = paramDefs
+		property.writeToBean()
 	}
 
 	private fun noAction() {

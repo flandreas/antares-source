@@ -1,9 +1,5 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.edit.model.text.description.observableName
 import ch.scorpion.jabbah.io.*
 
 interface GraphParamType<T> {
@@ -37,12 +33,12 @@ object GraphParamTypeRegistry {
  * Default constructor must be "empty" in order to be readable as [Storable].
  */
 class GraphParamDefinition<T : Any>(
-	name: TranslatableText = TranslatableText()
-) : Storable, Namable {
+	name: String = ""
+) : Storable {
 
 	companion object {
 		fun <T : Any> create(
-			name: TranslatableText,
+			name: String,
 			type: GraphParamType<T>,
 			defaultValue: T
 		) : GraphParamDefinition<T> {
@@ -53,7 +49,7 @@ class GraphParamDefinition<T : Any>(
 		}
 	}
 
-	override var name: Name by observableName(Name(name))
+	var name: String = name
 
 	lateinit var type: GraphParamType<T>
 
@@ -64,14 +60,49 @@ class GraphParamDefinition<T : Any>(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
-		name.write("name", writer)
+		writer.writeString("name", name)
 		writer.writeString("type", type.name)
 		type.writeValue("defaultValue", defaultValue, writer)
 	}
 
 	override fun read(reader: StoreReader) {
-		name = Name.read("name", reader)
+		name = reader.readString("name")
 		type = GraphParamTypeRegistry.get(reader.readString("type"))
 		defaultValue = type.readValue("defaultValue", reader)
+	}
+}
+
+class GraphParamDefinitions : Storable {
+
+	private val definitions = mutableListOf<GraphParamDefinition<*>>()
+
+	val size: Int get() = definitions.size
+
+	val isEmpty: Boolean get() = definitions.isEmpty()
+
+	val isNotEmpty: Boolean get() = definitions.isNotEmpty()
+
+	fun add(definition: GraphParamDefinition<*>) {
+		if (definitions.any { it.name == definition.name }) {
+			throw IllegalArgumentException("name '${definition.name}' already exists")
+		}
+		definitions.add(definition)
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+
+	override fun write(writer: StoreWriter) {
+		if (isNotEmpty) {
+			writer.writeStorables("paramDefs", definitions.iterator())
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		if (reader.hasElement("paramDefs")) {
+			definitions.clear()
+			definitions.addAll(reader.readStorables("paramDefs"))
+		}
 	}
 }

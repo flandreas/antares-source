@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
@@ -72,6 +73,7 @@ object GraphModelModule : AbstractModule() {
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", GraphImpl::class)
 		typeMap.register("graphParamDef", GraphParamDefinition::class)
+		typeMap.register("graphParamDefs", GraphParamDefinitions::class)
 		typeMap.register("metaGraph", MetaGraph::class)
 		typeMap.register("metaGraphBundle", MetaGraphBundle::class)
 		typeMap.register("graphStorable", GraphStorable::class)

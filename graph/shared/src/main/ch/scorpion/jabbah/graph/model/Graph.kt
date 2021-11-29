@@ -59,6 +59,8 @@ interface Graph : Namable, Describable, Storable {
     /** Returns the [GraphPort]s of this [Graph] as an immutable list.*/
     val graphPorts: ImmutableList<GraphPort<*>>
 
+	var parameterDefinitions: GraphParamDefinitions
+
 	/** Informs this [Graph] that it is not actively used any more.*/
 	fun dispose()
 
