@@ -67,6 +67,8 @@ class SubGraphVerticeViewImpl(
 
 	companion object {
 		val LOG by logger(SubGraphVerticeViewImpl::class)
+
+		private val DEF_CONTROL_VIEW_VISIBILITY = ControlViewVisibility.Always
 	}
 
 	/** Contains the [Drawable]s that make up the look of this [SubGraphVerticeView].*/
@@ -119,6 +121,16 @@ class SubGraphVerticeViewImpl(
 			}
 			field = value
 			mirrorVertically(location.y)
+		}
+
+	override var controlViewVisibility: ControlViewVisibility = DEF_CONTROL_VIEW_VISIBILITY
+		set(value) {
+			if (value == field) {
+				return
+			}
+			field = value
+			invalidate()
+			validate()
 		}
 
 	/**
@@ -219,7 +231,10 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		drawableBag.drawables.forEach { it.draw(context) }
+		drawableBag.drawables
+			.filter { controlViewVisibility.drawFilter(it, context) }
+			.forEach { it.draw(context) }
+
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute /*&& StringUtils.isNotEmpty(drawExecScript)*/) {
 			drawExecScriptInterpreter?.let {
 				DrawExecSymbolFunctions.bind(this, context)
@@ -237,7 +252,9 @@ class SubGraphVerticeViewImpl(
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) { c ->
-			drawableBag.drawables.forEach { drawableDrawer.invoke(it) }
+			drawableBag.drawables
+				.filter { controlViewVisibility.drawFilter(it, context) }
+				.forEach { drawableDrawer.invoke(it) }
 			super.drawImpl(c)
 		}
 	}
@@ -259,6 +276,9 @@ class SubGraphVerticeViewImpl(
 		}
 		if (customizedContainerDrawing != null) {
 			writer.writeStorable("container", customizedContainerDrawing!!)
+		}
+		if (controlViewVisibility != DEF_CONTROL_VIEW_VISIBILITY) {
+			writer.writeString("controlViewVisibility", controlViewVisibility.customName)
 		}
 	}
 
@@ -307,6 +327,9 @@ class SubGraphVerticeViewImpl(
 				referenceId = globalId,
 				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID), globalId)
 			))
+		}
+		if (reader.hasAttribute("controlViewVisibility")) {
+			controlViewVisibility = ControlViewVisibility.withName(reader.readString("controlViewVisibility"))
 		}
 	}
 

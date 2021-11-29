@@ -31,6 +31,8 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 
 	var executionLabel: Translatable?
 
+	var controlViewVisibility: ControlViewVisibility
+
 	/**
 	 * Creates a new [GraphView] of the references sub [Graph].
 	 * @param signalHandler the [SignalHandler] required if the [GraphView] is currently being executed

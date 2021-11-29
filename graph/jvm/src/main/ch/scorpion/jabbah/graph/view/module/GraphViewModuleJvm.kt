@@ -38,6 +38,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.vertice.ControlViewVisibility
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.IOModuleJvm
 
@@ -80,7 +81,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
-
+		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -89,6 +90,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
 		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
+		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

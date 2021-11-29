@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.vertice.ControlViewVisibility
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import javax.swing.JComboBox
@@ -40,6 +41,9 @@ object GraphProperties {
 
 	fun purelyScripted(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Boolean> =
 		CommandPropertySwing("purelyScripted", "graph.property.GraphViewImpl.purelyScripted", Boolean::class.java, beanProvider)
+
+	fun controlViewVisibility(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<ControlViewVisibility> =
+		CommandPropertySwing("controlViewVisibility", baseKey = ControlViewVisibility.BASE_KEY, ControlViewVisibility::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {
@@ -74,5 +78,12 @@ class VerticeLabelPositionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(VerticeLabelPosition.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<VerticeLabelPosition>()
+	}
+}
+
+class ControlViewVisibilityEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(ControlViewVisibility.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<ControlViewVisibility>()
 	}
 }
