@@ -448,7 +448,7 @@
       <model>
         <subGraphVertice _id='189' id='0' delay='0' uuid='473fb78a-d491-42bf-a119-c4299979b89d'>
           <desc>
-            <translation lang='en' text='Produces a 2-bit number representing the position of the first asserted input'/>
+            <translation lang='en' text='Produces a 3-bit number representing the position of the first asserted input'/>
             <translation lang='de' text='Erzeugt eine 2-Bit-Zahl, die die Position des gesetzten Eingang-Bit darstellt'/>
           </desc>
           <name>
