@@ -73,9 +73,9 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 	/** Updates [color] according to the specified value.*/
 	private fun updateColor(value: DigitalSignal) {
 		color = Color(
-			value.getSubwordValue(BitWidth.BW_8, 2)!!.toInt(),
-			value.getSubwordValue(BitWidth.BW_8, 1)!!.toInt(),
-			value.getSubwordValue(BitWidth.BW_8, 0)!!.toInt()
+			value.getSubwordValue(BitWidth.BW_8, 2)?.toInt() ?: 0,
+			value.getSubwordValue(BitWidth.BW_8, 1)?.toInt() ?: 0,
+			value.getSubwordValue(BitWidth.BW_8, 0)?.toInt() ?: 0
 		)
 	}
 }
