@@ -1,6 +1,10 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.antares.model.signal.BitWidth.*
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_16
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation.*

@@ -1,7 +1,10 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.model.signal.BitWidth.*
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.signal.Word.Companion.of

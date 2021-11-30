@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.net
 
-import ch.scorpion.antares.model.signal.BitWidth.*
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.graph.model.OutputPort
 import io.mockk.mockk

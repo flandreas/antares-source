@@ -64,7 +64,7 @@ object BitOperation {
 	 */
 	fun normalizeHex(hex: String, bitWidth: BitWidth): String? {
 		val value = hex.uppercase()
-		if (bitWidth < BitWidth.BW_4) {
+		if (bitWidth.width < BitWidth.BW_4.width) {
 			if (value.length > 1) {
 				return null
 			}
