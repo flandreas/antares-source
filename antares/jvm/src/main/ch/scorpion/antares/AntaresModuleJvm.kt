@@ -21,6 +21,7 @@ import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.BitWidthEditor
+import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.antares.view.signal.BitWidthRenderer
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
@@ -189,7 +190,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
-		registry.register(BitWidth::class.java) { BitWidthEditor((it as CommandPropertySwing<BitWidth>).filter ) }
 		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
@@ -201,6 +201,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
+
+		registry.register(BitWidth::class.java) {
+			BitWidthEditor(
+				propertyName = it.displayName,
+				editable = it.isEditable,
+				parserFactory = (it as BitWidthPropertySwing).parserFactory,
+				it.filter )
+		}
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

@@ -6,14 +6,22 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.signal.BitWidthPropertySwing
+import ch.scorpion.jabbah.base.dsl.ParserFactory
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
 
 object AntaresProperties {
 
-	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY): CommandPropertySwing<BitWidth> =
-		CommandPropertySwing(name, baseKey, BitWidth::class.java, componentBeanProvider)
+	fun bitWidth(
+		name: String = "bitWidth",
+		baseKey: String = BitWidth.BASE_KEY,
+		beanProvider: BeanProvider = componentBeanProvider,
+		parserFactory: ParserFactory = BaseModule.parserFactory
+	): BitWidthPropertySwing = BitWidthPropertySwing(name, baseKey, beanProvider, parserFactory)
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
 		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)
