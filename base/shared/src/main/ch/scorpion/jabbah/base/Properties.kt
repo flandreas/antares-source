@@ -154,7 +154,9 @@ open class PropertiesProxy(protected val target: Properties) : Properties() {
  */
 class Settings {
 
-    private val values: MutableMap<String, String> by lazy { mutableMapOf<String,String>() }
+    private val values: MutableMap<String, String> by lazy { mutableMapOf() }
+
+	fun containsKey(name: String): Boolean = values.containsKey(name)
 
     fun getString(name: String, defaultValue: String): String =
     	getOptional(name) ?: defaultValue

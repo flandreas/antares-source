@@ -21,6 +21,7 @@ import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
+import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
@@ -153,6 +154,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun customizeProperties(properties: Properties) {
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
+		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
+		properties.set(RailwayAppUsageServiceImpl.PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

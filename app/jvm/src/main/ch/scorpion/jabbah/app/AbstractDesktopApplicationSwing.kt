@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -50,6 +51,10 @@ abstract class AbstractDesktopApplicationSwing(
 
 	override fun init() {
 		super.init()
+
+		if (!EditAuthModule.userHolder.user.isDeveloper) {
+			registerApplicationUsage()
+		}
 
 		ApplicationDataViewSwing(controller, fileExtension, displayName)
 
@@ -97,6 +102,10 @@ abstract class AbstractDesktopApplicationSwing(
 		if (offeredVersion != null) {
 			NewVersionPanel.showAsDialog(mainFrame, offeredVersion)
 		}
+	}
+
+	private fun registerApplicationUsage() {
+		AppModuleJvm.applicationUsageService.registerUsage()
 	}
 
 	/** ---- [AbstractDesktopApplication] */
