@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.GraphParamDefinitionsPropertyEditor
 import ch.scorpion.jabbah.graph.GraphParamDefinitionsPropertyRenderer
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
-import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm

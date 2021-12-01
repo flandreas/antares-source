@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.graph
 
-import ch.scorpion.jabbah.graph.model.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphPortView

@@ -19,8 +19,8 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory

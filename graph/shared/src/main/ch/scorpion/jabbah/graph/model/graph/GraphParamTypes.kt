@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
-import ch.scorpion.jabbah.graph.model.GraphParamType
+import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 

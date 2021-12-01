@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
-import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.BorderLayout
 import java.awt.Component

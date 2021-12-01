@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.jabbah.graph.model.GraphParamType
+import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 

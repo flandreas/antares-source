@@ -5,8 +5,8 @@ import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.model.GraphParamDefinition
-import ch.scorpion.jabbah.graph.model.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import java.awt.Frame
 import javax.swing.JOptionPane

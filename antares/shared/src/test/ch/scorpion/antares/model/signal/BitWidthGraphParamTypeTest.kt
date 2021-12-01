@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.jabbah.graph.model.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
