@@ -25,6 +25,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import org.junit.Test
+import kotlin.test.Ignore
 
 class AntaresBeanInfoTest {
 
@@ -137,6 +138,7 @@ class AntaresBeanInfoTest {
 	// inout
 
 	@Test
+	@Ignore
 	fun shouldReadWriteCircuitInOutView() {
 		readWrite(CircuitInOutView(), CircuitInOutViewBeanInfo())
 	}

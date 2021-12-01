@@ -82,6 +82,10 @@ class GraphParamDefinitions : Storable {
 
 	val isNotEmpty: Boolean get() = definitions.isNotEmpty()
 
+	fun contains(name: String): Boolean = definitions.any { it.name == name }
+
+	fun withName(name: String): GraphParamDefinition<*>? = definitions.firstOrNull { it.name == name }
+
 	fun add(definition: GraphParamDefinition<*>) {
 		if (definitions.any { it.name == definition.name }) {
 			throw IllegalArgumentException("name '${definition.name}' already exists")

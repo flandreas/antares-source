@@ -3,11 +3,10 @@ package ch.scorpion.antares.property
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.properties.PropertyProps
-import ch.scorpion.jabbah.edit.properties.enumPropertyField
+import ch.scorpion.jabbah.edit.properties.selectPropertyField
 import react.RBuilder
-import react.child
 
-val jmBitWidthField = enumPropertyField("BitWidth", BitWidth.values())
+val jmBitWidthField = selectPropertyField("BitWidth", BitWidth.PREDEFINED)
 
 fun RBuilder.jmBitWidthField(
 	editor: Editor,

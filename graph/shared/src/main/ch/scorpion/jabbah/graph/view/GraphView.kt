@@ -52,7 +52,7 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [GraphView]'s [Graph]
 	 * as variable definitions.
 	 */
-	val portSymbolTable: SymbolTable
+	val symbolTable: SymbolTable
 
 	/**
 	 * Creates a [Parser] for parsing the [Graph]'s execution script.

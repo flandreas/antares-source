@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ParserFactory
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -25,7 +24,7 @@ class BitWidthPropertySwing(
 	propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
-	val parserFactory: ParserFactory = BaseModule.parserFactory
+	val parserFactory: ParserFactory? = null
 ) : CommandPropertySwing<BitWidth>(
 	propertyName,
 	baseKey,
@@ -73,7 +72,7 @@ class BitWidthRenderer : DefaultListCellRenderer(), TableCellRenderer {
 class BitWidthEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
-	private val parserFactory: ParserFactory = BaseModule.parserFactory,
+	private val parserFactory: ParserFactory? = null,
 	filter: (BitWidth) -> Boolean = { _ -> true }
 ) : AbstractPropertyEditor() {
 
@@ -86,7 +85,9 @@ class BitWidthEditor(
 		comboBox.renderer = BitWidthRenderer()
 
 		val list = BitWidth.PREDEFINED.filter { filter(it) }.toMutableList()
-		list.add(BitWidthExpression(""))
+		if (parserFactory != null) {
+			list.add(BitWidthExpression(""))
+		}
 		comboBoxEditor.setAvailableValues(list.toTypedArray())
 
 		comboBox.addItemListener {
@@ -112,7 +113,7 @@ class BitWidthEditor(
 	}
 
 	private fun updateButton() {
-		button.isEnabled = comboBox.selectedItem is BitWidthExpression
+		button.isEnabled = parserFactory != null && comboBox.selectedItem is BitWidthExpression
 	}
 
 	private fun buildUI() {
@@ -138,7 +139,7 @@ class BitWidthEditor(
 			script = script.scriptOrEmpty,
 			editable = editable,
 			propertyName = propertyName,
-			parserFactory = parserFactory
+			parserFactory = parserFactory!!
 		) ?.let {
 			script = ScriptProperty(it)
 		}

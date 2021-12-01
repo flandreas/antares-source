@@ -29,7 +29,12 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
         super.addProperties(bean, editor, properties)
 
 	    val graphView = editor.drawing as GraphView
-	    val bitWidth = AntaresProperties.bitWidth(parserFactory = graphView::createParser)
+
+	    val bitWidth = if (graphView.graph != null) {
+			AntaresProperties.bitWidth(parserFactory = graphView::createParser)
+	    } else {
+			AntaresProperties.bitWidth()
+	    }
 
 	    properties.add(modelId.bind(editor, bean.id, editable = false))
 	    properties.add(name.bind(editor, bean.id))

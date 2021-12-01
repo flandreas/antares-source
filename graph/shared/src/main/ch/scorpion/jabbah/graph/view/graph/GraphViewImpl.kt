@@ -55,7 +55,7 @@ open class GraphViewImpl(
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
-	override val portSymbolTable: SymbolTable by lazy { GraphViewPortSymbolTable(this) }
+	override val symbolTable: SymbolTable by lazy { GraphViewSymbolTable(this) }
 
 	/** ---- [Any] */
 
@@ -230,7 +230,7 @@ open class GraphViewImpl(
 	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
 		BaseModule.parserFactory.create(
 			program,
-			BaseModule.semanticAnalyserFactory.create(portSymbolTable))
+			BaseModule.semanticAnalyserFactory.create(symbolTable))
 
 	/** ---- [Storable] interface */
 

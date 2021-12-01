@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * This relieves [GraphView] from the burden to update its [SymbolTable] whenever
  * [GraphPort]s are added or removed, or when their names change.
  */
-class GraphViewPortSymbolTable(
+class GraphViewSymbolTable(
 	private val graphView: GraphView,
 	override val scopeLevel: Int = 0
 ) : SymbolTable {
@@ -24,8 +24,10 @@ class GraphViewPortSymbolTable(
 	}
 
 	override fun hasSymbol(name: String, currentScopeOnly: Boolean): Boolean =
-		graphView.graph!!.graphPorts.any { it.name == name }
+		graphView.graph!!.graphPorts.any { it.name == name } ||
+			graphView.graph!!.parameterDefinitions.contains(name)
 
 	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? =
 		graphView.graph!!.graphPorts.firstOrNull { it.name == name }?.let { Symbol(it.name!!) }
+			?: graphView.graph!!.parameterDefinitions.withName(name)?.let { Symbol(it.name) }
 }
