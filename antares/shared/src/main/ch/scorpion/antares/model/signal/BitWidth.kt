@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 open class BitWidth(
 	val width: Int,
@@ -31,6 +33,12 @@ open class BitWidth(
 		fun withName(customName: String): BitWidth =
 			PREDEFINED.firstOrNull { it.customName == customName }
 				?: throw IllegalArgumentException("Unknown BitWidth '$customName'")
+
+		fun read(name: String, reader: StoreReader): BitWidth {
+			val value = reader.readString(name)
+			val number = value.toIntOrNull()
+			return number?.let { of(it) } ?: BitWidthExpression(value)
+		}
 	}
 
 	val maxValue: ULong = if (width == 64) {
@@ -53,11 +61,19 @@ open class BitWidth(
 	override fun hashCode(): Int = width
 
 	fun max(other: BitWidth): BitWidth = of(kotlin.math.max(width, other.width))
+
+	open fun write(name: String, writer: StoreWriter) {
+		writer.writeInt(name, width)
+	}
 }
 
 class BitWidthExpression(
-	val expression: String
-) : BitWidth(2, "Expr") {
+	var expression: String
+) : BitWidth(1, "Expr") {
+
+	override fun write(name: String, writer: StoreWriter) {
+		writer.writeString(name, expression)
+	}
 
 	override fun toString(): String = "${Translations.getString("graph.property.graphParams.expression")}: $expression"
 

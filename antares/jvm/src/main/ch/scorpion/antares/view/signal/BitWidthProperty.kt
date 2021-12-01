@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
@@ -79,7 +78,8 @@ class BitWidthEditor(
 	private val comboBoxEditor = ComboBoxPropertyEditor()
 	private val button = JButton()
 	private val comboBox: JComboBox<BitWidth> get() = comboBoxEditor.customEditor as JComboBox<BitWidth>
-	private var script: ScriptProperty = ScriptProperty()
+
+	private val isExpression: Boolean get() = parserFactory != null && comboBox.selectedItem is BitWidthExpression
 
 	init {
 		comboBox.renderer = BitWidthRenderer()
@@ -113,7 +113,7 @@ class BitWidthEditor(
 	}
 
 	private fun updateButton() {
-		button.isEnabled = parserFactory != null && comboBox.selectedItem is BitWidthExpression
+		button.isEnabled = isExpression
 	}
 
 	private fun buildUI() {
@@ -136,12 +136,12 @@ class BitWidthEditor(
 
 	private fun showDialog() {
 		ScriptPropertyPanel.showAsDialog(
-			script = script.scriptOrEmpty,
+			script = (comboBox.selectedItem as BitWidthExpression).expression,
 			editable = editable,
 			propertyName = propertyName,
 			parserFactory = parserFactory!!
 		) ?.let {
-			script = ScriptProperty(it)
+			(comboBox.selectedItem as BitWidthExpression).expression = it
 		}
 	}
 }
