@@ -12,18 +12,20 @@ import org.w3c.xhr.XMLHttpRequest
  * An implementation of [LibraryPersistenceService] that calls the REST endpoints of Akrab.
  * Performs synchronous (blocking) calls.
  * TODO: Consider using Kotlin Coroutines.
- * TODO: Add authorization
  */
 class AkrabRestLibraryPersistenceService(
 	private val baseUrl: String,
 	private val dictionaryName: String
 ) : LibraryPersistenceService {
 
+	var accessToken = ""
+
 	/** ---- [LibraryPersistenceService] interface. */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
 		val request = XMLHttpRequest()
 		request.open("GET", buildMetaGraphPath(library.uuid, uuid), async = false)
+		request.setRequestHeader("Authorization", "Bearer $accessToken")
 		request.overrideMimeType("text/xml")
 		request.send()
 		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
@@ -32,6 +34,7 @@ class AkrabRestLibraryPersistenceService(
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
 		val request = XMLHttpRequest()
 		request.open("PUT", buildMetaGraphPath(library.uuid, metaGraph.uuid), async = false)
+		request.setRequestHeader("Authorization", "Bearer $accessToken")
 		request.overrideMimeType("text/xml")
 		request.send(
 			StorableCloner.serialize(metaGraph)
@@ -45,6 +48,7 @@ class AkrabRestLibraryPersistenceService(
 	override fun loadLibrary(uuid: UUID): Library {
 		val request = XMLHttpRequest()
 		request.open("GET", buildLibraryDictionaryPath(uuid), async = false)
+		request.setRequestHeader("Authorization", "Bearer $accessToken")
 		request.overrideMimeType("text/xml")
 		request.send()
 		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library

@@ -2,11 +2,14 @@ package ch.scorpion.antares.shaulamock
 
 import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.akrabapi.ProjectTO
+import ch.scorpion.antares.mainScope
 import ch.scorpion.antares.module.AntaresAkrabModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.auth0.Auth0ContextInterface
+import ch.scorpion.jabbah.base.auth0.Auth0Provider
+import ch.scorpion.jabbah.base.auth0.loginLogout
 import ch.scorpion.jabbah.base.auth0.useAuth0
 import ch.scorpion.jabbah.base.util.encodeURI
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -21,7 +24,6 @@ import com.ccfraser.muirwik.components.card.mCardContent
 import com.ccfraser.muirwik.components.card.mCardHeader
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.css.margin
@@ -37,8 +39,6 @@ import react.useEffectOnce
 import react.useState
 import styled.css
 import styled.styledDiv
-
-val mainScope = MainScope()
 
 class ShaulaMock {
 
@@ -62,27 +62,45 @@ class ShaulaMock {
 
 	private fun display() {
 		render(document.getElementById("root")) {
-			child(shaulaMock)
+			child(Auth0Provider) {
+				attrs {
+					domain = "dev-wq7i977v.eu.auth0.com"
+					clientId = "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO"
+					audience = "https://antarescircuit.io/api"
+					redirectUri = window.location.origin
+					onRedirectCallback = {
+						if (it.returnTo != null) {
+							window.location.replace(it.returnTo!!)
+						} else {
+							window.location.replace("/")
+						}
+					}
+				}
+				child(shaulaMock)
+			}
 		}
 	}
 }
 
 val shaulaMock = fc<Props> {
 
+	var auth0 = useAuth0()
 	var allProjects: Result<List<ProjectTO>>? by useState(null)
-	var auth0ContextInterface: Auth0ContextInterface = useAuth0()
 
-	useEffectOnce {
-		mainScope.launch {
-			allProjects = fetchProjects(auth0ContextInterface)
+	//if (auth0.isAuthenticated) {
+		useEffectOnce {
+			mainScope.launch {
+				allProjects = fetchProjects(auth0)
+			}
 		}
-	}
+	//}
 
 	mCssBaseline()
 	styledDiv {
 		mAppBar(position = MAppBarPosition.static) {
 			mToolbar {
 				mToolbarTitle("Antares")
+				child(loginLogout)
 			}
 		}
 
@@ -96,8 +114,6 @@ val shaulaMock = fc<Props> {
 					}
 				}
 			}
-		} ?: run {
-			mTypography("Loading..")
 		}
 	}
 }
@@ -113,23 +129,15 @@ data class Result<T>(
 	val isError: Boolean get() = errorCode != null
 }
 
-suspend fun fetchProjects(auth0ContextInterface: Auth0ContextInterface): Result<List<ProjectTO>> {
-	println("fetchProjects: getAccessToken")
-	var token: String = ""
-	try {
-		token = auth0ContextInterface.getAccessTokenSilently().await()
-	} catch (e: Throwable) {
-		println("Running outside Auth0Provider")
-	}
-
-	println("fetchProjects: calling Akrab")
+suspend fun fetchProjects(auth0: Auth0ContextInterface): Result<List<ProjectTO>> {
+	var token =auth0.getAccessTokenSilently().await()
+	val headers = Headers()
+	headers.set("Authorization", "Bearer $token")
 	val response = window
 		.fetch("http://localhost:8080/api/projects", RequestInit(
-			headers = Headers().set("Authorization", "Bearer $token")
+			headers = headers
 		))
 		.await()
-
-	println("fetchProjects: Akrab returned ${response.status}")
 
 	if (!response.ok) {
 		return Result.error(response.status)

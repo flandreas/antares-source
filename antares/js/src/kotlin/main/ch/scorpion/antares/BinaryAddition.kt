@@ -24,7 +24,7 @@ import react.dom.render
 import styled.*
 
 /** A React application displaying possible multiple [GraphViewerJs].*/
-class AntaresPage {
+class BinaryAddition {
 
 	fun show() {
 		initialize()

@@ -86,7 +86,7 @@ class AntaresViewJs(
 
 		controller = GraphPanelViewController(editor, props.applicationDataHolder, applicationContextHolder, applicationModeHolder)
 
-		this.state.isLoading = true
+		this.state.isLoading = !hasAllBundles()
 		BaseModule.eventBus.register(TranslationBundleAdded::class, translationEventHandler)
 	}
 
