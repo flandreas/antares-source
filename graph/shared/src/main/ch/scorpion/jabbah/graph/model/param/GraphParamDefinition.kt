@@ -29,6 +29,8 @@ class GraphParamDefinition<T : Any>(
 
 	lateinit var defaultValue: T
 
+	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue)
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
@@ -55,6 +57,8 @@ class GraphParamDefinitions : Storable {
 	val isEmpty: Boolean get() = definitions.isEmpty()
 
 	val isNotEmpty: Boolean get() = definitions.isNotEmpty()
+
+	fun iterator(): Iterator<GraphParamDefinition<*>> = definitions.iterator()
 
 	fun contains(name: String): Boolean = definitions.any { it.name == name }
 

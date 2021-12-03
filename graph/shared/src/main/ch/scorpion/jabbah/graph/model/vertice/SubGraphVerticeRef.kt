@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.Storable
@@ -72,6 +73,9 @@ class SubGraphVerticeRef(
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
 
+	var paramValues = GraphParamValues()
+		private set
+
 	override val designError: DesignError? get() = _designError
 
 	/** ---- [GraphElement] interface */
@@ -91,6 +95,12 @@ class SubGraphVerticeRef(
 	/** ---- [SubGraphVertice] */
 
 	override var graphUUID: UUID? = graphUUID
+		set(value) {
+			if (field != value) {
+				field = value
+				setDefaultParamValues()
+			}
+		}
 
 	override var graphName: Name = Name(TranslatableText())
 
@@ -110,10 +120,16 @@ class SubGraphVerticeRef(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("uuid", graphUUID!!.id)
+		if (paramValues.isNotEmpty) {
+			writer.writeStorable("params", paramValues)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		graphUUID = UUID(reader.readString("uuid"))
+		if (reader.hasElement("params")) {
+			paramValues = reader.readStorable("params")
+		}
 
 		val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 		if (metaGraph != null) {
@@ -303,4 +319,14 @@ class SubGraphVerticeRef(
 
 	private fun getSubGraphOutputPorts(): ImmutableList<SubGraphOutputPort<Any>> =
 		getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
+
+	private fun setDefaultParamValues() {
+		graphUUID?.let {
+			repository.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
+				for (def in defs.iterator()) {
+					paramValues.add(def.createDefaultValue())
+				}
+			}
+		}
+	}
 }

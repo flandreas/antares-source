@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -10,6 +11,13 @@ import ch.scorpion.jabbah.io.StoreWriter
 object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override val name: String = "bitWidth"
+
+	override fun createValue(name: String, value: BitWidth): GraphParamValue<BitWidth> =
+		GraphParamValue<BitWidth>().also {
+			it.name = name
+			it.type = this
+			it.value = value
+		}
 
 	override fun writeValue(name: String, value: BitWidth, writer: StoreWriter) {
 		writer.writeString(name, value.customName)

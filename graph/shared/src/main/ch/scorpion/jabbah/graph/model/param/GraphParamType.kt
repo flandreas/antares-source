@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.graph.model.param
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-interface GraphParamType<T> {
+interface GraphParamType<T : Any> {
 	val name: String
+
 	fun writeValue(name: String, value: T, writer: StoreWriter)
+
 	fun readValue(name: String, reader: StoreReader): T
+
+	fun createValue(name: String, value: T): GraphParamValue<T>
 }
 
 typealias GraphParamTypeProvider = () -> GraphParamType<*>
@@ -26,6 +30,6 @@ object GraphParamTypeRegistry {
 		providers[name] = provider
 	}
 
-	fun <T> get(name: String): GraphParamType<T> =
-		providers[name]?.invoke() as GraphParamType<T> ?: throw IllegalArgumentException("no provider for GraphParamType '$name' registered")
+	fun <T : Any> get(name: String): GraphParamType<T> =
+		(providers[name]?.invoke() as GraphParamType<T>?) ?: throw IllegalArgumentException("no provider for GraphParamType '$name' registered")
 }

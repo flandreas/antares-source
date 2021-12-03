@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
@@ -70,6 +71,7 @@ object GraphModelModule : AbstractModule() {
 		typeMap.register("graph", GraphImpl::class)
 		typeMap.register("graphParamDef", GraphParamDefinition::class)
 		typeMap.register("graphParamDefs", GraphParamDefinitions::class)
+		typeMap.register("graphParam", GraphParamValue::class)
 		typeMap.register("metaGraph", MetaGraph::class)
 		typeMap.register("metaGraphBundle", MetaGraphBundle::class)
 		typeMap.register("graphStorable", GraphStorable::class)
