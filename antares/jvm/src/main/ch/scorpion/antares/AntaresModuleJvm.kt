@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
@@ -20,10 +21,7 @@ import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
-import ch.scorpion.antares.view.signal.BitWidthEditor
-import ch.scorpion.antares.view.signal.BitWidthPropertySwing
-import ch.scorpion.antares.view.signal.BitWidthRenderer
-import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
+import ch.scorpion.antares.view.signal.*
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
@@ -36,8 +34,11 @@ import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
@@ -46,9 +47,13 @@ import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersiste
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
+import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
@@ -150,6 +155,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+		configureGraphParamValueProperties()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
@@ -209,6 +215,28 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				parserFactory = (it as BitWidthPropertySwing).parserFactory,
 				it.filter )
 		}
+	}
+
+	private fun configureGraphParamValueProperties() {
+		GraphParamValuePropertyFactoryRegistry.register(
+			BitWidthGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					val graphView = editor.drawing as GraphView
+					return BitWidthParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<BitWidth>,
+						propertyName = "<notUsed>",
+						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						beanProvider,
+						graphView::createParser
+					)
+				}
+			}
+		)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

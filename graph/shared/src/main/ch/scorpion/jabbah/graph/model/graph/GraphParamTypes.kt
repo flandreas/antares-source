@@ -4,10 +4,14 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.reflect.KClass
 
 object StringGraphParamType : GraphParamType<String> {
 
 	override val name: String = "String"
+
+	override val valueClass: KClass<String>
+		get() = String::class
 
 	override fun createValue(name: String, value: String): GraphParamValue<String> =
 		GraphParamValue<String>().also {

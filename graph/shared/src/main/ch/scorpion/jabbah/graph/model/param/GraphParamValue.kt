@@ -39,6 +39,14 @@ class GraphParamValues : Storable {
 		values.add(value)
 	}
 
+	fun addOrReplace(value: GraphParamValue<*>) {
+		val existingValue = values.firstOrNull { it.name == value.name }
+		if (existingValue != null) {
+			values.remove(existingValue)
+		}
+		values.add(value)
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }

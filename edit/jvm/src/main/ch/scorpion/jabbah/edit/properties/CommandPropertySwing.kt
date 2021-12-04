@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import com.l2fprod.common.propertysheet.Property
 import java.lang.reflect.InvocationTargetException
@@ -13,7 +14,7 @@ open class CommandPropertySwing<V>(
 	propertyName: String,
 	baseKey: String,
 	valueClass: Class<V>,
-	private val beanProvider: BeanProvider,
+	protected val beanProvider: BeanProvider,
 	private val setterPropertyName: String = propertyName,
 	getterPropertyName: String = propertyName,
 	interactive: Boolean = false
@@ -53,6 +54,6 @@ open class CommandPropertySwing<V>(
 		}
 	}
 
-	protected open fun createCommand(newValue: V?): PropertyCommandSwing<V> =
+	protected open fun createCommand(newValue: V?): AbstractPropertyCommand<V> =
 		PropertyCommandSwing(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 }

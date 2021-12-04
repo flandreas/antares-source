@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.app
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
-import ch.scorpion.jabbah.edit.properties.PropertyCommandSwing
 
 class InputCountPropertySwing(
-	private val beanProvider: BeanProvider,
+	beanProvider: BeanProvider,
 ) : CommandPropertySwing<InputCount>(
 	"chosenInputCount",
 	InputCount.BASE_KEY,
@@ -14,6 +14,6 @@ class InputCountPropertySwing(
 	beanProvider
 ) {
 
-	override fun createCommand(newValue: InputCount?): PropertyCommandSwing<InputCount> =
+	override fun createCommand(newValue: InputCount?): AbstractPropertyCommand<InputCount> =
 		ChangeInputCountCommandSwing(editor!!, beanProvider, beanIds, newValue!!)
 }

@@ -16,7 +16,7 @@ import org.apache.commons.beanutils.PropertyUtils
 abstract class AbstractReflectionPropertySwing<V>(
 	propertyName: String,
 	protected val baseKey: String,
-	private val valueClass: Class<V>,
+	private val valueClass: Class<*>,
 	protected val getterPropertyName: String = propertyName,
 	private var interactive: Boolean = false
 ) : AbstractProperty() {

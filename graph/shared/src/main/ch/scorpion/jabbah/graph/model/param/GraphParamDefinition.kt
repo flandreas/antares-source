@@ -31,6 +31,8 @@ class GraphParamDefinition<T : Any>(
 
 	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue)
 
+	fun createValue(value: T): GraphParamValue<T> = type.createValue(name, value)
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }

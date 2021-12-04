@@ -2,9 +2,12 @@ package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.reflect.KClass
 
 interface GraphParamType<T : Any> {
 	val name: String
+
+	val valueClass: KClass<T>
 
 	fun writeValue(name: String, value: T, writer: StoreWriter)
 

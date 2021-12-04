@@ -5,11 +5,15 @@ import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamValueCommand
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import java.awt.BorderLayout
@@ -19,7 +23,7 @@ import java.awt.event.FocusEvent
 import javax.swing.*
 import javax.swing.table.TableCellRenderer
 
-class BitWidthPropertySwing(
+open class BitWidthPropertySwing(
 	propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
@@ -31,6 +35,23 @@ class BitWidthPropertySwing(
 	beanProvider,
 	interactive = true
 )
+
+class BitWidthParamValuePropertySwing(
+	private val paramDefinition: GraphParamDefinition<BitWidth>,
+	propertyName: String,
+	baseKey: String,
+	beanProvider: BeanProvider = componentBeanProvider,
+	parserFactory: ParserFactory? = null
+) : BitWidthPropertySwing(propertyName, baseKey, beanProvider, parserFactory) {
+
+	override fun readFromObject(bean: Any?) {
+		val subGraphVerticeView = bean as SubGraphVerticeViewImpl?
+		value = subGraphVerticeView?.model?.paramValues?.withName(paramDefinition.name)?.value
+	}
+
+	override fun createCommand(newValue: BitWidth?): AbstractPropertyCommand<BitWidth> =
+		GraphParamValueCommand(paramDefinition, editor!!, baseKey, beanProvider, beanIds, newValue)
+}
 
 class BitWidthRenderer : DefaultListCellRenderer(), TableCellRenderer {
 

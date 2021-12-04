@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.reflect.KClass
 
 /**
  * Defines [BitWidth] as [GraphParamType].
@@ -11,6 +12,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override val name: String = "bitWidth"
+
+	override val valueClass: KClass<BitWidth> get() = BitWidth::class
 
 	override fun createValue(name: String, value: BitWidth): GraphParamValue<BitWidth> =
 		GraphParamValue<BitWidth>().also {
