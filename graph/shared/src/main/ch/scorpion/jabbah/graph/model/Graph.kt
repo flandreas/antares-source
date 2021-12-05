@@ -3,6 +3,10 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.Symbol
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -11,6 +15,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -60,6 +65,12 @@ interface Graph : Namable, Describable, Storable {
 
     /** Returns the [GraphPort]s of this [Graph] as an immutable list.*/
     val graphPorts: ImmutableList<GraphPort<*>>
+
+	/**
+	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [Graph]
+	 * as variable definitions.
+	 */
+	val symbolTable: SymbolTable
 
 	val parameterDefinitions: GraphParamDefinitions
 
@@ -119,6 +130,14 @@ interface Graph : Namable, Describable, Storable {
 
     /** Returns the [GraphOutput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphOutput(name: String): GraphOutput<T>?
+
+	/**
+	 * Creates a [Parser] for parsing the [Graph]'s execution script.
+	 * The created [Parser] contains a [SemanticAnalyser] that uses this [GraphView] as
+	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
+	 */
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
+
 }
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)

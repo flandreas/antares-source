@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.graph
 
+import ch.scorpion.jabbah.graph.model.graph.GraphSymbolTable
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -23,7 +24,7 @@ class GraphViewSymbolTableTest {
 	fun shouldContainPortNames() {
 		builder.addVerticeView(TestGraphPortView.input<Int>("I"))
 		builder.addVerticeView(TestGraphPortView.output<Int>("O"))
-		val symbolTable = GraphViewSymbolTable(builder.graphView)
+		val symbolTable = GraphSymbolTable(builder.graphView.graph!!)
 
 		assertTrue(symbolTable.hasSymbol("I"))
 		assertTrue(symbolTable.hasSymbol("O"))
@@ -34,7 +35,7 @@ class GraphViewSymbolTableTest {
 	fun shouldContainGraphParams() {
 		builder.graph.parameterDefinitions.add(
 			GraphParamDefinition.create("P", StringGraphParamType, "Test"))
-		val symbolTable = GraphViewSymbolTable(builder.graphView)
+		val symbolTable = GraphSymbolTable(builder.graphView.graph!!)
 
 		assertTrue(symbolTable.hasSymbol("P"))
 		assertFalse(symbolTable.hasSymbol("X"))

@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
@@ -66,6 +69,8 @@ open class GraphImpl(
 
 	override val elementsCount: Int
 		get() = _elements.size
+
+	override val symbolTable: SymbolTable by lazy { GraphSymbolTable(this) }
 
 	override var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
 
@@ -191,6 +196,11 @@ open class GraphImpl(
 		}
 		return getGraphInputOutput(name) as GraphOutput<T>?
 	}
+
+	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		BaseModule.parserFactory.create(
+			program,
+			BaseModule.semanticAnalyserFactory.create(symbolTable))
 
 	/** ---- [Storable] interface */
 

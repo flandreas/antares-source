@@ -138,7 +138,7 @@ class UsecaseImpl(
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
 
 	private fun createSymbolTable(): SymbolTable {
-		val portSymbolTable = graphView!!.symbolTable
+		val portSymbolTable = graphView!!.graph!!.symbolTable
 		return ScopedSymbolTable(
 			name = "ExternalFunctions",
 			scopeLevel = portSymbolTable.scopeLevel,

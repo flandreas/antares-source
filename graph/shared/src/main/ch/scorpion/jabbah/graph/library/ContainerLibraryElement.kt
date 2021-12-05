@@ -54,7 +54,7 @@ class ContainerLibraryElement(
 	private val executionScriptASTCache = resettableLazy {
 		metaGraph?.graph?.model?.script?.let {
 			LOG.trace("Parsing script of '${metaGraph!!.name}'")
-			metaGraph!!.graph.graphView
+			metaGraph!!.graph.model!!
 				.createParser(it, null)
 				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.GraphViewImpl.script.name")))
 		}

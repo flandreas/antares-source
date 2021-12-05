@@ -31,7 +31,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    val graphView = editor.drawing as GraphView
 
 	    val bitWidth = if (graphView.graph != null) {
-			AntaresProperties.bitWidth(parserFactory = graphView::createParser)
+			AntaresProperties.bitWidth(parserFactory = graphView.graph!!::createParser)
 	    } else {
 			AntaresProperties.bitWidth()
 	    }

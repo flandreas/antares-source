@@ -232,7 +232,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 						propertyName = "<notUsed>",
 						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
 						beanProvider,
-						graphView::createParser
+						graphView.graph!!::createParser
 					)
 				}
 			}
