@@ -1,10 +1,14 @@
 package ch.scorpion.antares.model.inout
 
+import ch.scorpion.antares.dsl.AntaresInterpreter
+import ch.scorpion.antares.dsl.AntaresLexer
+import ch.scorpion.antares.dsl.AntaresParser
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -13,10 +17,11 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
+import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -79,6 +84,23 @@ class CircuitInOutImpl(
 			PortType.INPUT -> INPUT_TYPE_DESC
 			PortType.OUTPUT -> OUTPUT_TYPE_DESC
 		}
+
+	override fun graphParamsChanged(graph: Graph) {
+		if (bitWidth is BitWidthExpression) {
+			val oldBitWidth = bitWidth as BitWidthExpression
+			val parser = AntaresParser(
+				AntaresLexer(oldBitWidth.expression),
+				BaseModule.semanticAnalyserFactory.create(graph.symbolTable))
+			val value = AntaresInterpreter(
+				parser,
+				Memory(GraphActivationRecord(graph))
+			).interpret()
+
+			if (value is Long && bitWidth.width.toLong() != value) {
+				bitWidth = BitWidthExpression(oldBitWidth.expression, BitWidth.of(value.toInt()))
+			}
+		}
+	}
 
 	/** ---- [GraphPort] interface */
 

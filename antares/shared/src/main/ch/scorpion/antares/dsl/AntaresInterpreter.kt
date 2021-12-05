@@ -17,6 +17,7 @@ class AntaresInterpreter(
 ) : GraphDslInterpreter(node, memory) {
 
 	constructor(parser: AntaresParser): this(parser.parse())
+	constructor(parser: AntaresParser, memory: Memory): this(parser.parse(), memory)
 	constructor(program: String): this(AntaresParser(program))
 
 	private val data: GraphActorData? get() = if (params is GraphActorData) params as GraphActorData else null

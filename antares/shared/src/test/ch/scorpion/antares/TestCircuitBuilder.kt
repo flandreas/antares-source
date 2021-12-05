@@ -1,7 +1,10 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.BitWidthExpression
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -10,6 +13,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -83,13 +88,37 @@ class TestCircuitBuilder(
 	}
 
 	/**
-	 * Builds a [graphView] with 2 inputs and 1 output, no content circuitry, but a DSL execution script.
+	 * Builds a [GraphView] with 2 inputs and 1 output, no content circuitry, but a DSL execution script.
 	 */
 	fun buildScriptedBinaryFunction(input1Name: String, input2Name: String, outputName: String, script: String): GraphView {
 		addInput(input1Name)
 		addInput(input2Name)
 		addOutput(outputName)
 		graphView.graph!!.script = script
+		return graphView
+	}
+
+	/**
+	 * Builds a [GraphView] whose [Graph] consists of a [CircuitInOutImpl] of type [PortType.INPUT]
+	 * with [BitWidthExpression] [inputExpression] and a [CircuitInOutImpl] of type [PortType.OUTPUT]
+	 * with [BitWidthExpression] [outputExpression], both unconnected.
+	 * Adds a [GraphParamDefinition] of type [BitWidthGraphParamType] with name "BW"
+	 */
+	fun buildBitWidthExpressionInputOutput(
+		inputExpression: String,
+		outputExpression: String,
+		graphScript: String? = null
+	): GraphView {
+		val input = addInput("I")
+		input.bitWidth = BitWidthExpression(inputExpression)
+		val output = addOutput("O")
+		output.bitWidth = BitWidthExpression(outputExpression)
+
+		graph.purelyScripted = true
+		graphScript?.let { graph.script = it }
+
+		graph.parameterDefinitions.add(GraphParamDefinition.create("BW", BitWidthGraphParamType, BitWidth.BW_4))
+
 		return graphView
 	}
 

@@ -24,4 +24,6 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override fun readValue(name: String, reader: StoreReader): BitWidth =
 		BitWidth.withName(reader.readString(name))
+
+	override fun toDslValue(value: BitWidth): Any = value.width.toLong()
 }

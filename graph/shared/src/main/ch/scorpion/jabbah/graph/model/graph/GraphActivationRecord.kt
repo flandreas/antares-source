@@ -6,10 +6,11 @@ import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.Variable
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 
 /**
  * An [ActivationRecord] implementation that allows a DSL script to read
- * a [Graph]'s [GraphPort] values as global context variables.
+ * a [Graph]'s [GraphPort] signals or [GraphParamValues] as global context variables.
  */
 class GraphActivationRecord(private val graph: Graph) : ActivationRecord {
 
@@ -35,8 +36,19 @@ class GraphActivationRecord(private val graph: Graph) : ActivationRecord {
 		getOptionalValue(variable) ?: throw RuntimeError(variable.location, Translations.getString("antares.dsl.noValueAtPort.msg", variable.token.value!!))
 
 	override fun getOptionalValue(variable: Variable): Any? {
+		return getPortValue(variable) ?: getParamValue(variable)
+	}
+
+	private fun getPortValue(variable: Variable): Any? {
 		val name = variable.token.value!!
 		val port = graph.getGraphPort<Any>(name)
 		return port?.signal
+	}
+
+	private fun getParamValue(variable: Variable): Any? {
+		val name = variable.token.value!!
+		return graph.parameterValues.getTypedValue<Any>(name)?.let {
+			it.type.toDslValue(it.value)
+		}
 	}
 }

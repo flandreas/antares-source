@@ -4,27 +4,24 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-open class BitWidth(
-	val width: Int,
-	val size: String
-) {
-	companion object {
+interface BitWidth {
 
+	companion object {
 		const val BASE_KEY = "element.property.bitWidth"
 
-		val BW_1 = BitWidth(1, "1")
-		val BW_2 = BitWidth(2, "4")
-		val BW_4 = BitWidth(4, "16")
-		val BW_8 = BitWidth(8, "256")
-		val BW_12 = BitWidth(12, "4K")
-		val BW_16 = BitWidth(16, "64K")
-		val BW_20 = BitWidth(20, "1M")
-		val BW_24 = BitWidth(24, "16M")
-		val BW_28 = BitWidth(28, "256M")
-		val BW_32 = BitWidth(32, "4G")
-		val BW_64 = BitWidth(64, "16E")
+		val BW_1 = BitWidthImpl(1, "1")
+		val BW_2 = BitWidthImpl(2, "4")
+		val BW_4 = BitWidthImpl(4, "16")
+		val BW_8 = BitWidthImpl(8, "256")
+		val BW_12 = BitWidthImpl(12, "4K")
+		val BW_16 = BitWidthImpl(16, "64K")
+		val BW_20 = BitWidthImpl(20, "1M")
+		val BW_24 = BitWidthImpl(24, "16M")
+		val BW_28 = BitWidthImpl(28, "256M")
+		val BW_32 = BitWidthImpl(32, "4G")
+		val BW_64 = BitWidthImpl(64, "16E")
 
-		val PREDEFINED = listOf(BW_1, BW_2, BW_4, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
+		val PREDEFINED: List<BitWidth> = listOf(BW_1, BW_2, BW_4, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
 
 		fun of(width: Int): BitWidth =
 			PREDEFINED.firstOrNull { it.width == width }
@@ -41,13 +38,28 @@ open class BitWidth(
 		}
 	}
 
-	val maxValue: ULong = if (width == 64) {
+	val width: Int
+	val size: String
+
+	val maxValue: ULong get() =  if (width == 64) {
 		ULong.MAX_VALUE
 	} else {
 		BitOperation.power(this.width.toByte()) - 1UL
 	}
 
 	val customName: String get() = width.toString()
+
+	fun max(other: BitWidth): BitWidth = of(kotlin.math.max(width, other.width))
+
+	fun write(name: String, writer: StoreWriter) {
+		writer.writeInt(name, width)
+	}
+}
+
+open class BitWidthImpl(
+	override val width: Int,
+	override val size: String
+) : BitWidth {
 
 	override fun toString(): String = customName
 
@@ -59,17 +71,20 @@ open class BitWidth(
 	}
 
 	override fun hashCode(): Int = width
-
-	fun max(other: BitWidth): BitWidth = of(kotlin.math.max(width, other.width))
-
-	open fun write(name: String, writer: StoreWriter) {
-		writer.writeInt(name, width)
-	}
 }
 
+/**
+ * A [BitWidth] implementation whose concrete value can be calculated from an expression.
+ * Note: Interface cannot be implemented using "BitWidth by value", because Kotlin doesn't support "var" delegates.
+ */
 class BitWidthExpression(
-	var expression: String
-) : BitWidth(1, "Expr") {
+	var expression: String,
+	var value: BitWidth = BitWidth.BW_1
+) : BitWidth {
+
+	override val width: Int get() = value.width
+
+	override val size: String get() = value.size
 
 	override fun write(name: String, writer: StoreWriter) {
 		writer.writeString(name, expression)
@@ -81,7 +96,7 @@ class BitWidthExpression(
 		if (other !is BitWidthExpression) {
 			return false
 		}
-		return expression == this.expression
+		return this.expression == other.expression && this.width == other.width
 	}
 
 	override fun hashCode(): Int {

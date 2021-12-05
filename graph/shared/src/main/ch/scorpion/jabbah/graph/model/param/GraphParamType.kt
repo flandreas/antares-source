@@ -14,6 +14,9 @@ interface GraphParamType<T : Any> {
 	fun readValue(name: String, reader: StoreReader): T
 
 	fun createValue(name: String, value: T): GraphParamValue<T>
+
+	/** Convert [value] to a type supported by the DSL in order to evaluate expressions such as addition.*/
+	fun toDslValue(value: T): Any
 }
 
 typealias GraphParamTypeProvider = () -> GraphParamType<*>

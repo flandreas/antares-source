@@ -30,6 +30,7 @@ class TestLibraryBuilder(
 		const val INOUT_TO_OUT = "InOutToOut"
 		const val INOUT_TO_INOUT = "InOutToInOut"
 		const val BINARY_FUNCTION = "BinaryFunction"
+		const val BIT_WITH_EXPRESSION = "BitWidthExpression"
 	}
 
 	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
@@ -84,6 +85,13 @@ class TestLibraryBuilder(
 	fun addScriptedBinaryFunction(library: Library, input1Name: String, input2Name: String, outputName: String, script: String): MetaGraph {
 		val binaryFunction = TestCircuitBuilder(BINARY_FUNCTION).buildScriptedBinaryFunction(input1Name, input2Name, outputName, script)
 		val metaGraph = MetaGraph(GraphStorable(binaryFunction), createContainerDrawing(binaryFunction))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
+	fun addBitWidthExpressionInputOutput(library: Library, inputExpression: String, outputExpression: String, graphScript: String? = null): MetaGraph {
+		val graphView = TestCircuitBuilder(BIT_WITH_EXPRESSION).buildBitWidthExpressionInputOutput(inputExpression, outputExpression, graphScript)
+		val metaGraph = MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
 		libraryService.addContainerLibraryElement(library, metaGraph, library)
 		return metaGraph
 	}

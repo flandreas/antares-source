@@ -64,9 +64,12 @@ class GraphParamValues : Storable {
 
 	fun getValue(name: String): GraphParamValue<*>? = values.firstOrNull { it.name == name }
 
+	fun <T : Any> getTypedValue(name: String): GraphParamValue<T>? = values.firstOrNull { it.name == name } as GraphParamValue<T>?
+
 	fun withValue(value: GraphParamValue<*>): GraphParamValues =
-		GraphParamValues().also {
-			_values.filter { it.name != value.name }.toMutableList().also { it.add(value) }
+		GraphParamValues().also { newValues ->
+			newValues._values = values.filter { it.name != value.name }.toMutableList()
+			newValues._values.add(value)
 		}
 
 	/** ---- [Storable] interface */

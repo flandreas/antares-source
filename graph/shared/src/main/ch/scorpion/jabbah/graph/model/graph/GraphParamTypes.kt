@@ -22,4 +22,6 @@ object StringGraphParamType : GraphParamType<String> {
 
 	override fun readValue(name: String, reader: StoreReader): String =
 		reader.readString(name)
+
+	override fun toDslValue(value: String): Any = value
 }
