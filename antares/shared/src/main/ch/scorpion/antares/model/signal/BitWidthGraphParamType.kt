@@ -16,11 +16,7 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 	override val valueClass: KClass<BitWidth> get() = BitWidth::class
 
 	override fun createValue(name: String, value: BitWidth): GraphParamValue<BitWidth> =
-		GraphParamValue<BitWidth>().also {
-			it.name = name
-			it.type = this
-			it.value = value
-		}
+		GraphParamValue.create(name, this, value)
 
 	override fun writeValue(name: String, value: BitWidth, writer: StoreWriter) {
 		writer.writeString(name, value.customName)

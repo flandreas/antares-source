@@ -14,11 +14,7 @@ object StringGraphParamType : GraphParamType<String> {
 		get() = String::class
 
 	override fun createValue(name: String, value: String): GraphParamValue<String> =
-		GraphParamValue<String>().also {
-			it.name = name
-			it.type = this
-			it.value = value
-		}
+		GraphParamValue.create(name, this, value)
 
 	override fun writeValue(name: String, value: String, writer: StoreWriter) {
 		writer.writeString(name, value)

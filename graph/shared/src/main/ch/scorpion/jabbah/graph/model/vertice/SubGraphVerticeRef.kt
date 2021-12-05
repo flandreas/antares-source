@@ -24,13 +24,11 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.*
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -299,6 +297,11 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVerticeRef] */
 
+	fun setParamValue(paramValue: GraphParamValue<*>) {
+		paramValues = paramValues.withValue(paramValue)
+		forwardParamValues()
+	}
+
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
 		graphUUID = subGraphVertice.graphUUID
 
@@ -323,10 +326,12 @@ class SubGraphVerticeRef(
 	private fun setDefaultParamValues() {
 		graphUUID?.let {
 			repository.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
-				for (def in defs.iterator()) {
-					paramValues.add(def.createDefaultValue())
-				}
+				paramValues = GraphParamValues.withDefaults(defs)
 			}
 		}
+	}
+
+	private fun forwardParamValues() {
+		getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
 	}
 }

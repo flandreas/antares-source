@@ -50,7 +50,7 @@ class GraphParamDefinition<T : Any>(
 	}
 }
 
-class GraphParamDefinitions : Storable {
+class GraphParamDefinitions : Iterable<GraphParamDefinition<*>>, Storable {
 
 	private val definitions = mutableListOf<GraphParamDefinition<*>>()
 
@@ -60,7 +60,7 @@ class GraphParamDefinitions : Storable {
 
 	val isNotEmpty: Boolean get() = definitions.isNotEmpty()
 
-	fun iterator(): Iterator<GraphParamDefinition<*>> = definitions.iterator()
+	override fun iterator(): Iterator<GraphParamDefinition<*>> = definitions.iterator()
 
 	fun contains(name: String): Boolean = definitions.any { it.name == name }
 

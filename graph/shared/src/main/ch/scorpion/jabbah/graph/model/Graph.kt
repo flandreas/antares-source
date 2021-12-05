@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -60,7 +61,10 @@ interface Graph : Namable, Describable, Storable {
     /** Returns the [GraphPort]s of this [Graph] as an immutable list.*/
     val graphPorts: ImmutableList<GraphPort<*>>
 
-	var parameterDefinitions: GraphParamDefinitions
+	val parameterDefinitions: GraphParamDefinitions
+
+	/** Non-persistent values for [parameterDefinitions]. */
+	var parameterValues: GraphParamValues
 
 	/** Informs this [Graph] that it is not actively used any more.*/
 	fun dispose()

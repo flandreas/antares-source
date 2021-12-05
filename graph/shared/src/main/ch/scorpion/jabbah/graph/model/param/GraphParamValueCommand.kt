@@ -29,11 +29,11 @@ class GraphParamValueCommand<V : Any>(
 	private val subGraphVerticeView: SubGraphVerticeViewImpl get() = bean as SubGraphVerticeViewImpl
 
 	override fun getValue(): V? =
-		subGraphVerticeView.model.paramValues.withName(paramDef.name)?.value as V?
+		subGraphVerticeView.model.paramValues.getValue(paramDef.name)?.value as V?
 
 	override fun setValue(value: V?) {
 		value?.let {
-			subGraphVerticeView.model.paramValues.addOrReplace(paramDef.createValue(it))
+			subGraphVerticeView.model.setParamValue(paramDef.createValue(it))
 		} ?: throw IllegalArgumentException("value must not be null")
 	}
 }

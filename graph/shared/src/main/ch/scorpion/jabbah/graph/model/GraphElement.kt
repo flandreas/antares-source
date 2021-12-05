@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -74,6 +75,12 @@ interface GraphElement : Storable, Actor, Describable {
 
 	/** Called by services that updated this [GraphElement], which then informs all registered [GraphElementListener].*/
 	fun notifyStateChanged()
+
+	/**
+	 * Called by the specified [Graph] when its [GraphParamValues] have changed.
+	 * A [Vertice] containing properties that depend on [GraphParamValues] should react accordingly.
+	 */
+	fun graphParamsChanged(graph: Graph)
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

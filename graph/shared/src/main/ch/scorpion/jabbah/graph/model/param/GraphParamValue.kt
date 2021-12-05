@@ -2,10 +2,30 @@ package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.io.*
 
+/**
+ * Holds an quasi-immutable named value of a [GraphParamType].
+ * Quasi-immutable means immutable interface, but for technical reasons updated during deserialization.
+ */
 class GraphParamValue<T : Any> : Storable {
-	lateinit var name: String
-	lateinit var type: GraphParamType<T>
-	lateinit var value: T
+
+	companion object {
+		fun <T : Any> create(name: String, type: GraphParamType<T>, value: T): GraphParamValue<T> {
+			return GraphParamValue<T>().also {
+				it._name = name
+				it._type = type
+				it._value = value
+			}
+		}
+	}
+
+	private lateinit var _name: String
+	val name: String get() = _name
+
+	private lateinit var _type: GraphParamType<T>
+	val type: GraphParamType<T> get() = _type
+
+	private lateinit var _value: T
+	val value: T get() = _value
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
@@ -16,36 +36,38 @@ class GraphParamValue<T : Any> : Storable {
 	}
 
 	override fun read(reader: StoreReader) {
-		name =reader.readString("name")
-		type = GraphParamTypeRegistry.get(reader.readString("type"))
-		value = type.readValue("value", reader)
+		_name =reader.readString("name")
+		_type = GraphParamTypeRegistry.get(reader.readString("type"))
+		_value = type.readValue("value", reader)
 	}
 }
 
+/**
+ * A [Storable], quasi-immutable collection of [GraphParamValue].
+ * Quasi-immutable means immutable interface, but for technical reasons updated during deserialization.
+ */
 class GraphParamValues : Storable {
 
-	private val values = mutableListOf<GraphParamValue<*>>()
+	companion object {
+		fun withDefaults(defs: GraphParamDefinitions): GraphParamValues =
+			GraphParamValues().also {
+				it._values = defs.map { def -> def.createDefaultValue() }.toMutableList()
+			}
+	}
+
+	private var _values = mutableListOf<GraphParamValue<*>>()
+	val values: Collection<GraphParamValue<*>> get() = _values
 
 	val isEmpty: Boolean get() = values.isEmpty()
 
 	val isNotEmpty: Boolean get() = values.isNotEmpty()
 
-	fun withName(name: String): GraphParamValue<*>? = values.firstOrNull { it.name == name }
+	fun getValue(name: String): GraphParamValue<*>? = values.firstOrNull { it.name == name }
 
-	fun add(value: GraphParamValue<*>) {
-		if (values.any { it.name == value.name}) {
-			throw IllegalArgumentException("name '${value.name}' already exists")
+	fun withValue(value: GraphParamValue<*>): GraphParamValues =
+		GraphParamValues().also {
+			_values.filter { it.name != value.name }.toMutableList().also { it.add(value) }
 		}
-		values.add(value)
-	}
-
-	fun addOrReplace(value: GraphParamValue<*>) {
-		val existingValue = values.firstOrNull { it.name == value.name }
-		if (existingValue != null) {
-			values.remove(existingValue)
-		}
-		values.add(value)
-	}
 
 	/** ---- [Storable] interface */
 
@@ -59,8 +81,8 @@ class GraphParamValues : Storable {
 
 	override fun read(reader: StoreReader) {
 		if (reader.hasElement("values")) {
-			values.clear()
-			values.addAll(reader.readStorables("values"))
+			_values.clear()
+			_values.addAll(reader.readStorables("values"))
 		}
 	}
 }

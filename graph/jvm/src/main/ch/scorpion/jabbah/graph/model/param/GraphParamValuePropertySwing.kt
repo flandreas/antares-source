@@ -16,7 +16,7 @@ class GraphParamValuePropertySwing<V : Any>(
 
 	override fun readFromObject(bean: Any?) {
 		val subGraphVerticeView = bean as SubGraphVerticeViewImpl?
-		value = subGraphVerticeView?.model?.paramValues?.withName(paramDefinition.name)?.value
+		value = subGraphVerticeView?.model?.paramValues?.getValue(paramDefinition.name)?.value
 	}
 
 	override fun createCommand(newValue: V?): AbstractPropertyCommand<V> =

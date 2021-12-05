@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -67,6 +68,12 @@ open class GraphImpl(
 		get() = _elements.size
 
 	override var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
+
+	override var parameterValues: GraphParamValues = GraphParamValues()
+		set(value) {
+			field = value
+			_elements.forEach { it.graphParamsChanged(this) }
+		}
 
 	override val elements: ImmutableList<GraphElement>
 		get() = ImmutableList(_elements)

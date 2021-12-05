@@ -37,7 +37,7 @@ class SubGraphVerticeRefParamTest {
 
 		val subGraphVerticeRef = SubGraphVerticeRef.fromSubGraphVertice(metaGraph.containerDrawing.createSubGraphVertice(), GraphModule.metaGraphRepository)
 
-		assertEquals("Sepp", subGraphVerticeRef.paramValues.withName("test")?.value)
+		assertEquals("Sepp", subGraphVerticeRef.paramValues.getValue("test")?.value)
 	}
 
 	private fun createParamDef(): GraphParamDefinition<String> {
