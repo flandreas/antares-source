@@ -92,7 +92,9 @@ interface GraphOutput<T : Any> : GraphPort<T>, NetCombiner {
 	var subGraphOutputPort: SubGraphOutputPort<T>?
 }
 
-interface SubGraphPort<T : Any> : Port<T>, Storable
+interface SubGraphPort<T : Any> : Port<T>, Storable {
+	fun handleGraphPortChanged(graphPort: GraphPort<*>) {}
+}
 
 interface SubGraphInputPort<T : Any> : InputPort<T>, SubGraphPort<T> {
 

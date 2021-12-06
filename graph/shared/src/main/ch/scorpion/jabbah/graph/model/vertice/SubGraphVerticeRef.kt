@@ -72,7 +72,11 @@ class SubGraphVerticeRef(
 	private var interpreter: Interpreter? = null
 
 	var paramValues = GraphParamValues()
-		private set
+		private set(value) {
+			field = value
+			synchronizePorts()
+			stateChanged(null)
+		}
 
 	override val designError: DesignError? get() = _designError
 
@@ -125,6 +129,7 @@ class SubGraphVerticeRef(
 
 	override fun read(reader: StoreReader) {
 		graphUUID = UUID(reader.readString("uuid"))
+
 		if (reader.hasElement("params")) {
 			paramValues = reader.readStorable("params")
 		}
@@ -134,6 +139,11 @@ class SubGraphVerticeRef(
 			name = metaGraph.name
 			graphName = metaGraph.containerDrawing.model.graphName
 			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
+
+			if (paramValues.isNotEmpty) {
+				getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
+				synchronizePorts()
+			}
 
 			super.read(reader)
 
@@ -237,9 +247,7 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override fun getGraphIfPresent(): Graph? {
-		return graph
-	}
+	override fun getGraphIfPresent(): Graph? = graph
 
 	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		super.bind(repository, storableCreator)
@@ -298,8 +306,13 @@ class SubGraphVerticeRef(
 	/** ---- [SubGraphVerticeRef] */
 
 	fun setParamValue(paramValue: GraphParamValue<*>) {
-		paramValues = paramValues.withValue(paramValue)
-		forwardParamValues()
+		val newParamValues = paramValues.withValue(paramValue)
+
+		// First forward to Graph. Local update will then inform Views to sync their state,
+		// which depends on the Graph.
+		getGraph(repository, IOModule.storableCreator).parameterValues = newParamValues
+
+		paramValues = newParamValues
 	}
 
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
@@ -331,7 +344,15 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	private fun forwardParamValues() {
-		getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
+	private fun synchronizePorts() {
+		if (paramValues.isNotEmpty) {
+			val graph = getGraph(repository, IOModule.storableCreator)
+			for (port in getPorts()) {
+				val graphPort = graph.getGraphPort<Any>(port.name!!)
+				if (graphPort != null && port is SubGraphPort<*>) {
+					port.handleGraphPortChanged(graphPort)
+				}
+			}
+		}
 	}
 }
