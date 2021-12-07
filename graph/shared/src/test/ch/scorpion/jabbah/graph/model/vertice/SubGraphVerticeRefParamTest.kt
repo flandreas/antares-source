@@ -52,7 +52,9 @@ class SubGraphVerticeRefParamTest {
 	private fun createLibraryMetaGraph(paramDef: GraphParamDefinition<String>): MetaGraph {
 		val library = LibraryModule.libraryHolder.library
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library)
-		metaGraph.graph.model!!.parameterDefinitions.add(paramDef)
+		metaGraph.graph.model?.let {
+			it.parameterDefinitions = it.parameterDefinitions.withDefinition(paramDef)
+		}
 		return metaGraph
 	}
 }

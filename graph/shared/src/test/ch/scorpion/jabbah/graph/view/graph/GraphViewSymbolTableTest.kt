@@ -33,7 +33,7 @@ class GraphViewSymbolTableTest {
 
 	@Test
 	fun shouldContainGraphParams() {
-		builder.graph.parameterDefinitions.add(
+		builder.graph.parameterDefinitions = builder.graph.parameterDefinitions.withDefinition(
 			GraphParamDefinition.create("P", StringGraphParamType, "Test"))
 		val symbolTable = GraphSymbolTable(builder.graphView.graph!!)
 

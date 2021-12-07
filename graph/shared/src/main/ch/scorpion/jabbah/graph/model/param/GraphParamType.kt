@@ -2,10 +2,16 @@ package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 import kotlin.reflect.KClass
 
 interface GraphParamType<T : Any> {
+
+	/** The technical name also used as [Storable] key. */
 	val name: String
+
+	/** The translated name to be used in UIs.*/
+	val displayableName: String
 
 	val valueClass: KClass<T>
 
@@ -28,6 +34,10 @@ object GraphParamTypeRegistry {
 	fun clear() {
 		providers.clear()
 	}
+
+	fun getFirst(): GraphParamType<*>? = providers[providers.keys.first()]?.invoke()
+
+	fun getAll(): Collection<GraphParamType<*>> = providers.values.map { it.invoke() }
 
 	fun register(name: String, provider: GraphParamTypeProvider) {
 		if (providers.containsKey(name)) {

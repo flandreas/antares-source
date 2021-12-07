@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.io.*
 
-
 /**
  * Default constructor must be "empty" in order to be readable as [Storable].
  */
@@ -52,26 +51,39 @@ class GraphParamDefinition<T : Any>(
 
 class GraphParamDefinitions : Iterable<GraphParamDefinition<*>>, Storable {
 
-	private val definitions = mutableListOf<GraphParamDefinition<*>>()
+	private var _definitions = mutableListOf<GraphParamDefinition<*>>()
+	val definitions: Collection<GraphParamDefinition<*>> get() = _definitions
 
-	val size: Int get() = definitions.size
+	val size: Int get() = _definitions.size
 
-	val isEmpty: Boolean get() = definitions.isEmpty()
+	val isEmpty: Boolean get() = _definitions.isEmpty()
 
-	val isNotEmpty: Boolean get() = definitions.isNotEmpty()
+	val isNotEmpty: Boolean get() = _definitions.isNotEmpty()
 
-	override fun iterator(): Iterator<GraphParamDefinition<*>> = definitions.iterator()
+	fun get(index: Int): GraphParamDefinition<*> = _definitions[index]
 
-	fun contains(name: String): Boolean = definitions.any { it.name == name }
+	fun get(name: String): GraphParamDefinition<*>? = _definitions.firstOrNull { it.name == name }
 
-	fun withName(name: String): GraphParamDefinition<*>? = definitions.firstOrNull { it.name == name }
+	override fun iterator(): Iterator<GraphParamDefinition<*>> = _definitions.iterator()
 
-	fun add(definition: GraphParamDefinition<*>) {
-		if (definitions.any { it.name == definition.name }) {
-			throw IllegalArgumentException("name '${definition.name}' already exists")
+	fun contains(name: String): Boolean = _definitions.any { it.name == name }
+
+	fun withDefinition(def: GraphParamDefinition<*>): GraphParamDefinitions =
+		GraphParamDefinitions().also { newDefs ->
+			newDefs._definitions = _definitions.filter { it.name != def.name}.toMutableList()
+			newDefs._definitions.add(def)
 		}
-		definitions.add(definition)
-	}
+
+	fun withReplacedDefinition(name: String, def: GraphParamDefinition<*>): GraphParamDefinitions =
+		GraphParamDefinitions().also { newDefs ->
+			newDefs._definitions = _definitions.filter { it.name != name}.toMutableList()
+			newDefs._definitions.add(def)
+		}
+
+	fun withoutDefinition(name: String): GraphParamDefinitions =
+		GraphParamDefinitions().also { newDefs ->
+			newDefs._definitions = _definitions.filter { it.name != name}.toMutableList()
+		}
 
 	/** ---- [Storable] interface */
 
@@ -85,8 +97,8 @@ class GraphParamDefinitions : Iterable<GraphParamDefinition<*>>, Storable {
 
 	override fun read(reader: StoreReader) {
 		if (reader.hasElement("paramDefs")) {
-			definitions.clear()
-			definitions.addAll(reader.readStorables("paramDefs"))
+			_definitions.clear()
+			_definitions.addAll(reader.readStorables("paramDefs"))
 		}
 	}
 }

@@ -1,9 +1,10 @@
-package ch.scorpion.jabbah.graph
+package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.ui.param.GraphParamDefinitionsViewSwing
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.BorderLayout
 import java.awt.Component
@@ -33,7 +34,8 @@ class GraphParamDefinitionsPropertyRenderer : DefaultTableCellRenderer() {
  */
 class GraphParamDefinitionsPropertyEditor(
 	private val propertyName: String,
-	private val editable: Boolean
+	private val editable: Boolean,
+	private val graph: Graph
 ) : AbstractPropertyEditor() {
 
 	private val label = JLabel()
@@ -71,6 +73,8 @@ class GraphParamDefinitionsPropertyEditor(
 	}
 
 	private fun showDialog() {
-		// TODO
+		GraphParamDefinitionsViewSwing.showAsDialog(JFrame.getFrames()[0], graph)?.let {
+			paramDefs = it
+		}
 	}
 }

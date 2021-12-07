@@ -8,9 +8,8 @@ class GraphParamValuesTest {
 
 	@Test
 	fun shouldCopyWithNewValue() {
-		val defs = GraphParamDefinitions().also {
-			it.add(GraphParamDefinition.create("test", StringGraphParamType, "Default"))
-		}
+		val defs = GraphParamDefinitions().withDefinition(
+			GraphParamDefinition.create("test", StringGraphParamType, "Default"))
 		var values = GraphParamValues.withDefaults(defs)
 
 		values = values.withValue(GraphParamValue.create("test", StringGraphParamType, "New"))

@@ -59,13 +59,14 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
-	fun show() {
+	fun show(): DialogBuilder<T> {
 		BusyHandler.register(dialog, null)
 		setupWindowListener()
 		setupEscapeListener()
 		dialog.pack()
 		dialog.setLocationRelativeTo(parent)
 		dialog.isVisible = true
+		return this
 	}
 
 	private fun setupWindowListener() {

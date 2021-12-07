@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * Implicitly and dynamically defines the names of all [GraphPort]s as variable names.
@@ -30,5 +29,5 @@ class GraphSymbolTable(
 
 	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? =
 		graph.graphPorts.firstOrNull { it.name == name }?.let { Symbol(it.name!!) }
-			?: graph.parameterDefinitions.withName(name)?.let { Symbol(it.name) }
+			?: graph.parameterDefinitions.get(name)?.let { Symbol(it.name) }
 }

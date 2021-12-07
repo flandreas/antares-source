@@ -21,7 +21,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 	private var interactive: Boolean = false
 ) : AbstractProperty() {
 
-	protected var editor: Editor? = null
+	var editor: Editor? = null
 
 	protected var beanIds: List<Int> = listOf()
 

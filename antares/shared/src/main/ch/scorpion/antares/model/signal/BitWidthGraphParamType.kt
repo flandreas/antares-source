@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
@@ -13,7 +14,11 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override val name: String = "bitWidth"
 
+	override val displayableName: String by lazy { Translations.getString("${BitWidth.BASE_KEY}.name") }
+
 	override val valueClass: KClass<BitWidth> get() = BitWidth::class
+
+	override fun toString(): String = displayableName
 
 	override fun createValue(name: String, value: BitWidth): GraphParamValue<BitWidth> =
 		GraphParamValue.create(name, this, value)

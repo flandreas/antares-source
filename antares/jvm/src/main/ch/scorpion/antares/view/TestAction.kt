@@ -29,8 +29,7 @@ class TestAction(
 			defaultValue = BitWidth.BW_4
 		)
 
-		val paramDefs = GraphParamDefinitions()
-		paramDefs.add(param)
+		val paramDefs = GraphParamDefinitions().withDefinition(param)
 
 		property.value = paramDefs
 		property.writeToBean()

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
@@ -10,8 +11,12 @@ object StringGraphParamType : GraphParamType<String> {
 
 	override val name: String = "String"
 
+	override val displayableName: String by lazy { Translations.getString("graph.paramType.string.name") }
+
 	override val valueClass: KClass<String>
 		get() = String::class
+
+	override fun toString(): String = displayableName
 
 	override fun createValue(name: String, value: String): GraphParamValue<String> =
 		GraphParamValue.create(name, this, value)

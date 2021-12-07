@@ -48,6 +48,7 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
@@ -156,6 +157,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 		configureGraphParamValueProperties()
+		configureGraphParamValueEditors()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
@@ -237,6 +239,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				}
 			}
 		)
+	}
+
+	private fun configureGraphParamValueEditors() {
+		GraphParamValueEditorRegistry.register(BitWidthGraphParamType) { BitWidthGraphParamValueEditor() }
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

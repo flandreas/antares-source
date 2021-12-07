@@ -16,13 +16,12 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
-import ch.scorpion.jabbah.graph.GraphParamDefinitionsPropertyEditor
-import ch.scorpion.jabbah.graph.GraphParamDefinitionsPropertyRenderer
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 
 /**
@@ -58,7 +57,8 @@ object GraphModuleJvm : AbstractModule() {
 		registry.register(GraphParamDefinitions::class.java) {
 			GraphParamDefinitionsPropertyEditor(
 				propertyName = (it as CommandPropertySwing<GraphParamDefinitions>).displayName,
-				editable = it.editable
+				editable = it.editable,
+				graph = (it.editor!!.drawing as GraphView).graph!!
 			)
 		}
 	}
