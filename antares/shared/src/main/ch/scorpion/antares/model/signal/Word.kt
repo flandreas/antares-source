@@ -162,7 +162,7 @@ internal data class Word(
 	}
 
 	override val color: CompositeColor by lazy calcColor@ {
-		if (bitWidth == BitWidth.BW_1) {
+		if (bitWidth.width == BitWidth.BW_1.width) {
 			return@calcColor bitAt(0).color
 		}
 		if (zero) {

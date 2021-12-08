@@ -117,7 +117,8 @@ class TestCircuitBuilder(
 		graph.purelyScripted = true
 		graphScript?.let { graph.script = it }
 
-		graph.parameterDefinitions.add(GraphParamDefinition.create("BW", BitWidthGraphParamType, BitWidth.BW_4))
+		graph.parameterDefinitions = graph.parameterDefinitions.withDefinition(
+			GraphParamDefinition.create("BW", BitWidthGraphParamType, BitWidth.BW_4))
 
 		return graphView
 	}

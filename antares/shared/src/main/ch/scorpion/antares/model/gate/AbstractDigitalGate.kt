@@ -45,7 +45,7 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
 
 	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
-		if (vertice.bitWidth == BitWidth.BW_1) {
+		if (vertice.bitWidth.width == BitWidth.BW_1.width) {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateSingleBit(vertice), signalHandler)
 		} else {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateMultiBit(vertice), signalHandler)
