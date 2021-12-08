@@ -73,6 +73,12 @@ open class GraphImpl(
 	override val symbolTable: SymbolTable by lazy { GraphSymbolTable(this) }
 
 	override var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
+		set(value) {
+			if (field !== value) {
+				field = value
+				parameterValues = GraphParamValues.withDefaults(field)
+			}
+		}
 
 	override var parameterValues: GraphParamValues = GraphParamValues()
 		set(value) {
@@ -230,13 +236,16 @@ open class GraphImpl(
 		if (reader.hasAttribute("propDelay")) {
 			propagationDelay = reader.readLong("propDelay")
 		}
-		if (reader.hasElement("params")) {
-			parameterDefinitions = reader.readStorable("params")
-		}
 		_elements.clear()
 		reader.readStorables<GraphElement>("elements").forEach {
 			_elements.add(it)
 			handleGraphElementAdded(it)
+		}
+
+		// Read GraphParamDefinitions AFTER elements have been read, so that setting GraphParamDefinitions
+		// can apply them to all GraphElements.
+		if (reader.hasElement("params")) {
+			parameterDefinitions = reader.readStorable("params")
 		}
 	}
 

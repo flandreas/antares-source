@@ -337,9 +337,9 @@ class SubGraphVerticeRef(
 		getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
 
 	private fun setDefaultParamValues() {
-		graphUUID?.let {
-			repository.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
-				paramValues = GraphParamValues.withDefaults(defs)
+		graphUUID?.let { uuid ->
+			repository.getMetaGraph(uuid).graph.model?.parameterValues?.let {
+				paramValues = it
 			}
 		}
 	}
