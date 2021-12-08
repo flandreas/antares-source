@@ -9,9 +9,11 @@ import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.GraphView
 
 object AntaresProperties {
 
@@ -21,6 +23,21 @@ object AntaresProperties {
 		beanProvider: BeanProvider = componentBeanProvider,
 		parserFactory: ParserFactory? = null
 	): BitWidthPropertySwing = BitWidthPropertySwing(name, baseKey, beanProvider, parserFactory)
+
+	fun bitWidth(
+		name: String = "bitWidth",
+		baseKey: String = BitWidth.BASE_KEY,
+		beanProvider: BeanProvider = componentBeanProvider,
+		editor: Editor
+	): BitWidthPropertySwing {
+		val graphView = editor.drawing as GraphView
+		val parserFactory = if (graphView.graph != null) {
+			graphView.graph!!::createParser
+		} else {
+			null
+		}
+		return BitWidthPropertySwing(name, baseKey, beanProvider, parserFactory)
+	}
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
 		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)

@@ -5,10 +5,9 @@ import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.graph.view.GraphProperties
-import ch.scorpion.jabbah.graph.view.GraphView
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
@@ -28,18 +27,10 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
     override fun addProperties(bean: CircuitInOutView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    val graphView = editor.drawing as GraphView
-
-	    val bitWidth = if (graphView.graph != null) {
-			AntaresProperties.bitWidth(parserFactory = graphView.graph!!::createParser)
-	    } else {
-			AntaresProperties.bitWidth()
-	    }
-
 	    properties.add(modelId.bind(editor, bean.id, editable = false))
 	    properties.add(name.bind(editor, bean.id))
 	    properties.add(portType.bind(editor, bean.id))
-	    properties.add(bitWidth.bind(editor, bean.id))
+	    properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
 	    properties.add(orientation.bind(editor, bean.id))
 	    properties.add(color.bind(editor, bean.id))
 	    properties.add(signalRepresentation.bind(editor, bean.id))
