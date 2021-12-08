@@ -231,8 +231,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					val graphView = editor.drawing as GraphView
 					return BitWidthParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
-						propertyName = "<notUsed>",
-						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						propertyName = "BitWidth", // only used for logging
+						baseKey ="element.property.bitWidth",
 						beanProvider,
 						graphView.graph!!::createParser
 					)

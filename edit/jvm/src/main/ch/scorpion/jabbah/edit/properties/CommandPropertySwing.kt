@@ -17,8 +17,9 @@ open class CommandPropertySwing<V>(
 	protected val beanProvider: BeanProvider,
 	private val setterPropertyName: String = propertyName,
 	getterPropertyName: String = propertyName,
-	interactive: Boolean = false
-) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive) {
+	interactive: Boolean = false,
+	displayName: String? = null
+) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive, displayName) {
 
 	companion object {
 		private val LOG by logger(CommandPropertySwing::class)

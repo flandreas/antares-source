@@ -27,13 +27,15 @@ open class BitWidthPropertySwing(
 	propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
-	val parserFactory: ParserFactory? = null
+	val parserFactory: ParserFactory? = null,
+	displayName: String? = null
 ) : CommandPropertySwing<BitWidth>(
 	propertyName,
 	baseKey,
 	BitWidth::class.java,
 	beanProvider,
-	interactive = true
+	interactive = true,
+	displayName = displayName
 )
 
 class BitWidthParamValuePropertySwing(
@@ -42,7 +44,13 @@ class BitWidthParamValuePropertySwing(
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
 	parserFactory: ParserFactory? = null
-) : BitWidthPropertySwing(propertyName, baseKey, beanProvider, parserFactory) {
+) : BitWidthPropertySwing(
+	propertyName,
+	baseKey,
+	beanProvider,
+	parserFactory,
+	displayName = "${Translations.getString("$baseKey.name")} '${paramDefinition.name}'"
+) {
 
 	override fun readFromObject(bean: Any?) {
 		val subGraphVerticeView = bean as SubGraphVerticeViewImpl?

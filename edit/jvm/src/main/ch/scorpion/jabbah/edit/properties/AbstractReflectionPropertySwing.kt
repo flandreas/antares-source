@@ -18,7 +18,8 @@ abstract class AbstractReflectionPropertySwing<V>(
 	protected val baseKey: String,
 	private val valueClass: Class<*>,
 	protected val getterPropertyName: String = propertyName,
-	private var interactive: Boolean = false
+	private var interactive: Boolean = false,
+	private val displayName: String? = null
 ) : AbstractProperty() {
 
 	var editor: Editor? = null
@@ -70,7 +71,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 
 	override fun getName(): String = getterPropertyName
 
-	override fun getDisplayName(): String = Translations.getString("$baseKey.name")
+	override fun getDisplayName(): String = displayName ?: Translations.getString("$baseKey.name")
 
 	override fun getType(): Class<*> = valueClass
 
