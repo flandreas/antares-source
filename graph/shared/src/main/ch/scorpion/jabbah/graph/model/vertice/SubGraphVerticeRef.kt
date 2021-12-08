@@ -97,12 +97,6 @@ class SubGraphVerticeRef(
 	/** ---- [SubGraphVertice] */
 
 	override var graphUUID: UUID? = graphUUID
-		set(value) {
-			if (field != value) {
-				field = value
-				setDefaultParamValues()
-			}
-		}
 
 	override var graphName: Name = Name(TranslatableText())
 
@@ -130,15 +124,16 @@ class SubGraphVerticeRef(
 	override fun read(reader: StoreReader) {
 		graphUUID = UUID(reader.readString("uuid"))
 
-		if (reader.hasElement("params")) {
-			paramValues = reader.readStorable("params")
-		}
-
 		val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 		if (metaGraph != null) {
 			name = metaGraph.name
 			graphName = metaGraph.containerDrawing.model.graphName
 			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
+
+			// Establish GraphParamValues AFTER GraphElements have been read
+			if (reader.hasElement("params")) {
+				paramValues = reader.readStorable("params")
+			}
 
 			if (paramValues.isNotEmpty) {
 				getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
@@ -325,6 +320,8 @@ class SubGraphVerticeRef(
 		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)
 		}
+
+		setDefaultParamValues()
 	}
 
 	private fun isDeepExecution(signalHandler: SignalHandler): Boolean =
@@ -346,11 +343,12 @@ class SubGraphVerticeRef(
 
 	private fun synchronizePorts() {
 		if (paramValues.isNotEmpty) {
-			val graph = getGraph(repository, IOModule.storableCreator)
-			for (port in getPorts()) {
-				val graphPort = graph.getGraphPort<Any>(port.name!!)
-				if (graphPort != null && port is SubGraphPort<*>) {
-					port.handleGraphPortChanged(graphPort)
+			with(ensureGraph(IOModule.storableCreator)) {
+				for (port in getPorts()) {
+					val graphPort = getGraphPort<Any>(port.name!!)
+					if (graphPort != null && port is SubGraphPort<*>) {
+						port.handleGraphPortChanged(graphPort)
+					}
 				}
 			}
 		}
