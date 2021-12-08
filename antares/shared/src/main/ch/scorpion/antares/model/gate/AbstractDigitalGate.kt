@@ -120,7 +120,7 @@ abstract class AbstractDigitalGate(
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
 	    writer.writeIntegers("negatedInputs", negatedInputPortIds)
-	    if (bitWidth != BitWidth.BW_1) {
+	    if (bitWidth.width != BitWidth.BW_1.width) {
 		    bitWidth.write("bitWidth", writer)
 	    }
     }
