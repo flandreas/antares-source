@@ -301,7 +301,7 @@ class DigitalPortView(
 			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
 		}
 
-		if (getDigitalPort().bitWidth != BitWidth.BW_1) {
+		if (getDigitalPort().bitWidth.width != BitWidth.BW_1.width) {
 			content.appendLine()
 			content.append("${Translations.getString("${BitWidth.BASE_KEY}.name")}: ${getDigitalPort().bitWidth.width}")
 		}
@@ -351,7 +351,7 @@ class DigitalPortView(
 	fun getDigitalPort(): DigitalPort = port as DigitalPort
 
 	private fun buildBitWidthAnnotation() {
-		bitWidthAnnotation = if (getDigitalPort().bitWidth != BitWidth.BW_1) {
+		bitWidthAnnotation = if (getDigitalPort().bitWidth.width != BitWidth.BW_1.width) {
 			if (centerExternalLabel && portLabelPosition == PortLabelPosition.EXTERNAL) {
 				// The external label has priority over BitWithAnnotation
 				null

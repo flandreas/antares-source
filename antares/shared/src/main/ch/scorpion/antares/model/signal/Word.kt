@@ -347,7 +347,7 @@ internal data class Word(
 	}
 
 	override fun isConsistentWith(other: DigitalSignal?): Boolean {
-		if (this.bitWidth != other?.bitWidth) {
+		if (this.bitWidth.width != other?.bitWidth?.width) {
 			return false
 		}
 		bits.forEachIndexed { index, bit ->
