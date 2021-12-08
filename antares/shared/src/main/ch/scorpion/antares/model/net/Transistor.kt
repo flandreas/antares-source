@@ -4,17 +4,11 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.effectiveGateInputBit
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -107,6 +101,7 @@ class Transistor(
 		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, canBeUndefined = true))
 	}
 
+
 	/** ---- [GraphElement] interface */
 
 	override val type: String get() =
@@ -121,17 +116,21 @@ class Transistor(
 			TransistorType.P -> TYPE_P_DESC
 		}
 
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 		writer.writeString("type", transistorType.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 		if (reader.hasAttribute("logic")) {
 			// Backward compatibility: Transistor used to extend TriStateBufferGate
 			transistorType = logicToType(Logic.withName(reader.readString("logic")))

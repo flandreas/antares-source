@@ -11,13 +11,12 @@ class TunnelViewBeanInfo : DigitalComponentBeanInfo<TunnelView>() {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()
-	    private val bitWidth = AntaresProperties.bitWidth()
     }
 
     override fun addProperties(bean: TunnelView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
 	    properties.add(name.bind(editor, bean.id))
-	    properties.add(bitWidth.bind(editor, bean.id))
+	    properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
     }
 }

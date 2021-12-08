@@ -9,9 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.LogEvent
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -94,6 +92,12 @@ class Probe(
 		this.hasOutput = hasOutput
 	}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [DigitalSignalSource] interface */
 
 	@Suppress("UNUSED_PARAMETER")
@@ -118,7 +122,7 @@ class Probe(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 		writer.writeBoolean("hasOutput", hasOutput)
 		if (isLogging) {
 			writer.writeBoolean("logging", isLogging)
@@ -127,7 +131,7 @@ class Probe(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 		hasOutput = reader.readBoolean("hasOutput")
 		if (reader.hasAttribute("logging")) {
 			isLogging = reader.readBoolean("logging")

@@ -4,15 +4,14 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -67,16 +66,22 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 	}
 
 	/** ---- [Actor] interface */

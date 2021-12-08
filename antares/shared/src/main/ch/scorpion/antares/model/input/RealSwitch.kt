@@ -3,16 +3,11 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.io.Storable
@@ -88,6 +83,12 @@ class RealSwitch(
 		addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, null, bitWidth))
 	}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [NetTopologyChanger] interface */
 
 	private val netTopologyChangeListeners = mutableListOf<NetTopologyChangeListener>()
@@ -124,15 +125,15 @@ class RealSwitch(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (bitWidth != BitWidth.BW_1) {
-			writer.writeInt("bitWidth", bitWidth.width)
+		if (bitWidth.width != BitWidth.BW_1.width) {
+			bitWidth.write("bitWidth", writer)
 		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("bitWidth")) {
-			bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+			bitWidth = BitWidth.read("bitWidth", reader)
 		}
 	}
 

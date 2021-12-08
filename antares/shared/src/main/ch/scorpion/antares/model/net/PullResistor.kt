@@ -4,10 +4,7 @@ import ch.scorpion.antares.model.net.PullDirection.HIGH
 import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -94,6 +91,12 @@ class PullResistor(
 
 	fun getOutputPort(): DigitalPort = getOutput<DigitalSignal>() as DigitalPort
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [WeakOutputPortBehaviour] interface */
 
 	override fun withdrawWeakOutput(netSignal: DigitalSignal?, port: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
@@ -115,13 +118,13 @@ class PullResistor(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 		writer.writeString("pullDir", pullDirection.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 		pullDirection = PullDirection.withName(reader.readString("pullDir"))
 	}
 

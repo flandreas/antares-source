@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.signal.BitWidthPropertySwing
-import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -17,12 +16,14 @@ import ch.scorpion.jabbah.graph.view.GraphView
 
 object AntaresProperties {
 
+	/*
 	fun bitWidth(
 		name: String = "bitWidth",
 		baseKey: String = BitWidth.BASE_KEY,
 		beanProvider: BeanProvider = componentBeanProvider,
 		parserFactory: ParserFactory? = null
 	): BitWidthPropertySwing = BitWidthPropertySwing(name, baseKey, beanProvider, parserFactory)
+	*/
 
 	fun bitWidth(
 		name: String = "bitWidth",

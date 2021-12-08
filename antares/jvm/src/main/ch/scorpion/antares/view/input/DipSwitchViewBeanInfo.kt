@@ -13,7 +13,6 @@ class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()
-		private val bitWidth = AntaresProperties.bitWidth()
 		private val initialValue = CommandPropertySwing("initialValue", "element.property.DipSwitch.initialValue", Long::class.java, componentBeanProvider)
 	}
 
@@ -21,7 +20,7 @@ class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 		super.addProperties(bean, editor, properties)
 
 		properties.add(name.bind(editor, bean.id))
-		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
 		properties.add(initialValue.bind(editor, bean.id))
 	}
 }
