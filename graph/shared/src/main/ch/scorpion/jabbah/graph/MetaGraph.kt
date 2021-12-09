@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -58,6 +59,8 @@ class MetaGraph(
 				field = value
 			}
 		}
+
+	var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
 
 	val name: String get() = graph.model!!.name.value
 
@@ -105,6 +108,13 @@ class MetaGraph(
 	override fun write(writer: StoreWriter) {
 		writer.writeStorable("graph", graph)
 		writer.writeStorable("container", containerDrawing)
+
+		// GraphParamDefinitions might have been changed by Graph
+		parameterDefinitions = graph.model!!.parameterDefinitions
+
+		if (parameterDefinitions.isNotEmpty) {
+			writer.writeStorable("params", parameterDefinitions)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -123,11 +133,16 @@ class MetaGraph(
 			referenceId = globalContainerId,
 			additionalInfo = aContainerDrawing,
 			resolveAfter = listOf(globalContainerId, globalGraphId)))
+
+		if (reader.hasElement("params")) {
+			parameterDefinitions = reader.readStorable("params")
+		}
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "graph") {
 			graph = reference.additionalInfo as GraphStorable
+			graph.model!!.parameterDefinitions = parameterDefinitions
 		}
 		if (reference.name == "container") {
 			containerDrawing = reference.additionalInfo as ContainerDrawing
@@ -157,11 +172,13 @@ class MetaGraph(
 		StorableCloner
 			.clone(graph)
 			.also {
+				it.model!!.parameterDefinitions = parameterDefinitions
 				Companion.copyGraphDataFromContainerModel(it.graphView.graph!!, containerDrawing)
 			}
 
 	fun cloneGraphModel(storableCreator: StorableCreator): Graph {
 		val clone = StorableCloner.clonePreservingIdentities(graph.model!!, storableCreator)
+		clone.parameterDefinitions = parameterDefinitions
 		copyGraphDataFromContainerModel(clone)
 		return clone
 	}

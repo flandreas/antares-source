@@ -72,6 +72,7 @@ interface Graph : Namable, Describable, Storable {
 	 */
 	val symbolTable: SymbolTable
 
+	/** Non-persistent definitions of parameters of this [Graph]. Made persistent by higher-level object.*/
 	var parameterDefinitions: GraphParamDefinitions
 
 	/** Non-persistent values for [parameterDefinitions]. */

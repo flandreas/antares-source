@@ -220,9 +220,6 @@ open class GraphImpl(
 			writer.writeBoolean("purelyScripted", purelyScripted)
 		}
 		propagationDelay?.let { writer.writeLong("propDelay", it) }
-		if (parameterDefinitions.isNotEmpty) {
-			writer.writeStorable("params", parameterDefinitions)
-		}
 		writer.writeStorables("elements", _elements.iterator())
 	}
 
@@ -240,12 +237,6 @@ open class GraphImpl(
 		reader.readStorables<GraphElement>("elements").forEach {
 			_elements.add(it)
 			handleGraphElementAdded(it)
-		}
-
-		// Read GraphParamDefinitions AFTER elements have been read, so that setting GraphParamDefinitions
-		// can apply them to all GraphElements.
-		if (reader.hasElement("params")) {
-			parameterDefinitions = reader.readStorable("params")
 		}
 	}
 
