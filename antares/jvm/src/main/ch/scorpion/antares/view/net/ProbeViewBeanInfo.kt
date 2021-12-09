@@ -13,6 +13,7 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()
+	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val signalRep = AntaresProperties.signalRepresentation()
 	    private val output = CommandPropertySwing("hasOutput", "element.property.hasOutput", Boolean::class.java, componentBeanProvider)
 	    private val logging = CommandPropertySwing("logging", "element.property.logging", Boolean::class.java, componentBeanProvider)
@@ -22,7 +23,7 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
         super.addProperties(bean, editor, properties)
 
 	    properties.add(name.bind(editor, bean.id))
-	    properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+	    properties.add(bitWidth.bind(editor, bean.id))
 	    properties.add(signalRep.bind(editor, bean.id))
 	    properties.add(output.bind(editor, bean.id, editable = !bean.model.isConnected))
 	    properties.add(logging.bind(editor, bean.id))

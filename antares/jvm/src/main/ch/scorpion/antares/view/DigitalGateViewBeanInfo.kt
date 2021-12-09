@@ -12,6 +12,7 @@ open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalCompo
 
     companion object {
 	    private val inputCount = InputCountPropertySwing(componentBeanProvider)
+	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val outputPortName = CommandPropertySwing("outputPortName", AbstractDigitalGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
 	    private val negateInput = Array(8) { portId ->
 		    CommandPropertySwing("negateInput${portId + 1}", "${AbstractLogicGateView.BASE_KEY_NEGATE_INPUT}${portId + 1}", Boolean::class.java, componentBeanProvider)
@@ -22,7 +23,7 @@ open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalCompo
         super.addProperties(bean, editor, properties)
 
 	    properties.add(inputCount.bind(editor, bean.id, editable = true, filter = { it.ordinal >= 2 }))
-	    properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+	    properties.add(bitWidth.bind(editor, bean.id))
 	    properties.add(outputPortName.bind(editor, bean.id))
 
 	    for (i in 0 until bean.chosenInputCount.count) {

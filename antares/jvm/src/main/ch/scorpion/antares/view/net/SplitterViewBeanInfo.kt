@@ -12,6 +12,7 @@ import com.l2fprod.common.propertysheet.Property
 class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
 
     companion object {
+	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val branchCount = CommandPropertySwing("branchCount", "element.property.branchCount", BranchCount::class.java, componentBeanProvider)
 	    private val handedness = AntaresProperties.handedness(baseKey = "element.property.Splitter.handedness")
 	    private val portViewSpacing = AntaresProperties.portViewSpacing()
@@ -25,7 +26,7 @@ class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
 
         val connected = bean.model.isConnected
 
-	    properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id, editable = !connected))
+	    properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
 	    properties.add(branchCount.bind(editor, bean.id, editable = !connected, filter = { bean.model.supportedBranchCounts.contains(it)} ))
 	    properties.add(handedness.bind(editor, bean.id, editable = !connected))
 	    properties.add(portViewSpacing.bind(editor, bean.id))

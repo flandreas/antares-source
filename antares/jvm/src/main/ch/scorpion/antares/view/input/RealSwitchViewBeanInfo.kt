@@ -11,12 +11,13 @@ import com.l2fprod.common.propertysheet.Property
 class RealSwitchViewBeanInfo : DigitalComponentBeanInfo<RealSwitchView>() {
 
 	companion object {
+		private val bitWidth = AntaresProperties.bitWidth()
 		private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: RealSwitchView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(toggle.bind(editor, bean.id))
 	}
 }

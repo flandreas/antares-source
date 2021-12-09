@@ -11,6 +11,7 @@ import com.l2fprod.common.propertysheet.Property
 class ConstantViewBeanInfo : DigitalComponentBeanInfo<ConstantView>() {
 
 	companion object {
+		private val bitWidth = AntaresProperties.bitWidth()
 		private val signalRep = AntaresProperties.signalRepresentation()
 		private val value = CommandPropertySwing("value", "element.property.Constant.value", Long::class.java, componentBeanProvider)
 	}
@@ -18,7 +19,7 @@ class ConstantViewBeanInfo : DigitalComponentBeanInfo<ConstantView>() {
 	override fun addProperties(bean: ConstantView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(signalRep.bind(editor, bean.id))
 		properties.add(value.bind(editor, bean.id))
 	}

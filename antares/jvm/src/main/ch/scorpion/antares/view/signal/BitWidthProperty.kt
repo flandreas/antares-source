@@ -3,16 +3,17 @@ package ch.scorpion.antares.view.signal
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamValueCommand
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
@@ -27,7 +28,6 @@ open class BitWidthPropertySwing(
 	propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
-	val parserFactory: ParserFactory? = null,
 	displayName: String? = null
 ) : CommandPropertySwing<BitWidth>(
 	propertyName,
@@ -43,12 +43,10 @@ class BitWidthParamValuePropertySwing(
 	propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider = componentBeanProvider,
-	parserFactory: ParserFactory? = null
 ) : BitWidthPropertySwing(
 	propertyName,
 	baseKey,
 	beanProvider,
-	parserFactory,
 	displayName = "${Translations.getString("$baseKey.name")} '${paramDefinition.name}'"
 ) {
 
@@ -100,13 +98,16 @@ class BitWidthRenderer : DefaultListCellRenderer(), TableCellRenderer {
 class BitWidthEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
-	private val parserFactory: ParserFactory? = null,
+	private val graphEditor: Editor,
 	filter: (BitWidth) -> Boolean = { _ -> true }
 ) : AbstractPropertyEditor() {
 
 	private val comboBoxEditor = ComboBoxPropertyEditor()
 	private val button = JButton()
 	private val comboBox: JComboBox<BitWidth> get() = comboBoxEditor.customEditor as JComboBox<BitWidth>
+
+	private val graph = (graphEditor.drawing as GraphView).graph!!
+	private val parserFactory = graph::createParser
 
 	private val isExpression: Boolean get() = parserFactory != null && comboBox.selectedItem is BitWidthExpression
 
@@ -171,6 +172,9 @@ class BitWidthEditor(
 			parserFactory = parserFactory!!
 		) ?.let {
 			(comboBox.selectedItem as BitWidthExpression).expression = it
+			(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph)?.let { value ->
+				(comboBox.selectedItem as BitWidthExpression).value = value
+			}
 		}
 	}
 }

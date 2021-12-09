@@ -214,7 +214,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			BitWidthEditor(
 				propertyName = it.displayName,
 				editable = it.isEditable,
-				parserFactory = (it as BitWidthPropertySwing).parserFactory,
+				graphEditor = (it as BitWidthPropertySwing).editor!!,
 				it.filter )
 		}
 	}
@@ -228,13 +228,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
-					val graphView = editor.drawing as GraphView
 					return BitWidthParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
 						propertyName = "BitWidth", // only used for logging
 						baseKey ="element.property.bitWidth",
 						beanProvider,
-						graphView.graph!!::createParser
 					)
 				}
 			}

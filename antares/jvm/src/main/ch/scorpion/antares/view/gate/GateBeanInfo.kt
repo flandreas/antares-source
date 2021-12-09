@@ -27,9 +27,12 @@ class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 
 @Suppress("unused")
 class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
+	companion object {
+		private val bitWidth = AntaresProperties.bitWidth()
+	}
 	override fun addProperties(bean: BufferGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 	}
 }
 
@@ -37,6 +40,7 @@ class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 	companion object {
 		private val delay = CommandPropertySwing("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
+		private val bitWidth = AntaresProperties.bitWidth()
 		private val orientation = EditProperties.orientation()
 	}
 
@@ -44,7 +48,7 @@ class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 		super.addProperties(bean, editor, properties)
 
 		properties.add(delay.bind(editor, bean.id))
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(orientation.bind(editor, bean.id))
 	}
 }
@@ -57,9 +61,12 @@ class NorGateViewBeanInfo : DigitalGateViewBeanInfo<NorGateView>()
 
 @Suppress("unused")
 class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>() {
+	companion object {
+		private val bitWidth = AntaresProperties.bitWidth()
+	}
 	override fun addProperties(bean: NotGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 	}
 }
 
@@ -70,6 +77,7 @@ class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
 class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
 	companion object {
 		val enableLogic = CommandPropertySwing("enableLogic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
+		private val bitWidth = AntaresProperties.bitWidth()
 		val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
 	}
 
@@ -77,7 +85,7 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGa
 		super.addProperties(bean, editor, properties)
 
 		properties.add(enableLogic.bind(editor, bean.id))
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(handedness.bind(editor, bean.id))
 	}
 }

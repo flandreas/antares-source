@@ -14,6 +14,7 @@ class TransistorViewBeanInfo : DigitalComponentBeanInfo<TransistorView>() {
 		private val name = EditProperties.untranslatableName()
 		private val transistorType = AntaresProperties.transistorType()
 		private val transistorSymbol = AntaresProperties.transistorSymbol()
+		private val bitWidth = AntaresProperties.bitWidth()
 		private val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
 	}
 
@@ -23,7 +24,7 @@ class TransistorViewBeanInfo : DigitalComponentBeanInfo<TransistorView>() {
 		properties.add(name.bind(editor, bean.id))
 		properties.add(transistorType.bind(editor, bean.id))
 		properties.add(transistorSymbol.bind(editor, bean.id))
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(handedness.bind(editor, bean.id))
 	}
 }

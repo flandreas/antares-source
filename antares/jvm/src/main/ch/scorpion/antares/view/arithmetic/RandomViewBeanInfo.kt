@@ -8,8 +8,12 @@ import com.l2fprod.common.propertysheet.Property
 @Suppress("unused")
 class RandomViewBeanInfo : DigitalComponentBeanInfo<RandomView>() {
 
+	companion object {
+		private val bitWidth = AntaresProperties.bitWidth()
+	}
+
 	override fun addProperties(bean: RandomView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(AntaresProperties.bitWidth(editor = editor).bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 	}
 }
