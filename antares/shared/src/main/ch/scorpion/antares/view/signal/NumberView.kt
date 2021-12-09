@@ -25,7 +25,7 @@ import kotlin.math.max
  */
 class NumberView(
 	representation: DigitalSignalRepresentation,
-	bitWidth: BitWidth,
+	val bitWidth: BitWidth,
 	drawDigitBorder: Boolean = true,
 	drawBox: Boolean = true,
 	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()

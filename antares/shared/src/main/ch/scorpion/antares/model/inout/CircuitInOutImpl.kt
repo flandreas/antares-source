@@ -243,6 +243,7 @@ class CircuitInOutImpl(
 				val oldValue = getDigitalPort().bitWidth
 				getDigitalPort().bitWidth = value
 				if (!readingFromStore) {
+					stateChanged(null)
 					eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
 				}
 			}
