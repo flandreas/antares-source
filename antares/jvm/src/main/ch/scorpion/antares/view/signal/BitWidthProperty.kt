@@ -111,7 +111,7 @@ class BitWidthRenderer : DefaultListCellRenderer(), TableCellRenderer {
 class BitWidthEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
-	private val graphEditor: Editor,
+	graphEditor: Editor?,
 	private val errorCallback: (DslError) -> Unit,
 	filter: (BitWidth) -> Boolean = { _ -> true }
 ) : AbstractPropertyEditor() {
@@ -120,8 +120,8 @@ class BitWidthEditor(
 	private val button = JButton()
 	private val comboBox: JComboBox<BitWidth> get() = comboBoxEditor.customEditor as JComboBox<BitWidth>
 
-	private val graph = (graphEditor.drawing as GraphView).graph!!
-	private val parserFactory = graph::createParser
+	private val graph = (graphEditor?.drawing as GraphView?)?.graph
+	private val parserFactory = if (graph != null) graph::createParser else null
 
 	private val isExpression: Boolean get() = parserFactory != null && comboBox.selectedItem is BitWidthExpression
 
@@ -132,6 +132,7 @@ class BitWidthEditor(
 		if (parserFactory != null) {
 			list.add(BitWidthExpression(""))
 		}
+
 		comboBoxEditor.setAvailableValues(list.toTypedArray())
 
 		comboBox.addItemListener {
@@ -152,6 +153,12 @@ class BitWidthEditor(
 
 	override fun setValue(value: Any?) {
 		super.setValue(value)
+		if (value is BitWidthExpression) {
+			(comboBox.getItemAt(comboBox.itemCount - 1) as? BitWidthExpression)?.let {
+				it.expression = value.expression
+				it.value = value.value
+			}
+		}
 		comboBoxEditor.value = value
 		updateButton()
 	}
@@ -188,7 +195,7 @@ class BitWidthEditor(
 			(comboBox.selectedItem as BitWidthExpression).expression = it
 
 			try {
-				(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph)?.let { value ->
+				(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph!!)?.let { value ->
 					(comboBox.selectedItem as BitWidthExpression).value = value
 				}
 			} catch (e: DslError) {

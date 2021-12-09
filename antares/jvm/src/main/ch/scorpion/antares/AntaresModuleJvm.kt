@@ -214,7 +214,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			BitWidthEditor(
 				propertyName = prop.displayName,
 				editable = prop.isEditable,
-				graphEditor = (prop as BitWidthPropertySwing).editor!!,
+				graphEditor = (prop as BitWidthPropertySwing).editor,
 				errorCallback = { prop.dslError = it },
 				prop.filter )
 		}
