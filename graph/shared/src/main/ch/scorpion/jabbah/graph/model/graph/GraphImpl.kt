@@ -37,9 +37,13 @@ open class GraphImpl(
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
 	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
-		LOG.trace("handling GraphPortNameChanged")
-		if (it.newName != null && contains(it.graphPort) && existsGraphPortNameExcluding(it.newName, it.graphPort)) {
-			throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+		if (it.newName != null &&  contains(it.graphPort)) {
+			if (existsGraphPortNameExcluding(it.newName, it.graphPort)) {
+				if (parameterDefinitions.contains(it.newName)) {
+					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
+				}
+				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+			}
 		}
 	}
 
@@ -303,6 +307,7 @@ open class GraphImpl(
 
 	private fun existsGraphPortNameExcluding(name: String, excludedGraphPort: GraphPort<Any>): Boolean {
 		return graphPorts.any { it != excludedGraphPort && it.name == name }
+			|| parameterDefinitions.contains(name)
 	}
 
 	private fun getOscilloscope(): Oscilloscope? {
