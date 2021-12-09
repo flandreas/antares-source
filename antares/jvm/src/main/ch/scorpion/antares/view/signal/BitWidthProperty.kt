@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.signal
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
@@ -36,7 +37,19 @@ open class BitWidthPropertySwing(
 	beanProvider,
 	interactive = true,
 	displayName = displayName
-)
+) {
+	var dslError: DslError? = null
+
+	override fun writeToBean(force: Boolean) {
+		dslError?.let { throw it }
+		super.writeToBean(force)
+	}
+
+	override fun readFromObject(bean: Any?) {
+		super.readFromObject(bean)
+		dslError = null
+	}
+}
 
 class BitWidthParamValuePropertySwing(
 	private val paramDefinition: GraphParamDefinition<BitWidth>,
@@ -99,6 +112,7 @@ class BitWidthEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
 	private val graphEditor: Editor,
+	private val errorCallback: (DslError) -> Unit,
 	filter: (BitWidth) -> Boolean = { _ -> true }
 ) : AbstractPropertyEditor() {
 
@@ -172,8 +186,13 @@ class BitWidthEditor(
 			parserFactory = parserFactory!!
 		) ?.let {
 			(comboBox.selectedItem as BitWidthExpression).expression = it
-			(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph)?.let { value ->
-				(comboBox.selectedItem as BitWidthExpression).value = value
+
+			try {
+				(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph)?.let { value ->
+					(comboBox.selectedItem as BitWidthExpression).value = value
+				}
+			} catch (e: DslError) {
+				errorCallback(e)
 			}
 		}
 	}

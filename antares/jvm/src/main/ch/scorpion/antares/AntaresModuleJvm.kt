@@ -210,12 +210,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
 
-		registry.register(BitWidth::class.java) {
+		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(
-				propertyName = it.displayName,
-				editable = it.isEditable,
-				graphEditor = (it as BitWidthPropertySwing).editor!!,
-				it.filter )
+				propertyName = prop.displayName,
+				editable = prop.isEditable,
+				graphEditor = (prop as BitWidthPropertySwing).editor!!,
+				errorCallback = { prop.dslError = it },
+				prop.filter )
 		}
 	}
 
