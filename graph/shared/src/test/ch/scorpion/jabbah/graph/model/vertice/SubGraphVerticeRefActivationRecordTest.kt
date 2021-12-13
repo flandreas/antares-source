@@ -12,6 +12,9 @@ import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
+import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
 import io.mockk.mockk
@@ -25,6 +28,7 @@ class SubGraphVerticeRefActivationRecordTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
+			GraphParamTypeRegistry.register(StringGraphParamType.name) { LongGraphParamType }
 		}
 	}
 
@@ -39,20 +43,7 @@ class SubGraphVerticeRefActivationRecordTest {
 
 	@Test
 	fun shouldAccessGraphPortsAsVariables() {
-		val input = mockk<InputPort<Long>>()
-		every { input.getIncomingSignal() } returns 42L
-
-		val output = mockk<OutputPort<Long>>()
-		val outputSlot = slot<Long>()
-		every { output.setOutgoingSignalBuffered(capture(outputSlot), any()) } returns Unit
-
-		val vv = mockk<SubGraphVerticeRef>()
-		every { vv.hasPort(any<String>()) } returns true
-		every { vv.hasPort(any<Int>()) } returns true
-		every { vv.hasInput(any()) } returns true
-		every { vv.hasOutput(any()) } returns true
-		every { vv.getInput<Long>(any<String>()) } returns input
-		every { vv.getOutput<Long>(any<String>())} returns output
+		val vv = createSubGraphVerticeRefMock()
 
 		val activationRecord = SubGraphVerticeRefActivationRecord(vv, signalHandler)
 		val memory = Memory(activationRecord)
@@ -66,5 +57,44 @@ class SubGraphVerticeRefActivationRecordTest {
 		val result = interpreter.interpret()
 
 		assertEquals(84L, result)
+	}
+
+	@Test
+	fun shouldAccessGraphParamsAsVariables() {
+		val paramValue = GraphParamValue.create("L", LongGraphParamType, 99L)
+
+		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
+		every { vv.paramValues } returns GraphParamValues().withValue(paramValue)
+
+		val activationRecord = SubGraphVerticeRefActivationRecord(vv, signalHandler)
+		val memory = Memory(activationRecord)
+		val parser = Parser(Lexer("L"), null)
+		val interpreter = Interpreter(parser.parse(), memory)
+
+		val result = interpreter.interpret()
+
+		assertEquals(99L, result)
+	}
+
+	private fun createSubGraphVerticeRefMock(paramValue: GraphParamValue<Long>? = null): SubGraphVerticeRef {
+		val input = mockk<InputPort<Long>>()
+		every { input.getIncomingSignal() } returns 42L
+
+		val output = mockk<OutputPort<Long>>()
+		val outputSlot = slot<Long>()
+		every { output.setOutgoingSignalBuffered(capture(outputSlot), any()) } returns Unit
+
+		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
+		every { vv.hasPort(any<String>()) } returns true
+		every { vv.hasPort(any<Int>()) } returns true
+		every { vv.hasInput(any()) } returns true
+		every { vv.hasOutput(any()) } returns true
+		every { vv.getInput<Long>(any<String>()) } returns input
+		every { vv.getOutput<Long>(any<String>())} returns output
+		paramValue?.let {
+			every { vv.paramValues } returns GraphParamValues().withValue(it)
+		}
+
+		return vv
 	}
 }

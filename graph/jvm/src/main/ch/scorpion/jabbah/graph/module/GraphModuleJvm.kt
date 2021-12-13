@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
@@ -77,6 +78,25 @@ object GraphModuleJvm : AbstractModule() {
 						propertyName = "<notUsed>",
 						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
 						valueClass = String::class.java,
+						beanProvider
+					)
+				}
+			}
+		)
+
+		GraphParamValuePropertyFactoryRegistry.register(
+			LongGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return GraphParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<Long>,
+						propertyName = "<notUsed>",
+						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						valueClass = Long::class.java,
 						beanProvider
 					)
 				}

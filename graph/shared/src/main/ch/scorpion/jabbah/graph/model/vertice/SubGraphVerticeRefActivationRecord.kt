@@ -42,10 +42,12 @@ open class SubGraphVerticeRefActivationRecord(
 	}
 
 	override fun getValue(variable: Variable): Any {
-		if (!verticeRef.hasInput(variable.token.value!!)) {
-			throw RuntimeError(variable.location, Translations.getString("graph.dsl.inputNotFound.msg", variable.token.value!!))
+		if (verticeRef.hasInput(variable.token.value!!)) {
+			return verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()!!
 		}
-		return verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()!!
+		verticeRef.paramValues.getTypedValue<Any>(variable.token.value!!)?.let {
+			return it.type.toDslValue(it.value)
+		} ?: throw RuntimeError(variable.location, Translations.getString("graph.dsl.inputNotFound.msg", variable.token.value!!))
 	}
 
 	override fun getOptionalValue(variable: Variable): Any? =
