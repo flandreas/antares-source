@@ -63,6 +63,11 @@ class GraphParamDefinitionsController(
 		updateActions()
 	}
 
+	fun formReset() {
+		isFormDirty = false
+		updateActions()
+	}
+
 	private fun updateActions() {
 		addAction.enabled = true
 		removeAction.enabled = selectedDefinition != null

@@ -88,6 +88,8 @@ class GraphParamDefinitionsViewSwing(
 		invalidate()
 		revalidate()
 		repaint()
+
+		controller.formReset()
 	}
 
 	private fun fillForm(def: GraphParamDefinition<*>) {
@@ -100,6 +102,8 @@ class GraphParamDefinitionsViewSwing(
 		invalidate()
 		revalidate()
 		repaint()
+
+		controller.formReset()
 	}
 
 	private fun updateFormEnabledness() {
