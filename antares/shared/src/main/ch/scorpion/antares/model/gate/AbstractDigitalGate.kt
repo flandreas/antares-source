@@ -4,10 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
@@ -45,7 +42,7 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
 
 	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
-		if (vertice.bitWidth == BitWidth.BW_1) {
+		if (vertice.bitWidth.width == BitWidth.BW_1.width) {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateSingleBit(vertice), signalHandler)
 		} else {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateMultiBit(vertice), signalHandler)
@@ -108,6 +105,12 @@ abstract class AbstractDigitalGate(
 		addPort(createOutputPort())
 	}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
@@ -117,8 +120,8 @@ abstract class AbstractDigitalGate(
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
 	    writer.writeIntegers("negatedInputs", negatedInputPortIds)
-	    if (bitWidth != BitWidth.BW_1) {
-	    	writer.writeString("bitWidth", bitWidth.customName)
+	    if (bitWidth.width != BitWidth.BW_1.width) {
+		    bitWidth.write("bitWidth", writer)
 	    }
     }
 
@@ -134,7 +137,7 @@ abstract class AbstractDigitalGate(
 		    }
 	    }
 	    if (reader.hasAttribute("bitWidth")) {
-	    	bitWidth = BitWidth.withName(reader.readString("bitWidth"))
+		    bitWidth = BitWidth.read("bitWidth", reader)
 	    }
     }
 

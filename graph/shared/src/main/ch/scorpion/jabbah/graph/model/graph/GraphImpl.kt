@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
@@ -12,6 +15,8 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -32,9 +37,13 @@ open class GraphImpl(
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
 	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
-		LOG.trace("handling GraphPortNameChanged")
-		if (it.newName != null && contains(it.graphPort) && existsGraphPortNameExcluding(it.newName, it.graphPort)) {
-			throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+		if (it.newName != null &&  contains(it.graphPort)) {
+			if (existsGraphPortNameExcluding(it.newName, it.graphPort)) {
+				if (parameterDefinitions.contains(it.newName)) {
+					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
+				}
+				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+			}
 		}
 	}
 
@@ -64,6 +73,22 @@ open class GraphImpl(
 
 	override val elementsCount: Int
 		get() = _elements.size
+
+	override val symbolTable: SymbolTable by lazy { GraphSymbolTable(this) }
+
+	override var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
+		set(value) {
+			if (field !== value) {
+				field = value
+				parameterValues = GraphParamValues.withDefaults(field)
+			}
+		}
+
+	override var parameterValues: GraphParamValues = GraphParamValues()
+		set(value) {
+			field = value
+			_elements.forEach { it.graphParamsChanged(this) }
+		}
 
 	override val elements: ImmutableList<GraphElement>
 		get() = ImmutableList(_elements)
@@ -182,6 +207,11 @@ open class GraphImpl(
 		return getGraphInputOutput(name) as GraphOutput<T>?
 	}
 
+	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		BaseModule.parserFactory.create(
+			program,
+			BaseModule.semanticAnalyserFactory.create(symbolTable))
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
@@ -277,6 +307,7 @@ open class GraphImpl(
 
 	private fun existsGraphPortNameExcluding(name: String, excludedGraphPort: GraphPort<Any>): Boolean {
 		return graphPorts.any { it != excludedGraphPort && it.name == name }
+			|| parameterDefinitions.contains(name)
 	}
 
 	private fun getOscilloscope(): Oscilloscope? {

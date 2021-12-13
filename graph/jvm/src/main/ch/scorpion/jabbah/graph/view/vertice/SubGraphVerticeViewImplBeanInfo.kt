@@ -3,8 +3,10 @@ package ch.scorpion.jabbah.graph.view.vertice
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
+import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
+import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -37,5 +39,14 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
 	        properties.add(label.bind(editor, bean.id, filter = { false }))
 	    }
 	    properties.add(description.bind(editor, bean.id))
+
+	    bean.model.graphUUID?.let {
+	        GraphModule.metaGraphRepository.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
+		        for (def in defs.iterator()) {
+			        val property = GraphParamValuePropertyFactoryRegistry.createProperty(def, editor, componentBeanProvider)
+			        properties.add(property.bind(editor, bean.id))
+		        }
+	        }
+	    }
     }
 }

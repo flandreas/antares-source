@@ -16,6 +16,10 @@ import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
@@ -63,13 +67,13 @@ object GraphModelModule : AbstractModule() {
 		override fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord =
 			SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 	}
-	/*
-	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory =
-		SubGraphVerticeRefActivationRecordFactory { v, s -> SubGraphVerticeRefActivationRecord(v, s)}
-	*/
 
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", GraphImpl::class)
+		typeMap.register("graphParamDef", GraphParamDefinition::class)
+		typeMap.register("graphParamDefs", GraphParamDefinitions::class)
+		typeMap.register("graphParam", GraphParamValue::class)
+		typeMap.register("graphParams", GraphParamValues::class)
 		typeMap.register("metaGraph", MetaGraph::class)
 		typeMap.register("metaGraphBundle", MetaGraphBundle::class)
 		typeMap.register("graphStorable", GraphStorable::class)

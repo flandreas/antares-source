@@ -24,12 +24,11 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.*
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -72,6 +71,16 @@ class SubGraphVerticeRef(
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
 
+	var paramValues = GraphParamValues()
+		private set(value) {
+			field = value
+			getGraphIfPresent()?.let {
+				it.parameterValues = field
+			}
+			synchronizePorts()
+			stateChanged(null)
+		}
+
 	override val designError: DesignError? get() = _designError
 
 	/** ---- [GraphElement] interface */
@@ -86,6 +95,18 @@ class SubGraphVerticeRef(
 			graph?.accept(visitor)
 		}
 		return visitor.visitLeave(this)
+	}
+
+	override fun graphParamsChanged(graph: Graph) {
+		var newParamValues: GraphParamValues = paramValues
+		var changed = false
+		for (paramValue in paramValues.values) {
+			newParamValues = newParamValues.withValue(paramValue.evaluateIn(graph))
+			changed = true
+		}
+		if (changed) {
+			paramValues = newParamValues
+		}
 	}
 
 	/** ---- [SubGraphVertice] */
@@ -110,6 +131,9 @@ class SubGraphVerticeRef(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("uuid", graphUUID!!.id)
+		if (paramValues.isNotEmpty) {
+			writer.writeStorable("params", paramValues)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -120,6 +144,16 @@ class SubGraphVerticeRef(
 			name = metaGraph.name
 			graphName = metaGraph.containerDrawing.model.graphName
 			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
+
+			// Establish GraphParamValues AFTER GraphElements have been read
+			if (reader.hasElement("params")) {
+				paramValues = reader.readStorable("params")
+			}
+
+			if (paramValues.isNotEmpty) {
+				getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
+				synchronizePorts()
+			}
 
 			super.read(reader)
 
@@ -223,9 +257,7 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override fun getGraphIfPresent(): Graph? {
-		return graph
-	}
+	override fun getGraphIfPresent(): Graph? = graph
 
 	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		super.bind(repository, storableCreator)
@@ -283,6 +315,16 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVerticeRef] */
 
+	fun setParamValue(paramValue: GraphParamValue<*>) {
+		val newParamValues = paramValues.withValue(paramValue)
+
+		// First forward to Graph. Local update will then inform Views to sync their state,
+		// which depends on the Graph.
+		getGraph(repository, IOModule.storableCreator).parameterValues = newParamValues
+
+		paramValues = newParamValues
+	}
+
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
 		graphUUID = subGraphVertice.graphUUID
 
@@ -293,6 +335,8 @@ class SubGraphVerticeRef(
 		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)
 		}
+
+		setDefaultParamValues()
 	}
 
 	private fun isDeepExecution(signalHandler: SignalHandler): Boolean =
@@ -303,4 +347,25 @@ class SubGraphVerticeRef(
 
 	private fun getSubGraphOutputPorts(): ImmutableList<SubGraphOutputPort<Any>> =
 		getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
+
+	private fun setDefaultParamValues() {
+		graphUUID?.let { uuid ->
+			repository.getMetaGraph(uuid).graph.model?.parameterValues?.let {
+				paramValues = it
+			}
+		}
+	}
+
+	private fun synchronizePorts() {
+		if (paramValues.isNotEmpty) {
+			with(ensureGraph(IOModule.storableCreator)) {
+				for (port in getPorts()) {
+					val graphPort = getGraphPort<Any>(port.name!!)
+					if (graphPort != null && port is SubGraphPort<*>) {
+						port.handleGraphPortChanged(graphPort)
+					}
+				}
+			}
+		}
+	}
 }

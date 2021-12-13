@@ -8,10 +8,20 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
+import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 
 /**
@@ -30,9 +40,48 @@ object GraphModuleJvm : AbstractModule() {
 
 		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider()
 
+		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
+		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+		configureGraphParamValueProperties()
+
 		fillProperties(BaseModule.properties)
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
+	}
+
+	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
+		registry.register(GraphParamDefinitions::class.java) { GraphParamDefinitionsPropertyRenderer() }
+	}
+
+	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
+		registry.register(GraphParamDefinitions::class.java) {
+			GraphParamDefinitionsPropertyEditor(
+				propertyName = (it as CommandPropertySwing<GraphParamDefinitions>).displayName,
+				editable = it.editable,
+				graph = (it.editor!!.drawing as GraphView).graph!!
+			)
+		}
+	}
+
+	private fun configureGraphParamValueProperties() {
+		GraphParamValuePropertyFactoryRegistry.register(
+			StringGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return GraphParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<String>,
+						propertyName = "<notUsed>",
+						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						valueClass = String::class.java,
+						beanProvider
+					)
+				}
+			}
+		)
 	}
 
 	@Suppress("UNUSED_PARAMETER")

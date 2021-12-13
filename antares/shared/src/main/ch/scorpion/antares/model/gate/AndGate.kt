@@ -42,7 +42,7 @@ class AndGate(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	fun calculate(portFilter: (Int) -> Boolean): DigitalSignal = if (bitWidth == BitWidth.BW_1) {
+	fun calculate(portFilter: (Int) -> Boolean): DigitalSignal = if (bitWidth.width == BitWidth.BW_1.width) {
 		CALCULATOR.calculateSingleBit(this, portFilter)
 	} else {
 		CALCULATOR.calculateMultiBit(this, portFilter)

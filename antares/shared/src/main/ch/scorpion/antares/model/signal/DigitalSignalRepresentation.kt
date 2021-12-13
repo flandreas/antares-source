@@ -28,7 +28,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		override val digitGroupSize: Int get() = 3
 		override fun digitCount(bitWidth: BitWidth): Int = bitWidth.maxValue.toString().length
 		override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal {
-			val bitWidth = if (signal.bitWidth == BitWidth.BW_1) BitWidth.BW_1 else BitWidth.of(bitCount)
+			val bitWidth = if (signal.bitWidth.width == BitWidth.BW_1.width) BitWidth.BW_1 else BitWidth.of(bitCount)
 			val value = signal.toLong()
 				?: return if (signal.isPartiallyUndefined) {
 					DigitalSignalFactory.undefined(bitWidth)

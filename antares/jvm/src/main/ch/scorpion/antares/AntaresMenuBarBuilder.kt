@@ -48,7 +48,7 @@ class AntaresMenuBarBuilder(
     }
 
     private fun fillDevelopmentMenu(menu: JMenu): JMenu {
-	    menu.add(ActionWrapperSwing(TestAction()))
+	    menu.add(ActionWrapperSwing(TestAction(graphFrame.editor)))
 	    menu.add(ActionWrapperSwing(DebugGraphicsAction()))
 	    menu.add(JCheckBoxMenuItem(ActionWrapperSwing(DummyViewSpaceReductionAction())))
 	    menu.addSeparator()

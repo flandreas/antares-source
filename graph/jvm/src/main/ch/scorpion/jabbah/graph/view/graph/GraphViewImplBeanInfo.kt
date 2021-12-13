@@ -17,12 +17,13 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
+	    private val paramDefs = GraphProperties.graphParamDefinitions()
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean::createParser)
+	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean.graph!!::createParser)
 	    val ids = listOf<Int>()
 
 	    properties.add(name.bind(editor, ids, filter = { false }))
@@ -30,5 +31,6 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    properties.add(description.bind(editor, ids, filter = { true }))
 	    properties.add(script.bind(editor, ids))
 	    properties.add(purelyScripted.bind(editor, ids, editable = bean.script.isNotEmpty()))
+	    properties.add(paramDefs.bind(editor, ids))
     }
 }

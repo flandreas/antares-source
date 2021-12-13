@@ -361,6 +361,9 @@ class CircuitInOutView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
+		if (model.bitWidth.width != numberView!!.bitWidth.width) {
+			updateView()
+		}
 		numberView!!.setSignal(model.signal!!)
 		label.text = StringUtils.orEmpty(name)
 		updateBoundingBox()

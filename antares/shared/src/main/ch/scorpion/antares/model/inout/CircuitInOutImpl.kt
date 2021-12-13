@@ -14,9 +14,9 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -79,6 +79,10 @@ class CircuitInOutImpl(
 			PortType.INPUT -> INPUT_TYPE_DESC
 			PortType.OUTPUT -> OUTPUT_TYPE_DESC
 		}
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
 
 	/** ---- [GraphPort] interface */
 
@@ -199,7 +203,7 @@ class CircuitInOutImpl(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("type", portType.customName)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 		portDescription.write("desc", writer)
 	}
 
@@ -208,7 +212,7 @@ class CircuitInOutImpl(
 			readingFromStore = true
 			super.read(reader)
 			portType = PortType.withName(reader.readString("type"))
-			bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+			bitWidth = BitWidth.read("bitWidth", reader)
 			portDescription = Description.read("desc", reader)
 		} finally {
 			readingFromStore = false
@@ -239,6 +243,7 @@ class CircuitInOutImpl(
 				val oldValue = getDigitalPort().bitWidth
 				getDigitalPort().bitWidth = value
 				if (!readingFromStore) {
+					stateChanged(null)
 					eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
 				}
 			}

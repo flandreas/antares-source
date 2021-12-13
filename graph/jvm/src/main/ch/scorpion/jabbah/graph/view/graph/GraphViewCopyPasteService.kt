@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.NetViewElement
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -148,7 +149,14 @@ class GraphViewCopyPasteService(
 		}
 
 		Movable.moveBy(copyDrawing.drawables, dislocation)
-		copyDrawing.drawables.forEach { c -> view.drawing.add(c) }
+		copyDrawing.drawables.forEach { c ->
+			view.drawing.add(c)
+			if (c is GraphElementView<*>) {
+				(view.drawing as? GraphView)?.graph?.let {
+					c.model.graphParamsChanged(it)
+				}
+			}
+		}
 
 		if (pastedAnchorComponent != null) {
 			pastedAnchorComponentId = pastedAnchorComponent.id

@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
@@ -18,6 +21,11 @@ class GraphImplTest {
 		init {
 			GraphModelTestRule.configure()
 		}
+	}
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
 	}
 
 	@Test
@@ -193,5 +201,21 @@ class GraphImplTest {
 		}
 
 		assertEquals("I2", in2.name)
+	}
+
+	@Test
+	fun shouldPreventPortNameConflictWithParamName() {
+		val eventBus = EventBusImpl()
+		val graph = GraphImpl(eventBus = eventBus)
+
+		graph.parameterDefinitions = GraphParamDefinitions().withDefinition(
+			GraphParamDefinition.create("P", StringGraphParamType, "Default"))
+		val input = GraphInputImpl(PortImpl.createOutput(), "I1", eventBus).also {
+			graph.add(it)
+		}
+
+		assertFailsWith(IllegalArgumentException::class) {
+			input.name = "P"
+		}
 	}
 }

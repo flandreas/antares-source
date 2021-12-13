@@ -3,9 +3,11 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
@@ -59,6 +61,10 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 			}
 		}
 
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
@@ -70,7 +76,7 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeLong("delay", delay)
-	    writer.writeInt("bitWidth", bitWidth.width)
+	    bitWidth.write("bitWidth", writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -78,7 +84,7 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
         delay = reader.readLong("delay")
 	    if (reader.hasAttribute("bitWidth")) {
 		    // Backward compatibility: Older version didn't have a BitWidth property
-		    bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		    bitWidth = BitWidth.read("bitWidth", reader)
 	    }
     }
 }

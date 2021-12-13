@@ -7,10 +7,7 @@ import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.DesignError
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.model.GraphElementListener
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -63,6 +60,8 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 	override fun formNet(signalHandler: SignalHandler) {
 		// empty
 	}
+
+	override fun graphParamsChanged(graph: Graph) { }
 
 	/** ---- [Storable] interface */
 

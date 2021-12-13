@@ -3,13 +3,11 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -73,6 +71,10 @@ class NotGate(
 		addPort(DigitalPortImpl.createOutput(Logic.NEGATIVE))
 	}
 
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
@@ -80,15 +82,15 @@ class NotGate(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (bitWidth != BitWidth.BW_1) {
-			writer.writeInt("bitWidth", bitWidth.width)
+		if (bitWidth.width != BitWidth.BW_1.width) {
+			bitWidth.write("bitWidth", writer)
 		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("bitWidth")) {
-			bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+			bitWidth = BitWidth.read("bitWidth", reader)
 		}
 	}
 }

@@ -61,7 +61,9 @@ abstract class AbstractPortView<T : Any>(
 		get() = _port
 		set(value) {
 			invalidate()
+			_port.removePropertyChangeListener(portListener)
 			_port = value
+			_port.addPropertyChangeListener(portListener)
 			if (_port.isConnected) {
 				length = connectedLength
 			}

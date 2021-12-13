@@ -16,12 +16,13 @@ import org.apache.commons.beanutils.PropertyUtils
 abstract class AbstractReflectionPropertySwing<V>(
 	propertyName: String,
 	protected val baseKey: String,
-	private val valueClass: Class<V>,
+	private val valueClass: Class<*>,
 	protected val getterPropertyName: String = propertyName,
-	private var interactive: Boolean = false
+	private var interactive: Boolean = false,
+	private val displayName: String? = null
 ) : AbstractProperty() {
 
-	protected var editor: Editor? = null
+	var editor: Editor? = null
 
 	protected var beanIds: List<Int> = listOf()
 
@@ -70,7 +71,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 
 	override fun getName(): String = getterPropertyName
 
-	override fun getDisplayName(): String = Translations.getString("$baseKey.name")
+	override fun getDisplayName(): String = displayName ?: Translations.getString("$baseKey.name")
 
 	override fun getType(): Class<*> = valueClass
 

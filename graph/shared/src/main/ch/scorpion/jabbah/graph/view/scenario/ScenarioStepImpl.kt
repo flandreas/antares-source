@@ -212,7 +212,7 @@ class ScenarioStepImpl(
 	/** ---- [ScenarioStepImpl] */
 
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		graphView?.createParser(program, semanticAnalyser)
+		graphView?.graph?.createParser(program, semanticAnalyser)
 			?: BaseModule.parserFactory.create(program, semanticAnalyser)
 
 	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =

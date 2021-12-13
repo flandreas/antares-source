@@ -9,8 +9,8 @@ import com.l2fprod.common.propertysheet.Property
 class BitExtenderViewBeanInfo : DigitalComponentBeanInfo<BitExtenderView>() {
 
 	companion object {
-		val inputBitWidth = AntaresProperties.bitWidth("inputBitWidth", BitExtenderView.INPUT_BIT_WIDTH_BASE_KEY)
-		val outputBitWidth = AntaresProperties.bitWidth("outputBitWidth", BitExtenderView.OUTPUT_BIT_WIDTH_BASE_KEY)
+		private val inputBitWidth = AntaresProperties.bitWidth("inputBitWidth", BitExtenderView.INPUT_BIT_WIDTH_BASE_KEY)
+		private val outputBitWidth = AntaresProperties.bitWidth("outputBitWidth", BitExtenderView.OUTPUT_BIT_WIDTH_BASE_KEY)
 	}
 
 	override fun addProperties(bean: BitExtenderView, editor: Editor, properties: MutableList<Property>) {

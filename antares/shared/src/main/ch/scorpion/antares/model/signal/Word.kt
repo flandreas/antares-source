@@ -27,33 +27,33 @@ internal data class Word(
 
 	companion object {
 
-		private val UNDEFINED: MutableMap<BitWidth, Word> = mutableMapOf()
-		private val ERROR: MutableMap<BitWidth, Word> = mutableMapOf()
-		private val FALSE: MutableMap<BitWidth, Word> = mutableMapOf()
-		private val TRUE: MutableMap<BitWidth, Word> = mutableMapOf()
+		private val UNDEFINED: MutableMap<Int, Word> = mutableMapOf()
+		private val ERROR: MutableMap<Int, Word> = mutableMapOf()
+		private val FALSE: MutableMap<Int, Word> = mutableMapOf()
+		private val TRUE: MutableMap<Int, Word> = mutableMapOf()
 		private val ZERO_WIDTH_1 = Word(listOf(Bit.False))
 		private val ONE_WIDTH_1 = Word(listOf(Bit.True))
 
 		init {
-			for (bitWidth in BitWidth.values()) {
-				UNDEFINED[bitWidth] = Word(createListWithBit(bitWidth, Bit.Undefined))
-				ERROR[bitWidth] = Word(createListWithBit(bitWidth, Bit.Error))
-				FALSE[bitWidth] = Word(createListWithBit(bitWidth, Bit.False))
-				TRUE[bitWidth] = Word(createListWithBit(bitWidth, Bit.True))
+			for (bitWidth in BitWidth.PREDEFINED) {
+				UNDEFINED[bitWidth.width] = Word(createListWithBit(bitWidth, Bit.Undefined))
+				ERROR[bitWidth.width] = Word(createListWithBit(bitWidth, Bit.Error))
+				FALSE[bitWidth.width] = Word(createListWithBit(bitWidth, Bit.False))
+				TRUE[bitWidth.width] = Word(createListWithBit(bitWidth, Bit.True))
 			}
 		}
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s undefined. */
-		fun undefined(bitWidth: BitWidth): Word = UNDEFINED[bitWidth]!!
+		fun undefined(bitWidth: BitWidth): Word = UNDEFINED[bitWidth.width]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in error state. */
-		fun error(bitWidth: BitWidth): Word = ERROR[bitWidth]!!
+		fun error(bitWidth: BitWidth): Word = ERROR[bitWidth.width]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `false` state. */
-		fun falseValue(bitWidth: BitWidth): Word = FALSE[bitWidth]!!
+		fun falseValue(bitWidth: BitWidth): Word = FALSE[bitWidth.width]!!
 
 		/** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `true` state. */
-		fun trueValue(bitWidth: BitWidth): Word = TRUE[bitWidth]!!
+		fun trueValue(bitWidth: BitWidth): Word = TRUE[bitWidth.width]!!
 
 		/** Returns a [Word] of the specified width with all the same [Bit]s.*/
 		fun allOf(bitWidth: BitWidth, bit: Bit): Word {
@@ -86,7 +86,7 @@ internal data class Word(
 
 		fun ofMinimalBitWidth(value: ULong): Word =
 			of(
-				BitWidth.values().firstOrNull { it.maxValue >= value }  ?: throw IllegalArgumentException(""),
+				BitWidth.PREDEFINED.firstOrNull { it.maxValue >= value }  ?: throw IllegalArgumentException(""),
 				value)
 
 		/** Combines the specified [Word]s into a single [Word].*/
@@ -162,7 +162,7 @@ internal data class Word(
 	}
 
 	override val color: CompositeColor by lazy calcColor@ {
-		if (bitWidth == BitWidth.BW_1) {
+		if (bitWidth.width == BitWidth.BW_1.width) {
 			return@calcColor bitAt(0).color
 		}
 		if (zero) {
@@ -347,7 +347,7 @@ internal data class Word(
 	}
 
 	override fun isConsistentWith(other: DigitalSignal?): Boolean {
-		if (this.bitWidth != other?.bitWidth) {
+		if (this.bitWidth.width != other?.bitWidth?.width) {
 			return false
 		}
 		bits.forEachIndexed { index, bit ->

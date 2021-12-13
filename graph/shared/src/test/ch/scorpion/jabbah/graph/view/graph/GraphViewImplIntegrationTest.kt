@@ -42,6 +42,5 @@ class GraphViewImplIntegrationTest {
 		val clone = StorableCloner.clone(metaGraph)
 
 		metaGraph.graph.graphView.cloneForExistingModel(clone.graph.model!!)
-		//clone.graph.graphView.cloneForExistingModel(metaGraph.graph.model!!)
 	}
 }

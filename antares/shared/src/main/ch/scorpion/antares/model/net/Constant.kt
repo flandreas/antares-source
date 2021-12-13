@@ -6,9 +6,7 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -63,6 +61,12 @@ class Constant(
 			}
 		}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [Actor] */
 
 	override fun executionStart(signalHandler: SignalHandler) {
@@ -74,13 +78,13 @@ class Constant(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 		writer.writeULong("value", value.getValue())
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 		value = DigitalSignalFactory.of(bitWidth, reader.readULong("value"))
 	}
 }

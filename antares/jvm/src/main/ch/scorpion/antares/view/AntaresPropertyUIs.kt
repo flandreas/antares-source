@@ -5,11 +5,10 @@ import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
+import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.sound.WaveformType
@@ -69,13 +68,6 @@ class InputPortNumberEditor(filter: (InputPortNumber) -> Boolean = { _ -> true }
     init {
         setAvailableValues(InputPortNumber.values().filter { filter.invoke(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<InputPortNumber>()
-    }
-}
-
-class BitWidthEditor(filter: (BitWidth) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
-    init {
-        setAvailableValues(BitWidth.values().filter { filter(it) }.toTypedArray())
-        (editor as JComboBox<*>).renderer = EnumRenderer<BitWidth>()
     }
 }
 

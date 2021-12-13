@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
  * A [Vertice] is a node in a [Graph] that can be connected with other [Vertice]s using [Net]s that are attached
@@ -136,5 +136,4 @@ interface Vertice : GraphElement, Describable {
     fun <T: Any> getOutput(id: Int): OutputPort<T>
 
     fun <T: Any> replaceUndefinedOutput(signal: T?)
-
 }

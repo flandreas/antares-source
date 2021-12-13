@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
@@ -22,6 +23,7 @@ import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
+import ch.scorpion.antares.view.signal.*
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
@@ -34,8 +36,11 @@ import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.edit.BeanProvider
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
@@ -44,9 +49,14 @@ import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersiste
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
+import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
+import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
@@ -148,6 +158,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+		configureGraphParamValueProperties()
+		configureGraphParamValueEditors()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
@@ -170,7 +182,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(Logic::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Trigger::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(BranchCount::class.java, EnumRenderer::class.java)
-		registry.registerRenderer(BitWidth::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(BitWidth::class.java, BitWidthRenderer::class.java)
 		registry.registerRenderer(DigitalSignalRepresentation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
@@ -190,7 +202,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
-		registry.register(BitWidth::class.java) { BitWidthEditor((it as CommandPropertySwing<BitWidth>).filter )}
 		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
@@ -202,6 +213,39 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
+
+		registry.register(BitWidth::class.java) { prop ->
+			BitWidthEditor(
+				propertyName = prop.displayName,
+				editable = prop.isEditable,
+				graphEditor = (prop as BitWidthPropertySwing).editor,
+				errorCallback = { prop.dslError = it },
+				prop.filter )
+		}
+	}
+
+	private fun configureGraphParamValueProperties() {
+		GraphParamValuePropertyFactoryRegistry.register(
+			BitWidthGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return BitWidthParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<BitWidth>,
+						propertyName = "BitWidth", // only used for logging
+						baseKey ="element.property.bitWidth",
+						beanProvider,
+					)
+				}
+			}
+		)
+	}
+
+	private fun configureGraphParamValueEditors() {
+		GraphParamValueEditorRegistry.register(BitWidthGraphParamType) { BitWidthGraphParamValueEditor() }
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

@@ -45,7 +45,7 @@ open class GraphMenuBarBuilder(
 		fun createUsecasesMenu() = JMenu(Translations.getString("application.menu.usecases"))
 	}
 
-	private val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
+	protected val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
 
 	private val scheduler: Scheduler get() = graphFrame.controller.applicationContextHolder.scheduler
 

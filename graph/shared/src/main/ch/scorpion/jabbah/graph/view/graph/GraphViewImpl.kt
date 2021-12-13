@@ -3,9 +3,6 @@ package ch.scorpion.jabbah.graph.view.graph
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.Parser
-import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
@@ -54,8 +51,6 @@ open class GraphViewImpl(
 
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
-
-	override val portSymbolTable: SymbolTable by lazy { GraphViewPortSymbolTable(this) }
 
 	/** ---- [Any] */
 
@@ -226,11 +221,6 @@ open class GraphViewImpl(
 	override fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>> {
 		return getDrawables { it is SubGraphVerticeView<*> }.map { it as SubGraphVerticeView<*> }.toImmutableList()
 	}
-
-	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		BaseModule.parserFactory.create(
-			program,
-			BaseModule.semanticAnalyserFactory.create(portSymbolTable))
 
 	/** ---- [Storable] interface */
 

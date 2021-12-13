@@ -46,7 +46,7 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			if (occurringBitWidths.size <= 1) {
 				return null
 			}
-			val bitWidthNames = occurringBitWidths.map { it.customName }.toSet()
+			val bitWidthNames = occurringBitWidths.map { it.toString() }.toSet()
 			return DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
 		}
 
@@ -55,8 +55,8 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 
 	private val isDesignError: Boolean get() = getOccurringBitWidths().size > 1
 
-	private fun getOccurringBitWidths(): Set<BitWidth> {
-		return ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth }.toSet()
+	private fun getOccurringBitWidths(): Set<Int> {
+		return ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
 	}
 
 	/** ---- [Net] */

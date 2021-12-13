@@ -49,19 +49,6 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	var currentScenarioStep: ScenarioStep?
 
 	/**
-	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [GraphView]'s [Graph]
-	 * as variable definitions.
-	 */
-	val portSymbolTable: SymbolTable
-
-	/**
-	 * Creates a [Parser] for parsing the [Graph]'s execution script.
-	 * The created [Parser] contains a [SemanticAnalyser] that uses this [GraphView] as
-	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
-	 */
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
-
-	/**
 	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
 	 *
 	 * This method is automatically called typically before simulation is started and is needed because [GraphView]s

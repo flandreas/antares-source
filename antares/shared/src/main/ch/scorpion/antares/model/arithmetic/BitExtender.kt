@@ -4,14 +4,13 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -80,18 +79,25 @@ class BitExtender(
 			}
 		}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(inputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> inputBitWidth = bw } }
+		(outputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> outputBitWidth = bw } }
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("inputBitWidth", inputBitWidth.width)
-		writer.writeInt("outputBitWidth", outputBitWidth.width)
+		inputBitWidth.write("inputBitWidth", writer)
+		inputBitWidth.write("outputBitWidth", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		digitalInput.bitWidth = BitWidth.of(reader.readInt("inputBitWidth"))
-		digitalOutput.bitWidth = BitWidth.of(reader.readInt("outputBitWidth"))
+		digitalInput.bitWidth = BitWidth.read("inputBitWidth", reader)
+		digitalOutput.bitWidth = BitWidth.read("outputBitWidth", reader)
 		stateChanged()
 	}
 }

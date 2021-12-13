@@ -70,16 +70,22 @@ class Tunnel(
 			}
 		}
 
+	/** ---- [GraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("bitWidth", bitWidth.width)
+		bitWidth.write("bitWidth", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 	}
 
 	/** ---- [Actor] */

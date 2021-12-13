@@ -1,7 +1,11 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.model.signal.Bit.*
-import ch.scorpion.antares.model.signal.BitWidth.*
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_12
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.draw.module.DrawModule
