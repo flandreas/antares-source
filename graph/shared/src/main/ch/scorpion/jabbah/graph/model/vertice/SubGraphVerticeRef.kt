@@ -74,6 +74,9 @@ class SubGraphVerticeRef(
 	var paramValues = GraphParamValues()
 		private set(value) {
 			field = value
+			getGraphIfPresent()?.let {
+				it.parameterValues = field
+			}
 			synchronizePorts()
 			stateChanged(null)
 		}
@@ -92,6 +95,18 @@ class SubGraphVerticeRef(
 			graph?.accept(visitor)
 		}
 		return visitor.visitLeave(this)
+	}
+
+	override fun graphParamsChanged(graph: Graph) {
+		var newParamValues: GraphParamValues = paramValues
+		var changed = false
+		for (paramValue in paramValues.values) {
+			newParamValues = newParamValues.withValue(paramValue.evaluateIn(graph))
+			changed = true
+		}
+		if (changed) {
+			paramValues = newParamValues
+		}
 	}
 
 	/** ---- [SubGraphVertice] */

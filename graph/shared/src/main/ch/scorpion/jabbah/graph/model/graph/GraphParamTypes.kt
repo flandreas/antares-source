@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.io.StoreReader
@@ -29,4 +30,6 @@ object StringGraphParamType : GraphParamType<String> {
 		reader.readString(name)
 
 	override fun toDslValue(value: String): Any = value
+
+	override fun evaluateIn(graph: Graph, value: String): String = value
 }

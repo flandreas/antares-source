@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -26,6 +27,9 @@ class GraphParamValue<T : Any> : Storable {
 
 	private lateinit var _value: T
 	val value: T get() = _value
+
+	fun evaluateIn(graph: Graph): GraphParamValue<T> =
+		create(name, type, type.evaluateIn(graph, value))
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 

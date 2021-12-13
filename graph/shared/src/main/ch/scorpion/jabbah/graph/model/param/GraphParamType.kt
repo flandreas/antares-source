@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
@@ -23,6 +24,8 @@ interface GraphParamType<T : Any> {
 
 	/** Convert [value] to a type supported by the DSL in order to evaluate expressions such as addition.*/
 	fun toDslValue(value: T): Any
+
+	fun evaluateIn(graph: Graph, value: T): T
 }
 
 typealias GraphParamTypeProvider = () -> GraphParamType<*>

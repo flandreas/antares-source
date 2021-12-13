@@ -1,13 +1,7 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.antares.dsl.AntaresInterpreter
-import ch.scorpion.antares.dsl.AntaresLexer
-import ch.scorpion.antares.dsl.AntaresParser
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -113,19 +107,11 @@ class BitWidthExpression(
 	}
 
 	fun evaluateIn(graph: Graph): BitWidth? {
-		val parser = AntaresParser(
-			AntaresLexer(expression),
-			BaseModule.semanticAnalyserFactory.create(graph.symbolTable))
-		val value = AntaresInterpreter(
-			parser,
-			Memory(GraphActivationRecord(graph))
-		).interpret()
-
-		return if (value is Long && width.toLong() != value) {
-			BitWidthExpression(expression, BitWidth.of(value.toInt()))
-		} else {
-			null
+		val newValue = BitWidthGraphParamType.evaluateIn(graph, this)
+		if (newValue === this) {
+			return null
 		}
+		return newValue
 	}
 }
 
