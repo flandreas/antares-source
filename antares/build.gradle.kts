@@ -168,12 +168,14 @@ tasks {
 		commandLine(
 			"${macOS_jpackage_home}/bin/jpackage",
 			"--name", "Antares",
+			"--mac-package-name", "Antares",
 			"--input", "${buildDir}/package",
 			"--dest", "${buildDir}/distributions",
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
 			"--icon", "jvm/rsc/antares.icns",
 			"--java-options", "-splash:\$APPDIR/splash.png",
+			"--java-options", "-Dapple.awt.application.name=Antares",
 			"--type", "pkg"
 		)
 	}
