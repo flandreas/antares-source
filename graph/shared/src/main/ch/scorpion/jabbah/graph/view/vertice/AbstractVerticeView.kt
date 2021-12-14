@@ -109,7 +109,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-	private val executionTooltip: Tooltip? by lazy {
+	protected val executionTooltip = resettableLazy {
 		buildToolTipText(type, typeDesc, executionTooltipSubtext)?.let {
 			Tooltip(it, plainBoundingBox.centerX, plainBoundingBox.maxY)
 		}
@@ -318,7 +318,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		return executionTooltip?.also { it.sourceRect = plainBoundingBox }
+		return executionTooltip.value?.also { it.sourceRect = plainBoundingBox }
 	}
 
 	protected open val executionTooltipSubtext: String? get() = description.value

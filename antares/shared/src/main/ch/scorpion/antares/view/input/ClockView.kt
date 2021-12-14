@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Rotation.*
@@ -113,6 +114,7 @@ class ClockView(
 		context.g.color = oldColor
 	}
 
+
 	private fun drawIconPath(context: DrawContext) {
 		val dx = when (rotation) {
 			R0, R180 -> bounds.centerX
@@ -143,10 +145,15 @@ class ClockView(
 		val frequency = model.cycleCount / max(1, durationMillis / 1_000) / 2
 		val frequencyText = Translations.getString("antares.clock.frequency.text", StringUtils.formatLong(frequency, '\'')) + " Hz"
 		val subtext = super.executionTooltipSubtext
-		if (subtext != null) {
-			return "$subtext<br>$frequencyText"
+		if (StringUtils.isNotEmpty(subtext)) {
+			return "$subtext\n$frequencyText"
 		}
 		return frequencyText
+	}
+
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+		executionTooltip.reset()
+		return super<BoxGateView>.getExecutionTooltip(x, y)
 	}
 
 	/** ---- [ControlViewSource] */
