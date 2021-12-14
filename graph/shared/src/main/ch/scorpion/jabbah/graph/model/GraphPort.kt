@@ -26,17 +26,6 @@ interface GraphPort<out T : Any> : Vertice {
 	 * user can choose whether a [Port] is an input or an output, or both.
 	 */
 	var portType: PortType
-
-	/** Corresponds with [Port.description] of the single [Port] of this [GraphPort].*/
-	var portDescription: Description
-		get() {
-			val port: Port<T> = getPort()
-			return port.description
-		}
-		set(value) {
-			val port: Port<T> = getPort()
-			port.description = value
-		}
 }
 
 /** Gets posted on [EventBus] when the name of a [GraphPort] has changed.*/

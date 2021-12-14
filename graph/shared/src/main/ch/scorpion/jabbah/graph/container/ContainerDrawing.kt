@@ -124,7 +124,7 @@ class ContainerDrawing(
 	 */
 	fun completeFromGraph(graph: Graph) {
 		model.getPorts().forEach {
-			it.description = graph.getGraphPort<Any>(it.name!!)!!.portDescription
+			it.description = graph.getGraphPort<Any>(it.name!!)!!.description
 		}
 	}
 

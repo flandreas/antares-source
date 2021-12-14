@@ -204,7 +204,6 @@ class CircuitInOutImpl(
 		super.write(writer)
 		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
-		portDescription.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -213,7 +212,6 @@ class CircuitInOutImpl(
 			super.read(reader)
 			portType = PortType.withName(reader.readString("type"))
 			bitWidth = BitWidth.read("bitWidth", reader)
-			portDescription = Description.read("desc", reader)
 		} finally {
 			readingFromStore = false
 		}
