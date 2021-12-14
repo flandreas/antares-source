@@ -157,6 +157,7 @@ class CircuitInOutView(
 		get() = model.getPort<DigitalSignal>().description
 		set(value) {
 			model.getPort<DigitalSignal>().description = value
+			tooltip.reset()
 		}
 
 	/** ---- [Transparent] */

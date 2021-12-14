@@ -123,7 +123,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	override var description: Description
 		get() = model.description
-		set(value) { model.description = value }
+		set(value) {
+			model.description = value
+			tooltip.reset()
+		}
 
 	/** ---- [VerticeView] interface */
 
