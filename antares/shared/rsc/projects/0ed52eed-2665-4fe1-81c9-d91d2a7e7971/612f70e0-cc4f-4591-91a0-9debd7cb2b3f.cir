@@ -251,8 +251,8 @@
                 </rectangle>
               </component>
             </graphElement>
-            <subGraphVerticeViewRef _id='129' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-294.0' y='42.0'/>
-            <subGraphVerticeViewRef _id='130' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-140.0' y='-56.0'/>
+            <subGraphVerticeViewRef _id='129' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-294.0' y='42.0' controlViewVisibility='always'/>
+            <subGraphVerticeViewRef _id='130' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-140.0' y='-56.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='131' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='129' origPort='5' origPortOutput='true' dest='130' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-189.0,7.0 -126.0,7.0'/>
@@ -276,7 +276,7 @@
             <concentratorView _id='135' id='7' rot='0' filled='true' stroked='true' modelId='17' x='182.0' y='63.0' handedness='right'/>
             <romView _id='136' id='14' rot='0' filled='true' stroked='true' modelId='35' x='196.0' y='63.0' contentRowsCount='4' contentColumnsCount='1' showDisassembler='false'/>
             <splitterView _id='137' id='16' rot='0' filled='true' stroked='true' modelId='36' x='441.0' y='63.0' handedness='left'/>
-            <subGraphVerticeViewRef _id='138' id='18' rot='0' filled='true' stroked='true' modelId='37' x='581.0' y='-98.0'>
+            <subGraphVerticeViewRef _id='138' id='18' rot='0' filled='true' stroked='true' modelId='37' x='581.0' y='-98.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='BCD-7Seg hex'/>
               </label>

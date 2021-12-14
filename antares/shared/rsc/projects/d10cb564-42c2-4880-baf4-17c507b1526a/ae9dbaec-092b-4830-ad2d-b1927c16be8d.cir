@@ -644,7 +644,7 @@ when (FB) {
             <netView _id='387' modelId='67' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='388' id='1' rot='0' filled='true' stroked='true' modelId='3' x='679.0' y='448.0'/>
+            <subGraphVerticeViewRef _id='388' id='1' rot='0' filled='true' stroked='true' modelId='3' x='679.0' y='448.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='389' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='south'>
               <location>
                 <point x='1099.0' y='168.0'/>
@@ -665,9 +665,9 @@ when (FB) {
                 <point x='1729.0' y='504.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='393' id='6' rot='0' filled='true' stroked='true' modelId='8' x='679.0' y='560.0'/>
-            <subGraphVerticeViewRef _id='394' id='7' rot='0' filled='true' stroked='true' modelId='9' x='679.0' y='672.0'/>
-            <subGraphVerticeViewRef _id='395' id='8' rot='0' filled='true' stroked='true' modelId='10' x='679.0' y='784.0'/>
+            <subGraphVerticeViewRef _id='393' id='6' rot='0' filled='true' stroked='true' modelId='8' x='679.0' y='560.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='394' id='7' rot='0' filled='true' stroked='true' modelId='9' x='679.0' y='672.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='395' id='8' rot='0' filled='true' stroked='true' modelId='10' x='679.0' y='784.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='396' id='9' rot='0' filled='true' stroked='true' modelId='11' representation='hex' orientation='south'>
               <location>
                 <point x='427.0' y='168.0'/>
@@ -688,7 +688,7 @@ when (FB) {
                 <point x='126.0' y='504.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='400' id='13' rot='270' filled='true' stroked='true' modelId='15' x='1148.0' y='266.0'/>
+            <subGraphVerticeViewRef _id='400' id='13' rot='270' filled='true' stroked='true' modelId='15' x='1148.0' y='266.0' controlViewVisibility='simulation'/>
             <splitterView _id='401' id='14' rot='270' filled='true' stroked='true' modelId='16' x='1099.0' y='196.0' handedness='left'/>
             <digitalEdgeView _id='402' id='15' filled='true' stroked='true' modelId='17' layout='ortho' orig='389' origPort='1' origPortOutput='true' dest='401' destPort='1' adjusted='false'>
               <shape>
@@ -721,7 +721,7 @@ when (FB) {
                 <polylineShape points='938.0,322.0 973.0,322.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='409' id='22' rot='270' filled='true' stroked='true' modelId='36' x='1498.0' y='266.0'/>
+            <subGraphVerticeViewRef _id='409' id='22' rot='270' filled='true' stroked='true' modelId='36' x='1498.0' y='266.0' controlViewVisibility='simulation'/>
             <splitterView _id='410' id='23' rot='270' filled='true' stroked='true' modelId='37' x='1449.0' y='196.0' handedness='left'/>
             <digitalEdgeView _id='411' id='24' filled='true' stroked='true' modelId='38' layout='ortho' orig='390' origPort='1' origPortOutput='true' dest='410' destPort='1' adjusted='false'>
               <shape>
@@ -882,7 +882,7 @@ when (FB) {
                 <polylineShape points='623.0,784.0 693.0,784.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='454' id='63' rot='270' filled='true' stroked='true' modelId='145' x='476.0' y='266.0'/>
+            <subGraphVerticeViewRef _id='454' id='63' rot='270' filled='true' stroked='true' modelId='145' x='476.0' y='266.0' controlViewVisibility='simulation'/>
             <splitterView _id='455' id='64' rot='270' filled='true' stroked='true' modelId='146' x='427.0' y='196.0' handedness='left'/>
             <digitalEdgeView _id='456' id='65' filled='true' stroked='true' modelId='147' layout='ortho' orig='396' origPort='1' origPortOutput='true' dest='455' destPort='1' adjusted='false'>
               <shape>
@@ -1151,7 +1151,7 @@ when (FB) {
                 <polylineShape points='1512.0,364.0 1512.0,798.0 1617.0,798.0 1617.0,830.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='518' id='128' rot='0' filled='true' stroked='true' modelId='172' x='679.0' y='896.0'/>
+            <subGraphVerticeViewRef _id='518' id='128' rot='0' filled='true' stroked='true' modelId='172' x='679.0' y='896.0' controlViewVisibility='simulation'/>
             <triStateBufferGateView _id='519' id='130' rot='0' filled='true' stroked='true' modelId='152' x='567.0' y='896.0' controlOrientation='left'/>
             <digitalEdgeView _id='520' id='131' filled='true' stroked='true' modelId='214' layout='ortho' orig='519' origPort='3' origPortOutput='true' dest='518' destPort='1' adjusted='false'>
               <shape>
@@ -1669,7 +1669,7 @@ when (FB) {
                 <polylineShape points='1078.0,364.0 1078.0,1428.0 1274.0,1428.0 1274.0,1460.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='637' id='258' rot='0' filled='true' stroked='true' modelId='174' x='679.0' y='1596.0'/>
+            <subGraphVerticeViewRef _id='637' id='258' rot='0' filled='true' stroked='true' modelId='174' x='679.0' y='1596.0' controlViewVisibility='simulation'/>
             <triStateBufferGateView _id='638' id='259' rot='0' filled='true' stroked='true' modelId='155' x='567.0' y='1596.0' controlOrientation='left'/>
             <triStateBufferGateView _id='639' id='260' rot='0' filled='true' stroked='true' modelId='92' x='1239.0' y='1610.0' controlOrientation='left'/>
             <triStateBufferGateView _id='640' id='261' rot='0' filled='true' stroked='true' modelId='120' x='1589.0' y='1666.0' controlOrientation='left'/>
@@ -1824,7 +1824,7 @@ when (FB) {
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='672'>
+    <containerDrawing _id='672' controlViewVisibility='always'>
       <components>
         <rectangle _id='673' id='1' style='figure' filled='true' stroked='true' x='126.0' y='140.0' w='189.0' h='210.0'/>
         <originIndicator _id='674'>

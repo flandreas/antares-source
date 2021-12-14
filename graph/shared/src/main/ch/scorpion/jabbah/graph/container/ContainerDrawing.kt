@@ -35,6 +35,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.ControlViewVisibility
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
@@ -59,6 +60,8 @@ class ContainerDrawing(
 
 	/** Contains the script code that customized the visual look while execution mode.*/
 	var execDrawScript = ScriptProperty()
+
+	var controlViewVisibility = ControlViewVisibility.DEFAULT
 
 	/** ---- [Any] */
 
@@ -98,12 +101,18 @@ class ContainerDrawing(
 		if (execDrawScript.isNotEmpty()) {
 			writer.writeString("execDrawScript", execDrawScript.script!!)
 		}
+		if (controlViewVisibility != ControlViewVisibility.DEFAULT) {
+			writer.writeString("controlViewVisibility", controlViewVisibility.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		model = reader.readStorable("model") as SubGraphVertice
 		if (reader.hasAttribute("execDrawScript")) {
 			execDrawScript = ScriptProperty(reader.readString("execDrawScript"))
+		}
+		if (reader.hasAttribute("controlViewVisibility")) {
+			controlViewVisibility = ControlViewVisibility.withName(reader.readString("controlViewVisibility"))
 		}
 		super.read(reader)
 	}
@@ -176,6 +185,7 @@ class ContainerDrawing(
 		val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository)
 		val view = SubGraphVerticeViewImpl(model, styleProvider, storableCreator, repository, eventBus)
 		fillSubGraphVerticeView(view)
+		view.controlViewVisibility = controlViewVisibility
 		return view
 	}
 

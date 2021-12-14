@@ -147,19 +147,19 @@ FF([A-F0-9]{2})=HALT'/>
             <netView _id='74' modelId='55' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='75' id='1' rot='0' filled='true' stroked='true' modelId='3' x='238.0' y='511.0' mirrorV='true'>
+            <subGraphVerticeViewRef _id='75' id='1' rot='0' filled='true' stroked='true' modelId='3' x='238.0' y='511.0' mirrorV='true' controlViewVisibility='always'>
               <label>
                 <translation lang='de' text='CPU'/>
               </label>
             </subGraphVerticeViewRef>
             <ramView _id='76' id='4' rot='270' filled='true' stroked='true' modelId='4' x='560.0' y='301.0' showContents='true' contentRowsCount='10' contentColumnsCount='1'/>
             <romView _id='77' id='5' rot='270' filled='true' stroked='true' modelId='5' x='805.0' y='301.0' showContents='true' contentRowsCount='10' contentColumnsCount='1' showDisassembler='true' highlightCurrentCell='true'/>
-            <subGraphVerticeViewRef _id='78' id='6' rot='0' filled='true' stroked='true' modelId='6' x='1022.0' y='315.0'>
+            <subGraphVerticeViewRef _id='78' id='6' rot='0' filled='true' stroked='true' modelId='6' x='1022.0' y='315.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='PIO'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='79' id='7' rot='0' filled='true' stroked='true' modelId='7' x='686.0' y='98.0'>
+            <subGraphVerticeViewRef _id='79' id='7' rot='0' filled='true' stroked='true' modelId='7' x='686.0' y='98.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='Address Decoder'/>
               </label>
@@ -244,7 +244,7 @@ FF([A-F0-9]{2})=HALT'/>
                 <polylineShape points='756.0,168.0 756.0,224.0 1022.0,224.0 1022.0,329.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='97' id='51' rot='0' filled='true' stroked='true' modelId='36' x='1113.0' y='399.0'/>
+            <subGraphVerticeViewRef _id='97' id='51' rot='0' filled='true' stroked='true' modelId='36' x='1113.0' y='399.0' controlViewVisibility='always'/>
             <digitalEdgeView _id='98' id='52' filled='true' stroked='true' modelId='37' layout='ortho' orig='78' origPort='2' origPortOutput='true' dest='97' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='1064.0,399.0 1127.0,399.0'/>
@@ -333,7 +333,7 @@ FF([A-F0-9]{2})=HALT'/>
             </digitalEdgeView>
             <graphElement _id='115' modelId='116' id='76'>
               <component>
-                <text _id='117' id='76' style='explanation' filled='false' stroked='false' x='644.0' y='609.0' w='91.0' h='43.0' hAlign='left'>
+                <text _id='117' id='76' style='text' filled='false' stroked='false' x='644.0' y='609.0' w='91.0' h='43.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Datenbus'/>
                     <translation lang='en' text='Data Bus'/>
@@ -343,7 +343,7 @@ FF([A-F0-9]{2})=HALT'/>
             </graphElement>
             <graphElement _id='118' modelId='119' id='77'>
               <component>
-                <text _id='120' id='77' style='explanation' filled='false' stroked='false' x='644.0' y='28.0' w='105.0' h='35.0' hAlign='left'>
+                <text _id='120' id='77' style='text' filled='false' stroked='false' x='644.0' y='28.0' w='105.0' h='35.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Adressbus'/>
                     <translation lang='en' text='Address Bus'/>
@@ -353,7 +353,7 @@ FF([A-F0-9]{2})=HALT'/>
             </graphElement>
             <graphElement _id='121' modelId='122' id='78'>
               <component>
-                <text _id='123' id='78' style='explanation' filled='false' stroked='false' x='630.0' y='567.0' w='105.0' h='43.0' hAlign='left'>
+                <text _id='123' id='78' style='text' filled='false' stroked='false' x='630.0' y='567.0' w='105.0' h='43.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Kontrollbus'/>
                     <translation lang='en' text='Control Bus'/>
@@ -361,7 +361,7 @@ FF([A-F0-9]{2})=HALT'/>
                 </text>
               </component>
             </graphElement>
-            <subGraphVerticeViewRef _id='124' id='89' rot='0' filled='true' stroked='true' modelId='44' x='119.0' y='329.0'/>
+            <subGraphVerticeViewRef _id='124' id='89' rot='0' filled='true' stroked='true' modelId='44' x='119.0' y='329.0' controlViewVisibility='always'/>
             <digitalEdgeView _id='125' id='90' filled='true' stroked='true' modelId='45' layout='ortho' orig='124' origPort='1' origPortOutput='true' dest='75' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='105.0,329.0 154.0,329.0'/>

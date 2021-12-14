@@ -25,6 +25,7 @@ enum class ControlViewVisibility(override val customName: String) : EnumProperty
 
 	companion object {
 
+		val DEFAULT = Simulation
 		const val BASE_KEY = "graph.property.controlViewVisibility"
 
 		fun withName(customName: String): ControlViewVisibility =

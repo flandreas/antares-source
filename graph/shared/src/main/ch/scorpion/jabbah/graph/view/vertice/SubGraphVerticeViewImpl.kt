@@ -67,8 +67,6 @@ class SubGraphVerticeViewImpl(
 
 	companion object {
 		val LOG by logger(SubGraphVerticeViewImpl::class)
-
-		private val DEF_CONTROL_VIEW_VISIBILITY = ControlViewVisibility.Always
 	}
 
 	/** Contains the [Drawable]s that make up the look of this [SubGraphVerticeView].*/
@@ -123,7 +121,7 @@ class SubGraphVerticeViewImpl(
 			mirrorVertically(location.y)
 		}
 
-	override var controlViewVisibility: ControlViewVisibility = DEF_CONTROL_VIEW_VISIBILITY
+	override var controlViewVisibility: ControlViewVisibility = ControlViewVisibility.DEFAULT
 		set(value) {
 			if (value == field) {
 				return
@@ -277,9 +275,8 @@ class SubGraphVerticeViewImpl(
 		if (customizedContainerDrawing != null) {
 			writer.writeStorable("container", customizedContainerDrawing!!)
 		}
-		if (controlViewVisibility != DEF_CONTROL_VIEW_VISIBILITY) {
-			writer.writeString("controlViewVisibility", controlViewVisibility.customName)
-		}
+		// Default is determined by ContainerDrawing, therefore store always
+		writer.writeString("controlViewVisibility", controlViewVisibility.customName)
 	}
 
 	override fun read(reader: StoreReader) {
