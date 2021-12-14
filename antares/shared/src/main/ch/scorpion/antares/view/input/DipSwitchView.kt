@@ -56,7 +56,7 @@ class DipSwitchView(
 
 		private const val KNOB_HEIGHT = 5.0 * Look.SCALE
 		private const val KNOB_WIDTH = 2.0 * Look.SCALE
-		private const val KNOB_INSET = 2
+		private const val KNOB_INSET = 3
 	}
 
 	/** Contains the individual [BitView]s, starting with the lowest priority [Bit] at index 0.*/
@@ -70,7 +70,7 @@ class DipSwitchView(
 	/** Single instance used as flyweight to draw the index number above [BitView]s.*/
 	private val bitLabelFlyweight = Label(
 		font = styleProvider.getStyle(StyleType.ANNOTATION).font.deriveFont(
-			styleProvider.getStyle(StyleType.ANNOTATION).font.size - 2
+			styleProvider.getStyle(StyleType.ANNOTATION).font.size + 2
 		),
 		text = "",
 		horizontalAlignment = HorizontalAlignment.CENTER,
@@ -485,7 +485,7 @@ class DipSwitchView(
 			// Draw index label
 			with(bitLabelFlyweight) {
 				location = Point2D(this@BitView.bounds.centerX, this@BitView.bounds.minY + 4)
-				text = index.toString()
+				text = (index % 10).toString()
 				color = bitLabelColor
 				draw(context)
 			}
