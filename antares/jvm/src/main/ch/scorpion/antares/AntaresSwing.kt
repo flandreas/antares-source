@@ -162,6 +162,7 @@ class AntaresSwing(
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", AntaresApplication.SYSTEM_NAME)
+			System.setProperty("apple.awt.application.name", AntaresApplication.SYSTEM_NAME)
 
 			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
 			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
