@@ -88,9 +88,9 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val EXPLANATION_STYLE = BasicStyle(color = EXPLANATION_COLOR, stroke = ANNOTATION_STROKE, font = EXPLANATION_FONT)
 
-	private val MESSAGE_ERROR_STYLE = BasicStyle(color = MESSAGE_ERROR_COLOR, stroke = ANNOTATION_STROKE, font = EXPLANATION_FONT)
+	private val MESSAGE_ERROR_STYLE = BasicStyle(color = MESSAGE_ERROR_COLOR, stroke = ANNOTATION_STROKE, font = TEXT_FONT)
 
-	private val MESSAGE_INFO_STYLE = BasicStyle(color = MESSAGE_INFO_COLOR, stroke = ANNOTATION_STROKE, font = EXPLANATION_FONT)
+	private val MESSAGE_INFO_STYLE = BasicStyle(color = MESSAGE_INFO_COLOR, stroke = ANNOTATION_STROKE, font = TEXT_FONT)
 
 	private val FOCUS_STYLE = BasicStyle(color = FOCUS_COLOR, stroke = FOCUS_STROKE)
 
