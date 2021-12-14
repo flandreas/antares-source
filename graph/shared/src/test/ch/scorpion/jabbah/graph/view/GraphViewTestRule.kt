@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
@@ -29,6 +30,8 @@ object GraphViewTestRule {
 	fun configure() {
 		BaseModule.require()
 		BaseModule.eventBus.clear()
+
+		GraphParamTypeRegistry.clear()
 		GraphViewModule.require()
 
 		Translations.withAnyKey()
