@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -94,11 +93,14 @@ class Clock : CalculatingVertice(CALCULATOR) {
 		if (reader.hasAttribute("enabled")) {
 			isEnabled = reader.readBoolean("enabled")
 		}
-		if (reader.hasAttribute("unit")) {
-			periodOrFrequency = PeriodOrFrequency.fromNanoseconds(
+		periodOrFrequency = if (reader.hasAttribute("unit")) {
+			PeriodOrFrequency.fromNanoseconds(
 				propagationDelay,
-				PeriodOrFrequencyUnit.withName(reader.readString("unit"))
-			)
+				PeriodOrFrequencyUnit.withName(reader.readString("unit")))
+		} else {
+			PeriodOrFrequency.fromNanoseconds(
+				propagationDelay,
+				Nanosecond)
 		}
 	}
 
