@@ -15,7 +15,10 @@ import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 /**
  * Represents the supported types for laying out the segments of an [EdgeView].
  */
-enum class LayoutType(override val customName: String, inputEventHandler: EdgeViewInputEventHandler) : EnumProperty<LayoutType> {
+enum class LayoutType(
+	override val customName: String,
+	inputEventHandler: EdgeViewInputEventHandler
+) : EnumProperty<LayoutType> {
 
 	STRAIGHT("straight", EdgeViewInputEventHandler()) {
 
@@ -82,7 +85,7 @@ enum class LayoutType(override val customName: String, inputEventHandler: EdgeVi
 		}
 	}
 
-	private val _inputEventHandler: EdgeViewInputEventHandler = inputEventHandler
+	val edgeViewInputEventHandler: EdgeViewInputEventHandler = inputEventHandler
 
 	/**
 	 * Returns an [InputEventHandler] that handles input events for the specified [EdgeView].
@@ -100,8 +103,8 @@ enum class LayoutType(override val customName: String, inputEventHandler: EdgeVi
 		edgeView: EdgeView<*>,
 		context: T,
 		alternative: () -> InputEventHandler<T> = {
-			_inputEventHandler.edgeView = edgeView
-			_inputEventHandler as InputEventHandler<T>
+			edgeViewInputEventHandler.edgeView = edgeView
+			edgeViewInputEventHandler as InputEventHandler<T>
 		}
 	): InputEventHandler<T> {
 
