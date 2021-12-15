@@ -23,7 +23,7 @@ class SevenSegmentDisplay(
 
 		private class Calculator : VerticeCalculator<SevenSegmentDisplay> {
 			override fun calculate(vertice: SevenSegmentDisplay, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.stateChanged()
+				vertice.stateChanged(signalHandler)
 			}
 		}
 	}

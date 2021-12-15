@@ -210,7 +210,9 @@ abstract class AbstractAddressableView<T : Addressable>(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		label.text = if (text == null) buildLabelText() else text!!.getTranslation()
+		if (event.signalHandler == null) {
+			label.text = if (text == null) buildLabelText() else text!!.getTranslation()
+		}
 		if (model.isSelected) {
 			contentsView.handleCurrentAddressChanged()
 		}

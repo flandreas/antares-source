@@ -88,8 +88,10 @@ class ProbeView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
-		updateBoxes()
-		updateLabel()
+		if (event.signalHandler == null) {
+			updateBoxes()
+			updateLabel()
+		}
 		super.handleStateChanged(event)
 	}
 

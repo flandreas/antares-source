@@ -70,7 +70,7 @@ class GraphOutputImpl<T : Any>(
 
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
 		this.signal = signal
-		stateChanged()
+		stateChanged(signalHandler)
 		subGraphOutputPort?.setOutgoingSignalBuffered(signal, signalHandler)
 	}
 }

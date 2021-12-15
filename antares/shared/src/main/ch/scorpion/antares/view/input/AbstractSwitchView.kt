@@ -55,7 +55,9 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
-		updateLabels()
+		if (event.signalHandler == null) {
+			updateLabels()
+		}
 		super.handleStateChanged(event)
 	}
 

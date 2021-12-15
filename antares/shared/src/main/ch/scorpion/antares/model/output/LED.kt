@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * A light emitting [Vertice] that turns on with [Bit.True].
  */
-class LED() : CalculatingVertice(CALCULATOR) {
+class LED : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 

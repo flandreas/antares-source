@@ -144,7 +144,7 @@ class Keyboard(
 		} else {
 			dataOutput.setOutgoingSignalBuffered(DigitalSignalFactory.of(dataOutput.bitWidth, buffer[0].toLong()), signalHandler)
 		}
-		stateChanged()
+		stateChanged(signalHandler)
 	}
 
 	private fun consume(signalHandler: SignalHandler) {

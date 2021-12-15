@@ -195,7 +195,7 @@ class CircuitInOutImpl(
 		if (portType.isInput) {
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
 		}
-		stateChanged()
+		stateChanged(signalHandler)
 	}
 
 	/** ---- [Storable] interface */
@@ -273,7 +273,7 @@ class CircuitInOutImpl(
 
 	private fun setOutgoingSignal(signal: DigitalSignal, signalHandler: SignalHandler, fromOutside: Boolean) {
 		this.signal = signal
-		stateChanged()
+		stateChanged(signalHandler)
 
 		if (signalHandler.executionTime == propagationDelay) {
 			// start-up

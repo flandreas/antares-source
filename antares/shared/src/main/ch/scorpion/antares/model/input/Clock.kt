@@ -135,7 +135,7 @@ class Clock : CalculatingVertice(CALCULATOR) {
 			cycleCount++
 			this.isOn = on
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
-			stateChanged()
+			stateChanged(signalHandler)
 			if (isEnabled) {
 				requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 			}

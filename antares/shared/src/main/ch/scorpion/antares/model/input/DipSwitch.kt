@@ -103,7 +103,7 @@ class DipSwitch(
 		super.executionStopped(signalHandler)
 		value = initialValue
 		enabled = true
-		stateChanged()
+		stateChanged(signalHandler)
 	}
 
 	/** ---- [Storable] */

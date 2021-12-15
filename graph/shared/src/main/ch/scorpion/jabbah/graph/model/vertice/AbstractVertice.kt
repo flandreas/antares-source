@@ -50,7 +50,7 @@ abstract class AbstractVertice(
 	}
 
 	override fun outputChanged(output: OutputPort<*>, signalHandler: SignalHandler) {
-		stateChanged()
+		stateChanged(signalHandler)
 	}
 
 	override fun <T : Any> addPort(port: Port<T>) {
