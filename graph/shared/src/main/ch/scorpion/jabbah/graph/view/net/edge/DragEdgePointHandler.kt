@@ -21,6 +21,12 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
     private var oldLocation: Point2D? = null
 
+	/** ---- [EdgeViewInputEventHandler] */
+
+	override fun dismiss(view: DrawingView<*>) {
+		removeHighlight(view)
+	}
+
     /** ---- [InputEventHandler] */
 
     override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
