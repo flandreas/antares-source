@@ -113,7 +113,7 @@ class GraphViewExecutionAnimator(
 
 		val changedPort = actorData.immediatePort!!
 
-		if (!requireEdgeViewAnimation()) {
+		if (!requireEdgeViewAnimation(net)) {
 			return
 		}
 
@@ -156,7 +156,7 @@ class GraphViewExecutionAnimator(
 
 		applicationContextHolder.scheduler.logActorTrace(net) { "handleNetActed" }
 
-		if (!requireEdgeViewAnimation()) {
+		if (!requireEdgeViewAnimation(net)) {
 			net.actingVisualized(applicationContextHolder.scheduler, actorListener, data)
 			return
 		}
@@ -226,9 +226,10 @@ class GraphViewExecutionAnimator(
 	}
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
-	private fun requireEdgeViewAnimation(): Boolean =
+	private fun requireEdgeViewAnimation(net: Net<*>): Boolean =
 		applicationContextHolder.scheduler.executionTime > (drawingView.drawing.graph!!.startupTime ?: 0)
 			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
+			&& SignalUtil.differ(net.signal, net.signalBuffer)
 
 	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
 	private fun requireVerticeViewGlowAnimation(): Boolean = applicationContextHolder.scheduler.isSingleStepMode
