@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='if (S) O = B else O = A' propDelay='60'>
+        <graph _id='2' script='if (S) O = B else O = A' propDelay='60' startupTime='30'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='60' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
             <subGraphVerticeRef _id='4' id='2' delay='60' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
@@ -92,8 +92,8 @@
             <netView _id='53' modelId='40' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='54' id='1' rot='0' filled='true' stroked='true' modelId='3' x='392.0' y='147.0'/>
-            <subGraphVerticeViewRef _id='55' id='2' rot='0' filled='true' stroked='true' modelId='4' x='392.0' y='308.0'/>
+            <subGraphVerticeViewRef _id='54' id='1' rot='0' filled='true' stroked='true' modelId='3' x='392.0' y='147.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='55' id='2' rot='0' filled='true' stroked='true' modelId='4' x='392.0' y='308.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='56' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
               <location>
                 <point x='210.0' y='154.0'/>

@@ -9,14 +9,10 @@ var ha2s = (ha1s or CI) and not (ha1s and CI)
 var ha2c = ha1s and CI
 
 S = ha2s
-CO = ha1c or ha2c' propDelay='60'>
+CO = ha1c or ha2c' propDelay='60' startupTime='10'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
             <circuitInOut _id='4' id='2' name='A' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Erstes Summand-Bit'/>
-                <translation lang='en' text='First summand bit'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Erstes Summand-Bit'/>
                 <translation lang='en' text='First summand bit'/>
@@ -27,16 +23,8 @@ CO = ha1c or ha2c' propDelay='60'>
                 <translation lang='de' text='Zweites Summand-Bit'/>
                 <translation lang='en' text='Second summand bit'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Zweites Summand-Bit'/>
-                <translation lang='en' text='Second summand bit'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='6' id='4' name='CI' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Eingehendes Übertrags-Bit '/>
-                <translation lang='en' text='Incoming carry bit'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Eingehendes Übertrags-Bit '/>
                 <translation lang='en' text='Incoming carry bit'/>
@@ -47,16 +35,8 @@ CO = ha1c or ha2c' propDelay='60'>
                 <translation lang='de' text='Summe'/>
                 <translation lang='en' text='Sum'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Summe'/>
-                <translation lang='en' text='Sum'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='8' id='6' name='CO' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertrags-Bit'/>
-                <translation lang='en' text='Resulting carry bit'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultierendes Übertrags-Bit'/>
                 <translation lang='en' text='Resulting carry bit'/>
@@ -182,7 +162,7 @@ assertOutputAt(200, &quot;CO&quot;, 1)'>
             </usecases>
           </usecases>
           <components>
-            <subGraphVerticeViewRef _id='51' id='1' rot='0' filled='true' stroked='true' modelId='3' x='252.0' y='112.0'>
+            <subGraphVerticeViewRef _id='51' id='1' rot='0' filled='true' stroked='true' modelId='3' x='252.0' y='112.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
@@ -212,7 +192,7 @@ assertOutputAt(200, &quot;CO&quot;, 1)'>
                 <point x='546.0' y='238.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='57' id='7' rot='0' filled='true' stroked='true' modelId='9' x='364.0' y='154.0'>
+            <subGraphVerticeViewRef _id='57' id='7' rot='0' filled='true' stroked='true' modelId='9' x='364.0' y='154.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>

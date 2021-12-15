@@ -131,22 +131,22 @@
                 <translation lang='de' text='Register 4-Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='59' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'>
+            <containerLibraryElement _id='59' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
+              <name>
+                <translation lang='en' text='Register 8 Bit'/>
+                <translation lang='de' text='Register 8-Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='60' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'>
               <name>
                 <translation lang='en' text='Register 16 Bit'/>
                 <translation lang='de' text='Register 16-Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='60' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'>
+            <containerLibraryElement _id='61' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'>
               <name>
                 <translation lang='en' text='Register 32 Bit'/>
                 <translation lang='de' text='Register 32-Bit'/>
-              </name>
-            </containerLibraryElement>
-            <containerLibraryElement _id='61' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
-              <name>
-                <translation lang='en' text='Register 8 Bit'/>
-                <translation lang='de' text='Register 8-Bit'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='62' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>

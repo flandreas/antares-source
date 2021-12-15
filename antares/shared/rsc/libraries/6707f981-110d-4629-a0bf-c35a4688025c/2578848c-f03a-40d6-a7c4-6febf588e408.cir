@@ -8,7 +8,7 @@ if (^C) {
 	signal = D
 
 	O = signal
-}' propDelay='110'>
+}' propDelay='110' startupTime='110'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
               <desc>
@@ -17,10 +17,6 @@ if (^C) {
               </desc>
             </subGraphVerticeRef>
             <circuitInOut _id='4' id='2' name='D' type='input' bitWidth='16'>
-              <desc>
-                <translation lang='de' text='Dateneingang'/>
-                <translation lang='en' text='Data input'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Dateneingang'/>
                 <translation lang='en' text='Data input'/>
@@ -56,17 +52,9 @@ if (^C) {
                 <translation lang='de' text='Datenausgang'/>
                 <translation lang='en' text='Data output'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
-              </desc>
             </circuitInOut>
             <concentrator _id='13' id='9' delay='0' bitWidth='16' branchCount='4' representation='binary'/>
             <circuitInOut _id='14' id='11' name='C' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Takteingang (Clock)'/>
                 <translation lang='en' text='Clock input'/>
@@ -154,7 +142,7 @@ if (^C) {
             <netView _id='59' modelId='45' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='60' id='1' rot='0' filled='true' stroked='true' modelId='3' x='378.0' y='126.0'>
+            <subGraphVerticeViewRef _id='60' id='1' rot='0' filled='true' stroked='true' modelId='3' x='378.0' y='126.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
@@ -164,17 +152,17 @@ if (^C) {
                 <point x='203.0' y='147.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='62' id='3' rot='0' filled='true' stroked='true' modelId='5' x='378.0' y='210.0'>
+            <subGraphVerticeViewRef _id='62' id='3' rot='0' filled='true' stroked='true' modelId='5' x='378.0' y='210.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='63' id='4' rot='0' filled='true' stroked='true' modelId='6' x='378.0' y='294.0'>
+            <subGraphVerticeViewRef _id='63' id='4' rot='0' filled='true' stroked='true' modelId='6' x='378.0' y='294.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='64' id='5' rot='0' filled='true' stroked='true' modelId='7' x='378.0' y='378.0'>
+            <subGraphVerticeViewRef _id='64' id='5' rot='0' filled='true' stroked='true' modelId='7' x='378.0' y='378.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>

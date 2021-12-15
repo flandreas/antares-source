@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' startupTime='25000000'>
           <elements>
             <constant _id='3' id='1' delay='1' bitWidth='1' value='1'/>
             <subGraphVerticeRef _id='4' id='2' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
@@ -13,7 +13,7 @@
               </ports>
             </digitalNet>
             <ledMatrix _id='8' id='4' delay='0' columnWidth='8' rowWidth='8' afterglow='500'/>
-            <clock _id='9' id='5' delay='50000000'/>
+            <clock _id='9' id='5' delay='50000000' enabled='false'/>
             <subGraphVerticeRef _id='10' id='6' delay='0' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
             <digitalNet _id='11' id='7' delay='0'>
               <ports>
@@ -374,7 +374,7 @@
           </netViews>
           <components>
             <constantView _id='239' id='1' filled='true' stroked='true' modelId='3' x='-182.0' y='-133.0' representation='binary' orientation='north'/>
-            <subGraphVerticeViewRef _id='240' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-238.0' y='-231.0'>
+            <subGraphVerticeViewRef _id='240' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-238.0' y='-231.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='DEC'/>
               </label>
@@ -386,7 +386,7 @@
             </digitalEdgeView>
             <ledMatrixView _id='242' id='4' rot='0' filled='true' stroked='true' modelId='8' x='98.0' y='-756.0' lightColor='green' size='large' circle='true'/>
             <clockView _id='243' id='5' rot='0' filled='true' stroked='true' modelId='9' x='-483.0' y='-203.0' knobEnabled='true'/>
-            <subGraphVerticeViewRef _id='244' id='6' rot='0' filled='true' stroked='true' modelId='10' x='-413.0' y='-203.0'>
+            <subGraphVerticeViewRef _id='244' id='6' rot='0' filled='true' stroked='true' modelId='10' x='-413.0' y='-203.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='CTR 8'/>
               </label>
@@ -457,11 +457,11 @@
                 <point x='-658.0' y='-420.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='263' id='22' rot='0' filled='true' stroked='true' modelId='22' x='-413.0' y='-406.0'/>
+            <subGraphVerticeViewRef _id='263' id='22' rot='0' filled='true' stroked='true' modelId='22' x='-413.0' y='-406.0' controlViewVisibility='simulation'/>
             <concentratorView _id='264' id='24' rot='0' filled='true' stroked='true' modelId='85' x='-28.0' y='-455.0' handedness='left'/>
             <digitalEdgeView _id='265' id='27' filled='true' stroked='true' modelId='86' layout='ortho' orig='263' origPort='2' origPortOutput='true' dest='264' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='-329.0,-406.0 -56.0,-406.0'/>
+                <polylineShape points='-329.0,-406.0 -189.0,-406.0 -189.0,-504.0 -56.0,-504.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='248' id='29' filled='true' stroked='true' modelId='18'>
@@ -504,12 +504,12 @@
                 <polylineShape points='-294.0,-175.0 -224.0,-175.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='273' id='37' rot='0' filled='true' stroked='true' modelId='17' x='7.0' y='-455.0'>
+            <subGraphVerticeViewRef _id='273' id='37' rot='0' filled='true' stroked='true' modelId='17' x='7.0' y='-455.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='274' id='38' rot='0' filled='true' stroked='true' modelId='15' x='7.0' y='-308.0'>
+            <subGraphVerticeViewRef _id='274' id='38' rot='0' filled='true' stroked='true' modelId='15' x='7.0' y='-308.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
@@ -564,7 +564,7 @@
                 <polylineShape points='-21.0,-280.0 21.0,-280.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='284' id='53' rot='0' filled='true' stroked='true' modelId='24' x='-420.0' y='-602.0'/>
+            <subGraphVerticeViewRef _id='284' id='53' rot='0' filled='true' stroked='true' modelId='24' x='-420.0' y='-602.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='285' id='56' filled='true' stroked='true' modelId='18' layout='ortho' orig='248' dest='286' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-231.0 -266.0,-336.0'/>
@@ -625,7 +625,7 @@
                 <point x='-658.0' y='-616.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='298' id='69' rot='0' filled='true' stroked='true' modelId='26' x='-420.0' y='-777.0'/>
+            <subGraphVerticeViewRef _id='298' id='69' rot='0' filled='true' stroked='true' modelId='26' x='-420.0' y='-777.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='299' id='70' filled='true' stroked='true' modelId='18' layout='ortho' orig='288' dest='300' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-518.0 -266.0,-700.0'/>
@@ -681,7 +681,7 @@
                 <point x='-658.0' y='-791.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='310' id='82' rot='0' filled='true' stroked='true' modelId='28' x='-420.0' y='-959.0'/>
+            <subGraphVerticeViewRef _id='310' id='82' rot='0' filled='true' stroked='true' modelId='28' x='-420.0' y='-959.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='311' id='83' filled='true' stroked='true' modelId='18' layout='ortho' orig='300' dest='312' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-700.0 -266.0,-882.0'/>
@@ -737,7 +737,7 @@
                 <point x='-665.0' y='-973.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='322' id='95' rot='0' filled='true' stroked='true' modelId='30' x='-420.0' y='-1141.0'/>
+            <subGraphVerticeViewRef _id='322' id='95' rot='0' filled='true' stroked='true' modelId='30' x='-420.0' y='-1141.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='323' id='96' filled='true' stroked='true' modelId='18' layout='ortho' orig='312' dest='324' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-882.0 -266.0,-1064.0'/>
@@ -793,7 +793,7 @@
                 <point x='-665.0' y='-1155.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='334' id='108' rot='0' filled='true' stroked='true' modelId='32' x='-420.0' y='-1323.0'/>
+            <subGraphVerticeViewRef _id='334' id='108' rot='0' filled='true' stroked='true' modelId='32' x='-420.0' y='-1323.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='335' id='109' filled='true' stroked='true' modelId='18' layout='ortho' orig='324' dest='336' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-1064.0 -266.0,-1246.0'/>
@@ -854,7 +854,7 @@
                 <point x='-658.0' y='-1701.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='346' id='123' rot='0' filled='true' stroked='true' modelId='34' x='-420.0' y='-1505.0'/>
+            <subGraphVerticeViewRef _id='346' id='123' rot='0' filled='true' stroked='true' modelId='34' x='-420.0' y='-1505.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='347' id='124' filled='true' stroked='true' modelId='18' layout='ortho' orig='336' dest='348' adjusted='false'>
               <shape>
                 <polylineShape points='-266.0,-1246.0 -266.0,-1428.0'/>
@@ -910,7 +910,7 @@
                 <polylineShape points='-336.0,-1505.0 -154.0,-1505.0 -154.0,-490.0 -56.0,-490.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='359' id='138' rot='0' filled='true' stroked='true' modelId='36' x='-420.0' y='-1687.0'/>
+            <subGraphVerticeViewRef _id='359' id='138' rot='0' filled='true' stroked='true' modelId='36' x='-420.0' y='-1687.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='360' id='139' filled='true' stroked='true' modelId='18' layout='ortho' orig='348' dest='359' destPort='3' adjusted='true'>
               <shape>
                 <polylineShape points='-266.0,-1428.0 -266.0,-1610.0 -350.0,-1610.0 -350.0,-1638.0'/>
@@ -961,42 +961,42 @@
                 <polylineShape points='-336.0,-1687.0 -140.0,-1687.0 -140.0,-504.0 -56.0,-504.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='367' id='149' rot='0' filled='true' stroked='true' modelId='129' x='-602.0' y='-420.0'>
+            <subGraphVerticeViewRef _id='367' id='149' rot='0' filled='true' stroked='true' modelId='129' x='-602.0' y='-420.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='368' id='150' rot='0' filled='true' stroked='true' modelId='130' x='-602.0' y='-616.0'>
+            <subGraphVerticeViewRef _id='368' id='150' rot='0' filled='true' stroked='true' modelId='130' x='-602.0' y='-616.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='369' id='151' rot='0' filled='true' stroked='true' modelId='131' x='-602.0' y='-791.0'>
+            <subGraphVerticeViewRef _id='369' id='151' rot='0' filled='true' stroked='true' modelId='131' x='-602.0' y='-791.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='370' id='152' rot='0' filled='true' stroked='true' modelId='132' x='-602.0' y='-973.0'>
+            <subGraphVerticeViewRef _id='370' id='152' rot='0' filled='true' stroked='true' modelId='132' x='-602.0' y='-973.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='371' id='153' rot='0' filled='true' stroked='true' modelId='133' x='-602.0' y='-1155.0'>
+            <subGraphVerticeViewRef _id='371' id='153' rot='0' filled='true' stroked='true' modelId='133' x='-602.0' y='-1155.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='372' id='154' rot='0' filled='true' stroked='true' modelId='134' x='-602.0' y='-1337.0'>
+            <subGraphVerticeViewRef _id='372' id='154' rot='0' filled='true' stroked='true' modelId='134' x='-602.0' y='-1337.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='373' id='155' rot='0' filled='true' stroked='true' modelId='135' x='-595.0' y='-1519.0'>
+            <subGraphVerticeViewRef _id='373' id='155' rot='0' filled='true' stroked='true' modelId='135' x='-595.0' y='-1519.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='374' id='156' rot='0' filled='true' stroked='true' modelId='136' x='-602.0' y='-1701.0'>
+            <subGraphVerticeViewRef _id='374' id='156' rot='0' filled='true' stroked='true' modelId='136' x='-602.0' y='-1701.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>

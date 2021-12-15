@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' startupTime='30'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'/>
@@ -173,8 +173,8 @@
             <netView _id='104' modelId='81' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='105' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-196.0' y='-266.0'/>
-            <subGraphVerticeViewRef _id='106' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-196.0' y='-35.0'/>
+            <subGraphVerticeViewRef _id='105' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-196.0' y='-266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='106' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-196.0' y='-35.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='107' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
               <location>
                 <point x='-266.0' y='-14.0'/>
@@ -270,7 +270,7 @@
                 <polylineShape points='-280.0,-140.0 -224.0,-140.0 -224.0,-203.0 -182.0,-203.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='126' id='29' rot='0' filled='true' stroked='true' modelId='40' x='28.0' y='21.0' mirrorV='true'/>
+            <subGraphVerticeViewRef _id='126' id='29' rot='0' filled='true' stroked='true' modelId='40' x='28.0' y='21.0' mirrorV='true' controlViewVisibility='simulation'/>
             <concentratorView _id='127' id='30' rot='0' filled='true' stroked='true' modelId='41' x='-21.0' y='21.0' handedness='right'/>
             <concentratorView _id='128' id='31' rot='0' filled='true' stroked='true' modelId='42' x='-21.0' y='-210.0' handedness='left'/>
             <digitalEdgeView _id='129' id='37' filled='true' stroked='true' modelId='43' layout='ortho' orig='128' origPort='1' origPortOutput='true' dest='126' destPort='2' adjusted='true'>

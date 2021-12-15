@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='O = A == B'>
+        <graph _id='2' script='O = A == B' startupTime='30'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'>
               <desc>
@@ -21,16 +21,8 @@
                 <translation lang='de' text='Erster zu vergleichender Wert'/>
                 <translation lang='en' text='First value to compare'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Erster zu vergleichender Wert'/>
-                <translation lang='en' text='First value to compare'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='6' id='4' name='B' type='input' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='Zweiter zu vergleichender Wert'/>
-                <translation lang='en' text='Second value to compare'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Zweiter zu vergleichender Wert'/>
                 <translation lang='en' text='Second value to compare'/>
@@ -97,10 +89,6 @@
                 <translation lang='de' text='Resultat = 1, falls A = B'/>
                 <translation lang='en' text='Result = 1, if A = B'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Resultat = 1, falls A = B'/>
-                <translation lang='en' text='Result = 1, if A = B'/>
-              </desc>
             </circuitInOut>
             <digitalNet _id='35' id='17' delay='0'>
               <ports>
@@ -125,12 +113,12 @@
             <netView _id='47' modelId='21' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='48' id='1' rot='0' filled='true' stroked='true' modelId='3' x='406.0' y='252.0'>
+            <subGraphVerticeViewRef _id='48' id='1' rot='0' filled='true' stroked='true' modelId='3' x='406.0' y='252.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='='/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='49' id='2' rot='0' filled='true' stroked='true' modelId='4' x='406.0' y='378.0'>
+            <subGraphVerticeViewRef _id='49' id='2' rot='0' filled='true' stroked='true' modelId='4' x='406.0' y='378.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='='/>
               </label>

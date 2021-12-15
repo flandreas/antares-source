@@ -3,14 +3,10 @@
     <graphStorable _id='1'>
       <model>
         <graph _id='2' script='O = (D + 1) % 256
-CO = D == 255'>
+CO = D == 255' startupTime='21'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
             <circuitInOut _id='4' id='2' name='D' type='input' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='8-Bit-Zahl, die inkrementiert werden soll.'/>
-                <translation lang='en' text='The 8-bit number to be incremented'/>
-              </desc>
               <desc>
                 <translation lang='de' text='8-Bit-Zahl, die inkrementiert werden soll.'/>
                 <translation lang='en' text='The 8-bit number to be incremented'/>
@@ -96,17 +92,9 @@ CO = D == 255'>
                 <translation lang='de' text='Resultat der Inkrementierung: O = D + 1'/>
                 <translation lang='en' text='Incrementation result: O = D + 1'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Resultat der Inkrementierung: O = D + 1'/>
-                <translation lang='en' text='Incrementation result: O = D + 1'/>
-              </desc>
             </circuitInOut>
             <concentrator _id='48' id='25' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
             <circuitInOut _id='49' id='26' name='CO' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertrags-Bit. Ist 1, falls D = 255 ist.'/>
-                <translation lang='en' text='Resulting carry bit. Is 1 if D = 255.'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultierendes Übertrags-Bit. Ist 1, falls D = 255 ist.'/>
                 <translation lang='en' text='Resulting carry bit. Is 1 if D = 255.'/>
@@ -243,7 +231,7 @@ CO = D == 255'>
             <netView _id='125' modelId='95' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='126' id='1' rot='0' filled='true' stroked='true' modelId='3' x='322.0' y='224.0'>
+            <subGraphVerticeViewRef _id='126' id='1' rot='0' filled='true' stroked='true' modelId='3' x='322.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
@@ -265,37 +253,37 @@ CO = D == 255'>
                 <polylineShape points='182.0,266.0 336.0,266.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='132' id='7' rot='0' filled='true' stroked='true' modelId='13' x='434.0' y='224.0'>
+            <subGraphVerticeViewRef _id='132' id='7' rot='0' filled='true' stroked='true' modelId='13' x='434.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='133' id='8' rot='0' filled='true' stroked='true' modelId='14' x='546.0' y='224.0'>
+            <subGraphVerticeViewRef _id='133' id='8' rot='0' filled='true' stroked='true' modelId='14' x='546.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='134' id='9' rot='0' filled='true' stroked='true' modelId='15' x='658.0' y='224.0'>
+            <subGraphVerticeViewRef _id='134' id='9' rot='0' filled='true' stroked='true' modelId='15' x='658.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='135' id='10' rot='0' filled='true' stroked='true' modelId='16' x='770.0' y='224.0'>
+            <subGraphVerticeViewRef _id='135' id='10' rot='0' filled='true' stroked='true' modelId='16' x='770.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='136' id='11' rot='0' filled='true' stroked='true' modelId='17' x='882.0' y='224.0'>
+            <subGraphVerticeViewRef _id='136' id='11' rot='0' filled='true' stroked='true' modelId='17' x='882.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='137' id='12' rot='0' filled='true' stroked='true' modelId='18' x='994.0' y='224.0'>
+            <subGraphVerticeViewRef _id='137' id='12' rot='0' filled='true' stroked='true' modelId='18' x='994.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='138' id='13' rot='0' filled='true' stroked='true' modelId='19' x='1106.0' y='224.0'>
+            <subGraphVerticeViewRef _id='138' id='13' rot='0' filled='true' stroked='true' modelId='19' x='1106.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='HA'/>
               </label>

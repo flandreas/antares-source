@@ -8,7 +8,7 @@ if (^C) {
 	signal = D
 
 	O = signal
-}' propDelay='110'>
+}' propDelay='110' startupTime='110'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
               <desc>
@@ -59,10 +59,6 @@ if (^C) {
               </desc>
             </subGraphVerticeRef>
             <circuitInOut _id='11' id='9' name='D' type='input' bitWidth='32'>
-              <desc>
-                <translation lang='de' text='Dateineingang'/>
-                <translation lang='en' text='Data input'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Dateineingang'/>
                 <translation lang='en' text='Data input'/>
@@ -128,10 +124,6 @@ if (^C) {
                 <translation lang='de' text='Takteingang (Clock)'/>
                 <translation lang='en' text='Clock input'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
-              </desc>
             </circuitInOut>
             <digitalNet _id='41' id='21' delay='0'>
               <ports>
@@ -148,10 +140,6 @@ if (^C) {
             </digitalNet>
             <concentrator _id='51' id='22' delay='0' bitWidth='32' branchCount='8' representation='binary'/>
             <circuitInOut _id='52' id='31' name='O' type='output' bitWidth='32'>
-              <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Datenausgang'/>
                 <translation lang='en' text='Data output'/>
@@ -238,42 +226,42 @@ if (^C) {
             <netView _id='99' modelId='77' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='100' id='1' rot='0' filled='true' stroked='true' modelId='3' x='560.0' y='140.0'>
+            <subGraphVerticeViewRef _id='100' id='1' rot='0' filled='true' stroked='true' modelId='3' x='560.0' y='140.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='101' id='2' rot='0' filled='true' stroked='true' modelId='4' x='560.0' y='224.0'>
+            <subGraphVerticeViewRef _id='101' id='2' rot='0' filled='true' stroked='true' modelId='4' x='560.0' y='224.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='102' id='3' rot='0' filled='true' stroked='true' modelId='5' x='560.0' y='308.0'>
+            <subGraphVerticeViewRef _id='102' id='3' rot='0' filled='true' stroked='true' modelId='5' x='560.0' y='308.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='103' id='4' rot='0' filled='true' stroked='true' modelId='6' x='560.0' y='392.0'>
+            <subGraphVerticeViewRef _id='103' id='4' rot='0' filled='true' stroked='true' modelId='6' x='560.0' y='392.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='104' id='5' rot='0' filled='true' stroked='true' modelId='7' x='560.0' y='476.0'>
+            <subGraphVerticeViewRef _id='104' id='5' rot='0' filled='true' stroked='true' modelId='7' x='560.0' y='476.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='105' id='6' rot='0' filled='true' stroked='true' modelId='8' x='560.0' y='560.0'>
+            <subGraphVerticeViewRef _id='105' id='6' rot='0' filled='true' stroked='true' modelId='8' x='560.0' y='560.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='106' id='7' rot='0' filled='true' stroked='true' modelId='9' x='560.0' y='644.0'>
+            <subGraphVerticeViewRef _id='106' id='7' rot='0' filled='true' stroked='true' modelId='9' x='560.0' y='644.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='107' id='8' rot='0' filled='true' stroked='true' modelId='10' x='560.0' y='728.0'>
+            <subGraphVerticeViewRef _id='107' id='8' rot='0' filled='true' stroked='true' modelId='10' x='560.0' y='728.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='de' text='REG'/>
               </label>

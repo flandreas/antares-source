@@ -10,7 +10,7 @@
 if (^C) {
 	Q = D
 	&apos;!Q&apos; = not D
-}' propDelay='110'>
+}' propDelay='110' startupTime='45'>
           <elements>
             <norGate _id='3' id='1' delay='7' inputCount='2'/>
             <norGate _id='4' id='2' delay='10' inputCount='2'/>
@@ -114,7 +114,7 @@ if (^C) {
             </circuitInOutView>
             <andGateView _id='56' id='7' rot='0' filled='true' stroked='true' modelId='9' x='378.0' y='168.0'/>
             <andGateView _id='57' id='8' rot='0' filled='true' stroked='true' modelId='10' x='378.0' y='322.0'/>
-            <subGraphVerticeViewRef _id='58' id='9' rot='0' filled='true' stroked='true' modelId='11' x='196.0' y='238.0'/>
+            <subGraphVerticeViewRef _id='58' id='9' rot='0' filled='true' stroked='true' modelId='11' x='196.0' y='238.0' controlViewVisibility='simulation'/>
             <notGateView _id='59' id='10' rot='0' filled='true' stroked='true' modelId='12' x='266.0' y='336.0'/>
             <digitalEdgeView _id='60' id='11' filled='true' stroked='true' modelId='13' layout='ortho' orig='52' origPort='1' origPortOutput='true' dest='61' adjusted='false'>
               <shape>

@@ -21,7 +21,7 @@ if (S) {
 	return
 }
 Q = 0
-&apos;!Q&apos; = 1'>
+&apos;!Q&apos; = 1' startupTime='15'>
           <elements>
             <norGate _id='3' id='1' delay='8' inputCount='2'/>
             <norGate _id='4' id='2' delay='11' inputCount='2'/>

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='1' name='J' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
@@ -208,7 +208,7 @@
                 <polylineShape points='161.0,-7.0 210.0,-7.0 273.0,-175.0 329.0,-175.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='61' id='29' rot='0' filled='true' stroked='true' modelId='16' x='-210.0' y='-91.0'/>
+            <subGraphVerticeViewRef _id='61' id='29' rot='0' filled='true' stroked='true' modelId='16' x='-210.0' y='-91.0' controlViewVisibility='simulation'/>
             <digitalEdgeView _id='82' id='30' filled='true' stroked='true' modelId='38' layout='ortho' orig='61' origPort='2' origPortOutput='true' dest='83' adjusted='false'>
               <shape>
                 <polylineShape points='-140.0,-91.0 -98.0,-91.0'/>

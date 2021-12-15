@@ -10,7 +10,7 @@
   O = D &lt;&lt; 1
   COL = D &gt;= 32768
   COR = 0
-}' propDelay='80'>
+}' propDelay='80' startupTime='30'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='20' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'>
               <desc>
@@ -29,10 +29,6 @@
                 <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
                 <translation lang='en' text='Data input. The number to be shifted.'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
-                <translation lang='en' text='Data input. The number to be shifted.'/>
-              </desc>
             </circuitInOut>
             <splitter _id='6' id='4' delay='0' bitWidth='16' branchCount='2' representation='binary'/>
             <circuitInOut _id='7' id='9' name='O' type='output' bitWidth='16'>
@@ -40,17 +36,9 @@
                 <translation lang='de' text='Resultat-Ausgang'/>
                 <translation lang='en' text='Result output'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Resultat-Ausgang'/>
-                <translation lang='en' text='Result output'/>
-              </desc>
             </circuitInOut>
             <concentrator _id='8' id='10' delay='0' bitWidth='16' branchCount='2' representation='binary'/>
             <circuitInOut _id='9' id='15' name='F' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
-                <translation lang='en' text='0: Schift to left, 1: Shift to right'/>
-              </desc>
               <desc>
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Schift to left, 1: Shift to right'/>
@@ -68,16 +56,8 @@
                 <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
                 <translation lang='en' text='Carry-in (right)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
-                <translation lang='en' text='Carry-in (right)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='15' id='19' name='CIL' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Eingehendes Übertragsbit (links)'/>
-                <translation lang='en' text='Carry-in (left)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Eingehendes Übertragsbit (links)'/>
                 <translation lang='en' text='Carry-in (left)'/>
@@ -88,16 +68,8 @@
                 <translation lang='de' text='Resultierendes Übertrags-Bit (links)'/>
                 <translation lang='en' text='Carry-out (left)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertrags-Bit (links)'/>
-                <translation lang='en' text='Carry-out (left)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='17' id='23' name='COR' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertrags-Bit (rechts)'/>
-                <translation lang='en' text='Carry-out (right)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultierendes Übertrags-Bit (rechts)'/>
                 <translation lang='en' text='Carry-out (right)'/>
@@ -196,12 +168,12 @@
             <netView _id='67' modelId='51' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='68' id='1' rot='0' filled='true' stroked='true' modelId='3' x='364.0' y='231.0'>
+            <subGraphVerticeViewRef _id='68' id='1' rot='0' filled='true' stroked='true' modelId='3' x='364.0' y='231.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='SHFT'/>
               </label>
             </subGraphVerticeViewRef>
-            <subGraphVerticeViewRef _id='69' id='2' rot='0' filled='true' stroked='true' modelId='4' x='553.0' y='231.0'>
+            <subGraphVerticeViewRef _id='69' id='2' rot='0' filled='true' stroked='true' modelId='4' x='553.0' y='231.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='SHFT'/>
               </label>

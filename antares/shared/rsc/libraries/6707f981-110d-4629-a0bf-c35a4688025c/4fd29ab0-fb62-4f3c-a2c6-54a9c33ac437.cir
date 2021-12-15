@@ -9,7 +9,7 @@ when (s) {
 	2 : O = I2
 	3 : O = I3
 	else : O = 0
-}'>
+}' startupTime='30'>
           <elements>
             <circuitInOut _id='3' id='4' name='S1' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='5' name='S0' type='input' bitWidth='1'/>

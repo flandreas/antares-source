@@ -8,7 +8,7 @@ if (^C) {
 	signal = D
 
 	O = signal
-}'>
+}' propDelay='110' startupTime='110'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
               <desc>
@@ -60,10 +60,6 @@ if (^C) {
             </subGraphVerticeRef>
             <splitter _id='11' id='9' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
             <circuitInOut _id='12' id='10' name='D' type='input' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='Dateineingang'/>
-                <translation lang='en' text='Data input'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Dateineingang'/>
                 <translation lang='en' text='Data input'/>
@@ -128,17 +124,9 @@ if (^C) {
                 <translation lang='de' text='Takteingang (Clock)'/>
                 <translation lang='en' text='Clock input'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
-              </desc>
             </circuitInOut>
             <concentrator _id='41' id='22' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
             <circuitInOut _id='42' id='23' name='O' type='output' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Datenausgang'/>
                 <translation lang='en' text='Data output'/>
@@ -239,14 +227,14 @@ if (^C) {
             <netView _id='101' modelId='77' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='102' id='1' rot='0' filled='true' stroked='true' modelId='3' x='308.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='103' id='2' rot='0' filled='true' stroked='true' modelId='4' x='448.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='104' id='3' rot='0' filled='true' stroked='true' modelId='5' x='588.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='105' id='4' rot='0' filled='true' stroked='true' modelId='6' x='728.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='106' id='5' rot='0' filled='true' stroked='true' modelId='7' x='868.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='107' id='6' rot='0' filled='true' stroked='true' modelId='8' x='1008.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='108' id='7' rot='0' filled='true' stroked='true' modelId='9' x='1148.0' y='266.0'/>
-            <subGraphVerticeViewRef _id='109' id='8' rot='0' filled='true' stroked='true' modelId='10' x='1288.0' y='266.0'/>
+            <subGraphVerticeViewRef _id='102' id='1' rot='0' filled='true' stroked='true' modelId='3' x='308.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='103' id='2' rot='0' filled='true' stroked='true' modelId='4' x='448.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='104' id='3' rot='0' filled='true' stroked='true' modelId='5' x='588.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='105' id='4' rot='0' filled='true' stroked='true' modelId='6' x='728.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='106' id='5' rot='0' filled='true' stroked='true' modelId='7' x='868.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='107' id='6' rot='0' filled='true' stroked='true' modelId='8' x='1008.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='108' id='7' rot='0' filled='true' stroked='true' modelId='9' x='1148.0' y='266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='109' id='8' rot='0' filled='true' stroked='true' modelId='10' x='1288.0' y='266.0' controlViewVisibility='simulation'/>
             <splitterView _id='110' id='9' rot='0' filled='true' stroked='true' modelId='11' x='238.0' y='175.0' handedness='right'/>
             <circuitInOutView _id='111' id='10' rot='0' filled='true' stroked='true' modelId='12' representation='hex' orientation='east'>
               <location>

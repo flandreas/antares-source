@@ -17,13 +17,9 @@ if (^T) {
 	Q = data@3
 }
 
-'>
+' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='5' name='I' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Dateneingang (seriell)'/>
-                <translation lang='en' text='Data input (serial)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Dateneingang (seriell)'/>
                 <translation lang='en' text='Data input (serial)'/>
@@ -44,10 +40,6 @@ if (^T) {
               </ports>
             </digitalNet>
             <circuitInOut _id='13' id='9' name='T' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Takteingang'/>
-                <translation lang='en' text=' Clock input'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Takteingang'/>
                 <translation lang='en' text=' Clock input'/>
@@ -106,10 +98,6 @@ if (^T) {
                 <translation lang='de' text='Datenausgang (seriell)'/>
                 <translation lang='en' text='Data output (serial)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Datenausgang (seriell)'/>
-                <translation lang='en' text='Data output (serial)'/>
-              </desc>
             </circuitInOut>
             <digitalNet _id='48' id='18' delay='0'>
               <ports>
@@ -123,16 +111,8 @@ if (^T) {
                 <translation lang='de' text='Datenausgang Bit 0 (parallel)'/>
                 <translation lang='en' text='Data output bit 0 (parallel)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Datenausgang Bit 0 (parallel)'/>
-                <translation lang='en' text='Data output bit 0 (parallel)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='22' id='20' name='O1' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Datenausgang Bit 1 (parallel)'/>
-                <translation lang='en' text='Data output bit 1 (parallel)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Datenausgang Bit 1 (parallel)'/>
                 <translation lang='en' text='Data output bit 1 (parallel)'/>
@@ -143,16 +123,8 @@ if (^T) {
                 <translation lang='de' text=' Datenausgang Bit 2 (parallel)'/>
                 <translation lang='en' text='Data output bit 2 (parallel)'/>
               </desc>
-              <desc>
-                <translation lang='de' text=' Datenausgang Bit 2 (parallel)'/>
-                <translation lang='en' text='Data output bit 2 (parallel)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='51' id='22' name='O3' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text=' Datenausgang Bit 3 (parallel)'/>
-                <translation lang='en' text='Data output bit 3 (parallel)'/>
-              </desc>
               <desc>
                 <translation lang='de' text=' Datenausgang Bit 3 (parallel)'/>
                 <translation lang='en' text='Data output bit 3 (parallel)'/>
@@ -386,10 +358,10 @@ if (^T) {
                 <polylineShape points='602.0,-182.0 658.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='67' id='47' rot='0' filled='true' stroked='true' modelId='8' x='70.0' y='-182.0'/>
-            <subGraphVerticeViewRef _id='76' id='48' rot='0' filled='true' stroked='true' modelId='19' x='210.0' y='-182.0'/>
-            <subGraphVerticeViewRef _id='79' id='49' rot='0' filled='true' stroked='true' modelId='25' x='350.0' y='-182.0'/>
-            <subGraphVerticeViewRef _id='86' id='50' rot='0' filled='true' stroked='true' modelId='31' x='490.0' y='-182.0'/>
+            <subGraphVerticeViewRef _id='67' id='47' rot='0' filled='true' stroked='true' modelId='8' x='70.0' y='-182.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='76' id='48' rot='0' filled='true' stroked='true' modelId='19' x='210.0' y='-182.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='79' id='49' rot='0' filled='true' stroked='true' modelId='25' x='350.0' y='-182.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='86' id='50' rot='0' filled='true' stroked='true' modelId='31' x='490.0' y='-182.0' controlViewVisibility='simulation'/>
           </components>
         </graphView>
       </view>

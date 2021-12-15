@@ -4,7 +4,7 @@
       <model>
         <graph _id='2' script='S = (A or B) and not (A and B)
 C = A and B
-' propDelay='20'>
+' propDelay='20' startupTime='10'>
           <elements>
             <xorGate _id='3' id='1' delay='20' inputCount='2'>
               <desc>
@@ -17,16 +17,8 @@ C = A and B
                 <translation lang='de' text='Erstes Summand-Bit'/>
                 <translation lang='en' text='First summand bit'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Erstes Summand-Bit'/>
-                <translation lang='en' text='First summand bit'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='5' id='3' name='B' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Zweites Summand-Bit'/>
-                <translation lang='en' text='Seconds Summand-Bit'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Zweites Summand-Bit'/>
                 <translation lang='en' text='Seconds Summand-Bit'/>
@@ -57,16 +49,8 @@ C = A and B
                 <translation lang='de' text='Summe'/>
                 <translation lang='en' text='Sum'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Summe'/>
-                <translation lang='en' text='Sum'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='16' id='8' name='C' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertrags-Bit'/>
-                <translation lang='en' text='Resulting carry bit'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultierendes Übertrags-Bit'/>
                 <translation lang='en' text='Resulting carry bit'/>

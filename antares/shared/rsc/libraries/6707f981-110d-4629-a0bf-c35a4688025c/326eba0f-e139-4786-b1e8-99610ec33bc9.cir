@@ -6,7 +6,7 @@
 O0 = EN and val == 0
 O1 = EN and val == 1
 O2 = EN and val == 2
-O3 = EN and val == 3' propDelay='40'>
+O3 = EN and val == 3' propDelay='40' startupTime='53'>
           <elements>
             <circuitInOut _id='3' id='1' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='1'/>

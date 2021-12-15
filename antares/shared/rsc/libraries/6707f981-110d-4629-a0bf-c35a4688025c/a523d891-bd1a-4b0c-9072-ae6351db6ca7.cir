@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='O = A == B'>
+        <graph _id='2' script='O = A == B' startupTime='10'>
           <elements>
             <xorGate _id='3' id='1' delay='20' inputCount='2'>
               <desc>
@@ -33,16 +33,8 @@
                 <translation lang='de' text='Erster zu vergleichender Wert'/>
                 <translation lang='en' text='First value to compare'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Erster zu vergleichender Wert'/>
-                <translation lang='en' text='First value to compare'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='8' id='6' name='B' type='input' bitWidth='4'>
-              <desc>
-                <translation lang='de' text='Zweiter zu vergleichender Wert'/>
-                <translation lang='en' text='Second value to compare'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Zweiter zu vergleichender Wert'/>
                 <translation lang='en' text='Second value to compare'/>
@@ -141,10 +133,6 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='54' id='25' name='O' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultat = 1, falls A = B'/>
-                <translation lang='en' text='Result = 1, if A = B'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultat = 1, falls A = B'/>
                 <translation lang='en' text='Result = 1, if A = B'/>

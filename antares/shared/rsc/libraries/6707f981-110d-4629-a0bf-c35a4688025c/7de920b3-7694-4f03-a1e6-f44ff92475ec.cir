@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' startupTime='90'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
@@ -407,10 +407,10 @@
             <netView _id='263' modelId='215' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='264' id='1' rot='0' filled='true' stroked='true' modelId='3' x='0.0' y='-266.0'/>
-            <subGraphVerticeViewRef _id='265' id='2' rot='0' filled='true' stroked='true' modelId='4' x='0.0' y='-98.0'/>
-            <subGraphVerticeViewRef _id='266' id='3' rot='0' filled='true' stroked='true' modelId='5' x='0.0' y='70.0'/>
-            <subGraphVerticeViewRef _id='267' id='4' rot='0' filled='true' stroked='true' modelId='6' x='0.0' y='238.0'/>
+            <subGraphVerticeViewRef _id='264' id='1' rot='0' filled='true' stroked='true' modelId='3' x='0.0' y='-266.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='265' id='2' rot='0' filled='true' stroked='true' modelId='4' x='0.0' y='-98.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='266' id='3' rot='0' filled='true' stroked='true' modelId='5' x='0.0' y='70.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='267' id='4' rot='0' filled='true' stroked='true' modelId='6' x='0.0' y='238.0' controlViewVisibility='simulation'/>
             <orGateView _id='268' id='5' rot='0' filled='true' stroked='true' modelId='7' x='-56.0' y='-280.0'/>
             <orGateView _id='269' id='6' rot='0' filled='true' stroked='true' modelId='8' x='-56.0' y='-210.0'/>
             <orGateView _id='270' id='7' rot='0' filled='true' stroked='true' modelId='9' x='-56.0' y='-42.0'/>

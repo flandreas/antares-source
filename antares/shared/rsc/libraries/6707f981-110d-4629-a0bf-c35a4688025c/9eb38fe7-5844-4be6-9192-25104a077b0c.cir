@@ -10,7 +10,7 @@
   O = D &lt;&lt; 1
   COL = D &gt;= 128
   COR = 0
-}' propDelay='20'>
+}' propDelay='20' startupTime='30'>
           <elements>
             <andGate _id='3' id='1' delay='20' inputCount='2'/>
             <andGate _id='4' id='2' delay='20' inputCount='2'/>
@@ -37,16 +37,8 @@
                 <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
                 <translation lang='en' text='Carry-in (right)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
-                <translation lang='en' text='Carry-in (right)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='24' id='22' name='CIL' type='input' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Eingehendes Übertrags-Bit (links)'/>
-                <translation lang='en' text='Carry-in (left)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Eingehendes Übertrags-Bit (links)'/>
                 <translation lang='en' text='Carry-in (left)'/>
@@ -91,17 +83,9 @@
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
               </desc>
-              <desc>
-                <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
-                <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
-              </desc>
             </circuitInOut>
             <notGate _id='47' id='35' delay='20'/>
             <circuitInOut _id='48' id='36' name='D' type='input' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
-                <translation lang='en' text='Data input. The number to be shifted.'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
                 <translation lang='en' text='Data input. The number to be shifted.'/>
@@ -154,16 +138,8 @@
                 <translation lang='de' text='Resultierendes Übertragsbits (rechts)'/>
                 <translation lang='en' text='Carry-out (right)'/>
               </desc>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertragsbits (rechts)'/>
-                <translation lang='en' text='Carry-out (right)'/>
-              </desc>
             </circuitInOut>
             <circuitInOut _id='81' id='43' name='COL' type='output' bitWidth='1'>
-              <desc>
-                <translation lang='de' text='Resultierendes Übertragsbit (links)'/>
-                <translation lang='en' text='Carry-out (left)'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultierendes Übertragsbit (links)'/>
                 <translation lang='en' text='Carry-out (left)'/>
@@ -209,10 +185,6 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='101' id='54' name='O' type='output' bitWidth='8'>
-              <desc>
-                <translation lang='de' text='Resultat-Ausgang'/>
-                <translation lang='en' text='Result output'/>
-              </desc>
               <desc>
                 <translation lang='de' text='Resultat-Ausgang'/>
                 <translation lang='en' text='Result output'/>
