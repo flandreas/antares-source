@@ -452,7 +452,7 @@
             <translation lang='de' text='Erzeugt eine 2-Bit-Zahl, die die Position des gesetzten Eingang-Bit darstellt'/>
           </desc>
           <name>
-            <translation lang='en' text='8-3 Priorität Encoder'/>
+            <translation lang='en' text='8-3 Priority Encoder'/>
             <translation lang='de' text='8-3 Priorität-Kodierer'/>
           </name>
           <ports>

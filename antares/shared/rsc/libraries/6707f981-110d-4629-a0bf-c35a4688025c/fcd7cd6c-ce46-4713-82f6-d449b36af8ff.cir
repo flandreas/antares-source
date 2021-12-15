@@ -1555,7 +1555,7 @@
         <subGraphVertice _id='546' id='0' delay='0' uuid='fcd7cd6c-ce46-4713-82f6-d449b36af8ff'>
           <name>
             <translation lang='de' text='Volladierer 4-Bit (schneller Übertrag)'/>
-            <translation lang='en' text='Full Adder 4 Bit (Fast Cary)'/>
+            <translation lang='en' text='Full Adder 4 Bit (Fast Carry)'/>
           </name>
           <ports>
             <subCircuitPort _id='532' portId='1' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
