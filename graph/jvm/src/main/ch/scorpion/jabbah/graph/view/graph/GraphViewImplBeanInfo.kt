@@ -15,6 +15,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
     companion object {
 	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
+	    private val startupTime = GraphProperties.startupTime(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
 	    private val paramDefs = GraphProperties.graphParamDefinitions()
@@ -28,6 +29,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 
 	    properties.add(name.bind(editor, ids, filter = { false }))
 	    properties.add(propDelay.bind(editor, ids))
+	    properties.add(startupTime.bind(editor, ids, optional = true))
 	    properties.add(description.bind(editor, ids, filter = { true }))
 	    properties.add(script.bind(editor, ids))
 	    properties.add(purelyScripted.bind(editor, ids, editable = bean.script.isNotEmpty()))

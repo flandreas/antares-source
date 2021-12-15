@@ -27,6 +27,9 @@ object GraphProperties {
 	fun propagationDelay(beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> =
 		CommandPropertySwing("propagationDelay", AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, Long::class.java, beanProvider)
 
+	fun startupTime(beanProvider: BeanProvider = drawingBeanProvider): CommandPropertySwing<Long> =
+		CommandPropertySwing("graph.startupTime", "graph.property.startupTime", Long::class.java, beanProvider)
+
 	fun label(
 		name: String = "label",
 		baseKey: String = "graph.property.label",

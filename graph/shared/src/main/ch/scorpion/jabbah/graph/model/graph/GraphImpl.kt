@@ -67,6 +67,15 @@ open class GraphImpl(
 
 	override var propagationDelay: Long? = null
 
+	override var startupTime: Long? = null
+		set(value) {
+			field = if (value == 0L) {
+				null
+			} else {
+				value
+			}
+		}
+
 	override var script: String? = null
 
 	override var purelyScripted: Boolean = false
@@ -225,6 +234,11 @@ open class GraphImpl(
 		}
 		propagationDelay?.let { writer.writeLong("propDelay", it) }
 		writer.writeStorables("elements", _elements.iterator())
+		startupTime?.let {
+			if (it > 0) {
+				writer.writeLong("startupTime", it)
+			}
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -236,6 +250,9 @@ open class GraphImpl(
 		}
 		if (reader.hasAttribute("propDelay")) {
 			propagationDelay = reader.readLong("propDelay")
+		}
+		if (reader.hasAttribute("startupTime")) {
+			startupTime = reader.readLong("startupTime")
 		}
 		_elements.clear()
 		reader.readStorables<GraphElement>("elements").forEach {

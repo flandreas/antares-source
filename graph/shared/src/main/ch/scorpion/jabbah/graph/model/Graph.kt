@@ -42,6 +42,12 @@ interface Graph : Namable, Describable, Storable {
      */
     var propagationDelay: Long?
 
+	/**
+	 * The optional time (in nanoseconds) until this [Graph] has reached a stable state after starting execution.
+	 * Used to skip signal flow animations during the start-up phase.
+	 */
+	var startupTime: Long?
+
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
 
