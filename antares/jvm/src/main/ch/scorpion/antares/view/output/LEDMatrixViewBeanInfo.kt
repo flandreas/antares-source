@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.output
 
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -13,8 +12,8 @@ import com.l2fprod.common.propertysheet.Property
 class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 
     companion object {
-	    private val columnWidth = CommandPropertySwing("columnWidth", "element.property.columns", BitWidth::class.java, componentBeanProvider)
-	    private val rowWidth = CommandPropertySwing("rowWidth", "element.property.rows", BitWidth::class.java, componentBeanProvider)
+	    private val columnWidth = AntaresProperties.bitWidth("columnWidth", "element.property.columns")
+	    private val rowWidth = AntaresProperties.bitWidth("rowWidth", "element.property.rows")
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val size = EditProperties.size()
 	    private val afterglow = CommandPropertySwing("afterglowDuration", "element.property.LEDMatrix.afterglow", Long::class.java, componentBeanProvider)
