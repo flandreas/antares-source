@@ -8,7 +8,9 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.GraphProperties
+import java.awt.Dimension
 import java.awt.Frame
+import java.awt.Point
 import javax.swing.JOptionPane
 
 class TestAction(
@@ -16,7 +18,7 @@ class TestAction(
 ) : AbstractViewAction("view.action.test") {
 
 	override fun execute(event: ActionEvent) {
-		setBitWidthGraphParam()
+		windowSize16to9()
 	}
 
 	private fun setBitWidthGraphParam() {
@@ -33,6 +35,12 @@ class TestAction(
 
 		property.value = paramDefs
 		property.writeToBean()
+	}
+
+	private fun windowSize16to9() {
+		val frame = Frame.getFrames()[0]
+		frame.size = Dimension(1920, 1080)
+		frame.location = Point(0, 0)
 	}
 
 	private fun noAction() {
