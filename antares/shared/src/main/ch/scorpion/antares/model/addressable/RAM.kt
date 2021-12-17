@@ -199,7 +199,9 @@ class RAM(
 	fun read(address: Int): ULong = memory.read(address)
 
 	fun write(address: Int, value: ULong, signalHandler: SignalHandler? = null) {
+		val oldValue = memory.read(address)
 		memory.write(address, value)
+		notifyDataChanged(address, oldValue, value)
 		stateChanged(signalHandler)
 	}
 }

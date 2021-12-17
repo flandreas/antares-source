@@ -37,6 +37,11 @@ interface BitWidth {
 			val number = value.toIntOrNull()
 			return number?.let { of(it) } ?: BitWidthExpression(value)
 		}
+
+		/** Returns the smallest [BitWidth] that can represent [value].*/
+		fun smallest(value: ULong): BitWidth? {
+			return PREDEFINED.firstOrNull { it.maxValue >= value }
+		}
 	}
 
 	val width: Int

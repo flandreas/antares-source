@@ -9,8 +9,9 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.graphics.BufferedImageJvm
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.ImageJvm
+import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
 import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.draw.view.TooltipManager
@@ -35,7 +36,8 @@ object DrawModuleJvm : AbstractModule() {
     override fun initialize() {
         BaseModuleJvm.require()
 
-        DrawModule.imageLoader = { ImageJvm(it) }
+        DrawModule.imageLoader = { ResourceImageJvm(it) }
+	    DrawModule.bufferedImageFactory = { w, h -> BufferedImageJvm(w, h) }
 
         DrawModule.require()
 

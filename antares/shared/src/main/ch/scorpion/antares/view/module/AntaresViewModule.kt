@@ -104,6 +104,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val CLOCK = "Clock"
 	private const val KEYBOARD = "Keyboard"
 	private const val TERMINAL = "Terminal"
+	private const val VIDEO_RAM = "VideoRam"
 	private const val JOYSTICK = "Joystick"
 	private const val REAL_SWITCH = "RealSwitch"
 
@@ -212,6 +213,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
+		properties.set(VideoRamView.PROP_ICON_PATH, "/img/terminal.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(TransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -272,6 +274,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("realSwitchView", RealSwitchView::class)
 		typeMap.register("bitExtenderView", BitExtenderView::class)
 		typeMap.register("buzzerView", BuzzerView::class)
+		typeMap.register("videoRamView", VideoRamView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -317,6 +320,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, VideoRamView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -425,6 +429,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
+		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/terminal.png" }, VideoRamView::class)
 		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}

@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.graphics.ImageJvm
+import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -57,7 +57,7 @@ class NavigationStackViewSwing(
 		private val elementHoverBorderColor: java.awt.Color get() = UIManager.getColor("Button.hoverBorderColor")
 		private val elementTextColor: java.awt.Color get() = UIManager.getColor("Button.foreground")
 
-		private val lockedIcon = ImageJvm.themedImage("/img/locked-16.png")
+		private val lockedIcon = ResourceImageJvm.themedImage("/img/locked-16.png")
 	}
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack

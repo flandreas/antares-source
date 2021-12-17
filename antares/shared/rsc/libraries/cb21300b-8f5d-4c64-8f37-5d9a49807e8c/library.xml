@@ -91,6 +91,7 @@
             <baseLibraryElement _id='28' id='LEDMatrix'/>
             <baseLibraryElement _id='36' id='Terminal'/>
             <baseLibraryElement _id='53' id='Buzzer'/>
+            <baseLibraryElement _id='54' id='VideoRam'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='30'>

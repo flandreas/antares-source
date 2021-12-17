@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.sound.WaveformType
@@ -159,6 +160,13 @@ class WaveformTypeEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(WaveformType.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<WaveformType>()
+	}
+}
+
+class VideoRamColorModelEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(VideoRamColorModel.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<VideoRamColorModel>()
 	}
 }
 
