@@ -7,7 +7,9 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.BufferedImage
@@ -22,9 +24,12 @@ import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -38,7 +43,7 @@ class VideoRamView(
 	styleProvider,
 	model,
 	RoundRectangle2D(0.0, 0.0, 0.0, 0.0, ROUND_ARC.toDouble(), ROUND_ARC.toDouble())
-) {
+), ControlViewSource<RAM>, ControlView<RAM> {
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.VideoRamView.iconPath"
 
@@ -74,7 +79,7 @@ class VideoRamView(
 			}
 		}
 
-	var rowsCount: Int = 100
+	var rowsCount: Int = 50
 		set(value) {
 			if (field != value) {
 				field = value
@@ -85,7 +90,7 @@ class VideoRamView(
 			}
 		}
 
-	var columnsCount: Int = 100
+	var columnsCount: Int = 50
 		set(value) {
 			if (field != value) {
 				field = value
@@ -231,6 +236,47 @@ class VideoRamView(
 		colorModel = VideoRamColorModel.withName(reader.readString("colorModel"))
 		size = Size.withName(reader.readString("pixelSize"))
 	}
+
+	/** ---- [ControlViewSource] */
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override val controlId: String get() = "videoRam:" + model.id
+
+	override val controlName: String get() = super.controlName
+
+	override fun createControlView(): ControlView<RAM> {
+		val clone = VideoRamView(styleProvider, colorModel, model)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	private fun copyControlViewProperties(source: VideoRamView, dest: VideoRamView) {
+		dest.size = source.size
+		dest.rowsCount = source.rowsCount
+		dest.columnsCount = source.columnsCount
+		dest.colorModel = source.colorModel
+	}
+
+	/** ---- [ControlView] */
+
+	override var isActiveControlView: Boolean = false
+
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: RAM) {
+		this.model =  model
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<RAM>) {
+		if (source is VideoRamView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) { }
+
+	override fun readModelProperties(reader: StoreReader) { }
 
 	/** ---- [AbstractVerticeView] */
 
