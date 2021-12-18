@@ -2,7 +2,9 @@ package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.CodeLocation
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
@@ -200,6 +202,8 @@ class BitWidthEditor(
 				}
 			} catch (e: DslError) {
 				errorCallback(e)
+			} catch (e: Throwable) {
+				errorCallback(DslError(CodeLocation.UNDEFINED, Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(it, 10))))
 			}
 		}
 	}

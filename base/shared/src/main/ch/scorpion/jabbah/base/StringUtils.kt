@@ -95,4 +95,11 @@ object StringUtils {
 				.replace(SPF, LIST_SEPARATOR)
 			}
 	}
+
+	fun limit(s: String, length: Int, moreIndicator: String = ".."): String =
+		if (s.length > length) {
+			"${s.take(length)}.."
+		} else {
+			s
+		}
 }
