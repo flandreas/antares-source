@@ -35,7 +35,13 @@ interface BitWidth {
 		fun read(name: String, reader: StoreReader): BitWidth {
 			val value = reader.readString(name)
 			val number = value.toIntOrNull()
-			return number?.let { of(it) } ?: BitWidthExpression(value)
+			return number?.let {
+				try {
+					of(it)
+				} catch (e: Throwable) {
+					BitWidthExpression(value)
+				}
+			} ?: BitWidthExpression(value)
 		}
 	}
 
@@ -107,11 +113,15 @@ class BitWidthExpression(
 	}
 
 	fun evaluateIn(graph: Graph): BitWidth? {
-		val newValue = BitWidthGraphParamType.evaluateIn(graph, this)
-		if (newValue === this) {
+		try {
+			val newValue = BitWidthGraphParamType.evaluateIn(graph, this)
+			if (newValue === this) {
+				return null
+			}
+			return newValue
+		} catch (e: Throwable) {
 			return null
 		}
-		return newValue
 	}
 }
 

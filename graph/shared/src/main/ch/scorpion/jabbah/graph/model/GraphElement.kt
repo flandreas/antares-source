@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorState
@@ -79,6 +80,7 @@ interface GraphElement : Storable, Actor, Describable {
 	/**
 	 * Called by the specified [Graph] when its [GraphParamValues] have changed.
 	 * A [Vertice] containing properties that depend on [GraphParamValues] should react accordingly.
+	 * @throws DslError if application of [GraphParamValues] to properties with expressions fails
 	 */
 	fun graphParamsChanged(graph: Graph)
 }

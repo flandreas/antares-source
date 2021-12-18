@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
@@ -96,7 +97,18 @@ open class GraphImpl(
 	override var parameterValues: GraphParamValues = GraphParamValues()
 		set(value) {
 			field = value
-			_elements.forEach { it.graphParamsChanged(this) }
+			_elements.forEach {
+				try {
+					it.graphParamsChanged(this)
+				} catch (e: DslError) {
+					eventBus.post(IssueImpl(
+						severity = IssueSeverity.Error,
+						name = Translations.getString("base.dsl.scriptError.msg"),
+						description = e.message,
+						origin = "${it.type} ${it.id}",
+						context = null))
+				}
+			}
 		}
 
 	override val elements: ImmutableList<GraphElement>
