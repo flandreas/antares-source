@@ -477,35 +477,28 @@
         </digitalPortViewComp>
         <label _id='165'>
           <text>
-            <translation lang='de' text='BCD'/>
+            <translation lang='de' text='BCD CTR'/>
+            <translation lang='en' text='BCD CTR'/>
           </text>
           <location>
             <point x='175.79' y='154.268'/>
           </location>
         </label>
-        <label _id='166'>
-          <text>
-            <translation lang='de' text='CTR 8'/>
-          </text>
-          <location>
-            <point x='175.337' y='168.0'/>
-          </location>
-        </label>
-        <digitalPortViewComp _id='167' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='166' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='168' x='175.0' y='280.0' dir='south' textPos='internal' portId='169'/>
+            <digitalPortView _id='167' x='175.0' y='280.0' dir='south' textPos='internal' portId='168'/>
           </portView>
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='170' id='0' delay='0' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
+        <subGraphVertice _id='169' id='0' delay='0' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
           <desc>
             <translation lang='en' text='Counts from 0 to 9 and starts over with 0'/>
             <translation lang='de' text=' Zählt von 0 bis 9 und fängt dann wieder bei 0 an'/>
           </desc>
           <name>
-            <translation lang='en' text='Sync. BCD Counter 4 Bit'/>
-            <translation lang='de' text='Synch. BCD-Zähler 4-Bit'/>
+            <translation lang='en' text='Sync. BCD Counter'/>
+            <translation lang='de' text='Synch. BCD-Zähler'/>
           </name>
           <ports>
             <subCircuitPort _id='152' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
@@ -513,7 +506,7 @@
             <subCircuitPort _id='158' portId='3' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='161' portId='4' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='164' portId='5' name='O3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='169' portId='6' name='CLR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='168' portId='6' name='CLR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>

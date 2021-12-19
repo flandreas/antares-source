@@ -494,8 +494,8 @@
             </containerLibraryElement>
             <containerLibraryElement _id='120' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
               <name>
-                <translation lang='en' text='Sync. BCD Counter 4 Bit'/>
-                <translation lang='de' text='Synch. BCD-Zähler 4-Bit'/>
+                <translation lang='en' text='Sync. BCD Counter'/>
+                <translation lang='de' text='Synch. BCD-Zähler'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='121' uuid='0a2995f4-af04-4830-b141-76de188e2e34'>
