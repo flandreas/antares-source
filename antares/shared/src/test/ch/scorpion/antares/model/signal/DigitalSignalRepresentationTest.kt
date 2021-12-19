@@ -3,7 +3,9 @@ package ch.scorpion.antares.model.signal
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_16
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_3
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_5
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
@@ -101,5 +103,15 @@ class DigitalSignalRepresentationTest {
 		assertEquals("1", BINARY.represent(of(BW_8, 1L)))
 		assertEquals("0", HEXADECIMAL.represent(of(BW_8, 0L)))
 		assertEquals("1", HEXADECIMAL.represent(of(BW_8, 1L)))
+	}
+
+	@Test
+	fun shouldCalculateHexDigitCount() {
+		assertEquals(1, HEXADECIMAL.digitCount(BW_1))
+		assertEquals(1, HEXADECIMAL.digitCount(BW_2))
+		assertEquals(1, HEXADECIMAL.digitCount(BW_3))
+		assertEquals(1, HEXADECIMAL.digitCount(BW_4))
+		assertEquals(2, HEXADECIMAL.digitCount(BW_5))
+		assertEquals(2, HEXADECIMAL.digitCount(BW_8))
 	}
 }

@@ -2,7 +2,7 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
-import kotlin.math.max
+import kotlin.math.ceil
 
 
 enum class DigitalSignalRepresentation(override val customName: String) : EnumProperty<DigitalSignalRepresentation> {
@@ -66,7 +66,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	    override val suffix: String get() = "h"
 	    override val bitCount: Int get() = 4
 	    override val digitGroupSize: Int get() = 4
-	    override fun digitCount(bitWidth: BitWidth): Int = max(1, bitWidth.width / bitCount)
+	    override fun digitCount(bitWidth: BitWidth): Int = ceil(bitWidth.width.toDouble() / bitCount).toInt()
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
         override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.hexString)
         override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.hexDigitToWord(bitWidth, digit)

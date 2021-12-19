@@ -243,7 +243,11 @@ internal data class Word(
 		val subword = mutableListOf<Bit>()
 		val digit = min(bitWidth.width, subwordWidth.width) - 1
 		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
-			subword.add(0, bits[i])
+			if (i < bits.size) {
+				subword.add(0, bits[i])
+			} else {
+				subword.add(0, Bit.False)
+			}
 		}
 		return Word(subword)
 	}
@@ -252,11 +256,13 @@ internal data class Word(
 		var sum: ULong = 0UL
 		var digit = min(bitWidth.width, subwordWidth.width) - 1
 		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
-			if (!bits[i].isDefined) {
-				return null
-			}
-			if (bits[i].numericalValue == 1) {
-				sum += BitOperation.power(digit.toByte())
+			if (i < bits.size) {
+				if (!bits[i].isDefined) {
+					return null
+				}
+				if (bits[i].numericalValue == 1) {
+					sum += BitOperation.power(digit.toByte())
+				}
 			}
 			digit--
 		}

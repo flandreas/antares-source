@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_12
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_5
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.theme.AntaresThemes
@@ -64,6 +65,11 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldExtractUnevenSubword() {
+		assertEquals(DigitalSignalFactory.of(BW_4, 1), DigitalSignalFactory.of(BW_5, 31L).getSubword(BW_4, 1))
+	}
+
+	@Test
 	fun shouldExtractSubwordValue() {
 		assertEquals(15UL, DigitalSignalFactory.of(BW_4, 15L).getSubwordValue(BW_4, 0))
 		assertEquals(15UL, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 0))
@@ -74,6 +80,11 @@ class WordTest {
 		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 1))
 		assertEquals(1UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 0))
 		assertEquals(2UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 1))
+	}
+
+	@Test
+	fun shouldExtractUnevenSubwordValue() {
+		assertEquals(1UL, DigitalSignalFactory.of(BW_5, 31L).getSubwordValue(BW_4, 1))
 	}
 
 	@Test

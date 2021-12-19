@@ -7,6 +7,7 @@ enum class BranchCount(val count: Int) {
 	BC_2(2),
 	BC_3(3),
 	BC_4(4),
+	BC_5(5),
 	BC_6(6),
 	BC_7(7),
 	BC_8(8),
@@ -25,7 +26,9 @@ enum class BranchCount(val count: Int) {
 		/** Defines all possible [BranchCount]w for every [BitWidth].*/
 		private val BRANCH_COUNTS: Map<BitWidth, List<BranchCount>> = mapOf(
 			BitWidth.BW_2 to listOf(BC_2),
+			BitWidth.BW_3 to listOf(BC_3),
 			BitWidth.BW_4 to listOf(BC_2, BC_4),
+			BitWidth.BW_5 to listOf(BC_5),
 			BitWidth.BW_8 to listOf(BC_2, BC_4, BC_8),
 			BitWidth.BW_12 to listOf(BC_3, BC_6, BC_12),
 			BitWidth.BW_16 to listOf(BC_2, BC_4, BC_8, BC_16),

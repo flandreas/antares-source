@@ -12,7 +12,9 @@ interface BitWidth {
 
 		val BW_1 = BitWidthImpl(1, "1")
 		val BW_2 = BitWidthImpl(2, "4")
+		val BW_3 = BitWidthImpl(3, "8")
 		val BW_4 = BitWidthImpl(4, "16")
+		val BW_5 = BitWidthImpl(5, "32")
 		val BW_8 = BitWidthImpl(8, "256")
 		val BW_12 = BitWidthImpl(12, "4K")
 		val BW_16 = BitWidthImpl(16, "64K")
@@ -22,7 +24,7 @@ interface BitWidth {
 		val BW_32 = BitWidthImpl(32, "4G")
 		val BW_64 = BitWidthImpl(64, "16E")
 
-		val PREDEFINED: List<BitWidth> = listOf(BW_1, BW_2, BW_4, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
+		val PREDEFINED: List<BitWidth> = listOf(BW_1, BW_2, BW_3, BW_4, BW_5, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
 
 		fun of(width: Int): BitWidth =
 			PREDEFINED.firstOrNull { it.width == width }
