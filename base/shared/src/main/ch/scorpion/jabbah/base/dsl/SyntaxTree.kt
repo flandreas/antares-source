@@ -63,6 +63,7 @@ class BinaryOperation(
 			TokenType.MINUS -> "-"
 			TokenType.MULTIPLY -> "*"
 			TokenType.DIVIDE -> "/"
+			TokenType.CARET -> "^"
 			TokenType.EQUAL -> "=="
 			TokenType.DIFF -> "!="
 			TokenType.AND -> "and"

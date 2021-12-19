@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import kotlin.math.pow
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
@@ -117,6 +118,7 @@ open class Interpreter(
 			MINUS -> typedBinaryOp(node)
 			MULTIPLY -> typedBinaryOp(node)
 			DIVIDE -> typedBinaryOp(node)
+			CARET -> typedBinaryOp(node)
 			EQUAL -> typedBinaryOp(node)
 			DIFF -> typedBinaryOp(node)
 			AND -> typedBinaryOp(node)
@@ -138,6 +140,7 @@ open class Interpreter(
 			MINUS -> binaryOp(node) { l, r -> l - r }
 			MULTIPLY -> binaryOp(node) { l, r -> l * r }
 			DIVIDE -> binaryOp(node) { l, r -> l.div(r) }
+			CARET -> binaryOp(node) { l, r -> l.toDouble().pow(r.toInt()).toLong() }
 			OR -> binaryOp(node) { l, r -> l.or(r) }
 			SMALLER -> binaryOp(node) { l, r -> if (l < r) 1L else 0L }
 			SMALLER_EQUAL -> binaryOp(node) { l, r -> if (l <= r) 1L else 0L }

@@ -6,6 +6,7 @@ enum class TokenType(val id: String) {
 	MINUS("-"),
 	MULTIPLY("*"),
 	DIVIDE("/"),
+	CARET("^"),
 	LPAREN("("),
 	RPAREN(")"),
 	EOF("EOF"),
@@ -40,7 +41,6 @@ enum class TokenType(val id: String) {
 	RETURN("return"),
 
 	// TokenTypes needed by higher level modules
-	CARET("^"),
 	INIT("init"),
 	AT("@"),
 	HASH("#"),

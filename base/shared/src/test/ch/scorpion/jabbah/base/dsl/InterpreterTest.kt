@@ -21,6 +21,7 @@ class InterpreterTest {
 		assertEquals(3L, Interpreter("12/4").interpret())
 		assertEquals(-8L, Interpreter("-8").interpret())
 		assertEquals(10L, Interpreter("1 + 2 + 3 + 4").interpret())
+		assertEquals(8L, Interpreter("2^3").interpret())
 	}
 
 	@Test

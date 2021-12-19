@@ -370,6 +370,18 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseExponentialTerm() {
+		val parser = Parser(Lexer("2^3"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- ^
+			-- 2
+			-- 3
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)
