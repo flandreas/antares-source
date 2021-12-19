@@ -90,6 +90,11 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 
 * image:user-manual/base-library/random.svg[Random] link:{{site.basedir}}/user-manual/english/base-library/random[Random]
 * image:user-manual/base-library/bitextender.svg[Bit Extender] link:{{site.basedir}}/user-manual/english/base-library/bit-extender[Bit Extender]
+* Adder n Bit
+* Subtractor n Bit
+* Multiplier n Bit
+* Divider n Bit
+* Comparator n Bit
 * Half Adder
 * Full Adder
 * Incrementer 8 Bit
@@ -97,10 +102,6 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 * Comparator 4,8 Bit
 * Magnitude Comparator 4 Bit
 * Full Adder 4 Bit (Fast Carry)
-* Adder n Bit
-* Substractor n Bit
-* Multiplier n Bit
-* Divider n Bit
 
 === Codec
 
@@ -124,6 +125,8 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 
 === Plexer
 
+* Multiplexer n Bit
+* Bit Selector n Bit
 * 2x 4-4 Multiplexer
 * 2x 8-8 Multiplexer
 * 2x 16-16 Multiplexer
