@@ -75,7 +75,7 @@ class GraphParamDefinitionsController(
 	}
 
 	private fun validate(def: GraphParamDefinition<*>): Boolean {
-		return if (value.contains(def.name)) {
+		return if (isAdding && value.contains(def.name)) {
 			view.errorMessage(Translations.getString("graph.paramDefs.dialog.error.unique"))
 			false
 		} else if (graph.getGraphPort<Any>(def.name) != null) {
