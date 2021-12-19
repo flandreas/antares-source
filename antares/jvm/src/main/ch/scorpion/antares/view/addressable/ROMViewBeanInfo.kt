@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -13,8 +13,9 @@ import com.l2fprod.common.propertysheet.Property
 class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 
 	companion object {
-		private val addressBitWidth = CommandPropertySwing("addressWidth", "element.property.addressBitWidth", BitWidth::class.java, componentBeanProvider)
-		private val dataBitWidth = CommandPropertySwing("dataWidth", "element.property.dataBitWidth", BitWidth::class.java, componentBeanProvider)
+		private val addressBitWidth = AntaresProperties.bitWidth("addressWidth", "element.property.addressBitWidth")
+		private val dataBitWidth = AntaresProperties.bitWidth("dataWidth", "element.property.dataBitWidth")
+
 		private val text = GraphProperties.label(name = "text")
 		private val showContents = CommandPropertySwing("showContents", "element.property.Addressable.showContents", Boolean::class.java, componentBeanProvider)
 		private val contentsRowCount = CommandPropertySwing("contentRowsCount", "element.property.Addressable.rowsCount", Int::class.java, componentBeanProvider)
