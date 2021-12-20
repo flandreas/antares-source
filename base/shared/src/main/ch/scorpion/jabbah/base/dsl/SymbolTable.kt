@@ -22,6 +22,7 @@ class ScopedSymbolTable(
 			Lexer.getReservedWords().forEach {
 				define(BuiltInTypeSymbol(it))
 			}
+			DslGlobalFunctions.defineIn(this)
 		}
 	}
 
