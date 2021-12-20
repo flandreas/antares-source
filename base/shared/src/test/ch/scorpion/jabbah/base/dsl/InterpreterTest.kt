@@ -253,6 +253,16 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldShiftLeftWithVarRightTerm() {
+		val result = Interpreter("""
+			var a = 2
+			1 << a
+		""".trimIndent()).interpret()
+
+		assertEquals(4L, result)
+	}
+
+	@Test
 	fun shouldInterpretMod() {
 		assertEquals(1L, Interpreter("5 % 2").interpret())
 		assertEquals(0L, Interpreter("6 % 2").interpret())

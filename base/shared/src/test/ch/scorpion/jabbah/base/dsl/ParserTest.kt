@@ -382,6 +382,18 @@ class ParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseShiftWithVariableRightFactor() {
+		val parser = Parser(Lexer("A << B"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- <<
+			-- A
+			-- B
+		""".trimIndent())
+	}
+
 	private fun assertAST(node: Node, ast: String) {
 		val printer = SyntaxTreePrinter()
 		node.accept(printer)

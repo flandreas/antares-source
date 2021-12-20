@@ -127,8 +127,8 @@ open class Interpreter(
 			GREATER -> typedBinaryOp(node)
 			SMALLER_EQUAL -> typedBinaryOp(node)
 			GREATER_EQUAL -> typedBinaryOp(node)
-			SHIFT_LEFT -> typedBinaryOpWithRightInt(node)
-			SHIFT_RIGHT -> typedBinaryOpWithRightInt(node)
+			SHIFT_LEFT -> typedBinaryOp(node)
+			SHIFT_RIGHT -> typedBinaryOp(node)
 			MOD -> typedBinaryOp(node)
 			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
@@ -150,6 +150,8 @@ open class Interpreter(
 			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
 			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }
 			MOD -> binaryOp(node) { l, r -> l.mod(r) }
+			SHIFT_LEFT -> binaryOp(node) { l, r -> l.shl(r.toInt()) }
+			SHIFT_RIGHT -> binaryOp(node)  { l, r -> l.shr(r.toInt()) }
 			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 	}
@@ -167,13 +169,6 @@ open class Interpreter(
 			throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
-
-	protected open fun typedBinaryOpWithRightInt(node: BinaryOperation): Any =
-		when (node.op.type) {
-			SHIFT_LEFT -> binaryOpWithRightInt(node) { l, r -> l.shl(r) }
-			SHIFT_RIGHT -> binaryOpWithRightInt(node)  { l, r -> l.shr(r) }
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
-		}
 
 	private fun binaryOpWithRightInt(
 		node: BinaryOperation,

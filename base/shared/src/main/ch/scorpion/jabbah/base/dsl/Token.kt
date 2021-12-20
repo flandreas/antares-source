@@ -16,7 +16,7 @@ enum class TokenType(val id: String) {
 	RCURLEY("}"),
 	VAR("var"),
 	STORE("store"),
-	EQUAL("="),
+	EQUAL("=="),
 	DIFF("!="),
 	SMALLER("<"),
 	SMALLER_EQUAL("<="),

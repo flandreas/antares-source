@@ -189,16 +189,19 @@ class AntaresInterpreter(
 				{ l, r -> if (l.isSmallerEqualThan(r)) 1L else 0L },
 				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L },
 				{ l, r -> if (l <= signalToLong(r)) 1L else 0L })
+			SHIFT_LEFT -> binaryOp(node,
+				{ l, r -> l.shl(r.toInt()) },
+				{ l, r -> l.shiftLeft(r.toInt() ?: 0) },
+				{ l, r -> l.shiftLeft(r.toInt()) },
+				{ l, r -> l.shl(r.toInt() ?: 0) })
+			SHIFT_RIGHT -> binaryOp(node,
+				{ l, r -> l.shr(r.toInt()) },
+				{ l, r -> l.shiftRight(r.toInt() ?: 0) },
+				{ l, r -> l.shiftRight(r.toInt()) },
+				{ l, r -> l.shr(r.toInt() ?: 0) })
 			else -> super.typedBinaryOp(node)
 		}
 	}
-
-	override fun typedBinaryOpWithRightInt(node: BinaryOperation): Any =
-		when (node.op.type) {
-			SHIFT_LEFT -> binaryOpWithRightInt(node, { l, r -> l.shl(r) }, { l, r -> l.shiftLeft(r) })
-			SHIFT_RIGHT -> binaryOpWithRightInt(node, { l, r -> l.shr(r) }, { l, r -> l.shiftRight(r) })
-			else -> super.typedBinaryOpWithRightInt(node)
-		}
 
 	private fun binaryOp(
 		node: BinaryOperation,

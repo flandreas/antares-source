@@ -328,15 +328,19 @@ internal data class Word(
 
 	override fun shiftLeft(bitCount: Int): DigitalSignal {
 		val newBits = bits.toMutableList()
-		newBits.add(0, Bit.False)
-		newBits.removeLast()
+		for (i in 0 until bitCount) {
+			newBits.add(0, Bit.False)
+			newBits.removeLast()
+		}
 		return Word(newBits)
 	}
 
 	override fun shiftRight(bitCount: Int): DigitalSignal {
 		val newBits = bits.toMutableList()
-		newBits.removeFirst()
-		newBits.add(Bit.False)
+		for (i in 0 until bitCount) {
+			newBits.removeFirst()
+			newBits.add(Bit.False)
+		}
 		return Word(newBits)
 	}
 

@@ -459,4 +459,30 @@ class AntaresInterpreterSignalTest {
 		memory.preset("F1", of(true))
 		assertEquals(3L, interpreter.interpret())
 	}
+
+	@Test
+	fun shouldShiftLeftWithVarRightTerm() {
+		val parser = AntaresParser(AntaresLexer("""
+			1 << A
+		""".trimIndent()), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_2, 2UL))
+		assertEquals(4L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldShiftRightWithVarRightTerm() {
+		val parser = AntaresParser(AntaresLexer("""
+			4 >> A
+		""".trimIndent()), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", of(BW_2, 2UL))
+		assertEquals(1L, interpreter.interpret())
+	}
 }

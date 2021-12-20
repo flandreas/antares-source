@@ -207,6 +207,7 @@ class WordTest {
 	@Test
 	fun shouldShiftLeft() {
 		assertEquals(DigitalSignalFactory.of(BW_8, 16L), DigitalSignalFactory.of(BW_8, 8L).shiftLeft())
+		assertEquals(DigitalSignalFactory.of(BW_8, 32L), DigitalSignalFactory.of(BW_8, 8L).shiftLeft(2))
 		assertEquals(DigitalSignalFactory.of(BW_4, 0L), DigitalSignalFactory.of(BW_4, 8L).shiftLeft())
 		assertEquals(Word(listOf(False, Undefined, Undefined, Undefined)), Word.undefined(BW_4).shiftLeft())
 	}
@@ -214,6 +215,7 @@ class WordTest {
 	@Test
 	fun shouldShiftRight() {
 		assertEquals(DigitalSignalFactory.of(BW_8, 4L), DigitalSignalFactory.of(BW_8, 8L).shiftRight())
+		assertEquals(DigitalSignalFactory.of(BW_8, 2L), DigitalSignalFactory.of(BW_8, 8L).shiftRight(2))
 		assertEquals(DigitalSignalFactory.of(BW_4, 0L), DigitalSignalFactory.of(BW_4, 1L).shiftRight())
 		assertEquals(Word(listOf(Undefined, Undefined, Undefined, False)), Word.undefined(BW_4).shiftRight())
 	}

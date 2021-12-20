@@ -57,20 +57,7 @@ class BinaryOperation(
 	val right: Node
 ) : AbstractNode(location) {
 
-	override fun toString(): String {
-		return when (op.type) {
-			TokenType.PLUS -> "+"
-			TokenType.MINUS -> "-"
-			TokenType.MULTIPLY -> "*"
-			TokenType.DIVIDE -> "/"
-			TokenType.CARET -> "^"
-			TokenType.EQUAL -> "=="
-			TokenType.DIFF -> "!="
-			TokenType.AND -> "and"
-			TokenType.OR -> "or"
-			else -> throw IllegalStateException("unsupported binary op ${op.type}")
-		}
-	}
+	override fun toString(): String = op.type.id
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
