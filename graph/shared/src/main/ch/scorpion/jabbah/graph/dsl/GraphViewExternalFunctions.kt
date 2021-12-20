@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.dsl
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.DslExternalFunctions
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -22,7 +23,7 @@ import kotlin.reflect.KClass
  * Can be used as delegate by other [DslExternalFunctions] implementations
  * that enhance the DSL with more specific functions.
  */
-open class GraphViewExternalFunctions : AbstractExternalFunctions() {
+open class GraphViewExternalFunctions : DslExternalFunctions {
 
 	companion object {
 		private val LOG by logger(GraphViewExternalFunctions::class)

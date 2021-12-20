@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.dsl
 
-import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.SymbolTable
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -42,9 +41,9 @@ open class UsecaseActionExternalFunctions(
 
 	private fun setInputAtImpl(params: List<Any>): Any {
 		setInputAt(
-			delegate.longParam(0, params),
-			delegate.stringParam(1, params),
-			delegate.anyParam(2, params))
+			longParam(0, params),
+			stringParam(1, params),
+			anyParam(2, params))
 		return 0
 	}
 
@@ -66,7 +65,7 @@ open class UsecaseActionExternalFunctions(
 	protected open fun convertSignal(signal: Any): Any = signal
 
 	private fun pauseAtImpl(params: List<Any>): Any {
-		pauseAt(delegate.longParam(0, params))
+		pauseAt(longParam(0, params))
 		return 0
 	}
 

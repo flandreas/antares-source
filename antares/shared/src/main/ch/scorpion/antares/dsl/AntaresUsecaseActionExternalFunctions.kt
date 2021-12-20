@@ -5,6 +5,8 @@ import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
+import ch.scorpion.jabbah.base.dsl.longParam
+import ch.scorpion.jabbah.base.dsl.stringParam
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.dsl.UsecaseActionExternalFunctions
@@ -46,8 +48,8 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 
 	private fun pressButtonAtImpl(params: List<Any>): Any {
 		pressButtonAt(
-			delegate.longParam(0, params),
-			delegate.longParam(1, params))
+			longParam(0, params),
+			longParam(1, params))
 		return 0L
 	}
 
@@ -72,8 +74,8 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 
 	private fun applyClockImpl(params: List<Any>): Any {
 		applyClock(
-			cvDelegate.stringParam(0, params),
-			cvDelegate.longParam(1, params))
+			stringParam(0, params),
+			longParam(1, params))
 		return 0L
 	}
 

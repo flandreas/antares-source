@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
-import ch.scorpion.jabbah.base.dsl.SymbolTable
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.dsl.AbstractExternalFunctions
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -12,7 +10,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * Defines the external functions used by DSL scripts that adjust a [SubGraphVerticeView]'s symbol
  * during execution.
  */
-object DrawExecSymbolFunctions : AbstractExternalFunctions() {
+object DrawExecSymbolFunctions : DslExternalFunctions {
 
 	private lateinit var view: SubGraphVerticeView<*>
 	private lateinit var context: DrawContext

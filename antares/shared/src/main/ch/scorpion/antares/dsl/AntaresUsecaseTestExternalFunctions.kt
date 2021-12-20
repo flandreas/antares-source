@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
+import ch.scorpion.jabbah.base.dsl.longParam
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.dsl.UsecaseTestExternalFunctions
 
@@ -22,8 +23,8 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 
 	private fun assertLedOnAtImpl(params: List<Any>): Any {
 		assertLedOnAt(
-			delegate.longParam(0, params),
-			delegate.longParam(1, params).toInt())
+			longParam(0, params),
+			longParam(1, params).toInt())
 		return 0L
 	}
 
@@ -43,8 +44,8 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 
 	private fun assertLedOffAtImpl(params: List<Any>): Any {
 		assertLedOffAt(
-			delegate.longParam(0, params),
-			delegate.longParam(1, params).toInt())
+			longParam(0, params),
+			longParam(1, params).toInt())
 		return 0L
 	}
 
