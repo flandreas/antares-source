@@ -3,14 +3,8 @@
     <graphStorable _id='1'>
       <model>
         <graph _id='2' script='var sum = (1 * A) + (1 * B) + CI
-
-var max = 0
-for (i in 1 to BW) {
-	max = max &lt;&lt; 1 or 1
-}
-
 S = sum
-CO = sum &gt; max' purelyScripted='true'>
+CO = sum &gt; (2^BW - 1)' purelyScripted='true'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>
