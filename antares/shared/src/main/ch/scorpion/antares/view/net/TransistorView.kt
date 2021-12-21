@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -201,6 +202,13 @@ class TransistorView(
 	}
 
 	override fun drawImpl(context: DrawContext) {
+		if (hasCircle && shadow) {
+			DropShadow.draw(context, transparency) {
+				context.g.fillOval(
+					DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
+					WIDTH.toDouble(), HEIGHT.toDouble())
+			}
+		}
 		super.drawImpl(context)
 
 		drawBody(context)
