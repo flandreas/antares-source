@@ -311,10 +311,10 @@ enum class TransistorViewSymbol(val customName: String) {
 				?: throw IllegalArgumentException("unknown TransistorViewSymbol '$customName'")
 
 		val configured: TransistorViewSymbol get() =
-			withName(BaseModule.properties.getString(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL))
+			withName(BaseModule.properties.getString(PROP_TRANSISTOR_SYMBOL))
 
 		fun prepareDrainExecutionDrawContext(view: TransistorView, context: DrawContext, portView: PortView<*>) {
-			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && portView.port == view.model.drainPort && portView.port.isConnected) {
+			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState && portView.port == view.model.drainPort && portView.port.isConnected) {
 				context.g.color = (portView.port.net!!.signal!! as DigitalSignal).color.foregroundColor
 			}
 		}
