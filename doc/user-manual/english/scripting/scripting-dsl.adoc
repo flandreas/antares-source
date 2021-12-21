@@ -67,6 +67,10 @@ if (1) {
 
 The kind of operations you can use in expressions depends on the type of terms the expression contains.
 
+NOTE: When expressions contain digital signals that are fully or partially undefined, the user preference
+"Undefined Gate Input Behaviour" is applied to derive a defined value to be used in the expression. The default
+value of this preference is 0.
+
 ==== Arithmetic Operations
 
 _Antares DSL_ supports the following arithmetic operations.
