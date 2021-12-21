@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.StoreReader
@@ -99,7 +100,7 @@ class BitWidthExpression(
 		writer.writeString(name, expression)
 	}
 
-	override fun toString(): String = "${Translations.getString("graph.property.graphParams.expression")}: $expression"
+	override fun toString(): String = "${Translations.getString("graph.property.graphParams.expression")}: ${StringUtils.limit(expression, 10)}"
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is BitWidthExpression) {
