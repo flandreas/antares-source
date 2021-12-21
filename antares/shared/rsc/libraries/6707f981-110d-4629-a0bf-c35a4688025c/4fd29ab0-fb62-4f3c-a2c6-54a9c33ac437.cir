@@ -400,7 +400,7 @@ when (s) {
             <point x='154.0' y='189.0'/>
           </location>
         </originIndicator>
-        <polyline _id='135' id='1' style='figure' filled='true' stroked='true' points='168.0,161.0 168.0,273.0 231.0,252.0 231.0,175.0 168.0,161.0'/>
+        <polyline _id='135' id='1' style='figure' filled='true' stroked='true' points='168.0,161.0 168.0,273.0 231.0,252.0 231.0,182.0 168.0,161.0'/>
         <digitalPortViewComp _id='136' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
             <digitalPortView _id='137' x='168.0' y='189.0' dir='west' textPos='internal' portId='138'/>
