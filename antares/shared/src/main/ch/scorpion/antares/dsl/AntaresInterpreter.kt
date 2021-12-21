@@ -1,5 +1,6 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
@@ -124,7 +125,7 @@ class AntaresInterpreter(
 	}
 
 	private fun signalToLong(signal: DigitalSignal): Long =
-		signal.toLong()?.toLong() ?: throw RuntimeError(rootNode.location, Translations.getString("antares.dsl.undefinedSignal.msg"))
+		signal.toLong()?.toLong() ?: CurrentUndefinedGateInputBehavior.value.definedValue(signal.bitWidth).toLong()!!.toLong()
 
 	override fun typedBinaryOp(node: BinaryOperation): Any {
 		return when (node.op.type) {
@@ -243,20 +244,6 @@ class AntaresInterpreter(
 			} else {
 				throw RuntimeError(node.location, Translations.getString("antares.dsl.operationExecutionError.msg"))
 			}
-		}
-	}
-
-	private fun binaryOpWithRightInt(
-		node: BinaryOperation,
-		longOp: (Long, Int) -> Long,
-		signalOp: (DigitalSignal, Int) -> DigitalSignal
-	): Any {
-		val left = interpret(node.left)
-		val right = interpretAsLong(node.right)
-		return when (left) {
-			is Long -> longOp(left, right.toInt())
-			is DigitalSignal -> signalOp(left, right.toInt())
-			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
 

@@ -1,11 +1,14 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
+import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.signal.Word.Companion.of
 import ch.scorpion.jabbah.base.dsl.DslError
@@ -483,6 +486,19 @@ class AntaresInterpreterSignalTest {
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 
 		memory.preset("A", of(BW_2, 2UL))
+		assertEquals(1L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldNotFailArithmeticsWithUndefinedInput() {
+		val parser = AntaresParser(AntaresLexer("1 + A"), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+
+		memory.preset("A", DigitalSignalFactory.undefined(BW_4))
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
+
 		assertEquals(1L, interpreter.interpret())
 	}
 }

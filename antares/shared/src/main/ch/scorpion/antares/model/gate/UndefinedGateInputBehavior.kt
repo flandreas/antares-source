@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -9,12 +12,18 @@ enum class UndefinedGateInputBehavior(val customName: String) {
 
 	ReadAs0("readAs0") {
 		override val definedBit: Bit get() = Bit.False
+		override fun definedValue(bitWidth: BitWidth): DigitalSignal =
+			DigitalSignalFactory.allOf(bitWidth, definedBit)
 	},
 	ReadAs1("readAs1") {
 		override val definedBit: Bit get() = Bit.True
+		override fun definedValue(bitWidth: BitWidth): DigitalSignal =
+			DigitalSignalFactory.allOf(bitWidth, definedBit)
 	},
 	ReadAsRandom("readAsRandom") {
 		override val definedBit: Bit get() = Bit.random()
+		override fun definedValue(bitWidth: BitWidth): DigitalSignal =
+			DigitalSignalFactory.random(bitWidth)
 	};
 
 	companion object {
@@ -26,6 +35,8 @@ enum class UndefinedGateInputBehavior(val customName: String) {
 	}
 
 	abstract val definedBit: Bit
+
+	abstract fun definedValue(bitWidth: BitWidth): DigitalSignal
 
 	override fun toString(): String {
 		return when (this) {
