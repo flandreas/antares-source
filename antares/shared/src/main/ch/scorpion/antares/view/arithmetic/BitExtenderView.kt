@@ -90,7 +90,9 @@ class BitExtenderView(
 	private fun drawShadow(context: DrawContext) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
+				context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
 				context.g.fill(SHAPE)
+				context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
 			}
 		}
 	}
