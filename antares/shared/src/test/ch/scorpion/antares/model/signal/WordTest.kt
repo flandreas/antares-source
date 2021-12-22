@@ -260,11 +260,11 @@ class WordTest {
 	
 	@Test
 	fun shouldAddWord() {
-		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(Word.of(BW_4, 14UL)))
+		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(14U))
 	}
 
 	@Test
-	fun shouldAddUUInt() {
+	fun shouldAddUInt() {
 		assertEquals(Word.of(BW_8, 31UL), Word.of(BW_8, 17UL).add(14U))
 	}
 
@@ -275,9 +275,9 @@ class WordTest {
 
 	@Test
 	fun shouldBeGreaterThanWord() {
-		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_4, 6UL)))
-		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_8, 1UL)))
-		assertFalse(Word.of(BW_4, 7UL).isGreaterThan(Word.of(BW_4, 7UL)))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterThan(7UL))
 	}
 
 	@Test
@@ -289,9 +289,9 @@ class WordTest {
 
 	@Test
 	fun shouldBeGreaterEqualThanWord() {
-		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_4, 6UL)))
-		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_8, 1UL)))
-		assertFalse(Word.of(BW_4, 7UL).isGreaterEqualThan(Word.of(BW_4, 8UL)))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(6UL))
+		assertTrue(Word.of(BW_4, 7UL).isGreaterEqualThan(1UL))
+		assertFalse(Word.of(BW_4, 7UL).isGreaterEqualThan(8UL))
 	}
 
 	@Test
@@ -303,9 +303,9 @@ class WordTest {
 
 	@Test
 	fun shouldBeSmallerThanWord() {
-		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 7UL)))
-		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_8, 1UL)))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(Word.of(BW_4, 8UL)))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(7UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerThan(1UL))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerThan(8UL))
 	}
 
 	@Test
@@ -317,9 +317,9 @@ class WordTest {
 
 	@Test
 	fun shouldBeSmallerEqualThanWord() {
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 7UL)))
-		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_8, 8UL)))
-		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(Word.of(BW_4, 6UL)))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(7UL))
+		assertTrue(Word.of(BW_4, 7UL).isSmallerEqualThan(8UL))
+		assertFalse(Word.of(BW_4, 7UL).isSmallerEqualThan(6UL))
 	}
 
 	@Test

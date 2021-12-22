@@ -436,20 +436,6 @@ class AntaresInterpreterSignalTest {
 	}
 
 	@Test
-	fun shouldThrowDslErrorWhenAddingUndefinedSignals() {
-		val parser = AntaresParser(AntaresLexer("A + B"), null)
-		val memory = Memory()
-		val interpreter = AntaresInterpreter(parser.parse(), memory)
-
-		memory.preset("A", of(BW_4, 1UL))
-		memory.preset("B", Word.undefined(BW_4))
-
-		assertFailsWith(DslError::class) {
-			interpreter.interpret()
-		}
-	}
-
-	@Test
 	fun shouldLeftAssociateTypeInOperation() {
 		val parser = AntaresParser(AntaresLexer("""
 			2 * F1 + F0

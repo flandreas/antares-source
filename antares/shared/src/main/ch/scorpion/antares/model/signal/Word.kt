@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
@@ -320,6 +321,18 @@ internal data class Word(
 		return Word(resultBits)
 	}
 
+	override fun asDefined(): DigitalSignal {
+		val resultBits = mutableListOf<Bit>()
+		for (bit in bits) {
+			when (bit) {
+				Bit.True, Bit.False -> resultBits.add(bit)
+				Bit.Undefined -> resultBits.add(CurrentUndefinedGateInputBehavior.value.definedBit)
+				Bit.Error -> throw IllegalStateException("bit has error value")
+			}
+		}
+		return Word(resultBits)
+	}
+
 	/**
 	 * Creates a copy of this [Word]'s value and expands or reduces it to the specified [BitWidth].
 	 * Expanding is done by adding zeros to the left, while reducing is done by truncating high order numbers.
@@ -368,157 +381,38 @@ internal data class Word(
 		return true
 	}
 
-	override fun add(other: DigitalSignal): DigitalSignal {
-		val result = if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot add non fully defined digital signal")
-		} else {
-			longValue!! + other.toLong()!!
-		}
-		return of(bitWidth.max(other.bitWidth), result)
-	}
+	override fun add(other: UInt): DigitalSignal =
+		of(bitWidth, (longValue ?: asDefined().getValue()) + other)
 
-	override fun add(other: UInt): DigitalSignal {
-		val result = if (longValue == null) {
-			throw IllegalArgumentException("cannot add non fully defined digital signal")
-		} else {
-			longValue!! + other
-		}
-		return of(bitWidth, result)
-	}
+	override fun subtract(other: UInt): DigitalSignal =
+		of(bitWidth, (longValue ?: asDefined().getValue()) - other)
 
-	override fun subtract(other: UInt): DigitalSignal {
-		val result = if (longValue == null) {
-			throw IllegalArgumentException("cannot subtract non fully defined digital signal")
-		} else {
-			longValue!! - other
-		}
-		return of(bitWidth, result)
-	}
+	override fun multiply(other: UInt): DigitalSignal =
+		of(bitWidth, (longValue ?: asDefined().getValue()) * other)
 
-	override fun subtract(other: DigitalSignal): DigitalSignal {
-		val result = if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot subtract non fully defined digital signal")
+	override fun divide(other: ULong): DigitalSignal =
+		if (other == 0UL) {
+			this
 		} else {
-			longValue!! - other.toLong()!!
+			of(bitWidth, (longValue ?: asDefined().getValue()) / other)
 		}
-		return of(bitWidth, result)
-	}
 
-	override fun multiply(other: UInt): DigitalSignal {
-		val result = if (longValue == null) {
-			throw IllegalArgumentException("cannot multiply non fully defined digital signal")
+	override fun mod(value: ULong): DigitalSignal =
+		if (value == 0UL) {
+			of(bitWidth, 0UL)
 		} else {
-			longValue!! * other
+			of(bitWidth, (longValue ?: asDefined().getValue()).mod(value))
 		}
-		return of(bitWidth, result)
-	}
 
-	override fun multiply(other: DigitalSignal): DigitalSignal {
-		val result = if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot multiply non fully defined digital signal")
-		} else {
-			longValue!! * other.toLong()!!
-		}
-		return of(bitWidth.max(other.bitWidth), result)
-	}
+	override fun isGreaterThan(other: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) > other
 
-	override fun divide(other: UInt): DigitalSignal {
-		val result = if (longValue == null) {
-			throw IllegalArgumentException("cannot divide non fully defined digital signal")
-		} else {
-			longValue!! / other
-		}
-		return of(bitWidth, result)
-	}
+	override fun isGreaterEqualThan(other: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) >= other
 
-	override fun divide(other: DigitalSignal): DigitalSignal {
-		val result = if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot divide non fully defined digital signal")
-		} else {
-			longValue!! / other.toLong()!!
-		}
-		return of(bitWidth, result)
-	}
+	override fun isSmallerThan(other: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) < other
 
-	override fun mod(other: DigitalSignal): DigitalSignal {
-		val mod = if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot divide non fully defined digital signal")
-		} else {
-			longValue!!.mod(other.toLong()!!)
-		}
-		return of(bitWidth.max(other.bitWidth), mod)
-	}
-
-	override fun mod(value: ULong): DigitalSignal {
-		val mod = if (longValue == null) {
-			throw IllegalArgumentException("cannot divide non fully defined digital signal")
-		} else {
-			longValue!!.mod(value)
-		}
-		return of(bitWidth, mod)
-	}
-
-	override fun isGreaterThan(other: DigitalSignal): Boolean {
-		return if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! > other.toLong()!!
-		}
-	}
-
-	override fun isGreaterThan(other: ULong): Boolean {
-		return if (longValue == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! > other
-		}
-	}
-
-	override fun isGreaterEqualThan(other: DigitalSignal): Boolean {
-		return if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! >= other.toLong()!!
-		}
-	}
-
-	override fun isGreaterEqualThan(other: ULong): Boolean {
-		return if (longValue == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! >= other
-		}
-	}
-
-	override fun isSmallerThan(other: DigitalSignal): Boolean {
-		return if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! < other.toLong()!!
-		}
-	}
-
-	override fun isSmallerThan(other: ULong): Boolean {
-		return if (longValue == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! < other
-		}
-	}
-
-	override fun isSmallerEqualThan(other: DigitalSignal): Boolean {
-		return if (longValue == null || other.toLong() == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! <= other.toLong()!!
-		}
-	}
-
-	override fun isSmallerEqualThan(other: ULong): Boolean {
-		return if (longValue == null) {
-			throw IllegalArgumentException("cannot order non fully defined digital signal")
-		} else {
-			longValue!! <= other
-		}
-	}
+	override fun isSmallerEqualThan(other: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) <= other
 }

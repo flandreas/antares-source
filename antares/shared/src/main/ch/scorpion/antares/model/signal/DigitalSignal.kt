@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 
 interface DigitalSignal {
 
@@ -57,6 +58,13 @@ interface DigitalSignal {
     fun toLong(): ULong?
 
 	/**
+	 * Creates a copy of this [DigitalSignal] by replacing all undefined [Bit] according to the
+	 * [CurrentUndefinedGateInputBehavior].
+	 * @throws IllegalStateException if a [Bit.Error] occurs
+	 */
+	fun asDefined(): DigitalSignal
+
+	/**
 	 * Creates a copy of this [DigitalSignal] by replacing all [Bit]s with [replacement]
 	 * that fulfill condition [filter].
 	 *
@@ -111,41 +119,25 @@ interface DigitalSignal {
 	fun nibbleToHexChar(index: Int): Char
 
 	/**
-	 * Creates a new [DigitalSignal] with the sum of both [DigitalSignal]s and the maximum [BitWidth] of both.
-	 * Sums that don't fit in that [BitWidth] get truncated.
-	 */
-	fun add(other: DigitalSignal): DigitalSignal
-
-	/**
 	 * Creates a new [DigitalSignal] with the sum of this [DigitalSignal] and [other] with this [DigitalSignal]'s [BitWidth].
 	 * Sums that don't fit in that [BitWidth] get truncated.
 	 */
 	fun add(other: UInt): DigitalSignal
 
-	fun subtract(other: DigitalSignal): DigitalSignal
 	fun subtract(other: UInt): DigitalSignal
 
-	fun multiply(other: DigitalSignal): DigitalSignal
 	fun multiply(other: UInt): DigitalSignal
 
-	fun divide(other: DigitalSignal): DigitalSignal
-	fun divide(other: UInt): DigitalSignal
+	fun divide(other: ULong): DigitalSignal
 
 	/** Modulo operation. */
-	fun mod(other: DigitalSignal): DigitalSignal
-
 	fun mod(value: ULong): DigitalSignal
 
-	fun isGreaterThan(other: DigitalSignal): Boolean
 	fun isGreaterThan(value: ULong): Boolean
 
-	fun isGreaterEqualThan(other: DigitalSignal): Boolean
 	fun isGreaterEqualThan(value: ULong): Boolean
 
-	fun isSmallerThan(other: DigitalSignal): Boolean
 	fun isSmallerThan(value: ULong): Boolean
 
-	fun isSmallerEqualThan(other: DigitalSignal): Boolean
 	fun isSmallerEqualThan(value: ULong): Boolean
-
 }

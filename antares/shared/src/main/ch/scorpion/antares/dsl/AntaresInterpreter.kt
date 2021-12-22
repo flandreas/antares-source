@@ -110,7 +110,7 @@ class AntaresInterpreter(
 		return when (index) {
 			is Long -> index.toInt()
 			is DigitalSignal -> {
-				index.toLong()?.toInt() ?: throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
+				signalToLong(index).toInt()
 			}
 			else -> throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.bitAccessNotSupportedByType.msg"))
 		}
@@ -142,52 +142,52 @@ class AntaresInterpreter(
 				{ l, r -> l.or(signalToLong(r)) })
 			PLUS -> binaryOp(node,
 				{ l, r -> l + r},
-				{ l, r -> l.add(r) },
+				{ l, r -> l.add(signalToLong(r).toUInt()) },
 				{ l, r -> l.add(r.toUInt()) },
 				{ l, r -> l.plus(signalToLong(r)) })
 			MINUS -> binaryOp(node,
 				{ l, r -> l - r },
-				{ l, r -> l.subtract(r)},
+				{ l, r -> l.subtract(signalToLong(r).toUInt()) },
 				{ l, r -> l.subtract(r.toUInt()) },
 				{ l, r -> l.minus(signalToLong(r)) })
 			MULTIPLY -> binaryOp(node,
 				{ l, r -> l * r},
-				{ l, r -> l.multiply(r) },
+				{ l, r -> l.multiply(signalToLong(r).toUInt()) },
 				{ l, r -> l.multiply(r.toUInt()) },
 				{ l, r -> l * signalToLong(r) })
 			DIVIDE -> binaryOp(node,
-				{ l, r -> l.div(r)},
-				{ l, r -> l.divide(r) },
-				{ l, r -> l.divide(r.toUInt()) },
-				{ l, r -> l.div(signalToLong(r)) })
+				{ l, r -> if (r == 0L) l else l.div(r) },
+				{ l, r -> signalToLong(r).let { if (it == 0L) l else l.divide(it.toULong()) } },
+				{ l, r -> if (r == 0L) l else l.divide(r.toULong()) },
+				{ l, r -> signalToLong(r).let { if (it == 0L) l else l.div(it) } })
 			DIFF -> binaryOp(node,
 				{ l, r -> if (l != r) 1L else 0L},
 				{ l, r -> if (l != r) 1L else 0L },
 				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L },
 				{ l, r -> if (l != signalToLong(r)) 1L else 0L })
 			MOD -> binaryOp(node,
-				{ l, r -> l.mod(r) },
-				{ l, r -> l.mod(r) },
-				{ l, r -> l.mod(r.toULong()) },
-				{ l, r -> l.mod(signalToLong(r)) })
+				{ l, r -> if (r == 0L) 0L else l.mod(r) },
+				{ l, r -> signalToLong(r).let { if (it == 0L) 0L else l.mod(it.toULong()) }},
+				{ l, r -> if (r == 0L) 0L else l.mod(r.toULong())},
+				{ l, r -> signalToLong(r).let { if (it == 0L) 0L else l.mod(it) } })
 			GREATER -> binaryOp(node,
 				{ l, r -> if (l > r) 1L else 0L },
-				{ l, r -> if (l.isGreaterThan(r)) 1L else 0L },
+				{ l, r -> if (l.isGreaterThan(signalToLong(r).toULong())) 1L else 0L },
 				{ l, r -> if (l.isGreaterThan(r.toULong())) 1L else 0L },
 				{ l, r -> if (l > signalToLong(r)) 1L else 0L })
 			GREATER_EQUAL -> binaryOp(node,
 				{ l, r -> if (l >= r) 1L else 0L },
-				{ l, r -> if (l.isGreaterEqualThan(r)) 1L else 0L },
+				{ l, r -> if (l.isGreaterEqualThan(signalToLong(r).toULong())) 1L else 0L },
 				{ l, r -> if (l.isGreaterEqualThan(r.toULong())) 1L else 0L },
 				{ l, r -> if (l >= signalToLong(r)) 1L else 0L })
 			SMALLER -> binaryOp(node,
 				{ l, r -> if (l < r) 1L else 0L },
-				{ l, r -> if (l.isSmallerThan(r)) 1L else 0L },
+				{ l, r -> if (l.isSmallerThan(signalToLong(r).toULong())) 1L else 0L },
 				{ l, r -> if (l.isSmallerThan(r.toULong())) 1L else 0L },
 				{ l, r -> if (l < signalToLong(r)) 1L else 0L})
 			SMALLER_EQUAL -> binaryOp(node,
 				{ l, r -> if (l <= r) 1L else 0L },
-				{ l, r -> if (l.isSmallerEqualThan(r)) 1L else 0L },
+				{ l, r -> if (l.isSmallerEqualThan(signalToLong(r).toULong())) 1L else 0L },
 				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L },
 				{ l, r -> if (l <= signalToLong(r)) 1L else 0L })
 			SHIFT_LEFT -> binaryOp(node,

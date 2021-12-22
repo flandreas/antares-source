@@ -165,7 +165,6 @@ open class Interpreter(
 		return if (left is Long && right is Long) {
 			longOp(left, right)
 		} else {
-			//throw RuntimeError(node.location, "Incompatible types for '${node.op.type}'")
 			throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
 		}
 	}
