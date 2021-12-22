@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -104,13 +105,18 @@ class AndGateView(
 			} else {
 				context.g.stroke = createOpenDataPathStroke()
 			}
-
 		} else {
 			context.g.stroke = createOpenDataPathStroke()
 		}
 
 		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-			context.g.color = model.getOutput<DigitalSignal>().getOutgoingSignal()!!.color.foregroundColor
+			val signal = model.getOutput<DigitalSignal>().getOutgoingSignal()!!
+			if (UI.isDark && signal.isAllOf(Bit.False)) {
+				// The "false" signal color on dark background doesn't allow to distinguish data path state
+				context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
+			} else {
+				context.g.color = signal.color.foregroundColor
+			}
 		} else {
 			context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
 		}
