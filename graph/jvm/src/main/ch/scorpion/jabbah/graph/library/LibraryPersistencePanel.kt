@@ -14,9 +14,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Dimension
-import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -60,7 +58,6 @@ class LibraryPersistencePanel(
 
 	private val libraryDictionaryEntries = JList(loadLibraryDirectoryEntries())
 	private val descriptionTextArea = JTextArea()
-	private val currentLibraryFont = libraryDictionaryEntries.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
 	val openButton = createButton(openAction)
@@ -168,7 +165,11 @@ class LibraryPersistencePanel(
 		buttonPanel.add(createButton(CancelAction()))
 		add(buttonPanel, BorderLayout.SOUTH)
 
-		libraryDictionaryEntries.cellRenderer = LibraryListRenderer()
+		libraryDictionaryEntries.cellRenderer = LibraryListRenderer(
+			normalFont = libraryDictionaryEntries.font,
+			isOpen = { entry -> entry.uuid == libraryHolder.library.uuid },
+			isReadOnly = ::isReadonly
+		)
 	}
 
 	private fun createButton(action: Action): JButton =
@@ -284,20 +285,6 @@ class LibraryPersistencePanel(
 					closeHandler.invoke()
 				}
 			}
-		}
-	}
-
-	private inner class LibraryListRenderer : DefaultListCellRenderer() {
-
-		private val lockedIcon = UiUtil.themedIcon("/img/locked-16.png")
-		private val unlockedIcon = UiUtil.themedIcon("/img/unlocked-16.png")
-
-		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
-			val entry = value as LibraryDictionaryEntry
-			renderer.font = if (entry.name == libraryHolder.library.name) currentLibraryFont else libraryDictionaryEntries.font
-			renderer.icon = if (isReadonly(entry)) lockedIcon else unlockedIcon
-			return renderer
 		}
 	}
 }
