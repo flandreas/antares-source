@@ -44,7 +44,8 @@ class ExecutionToolbarSwing(
 		val pauseOrResumeButton = JToggleButton(pauseOrResumeWrapper)
 		pauseOrResumeButton.text = null
 
-		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
+		speedSlider.preferredSize = Dimension(150, speedSlider.preferredSize.height)
+		speedSlider.maximumSize = Dimension(150, speedSlider.maximumSize.height)
 
 		isFloatable = false
 		isRollover = true
