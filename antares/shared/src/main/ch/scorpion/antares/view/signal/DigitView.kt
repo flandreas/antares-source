@@ -120,10 +120,6 @@ class DigitView(
             drawFocus(context)
         }
 
-	    if (isOn && inactive) {
-		    drawInactive(context)
-	    }
-
 		context.g.color = oldColor
 		context.g.stroke = oldStroke
     }
