@@ -95,10 +95,10 @@ class GraphViewExecutionController(
 			rootGraphProvider.invoke()?.apply {
 				if (event.scheduler.isActive) {
 					if (isRoot) {
-						bind(repository, storableCreator)
+						bind(event.scheduler.isDeepExecution, repository, storableCreator)
 					}
 					graphViewsProvider.invoke().forEach {
-						it.bind()
+						it.bind(event.scheduler.isDeepExecution)
 					}
 					formNet(event.scheduler)
 					executionInitialize(event.scheduler)

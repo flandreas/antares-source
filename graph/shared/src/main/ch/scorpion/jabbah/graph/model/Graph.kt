@@ -113,7 +113,7 @@ interface Graph : Namable, Describable, Storable {
     fun withId(id: Int): GraphElement?
 
 	/** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
-	fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
+	fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator)
 
 	/**
 	 * Forms the [CombinedNet]s to be used during execution.

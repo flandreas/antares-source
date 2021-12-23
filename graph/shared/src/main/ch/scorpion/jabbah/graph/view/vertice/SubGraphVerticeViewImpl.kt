@@ -385,11 +385,16 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [GraphElementView] */
 
-	override fun bind(graph: Graph) {
-		super.bind(graph)
+	override fun bind(graph: Graph, deep: Boolean) {
+		super.bind(graph, deep)
 		if (model.designError == null) {
-			val innerGraph = getGraph()
-			getControlViewComponents().forEach { it.bindControlView(this, innerGraph, repository, storableCreator) }
+			if (model.isDeepExecution(deep)) {
+				val controlViewComponents = getControlViewComponents()
+				if (controlViewComponents.isNotEmpty()) {
+					val innerGraph = getGraph()
+					controlViewComponents.forEach { it.bindControlView(this, innerGraph, repository, storableCreator) }
+				}
+			}
 		}
 	}
 
@@ -448,7 +453,7 @@ class SubGraphVerticeViewImpl(
 	override fun createSubGraphView(signalHandler: SignalHandler?): GraphView {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
 		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
-		graphView.bind()
+		graphView.bind(signalHandler?.isDeepExecution ?: false)
 		signalHandler?.let {
 			graphView.executionStart(it)
 		}

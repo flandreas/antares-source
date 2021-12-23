@@ -59,7 +59,7 @@ class AntaresDslGraphExecutionTest {
 
 	private fun createAndStart(libraryElement: ContainerLibraryElement): SubGraphVerticeView<SubGraphVerticeRef> {
 		val vv = libraryElement.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView
-		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		return vv

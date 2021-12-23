@@ -61,7 +61,7 @@ abstract class AbstractCircuitTest {
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
-		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(it, IOModule.storableCreator) }
+		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(true, it, IOModule.storableCreator) }
 		getCircuitView().graph!!.formNet(scheduler)
 		getCircuitView().graph!!.executionInitialize(scheduler)
 		getCircuitView().graph!!.executionStart(scheduler)

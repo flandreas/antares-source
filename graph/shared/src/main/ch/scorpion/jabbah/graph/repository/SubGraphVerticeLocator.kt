@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 
 /**
@@ -25,7 +24,7 @@ class SubGraphVerticeLocator(
 	 * Checks whether [graph] contains a [SubGraphVertice] with [UUID] [uuid].
 	 */
 	fun contains(uuid: UUID): Boolean {
-		graph.bind(repository, storableCreator)
+		graph.bind(true, repository, storableCreator)
 		graph.accept(object : EmptyHierarchyVisitor() {
 			override fun visitEnter(node: Any): Boolean {
 				if (node is SubGraphVertice) {

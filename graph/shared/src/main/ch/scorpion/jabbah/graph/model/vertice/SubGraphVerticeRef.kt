@@ -1,14 +1,11 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -44,7 +41,7 @@ class SubGraphVerticeRef(
 
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
-				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
+				if (data.isInput && !vertice.isDeepExecution(signalHandler.isDeepExecution)) {
 					vertice.runExecutionScript(data)
 				}
 			}
@@ -70,6 +67,8 @@ class SubGraphVerticeRef(
 
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
+
+	private var isDeepExecutionCache: Boolean? = null
 
 	var paramValues = GraphParamValues()
 		private set(value) {
@@ -173,9 +172,11 @@ class SubGraphVerticeRef(
 	/** ---- [Actor] */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
+		isDeepExecutionCache = null
+
 		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
-			if (isDeepExecution(signalHandler)) {
+			if (isDeepExecution(signalHandler.isDeepExecution)) {
 				graph?.executionInitialize(signalHandler)
 			}
 		}
@@ -184,7 +185,7 @@ class SubGraphVerticeRef(
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
-			if (isDeepExecution(signalHandler)) {
+			if (isDeepExecution(signalHandler.isDeepExecution)) {
 				graph?.executionStart(signalHandler)
 			} else {
 				interpreter = createInterpreter(signalHandler)
@@ -211,7 +212,7 @@ class SubGraphVerticeRef(
 	}
 
 	override fun actImpl(signalHandler: SignalHandler, data: ActorData) {
-		if ((data as GraphActorData).isInput && !isDeepExecution(signalHandler)) {
+		if ((data as GraphActorData).isInput && !isDeepExecution(signalHandler.isDeepExecution)) {
 			super.actImpl(signalHandler, data)
 		}
 		// With deep execution, no execution logic by the [SubGraphVerticeRef] has to take place.
@@ -224,12 +225,13 @@ class SubGraphVerticeRef(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		graph?.executionStopped(signalHandler)
+		isDeepExecutionCache = null
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {
 		super.formNet(signalHandler)
 		if (!hasDesignError) {
-			if (isDeepExecution(signalHandler)) {
+			if (isDeepExecution(signalHandler.isDeepExecution)) {
 				graph?.formNet(signalHandler)
 			}
 		}
@@ -244,10 +246,10 @@ class SubGraphVerticeRef(
 	/** ---- [AbstractVertice] */
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
-		if (isDeepExecution(signalHandler)) {
+		if (isDeepExecution(signalHandler.isDeepExecution)) {
 			val graphInput = (input as SubGraphInputPort<Any>).graphInput
 			signalHandler.logActorTrace(this) { "input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}" }
-			graphInput!!.setIncomingSignal(input.getIncomingSignal(), signalHandler)
+			graphInput?.setIncomingSignal(input.getIncomingSignal(), signalHandler)
 		}
 		// This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
 		// Even if deeply executing, we need to request acting, because only that will initiate
@@ -259,10 +261,10 @@ class SubGraphVerticeRef(
 
 	override fun getGraphIfPresent(): Graph? = graph
 
-	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
-		super.bind(repository, storableCreator)
-		if (!hasDesignError) {
-			ensureGraph(storableCreator).bind(repository, storableCreator)
+	override fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator) {
+		super.bind(deep, repository, storableCreator)
+		if (deep && !hasDesignError) {
+			ensureGraph(storableCreator).bind(deep, repository, storableCreator)
 		}
 	}
 
@@ -270,7 +272,7 @@ class SubGraphVerticeRef(
 		return ensureGraph(storableCreator)
 	}
 
-	private fun ensureGraph(storableCreator: StorableCreator): Graph {
+	private fun ensureGraph(storableCreator: StorableCreator = IOModule.storableCreator): Graph {
 		if (graph != null) {
 			return graph!!
 		}
@@ -298,10 +300,10 @@ class SubGraphVerticeRef(
 	/** ---- [NetCombiner] */
 
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
-		if (!isDeepExecution(signalHandler)) {
+		if (!isDeepExecution(signalHandler.isDeepExecution)) {
 			return emptyList()
 		}
-		val graphInput = graph!!.getGraphInput<T>(inputPort.name!!)
+		val graphInput = ensureGraph().getGraphInput<T>(inputPort.name!!)
 		val innerOutputPort = graphInput!!.getOutput<T>()
 		val result = CombinedNet.createFor(innerOutputPort, signalHandler)
 
@@ -311,7 +313,7 @@ class SubGraphVerticeRef(
 	}
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
-		!isDeepExecution(signalHandler)
+		!isDeepExecution(signalHandler.isDeepExecution)
 
 	/** ---- [SubGraphVerticeRef] */
 
@@ -339,8 +341,22 @@ class SubGraphVerticeRef(
 		setDefaultParamValues()
 	}
 
-	private fun isDeepExecution(signalHandler: SignalHandler): Boolean =
-		!graph!!.purelyScripted && signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
+	fun isDeepExecution(deepExecution: Boolean): Boolean {
+		//return !graph!!.purelyScripted && signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
+
+		if (isDeepExecutionCache == null) {
+			isDeepExecutionCache = (graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
+				!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
+			}
+		}
+		return isDeepExecutionCache!!
+
+		/*
+		return (graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
+			!it.purelyScripted && deepExecution ||  it.script == null || it.script == ""
+		}
+		 */
+	}
 
 	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =
 		getInputs().map { it as SubGraphInputPort<Any> }.toImmutableList()

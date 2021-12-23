@@ -136,6 +136,7 @@ class GraphNavigationViewControllerTest {
 		val testVerticeView = mockk<VerticeView<Vertice>>(relaxed = true)
 		every { testVerticeView.model } returns testVertice
 		every { scheduler.isActive } returns true
+		every { scheduler.isDeepExecution } returns true
 		every { applicationModeHolder.currentMode } returns ApplicationMode.EXECUTE
 
 		graphViewBuilder.addVerticeView(testVerticeView)
@@ -143,7 +144,7 @@ class GraphNavigationViewControllerTest {
 
 		eventBus.post(SchedulerActivationStateEvent(scheduler))
 
-		verify { testVerticeView.bind(eq(graphViewBuilder.graph)) }
+		verify { testVerticeView.bind(eq(graphViewBuilder.graph), true) }
 		verify { testVertice.executionInitialize(any()) }
 		verify { testVertice.executionStart(any()) }
 	}

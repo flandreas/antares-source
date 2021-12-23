@@ -87,9 +87,7 @@ class ControlViewComponent(
 
 	override val model: Vertice get() = controlView.model
 
-	override fun bind(graph: Graph) {
-		// empty
-	}
+	override fun bind(graph: Graph, deep: Boolean) { }
 
 	/** ---- [Storable] interface */
 

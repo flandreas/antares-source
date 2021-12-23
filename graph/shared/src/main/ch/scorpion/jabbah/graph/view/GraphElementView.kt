@@ -19,5 +19,5 @@ interface GraphElementView<T : GraphElement> : Component {
      * particular [Graph]. Concrete classes implement this method if they need information from the [Graph]
      * other than the model [GraphElement] that they display.
      */
-    fun bind(graph: Graph)
+    fun bind(graph: Graph, deep: Boolean)
 }

@@ -56,7 +56,7 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 * [Graph], which is not available before [Graph] binding. Note however that this method should **not** bind
 	 * [Graph] models in terms of [Graph.bind]; this is the responsibility of other classes.
 	 */
-	fun bind()
+	fun bind(deep: Boolean)
 
 	/**
 	 * Called when execution on this [GraphView] has been started, or when this [GraphView] is opened

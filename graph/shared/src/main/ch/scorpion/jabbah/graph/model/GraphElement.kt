@@ -69,7 +69,7 @@ interface GraphElement : Storable, Actor, Describable {
      * @param repository the [MetaGraphRepository] from which sub [Graph]s are retrieved
      * @param storableCreator the [StorableCreator] to be used when cloning [Graph]s from the [MetaGraphRepository].
      */
-    fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
+    fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator)
 
 	/** Forms the necessary [CombinedNet]s used for execution.*/
 	fun formNet(signalHandler: SignalHandler)

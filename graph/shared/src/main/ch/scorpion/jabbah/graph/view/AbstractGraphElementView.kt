@@ -100,9 +100,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		isResolving = false
 	}
 
-	override fun bind(graph: Graph) {
-		// empty
-	}
+	override fun bind(graph: Graph, deep: Boolean) { }
 
 	/** ---- [Component] interface */
 

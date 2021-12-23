@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.module.GraphModule
@@ -26,7 +25,7 @@ class ContainerLibraryElementCollector(
 	/** Collects the [Set] of  [UUID] all recursively reachable [Graph]s of `graph`.*/
 	fun collect(graph: Graph): Set<UUID> {
 		uuids.clear()
-		graph.bind(repository, storableCreator)
+		graph.bind(true, repository, storableCreator)
 		graph.accept(GraphVisitor())
 		return uuids
 	}

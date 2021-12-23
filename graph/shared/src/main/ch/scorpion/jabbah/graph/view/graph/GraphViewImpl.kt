@@ -138,9 +138,9 @@ open class GraphViewImpl(
 			eventBus.post(ScenarioStepEvent(this, oldValue, value))
 		}
 
-	override fun bind() {
+	override fun bind(deep: Boolean) {
 		for (graphElementView in drawables) {
-			graphElementView.bind(graph!!)
+			graphElementView.bind(graph!!, deep)
 		}
 	}
 

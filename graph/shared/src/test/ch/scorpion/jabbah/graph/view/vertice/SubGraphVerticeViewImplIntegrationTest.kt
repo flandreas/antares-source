@@ -93,7 +93,7 @@ class SubGraphVerticeViewImplIntegrationTest {
 	@Test
 	fun shouldUseExecutionLabel() {
 		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
-		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		vv.executionStarted(signalHandler)
@@ -106,7 +106,7 @@ class SubGraphVerticeViewImplIntegrationTest {
 	@Test
 	fun shouldResetExecutionLabel() {
 		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
-		vv.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		vv.executionStarted(signalHandler)

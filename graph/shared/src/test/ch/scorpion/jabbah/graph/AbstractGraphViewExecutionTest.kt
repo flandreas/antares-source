@@ -59,7 +59,7 @@ abstract class AbstractGraphViewExecutionTest {
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
-		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(it, IOModule.storableCreator) }
+		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(true, it, IOModule.storableCreator) }
 		getGraphView().graph!!.formNet(scheduler)
 		getGraphView().graph!!.executionInitialize(scheduler)
 		getGraphView().graph!!.executionStart(scheduler)

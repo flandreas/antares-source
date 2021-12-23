@@ -36,7 +36,7 @@ class GraphElementCollector(
 		deepEntries.clear()
 		flatEntries.clear()
 
-		graph.bind(repository, storableCreator)
+		graph.bind(true, repository, storableCreator)
 
 		graph.accept(DeepGraphVisitor())
 		graph.accept(FlatGraphVisitor())
