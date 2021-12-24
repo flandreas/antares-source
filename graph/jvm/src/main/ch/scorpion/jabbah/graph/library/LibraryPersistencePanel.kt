@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -14,9 +13,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.*
 
 /** An [Action] that opens a dialog containing [LibraryPersistencePanel].*/
@@ -38,9 +34,9 @@ class ShowLibrariesDialogAction(
 class LibraryPersistencePanel(
 	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : AbstractLibraryPersistencePanel(managementService, "library") {
+) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == libraryHolder.library.uuid }, "library") {
 
 	companion object {
 
@@ -56,13 +52,49 @@ class LibraryPersistencePanel(
 		}
 	}
 
-	private val libraryDictionaryEntries = JList(loadLibraryDirectoryEntries())
-	private val descriptionTextArea = JTextArea()
 	private val openAction = OpenAction()
+
 	private val deleteAction = DeleteAction()
+
 	val openButton = createButton(openAction)
 
-	override val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+	init {
+		buildUI()
+		load()
+		selectCurrentLibrary(libraryHolder.l)
+	}
+
+	/** ---- [AbstractLibrarySelectionPanel] */
+
+	override fun buildUI() {
+		super.buildUI()
+
+		val buttonPanel = JPanel()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+		buttonPanel.add(openButton)
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(createButton(NewAction()))
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(createButton(deleteAction))
+		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(createButton(importAction))
+		buttonPanel.add(Box.createHorizontalStrut(9))
+
+		buttonPanel.add(Box.createHorizontalGlue())
+		buttonPanel.add(createButton(CancelAction()))
+		add(buttonPanel, BorderLayout.SOUTH)
+	}
+
+	override fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
+		val list = DefaultListModel<LibraryDictionaryEntry>()
+		managementService.getLibraryDirectoryEntries().forEach { list.addElement(it) }
+		return list
+	}
+
+	override fun handleListDoubleClick(event: ActionEvent) {
+		openAction.execute(event)
+	}
 
 	override fun getExportSuccessMsg(entry: LibraryDictionaryEntry): String =
 		Translations.getString("library.dialog.export.success.msg", entry.name.value)
@@ -89,117 +121,15 @@ class LibraryPersistencePanel(
 	override val fileExtensionFilterName: String
 		get() = Translations.getString("library.dialog.import.filter.name")
 
-	override fun refreshLibraries() {
-		libraryDictionaryEntries.model = loadLibraryDirectoryEntries()
+	override fun currentLibraryIndex(): Int? = getLibraryIndex(libraryHolder.library.uuid)
+
+	override fun handleSelectionChanged() {
+		openAction.enabled = selectedLibrary?.uuid != libraryHolder.l?.uuid
+		deleteAction.enabled = selectedLibrary?.let { it.uuid != libraryHolder.l?.uuid } ?: false
+		exportAction.enabled = selectedLibrary != null
 	}
 
-	override fun selectLibrary(uuid: UUID?) {
-		libraryIndex(uuid)?.let { libraryDictionaryEntries.selectedIndex = it }
-	}
-
-	init {
-		libraryDictionaryEntries.addListSelectionListener {
-			updateDescription()
-			updateActions()
-		}
-		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent?) {
-				if (e!!.clickCount == 2) {
-					openAction.execute(ActionWrapperSwing.toJabbahActionEvent(e))
-				}
-			}
-		})
-		buildUI()
-		updateActions()
-
-		libraryDictionaryEntries.requestFocusInWindow()
-		currentLibraryIndex()?.let { libraryDictionaryEntries.selectedIndex = it }
-	}
-
-	private fun currentLibraryIndex(): Int? = libraryIndex(libraryHolder.library.uuid)
-
-	private fun libraryIndex(uuid: UUID?): Int? {
-		if (libraryDictionaryEntries.model.size == 0) {
-			return null
-		}
-		for (index in 0 until libraryDictionaryEntries.model.size) {
-			if (libraryDictionaryEntries.model.getElementAt(index).uuid == uuid) {
-				return index
-			}
-		}
-		return null
-	}
-
-	private fun buildUI() {
-		layout = BorderLayout(0, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-
-		descriptionTextArea.lineWrap = true
-		descriptionTextArea.wrapStyleWord = true
-		descriptionTextArea.background = background
-		descriptionTextArea.isEditable = false
-		descriptionTextArea.rows = 6
-		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
-		descriptionScroll.background = background
-
-		val scrollPane = JScrollPane(libraryDictionaryEntries)
-		scrollPane.preferredSize = Dimension(300, 300)
-		add(scrollPane, BorderLayout.NORTH)
-
-		add(descriptionScroll, BorderLayout.CENTER)
-
-		val buttonPanel = JPanel()
-		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-		buttonPanel.add(openButton)
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(NewAction()))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(deleteAction))
-		buttonPanel.add(Box.createHorizontalStrut(9))
-		buttonPanel.add(createButton(exportAction))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(importAction))
-		buttonPanel.add(Box.createHorizontalStrut(9))
-
-		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(createButton(CancelAction()))
-		add(buttonPanel, BorderLayout.SOUTH)
-
-		libraryDictionaryEntries.cellRenderer = LibraryListRenderer(
-			normalFont = libraryDictionaryEntries.font,
-			isOpen = { entry -> entry.uuid == libraryHolder.library.uuid },
-			isReadOnly = ::isReadonly
-		)
-	}
-
-	private fun createButton(action: Action): JButton =
-		JButton(ActionWrapperSwing(action))
-
-	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean =
-		entry.author != userHolder.user.identity
-
-	private fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
-		val list = DefaultListModel<LibraryDictionaryEntry>()
-		managementService.getLibraryDirectoryEntries().forEach { list.addElement(it) }
-		return list
-	}
-
-	private fun updateActions() {
-		openAction.enabled =
-			!libraryDictionaryEntries.isSelectionEmpty
-			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
-
-		deleteAction.enabled =
-			!libraryDictionaryEntries.isSelectionEmpty
-			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
-			&& !isReadonly(libraryDictionaryEntries.selectedValue)
-
-		exportAction.enabled = !libraryDictionaryEntries.isSelectionEmpty
-	}
-
-	private fun updateDescription() {
-		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""
-	}
+	/** ---- [LibraryPersistencePanel] */
 
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
 		override fun execute(event: ActionEvent) {

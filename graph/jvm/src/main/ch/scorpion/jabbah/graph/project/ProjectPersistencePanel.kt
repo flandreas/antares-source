@@ -1,23 +1,23 @@
 package ch.scorpion.jabbah.graph.project
 
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.AbstractLibraryPersistencePanel
+import ch.scorpion.jabbah.graph.library.AbstractLibrarySelectionPanel
+import ch.scorpion.jabbah.graph.library.LibraryProperties
+import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Font
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.*
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
@@ -39,8 +39,9 @@ class ShowProjectsDialogAction(
 class ProjectPersistencePanel(
 	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : AbstractLibraryPersistencePanel(managementService, "project") {
+) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == projectHolder.project?.uuid }, "project") {
 
 	companion object {
 
@@ -56,32 +57,59 @@ class ProjectPersistencePanel(
 		}
 	}
 
-	private val projectsList = JList(loadProjects())
-	private val descriptionTextArea = JTextArea()
-	override val selectedLibrary: LibraryDictionaryEntry? get() = projectsList.selectedValue
-	private val currentProjectFont = projectsList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
+
 	private val deleteAction = DeleteAction()
+
 	val openButton = createButton(openAction)
 
 	init {
-		projectsList.addListSelectionListener {
-			updateDescription()
-			updateActions()
-		}
-		projectsList.addMouseListener(object : MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent?) {
-				if (e!!.clickCount == 2) {
-					openAction.execute(ActionWrapperSwing.toJabbahActionEvent(e))
-				}
-			}
-		})
 		buildUI()
-		updateActions()
-
-		projectsList.requestFocusInWindow()
-		currentProjectIndex()?.let { projectsList.selectedIndex = it }
+		load()
+		selectCurrentLibrary(projectHolder.project)
 	}
+
+	/** ---- [AbstractLibrarySelectionPanel] */
+
+	override fun buildUI() {
+		super.buildUI()
+
+		val buttonPanel = JPanel()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+
+		buttonPanel.add(openButton)
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(createButton(NewAction()))
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(createButton(deleteAction))
+		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(createButton(importAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(createButton(CancelAction()))
+
+		add(buttonPanel, BorderLayout.SOUTH)
+	}
+
+	override fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
+		val list = DefaultListModel<LibraryDictionaryEntry>()
+		managementService
+			.getProjectDirectoryEntries()
+			.sortedBy { it.name.value }
+			.forEach { list.addElement(it) }
+		return list
+	}
+
+	override fun handleListDoubleClick(event: ActionEvent) {
+		openAction.execute(event)
+	}
+
+	override fun currentLibraryIndex(): Int? =
+		projectHolder.project?.uuid?.let {
+			getLibraryIndex(it)
+		}
 
 	override fun getExportSuccessMsg(entry: LibraryDictionaryEntry): String =
 		Translations.getString("project.dialog.export.success.msg", entry.name.value)
@@ -108,114 +136,14 @@ class ProjectPersistencePanel(
 	override val fileExtensionFilterName: String
 		get() = Translations.getString("project.dialog.import.filter.name")
 
-	private fun currentProjectIndex(): Int? = projectIndex(projectHolder.project?.uuid)
-
-	private fun projectIndex(uuid: UUID?): Int? {
-		if (projectsList.model.size == 0) {
-			return null
-		}
-		for (index in 0 until projectsList.model.size) {
-			if (projectsList.model.getElementAt(index).uuid == uuid) {
-				return index
-			}
-		}
-		return null
-	}
-
-	override fun selectLibrary(uuid: UUID?) {
-		projectIndex(uuid)?.let { projectsList.selectedIndex = it }
-	}
-
-	private fun updateActions() {
-		openAction.enabled = selectedLibrary != null && selectedLibrary?.uuid != projectHolder.p?.uuid
-		deleteAction.enabled = !projectsList.isSelectionEmpty
-		exportAction.enabled = !projectsList.isSelectionEmpty
+	override fun handleSelectionChanged() {
+		openAction.enabled = selectedLibrary?.uuid != projectHolder.p?.uuid
+		deleteAction.enabled = selectedLibrary != null
+		exportAction.enabled = selectedLibrary != null
 		importAction.enabled = true
 	}
 
-	private fun updateDescription() {
-		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""
-	}
-
-	private fun buildUI() {
-		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-
-		descriptionTextArea.lineWrap = true
-		descriptionTextArea.wrapStyleWord = true
-		descriptionTextArea.background = background
-		descriptionTextArea.isEditable = false
-		descriptionTextArea.rows = 6
-		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
-		descriptionScroll.background = background
-
-		val scrollPane = JScrollPane(projectsList)
-		scrollPane.preferredSize = Dimension(300, 300)
-		add(scrollPane, BorderLayout.NORTH)
-
-		add(descriptionScroll, BorderLayout.CENTER)
-
-		val buttonPanel = JPanel()
-		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-
-		buttonPanel.add(openButton)
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(NewAction()))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(deleteAction))
-		buttonPanel.add(Box.createHorizontalStrut(9))
-		buttonPanel.add(createButton(exportAction))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(createButton(importAction))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(Box.createHorizontalStrut(9))
-		buttonPanel.add(createButton(CancelAction()))
-
-		add(buttonPanel, BorderLayout.SOUTH)
-
-		projectsList.cellRenderer = ProjectListRenderer()
-	}
-
-	private fun createButton(action: Action): JButton {
-		return JButton(ActionWrapperSwing(action))
-	}
-
-	private fun loadProjects(): ListModel<LibraryDictionaryEntry> {
-		val list = DefaultListModel<LibraryDictionaryEntry>()
-		managementService
-			.getProjectDirectoryEntries()
-			.sortedBy { it.name.value }
-			.forEach { list.addElement(it) }
-		return list
-	}
-
-	override fun refreshLibraries() {
-		projectsList.model = loadProjects()
-	}
-
-	private inner class ProjectListRenderer : DefaultListCellRenderer() {
-
-		// TODO: This is a placeholder. Order real icon from Janis.
-		private val publicIcon = UiUtil.themedIcon("/img/compass-16.png")
-
-		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
-			val project = value as LibraryDictionaryEntry
-			if (project.uuid == projectHolder.project?.uuid) {
-				renderer.font = currentProjectFont
-			} else {
-				renderer.font = projectsList.font
-			}
-			if (GraphModuleJvm.supportWeb) {
-				if (project.visibility == LibraryVisibility.Public) {
-					renderer.icon = publicIcon
-				} else {
-					renderer.icon = null
-				}
-			}
-			return renderer
-		}
-	}
+	/** ---- [ProjectPersistencePanel] */
 
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {

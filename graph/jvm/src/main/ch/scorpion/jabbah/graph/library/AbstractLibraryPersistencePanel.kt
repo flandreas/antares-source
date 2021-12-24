@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
@@ -13,16 +10,17 @@ import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import org.apache.commons.io.FilenameUtils
 import java.io.File
+import javax.swing.JButton
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
-import javax.swing.JPanel
 import javax.swing.filechooser.FileFilter
 
 abstract class AbstractLibraryPersistencePanel(
 	private val managementService: AbstractLibraryManagementService,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	isOpen: (entry: LibraryDictionaryEntry) -> Boolean,
 	private val logName: String,
-	private val userHolder: UserHolder<User> = EditAuthModule.userHolder
-) : JPanel() {
+) : AbstractLibrarySelectionPanel(userHolder, isOpen) {
 
 	companion object {
 		private val LOG by logger(AbstractLibraryPersistencePanel::class)
@@ -33,7 +31,6 @@ abstract class AbstractLibraryPersistencePanel(
 
 	protected val importAction: Action = ImportAction()
 
-	protected abstract val selectedLibrary: LibraryDictionaryEntry?
 	protected abstract val exportActionNameKey: String
 	protected abstract val importActionNameKey: String
 	protected abstract val fileExtensionFilterName: String
@@ -43,11 +40,11 @@ abstract class AbstractLibraryPersistencePanel(
 	protected abstract fun getInvalidMsg(name: String): String
 	protected abstract fun getStaleReferenceMsg(name: String): String
 	protected abstract fun getUuidAlreadyExistsMsg(): String
-	protected abstract fun refreshLibraries()
-	protected abstract fun selectLibrary(uuid: UUID?)
 
 	protected fun getLibraryIdentity(uuid: UUID): LibraryIdentification =
 		LibraryIdentification(uuid, userHolder.user.identity)
+
+	protected fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
 
 	private inner class ExportAction : AbstractAction(exportActionNameKey) {
 		override fun execute(event: ActionEvent) {
@@ -88,7 +85,7 @@ abstract class AbstractLibraryPersistencePanel(
 				LOG.userTrail("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
 				val result = managementService.import(path, replaceIfUuidExists)
 				when (result.type) {
-					Success -> handleSuccessfulImport(name, result.library)
+					Success -> handleSuccessfulImport(name, result.library!!)
 					NameAlreadyExists -> handleImportNameAlreadyExists(name)
 					Invalid -> handleInvalidImportFile(name)
 					StaleLibraryReference -> handleStaleLibraryReference(name)
@@ -103,7 +100,7 @@ abstract class AbstractLibraryPersistencePanel(
 
 		private fun createFilter(): FileFilter = FileExtensionFilter(EXPORT_FILE_EXTENSION, fileExtensionFilterName)
 
-		fun handleSuccessfulImport(libraryName: String, library: Library?) {
+		fun handleSuccessfulImport(libraryName: String, library: Library) {
 			JOptionPane.showConfirmDialog(
 				this@AbstractLibraryPersistencePanel,
 				getImportSuccessMsg(libraryName),
@@ -111,7 +108,7 @@ abstract class AbstractLibraryPersistencePanel(
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE)
 			refreshLibraries()
-			selectLibrary(library?.uuid)
+			selectLibrary(library.uuid)
 		}
 
 		fun handleImportNameAlreadyExists(libraryName: String) {
