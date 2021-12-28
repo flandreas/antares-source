@@ -76,7 +76,7 @@ Color:: Normally, the color in which a component is drawn is determined by its s
 * image:user-manual/base-library/led-matrix.svg[LED-Matrix] link:{{site.basedir}}/user-manual/english/base-library/led-matrix[LED-Matrix]
 * image:user-manual/base-library/terminal.svg[Terminal] link:{{site.basedir}}/user-manual/english/base-library/terminal[Terminal]
 * image:user-manual/base-library/buzzer.svg[Buzzer] link:{{site.basedir}}/user-manual/english/base-library/buzzer[Buzzer]
-* image:user-manual/base-library/terminal.svg[Video RAM] link:{{site.basedir}}/user-manual/english/base-library/video-ram[Video RAM]
+* image:user-manual/base-library/videoram.svg[Video RAM] link:{{site.basedir}}/user-manual/english/base-library/video-ram[Video RAM]
 * 8x8 LED Matrix with Ctrl
 
 === Memory

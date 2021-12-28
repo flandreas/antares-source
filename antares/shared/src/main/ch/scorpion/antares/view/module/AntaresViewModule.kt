@@ -213,7 +213,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
-		properties.set(VideoRamView.PROP_ICON_PATH, "/img/terminal.png")
+		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(TransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -429,7 +429,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
-		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/terminal.png" }, VideoRamView::class)
+		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/videoram.png" }, VideoRamView::class)
 		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
