@@ -54,6 +54,9 @@ class VideoRamView(
 
 		private const val MIN_WIDTH = 14 * Look.SCALE
 		private const val MIN_HEIGHT = 14 * Look.SCALE
+
+		private const val MAX_COLUMNS_COUNT = 600
+		private const val MAX_ROWS_COUNT = 400
 	}
 
 	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(
@@ -82,9 +85,12 @@ class VideoRamView(
 	var rowsCount: Int = 50
 		set(value) {
 			if (field != value) {
+				if (value > MAX_ROWS_COUNT) {
+					throw IllegalArgumentException("Maximum height is $MAX_ROWS_COUNT")
+				}
 				field = value
 				model.getAddressInput().bitWidth = BitWidth.smallest((field * columnsCount).toULong())
-					?: throw IllegalArgumentException("Height too big")
+					?: throw IllegalArgumentException("Height too big for address space")
 				updateGeometry()
 				validate()
 			}
@@ -93,9 +99,12 @@ class VideoRamView(
 	var columnsCount: Int = 50
 		set(value) {
 			if (field != value) {
+				if (value > MAX_COLUMNS_COUNT) {
+					throw IllegalArgumentException("Maximum width is $MAX_COLUMNS_COUNT")
+				}
 				field = value
 				model.getAddressInput().bitWidth = BitWidth.smallest((field * rowsCount).toULong())
-					?: throw IllegalArgumentException("Width too big")
+					?: throw IllegalArgumentException("Width too big for address space")
 				updateGeometry()
 				validate()
 			}
