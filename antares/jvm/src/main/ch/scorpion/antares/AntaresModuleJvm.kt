@@ -20,11 +20,11 @@ import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
+import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
-import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
-import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.antares.view.signal.*
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
+import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
@@ -56,7 +56,6 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegist
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
@@ -193,6 +192,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(DigitalPortViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PortViewSpacing::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(WaveformType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(VideoRamColorModel::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -213,6 +213,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(DigitalPortViewStyle::class.java, DigitalPortViewStyleEditor::class.java)
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
+		registry.registerEditor(VideoRamColorModel::class.java, VideoRamColorModelEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

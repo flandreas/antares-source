@@ -5,27 +5,31 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
 import javax.swing.ImageIcon
 
-class ImageJvm(override val path: String) : Image {
+/**
+ * An [Image] implementation whose data is loaded from  resources.
+ * @param path the path from which the image data are loaded
+ */
+class ResourceImageJvm(val path: String) : Image {
 
     companion object {
-        private val LOG by logger(ImageJvm::class)
+        private val LOG by logger(ResourceImageJvm::class)
 
 	    fun themedImage(path: String): Image {
 		    if (UI.isDark) {
 			    return try {
-				    ImageJvm(UiUtil.darkImagePath(path))
+				    ResourceImageJvm(UiUtil.darkImagePath(path))
 			    } catch (t: Throwable) {
-				    ImageJvm(path)
+				    ResourceImageJvm(path)
 			    }
 		    }
-		    return ImageJvm(path)
+		    return ResourceImageJvm(path)
 	    }
     }
 
     val imageIcon: ImageIcon
 
     init {
-        val resource = ImageJvm::class.java.getResource(path)
+        val resource = ResourceImageJvm::class.java.getResource(path)
         if (resource == null) {
             LOG.error("Image '$path' not found")
             throw IllegalArgumentException("Image '$path' not found")

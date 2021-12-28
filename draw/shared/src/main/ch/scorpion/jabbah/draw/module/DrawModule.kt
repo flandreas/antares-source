@@ -30,6 +30,8 @@ object DrawModule : AbstractModule() {
     /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
 
+	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
+
     override fun initialize() {
         BaseModule.require()
 

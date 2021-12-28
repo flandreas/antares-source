@@ -287,7 +287,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawImage(image: Image, x: Int, y: Int) {
-        g.drawImage((image as ImageJvm).imageIcon.image, x, y, null)
+	    when (image) {
+			is ResourceImageJvm -> g.drawImage(image.imageIcon.image, x, y, null)
+		    is BufferedImageJvm -> g.drawImage(image.jvmImage, x, y, null)
+		    else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
+		}
     }
 
     /** ---- [Graphics2DJvm] */
