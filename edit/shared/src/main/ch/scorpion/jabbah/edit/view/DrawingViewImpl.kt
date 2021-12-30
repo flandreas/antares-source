@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
+import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Stylable
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.edit.*
@@ -160,7 +162,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	override val mainContent: MainContent get() = MainContent(
 		drawing.toString(),
-		drawing)
+		drawing,
+		Themes.get<DrawTheme>().background.color.backgroundColor)
 
 	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds { drawing.boundingBox }
 

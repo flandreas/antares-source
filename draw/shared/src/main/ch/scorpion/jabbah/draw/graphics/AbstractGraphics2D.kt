@@ -13,6 +13,15 @@ abstract class AbstractGraphics2D : Graphics2D {
 
 	companion object {
 		private val LOG by logger(AbstractGraphics2D::class)
+
+		fun toJsColor(color: Color): String {
+			val alpha = when (color.alpha) {
+				255 -> 1.0
+				0 -> 0.0
+				else -> color.alpha / 255.0
+			}
+			return "rgba(${color.red},${color.green},${color.blue},$alpha)"
+		}
 	}
 
 	/** ---- [Graphics2D] */

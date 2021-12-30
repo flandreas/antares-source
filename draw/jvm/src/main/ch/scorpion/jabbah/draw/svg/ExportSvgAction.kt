@@ -16,7 +16,7 @@ class ExportSvgAction : AbstractViewAction("draw.action.exportSvg") {
 			fileChooser.selectedFile = File("${mainContent.name}.svg")
 
 			if (fileChooser.showSaveDialog(Frame.getFrames()[0]) == JFileChooser.APPROVE_OPTION) {
-				SvgExporter.export(mainContent.drawable, fileChooser.selectedFile.absolutePath)
+				SvgExporter.export(mainContent, fileChooser.selectedFile.absolutePath)
 			}
 		}
 	}

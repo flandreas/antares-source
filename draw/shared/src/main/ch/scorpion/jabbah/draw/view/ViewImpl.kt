@@ -11,7 +11,9 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.ThemeEvent
+import ch.scorpion.jabbah.draw.style.Themes
 
 
 /**
@@ -63,7 +65,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	override val mainContent: MainContent get() = MainContent(
 		"Drawing",
-		drawables.first())
+		drawables.first(),
+		Themes.get<DrawTheme>().background.color.backgroundColor)
 
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)

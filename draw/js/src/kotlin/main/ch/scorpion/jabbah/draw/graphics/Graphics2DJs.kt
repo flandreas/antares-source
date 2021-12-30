@@ -277,15 +277,6 @@ class Graphics2DJs(
 
 	/** ---- [Graphics2DJs] */
 
-	private fun toJsColor(color: Color): String {
-		val alpha = when (color.alpha) {
-			255 -> 1.0
-			0 -> 0.0
-			else -> color.alpha / 255.0
-		}
-		return "rgba(${color.red},${color.green},${color.blue},$alpha)"
-	}
-
 	private fun toJsGradient(gradient: LinearColorGradient): CanvasGradient {
 		val jsGradient = ctx.createLinearGradient(gradient.p1.x, gradient.p1.y, gradient.p2.x, gradient.p2.y)
 		jsGradient.addColorStop(0.0, toJsColor(gradient.color1))

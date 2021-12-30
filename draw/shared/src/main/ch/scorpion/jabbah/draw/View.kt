@@ -20,7 +20,8 @@ data class CloseViewRequest(val view: View<*>)
  */
 data class MainContent(
 	val name: String,
-	val drawable: Drawable
+	val drawable: Drawable,
+	val background: Color
 )
 
 /**
