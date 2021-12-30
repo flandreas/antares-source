@@ -230,7 +230,7 @@ open class TextComponentJvm(
 		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
 		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
 
-		context.g.setClipBounds(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
+		context.g.setClipBounds(oldClip)
 
 		if (stroked) {
 			decorator.drawForeground(this, context)

@@ -84,6 +84,10 @@ class Graphics2DJs(
 		// Not yet implemented
 	}
 
+	override fun setClipBounds(r: Rectangle2D?) {
+		// Not yet implemented
+	}
+
 	override fun clip(x: Int, y: Int, w: Int, h: Int) {
 		// Not yet implemented
 	}
@@ -251,8 +255,10 @@ class Graphics2DJs(
 		}
 	}
 
-	override fun getClipBounds(): Rectangle2D {
-		return Rectangle2D(clip)
+	override fun getClipBounds(): Rectangle2D? {
+		return if (supportClipping) {
+			Rectangle2D(clip)
+		} else null
 	}
 
 	override fun getClipBounds(r: Rectangle2D): Rectangle2D {

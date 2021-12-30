@@ -103,11 +103,17 @@ interface Graphics2D {
 	 */
 	fun setClipBounds(x: Int, y: Int, w: Int, h: Int)
 
-    /** Returns the bounding rectangle of the current clipping area. */
-    fun getClipBounds(): Rectangle2D
+	fun setClipBounds(r: Rectangle2D?)
+
+    /**
+     * Returns the bounding rectangle of the current clipping area, or `null`
+     * if the clipping area is not set or [supportClipping] is `false`.
+     * */
+    fun getClipBounds(): Rectangle2D?
 
     /**
      * Returns the bounding rectangle of the current clipping area and writes it into the specified [Rectangle2D].
+     * Does nothing if the clipping area is not set.
      * @return [r]
      */
     fun getClipBounds(r: Rectangle2D): Rectangle2D
