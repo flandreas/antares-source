@@ -61,6 +61,10 @@ open class ViewImpl<C : InputEventContext>(
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
 		}
 
+	override val mainContent: MainContent get() = MainContent(
+		"Drawing",
+		drawables.first())
+
 	init {
 		eventBus.register(ThemeEvent::class, themeListener)
 		applicationContextHolder?.addPropertyChangeListener(propertyChangeHandler)

@@ -32,6 +32,8 @@ object DrawModule : AbstractModule() {
 
 	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
 
+	var drawContextFactory: (g: Graphics2D, appContext: Any?) -> DrawContext = { g, appContext -> DrawContext(g, appContext) }
+
     override fun initialize() {
         BaseModule.require()
 

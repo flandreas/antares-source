@@ -60,7 +60,7 @@ open class GraphViewImpl(
 
 	/** ---- UI properties */
 
-	var name: String
+	override var name: String
 		get() = graph!!.name.value
 		set(value) {
 			graph!!.name = Name(value)

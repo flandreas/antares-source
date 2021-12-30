@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.edit.Drawing
  */
 open class DrawingImpl<T : Component> : ComponentContainerImpl<T>(), Drawing<T> {
 
+	override val name: String get() = "Drawing"
+
     override fun dispose() {
         // empty
     }

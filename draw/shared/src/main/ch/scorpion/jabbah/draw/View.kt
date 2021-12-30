@@ -15,6 +15,15 @@ import ch.scorpion.jabbah.draw.view.ViewSpace
 data class CloseViewRequest(val view: View<*>)
 
 /**
+ * The main content of a [View] to be used when exporting or printing the contents of that [View],
+ * excluding any auxiliary [Drawables][Drawable] used by this [View] for editing etc.
+ */
+data class MainContent(
+	val name: String,
+	val drawable: Drawable
+)
+
+/**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
  * [DrawableContainer]s that represent entire diagrams, of that contain selection or highlight graphics.
 
@@ -54,6 +63,8 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	/** Controls the rectangular area that is free to display content to the user. Can be reduced from outside.*/
 	val space: ViewSpace
+
+	val mainContent: MainContent
 
 	/** ---- Life cycle */
 

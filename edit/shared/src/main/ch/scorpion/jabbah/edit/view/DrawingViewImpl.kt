@@ -158,6 +158,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	/** ---- [View] interface */
 
+	override val mainContent: MainContent get() = MainContent(
+		drawing.toString(),
+		drawing)
+
 	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds { drawing.boundingBox }
 
 	override fun removeDrawable(drawable: Drawable) {
