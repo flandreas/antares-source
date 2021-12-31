@@ -2,8 +2,8 @@
   <folder>
     <libraryFolder _id='1'>
       <name>
-        <translation lang='en' text='Microcomputer (Tannenbaum)'/>
-        <translation lang='de' text='Mikrocomputer (Tannenbaum)'/>
+        <translation lang='en' text='Microcomputer (Tanenbaum)'/>
+        <translation lang='de' text='Mikrocomputer (Tanenbaum)'/>
       </name>
       <items>
         <libraryFolder _id='2'>
@@ -113,7 +113,7 @@
     </libraryFolder>
   </folder>
   <desc>
-    <translation lang='en' text='A fully functional computer with micro-programmable CPU according to Tannenbaum'/>
-    <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tannenbaum'/>
+    <translation lang='en' text='A fully functional computer with micro-programmable CPU according to Tanenbaum'/>
+    <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tanenbaum'/>
   </desc>
 </project>

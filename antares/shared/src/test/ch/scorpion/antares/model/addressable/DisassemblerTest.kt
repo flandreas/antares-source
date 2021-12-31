@@ -11,7 +11,7 @@ class DisassemblerTest {
 
 	companion object {
 
-		/** The macro-architecture operations of Tannenbaum's "Structured Computer Organization".*/
+		/** The macro-architecture operations of Tanenbaum's "Structured Computer Organization".*/
 		private const val MAR_OPS = """
             0([A-F0-9]{3})=LODD ${'$'}1
             1([A-F0-9]{3})=STOD ${'$'}1

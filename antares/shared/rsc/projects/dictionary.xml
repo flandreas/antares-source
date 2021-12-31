@@ -2,12 +2,12 @@
   <entries>
     <libraryDictionaryEntry _id='1' uuid='d10cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
       <name>
-        <translation lang='en' text='Microcomputer (Tannenbaum)'/>
-        <translation lang='de' text='Mikrocomputer (Tannenbaum)'/>
+        <translation lang='en' text='Microcomputer (Tanenbaum)'/>
+        <translation lang='de' text='Mikrocomputer (Tanenbaum)'/>
       </name>
       <desc>
-        <translation lang='en' text='A fully functional computer with micro-programmable CPU according to Tannenbaum'/>
-        <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tannenbaum'/>
+        <translation lang='en' text='A fully functional computer with micro-programmable CPU according to Tanenbaum'/>
+        <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tanenbaum'/>
       </desc>
     </libraryDictionaryEntry>
     <libraryDictionaryEntry _id='2' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a'>

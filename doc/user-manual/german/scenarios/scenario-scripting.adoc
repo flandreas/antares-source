@@ -1,3 +1,0 @@
-== Skripting in Szenarien
-
-TODO
