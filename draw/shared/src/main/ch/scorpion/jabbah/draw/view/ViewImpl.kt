@@ -282,7 +282,7 @@ open class ViewImpl<C : InputEventContext>(
 	}
 
 	override fun paint(g: Graphics2D) {
-		painter.paintView(DrawContext(g, applicationContext))
+		painter.paintView(DrawModule.drawContextFactory(g, applicationContext))
 	}
 
 	override fun draw(context: DrawContext) {

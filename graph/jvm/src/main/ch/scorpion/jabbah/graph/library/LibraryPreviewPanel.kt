@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
 import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Component
@@ -180,7 +181,7 @@ class LibraryPreviewPanel(
 			}
 
 			if (selection != null) {
-				drawableDrawer.process(DrawContext(Graphics2DJvm(g2), appContext), selection!!)
+				drawableDrawer.process(DrawModule.drawContextFactory(Graphics2DJvm(g2), appContext), selection!!)
 			}
 
 			if (scale != 1.0) {

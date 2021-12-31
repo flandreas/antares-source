@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
+import ch.scorpion.jabbah.draw.module.DrawModule
 import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
@@ -19,7 +20,7 @@ class ViewImplTest {
 
 	private val graphics2D = Graphics2DMockBuilder()
 
-	private val context = DrawContext(graphics2D.build(), null)
+	private val context = DrawModule.drawContextFactory(graphics2D.build(), null)
 
 	private val view = ViewImpl<InputEventContext>(
 		transformFactory = { System.createAffineTransform() },
