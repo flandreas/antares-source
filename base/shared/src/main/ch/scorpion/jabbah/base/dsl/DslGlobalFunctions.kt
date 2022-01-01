@@ -2,11 +2,16 @@ package ch.scorpion.jabbah.base.dsl
 
 import kotlin.math.ceil
 
-object DslGlobalFunctions : DslExternalFunctions {
+open class DslGlobalFunctions : DslExternalFunctions {
 
-	val RESERVED_FUNCTION_NAMES = listOf(
-		"log2"
-	)
+	protected val _reservedFunctionNames = mutableListOf<String>()
+	val reservedFunctionNames: List<String> get() = _reservedFunctionNames
+
+	init {
+		with(_reservedFunctionNames) {
+			add("log2")
+		}
+	}
 
 	override fun defineIn(symbolTable: SymbolTable) {
 		with(symbolTable) {

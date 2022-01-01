@@ -19,5 +19,6 @@ object AntaresDslModule : AbstractModule() {
 		BaseModule.parserFactory = ParserFactory { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
 		BaseModule.storingActivationRecordFactory = ActivationRecordFactory { n, p -> AntaresStoringActivationRecord(n, p) }
 		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
+		BaseModule.dslGlobalFunctions = AntaresDslGlobalFunctions()
 	}
 }

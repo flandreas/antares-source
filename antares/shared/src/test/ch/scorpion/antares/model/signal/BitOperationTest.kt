@@ -145,4 +145,10 @@ class BitOperationTest {
 		assertNull(BitOperation.normalizeHex("-", BitWidth.BW_2))
 		assertNull(BitOperation.normalizeHex("AX", BitWidth.BW_8))
 	}
+
+	@Test
+	fun shouldCalculateBits() {
+		assertEquals(1UL, BitOperation.bits(15UL, 3, 2))
+		assertEquals(3UL, BitOperation.bits(31UL, 3, 2))
+	}
 }

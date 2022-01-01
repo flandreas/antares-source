@@ -2,7 +2,22 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='' propDelay='120'>
+        <graph _id='2' script='if (^CLK) {
+	ADR = bits(I, 0, 8)
+	A = bits(I, 8, 4)
+	B = bits(I, 12, 4)
+	C = bits(I, 16, 4)
+	ENC = I@20
+	WR = I@21
+	RD = I@22
+	MAR = I@23
+	MBR = I@24
+	SH = bits(I, 25, 2)
+	ALU = bits(I, 27, 2)
+	COND = bits(I, 29, 2)
+	AMUX = I@31
+}
+' propDelay='120'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'/>
             <circuitInOut _id='4' id='2' name='I' type='input' bitWidth='32'/>
@@ -330,7 +345,7 @@
             <netView _id='195' modelId='77' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='196' id='1' rot='270' filled='true' stroked='true' modelId='3' x='581.0' y='245.0'/>
+            <subGraphVerticeViewRef _id='196' id='1' rot='270' filled='true' stroked='true' modelId='3' x='581.0' y='245.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='197' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='south'>
               <location>
                 <point x='581.0' y='203.0'/>

@@ -270,6 +270,21 @@ internal data class Word(
 		return sum
 	}
 
+	override fun bitsAt(pos: Int, size: Int): ULong? {
+		var result = 0UL
+		var factor = 1UL
+		for (i in pos..min(pos + size, bits.size - 1)) {
+			val bit = when (bits[i]) {
+				Bit.Undefined -> CurrentUndefinedGateInputBehavior.value.definedBit
+				Bit.Error -> return null
+				Bit.True, Bit.False -> bits[i]
+			}
+			result += factor * bit.numericalValue.toULong()
+			factor *= 2UL
+		}
+		return result
+	}
+
 	override fun nibbleToHexChar(index: Int): Char {
 		val subword = getSubword(BitWidth.BW_4, index)
 		return when {

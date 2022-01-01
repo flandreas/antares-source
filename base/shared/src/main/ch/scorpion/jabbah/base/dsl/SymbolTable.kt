@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.module.BaseModule
+
 interface SymbolTable {
 	val scopeLevel: Int
 	val enclosingScope: SymbolTable?
@@ -22,7 +24,7 @@ class ScopedSymbolTable(
 			Lexer.getReservedWords().forEach {
 				define(BuiltInTypeSymbol(it))
 			}
-			DslGlobalFunctions.defineIn(this)
+			BaseModule.dslGlobalFunctions.defineIn(this)
 		}
 	}
 

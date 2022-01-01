@@ -92,7 +92,7 @@ open class StoringActivationRecord(val name: String, val parent: ActivationRecor
 		when {
 			isLocallyDefined(variable.token.value!!) -> {
 				values[variable.token.value]
-					?: throw RuntimeError(variable.location, Translations.getString("base.dsl.noValueForVariable.msg = No value for variable ''{0}'' available", variable.token.value))
+					?: throw RuntimeError(variable.location, Translations.getString("base.dsl.noValueForVariable.msg", variable.token.value))
 			}
 			parent != null ->
 				parent.getValue(variable)

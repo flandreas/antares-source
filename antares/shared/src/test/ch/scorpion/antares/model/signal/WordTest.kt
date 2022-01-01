@@ -335,4 +335,15 @@ class WordTest {
 		assertEquals(Word.of(BW_4, 13UL), Word.ofMinimalBitWidth(13UL))
 		assertEquals(Word.of(BW_12, 4095UL), Word.ofMinimalBitWidth(4095UL))
 	}
+
+	@Test
+	fun shouldRetrieveBitsAt() {
+		assertEquals(1UL, Word.of(BW_8, 15UL).bitsAt(3, 2))
+		assertEquals(3UL, Word.of(BW_8, 31UL).bitsAt(3, 2))
+	}
+
+	@Test
+	fun shouldNotRetrieveErrorBitsAt() {
+		assertNull(Word.allOf(BW_8, Error).bitsAt(0, 2))
+	}
 }

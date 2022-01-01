@@ -49,6 +49,15 @@ interface DigitalSignal {
 
 	fun getSubwordValue(subwordWidth: BitWidth, index: Int): ULong?
 
+	/**
+	 * Returns the value of a given number of [Bits][Bit] at the specified position in this [DigitalSignal].
+	 * In contrast to [getSubword], this method can be used to access "sub values" that are not aligned
+	 * with standard [BitWidth] sub ranges.
+	 * Uses [CurrentUndefinedGateInputBehavior] to replace undefined [Bits][Bit].
+	 * @return `null` if any of the [Bits][Bit] is [Bit.Error]
+	 */
+	fun bitsAt(pos: Int, size: Int): ULong?
+
     /**
      * Returns the value of this [DigitalSignal] as an Integer, or `null` if any of the [Bit]s is
      * undefined.

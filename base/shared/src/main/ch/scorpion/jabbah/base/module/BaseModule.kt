@@ -30,6 +30,8 @@ object BaseModule : AbstractModule() {
 
 	var interpreterFactory: (node: Node, memory: Memory) -> Interpreter = { n, m -> Interpreter(n, m) }
 
+	var dslGlobalFunctions: DslGlobalFunctions = DslGlobalFunctions()
+
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")
 	    fillProperties(properties)

@@ -53,6 +53,20 @@ object BitOperation {
         return value and (1UL shl index).inv()
     }
 
+	fun bits(value: ULong, pos: Int, size: Int): ULong {
+		var temp = value shr pos
+		var result = 0UL
+		var factor = 1UL
+		for (i in pos..pos+size) {
+			if (temp.mod(2UL) == 1UL) {
+				temp = temp shr 1
+				result += factor
+				factor *= 2UL
+			}
+		}
+		return result
+	}
+
     fun power(value: Byte): ULong {
 	    checkArgument(value <= 63, "value must not be larger than 64")
 	    return POWER[value.toInt()]
