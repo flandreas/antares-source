@@ -68,7 +68,7 @@ class DipSwitch(
 
 	/** The current value of this [DipSwitch]. */
 	var value: DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
-		private set(value) {
+		set(value) {
 			if (field != value) {
 				field = value
 				stateChanged()
@@ -148,6 +148,13 @@ class DipSwitch(
 		if (enabled) {
 			value = value.withBit(index, bit)
 			enabled = false
+			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		}
+	}
+
+	fun setValue(value: DigitalSignal, signalHandler: SignalHandler) {
+		if (enabled) {
+			this.value = value
 			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 		}
 	}

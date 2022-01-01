@@ -382,7 +382,11 @@ class DipSwitchView(
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			toggle(context.signalHandler, context.x, context.y)
+			getBitViewIndexAt(context.x - location.x, context.y - location.y)?.let {
+				toggleImpl(it, context.signalHandler, all = context.mouseEvent?.isAltDown == true)
+				requestFocus()
+				setFocusTo(it)
+			}
 			context.mouseEvent?.consume()
 			return null
 		}
@@ -392,25 +396,13 @@ class DipSwitchView(
 			return this
 		}
 
-		private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
-			getBitViewIndexAt(x - location.x, y - location.y)?.let {
-				toggleImpl(it, signalHandler)
-				requestFocus()
-				setFocusTo(it)
+		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean) {
+			val bit = model.value.bitAt(index).not()
+			if (all) {
+				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler)
+			} else {
+				model.setBit(index, bit, signalHandler)
 			}
-		}
-
-		private fun toggleImpl(index: Int, signalHandler: SignalHandler) {
-			var signal = model.value as DigitalSignal?
-			if (signal == null) {
-				signal = DigitalSignalFactory.allOf(model.bitWidth, Bit.Undefined)
-			}
-			var bit = signal.bitAt(index)
-			if (!bit.isDefined) {
-				bit = Bit.False
-			}
-			bit = bit.not()
-			model.setBit(index, bit, signalHandler)
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
@@ -419,7 +411,7 @@ class DipSwitchView(
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()
 					KeyEvent.VK_RIGHT -> transferFocusRight()
-					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
+					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true)
 					KeyEvent.VK_0 -> {
 						model.setBit(focusIndex!!, Bit.False, context.signalHandler)
 						transferFocusRight()
