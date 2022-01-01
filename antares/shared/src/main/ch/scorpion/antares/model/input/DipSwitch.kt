@@ -32,6 +32,8 @@ class DipSwitch(
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
+		private const val DEF_RETAIN_VALUE = false
+
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<DipSwitch> {
@@ -61,6 +63,9 @@ class DipSwitch(
 			}
 		}
 
+	/** If set to `true`, [value] is retained between multiple execution runs.*/
+	var retainValue: Boolean = DEF_RETAIN_VALUE
+
 	/** The current value of this [DipSwitch]. */
 	var value: DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 		private set(value) {
@@ -81,6 +86,8 @@ class DipSwitch(
 			}
 		}
 
+	private var firstExecution: Boolean = true
+
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
@@ -91,7 +98,9 @@ class DipSwitch(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		value = initialValue
+		if (firstExecution || !retainValue) {
+			value = initialValue
+		}
 		enabled = false
 	}
 
@@ -101,9 +110,12 @@ class DipSwitch(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		value = initialValue
+		if (!retainValue) {
+			value = initialValue
+		}
 		enabled = true
 		stateChanged(signalHandler)
+		firstExecution = false
 	}
 
 	/** ---- [Storable] */
@@ -114,6 +126,9 @@ class DipSwitch(
 		if (reader.hasAttribute("initialValue")) {
 			initialValue = DigitalSignalFactory.of(bitWidth, reader.readLong("initialValue"))
 		}
+		if (reader.hasAttribute("retainValue")) {
+			retainValue = reader.readBoolean("retainValue")
+		}
 	}
 
 	override fun write(writer: StoreWriter) {
@@ -121,6 +136,9 @@ class DipSwitch(
 		bitWidth.write("bitWidth", writer)
 		if (initialValue != DigitalSignalFactory.allOf(bitWidth, Bit.False)) {
 			writer.writeULong("initialValue", initialValue.getValue())
+		}
+		if (retainValue != DEF_RETAIN_VALUE) {
+			writer.writeBoolean("retainValue", retainValue)
 		}
 	}
 

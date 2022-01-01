@@ -15,6 +15,7 @@ class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 		private val name = EditProperties.untranslatableName()
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val initialValue = CommandPropertySwing("initialValue", "element.property.DipSwitch.initialValue", Long::class.java, componentBeanProvider)
+		private val retainValue = CommandPropertySwing("retainValue", "element.property.DipSwitch.retainValue", Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: DipSwitchView, editor: Editor, properties: MutableList<Property>) {
@@ -23,5 +24,6 @@ class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 		properties.add(name.bind(editor, bean.id))
 		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(initialValue.bind(editor, bean.id))
+		properties.add(retainValue.bind(editor, bean.id))
 	}
 }

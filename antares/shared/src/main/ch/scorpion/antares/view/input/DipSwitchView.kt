@@ -130,6 +130,7 @@ class DipSwitchView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
 	var initialValue: Long
 		get() = model.initialValue.getValue().toLong()
 		set(value) {
@@ -137,6 +138,15 @@ class DipSwitchView(
 				model.initialValue = DigitalSignalFactory.of(bitWidth, value)
 				invalidate()
 				validate()
+			}
+		}
+
+	@Suppress("unused") // Reflection
+	var retainValue: Boolean
+		get() = model.retainValue
+		set(value) {
+			if (value != retainValue) {
+				model.retainValue = value
 			}
 		}
 
