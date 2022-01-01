@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
 
-open class DslError(val location: CodeLocation, msg: String)
-	: Throwable(Translations.getString("base.dsl.error.msg", msg, location))
+open class DslError(val location: CodeLocation, msg: String) : Throwable(msg) {
+	override fun toString(): String =
+		Translations.getString("base.dsl.error.msg", message!!, location)
+}
 
 /** Thrown by [Lexer] and [Parser] if a syntax error is detected.*/
 class SyntaxError(location: CodeLocation, msg: String) : DslError(location, msg)

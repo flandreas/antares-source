@@ -57,7 +57,7 @@ open class Interpreter(
 			BaseModule.eventBus.post(IssueImpl(
 				severity = IssueSeverity.Error,
 				name = Translations.getString("base.dsl.scriptError.msg"),
-				description = e.message,
+				description = e.toString(),
 				origin = metaData.origin,
 				context = metaData.context
 			))
@@ -340,6 +340,11 @@ open class Interpreter(
 		if (node.function == null) {
 			throw RuntimeError(node.location, Translations.getString("base.dsl.noImplementationOfFunction.msg", node.name.value!!))
 		}
-		return node.function!!.function.execute(node.params.map { interpret(it) })
+		try {
+			return node.function!!.function.execute(node.params.map { interpret(it) })
+		} catch (e: RuntimeError) {
+			// Catch and rethrow with CodeLocation to avoid passing CodeLocation as argument of the execute() method
+			throw RuntimeError(node.location, e.message!!)
+		}
 	}
 }
