@@ -2,7 +2,15 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' script='init {
+	store data = 0
+	O = 0
+}
+
+if (EN and ^CLK) {
+	data = D
+	O = D
+}'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'/>
             <circuitInOut _id='4' id='2' name='D' type='input' bitWidth='16'/>
@@ -53,7 +61,7 @@
             <netView _id='29' modelId='8' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='30' id='1' rot='0' filled='true' stroked='true' modelId='3' x='301.0' y='126.0'/>
+            <subGraphVerticeViewRef _id='30' id='1' rot='0' filled='true' stroked='true' modelId='3' x='301.0' y='126.0' controlViewVisibility='simulation'/>
             <circuitInOutView _id='31' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
               <location>
                 <point x='238.0' y='126.0'/>
