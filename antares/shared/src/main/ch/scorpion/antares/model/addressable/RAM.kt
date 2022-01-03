@@ -15,7 +15,9 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -178,6 +180,14 @@ class RAM(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		clear()
+	}
+
+	/** ---- [CalculatingVertice] interface */
+
+	override fun flush(signalHandler: SignalHandler, data: ActorData) {
+		if (isRead) {
+			super.flush(signalHandler, data)
+		}
 	}
 
 	/** ---- [RAM] */
