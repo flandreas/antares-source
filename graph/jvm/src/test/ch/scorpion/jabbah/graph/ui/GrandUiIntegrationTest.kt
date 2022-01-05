@@ -43,7 +43,7 @@ class GrandUiIntegrationTest {
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "projects")
 			ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService )}
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(projectsDir))
-			ProjectModule.projectManagementService = ProjectManagementService()
+			ProjectModule.projectManagementService = { ProjectManagementService() }
 		}
 
 		private fun createUserLibrary(name: String) {
@@ -117,8 +117,8 @@ class GrandUiIntegrationTest {
 
 	private fun createAndOpenNewProject(name: String) {
 		val service = ProjectModule.projectManagementService
-		val project = service.create(LibraryProperties(name = TranslatableText(name)), LibraryModule.libraryHolder.library.uuid)
-		service.open(project.uuid)
+		val project = service.invoke().create(LibraryProperties(name = TranslatableText(name)), LibraryModule.libraryHolder.library.uuid)
+		service.invoke().open(project.uuid)
 	}
 
 	private fun editGraphView(): GraphView {

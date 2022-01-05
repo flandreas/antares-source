@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.library.LibraryProperties
 
 class ProjectPropertiesAction(
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val managementService: ProjectManagementService = ProjectModule.projectManagementService
+	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
 ) : AbstractLibraryPropertiesAction(
 	baseName = "project.action.properties"
 ) {

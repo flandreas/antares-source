@@ -196,7 +196,7 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	private fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
+	override fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
 		FileSystems.getDefault().getPath(baseName, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =

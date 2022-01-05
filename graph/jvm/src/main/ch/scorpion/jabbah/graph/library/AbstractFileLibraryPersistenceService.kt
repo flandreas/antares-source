@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.io.*
 import java.io.*
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
@@ -25,6 +26,13 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 	}
 
 	protected abstract fun ensureLibraryDirectory(libraryUuid: UUID)
+
+	protected abstract fun buildMetaGraphFilePath(libraryUuid: UUID, metaGraphUuid: UUID): String
+
+	@Suppress("unused")
+	fun existsMetaGraphFile(libraryUuid: UUID, metaGraphUuid: UUID): Boolean =
+		Files.exists(Paths.get(buildMetaGraphFilePath(libraryUuid, metaGraphUuid)))
+
 
 	abstract fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream
 

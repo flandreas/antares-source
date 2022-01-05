@@ -24,7 +24,7 @@ import react.dom.render
 import styled.*
 
 /** A React application displaying possible multiple [GraphViewerJs].*/
-class AntaresPage {
+class BinaryAddition {
 
 	fun show() {
 		initialize()
@@ -48,7 +48,7 @@ class AntaresPage {
 
 	private fun loadProject() {
 		val projectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.load(projectUuid)
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectUuid)
 	}
 
 	private fun display() {

@@ -330,13 +330,13 @@ class AntaresSwing(
 
 		val dataViewController = (controller as GraphDataViewController)
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
-		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
+		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.invoke().contains(UUID(projectName))) {
 			dataViewController.openProject(UUID(projectName))
 			return
 		}
 
-		if (!ProjectModule.projectManagementService.directoryExists) {
-			ProjectModule.projectManagementService
+		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
+			ProjectModule.projectManagementService.invoke()
 				.createHelloProject(DEF_LIBRARY_UUID)
 				.also { dataViewController.openProject(it.uuid) }
 			return

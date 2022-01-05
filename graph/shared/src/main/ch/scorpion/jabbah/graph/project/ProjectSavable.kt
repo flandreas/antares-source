@@ -19,7 +19,7 @@ class ProjectSavable(
 	element: ContainerLibraryElement,
 	val project: Project = ProjectModule.projectHolder.project!!,
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService
+	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
 ) : AbstractLibrarySavable(element, libraryService) {
 
 	/** ---- [Any] */

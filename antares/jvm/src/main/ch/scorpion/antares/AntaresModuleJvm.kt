@@ -148,8 +148,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				projects = true)
 		}
 
-		ProjectModule.projectManagementService = ProjectManagementService(
-			newMetaGraphNameTranslationKey = "graph.name.unknown")
+		ProjectModule.projectManagementService = { ProjectManagementService(
+			newMetaGraphNameTranslationKey = "graph.name.unknown") }
 
 
 		customizeProperties(BaseModule.properties)

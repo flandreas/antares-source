@@ -17,11 +17,13 @@ object ProjectModule : AbstractModule() {
 
 	var projectLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
-	var projectLibraryService: () -> LibraryService = { LibraryService(userLibraryPersister = projectLibraryPersistenceService) }
+	var projectLibraryService: () -> LibraryService = {
+		LibraryService(userLibraryPersister = projectLibraryPersistenceService)
+	}
 
 	var projectDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
-	lateinit var projectManagementService: ProjectManagementService
+	lateinit var projectManagementService: () -> ProjectManagementService
 
 	val projectFactory: (TranslatableText) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), objectTypeKey = "project.project.name") }
 

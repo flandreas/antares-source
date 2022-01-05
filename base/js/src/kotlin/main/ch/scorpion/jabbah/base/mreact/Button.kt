@@ -2,11 +2,9 @@ package ch.scorpion.jabbah.base.mreact
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import com.ccfraser.muirwik.components.button.MButtonProps
-import com.ccfraser.muirwik.components.button.color
-import com.ccfraser.muirwik.components.button.variant
+import com.ccfraser.muirwik.components.MColor
+import com.ccfraser.muirwik.components.button.*
 import com.ccfraser.muirwik.components.createStyled
 import react.*
 
@@ -22,9 +20,19 @@ interface JMButtonProps : MButtonProps {
 	var action: Action
 }
 
-fun RBuilder.jmButton(handler: JMButtonProps.() -> Unit) {
+fun RBuilder.jmButton(
+	action: Action,
+	color: MColor = MColor.inherit,
+	variant: MButtonVariant = MButtonVariant.outlined,
+	size: MButtonSize = MButtonSize.small,
+	handler: (JMButtonProps.() -> Unit)? = null
+) {
 	child(JabbahMaterialButton::class) {
-		this.attrs(handler)
+		attrs.action = action
+		attrs.color = color
+		attrs.variant = variant
+		attrs.size = size
+		handler?.let { attrs(it) }
 	}
 }
 
@@ -44,13 +52,12 @@ class JabbahMaterialButton : RComponent<JMButtonProps, State>() {
 	override fun RBuilder.render() {
 		createStyled(buttonComponent) {
 			attrs.color = props.color
+			attrs.size = props.size
 			attrs.variant = props.variant
 			attrs.disabled = !props.action.enabled
 			attrs.onClick = { props.action.execute(ActionEvent("click", this, 0, "click", 0)) }
 
-			// TODO This should really use the 'name' instead of the 'description'
-			// Currently needed to ToggleApplicationModeAction work (which is really a ToggleAction)
-			childList.add(ReactNode(props.action.description ?: "Button"))
+			childList.add(ReactNode(props.action.name))
 		}
 	}
 }
