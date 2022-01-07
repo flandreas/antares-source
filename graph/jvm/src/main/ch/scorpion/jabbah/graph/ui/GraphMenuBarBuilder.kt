@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.app.action.QuitApplicationAction
 import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.auth0.LoginAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.svg.ExportSvgAction
@@ -71,6 +72,7 @@ open class GraphMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
 			menu.addSeparator()
 		}
+		menu.add(JMenuItem(ActionWrapperSwing(LoginAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 		if (!SystemUtils.IS_OS_MAC) {

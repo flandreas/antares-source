@@ -28,12 +28,6 @@ actual object LogSystem {
 		get() = propertyValue
 		set(value) {
 			var usedLevel = value
-			if (usedLevel.ordinal < Debug.ordinal) {
-				// Temporarily forcing DEBUG level during stabilization phase
-				// TODO Remove once application is stable enough
-				LOG.info("Forcing log level to DEBUG during stabilization phase")
-				usedLevel = Debug
-			}
 			if (usedLevel != fromLog4jLevel(getRootLogger().level)) {
 				LOG.info("Setting log level to $usedLevel")
 				getRootLogger().level = toLog4jLevel(usedLevel)
