@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.auth0.Auth0LoginFlow
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
@@ -167,6 +168,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
+
+		properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
+		properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
+		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

@@ -21,7 +21,11 @@ import javax.swing.*
 class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	private val dialog = JDialog(parent, true)
+
 	lateinit var content: T
+		private set
+
+	private var onWindowOpened: (T) -> Unit = {}
 
 	fun content(factory: (JDialog) -> T): DialogBuilder<T> {
 		content = factory.invoke(dialog)
@@ -59,6 +63,11 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
+	fun onWindowOpened(handler: (T) -> Unit): DialogBuilder<T> {
+		this.onWindowOpened = handler
+		return this
+	}
+
 	fun show(): DialogBuilder<T> {
 		BusyHandler.register(dialog, null)
 		setupWindowListener()
@@ -71,6 +80,9 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	private fun setupWindowListener() {
 		dialog.addWindowListener(object : WindowAdapter() {
+			override fun windowOpened(e: WindowEvent?) {
+				this@DialogBuilder.onWindowOpened(content)
+			}
 			override fun windowClosed(e: WindowEvent?) {
 				BusyHandler.deregister(dialog)
 			}

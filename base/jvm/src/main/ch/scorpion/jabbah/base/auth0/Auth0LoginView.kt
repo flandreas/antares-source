@@ -2,23 +2,59 @@ package ch.scorpion.jabbah.base.auth0
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 
-class LoginAction : AbstractAction("base.action.login") {
+/**
+ * Opens a [Auth0LoginView] and starts a [Auth0LoginFlow].
+ */
+class LoginLogoutAction : AbstractAction("base.action.login") {
+
+	private val auth0SessionListener: (Auth0SessionEvent) -> Unit = { update() }
+
+	init {
+		BaseModule.eventBus.register(Auth0SessionEvent::class, auth0SessionListener)
+		update()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		BaseModule.eventBus.unregister(auth0SessionListener)
+	}
 
 	override fun execute(event: ActionEvent) {
-		Auth0LoginView.showAsDialog()
+		if (Auth0Session.exists) {
+			Auth0Session.drop()
+		} else {
+			Auth0LoginView.showAsDialog()
+		}
+	}
+
+	private fun update() {
+		name = if (Auth0Session.exists) {
+			Translations.getString("base.action.logout.name")
+		} else {
+			Translations.getString("base.action.login.name")
+		}
 	}
 }
 
+/**
+ * Provides a UI for tracking the various steps of a [Auth0LoginFlow].
+ */
 class Auth0LoginView(
+	properties: Properties = BaseModule.properties,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -32,23 +68,26 @@ class Auth0LoginView(
 				.defaultButton { it.continueButton }
 				.preferredSize(Dimension(300, 200))
 				.nonResizable()
+				.onWindowOpened {
+					it.nextState()
+				}
 				.show()
 		}
 	}
 
+	private val mainScope = MainScope()
+
 	private val textArea = JTextArea()
-	private val continueAction = ContinueAction()
+	private val okAction = OkAction()
 	private val cancelAction = CancelAction()
-	private val continueButton = JButton(ActionWrapperSwing(continueAction))
+	private val continueButton = JButton(ActionWrapperSwing(okAction))
 
-	// TODO: Extract parameters to property file
 	private val loginParams = LoginParams(
-		domain = "dev-wq7i977v.eu.auth0.com",
-		clientId = "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO",
-		redirectUrl = "http://127.0.0.1:8899/desktop"
-	)
+		domain = properties.getString(Auth0LoginFlow.PROP_AUTH0_DOMAIN),
+		clientId = properties.getString(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID),
+		redirectUrl = properties.getString(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL))
 
-	private val flow = Auth0LoginFlow(loginParams, ::handleStateChanged)
+	private val flow = Auth0LoginFlow(mainScope, loginParams, ::handleStateChanged)
 
 	init {
 		buildUI()
@@ -61,10 +100,11 @@ class Auth0LoginView(
 
 		textArea.isEditable = false
 		textArea.rows = 5
+		textArea.wrapStyleWord = true
+		textArea.lineWrap = true
 		add(textArea, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
-		//buttonPanel.border = BorderFactory.createEmptyBorder(10, 10, 0, 10)
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
 		buttonPanel.add(Box.createHorizontalGlue())
@@ -76,22 +116,16 @@ class Auth0LoginView(
 
 	private fun handleStateChanged() {
 		updateText()
-		continueAction.enabled = when (flow.state) {
-			FlowState.Welcome -> true
-			FlowState.Initializing -> false
-			FlowState.Initialized -> true
-			FlowState.EnterCredentials -> true
-			FlowState.Done -> true
-		}
+		okAction.enabled = flow.state == FlowState.Done
+		cancelAction.enabled = flow.state != FlowState.Done
 	}
 
 	private fun updateText() {
 		textArea.text = when (flow.state) {
-			FlowState.Welcome -> "Welcome"
-			FlowState.Initializing -> "Initializing"
-			FlowState.Initialized -> "Initialized"
-			FlowState.EnterCredentials -> "Enter Credentials"
-			FlowState.Done -> "Done"
+			FlowState.Startup -> ""
+			FlowState.Initializing -> Translations.getString("base.action.login.initialize.text")
+			FlowState.EnterCredentials -> Translations.getString("base.action.login.credentials.text")
+			FlowState.Done -> Translations.getString("base.action.login.done.text")
 		}
 	}
 
@@ -100,13 +134,17 @@ class Auth0LoginView(
 		closeHandler()
 	}
 
-	private inner class ContinueAction : AbstractAction("base.action.continue") {
+	private fun nextState() {
+		mainScope.launch(Dispatchers.Main) {
+			flow.nextState()
+		}
+	}
+
+	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
 			InvocationHandler.invoke {
 				if (flow.state == FlowState.Done) {
 					stop()
-				} else {
-					flow.nextState()
 				}
 			}
 		}

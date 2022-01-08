@@ -88,6 +88,7 @@ subprojects {
 				resources.srcDir("shared/rsc")
 				dependencies {
 					implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 				}
 			}
 			val commonTest by getting {
@@ -102,6 +103,8 @@ subprojects {
 				kotlin.srcDir("jvm/src/main")
 				dependencies {
 					implementation(kotlin("reflect"))
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.5.2")
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
 					implementation("commons-io:commons-io:$commonsIoVersion")
@@ -130,7 +133,6 @@ subprojects {
 					implementation("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}")
 					implementation(npm("react-hot-loader", "^4.12.20"))
 					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled")
-					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 					implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
 					implementation(npm("react-resize-detector", "~6.7.0"))
 					implementation(npm("react-split-pane", "~0.1.92"))

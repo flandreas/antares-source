@@ -1,7 +1,12 @@
 package ch.scorpion.jabbah.base.auth0
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import spark.Spark
@@ -13,7 +18,14 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 
+/**
+ * Starts a Spark Server for listening on the loop-back interface for the redirect from Auth0
+ * that contains the access code for fetching the access token from Auth0.
+ *
+ * Establishes [Auth0Session] if everything went well.
+ */
 class Auth0RedirectListener(
+	private val scope: CoroutineScope,
 	private val params: LoginParams,
 	private val flowInfo: FlowInfo
 ) {
@@ -33,21 +45,20 @@ class Auth0RedirectListener(
 		Spark.threadPool(8)
 		Spark.internalServerError("Internal Server Error 500")
 
-		LOG.info("Listening on host=$host, port=$port, path=$path for redirect")
-
-		Spark.get(path) { request, response ->
-			LOG.info("Received Request Query: ${request.queryString()}")
-
+		Spark.get(path) { request, _ ->
 			val code = request.queryParams("code")
 			val state = request.queryParams("state")
 
 			if (flowInfo.state == state && StringUtils.isNotEmpty(code)) {
-				fetchLoginInfo(flowInfo, code)
+				scope.launch(Dispatchers.Main) {
+					fetchLoginInfo(flowInfo, code)
+				}
 			}
 
-			response.body("Response")
+			Translations.getString("base.action.login.browserDone.txt")
 		}
 
+		// Blocking call
 		Spark.awaitInitialization()
 	}
 
@@ -55,7 +66,7 @@ class Auth0RedirectListener(
 		Spark.stop()
 	}
 
-	private fun fetchLoginInfo(flowInfo: FlowInfo, code: String) {
+	private suspend fun fetchLoginInfo(flowInfo: FlowInfo, code: String) {
 		LOG.info(("Fetching LoginInfo..."))
 
 		val uri = URI.create("https://${params.domain}/").resolve("/oauth/token")
@@ -74,7 +85,10 @@ class Auth0RedirectListener(
 			.uri(uri)
 			.build()
 
-		val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+		val response = client
+			.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+			.await()
+
 		if (response.statusCode() == 200) {
 			val format = Json { ignoreUnknownKeys = true }
 			Auth0Session.establish(format.decodeFromString(response.body()))

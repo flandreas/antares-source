@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.auth0
 import ch.scorpion.jabbah.base.auth0.FlowState.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import kotlinx.coroutines.CoroutineScope
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.RandomStringUtils
 import java.net.URLEncoder
@@ -10,45 +11,60 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.SecureRandom
 
+/** The login parameters as configured in Auth0 for the current application.*/
 data class LoginParams(
 	val domain: String,
 	val clientId: String,
 	val redirectUrl: String
 )
 
+/** Information created during [Auth0LoginFlow] and used again in later steps of the flow.*/
 data class FlowInfo(
 	val verifier: String,
 	val challenge: String,
 	val state: String,
 	val authorizationUrl: String)
 
+/** Represents the various steps of [Auth0LoginFlow]. Can be used by a UI to inform the user about these steps.*/
 enum class FlowState {
-	Welcome,
+	Startup,
 	Initializing,
-	Initialized,
 	EnterCredentials,
 	Done
 }
 
 /**
+ * Performs a login with Auth0 for this desktop application using the system browser for entering credentials.
+ * Starts a Spark Server for listening on the loop-back interface for the redirect from Auth0
+ * that contains the access code for fetching the access token from Auth0.
+ *
  * Source: https://github.com/eduramiba/javafx-example-app-auth0-login
  */
 class Auth0LoginFlow(
+	scope: CoroutineScope,
 	params: LoginParams,
 	private val stateChangeHandler: () -> Unit
 ) {
 
 	companion object {
 		private val LOG by logger(Auth0LoginFlow::class)
+
+		const val PROP_AUTH0_DOMAIN = "base.auth0.domain"
+		const val PROP_AUTH0_CLIENT_ID = "base.auth0.clientId"
+		const val PROP_AUTH0_REDIRECT_URL = "base.auth0.redirectUrl"
 	}
 
 	private val flowInfo: FlowInfo = createFlowInfo(params)
 
-	private val redirectListener = Auth0RedirectListener(params, flowInfo)
+	private val redirectListener = Auth0RedirectListener(scope, params, flowInfo)
 
-	private val auth0SessionListener: (Auth0SessionEvent) -> Unit = { nextState() }
+	private val auth0SessionListener: (Auth0SessionEvent) -> Unit = {
+		if (Auth0Session.exists) {
+			state = Done
+		}
+	}
 
-	var state: FlowState = Welcome
+	var state: FlowState = Startup
 		private set(value) {
 			if (field != value) {
 				field = value
@@ -65,14 +81,15 @@ class Auth0LoginFlow(
 		BaseModule.eventBus.unregister(auth0SessionListener)
 	}
 
+	/**
+	 * Forwards to the next [FlowState].
+	 * This call can be blocking and should be run in a coroutine.
+	 */
 	fun nextState() {
 		state = when (state) {
-			Welcome -> {
+			Startup -> {
 				state = Initializing
 				redirectListener.start()
-				Initialized
-			}
-			Initialized -> {
 				login()
 				EnterCredentials
 			}
