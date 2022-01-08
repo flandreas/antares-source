@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.base.auth0
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
@@ -23,11 +25,13 @@ import java.nio.charset.StandardCharsets
  * that contains the access code for fetching the access token from Auth0.
  *
  * Establishes [Auth0Session] if everything went well.
+ * Posts [Auth0LoginError] on [eventBus] if an error occurs.
  */
 class Auth0RedirectListener(
 	private val scope: CoroutineScope,
 	private val params: LoginParams,
-	private val flowInfo: FlowInfo
+	private val flowInfo: FlowInfo,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
 	companion object {
@@ -51,7 +55,12 @@ class Auth0RedirectListener(
 
 			if (flowInfo.state == state && StringUtils.isNotEmpty(code)) {
 				scope.launch(Dispatchers.Main) {
-					fetchLoginInfo(flowInfo, code)
+					try {
+						fetchLoginInfo(flowInfo, code)
+					} catch (e: Throwable) {
+						LOG.error("Exception while fetching access token from Auth0", e)
+						eventBus.post(Auth0LoginError(Translations.getString("base.action.login.error.msg")))
+					}
 				}
 			}
 
@@ -67,8 +76,6 @@ class Auth0RedirectListener(
 	}
 
 	private suspend fun fetchLoginInfo(flowInfo: FlowInfo, code: String) {
-		LOG.info(("Fetching LoginInfo..."))
-
 		val uri = URI.create("https://${params.domain}/").resolve("/oauth/token")
 
 		val client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build()
@@ -92,6 +99,12 @@ class Auth0RedirectListener(
 		if (response.statusCode() == 200) {
 			val format = Json { ignoreUnknownKeys = true }
 			Auth0Session.establish(format.decodeFromString(response.body()))
+		} else if (response.statusCode() == 401) {
+			LOG.error("Received 401 while fetching access token from Auth0")
+			eventBus.post(Auth0LoginError(Translations.getString("base.action.login.errorUnauthorized.msg")))
+		} else {
+			LOG.error("Received ${response.statusCode()} while fetching access token from Auth0")
+			eventBus.post(Auth0LoginError(Translations.getString("base.action.login.error.msg")))
 		}
 	}
 

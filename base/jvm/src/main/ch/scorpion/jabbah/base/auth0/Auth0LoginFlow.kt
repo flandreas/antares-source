@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base.auth0
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.auth0.FlowState.*
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlinx.coroutines.CoroutineScope
@@ -30,8 +32,11 @@ enum class FlowState {
 	Startup,
 	Initializing,
 	EnterCredentials,
-	Done
+	Done,
+	Error
 }
+
+data class Auth0LoginError(val msg: String)
 
 /**
  * Performs a login with Auth0 for this desktop application using the system browser for entering credentials.
@@ -43,6 +48,7 @@ enum class FlowState {
 class Auth0LoginFlow(
 	scope: CoroutineScope,
 	params: LoginParams,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val stateChangeHandler: () -> Unit
 ) {
 
@@ -64,6 +70,11 @@ class Auth0LoginFlow(
 		}
 	}
 
+	private val errorHandler: (Auth0LoginError) -> Unit = {
+		errorMessage = it.msg
+		state = Error
+	}
+
 	var state: FlowState = Startup
 		private set(value) {
 			if (field != value) {
@@ -72,13 +83,17 @@ class Auth0LoginFlow(
 			}
 		}
 
+	var errorMessage: String? = null
+
 	init {
-		BaseModule.eventBus.register(Auth0SessionEvent::class, auth0SessionListener)
+		eventBus.register(Auth0SessionEvent::class, auth0SessionListener)
+		eventBus.register(Auth0LoginError::class, errorHandler)
 	}
 
 	fun dispose() {
 		redirectListener.stop()
-		BaseModule.eventBus.unregister(auth0SessionListener)
+		eventBus.unregister(auth0SessionListener)
+		eventBus.unregister(errorHandler)
 	}
 
 	/**
@@ -89,9 +104,15 @@ class Auth0LoginFlow(
 		state = when (state) {
 			Startup -> {
 				state = Initializing
-				redirectListener.start()
-				login()
-				EnterCredentials
+				try {
+					redirectListener.start()
+					login()
+					EnterCredentials
+				} catch (e: Throwable) {
+					LOG.error("Error while starting authentication flow: ${e.message}")
+					errorMessage = Translations.getString("base.action.login.error.msg")
+					Error
+				}
 			}
 			EnterCredentials -> {
 				Done

@@ -27,6 +27,8 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	private var onWindowOpened: (T) -> Unit = {}
 
+	private var onWindowClosed: (T) -> Unit = {}
+
 	fun content(factory: (JDialog) -> T): DialogBuilder<T> {
 		content = factory.invoke(dialog)
 		dialog.contentPane = content
@@ -68,6 +70,11 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
+	fun onWindowClosed(handler: (T) -> Unit): DialogBuilder<T> {
+		this.onWindowClosed = handler
+		return this
+	}
+
 	fun show(): DialogBuilder<T> {
 		BusyHandler.register(dialog, null)
 		setupWindowListener()
@@ -84,6 +91,7 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 				this@DialogBuilder.onWindowOpened(content)
 			}
 			override fun windowClosed(e: WindowEvent?) {
+				this@DialogBuilder.onWindowClosed(content)
 				BusyHandler.deregister(dialog)
 			}
 		})
