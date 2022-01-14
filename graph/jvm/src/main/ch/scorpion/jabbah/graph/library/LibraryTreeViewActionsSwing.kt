@@ -42,6 +42,8 @@ class LibraryTreeViewActionsSwing(
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
 
+	private val uploadProjectAction = UploadProjectAction(controller, projectOperationTarget)
+
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
 	private val desktopPopupMenu = JPopupMenu()
@@ -127,8 +129,9 @@ class LibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
+		projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
+		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))

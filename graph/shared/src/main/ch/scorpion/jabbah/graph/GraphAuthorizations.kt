@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.auth.Operation.View
 import ch.scorpion.jabbah.graph.library.Library

@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
+import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
@@ -31,6 +32,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 object GraphModuleJvm : AbstractModule() {
 
 	var containerTreeViewFactory: () -> ContainerTreeView = { ContainerTreeView() }
+
+	var projectAkrabClientServiceJvm: () -> ProjectAkrabClientServiceJvm = { throw UnsupportedOperationException() }
 
 	override fun initialize() {
 		BaseModuleJvm.require()

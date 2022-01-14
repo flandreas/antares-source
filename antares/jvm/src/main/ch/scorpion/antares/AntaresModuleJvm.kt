@@ -55,6 +55,7 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -152,6 +153,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		ProjectModule.projectManagementService = { ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown") }
 
+		if (app.dataLocation == DataLocation.Local) {
+			GraphModuleJvm.projectAkrabClientServiceJvm = {
+				ProjectAkrabClientServiceJvm(
+					app.dataUrl!!,
+					ProjectModule.projectLibraryPersistenceService as FileLibraryPersistenceService
+				)
+			}
+		}
 
 		customizeProperties(BaseModule.properties)
 

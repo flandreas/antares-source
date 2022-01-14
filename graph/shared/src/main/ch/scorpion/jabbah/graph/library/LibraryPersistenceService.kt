@@ -23,7 +23,8 @@ interface LibraryPersistenceService {
 	fun deleteLibrary(uuid: UUID)
 
 	/**
-	 * Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the [UUID] contained in the file.
+	 * Imports a [Library] contained in a ZIP file at the local `inputPath` and stores it as new [Library]
+	 * with the [UUID] contained in the file.
 	 * @return the [UUID] of the imported [Library]
 	 * @throws IllegalArgumentException if the import file could not be read successfully
 	 * @throws LibraryImportConflictException if a [Library] with the same [UUID] already exists

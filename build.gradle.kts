@@ -38,6 +38,8 @@ allprojects {
 }
 
 val kotlinWrappersVersion: String by extra
+val ktorVersion: String by extra
+val kotlinCoroutinesVersion: String by extra
 val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
@@ -88,7 +90,7 @@ subprojects {
 				resources.srcDir("shared/rsc")
 				dependencies {
 					implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
-					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 				}
 			}
 			val commonTest by getting {
@@ -103,8 +105,11 @@ subprojects {
 				kotlin.srcDir("jvm/src/main")
 				dependencies {
 					implementation(kotlin("reflect"))
-					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2")
-					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.5.2")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinCoroutinesVersion")
+					implementation("io.ktor:ktor-client-core:$ktorVersion")
+					implementation("io.ktor:ktor-client-cio:$ktorVersion")
+					implementation("io.ktor:ktor-client-java:$ktorVersion")
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
 					implementation("commons-io:commons-io:$commonsIoVersion")

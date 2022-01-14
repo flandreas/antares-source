@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
+import io.ktor.client.*
+import io.ktor.client.engine.java.*
 
 /**
  * Setup of the [ch.scorpion.jabbah.base] module for the JVM target.
@@ -18,6 +20,10 @@ object BaseModuleJvm : AbstractModule() {
 	private const val PREF_TREE_GENERAL = "base.preferences.group.general"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
+
+	var httpClientFactory: () -> HttpClient = { HttpClient(Java) }
+
+	val httpClient: HttpClient by lazy { httpClientFactory() }
 
 	override fun initialize() {
 		defineKeyCodes()

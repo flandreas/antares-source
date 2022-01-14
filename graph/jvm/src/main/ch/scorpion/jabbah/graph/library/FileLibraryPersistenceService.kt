@@ -8,10 +8,7 @@ import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import org.apache.commons.io.FileUtils
 import java.io.*
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.nio.file.*
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
@@ -24,6 +21,7 @@ import java.util.zip.ZipOutputStream
  * @property libraryFileName the name of the [Library] file
  * @property userHolder if provided, the identification of the [User] is part of the file system path
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class FileLibraryPersistenceService(
 	private val dataPath: String,
 	private val directoryName: String,
@@ -69,7 +67,11 @@ class FileLibraryPersistenceService(
 
 	override fun exportLibrary(uuid: UUID, outputPath: String) {
 		LOG.trace("Exporting library to $outputPath")
-		FileOutputStream(outputPath).use { output ->
+		exportLibrary(uuid, FileOutputStream(outputPath))
+	}
+
+	fun exportLibrary(uuid: UUID, outputStream: FileOutputStream) {
+		outputStream.use { output ->
 			ZipOutputStream(output).use {
 				val fileToZip = File(buildLibraryDirectoryPath(uuid))
 				ZipUtil.zipFile(fileToZip, fileToZip.name, it)
@@ -91,47 +93,7 @@ class FileLibraryPersistenceService(
 
 	override fun importLibrary(inputPath: String): UUID {
 		LOG.trace("Importing library from $inputPath")
-
-		// Import and unzip file to incubation directory
-		val incubationDirPath = Files.createTempDirectory(null)
-		FileInputStream(inputPath).use { input ->
-			ZipInputStream(input).use {
-				ZipUtil.unzipFile(incubationDirPath, it)
-			}
-		}
-
-		// Check created directory structure
-		val incubationDir = incubationDirPath.toFile()
-		val incubationFiles = incubationDir.listFiles()
-		if (incubationFiles == null || incubationFiles.size != 1) {
-			val msg = "Expected 1 file in zip file, but found ${incubationFiles?.size}"
-			LOG.trace(msg)
-			throw IllegalArgumentException(msg)
-		}
-
-		// Load incubating Library
-		val libraryFilePath = buildLibraryFilePath(incubationDirPath.toAbsolutePath().toString(), incubationFiles[0].name)
-		val library = createLibraryFileInputStream(libraryFilePath).use {
-			try {
-				loadLibrary(it)
-			} catch (e: Exception) {
-				LOG.trace("Could not read library file, possibly not an Graph library")
-				throw IllegalArgumentException("Could not read library file", e)
-			}
-		}
-
-		// Check if UUID already exists
-		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
-		if (Files.exists(newDirectory)) {
-			val msg = "Library ${library.uuid} already exists"
-			LOG.trace(msg)
-			throw LibraryImportConflictException(library.uuid)
-		}
-
-		// Rename directory to UUID of imported Library
-		incubationFiles[0].renameTo(newDirectory.toFile())
-
-		return library.uuid
+		return importLibrary(FileInputStream(inputPath), false)
 	}
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
@@ -194,6 +156,51 @@ class FileLibraryPersistenceService(
 		} else {
 			"$dataPath$sep${userHolder.user.identity}$sep$directoryName"
 		}
+	}
+
+	fun importLibrary(inputStream: InputStream, replaceExisting: Boolean): UUID {
+
+		// Import and unzip file to incubation directory
+		val incubationDirPath = Files.createTempDirectory(null)
+		inputStream.use { input ->
+			ZipInputStream(input).use {
+				ZipUtil.unzipFile(incubationDirPath, it)
+			}
+		}
+
+		// Check created directory structure
+		val incubationDir = incubationDirPath.toFile()
+		val incubationFiles = incubationDir.listFiles()
+		if (incubationFiles == null || incubationFiles.size != 1) {
+			val msg = "Expected 1 file in zip file, but found ${incubationFiles?.size}"
+			LOG.trace(msg)
+			throw IllegalArgumentException(msg)
+		}
+
+		// Load incubating Library
+		val libraryFilePath = buildLibraryFilePath(incubationDirPath.toAbsolutePath().toString(), incubationFiles[0].name)
+		val library = createLibraryFileInputStream(libraryFilePath).use {
+			try {
+				loadLibrary(it)
+			} catch (e: Exception) {
+				LOG.trace("Could not read library file, possibly not an Graph library")
+				throw IllegalArgumentException("Could not read library file", e)
+			}
+		}
+
+		// Check if UUID already exists
+		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
+		if (!replaceExisting && Files.exists(newDirectory)) {
+			val msg = "Library ${library.uuid} already exists"
+			LOG.trace(msg)
+			throw LibraryImportConflictException(library.uuid)
+		}
+
+		// Rename directory to UUID of imported Library
+		//incubationFiles[0].renameTo(newDirectory.toFile())
+		Files.move(incubationFiles[0].toPath(), newDirectory, StandardCopyOption.REPLACE_EXISTING)
+
+		return library.uuid
 	}
 
 	override fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
