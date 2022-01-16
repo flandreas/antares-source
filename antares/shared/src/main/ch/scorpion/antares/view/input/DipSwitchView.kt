@@ -152,8 +152,6 @@ class DipSwitchView(
 
 	/** ---- [Component] */
 
-	override val useRotation: Boolean get() = false
-
 	override val useOrientation: Boolean get() = true
 
 	override val boundingBox: Rectangle2D
@@ -165,6 +163,14 @@ class DipSwitchView(
 			}
 			return bb
 		}
+
+	override fun rotateCounterClockwise() {
+		orientation = Direction.of(orientation.rotation.next())
+	}
+
+	override fun rotateClockwise() {
+		orientation = Direction.of(orientation.rotation.previous())
+	}
 
 	/** ---- [ActorView] */
 

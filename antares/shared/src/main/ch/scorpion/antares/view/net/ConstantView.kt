@@ -156,9 +156,13 @@ class ConstantView(
 
 	/** ---- [Component] */
 
-	override val useRotation: Boolean get() = false
+	override fun rotateCounterClockwise() {
+		orientation = Direction.of(orientation.rotation.next())
+	}
 
-	override val useOrientation: Boolean get() = true
+	override fun rotateClockwise() {
+		orientation = Direction.of(orientation.rotation.previous())
+	}
 
 	/** ---- [ConstantView] */
 

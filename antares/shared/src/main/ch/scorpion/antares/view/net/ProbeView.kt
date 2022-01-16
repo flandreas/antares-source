@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -119,6 +120,7 @@ class ProbeView(
 			}
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
 	var isLogging: Boolean
 		get() = model.isLogging
 		set(value) {
@@ -137,6 +139,18 @@ class ProbeView(
 			bb.add(lbb)
 			return bb
 		}
+
+	/** ---- [Component] */
+
+	override val useRotation: Boolean get() = true
+
+	override fun rotateCounterClockwise() {
+		orientation = Direction.of(orientation.rotation.next())
+	}
+
+	override fun rotateClockwise() {
+		orientation = Direction.of(orientation.rotation.previous())
+	}
 
 	/** ---- [AbstractNumberViewComponent] */
 
@@ -198,7 +212,6 @@ class ProbeView(
 		controlView.location = Point2D(0, 0)
 		return controlView
 	}
-
 
 	/** ---- [AbstractDrawable] */
 
