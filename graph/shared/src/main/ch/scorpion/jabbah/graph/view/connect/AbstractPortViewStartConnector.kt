@@ -8,14 +8,13 @@ import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altReleased
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.keyReleased
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseClicked
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDoubleClicked
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftClicked
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftDoubleClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mousePressed
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseReleased
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseSingleClicked
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.Port
@@ -86,13 +85,13 @@ abstract class AbstractPortViewStartConnector(
 				transitTo("insideStartAdjust") {
 					given { altPressed(it) }
 				}
-				stayIf { mouseReleased(it) && it.mouseEvent?.isAltDown == true }
+				stayIf { mouseLeftReleased(it) && it.mouseEvent?.isAltDown == true }
 				transitTo("adjust") {
-					given { mouseClicked(it) && it.mouseEvent?.isAltDown == true }
+					given { mouseLeftClicked(it) && it.mouseEvent?.isAltDown == true }
 					onTransit { beginConnecting(it) }
 				}
 				transitTo("drag") {
-					given { mousePressed(it) && it.mouseEvent?.isAltDown != true }
+					given { mouseLeftPressed(it) && it.mouseEvent?.isAltDown != true }
 					onTransit { beginConnecting(it) }
 				}
 			}
@@ -108,13 +107,10 @@ abstract class AbstractPortViewStartConnector(
 					given { altReleased(it) }
 				}
 				transitTo("adjust") {
-					given { mouseClicked(it) }
+					given { mouseLeftClicked(it) }
 					onTransit { beginConnecting(it) }
 				}
-				// The following is necessary to properly support "mouseClicked". Couldn't that be automatically
-				// supported by the framework?
-				stayIf { mousePressed(it) }
-				stayIf { mouseReleased(it) }
+				stayOtherwise()
 			}
 
 			superstate("drag") {
@@ -131,14 +127,15 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseDragged(it) && allowEdgeViewAsTarget && insideTargetEdgeView(it) }
 						}
 						transitTo("connected") {
-							given { mouseReleased(it) && isValidEdgeView }
+							given { mouseLeftReleased(it) && isValidEdgeView }
 						}
 						transitTo("cancelled") {
-							given { mouseReleased(it) && !isValidEdgeView }
+							given { mouseLeftReleased(it) && !isValidEdgeView }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) }
 						}
+						stayOtherwise()
 					}
 
 					state("insideTargetPortView") {
@@ -149,7 +146,7 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo("connected") {
-							given { mouseReleased(it) }
+							given { mouseLeftReleased(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) }
@@ -166,11 +163,12 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseDragged(it) && !insideTargetEdgeView(it) }
 						}
 						transitTo("connectedToEdge") {
-							given { mouseReleased(it) }
+							given { mouseLeftReleased(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) }
 						}
+						stayOtherwise()
 					}
 
 					state("connected") {
@@ -201,9 +199,6 @@ abstract class AbstractPortViewStartConnector(
 
 					state("move") {
 						onEntry { it.view.setCursor(Cursor.CROSSHAIR) }
-						stayIf { mousePressed(it) }
-						stayIf { mouseReleased(it) }
-						stayIf { keyReleased(it) }
 						transitTo("insideTargetPortView") {
 							given { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						}
@@ -213,15 +208,16 @@ abstract class AbstractPortViewStartConnector(
 						stayIf({ mouseMoved(it) }) {
 							onTransit { moveAdjustedPoint(it) }
 						}
-						stayIf({ mouseSingleClicked(it) }) {
+						stayIf({ mouseLeftSingleClicked(it) }) {
 							onTransit { addAdjustedPoint(it) }
 						}
 						transitTo("connected") {
-							given { mouseDoubleClicked(it) }
+							given { mouseLeftDoubleClicked(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) && isLastUndo() }
 						}
+						stayOtherwise()
 					}
 
 					state("insideTargetPortView") {
@@ -231,14 +227,14 @@ abstract class AbstractPortViewStartConnector(
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
-						stayIf { mousePressed(it) }
-						stayIf { mouseReleased(it) }
+
 						transitTo("connected") {
-							given { mouseClicked(it) }
+							given { mouseLeftPressed(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) && isLastUndo() }
 						}
+						stayOtherwise()
 					}
 
 					state("insideTargetEdgeView") {
@@ -250,14 +246,15 @@ abstract class AbstractPortViewStartConnector(
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetEdgeView(it) }
 						}
-						stayIf { mousePressed(it) }
-						stayIf { mouseReleased(it) }
+
 						transitTo("connectedToEdge") {
-							given { mouseClicked(it) }
+							given { mouseLeftPressed(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) && isLastUndo() }
 						}
+
+						stayOtherwise()
 					}
 
 					state("connected") {
@@ -311,6 +308,8 @@ abstract class AbstractPortViewStartConnector(
 		startVerticeView = null
 		startPortView = null
 		adjustment = null
+		targetEdgeView = null
+		targetEdgeViewSegmentIndex = null
 	}
 
 	private fun insideStartPortView(location: Point2D): Boolean {
@@ -434,6 +433,17 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun completeConnectingToEdge(context: EditInputEventContext) {
+		if (edgeView == null) {
+			LOG.warn("Illegal State: edgeView in completeConnectingToEdge is null")
+			cancel(context.editor)
+			return
+		}
+
+		if (targetEdgeView == null || targetEdgeViewSegmentIndex == null) {
+			cancel(context.editor)
+			return
+		}
+
 		connectService.unconnect(edgeView!!)
 		context.drawingView().drawing.remove(edgeView!!)
 

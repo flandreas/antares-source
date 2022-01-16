@@ -83,12 +83,12 @@ class StateMachineInputEventHandler<T : InputEventContext>(
 
 	companion object {
 		val mouseMoved: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.MOVED }
-		val mousePressed: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.PRESSED }
 		val mouseDragged: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.DRAGGED }
-		val mouseReleased: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.RELEASED }
-		val mouseClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED }
-		val mouseSingleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.clickCount != 2 }
-		val mouseDoubleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.clickCount == 2 }
+		val mouseLeftPressed: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.PRESSED && it.mouseEvent.isLeftButtonDown }
+		val mouseLeftReleased: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.RELEASED && it.mouseEvent.isLeftButtonDown }
+		val mouseLeftClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.isLeftButtonDown }
+		val mouseLeftSingleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.isLeftButtonDown && it.mouseEvent.clickCount != 2 }
+		val mouseLeftDoubleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.isLeftButtonDown && it.mouseEvent.clickCount == 2 }
 
 		val keyReleased: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.RELEASED }
 		val escapePressed: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.PRESSED && it.keyEvent.key == KeyEvent.VK_ESCAPE}

@@ -7,6 +7,8 @@ typealias Action<T> = (T) -> Unit
 
 typealias Condition<T> = (T) -> Boolean
 
+//val Always: Condition<Any> = { true }
+
 /**
  * DSL factory method for creating an defining a [StateMachine].
  *
@@ -230,25 +232,28 @@ open class State<T>(val name: String) {
 	 * DSL method for registering a [Transition] that stays in this [State] if the given [Condition] is true.
 	 * @param init the expression for defining the created [Transition], e.g. with an [Action]
 	 */
-	fun stayIf(condition: Condition<T>, init: (Transition<T>.() -> Unit)? = null): Transition<T> {
-		val transition = Transition(name, condition)
-		init?.let { transition.init() }
-		transitions.add(transition)
-		return transition
-	}
+	fun stayIf(condition: Condition<T>, init: (Transition<T>.() -> Unit)? = null): Transition<T> =
+		addTransition(Transition(name, condition), init)
 
 	/** DSL method for registering a [Transition] that stays in this [State] if the given [Condition] is true.*/
-	fun stayIf(condition: Condition<T>): Transition<T> {
-		return stayIf(condition, init = null)
-	}
+	fun stayIf(condition: Condition<T>): Transition<T> = stayIf(condition, init = null)
+
+	/**
+	 * DSL method for registering a [Transition] that always stays in this [State].
+	 * Should only be used as the last [Transition] in a [State], because subsequent ones would be unreachable.
+	 */
+	fun stayOtherwise(init: (Transition<T>.() -> Unit)? = null): Transition<T> =
+		addTransition(Transition(name) { true }, init)
 
 	/**
 	 * DSL method for registering a [Transition] to another [State].
 	 * @param init the expression for defining the created [Transition], e.g. with a [Condition] and an [Action]
 	 */
-	fun transitTo(destinationStateName: String, init: Transition<T>.() -> Unit): Transition<T> {
-		val transition = Transition<T>(destinationStateName)
-		transition.init()
+	fun transitTo(destinationStateName: String, init: Transition<T>.() -> Unit): Transition<T> =
+		addTransition(Transition(destinationStateName), init)
+
+	private fun addTransition(transition: Transition<T>, init: (Transition<T>.() -> Unit)?): Transition<T> {
+		init?.let { transition.init() }
 		transitions.add(transition)
 		return transition
 	}
@@ -265,9 +270,8 @@ class SuperState<T>(name: String) : State<T>(name) {
 		stateMachine.start(event)
 	}
 
-	override fun handle(event: T): Boolean {
-		return stateMachine.handle(event)
-	}
+	override fun handle(event: T): Boolean =
+		stateMachine.handle(event)
 
 	/** ---- DSL methods */
 
@@ -277,7 +281,10 @@ class SuperState<T>(name: String) : State<T>(name) {
 	}
 }
 
-class Transition<T>(val destinationStateName: String, condition: Condition<T>? = null) {
+class Transition<T>(
+	val destinationStateName: String,
+	condition: Condition<T>? = null
+) {
 
 	lateinit var condition: Condition<T>
 		private set

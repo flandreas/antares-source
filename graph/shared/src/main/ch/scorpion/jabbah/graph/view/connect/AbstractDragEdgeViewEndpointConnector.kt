@@ -43,7 +43,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { StateMachineInputEventHandler.mouseMoved(it) && !insideStart(it.location) }
 				}
 				transitTo("drag") {
-					given { StateMachineInputEventHandler.mousePressed(it) }
+					given { StateMachineInputEventHandler.mouseLeftPressed(it) }
 					onTransit { beginDragging(it) }
 				}
 				transitTo("sense") {
@@ -60,7 +60,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					onTransit { moveEdgeViewEndpoint(it) }
 				}
 				transitTo("draggedOpen") {
-					given { StateMachineInputEventHandler.mouseReleased(it) }
+					given { StateMachineInputEventHandler.mouseLeftReleased(it) }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
@@ -80,7 +80,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { StateMachineInputEventHandler.mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 				}
 				transitTo("connected") {
-					given { StateMachineInputEventHandler.mouseReleased(it) }
+					given { StateMachineInputEventHandler.mouseLeftReleased(it) }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }

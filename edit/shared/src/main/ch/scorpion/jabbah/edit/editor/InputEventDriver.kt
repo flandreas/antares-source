@@ -28,6 +28,8 @@ open class InputEventDriver(
 	}
 
 	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		pressMouseAt(x, y, modifiers)
+		releaseMouseAt(x, y)
 		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
 		return this
 	}
@@ -70,7 +72,7 @@ open class InputEventDriver(
 	fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
 		return EditInputEventContext(
 			editor = editor,
-			mouseEvent = MouseEventImpl(type, x = x, y = y, modifiers = modifiers, clickCount = clickCount),
+			mouseEvent = MouseEventImpl(type, x = x, y = y, button = Button.BUTTON1, modifiers = modifiers, clickCount = clickCount),
 			x = x.toDouble(),
 			y = y.toDouble())
 	}

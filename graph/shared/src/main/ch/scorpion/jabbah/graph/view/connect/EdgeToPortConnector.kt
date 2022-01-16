@@ -8,8 +8,8 @@ import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mousePressed
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -66,7 +66,7 @@ class EdgeToPortConnector(
 					onTransit { removePortViewHighlight() }
 				}
 				transitTo("drag") {
-					given { mousePressed(it) }
+					given { mouseLeftPressed(it) }
 					onTransit {
 						beginConnecting(it)
 						removePortViewHighlight()
@@ -83,10 +83,10 @@ class EdgeToPortConnector(
 					onTransit { moveEdgeViewEndpoint(it) }
 				}
 				transitTo("connected") {
-					given { mouseReleased(it) && isValidEdgeView }
+					given { mouseLeftReleased(it) && isValidEdgeView }
 				}
 				transitTo("cancelled") {
-					given { mouseReleased(it) && !isValidEdgeView }
+					given { mouseLeftReleased(it) && !isValidEdgeView }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
@@ -105,7 +105,7 @@ class EdgeToPortConnector(
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 				}
 				transitTo("connected") {
-					given { mouseReleased(it) }
+					given { mouseLeftReleased(it) }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
