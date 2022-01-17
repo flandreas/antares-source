@@ -7,6 +7,12 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface ViewNavigator {
 
+	/**
+	 * Creates a new [ViewTransformation] for the specified zoom factor, using
+	 * the [View]'s current pan offset.
+	 */
+	fun createTransformation(zoomFactor: Double): ViewTransformation
+
     /**
      * Sets the factor by which the [View] zooms the displayed [Drawable]s.
      *

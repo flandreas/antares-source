@@ -16,6 +16,9 @@ class AffineTransformJvm(val transform: java.awt.geom.AffineTransform) : AffineT
 
     /** ---- [AffineTransform] interface */
 
+	override fun clone(): AffineTransform =
+		AffineTransformJvm(java.awt.geom.AffineTransform(transform))
+
     override val scaleX: Double get() = transform.scaleX
 
     override val scaleY: Double get() = transform.scaleY

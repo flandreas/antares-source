@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -22,8 +24,20 @@ data class CloseViewRequest(val view: View<*>)
 data class MainContent(
 	val name: String,
 	val drawable: Drawable,
-	val background: Color
-)
+	val background: Color)
+
+/**
+ * Contains the current [ZoomPan] and the corresponding [AffineTransform] of a [View].
+ */
+data class ViewTransformation(
+	val zoomPan: ZoomPan,
+	val affineTransform: AffineTransform
+) {
+	companion object {
+		fun identity(): ViewTransformation =
+			ViewTransformation(ZoomPan(), System.createAffineTransform().apply { setToIdentity() })
+	}
+}
 
 /**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
@@ -44,8 +58,8 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 		/** The name of the [Float] property in [Properties] representing the default zoom factor (typically 1.0).*/
 		const val PROP_DEFAULT_ZOOM_FACTOR = "draw.view.defaultZoomFactor"
 
-		/** The name of the [ZoomPan] property in [PropertyChangeEvent]s.*/
-		const val PROP_ZOOM_PAN = "PROP_ZOOM_PAN"
+		/** The name of the [ViewTransformation] property in [PropertyChangeEvent].*/
+		const val PROP_TRANSFORMATION = "PROP_TRANSFORMATION"
 
 		/** The name of the [userZoomEnabled] property in [PropertyChangeEvent]s.*/
 		const val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
@@ -206,10 +220,14 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 	/** ---- Navigation */
 
 	/**
-	 * Holds the current zoom and pan of this [View].
-	 * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_ZOOM_PAN] has changed.
+	 * Defines how model coordinate space is transformed to displayed view coordinate space,
+	 * which involves zooming and panning, and the resulting [AffineTransform].
+	 * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_TRANSFORMATION] has changed.
 	 */
-	var zoomPan: ZoomPan
+	var transformation: ViewTransformation
+
+	/** A shortcut for getting the [ZoomPan] in [transformation].*/
+	val zoomPan: ZoomPan
 
 	/** A shortcut for getting the zoom factor in [zoomPan].*/
 	val zoomFactor: Double get() = zoomPan.zoomFactor

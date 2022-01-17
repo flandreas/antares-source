@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewNavigator
+import ch.scorpion.jabbah.draw.ViewTransformation
 import ch.scorpion.jabbah.draw.ZoomPan
 import kotlin.math.min
 
@@ -14,6 +16,7 @@ import kotlin.math.min
  */
 class ViewNavigatorImpl(
 	private val view: View<*>,
+	private val affineTransformFactory: () -> AffineTransform,
 	private val properties: Properties = BaseModule.properties
 ) : ViewNavigator {
 
@@ -31,6 +34,19 @@ class ViewNavigatorImpl(
 	private val defaultZoomFactor: Double get() = properties.getFloat(View.PROP_DEFAULT_ZOOM_FACTOR).toDouble()
 
 	/** ---- [ViewNavigator] interface */
+
+	override fun createTransformation(zoomFactor: Double): ViewTransformation =
+		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin))
+
+	private fun createTransformation(zoomPan: ZoomPan): ViewTransformation =
+		ViewTransformation(
+			zoomPan,
+			affineTransformFactory.invoke().apply {
+				translate(view.center)
+				scale(zoomPan.zoomFactor, zoomPan.zoomFactor)
+				translate(-zoomPan.panOrigin.x, -zoomPan.panOrigin.y)
+			}
+	)
 
 	override fun setZoomFactor(zoomFactor: Double) {
 		setZoomPan(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin))
@@ -61,7 +77,7 @@ class ViewNavigatorImpl(
 	}
 
 	override fun setZoomPan(zoomPan: ZoomPan) {
-		view.zoomPan = zoomPan
+		view.transformation = createTransformation(zoomPan)
 	}
 
 	override fun panCenter() {
@@ -123,8 +139,7 @@ class ViewNavigatorImpl(
 			(view.space.area.heightInt - 2 * FIT_ZOOM_INSET) / bounds.height)
 	}
 
-	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean {
-		return zoomFactor >= BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)
+	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
+		zoomFactor >= BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)
 			&& zoomFactor <= BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)
-	}
 }

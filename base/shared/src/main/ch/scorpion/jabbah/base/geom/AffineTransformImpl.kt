@@ -66,6 +66,8 @@ data class AffineTransformImpl(
 		return doubleArrayOf(m00, m10, m01, m11, m02, m12)
 	}
 
+	override fun clone(): AffineTransform = copy()
+
 	override val scaleX: Double get() = m00
 
 	override val scaleY: Double get() = m11

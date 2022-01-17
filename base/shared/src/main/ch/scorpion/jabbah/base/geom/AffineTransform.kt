@@ -37,6 +37,9 @@ interface AffineTransform {
     /** Returns the resulting scale factor if scaling is uniform, i.e. scaling in both directions are the same.*/
     val uniformScale: Double get() = sqrt(determinant)
 
+	/** Creates a copy of this [AffineTransform]. */
+	fun clone(): AffineTransform
+
     /** Returns the transformation matrix as an array of the form m00, m10, m01, m11, m02, m12.*/
     fun getMatrix(): DoubleArray
 

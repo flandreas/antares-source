@@ -204,7 +204,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         replaceDrawable(content.highlightContainer, newContent.highlightContainer)
 	    replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
-        zoomPan = newContent.zoomPan
+        transformation = newContent.transformation
         repaint()
     }
 

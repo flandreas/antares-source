@@ -40,7 +40,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	/** ---- [DrawingViewContent] interface */
 
-	override var zoomPan: ZoomPan = drawingView.zoomPan
+	override var transformation: ViewTransformation = ViewTransformation.identity()
 
 	override val selectionManager: SelectionManager = selectionManagerFactory.create(this)
 

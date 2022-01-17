@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ViewTransformation
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -219,7 +220,8 @@ class GraphNavigationViewController(
 	}
 
 	private fun rememberZoomPanOfCurrentNavigationStack() {
-		navigationStack.peek().content.zoomPan = drawingView.zoomPan
+		navigationStack.peek().content.transformation =
+			ViewTransformation(drawingView.zoomPan, drawingView.transformation.affineTransform.clone())
 	}
 
 	private fun isDescendAnimationRequired(request: OpenSubGraphRequest): Boolean {

@@ -109,8 +109,8 @@ interface DrawingViewContent<T : Drawing<*>> {
 	/** Holds the [Drawing] as the main [ComponentContainer] of this [DrawingViewContent].*/
 	val drawing: T
 
-	/** Stores the [ZoomPan] of a [DrawingView] in order to re-establish it when going back to this [DrawingViewContent].*/
-	var zoomPan: ZoomPan
+	/** Stores the [ViewTransformation] of a [DrawingView] in order to re-establish it when going back to this [DrawingViewContent].*/
+	var transformation: ViewTransformation
 
 	/** Allows selecting [Component]s in [drawing] for editing them.*/
 	val selectionManager: SelectionManager

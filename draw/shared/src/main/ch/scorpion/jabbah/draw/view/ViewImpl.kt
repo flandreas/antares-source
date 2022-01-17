@@ -18,10 +18,10 @@ import ch.scorpion.jabbah.draw.style.Themes
 
 /**
  * A standard implementation of the [View] interface.
- * @param transformFactory a factory for creating new [AffineTransform]s
+ * @param affineTransformFactory a factory for creating new [AffineTransform]s
  */
 open class ViewImpl<C : InputEventContext>(
-	private val transformFactory: () -> AffineTransform,
+	private val affineTransformFactory: () -> AffineTransform,
 	applicationContextHolder: ApplicationContextHolder?,
 	protected val eventBus: EventBus = BaseModule.eventBus,
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
@@ -290,7 +290,7 @@ open class ViewImpl<C : InputEventContext>(
 
 		val oldTransform = context.g.transform
 		val zoomedTransform = context.g.transform
-		zoomedTransform.concatenate(transform)
+		zoomedTransform.concatenate(transformation.affineTransform)
 
 		context.g.antialiasing = this.antialiasing
 
@@ -338,11 +338,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	/** ---- Zooming, panning and navigating */
 
-	/** The [AffineTransform] that represents the current zoom factor and pan offset.*/
-	private var transform: AffineTransform = transformFactory.invoke()
-
 	/** Offers functions for navigating withing this [View].*/
-	override val navigator: ViewNavigator = ViewNavigatorImpl(this)
+	override val navigator: ViewNavigator = ViewNavigatorImpl(this, affineTransformFactory)
 
 	override var defaultZoomStrategy: ZoomStrategy = ZoomStrategy(ZoomStrategyType.FIT_MAX_NORMAL)
 
@@ -357,12 +354,11 @@ open class ViewImpl<C : InputEventContext>(
 			field.apply(navigator)
 		}
 
-	override var zoomPan: ZoomPan = ZoomPan(this)
-		set(newValue) {
-			val oldValue = zoomPan
-			field = newValue
+	override var transformation: ViewTransformation = ViewTransformation.identity()
+		set(value) {
+			val oldValue = field
+			field = value
 
-			updateTransform()
 			drawables.forEach {
 				if (it is Unzoomable) {
 					it.zoomPan = zoomPan
@@ -371,8 +367,11 @@ open class ViewImpl<C : InputEventContext>(
 
 			invalidate()
 			repaint()
-			firePropertyChange(View.PROP_ZOOM_PAN, oldValue, newValue)
+
+			firePropertyChange(View.PROP_TRANSFORMATION, oldValue, field)
 		}
+
+	override val zoomPan: ZoomPan get() = transformation.zoomPan
 
 	override var userZoomEnabled: Boolean = true
 		set(value) {
@@ -397,34 +396,17 @@ open class ViewImpl<C : InputEventContext>(
 		zoomStrategy.apply(navigator)
 	}
 
-	/** Creates a new [AffineTransform] for the specified zoom factor, while keeping the pan origin and zoom center.*/
-	private fun createTransform(zoomFactor: Double): AffineTransform =
-		createTransform(ZoomPan(this, zoomFactor, zoomPan.panOrigin))
-
-	/** Creates a new [AffineTransform] that represents the specified geometrical properties.*/
-	private fun createTransform(zoomPan: ZoomPan): AffineTransform =
-		transformFactory.invoke().apply {
-			translate(center)
-			scale(zoomPan.zoomFactor, zoomPan.zoomFactor)
-			translate(-zoomPan.panOrigin.x, -zoomPan.panOrigin.y)
-		}
-
-	/** Updates the current [AffineTransform] for the specified pan offset.*/
-	private fun updateTransform() {
-		this.transform = createTransform(zoomPan)
-	}
-
 	/** ---- [ViewToModelTransform] */
 
-	override fun viewToModelX(x: Double): Double = transform.inverseTransform(Point2D(x, 0.0)).x
+	override fun viewToModelX(x: Double): Double = transformation.affineTransform.inverseTransform(Point2D(x, 0.0)).x
 
-	override fun viewToModelY(y: Double): Double = transform.inverseTransform(Point2D(0.0, y)).y
+	override fun viewToModelY(y: Double): Double = transformation.affineTransform.inverseTransform(Point2D(0.0, y)).y
 
-	override fun viewToModel(p: Point2D): Point2D = transform.inverseTransform(p)
+	override fun viewToModel(p: Point2D): Point2D = transformation.affineTransform.inverseTransform(p)
 
 	override fun viewToModelLength(length: Double): Double = length / zoomFactor
 
-	override fun modelToView(p: Point2D): Point2D = transform.transform(p)
+	override fun modelToView(p: Point2D): Point2D = transformation.affineTransform.transform(p)
 
 	override fun modelToViewX(x: Double): Double = modelToView(Point2D(x, 0.0)).x
 
@@ -434,7 +416,7 @@ open class ViewImpl<C : InputEventContext>(
 		if (zoomFactor == this.zoomFactor) {
 			modelToView(p)
 		} else {
-			createTransform(zoomFactor).transform(p)
+			navigator.createTransformation(zoomFactor).affineTransform.transform(p)
 		}
 
 	override fun modelToViewLength(length: Double): Double = length * zoomFactor
@@ -496,13 +478,11 @@ open class ViewImpl<C : InputEventContext>(
 			return destination
 		}
 
-		override fun mouseDragged(context: T): InputEventHandler<T>? {
-			return target?.mouseDragged(context)
-		}
+		override fun mouseDragged(context: T): InputEventHandler<T>? =
+			target?.mouseDragged(context)
 
-		override fun mouseReleased(context: T): InputEventHandler<T>? {
-			return target?.mouseReleased(context)
-		}
+		override fun mouseReleased(context: T): InputEventHandler<T>? =
+			target?.mouseReleased(context)
 
 		override fun keyPressed(context: T): InputEventHandler<T>? {
 			target = target?.keyPressed(context)
