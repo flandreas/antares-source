@@ -43,6 +43,8 @@ interface AffineTransform {
     /** Concatenates this [AffineTransform] with a translation transformation by the given offsets.*/
     fun translate(tx: Double, ty: Double)
 
+	fun translate(d: Point2D) = translate(d.x, d.y)
+
     /** Concatenates this [AffineTransform] with a scaling transformation by the given scale factor.*/
     fun scale(sx: Double, sy: Double)
 

@@ -5,7 +5,11 @@ import ch.scorpion.jabbah.base.geom.Point2D
 /**
  * Contains the zoom factor and pan origin of a [View].
  */
-data class ZoomPan(val transform: ViewToModelTransform, val zoomFactor: Double, val panOrigin: Point2D) {
+data class ZoomPan(
+	val transform: ViewToModelTransform,
+	val zoomFactor: Double,
+	val panOrigin: Point2D
+) {
 
 	constructor() : this(IdentityViewToModelTransform)
 

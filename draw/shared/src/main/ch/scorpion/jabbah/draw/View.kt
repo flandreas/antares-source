@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -91,6 +92,9 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	/** The height of this [View] in view coordinates.*/
 	val height: Int
+
+	/** The center of this [View] in view coordinates.*/
+	val center: Point2D get() = Point2D(width / 2.0, height / 2.0)
 
 	/** The bounds of the content (in model space) this [View] displays.*/
 	val contentBounds: ViewContentBounds

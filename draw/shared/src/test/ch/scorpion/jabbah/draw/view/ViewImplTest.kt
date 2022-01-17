@@ -73,19 +73,6 @@ class ViewImplTest {
 		assertEquals(modelLoc, view.viewToModel(viewLoc))
 	}
 
-	@Ignore
-	@Test
-	fun shouldCenterDrawableByDefault() {
-		view.addDrawable(DrawableMockBuilder()
-			.withBoundingBox(Rectangle2D(0, 0, 10, 10))
-			.build())
-
-		view.initialize()
-		view.draw(context)
-
-		assertEquals(Rectangle2D(495, 495, 10, 10), graphics2D.drawnRectangle)
-	}
-
 	@Test
 	@Ignore
 	fun shouldUseHigherDevicePixelRatio() {

@@ -341,9 +341,6 @@ open class ViewImpl<C : InputEventContext>(
 	/** The [AffineTransform] that represents the current zoom factor and pan offset.*/
 	private var transform: AffineTransform = transformFactory.invoke()
 
-	/** The location in view coordinates relative to which scale transformations are performed.*/
-	private var zoomCenter: Point2D = Point2D.ZERO
-
 	/** Offers functions for navigating withing this [View].*/
 	override val navigator: ViewNavigator = ViewNavigatorImpl(this)
 
@@ -360,20 +357,15 @@ open class ViewImpl<C : InputEventContext>(
 			field.apply(navigator)
 		}
 
-	private var _zoomPan: ZoomPan = ZoomPan(this)
-	override var zoomPan: ZoomPan
-		get() = _zoomPan
+	override var zoomPan: ZoomPan = ZoomPan(this)
 		set(newValue) {
-			val panOffset = Point2D(
-				newValue.panOrigin.x - _zoomPan.panOrigin.x,
-				newValue.panOrigin.y - _zoomPan.panOrigin.y)
-			val oldValue = _zoomPan
-			_zoomPan = newValue
+			val oldValue = zoomPan
+			field = newValue
 
-			updateTransform(panOffset)
+			updateTransform()
 			drawables.forEach {
 				if (it is Unzoomable) {
-					it.zoomPan = _zoomPan
+					it.zoomPan = zoomPan
 				}
 			}
 
@@ -405,47 +397,21 @@ open class ViewImpl<C : InputEventContext>(
 		zoomStrategy.apply(navigator)
 	}
 
-	/** Creates a new [ViewGeometry] for the specified zoom factor, while keeping the pan origin and zoom center.*/
-	private fun createViewGeometry(zoomFactor: Double): ViewGeometry {
-		return createViewGeometry(ZoomPan(this, zoomFactor, zoomPan.panOrigin), zoomCenter, Point2D.ZERO)
-	}
+	/** Creates a new [AffineTransform] for the specified zoom factor, while keeping the pan origin and zoom center.*/
+	private fun createTransform(zoomFactor: Double): AffineTransform =
+		createTransform(ZoomPan(this, zoomFactor, zoomPan.panOrigin))
 
-	/** Creates a new [ViewGeometry] that represents the specified geometrical properties.*/
-	private fun createViewGeometry(zoomPan: ZoomPan, zoomCenter: Point2D, panOffset: Point2D): ViewGeometry {
-		val newZoomCenter = calculateZoomCenter()
-
-		// Compensate the offset that occurs if the View has been resized in the meantime
-		val zoomCenterOffset = Point2D(
-			(newZoomCenter.x - zoomCenter.x) / zoomPan.zoomFactor,
-			(newZoomCenter.y - zoomCenter.y) / zoomPan.zoomFactor)
-
-		if (zoomCenterOffset != Point2D.ZERO) {
-			_zoomPan = ZoomPan(
-				this,
-				zoomPan.zoomFactor,
-				zoomPan.panOrigin.x + zoomCenterOffset.x + panOffset.x,
-				zoomPan.panOrigin.y + zoomCenterOffset.y + panOffset.y)
+	/** Creates a new [AffineTransform] that represents the specified geometrical properties.*/
+	private fun createTransform(zoomPan: ZoomPan): AffineTransform =
+		transformFactory.invoke().apply {
+			translate(center)
+			scale(zoomPan.zoomFactor, zoomPan.zoomFactor)
+			translate(-zoomPan.panOrigin.x, -zoomPan.panOrigin.y)
 		}
 
-		this.zoomCenter = newZoomCenter
-
-		val transform = transformFactory.invoke()
-		transform.translate(zoomCenter.x, zoomCenter.y)
-		transform.scale(zoomPan.zoomFactor, zoomPan.zoomFactor)
-		transform.translate(-zoomPan.panOrigin.x, -zoomPan.panOrigin.y)
-
-		return ViewGeometry(_zoomPan, newZoomCenter, transform)
-	}
-
-	/** Calculates the default zoom center as the center ot the [View].*/
-	private fun calculateZoomCenter() = Point2D(width / 2.0, height / 2.0)
-
 	/** Updates the current [AffineTransform] for the specified pan offset.*/
-	private fun updateTransform(panOffset: Point2D) {
-		val viewGeom = createViewGeometry(zoomPan, zoomCenter, panOffset)
-		this.transform = viewGeom.transform
-		this._zoomPan = zoomPan
-		this.zoomCenter = zoomCenter
+	private fun updateTransform() {
+		this.transform = createTransform(zoomPan)
 	}
 
 	/** ---- [ViewToModelTransform] */
@@ -465,7 +431,11 @@ open class ViewImpl<C : InputEventContext>(
 	override fun modelToViewY(y: Double): Double = modelToView(Point2D(0.0, y)).y
 
 	override fun modelToView(p: Point2D, zoomFactor: Double): Point2D =
-		createViewGeometry(zoomFactor).transform.transform(p)
+		if (zoomFactor == this.zoomFactor) {
+			modelToView(p)
+		} else {
+			createTransform(zoomFactor).transform(p)
+		}
 
 	override fun modelToViewLength(length: Double): Double = length * zoomFactor
 
@@ -545,5 +515,3 @@ open class ViewImpl<C : InputEventContext>(
 		}
 	}
 }
-
-data class ViewGeometry(val zoomPan: ZoomPan, val zoomPoint: Point2D, val transform: AffineTransform)
