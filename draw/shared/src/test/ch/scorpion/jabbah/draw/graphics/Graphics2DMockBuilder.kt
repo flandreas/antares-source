@@ -18,6 +18,9 @@ class Graphics2DMockBuilder {
 	private val y = slot<Int>()
 	private val width = slot<Int>()
 	private val height = slot<Int>()
+	private val xDouble = slot<Double>()
+	private val yDouble = slot<Double>()
+	private val point = slot<Point2D>()
 
 	lateinit var drawnRectangle: Rectangle2D
 		private set
@@ -25,6 +28,9 @@ class Graphics2DMockBuilder {
 	init {
 		every { g.transform } returns transform
 		every { g.transform = capture(transformSlot) } answers { transform = transformSlot.captured }
+		every { g.scale(capture(xDouble), capture(yDouble)) } answers { transform.scale(xDouble.captured, yDouble.captured) }
+		every { g.translate(capture(xDouble), capture(yDouble)) } answers { transform.translate(xDouble.captured, yDouble.captured) }
+		every { g.translate(capture(point))} answers { transform.translate(point.captured) }
 
 		every { g.drawRect(capture(x), capture(y), capture(width), capture(height))} answers {
 			val topLeft = transform.transform(Point2D(x.captured, y.captured))

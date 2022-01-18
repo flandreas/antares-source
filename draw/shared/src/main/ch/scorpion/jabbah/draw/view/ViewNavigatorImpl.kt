@@ -42,28 +42,28 @@ class ViewNavigatorImpl(
 		ViewTransformation(
 			zoomPan,
 			affineTransformFactory.invoke().apply {
-				translate(view.center)
 				scale(zoomPan.zoomFactor, zoomPan.zoomFactor)
-				translate(-zoomPan.panOrigin.x, -zoomPan.panOrigin.y)
+				translate(zoomPan.panOrigin.negate)
 			}
 	)
 
-	override fun setZoomFactor(zoomFactor: Double) {
-		setZoomPan(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin))
+	override fun setZoomFactor(zoomFactor: Double, zoomLocation: Point2D?) {
+		val effZoomLocation = zoomLocation ?: view.center
+
+		if (!isZoomFactorInValidRange(zoomFactor)) {
+			return
+		}
+
+		val zoomLocationBeforeM = view.viewToModel(effZoomLocation)
+		val zoomLocationAfterM = view.viewToModel(effZoomLocation, zoomFactor)
+		val offset = zoomLocationBeforeM.subtract(zoomLocationAfterM)
+
+		val zoomPan = ZoomPan(view, zoomFactor, view.zoomPan.panOrigin.add(offset))
+		view.transformation = createTransformation(zoomPan)
 	}
 
-	override fun addZoomFactor(delta: Double) {
-		val newZoomFactor = view.zoomFactor + delta
-		if (isZoomFactorInValidRange(newZoomFactor)) {
-			setZoomFactor(newZoomFactor)
-		}
-	}
-
-	override fun multiplyZoomFactor(factor: Double) {
-		val newZoomFactor = view.zoomFactor * factor
-		if (isZoomFactorInValidRange(newZoomFactor)) {
-			setZoomFactor(newZoomFactor)
-		}
+	override fun multiplyZoomFactor(factor: Double, zoomLocation: Point2D?) {
+		setZoomFactor(view.zoomFactor * factor, zoomLocation)
 	}
 
 	override fun panBy(dx: Int, dy: Int) {

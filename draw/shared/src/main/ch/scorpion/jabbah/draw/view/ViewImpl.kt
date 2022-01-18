@@ -404,6 +404,13 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun viewToModel(p: Point2D): Point2D = transformation.affineTransform.inverseTransform(p)
 
+	override fun viewToModel(p: Point2D, zoomFactor: Double): Point2D =
+		if (zoomFactor == this.zoomFactor) {
+			viewToModel(p)
+		} else {
+			navigator.createTransformation(zoomFactor).affineTransform.inverseTransform(p)
+		}
+
 	override fun viewToModelLength(length: Double): Double = length / zoomFactor
 
 	override fun modelToView(p: Point2D): Point2D = transformation.affineTransform.transform(p)

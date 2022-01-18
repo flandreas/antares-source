@@ -16,6 +16,8 @@ interface ViewToModelTransform {
     /** Transforms a [Point2D] from view space to model space by applying the [View]'s zoom factor and pan origin.*/
     fun viewToModel(p: Point2D): Point2D
 
+	fun viewToModel(p: Point2D, zoomFactor: Double): Point2D
+
     fun viewToModelLength(length: Double): Double
 
     /** Transforms a [Point2D] from model space to view space by applying the [View]'s zoom factor and pan origin.*/
@@ -46,6 +48,8 @@ object IdentityViewToModelTransform : ViewToModelTransform {
     override fun viewToModelY(y: Double): Double = y
 
     override fun viewToModel(p: Point2D): Point2D = p
+
+	override fun viewToModel(p: Point2D, zoomFactor: Double): Point2D = p
 
 	override fun viewToModelLength(length: Double): Double = length
 

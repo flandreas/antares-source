@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
  * Provides navigation methods such as zooming and panning in a [View].
+ *
+ * Supports zooming at an arbitrary location in the [View], or by default at the
+ * [View]'s center.
  */
 interface ViewNavigator {
 
@@ -19,21 +22,21 @@ interface ViewNavigator {
      * A zoom factor of 1.0 represents no zooming (100%). Zoom factors smaller than 1.0 result in drawings that are
      * displayed smaller than normal. For example, a zoom factor of 0.5 displays the drawing in half the original size.
      * @param zoomFactor the new zoom factor, where 1.0 represents unzoomed views
+     * @param zoomLocation the location (in view space) where zooming is applied,
+     * or `null` if zooming is to be applied at the [View]'s center
      * @throws IllegalArgumentException if zoomFactor is smaller than or equal to 0
      */
-    fun setZoomFactor(zoomFactor: Double)
-
-    /**
-     * Increments the zoom factor by the given delta.
-     * Does nothing if not in valid range as defined by [View.PROP_MIN_ZOOM_FACTOR] and [View.PROP_MAX_ZOOM_FACTOR]
-     */
-    fun addZoomFactor(delta: Double)
+    fun setZoomFactor(zoomFactor: Double, zoomLocation: Point2D? = null)
 
     /**
      * Multiplies the zoom factor by the given factor.
      * Does nothing if not in valid range as defined by [View.PROP_MIN_ZOOM_FACTOR] and [View.PROP_MAX_ZOOM_FACTOR]
+     *
+     * @param factor the factor by which the current zoom factor is multiplied
+     * @param zoomLocation the location (in view space) where zooming is applied,
+     * or `null` if zooming is to be applied at the [View]'s center
      */
-    fun multiplyZoomFactor(factor: Double)
+    fun multiplyZoomFactor(factor: Double, zoomLocation: Point2D? = null)
 
     /** Pans the [View] by the given delta offset.*/
     fun panBy(dx: Int, dy: Int)

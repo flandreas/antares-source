@@ -136,7 +136,7 @@ class ZoomPanController(val view: View<*>) {
 				startPos = Point2D.ZERO
 				pan(panVectorFromWheelRotation(e))
 			} else {
-				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
+				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e), e.location)
 			}
 			view.zoomStrategy = ZoomStrategy.NONE
 

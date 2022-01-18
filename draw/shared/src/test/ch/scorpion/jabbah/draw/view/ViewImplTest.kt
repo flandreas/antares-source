@@ -23,7 +23,7 @@ class ViewImplTest {
 	private val context = DrawModule.drawContextFactory(graphics2D.build(), null)
 
 	private val view = ViewImpl<InputEventContext>(
-		transformFactory = { System.createAffineTransform() },
+		affineTransformFactory = { System.createAffineTransform() },
 		viewPainterFactory = { SimpleViewPainter(it) },
 		applicationContextHolder = null
 	)
