@@ -153,6 +153,7 @@ class LibraryPersistencePanel(
 		buttonPanel.add(createButton(deleteAction))
 		buttonPanel.add(Box.createHorizontalStrut(9))
 		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(importAction))
 		buttonPanel.add(Box.createHorizontalStrut(9))
 
