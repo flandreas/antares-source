@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
@@ -148,6 +149,9 @@ class VideoRamView(
 
 		oldModel?.let { it.removeDataListener(dataChangeListener) }
 		model.addDataListener(dataChangeListener)
+
+		model.type = Translations.getString("library.element.VideoRam.name")
+		model.typeDesc = Translations.getOptionalString("library.element.VideoRam.desc")
 
 		addPortView(
 			DigitalPortView(

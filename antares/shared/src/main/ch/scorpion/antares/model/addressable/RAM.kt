@@ -52,8 +52,8 @@ class RAM(
 		private val CLOCK_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clockPort.desc"))
 	}
 
-	override val type: String get() = TYPE
-	override val typeDesc: String? get() = TYPE_DESC
+	override var type: String = TYPE
+	override var typeDesc: String? = TYPE_DESC
 
 	/** Determines whether this [RAM] has a clock input. */
 	var hasClock: Boolean = false
