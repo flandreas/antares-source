@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
@@ -72,7 +73,10 @@ open class GraphMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
 			menu.addSeparator()
 		}
-		menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
+		if (EditAuthModule.userHolder.user.isDeveloper) {
+			// Public available not before server has been released
+			menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
+		}
 		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 		if (!SystemUtils.IS_OS_MAC) {
