@@ -125,6 +125,7 @@ open class GraphFrameSwing(
 		super.dispose()
 		graphPanel.dispose()
 		containerPanel.dispose()
+		statusBar.dispose()
 	}
 
 	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/

@@ -4,20 +4,22 @@ import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusEvent
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
 
 class StatusBar(
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
 	private val largeLabel = JLabel(" ")
 	private val smallLabel = JLabel(" ", null, JLabel.TRAILING)
+	private val statusHandler: EventHandler<StatusEvent> = { handle(it) }
 
 	init {
-		eventBus.register(StatusEvent::class) { handle(it) }
+		eventBus.register(StatusEvent::class, statusHandler)
 
 		buildUI()
 
@@ -27,6 +29,10 @@ class StatusBar(
 			largeLabel.text = Status.get(StatusType.Large)
 			smallLabel.text = Status.get(StatusType.Small)
 		}
+	}
+
+	fun dispose() {
+		eventBus.unregister(statusHandler)
 	}
 
 	private fun buildUI() {

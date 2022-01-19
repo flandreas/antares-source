@@ -35,6 +35,7 @@ class ApplicationModeHolderImpl(
 
 	init {
 		editor.view.addPropertyChangeListener(editorViewListener)
+		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
 	}
 
 	override fun dispose() {

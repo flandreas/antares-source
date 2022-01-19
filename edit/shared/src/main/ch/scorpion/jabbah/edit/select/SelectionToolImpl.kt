@@ -76,6 +76,7 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		super<ToolAdapter>.mouseMoved(e, x, y)
 		if (!editor.view.editable) {
 			return
 		}
