@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 
 /**
  * Provides navigation methods such as zooming and panning in a [View].
@@ -15,6 +16,12 @@ interface ViewNavigator {
 	 * the [View]'s current pan offset.
 	 */
 	fun createTransformation(zoomFactor: Double): ViewTransformation
+
+	/**
+	 * Navigates the [View] such that a [Point2D] in model space seems to be translated
+	 * to a destination [Point2D] in view space.
+	 */
+	fun translate(translation: ZoomedPointTranslation)
 
     /**
      * Sets the factor by which the [View] zooms the displayed [Drawable]s.
@@ -46,9 +53,6 @@ interface ViewNavigator {
      * @param p the new location of the pan origin.
      */
     fun setPanOrigin(p: Point2D)
-
-    /** Sets the new zoom and pan settings of the [View].*/
-    fun setZoomPan(zoomPan: ZoomPan)
 
     /** Pans to the center of the [View]'s content by maintaining the current zoom factor. */
     fun panCenter()

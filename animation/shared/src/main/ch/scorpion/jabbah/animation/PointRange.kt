@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.animation
 
+import ch.scorpion.jabbah.base.SIGMA
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
 
@@ -50,7 +51,7 @@ class PointRange(val begin: Point2D, val end: Point2D) : Sequence<Point2D> {
 		    return
 	    }
 
-	    if (size == 0.0) {
+	    if (size <= SIGMA) {
             value = null
             return
         }

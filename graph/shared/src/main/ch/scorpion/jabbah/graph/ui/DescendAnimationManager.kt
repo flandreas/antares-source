@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.animation.AnimationModule
-import ch.scorpion.jabbah.animation.AnimationTask
-import ch.scorpion.jabbah.animation.AnimationTaskAdapter
-import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.animation.*
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.view.ZoomPanAnimation
+import ch.scorpion.jabbah.draw.view.ZoomedPointVoyageAnimation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -18,7 +15,7 @@ class DescendAnimationManager(
 ) {
 
     companion object {
-        private const val ZOOM_DURATION = 1_000.0
+        private const val ZOOM_DURATION = 700.0
         private const val OUTER_END_ZOOM_FACTOR = 16.0
         private const val INNER_START_ZOOM_FACTOR = 0.3
         private const val INNER_END_ZOOM_FACTOR = 1.0
@@ -44,13 +41,13 @@ class DescendAnimationManager(
             .start()
     }
 
-    private fun createInnerDescendAnimation(drawingView: DrawingView<*>, terminator: () -> Unit): ZoomPanAnimation {
-        val animation = ZoomPanAnimation(
-            drawingView,
-            INNER_END_ZOOM_FACTOR,
-	        drawingView.drawing.boundingBox.center,
-	        ZOOM_DURATION
-        )
+    private fun createInnerDescendAnimation(drawingView: DrawingView<*>, terminator: () -> Unit): AnimationTask {
+	    val animation = ZoomedPointVoyageAnimation(
+		    drawingView,
+		    INNER_END_ZOOM_FACTOR,
+		    drawingView.drawing.boundingBox.center,
+		    ZOOM_DURATION
+		)
         animation.addListener(object: AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {
                 terminator.invoke()
@@ -64,13 +61,13 @@ class DescendAnimationManager(
         subGraphVerticeView: SubGraphVerticeView<*>,
         descender: (SubGraphVerticeView<*>) -> Unit,
         terminator: () -> Unit
-    ): ZoomPanAnimation {
-        val animation = ZoomPanAnimation(
-            drawingView,
-            OUTER_END_ZOOM_FACTOR,
-	        subGraphVerticeView.boundingBox.center,
-	        ZOOM_DURATION
-        )
+    ): AnimationTask {
+	    val animation = ZoomedPointVoyageAnimation(
+		    drawingView,
+		    OUTER_END_ZOOM_FACTOR,
+		    subGraphVerticeView.boundingBox.center,
+		    ZOOM_DURATION
+		)
 
         /** Starts the inner animation after the outer animation has ended. */
         animation.addListener(object: AnimationTaskAdapter() {
@@ -113,8 +110,8 @@ class DescendAnimationManager(
 		endZoomFactor: Double,
 		ascender: (SubGraphVerticeView<*>) -> Unit,
 		terminator: () -> Unit
-	): ZoomPanAnimation {
-		val animation = ZoomPanAnimation(
+	): AnimationTask {
+		val animation = ZoomedPointVoyageAnimation(
 			drawingView,
 			INNER_START_ZOOM_FACTOR,
 			drawingView.drawing.boundingBox.center,
@@ -137,12 +134,13 @@ class DescendAnimationManager(
 		drawingView: DrawingView<*>,
 		endZoomFactor: Double,
 		terminator: () -> Unit
-	): ZoomPanAnimation {
-		val animation = ZoomPanAnimation(
+	): AnimationTask {
+		val animation = ZoomedPointVoyageAnimation(
 			drawingView,
 			endZoomFactor,
 			drawingView.drawing.boundingBox.center,
-			ZOOM_DURATION)
+			ZOOM_DURATION
+		)
 
 		animation.addListener(object: AnimationTaskAdapter() {
 			override fun ended(task: AnimationTask) {

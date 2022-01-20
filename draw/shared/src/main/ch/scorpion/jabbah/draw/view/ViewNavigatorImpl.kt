@@ -62,6 +62,16 @@ class ViewNavigatorImpl(
 		view.transformation = createTransformation(zoomPan)
 	}
 
+	override fun translate(translation: ZoomedPointTranslation) {
+		val locationAfterZoomV = translation.modelPoint.multiply(translation.zoomFactor)
+		val offsetV = translation.viewPoint.subtract(locationAfterZoomV)
+		val offsetM = offsetV.multiply(1 / translation.zoomFactor).negate
+
+		val zoomPan = ZoomPan(view, translation.zoomFactor, offsetM)
+
+		view.transformation = createTransformation(zoomPan)
+	}
+
 	override fun multiplyZoomFactor(factor: Double, zoomLocation: Point2D?) {
 		setZoomFactor(view.zoomFactor * factor, zoomLocation)
 	}
@@ -76,7 +86,7 @@ class ViewNavigatorImpl(
 		setZoomPan(ZoomPan(view, view.zoomPan.zoomFactor, p))
 	}
 
-	override fun setZoomPan(zoomPan: ZoomPan) {
+	private fun setZoomPan(zoomPan: ZoomPan) {
 		view.transformation = createTransformation(zoomPan)
 	}
 
