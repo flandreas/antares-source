@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -31,7 +32,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : Namable, Describable, Storable {
+interface Graph : Namable, Describable, Storable, Bean {
 
     /** The universal unique ID of this [Graph]. Used for referencing this [Graph] from other [Graph]s.*/
     var uuid: UUID
