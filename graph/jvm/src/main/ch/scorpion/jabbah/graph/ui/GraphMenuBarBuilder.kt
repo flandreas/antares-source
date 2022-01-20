@@ -69,16 +69,14 @@ open class GraphMenuBarBuilder(
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()
-		if (SystemUtils.IS_OS_MAC) {
-			menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
-			menu.addSeparator()
-		}
+		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
+		menu.addSeparator()
 		if (EditAuthModule.userHolder.user.isDeveloper) {
 			// Public available not before server has been released
 			menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
 		}
 		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 		if (!SystemUtils.IS_OS_MAC) {
 			menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
 			menu.addSeparator()
