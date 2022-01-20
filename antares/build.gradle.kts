@@ -89,7 +89,7 @@ tasks {
 		archiveClassifier.set("all")
 		from(kotlin.jvm().compilations.getByName("main").output)
 		configurations =
-			mutableListOf(kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration)
+			mutableListOf(kotlin.jvm().compilations.getByName("main").runtimeDependencyFiles as Configuration)
 	}
 
 	val copySplash by register<Copy>("copySplash") {
