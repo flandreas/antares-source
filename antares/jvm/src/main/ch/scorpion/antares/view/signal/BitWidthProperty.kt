@@ -42,6 +42,8 @@ open class BitWidthPropertySwing(
 ) {
 	var dslError: DslError? = null
 
+	override fun isEditable(): Boolean = true
+
 	override fun writeToBean(force: Boolean) {
 		dslError?.let { throw it }
 		super.writeToBean(force)
@@ -129,6 +131,7 @@ class BitWidthEditor(
 
 	init {
 		comboBox.renderer = BitWidthRenderer()
+		comboBox.isEnabled = editable
 
 		val list = BitWidth.PREDEFINED.filter { filter(it) }.toMutableList()
 		if (parserFactory != null) {
@@ -143,12 +146,14 @@ class BitWidthEditor(
 
 		buildUI()
 
-		editor.addFocusListener(object : FocusAdapter() {
-			override fun focusGained(e: FocusEvent?) {
-				comboBox.requestFocusInWindow()
-				comboBox.showPopup()
-			}
-		})
+		if (editable) {
+			editor.addFocusListener(object : FocusAdapter() {
+				override fun focusGained(e: FocusEvent?) {
+					comboBox.requestFocusInWindow()
+					comboBox.showPopup()
+				}
+			})
+		}
 	}
 
 	override fun getValue(): Any = comboBoxEditor.value

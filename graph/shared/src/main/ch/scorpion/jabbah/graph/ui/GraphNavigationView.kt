@@ -269,9 +269,12 @@ class GraphNavigationViewController(
 		if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
 			ascendFrom(event.entries)
 		} else {
-			drawingView.content = navigationStackViewController.navigationStack.peek().content
 			graphViewExecutionController.updateDrawingViewEditability()
 			graphViewExecutionController.updateDetachedUI()
+
+			// This leads to updating the PropertyPanel, which relies on DrawingView.editable
+			// and must therefore be done AFTER updating DrawViewEditability in GraphViewExecutionController
+			drawingView.content = navigationStackViewController.navigationStack.peek().content
 
 			view.refresh()
 		}

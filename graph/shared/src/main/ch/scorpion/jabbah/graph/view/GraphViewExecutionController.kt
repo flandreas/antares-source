@@ -70,7 +70,8 @@ class GraphViewExecutionController(
 	}
 
 	fun updateDrawingViewEditability() {
-		graphViewUI.drawingView.editable = isRoot
+		graphViewUI.drawingView.editable =
+			isRoot
 			&& !applicationContextHolder.scheduler.isActive
 			&& graphViewUI.isEditable
 	}

@@ -46,7 +46,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 	): AbstractReflectionPropertySwing<V> {
 		this.editor = editor
 		this.beanIds = beanIds
-		this.editable = editable && editor.active
+		this.editable = editable && editor.view.editable
 		if (filter != null) {
 			this.filter = filter
 		}

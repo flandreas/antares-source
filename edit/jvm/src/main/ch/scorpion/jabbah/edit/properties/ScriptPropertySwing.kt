@@ -16,4 +16,7 @@ class ScriptPropertySwing(
 	baseKey,
 	ScriptProperty::class.java,
 	beanProvider,
-	interactive = true)
+	interactive = true) {
+
+	override fun isEditable(): Boolean = true
+}

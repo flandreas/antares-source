@@ -11,6 +11,7 @@ class DrawingViewMockBuilder {
     private val grid = mockk<Grid>(relaxed = true)
 
     init {
+	    editable(true)
         every { grid.distance } returns 10.0
         every { drawingView.grid } returns grid
         every { drawingView.selectionManager } returns selectionManager
@@ -20,6 +21,11 @@ class DrawingViewMockBuilder {
         every { drawingView.drawing } returns drawing
         return this
     }
+
+	fun editable(editable: Boolean): DrawingViewMockBuilder {
+		every { drawingView.editable } returns editable
+		return this
+	}
 
     fun <T: Component> build(): DrawingView<Drawing<T>> {
         return drawingView as DrawingView<Drawing<T>>

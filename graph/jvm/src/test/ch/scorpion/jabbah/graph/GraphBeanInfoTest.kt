@@ -19,7 +19,6 @@ import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImplBeanInfo
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImplBeanInfo
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImplBeanInfo
 import io.mockk.every
@@ -34,10 +33,12 @@ class GraphBeanInfoTest {
 		}
 	}
 
+	private val view = DrawingViewMockBuilder().build<Component>()
 	private val editor = mockk<Editor>()
 
 	init {
 		every { editor.active } returns true
+		every { editor.view } returns view
 	}
 
 	private fun <T: Bean> read(bean: T, beanInfo: AbstractBeanInfo<T>) {

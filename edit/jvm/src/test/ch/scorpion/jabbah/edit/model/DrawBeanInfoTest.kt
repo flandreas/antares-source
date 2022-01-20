@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.edit.model
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
@@ -26,10 +24,12 @@ class DrawBeanInfoTest {
 		}
 	}
 
+	private val view = DrawingViewMockBuilder().build<Component>()
 	private val editor = mockk<Editor>()
 
 	init {
 		every { editor.active } returns true
+		every { editor.view } returns view
 	}
 
 	private fun <T: Component> read(component: T, beanInfo: AbstractBeanInfo<T>) {
