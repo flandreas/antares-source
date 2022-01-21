@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
 import java.awt.Color
-import java.awt.Container
 import java.beans.PropertyDescriptor
 import javax.swing.*
 import kotlin.math.max
@@ -56,7 +55,7 @@ abstract class AbstractPropertyPanelSwing(
 	init {
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
-		getTable().setShowGrid(true)
+		sheet.table.setShowGrid(true)
 
 		title = JLabel()
 		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
@@ -177,8 +176,7 @@ abstract class AbstractPropertyPanelSwing(
 
 			sheet.readFromObject(bean)
 
-			val table = getTable()
-			adjustTableHeights(table)
+			adjustTableHeights(sheet.table)
 			propertyObject = bean
 			updateLabel()
 		} catch (e: Throwable) {
@@ -205,10 +203,6 @@ abstract class AbstractPropertyPanelSwing(
 		} catch (e: ClassCastException) {
 			println("Exception while adjusting PropertySheetTable heights")
 		}
-	}
-
-	protected fun getTable(): JTable {
-		return ((sheet.getComponent(1) as Container).getComponent(0) as Container).getComponent(0) as JTable
 	}
 
 	private fun updateLabel() {
