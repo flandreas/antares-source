@@ -5,11 +5,10 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.Translatable
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.TranslatablePanel
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Component
-import java.awt.Dimension
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
@@ -18,7 +17,7 @@ class TranslatablePropertyRenderer(
 	multiline: (Translatable) -> Boolean = { _ -> false }
 ) : DefaultTableCellRenderer() {
 
-	private val textComponent: JTextComponent
+	private val textComponent: JTextComponent?
 
 	init {
 		if (multiline.invoke(TranslatableText())) {
@@ -28,28 +27,32 @@ class TranslatablePropertyRenderer(
 			textComponent.wrapStyleWord = true
 			textComponent.isEnabled = false
 			textComponent.border = null
+			textComponent.isOpaque = true
 		} else {
-			textComponent = JTextField()
-			textComponent.preferredSize = Dimension(70, 22)
-			textComponent.border = null
-			textComponent.isEnabled = false
+			textComponent = null
 		}
-		textComponent.isOpaque = true
 	}
 
 	override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-		if (value is String) {
-			textComponent.text = value
-
+		val text = if (value is String) {
+			value
 		} else if (value is Translatable) {
-			textComponent.text = value.getOptionalTranslation()
+			value.getOptionalTranslation()
+		} else {
+			""
 		}
 
-		val default = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
-		textComponent.foreground = default.foreground
-		textComponent.background = default.background
-
-		return textComponent
+		return if (textComponent != null) {
+			textComponent.text = text
+			if (isSelected) {
+				textComponent.background = table.selectionBackground
+			} else {
+				textComponent.background = table.background
+			}
+			textComponent
+		} else {
+			super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column)
+		}
 	}
 }
 
