@@ -10,12 +10,17 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Component
 import javax.swing.*
+import javax.swing.border.EmptyBorder
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
 
 class TranslatablePropertyRenderer(
 	multiline: (Translatable) -> Boolean = { _ -> false }
 ) : DefaultTableCellRenderer() {
+
+	companion object {
+		private val BORDER = EmptyBorder(2, 2, 2, 2)
+	}
 
 	private val textComponent: JTextComponent?
 
@@ -26,7 +31,7 @@ class TranslatablePropertyRenderer(
 			textComponent.lineWrap = true
 			textComponent.wrapStyleWord = true
 			textComponent.isEnabled = false
-			textComponent.border = null
+			textComponent.border = BORDER
 			textComponent.isOpaque = true
 		} else {
 			textComponent = null
