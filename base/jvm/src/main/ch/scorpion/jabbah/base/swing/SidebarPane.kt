@@ -54,9 +54,8 @@ class SidebarPane(
 
 			override val iconPath: String = "/img/double-arrow-right-16.png"
 
-			override fun createLabel(name: String, icon: Icon): JLabel {
-				return VerticalLabel.create(name, icon)
-			}
+			override fun createLabel(name: String, icon: Icon): JLabel =
+				VerticalLabel.create(name, icon)
 
 			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
 				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
@@ -70,9 +69,8 @@ class SidebarPane(
 
 			override val iconPath: String = "/img/double-arrow-left-16.png"
 
-			override fun createLabel(name: String, icon: Icon): JLabel {
-				return VerticalLabel.create(name, icon, clockwise = false)
-			}
+			override fun createLabel(name: String, icon: Icon): JLabel =
+				VerticalLabel.create(name, icon, clockwise = false)
 
 			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
 				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
@@ -90,13 +88,7 @@ class SidebarPane(
 	val isOpen: Boolean get() = current != null
 
 	/** Returns the index of the currently open content, of -1 if none is open.*/
-	val openIndex: Int
-		get() {
-			if (current == null) {
-				return -1
-			}
-			return entries.indexOf(current!!)
-		}
+	val openIndex: Int get() = current?.let { entries.indexOf(it) } ?: -1
 
 	/** The [JPanel] at the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
 	private val labelPanel = JPanel()
@@ -174,7 +166,7 @@ class SidebarPane(
 		}
 
 		override fun getBorderInsets(c: Component, insets: Insets): Insets {
-			when(location) {
+			when (location) {
 				Location.Bottom -> insets.set(2 * halfThickness, 0, 0, 0)
 				Location.Right -> insets.set(0, 2 * halfThickness, 0, 0)
 				Location.Left -> insets.set(0, 0, 0, 2 * halfThickness)
@@ -184,7 +176,9 @@ class SidebarPane(
 		}
 	}
 
-	private inner class Entry(private val content: SidebarPaneContent) : PropertyChangeListener<Any> {
+	private inner class Entry(
+		private val content: SidebarPaneContent
+	) : PropertyChangeListener<Any> {
 
 		val label: JLabel
 
@@ -238,19 +232,20 @@ class SidebarPane(
 		LOG.debug(entry?.let { "Open SideBarPane '${it.name}'" } ?: "Close SideBarPane '${current?.name}'")
 		val oldOpen = isOpen
 
-		if (current != null) {
-			contentPanel.remove(current!!.headerPanel)
-			contentPanel.remove(current!!.component)
-			current!!.label.background = background
+		current?.also {
+			contentPanel.remove(it.headerPanel)
+			contentPanel.remove(it.component)
+			it.label.background = background
 		}
 		current = entry
-		if (current != null) {
-			current!!.update()
-			contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
-			contentPanel.add(current!!.component, BorderLayout.CENTER)
 
-			current!!.label.background = background
+		current?.also {
+			it.update()
+			contentPanel.add(it.headerPanel, BorderLayout.NORTH)
+			contentPanel.add(it.component, BorderLayout.CENTER)
+			it.label.background = background
 		}
+
 		if (oldOpen != isOpen) {
 			isOpenChangeHandler.invoke()
 		}
@@ -278,21 +273,23 @@ class SidebarPane(
 	private inner class VerticalLabelListener : MouseAdapter() {
 
 		override fun mouseEntered(e: MouseEvent?) {
-			hover(e!!.source as JComponent)
+			(e?.source as? JComponent)?.let { hover(it) }
 		}
 
 		override fun mouseExited(e: MouseEvent?) {
-			(e!!.source as JComponent).background = this@SidebarPane.background
+			(e?.source as? JComponent)?.let { it.background = this@SidebarPane.background }
 		}
 
 		override fun mouseClicked(e: MouseEvent?) {
-			val clickedEntry = getEntry(e!!.source as JLabel)
-			if (isOpen && clickedEntry == current) {
-				activate(null)
-			} else {
-				activate(clickedEntry)
+			(e?.source as? JLabel)?.let {
+				val clickedEntry = getEntry(it)
+				if (isOpen && clickedEntry == current) {
+					activate(null)
+				} else {
+					activate(clickedEntry)
+				}
+				hover(it)
 			}
-			hover(e!!.source as JComponent)
 		}
 
 		private fun hover(component: JComponent) {
