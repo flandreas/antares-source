@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.view.Usecase
 class UsecasePropertyPanelSwing(
 	controller: UsecasePropertyPanelController,
 	sheetPanelFactory: PropertySheetPanelFactory,
-) : AbstractPropertyPanelSwing(controller, sheetPanelFactory), UsecasePropertyPanel {
+) : AbstractPropertyPanelSwing(controller, "usecase", sheetPanelFactory), UsecasePropertyPanel {
 
 	init {
 		controller.view = this

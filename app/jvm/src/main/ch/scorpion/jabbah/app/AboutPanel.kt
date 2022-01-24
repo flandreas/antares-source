@@ -50,7 +50,6 @@ class AboutPanel(
 	}
 
 	private fun addIcon(iconPath: String) {
-		//add(JLabel(ImageIcon(AboutPanel::class.java.getResource(iconPath))))
 		add(JLabel(UiUtil.themedIcon(iconPath)))
 	}
 

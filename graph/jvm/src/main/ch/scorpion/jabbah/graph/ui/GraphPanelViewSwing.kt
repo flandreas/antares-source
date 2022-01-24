@@ -53,7 +53,7 @@ class GraphPanelViewSwing(
 	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController, graphEditView)
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
-	private val propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, propertySheetFactory)
+	private val propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "graph", propertySheetFactory)
 
 	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanelSwing(controller.libraryPanelController, application, eventBus)
@@ -127,7 +127,6 @@ class GraphPanelViewSwing(
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()
-		propertyPanel.dispose()
 		executionToolbar.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)

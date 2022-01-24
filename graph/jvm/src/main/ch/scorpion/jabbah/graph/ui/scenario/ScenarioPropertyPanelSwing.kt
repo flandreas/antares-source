@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioStep
 class ScenarioPropertyPanelSwing(
 	controller: ScenarioPropertyPanelController,
 	sheetPanelFactory: PropertySheetPanelFactory
-) : AbstractPropertyPanelSwing(controller, sheetPanelFactory), ScenarioPropertyPanel {
+) : AbstractPropertyPanelSwing(controller, "scenario", sheetPanelFactory), ScenarioPropertyPanel {
 
 	init {
 		controller.view = this
