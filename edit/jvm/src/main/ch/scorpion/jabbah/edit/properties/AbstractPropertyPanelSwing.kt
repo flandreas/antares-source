@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.edit.properties
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.Settings
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
@@ -18,15 +20,29 @@ import kotlin.math.max
 
 /**
  * A [JPanel] for editing the properties of a bean.
+ *
+ * @property scope the scope name used to distinguish different [Settings] values
+ * of instances of this class
  */
 abstract class AbstractPropertyPanelSwing(
 	protected val controller: AbstractPropertyPanelController<*>,
+	private val scope: String,
 	sheetFactory: PropertySheetPanelFactory
 ) : JPanel(), PropertyPanel {
 
 	companion object {
 		private val LOG by logger(AbstractPropertyPanelSwing::class)
+
+		/** The base name of the [Boolean] value in [Settings] that determines whether the description area is open.*/
+		private const val PROP_DESC_OPEN_BASE = "edit.propertyPanel.descOpen"
+
+		/** The base name of the [Int] value in [Settings] that determines the location of the description area's split location. */
+		private const val PROP_DESC_SPLIT_LOCATION_BASE = "edit.propertyPanel.descSplitLocation"
 	}
+
+	private val descriptionOpenPropertyName: String get() = "$PROP_DESC_OPEN_BASE.$scope"
+
+	private val descriptionSplitLocationPropertyName: String get() = "$PROP_DESC_SPLIT_LOCATION_BASE.$scope"
 
 	/** Displays the properties of the selected [Component].*/
 	private val sheet: PropertySheetPanel = sheetFactory.create()
@@ -56,6 +72,10 @@ abstract class AbstractPropertyPanelSwing(
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		sheet.table.setShowGrid(true)
+		SwingUtilities.invokeLater {
+			sheet.splitterLocation = BaseModule.settings.getInt(descriptionSplitLocationPropertyName, 0)
+			sheet.isDescriptionVisible = BaseModule.settings.getBoolean(descriptionOpenPropertyName, true)
+		}
 
 		title = JLabel()
 		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
@@ -81,6 +101,9 @@ abstract class AbstractPropertyPanelSwing(
 	override fun dispose() {
 		controller.editor.removePropertyChangeListener(activeEditorListener)
 		controller.editor.removePropertyChangeListener(drawingListener)
+
+		BaseModule.settings.set(descriptionOpenPropertyName, sheet.isDescriptionVisible)
+		BaseModule.settings.set(descriptionSplitLocationPropertyName, sheet.splitterLocation)
 	}
 
 	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = controller.editor.addPropertyChangeListener { event ->

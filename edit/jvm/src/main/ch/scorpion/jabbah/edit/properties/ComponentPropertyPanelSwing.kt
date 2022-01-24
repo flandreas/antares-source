@@ -10,8 +10,9 @@ import javax.swing.JPanel
  */
 class ComponentPropertyPanelSwing(
 	controller: ComponentPropertyPanelController,
+	scope: String,
 	sheetFactory: PropertySheetPanelFactory
-) : AbstractPropertyPanelSwing(controller, sheetFactory), ComponentPropertyPanel {
+) : AbstractPropertyPanelSwing(controller, scope, sheetFactory), ComponentPropertyPanel {
 
 	init {
 		controller.view = this

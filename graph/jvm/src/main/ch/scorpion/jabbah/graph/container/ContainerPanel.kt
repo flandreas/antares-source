@@ -74,7 +74,7 @@ class ContainerPanel(
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
 
-		propertyPanel = ComponentPropertyPanelSwing(propertyPanelController, propertySheetFactory)
+		propertyPanel = ComponentPropertyPanelSwing(propertyPanelController, "container", propertySheetFactory)
 
 		treeView.transferHandler = ContainerTransferHandler()
 		(editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(editor, eventBus, ComponentTransferable.FLAVOR)

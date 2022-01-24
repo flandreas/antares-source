@@ -109,12 +109,21 @@ object UiUtil {
 		return Color(bg.red - 40, bg.green - 40, bg.blue - 40)
 	}
 
-	fun createToolBarButton(action: Action): JButton {
-		val button = JButton(ActionWrapperSwing(action))
-		button.border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+	fun createToolBarButton(action: Action, toggle: Boolean = false): AbstractButton {
+		val button = createToolBarButton(ActionWrapperSwing(action), toggle)
 		action.imagePath?.let { button.icon = themedIcon(it) }
-		button.text = null
 		button.toolTipText = action.name
+		return button
+	}
+
+	fun createToolBarButton(swingAction: javax.swing.Action, toggle: Boolean): AbstractButton {
+		val button = if (toggle) {
+			JToggleButton(swingAction)
+		} else {
+			JButton(swingAction)
+		}
+		button.border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+		button.text = null
 		RolloverButtonEnabler(button)
 		return button
 	}

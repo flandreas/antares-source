@@ -15,7 +15,7 @@ class PropertySheetPanelFactoryImpl(
 ) : PropertySheetPanelFactory {
 
     override fun create(): PropertySheetPanel {
-        val sheet = PropertySheetPanel()
+        val sheet = PropertySheetPanel(JabbahPropertySheetButtonProvider())
         sheet.rendererFactory = rendererRegistry
         sheet.editorFactory = editorRegistry
         sheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST)

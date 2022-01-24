@@ -241,6 +241,10 @@ class AntaresSwing(
 		}
 	}
 
+	override fun shutdownUI() {
+		(mainFrame as AntaresFrameSwing).controller.dispose()
+	}
+
 	override fun consumeCommandLine(commandLine: CommandLine) {
 		super.consumeCommandLine(commandLine)
 		if (commandLine.hasOption(SYSTEM_LIB_BASE_OPTION)) {
