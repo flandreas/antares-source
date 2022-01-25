@@ -6,7 +6,8 @@ import ch.scorpion.jabbah.io.Storable
 
 class GenericUndoableDataHolder(
 	state: Storable? = null,
-	commandManager: CommandManager? = null
+	commandManager: CommandManager? = null,
+	private val changeHandler: (Storable) -> Unit = {}
 ) : UndoableDataHolder {
 
 	init {
@@ -21,5 +22,6 @@ class GenericUndoableDataHolder(
 
 	override fun setUndoableState(state: Storable) {
 		this.state = state
+		changeHandler(state)
 	}
 }

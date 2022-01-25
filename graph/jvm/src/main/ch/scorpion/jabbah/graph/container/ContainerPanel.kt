@@ -104,16 +104,7 @@ class ContainerPanel(
 	 */
 	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		this.editable = editable
-
-		val oldZoomStrategy = editor.view.defaultZoomStrategy
-		if (!applyZoomStrategy) {
-			editor.view.defaultZoomStrategy = ZoomStrategy.NONE
-		}
-		editor.view.drawing = containerDrawing
-		if (!applyZoomStrategy) {
-			editor.view.defaultZoomStrategy = oldZoomStrategy
-		}
-
+		editor.view.setDrawing(containerDrawing, applyZoomStrategy)
 		treeView.update(graphView, containerDrawing, editable)
 	}
 

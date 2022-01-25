@@ -52,10 +52,9 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 
 	/**
 	 * Holds the [Drawing] as the main [ComponentContainer] in this [DrawingView].
-	 * When changed, creates a new [DrawingViewContent] for the new [Drawing] and sends
-	 * a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
 	 */
-	var drawing: T
+	val drawing: T
+
 
 	/** Allows selecting [Component]s in this [DrawingView] for editing them.*/
 	val selectionManager: SelectionManager
@@ -82,6 +81,15 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 
 	/** Holds the [DrawableContainer] that contains the [Drawable]s that highlight [Component]s.*/
 	val highlightContainer: DrawableContainer<Drawable>
+
+	/**
+	 * Sets the current [Drawing] by creating a new [DrawingViewContent] for the new [Drawing] and sending
+	 * a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
+	 * @param drawing the new [Drawing] to set
+	 * @param applyDefaultZoomStrategy `true` if [View.defaultZoomStrategy] is to be applied. Specify `false`
+	 * if the [Drawing] is reset for technical reasons, e.g. if the [Drawing] comes from an undo/redo snapshot.
+	 */
+	fun setDrawing(drawing: T, applyDefaultZoomStrategy: Boolean = true)
 
 	/** Creates a new [DrawingViewContent] for the specified [Drawing]*/
 	fun createContent(drawing: T): DrawingViewContent<T>

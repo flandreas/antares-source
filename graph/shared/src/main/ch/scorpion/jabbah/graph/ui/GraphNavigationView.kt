@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewTransformation
-import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -159,17 +158,8 @@ class GraphNavigationViewController(
 	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		this.editable = editable
 
-		val oldZoomStrategy = drawingView.defaultZoomStrategy
-		if (!applyZoomStrategy) {
-			drawingView.defaultZoomStrategy = ZoomStrategy.NONE
-		}
-		drawingView.drawing = graphView
-
+		drawingView.setDrawing(graphView, applyZoomStrategy)
 		drawingView.editable = editable && isRoot
-
-		if (!applyZoomStrategy) {
-			drawingView.defaultZoomStrategy = oldZoomStrategy
-		}
 
 		navigationStackViewController.view.editable = editable
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)

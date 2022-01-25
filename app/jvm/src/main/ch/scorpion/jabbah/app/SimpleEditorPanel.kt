@@ -37,7 +37,7 @@ class SimpleEditorPanel(
 	private fun handle(event: ApplicationDataEvent) {
 		if (event.newData?.content is Drawing<*>) {
 			@Suppress("UNCHECKED_CAST")
-			editor.view.drawing = event.newData.content as Drawing<Component>
+			editor.view.setDrawing(event.newData.content as Drawing<Component>)
 		}
 	}
 
