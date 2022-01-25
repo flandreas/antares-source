@@ -108,14 +108,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override val highlightContainer get() = content.highlightContainer
 
-    override var drawing: T
-        get() = content.drawing
-        set(value) {
-	        if (value !== content.drawing) {
-		        content = createContent(value)
-		        applyDefaultZoomStrategy()
-	        }
-        }
+    override val drawing: T get() = content.drawing
 
     override var showGrid: Boolean = false
         set(value) {
@@ -144,7 +137,16 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		grid.dispose()
 	}
 
-    override fun createContent(drawing: T): DrawingViewContent<T> {
+	override fun setDrawing(drawing: T, applyDefaultZoomStrategy: Boolean) {
+		if (drawing !== content.drawing) {
+			content = createContent(drawing)
+			if (applyDefaultZoomStrategy) {
+				applyDefaultZoomStrategy()
+			}
+		}
+	}
+
+	override fun createContent(drawing: T): DrawingViewContent<T> {
         return DrawingViewContentImpl(this, drawing, selectionManagerFactory, highlighterFactory)
     }
 

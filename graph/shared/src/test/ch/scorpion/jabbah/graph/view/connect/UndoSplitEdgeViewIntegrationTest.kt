@@ -34,7 +34,7 @@ class UndoSplitEdgeViewIntegrationTest {
 	}
 
 	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder {
-		builder -> drawingView.drawing = builder.graphView as Drawing<Component>
+		builder -> drawingView.setDrawing(builder.graphView as Drawing<Component>)
 	}
 	private val drawingView = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false)
 	private val editor: Editor = EditEditorModule.createEditor(drawingView)

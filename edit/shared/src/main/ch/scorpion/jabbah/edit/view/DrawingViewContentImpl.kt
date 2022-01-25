@@ -40,7 +40,9 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	/** ---- [DrawingViewContent] interface */
 
-	override var transformation: ViewTransformation = ViewTransformation.identity()
+	// Create a copy of the current ViewTransformation so new DrawingViewContents created due to
+	// establishing an undo snapshot doesn't change the transformation
+	override var transformation: ViewTransformation = drawingView.transformation.copy()
 
 	override val selectionManager: SelectionManager = selectionManagerFactory.create(this)
 
