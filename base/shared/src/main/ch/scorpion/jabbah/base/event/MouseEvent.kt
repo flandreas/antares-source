@@ -6,11 +6,11 @@ import ch.scorpion.jabbah.base.geom.Point2D
  * Identifies the mouse button that issued a [MouseEvent].
  */
 enum class Button {
-    NONE, BUTTON1, BUTTON2, BUTTON3
+    NONE, BUTTON1, BUTTON2, BUTTON3, UNKNOWN
 }
 
 enum class MouseEventType {
-	CLICKED, PRESSED, RELEASED, ENTERED, EXITED, MOVED, DRAGGED, WHEEL_ROTATED
+	CLICKED, PRESSED, RELEASED, ENTERED, EXITED, MOVED, DRAGGED, WHEEL_ROTATED, UNKNOWN
 }
 
 /**
