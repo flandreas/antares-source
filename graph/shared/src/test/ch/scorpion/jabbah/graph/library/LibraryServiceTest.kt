@@ -84,4 +84,16 @@ class LibraryServiceTest {
 		assertEquals("Element", orig.metaGraph!!.name)
 		assertEquals("NewName", duplicate.name.value)
 	}
+
+	@Test
+	fun shouldRenameContainerLibraryElement() {
+		libraryBuilder.addContainerLibraryElement("OldName")
+		val orig = library.get("OldName") as ContainerLibraryElement
+
+		service.renameContainerLibraryElement(orig, TranslatableText("NewName"))
+
+		val changed = library.get("NewName") as ContainerLibraryElement?
+
+		assertNotNull(changed)
+	}
 }

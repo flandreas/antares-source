@@ -6,8 +6,6 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -58,6 +56,11 @@ data class LibraryRenamedEvent(
 /** Posted on [EventBus] when a [LibraryDirectory] has been renamed*/
 data class LibraryDirectoryRenamedEvent(
 	val directory: LibraryDirectory,
+	val oldName: TranslatableText
+)
+
+data class ContainerLibraryElementRenamedEvent(
+	val element: ContainerLibraryElement,
 	val oldName: TranslatableText
 )
 
@@ -291,6 +294,19 @@ class LibraryService(
 		LOG.debug("Duplicate '${element.metaGraph?.uuid}' with name '${element.metaGraph?.name}'")
 		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
+	}
+
+	fun renameContainerLibraryElement(element: ContainerLibraryElement, newName: TranslatableText) {
+		LOG.debug("Renaming '${element.metaGraph?.uuid} to '${newName.getTranslation()}'")
+		val oldName = element.name.translation
+		val name = Name(newName)
+		element.metaGraph!!.graph.model!!.name = name
+		element.name = name
+
+		persister(element.library!!.isSystem).storeMetaGraph(element.library!!, element.metaGraph!!)
+		storeLibrary(element.library!!)
+
+		eventBus.post(ContainerLibraryElementRenamedEvent(element, oldName))
 	}
 
 	/**

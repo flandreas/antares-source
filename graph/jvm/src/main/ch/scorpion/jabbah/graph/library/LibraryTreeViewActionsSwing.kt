@@ -32,6 +32,7 @@ class LibraryTreeViewActionsSwing(
 	private val deleteLibraryElementAction = DeleteLibraryElementAction(controller, libraryOperationTarget)
 	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
 	private val importLibraryMetaGraphAction = ImportMetaGraphAction(controller, libraryOperationTarget)
+	private val renameLibraryMetaGraphAction = RenameMetaGraphAction(controller, libraryOperationTarget)
 
 	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
 	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
@@ -41,6 +42,7 @@ class LibraryTreeViewActionsSwing(
 	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
+	private val renameProjectMetaGraphAction = RenameMetaGraphAction(controller, projectOperationTarget)
 
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
@@ -133,6 +135,7 @@ class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
+		projectContainerPopupMenu.add(ActionWrapperSwing(renameProjectMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
@@ -164,6 +167,7 @@ class LibraryTreeViewActionsSwing(
 
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(renameLibraryMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))

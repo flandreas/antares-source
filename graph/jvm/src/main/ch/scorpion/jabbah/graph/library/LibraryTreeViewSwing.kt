@@ -115,6 +115,11 @@ class LibraryTreeViewSwing(
 		(model as DefaultTreeModel).nodeChanged(node)
 	}
 
+	override fun handle(event: ContainerLibraryElementRenamedEvent) {
+		val node = findTreeNode(event.element)
+		(model as DefaultTreeModel).nodeChanged(node)
+	}
+
 	override fun expandTo(element: ContainerLibraryElement) {
 		SwingUtilities.invokeLater {
 			val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject === element }

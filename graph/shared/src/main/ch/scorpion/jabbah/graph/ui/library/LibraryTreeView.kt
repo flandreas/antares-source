@@ -60,6 +60,8 @@ interface LibraryTreeView : UIView {
 	fun handle(event: LibraryItemMovedEvent)
 
 	fun handle(event: LibraryDirectoryRenamedEvent)
+
+	fun handle(event: ContainerLibraryElementRenamedEvent)
 }
 
 /**
@@ -104,6 +106,10 @@ class LibraryTreeViewController (
 
 	private val openContainerLibraryElementHandler: EventHandler<OpenContainerLibraryElementRequest> = {
 		if (displaysLibrary(it.element.library)) { view.expandTo(it.element) }
+	}
+
+	private val renameContainerLibraryElementHandler: EventHandler<ContainerLibraryElementRenamedEvent> = {
+		if (displaysLibrary(it.element.library)) { view.handle(it) }
 	}
 
 	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
@@ -175,6 +181,7 @@ class LibraryTreeViewController (
 		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
 		eventBus.register(LibraryDirectoryRenamedEvent::class, libraryItemDirectoryRenamedHandler)
+		eventBus.register(ContainerLibraryElementRenamedEvent::class, renameContainerLibraryElementHandler)
 
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -189,6 +196,7 @@ class LibraryTreeViewController (
 		eventBus.unregister(libraryItemUpdatedHandler)
 		eventBus.unregister(libraryItemMovedHandler)
 		eventBus.unregister(libraryItemDirectoryRenamedHandler)
+		eventBus.unregister(renameContainerLibraryElementHandler)
 
 		eventBus.unregister(currentSavableHandler)
 		eventBus.unregister(applicationModeHandler)

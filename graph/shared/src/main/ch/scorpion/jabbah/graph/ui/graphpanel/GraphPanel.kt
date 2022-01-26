@@ -41,6 +41,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeBeginEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectHolder
@@ -138,6 +139,7 @@ class GraphPanelViewController(
 	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { applicationModeHolder.updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
+	private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { propertyPanelController.refresh() }
 
 	private val rootGraphView: GraphView? get() = editViewController.editor.view.drawing as GraphView?
 
@@ -149,6 +151,7 @@ class GraphPanelViewController(
 		eventBus.register(ActiveViewChangedEvent::class, activeViewChangeHandler)
 		eventBus.register(IssueCollectorEvent::class, issuesCollectorHandler)
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, executionStoppedOnIssueHandler)
+		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenamedHandler)
 	}
 
 	/** ---- [AbstractUIController] */
@@ -165,6 +168,7 @@ class GraphPanelViewController(
 		eventBus.unregister(activeViewChangeHandler)
 		eventBus.unregister(issuesCollectorHandler)
 		eventBus.unregister(executionStoppedOnIssueHandler)
+		eventBus.unregister(containerLibraryElementRenamedHandler)
 
 		propertyPanelController.dispose()
 		libraryPanelController.dispose()

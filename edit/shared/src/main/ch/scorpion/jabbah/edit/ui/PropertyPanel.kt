@@ -39,6 +39,10 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 	/** A displayable description of the currently selected bean.*/
 	protected abstract val description: String?
 
+	fun refresh() {
+		view.handleBeanReplaced()
+	}
+
 	private fun updateTitle() {
 		title = if (bean == null) {
 			""

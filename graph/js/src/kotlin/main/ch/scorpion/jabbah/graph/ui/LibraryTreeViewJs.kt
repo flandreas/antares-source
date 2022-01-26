@@ -151,6 +151,11 @@ class LibraryTreeViewJs(
 		refresh()
 	}
 
+	// TODO?
+	override fun handle(event: ContainerLibraryElementRenamedEvent) {
+		refresh()
+	}
+
 	/** ---- [LibraryTreeViewJs] */
 
 	private fun nextNodeId(): String = (nodeId++).toString()
