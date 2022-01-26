@@ -17,7 +17,7 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 		private val scenarioStepProvider: BeanProvider = { e, ids -> (e.drawing as GraphView).scenarios.get(ids[0]).getStep(ids[1]) as Bean }
 
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioStepProvider)
-		private val description = EditProperties.description(beanProvider = scenarioStepProvider)
+		private val description = EditProperties.description(baseKey = "graph.property.scenarioStep.description", beanProvider = scenarioStepProvider)
 		private val highlightIds = CommandPropertySwing("highlightIds", "graph.property.scenario.highlightIds", String::class.java, scenarioStepProvider)
 	}
 

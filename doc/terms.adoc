@@ -15,6 +15,7 @@ Bidirectional (Bidirektional):: Signalrichtung an einem Anschluss, der gleichzei
 Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
 Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
 Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
+Connection (Verbindung):: Im Allgemeinen die Verbindung zwischen Anschlüssen von Komponenten. In Antares wird "Wire (Leitung)" verwendet.
 Control (Steuerelemente):: Komponenten einer Teilschaltung, die in das Symbol der Teilschaltung aufgenommen werden. Steuerelemente können interaktiv sein.
 Description Popup (Beschreibungs-Popup):: Wird über einer Komponente angezeigt, nachdem sich die Maus eine gewisse Zeit über der Komponente befunden hat. Enthält den Namen der Komponente sowie eine Beschreibung. Die Beschreibung ist entweder die Standardbeschreibung (durch den Typ der Komponente vorgegeben) oder eine Spezial-Beschreibung, die der Autor für diese Komponenten-Instanz erfasst hat und die den Zweck dieser Komponente in der Schaltung erläutern kann.
 Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
@@ -54,6 +55,7 @@ Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
 Unconnected (Unverbunden):: Ein Anschluss ist unverbunden, wenn er nicht mit einer Leitung verbunden ist. Unverbundene Anschlüsse haben immer den Wert 0.
 Undefined (Undefiniert):: Digitaler Signalwert, der von einem bidirektionalen Anschluss ausgegeben werden kann und auf analoger Ebene auch als "hochohmig" bezeichnet wird.
+Use Case (Anwendungsfall):: Ausprogrammierter Anwendungsfall einer Schaltung, den der Benutzer ausführen kann.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
 Value (Wert):: Der Wert, der an einem Eingang anliegt oder an einem Ausgang ausgegeben wird.
 View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste. Begriff wird auch für andere Ansichten wie "Issues" oder "Log" verwendet.
