@@ -16,7 +16,7 @@ class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 		private val scenarioBeanProvider: BeanProvider = { e, ids -> (e.drawing as GraphView).scenarios.get(ids[0]) as Bean }
 
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioBeanProvider)
-		private val description = EditProperties.description(beanProvider = scenarioBeanProvider)
+		private val description = EditProperties.description(baseKey = "graph.property.scenario.description", beanProvider = scenarioBeanProvider)
 	}
 
 	override fun addProperties(bean: ScenarioImpl, editor: Editor, properties: MutableList<Property>) {
