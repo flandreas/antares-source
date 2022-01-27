@@ -180,6 +180,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
 		properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
+		properties.set(Auth0LoginFlow.PROP_AUTH0_AUDIENCE, "https://antarescircuit.io/api")
 		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
 	}
 

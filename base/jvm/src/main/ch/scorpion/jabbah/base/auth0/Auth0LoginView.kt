@@ -87,6 +87,7 @@ class Auth0LoginView(
 	private val loginParams = LoginParams(
 		domain = properties.getString(Auth0LoginFlow.PROP_AUTH0_DOMAIN),
 		clientId = properties.getString(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID),
+		audience = properties.getString(Auth0LoginFlow.PROP_AUTH0_AUDIENCE),
 		redirectUrl = properties.getString(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL))
 
 	private val flow = Auth0LoginFlow(mainScope, loginParams, eventBus, ::handleStateChanged)

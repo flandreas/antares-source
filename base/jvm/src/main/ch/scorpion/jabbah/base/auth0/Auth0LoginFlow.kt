@@ -17,6 +17,7 @@ import java.security.SecureRandom
 data class LoginParams(
 	val domain: String,
 	val clientId: String,
+	val audience: String,
 	val redirectUrl: String
 )
 
@@ -57,6 +58,7 @@ class Auth0LoginFlow(
 
 		const val PROP_AUTH0_DOMAIN = "base.auth0.domain"
 		const val PROP_AUTH0_CLIENT_ID = "base.auth0.clientId"
+		const val PROP_AUTH0_AUDIENCE = "base.auth0.audience"
 		const val PROP_AUTH0_REDIRECT_URL = "base.auth0.redirectUrl"
 	}
 
@@ -148,6 +150,7 @@ class Auth0LoginFlow(
 			&code_challenge_method=S256
 			&code_challenge=$challenge
 			&scope=${URLEncoder.encode("openid profile email", StandardCharsets.US_ASCII)}
+			&audience=${URLEncoder.encode(params.audience, StandardCharsets.US_ASCII)}
 			&state=$state
 			&redirect_uri=${URLEncoder.encode(params.redirectUrl, StandardCharsets.US_ASCII)}
 		""".trimIndent().replace(System.lineSeparator(), "")

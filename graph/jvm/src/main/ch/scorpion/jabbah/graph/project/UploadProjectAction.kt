@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.auth0.Auth0Session
 import ch.scorpion.jabbah.base.auth0.Auth0SessionEvent
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
@@ -58,8 +59,24 @@ class UploadProjectAction(
 			return
 		}
 
-		scope.launch(Dispatchers.Main) {
-			service.upload(selectedFolder as Project)
+		InvocationHandler.invoke {
+			scope.launch(Dispatchers.Main) {
+				if (service.upload(selectedFolder as Project)) {
+					JOptionPane.showConfirmDialog(
+						SwingUtilities.getWindowAncestor(controller.view as Component),
+						Translations.getString("project.action.upload.success.msg"),
+						name,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.INFORMATION_MESSAGE)
+				} else {
+					JOptionPane.showConfirmDialog(
+						SwingUtilities.getWindowAncestor(controller.view as Component),
+						Translations.getString("project.action.upload.error.msg"),
+						name,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.ERROR_MESSAGE)
+				}
+			}
 		}
 	}
 }

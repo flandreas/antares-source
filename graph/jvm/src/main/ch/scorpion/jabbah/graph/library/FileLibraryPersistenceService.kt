@@ -196,8 +196,10 @@ class FileLibraryPersistenceService(
 			throw LibraryImportConflictException(library.uuid)
 		}
 
-		// Rename directory to UUID of imported Library
-		//incubationFiles[0].renameTo(newDirectory.toFile())
+		if (Files.exists(newDirectory)) {
+			FileUtils.deleteDirectory(newDirectory.toFile())
+		}
+
 		Files.move(incubationFiles[0].toPath(), newDirectory, StandardCopyOption.REPLACE_EXISTING)
 
 		return library.uuid
