@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
@@ -43,6 +44,8 @@ class LibraryTreeViewActionsSwing(
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
 	private val renameProjectMetaGraphAction = RenameMetaGraphAction(controller, projectOperationTarget)
+
+	private val uploadProjectAction = UploadProjectAction(controller, projectOperationTarget)
 
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
@@ -129,8 +132,11 @@ class LibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
+		if (EditAuthModule.userHolder.user.isDeveloper) {
+			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
+		}
+		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))

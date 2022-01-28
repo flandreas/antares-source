@@ -49,12 +49,12 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -81,17 +81,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
-		LibraryModule.userLibraryPersistenceService = if (app.dataLocation == DataLocation.Local) {
-			FileLibraryPersistenceService(
-				dataPath = app.fileStoreBasePath,
-				directoryName = app.userLibraryDirectoryName,
-				metaGraphFileExtension = app.fileExtension,
-				libraryFileName = app.libraryFileName)
-		} else {
-			RestLibraryPersistenceService(
-				baseUrl = app.dataUrl!!,
-				projects = false)
-		}
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(
+			dataPath = app.fileStoreBasePath,
+			directoryName = app.userLibraryDirectoryName,
+			metaGraphFileExtension = app.fileExtension,
+			libraryFileName = app.libraryFileName)
 
 		LibraryModule.systemLibraryPersistenceService = if (app.systemLibraryBasePath != null) {
 			FileLibraryPersistenceService(
@@ -110,14 +104,9 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 		LibraryModule.libraryService = LibraryService()
 
-		LibraryModule.userLibraryDictionaryService = if (app.dataLocation == DataLocation.Local) {
-			LibraryDictionaryService(
-				FileLibraryDictionaryPersistenceService(
-					"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.userLibraryDirectoryName}"))
-		} else {
-			LibraryDictionaryService(
-				RestLibraryDictionaryPersistenceService(baseUrl = app.dataUrl!!, projects = false))
-		}
+		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(
+			FileLibraryDictionaryPersistenceService(
+				"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.userLibraryDirectoryName}"))
 
 		LibraryModule.systemLibraryDictionaryService = if (app.systemLibraryBasePath != null) {
 			LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
@@ -128,30 +117,28 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
-		ProjectModule.projectDictionaryService = if (app.dataLocation == DataLocation.Local) {
-			LibraryDictionaryService(
-				(FileLibraryDictionaryPersistenceService(
-					"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.projectDirectoryName}")))
-		} else {
-			LibraryDictionaryService(
-				RestLibraryDictionaryPersistenceService(baseUrl = app.dataUrl!!, projects = true))
-		}
+		ProjectModule.projectDictionaryService = LibraryDictionaryService(
+			(FileLibraryDictionaryPersistenceService(
+				"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.projectDirectoryName}")))
 
-		ProjectModule.projectLibraryPersistenceService = if (app.dataLocation == DataLocation.Local) {
-			FileLibraryPersistenceService(
-				dataPath = app.fileStoreBasePath,
-				directoryName = app.projectDirectoryName,
-				metaGraphFileExtension = app.fileExtension,
-				libraryFileName = app.libraryFileName)
-		} else {
-			RestLibraryPersistenceService(
-				baseUrl = app.dataUrl!!,
-				projects = true)
-		}
+
+		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
+			dataPath = app.fileStoreBasePath,
+			directoryName = app.projectDirectoryName,
+			metaGraphFileExtension = app.fileExtension,
+			libraryFileName = app.libraryFileName)
 
 		ProjectModule.projectManagementService = { ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown") }
 
+		if (app.dataLocation == DataLocation.Local) {
+			GraphModuleJvm.projectAkrabClientServiceJvm = {
+				ProjectAkrabClientServiceJvm(
+					app.dataUrl!!,
+					ProjectModule.projectLibraryPersistenceService as FileLibraryPersistenceService
+				)
+			}
+		}
 
 		customizeProperties(BaseModule.properties)
 
@@ -171,6 +158,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
 		properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
+		properties.set(Auth0LoginFlow.PROP_AUTH0_AUDIENCE, "https://antarescircuit.io/api")
 		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
 	}
 
