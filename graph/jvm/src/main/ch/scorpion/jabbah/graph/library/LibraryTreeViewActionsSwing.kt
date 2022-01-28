@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
@@ -130,7 +131,9 @@ class LibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
-		projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
+		if (EditAuthModule.userHolder.user.isDeveloper) {
+			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
+		}
 		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
