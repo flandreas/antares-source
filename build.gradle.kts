@@ -14,6 +14,7 @@ plugins {
 	kotlin("multiplatform") version "1.5.30" apply false
 	kotlin("plugin.serialization") version "1.5.30" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
+	id("maven-publish")
 }
 
 allprojects {
@@ -29,7 +30,7 @@ allprojects {
 	}
 
 	val version_project: String by project
-	val group_project = "${rootProject.name}"
+	val group_project = rootProject.name
 
 	group = group_project
 	version = version_project
@@ -60,6 +61,7 @@ subprojects {
 
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 	apply(plugin = "kotlinx-serialization")
+	apply(plugin = "maven-publish")
 
 	configure<KotlinMultiplatformExtension> {
 		jvm {
@@ -119,7 +121,6 @@ subprojects {
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("mind:exml:7.0.0")
 					implementation("com.formdev:flatlaf:0.43")
-					implementation("com.github.jkcclemens:khttp:-SNAPSHOT")
 				}
 			}
 			val jvmTest by getting {
