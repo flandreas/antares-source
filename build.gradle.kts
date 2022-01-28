@@ -120,7 +120,7 @@ subprojects {
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("mind:exml:7.0.0")
-					implementation("com.formdev:flatlaf:0.43")
+					implementation("com.formdev:flatlaf:2.0.1")
 				}
 			}
 			val jvmTest by getting {

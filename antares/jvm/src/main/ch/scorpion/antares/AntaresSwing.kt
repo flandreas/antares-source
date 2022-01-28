@@ -144,10 +144,10 @@ class AntaresSwing(
 			// TODO: Okay, this is a terrible hack. Currently don't know how to access the current Theme
 			// before the Themes have been registered later in the boot-strap sequence.
 			if (name == "CRT" || name == "Darcula") {
-				FlatDarkLaf.install()
+				FlatDarkLaf.setup()
 				UI.isDark = true
 			} else {
-				FlatLightLaf.install()
+				FlatLightLaf.setup()
 				UI.isDark = false
 			}
 		}
