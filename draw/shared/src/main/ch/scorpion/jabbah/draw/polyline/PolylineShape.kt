@@ -208,8 +208,8 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		updateLineTerminatorLocations()
 	}
 
-	override fun rotate(direction: RotationDirection) {
-		setPoints(points.map { direction.rotation.rotatePointAround(getFirstPoint(), it) })
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		setPoints(points.map { direction.rotation.rotatePointAround(pivot ?: getFirstPoint(), it) })
 	}
 
 	/** ---- [PolylineShape]  */

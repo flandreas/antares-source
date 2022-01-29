@@ -70,6 +70,11 @@ class RotationTest {
         assertEquals(Point2D(-4.0, -1.0), R270.rotatePoint(-1.0, 4.0))
     }
 
+	@Test
+	fun shouldRotatePointAroundPivot() {
+		assertEquals(Point2D(200, 200), R90.rotatePointAround(Point2D(200, 0), Point2D.ZERO))
+	}
+
     @Test
     fun shouldRotateRectangleAroundPivot() {
         val pivot = Point2D(2, -1)

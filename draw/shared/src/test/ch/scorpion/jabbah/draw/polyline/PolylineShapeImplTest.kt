@@ -128,4 +128,18 @@ class PolylineShapeImplTest {
 		assertEquals(Point2D(0, 100), polyline.getPointAt(1))
 		assertEquals(Point2D(-100, 100), polyline.getPointAt(2))
 	}
+
+	@Test
+	fun shouldRotateAroundPivot() {
+		val polyline = PolylineShapeImpl(listOf(
+			Point2D(0, 0),
+			Point2D(100, 0),
+			Point2D(100, 100)))
+
+		polyline.rotate(RotationDirection.CounterClockwise, Point2D(200, 0))
+
+		assertEquals(Point2D(200, 200), polyline.getPointAt(0))
+		assertEquals(Point2D(200, 100), polyline.getPointAt(1))
+		assertEquals(Point2D(300, 100), polyline.getPointAt(2))
+	}
 }

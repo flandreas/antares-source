@@ -65,10 +65,13 @@ open class PortViewComponent<T : Any>(
 
 	override val rotatable: Boolean get() = true
 
-	override fun rotate(direction: RotationDirection) {
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		this.direction = when (direction) {
 			RotationDirection.Clockwise -> Direction.of(this.direction.rotation.previous())
 			RotationDirection.CounterClockwise -> Direction.of(this.direction.rotation.next())
+		}
+		pivot?.let {
+			location = direction.rotation.rotatePointAround(it, location)
 		}
 	}
 

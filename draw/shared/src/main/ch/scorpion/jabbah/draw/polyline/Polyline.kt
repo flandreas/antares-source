@@ -171,5 +171,5 @@ interface Polyline {
 	fun reverse()
 
 	/** Rotates by 90 degrees to the specified [RotationDirection]. */
-	fun rotate(direction: RotationDirection)
+	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
 }

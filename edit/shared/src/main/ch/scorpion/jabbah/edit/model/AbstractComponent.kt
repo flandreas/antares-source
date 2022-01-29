@@ -163,10 +163,13 @@ abstract class AbstractComponent(
 	 */
 	override val rotatable: Boolean get() = useRotation
 
-	override fun rotate(direction: RotationDirection) {
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		rotation = when (direction) {
-			RotationDirection.Clockwise ->rotation.previous()
+			RotationDirection.Clockwise -> rotation.previous()
 			RotationDirection.CounterClockwise -> rotation.next()
+		}
+		pivot?.let {
+			location = direction.rotation.rotatePointAround(it, location)
 		}
 	}
 

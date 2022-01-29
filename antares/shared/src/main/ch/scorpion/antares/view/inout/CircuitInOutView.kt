@@ -351,10 +351,13 @@ class CircuitInOutView(
 		super<AbstractVerticeView>.focusLost()
 	}
 
-	override fun rotate(direction: RotationDirection) {
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		orientation = when (direction) {
 			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
 			RotationDirection.CounterClockwise -> Direction.of(orientation.rotation.next())
+		}
+		pivot?.let {
+			location = direction.rotation.rotatePointAround(it, location)
 		}
 	}
 

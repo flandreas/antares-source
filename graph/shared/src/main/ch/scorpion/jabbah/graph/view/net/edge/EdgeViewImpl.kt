@@ -755,8 +755,11 @@ open class EdgeViewImpl<T : Any>(
 
 	override val rotatable: Boolean get() = true
 
-	override fun rotate(direction: RotationDirection) {
-		polyline.rotate(direction)
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		polyline.rotate(direction, pivot)
+		pivot?.let {
+			location = direction.rotation.rotatePointAround(it, location)
+		}
 		updateEndpointViews()
 	}
 

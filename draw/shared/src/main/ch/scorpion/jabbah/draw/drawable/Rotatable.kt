@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawableContainer
 
@@ -52,6 +53,9 @@ interface Rotatable : Locatable {
 	 * will lead to an exception if [useRotation] is `false`. However, some [Rotatable] implementation
 	 * might have to adjust their geometry when being rotated, so they will implement a different behaviour
 	 * of rotation, perhaps one that is based more on orientation [Direction] that on [Rotation] angle.
+	 *
+	 * @param direction the [RotationDirection] to which this [Rotatable] gets rotated 90 degrees
+	 * @param pivot the rotation center. If `null`, this [Rotatable]'s [location] is used.
 	 */
-	fun rotate(direction: RotationDirection)
+	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
 }

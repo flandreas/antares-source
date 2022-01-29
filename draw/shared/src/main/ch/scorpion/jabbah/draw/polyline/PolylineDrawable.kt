@@ -211,7 +211,7 @@ class PolylineDrawable constructor(
 		shape.reverse()
 	}
 
-	override fun rotate(direction: RotationDirection) {
-		shape.rotate(direction)
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		shape.rotate(direction, pivot)
 	}
 }
