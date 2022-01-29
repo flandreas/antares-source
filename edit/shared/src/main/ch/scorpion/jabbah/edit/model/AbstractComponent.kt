@@ -2,8 +2,11 @@ package ch.scorpion.jabbah.edit.model
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.*
@@ -174,5 +177,25 @@ abstract class AbstractComponent(
 	@Suppress("UNUSED_PARAMETER")
 	protected open fun rotationChanged(newRotation: Rotation) {
 		// empty
+	}
+
+	/**
+	 * Drawing wrapper method that prepares a setup for location and rotation independent drawing of custom drawing code.
+	 *
+	 * This method translates the [Graphics2D] context to the location of this [Component] and also
+	 * rotates it to the current [Rotation].
+	 * @param context the [DrawContext] to be used for drawing
+	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
+	 */
+	open fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
+		context.g.translate(location.x, location.y)
+		context.g.rotate(rotation.angle)
+
+		drawer.invoke(context)
+
+		context.g.rotate(-rotation.angle)
+		context.g.translate(-location.x, -location.y)
+
+		DrawModule.drawLocatableDebugBoundingBox(this, context)
 	}
 }

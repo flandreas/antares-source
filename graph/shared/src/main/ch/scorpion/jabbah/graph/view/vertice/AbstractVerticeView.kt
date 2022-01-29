@@ -399,8 +399,14 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	/**
-	 * Calls [drawImpl(DrawContext,Boolean)] and uses the property [isShowPortViews] to determine
-	 * whether the [PortView]s are to be drawn.
+	 * Basic drawing method that only draws all [PortView]s of this [VerticeView].
+	 *
+	 * When this method gets called, the [DrawContext] is translated to the location and rotated to the rotation
+	 * angle of this [AbstractVerticeView].
+	 *
+	 * Subclasses will extends this method in order to draw their individual look. Note that this method is typically
+	 * called by [AbstractVerticeView.draw], which prepares a setup for location and rotation independent drawing of
+	 * this method.
 	 */
 	protected open fun drawImpl(context: DrawContext) {
 		drawImpl(context, isShowPortViews)
@@ -414,17 +420,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		drawImpl(context, isShowPortViews, beforeBorder = false)
 	}
 
-	/**
-	 * Basic drawing method that only draws all [PortView]s of this [VerticeView].
-	 *
-	 * When this method gets called, the [DrawContext] is translated to the location and rotated to the rotation
-	 * angle of this [AbstractVerticeView].
-	 *
-	 * Subclasses will extends this method in order to draw their individual look. Note that this method is typically
-	 * called by [AbstractVerticeView.draw], which prepares a setup for location and rotation independent drawing of
-	 * this method.
-	 */
-	protected open fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
+	private fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
 		val oldStylable = context.stylable
 		context.stylable = this
 		if (drawPortViews) {
@@ -450,16 +446,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * @param context the [DrawContext] to be used for drawing
 	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
 	 */
-	fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
-		val oldColor = context.g.color
-
-		context.g.translate(location.x, location.y)
-		context.g.rotate(rotation.angle)
-
-		drawer.invoke(context)
-
-		context.g.rotate(-rotation.angle)
-		context.g.translate(-location.x, -location.y)
+	override fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
+		super.draw(context, drawer)
 
 		// Draw propagation delay above bounding box if in waiting state
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
@@ -469,8 +457,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 
 		DrawModule.drawLocatableDebugBoundingBox(this, context)
-
-		context.g.color = oldColor
 	}
 
 	protected fun getApplicableForegroundColor(context: DrawContext): Color {

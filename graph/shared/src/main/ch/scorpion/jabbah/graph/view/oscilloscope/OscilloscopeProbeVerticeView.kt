@@ -130,8 +130,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		addPortView(GenericPortView<T>(model.getInput(), 0, 0, Direction.SOUTH))
 	}
 
-	override fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
-		super.drawImpl(context, drawPortViews)
+	override fun drawImpl(context: DrawContext) {
+		super.drawImpl(context)
 		icon.draw(context, Point2D(0.0, -icon.dim.width))
 		if (model.isConnected) {
 			val connPoint = connectionPoint().subtract(location)
