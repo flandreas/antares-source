@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
@@ -38,7 +39,7 @@ class ClockControlViewTest {
 		val controlView = vv.getControlViewComponents().first().controlView as ClockControlView
 		controlView.knobLauncher = knobLauncher
 		controlView.bindControlView(vv, controlViewSource.model)
-		vv.rotateCounterClockwise()
+		vv.rotate(RotationDirection.CounterClockwise)
 
 		val context = contextFor(ClockControlView.ICON_BUTTON_SIZE / 2.0, -ClockControlView.ICON_BUTTON_SIZE / 2.0)
 		vv.getActorInteractionHandler(context).mouseMoved(context)

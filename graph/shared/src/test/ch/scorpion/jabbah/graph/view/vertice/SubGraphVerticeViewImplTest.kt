@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.vertice
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -37,7 +38,7 @@ class SubGraphVerticeViewImplTest {
 		val vv = SubGraphVerticeViewImpl()
 		vv.fillFromContainerDrawing(containerDrawing)
 		(vv.getControlViewComponents().first().controlView as TestControlVerticeView).actorInteractionHandler = handler
-		vv.rotateCounterClockwise()
+		vv.rotate(RotationDirection.CounterClockwise)
 
 		val context = contextFor(50.0, -50.0)
 		vv.getActorInteractionHandler(context).mouseMoved(context)

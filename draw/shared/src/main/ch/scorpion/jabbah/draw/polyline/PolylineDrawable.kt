@@ -5,10 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -214,11 +211,7 @@ class PolylineDrawable constructor(
 		shape.reverse()
 	}
 
-	override fun rotateCounterClockwise() {
-		shape.rotateCounterClockwise()
-	}
-
-	override fun rotateClockwise() {
-		shape.rotateClockwise()
+	override fun rotate(direction: RotationDirection) {
+		shape.rotate(direction)
 	}
 }

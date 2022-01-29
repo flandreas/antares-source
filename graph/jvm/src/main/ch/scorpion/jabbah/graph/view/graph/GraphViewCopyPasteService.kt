@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Movable
+import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.graph.GraphStorable

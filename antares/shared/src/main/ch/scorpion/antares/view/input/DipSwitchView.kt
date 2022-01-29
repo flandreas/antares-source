@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -164,12 +165,11 @@ class DipSwitchView(
 			return bb
 		}
 
-	override fun rotateCounterClockwise() {
-		orientation = Direction.of(orientation.rotation.next())
-	}
-
-	override fun rotateClockwise() {
-		orientation = Direction.of(orientation.rotation.previous())
+	override fun rotate(direction: RotationDirection) {
+		orientation = when (direction) {
+			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
+			RotationDirection.CounterClockwise -> Direction.of(orientation.rotation.next())
+		}
 	}
 
 	/** ---- [ActorView] */

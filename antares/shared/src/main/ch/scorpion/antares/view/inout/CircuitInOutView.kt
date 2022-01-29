@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.ShakeLocatableAnimation
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -350,12 +351,11 @@ class CircuitInOutView(
 		super<AbstractVerticeView>.focusLost()
 	}
 
-	override fun rotateCounterClockwise() {
-		orientation = Direction.of(orientation.rotation.next())
-	}
-
-	override fun rotateClockwise() {
-		orientation = Direction.of(orientation.rotation.previous())
+	override fun rotate(direction: RotationDirection) {
+		orientation = when (direction) {
+			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
+			RotationDirection.CounterClockwise -> Direction.of(orientation.rotation.next())
+		}
 	}
 
 	/** ---- [AbstractGraphElementView] */

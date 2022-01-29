@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.module.EditModule

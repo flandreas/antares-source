@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -156,12 +157,11 @@ class ConstantView(
 
 	/** ---- [Component] */
 
-	override fun rotateCounterClockwise() {
-		orientation = Direction.of(orientation.rotation.next())
-	}
-
-	override fun rotateClockwise() {
-		orientation = Direction.of(orientation.rotation.previous())
+	override fun rotate(direction: RotationDirection) {
+		orientation = when (direction) {
+			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
+			RotationDirection.CounterClockwise -> Direction.of(orientation.rotation.next())
+		}
 	}
 
 	/** ---- [ConstantView] */

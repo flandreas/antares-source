@@ -1,9 +1,19 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.drawable.Locatable
+
+/**
+ * The direction to which a [Rotatable] is rotated in a single user interaction.
+ * Supports only 90 degree step rotations.
+ *
+ * @property rotation the [Rotation] angle covered with one rotation step to this [RotationDirection]
+ */
+enum class RotationDirection(val rotation: Rotation) {
+	Clockwise(Rotation.R270),
+	CounterClockwise(Rotation.R90)
+}
 
 /**
  * Represents a [Locatable] that can be rotated interactively.
@@ -18,7 +28,7 @@ interface Rotatable : Locatable {
 
 	/**
 	 * Determines whether this [Rotatable] can be interactively rotated by the user in terms of
-	 * [rotateClockwise] and [rotateCounterClockwise], which doesn't necessarily require [useRotation] to be `true`.
+	 * [rotate], which doesn't necessarily require [useRotation] to be `true`.
 	 */
 	val rotatable: Boolean
 
@@ -36,17 +46,12 @@ interface Rotatable : Locatable {
 	fun completeRotateBy() {}
 
 	/**
-	 * Increases the current [Rotation] of this [Rotatable] counterclockwise by 90 degrees.
+	 * Increases the current [Rotation] of this [Rotatable] by 90 degrees to the specified [RotationDirection].
+	 *
 	 * The default implementation of this method will be to adjust the [rotation] property, which
 	 * will lead to an exception if [useRotation] is `false`. However, some [Rotatable] implementation
 	 * might have to adjust their geometry when being rotated, so they will implement a different behaviour
 	 * of rotation, perhaps one that is based more on orientation [Direction] that on [Rotation] angle.
 	 */
-	fun rotateCounterClockwise()
-
-	/**
-	 * Increases the current [Rotation] of this [Rotatable] clockwise by 90 degrees.
-	 * @see [rotateCounterClockwise] for more information.
-	 */
-	fun rotateClockwise()
+	fun rotate(direction: RotationDirection)
 }

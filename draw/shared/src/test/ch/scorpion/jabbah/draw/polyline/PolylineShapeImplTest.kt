@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawTestRule
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import kotlin.test.*
 
 /**
@@ -107,7 +108,7 @@ class PolylineShapeImplTest {
 			Point2D(100, 0),
 			Point2D(100, 100)))
 
-		polyline.rotateCounterClockwise()
+		polyline.rotate(RotationDirection.CounterClockwise)
 
 		assertEquals(Point2D(0, 0), polyline.getPointAt(0))
 		assertEquals(Point2D(0, -100), polyline.getPointAt(1))
@@ -121,7 +122,7 @@ class PolylineShapeImplTest {
 			Point2D(100, 0),
 			Point2D(100, 100)))
 
-		polyline.rotateClockwise()
+		polyline.rotate(RotationDirection.Clockwise)
 
 		assertEquals(Point2D(0, 0), polyline.getPointAt(0))
 		assertEquals(Point2D(0, 100), polyline.getPointAt(1))

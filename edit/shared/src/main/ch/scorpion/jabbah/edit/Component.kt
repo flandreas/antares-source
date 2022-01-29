@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.io.Storable

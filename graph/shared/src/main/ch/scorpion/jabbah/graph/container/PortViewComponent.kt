@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
@@ -64,12 +65,11 @@ open class PortViewComponent<T : Any>(
 
 	override val rotatable: Boolean get() = true
 
-	override fun rotateCounterClockwise() {
-		direction = Direction.of(direction.rotation.next())
-	}
-
-	override fun rotateClockwise() {
-		direction = Direction.of(direction.rotation.previous())
+	override fun rotate(direction: RotationDirection) {
+		this.direction = when (direction) {
+			RotationDirection.Clockwise -> Direction.of(this.direction.rotation.previous())
+			RotationDirection.CounterClockwise -> Direction.of(this.direction.rotation.next())
+		}
 	}
 
 	/** ---- [Storable] interface */

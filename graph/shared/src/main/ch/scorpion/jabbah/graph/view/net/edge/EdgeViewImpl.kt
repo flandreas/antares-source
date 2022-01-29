@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.LineTerminator
@@ -753,13 +755,8 @@ open class EdgeViewImpl<T : Any>(
 
 	override val rotatable: Boolean get() = true
 
-	override fun rotateCounterClockwise() {
-		polyline.rotateCounterClockwise()
-		updateEndpointViews()
-	}
-
-	override fun rotateClockwise() {
-		polyline.rotateClockwise()
+	override fun rotate(direction: RotationDirection) {
+		polyline.rotate(direction)
 		updateEndpointViews()
 	}
 

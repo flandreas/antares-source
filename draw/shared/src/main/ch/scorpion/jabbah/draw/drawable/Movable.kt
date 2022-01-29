@@ -1,8 +1,7 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.drawable.Locatable
 
 /**
  * Represents a [Locatable] that can be moved interactively.

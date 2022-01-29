@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
@@ -162,12 +163,11 @@ abstract class AbstractComponent(
 	 */
 	override val rotatable: Boolean get() = useRotation
 
-	override fun rotateCounterClockwise() {
-		rotation = rotation.next()
-	}
-
-	override fun rotateClockwise() {
-		rotation = rotation.previous()
+	override fun rotate(direction: RotationDirection) {
+		rotation = when (direction) {
+			RotationDirection.Clockwise ->rotation.previous()
+			RotationDirection.CounterClockwise -> rotation.next()
+		}
 	}
 
 	/** ---- [AbstractComponent] */

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.CommandManager
@@ -37,11 +38,11 @@ private class RotateCounterclockwiseCommand(
 	private val component: Component get() = drawingView.drawing.getWithId(componentId) as Component
 
 	override fun execute() {
-		component.rotateCounterClockwise()
+		component.rotate(RotationDirection.CounterClockwise)
 	}
 
 	override fun undo() {
-		component.rotateClockwise()
+		component.rotate(RotationDirection.Clockwise)
 	}
 
 	override fun validate() {

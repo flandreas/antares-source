@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 
 /**
@@ -207,12 +208,8 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		updateLineTerminatorLocations()
 	}
 
-	override fun rotateCounterClockwise() {
-		setPoints(points.map { Rotation.R90.rotatePointAround(getFirstPoint(), it) })
-	}
-
-	override fun rotateClockwise() {
-		setPoints(points.map { Rotation.R270.rotatePointAround(getFirstPoint(), it) })
+	override fun rotate(direction: RotationDirection) {
+		setPoints(points.map { direction.rotation.rotatePointAround(getFirstPoint(), it) })
 	}
 
 	/** ---- [PolylineShape]  */

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 
 /**
  * A geometric figure consisting of a sequence of straight line segments.
@@ -169,9 +170,6 @@ interface Polyline {
 	 */
 	fun reverse()
 
-	/** Rotates by 90 degrees. */
-	fun rotateCounterClockwise()
-
-	/** Rotates by -90 degrees. */
-	fun rotateClockwise()
+	/** Rotates by 90 degrees to the specified [RotationDirection]. */
+	fun rotate(direction: RotationDirection)
 }
