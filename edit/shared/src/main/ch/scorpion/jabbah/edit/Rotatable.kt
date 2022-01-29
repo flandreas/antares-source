@@ -1,0 +1,52 @@
+package ch.scorpion.jabbah.edit
+
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.drawable.Locatable
+
+/**
+ * Represents a [Locatable] that can be rotated interactively.
+ */
+interface Rotatable : Locatable {
+
+	/** The unique identification of this [Rotatable] in its containing [DrawableContainer]. */
+	val id: Int
+
+	/** Determines whether this [Rotatable] uses its [rotation] property.*/
+	val useRotation: Boolean
+
+	/**
+	 * Determines whether this [Rotatable] can be interactively rotated by the user in terms of
+	 * [rotateClockwise] and [rotateCounterClockwise], which doesn't necessarily require [useRotation] to be `true`.
+	 */
+	val rotatable: Boolean
+
+	/**
+	 * Holds the geometrical rotation property of this [Rotatable]. This is automatically accounted for when the [Rotatable]
+	 * is drawn, or when its bounding box is calculated.
+	 * @throws IllegalArgumentException when this property is set although [useRotation] is `false`
+	 */
+	var rotation: Rotation
+
+	/** Informs this [Rotatable] that it is about to be rotated with other [Rotatables][Rotatable]. */
+	fun prepareRotateBy(components: Collection<Rotatable>) {}
+
+	/** Informs this [Rotatable] that rotating previously annonced by [prepareRotateBy] has been completed for all [Rotatables][Rotatable]. */
+	fun completeRotateBy() {}
+
+	/**
+	 * Increases the current [Rotation] of this [Rotatable] counterclockwise by 90 degrees.
+	 * The default implementation of this method will be to adjust the [rotation] property, which
+	 * will lead to an exception if [useRotation] is `false`. However, some [Rotatable] implementation
+	 * might have to adjust their geometry when being rotated, so they will implement a different behaviour
+	 * of rotation, perhaps one that is based more on orientation [Direction] that on [Rotation] angle.
+	 */
+	fun rotateCounterClockwise()
+
+	/**
+	 * Increases the current [Rotation] of this [Rotatable] clockwise by 90 degrees.
+	 * @see [rotateCounterClockwise] for more information.
+	 */
+	fun rotateClockwise()
+}

@@ -24,7 +24,7 @@ interface Movable : Locatable {
 		}
 	}
 
-	/** The unique identification of this [Movable] in its containing [DrawableContainer]*/
+	/** The unique identification of this [Movable] in its containing [DrawableContainer]. */
 	val id: Int
 
 	/** Informs this [Movable] that it is about to be moved together with other [Movable]s.*/

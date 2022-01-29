@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -17,7 +15,7 @@ import ch.scorpion.jabbah.io.Storable
  * - [Component]s can be selected
  * - [Component]s can be manipulated by an [Editor]
  */
-interface Component : Movable, Snappable, Storable, Stylable, Focusable, Cloneable<Component>, Bean {
+interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusable, Cloneable<Component>, Bean {
 
 	companion object {
 		const val BASE_KEY_ID = "edit.property.id"
@@ -62,22 +60,6 @@ interface Component : Movable, Snappable, Storable, Stylable, Focusable, Cloneab
 	/** Determines whether this [Component] can be manually copied to the clipboard. */
 	val copyable: Boolean get() = true
 
-	/** Determines whether this [Component] uses its [rotation] property.*/
-	val useRotation: Boolean
-
-	/**
-	 * Determines whether this [Component] can be interactively rotated by the user in terms of
-	 * [rotateClockwise] and [rotateCounterClockwise], which doesn't necessarily require [useRotation] to be `true`.
-	 */
-	val rotatable: Boolean
-
-	/**
-	 * Holds the geometrical rotation property of this [Component]. This is automatically accounted for when the [Component]
-	 * is drawn, or when its bounding box is calculated.
-	 * @throws IllegalArgumentException when this property is set although [useRotation] is `false`
-	 */
-	var rotation: Rotation
-
 	/**
 	 * Returns the object whose properties are editable when the user edits this [Component].
 	 * Most implementations will just return `this`. Wrapper classes might return the wrapped object.
@@ -96,19 +78,4 @@ interface Component : Movable, Snappable, Storable, Stylable, Focusable, Cloneab
 	 * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
 	 */
 	var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-
-	/**
-	 * Increases the current [Rotation] of this [Component] counterclockwise by 90 degrees.
-	 * The default implementation of this method will be to adjust the [rotation] property, which
-	 * will lead to an exception if [useRotation] is `false`. However, some [Component] implementation
-	 * might have to adjust their geometry when being rotated, so they will implement a different behaviour
-	 * of rotation, perhaps one that is based more on orientation [Direction] that on [Rotation] angle.
-	 */
-	fun rotateCounterClockwise()
-
-	/**
-	 * Increases the current [Rotation] of this [Component] clockwise by 90 degrees.
-	 * @see [rotateCounterClockwise] for more information.
-	 */
-	fun rotateClockwise()
 }
