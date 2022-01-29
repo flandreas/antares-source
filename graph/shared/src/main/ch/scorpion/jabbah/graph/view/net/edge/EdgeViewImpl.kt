@@ -751,6 +751,18 @@ open class EdgeViewImpl<T : Any>(
 
 	override val deletable: Boolean get() = !underConstruction && super.deletable
 
+	override val rotatable: Boolean get() = true
+
+	override fun rotateCounterClockwise() {
+		polyline.rotateCounterClockwise()
+		updateEndpointViews()
+	}
+
+	override fun rotateClockwise() {
+		polyline.rotateClockwise()
+		updateEndpointViews()
+	}
+
 	/** ---- [EdgeViewImpl] */
 
 	/**

@@ -69,6 +69,9 @@ enum class Rotation(val customName: String, val angle: Double) {
         return Point2D(pivot.x + p.x, pivot.y + p.y)
     }
 
+	fun rotatePointAround(pivot: Point2D, point: Point2D): Point2D =
+		rotatePointAround(pivot, point.x, point.y)
+
     /**
      * Rotates a [RectangularShape] around the specified pivot point (rotation center),
      * both being defined in the same global coordinate system.

@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
-import ch.scorpion.jabbah.base.geom.Geometry
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Shape
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 
 /**
@@ -208,6 +205,14 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		points.clear()
 		points.addAll(buffer)
 		updateLineTerminatorLocations()
+	}
+
+	override fun rotateCounterClockwise() {
+		setPoints(points.map { Rotation.R90.rotatePointAround(getFirstPoint(), it) })
+	}
+
+	override fun rotateClockwise() {
+		setPoints(points.map { Rotation.R270.rotatePointAround(getFirstPoint(), it) })
 	}
 
 	/** ---- [PolylineShape]  */

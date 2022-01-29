@@ -213,4 +213,12 @@ class PolylineDrawable constructor(
 	override fun reverse() {
 		shape.reverse()
 	}
+
+	override fun rotateCounterClockwise() {
+		shape.rotateCounterClockwise()
+	}
+
+	override fun rotateClockwise() {
+		shape.rotateClockwise()
+	}
 }

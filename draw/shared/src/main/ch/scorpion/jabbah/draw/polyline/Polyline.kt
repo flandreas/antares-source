@@ -168,4 +168,10 @@ interface Polyline {
 	 * and vice versa.
 	 */
 	fun reverse()
+
+	/** Rotates by 90 degrees. */
+	fun rotateCounterClockwise()
+
+	/** Rotates by -90 degrees. */
+	fun rotateClockwise()
 }
