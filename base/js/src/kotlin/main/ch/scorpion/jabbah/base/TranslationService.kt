@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.text.PropertiesFileParser
 import kotlinx.browser.window
 import kotlin.js.Promise
 
@@ -16,7 +17,6 @@ class TranslationServiceImpl(
 ) : TranslationService {
 
 	companion object {
-		private val LOG by logger(TranslationService::class)
 		private const val BASE_URL = ".."
 	}
 
@@ -27,26 +27,10 @@ class TranslationServiceImpl(
 		return window
 			.fetch(url)
 			.then { it.text() }
-			.then { parse(it) }
+			.then { PropertiesFileParser.parse(it) }
 			.catch {
 				console.error("Error while loading translations from $url: $it")
 				mapOf()
 			}
-	}
-
-	private fun parse(text: String): Map<String, String> {
-		val translations = mutableMapOf<String, String>()
-		text
-			.lines()
-			.filter { !it.startsWith('#') && it.isNotBlank() }
-			.forEach { line ->
-				try {
-					val (key, value) = line.split('=')
-					translations[key.trim()] = value.trim()
-				} catch (e: Throwable) {
-					LOG.error("Error while parsing translation line '$line': $e")
-				}
-			}
-		return translations
 	}
 }
