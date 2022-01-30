@@ -21,6 +21,14 @@ enum class RotationDirection(val rotation: Rotation) {
  */
 interface Rotatable : Locatable {
 
+	companion object {
+		fun rotate(rotatables: Collection<Rotatable>, direction: RotationDirection, pivot: Point2D? = null) {
+			rotatables.forEach { it.prepareRotateBy(rotatables) }
+			rotatables.forEach { it.rotate(direction, pivot) }
+			rotatables.forEach { it.completeRotateBy() }
+		}
+	}
+
 	/** The unique identification of this [Rotatable] in its containing [DrawableContainer]. */
 	val id: Int
 

@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Rotatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -58,6 +60,16 @@ open class NodeViewImpl<T : Any>(
 			field = value
 			updateGeometry()
 		}
+
+	/** ---- [Rotatable] interface */
+
+	override val rotatable: Boolean get() = true
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		pivot?.let {
+			location = direction.rotation.rotatePointAround(it, location)
+		}
+	}
 
 	/** ---- [Snappable] interface */
 

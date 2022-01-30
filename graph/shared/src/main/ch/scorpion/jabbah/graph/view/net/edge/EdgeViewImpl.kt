@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -541,22 +542,27 @@ open class EdgeViewImpl<T : Any>(
 		}
 		get() = polyline.getFirstPoint()
 
-	override fun prepareMoveBy(components: Collection<Movable>) {
-		val originIfExistsMoves = origin == null || components.contains(origin!!.connectableView as Locatable)
-		val destIfExistsMoves = destination == null || components.contains(destination!!.connectableView as Locatable)
-		val thisMoves = originIfExistsMoves && destIfExistsMoves
+	/** ---- [Movable] interface */
 
-		layout.suspendOriginLayout = originIfExistsMoves && thisMoves
-		layout.suspendDestinationLayout = destIfExistsMoves && thisMoves
+	private fun prepareTransformation(components: Collection<*>) {
+		val originIfExistsTransforms = origin == null || components.contains(origin!!.connectableView as Locatable)
+		val destIfExistsTransforms = destination == null || components.contains(destination!!.connectableView as Locatable)
+		val thisTransforms = originIfExistsTransforms && destIfExistsTransforms
+
+		layout.suspendOriginLayout = originIfExistsTransforms && thisTransforms
+		layout.suspendDestinationLayout = destIfExistsTransforms && thisTransforms
+	}
+
+	private fun canNotTransform(): Boolean =
+		// An EdgeView does only transform if all ConnectableView it is connected to are transformed as well
+		origin != null && !layout.suspendOriginLayout || destination != null && !layout.suspendDestinationLayout
+
+	override fun prepareMoveBy(components: Collection<Movable>) {
+		prepareTransformation(components)
 	}
 
 	override fun moveBy(dx: Double, dy: Double) {
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("moveBy")
-		}
-
-		// An EdgeView does only move if all ConnectableView it is connected to are moved as well
-		if (origin != null && !layout.suspendOriginLayout || destination != null && !layout.suspendDestinationLayout) {
+		if (canNotTransform()) {
 			return
 		}
 
@@ -568,9 +574,31 @@ open class EdgeViewImpl<T : Any>(
 		super<AbstractNetViewElement>.moveBy(dx, dy)
 	}
 
-	override fun completeMoveBy() {
+	private fun completeTransformation() {
 		layout.suspendOriginLayout = false
 		layout.suspendDestinationLayout = false
+	}
+
+	override fun completeMoveBy() {
+		completeTransformation()
+	}
+
+	/** ---- [Rotatable] interface */
+
+	override val rotatable: Boolean get() = true
+
+	override fun prepareRotateBy(components: Collection<Rotatable>) {
+		prepareTransformation(components)
+	}
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		polyline.rotate(direction, pivot)
+		updateEndpointViews()
+		styling.updateBoundingBox()
+	}
+
+	override fun completeRotateBy() {
+		completeTransformation()
 	}
 
 	/** ---- [Snappable] interface: [EdgeView]s aren't snap point sources */
@@ -752,16 +780,6 @@ open class EdgeViewImpl<T : Any>(
 	override val type: String get() = TYPE
 
 	override val deletable: Boolean get() = !underConstruction && super.deletable
-
-	override val rotatable: Boolean get() = true
-
-	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
-		polyline.rotate(direction, pivot)
-		pivot?.let {
-			location = direction.rotation.rotatePointAround(it, location)
-		}
-		updateEndpointViews()
-	}
 
 	/** ---- [EdgeViewImpl] */
 
