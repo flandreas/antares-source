@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.ACTIVE
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.PASSIVE
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.reflect.KClass
@@ -46,6 +47,7 @@ class SchedulerImpl(
 		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
 		private const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
+		private const val SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR = "execution.scheduler.enableSimulationTimeStatusBar"
 	}
 
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
@@ -95,18 +97,31 @@ class SchedulerImpl(
 		}
 	}
 
+	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
+		if (!displaySimulationTime) {
+			clearSimulationTimeStatus()
+		} else {
+			publishSimulationTimeStatus()
+		}
+	}
+
+	private val displaySimulationTime: Boolean get() =
+		isSingleStepMode || isSimulationTimeStatusEnabled && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe
+
 	init {
 		task.bind(this)
 
 		eventBus.register(IssueCollectorEvent::class, issueCollectorListener)
 		eventBus.register(BreakEvent::class, breakListener)
 		eventBus.register(SystemSpeedPauseEvent::class, pauseEventListener)
+		eventBus.register(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
 	}
 
 	override fun dispose() {
 		eventBus.unregister(issueCollectorListener)
 		eventBus.unregister(breakListener)
 		eventBus.unregister(pauseEventListener)
+		eventBus.unregister(systemSpeedCategoryHandler)
 	}
 
 	/** ---- [Scheduler] interface */
@@ -176,7 +191,8 @@ class SchedulerImpl(
 			eventBus.post(StopOnIssueEvent(this, field))
 		}
 
-	override var isSimulationTimeStatusEnabled: Boolean = false
+	override var isSimulationTimeStatusEnabled: Boolean = BaseModule.settings.getBoolean(
+		SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR, false)
 		set(value) {
 			if (field == value) {
 				return
@@ -187,6 +203,7 @@ class SchedulerImpl(
 			} else {
 				clearSimulationTimeStatus()
 			}
+			BaseModule.settings.set(SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR, field)
 			eventBus.post(SimulationTimeStatusEnabledEvent(this))
 		}
 
@@ -360,7 +377,7 @@ class SchedulerImpl(
 	}
 
 	private fun postSchedulerStateEvent() {
-		if (isSimulationTimeStatusEnabled || isSingleStepMode) {
+		if (displaySimulationTime) {
 			publishSimulationTimeStatus()
 		}
 	}

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.actor.Actor
 
 /**
@@ -39,7 +40,8 @@ interface Scheduler : SignalHandler {
 	 * in stepping mode.
 	 * </p>
 	 * Normally, this feature is only enabled in stepping mode due to performance considerations.
-	 * When setting this flag, the [Status] gets also updated when not in stepping mode.
+	 * When setting this flag, the [Status] gets also updated when not in stepping mode, but only
+	 * if [SystemSpeed] is not greater than [SystemSpeedCategory.Observe].
 	 */
 	var isSimulationTimeStatusEnabled: Boolean
 
