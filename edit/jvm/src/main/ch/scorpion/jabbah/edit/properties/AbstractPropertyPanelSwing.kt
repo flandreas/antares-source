@@ -1,13 +1,10 @@
 package ch.scorpion.jabbah.edit.properties
 
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.Settings
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
 import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
@@ -64,10 +61,6 @@ abstract class AbstractPropertyPanelSwing(
 		}
 	}
 
-	private val activeEditorListener = setupActiveEditorListener()
-
-	private val drawingListener = setupDrawingListener()
-
 	init {
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
@@ -77,7 +70,7 @@ abstract class AbstractPropertyPanelSwing(
 			sheet.isDescriptionVisible = BaseModule.settings.getBoolean(descriptionOpenPropertyName, true)
 		}
 
-		title = JLabel()
+		title = JLabel(controller.title)
 		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
 
 		messageTextArea = JTextArea()
@@ -99,27 +92,8 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	override fun dispose() {
-		controller.editor.removePropertyChangeListener(activeEditorListener)
-		controller.editor.removePropertyChangeListener(drawingListener)
-
 		BaseModule.settings.set(descriptionOpenPropertyName, sheet.isDescriptionVisible)
 		BaseModule.settings.set(descriptionSplitLocationPropertyName, sheet.splitterLocation)
-	}
-
-	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = controller.editor.addPropertyChangeListener { event ->
-		if (event.name == Editor.PROP_ACTIVE) {
-			if (controller.editor.active) {
-				setupDefaultProperties()
-			} else {
-				clearProperties()
-			}
-		}
-	}
-
-	private fun setupDrawingListener(): PropertyChangeListener<Any> = controller.editor.view.addPropertyChangeListener { event ->
-		if (event.name == DrawingView.PROP_DRAWING) {
-			setupDefaultProperties()
-		}
 	}
 
 	/** ---- [PropertyPanel] interface */
@@ -142,12 +116,6 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	/** ---- [AbstractPropertyPanelSwing] */
-
-	/**
-	 * Fill with properties of the object to be displayed per default, for example when the [Editor]
-	 * just has become active.
-	 */
-	protected abstract fun setupDefaultProperties()
 
 	private fun showMessage(message: String) {
 		messageTextArea.text = message

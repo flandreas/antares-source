@@ -33,12 +33,14 @@ class ComponentPropertyPanelController(
 
 	/** ---- [AbstractPropertyPanelController] */
 
-	override val description: String?
+	override val description: String
 		get() = when (bean) {
 			null -> ""
 			is Component -> (bean as Component).type
 			else -> bean.toString()
 		}
+
+	override val defaultBean: Any get() = editor.drawing
 
 	/** ---- [ComponentPropertyPanelController] */
 

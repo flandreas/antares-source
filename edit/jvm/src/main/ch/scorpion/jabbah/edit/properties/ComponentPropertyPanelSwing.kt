@@ -20,10 +20,6 @@ class ComponentPropertyPanelSwing(
 
     /** ---- [ComponentPropertyPanelSwing] */
 
-    override fun setupDefaultProperties() {
-	    loadProperties(controller.editor.drawing)
-    }
-
 	override fun handleBeanReplaced() {
 		clearProperties()
 

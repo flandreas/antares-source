@@ -17,8 +17,4 @@ class ScenarioPropertyPanelSwing(
 	init {
 		controller.view = this
 	}
-
-	override fun setupDefaultProperties() {
-		// empty
-	}
 }
