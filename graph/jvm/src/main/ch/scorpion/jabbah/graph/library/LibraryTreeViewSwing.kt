@@ -124,7 +124,10 @@ class LibraryTreeViewSwing(
 		SwingUtilities.invokeLater {
 			val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject === element }
 			if (node != null) {
-				selectionPath = getPath(node)
+				getPath(node).also {
+					selectionPath = it
+					scrollPathToVisible(it)
+				}
 			}
 		}
 	}
