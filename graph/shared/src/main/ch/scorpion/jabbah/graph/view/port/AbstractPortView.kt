@@ -87,12 +87,10 @@ abstract class AbstractPortView<T : Any>(
 	override var ownerRotation: Rotation
 		get() = owner?.rotation ?: Rotation.R0
 		set(value) {
-			if (ownerRotation != value) {
-				invalidate()
-				ownerRotationChanged()
-				invalidate()
-				update()
-			}
+			invalidate()
+			ownerRotationChanged()
+			invalidate()
+			update()
 		}
 
 	override val connectionPoint: Point2D get() = Point2D(connectionPointX, connectionPointY)
