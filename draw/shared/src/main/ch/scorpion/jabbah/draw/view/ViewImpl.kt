@@ -48,6 +48,13 @@ open class ViewImpl<C : InputEventContext>(
 	// Backing property as alternative to 'lateinit' with custom setter.
 	protected var _canvas: Canvas? = null
 
+	/**
+	 * Used to wait drawing this [View] until [Canvas] has been laid out and therefore has a proper [Dimension2D].
+	 * Without this, this [View] would draw initial content before the [defaultZoomStrategy] has been applied,
+	 * followed by drawing it after [defaultZoomStrategy] has been applied, which results in flickering.
+	 * */
+	private var canvasLaidOut: Boolean = false
+
 	override var canvas: Canvas
 		get() = _canvas!!
 		set(value) {
@@ -286,6 +293,10 @@ open class ViewImpl<C : InputEventContext>(
 	}
 
 	override fun draw(context: DrawContext) {
+		if (!canvasLaidOut) {
+			return
+		}
+
 		context.g.save()
 
 		val oldTransform = context.g.transform
@@ -441,6 +452,7 @@ open class ViewImpl<C : InputEventContext>(
 			when (e.name) {
 				Canvas.PROP_DIMENSION -> {
 					space.viewDimension = canvas.dimension
+					canvasLaidOut = space.viewDimension.widthInt > 0 && space.viewDimension.heightInt > 0
 					applyZoomStrategy()
 				}
 				ViewSpace.PROP_AREA -> applyZoomStrategy()

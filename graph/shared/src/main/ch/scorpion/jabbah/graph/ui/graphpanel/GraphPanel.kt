@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
@@ -53,6 +55,7 @@ import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
 class EditedGraphViewEvent(
@@ -225,6 +228,10 @@ class GraphPanelViewController(
 	fun setApplicationData(graphView: GraphView?, editable: Boolean) {
 		isSavableEditable = editable
 		if (graphView == null) {
+			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when
+			// the subsequent drawing gets displayed
+			editor.view.setDrawing(GraphViewModule.graphViewFactory(null) as Drawing<Component>, applyDefaultZoomStrategy = false)
+
 			desktopController.closeAll()
 		} else if (rootGraphView != graphView) {
 			desktopController.showMainOnly()

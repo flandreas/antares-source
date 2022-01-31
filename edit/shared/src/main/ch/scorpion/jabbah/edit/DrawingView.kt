@@ -45,7 +45,7 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	/**
 	 * Contains the [DrawingViewContent] that is currently being displayed by this [DrawingView].
 	 * Set a new [DrawingViewContent] if the [Drawing] and its current selection and highlights should be restored,
-	 * otherwise use the property [drawing] to set a new [Drawing] and to create a new [DrawingViewContent].
+	 * otherwise use [setDrawing] to set a new [Drawing] and to create a new [DrawingViewContent].
 	 * Sends a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
 	 */
 	var content: DrawingViewContent<T>
