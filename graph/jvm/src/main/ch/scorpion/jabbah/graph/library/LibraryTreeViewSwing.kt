@@ -64,7 +64,7 @@ class LibraryTreeViewSwing(
 
 	override fun refresh() {
 		invalidate()
-		validate()
+		repaint()
 		dragEnabled = controller.active
 	}
 
