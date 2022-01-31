@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
@@ -31,7 +32,9 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 
 	    properties.add(name.bind(editor, bean.id))
 	    properties.add(lightColor.bind(editor, bean.id))
-	    properties.add(portScheme.bind(editor, bean.id, editable = !connected))
+	    if (bean.size == Size.LARGE) {
+		    properties.add(portScheme.bind(editor, bean.id, editable = !connected))
+	    }
 	    properties.add(size.bind(editor, bean.id, editable = !connected))
 	    properties.add(hasBorder.bind(editor, bean.id))
     }
