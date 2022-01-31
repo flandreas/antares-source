@@ -65,7 +65,7 @@ class PolylineDrawable constructor(
 
 	override fun draw(context: DrawContext) {
 		if (context.useContextColors) {
-			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
+			drawImpl(context, context.color!!.foregroundColor, if (filled) context.color!!.backgroundColor else null)
 		} else {
 			drawImpl(context, transparent.applyTo(foregroundColor), if (filled) transparent.applyTo(backgroundColor) else null)
 		}
