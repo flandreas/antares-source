@@ -88,9 +88,9 @@ class LibraryPropertiesPanel(
 			0, 1,
 			1, 1,
 			0.0, 0.0,
-			EGBL.WEST,
+			EGBL.NORTHWEST,
 			EGBL.NONE,
-			0, inset, 0, 0
+			4, inset, 0, 0
 		)
 
 		EGBL.add(
