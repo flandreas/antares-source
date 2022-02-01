@@ -23,10 +23,6 @@ class ViewImplZoomPanTest {
 		viewPainterFactory = { SimpleViewPainter(it) },
 		applicationContextHolder = null)
 
-	private val canvas = CanvasMockBuilder()
-		.withDimension(Dimension2D(100, 100))
-		.withView(view)
-
 	@BeforeTest
 	fun setup() {
 		DrawTestRule.configure()
@@ -111,11 +107,16 @@ class ViewImplZoomPanTest {
 	}
 
 	private fun initializeAndDrawView(defaultZoomStrategy: ZoomStrategy? = null) {
+		defaultZoomStrategy?.let { view.zoomStrategy = it }
 		defaultZoomStrategy?.let { view.defaultZoomStrategy = it }
 		view.addDrawable(
 			DrawableMockBuilder()
 				.withBoundingBox(Rectangle2D(0, 0, 20, 10))
 				.build())
+
+		CanvasMockBuilder()
+			.withDimension(Dimension2D(100, 100))
+			.withView(view)
 
 		view.initialize()
 		view.draw(context)
