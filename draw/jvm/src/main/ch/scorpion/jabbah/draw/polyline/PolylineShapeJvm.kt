@@ -9,59 +9,37 @@ import java.awt.geom.Rectangle2D
 import java.util.*
 
 actual object PolylineShapeFactory {
-
 	actual fun create(points: List<ch.scorpion.jabbah.base.geom.Point2D>?): PolylineShape = PolylineShapeJvm(points)
-
 }
+
 /**
  * Adapts [PolylineShape] to the [java.awt.Shape] interface.
  */
 class PolylineShapeJvm private constructor(val shape: PolylineShape) : PolylineShape by shape, java.awt.Shape {
 
-	constructor() : this(PolylineShapeImpl())
-	constructor(points: List<ch.scorpion.jabbah.base.geom.Point2D>?) : this(PolylineShapeImpl(points ?: listOf()))
+	constructor(points: List<ch.scorpion.jabbah.base.geom.Point2D>?)
+		: this(PolylineShapeImpl(points ?: listOf()))
 
 	/** ---- [java.awt.Shape] interface */
 
-	override fun contains(p: Point2D?): Boolean {
-		if (p == null) {
-			return false
-		}
-		return shape.contains(p.x, p.y)
-	}
+	override fun contains(p: Point2D?): Boolean =
+		p?.let { shape.contains(it.x, it.y) } ?: false
 
-	override fun contains(r: Rectangle2D?): Boolean {
-		if (r == null) {
-			return false
-		}
-		return shape.contains(r.x, r.y, r.width, r.height)
-	}
+	override fun contains(r: Rectangle2D?): Boolean =
+		r?.let { shape.contains(it.x, it.y, it.width, it.height) } ?: false
 
-	override fun intersects(r: Rectangle2D?): Boolean {
-		if (r == null) {
-			return false
-		}
-		return shape.intersects(r.x, r.y, r.width, r.height)
-	}
+	override fun intersects(r: Rectangle2D?): Boolean =
+		r?.let { shape.intersects(it.x, it.y, it.width, it.height) } ?: false
 
-	override fun getBounds2D(): Rectangle2D {
-		val r = shape.boundingBox
-		return Rectangle2D.Double(r.x, r.y, r.width, r.height)
-	}
+	override fun getBounds2D(): Rectangle2D =
+		shape.boundingBox.let { Rectangle2D.Double(it.x, it.y, it.width, it.height) }
 
-	override fun getPathIterator(at: AffineTransform?): PathIterator {
-		return PolylineIterator(at)
-	}
+	override fun getBounds(): Rectangle =
+		shape.boundingBox.let {  Rectangle(it.x.toInt(), it.y.toInt(), it.width.toInt(), it.height.toInt()) }
 
-	override fun getPathIterator(at: AffineTransform?, flatness: Double): PathIterator {
-		return PolylineIterator(at)
-	}
+	override fun getPathIterator(at: AffineTransform?): PathIterator = PolylineIterator(at)
 
-	override fun getBounds(): Rectangle {
-		val r = shape.boundingBox
-		return Rectangle(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt())
-	}
-
+	override fun getPathIterator(at: AffineTransform?, flatness: Double): PathIterator = PolylineIterator(at)
 
 	/**
 	 * This class is needed by [Graphics2D] in the rendering process.
@@ -116,13 +94,9 @@ class PolylineShapeJvm private constructor(val shape: PolylineShape) : PolylineS
 			return if (index == 0) PathIterator.SEG_MOVETO else PathIterator.SEG_LINETO
 		}
 
-		override fun getWindingRule(): Int {
-			return PathIterator.WIND_NON_ZERO
-		}
+		override fun getWindingRule(): Int = PathIterator.WIND_NON_ZERO
 
-		override fun isDone(): Boolean {
-			return index >= shape.pointsCount
-		}
+		override fun isDone(): Boolean = index >= shape.pointsCount
 
 		override fun next() {
 			index++

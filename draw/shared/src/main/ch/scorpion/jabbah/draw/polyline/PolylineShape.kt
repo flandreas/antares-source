@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Geometry
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 
@@ -58,12 +61,12 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			return bbox
 		}
 
-	override fun contains(x: Double, y: Double): Boolean =
-		intersects(
-			x - CONTAINS_SENSITIVITY,
-			y - CONTAINS_SENSITIVITY,
-			2 * CONTAINS_SENSITIVITY,
-			2 * CONTAINS_SENSITIVITY)
+	override fun contains(x: Double, y: Double): Boolean = containsInArea(x, y)
+		|| intersects(
+		x - CONTAINS_SENSITIVITY,
+		y - CONTAINS_SENSITIVITY,
+		2 * CONTAINS_SENSITIVITY,
+		2 * CONTAINS_SENSITIVITY)
 
 	override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean = false
 
@@ -264,4 +267,73 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	/** Checks whether the point at the specified index has the same y coordinate as its two neighbours.*/
 	private fun isCoparallelY(index: Int): Boolean =
 		Geometry.equal(points[index].y, points[index - 1].y) && Geometry.equal(points[index].y, points[index + 1].y)
+
+	// From java.awt.Polygon.contains(double, double)
+	private fun containsInArea(x: Double, y: Double): Boolean {
+		if (points.size <= 2 || !boundingBox.contains(x, y)) {
+			return false
+		}
+		var hits = 0
+		var lastX: Double
+		var lastY: Double
+		var curX = points.last().x
+		var curY = points.last().y
+
+
+		var i = -1
+		while (i < points.size - 1) {
+			i++
+			lastX = curX
+			lastY = curY
+
+			curX = points[i].x
+			curY = points[i].y
+
+			if (curY == lastY) {
+				continue
+			}
+
+			var leftX: Int = if (curX < lastX) {
+				if (x >= lastX) {
+					continue
+				}
+				curX.toInt()
+			} else {
+				if (x >= curX) {
+					continue
+				}
+				lastX.toInt()
+			}
+
+			var test1: Double
+			var test2: Double
+			if (curY < lastY) {
+				if (y < curY || y >= lastY) {
+					continue
+				}
+				if (x < leftX) {
+					hits++
+					continue
+				}
+				test1 = x - curX
+				test2 = y - curY
+			} else {
+				if (y < lastY || y >= curY) {
+					continue
+				}
+				if (x < leftX) {
+					hits++
+					continue
+				}
+				test1 = x - lastX
+				test2 = y - lastY
+			}
+
+			if (test1 < test2 / (lastY - curY) * (lastX - curX)) {
+				hits++
+			}
+		}
+
+		return hits.and(1) != 0
+	}
 }
