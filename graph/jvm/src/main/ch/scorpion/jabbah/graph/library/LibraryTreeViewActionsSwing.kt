@@ -45,7 +45,11 @@ class LibraryTreeViewActionsSwing(
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
 	private val renameProjectMetaGraphAction = RenameMetaGraphAction(controller, projectOperationTarget)
 
-	private val uploadProjectAction = UploadProjectAction(controller, projectOperationTarget)
+	private val uploadProjectAction = if (EditAuthModule.userHolder.user.isDeveloper) {
+		UploadProjectAction(controller, projectOperationTarget)
+	} else {
+		null
+	}
 
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
@@ -133,7 +137,7 @@ class LibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
-		if (EditAuthModule.userHolder.user.isDeveloper) {
+		if (uploadProjectAction != null) {
 			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
 		}
 		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
