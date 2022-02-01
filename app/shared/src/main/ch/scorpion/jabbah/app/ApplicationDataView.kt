@@ -38,6 +38,15 @@ interface ApplicationDataView : UIView {
 	fun defineSavableForLoading(): Savable?
 
 	fun showModalMessage(type: ModalMessageType, title: String, message: String)
+
+	/**
+	 * Register application usage if supported and required by the current platform.
+	 * Called if [ApplicationData] is opened. Tracks usage if previous registration is
+	 * older than a certain time. Used to track usage even if users seldom restart the application.
+	 *
+	 * Part of the [UIView] because the controller is platform agnostic.
+	 */
+	fun registerKeepAliveUsage()
 }
 
 /**

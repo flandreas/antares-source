@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import java.math.BigInteger
 import java.net.URI
 import java.net.URLEncoder
@@ -25,6 +26,16 @@ interface ApplicationUsageService {
 	 * that has to conform with current data privacy laws.
 	 */
 	fun registerUsage(applicationId: String? = null, userIdentifier: String? = null)
+
+	/**
+	 * Calls [registerUsage] if the last registration happened more than one day ago.
+	 * This allows for tracking accurate usage data even if user keep the application running
+	 * for a long period of time, without ever restarting it.
+	 *
+	 * Call this method from withing the using application at a location that represents a typical
+	 * user interaction, such as opening a new document.
+	 */
+	fun keepAlive(applicationId: String? = null, userIdentifier: String? = null)
 }
 
 class RailwayAppUsageServiceImpl(
@@ -36,13 +47,31 @@ class RailwayAppUsageServiceImpl(
 		const val PROP_PING_URL = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.pingUrl"
 		const val PROP_PING_APPLICATION_ID = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.applicationId"
 		const val PROP_USER_IDENTIFIER = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.userId"
+
+		// 1 day
+		private const val KEEP_ALIVE_MILLIS = 60 * 60 * 24 * 1_000
 	}
 
+	private var lastPingMillis: Long? = null
+
 	override fun registerUsage(applicationId: String?, userIdentifier: String?) {
+		// Register even if call fails to avoid retrying too often
+		lastPingMillis = System.currentTimeMillis()
+
+		if (EditAuthModule.userHolder.user.isDeveloper) {
+			return
+		}
+
 		try {
 			sendPingRequest(applicationId, userIdentifier)
 		} catch (e: Throwable) {
 			// Ignore
+		}
+	}
+
+	override fun keepAlive(applicationId: String?, userIdentifier: String?) {
+		if (lastPingMillis == null || System.currentTimeMillis() - lastPingMillis!! >= KEEP_ALIVE_MILLIS) {
+			registerUsage(applicationId, userIdentifier)
 		}
 	}
 

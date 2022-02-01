@@ -25,4 +25,8 @@ class ApplicationDataViewJs : ApplicationDataView {
 	override fun showModalMessage(type: ModalMessageType, title: String, message: String) {
 		// TODO
 	}
+
+	override fun registerKeepAliveUsage() {
+		// Not used on JS platform
+	}
 }

@@ -90,6 +90,8 @@ class GraphDataViewController(
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
 		try {
 			LOG.info("Open '${element.name.value}'")
+			view.registerKeepAliveUsage()
+
 			open {
 				val library = element.library!!
 				library.libraryService.loadMetaGraph(library, element)

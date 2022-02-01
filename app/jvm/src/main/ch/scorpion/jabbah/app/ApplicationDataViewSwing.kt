@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
@@ -81,6 +82,10 @@ class ApplicationDataViewSwing(
 			JOptionPane.DEFAULT_OPTION,
 			mapMessageType(type)
 		)
+	}
+
+	override fun registerKeepAliveUsage() {
+		AppModuleJvm.applicationUsageService.keepAlive()
 	}
 
 	private fun createFileFilter(): FileFilter {

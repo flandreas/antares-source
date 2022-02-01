@@ -52,9 +52,7 @@ abstract class AbstractDesktopApplicationSwing(
 	override fun init() {
 		super.init()
 
-		if (!EditAuthModule.userHolder.user.isDeveloper) {
-			registerApplicationUsage()
-		}
+		registerApplicationUsage()
 
 		ApplicationDataViewSwing(controller, fileExtension, displayName)
 
