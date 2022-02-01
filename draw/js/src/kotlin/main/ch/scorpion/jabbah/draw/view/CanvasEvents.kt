@@ -45,8 +45,8 @@ internal class MouseEventJs(
 
 	override fun toString(): String = "MouseEvent $type"
 
-	private fun convertEventType(): MouseEventType {
-		return when (event.type) {
+	private fun convertEventType(): MouseEventType =
+		when (event.type) {
 			"click" -> MouseEventType.CLICKED
 			"mousedown" -> MouseEventType.PRESSED
 			"mouseup" -> MouseEventType.RELEASED
@@ -54,18 +54,16 @@ internal class MouseEventJs(
 			"mouseleave" -> MouseEventType.EXITED
 			"mousemove" -> if (pressed) MouseEventType.DRAGGED else MouseEventType.MOVED
 			"wheel" -> MouseEventType.WHEEL_ROTATED
-			else -> MouseEventType.MOVED // TODO what to do else?
+			else -> MouseEventType.UNKNOWN
 		}
-	}
 
-	private fun convertButton(): Button {
-		return when (event.button.toInt()) {
+	private fun convertButton(): Button =
+		when (event.button.toInt()) {
 			0 -> Button.BUTTON1
 			1 -> Button.BUTTON2
 			2 -> Button.BUTTON3
 			else -> Button.NONE
 		}
-	}
 
 	private fun convertModifiers(): Int {
 		var modifiers = 0

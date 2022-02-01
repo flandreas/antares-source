@@ -16,7 +16,6 @@ import java.awt.Graphics2D
 import java.awt.MouseInfo
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import java.awt.event.ComponentListener
 import java.awt.event.MouseWheelEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -252,7 +251,7 @@ private class MouseEventJvm(
 			AwtMouseEvent.BUTTON1 -> Button.BUTTON1
 			AwtMouseEvent.BUTTON2 -> Button.BUTTON2
 			AwtMouseEvent.BUTTON3 -> Button.BUTTON3
-			else -> throw IllegalArgumentException("unknown button $jvmButton")
+			else -> Button.UNKNOWN
 		}
 
 	private fun convertEventType(id: Int): MouseEventType =
@@ -265,7 +264,7 @@ private class MouseEventJvm(
 			AwtMouseEvent.MOUSE_MOVED -> MouseEventType.MOVED
 			AwtMouseEvent.MOUSE_DRAGGED -> MouseEventType.DRAGGED
 			AwtMouseEvent.MOUSE_WHEEL -> MouseEventType.WHEEL_ROTATED
-			else -> throw IllegalArgumentException("unknown AWT mouse event id $id")
+			else -> MouseEventType.UNKNOWN
 		}
 }
 
@@ -289,7 +288,7 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 			AwtKeyEvent.KEY_TYPED -> KeyEventType.TYPED
 			AwtKeyEvent.KEY_PRESSED -> KeyEventType.PRESSED
 			AwtKeyEvent.KEY_RELEASED -> KeyEventType.RELEASED
-			else -> throw IllegalArgumentException("unknown AWT key event id $id")
+			else -> KeyEventType.UNKNOWN
 		}
 }
 

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.event
 
 enum class KeyEventType {
-	TYPED, PRESSED, RELEASED
+	TYPED, PRESSED, RELEASED, UNKNOWN
 }
 /**
  * An event which indicates that the user has pressed a key.
