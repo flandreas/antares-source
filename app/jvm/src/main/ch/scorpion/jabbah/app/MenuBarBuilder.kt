@@ -48,7 +48,11 @@ open class MenuBarBuilder(
     init {
         fillFileMenu(fileMenu)
         fillEditMenu(editMenu)
+
         fillViewMenu(viewMenu)
+	    viewMenu.addSeparator()
+	    viewMenu.add(JMenuItem(ActionWrapperSwing(CloseViewAction())))
+
 	    fillHelpMenu(helpMenu)
         fillMenuBar(menuBar)
 
@@ -104,8 +108,6 @@ open class MenuBarBuilder(
     }
 
     protected open fun fillViewMenu(menu: JMenu) {
-	    menu.add(JMenuItem(ActionWrapperSwing(CloseViewAction())))
-	    menu.addSeparator()
 	    addZoomActions(menu)
         menu.addSeparator()
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GridAction())))
