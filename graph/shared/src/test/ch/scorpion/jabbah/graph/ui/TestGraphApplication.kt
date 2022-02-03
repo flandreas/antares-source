@@ -26,6 +26,7 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 	override val displayName: String = "Test"
 
 	override fun start() {
+		GraphDataViewMockBuilder(controller as GraphDataViewController)
 		openInitialSavable()
 	}
 

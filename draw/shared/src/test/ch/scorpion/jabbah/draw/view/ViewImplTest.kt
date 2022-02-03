@@ -28,15 +28,16 @@ class ViewImplTest {
 		applicationContextHolder = null
 	)
 
-	private val canvas = CanvasMockBuilder()
-		.withView(view)
-		.withDimension(Dimension2D(1000, 1000))
+	private lateinit var canvas: CanvasMockBuilder
 
 	private val container = DrawableContainerImpl<Drawable>()
 
 	@BeforeTest
 	fun before() {
 		DrawTestRule.configure()
+		canvas = CanvasMockBuilder()
+			.withDimension(Dimension2D(1000, 1000))
+			.withView(view)
 		view.addDrawable(container)
 	}
 

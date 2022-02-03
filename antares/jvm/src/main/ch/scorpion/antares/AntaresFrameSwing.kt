@@ -30,7 +30,7 @@ class AntaresFrameSwing(
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem {
 		return AddressableContentGraphDesktopItem(
 			controller = application.controller,
-			addressable = request.addressable,
+			addressableId = request.addressable.id,
 			title = request.name,
 			applicationContextHolder = controller.applicationContextHolder,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
@@ -44,7 +44,7 @@ class AntaresFrameSwing(
 			controller = application.controller,
 			applicationContextHolder = controller.applicationContextHolder,
 			name = request.name,
-			addressable = request.addressable,
+			addressableId = request.addressable.id,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
 			readonly = request.readonly)
 	}

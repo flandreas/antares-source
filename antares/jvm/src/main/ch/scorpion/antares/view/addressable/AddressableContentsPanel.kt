@@ -3,21 +3,20 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableClearCommand
 import ch.scorpion.antares.model.addressable.MemoryDump
+import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -27,65 +26,19 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.*
 
-
-/** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
-class AddressableContentGraphDesktopItem(
-	controller: ApplicationDataViewController,
-	addressable: Addressable,
-	title: String,
-	applicationContextHolder: GraphApplicationContextHolder,
-	cmdManager: CommandManager = EditModule.commandManager,
-	readonly: Boolean = false,
-	contextColor: CompositeColor
-) : AbstractGraphDesktopItemPanel() {
-
-	private val memoryContentPanel = AddressableContentsPanel(controller, applicationContextHolder, addressable, cmdManager, readonly)
-
-	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
-
-	init {
-		buildUI(contextColor)
-	}
-
-	private fun buildUI(contextColor: CompositeColor) {
-		layout = BorderLayout()
-		add(headerPanel, BorderLayout.NORTH)
-		add(memoryContentPanel, BorderLayout.CENTER)
-		super.contextColor = contextColor
-	}
-
-	/** ---- [GraphDesktopViewItem] */
-
-	override val drawingView: DrawingView<GraphView>?
-		get() = null
-
-	override fun disposeItem() {
-		memoryContentPanel.dispose()
-	}
-
-	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
-
-	override fun addContextColorBorder(color: Color) {
-		memoryContentPanel.border = createContextColorBorder(color)
-	}
-
-	override fun removeContextColorBorder() {
-		memoryContentPanel.border = null
-	}
-
-	override fun createCloseRequest(): Any = GraphDesktopViewItemCloseRequest(this, false)
-}
-
 /**
  * Displays the contents of an [Addressable] using a [AddressableDisplayPanel], along with [Action]s for importing,
- * exporting and resetting the memory contents..
+ * exporting and resetting the memory contents.
+ *
+ * Must not keep reference to [Addressable] in order to deal with changing snapshots due to [Command] execution.
  */
 class AddressableContentsPanel(
 	private val controller: ApplicationDataViewController,
 	applicationContextHolder: GraphApplicationContextHolder,
-	private val addressable: Addressable,
+	private val addressableId: Int,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
 ) : JPanel() {
 
@@ -99,12 +52,12 @@ class AddressableContentsPanel(
 			controller: ApplicationDataViewController,
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
-			addressable: Addressable,
+			addressableId: Int,
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
-				.content { dialog -> AddressableContentsPanel(controller, applicationContextHolder, addressable, cmdManager, readonly) { dialog.dispose()} }
+				.content { dialog -> AddressableContentsPanel(controller, applicationContextHolder, addressableId, cmdManager, readonly) { dialog.dispose()} }
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
@@ -112,7 +65,13 @@ class AddressableContentsPanel(
 		}
 	}
 
+	private val graphView: GraphView get() = (controller.data!!.content as MetaGraph).graph.graphView
+	private val addressable: Addressable get() = graphView.graph!!.withId(addressableId) as Addressable
+
 	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly, applicationContextHolder, controller)
+
+	/** React to snapshot changes. */
+	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { updateAddressableListener() }
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
@@ -121,16 +80,27 @@ class AddressableContentsPanel(
 		}
 	}
 
+	/** The [Addressable] listened to by [addressableListener]. Must be updated with snapshot changes. */
+	private var listenedAddressable: Addressable = addressable
+
 	var closeButton: JButton? = null
 
 	init {
 		addressable.addGraphElementListener(addressableListener)
+		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 		buildUI(readonly)
 	}
 
 	fun dispose() {
-		addressable.removeGraphElementListener(addressableListener)
+		listenedAddressable.removeGraphElementListener(addressableListener)
+		eventBus.unregister(applicationDataContentHandler)
 		memoryDisplayPanel.dispose()
+	}
+
+	private fun updateAddressableListener() {
+		listenedAddressable.removeGraphElementListener(addressableListener)
+		listenedAddressable = addressable
+		listenedAddressable.addGraphElementListener(addressableListener)
 	}
 
 	/** ---- [AddressableContentsPanel] */
