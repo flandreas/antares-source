@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
@@ -106,19 +107,24 @@ interface GraphViewConnectService {
 	/**
 	 * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of [newEdgeView],
 	 * and connects the [NodeView] with a destination [Port], if available.
-	 * Adds the [newEdgeView] to the [graphView].
+	 * Adds the [newEdgeView] to the [graphView] if not already contained.
 	 *
 	 * @param newEdgeViewEndpointType the [EdgeViewEndpointType] to connect [newEdgeView] with the created [NodeView]
 	 * @param otherNewEdgeViewPortView the [PortView] to connect the end of [newEdgeView] that is not connected to the [NodeView]
+	 * @param joinNetViews if `true`, the [NetView] of [newEdgeView] is joined into the [NetView] of [splitEdgeView].
+	 * Provide `false` if [newEdgeView] is a solitary object not being part of any complex [NetView], e.g. if [newEdgeView]
+	 * has just been created to connect a [PortView] with an existing [EdgeView].
 	 */
 	fun <T : Any> split(
 		graphView: GraphView,
 		splitEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
+		splitLocation: Point2D,
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 		otherNewEdgeViewPortView: PortView<T>?,
-		tailEdgeView: EdgeView<T>? = null
+		tailEdgeView: EdgeView<T>? = null,
+		joinNetViews: Boolean
 	): SplitEdgeViewResult<T>
 
 	/**

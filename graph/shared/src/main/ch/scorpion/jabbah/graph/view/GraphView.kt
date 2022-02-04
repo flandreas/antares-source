@@ -2,10 +2,6 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.dsl.Parser
-import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.Symbol
-import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
@@ -47,6 +43,9 @@ interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
 	var currentScenarioStep: ScenarioStep?
+
+	/** The number of [NetViews][NetView] of this [GraphView]. Mainly for testing. */
+	val netViewsCount: Int
 
 	/**
 	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
@@ -116,4 +115,13 @@ interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** Returns all [SubGraphVerticeView] that this [GraphView] contains.*/
 	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>>
+
+	/**
+	 * Removes the specified [NetView] from this [GraphView].
+	 * This should only be used if [NetViews][NetView] are joined as a result of complex operations.
+	 * In normal operations, [NetViews][NetView] are removed as the result of removing [NetViewElement], and
+	 * that is covered internally by implementations of [GraphView].
+	 */
+	fun removeNetView(netView: NetView<*>)
+
 }

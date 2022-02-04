@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -134,14 +135,15 @@ class GraphViewConnectServiceImpl(
 		graphView: GraphView,
 		splitEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
+		splitLocation: Point2D,
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType,
 		otherNewEdgeViewPortView: PortView<T>?,
-		tailEdgeView: EdgeView<T>?
+		tailEdgeView: EdgeView<T>?,
+		joinNetViews: Boolean
 	): SplitEdgeViewResult<T> {
 		LOG.trace("split EdgeView ${splitEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
-		val splitLocation = newEdgeViewEndpointType.getLocation(newEdgeView)
 		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>) as NodeView<T>
 		graphView.add(nodeView)
 
@@ -163,9 +165,12 @@ class GraphViewConnectServiceImpl(
 		connectToOrigin(tail, Connection(nodeView))
 
 		// Connect newEdgeView
+		val oldNet = newEdgeView.net
 		newEdgeView.net = splitEdgeView.net
 
-		graphView.add(newEdgeView)
+		if (!graphView.contains(newEdgeView)) {
+			graphView.add(newEdgeView)
+		}
 
 		when (newEdgeViewEndpointType) {
 			EdgeViewEndpointType.ORIGIN -> {
@@ -180,6 +185,12 @@ class GraphViewConnectServiceImpl(
 					connectToOrigin(newEdgeView, Connection(otherNewEdgeViewPortView.owner!!, otherNewEdgeViewPortView.port))
 				}
 			}
+		}
+
+		if (joinNetViews) {
+			splitEdgeView.netView!!.combine(newEdgeView.netView!!)
+			graphView.graph?.remove(oldNet!!)
+			graphView.removeNetView(newEdgeView.netView!!)
 		}
 
 		return SplitEdgeViewResult(

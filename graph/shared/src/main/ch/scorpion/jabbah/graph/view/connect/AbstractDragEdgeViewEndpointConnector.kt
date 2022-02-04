@@ -1,13 +1,21 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -17,8 +25,13 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  * target [PortView] or leave the edited [EdgeView] open-ended.
  */
 abstract class AbstractDragEdgeViewEndpointConnector(
+	protected val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	draggedEndpointType: EdgeViewEndpointType
 ) : AbstractConnector(draggedEndpointType) {
+
+	companion object {
+		private val LOG by logger(AbstractDragEdgeViewEndpointConnector::class)
+	}
 
 	/** The location where dragging started. */
 	protected var oldLocation = Point2D.ZERO
@@ -29,7 +42,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 			state("sense") {
 				transitTo("insideStart") {
-					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location)}
+					given { mouseMoved(it) && insideStart(it.location)}
 				}
 			}
 
@@ -37,36 +50,39 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				onEntry { displayPortViewHighlight(it) }
 				onExit { removePortViewHighlight() }
 				transitTo("insideStart") {
-					given { StateMachineInputEventHandler.mouseMoved(it) && insideStart(it.location) }
+					given { mouseMoved(it) && insideStart(it.location) }
 				}
 				transitTo("sense") {
-					given { StateMachineInputEventHandler.mouseMoved(it) && !insideStart(it.location) }
+					given { mouseMoved(it) && !insideStart(it.location) }
 				}
 				transitTo("drag") {
-					given { StateMachineInputEventHandler.mouseLeftPressed(it) }
+					given { mouseLeftPressed(it) }
 					onTransit { beginDragging(it) }
 				}
 				transitTo("sense") {
-					given { StateMachineInputEventHandler.altReleased(it) }
+					given { altReleased(it) }
 				}
 			}
 
 			state("drag") {
 				transitTo("insideTargetPortView") {
-					given { StateMachineInputEventHandler.mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+				}
+				transitTo("insideTargetEdgeView") {
+					given { mouseDragged(it) && insideTargetEdgeView(it) }
 				}
 				transitTo("drag") {
-					given { StateMachineInputEventHandler.mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it)}
+					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it)}
 					onTransit { moveEdgeViewEndpoint(it) }
 				}
 				transitTo("draggedOpen") {
-					given { StateMachineInputEventHandler.mouseLeftReleased(it) }
+					given { mouseLeftReleased(it) }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
 				}
 				transitTo("drag") {
-					given { StateMachineInputEventHandler.altReleased(it) }
+					given { altReleased(it) }
 				}
 			}
 
@@ -74,17 +90,35 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				onEntry { snapToTargetPortView(it) }
 				onExit { removePortViewHighlight() }
 				transitTo("insideTargetPortView") {
-					given { StateMachineInputEventHandler.mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
 				transitTo("drag") {
-					given { StateMachineInputEventHandler.mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
+					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 				}
 				transitTo("connected") {
-					given { StateMachineInputEventHandler.mouseLeftReleased(it) }
+					given { mouseLeftReleased(it) }
 				}
 				transitTo("cancelled") {
 					given { escapePressed(it) }
 				}
+			}
+
+			state("insideTargetEdgeView") {
+				onEntry { snapToTargetEdgeView(it) }
+				onExit { removePortViewHighlight() }
+				stayIf({ mouseDragged(it) && insideTargetEdgeView(it) }) {
+					onTransit { snapToTargetEdgeView(it) }
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideTargetEdgeView(it) }
+				}
+				transitTo("connectedToEdge") {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo("cancelled") {
+					given { escapePressed(it) }
+				}
+				stayOtherwise()
 			}
 
 			state("draggedOpen") {
@@ -101,6 +135,14 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					edgeView?.underConstruction = false
 					removePortViewHighlight()
 					completeDragConnecting(it)
+					reset()
+				}
+			}
+
+			state("connectedToEdge") {
+				onEntry {
+					edgeView?.underConstruction = false
+					completeConnectingToEdgeView(it)
 					reset()
 				}
 			}
@@ -145,5 +187,32 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		oldLocation = getEndpointView().location
 		context.drawingView().selectionManager.deselectAll()
 		context.drawingView().selectionManager.select(edgeView!!)
+	}
+
+	private fun completeConnectingToEdgeView(context: EditInputEventContext) {
+		if (edgeView == null) {
+			LOG.warn("Illegal State: edgeView in completeConnectingToEdgeView is null")
+			cancel(context.editor)
+			return
+		}
+
+		if (targetEdgeView == null || targetEdgeViewSegmentIndex == null) {
+			cancel(context.editor)
+			return
+		}
+
+		context.editor.commandManager.execute(SplitEdgeViewCommand(
+			editor = context.editor,
+			baseKey = "graph.command.combineEdgeViews",
+			connectService = connectService,
+			splitEdgeViewId = targetEdgeView!!.id,
+			splitLocation = draggedEndpointType.getLocation(edgeView!!),
+			segmentIndex = targetEdgeViewSegmentIndex!!,
+			newEdgeViewProvider = NewEdgeViewAtSplitRetrieveProvider(context.editor, edgeView!!.id),
+			newEdgeViewEndpointType = draggedEndpointType,
+			targetConnectableViewId = null,
+			targetPortId = null,
+			joinNetViews = true
+		))
 	}
 }

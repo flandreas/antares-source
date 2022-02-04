@@ -8,8 +8,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
 class DragEdgeViewOriginConnector(
-	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
-) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.ORIGIN) {
+	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
+) : AbstractDragEdgeViewEndpointConnector(connectService, EdgeViewEndpointType.ORIGIN) {
 
 	companion object {
 		private val LOG by logger(DragEdgeViewOriginConnector::class)

@@ -53,5 +53,11 @@ interface Net<T: Any> : GraphElement {
 	 */
 	fun splitOff(ports: Set<Port<T>>): Net<T>
 
+	/**
+	 * Unconnects all [Ports][Port] in [other] and connects them with this [Net].
+	 * Does NOT remove [other] from its owning [Graph]. This is the responsibility of calling objects.
+	 */
+	fun combine(other: Net<T>)
+
 }
 

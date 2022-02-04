@@ -203,7 +203,15 @@ class GraphViewConnectServiceImplTest {
 		val newEv = edgeViewFactory.createEdgeView(ev.netView!!)
 		newEv.addSegmentPoint(Point2D(150, 100))
 
-		val result = service.split(gv, ev, 0, newEv, ORIGIN, null)
+		val result = service.split(
+			gv,
+			ev,
+			0,
+			ORIGIN.getLocation(newEv),
+			newEv,
+			ORIGIN,
+			null,
+			joinNetViews = false)
 
 		// Model assertions
 		assertEquals(2, gv.graph!!.elementsCount)
@@ -285,7 +293,7 @@ class GraphViewConnectServiceImplTest {
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val inputPort = vv.model.getInput<Boolean>()
-		return service.split(gv, splitEdgeView, 0, newEdgeView, ORIGIN, vv.getPortView(inputPort))
+		return service.split(gv, splitEdgeView, 0, ORIGIN.getLocation(newEdgeView), newEdgeView, ORIGIN, vv.getPortView(inputPort), joinNetViews = false)
 	}
 
 	private fun splitToOutput(
@@ -294,6 +302,6 @@ class GraphViewConnectServiceImplTest {
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val outputPort = vv.model.getOutput<Boolean>()
-		return service.split(gv, splitEdgeView, 0, newEdgeView, ORIGIN, vv.getPortView(outputPort))
+		return service.split(gv, splitEdgeView, 0, ORIGIN.getLocation(newEdgeView), newEdgeView, ORIGIN, vv.getPortView(outputPort), joinNetViews = false)
 	}
 }

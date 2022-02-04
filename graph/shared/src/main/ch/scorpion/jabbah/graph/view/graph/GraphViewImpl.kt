@@ -368,7 +368,9 @@ open class GraphViewImpl(
 		}
 	}
 
-	private fun removeNetView(netView: NetView<Any>) {
+	override val netViewsCount: Int get() = netViewMap.size
+
+	override fun removeNetView(netView: NetView<*>) {
 		netViewMap.remove(netView.net)
 	}
 

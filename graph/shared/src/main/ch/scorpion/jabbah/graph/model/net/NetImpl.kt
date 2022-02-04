@@ -95,6 +95,13 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		return newNet
 	}
 
+	override fun combine(other: Net<T>) {
+		for (port in other.ports.toList()) {
+			other.unconnect(port)
+			connect(port)
+		}
+	}
+
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {

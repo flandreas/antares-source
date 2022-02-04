@@ -4,10 +4,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter.displayPortViewHighlight
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
@@ -25,9 +25,16 @@ abstract class AbstractConnector(
 	/** The found target [PortView], if any. */
 	var targetPortView: PortView<*>? = null
 
+	/** The found target [EdgeView], if any. */
+	protected var targetEdgeView: EdgeView<*>? = null
+
+	protected var targetEdgeViewSegmentIndex: Int? = null
+
 	protected open fun reset() {
 		edgeView = null
 		targetPortView = null
+		targetEdgeView = null
+		targetEdgeViewSegmentIndex = null
 	}
 
 	protected fun displayPortViewHighlight(context: EditInputEventContext, location: Point2D, alternativeView: Boolean = false) {
@@ -84,7 +91,30 @@ abstract class AbstractConnector(
 		targetPortView = null
 	}
 
-	protected fun escapePressed(context: EditInputEventContext): Boolean {
-		return StateMachineInputEventHandler.escapePressed(context)
+	protected fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
+		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
+		if (destDrawable == null || destDrawable !is EdgeView<*>) {
+			clearTargetEdgeView()
+			return false
+		}
+
+		clearTargetPortView()
+		targetEdgeView = destDrawable
+
+		return true
+	}
+
+	protected fun snapToTargetEdgeView(context: EditInputEventContext) {
+		targetEdgeView!!.snap(context.x, context.y, context.editor.view.grid)?.let { snapResult ->
+			targetEdgeViewSegmentIndex = snapResult.segmentIndex
+			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
+			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
+			draggedEndpointType.layout(edgeView!!, null)
+			edgeView!!.layout
+		}
+	}
+
+	private fun clearTargetEdgeView() {
+		targetEdgeView = null
 	}
 }

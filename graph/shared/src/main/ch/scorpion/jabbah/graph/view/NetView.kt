@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.io.Storable
@@ -25,6 +26,8 @@ interface NetView<T : Any> : Storable, Bean {
 
     val net: Net<T>
 
+	val size: Int
+
     val isEmpty: Boolean
 
     var style: NetViewStyle
@@ -43,4 +46,13 @@ interface NetView<T : Any> : Storable, Bean {
 	 * newly created [NetView], including reconnecting these [Port]s to the new [Net].
 	 */
 	fun splitOff(ports: Set<Port<T>>): NetView<T>
+
+	/**
+	 * Combines this [NetView] with the [other] [NetView] by combining their [Nets][Net]
+	 * and moving all [NetViewElement] of [other] to this [NetView].
+	 *
+	 * Does NOT remove [other] from its owning [GraphView] and NOT remove [other]'s [Net] from its owning [Graph].
+	 * This is responsibility of objects calling this method.
+	 */
+	fun combine(other: NetView<T>)
 }

@@ -16,9 +16,9 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 abstract class AbstractReconnectConnector(
 	draggedEndpointType: EdgeViewEndpointType,
-	protected val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
+	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : AbstractDragEdgeViewEndpointConnector(draggedEndpointType) {
+) : AbstractDragEdgeViewEndpointConnector(connectService, draggedEndpointType) {
 
 	companion object {
 		const val MIN_DRAG_DISTANCE = 10

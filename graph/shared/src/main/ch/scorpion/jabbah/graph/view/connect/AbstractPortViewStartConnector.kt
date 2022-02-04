@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftDoubleClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
@@ -47,11 +48,6 @@ abstract class AbstractPortViewStartConnector(
 	/** The [PortView] in [startVerticeView] from which the new connection originates.  */
 	protected var startPortView: PortView<*>? = null
 		private set
-
-	/** The found target [EdgeView], if any. */
-	private var targetEdgeView: EdgeView<*>? = null
-
-	private var targetEdgeViewSegmentIndex: Int? = null
 
 	/**
 	 * The indices of the points in [edgeView] that have been manually set (i.e. adjusted) by the user.
@@ -308,8 +304,6 @@ abstract class AbstractPortViewStartConnector(
 		startVerticeView = null
 		startPortView = null
 		adjustment = null
-		targetEdgeView = null
-		targetEdgeViewSegmentIndex = null
 	}
 
 	private fun insideStartPortView(location: Point2D): Boolean {
@@ -348,33 +342,6 @@ abstract class AbstractPortViewStartConnector(
 		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
-	}
-
-	private fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*>) {
-			clearTargetEdgeView()
-			return false
-		}
-
-		clearTargetPortView()
-		targetEdgeView = destDrawable
-
-		return true
-	}
-
-	private fun clearTargetEdgeView() {
-		targetEdgeView = null
-	}
-
-	private fun snapToTargetEdgeView(context: EditInputEventContext) {
-		targetEdgeView!!.snap(context.x, context.y, context.editor.view.grid)?.let { snapResult ->
-			targetEdgeViewSegmentIndex = snapResult.segmentIndex
-			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
-			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
-			draggedEndpointType.layout(edgeView!!, null)
-			edgeView!!.layout
-		}
 	}
 
 	private fun moveAdjustedPoint(context: EditInputEventContext) {
@@ -452,11 +419,13 @@ abstract class AbstractPortViewStartConnector(
 				editor = context.editor,
 				connectService = connectService,
 				splitEdgeViewId = targetEdgeView!!.id,
+				splitLocation = draggedEndpointType.getLocation(edgeView!!),
 				segmentIndex = targetEdgeViewSegmentIndex!!,
-				newEdgeView = edgeView!!,
+				newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
 				newEdgeViewEndpointType = draggedEndpointType,
 				targetConnectableViewId = startPortView!!.owner!!.id,
-				targetPortId = startPortView!!.port.portId
+				targetPortId = startPortView!!.port.portId,
+				joinNetViews = false
 			)
 		)
 	}

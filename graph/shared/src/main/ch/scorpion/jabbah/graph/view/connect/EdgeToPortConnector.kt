@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDrag
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -189,10 +190,12 @@ class EdgeToPortConnector(
 			connectService = connectService,
 			splitEdgeViewId = branchedEdgeView!!.id,
 			segmentIndex = branchedSegmentIndex!!,
-			newEdgeView = edgeView!!,
+			splitLocation = EdgeViewEndpointType.ORIGIN.getLocation(edgeView!!),
+			newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetConnectableViewId = null,
-			targetPortId = null)
+			targetPortId = null,
+			joinNetViews = false)
 	}
 
 	private fun createConnectDestinationCommand(editor: Editor): Command {

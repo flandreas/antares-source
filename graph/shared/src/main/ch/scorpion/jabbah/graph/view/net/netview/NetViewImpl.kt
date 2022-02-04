@@ -41,6 +41,8 @@ class NetViewImpl<T : Any>(
 			}
 		}
 
+	override val size: Int get() = elements.size
+
 	override val isEmpty: Boolean get() = elements.isEmpty()
 
 	override fun add(elem: NetViewElement<T>) {
@@ -102,5 +104,16 @@ class NetViewImpl<T : Any>(
 			}
 		}
 		return newNetView
+	}
+
+	override fun combine(other: NetView<T>) {
+		// Combine Nets
+		net.combine(other.net)
+
+		// Combine NetViews
+		for (element in other.getElements().toList()) {
+			other.remove(element)
+			add(element)
+		}
 	}
 }

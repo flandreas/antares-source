@@ -47,11 +47,13 @@ class SplitEdgeViewCommandTest {
 			editor = editorBuilder.editor,
 			connectService = service,
 			splitEdgeViewId = testGraphView.ev.id,
+			splitLocation = EdgeViewEndpointType.ORIGIN.getLocation(newEdgeView),
 			segmentIndex = 0,
-			newEdgeView = newEdgeView,
+			newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(newEdgeView),
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetConnectableViewId = null,
-			targetPortId = null
+			targetPortId = null,
+			joinNetViews = false
 		)
 		command.execute()
 

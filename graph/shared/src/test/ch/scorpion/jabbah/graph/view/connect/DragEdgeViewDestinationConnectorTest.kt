@@ -2,9 +2,12 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.verify
 import kotlin.test.*
 
@@ -131,5 +134,81 @@ class DragEdgeViewDestinationConnectorTest
 		GraphViewModule.graphViewAppService.delete(listOf(ev), editor.view)
 
 		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+	}
+
+	@Test
+	fun shouldConnectToEdgeView() {
+		connectToEdgeView()
+		assertConnectedToEdgeView()
+	}
+
+	private fun connectToEdgeView() {
+		v2.location = Point2D(200, 200)
+		val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+		builder.connect(v3, v2)
+
+		editor.commandManager.reset()
+
+		mouseMoveTo(150, 100)
+		pressMouseAt(150, 100)
+		dragMouseTo(150, 200)
+		releaseMouseAt(150, 200)
+	}
+
+	@Test
+	fun shouldUndoConnectToEdgeView() {
+		connectToEdgeView()
+
+		editor.commandManager.undo()
+
+		assertBeforeConnectToEdgeView()
+	}
+
+	@Test
+	fun shouldRedoConnectToEdgeView() {
+		connectToEdgeView()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertConnectedToEdgeView()
+	}
+
+	private fun assertBeforeConnectToEdgeView() {
+		val newEv1 = builder.graphView.getEdgeViews().first()
+		val newEv2 = builder.graphView.getEdgeViews().last()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(newEv1.model.isConnectedWith(newV3.model.getOutput()))
+		assertTrue(newEv1.model.isConnectedWith(newV2.model.getInput()))
+		assertTrue(newEv2.model.isConnectedWith(newV1.model.getOutput()))
+
+		assertEquals(2, newEv1.polyline.pointsCount)
+		assertEquals(2, newEv2.polyline.pointsCount)
+
+		assertEquals(Point2D(150, 100), newEv2.destinationEndpointView.location)
+		assertEquals(2, builder.graphView.netViewsCount)
+		assertEquals(2, builder.graph.elements.filterIsInstance<Net<*>>().size)
+	}
+
+	private fun assertConnectedToEdgeView() {
+		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(nodeView.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(nodeView.model.isConnectedWith(newV2.model.getInput()))
+		assertTrue(nodeView.model.isConnectedWith(newV3.model.getOutput()))
+
+		assertEquals(Point2D(150, 200), nodeView.location)
+
+		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
+		assertEquals(7, builder.graphView.drawables.size)
+
+		assertEquals(1, builder.graphView.netViewsCount)
+		assertEquals(1, builder.graph.elements.filterIsInstance<Net<*>>().size)
 	}
 }

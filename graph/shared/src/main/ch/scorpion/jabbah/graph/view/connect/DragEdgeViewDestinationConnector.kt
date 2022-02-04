@@ -14,8 +14,8 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
  * or to be connected with a target [PortView].
  */
 class DragEdgeViewDestinationConnector(
-	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
-) : AbstractDragEdgeViewEndpointConnector(DESTINATION) {
+	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
+) : AbstractDragEdgeViewEndpointConnector(connectService, DESTINATION) {
 
 	companion object {
 		private val LOG by logger(DragEdgeViewDestinationConnector::class)

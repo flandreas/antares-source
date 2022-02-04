@@ -119,8 +119,15 @@ open class GraphViewBuilder<T : Any>(
 		if (dest != null) {
 			portView = dest.getPortView(dest.model.getPort())
 		}
-		val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView,
-			segmentIndex, newEdgeView, EdgeViewEndpointType.ORIGIN, portView)
+		val result = GraphViewModule.graphViewConnectService.split(
+			graphView,
+			edgeView,
+			segmentIndex,
+			EdgeViewEndpointType.ORIGIN.getLocation(newEdgeView),
+			newEdgeView,
+			EdgeViewEndpointType.ORIGIN,
+			portView,
+			joinNetViews = false)
 		if (dest == null) {
 			newEdgeView.addSegmentPoint(location)
 		}
