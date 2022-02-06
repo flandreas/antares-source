@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -56,7 +55,7 @@ class CircuitInOutImpl(
 			override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
-					enabled = true
+					setInteractionEnabled(true, signalHandler)
 				}
 			}
 		}
@@ -119,7 +118,7 @@ class CircuitInOutImpl(
 		signalHandler.logActorTrace(this) { "GraphInput.setIncomingSignal: enabled=$enabled, differs=$differs" }
 		if (differs) {
 			this.signal = signal
-			enabled = false
+			setInteractionEnabled(false, signalHandler)
 			requestActingAfter(signalHandler, delay, StoringGraphActorData(null, this.signal))
 		}
 	}
@@ -160,7 +159,7 @@ class CircuitInOutImpl(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		enabled = true
+		setInteractionEnabled(true, signalHandler)
 		signal = getDigitalPort().dominantSignal
 		stateChanged(signalHandler)
 	}

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Vertice
 
@@ -21,11 +22,14 @@ abstract class AbstractInteractableVertice(
 	name: String? = null
 ) : CalculatingVertice(calculator, name), InteractableVertice {
 
-	override var enabled: Boolean = true
-		protected set(value) {
-			if (field != value) {
-				field = value
-				stateChanged()
-			}
+	private var _enabled: Boolean = true
+
+	override val enabled: Boolean get() = _enabled
+
+	fun setInteractionEnabled(enabled: Boolean, signalHandler: SignalHandler) {
+		if (_enabled != enabled) {
+			_enabled = enabled
+			stateChanged(signalHandler)
 		}
+	}
 }

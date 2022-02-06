@@ -40,7 +40,7 @@ class DipSwitch(
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				val output = vertice.getOutput<DigitalSignal>()
 				output.setOutgoingSignalBuffered(vertice.value, signalHandler)
-				vertice.enabled = true
+				vertice.setInteractionEnabled(true, signalHandler)
 			}
 		}
 	}
@@ -101,7 +101,7 @@ class DipSwitch(
 		if (firstExecution || !retainValue) {
 			value = initialValue
 		}
-		enabled = false
+		setInteractionEnabled(false, signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
@@ -113,7 +113,7 @@ class DipSwitch(
 		if (!retainValue) {
 			value = initialValue
 		}
-		enabled = true
+		setInteractionEnabled(true, signalHandler)
 		stateChanged(signalHandler)
 		firstExecution = false
 	}
@@ -147,7 +147,7 @@ class DipSwitch(
 	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler) {
 		if (enabled) {
 			value = value.withBit(index, bit)
-			enabled = false
+			setInteractionEnabled(false, signalHandler)
 			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 		}
 	}

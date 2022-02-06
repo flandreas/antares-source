@@ -19,7 +19,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 					vertice.delayedOff = false
 					vertice.setState(signalHandler, false)
 				} else {
-					vertice.enabled = true
+					vertice.setInteractionEnabled(true, signalHandler)
 				}
 			}
 		}
@@ -51,7 +51,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		isOn = false
-		enabled = true
+		setInteractionEnabled(true, signalHandler)
 	}
 
 	fun toggle(signalHandler: SignalHandler) {
@@ -80,7 +80,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	protected open fun setState(signalHandler: SignalHandler, on: Boolean) {
 		isOn = on
-		enabled = false
+		setInteractionEnabled(false, signalHandler)
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
