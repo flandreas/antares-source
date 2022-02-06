@@ -23,39 +23,42 @@ enum class RotationDisplayStrategy {
 	 */
 	ROTATE_HALF {
 		override fun beforeDraw(context: DrawContext, label: Label) {
-			context.g.translate(label.bounds.centerX, label.bounds.centerY)
+			val pivot = label.rotation.rotatePointAround(label.location, label.bounds.center)
+			context.g.translate(pivot)
 			context.g.rotate(calculateRotation(label).angle)
-			context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+			context.g.translate(pivot.negate)
 		}
 
 		override fun afterDraw(context: DrawContext, label: Label) {
-			context.g.translate(label.bounds.centerX, label.bounds.centerY)
+			val pivot = label.rotation.rotatePointAround(label.location, label.bounds.center)
+			context.g.translate(pivot)
 			context.g.rotate(calculateRotation(label).angle)
-			context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+			context.g.translate(pivot.negate)
 		}
 
-		private fun calculateRotation(label: Label): Rotation {
-			return when (label.ownerRotation.add(label.rotation)) {
+		private fun calculateRotation(label: Label): Rotation =
+			when (label.ownerRotation.add(label.rotation)) {
 				Rotation.R0 -> Rotation.R0
 				Rotation.R180 -> Rotation.R180
 				Rotation.R90 -> Rotation.R0
 				Rotation.R270 -> Rotation.R180
 			}
-		}
 	},
 
 	/** Keeps the label text always horizontal.*/
 	KEEP_HORIZONTAL {
 		override fun beforeDraw(context: DrawContext, label: Label) {
-			context.g.translate(label.bounds.centerX, label.bounds.centerY)
+			val pivot = label.rotation.rotatePointAround(label.location, label.bounds.center)
+			context.g.translate(pivot)
 			context.g.rotate(-label.ownerRotation.angle)
-			context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+			context.g.translate(pivot.negate)
 		}
 
 		override fun afterDraw(context: DrawContext, label: Label) {
-			context.g.translate(label.bounds.centerX, label.bounds.centerY)
+			val pivot = label.rotation.rotatePointAround(label.location, label.bounds.center)
+			context.g.translate(pivot)
 			context.g.rotate(label.ownerRotation.angle)
-			context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+			context.g.translate(pivot.negate)
 		}
 	};
 
