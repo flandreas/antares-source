@@ -197,7 +197,7 @@ class StoreXmlReader(
 	private fun <T: Storable> readStorableImpl(): T {
 		val storable = instantiate(xmlReader.getName())
 		readGlobalId()?.let { referenceResolver.addStorable(it, storable) }
-		storable.read(this)
+		storable.readFromStore(this)
 
 		// Accept a ClassCastException if cast fails
 		@Suppress("UNCHECKED_CAST")

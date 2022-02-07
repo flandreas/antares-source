@@ -25,7 +25,7 @@ class MetaGraph(
 	graph: GraphStorable = GraphStorable(Translations.getString("graph.name.unknown")),
 	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : Storable {
+) : AbstractStorable() {
 
 	companion object {
 		private val LOG by logger(MetaGraph::class)

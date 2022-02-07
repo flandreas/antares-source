@@ -49,16 +49,18 @@ abstract class AbstractGraphPort<T : Any>(
 				}
 				val oldName = super.name
 				super.name = value
-				stateChanged()
-				eventBus.postVetoable(
-					event = GraphPortNameChanged(this, oldName, value),
-					undoEvent = GraphPortNameChanged(this, value, oldName),
-					elseHandler = {
-						super.name = oldName
-						stateChanged()
-						throw IllegalArgumentException(it.message)
-					}
-				)
+				if (isNotReading) {
+					stateChanged()
+					eventBus.postVetoable(
+						event = GraphPortNameChanged(this, oldName, value),
+						undoEvent = GraphPortNameChanged(this, value, oldName),
+						elseHandler = {
+							super.name = oldName
+							stateChanged()
+							throw IllegalArgumentException(it.message)
+						}
+					)
+				}
 			}
 		}
 

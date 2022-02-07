@@ -21,7 +21,7 @@ class NetViewImpl<T : Any>(
 	style: NetViewStyle = NetViewStyle.LINE,
 	customColor: PredefinedColor? = null,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : NetView<T> {
+) : AbstractStorable(), NetView<T> {
 
 	private val elements = mutableListOf<NetViewElement<T>>()
 

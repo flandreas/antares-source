@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.io.*
  *
  * @param portView only `null` during deserialization
  */
-class PortViewStorable<T: Any>(portView: PortView<T>? = null) : Storable {
+class PortViewStorable<T: Any>(portView: PortView<T>? = null) : AbstractStorable() {
 
 	var portView: PortView<T>? = portView
 

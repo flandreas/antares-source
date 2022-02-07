@@ -45,6 +45,8 @@ class SubCircuitPort(
 
 	/** ---- [Storable] interface */
 
+	override var isReading: Boolean = false
+
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		// empty
 	}

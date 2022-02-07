@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.io.*
  *
  * @param verticeView only `null` during deserialization
  */
-class VerticeViewStorable<T: Vertice>(verticeView: VerticeView<T>? = null) : Storable {
+class VerticeViewStorable<T: Vertice>(verticeView: VerticeView<T>? = null) : AbstractStorable() {
 
 	var verticeView: VerticeView<T>? = verticeView
 		private set

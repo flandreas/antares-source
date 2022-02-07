@@ -157,7 +157,7 @@ class TranslatableTextTest {
 	}
 }
 
-class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {
+class ClassUsingTranslatable(text: TranslatableText? = null) : AbstractStorable() {
 
 	var attribute: TranslatableText = text ?: TranslatableText()
 		private set

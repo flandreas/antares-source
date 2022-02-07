@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.io.*
 class ScenarioStepImpl(
 	initialName: String = "",
 	graphView: GraphView? = null
-) : ScenarioStep, Namable, Describable, Bean {
+) : AbstractStorable(), ScenarioStep, Namable, Describable, Bean {
 
 	companion object {
 		private val LOG by logger(ScenarioStepImpl::class)

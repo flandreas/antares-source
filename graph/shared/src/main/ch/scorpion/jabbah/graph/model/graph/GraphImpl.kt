@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.io.*
 open class GraphImpl(
 	name: String = Translations.getString("graph.name.unknown"),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : Graph, Namable, Describable {
+) : AbstractStorable(), Graph, Namable, Describable {
 
 	companion object {
 		private val LOG by logger(GraphImpl::class)

@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.io.*
 class UsecasesImpl(
 	graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : Usecases {
+) : AbstractStorable(), Usecases {
 
 	private var isLoading: Boolean = false
 	private val usecases: MutableList<Usecase> by lazy { mutableListOf() }

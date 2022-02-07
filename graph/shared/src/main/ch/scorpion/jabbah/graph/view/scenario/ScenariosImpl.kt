@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.io.*
 class ScenariosImpl(
 	graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : Scenarios {
+) : AbstractStorable(), Scenarios {
 
 	private var isLoading: Boolean = false
 	private val scenarios: MutableList<Scenario> by lazy { mutableListOf() }

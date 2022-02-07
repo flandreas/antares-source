@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.io.*
  */
 class GraphStorable(
 	graphView: GraphView?
-) : Storable {
+) : AbstractStorable() {
 
 	constructor() : this(null)
 	constructor(name: String) : this(GraphViewModule.graphViewFactory.invoke(name))

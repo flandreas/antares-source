@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.io.*
  */
 class GraphParamDefinition<T : Any>(
 	name: String = ""
-) : Storable {
+) : AbstractStorable() {
 
 	companion object {
 		fun <T : Any> create(
@@ -49,7 +49,7 @@ class GraphParamDefinition<T : Any>(
 	}
 }
 
-class GraphParamDefinitions : Iterable<GraphParamDefinition<*>>, Storable {
+class GraphParamDefinitions : AbstractStorable(), Iterable<GraphParamDefinition<*>> {
 
 	private var _definitions = mutableListOf<GraphParamDefinition<*>>()
 	val definitions: Collection<GraphParamDefinition<*>> get() = _definitions

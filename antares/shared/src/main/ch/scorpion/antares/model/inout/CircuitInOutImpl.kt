@@ -61,8 +61,6 @@ class CircuitInOutImpl(
 		}
 	}
 
-	private var readingFromStore = false
-
 	/** ---- [GraphElement] */
 
 	override val type: String
@@ -206,14 +204,9 @@ class CircuitInOutImpl(
 	}
 
 	override fun read(reader: StoreReader) {
-		try {
-			readingFromStore = true
-			super.read(reader)
-			portType = PortType.withName(reader.readString("type"))
-			bitWidth = BitWidth.read("bitWidth", reader)
-		} finally {
-			readingFromStore = false
-		}
+		super.read(reader)
+		portType = PortType.withName(reader.readString("type"))
+		bitWidth = BitWidth.read("bitWidth", reader)
 	}
 
 	/** ---- [CircuitInOut] interface */
@@ -224,7 +217,7 @@ class CircuitInOutImpl(
 			if (value != getDigitalPort().signalRepresentation) {
 				val oldValue = getDigitalPort().signalRepresentation
 				getDigitalPort().signalRepresentation = value
-				if (!readingFromStore) {
+				if (isNotReading) {
 					eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
 				}
 			}
@@ -239,7 +232,7 @@ class CircuitInOutImpl(
 				signal = null
 				val oldValue = getDigitalPort().bitWidth
 				getDigitalPort().bitWidth = value
-				if (!readingFromStore) {
+				if (isNotReading) {
 					stateChanged(null)
 					eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
 				}

@@ -58,6 +58,8 @@ abstract class AbstractComponent(
 
 	/** ---- [Storable] interface */
 
+	override var isReading: Boolean = false
+
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
 		if (!fixStyleType) {

@@ -11,6 +11,16 @@ interface Storable {
 	 */
 	val isReferencable: Boolean get() = true
 
+	/**
+	 * Signals whether this [Storable] is currently in its [read] methods.
+	 * Can be used by implementations to avoid unnecessary event broadcasting etc. while
+	 * being deserialized from persistent store.
+	 * */
+	var isReading: Boolean
+
+	/** The negation of [isReading]. */
+	val isNotReading: Boolean get() = !isReading
+
     /**
      * Asks this [Storable] to resolve a [Reference] to another [Storable] that it has requested to be
      * resolved during [read] using [ReferenceResolver.requestResolution].
@@ -39,4 +49,24 @@ interface Storable {
 
     /** Reads the properties of this [Storable] from persistent store using the specified [StoreReader].*/
     fun read(reader: StoreReader)
+
+	/**
+	 * Reads this [Storable] from the specified [StoreReader] while flagging [isReading] during the
+	 * entire read operation.
+	 * Should only be called by [StoreReader] who initiates top-level reads. [Storables][Storable] that
+	 * read sub-[Storables][Storable] should use the appropriate methods of [StoreReader], such as
+	 * [StoreReader.readStorables].
+	 */
+	fun readFromStore(reader: StoreReader) {
+		try {
+			isReading = true
+			read(reader)
+		} finally {
+			isReading = false
+		}
+	}
+}
+
+abstract class AbstractStorable : Storable {
+	override var isReading: Boolean = false
 }

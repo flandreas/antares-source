@@ -278,6 +278,8 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Storable] interface */
 
+	override var isReading: Boolean = false
+
 	override fun write(writer: StoreWriter) {
 		writer.writeDouble("x", location.x)
 		writer.writeDouble("y", location.y)

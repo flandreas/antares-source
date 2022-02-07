@@ -76,7 +76,7 @@ class ContainerDrawing(
 
 	override fun add(drawable: Component, index: Int): DrawableContainer<Component> {
 		super.add(drawable, index)
-		if (readingFromStore) {
+		if (resolvingFromStore) {
 			return this
 		}
 		if (drawable is PortViewComponent<*>) {

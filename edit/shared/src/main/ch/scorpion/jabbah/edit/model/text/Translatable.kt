@@ -27,6 +27,8 @@ class Translation(
 
 	/** ---- [Storable] interface */
 
+	override var isReading: Boolean = false
+
 	override val isReferencable: Boolean get() = false
 
 	override fun write(writer: StoreWriter) {

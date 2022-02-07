@@ -320,7 +320,7 @@ open class GraphViewImpl(
 	/** Overridden in order to add the [GraphElement] to the [Graph] that this [GraphView] displays.*/
 	override fun add(drawable: GraphElementView<*>, index: Int): DrawableContainer<GraphElementView<*>> {
 		if (!contains(drawable)) {
-			if (!readingFromStore) {
+			if (!resolvingFromStore) {
 				graph?.add(drawable.model)
 			}
 			if (drawable is NetViewElement<*>) {

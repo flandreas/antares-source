@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.io
 
 class TestStorable(
 	private val resolver: (Int) -> Unit = {}
-) : Storable {
+) : AbstractStorable() {
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		resolver(referenceResolver.getGlobalId(this))

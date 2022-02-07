@@ -12,12 +12,12 @@ import ch.scorpion.jabbah.io.*
  */
 open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), ComponentContainer<T> {
 
-    /** Determines whether this [Storable] is currently being read from persistent store */
-    protected var readingFromStore: Boolean = false
+    /** Determines whether this [Storable] is currently resolving child objects from persistent store */
+    protected var resolvingFromStore: Boolean = false
 
     override fun add(drawable: T, index: Int): DrawableContainer<T> {
         if (!contains(drawable)) {
-            if (!readingFromStore) {
+            if (!resolvingFromStore) {
                 drawable.id = getMaxId() + 1
             }
             return super.add(drawable, index)
@@ -66,6 +66,8 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     /** ---- [Storable] interface */
 
+    override var isReading: Boolean = false
+
     override fun write(writer: StoreWriter) {
         writer.writeStorables("components", backToFrontIterator())
     }
@@ -83,10 +85,13 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "component") {
-			readingFromStore = true
-			@Suppress("UNCHECKED_CAST")
-			add(reference.additionalInfo as T)
-			readingFromStore = false
+			try {
+				resolvingFromStore = true
+				@Suppress("UNCHECKED_CAST")
+				add(reference.additionalInfo as T)
+			} finally {
+				resolvingFromStore = false
+			}
 		}
 	}
 

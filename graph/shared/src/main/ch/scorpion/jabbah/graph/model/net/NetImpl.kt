@@ -193,7 +193,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	}
 
 	/** Used for storing references to the [Port]s of a [Net].*/
-	class PortRef<T : Any>(val port: Port<T>? = null) : Storable {
+	class PortRef<T : Any>(val port: Port<T>? = null) : AbstractStorable() {
 
 		var verticeId: Int = -1
 		var portId: Int = -1

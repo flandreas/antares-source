@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.io.*
  * Maintains all [Libraries][Library] of an installation/user by mapping [Library] names to their [UUID],
  * avoiding the need to read all [Libraries][Library] from persistent store to do this mapping.
  */
-class LibraryDictionary : Storable {
+class LibraryDictionary : AbstractStorable() {
 
 	/** Maps a [UUID] of a [LibraryDictionaryEntry] to its [LibraryDictionaryEntry].*/
 	private val entries = mutableMapOf<UUID, LibraryDictionaryEntry>()
@@ -86,7 +86,7 @@ class LibraryDictionaryEntry(
 	initialName: TranslatableText = TranslatableText(),
 	var author: UserIdentity = UserIdentity.random(),
 	var initialDescription: TranslatableText = TranslatableText()
-) : Storable, Namable, Describable {
+) : AbstractStorable(), Namable, Describable {
 
 	companion object {
 		fun forLibrary(library: Library): LibraryDictionaryEntry {

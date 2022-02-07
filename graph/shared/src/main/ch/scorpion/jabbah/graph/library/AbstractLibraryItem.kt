@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName
+import ch.scorpion.jabbah.io.AbstractStorable
 
 /**
  * Abstract base implementation of the [LibraryItem] interface
@@ -11,7 +12,7 @@ import ch.scorpion.jabbah.edit.model.text.description.observableName
 abstract class AbstractLibraryItem(
 	initialName: TranslatableText = TranslatableText(),
 	override val iconPath: String? = null,
-) : LibraryItem, Namable {
+) : AbstractStorable(), LibraryItem, Namable {
 
 	override var name: Name by observableName(Name(initialName))
 

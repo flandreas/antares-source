@@ -26,7 +26,7 @@ class ScenarioImpl(
 	initialName: String = "",
 	graphView: GraphView? = null,
 	private var conditionScript: String = ""
-) : Scenario, Namable, Describable, Bean {
+) : AbstractStorable(), Scenario, Namable, Describable, Bean {
 
 	companion object {
 		private val LOG by logger(ScenarioImpl::class)

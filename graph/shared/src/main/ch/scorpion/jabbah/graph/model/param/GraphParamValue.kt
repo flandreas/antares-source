@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.io.*
  * Holds an quasi-immutable named value of a [GraphParamType].
  * Quasi-immutable means immutable interface, but for technical reasons updated during deserialization.
  */
-class GraphParamValue<T : Any> : Storable {
+class GraphParamValue<T : Any> : AbstractStorable() {
 
 	companion object {
 		fun <T : Any> create(name: String, type: GraphParamType<T>, value: T): GraphParamValue<T> {
@@ -50,7 +50,7 @@ class GraphParamValue<T : Any> : Storable {
  * A [Storable], quasi-immutable collection of [GraphParamValue].
  * Quasi-immutable means immutable interface, but for technical reasons updated during deserialization.
  */
-class GraphParamValues : Storable {
+class GraphParamValues : AbstractStorable() {
 
 	companion object {
 		fun withDefaults(defs: GraphParamDefinitions): GraphParamValues =

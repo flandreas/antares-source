@@ -49,6 +49,8 @@ class SubGraphPortImpl<T: Any>(
 
     /** ---- [Storable] interface */
 
+    override var isReading: Boolean = false
+
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
     override fun write(writer: StoreWriter) {

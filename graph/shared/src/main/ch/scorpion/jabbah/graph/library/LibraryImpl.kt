@@ -24,7 +24,7 @@ open class LibraryImpl(
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
 	userHolder: UserHolder = EditAuthModule.userHolder
-) : Library, LibraryDirectory, Describable {
+) : AbstractStorable(), Library, LibraryDirectory, Describable {
 
 	constructor(
 		name: TranslatableText = TranslatableText(),

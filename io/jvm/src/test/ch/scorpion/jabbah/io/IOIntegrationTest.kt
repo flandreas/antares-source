@@ -123,7 +123,7 @@ class IOIntegrationTest {
         assertEquals("anyB", a.referencedB!!.name)
     }
 
-    class Document : Storable {
+    class Document : AbstractStorable() {
 
         val children = mutableListOf<Storable>()
 
@@ -139,7 +139,7 @@ class IOIntegrationTest {
         }
     }
 
-    class A : Storable {
+    class A : AbstractStorable() {
 
 	    companion object {
 	        var instancesCount: Int = 0
@@ -192,7 +192,7 @@ class IOIntegrationTest {
         }
     }
 
-    class B(var name: String = "") : Storable {
+    class B(var name: String = "") : AbstractStorable() {
 
         override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 

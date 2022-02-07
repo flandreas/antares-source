@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.project.Project
  * if either [referencedSystemLibrary] is `null`, or the destination [Library] (if it is a [Project]) depends
  * on the referenced system [Library].
  */
-class MetaGraphBundle : Storable {
+class MetaGraphBundle : AbstractStorable() {
 
 	private val _metaGraphs = mutableListOf<MetaGraph>()
 

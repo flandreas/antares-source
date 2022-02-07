@@ -464,7 +464,7 @@ class SourcingCommandManagerTest {
 	}
 }
 
-class StorableString(value: String = "") : Storable {
+class StorableString(value: String = "") : AbstractStorable() {
 
 	var value: String = value
 		private set

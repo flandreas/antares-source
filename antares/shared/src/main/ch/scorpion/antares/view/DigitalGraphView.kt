@@ -35,8 +35,6 @@ class DigitalGraphView(
 			}
 		}
 
-	private var isReading = false
-
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -46,11 +44,9 @@ class DigitalGraphView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		isReading = true
 		if (reader.hasAttribute("lightColor")) {
 			defaultLightColor = LightColor.withName(reader.readString("lightColor"))
 		}
-		isReading = false
 	}
 }
 
