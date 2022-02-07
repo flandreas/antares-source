@@ -130,11 +130,11 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		_signal = (data as GraphActorData).getSignal(1)
 		signalBuffer = _signal
 		stateChanged(signalHandler)
-		ports
-			.filter { it.portType.isInput && it != data.changedPort }
+		_ports
+			.filter { it.portType.isInput && it !== data.changedPort }
 			.map { it as InputPort }
 			.forEach {
-				signalHandler.logActorTrace(this) { "Set incoming signal $signal on InputPort ${it.portId} of vertice ${it.owner?.id}" }
+				//signalHandler.logActorTrace(this) { "Set incoming signal $signal on InputPort ${it.portId} of vertice ${it.owner?.id}" }
 				it.setIncomingSignal(signal, signalHandler)
 			}
 	}
