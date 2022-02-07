@@ -8,17 +8,15 @@ abstract class AbstractStorableCloner {
 		private val LOG by logger(AbstractStorableCloner::class)
 	}
 
-	protected abstract fun <T: Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): String
+	/** Used to store an intermediate [ByteArray] while cloning. */
+	protected class Buffer(
+		val data: ByteArray,
+		val length: Int
+	)
 
-	protected abstract fun <T: Storable> deserializeImpl(s: String, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): T
+	protected abstract fun <T: Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): Buffer
 
-	fun serialize(storable: Storable): String {
-		return serializeImpl(storable, GlobalIdentityCreator())
-	}
-
-	fun deserialize(s: String): Storable {
-		return deserializeImpl(s, IOModule.storableCreator, ReferenceResolverImpl())
-	}
+	protected abstract fun <T: Storable> deserializeImpl(s: Buffer, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): T
 
 	fun <T: Storable> clone(storable: T): T {
 		return newClone(storable)
@@ -53,7 +51,6 @@ abstract class AbstractStorableCloner {
 	): T {
 		try {
 			val data = serializeImpl(storable, identityProvider)
-			//println(data)
 			return deserializeImpl(data, IOModule.storableCreator, ReferenceResolverImpl(identityProvider))
 		} catch (x: Throwable) {
 			LOG.error("Error while cloning Storable: ${x.message}")

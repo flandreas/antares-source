@@ -252,7 +252,7 @@ open class LibraryImpl(
 				result = node
 				return false
 			}
-			return true
+			return node is LibraryDirectory
 		}
 	}
 
