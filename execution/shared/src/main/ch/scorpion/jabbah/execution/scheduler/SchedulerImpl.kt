@@ -545,9 +545,9 @@ class SchedulerImpl(
 		data: ActorData
 	) : Comparable<Slot> {
 
-		val isExecutable: Boolean get() = requests.any { it.isActable }
+		val isExecutable: Boolean get() = requests.values.any { it.isActable }
 
-		val isActing: Boolean get() = requests.any { it.isActing }
+		val isActing: Boolean get() = requests.values.any { it.isActing }
 
 		val empty: Boolean get() = requests.isEmpty()
 
@@ -555,7 +555,7 @@ class SchedulerImpl(
 		 * Contains the [Actor]s to the scheduled at the specified [relativeTime]. A particular [Actor]
 		 * can only be contained at most once.
 		 */
-		private val requests = mutableListOf<Request>()
+		private val requests = mutableMapOf<Actor, Request>()
 
 
 		init {
@@ -564,7 +564,7 @@ class SchedulerImpl(
 
 		override fun compareTo(other: Slot): Int = relativeTime.compareTo(other.relativeTime)
 
-		fun getRequests(): Iterable<Request> = requests
+		fun getRequests(): Iterable<Request> = requests.values
 
 		/**
 		 * Adds the specified [Actor] and its [ActorData] as a new [Request] to this [Slot].
@@ -582,22 +582,22 @@ class SchedulerImpl(
 		fun actingDone(actor: Actor) {
 			findRequest(actor)?.let {
 				logActorTrace(actor) { "Actor is done " }
-				requests.remove(it)
+				requests.remove(it.actor)
 				postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
 			}
 		}
 
-		fun findRequest(actor: Actor): Request? = requests.find { it.actor === actor }
+		fun findRequest(actor: Actor): Request? = requests[actor]
 
 		/** Prints this [Slot] to the DEBUG log.*/
 		fun print() {
 			LOG.debug("\tSlot at ${StringUtils.formatLong(relativeTime)} ns with ${requests.size} requests")
-			requests.forEach { it.print() }
+			requests.values.forEach { it.print() }
 		}
 
 		private fun addRequest(request: Request) {
 			logActorTrace(request.actor) { "Add actor to slot ${StringUtils.formatLong(relativeTime)} ns" }
-			requests.add(request)
+			requests[request.actor] = request
 		}
 	}
 
