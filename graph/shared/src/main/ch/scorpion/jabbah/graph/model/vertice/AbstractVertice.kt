@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -79,7 +78,7 @@ abstract class AbstractVertice(
 	override fun hasPort(id: Int): Boolean =
 		ports.any { it.portId == id }
 
-	override fun getPorts(): ImmutableList<Port<*>> = ImmutableList(ports)
+	override fun getPorts(): List<Port<*>> = ports
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getPort(name: String): Port<T> =
@@ -96,8 +95,8 @@ abstract class AbstractVertice(
 	override fun <T : Any> getInput(): InputPort<T> =
 		ports.first { it.portType.isInput } as InputPort<T>
 
-	override fun getInputs(): ImmutableList<InputPort<*>> =
-		ImmutableList(ports.filter { it.portType.isInput }.map { it as InputPort<*> })
+	override fun getInputs(): List<InputPort<*>> =
+		ports.filter { it.portType.isInput }.map { it as InputPort<*> }
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getInput(name: String): InputPort<T> =
@@ -114,8 +113,8 @@ abstract class AbstractVertice(
 	override fun <T : Any> getOutput(): OutputPort<T> =
 		ports.first { it.portType.isOutput } as OutputPort<T>
 
-	override fun getOutputs(): ImmutableList<OutputPort<*>> =
-		ImmutableList(ports.filter { it.portType.isOutput }.map { it as OutputPort<*> })
+	override fun getOutputs(): List<OutputPort<*>> =
+		ports.filter { it.portType.isOutput }.map { it as OutputPort<*> }
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getOutput(name: String): OutputPort<T> =

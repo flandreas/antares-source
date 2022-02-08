@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
 
@@ -67,7 +66,7 @@ interface Vertice : GraphElement, Describable {
     fun <T: Any> getPort(): Port<T>
 
     /** Returns all [Port]s of this [Vertice].*/
-    fun getPorts(): ImmutableList<Port<*>>
+    fun getPorts(): List<Port<*>>
 
     /**
      * Returns the [Port] with the specified name.
@@ -96,7 +95,7 @@ interface Vertice : GraphElement, Describable {
     fun <T: Any> getInput(): InputPort<T>
 
     /** Returns all [InputPort]s of this [Vertice].*/
-    fun getInputs(): ImmutableList<InputPort<*>>
+    fun getInputs(): List<InputPort<*>>
 
     /**
      * Returns the [InputPort] with the specified name.
@@ -120,7 +119,7 @@ interface Vertice : GraphElement, Describable {
     fun <T: Any> getOutput(): OutputPort<T>
 
     /** Returns all [OutputPort]s of this [Vertice].*/
-    fun getOutputs(): ImmutableList<OutputPort<*>>
+    fun getOutputs(): List<OutputPort<*>>
 
     /**
      * Returns the [OutputPort] with the specified name.

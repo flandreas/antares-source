@@ -452,7 +452,9 @@ class SchedulerImpl(
 		val newRelativeTime = max(relativeTime, this.relativeTime)
 		if (newRelativeTime > this.relativeTime) {
 			this.relativeTime = newRelativeTime
-			LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
+			if (LOG.isTraceEnabled()) {
+				LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
+			}
 			executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 		}
 	}
@@ -478,7 +480,9 @@ class SchedulerImpl(
 			return ExecutionStepResult(recalculated = false, breakpoint = false)
 		}
 
-		LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
+		}
 
 		// Resynchronize relative time with real time (if simulation is faster that real time)
 		updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
@@ -509,7 +513,9 @@ class SchedulerImpl(
 			isInBreakpoint = false
 
 			slot.getRequests().filter { it.isActable }.forEach {
-				logActorTrace(it.actor) { "Executing" }
+				if (LOG.isTraceEnabled()) {
+					logActorTrace(it.actor) { "Executing" }
+				}
 				it.act()
 			}
 
