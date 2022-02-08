@@ -35,7 +35,7 @@ import javax.swing.text.JTextComponent
  */
 class AddressableDisplayPanel(
 	private val addressableRef: AddressableReference,
-	editable: Boolean,
+	editable: () -> Boolean,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val view: DrawingView<GraphView>,
 	private val cmdManager: CommandManager = EditModule.commandManager

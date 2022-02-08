@@ -47,7 +47,7 @@ abstract class AbstractAddressableDisplayLayout(
 class FixedWidthLayout(
 	override val cellsPerRow: Int,
 	addressable: AddressableReference,
-	private val editable: Boolean,
+	private val editable: () -> Boolean,
 	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableDisplayLayout(addressable) {
 
@@ -134,7 +134,7 @@ abstract class AbstractAddressableTableModel(
 
 	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
 
-	protected fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
+	private fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
 		addressableRef.addressable.dataAt(getCellAddress(rowIndex, columnIndex))
 
 	private fun rowOf(address: Int): Int = address / cellsPerRow
@@ -146,7 +146,7 @@ private open class AddressableTableModel(
 	cellsPerRow: Int,
 	addressable: AddressableReference,
 	rowCount: Int,
-	private val editable: Boolean,
+	private val editable: () -> Boolean,
 	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableTableModel(cellsPerRow, addressable, rowCount) {
 
@@ -159,7 +159,7 @@ private open class AddressableTableModel(
 		setMemoryValue(aValue as String, rowIndex, columnIndex)
 	}
 
-	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable
+	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable()
 
 	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
 		try {
@@ -175,7 +175,7 @@ private open class AddressableTableModel(
 private class SingleColumnTableModel(
 	addressable: AddressableReference,
 	rowCount: Int,
-	editable: Boolean,
+	editable: () -> Boolean,
 	signalHandler: SignalHandler? = null
 ) : AddressableTableModel(1, addressable, rowCount, editable, signalHandler) {
 

@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.addressable.AddressableClearCommand
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -31,11 +33,10 @@ import javax.swing.*
  */
 class AddressableContentsPanel(
 	private val view: DrawingView<GraphView>,
-	applicationContextHolder: GraphApplicationContextHolder,
+	private val applicationContextHolder: GraphApplicationContextHolder,
 	addressableId: Int,
 	private val cmdManager: CommandManager,
-	readonly: Boolean = false,
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
 ) : JPanel() {
 
@@ -50,11 +51,10 @@ class AddressableContentsPanel(
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
 			addressableId: Int,
-			cmdManager: CommandManager,
-			readonly: Boolean
+			cmdManager: CommandManager
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
-				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, addressableId, cmdManager, readonly) { dialog.dispose()} }
+				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, addressableId, cmdManager) { dialog.dispose()} }
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
@@ -64,7 +64,7 @@ class AddressableContentsPanel(
 
 	private val addressableRef = AddressableReference(addressableId, view, eventBus)
 
-	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, !readonly, applicationContextHolder, view)
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder, view)
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
@@ -73,14 +73,26 @@ class AddressableContentsPanel(
 		}
 	}
 
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateEditable() }
+
+	private val importAction = ImportAction()
+	private val exportAction = ExportAction()
+	private val clearAction = ClearAction()
+	private val closeAction = CloseAction()
+
+	private var editable: Boolean = false
+
 	var closeButton: JButton? = null
 
 	init {
 		addressableRef.addGraphElementListener(addressableListener)
-		buildUI(readonly)
+		buildUI()
+		updateEditable()
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 	}
 
 	fun dispose() {
+		eventBus.unregister(applicationModeHandler)
 		addressableRef.removeGraphElementListener(addressableListener)
 		addressableRef.dispose()
 		memoryDisplayPanel.dispose()
@@ -88,7 +100,19 @@ class AddressableContentsPanel(
 
 	/** ---- [AddressableContentsPanel] */
 
-	private fun buildUI(readonly: Boolean) {
+	private fun updateEditable() {
+		editable = if (addressableRef.addressable.storesCells) {
+			view.editable && applicationContextHolder.applicationModeHolder.currentMode.isEdit()
+		} else {
+			applicationContextHolder.applicationModeHolder.currentMode.isExecute()
+		}
+
+		importAction.isEnabled = editable
+		clearAction.isEnabled = editable
+		memoryDisplayPanel.refresh()
+	}
+
+	private fun buildUI() {
 		layout = BorderLayout()
 
 		val contentsView = JPanel(BorderLayout())
@@ -100,19 +124,16 @@ class AddressableContentsPanel(
 		buttonPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
-		if (!readonly) {
-			buttonPanel.add(Box.createHorizontalStrut(2))
-			buttonPanel.add(JButton(ImportAction()))
-		}
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(JButton(importAction))
 
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(ExportAction()))
-		if (!readonly) {
-			buttonPanel.add(Box.createHorizontalStrut(2))
-			buttonPanel.add(JButton(ClearAction()))
-		}
+		buttonPanel.add(JButton(exportAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(JButton(clearAction))
+
 		if (closeHandler != null) {
-			closeButton = JButton(CloseAction())
+			closeButton = JButton(closeAction)
 			buttonPanel.add(Box.createHorizontalGlue())
 			buttonPanel.add(closeButton)
 		}

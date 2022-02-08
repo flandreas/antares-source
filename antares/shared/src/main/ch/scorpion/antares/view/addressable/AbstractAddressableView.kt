@@ -271,8 +271,6 @@ abstract class AbstractAddressableView<T : Addressable>(
 
 	protected abstract fun updatePortViewPositions()
 
-	protected abstract val canChangeContentsInEditMode: Boolean
-
 	protected fun updateGeometry() {
 		invalidate()
 		contentsView.updateGeometry()
@@ -334,14 +332,14 @@ abstract class AbstractAddressableView<T : Addressable>(
 	protected fun buildLabelText(): String =
 		"$type ${addressWidth.size}x${dataWidth.width}"
 
-	private fun requestOpenMemoryContents(view: DrawingView<GraphView>, readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(view, this, label.text, model, readonly, newDesktopView))
+	private fun requestOpenMemoryContents(view: DrawingView<GraphView>, newDesktopView: Boolean) {
+		eventBus.post(OpenMemoryContentsRequest(view, this, label.text, model, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(context.view as DrawingView<GraphView>, readonly = !canChangeContentsInEditMode, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
 				return null
 			}
 			return super.mouseClicked(context)
@@ -351,7 +349,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(context.view as DrawingView<GraphView>, false, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
 			}
 			return null
 		}

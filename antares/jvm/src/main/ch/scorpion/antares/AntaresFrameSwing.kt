@@ -34,7 +34,6 @@ class AntaresFrameSwing(
 			title = request.name,
 			applicationContextHolder = controller.applicationContextHolder,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
-			readonly = request.readonly,
 			contextColor = contextColor)
 	}
 
@@ -45,8 +44,7 @@ class AntaresFrameSwing(
 			applicationContextHolder = controller.applicationContextHolder,
 			name = request.name,
 			addressableId = request.addressable.id,
-			cmdManager = controller.graphPanelViewController.editor.commandManager,
-			readonly = request.readonly)
+			cmdManager = controller.graphPanelViewController.editor.commandManager)
 	}
 
 	override fun shouldReplaceLightColor(): Boolean {

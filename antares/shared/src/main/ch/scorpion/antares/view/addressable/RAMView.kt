@@ -106,6 +106,4 @@ class RAMView(
 		getPortView(model.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 		getPortView(model.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 	}
-
-	override val canChangeContentsInEditMode: Boolean get() = false
 }

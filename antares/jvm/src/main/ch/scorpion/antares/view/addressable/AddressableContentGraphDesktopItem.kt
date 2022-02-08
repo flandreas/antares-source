@@ -19,11 +19,10 @@ class AddressableContentGraphDesktopItem(
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
 	cmdManager: CommandManager = EditModule.commandManager,
-	readonly: Boolean = false,
 	contextColor: CompositeColor
 ) : AbstractGraphDesktopItemPanel() {
 
-	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, addressableId, cmdManager, readonly)
+	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, addressableId, cmdManager)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
 

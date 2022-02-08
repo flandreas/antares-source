@@ -14,6 +14,5 @@ data class OpenMemoryContentsRequest(
 	val verticeView: VerticeView<*>,
 	val name: String,
 	val addressable: Addressable,
-	val readonly: Boolean,
 	val newDesktopView: Boolean = false
 )
