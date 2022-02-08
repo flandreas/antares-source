@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.CommandManager
@@ -15,7 +14,7 @@ import javax.swing.JLabel
 
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItem(
-	controller: ApplicationDataViewController,
+	drawingView: DrawingView<GraphView>,
 	addressableId: Int,
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
@@ -24,7 +23,7 @@ class AddressableContentGraphDesktopItem(
 	contextColor: CompositeColor
 ) : AbstractGraphDesktopItemPanel() {
 
-	private val memoryContentPanel = AddressableContentsPanel(controller, applicationContextHolder, addressableId, cmdManager, readonly)
+	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, addressableId, cmdManager, readonly)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
 

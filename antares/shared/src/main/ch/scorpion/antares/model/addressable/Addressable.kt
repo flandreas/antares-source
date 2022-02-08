@@ -58,7 +58,10 @@ interface Addressable : Vertice {
 	/** Typically corresponds with the value of a "chip select (CS)" input.*/
 	val isSelected: Boolean
 
-	/** Determines whether this [Addressable] stores the cell values in [Vertice.write].*/
+	/**
+	 * Determines whether this [Addressable] stores the cell values in [Vertice.write].
+	 * If `false`, it is assumed that this [Addressable] resets its content upon execution start.
+	 */
 	val storesCells: Boolean
 
 	fun addDataListener(listener: AddressableDataListener)

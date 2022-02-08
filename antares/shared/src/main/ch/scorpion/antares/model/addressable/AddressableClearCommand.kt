@@ -1,22 +1,20 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /** A [Command] for clearing the contents of an [Addressable].*/
 class AddressableClearCommand(
-	private val controller: ApplicationDataViewController,
+	private val view: DrawingView<GraphView>,
 	private val addressableId: Int,
 	private val bitWidth: BitWidth
 ) : AbstractCommand("antares.command.clearMemory"), Undoable {
 
-	private val graphView: GraphView get() = (controller.data!!.content as MetaGraph).graph.graphView
-	private val addressable: Addressable get() = graphView.graph!!.withId(addressableId) as Addressable
+	private val addressable: Addressable get() = view.drawing.graph!!.withId(addressableId) as Addressable
 
 	private var oldContents: String? = null
 

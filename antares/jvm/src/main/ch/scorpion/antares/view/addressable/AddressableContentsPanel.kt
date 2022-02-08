@@ -3,18 +3,15 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableClearCommand
 import ch.scorpion.antares.model.addressable.MemoryDump
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -33,12 +30,12 @@ import javax.swing.*
  * Must not keep reference to [Addressable] in order to deal with changing snapshots due to [Command] execution.
  */
 class AddressableContentsPanel(
-	private val controller: ApplicationDataViewController,
+	private val view: DrawingView<GraphView>,
 	applicationContextHolder: GraphApplicationContextHolder,
-	private val addressableId: Int,
+	addressableId: Int,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
 ) : JPanel() {
 
@@ -49,7 +46,7 @@ class AddressableContentsPanel(
 
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
-			controller: ApplicationDataViewController,
+			view: DrawingView<GraphView>,
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
 			addressableId: Int,
@@ -57,7 +54,7 @@ class AddressableContentsPanel(
 			readonly: Boolean
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
-				.content { dialog -> AddressableContentsPanel(controller, applicationContextHolder, addressableId, cmdManager, readonly) { dialog.dispose()} }
+				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, addressableId, cmdManager, readonly) { dialog.dispose()} }
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
@@ -65,13 +62,9 @@ class AddressableContentsPanel(
 		}
 	}
 
-	private val graphView: GraphView get() = (controller.data!!.content as MetaGraph).graph.graphView
-	private val addressable: Addressable get() = graphView.graph!!.withId(addressableId) as Addressable
+	private val addressableRef = AddressableReference(addressableId, view, eventBus)
 
-	private val memoryDisplayPanel = AddressableDisplayPanel(addressable, !readonly, applicationContextHolder, controller)
-
-	/** React to snapshot changes. */
-	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { updateAddressableListener() }
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, !readonly, applicationContextHolder, view)
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
@@ -80,27 +73,17 @@ class AddressableContentsPanel(
 		}
 	}
 
-	/** The [Addressable] listened to by [addressableListener]. Must be updated with snapshot changes. */
-	private var listenedAddressable: Addressable = addressable
-
 	var closeButton: JButton? = null
 
 	init {
-		addressable.addGraphElementListener(addressableListener)
-		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
+		addressableRef.addGraphElementListener(addressableListener)
 		buildUI(readonly)
 	}
 
 	fun dispose() {
-		listenedAddressable.removeGraphElementListener(addressableListener)
-		eventBus.unregister(applicationDataContentHandler)
+		addressableRef.removeGraphElementListener(addressableListener)
+		addressableRef.dispose()
 		memoryDisplayPanel.dispose()
-	}
-
-	private fun updateAddressableListener() {
-		listenedAddressable.removeGraphElementListener(addressableListener)
-		listenedAddressable = addressable
-		listenedAddressable.addGraphElementListener(addressableListener)
 	}
 
 	/** ---- [AddressableContentsPanel] */
@@ -138,7 +121,7 @@ class AddressableContentsPanel(
 	}
 
 	private fun executeCommand(command: Command) {
-		if (addressable.storesCells) {
+		if (addressableRef.addressable.storesCells) {
 			cmdManager.execute(command)
 		} else {
 			command.execute()
@@ -156,7 +139,7 @@ class AddressableContentsPanel(
 			val fileChooser = JFileChooser()
 			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					executeCommand(AddressableContentsCommand(controller, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					executeCommand(AddressableContentsCommand(view, addressableRef.id, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					LOG.error("Invalid data in memory file: ${e.message}")
@@ -181,7 +164,7 @@ class AddressableContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			executeCommand(AddressableClearCommand(controller, addressable.id, addressable.dataWidth))
+			executeCommand(AddressableClearCommand(view, addressableRef.id, addressableRef.addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}
@@ -190,7 +173,7 @@ class AddressableContentsPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			val fileChooser = JFileChooser()
 			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
-				val contents = MemoryDump.write(addressable.memory, addressable.dataWidth)
+				val contents = MemoryDump.write(addressableRef.addressable.memory, addressableRef.addressable.dataWidth)
 				try {
 					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
 				} catch (e: Throwable) {

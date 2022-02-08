@@ -29,7 +29,7 @@ class AntaresFrameSwing(
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem {
 		return AddressableContentGraphDesktopItem(
-			controller = application.controller,
+			drawingView = request.drawingView,
 			addressableId = request.addressable.id,
 			title = request.name,
 			applicationContextHolder = controller.applicationContextHolder,
@@ -41,7 +41,7 @@ class AntaresFrameSwing(
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(
 			parent = Frame.getFrames()[0],
-			controller = application.controller,
+			view = request.drawingView,
 			applicationContextHolder = controller.applicationContextHolder,
 			name = request.name,
 			addressableId = request.addressable.id,

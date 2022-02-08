@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.ROTATE_HALF
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -27,6 +28,7 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.max
@@ -332,14 +334,14 @@ abstract class AbstractAddressableView<T : Addressable>(
 	protected fun buildLabelText(): String =
 		"$type ${addressWidth.size}x${dataWidth.width}"
 
-	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(this, label.text, model, readonly, newDesktopView))
+	private fun requestOpenMemoryContents(view: DrawingView<GraphView>, readonly: Boolean, newDesktopView: Boolean) {
+		eventBus.post(OpenMemoryContentsRequest(view, this, label.text, model, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(readonly = !canChangeContentsInEditMode, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(context.view as DrawingView<GraphView>, readonly = !canChangeContentsInEditMode, context.mouseEvent?.isAltDown == true)
 				return null
 			}
 			return super.mouseClicked(context)
@@ -349,7 +351,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(false, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(context.view as DrawingView<GraphView>, false, context.mouseEvent?.isAltDown == true)
 			}
 			return null
 		}

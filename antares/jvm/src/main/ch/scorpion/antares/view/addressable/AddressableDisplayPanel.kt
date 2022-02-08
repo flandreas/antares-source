@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.addressable.AddressableCellChange
 import ch.scorpion.antares.model.addressable.AddressableCellChangeCommand
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.view.Look
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FocusJTable
@@ -14,8 +13,10 @@ import ch.scorpion.jabbah.base.swing.SelectAllCellEditor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout
@@ -33,10 +34,10 @@ import javax.swing.text.JTextComponent
  * Creates [AddressableCellChangeCommand]s when the user manually edits cell.
  */
 class AddressableDisplayPanel(
-	private val addressable: Addressable,
+	private val addressableRef: AddressableReference,
 	editable: Boolean,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	private val controller: ApplicationDataViewController,
+	private val view: DrawingView<GraphView>,
 	private val cmdManager: CommandManager = EditModule.commandManager
 ) : JPanel() {
 
@@ -45,10 +46,10 @@ class AddressableDisplayPanel(
 	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
-		FixedWidthLayout(1, addressable, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(4, addressable, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(8, addressable, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(16, addressable, editable, applicationContextHolder.scheduler)
+		FixedWidthLayout(1, addressableRef, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(4, addressableRef, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(8, addressableRef, editable, applicationContextHolder.scheduler),
+		FixedWidthLayout(16, addressableRef, editable, applicationContextHolder.scheduler)
 	)
 
     private val table = FocusJTable(layouts[1].createTableModel())
@@ -100,7 +101,9 @@ class AddressableDisplayPanel(
 		table.model = addressableDisplayLayout.createTableModel()
 		table.model.addTableModelListener(changeCollector)
 
-		val rowHeaderTable = RowHeaderTable(table) { BitOperation.longToHexPadded(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressable.addressWidth) }
+		val rowHeaderTable = RowHeaderTable(table) {
+			BitOperation.longToHexPadded(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressableRef.addressable.addressWidth)
+		}
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
@@ -122,7 +125,10 @@ class AddressableDisplayPanel(
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
-			if (applicationContextHolder.scheduler.isActive && addressable.isSelected && addressableDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
+			if (applicationContextHolder.scheduler.isActive
+				&& addressableRef.addressable.isSelected
+				&& addressableDisplayLayout.getCellAddress(row, column) == addressableRef.addressable.currentAddress
+			) {
 				component.background = Graphics2DJvm.toAwtColor(Look.highlightWithSelectionColor)
 			} else {
 				if (isSelected) {
@@ -142,7 +148,7 @@ class AddressableDisplayPanel(
 
 		override fun verify(input: JComponent?): Boolean {
 			val text = (input as JTextComponent).text
-			val result = BitOperation.normalizeHex(text.trim(), addressable.dataWidth) != null
+			val result = BitOperation.normalizeHex(text.trim(), addressableRef.addressable.dataWidth) != null
 			if (result) {
 				changeCommand?.let {
 					cmdManager.register(it)
@@ -163,10 +169,10 @@ class AddressableDisplayPanel(
 				LOG.trace("cell at ${e.firstRow},${e.column} changed")
 				val address = addressableDisplayLayout.getCellAddress(e.firstRow, e.column)
 				val newValue = getCurrentValue(e.firstRow, e.column)
-				if (addressable.storesCells && newValue != e.oldValue) {
+				if (addressableRef.addressable.storesCells && newValue != e.oldValue) {
 					changeCommand = AddressableCellChangeCommand(
-						controller,
-						addressable.id,
+						view,
+						addressableRef.id,
 						listOf(AddressableCellChange(address, newValue, getOrigValue(address, e.oldValue))))
 				}
 			}
@@ -176,6 +182,6 @@ class AddressableDisplayPanel(
 			changes[address]?.origValue ?: previousValue
 
 		private fun getCurrentValue(rowIndex: Int, columnIndex: Int): ULong =
-			addressable.dataAt(addressableDisplayLayout.getCellAddress(rowIndex, columnIndex))
+			addressableRef.addressable.dataAt(addressableDisplayLayout.getCellAddress(rowIndex, columnIndex))
 	}
 }

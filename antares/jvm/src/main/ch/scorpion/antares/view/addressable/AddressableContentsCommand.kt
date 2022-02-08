@@ -3,12 +3,11 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -17,7 +16,7 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of an [Addressable] from a file.
  */
 class AddressableContentsCommand(
-	private val controller: ApplicationDataViewController,
+	private val view: DrawingView<GraphView>,
 	private val addressableId: Int,
 	private val bitWidth: BitWidth,
 	private val filePath: String
@@ -27,8 +26,7 @@ class AddressableContentsCommand(
 		private val LOG by logger(AddressableContentsCommand::class)
 	}
 
-	private val graphView: GraphView get() = (controller.data!!.content as MetaGraph).graph.graphView
-	private val addressable: Addressable get() = graphView.graph!!.withId(addressableId) as Addressable
+	private val addressable: Addressable get() = view.drawing.graph!!.withId(addressableId) as Addressable
 
 	private var oldContents: String? = null
 
