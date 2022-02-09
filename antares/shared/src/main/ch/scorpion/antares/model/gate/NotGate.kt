@@ -21,19 +21,32 @@ import ch.scorpion.jabbah.io.StoreWriter
 class NotCalculator<T : Vertice> : VerticeCalculator<T> {
 
     override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-	    vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-		    calculateOutputValue(data.getSignal(1)!!),
-		    signalHandler)
+	    val signal = data.getSignal<DigitalSignal>(1)!!
+	    if (signal.bitWidth.width == 1) {
+		    vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
+			    DigitalSignalFactory.of(calculateOutputBit(signal.bitAt(0))),
+			    signalHandler)
+	    } else {
+		    vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
+			    calculateOutputValue(signal),
+			    signalHandler
+		    )
+	    }
     }
 
-	private fun calculateOutputValue(inputValue: DigitalSignal): DigitalSignal {
-		return DigitalSignalFactory.ofBits(inputValue.bits.map {
+	private fun calculateOutputValue(inputValue: DigitalSignal): DigitalSignal =
+		DigitalSignalFactory.ofBits(inputValue.bits.map {
 			when (it) {
 				Bit.Undefined -> CurrentUndefinedGateInputBehavior.value.definedBit
 				else -> it.not()
 			}
 		})
-	}
+
+	private fun calculateOutputBit(inputBit: Bit): Bit =
+		when (inputBit) {
+			Bit.Undefined -> CurrentUndefinedGateInputBehavior.value.definedBit
+			else -> inputBit.not()
+		}
 }
 
 class NotGate(

@@ -11,9 +11,6 @@ import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [NotCalculator].
- */
 class NotCalculatorTest {
 
     companion object {

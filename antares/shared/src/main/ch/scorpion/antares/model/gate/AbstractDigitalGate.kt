@@ -41,9 +41,12 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 
 	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
 
+	/** The fast lane for BitWidth 1 inputs.*/
+	abstract fun calculateBit(input: MultiSignalSource<DigitalSignal>): Bit
+
 	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
 		if (vertice.bitWidth.width == BitWidth.BW_1.width) {
-			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateSingleBit(vertice), signalHandler)
+			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(calculateBit(vertice)), signalHandler)
 		} else {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(calculateMultiBit(vertice), signalHandler)
 		}
@@ -143,7 +146,7 @@ abstract class AbstractDigitalGate(
 
 	/** ---- [MultiSignalSource] */
 
-	override val signalCount: Int get() = chosenInputCount.count
+	override val signalCount: Int get() = inputCount
 
 	override fun getSignal(id: Int): DigitalSignal {
 		val inputPort = getInput<DigitalSignal>(id) as DigitalPort

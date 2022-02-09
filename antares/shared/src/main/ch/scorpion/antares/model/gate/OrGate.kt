@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.Bit.True
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
@@ -19,6 +20,18 @@ class OrCalculator : AbstractDigitalGateCalculator() {
 		input.forEach {
 			@Suppress("NON_EXHAUSTIVE_WHEN")
 			when (it.bitAt(bitIndex)) {
+				True -> result = true
+				Error -> return Error
+			}
+		}
+		return Bit.of(result)
+	}
+
+	override fun calculateBit(input: MultiSignalSource<DigitalSignal>): Bit {
+		var result = false
+		for (i in 1..input.signalCount) {
+			@Suppress("NON_EXHAUSTIVE_WHEN")
+			when (effectiveGateInputBit(input.getSignal(i).bitAt(0))) {
 				True -> result = true
 				Error -> return Error
 			}

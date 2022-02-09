@@ -133,7 +133,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		stateChanged(signalHandler)
 
 		// Tuning: Faster this way than with stream, filter and map
-		for (port in _ports) {
+		for (i in 0 until _ports.size) {
+			val port = _ports[i]
 			if (port.portType.isInput && port !== data.changedPort) {
 				(port as InputPort).setIncomingSignal(signal, signalHandler)
 			}

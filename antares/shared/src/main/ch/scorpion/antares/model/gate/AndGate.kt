@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.Bit.True
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /** Performs a logical "AND" function with the current input signals of a [Vertice].*/
@@ -22,6 +23,18 @@ class AndCalculator : AbstractDigitalGateCalculator() {
 			}
 		}
 		return Bit.of(trueCount == input.size)
+	}
+
+	override fun calculateBit(input: MultiSignalSource<DigitalSignal>): Bit {
+		var trueCount = 0
+		for (i in 1..input.signalCount) {
+			@Suppress("NON_EXHAUSTIVE_WHEN")
+			when (effectiveGateInputBit(input.getSignal(i).bitAt(0))) {
+				True -> trueCount++
+				Error -> return Error
+			}
+		}
+		return Bit.of(trueCount == input.signalCount)
 	}
 }
 
