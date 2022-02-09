@@ -249,6 +249,8 @@ class SchedulerImpl(
 
 	override val executionTime: Long get() = relativeTime
 
+	override val isLogTrace: Boolean get() = LOG.isTraceEnabled()
+
 	override fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String) {
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${clazz.simpleName} ($id)]: ${msg.invoke()}")

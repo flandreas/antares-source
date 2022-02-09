@@ -25,6 +25,8 @@ interface SignalHandler : ExecutionErrorHandler {
     /** Returns the relative execution time, i.e. the relative time in nanoseconds since execution has been started.*/
     val executionTime: Long
 
+	val isLogTrace: Boolean
+
     /** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
     fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String)
 
