@@ -33,7 +33,7 @@ abstract class AbstractVertice(
 
 	override val portsCount: Int get() = ports.size
 
-	override val inputCount: Int get() = getInputs().size
+	override val inputCount: Int get() = ports.count { it.portType.isInput }
 
 	override val outputCount: Int get() = ports.count { it.portType.isOutput }
 

@@ -20,18 +20,15 @@ actual object LogSystem {
 
 	private val LOG: Logger = Logger(LoggerFactory.getLogger(LogSystem::class.simpleName))
 
-	private val propertyValue: LogLevel get() = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL))
-
 	actual val PROP_LOG_LEVEL = "base.logLevel"
 
-	actual var level: LogLevel
-		get() = propertyValue
+	actual var level: LogLevel = LogLevel.Info
 		set(value) {
-			var usedLevel = value
-			if (usedLevel != fromLog4jLevel(getRootLogger().level)) {
-				LOG.info("Setting log level to $usedLevel")
-				getRootLogger().level = toLog4jLevel(usedLevel)
-				BaseModule.properties.customize(PROP_LOG_LEVEL, usedLevel.name)
+			field = value
+			if (value != fromLog4jLevel(getRootLogger().level)) {
+				LOG.info("Setting log level to $value")
+				getRootLogger().level = toLog4jLevel(value)
+				BaseModule.properties.customize(PROP_LOG_LEVEL, value.name)
 			}
 		}
 
@@ -115,7 +112,7 @@ actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 		}
 	}
 
-	actual fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
+	actual fun isTraceEnabled(): Boolean = LogSystem.level >= Trace
 
 	actual fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
 }

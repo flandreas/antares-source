@@ -36,7 +36,7 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 		DigitalSignalFactory.of(calculateBit(
 			(1..source.signalCount)
 				.filter(filter)
-				.map { effectiveGateInputValue(it, source) },
+				.map { DigitalSignalFactory.of(effectiveGateInputBit(source.getSignal(it).bitAt(0))) },
 			0))
 
 	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
