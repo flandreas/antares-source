@@ -98,9 +98,12 @@ open class Interpreter(
 
 	private fun compound(node: Compound): Any {
 		var result: Any = 0L
-		node.children.forEach { child ->
-			result = interpret(child)
-			returnValue?.let { return it }
+		// Tuning: Faster than with streams
+		for (i in 0 until node.children.size) {
+			result = interpret(node.children[i])
+			if (returnValue != null) {
+				return returnValue!!
+			}
 		}
 		return result
 	}
