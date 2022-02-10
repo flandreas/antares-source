@@ -1,7 +1,5 @@
 package ch.scorpion.antares.model.input
 
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -13,7 +11,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 ) : AbstractInteractableVertice(calculator) {
 
 	companion object {
-		protected open class AbstractSwitchCalculator<T : AbstractSwitch<T>> : VerticeCalculator<T> {
+		open class AbstractSwitchCalculator<T : AbstractSwitch<T>> : VerticeCalculator<T> {
 			override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.delayedOff) {
 					vertice.delayedOff = false
@@ -84,5 +82,5 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
-	protected open fun createSignal(): DigitalSignal = DigitalSignalFactory.of(isOn)
+	//protected open fun createSignal(): DigitalSignal = DigitalSignalFactory.of(isOn)
 }

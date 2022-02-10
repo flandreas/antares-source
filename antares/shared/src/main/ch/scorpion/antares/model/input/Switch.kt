@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -25,7 +26,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<Switch>() {
 			override fun calculate(vertice: Switch, data: GraphActorData, signalHandler: SignalHandler) {
 				val output = vertice.getOutput<DigitalSignal>()
-				output.setOutgoingSignalBuffered(vertice.createSignal(), signalHandler)
+				output.setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.isOn), signalHandler)
 
 				super.calculate(vertice, data, signalHandler)
 			}

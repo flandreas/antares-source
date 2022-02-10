@@ -44,6 +44,7 @@
             <baseLibraryElement _id='48' id='Ground'/>
             <baseLibraryElement _id='49' id='Power'/>
             <baseLibraryElement _id='51' id='RealSwitch'/>
+            <baseLibraryElement _id='55' id='DoubleThrowSwitch'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>

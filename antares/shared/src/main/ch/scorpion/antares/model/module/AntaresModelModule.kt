@@ -99,6 +99,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("realSwitch", RealSwitch::class)
 		typeMap.register("bitExtender", BitExtender::class)
 		typeMap.register("buzzer", Buzzer::class)
+		typeMap.register("doubleThrowSwitch", DoubleThrowSwitch::class)
 	}
 
 	private fun registerGraphParamTypes() {

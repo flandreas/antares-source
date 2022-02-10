@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
-	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<T>(styleProvider, model) {
 
 	/** Handles mouse interactions during execution*/

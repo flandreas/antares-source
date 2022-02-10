@@ -51,8 +51,8 @@ private interface SwitchViewFace {
 class SwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Switch = Switch(),
-	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSwitchView<Switch>(styleProvider, model, eventBus), ControlView<Switch>, ControlViewSource<Switch> {
+	private val eventBus: EventBus = BaseModule.eventBus
+) : AbstractSwitchView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
 	companion object {
 

@@ -107,6 +107,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val VIDEO_RAM = "VideoRam"
 	private const val JOYSTICK = "Joystick"
 	private const val REAL_SWITCH = "RealSwitch"
+	private const val DOUBLE_THROW_SWITCH = "DoubleThrowSwitch"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -275,6 +276,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("bitExtenderView", BitExtenderView::class)
 		typeMap.register("buzzerView", BuzzerView::class)
 		typeMap.register("videoRamView", VideoRamView::class)
+		typeMap.register("doubleThrowSwitchView", DoubleThrowSwitchView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -321,6 +323,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, VideoRamView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DoubleThrowSwitchView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -435,6 +438,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
 		repository.register(REAL_SWITCH, "library.element.RealSwitch", { "/img/real-switch.png" }, RealSwitchView::class)
+		repository.register(DOUBLE_THROW_SWITCH, "library.element.DoubleThrowSwitch", { "/img/real-switch.png" }, DoubleThrowSwitchView::class)
 
 		repository.register(LED, "library.element.LED", { "/img/led.png" }, LEDView::class)
 		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
