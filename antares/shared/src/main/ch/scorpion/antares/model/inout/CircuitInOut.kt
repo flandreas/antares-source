@@ -8,6 +8,9 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.BidirectionalGraphPort
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.GraphOutput
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
@@ -28,6 +31,12 @@ interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSign
     val isToplevel: Boolean
 
     var signalRepresentation: DigitalSignalRepresentation
+
+	/**
+	 * Indicates that a circuit produces a signal at this [GraphPort] that can be undefined,
+	 * which allows to connect multiple [GraphOutput]s to the same [Net].
+	 */
+	var triStateOutput: Boolean
 
 	/**
 	 * Toggles the bit at the specified index.
@@ -56,4 +65,10 @@ class CircuitInOutSignalRepresentationChanged(
     val circuitInOut: CircuitInOut,
     val oldValue: DigitalSignalRepresentation,
     val newValue: DigitalSignalRepresentation
+)
+
+class CircuitInOutTriStateChanged(
+	val circuitInOut: CircuitInOut,
+	val oldValue: Boolean,
+	val newValue: Boolean
 )

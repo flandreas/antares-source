@@ -46,4 +46,7 @@ object AntaresProperties {
 
 	fun portViewSpacing(name: String = "portViewSpacing", baseKey: String = "element.property.portViewSpacing"): CommandPropertySwing<PortViewSpacing> =
 		CommandPropertySwing(name, baseKey, PortViewSpacing::class.java, componentBeanProvider)
+
+	fun triStateOutput(name: String = "triStateOutput", baseKey: String = "element.property.CircuitOutput.triState"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
 }

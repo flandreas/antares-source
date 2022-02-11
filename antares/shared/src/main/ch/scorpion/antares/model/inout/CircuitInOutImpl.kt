@@ -201,12 +201,18 @@ class CircuitInOutImpl(
 		super.write(writer)
 		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
+		if (triStateOutput) {
+			writer.writeBoolean("triState", triStateOutput)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		portType = PortType.withName(reader.readString("type"))
 		bitWidth = BitWidth.read("bitWidth", reader)
+		if (reader.hasAttribute("triState")) {
+			triStateOutput = reader.readBoolean("triState")
+		}
 	}
 
 	/** ---- [CircuitInOut] interface */
@@ -219,6 +225,20 @@ class CircuitInOutImpl(
 				getDigitalPort().signalRepresentation = value
 				if (isNotReading) {
 					eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
+				}
+			}
+		}
+
+	override var triStateOutput: Boolean
+		get() = getDigitalPort().triStateOutput
+		set(value) {
+			with(getDigitalPort()) {
+				if (value != triStateOutput) {
+					val oldValue = triStateOutput
+					triStateOutput = value
+					if (isNotReading) {
+						eventBus.post(CircuitInOutTriStateChanged(this@CircuitInOutImpl, oldValue, triStateOutput))
+					}
 				}
 			}
 		}

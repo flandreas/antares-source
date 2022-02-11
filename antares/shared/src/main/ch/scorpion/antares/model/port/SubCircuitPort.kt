@@ -64,6 +64,9 @@ class SubCircuitPort(
 		if (outputAnnotation != OutputAnnotation.NONE) {
 			writer.writeString("outputAnnotation", outputAnnotation.customName)
 		}
+		if (triStateOutput) {
+			writer.writeBoolean("triState", triStateOutput)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -88,6 +91,9 @@ class SubCircuitPort(
 		}
 		if (reader.hasAttribute("outputAnnotation")) {
 			outputAnnotation = OutputAnnotation.withName(reader.readString("outputAnnotation"))
+		}
+		if (reader.hasAttribute("triState")) {
+			triStateOutput = reader.readBoolean("triState")
 		}
 	}
 }

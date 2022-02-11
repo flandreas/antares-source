@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_LOGIC
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_SIGNAL_REPRESENTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
+import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRI_STATE_OUTPUT
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -154,6 +155,15 @@ open class DigitalPortImpl(
 			}
 		}
 
+	override var triStateOutput: Boolean = false
+		set(value) {
+			if (field != value) {
+				val oldValue = field
+				field = value
+				changeSupport.fire(PROP_TRI_STATE_OUTPUT, oldValue, field)
+			}
+		}
+
 	private var dynamicSignalRepresentation: Boolean = signalRepresentation == null
 
 	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation ?: defaultSignalRepresentation(bitWidth)
@@ -174,6 +184,12 @@ open class DigitalPortImpl(
 	}
 
 	override var isAdaptive: Boolean = false
+
+	override var canBeUndefined: Boolean
+		get() = triStateOutput || super.canBeUndefined
+		set(value) {
+			super.canBeUndefined = value
+		}
 
 	/** ---- [Port] interface */
 
@@ -197,6 +213,9 @@ open class DigitalPortImpl(
 			}
 
 			if (portType == PortType.INPUT && !isConnected) {
+				return DigitalSignalFactory.undefined(bitWidth)
+			}
+			if (triStateOutput) {
 				return DigitalSignalFactory.undefined(bitWidth)
 			}
 

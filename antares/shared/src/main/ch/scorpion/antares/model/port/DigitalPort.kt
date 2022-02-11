@@ -21,6 +21,7 @@ interface DigitalPort : BidirectionalPort<DigitalSignal> {
 		const val PROP_SIGNAL_REPRESENTATION = "signalRepresentation"
 		const val PROP_TRIGGER = "trigger"
 		const val PROP_OUTPUT_ANNOTATION = "outputAnnotation"
+		const val PROP_TRI_STATE_OUTPUT = "triStateOutput"
 	}
 
 	/** Holds the type of [Logic] of this [DigitalPort].*/
@@ -35,6 +36,8 @@ interface DigitalPort : BidirectionalPort<DigitalSignal> {
 
 	var outputAnnotation: OutputAnnotation
 
+	var triStateOutput: Boolean
+
 	val defaultDigitalSignal: DigitalSignal
 
 	/**
@@ -45,4 +48,7 @@ interface DigitalPort : BidirectionalPort<DigitalSignal> {
 	 * is in [OscilloscopeProbeVertice], which must probe signals of any [BitWidth].
 	 */
 	var isAdaptive: Boolean
+
+	override fun canConnectToNet(net: Net<*>): Boolean =
+		triStateOutput || super.canConnectToNet(net)
 }

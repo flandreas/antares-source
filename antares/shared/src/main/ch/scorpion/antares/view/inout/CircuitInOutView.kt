@@ -154,6 +154,13 @@ class CircuitInOutView(
 			updateView()
 		}
 
+	@Suppress("unused")
+	var triStateOutput: Boolean
+		get() = model.triStateOutput
+		set(value) {
+			model.triStateOutput = value
+		}
+
 	override var description: Description
 		get() = model.getPort<DigitalSignal>().description
 		set(value) {

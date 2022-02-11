@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.container
 
 import ch.scorpion.antares.model.inout.CircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.CircuitInOutSignalRepresentationChanged
+import ch.scorpion.antares.model.inout.CircuitInOutTriStateChanged
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -27,6 +28,12 @@ class DigitalContainerEditor(
 		    val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
 		    if (portViewComponent != null) {
 			    (portViewComponent.port as DigitalPort).signalRepresentation = it.newValue
+		    }
+	    }
+
+	    eventBus.register(CircuitInOutTriStateChanged::class) { event ->
+		    getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)?.let {
+			    (it.port as DigitalPort).triStateOutput = event.newValue
 		    }
 	    }
     }

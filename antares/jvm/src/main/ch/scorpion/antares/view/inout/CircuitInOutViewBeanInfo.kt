@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -22,6 +23,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val color = EditProperties.color()
 	    private val signalRepresentation = AntaresProperties.signalRepresentation()
 	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
+	    private val triState = AntaresProperties.triStateOutput()
 	    private val description = EditProperties.description()
     }
 
@@ -37,6 +39,9 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    properties.add(signalRepresentation.bind(editor, bean.id))
 	    if (bean.model.portType.isInput) {
 		    properties.add(toggle.bind(editor, bean.id))
+	    }
+	    if (bean.model.portType == PortType.OUTPUT) {
+			properties.add(triState.bind(editor, bean.id))
 	    }
 	    properties.add(description.bind(editor, bean.id))
     }

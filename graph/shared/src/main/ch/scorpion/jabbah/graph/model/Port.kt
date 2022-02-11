@@ -186,6 +186,13 @@ interface OutputPort<T : Any> : Port<T> {
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler)
 
 	fun flush(signalHandler: SignalHandler)
+
+	/**
+	 * Determines whether this [OutputPort] can be connected with the specified [Net],
+	 * allowing to prevent clashes of signals from multiple [OutputPorts][OutputPort] on the same [Net].
+	 */
+	fun canConnectToNet(net: Net<*>): Boolean =
+		canBeUndefined || net.ports.none { it.portType.isOutput }
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/
