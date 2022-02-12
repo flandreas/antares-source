@@ -127,22 +127,33 @@ class CircuitInOutImpl(
 	/** ---- [NetCombiner] interface */
 
 	/** Only required for toplevel [CircuitInOutImpl] that can produce a signal when the user clicks on it. */
-	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = portType.isInput && subGraphInputPort == null
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
+		portType.isInput && subGraphInputPort == null // Clickable input in top-level Graph
+			|| portType == PortType.OUTPUT && subGraphOutputPort != null
 
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
 		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
 
+	override fun formNet(signalHandler: SignalHandler) {
+		if (portType == PortType.OUTPUT && subGraphOutputPort != null) {
+			subGraphOutputPort!!.formNet(signalHandler)
+		} else {
+			super.formNet(signalHandler)
+		}
+	}
 
 	private fun createCombinedNetsForOutput(outputPort: OutputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<CombinedNet<DigitalSignal>> {
-		val result = if (subGraphOutputPort == null) {
-			emptyList()
-		} else {
-			CombinedNet.createFor(subGraphOutputPort!!, signalHandler)
+		if (subGraphOutputPort == null) {
+			return emptyList()
 		}
 
-		result.forEach { it.replaceAccessPort(subGraphOutputPort as OutputPort<DigitalSignal>, outputPort) }
+		if (portType.isInput) {
+			return CombinedNet.createFor(subGraphOutputPort!!, signalHandler).onEach {
+				it.replaceAccessPort(subGraphOutputPort as OutputPort<DigitalSignal>, outputPort)
+			}
+		}
 
-		return result
+		return emptyList()
 	}
 
 	/** ---- [Vertice] */

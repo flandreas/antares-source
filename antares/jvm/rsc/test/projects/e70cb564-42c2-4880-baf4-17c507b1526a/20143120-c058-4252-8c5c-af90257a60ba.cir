@@ -34,7 +34,7 @@
                 <netPortRef _id='20' verticeId='8' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='21' id='11' name='O' type='output' bitWidth='1'/>
+            <circuitInOut _id='21' id='11' name='Out' type='output' bitWidth='1'/>
             <digitalNet _id='22' id='12' delay='0'>
               <ports>
                 <netPortRef _id='23' verticeId='3' portId='3'/>

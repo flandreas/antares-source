@@ -15,7 +15,8 @@ interface NetCombiner : Vertice {
 
 	/**
 	 * Determines whether this [NetCombiner] as a [Vertice] requires [CombinedNet]s that start
-	 * at its [OutputPort]s. This property is typically `false`.
+	 * at its [OutputPort]s. This property is typically `false`, because a [NetCombiner]'s output [Net]s
+	 * are combined with the incoming [Net]s.
 	 */
 	fun requiresCombinedNets(signalHandler: SignalHandler): Boolean
 
