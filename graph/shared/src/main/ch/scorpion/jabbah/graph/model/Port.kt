@@ -135,9 +135,14 @@ interface OutputPort<T : Any> : Port<T> {
 	/**
 	 * Multiple [OutputPort]s can only be connected to the same [Net] if at most
 	 * one of them cannot be undefined.
-	 * Writable only to be set after deserialization depending on [PortType].
+	 * Is implicitly `true` in this [Port] is also an [InputPort].
 	 */
-	var canBeUndefined: Boolean
+	val canBeUndefined: Boolean get() = portType == PortType.INOUT || customCanBeUndefined
+
+	/**
+	 * The explicit value of [canBeUndefined] set by client classes or interactively by the user.
+	 */
+	var customCanBeUndefined: Boolean
 
 	/** Determines whether all parts of the currently outgoing signal are undefined.*/
 	val isOutputFullyUndefined: Boolean

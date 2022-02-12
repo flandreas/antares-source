@@ -64,8 +64,8 @@ class SubCircuitPort(
 		if (outputAnnotation != OutputAnnotation.NONE) {
 			writer.writeString("outputAnnotation", outputAnnotation.customName)
 		}
-		if (triStateOutput) {
-			writer.writeBoolean("triState", triStateOutput)
+		if (customCanBeUndefined) {
+			writer.writeBoolean("canBeUndefined", customCanBeUndefined)
 		}
 	}
 
@@ -92,8 +92,8 @@ class SubCircuitPort(
 		if (reader.hasAttribute("outputAnnotation")) {
 			outputAnnotation = OutputAnnotation.withName(reader.readString("outputAnnotation"))
 		}
-		if (reader.hasAttribute("triState")) {
-			triStateOutput = reader.readBoolean("triState")
+		if (reader.hasAttribute("canBeUndefined")) {
+			customCanBeUndefined = reader.readBoolean("canBeUndefined")
 		}
 	}
 }

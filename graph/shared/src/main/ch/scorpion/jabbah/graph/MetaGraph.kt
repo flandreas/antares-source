@@ -12,9 +12,7 @@ import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
-import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.io.*
 
@@ -68,21 +66,15 @@ class MetaGraph(
 
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
-	private val graphNameHandler: EventHandler<NameChangedEvent> = {
-		handle(it)
-	}
+	private val graphNameHandler: EventHandler<NameChangedEvent> = { handle(it) }
 
-	private val graphDescHandler: EventHandler<DescriptionChangedEvent> = {
-		handle(it)
-	}
+	private val graphDescHandler: EventHandler<DescriptionChangedEvent> = { handle(it) }
 
-	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
-		handle(it)
-	}
+	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = { handle(it) }
 
-	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = {
-		handle(it)
-	}
+	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
+
+	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
 
 	init {
 		LOG.trace("Instantiated new MetaGraph with ID ${hashCode()}")
@@ -90,6 +82,7 @@ class MetaGraph(
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
 		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
+		eventBus.register(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
 		containerDrawing.model.graphUUID = uuid
 		containerDrawing.initialize()
 	}
@@ -98,6 +91,7 @@ class MetaGraph(
 		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
 		eventBus.unregister(DescriptionChangedEvent::class, graphDescHandler)
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.unregister(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
 		eventBus.unregister(graphDescHandler)
 		graph.dispose()
 		containerDrawing.dispose()
@@ -218,6 +212,16 @@ class MetaGraph(
 		if (graph.graphView.graph!!.contains(event.graphPort)) {
 			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
 				it.portView!!.port.portType = event.newPortType
+			}
+		}
+	}
+
+	private fun handle(event: GraphPortCanBeUndefinedChanged<*>) {
+		if (graph.graphView.graph!!.contains(event.graphPort)) {
+			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
+				if (it.portView!!.port is OutputPort) {
+					(it.portView!!.port as OutputPort).customCanBeUndefined = event.value
+				}
 			}
 		}
 	}

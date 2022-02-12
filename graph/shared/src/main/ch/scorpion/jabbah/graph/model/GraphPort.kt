@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -42,6 +41,11 @@ data class GraphPortTypeChanged<out T : Any>(
 	val newPortType: PortType
 )
 
+data class GraphPortCanBeUndefinedChanged<out T : Any>(
+	val graphPort: GraphPort<T>,
+	val value: Boolean
+)
+
 /**
  * A [GraphInput] is a special [GraphPort] that can feed a signal from outside into a [Graph].
  * The name of a [GraphInput] must be unique within a [Graph], because the name is used to bind
@@ -79,6 +83,11 @@ interface GraphOutput<T : Any> : GraphPort<T>, NetCombiner {
 	 * `null` for top-level [Graph]s. Not set before binding.
 	 */
 	var subGraphOutputPort: SubGraphOutputPort<T>?
+
+	/**
+	 * Corresponds with [OutputPort.customCanBeUndefined] of this [GraphOutput]'s [SubGraphOutputPort].
+	 */
+	var customCanBeUndefined: Boolean
 }
 
 interface SubGraphPort<T : Any> : Port<T>, Storable {

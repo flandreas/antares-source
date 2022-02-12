@@ -23,7 +23,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val color = EditProperties.color()
 	    private val signalRepresentation = AntaresProperties.signalRepresentation()
 	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
-	    private val triState = AntaresProperties.triStateOutput()
+	    private val canBeUndefined = AntaresProperties.canBeUndefined()
 	    private val description = EditProperties.description()
     }
 
@@ -41,7 +41,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 		    properties.add(toggle.bind(editor, bean.id))
 	    }
 	    if (bean.model.portType == PortType.OUTPUT) {
-			properties.add(triState.bind(editor, bean.id))
+			properties.add(canBeUndefined.bind(editor, bean.id))
 	    }
 	    properties.add(description.bind(editor, bean.id))
     }

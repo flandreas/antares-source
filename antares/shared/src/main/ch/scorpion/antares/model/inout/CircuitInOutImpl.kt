@@ -93,7 +93,6 @@ class CircuitInOutImpl(
 			if (portType != value) {
 				val oldValue = portType
 				getDigitalPort().portType = value.reverse()
-				getDigitalPort().canBeUndefined = value == PortType.INOUT
 				eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
 			}
 		}
@@ -125,8 +124,14 @@ class CircuitInOutImpl(
 
 	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
 
+	/** ---- [NetCombiner] interface */
+
 	/** Only required for toplevel [CircuitInOutImpl] that can produce a signal when the user clicks on it. */
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = portType.isInput && subGraphInputPort == null
+
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
+		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
+
 
 	private fun createCombinedNetsForOutput(outputPort: OutputPort<DigitalSignal>, signalHandler: SignalHandler): Collection<CombinedNet<DigitalSignal>> {
 		val result = if (subGraphOutputPort == null) {
@@ -139,11 +144,6 @@ class CircuitInOutImpl(
 
 		return result
 	}
-
-	/** ---- [NetCombiner] interface */
-
-	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
-		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
 
 	/** ---- [Vertice] */
 
@@ -201,18 +201,22 @@ class CircuitInOutImpl(
 		super.write(writer)
 		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
-		if (triStateOutput) {
-			writer.writeBoolean("triState", triStateOutput)
+		/*
+		if (canBeUndefined) {
+			writer.writeBoolean("canBeUndefined", canBeUndefined)
 		}
+		*/
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		portType = PortType.withName(reader.readString("type"))
 		bitWidth = BitWidth.read("bitWidth", reader)
-		if (reader.hasAttribute("triState")) {
-			triStateOutput = reader.readBoolean("triState")
+		/*
+		if (reader.hasAttribute("canBeUndefined")) {
+			canBeUndefined = reader.readBoolean("canBeUndefined")
 		}
+		*/
 	}
 
 	/** ---- [CircuitInOut] interface */
@@ -225,20 +229,6 @@ class CircuitInOutImpl(
 				getDigitalPort().signalRepresentation = value
 				if (isNotReading) {
 					eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
-				}
-			}
-		}
-
-	override var triStateOutput: Boolean
-		get() = getDigitalPort().triStateOutput
-		set(value) {
-			with(getDigitalPort()) {
-				if (value != triStateOutput) {
-					val oldValue = triStateOutput
-					triStateOutput = value
-					if (isNotReading) {
-						eventBus.post(CircuitInOutTriStateChanged(this@CircuitInOutImpl, oldValue, triStateOutput))
-					}
 				}
 			}
 		}

@@ -36,7 +36,7 @@ interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSign
 	 * Indicates that a circuit produces a signal at this [GraphPort] that can be undefined,
 	 * which allows to connect multiple [GraphOutput]s to the same [Net].
 	 */
-	var triStateOutput: Boolean
+	//var triStateOutput: Boolean
 
 	/**
 	 * Toggles the bit at the specified index.
@@ -65,10 +65,4 @@ class CircuitInOutSignalRepresentationChanged(
     val circuitInOut: CircuitInOut,
     val oldValue: DigitalSignalRepresentation,
     val newValue: DigitalSignalRepresentation
-)
-
-class CircuitInOutTriStateChanged(
-	val circuitInOut: CircuitInOut,
-	val oldValue: Boolean,
-	val newValue: Boolean
 )

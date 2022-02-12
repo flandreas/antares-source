@@ -24,7 +24,7 @@ open class PortImpl<T : Any>(
 	portType: PortType,
 	name: String?,
 	description: TranslatableText = TranslatableText(),
-	override var canBeUndefined: Boolean = false,
+	override var customCanBeUndefined: Boolean = false,
 	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null
 ) : BidirectionalPort<T>, Describable {
 
@@ -38,11 +38,11 @@ open class PortImpl<T : Any>(
 			PortImpl(PortType.INPUT, name)
 
 		fun <T : Any> createOutput(name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
-			PortImpl(PortType.OUTPUT, name, canBeUndefined = canBeUndefined)
+			PortImpl(PortType.OUTPUT, name, customCanBeUndefined = canBeUndefined)
 
 		@Suppress("unused")
 		fun <T : Any> createInOut(name: String? = null, canBeUndefined: Boolean = false): PortImpl<T> =
-			PortImpl(PortType.INOUT, name, canBeUndefined = canBeUndefined)
+			PortImpl(PortType.INOUT, name, customCanBeUndefined = canBeUndefined)
 	}
 
 	protected val changeSupport = PropertyChangeSupport<Any>(this)

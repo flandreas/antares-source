@@ -6,6 +6,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * An abstract base implementation of [GraphPort] that mainly posts a [GraphPortNameChanged] event
@@ -38,6 +41,21 @@ abstract class AbstractGraphPort<T : Any>(
 
 	override val storePropagationDelay: Boolean get() = false
 
+	var customCanBeUndefined: Boolean
+		get() = getPort<Any>().let {
+			if (it is OutputPort) it.customCanBeUndefined else false
+		}
+		set(value) {
+			if (value != customCanBeUndefined) {
+				getPort<Any>().let {
+					if (it is OutputPort) {
+						it.customCanBeUndefined = value
+						eventBus.post(GraphPortCanBeUndefinedChanged(this, value))
+					}
+				}
+			}
+		}
+
 	/** ---- [Vertice] interface */
 
 	override var name: String?
@@ -68,4 +86,20 @@ abstract class AbstractGraphPort<T : Any>(
 	override var description: Description
 		get() = getPort<T>().description
 		set(value) { getPort<T>().description = value }
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (customCanBeUndefined) {
+			writer.writeBoolean("canBeUndefined", customCanBeUndefined)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("canBeUndefined")) {
+			customCanBeUndefined = reader.readBoolean("canBeUndefined")
+		}
+	}
 }

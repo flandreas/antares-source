@@ -66,6 +66,16 @@
             <translation lang='en' text='NMOS NOR Gate'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='14' uuid='c74f6fe3-9f4b-48a6-b8f9-ea90a1400d79'>
+          <name>
+            <translation lang='en' text='Tri-State Output Inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='15' uuid='20143120-c058-4252-8c5c-af90257a60ba'>
+          <name>
+            <translation lang='en' text='Tri-State Output'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
