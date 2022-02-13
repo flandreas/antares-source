@@ -393,14 +393,18 @@ class SchedulerImpl(
 	}
 
 	private fun addSlot(slot: Slot) {
-		LOG.trace("Add slot ${StringUtils.formatLong(slot.relativeTime)}")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Add slot ${StringUtils.formatLong(slot.relativeTime)}")
+		}
 		queue.add(slot)
 	}
 
 	/** Removes the [Slot] at the head of the queue.*/
 	private fun removeSlot(slot: Slot) {
 		if (!queue.isEmpty) {
-			LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
+			if (LOG.isTraceEnabled()) {
+				LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
+			}
 			queue.remove(slot)
 			if (queue.isEmpty) {
 				task.stop()
