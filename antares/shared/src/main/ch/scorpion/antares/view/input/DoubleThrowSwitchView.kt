@@ -4,16 +4,11 @@ import ch.scorpion.antares.model.input.DoubleThrowSwitch
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -30,9 +25,6 @@ class DoubleThrowSwitchView(
 		private const val WIDTH = 4 * SCALE
 		private const val HEIGHT = 5 * SCALE
 	}
-
-	/** Handles mouse interactions during execution*/
-	private val actorInteractionHandler = InteractionHandler()
 
 	init {
 		isFocusable = true
@@ -73,11 +65,6 @@ class DoubleThrowSwitchView(
 			)
 		)
 	}
-
-	/** ---- [ActorView] interface */
-
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		actorInteractionHandler
 
 	/** ---- [AbstractVerticeView] */
 
@@ -133,36 +120,6 @@ class DoubleThrowSwitchView(
 		super.read(reader)
 		if (reader.hasAttribute("toggle")) {
 			toggle = reader.readBoolean("toggle")
-		}
-	}
-
-	/** ---- [DoubleThrowSwitchView] */
-
-	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
-
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.button != Button.BUTTON1) {
-				return null
-			}
-			model.toggle(context.signalHandler)
-			context.mouseEvent?.consume()
-			requestFocus()
-			return this
-		}
-
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
-			return this
-		}
-
-		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.button != Button.BUTTON1) {
-				return null
-			}
-			if (!toggle) {
-				model.toggle(context.signalHandler)
-				context.mouseEvent?.consume()
-			}
-			return null
 		}
 	}
 }
