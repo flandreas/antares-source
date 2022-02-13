@@ -33,6 +33,16 @@ class SelectionManagerImpl(
 		// empty
 	}
 
+	override fun activate() {
+		with(selection) {
+			if (isEmpty()) {
+				postSelectionChanged(emptyList(), selected = false)
+			} else {
+				postSelectionChanged(this, selected = true)
+			}
+		}
+	}
+
 	override fun select(component: Component) {
 		if (canSelect(component)) {
 			selectImpl(component)

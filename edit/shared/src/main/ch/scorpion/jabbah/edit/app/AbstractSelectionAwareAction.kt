@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -17,9 +18,16 @@ abstract class AbstractSelectionAwareAction(
 	viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractEditAction(baseName, eventBus, viewManager) {
 
+	private val selectionHandler: EventHandler<SelectionChangeEvent> = { updateEnabled() }
+
 	init {
-		eventBus.register(SelectionChangeEvent::class) { updateEnabled() }
+		eventBus.register(SelectionChangeEvent::class, selectionHandler)
 		enabled = calculateEnabled()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(selectionHandler)
 	}
 
 	protected val selection: Collection<Component> get() = drawingView!!.selectionManager.selection

@@ -13,6 +13,13 @@ interface SelectionManager {
 
 	fun dispose()
 
+	/**
+	 * Activates this [SelectionManager] by posting a [SelectionChangeEvent] even if no selection
+	 * change occurred from this [SelectionManager]'s point of view. This is e.g. necessary if the
+	 * current drawing has been replaced.
+	 */
+	fun activate()
+
     /**
      * Selects the specified [Component].
      *

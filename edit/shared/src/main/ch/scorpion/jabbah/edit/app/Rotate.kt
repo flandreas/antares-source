@@ -25,7 +25,7 @@ class RotateAction(
 ) : AbstractSelectionAwareAction("edit.action.rotate", eventBus, viewManager) {
 
 	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && ( selectionCount > 1 || selectionCount == 1 && singleSelection!!.rotatable)
+		super.calculateEnabled() && (selectionCount > 1 || selectionCount == 1 && singleSelection!!.rotatable)
 
 	override fun execute(event: ActionEvent) {
 		if (!selection.all { it.rotatable }) {

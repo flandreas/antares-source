@@ -86,6 +86,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
             field = value
 	        field.drawing.setDrawableDrawer(drawableDrawer)
             firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
+
+	        content.selectionManager.activate()
         }
 
     override var editable: Boolean = editable
