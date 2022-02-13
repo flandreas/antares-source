@@ -156,18 +156,12 @@ class SwitchView(
 		if (labelPosition != VerticeLabelPosition.EXTERNAL) {
 			writer.writeString("labelPos", labelPosition.customName)
 		}
-		if (!toggle) {
-			writer.writeBoolean("toggle", toggle)
-		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("labelPos")) {
 			labelPosition = VerticeLabelPosition.withName(reader.readString("labelPos"))
-		}
-		if (reader.hasAttribute("toggle")) {
-			toggle = reader.readBoolean("toggle")
 		}
 	}
 

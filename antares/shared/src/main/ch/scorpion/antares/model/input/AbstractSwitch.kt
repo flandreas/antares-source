@@ -81,6 +81,4 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		setInteractionEnabled(false, signalHandler)
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
-
-	//protected open fun createSignal(): DigitalSignal = DigitalSignalFactory.of(isOn)
 }

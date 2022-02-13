@@ -3,8 +3,6 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -13,6 +11,9 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -59,6 +60,24 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		}
 		super.handleStateChanged(event)
 	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (!toggle) {
+			writer.writeBoolean("toggle", toggle)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("toggle")) {
+			toggle = reader.readBoolean("toggle")
+		}
+	}
+
+	/** ---- [AbstractSwitchView] */
 
 	protected abstract fun updateLabels()
 
