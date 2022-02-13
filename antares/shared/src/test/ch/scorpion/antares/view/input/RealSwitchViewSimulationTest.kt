@@ -6,7 +6,6 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.net.PowerView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView

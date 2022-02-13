@@ -40,6 +40,7 @@
             <baseLibraryElement _id='21' id='Ground'/>
             <baseLibraryElement _id='22' id='Power'/>
             <baseLibraryElement _id='23' id='RealSwitch'/>
+            <baseLibraryElement _id='124' id='DoubleThrowSwitch'/>
             <containerLibraryElement _id='24' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577'>
               <name>
                 <translation lang='en' text='Bus Transceiver 4 Bit'/>

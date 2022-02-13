@@ -107,6 +107,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val VIDEO_RAM = "VideoRam"
 	private const val JOYSTICK = "Joystick"
 	private const val REAL_SWITCH = "RealSwitch"
+	private const val DOUBLE_THROW_SWITCH = "DoubleThrowSwitch"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -275,6 +276,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("bitExtenderView", BitExtenderView::class)
 		typeMap.register("buzzerView", BuzzerView::class)
 		typeMap.register("videoRamView", VideoRamView::class)
+		typeMap.register("doubleThrowSwitchView", DoubleThrowSwitchView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -321,6 +323,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, VideoRamView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DoubleThrowSwitchView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -435,6 +438,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
 		repository.register(REAL_SWITCH, "library.element.RealSwitch", { "/img/real-switch.png" }, RealSwitchView::class)
+		repository.register(DOUBLE_THROW_SWITCH, "library.element.DoubleThrowSwitch", { "/img/double-throw-switch.png" }, DoubleThrowSwitchView::class)
 
 		repository.register(LED, "library.element.LED", { "/img/led.png" }, LEDView::class)
 		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
@@ -465,6 +469,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(CONSTANT), net)
 		addLibraryItem(library, BaseLibraryElement(SPLITTER), net)
 		addLibraryItem(library, BaseLibraryElement(CONCENTRATOR), net)
+		addLibraryItem(library, BaseLibraryElement(BIDIRECTIONAL_SPLITTER), net)
 		addLibraryItem(library, BaseLibraryElement(PROBE), net)
 		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
 		addLibraryItem(library, BaseLibraryElement(BREAK), net)
@@ -474,6 +479,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(GROUND), net)
 		addLibraryItem(library, BaseLibraryElement(POWER), net)
 		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
+		addLibraryItem(library, BaseLibraryElement(DOUBLE_THROW_SWITCH), net)
 		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
@@ -505,6 +511,8 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAY), output)
 		addLibraryItem(library, BaseLibraryElement(LED_MATRIX), output)
 		addLibraryItem(library, BaseLibraryElement(TERMINAL), output)
+		addLibraryItem(library, BaseLibraryElement(BUZZER), output)
+		addLibraryItem(library, BaseLibraryElement(VIDEO_RAM), output)
 		addLibraryItem(library, output, library)
 
 		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
