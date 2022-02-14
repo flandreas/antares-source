@@ -41,11 +41,14 @@ import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.DrawExecSymbolFunctions
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.module.GraphModule
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
@@ -362,6 +365,22 @@ class SubGraphVerticeViewImpl(
 		if (customizedContainerDrawing != null && model.designError == null) {
 			repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
+		}
+	}
+
+	/** ---- [ConnectableView] */
+
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
+		super.handleConnect(edgeView, port)
+		if (port != null && !isReading) {
+			updateBoxes()
+		}
+	}
+
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean) {
+		super.handleUnconnect(edgeView, port, lockEndpoint)
+		if (port != null && !isReading) {
+			updateBoxes()
 		}
 	}
 
