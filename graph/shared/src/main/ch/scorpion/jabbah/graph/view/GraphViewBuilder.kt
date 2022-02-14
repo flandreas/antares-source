@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.graph.GraphStorable
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
@@ -60,6 +57,11 @@ open class GraphViewBuilder<T : Any>(
 
 	fun build(): GraphView {
 		return graphView
+	}
+
+	fun <T : GraphElementView<out GraphElement>> add(graphElementView: T): T {
+		graphView.add(graphElementView)
+		return graphElementView
 	}
 
 	fun <T : VerticeView<out Vertice>> addVerticeView(verticeView: T): T {
