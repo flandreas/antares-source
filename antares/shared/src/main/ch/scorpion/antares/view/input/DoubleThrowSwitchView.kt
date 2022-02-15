@@ -3,12 +3,10 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.model.input.DoubleThrowSwitch
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -71,19 +69,8 @@ class DoubleThrowSwitchView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		var circleRadius = 2.0
-		if (model.bitWidth.width > 1) {
-			context.g.stroke = Themes.get<AntaresTheme>().edge.busStroke
-			circleRadius = 3.0
-		} else {
-			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				Themes.get<AntaresTheme>().edge.executionStroke
-			} else {
-				Themes.get<AntaresTheme>().edge.stroke
-			}
-		}
+		(getPortView(model.getPort(1)) as DigitalPortView).prepareConnectionDrawContext(context)
 
-		context.g.color = transparent.applyTo(getPortColor(1, context))
 		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * SCALE, 0.0)
 
 		if (model.isOn) {
@@ -94,11 +81,12 @@ class DoubleThrowSwitchView(
 
 		context.g.fillCircle(bounds.minX + 0.5 * SCALE, 0.0, circleRadius)
 
-		context.g.color = transparent.applyTo(getPortColor(2, context))
+		(getPortView(model.getPort(2)) as DigitalPortView).prepareConnectionDrawContext(context)
+
 		context.g.drawLine(bounds.maxX - 0.5 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
 		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, -2.0 * SCALE, circleRadius)
 
-		context.g.color = transparent.applyTo(getPortColor(3, context))
+		(getPortView(model.getPort(3)) as DigitalPortView).prepareConnectionDrawContext(context)
 		context.g.drawLine(bounds.maxX - 0.5 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
 		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, 2.0 * SCALE, circleRadius)
 
