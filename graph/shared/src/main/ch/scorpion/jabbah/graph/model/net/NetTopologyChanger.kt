@@ -26,10 +26,14 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 interface NetTopologyChanger {
 	fun addNetTopologyChangeListener(listener: NetTopologyChangeListener)
 	fun removeNetTopologyChangeListener(listener: NetTopologyChangeListener)
+	fun containsNetTopologyChangeListener(listener: NetTopologyChangeListener): Boolean
 }
 
 /** Provided by objects interested in being informed about [Net] topology changes.*/
-typealias NetTopologyChangeListener = (NetTopologyChangeEvent) -> Unit
+interface NetTopologyChangeListener {
+	fun handle(event: NetTopologyChangeEvent)
+	fun resendSignal(signalHandler: SignalHandler)
+}
 
 /**
  * Sent by [NetTopologyChanger] to registered [NetTopologyChangeListener]s after a [Net] topology has

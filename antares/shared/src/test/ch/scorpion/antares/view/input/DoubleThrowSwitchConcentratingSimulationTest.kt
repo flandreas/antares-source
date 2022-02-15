@@ -11,7 +11,7 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.*
 
-class DoubleThrowViewSimulationTest : AbstractCircuitTest() {
+class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 
 	companion object {
 		init {
@@ -96,5 +96,6 @@ class DoubleThrowViewSimulationTest : AbstractCircuitTest() {
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(ledView.model.isOn)
+		assertEquals(DigitalSignalFactory.of(Bit.False), switchView.model.getOutput<DigitalSignal>(3).net!!.signal)
 	}
 }

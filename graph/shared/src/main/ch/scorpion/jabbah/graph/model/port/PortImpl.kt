@@ -26,7 +26,7 @@ open class PortImpl<T : Any>(
 	description: TranslatableText = TranslatableText(),
 	override var customCanBeUndefined: Boolean = false,
 	override val weakBehaviour: WeakOutputPortBehaviour<T>? = null
-) : BidirectionalPort<T>, Describable {
+) : BidirectionalPort<T>, Describable, NetTopologyChangeListener {
 
 	constructor(portType: PortType) : this(portType, null)
 
@@ -126,7 +126,7 @@ open class PortImpl<T : Any>(
 					if (combinedNet.accessOf(this) != null) {
 						_combinedNets.add(combinedNet)
 						if (combinedNet.netTopologyChanger.isNotEmpty()) {
-							combinedNet.netTopologyChanger.forEach { it.addNetTopologyChangeListener(::handle) }
+							combinedNet.netTopologyChanger.forEach { it.addNetTopologyChangeListener(this) }
 						}
 					}
 				}
@@ -135,7 +135,7 @@ open class PortImpl<T : Any>(
 
 	private fun clearCombinedNets() {
 		_combinedNets.forEach { combinedNet ->
-			combinedNet.netTopologyChanger.forEach { it.removeNetTopologyChangeListener(::handle) }
+			combinedNet.netTopologyChanger.forEach { it.removeNetTopologyChangeListener(this) }
 		}
 		_combinedNets.clear()
 	}
@@ -221,6 +221,16 @@ open class PortImpl<T : Any>(
 				getIncomingSignal()!!
 			}
 		}
+
+	/** ---- [NetTopologyChangeListener] */
+
+	override fun handle(event: NetTopologyChangeEvent) {
+		formNet(event.signalHandler)
+	}
+
+	override fun resendSignal(signalHandler: SignalHandler) {
+		flush(signalHandler)
+	}
 
 	/** ---- [PortImpl] */
 
@@ -358,9 +368,5 @@ open class PortImpl<T : Any>(
 		}
 
 		return replacement
-	}
-
-	private fun handle(event: NetTopologyChangeEvent) {
-		formNet(event.signalHandler)
 	}
 }

@@ -82,10 +82,17 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 		netTopologyChangeListeners.remove(listener)
 	}
 
+	override fun containsNetTopologyChangeListener(listener: NetTopologyChangeListener): Boolean =
+		netTopologyChangeListeners.contains(listener)
+
 	private fun notifyNetTopologyChanged(signalHandler: SignalHandler) {
 		LOG.trace("notifyNetTopologyChanged")
 		val event = NetTopologyChangeEvent(this, signalHandler)
-		netTopologyChangeListeners.toList().forEach { it.invoke(event) }
+		netTopologyChangeListeners.toList().forEach { it.handle(event) }
+	}
+
+	protected fun askNetTopologyChangeListenersForResend(signalHandler: SignalHandler) {
+		netTopologyChangeListeners.forEach { it.resendSignal(signalHandler) }
 	}
 
 	/** ---- [NetCombiner] interface */
