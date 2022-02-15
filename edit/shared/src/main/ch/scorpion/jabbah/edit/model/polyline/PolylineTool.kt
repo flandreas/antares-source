@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.polyline.Polyline
@@ -76,6 +77,14 @@ class PolylineTool(
 			val offset = editor.snapManager.snap(x, y)
 			instance!!.setPointAt(instance!!.pointsCount - 1, x + offset.x, y + offset.y)
 			instance!!.validate()
+		}
+	}
+
+	override fun keyPressed(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ESCAPE) {
+			editor.drawing.remove(addedComponent)
+			editor.drawing.validate()
+			editor.toolDone()
 		}
 	}
 }

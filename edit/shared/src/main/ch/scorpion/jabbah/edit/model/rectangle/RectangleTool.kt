@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -29,8 +30,8 @@ class RectangleTool<T : RectangularComponent>(
 	service: DrawingAppService = EditModule.drawingAppService,
 	factory: () -> T,
 	adder: (T) -> Component = { it },
-	val defaultWidth: Double = DEF_WIDTH,
-	val defaultHeight: Double = DEF_HEIGHT
+	private val defaultWidth: Double = DEF_WIDTH,
+	private val defaultHeight: Double = DEF_HEIGHT
 ) : AbstractComponentTool<T>(editor, service, factory, adder) {
 
 	companion object {
@@ -110,6 +111,14 @@ class RectangleTool<T : RectangularComponent>(
 		addComponent(addedComponent)
 
 		editor.toolDone()
+	}
+
+	override fun keyPressed(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ESCAPE) {
+			editor.drawing.remove(addedComponent)
+			editor.drawing.validate()
+			editor.toolDone()
+		}
 	}
 
 	private fun reportSize() {
