@@ -24,6 +24,8 @@ interface GraphActorData : ActorData {
 	 */
 	val immediatePort: Port<*>?
 
+	val force: Boolean
+
 	/** Returns the current signal of a particular [Port] at the beginning of an execution step.*/
 	fun <T : Any> getSignal(portId: Int): T?
 }
@@ -33,7 +35,8 @@ class StoringGraphActorData(
 	override val changedPort: Port<*>?,
 	val signal: Any?,
 	override val isInput: Boolean = true,
-	override val immediatePort: Port<*>? = changedPort
+	override val immediatePort: Port<*>? = changedPort,
+	override val force: Boolean = false
 ) : GraphActorData {
 
 	override fun dataToString(): String = "${changedPort?.name}:$signal"

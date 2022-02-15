@@ -47,7 +47,7 @@ class GraphOutputImpl<T : Any>(
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		super.act(signalHandler, data)
-		subGraphOutputPort?.flush(signalHandler)
+		subGraphOutputPort?.flush(signalHandler, (data as GraphActorData).force)
 	}
 
 	/** ---- [NetCombiner] */

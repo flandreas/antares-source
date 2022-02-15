@@ -36,7 +36,7 @@ class OscilloscopeProbeVertice<T : Any>(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
+	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		stateChanged(signalHandler)
 	}
 

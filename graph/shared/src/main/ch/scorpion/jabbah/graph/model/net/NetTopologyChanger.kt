@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model.net
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 
 /**
@@ -31,7 +32,18 @@ interface NetTopologyChanger {
 
 /** Provided by objects interested in being informed about [Net] topology changes.*/
 interface NetTopologyChangeListener {
+
+	/**
+	 * Notifies this [NetTopologyChangeListener] that a [NetTopologyChanger] has changed the topology of a [Net].
+	 * Typical implementations will rebuild their [CombinedNet]s to reflect the new [Net] topology.
+	 */
 	fun handle(event: NetTopologyChangeEvent)
+
+	/**
+	 * Asks this [NetTopologyChangeEvent] to resend its current signal after the [Net] topology has changed.
+	 * Implementations should use "force" sending signals, because otherwise [InputPort]s along the path
+	 * won't consume the resent signal if it doesn't differ from the current signal.
+	 */
 	fun resendSignal(signalHandler: SignalHandler)
 }
 

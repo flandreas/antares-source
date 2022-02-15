@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.antares.view.output.LEDView
@@ -50,12 +49,6 @@ class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
 	fun shouldRegisterAsNetTopologyChanger() {
 		startSimulation()
 		assertTrue(circuitInOutView.model.getOutput<DigitalSignal>().combinedNets.any { it.netTopologyChanger.contains(realSwitchView.model) })
-	}
-
-	@Test
-	fun shouldHaveCombinedNetTowardsCircuitInOut() {
-		startSimulation()
-		assertTrue(realSwitchView.model.getOutput<DigitalSignal>(1).combinedNets.any { it.accesses.any { it.port === circuitInOutView.model.getOutput<DigitalSignal>() } })
 	}
 
 	@Test

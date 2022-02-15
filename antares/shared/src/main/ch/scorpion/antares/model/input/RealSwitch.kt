@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
@@ -29,12 +30,12 @@ class RealSwitch(
 
 			override fun handleInputChanged(data: GraphActorData, vertice: RealSwitch, signalHandler: SignalHandler) {
 				if (vertice.isOn) {
-					val outputPortId = if (data.changedPort!!.portId == 1) 2 else 1
-					vertice.getOutput<DigitalSignal>(outputPortId).setOutgoingSignalBuffered(data.getSignal(data.changedPort!!.portId), signalHandler)
+					vertice.getOutput<DigitalSignal>(getOppositePortId(data.changedPort!!.portId))
+						.setOutgoingSignalBuffered(data.getSignal(data.changedPort!!.portId), signalHandler)
 				}
 			}
 
-			override fun handleStateChanged(vertice: RealSwitch, signalHandler: SignalHandler) {
+			override fun handleStateChanged(data: GraphActorData, vertice: RealSwitch, signalHandler: SignalHandler) {
 				val port1 = vertice.getPort<DigitalSignal>(1) as DigitalPort
 				val port2 = vertice.getPort<DigitalSignal>(2) as DigitalPort
 				port1.setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
@@ -45,9 +46,18 @@ class RealSwitch(
 					// of this RealSwitch because incoming signal is already set
 					(port1 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
 					(port2 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
+				} else {
+					port1.flush(signalHandler, data.force)
+					port2.flush(signalHandler, data.force)
 				}
+
+				// Re-flush the dominant signals in the Nets of the switched Ports
+				vertice.askNetTopologyChangeListenersForResend(signalHandler)
 			}
 		}
+
+		private fun getOppositePortId(portId: Int): Int =
+			if (portId == 1) 2 else 1
 	}
 
 	override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
@@ -55,11 +65,21 @@ class RealSwitch(
 
 	/** ---- [NetCombiner] interface */
 
-	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
-		return if (isOn) {
-			CombinedNet.createFor(outputPort, signalHandler)
+	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
+		if (isOn) {
+			val opposite = getOutput<T>(getOppositePortId(inputPort.portId))
+			CombinedNet.createFor(opposite, signalHandler).onEach {
+				it.replaceAccessPort(opposite, outputPort)
+			}
 		} else {
 			emptyList()
+		}
+
+	override fun flush(signalHandler: SignalHandler, data: ActorData) {
+		if ((data as GraphActorData).changedPort != null) {
+			if (isOn) {
+				getOutput<DigitalSignal>(getOppositePortId(data.changedPort!!.portId)).flush(signalHandler, data.force)
+			}
 		}
 	}
 }

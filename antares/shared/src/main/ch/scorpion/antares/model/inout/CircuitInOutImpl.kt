@@ -101,8 +101,8 @@ class CircuitInOutImpl(
 
 	override var subGraphInputPort: SubGraphInputPort<DigitalSignal>? = null
 
-	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler) {
-		setIncomingSignal(signal, signalHandler, propagationDelay)
+	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, force: Boolean) {
+		setIncomingSignal(signal, signalHandler, propagationDelay, force)
 	}
 
 	override fun outputChanged(output: OutputPort<*>, signalHandler: SignalHandler) {
@@ -110,13 +110,13 @@ class CircuitInOutImpl(
 		super.outputChanged(output, signalHandler)
 	}
 
-	private fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, delay: Long) {
+	private fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, delay: Long, force: Boolean = false) {
 		val differs = differ(this.signal, signal)
 		signalHandler.logActorTrace(this) { "GraphInput.setIncomingSignal: enabled=$enabled, differs=$differs" }
 		if (differs) {
 			this.signal = signal
 			setInteractionEnabled(false, signalHandler)
-			requestActingAfter(signalHandler, delay, StoringGraphActorData(null, this.signal))
+			requestActingAfter(signalHandler, delay, StoringGraphActorData(null, this.signal, force = force))
 		}
 	}
 
@@ -189,7 +189,7 @@ class CircuitInOutImpl(
 		if (portType.isOutput && subGraphOutputPort != null) {
 			if ((data as GraphActorData).changedPort != null || signalHandler.executionTime == propagationDelay) {
 				// Send signal to outside only if it came from inside
-				subGraphOutputPort?.flush(signalHandler)
+				subGraphOutputPort?.flush(signalHandler, data.force)
 			}
 		}
 	}

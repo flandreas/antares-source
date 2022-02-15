@@ -47,7 +47,7 @@ abstract class CalculatingVertice(
 		for (port in getPorts()) {
 			if (port.portType.isOutput && port !== (data as GraphActorData).changedPort) {
 				// Don't flush OutputPorts that triggered execution to avoid shooting back signals
-				(port as OutputPort<*>).flush(signalHandler)
+				(port as OutputPort<*>).flush(signalHandler, (data as GraphActorData).force)
 			}
 		}
 	}

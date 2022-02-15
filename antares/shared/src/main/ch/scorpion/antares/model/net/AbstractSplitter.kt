@@ -96,7 +96,7 @@ abstract class AbstractSplitter(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		getOutputs().forEach { it.flush(signalHandler) }
+		getOutputs().forEach { it.flush(signalHandler, force = false) }
 	}
 
 	/** ---- [NetCombiner] interface */
@@ -189,21 +189,21 @@ abstract class AbstractSplitter(
 
 	override fun flush(signalHandler: SignalHandler, data: ActorData) {
 		if ((data as GraphActorData).changedPort === wideSidePort) {
-			flushNarrowSide(signalHandler)
+			flushNarrowSide(signalHandler, (data as GraphActorData).force)
 		} else {
-			flushWideSide(signalHandler)
+			flushWideSide(signalHandler, (data as GraphActorData).force)
 		}
 	}
 
-	private fun flushNarrowSide(signalHandler: SignalHandler) {
+	private fun flushNarrowSide(signalHandler: SignalHandler, force: Boolean) {
 		narrowSidePorts.forEach {
-			it.flush(signalHandler)
+			it.flush(signalHandler, force)
 			(it as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 		}
 	}
 
-	private fun flushWideSide(signalHandler: SignalHandler) {
-		wideSidePort.flush(signalHandler)
+	private fun flushWideSide(signalHandler: SignalHandler, force: Boolean) {
+		wideSidePort.flush(signalHandler, force)
 		(wideSidePort as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 	}
 

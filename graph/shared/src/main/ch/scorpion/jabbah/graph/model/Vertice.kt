@@ -41,8 +41,13 @@ interface Vertice : GraphElement, Describable {
 
     val hasAnyOutput: Boolean
 
-    /** Notifies this [Vertice] that one of its [InputPort]s has changed its signal.*/
-    fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler)
+    /**
+     * Notifies this [Vertice] that one of its [InputPort]s has changed its signal.
+     * Typical implementations will request the [SignalHandler] for re-execution after their propagation delay.
+     * @param input the [InputPort] that received the incoming signal
+     * @param force `true` if the signal should be used even if its the same as the currently available signal.
+     */
+    fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean)
 
     /**
      * Notifies this [Vertice] that one of its [OutputPort]s has changed its signal.

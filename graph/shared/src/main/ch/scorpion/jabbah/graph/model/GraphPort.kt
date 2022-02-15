@@ -65,7 +65,7 @@ interface GraphInput<T : Any> : GraphPort<T> {
 	var subGraphInputPort: SubGraphInputPort<T>?
 
 	/** Sets the signal to be forwarded into the [Graph] that owns this [GraphInput].*/
-	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
+	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean = false)
 }
 
 /**

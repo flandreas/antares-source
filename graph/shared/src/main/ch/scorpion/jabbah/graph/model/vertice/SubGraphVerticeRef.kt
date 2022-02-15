@@ -245,16 +245,16 @@ class SubGraphVerticeRef(
 
 	/** ---- [AbstractVertice] */
 
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
+	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
 			val graphInput = (input as SubGraphInputPort<Any>).graphInput
 			signalHandler.logActorTrace(this) { "input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}" }
-			graphInput?.setIncomingSignal(input.getIncomingSignal(), signalHandler)
+			graphInput?.setIncomingSignal(input.getIncomingSignal(), signalHandler, force)
 		}
 		// This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
 		// Even if deeply executing, we need to request acting, because only that will initiate
 		// calculation animations for this [SubGraphVerticeRef] on the view layer.
-		super.inputChanged(input, signalHandler)
+		super.inputChanged(input, signalHandler, force)
 	}
 
 	/** ---- [SubGraphVertice] */

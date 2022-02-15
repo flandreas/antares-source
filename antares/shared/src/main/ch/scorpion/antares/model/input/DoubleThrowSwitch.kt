@@ -41,14 +41,13 @@ class DoubleThrowSwitch(
 				}
 			}
 
-			override fun handleStateChanged(vertice: DoubleThrowSwitch, signalHandler: SignalHandler) {
-
+			override fun handleStateChanged(data: GraphActorData, vertice: DoubleThrowSwitch, signalHandler: SignalHandler) {
 				// Set blind port to undefined
 				vertice.getOutput<DigitalSignal>(getBlindPortId(vertice)).apply {
 					setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.bitWidth), signalHandler)
 					// Flushing in DoubleThrowSwitch.flush() could overwrite the value established
 					// by resending the value of the NetTopologyChangeListener (see below)
-					flush(signalHandler)
+					flush(signalHandler, data.force)
 				}
 
 				setOf(1, getOppositePortId(1, vertice.isOn))
@@ -87,9 +86,6 @@ class DoubleThrowSwitch(
 
 	/** ---- [NetCombiner] interface */
 
-	// TODO: Move this up to AbstractRealSwitch, which should work the same
-	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
-
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		return when (inputPort.portId) {
 			1 -> {
@@ -114,7 +110,7 @@ class DoubleThrowSwitch(
 	override fun flush(signalHandler: SignalHandler, data: ActorData) {
 		if ((data as GraphActorData).changedPort != null) {
 			if (!isBlindInput(data.changedPort!!.portId, isOn)) {
-				getOutput<DigitalSignal>(getOppositePortId(data.changedPort!!.portId, isOn)).flush(signalHandler)
+				getOutput<DigitalSignal>(getOppositePortId(data.changedPort!!.portId, isOn)).flush(signalHandler, data.force)
 			}
 		}
 	}

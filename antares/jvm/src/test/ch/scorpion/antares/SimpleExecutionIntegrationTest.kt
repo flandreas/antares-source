@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.BeforeTest

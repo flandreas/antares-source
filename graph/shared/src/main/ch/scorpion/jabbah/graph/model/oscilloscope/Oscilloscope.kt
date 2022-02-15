@@ -53,7 +53,7 @@ class Oscilloscope(
 	override val type: String get() = TYPE
 	override val typeDesc: String get() = ""
 
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
+	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		storeSignal(input, signalHandler)
 		stateChanged(signalHandler)
 	}

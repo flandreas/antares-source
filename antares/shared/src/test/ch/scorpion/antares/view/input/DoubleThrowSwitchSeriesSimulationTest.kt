@@ -47,8 +47,8 @@ class DoubleThrowSwitchSeriesSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 
 		with(buttonView.model.getOutput<DigitalSignal>().combinedNets) {
-			any { it.netTopologyChanger.contains(switch1.model) }
-			any { it.netTopologyChanger.contains(switch2.model) }
+			assertTrue(any { it.netTopologyChanger.contains(switch1.model) })
+			assertTrue(any { it.netTopologyChanger.contains(switch2.model) })
 		}
 		assertTrue(switch1.model.containsNetTopologyChangeListener(buttonView.model.getOutput<DigitalSignal>(1) as PortImpl<*>))
 		assertTrue(switch2.model.containsNetTopologyChangeListener(buttonView.model.getOutput<DigitalSignal>(1) as PortImpl<*>))

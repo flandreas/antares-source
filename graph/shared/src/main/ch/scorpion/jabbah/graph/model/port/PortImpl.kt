@@ -148,10 +148,10 @@ open class PortImpl<T : Any>(
 		return _incomingSignal ?: getDefaultSignal()
 	}
 
-	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler) {
-		if (signal != _incomingSignal) {
+	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
+		if (force || signal != _incomingSignal) {
 			storeIncomingSignal(signal)
-			owner?.inputChanged(this, signalHandler)
+			owner?.inputChanged(this, signalHandler, force)
 		} else {
 			signalHandler.logActorTrace(owner!!) { "Ignoring incoming signal $signal, already present"}
 		}
@@ -194,11 +194,11 @@ open class PortImpl<T : Any>(
 
 	override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
 		storeOutgoingSignal(signal)
-		forwardSignal(signalHandler)
+		forwardSignal(signalHandler, force = false)
 	}
 
-	override fun flush(signalHandler: SignalHandler) {
-		forwardSignal(signalHandler)
+	override fun flush(signalHandler: SignalHandler, force: Boolean) {
+		forwardSignal(signalHandler, force)
 	}
 
 	fun syncIncomingSignalWithNegotiatedOutgoingSignal(always: Boolean = false) {
@@ -229,7 +229,7 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun resendSignal(signalHandler: SignalHandler) {
-		flush(signalHandler)
+		flush(signalHandler, force = true)
 	}
 
 	/** ---- [PortImpl] */
@@ -276,7 +276,7 @@ open class PortImpl<T : Any>(
 		net!!.executionError = null
 	}
 
-	private fun forwardSignal(signalHandler: SignalHandler) {
+	private fun forwardSignal(signalHandler: SignalHandler, force: Boolean) {
 		if (net == null) {
 			return
 		}
@@ -301,7 +301,7 @@ open class PortImpl<T : Any>(
 		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
 			val replacement = replaceOwnUndefinedSignals(signalHandler)
-			net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler)
+			net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler, force)
 			return
 		}
 
@@ -309,7 +309,7 @@ open class PortImpl<T : Any>(
 		if (!isOutputFullyUndefined) {
 			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $_outgoingSignal into net '${net!!.id}'" }
 			resetExecutionError()
-			net!!.setSignal(_outgoingSignal, this, this, signalHandler)
+			net!!.setSignal(_outgoingSignal, this, this, signalHandler, force)
 			return
 		}
 
@@ -317,7 +317,7 @@ open class PortImpl<T : Any>(
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		val replacement = replaceOwnUndefinedSignals(signalHandler)
 		resetExecutionError()
-		net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler)
+		net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler, force)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {

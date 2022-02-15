@@ -4,6 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.net.PowerView
@@ -81,5 +82,20 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(ledView.model.isOn)
+	}
+
+	@Test
+	fun shouldBeUndefinedWhenOff() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		realSwitchView.model.on(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		realSwitchView.model.off(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertFalse(ledView.model.isOn)
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_1), realSwitchView.model.getOutput<DigitalSignal>(2).net!!.signal)
 	}
 }

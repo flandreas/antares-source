@@ -37,12 +37,12 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 				if (data.changedPort != null) {
 					handleInputChanged(data, vertice, signalHandler)
 				} else {
-					handleStateChanged(vertice, signalHandler)
+					handleStateChanged(data, vertice, signalHandler)
 				}
 			}
 
 			protected abstract fun handleInputChanged(data: GraphActorData, vertice: T, signalHandler: SignalHandler)
-			protected abstract fun handleStateChanged(vertice: T, signalHandler: SignalHandler)
+			protected abstract fun handleStateChanged(data: GraphActorData, vertice: T, signalHandler: SignalHandler)
 		}
 	}
 
@@ -97,7 +97,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [NetCombiner] interface */
 
-	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = true
+	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
 
 	/** ---- [Storable] interface */
 

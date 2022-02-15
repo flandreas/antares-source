@@ -31,9 +31,9 @@ class SubGraphPortImpl<T: Any>(
 
     /** ---- [PortImpl] */
 
-    override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler) {
-        super.setIncomingSignal(signal, signalHandler)
-        graphInput?.setIncomingSignal(signal, signalHandler)
+    override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
+        super.setIncomingSignal(signal, signalHandler, force)
+        graphInput?.setIncomingSignal(signal, signalHandler, force)
     }
 
     // TODO Is this override necessary? Wasn't part of the guugen version

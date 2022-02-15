@@ -42,7 +42,7 @@ interface Net<T: Any> : GraphElement {
      * @param origin the [OutputPort] that sends `signal` into this [Net].
      * @param signalHandler the runtime interface to the execution subsystem.
      */
-    fun setSignal(signal: T?, origin: OutputPort<T>, immediatePort: OutputPort<T>, signalHandler: SignalHandler)
+    fun setSignal(signal: T?, origin: OutputPort<T>, immediatePort: OutputPort<T>, signalHandler: SignalHandler, force: Boolean)
 
     /** Creates a new [Net] of the same type like this [Net] without copying all the [Port]s.*/
     fun cloneEmpty(): Net<T>

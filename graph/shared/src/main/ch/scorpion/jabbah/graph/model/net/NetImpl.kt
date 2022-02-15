@@ -76,9 +76,9 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		return _ports.contains(port)
 	}
 
-	override fun setSignal(signal: T?, origin: OutputPort<T>, immediatePort: OutputPort<T>, signalHandler: SignalHandler) {
+	override fun setSignal(signal: T?, origin: OutputPort<T>, immediatePort: OutputPort<T>, signalHandler: SignalHandler, force: Boolean) {
 		signalBuffer = signal
-		val data = StoringGraphActorData(origin, signal, immediatePort = immediatePort)
+		val data = StoringGraphActorData(origin, signal, immediatePort = immediatePort, force = force)
 		requestActingAfter(signalHandler, 0, data)
 	}
 
@@ -136,7 +136,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		for (i in 0 until _ports.size) {
 			val port = _ports[i]
 			if (port.portType.isInput && port !== data.changedPort) {
-				(port as InputPort).setIncomingSignal(signal, signalHandler)
+				(port as InputPort).setIncomingSignal(signal, signalHandler, data.force)
 			}
 		}
 	}

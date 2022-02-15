@@ -41,12 +41,12 @@ abstract class AbstractVertice(
 
 	override val hasAnyOutput: Boolean get() = ports.any { it.portType.isOutput }
 
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
+	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (signalHandler.isLogTrace) {
 			signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" }
 		}
 
-		requestActingAfter(signalHandler, propagationDelay, createActorData(input))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(input, force))
 		stateChanged(signalHandler)
 	}
 
@@ -178,8 +178,8 @@ abstract class AbstractVertice(
 	/** ---- [AbstractVertice] */
 
 	/** Visible for testing. */
-	open fun createActorData(inputPort: InputPort<*>?): GraphActorData =
-		ActualPortValueActorData(inputPort, true)
+	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false): GraphActorData =
+		ActualPortValueActorData(inputPort, true, force = force)
 
 	/**
 	 * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
@@ -217,7 +217,8 @@ abstract class AbstractVertice(
 	private inner class ActualPortValueActorData(
 		override val changedPort: Port<*>?,
 		override val isInput: Boolean = true,
-		override val immediatePort: Port<*>? = changedPort
+		override val immediatePort: Port<*>? = changedPort,
+		override val force: Boolean
 	) : GraphActorData {
 
 		override fun <T : Any> getSignal(portId: Int): T? =

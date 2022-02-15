@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
+import ch.scorpion.jabbah.graph.model.net.NetTopologyChangeListener
 
 /**
  * A [Port] is an object in a [Vertice] to which [Net]s are attached.
@@ -87,8 +88,10 @@ interface InputPort<T : Any> : Port<T> {
 	 *
 	 * @param signal the signal to set.
 	 * @param signalHandler the [SignalHandler] to be used during execution.
+	 * @param force `true` if [signal] should be used even if its the same as the currently available signal.
+	 * Introduced to support resending signals by [NetTopologyChangeListener]s
 	 */
-	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
+	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean = false)
 
 	/**
 	 * Revokes the signal that has previously been set using [setIncomingSignal], giving this
@@ -190,7 +193,12 @@ interface OutputPort<T : Any> : Port<T> {
 	 */
 	fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler)
 
-	fun flush(signalHandler: SignalHandler)
+	/**
+	 * Forwards the currently buffered outgoing signal into the connected [Net].
+	 * @param force force `true` if [InputPort]s in the [Net] should consume the forwarded signal even if
+	 * its the same as the currently available signal.
+	 */
+	fun flush(signalHandler: SignalHandler, force: Boolean)
 
 	/**
 	 * Determines whether this [OutputPort] can be connected with the specified [Net],
