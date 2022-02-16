@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
-import ch.scorpion.jabbah.animation.AbstractAnimationTask
-import ch.scorpion.jabbah.animation.DoubleRange
-import ch.scorpion.jabbah.animation.PointRange
-import ch.scorpion.jabbah.animation.Sequence
+import ch.scorpion.jabbah.animation.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.View
 import kotlin.math.abs
@@ -23,42 +20,36 @@ data class ZoomedPointTranslation(
  */
 class ZoomedPointVoyageAnimation(
 	view: View<*>,
-	endZoomFactor: Double,
-	modelPoint: Point2D,
 	duration: Double,
-	viewDestinationPoint: Point2D = view.center
+	destination: ZoomedPointTranslation
 ) : AbstractAnimationTask<ZoomedPointTranslation>(
 	view,
 	{ view.navigator.translate(it) },
-	ZoomedPointVoyage(view, endZoomFactor, modelPoint, viewDestinationPoint),
+	ZoomedPointVoyage(view, destination),
 	duration
 )
 
 /**
  * A [Sequence] of [ZoomedPointTranslations][ZoomedPointTranslation] representing the voyage
- * of a [modelPoint] towards a destination point in view space while changing the [View]'s zoom factor
+ * of a model point towards a destination point in view space while changing the [View]'s zoom factor
  * at each step.
- *
- * @param endZoomFactor the zoom factor at the end of the voyage
- * @param modelPoint the [Point2D] to be moved in model space
- * @param viewDestinationPoint the destination point in view space
  */
 class ZoomedPointVoyage(
 	view: View<*>,
-	endZoomFactor: Double,
-	private val modelPoint: Point2D,
-	viewDestinationPoint: Point2D = view.center
+	destination: ZoomedPointTranslation
 ) : Sequence<ZoomedPointTranslation> {
 
 	private val viewLocationRange = PointRange(
-		begin = view.modelToView(modelPoint),
-		end = viewDestinationPoint)
+		begin = view.modelToView(destination.modelPoint),
+		end = destination.viewPoint
+	)
 
-	private val zoomFactorRange = DoubleRange(view.zoomFactor, endZoomFactor)
+	private val zoomFactorRange = DoubleRange(view.zoomFactor, destination.zoomFactor)
 
 	private val isViewLocationRangeLead = abs(viewLocationRange.size) >= abs(zoomFactorRange.size)
 
-	private var value: ZoomedPointTranslation? = ZoomedPointTranslation(modelPoint, view.modelToView(modelPoint), view.zoomFactor)
+	private var value: ZoomedPointTranslation? = ZoomedPointTranslation(
+		destination.modelPoint, view.modelToView(destination.modelPoint), view.zoomFactor)
 
 	override val size: Double = if (isViewLocationRangeLead) viewLocationRange.size else zoomFactorRange.size
 
@@ -104,6 +95,6 @@ class ZoomedPointVoyage(
 			value!!.zoomFactor
 		}
 
-		return ZoomedPointTranslation(modelPoint, viewLocation, zoomFactor)
+		return ZoomedPointTranslation(value!!.modelPoint, viewLocation, zoomFactor)
 	}
 }

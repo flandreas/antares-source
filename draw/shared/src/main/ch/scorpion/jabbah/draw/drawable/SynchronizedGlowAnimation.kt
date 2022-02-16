@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.animation.AbstractAnimationTask
-import ch.scorpion.jabbah.animation.AnimationModule
-import ch.scorpion.jabbah.animation.DoubleRange
-import ch.scorpion.jabbah.animation.SequenceType
+import ch.scorpion.jabbah.animation.*
 import ch.scorpion.jabbah.base.logger
 
 /**
@@ -17,7 +14,7 @@ object SynchronizedGlowAnimation {
 	private class GlowTask : AbstractAnimationTask<Double>(
 		SynchronizedGlowAnimation,
 		SynchronizedGlowAnimation::consume,
-		DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0, SequenceType.OSCILLATION),
+		Oscillation(DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0)),
 		300.0,
 		key = "SynchronizedGlow"
 	)

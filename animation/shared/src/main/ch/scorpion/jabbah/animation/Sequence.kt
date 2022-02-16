@@ -21,3 +21,12 @@ interface Sequence<out T> {
     /** Returns the value that has been returned by the most recent call of [getNext].*/
     fun getCurrent(): T
 }
+
+/**
+ * A [Sequence] capable of creating a reversed clone of itself. which is used for building
+ * oscillating composite [Sequence]s.
+ * Created clones must be reset to their initial i.e. start state.
+ */
+interface ReversibleSequence<out T> : Sequence<T> {
+	fun clone(reversed: Boolean): ReversibleSequence<T>
+}

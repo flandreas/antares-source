@@ -51,7 +51,7 @@ class AttentionDrawerImpl(
 		val animation = animator.schedule(
 			target = ring,
 			consumer = { ring.radius = it },
-			sequence = DoubleRange(0.0, maxRadius, SequenceType.ONCE),
+			sequence = DoubleRange(0.0, maxRadius),
 			duration = properties.getFloat(PROP_DURATION).toDouble()
 		)
 		animation.addListener(object : AnimationTaskAdapter() {

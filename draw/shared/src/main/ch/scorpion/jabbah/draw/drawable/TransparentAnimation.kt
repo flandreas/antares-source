@@ -36,27 +36,24 @@ class TransparentAnimation(
 		 * Creates a [TransparentAnimation] that produces a glow effect on the specified [Transparent]
 		 * by oscillating its transparency value by the specified frequency forever.
 		 */
-		fun glow(transparent: Transparent, frequency: Double = DEF_GLOW_PERIOD, key: String? = null): TransparentAnimation {
-			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0, SequenceType.OSCILLATION), frequency, key)
-		}
+		fun glow(transparent: Transparent, frequency: Double = DEF_GLOW_PERIOD, key: String? = null): TransparentAnimation =
+			TransparentAnimation(transparent, Oscillation(DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0)), frequency, key)
 
 		/**
 		 * Creates a [TransparentAnimation] that produces a "fade in" effect on the specified [Transparent]
 		 * by raising its transparency value from its current value to maximum value.
 		 * @param duration the duration of the animation in milliseconds
 		 */
-		fun fadeIn(transparent: Transparent, duration: Double): TransparentAnimation {
-			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_TRANSPARENT.toDouble(), Transparent.FULLY_OPAQUE.toDouble()), duration)
-		}
+		fun fadeIn(transparent: Transparent, duration: Double): TransparentAnimation =
+			TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_TRANSPARENT.toDouble(), Transparent.FULLY_OPAQUE.toDouble()), duration)
 
 		/**
 		 * Creates a [TransparentAnimation] that produces a "fade out" effect on the specified [Transparent]
 		 * by reducing its transparency value from its current value to minimum value.
 		 * @param duration the duration of the animation in milliseconds
 		 */
-		fun fadeOut(transparent: Transparent, duration: Double): TransparentAnimation {
-			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), Transparent.FULLY_TRANSPARENT.toDouble()), duration)
-		}
+		fun fadeOut(transparent: Transparent, duration: Double): TransparentAnimation =
+			TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), Transparent.FULLY_TRANSPARENT.toDouble()), duration)
 
 		/**
 		 * Combines various [AnimationTask]s to fade-in a [Transparent], hold it for a certain time, and fade-out it again.

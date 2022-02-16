@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -15,10 +16,12 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * @property subGraphVerticeView the [SubGraphVerticeView] whose opening lead to this entry
  * @property content the [DrawingViewContent] to be displayed if this entry is at the "head"
  * of the [NavigationStack]
+ * @param voyageOrigin used to capture the origin camera settings when diving into [subGraphVerticeView]
  */
 data class NavigationStackEntry<T : GraphView>(
 	val subGraphVerticeView: SubGraphVerticeView<*>? = null,
-	val content: DrawingViewContent<T>
+	val content: DrawingViewContent<T>,
+	var voyageOrigin: ZoomedPointTranslation? = null
 ) {
 	val graphName: Name? get() = content.drawing.graph?.name
 

@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.animation.*
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.draw.view.ZoomedPointVoyageAnimation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -44,10 +46,9 @@ class DescendAnimationManager(
     private fun createInnerDescendAnimation(drawingView: DrawingView<*>, terminator: () -> Unit): AnimationTask {
 	    val animation = ZoomedPointVoyageAnimation(
 		    drawingView,
-		    INNER_END_ZOOM_FACTOR,
-		    drawingView.drawing.boundingBox.center,
-		    ZOOM_DURATION
-		)
+		    ZOOM_DURATION,
+		    ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, INNER_END_ZOOM_FACTOR))
+
         animation.addListener(object: AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {
                 terminator.invoke()
@@ -64,10 +65,8 @@ class DescendAnimationManager(
     ): AnimationTask {
 	    val animation = ZoomedPointVoyageAnimation(
 		    drawingView,
-		    OUTER_END_ZOOM_FACTOR,
-		    subGraphVerticeView.boundingBox.center,
-		    ZOOM_DURATION
-		)
+		    ZOOM_DURATION,
+		    ZoomedPointTranslation(subGraphVerticeView.boundingBox.center, drawingView.center, OUTER_END_ZOOM_FACTOR))
 
         /** Starts the inner animation after the outer animation has ended. */
         animation.addListener(object: AnimationTaskAdapter() {
@@ -89,42 +88,38 @@ class DescendAnimationManager(
 	 * @param drawingView the [DrawingView] in which the animations take place
 	 * @param subGraphVerticeView the [SubGraphVerticeView] to ascend from
 	 * @param ascender the code to be executed when the inner animation has finished and before
-	 * the outer animation is started. This is typically code that exchanges the [DrawingView] in a [View]
+	 * the outer animation is started. This is typically code that exchanges the [DrawingView] in a [View].
+	 * Returns the destination [ZoomPan] at the end of the outer animation
 	 * @param terminator the code to be executed when the overall animation has ended
 	 */
 	fun ascendFrom(
 		drawingView: DrawingView<*>,
 		subGraphVerticeView: SubGraphVerticeView<*>,
-		endZoomFactor: Double,
-		ascender: (SubGraphVerticeView<*>) -> Unit,
+		ascender: (SubGraphVerticeView<*>) -> ZoomedPointTranslation,
 		terminator: () -> Unit
 	) {
 		animator
-			.schedule(createInnerAscendAnimation(drawingView, subGraphVerticeView, endZoomFactor, ascender, terminator))
+			.schedule(createInnerAscendAnimation(drawingView, subGraphVerticeView, ascender, terminator))
 			.start()
 	}
 
 	private fun createInnerAscendAnimation(
 		drawingView: DrawingView<*>,
 		subGraphVerticeView: SubGraphVerticeView<*>,
-		endZoomFactor: Double,
-		ascender: (SubGraphVerticeView<*>) -> Unit,
+		ascender: (SubGraphVerticeView<*>) -> ZoomedPointTranslation,
 		terminator: () -> Unit
 	): AnimationTask {
 		val animation = ZoomedPointVoyageAnimation(
 			drawingView,
-			INNER_START_ZOOM_FACTOR,
-			drawingView.drawing.boundingBox.center,
-			ZOOM_DURATION
-		)
+			ZOOM_DURATION,
+			ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, INNER_START_ZOOM_FACTOR))
 		animation.addListener(object: AnimationTaskAdapter() {
 			override fun ended(task: AnimationTask) {
-				ascender.invoke(subGraphVerticeView)
+				val destination = ascender.invoke(subGraphVerticeView)
 				drawingView.navigator.panCenter(OUTER_END_ZOOM_FACTOR)
-				val outerAnimation = createOuterAscendAnimation(drawingView, endZoomFactor, terminator)
+				val outerAnimation = createOuterAscendAnimation(drawingView, destination, terminator)
 				animator.schedule(outerAnimation)
 				outerAnimation.start()
-
 			}
 		})
 		return animation
@@ -132,15 +127,13 @@ class DescendAnimationManager(
 
 	private fun createOuterAscendAnimation(
 		drawingView: DrawingView<*>,
-		endZoomFactor: Double,
+		destination: ZoomedPointTranslation,
 		terminator: () -> Unit
 	): AnimationTask {
 		val animation = ZoomedPointVoyageAnimation(
 			drawingView,
-			endZoomFactor,
-			drawingView.drawing.boundingBox.center,
-			ZOOM_DURATION
-		)
+			ZOOM_DURATION,
+			destination)
 
 		animation.addListener(object: AnimationTaskAdapter() {
 			override fun ended(task: AnimationTask) {

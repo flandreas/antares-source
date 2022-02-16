@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewTransformation
+import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -221,6 +222,10 @@ class GraphNavigationViewController(
 	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
 		drawingView.userZoomEnabled = false
 		navigationStackViewController.view.active = false
+		navigationStackViewController.navigationStack.peek().voyageOrigin = ZoomedPointTranslation(
+			vv.boundingBox.center,
+			drawingView.modelToView(vv.boundingBox.center),
+			drawingView.zoomFactor)
 		DescendAnimationManager(animator).descendInto(
 			drawingView,
 			vv,
@@ -276,13 +281,14 @@ class GraphNavigationViewController(
 		DescendAnimationManager(animator).ascendFrom(
 			drawingView = drawingView,
 			subGraphVerticeView = entries.last().subGraphVerticeView!!,
-			endZoomFactor = 1.0,
 			ascender = {
-				drawingView.content = if (entries.size > 1) {
-					entries[entries.size - 2].content as DrawingViewContent<GraphView>
+				val outerEntry = if (entries.size > 1) {
+					entries[entries.size - 2]
 				} else {
-					navigationStackViewController.navigationStack.peek().content
+					navigationStackViewController.navigationStack.peek()
 				}
+				drawingView.content = outerEntry.content as DrawingViewContent<GraphView>
+				outerEntry.voyageOrigin!!
 			},
 			terminator = if (entries.size == 1) {
 				{
