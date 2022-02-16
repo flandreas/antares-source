@@ -159,8 +159,11 @@ class GraphNavigationViewController(
 	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		this.editable = editable
 
-		drawingView.setDrawing(graphView, applyZoomStrategy)
+		// Must be done before the drawing is set, because setting the drawing triggers
+		// updating the PropertyPanel, whose PropertyEditors get enabled based on DrawingView.editable
 		drawingView.editable = editable && isRoot
+
+		drawingView.setDrawing(graphView, applyZoomStrategy)
 
 		navigationStackViewController.view.editable = editable
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
