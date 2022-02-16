@@ -219,13 +219,17 @@ class GraphNavigationViewController(
 		return BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode
 	}
 
-	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
-		drawingView.userZoomEnabled = false
-		navigationStackViewController.view.active = false
+	private fun rememberVoyageOrigin(vv: SubGraphVerticeView<*>) {
 		navigationStackViewController.navigationStack.peek().voyageOrigin = ZoomedPointTranslation(
 			vv.boundingBox.center,
 			drawingView.modelToView(vv.boundingBox.center),
 			drawingView.zoomFactor)
+	}
+
+	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
+		drawingView.userZoomEnabled = false
+		navigationStackViewController.view.active = false
+		rememberVoyageOrigin(vv)
 		DescendAnimationManager(animator).descendInto(
 			drawingView,
 			vv,
@@ -242,6 +246,7 @@ class GraphNavigationViewController(
 	}
 
 	private fun descendIntoSubGraphWithoutAnimation(vv: SubGraphVerticeView<*>) {
+		rememberVoyageOrigin(vv)
 		System.invokeLater {
 			navigationStackViewController.navigationStack.push(NavigationStackEntry(
 				subGraphVerticeView = vv,
