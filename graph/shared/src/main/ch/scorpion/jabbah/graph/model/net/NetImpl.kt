@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.ExecutionError
@@ -56,7 +55,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakBehaviour != null }
 
 	override fun connect(port: Port<T>) {
-		checkState(!_ports.contains(port), "Net already connected to specified Port")
+		check(!_ports.contains(port)) { "Net already connected to specified Port" }
 		LOG.trace("connect ${port.portId}")
 		_ports.add(port)
 		port.connectTo(this)
@@ -65,7 +64,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	}
 
 	override fun unconnect(port: Port<*>) {
-		checkState(_ports.contains(port), "Net not connected with specified Port")
+		check(_ports.contains(port)) { "Net not connected with specified Port" }
 		LOG.trace("unconnect ${port.portId}")
 		_ports.remove(port)
 		port.disconnect()

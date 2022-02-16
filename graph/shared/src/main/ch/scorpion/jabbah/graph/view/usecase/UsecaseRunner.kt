@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -43,7 +42,7 @@ class UsecaseRunner(
 	 * This method should only be called once.
 	 */
 	fun run() {
-		checkState(!didRun, "Attempt to repeatedly run UsecaseRunner")
+		check(!didRun) { "Attempt to repeatedly run UsecaseRunner" }
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
 		applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {

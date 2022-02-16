@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_0
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_1
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_2
@@ -68,7 +67,7 @@ object BitOperation {
 	}
 
     fun power(value: Byte): ULong {
-	    checkArgument(value <= 63, "value must not be larger than 64")
+	    require(value <= 63) { "value must not be larger than 64" }
 	    return POWER[value.toInt()]
     }
 

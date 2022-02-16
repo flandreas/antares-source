@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.edit.model.curve
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -51,7 +49,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 	var points: List<Point2D>
 		get() = _points
 		set(value) {
-			checkState(value.size == 3)
+			check(value.size == 3)
 			setPointsImpl(value)
 		}
 
@@ -127,7 +125,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 	/** ---- [QuadCurveComponent] */
 
 	fun setPointAt(index: Int, location: Point2D) {
-		checkArgument(index in 0..2)
+		require(index in 0..2)
 		doInvalidating { _points[index] = location }
 	}
 
@@ -150,7 +148,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 	}
 
 	private fun updatePath() {
-		checkState(points.size == 3)
+		check(points.size == 3)
 		path = System.createPath()
 		path.moveTo(points[0].x, points[0].y)
 		path.quadTo(points[1].x, points[1].y, points[2].x, points[2].y)

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.view
 
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -22,7 +21,7 @@ object RepaintingObserver {
 
     var isEnabled: Boolean = false
         set(value) {
-            checkState(!isRunning)
+	        check(!isRunning)
             if (field != value) {
                 field = value
                 LOG.trace("RepaintingObserver isEnabled=$field")
@@ -39,7 +38,7 @@ object RepaintingObserver {
 
     var isRunning: Boolean = false
         set(value) {
-            checkState(isEnabled)
+	        check(isEnabled)
             if (field != value) {
                 field = value
                 LOG.trace("RepaintingObserver isRunning=$field")
@@ -98,14 +97,14 @@ object RepaintingObserver {
 
     fun previousLogEntry() {
         LOG.trace("RepaintingObserver.previousLogEntry")
-        checkState(logIndex > 0)
+	    check(logIndex > 0)
         logIndex -= 1
         BaseModule.eventBus.post(RepaintingObserverLogEvent())
     }
 
     fun nextLogEntry() {
         LOG.trace("RepaintingObserver.nextLogEntry")
-        checkState(logIndex < logSize - 1)
+	    check(logIndex < logSize - 1)
         logIndex += 1
         BaseModule.eventBus.post(RepaintingObserverLogEvent())
     }

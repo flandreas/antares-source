@@ -170,7 +170,7 @@ class TranslatableText(translations: Collection<Translation>? = null) : Translat
 		?: throw IllegalArgumentException("no translation available")
 
 	override fun withTranslation(language: Language, text: String): TranslatableText {
-		checkArgument(StringUtils.isNotEmpty(text), "text must not be empty")
+		require(StringUtils.isNotEmpty(text)) { "text must not be empty" }
 		val values = translations.toMutableMap()
 		values[language] = Translation(language, text)
 		return TranslatableText(values.values)

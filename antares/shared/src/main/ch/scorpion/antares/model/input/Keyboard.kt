@@ -8,13 +8,15 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -61,7 +63,7 @@ class Keyboard(
 
 	var bufferSize: Int = bufferSize
 		set(value) {
-			checkArgument(value >= 1, "bufferSize must not be smaller than 1")
+			require(value >= 1) { "bufferSize must not be smaller than 1" }
 			field = value
 		}
 

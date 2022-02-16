@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model.port
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
 import ch.scorpion.jabbah.base.logger
@@ -99,7 +98,7 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun connectTo(net: Net<T>) {
-		checkState(this.net == null, "Port already connected")
+		check(this.net == null) { "Port already connected" }
 		this.net = net
 	}
 

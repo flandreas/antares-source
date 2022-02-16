@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -63,7 +62,7 @@ class BitExtender(
 		get() = digitalInput.bitWidth
 		set(value) {
 			if (value != inputBitWidth) {
-				checkArgument(value.width < outputBitWidth.width, "Input BitWidth must be smaller than output")
+				require(value.width < outputBitWidth.width) { "Input BitWidth must be smaller than output" }
 				digitalInput.bitWidth = value
 				stateChanged()
 			}
@@ -73,7 +72,7 @@ class BitExtender(
 		get() = digitalOutput.bitWidth
 		set(value) {
 			if (value != outputBitWidth) {
-				checkArgument(value.width > inputBitWidth.width, "Output BitWidth must be larger that input")
+				require(value.width > inputBitWidth.width) { "Output BitWidth must be larger that input" }
 				digitalOutput.bitWidth = value
 				stateChanged()
 			}

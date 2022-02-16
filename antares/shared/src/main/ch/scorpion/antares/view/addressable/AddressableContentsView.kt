@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.view.Look
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -91,7 +90,7 @@ class AddressableContentsView(
 	var rowsCount: Int = rowsCount
 		set(value) {
 			if (field != value) {
-				checkArgument(value in 1..MAX_ROWS_COUNT)
+				require(value in 1..MAX_ROWS_COUNT)
 				invalidate()
 				field = value
 				updateGeometry()
@@ -102,7 +101,7 @@ class AddressableContentsView(
 	var columnsCount: Int = columnsCount
 		set(value) {
 			if (field != value) {
-				checkArgument(value in 1..MAX_COLUMNS_COUNT)
+				require(value in 1..MAX_COLUMNS_COUNT)
 				invalidate()
 				field = value
 				updateGeometry()

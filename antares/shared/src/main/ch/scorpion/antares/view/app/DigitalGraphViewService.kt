@@ -8,7 +8,6 @@ import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
@@ -61,8 +60,8 @@ class DigitalGraphViewService(
 		newInputCount: InputCount,
 		drawingView: DrawingView<GraphView>
 	) {
-		checkArgument(newInputCount.count >= gateView.model.minInputCount.count, "InputCount must not be smaller than minimum ${gateView.model.minInputCount.count}")
-		checkArgument(newInputCount.count <= gateView.model.maxInputCount.count, "InputCount must not be larger than maximum ${gateView.model.maxInputCount.count}")
+		require(newInputCount.count >= gateView.model.minInputCount.count) { "InputCount must not be smaller than minimum ${gateView.model.minInputCount.count}" }
+		require(newInputCount.count <= gateView.model.maxInputCount.count) { "InputCount must not be larger than maximum ${gateView.model.maxInputCount.count}" }
 
 		if (newInputCount.count > gateView.chosenInputCount.count) {
 			increaseInputCount(gateView, newInputCount)

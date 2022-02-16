@@ -4,8 +4,6 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
@@ -49,8 +47,8 @@ class TruthTableModel(
 	 * @throws IllegalArgumentException if the size of [input] is not [inputCount]
 	 */
 	fun define(input: Bits, output: Bit): TruthTableModel {
-		checkArgument(input.size == inputCount, "number of inputs must match inputCount of model")
-		checkState(outputCount == 1, "can only be used if outputCount of model is 1")
+		require(input.size == inputCount) { "number of inputs must match inputCount of model" }
+		check(outputCount == 1) { "can only be used if outputCount of model is 1" }
 		define(input, arrayOf(output))
 		return this
 	}
@@ -61,8 +59,8 @@ class TruthTableModel(
 	 * @throws IllegalArgumentException if the sizes of [input] or [output] don't match the corresponding column numbers
 	 */
 	fun define(input: Bits, output: Bits): TruthTableModel {
-		checkArgument(input.size == inputCount, "number of inputs must match inputCount of model")
-		checkArgument(output.size == outputCount, "number of outputs must match outputCount of model")
+		require(input.size == inputCount) { "number of inputs must match inputCount of model" }
+		require(output.size == outputCount) { "number of outputs must match outputCount of model" }
 		_rows[rowIndex(input)] = Row(input, output)
 		return this
 	}

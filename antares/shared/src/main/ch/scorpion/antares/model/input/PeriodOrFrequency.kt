@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
 
 enum class PeriodOrFrequencyUnit(
 	val customName: String,
@@ -38,7 +37,7 @@ data class PeriodOrFrequency(val value: Long, val unit: PeriodOrFrequencyUnit) {
 	}
 
 	init {
-		checkArgument(value > 0)
+		require(value > 0)
 	}
 
 	override fun toString(): String = "$value ${unit.denotation}"

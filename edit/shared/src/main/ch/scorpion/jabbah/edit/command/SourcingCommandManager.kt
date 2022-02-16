@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.edit.command
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.SourcingCommandManager.Snapshot
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCloner
 
@@ -326,7 +326,7 @@ class SourcingCommandManager(
 		}
 
 		fun undo() {
-			checkState(canUndo, "Cannot undo Transaction")
+			check(canUndo) { "Cannot undo Transaction" }
 			commands.reversed().forEach {
 				(it as Undoable).undo()
 				it.validate()

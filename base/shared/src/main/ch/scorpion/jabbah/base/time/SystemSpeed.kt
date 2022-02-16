@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 
@@ -23,7 +22,7 @@ class SystemSpeed(
 
 	var speed = speed
 		set(value) {
-			checkArgument(speed in 0..100, "SystemSpeed must be between 0 and 100")
+			require(speed in 0..100) { "SystemSpeed must be between 0 and 100" }
 			BaseModule.settings.set(SETTING_SPEED, value)
 			val oldSpeed = field
 			field = value

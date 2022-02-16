@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.app
 
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -99,7 +98,7 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
-		checkArgument(components.size >= 2, "grouping requires at least two Components")
+		require(components.size >= 2) { "grouping requires at least two Components" }
 		val group = GroupComponent(components)
 		commandManager.beginTransaction("edit.command.group", drawingView)
 		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }

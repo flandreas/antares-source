@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
@@ -78,7 +77,7 @@ class NavigationStack<T : GraphView>(
 			return null
 		}
 		set(value) {
-			checkArgument(value != null)
+			require(value != null)
 			entries.clear()
 			push(value!!)
 		}

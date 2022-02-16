@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -70,7 +69,7 @@ class BaseLibraryElementRepository(
 		val supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)? = null
 	) {
 		init {
-			checkState((clazz != null) || supplier != null, "either StorableCreator/clazz or supplier must be provided")
+			check((clazz != null) || supplier != null) { "either StorableCreator/clazz or supplier must be provided" }
 		}
 	}
 }

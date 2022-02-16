@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.DrawContext
@@ -44,7 +43,7 @@ class AndGateView(
 			if (field == value) {
 				return
 			}
-			checkArgument(value.id <= model.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
+			require(value.id <= model.chosenInputCount.count) { "InputPortNumber must not be larger than InputCount" }
 			invalidate()
 			field = value
 			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -193,9 +192,9 @@ abstract class AbstractVertice(
 	}
 
 	protected fun <T : Any> addPort(port: Port<T>, portId: Int) {
-		checkArgument(!ports.contains(port), "Port already contained")
-		checkArgument(!hasPort(port.name), "Port with name '${port.name}' already contained")
-		checkArgument(ports.none { it.portId == portId }, "Port with ID $portId already contained")
+		require(!ports.contains(port)) { "Port already contained" }
+		require(!hasPort(port.name)) { "Port with name '${port.name}' already contained" }
+		require(ports.none { it.portId == portId }) { "Port with ID $portId already contained" }
 		ports.add(port)
 		port.portId = portId
 		port.owner = this

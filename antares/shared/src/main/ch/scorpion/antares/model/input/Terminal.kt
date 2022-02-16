@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -59,7 +58,7 @@ class Terminal(
 
 	var rowsCount: Int = rowsCount
 		set(value) {
-			checkArgument(value >= 1)
+			require(value >= 1)
 			if (field != value) {
 				field = value
 				stateChanged()
@@ -68,7 +67,7 @@ class Terminal(
 
 	var columnsCount: Int = columnsCount
 		set(value) {
-			checkArgument(value >= 1)
+			require(value >= 1)
 			if (field != value) {
 				field = value
 				stateChanged()

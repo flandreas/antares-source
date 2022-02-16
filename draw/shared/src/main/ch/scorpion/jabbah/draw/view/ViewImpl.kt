@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.view
 
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -109,7 +108,7 @@ open class ViewImpl<C : InputEventContext>(
 	override fun addDrawable(drawable: Drawable) = addDrawable(drawable, drawablesCount)
 
 	override fun addDrawable(drawable: Drawable, index: Int) {
-		checkState(drawable !in drawables)
+		check(drawable !in drawables) { "drawable already contained" }
 		if (drawable is Unzoomable) {
 			drawable.zoomPan = this.zoomPan
 		}

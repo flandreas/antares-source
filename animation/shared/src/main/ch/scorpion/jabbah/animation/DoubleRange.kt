@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.animation
 
 import ch.scorpion.jabbah.base.SIGMA
-import ch.scorpion.jabbah.base.checkArgument
 import kotlin.math.abs
 
 /**
@@ -43,7 +42,7 @@ class DoubleRange(
 	}
 
 	private fun calculateNext(distance: Double) {
-		checkArgument(distance >= 0, "distance must not be negative")
+		require(distance >= 0) { "distance must not be negative" }
 
 		if (lastReached) {
 			value = null

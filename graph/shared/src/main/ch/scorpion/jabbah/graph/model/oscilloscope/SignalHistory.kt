@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.graph.model.Graph
 
 /**
@@ -86,7 +85,7 @@ class SignalHistoryImpl<T : Any>(
 	}
 
 	fun add(entry: SignalHistoryEntry<T>) {
-		checkArgument(list.isEmpty() || list.last().time <= entry.time)
+		require(list.isEmpty() || list.last().time <= entry.time)
 		if (list.isEmpty() || list.last().signal != entry.signal) {
 			if (size == bufferSize) {
 				list.removeAt(0)
