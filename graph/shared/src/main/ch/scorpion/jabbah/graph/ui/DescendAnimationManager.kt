@@ -20,7 +20,6 @@ class DescendAnimationManager(
         private const val ZOOM_DURATION = 700.0
         private const val OUTER_END_ZOOM_FACTOR = 16.0
         private const val INNER_START_ZOOM_FACTOR = 0.3
-        private const val INNER_END_ZOOM_FACTOR = 1.0
     }
 
     /**
@@ -47,7 +46,7 @@ class DescendAnimationManager(
 	    val animation = ZoomedPointVoyageAnimation(
 		    drawingView,
 		    ZOOM_DURATION,
-		    ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, INNER_END_ZOOM_FACTOR))
+		    ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, drawingView.navigator.calculateFixMaxNormalZoomFactor()))
 
         animation.addListener(object: AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {

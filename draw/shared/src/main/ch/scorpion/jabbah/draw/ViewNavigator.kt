@@ -74,4 +74,6 @@ interface ViewNavigator {
      * but avoids to set the zoom factor to more than 100% if not necessary in order to see everything.
      */
     fun fitMaxNormal()
+
+	fun calculateFixMaxNormalZoomFactor(): Double
 }
