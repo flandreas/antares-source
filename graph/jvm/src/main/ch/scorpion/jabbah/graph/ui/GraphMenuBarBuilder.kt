@@ -15,13 +15,13 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
@@ -72,7 +72,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 		menu.addSeparator()
-		if (EditAuthModule.userHolder.user.isDeveloper) {
+		if (GraphModuleJvm.supportWeb) {
 			// Public available not before server has been released
 			menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
 		}
