@@ -13,7 +13,10 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.Size
@@ -23,8 +26,9 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -55,37 +59,11 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 
 	/** Determines the shape in which the LED is drawn. Default is circular.*/
-	var square: Boolean = square
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				invalidate()
-				validate()
-			}
-		}
+	var square: Boolean by ControlViewSourceProperty(square, eventBus)
 
-	var size: Size = DEFAULT_SIZE
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				updateGeometry()
-				validate()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	var size: Size by ControlViewSourceProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
-	var hasBorder: Boolean = DEFAULT_HAS_BORDER
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				invalidate()
-				validate()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	var hasBorder: Boolean by ControlViewSourceProperty(DEFAULT_HAS_BORDER, eventBus)
 
 	private val widthOfSize: Int get() = when (size) {
 		Size.SMALL -> 2 * Look.SCALE
@@ -115,7 +93,6 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	init {
 		modelExchanged(null)
-		//setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
 		updateGeometry()
 	}
 

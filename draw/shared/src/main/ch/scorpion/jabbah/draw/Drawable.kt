@@ -78,6 +78,12 @@ interface Drawable {
 	/** Validates this [Drawable] by requesting that it is repainted.*/
 	fun validate()
 
+	/**
+	 * Notifies all registered [DrawableListener]s and the parent [DrawableContainer] that the geometry
+	 * of this [Drawable] has been updated.
+	 */
+	fun update()
+
 	/** Determines whether the location with the specified coordinates is located within this [Drawable]. */
 	fun contains(x: Double, y: Double): Boolean
 
