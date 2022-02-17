@@ -15,7 +15,7 @@ object AntaresAkrabModuleJs : AbstractModule() {
 		println("Configuring ProjectLibraryPersistenceService")
 
 		ProjectModule.projectLibraryPersistenceService = AkrabRestLibraryPersistenceService(
-			baseUrl = "http://localhost:8080/api/projects",
+			baseUrl = "http://localhost:9999/api/projects",
 			dictionaryName = "circuits"
 		)
 	}

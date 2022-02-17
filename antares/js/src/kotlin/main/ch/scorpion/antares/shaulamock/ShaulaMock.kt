@@ -134,7 +134,7 @@ suspend fun fetchProjects(auth0: Auth0ContextInterface): Result<List<ProjectTO>>
 	val headers = Headers()
 	headers.set("Authorization", "Bearer $token")
 	val response = window
-		.fetch("http://localhost:8080/api/projects", RequestInit(
+		.fetch("http://localhost:9999/api/projects", RequestInit(
 			headers = headers
 		))
 		.await()
