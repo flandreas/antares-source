@@ -29,7 +29,7 @@ actual object StorableCloner : AbstractStorableCloner() {
 		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): T {
-		val xmlReader = DomXmlReader(s.data.toString())
+		val xmlReader = DomXmlReader(s.data.decodeToString())
 		val reader = StoreXmlReader(xmlReader, IOModule.typeMap, storableCreator, referenceResolver)
 		return reader.readStorable() as T
 	}
