@@ -35,6 +35,9 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
 
+	/** Determines who can see [Graphs][Graph] of this [Library]. Relates to "publishing" [Libraries][Library].*/
+	var visibility: LibraryVisibility
+
 	/**
 	 * Convenience accessors for user-editable properties of this [Library].
 	 * Setting these properties does NOT make the [Library] changes persistent, nor does this class
@@ -78,8 +81,17 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
  */
 data class LibraryProperties(
 	val name: TranslatableText = TranslatableText(),
-	val description: TranslatableText = TranslatableText()
-)
+	val description: TranslatableText = TranslatableText(),
+	val visibility: LibraryVisibility = LibraryVisibility.Private
+) {
+	companion object {
+		fun ofLibrary(library: Library): LibraryProperties =
+			LibraryProperties(
+				library.name.translation,
+				library.description.translation,
+				library.visibility)
+	}
+}
 
 /**
  * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.

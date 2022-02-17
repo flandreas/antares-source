@@ -1,4 +1,4 @@
-<library _id='0' uuid='cb21300b-8f5d-4c64-8f37-5d9a49807e8c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system="true">
+<library _id='0' uuid='cb21300b-8f5d-4c64-8f37-5d9a49807e8c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system="true" visibility="public">
   <desc>
     <translation lang='en' text='Contains only build-in components'/>
     <translation lang='de' text='Enhält nur alle eingebauten Komponenten'/>

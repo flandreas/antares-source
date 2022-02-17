@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryProperties
+import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -85,18 +86,18 @@ class LibraryDictionaryEntry(
 	var uuid: UUID = System.createUUID(),
 	initialName: TranslatableText = TranslatableText(),
 	var author: UserIdentity = UserIdentity.random(),
-	var initialDescription: TranslatableText = TranslatableText()
+	var initialDescription: TranslatableText = TranslatableText(),
+	var visibility: LibraryVisibility = LibraryVisibility.Private
 ) : AbstractStorable(), Namable, Describable {
 
 	companion object {
-		fun forLibrary(library: Library): LibraryDictionaryEntry {
-			return LibraryDictionaryEntry(
+		fun forLibrary(library: Library): LibraryDictionaryEntry =
+			LibraryDictionaryEntry(
 				uuid = library.uuid,
 				initialName = library.name.translation,
 				author = library.author,
-				initialDescription = library.description.translation
-			)
-		}
+				initialDescription = library.description.translation,
+				visibility = library.visibility)
 	}
 
 	/** ---- [Any] */
@@ -118,6 +119,7 @@ class LibraryDictionaryEntry(
 		name.write("name", writer)
 		writer.writeString("author", author.toString())
 		description.write("desc", writer)
+		writer.writeString("visibility", visibility.customName)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -125,11 +127,17 @@ class LibraryDictionaryEntry(
 		name = Name.read("name", reader)
 		description = Description.read("desc", reader)
 		author = UserIdentity(reader.readString("author"))
+		if (reader.hasAttribute("visibility")) {
+			// Backward compatibility
+			visibility = LibraryVisibility.withName(reader.readString("visibility"))
+		}
 	}
 
 	/** ---- [LibraryDictionaryEntry] */
 
 	fun updateFrom(properties: LibraryProperties) {
+		name = Name(properties.name)
 		description = Description(properties.description)
+		visibility = properties.visibility
 	}
 }

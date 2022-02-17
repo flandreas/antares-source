@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
+import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
@@ -82,6 +83,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(LibraryVisibility::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -91,6 +93,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
 		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
+		registry.registerEditor(LibraryVisibility::class.java, LibraryVisibilityEditor::class.java)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

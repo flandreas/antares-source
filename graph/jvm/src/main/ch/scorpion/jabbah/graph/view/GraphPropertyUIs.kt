@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -97,5 +98,12 @@ class ControlViewVisibilityEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(ControlViewVisibility.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<ControlViewVisibility>()
+	}
+}
+
+class LibraryVisibilityEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(LibraryVisibility.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<LibraryVisibility>()
 	}
 }

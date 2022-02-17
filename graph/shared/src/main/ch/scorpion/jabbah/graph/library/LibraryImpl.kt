@@ -51,6 +51,8 @@ open class LibraryImpl(
 
 	override var defaultElementUUID: UUID? = null
 
+	override var visibility: LibraryVisibility = LibraryVisibility.Private
+
 	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
 
 	override var description: Description = Description(properties.description)
@@ -154,6 +156,9 @@ open class LibraryImpl(
 		if (isSystem) {
 			writer.writeBoolean("system", isSystem)
 		}
+		if (visibility != LibraryVisibility.Private) {
+			writer.writeString("visibility", visibility.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -167,6 +172,9 @@ open class LibraryImpl(
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
 		}
+		if (reader.hasAttribute("visibility")) {
+			visibility = LibraryVisibility.withName(reader.readString("visibility"))
+		}
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
@@ -174,10 +182,11 @@ open class LibraryImpl(
 	/** ---- [Library] interface */
 
 	override var properties: LibraryProperties
-		get() = LibraryProperties(name.translation, description.translation)
+		get() = LibraryProperties.ofLibrary(this)
 		set(value) {
 			name = Name(value.name)
 			description = Description(value.description)
+			visibility = value.visibility
 		}
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
