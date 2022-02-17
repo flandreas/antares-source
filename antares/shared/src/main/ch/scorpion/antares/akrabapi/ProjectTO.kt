@@ -9,5 +9,6 @@ data class ProjectTO(
 	val author: UUIDTO,
 	val isSystem: Boolean = false,
 	val description: TranslationsTO?,
-	val importedLibrary: String
+	val importedLibrary: String,
+	val public: Boolean
 )
