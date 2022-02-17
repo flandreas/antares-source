@@ -11,7 +11,9 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.AbstractLibraryPersistencePanel
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
+import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
 import java.awt.Component
@@ -190,13 +192,23 @@ class ProjectPersistencePanel(
 
 	private inner class ProjectListRenderer : DefaultListCellRenderer() {
 
+		// TODO: This is a placeholder. Order real icon from Janis.
+		private val publicIcon = UiUtil.themedIcon("/img/compass-16.png")
+
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
 			val project = value as LibraryDictionaryEntry
 			if (project.uuid == projectHolder.project?.uuid) {
 				renderer.font = currentProjectFont
 			} else {
 				renderer.font = projectsList.font
+			}
+			if (GraphModuleJvm.supportWeb) {
+				if (project.visibility == LibraryVisibility.Public) {
+					renderer.icon = publicIcon
+				} else {
+					renderer.icon = null
+				}
 			}
 			return renderer
 		}
