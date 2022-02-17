@@ -6,7 +6,7 @@ package ch.scorpion.jabbah.graph.model
 object SignalUtil {
 
     /**
-     * Decides whether two signals are equal, while both signals can be {@code null}.
+     * Decides whether two signals are equal, while both signals can be `null`.
      * @param a the first signal
      * @param b the second signal.
      * @return `true` if both signals are equal.

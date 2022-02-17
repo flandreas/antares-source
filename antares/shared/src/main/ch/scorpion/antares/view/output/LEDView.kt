@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -26,7 +27,7 @@ class LEDView(
     model: LED = LED(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     square: Boolean = false,
-    private val eventBus: EventBus = BaseModule.eventBus
+    eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter, ControlView<LED>, ControlViewSource<LED> {
 
     companion object {
@@ -36,15 +37,7 @@ class LEDView(
 
 	/** ---- [LightEmitter]  */
 
-    override var lightColor: LightColor = lightColor
-        set(value) {
-	        if (field != value) {
-		        invalidate()
-		        field = value
-		        postControlViewSourceChangeEvent(eventBus)
-		        validate()
-	        }
-        }
+	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
     /** ---- [ControlView] */
 

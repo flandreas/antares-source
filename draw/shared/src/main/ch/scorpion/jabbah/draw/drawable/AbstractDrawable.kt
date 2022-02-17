@@ -104,7 +104,7 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 	 * Notifies all registered [DrawableListener]s and the parent [DrawableContainer] that the geometry
 	 * of this [Drawable] has been updated.
 	 */
-	protected open fun update() {
+	override fun update() {
 		parent?.handleDrawableUpdated(this)
 		if (listeners.isNotEmpty()) {
 			val event = DrawableEvent(this)
