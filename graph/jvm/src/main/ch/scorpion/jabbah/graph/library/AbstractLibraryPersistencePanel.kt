@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
-import ch.scorpion.jabbah.graph.library.LibraryImportResult.*
+import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import org.apache.commons.io.FilenameUtils
 import java.io.File
@@ -77,7 +77,8 @@ abstract class AbstractLibraryPersistencePanel(
 			do {
 				var repeat = false
 				LOG.debug("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
-				when (managementService.import(path, replaceIfUuidExists)) {
+				val result = managementService.import(path, replaceIfUuidExists)
+				when (result.type) {
 					Success -> handleSuccessfulImport(name)
 					NameAlreadyExists -> handleImportNameAlreadyExists(name)
 					Invalid -> handleInvalidImportFile(name)
@@ -86,6 +87,7 @@ abstract class AbstractLibraryPersistencePanel(
 						replaceIfUuidExists = handleReplaceLibraryByImport()
 						repeat = replaceIfUuidExists
 					}
+					QuotaExceeded -> handleQuotaExceeded(result.param!!)
 				}
 			} while (repeat)
 		}
@@ -136,6 +138,15 @@ abstract class AbstractLibraryPersistencePanel(
 				name,
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
+		}
+
+		fun handleQuotaExceeded(msg: String) {
+			JOptionPane.showConfirmDialog(
+				this@AbstractLibraryPersistencePanel,
+				msg,
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
 		}
 	}
 }

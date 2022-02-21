@@ -6,8 +6,9 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphViewerJs
@@ -36,7 +37,7 @@ class BinaryAddition {
 
 		AntaresModuleJs.require()
 
-		EditAuthModule.userHolder.u = User.developer
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 		loadProject()

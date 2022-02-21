@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.graph.GraphQuota
+import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.module.GraphModule
@@ -349,19 +351,13 @@ class LibraryService(
 	 * Note that this wouldn't work in a client/server setup, which would require the imported data to be
 	 * transferred to the server to be stored there. This is up to a future extension.
 	 *
-	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 * @throws kotlin.IllegalArgumentException if the import file could not be read successfully
 	 * @throws LibraryImportConflictException if a [Library] with the same [UUID] already exists
+	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
+	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 */
-	fun importLibrary(inputPath: String): Library {
-		val uuid = userLibraryPersister.importLibrary(inputPath)
-		return try {
-			loadLibrary(uuid, isSystem = false)
-		} catch (e: Throwable) {
-			userLibraryPersister.deleteLibrary(uuid)
-			throw e
-		}
-	}
+	fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library =
+		userLibraryPersister.importLibrary(inputPath, currentLibraryCount, quota)
 
 	/**
 	 * Creates a [MetaGraphBundle] for the [MetaGraph] in [element] and stores it as a ZIP file

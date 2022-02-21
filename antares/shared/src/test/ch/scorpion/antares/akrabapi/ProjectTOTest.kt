@@ -23,7 +23,8 @@ class ProjectTOTest {
 				"author":{"id":"auth0|6184e440be040e0068472fb3"},
 				"isSystem":false,
 				"description":null,
-				"importedLibrary":"cb21300b-8f5d-4c64-8f37-5d9a49807e8c"
+				"importedLibrary":"cb21300b-8f5d-4c64-8f37-5d9a49807e8c",
+				"public":false
 			}]
 		""".trimIndent()
 		val projects: List<ProjectTO> = Json.decodeFromString(msg)

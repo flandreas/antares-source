@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -23,7 +24,7 @@ open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
-	userHolder: UserHolder = EditAuthModule.userHolder
+	userHolder: UserHolder<User> = EditAuthModule.userHolder
 ) : AbstractStorable(), Library, LibraryDirectory, Describable {
 
 	constructor(
@@ -31,7 +32,7 @@ open class LibraryImpl(
 		libraryService: LibraryService = LibraryModule.libraryService,
 		objectTypeKey: String = "library.library.name",
 		description: TranslatableText = TranslatableText(),
-		userHolder: UserHolder = EditAuthModule.userHolder
+		userHolder: UserHolder<User> = EditAuthModule.userHolder
 	) : this(LibraryProperties(name, description), libraryService, objectTypeKey, userHolder)
 
 	constructor(
@@ -56,6 +57,12 @@ open class LibraryImpl(
 	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
 
 	override var description: Description = Description(properties.description)
+
+	override val metaGraphCount: Int get() =
+		MetaGraphCounter().run {
+			accept(this)
+			result
+		}
 
 	init {
 		libraryFolder.bindTo(this)
@@ -275,6 +282,17 @@ open class LibraryImpl(
 			if (result == null && node is ContainerLibraryElement) {
 				result = node
 				return false
+			}
+			return true
+		}
+	}
+
+	private class MetaGraphCounter : EmptyHierarchyVisitor() {
+		var result: Int = 0
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is ContainerLibraryElement) {
+				result++
 			}
 			return true
 		}

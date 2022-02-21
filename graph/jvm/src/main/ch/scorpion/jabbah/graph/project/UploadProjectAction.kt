@@ -50,28 +50,41 @@ class UploadProjectAction(
 
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
-				SwingUtilities.getWindowAncestor(controller.view as Component),
-				Translations.getString("project.action.upload.text"),
-				name,
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE
+			SwingUtilities.getWindowAncestor(controller.view as Component),
+			Translations.getString("project.action.upload.text"),
+			name,
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE
 		) != JOptionPane.YES_OPTION) {
 			return
 		}
 
 		InvocationHandler.invoke {
 			scope.launch(Dispatchers.Main) {
-				if (service.upload(selectedFolder as Project)) {
+				try {
+					service.upload(selectedFolder as Project)
+
 					JOptionPane.showConfirmDialog(
 						SwingUtilities.getWindowAncestor(controller.view as Component),
 						Translations.getString("project.action.upload.success.msg"),
 						name,
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.INFORMATION_MESSAGE)
-				} else {
+				} catch (e: AkrabApiException) {
+					val message = when (e.error.type) {
+						"quota" -> e.error.msg!!
+						else -> Translations.getString("project.action.upload.error.msg")
+					}
 					JOptionPane.showConfirmDialog(
 						SwingUtilities.getWindowAncestor(controller.view as Component),
-						Translations.getString("project.action.upload.error.msg"),
+						message,
+						name,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.ERROR_MESSAGE)
+				} catch (e: Exception) {
+					JOptionPane.showConfirmDialog(
+						SwingUtilities.getWindowAncestor(controller.view as Component),
+						"General Error",
 						name,
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.ERROR_MESSAGE)

@@ -11,8 +11,9 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.useAuth0
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AkrabRestLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -25,8 +26,11 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import org.w3c.dom.url.URLSearchParams
-import react.*
+import react.Props
 import react.dom.render
+import react.fc
+import react.useEffectOnce
+import react.useState
 
 val mainScope = MainScope()
 
@@ -48,7 +52,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 		AntaresAkrabModuleJs.require()
 
-		EditAuthModule.userHolder.u = User.developer
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
 
 		AntaresThemes.install()

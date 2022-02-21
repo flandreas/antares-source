@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -36,7 +37,7 @@ class LibraryManagementService(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
-	private val userHolder: UserHolder = EditAuthModule.userHolder,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
 

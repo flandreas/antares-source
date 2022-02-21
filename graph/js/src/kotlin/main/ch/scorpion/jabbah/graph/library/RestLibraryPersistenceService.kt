@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.io.DomXmlReader
@@ -66,7 +67,7 @@ class RestLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importLibrary(inputPath: String): UUID {
+	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

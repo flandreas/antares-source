@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
@@ -39,7 +40,7 @@ class ShowLibrariesDialogAction(
 class LibraryPersistencePanel(
 	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val userHolder: UserHolder = EditAuthModule.userHolder,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
 ) : AbstractLibraryPersistencePanel(managementService, "library") {
 

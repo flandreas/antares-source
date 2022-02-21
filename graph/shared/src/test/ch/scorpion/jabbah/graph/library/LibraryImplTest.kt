@@ -40,4 +40,15 @@ class LibraryImplTest {
 
 		assertEquals(2, library.indexOf(library.getRecursively("Folder3")!!))
 	}
+
+	@Test
+	fun shouldCountMetaGraphs() {
+		libraryBuilder
+			.addContainerLibraryElement("MetaGraph1")
+			.addDirectory("Folder1")
+			.addContainerLibraryElement("MetaGraph2")
+			.addContainerLibraryElement("MetaGraph3")
+
+		assertEquals(3, library.metaGraphCount)
+	}
 }

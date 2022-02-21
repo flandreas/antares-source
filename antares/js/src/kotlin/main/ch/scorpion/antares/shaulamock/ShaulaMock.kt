@@ -12,8 +12,9 @@ import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.loginLogout
 import ch.scorpion.jabbah.base.auth0.useAuth0
 import ch.scorpion.jabbah.base.util.encodeURI
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.MButtonSize
@@ -52,7 +53,7 @@ class ShaulaMock {
 
 		AntaresAkrabModuleJs.require()
 
-		EditAuthModule.userHolder.u = User.developer
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 

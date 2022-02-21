@@ -4,17 +4,26 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.GraphQuota
+import ch.scorpion.jabbah.graph.GraphQuotaException
+import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.project.Project
 
-enum class LibraryImportResult {
+enum class LibraryImportResultType {
 	Success,
 	NameAlreadyExists,
 	Invalid,
 	StaleLibraryReference,
-	UuidAlreadyExists
+	UuidAlreadyExists,
+	QuotaExceeded;
+
+	fun result(param: String? = null): LibraryImportResult = LibraryImportResult(this, param)
 }
+
+data class LibraryImportResult(
+	val type: LibraryImportResultType, val param: String? = null)
 
 /**
  * Base service class for managing [Libraries][Library] as well as [Projects][Project].
@@ -45,37 +54,40 @@ abstract class AbstractLibraryManagementService(
 		lateinit var library: Library
 
 		try {
-			library = libraryService.importLibrary(inputPath)
+			library = libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
 		} catch (e: LibraryImportConflictException) {
 			if (replaceIfUuidExists) {
 				deleteImpl(e.uuid)
 				try {
-					library = libraryService.importLibrary(inputPath)
+					library =
+						libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
 				} catch (e: Throwable) {
-					return LibraryImportResult.Invalid
+					return Invalid.result()
 				}
 			} else {
-				return LibraryImportResult.UuidAlreadyExists
+				return UuidAlreadyExists.result()
 			}
+		} catch (e: GraphQuotaException) {
+			return QuotaExceeded.result(e.translatedMsg)
 		} catch (e: Throwable) {
-			return LibraryImportResult.Invalid
+			return Invalid.result()
 		}
 
 		if (existsName(library.name.translation)) {
 			LOG.trace("Name of imported project already exists")
 			libraryService.purgeLibrary(library.uuid)
-			return LibraryImportResult.NameAlreadyExists
+			return NameAlreadyExists.result()
 		}
 
 		if (hasStaleImportReferences(library)) {
 			LOG.trace("Library for imported project doesn't exist")
 			libraryService.purgeLibrary(library.uuid)
-			return LibraryImportResult.StaleLibraryReference
+			return StaleLibraryReference.result()
 		}
 
 		dictionaryService.add(library)
 
-		return LibraryImportResult.Success
+		return Success.result()
 	}
 
 	protected fun deleteImpl(uuid: UUID) {

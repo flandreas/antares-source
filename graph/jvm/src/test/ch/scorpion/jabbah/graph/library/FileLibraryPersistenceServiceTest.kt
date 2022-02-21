@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.TestPortFactory
@@ -101,7 +102,7 @@ class FileLibraryPersistenceServiceTest {
 
 		persistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, zipFile.toAbsolutePath().toString())
 		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.uuid)
-		persistenceService.importLibrary(zipFile.toAbsolutePath().toString())
+		persistenceService.importLibrary(zipFile.toAbsolutePath().toString(), 1, GraphQuota.UNLIMITED)
 
 		assertTrue(Files.exists(libraryFilePath()))
 		assertTrue(Files.exists(metaGraphPath(metaGraph)))

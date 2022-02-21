@@ -15,6 +15,3 @@ fun main() {
 		ShaulaMock().show()
 	}
 }
-
-
-

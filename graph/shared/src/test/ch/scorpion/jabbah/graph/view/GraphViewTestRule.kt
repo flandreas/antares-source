@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
@@ -47,7 +48,7 @@ object GraphViewTestRule {
 		IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
 		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
 
-		EditAuthModule.userHolder.u = User.developer
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()

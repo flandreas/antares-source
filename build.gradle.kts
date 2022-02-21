@@ -111,6 +111,7 @@ subprojects {
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinCoroutinesVersion")
 					implementation("io.ktor:ktor-client-core:$ktorVersion")
 					implementation("io.ktor:ktor-client-cio:$ktorVersion")
+					implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 					implementation("io.ktor:ktor-client-java:$ktorVersion")
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")

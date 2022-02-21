@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ResourcesUtil
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.io.File
 import java.io.FileOutputStream
@@ -82,7 +83,7 @@ class ResourceLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importLibrary(inputPath: String): UUID {
+	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		// This is not supported for system Libraries
 		throw UnsupportedOperationException("Importing system libraries is not supported")
 	}

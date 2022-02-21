@@ -3,8 +3,9 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import org.apache.commons.cli.*
 import org.apache.commons.lang3.SystemUtils
 import java.io.File
@@ -169,11 +170,11 @@ abstract class AbstractDesktopApplication(
 	 * the provided [Options].
 	 */
 	protected open fun consumeCommandLine(commandLine: CommandLine) {
-		EditAuthModule.userHolder.u = if (commandLine.hasOption("dev")) {
+		EditAuthModule.userHolder = if (commandLine.hasOption("dev")) {
 			LOG.info("Starting application in developer mode")
-			User.developer
+			DesktopUserHolder(DesktopUser.developer)
 		} else {
-			User.anybody
+			DesktopUserHolder(DesktopUser.anybody)
 		}
 	}
 

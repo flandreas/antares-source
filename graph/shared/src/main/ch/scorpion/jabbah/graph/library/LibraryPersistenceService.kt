@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.GraphQuota
+import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 
 /**
@@ -28,8 +30,10 @@ interface LibraryPersistenceService {
 	 * @return the [UUID] of the imported [Library]
 	 * @throws IllegalArgumentException if the import file could not be read successfully
 	 * @throws LibraryImportConflictException if a [Library] with the same [UUID] already exists
+	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
+	 * @return the imported [Library]
 	 * */
-	fun importLibrary(inputPath: String): UUID
+	fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota = GraphQuota.UNLIMITED): Library
 
 	fun importTemporaryLibrary(uuid: UUID, temporaryPath: String)
 
@@ -78,7 +82,7 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun deleteLibrary(uuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun importLibrary(inputPath: String):UUID {
+	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

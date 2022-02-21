@@ -1,10 +1,13 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.graph.GraphQuota
+import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraph
 import org.apache.commons.io.FileUtils
 import java.io.*
@@ -27,7 +30,7 @@ class FileLibraryPersistenceService(
 	private val directoryName: String,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
-	private val userHolder: UserHolder? = null
+	private val userHolder: UserHolder<User>? = null
 ) : AbstractFileLibraryPersistenceService() {
 
 	companion object {
@@ -91,9 +94,9 @@ class FileLibraryPersistenceService(
 		copyLibrary(temporaryPath, buildLibraryDirectoryPath(uuid))
 	}
 
-	override fun importLibrary(inputPath: String): UUID {
+	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		LOG.trace("Importing library from $inputPath")
-		return importLibrary(FileInputStream(inputPath), false)
+		return importLibrary(FileInputStream(inputPath), replaceExisting = false, currentLibraryCount, quota)
 	}
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
@@ -158,7 +161,22 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	fun importLibrary(inputStream: InputStream, replaceExisting: Boolean): UUID {
+	/**
+	 * Importing a [Library] by reading its data from [inputStream], replacing it if
+	 * it already exists if [replaceExisting] is `true`.
+	 *
+	 * @throws IllegalArgumentException if an error occurred while reading from [inputStream]
+	 * @throws LibraryImportConflictException if a [Library] with the [UUID] of the imported [Library] already exists
+	 * and [replaceExisting] is false
+	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
+	 * @return the imported [Library]
+	 */
+	fun importLibrary(
+		inputStream: InputStream,
+		replaceExisting: Boolean,
+		currentLibraryCount: Int,
+		quota: GraphQuota = GraphQuota.UNLIMITED
+	): Library {
 
 		// Import and unzip file to incubation directory
 		val incubationDirPath = Files.createTempDirectory(null)
@@ -190,19 +208,31 @@ class FileLibraryPersistenceService(
 
 		// Check if UUID already exists
 		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
-		if (!replaceExisting && Files.exists(newDirectory)) {
+		val exists = Files.exists(newDirectory)
+		if (exists && !replaceExisting) {
 			val msg = "Library ${library.uuid} already exists"
 			LOG.trace(msg)
 			throw LibraryImportConflictException(library.uuid)
 		}
 
-		if (Files.exists(newDirectory)) {
-			FileUtils.deleteDirectory(newDirectory.toFile())
+		if (library.metaGraphCount > quota.maxGraphPerLibrary) {
+			val msg = "Only ${quota.maxGraphPerLibrary} graphs per library allowed"
+			LOG.trace(msg)
+			throw GraphQuotaException(msg, Translations.getString("library.quota.maxGraphPerLibrary.text", quota.maxGraphPerLibrary))
 		}
 
+		if (!exists && currentLibraryCount + 1 > quota.maxLibraries) {
+			val msg = "Only ${quota.maxLibraries} libraries allowed"
+			LOG.trace(msg)
+			throw GraphQuotaException(msg, Translations.getString("library.quota.maxLibraries.text", quota.maxLibraries))
+		}
+
+		if (exists) {
+			FileUtils.deleteDirectory(newDirectory.toFile())
+		}
 		Files.move(incubationFiles[0].toPath(), newDirectory, StandardCopyOption.REPLACE_EXISTING)
 
-		return library.uuid
+		return library
 	}
 
 	override fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =

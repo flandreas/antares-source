@@ -21,6 +21,8 @@ class LibraryDictionaryService(
 	/** Determines whether the directory for storing the [LibraryDictionary] already exists.*/
 	val directoryExists: Boolean get() = persistenceService.directoryExists
 
+	val entriesCount: Int get() = dictionary.size
+
 	fun existsName(name: TranslatableText, except: UUID? = null): Boolean = dictionary.existsName(name, except)
 
 	fun contains(uuid: UUID): Boolean = dictionary.contains(uuid)

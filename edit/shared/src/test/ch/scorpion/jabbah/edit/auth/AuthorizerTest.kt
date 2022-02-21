@@ -23,8 +23,8 @@ class AuthorizerTest {
 	fun test() {
 		Authorizer.authorize().currentUser().to(Change).data(::ownedByHim)
 
-		assertTrue(Authorizer.isCurrentUserAuthorizedTo(Change, TestData(owner = User.developer)))
-		assertFalse(Authorizer.isCurrentUserAuthorizedTo(Change, TestData(owner = User.anybody)))
+		assertTrue(Authorizer.isCurrentUserAuthorizedTo(Change, TestData(owner = DesktopUser.developer)))
+		assertFalse(Authorizer.isCurrentUserAuthorizedTo(Change, TestData(owner = DesktopUser.anybody)))
 	}
 
 	class TestData(val owner: User)

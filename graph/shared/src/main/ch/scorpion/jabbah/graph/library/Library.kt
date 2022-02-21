@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 
@@ -52,6 +53,9 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	 */
 	val libraryService: LibraryService
 
+	/** Returns the number of [MetaGraph] contained in this [Library]. */
+	val metaGraphCount: Int
+
     /** Replaces the contents of this [Library] with the content of the specified [LibraryFolder].*/
     fun replaceContentsWith(libraryFolder: LibraryFolder)
 
@@ -72,7 +76,6 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 
 	/** Creates an appropriate [Savable] for the specified [ContainerLibraryElement].*/
 	fun createSavable(element: ContainerLibraryElement): Savable
-
 }
 
 /**

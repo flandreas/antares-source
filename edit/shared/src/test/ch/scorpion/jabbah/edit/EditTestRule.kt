@@ -1,7 +1,8 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
@@ -11,6 +12,6 @@ object EditTestRule  {
 
     fun configure() {
         EditModule.require()
-	    EditAuthModule.userHolder.u = User.developer
+	    EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
     }
 }
