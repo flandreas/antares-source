@@ -5,7 +5,9 @@ import ch.scorpion.antares.shaulamock.ShaulaMock
 fun main() {
 	val path = kotlinx.browser.window.location.pathname
 
-	if (path.startsWith("/desktop")) {
+	console.log("Path: $path")
+
+	if (path.startsWith("/jabbah/desktop")) {
 		AntaresJs().start()
 	} else if (path.startsWith("/iframe.html") || path.startsWith("/docs/web/iframe.html")) {
 		AntaresIFrame().show()

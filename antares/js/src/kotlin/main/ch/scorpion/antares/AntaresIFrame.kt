@@ -1,14 +1,15 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.antares.module.AntaresAkrabPublicModule
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.edit.auth.DesktopUser
-import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.AkrabApiError
+import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.graphViewer
 import com.ccfraser.muirwik.components.mCssBaseline
@@ -24,6 +25,8 @@ class AntaresIFrame {
 		private const val CIRCUIT_UUID_PARAM = "circuit"
 		private const val THEME_PARAM = "theme"
 	}
+
+	private var error: AkrabApiError? = null
 
 	fun show() {
 		val params = URLSearchParams(kotlinx.browser.window.location.search)
@@ -43,8 +46,10 @@ class AntaresIFrame {
 	}
 
 	private fun initialize(projectUuid: String, themeName: String? = null) {
-		AntaresModuleJs.require()
-		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
+		EditAuthModule.require()
+		EditAuthModule.userHolder = AnonymousWebUserHolder
+
+		AntaresAkrabPublicModule.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 
 		loadProject(projectUuid)
@@ -54,7 +59,11 @@ class AntaresIFrame {
 	}
 
 	private fun loadProject(projectUuid: String) {
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(UUID(projectUuid))
+		try {
+			ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(UUID(projectUuid))
+		} catch (e: AkrabApiException) {
+			error = e.error
+		}
 	}
 
 	private fun displayError(msg: String) {
@@ -64,6 +73,10 @@ class AntaresIFrame {
 	}
 
 	private fun displayCircuit(circuitUuid: String) {
+		if (error != null) {
+			displayError(error!!.msg ?: "Error")
+			return
+		}
 		render(document.getElementById("root")) {
 			mCssBaseline()
 			graphViewer {

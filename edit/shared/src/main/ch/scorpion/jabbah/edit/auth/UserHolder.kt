@@ -7,6 +7,3 @@ interface UserHolder<out T : User> {
 	val user: T
 }
 
-class DesktopUserHolder(
-	override val user: DesktopUser
-) : UserHolder<DesktopUser>

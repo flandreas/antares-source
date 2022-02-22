@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
-import ch.scorpion.antares.module.AntaresAkrabModuleJs
+import ch.scorpion.antares.module.AntaresAkrabProtectedModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.AbstractApplicationJs
@@ -11,11 +11,10 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.useAuth0
-import ch.scorpion.jabbah.edit.auth.DesktopUser
-import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.AkrabRestLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.AkrabRestLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -50,9 +49,10 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 	override fun init() {
 		console.info("Initializing AntaresJs")
 
-		AntaresAkrabModuleJs.require()
+		EditAuthModule.require()
+		EditAuthModule.userHolder = AnonymousWebUserHolder
 
-		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
+		AntaresAkrabProtectedModuleJs.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
 
 		AntaresThemes.install()
@@ -124,7 +124,7 @@ val antaresJs = fc<AntaresJsProps> { props ->
 	if (accessToken == null) {
 		mTypography("Loading..")
 	} else {
-		(ProjectModule.projectLibraryPersistenceService as AkrabRestLibraryPersistenceService).accessToken = accessToken!!
+		(ProjectModule.projectLibraryPersistenceService as AkrabRestLibraryPersistenceServiceJs).accessToken = accessToken!!
 
 		props.projectUuid?.let {
 			(props.application.controller as GraphDataViewController).openProject(it)

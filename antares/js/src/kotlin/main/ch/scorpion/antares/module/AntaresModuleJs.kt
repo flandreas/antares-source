@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.edit.properties.PropertyPageRendererRegistry
 import ch.scorpion.jabbah.graph.library.LibraryManagementService
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
-import ch.scorpion.jabbah.graph.library.RestLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.UrlLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
@@ -40,7 +40,7 @@ object AntaresModuleJs : AbstractModule() {
 		GraphViewModuleJs.require()
 		AntaresViewModule.require()
 
-		LibraryModule.systemLibraryPersistenceService = RestLibraryPersistenceService(
+		LibraryModule.systemLibraryPersistenceService = UrlLibraryPersistenceServiceJs(
 			baseUrl = "..",
 			libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
 			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
@@ -59,7 +59,7 @@ object AntaresModuleJs : AbstractModule() {
 
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
-		ProjectModule.projectLibraryPersistenceService = RestLibraryPersistenceService(
+		ProjectModule.projectLibraryPersistenceService = UrlLibraryPersistenceServiceJs(
 			baseUrl = "..",
 			libraryDirectoryName = "web-projects",
 			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME

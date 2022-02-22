@@ -7,20 +7,20 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
-import org.w3c.dom.Document
 import org.w3c.xhr.XMLHttpRequest
 
 /**
- * An implementation of [LibraryPersistenceService] that calls the REST services of [ch.scorpion.jabbah.graph].
+ * An implementation of [LibraryPersistenceService] that reads simple URL resources.
+ * Mainly used for loading built-in system [Libraries][Library].
  */
-class RestLibraryPersistenceService(
+class UrlLibraryPersistenceServiceJs(
 	private val baseUrl: String = BASE_URL,
 	private val libraryDirectoryName: String,
 	private val libraryFileName: String
 ) : LibraryPersistenceService {
 
     companion object {
-	    private val LOG by logger(RestLibraryPersistenceService::class)
+	    private val LOG by logger(UrlLibraryPersistenceServiceJs::class)
         private const val BASE_URL = ".."
     }
 
@@ -71,7 +71,7 @@ class RestLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporalPath: String) {
+	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
@@ -90,11 +90,4 @@ class RestLibraryPersistenceService(
 	override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
 		throw UnsupportedOperationException("not implemented")
 	}
-
-    /** ---- [RestLibraryPersistenceService] */
-
-    private fun handleLibraryResponse(library: Library, doc: Document) {
-        val libraryFolder = StoreXmlReader(DomXmlReader(doc)).readStorable() as LibraryFolder
-        library.replaceContentsWith(libraryFolder)
-    }
 }

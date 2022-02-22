@@ -1,13 +1,12 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.antares.module.AntaresAkrabPublicModule
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.edit.auth.DesktopUser
-import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -35,11 +34,12 @@ class BinaryAddition {
 	private fun initialize() {
 		console.info("Initializing AntaresPage")
 
-		AntaresModuleJs.require()
+		EditAuthModule.require()
+		EditAuthModule.userHolder = AnonymousWebUserHolder
 
-		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
-
+		AntaresAkrabPublicModule.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+
 		loadProject()
 
 		AntaresThemes.install()

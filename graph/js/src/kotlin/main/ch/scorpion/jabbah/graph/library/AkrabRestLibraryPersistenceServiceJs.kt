@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
+import ch.scorpion.jabbah.graph.project.AkrabApiError
+import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -14,19 +16,25 @@ import org.w3c.xhr.XMLHttpRequest
  * Performs synchronous (blocking) calls.
  * TODO: Consider using Kotlin Coroutines.
  */
-class AkrabRestLibraryPersistenceService(
+class AkrabRestLibraryPersistenceServiceJs(
 	private val baseUrl: String,
 	private val dictionaryName: String
 ) : LibraryPersistenceService {
 
-	var accessToken = ""
+	/**
+	 * The optional access token used for REST API authentication.
+	 * Can be `null` (anonymous) when using the public REST API.
+	 */
+	var accessToken: String? = null
 
 	/** ---- [LibraryPersistenceService] interface. */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
 		val request = XMLHttpRequest()
 		request.open("GET", buildMetaGraphPath(library.uuid, uuid), async = false)
-		request.setRequestHeader("Authorization", "Bearer $accessToken")
+		accessToken?.let {
+			request.setRequestHeader("Authorization", "Bearer $it")
+		}
 		request.overrideMimeType("text/xml")
 		request.send()
 		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
@@ -35,7 +43,9 @@ class AkrabRestLibraryPersistenceService(
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
 		val request = XMLHttpRequest()
 		request.open("PUT", buildMetaGraphPath(library.uuid, metaGraph.uuid), async = false)
-		request.setRequestHeader("Authorization", "Bearer $accessToken")
+		accessToken?.let {
+			request.setRequestHeader("Authorization", "Bearer $accessToken")
+		}
 		request.overrideMimeType("text/xml")
 		request.send(
 			StorableCloner.serialize(metaGraph)
@@ -49,10 +59,20 @@ class AkrabRestLibraryPersistenceService(
 	override fun loadLibrary(uuid: UUID): Library {
 		val request = XMLHttpRequest()
 		request.open("GET", buildLibraryDictionaryPath(uuid), async = false)
-		request.setRequestHeader("Authorization", "Bearer $accessToken")
+		accessToken?.let {
+			request.setRequestHeader("Authorization", "Bearer $accessToken")
+		}
 		request.overrideMimeType("text/xml")
 		request.send()
-		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library
+
+		if (request.status != 200.toShort()) {
+			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load library: ${request.status}"))
+		}
+		try {
+			return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library
+		} catch (e: Throwable) {
+			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load library: ${e.message}"))
+		}
 	}
 
 	override fun storeLibrary(library: Library) {
@@ -87,7 +107,7 @@ class AkrabRestLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	/** ---- [AkrabRestLibraryPersistenceService] */
+	/** ---- [AkrabRestLibraryPersistenceServiceJs] */
 
 	private fun buildLibraryDictionaryPath(libraryId: UUID): String =
 		"${buildLibraryBasePath(libraryId)}/$dictionaryName"

@@ -3,7 +3,7 @@ package ch.scorpion.antares.shaulamock
 import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.akrabapi.ProjectTO
 import ch.scorpion.antares.mainScope
-import ch.scorpion.antares.module.AntaresAkrabModuleJs
+import ch.scorpion.antares.module.AntaresAkrabProtectedModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
@@ -12,8 +12,7 @@ import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.loginLogout
 import ch.scorpion.jabbah.base.auth0.useAuth0
 import ch.scorpion.jabbah.base.util.encodeURI
-import ch.scorpion.jabbah.edit.auth.DesktopUser
-import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import com.ccfraser.muirwik.components.*
@@ -51,10 +50,10 @@ class ShaulaMock {
 	private fun initialize() {
 		console.info("Initializing AntaresPage")
 
-		AntaresAkrabModuleJs.require()
+		EditAuthModule.require()
+		EditAuthModule.userHolder = AnonymousWebUserHolder
 
-		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
-
+		AntaresAkrabProtectedModuleJs.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
 
 		AntaresThemes.install()
