@@ -29,7 +29,7 @@ class FileLibraryWithUserPersistenceServiceTest {
 	private val persistenceService = FileLibraryPersistenceService(
 		dataPath = directory.parent.toAbsolutePath().toString(),
 		directoryName = directory.name,
-		userHolder = EditAuthModule.userHolder)
+		useOwner = true)
 
 	@BeforeTest
 	fun setup() {

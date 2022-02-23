@@ -25,27 +25,27 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 		const val DEF_LIBRARY_FILE_NAME = "library.xml"
 	}
 
-	protected abstract fun ensureLibraryDirectory(libraryUuid: UUID)
+	protected abstract fun ensureLibraryDirectory(libraryId: LibraryIdentification)
 
-	protected abstract fun buildMetaGraphFilePath(libraryUuid: UUID, metaGraphUuid: UUID): String
+	protected abstract fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String
 
 	@Suppress("unused")
-	fun existsMetaGraphFile(libraryUuid: UUID, metaGraphUuid: UUID): Boolean =
-		Files.exists(Paths.get(buildMetaGraphFilePath(libraryUuid, metaGraphUuid)))
+	fun existsMetaGraphFile(libraryId: LibraryIdentification, metaGraphUuid: UUID): Boolean =
+		Files.exists(Paths.get(buildMetaGraphFilePath(libraryId, metaGraphUuid)))
 
 
-	abstract fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream
+	abstract fun createMetaGraphInputStream(libraryId: LibraryIdentification, metaGraphUuid: UUID): InputStream
 
-	abstract fun createMetaGraphOutputStream(libraryUuid: UUID, metaGraphUuid: UUID): OutputStream
+	abstract fun createMetaGraphOutputStream(libraryId: LibraryIdentification, metaGraphUuid: UUID): OutputStream
 
-	abstract fun createLibraryFileInputStream(libraryUuid: UUID): InputStream
+	abstract fun createLibraryFileInputStream(libraryId: LibraryIdentification): InputStream
 
-	abstract fun createLibraryFileOutputStream(libraryUuid: UUID): OutputStream
+	abstract fun createLibraryFileOutputStream(libraryId: LibraryIdentification): OutputStream
 
 	/** ---- [LibraryPersistenceService] */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-		createMetaGraphInputStream(library.uuid, uuid).use {
+		createMetaGraphInputStream(library.identification, uuid).use {
 			try {
 				val storeReader = StoreXmlReader(ElectricXmlReader(it))
 				val metaGraph = storeReader.readStorable() as MetaGraph
@@ -60,8 +60,8 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
 		LOG.trace("store MetaGraph '${metaGraph.uuid} with ID ${metaGraph.hashCode()}'")
-		ensureLibraryDirectory(library.uuid)
-		createMetaGraphOutputStream(library.uuid, metaGraph.uuid).use {
+		ensureLibraryDirectory(library.identification)
+		createMetaGraphOutputStream(library.identification, metaGraph.uuid).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(metaGraph)
@@ -73,8 +73,8 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 	}
 
 	override fun storeLibrary(library: Library) {
-		ensureLibraryDirectory(library.uuid)
-		createLibraryFileOutputStream(library.uuid).use {
+		ensureLibraryDirectory(library.identification)
+		createLibraryFileOutputStream(library.identification).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(library)
@@ -140,11 +140,11 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
-	protected fun loadLibrary(uuid: UUID, inputStream: InputStream): Library {
+	protected fun loadLibrary(libraryId: LibraryIdentification, inputStream: InputStream): Library {
 		try {
 			return loadLibrary(inputStream)
 		} catch (e: Throwable) {
-			LOG.error("Error while loading Library $uuid: ${e.message}")
+			LOG.error("Error while loading Library $${libraryId.uuid}: ${e.message}")
 			throw LibraryPersistenceServiceException(e.message)
 		}
 	}
@@ -152,6 +152,6 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 	protected fun loadLibrary(inputStream: InputStream): Library =
 		StoreXmlReader(ElectricXmlReader(inputStream)).readStorable() as Library
 
-	protected fun buildResourceLibraryDirectoryPath(libraryUuid: UUID): String =
-		"$RESOURCE_PATH/$libraryUuid"
+	protected fun buildResourceLibraryDirectoryPath(libraryId: LibraryIdentification): String =
+		"$RESOURCE_PATH/${libraryId.uuid.id}"
 }

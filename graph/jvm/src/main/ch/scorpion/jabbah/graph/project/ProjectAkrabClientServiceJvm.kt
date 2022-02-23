@@ -78,7 +78,7 @@ class ProjectAkrabClientServiceJvm(
 
 		val tempFilePath = Files.createTempFile(null, ".zip")
 		FileOutputStream(tempFilePath.absolutePathString()).use {
-			persistenceService.exportLibrary(project.uuid, it)
+			persistenceService.exportLibrary(project.identification, it)
 			it.flush()
 			it.close()
 		}

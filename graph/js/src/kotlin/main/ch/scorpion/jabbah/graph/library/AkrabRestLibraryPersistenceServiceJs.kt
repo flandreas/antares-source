@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
@@ -21,6 +22,10 @@ class AkrabRestLibraryPersistenceServiceJs(
 	private val dictionaryName: String
 ) : LibraryPersistenceService {
 
+	companion object {
+		private val LOG by logger(AkrabRestLibraryPersistenceServiceJs::class)
+	}
+
 	/**
 	 * The optional access token used for REST API authentication.
 	 * Can be `null` (anonymous) when using the public REST API.
@@ -30,19 +35,33 @@ class AkrabRestLibraryPersistenceServiceJs(
 	/** ---- [LibraryPersistenceService] interface. */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
+		val path = buildMetaGraphPath(library.uuid, uuid)
+		LOG.debug("Loading MetaGraph with GET $path")
+
 		val request = XMLHttpRequest()
-		request.open("GET", buildMetaGraphPath(library.uuid, uuid), async = false)
+		request.open("GET", path, async = false)
 		accessToken?.let {
 			request.setRequestHeader("Authorization", "Bearer $it")
 		}
 		request.overrideMimeType("text/xml")
 		request.send()
-		return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
+		if (request.status != 200.toShort()) {
+			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load graph: ${request.status}"))
+		}
+
+		try {
+			return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
+		} catch (e: Throwable) {
+			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load graph: ${e.message}"))
+		}
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
+		val path = buildMetaGraphPath(library.uuid, metaGraph.uuid)
+		LOG.debug("Storing MetaGraph with PUT $path")
+
 		val request = XMLHttpRequest()
-		request.open("PUT", buildMetaGraphPath(library.uuid, metaGraph.uuid), async = false)
+		request.open("PUT", path, async = false)
 		accessToken?.let {
 			request.setRequestHeader("Authorization", "Bearer $accessToken")
 		}
@@ -56,9 +75,12 @@ class AkrabRestLibraryPersistenceServiceJs(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun loadLibrary(uuid: UUID): Library {
+	override fun loadLibrary(libraryId: LibraryIdentification): Library {
+		val path = buildLibraryDictionaryPath(libraryId.uuid)
+		LOG.debug("Loading library with GET $path")
+
 		val request = XMLHttpRequest()
-		request.open("GET", buildLibraryDictionaryPath(uuid), async = false)
+		request.open("GET", path, async = false)
 		accessToken?.let {
 			request.setRequestHeader("Authorization", "Bearer $accessToken")
 		}
@@ -79,7 +101,7 @@ class AkrabRestLibraryPersistenceServiceJs(
 		throw UnsupportedOperationException("storeLibrary not implemented")
 	}
 
-	override fun deleteLibrary(uuid: UUID) {
+	override fun deleteLibrary(libraryId: LibraryIdentification) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
@@ -87,15 +109,15 @@ class AkrabRestLibraryPersistenceServiceJs(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
+	override fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibrary(uuid: UUID, outputPath: String) {
+	override fun exportLibrary(libraryId: LibraryIdentification, outputPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibraryTemporarily(uuid: UUID): String {
+	override fun exportLibraryTemporarily(libraryId: LibraryIdentification): String {
 		throw UnsupportedOperationException("not implemented")
 	}
 

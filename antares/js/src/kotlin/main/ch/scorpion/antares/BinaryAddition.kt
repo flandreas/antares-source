@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphViewerJs
@@ -38,7 +40,9 @@ class BinaryAddition {
 		EditAuthModule.userHolder = AnonymousWebUserHolder
 
 		AntaresAkrabPublicModule.require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null),
+			isSystem = true)
 
 		loadProject()
 
@@ -48,8 +52,10 @@ class BinaryAddition {
 	}
 
 	private fun loadProject() {
-		val projectUuid = UUID("532f0477-722c-4c88-ada3-c419a386d06a")
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectUuid)
+		val projectId = LibraryIdentification(
+			UUID("532f0477-722c-4c88-ada3-c419a386d06a"),
+			UserIdentity("5ecf330b-e395-4e17-88b0-0883834b384a"))
+		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectId)
 	}
 
 	private fun display() {

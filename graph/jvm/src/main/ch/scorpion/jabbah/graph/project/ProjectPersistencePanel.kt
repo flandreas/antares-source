@@ -219,7 +219,7 @@ class ProjectPersistencePanel(
 			selectedLibrary?.let {
 				LOG.debug("open project '${it.uuid}'")
 				InvocationHandler.invoke {
-					managementService.open(it.uuid)
+					managementService.open(getLibraryIdentity(it.uuid))
 					closeHandler.invoke()
 				}
 			}
@@ -288,7 +288,7 @@ class ProjectPersistencePanel(
 						JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 				) {
 					LOG.debug("Delete project '${it.uuid}'")
-					managementService.delete(it.uuid)
+					managementService.delete(getLibraryIdentity(it.uuid))
 					refreshLibraries()
 				}
 			}

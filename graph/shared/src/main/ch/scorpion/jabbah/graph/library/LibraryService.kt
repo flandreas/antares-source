@@ -93,10 +93,10 @@ class LibraryService(
 	private fun persister(system: Boolean): LibraryPersistenceService =
 		if (system) systemLibraryPersister else userLibraryPersister
 
-	/** Loads the [Library] with the specified [UUID] from persistent store.*/
-	fun loadLibrary(uuid: UUID, isSystem: Boolean): Library {
-		LOG.trace("Loading Library $uuid")
-		val library = persister(isSystem).loadLibrary(uuid)
+	/** Loads the [Library] with the specified [LibraryIdentification] from persistent store.*/
+	fun loadLibrary(libraryId: LibraryIdentification, isSystem: Boolean): Library {
+		LOG.trace("Loading Library $${libraryId.uuid}")
+		val library = persister(isSystem).loadLibrary(libraryId)
 		library.bindLibraryItems()
 		return library
 	}
@@ -113,19 +113,19 @@ class LibraryService(
 	 * Posts a [LibraryDeletedEvent] on this [LibraryService]'s [EventBus].
 	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
 	 */
-	fun deleteLibrary(uuid: UUID) {
-		LOG.trace("Deleting Library $uuid")
-		userLibraryPersister.deleteLibrary(uuid)
-		eventBus.post(LibraryDeletedEvent(uuid))
+	fun deleteLibrary(libraryId: LibraryIdentification) {
+		LOG.trace("Deleting Library $${libraryId.uuid}")
+		userLibraryPersister.deleteLibrary(libraryId)
+		eventBus.post(LibraryDeletedEvent(libraryId.uuid))
 	}
 
 	/**
 	 * Silently deletes any resources related with a user [Library].
 	 * This is primarily used by higher-level services after importing an invalid [Library].
 	 */
-	fun purgeLibrary(uuid: UUID) {
-		LOG.trace("Purging Library $uuid")
-		userLibraryPersister.deleteLibrary(uuid)
+	fun purgeLibrary(libraryId: LibraryIdentification) {
+		LOG.trace("Purging Library $${libraryId.uuid}")
+		userLibraryPersister.deleteLibrary(libraryId)
 	}
 
 	/** Renames a [Library] and makes the change persistent.*/
@@ -316,21 +316,22 @@ class LibraryService(
 	 * the given new name as user [Library].
 	 * @param library the [Library] to duplicate
 	 * @param newName the name of the duplicate [Library]
-	 * @param author the [UserIdentity] of the user who owns the duplicated [Library]
+	 * @param owner the [UserIdentity] of the user who owns the duplicated [Library]
 	 */
-	fun duplicateLibrary(library: Library, newName: TranslatableText, author: UserIdentity): Library {
+	fun duplicateLibrary(library: Library, newName: TranslatableText, owner: UserIdentity): Library {
 		val newUuid = System.createUUID()
 		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getOptionalTranslation()}' and UUID $newUuid")
 
-		val path = persister(library.isSystem).exportLibraryTemporarily(library.uuid)
+		val path = persister(library.isSystem).exportLibraryTemporarily(library.identification)
 
-		userLibraryPersister.importTemporaryLibrary(newUuid, path)
-		val newLibrary = loadLibrary(newUuid, isSystem = false)
+		val newIdentification = LibraryIdentification(newUuid, owner)
+		userLibraryPersister.importTemporaryLibrary(newIdentification, path)
+		val newLibrary = loadLibrary(newIdentification, isSystem = false)
 
 		newLibrary.uuid = newUuid
 		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
-		newLibrary.author = author
+		newLibrary.author = owner
 
 		storeLibrary(newLibrary)
 
@@ -342,8 +343,8 @@ class LibraryService(
 	 * Note that this wouldn't work in a client/server setup, which would require the exported data to be
 	 * transferred to the client to be stored there. This is up to a future extension.
 	 */
-	fun exportLibrary(uuid: UUID, outputPath: String) {
-		userLibraryPersister.exportLibrary(uuid, outputPath)
+	fun exportLibrary(libraryId: LibraryIdentification, outputPath: String) {
+		userLibraryPersister.exportLibrary(libraryId, outputPath)
 	}
 
 	/**

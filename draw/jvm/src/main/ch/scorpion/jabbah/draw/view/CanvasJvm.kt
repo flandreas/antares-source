@@ -95,6 +95,8 @@ class CanvasJvm(
 			return Point2D(location.x, location.y)
 		}
 
+	override val initialLayout: Boolean get() = false
+
 	override fun requestViewFocus() {
 		super.requestFocusInWindow()
 	}

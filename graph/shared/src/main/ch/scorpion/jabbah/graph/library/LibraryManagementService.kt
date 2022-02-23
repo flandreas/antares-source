@@ -56,9 +56,8 @@ class LibraryManagementService(
 
 	/** ---- [LibraryManagementService] */
 
-	private fun isSystemLibrary(uuid: UUID): Boolean {
-		return systemDictionaryService.contains(uuid)
-	}
+	fun isSystemLibrary(uuid: UUID): Boolean =
+		systemDictionaryService.contains(uuid)
 
 	/** Determines whether [uuid] exists as the [UUID] of either a user or a system [Library]. */
 	fun contains(uuid: UUID): Boolean
@@ -76,23 +75,23 @@ class LibraryManagementService(
 	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
-	 * @param templateLibraryUuid the [UUID] of the [Library] to be copied as a template.
+	 * @param templateLibraryId the [LibraryIdentification] of the [Library] to be copied as a template.
 	 *      If `null`, an empty [Library] is created.
 	 * @return the created [Library]
 	 * @throws IllegalArgumentException if a [Library] with the name in [properties] already exists
 	 */
-	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
+	fun create(properties: LibraryProperties, templateLibraryId: LibraryIdentification?): Library {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.info("Create new library '${properties.name.getTranslation()}' with template $templateLibraryUuid")
+		LOG.info("Create new library '${properties.name.getTranslation()}' with template ${templateLibraryId?.uuid}")
 
-		val library = if (templateLibraryUuid == null) {
+		val library = if (templateLibraryId == null) {
 			val library = libraryFactory.createEmptyLibrary(properties)
 			libraryService.storeLibrary(library)
 			library
 		} else {
-			libraryService.duplicateLibrary(loadLibrary(templateLibraryUuid), properties.name, userHolder.user.identity)
+			libraryService.duplicateLibrary(loadLibrary(templateLibraryId), properties.name, userHolder.user.identity)
 		}
 
 		library.bindLibraryItems()
@@ -126,16 +125,17 @@ class LibraryManagementService(
 		eventBus.post(LibraryPropertiesEvent(library, properties))
 	}
 
-	/** Loads the [Library] with the specified [UUID] from persistent store.*/
-	fun loadLibrary(uuid: UUID): Library =
-		libraryService.loadLibrary(uuid, isSystemLibrary(uuid))
+	/** Loads the [Library] with the specified [LibraryIdentification] from persistent store.*/
+	fun loadLibrary(libraryId: LibraryIdentification): Library =
+		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
 
 	/**
-	 * Loads and opens the [Library] with the specified [UUID], while closing a currently open project.
-	 * @throws IllegalArgumentException if a [Library] with [UUID] [uuid] doesn't exist
+	 * Loads and opens the [Library] with the specified [LibraryIdentification], while closing a currently open project.
+	 * @throws IllegalArgumentException if a [Library] with [libraryId] doesn't exist
 	 */
-	fun open(uuid: UUID): Library =
-		libraryService.loadLibrary(uuid, isSystemLibrary(uuid)).also { open(it) }
+	fun open(libraryId: LibraryIdentification): Library =
+		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
+			.also { open(it) }
 
 	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library) {
@@ -153,11 +153,11 @@ class LibraryManagementService(
 	 * Deletes the [Library] with the specified [UUID].
 	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
-	fun delete(uuid: UUID) {
-		if (libraryHolder.library.uuid == uuid) {
-			throw IllegalArgumentException("illegal attempt to delete the currently open library $uuid")
+	fun delete(libraryId: LibraryIdentification) {
+		if (libraryHolder.library.uuid == libraryId.uuid) {
+			throw IllegalArgumentException("illegal attempt to delete the currently open library ${libraryId.uuid}")
 		}
-		deleteImpl(uuid)
+		deleteImpl(libraryId)
 	}
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

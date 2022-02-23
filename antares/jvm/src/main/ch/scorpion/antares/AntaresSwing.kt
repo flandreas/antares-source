@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
@@ -226,7 +228,7 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
 
 		super.init()
 
@@ -332,17 +334,19 @@ class AntaresSwing(
 			return
 		}
 
+		val userId = EditAuthModule.userHolder.user.identity
+
 		val dataViewController = (controller as GraphDataViewController)
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
 		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.invoke().contains(UUID(projectName))) {
-			dataViewController.openProject(UUID(projectName))
+			dataViewController.openProject(LibraryIdentification(UUID(projectName), userId))
 			return
 		}
 
 		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
 			ProjectModule.projectManagementService.invoke()
 				.createHelloProject(DEF_LIBRARY_UUID)
-				.also { dataViewController.openProject(it.uuid) }
+				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
 			return
 		}
 

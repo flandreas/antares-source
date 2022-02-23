@@ -13,8 +13,10 @@ import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.useAuth0
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AkrabRestLibraryPersistenceServiceJs
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -41,6 +43,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 	companion object {
 		private const val PROJECT_UUID_PARAM = "project"
+		private const val OWNER_UUID_PARAM = "owner"
 		private const val RETURN_URI_PARAM = "returnUrl"
 	}
 
@@ -53,7 +56,8 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 		EditAuthModule.userHolder = AnonymousWebUserHolder
 
 		AntaresAkrabProtectedModuleJs.require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
 
 		AntaresThemes.install()
 
@@ -75,12 +79,24 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 		return params.get(PROJECT_UUID_PARAM)?.let { UUID(it) }
 	}
 
+	private fun extractOwnerUuidFromUrl(): UUID? {
+		val params = URLSearchParams(window.location.search)
+		return params.get(OWNER_UUID_PARAM)?.let { UUID(it) }
+	}
+
 	private fun extractReturnUriFromUrl(): String? {
 		val params = URLSearchParams(window.location.search)
 		return params.get(RETURN_URI_PARAM)
 	}
 
 	private fun display() {
+		val projectUuid = extractProjectUuidFromUrl()
+		val ownerUuid = extractOwnerUuidFromUrl()
+		val projectIdentification = if (projectUuid != null && ownerUuid != null) {
+			LibraryIdentification(projectUuid, UserIdentity(ownerUuid.id))
+		} else {
+			null
+		}
 		render(document.getElementById("root")) {
 
 			child(Auth0Provider) {
@@ -93,7 +109,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 					attrs {
 						application = this@AntaresJs
 						applicationDataHolder = controller
-						projectUuid = extractProjectUuidFromUrl()
+						projectId = projectIdentification
 						returnUri = extractReturnUriFromUrl()
 						metaGraph = controller.data?.content as MetaGraph?
 					}
@@ -106,7 +122,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 interface AntaresJsProps : Props {
 	var application: Application
 	var applicationDataHolder: ApplicationDataHolder
-	var projectUuid: UUID?
+	var projectId: LibraryIdentification?
 	var returnUri: String?
 	var metaGraph: MetaGraph?
 }
@@ -126,7 +142,7 @@ val antaresJs = fc<AntaresJsProps> { props ->
 	} else {
 		(ProjectModule.projectLibraryPersistenceService as AkrabRestLibraryPersistenceServiceJs).accessToken = accessToken!!
 
-		props.projectUuid?.let {
+		props.projectId?.let {
 			(props.application.controller as GraphDataViewController).openProject(it)
 
 			// TODO Open defaultElement

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.io.*
@@ -134,6 +135,8 @@ class LibraryDictionaryEntry(
 	}
 
 	/** ---- [LibraryDictionaryEntry] */
+
+	val identification: LibraryIdentification get() = LibraryIdentification(uuid, author)
 
 	fun updateFrom(properties: LibraryProperties) {
 		name = Name(properties.name)

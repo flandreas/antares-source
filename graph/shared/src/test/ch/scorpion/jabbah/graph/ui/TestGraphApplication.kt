@@ -46,7 +46,7 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
 			ProjectModule.projectManagementService.invoke()
 				.createHelloProject(LibraryModule.libraryHolder.library.uuid)
-				.also { dataViewController.openProject(it.uuid) }
+				.also { dataViewController.openProject(it.identification) }
 			return
 		}
 		dataViewController.closeData()

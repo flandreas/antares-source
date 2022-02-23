@@ -199,7 +199,7 @@ class LibraryPersistencePanel(
 			selectedLibrary?.let {
 				LOG.debug("open library '${it.uuid}'")
 				InvocationHandler.invoke {
-					managementService.open(it.uuid)
+					managementService.open(getLibraryIdentity(it.uuid))
 					closeHandler.invoke()
 				}
 			}
@@ -250,7 +250,9 @@ class LibraryPersistencePanel(
 
 			LOG.debug("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
-				managementService.open(managementService.create(LibraryProperties(info.name), info.templateUuid))
+				managementService.open(
+					managementService.create(LibraryProperties(info.name), info.templateUuid?.let { getLibraryIdentity(it) }),
+				)
 				closeHandler.invoke()
 			}
 		}
@@ -272,7 +274,7 @@ class LibraryPersistencePanel(
 
 				LOG.trace("delete library ${it.uuid}")
 				InvocationHandler.invoke {
-					managementService.delete(it.uuid)
+					managementService.delete(getLibraryIdentity(it.uuid))
 					closeHandler.invoke()
 				}
 			}

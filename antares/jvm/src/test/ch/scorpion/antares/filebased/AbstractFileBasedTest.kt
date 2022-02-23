@@ -33,7 +33,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path.parent.toString(), "projects")
 			ProjectModule.projectManagementService = { ProjectManagementService() }
 
-			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+				LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null), isSystem = true)
 		}
 	}
 
@@ -44,7 +45,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 	override fun getCircuitView(): GraphView = openedCircuitView
 
 	protected fun openCircuit(uuid: UUID) {
-		ProjectModule.projectManagementService.invoke().open(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"))
+		ProjectModule.projectManagementService.invoke().open(
+			LibraryIdentification(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"), null))
 		val metaGraph = ProjectModule.projectHolder.p!!.getMetaGraph(uuid)
 		openedCircuitView = metaGraph.graph.graphView
 	}

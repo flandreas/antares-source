@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
 import org.junit.Test
 import kotlin.test.*

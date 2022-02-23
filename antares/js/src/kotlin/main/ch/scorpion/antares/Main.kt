@@ -9,7 +9,7 @@ fun main() {
 
 	if (path.startsWith("/jabbah/desktop")) {
 		AntaresJs().start()
-	} else if (path.startsWith("/iframe.html") || path.startsWith("/docs/web/iframe.html")) {
+	} else if (path.startsWith("/jabbah/iframe.html") || path.startsWith("/docs/web/iframe.html")) {
 		AntaresIFrame().show()
 	} else if (path.startsWith("/binaryAddition.html")) {
 		BinaryAddition().show()

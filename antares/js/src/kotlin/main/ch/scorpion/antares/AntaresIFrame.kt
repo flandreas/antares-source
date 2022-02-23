@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.AkrabApiError
 import ch.scorpion.jabbah.graph.project.AkrabApiException
@@ -22,6 +24,7 @@ class AntaresIFrame {
 
 	companion object {
 		private const val PROJECT_UUID_PARAM = "project"
+		private const val OWNER_UUID_PARAM = "owner"
 		private const val CIRCUIT_UUID_PARAM = "circuit"
 		private const val THEME_PARAM = "theme"
 	}
@@ -31,36 +34,43 @@ class AntaresIFrame {
 	fun show() {
 		val params = URLSearchParams(kotlinx.browser.window.location.search)
 		val projectUuid = params.get(PROJECT_UUID_PARAM)
+		val ownerUuid = params.get(OWNER_UUID_PARAM)
 		val circuitUuid = params.get(CIRCUIT_UUID_PARAM)
 		val themeName = params.get(THEME_PARAM)
 
 		if (projectUuid == null) {
 			return displayError("Missing parameter '$PROJECT_UUID_PARAM'")
 		}
+		if (ownerUuid == null) {
+			return displayError("Missing parameter '$OWNER_UUID_PARAM'")
+		}
 		if (circuitUuid == null) {
 			return displayError("Missing parameter '$CIRCUIT_UUID_PARAM'")
 		}
 
-		initialize(projectUuid, themeName)
+		initialize(LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid)), themeName)
 		displayCircuit(circuitUuid)
 	}
 
-	private fun initialize(projectUuid: String, themeName: String? = null) {
+	private fun initialize(projectId: LibraryIdentification, themeName: String? = null) {
 		EditAuthModule.require()
 		EditAuthModule.userHolder = AnonymousWebUserHolder
 
 		AntaresAkrabPublicModule.require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null),
+			isSystem = true)
 
-		loadProject(projectUuid)
+		LogSystem.level = LogLevel.Debug
+
+		loadProject(projectId)
 
 		AntaresThemes.install(themeName)
-		LogSystem.level = LogLevel.Info
 	}
 
-	private fun loadProject(projectUuid: String) {
+	private fun loadProject(projectId: LibraryIdentification) {
 		try {
-			ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(UUID(projectUuid))
+			ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectId)
 		} catch (e: AkrabApiException) {
 			error = e.error
 		}

@@ -50,6 +50,8 @@ class CanvasJs(
 	override val mouseLocation: Point2D
 		get() = throw UnsupportedOperationException("getting mouseLocation not yet implemented")
 
+	override val initialLayout: Boolean get() = true
+
 	var dragTargetHandler: DragTargetHandler? = null
 		set(value) {
 			// Using canvas.addEventListener() seems not to work

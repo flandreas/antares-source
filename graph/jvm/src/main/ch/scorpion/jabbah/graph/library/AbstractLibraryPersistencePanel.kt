@@ -2,9 +2,13 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import org.apache.commons.io.FilenameUtils
@@ -16,7 +20,8 @@ import javax.swing.filechooser.FileFilter
 
 abstract class AbstractLibraryPersistencePanel(
 	private val managementService: AbstractLibraryManagementService,
-	private val logName: String
+	private val logName: String,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder
 ) : JPanel() {
 
 	companion object {
@@ -40,6 +45,9 @@ abstract class AbstractLibraryPersistencePanel(
 	protected abstract fun getUuidAlreadyExistsMsg(): String
 	protected abstract fun refreshLibraries()
 
+	protected fun getLibraryIdentity(uuid: UUID): LibraryIdentification =
+		LibraryIdentification(uuid, userHolder.user.identity)
+
 	private inner class ExportAction : AbstractAction(exportActionNameKey) {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
@@ -49,7 +57,7 @@ abstract class AbstractLibraryPersistencePanel(
 				if (fileChooser.showSaveDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {
 					LOG.debug("Export $logName ${it.uuid}")
 
-					managementService.export(it.uuid, fileChooser.selectedFile.absolutePath)
+					managementService.export(getLibraryIdentity(it.uuid), fileChooser.selectedFile.absolutePath)
 					JOptionPane.showConfirmDialog(
 						this@AbstractLibraryPersistencePanel,
 						getExportSuccessMsg(it),

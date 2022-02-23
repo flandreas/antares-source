@@ -18,11 +18,11 @@ interface LibraryPersistenceService {
 
 	fun deleteMetaGraph(library: Library, uuid: UUID)
 
-	fun loadLibrary(uuid: UUID): Library
+	fun loadLibrary(libraryId: LibraryIdentification): Library
 
 	fun storeLibrary(library: Library)
 
-	fun deleteLibrary(uuid: UUID)
+	fun deleteLibrary(libraryId: LibraryIdentification)
 
 	/**
 	 * Imports a [Library] contained in a ZIP file at the local `inputPath` and stores it as new [Library]
@@ -35,15 +35,15 @@ interface LibraryPersistenceService {
 	 * */
 	fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota = GraphQuota.UNLIMITED): Library
 
-	fun importTemporaryLibrary(uuid: UUID, temporaryPath: String)
+	fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String)
 
 	/** Exports the [Library] with the specified [UUID] into a ZIP file and stores it at `outputPath'. */
-	fun exportLibrary(uuid: UUID, outputPath: String)
+	fun exportLibrary(libraryId: LibraryIdentification, outputPath: String)
 
 	/**
 	 * Exports the [Library] with the specified [UUID]  and return the path of the temporary directory.
 	 */
-	fun exportLibraryTemporarily(uuid: UUID): String
+	fun exportLibraryTemporarily(libraryId: LibraryIdentification): String
 
 	/**
 	 * Exports [bundle] as a ZIP file to the specified location [outputPath].
@@ -59,7 +59,7 @@ interface LibraryPersistenceService {
  * as the one to be imported already exists.
  * @property uuid the [UUID] of the [Library] to be imported
  */
-data class LibraryImportConflictException(val uuid: UUID) : Throwable()
+data class LibraryImportConflictException(val libraryId: LibraryIdentification) : Throwable()
 
 /** Null pattern.*/
 class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
@@ -73,27 +73,27 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun deleteMetaGraph(library: Library, uuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun loadLibrary(uuid: UUID): Library =
+	override fun loadLibrary(libraryId: LibraryIdentification): Library =
 		throw UnsupportedOperationException("not implemented")
 
 	override fun storeLibrary(library: Library): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun deleteLibrary(uuid: UUID): Unit =
+	override fun deleteLibrary(libraryId: LibraryIdentification): Unit =
 		throw UnsupportedOperationException("not implemented")
 
 	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
+	override fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibrary(uuid: UUID, outputPath: String): Unit =
+	override fun exportLibrary(libraryId: LibraryIdentification, outputPath: String): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun exportLibraryTemporarily(uuid: UUID): String {
+	override fun exportLibraryTemporarily(libraryId: LibraryIdentification): String {
 		throw UnsupportedOperationException("not implemented")
 	}
 

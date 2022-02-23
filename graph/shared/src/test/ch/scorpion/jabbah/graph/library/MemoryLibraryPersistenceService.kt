@@ -28,7 +28,7 @@ class MemoryLibraryPersistenceService(
 		map.remove(uuid)
 	}
 
-	override fun loadLibrary(uuid: UUID): Library {
+	override fun loadLibrary(libraryId: LibraryIdentification): Library {
 		return libraryAccessor.invoke()!!
 	}
 
@@ -36,7 +36,7 @@ class MemoryLibraryPersistenceService(
 		// empty
 	}
 
-	override fun deleteLibrary(uuid: UUID) {
+	override fun deleteLibrary(libraryId: LibraryIdentification) {
 		// empty
 	}
 
@@ -44,15 +44,15 @@ class MemoryLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
+	override fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibrary(uuid: UUID, outputPath: String) {
+	override fun exportLibrary(libraryId: LibraryIdentification, outputPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibraryTemporarily(uuid: UUID): String {
+	override fun exportLibraryTemporarily(libraryId: LibraryIdentification): String {
 		throw UnsupportedOperationException("not implemented")
 	}
 

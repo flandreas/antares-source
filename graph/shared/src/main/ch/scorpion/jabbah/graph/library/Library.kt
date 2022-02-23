@@ -19,6 +19,13 @@ import ch.scorpion.jabbah.graph.model.Graph
  */
 interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 
+	/** Returns the [LibraryIdentification] used for building persistent paths to this [Library]. */
+	val identification: LibraryIdentification get() = if (isSystem) {
+		LibraryIdentification(uuid, null)
+	} else {
+		LibraryIdentification(uuid, author)
+	}
+
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
 	var uuid: UUID
 
@@ -77,6 +84,16 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	/** Creates an appropriate [Savable] for the specified [ContainerLibraryElement].*/
 	fun createSavable(element: ContainerLibraryElement): Savable
 }
+
+/**
+ * Used by persistence-oriented classes that store [Libraries][Library] per owner.
+ * The owner is empty for system-level [Libraries][Library] that can't be changed by the users
+ * and are stored centrally.
+ */
+data class LibraryIdentification(
+	val uuid: UUID,
+	val owner: UserIdentity?
+)
 
 /**
  * Represents those properties of a [Library] that can be provided by the user when creating a [Library],

@@ -38,7 +38,7 @@ class ProjectSavable(
 	override val editable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Change, project)
 
 	override fun open(application: Application): Boolean {
-		projectManagementService.open(project.uuid, element.uuid)
+		projectManagementService.open(project.identification, element.uuid)
 		return true
 	}
 

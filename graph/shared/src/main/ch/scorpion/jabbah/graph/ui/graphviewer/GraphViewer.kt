@@ -14,8 +14,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.SingleStepModeAction
 import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.execution.SingleStepModeAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode.*
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.io.StorableCloner
 
 interface GraphViewerView : UIView {
 

@@ -73,10 +73,10 @@ class ProjectManagementService(
 		dictionaryService.getEntries()
 
 	/**
-	 * Loads the [Project] with the specified [UUID].
-	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
+	 * Loads the [Project] with the specified [LibraryIdentification].
+	 * @throws IllegalArgumentException if a [Project] with [libraryId] doesn't exist
 	 */
-	fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid, isSystem = false) as Project
+	fun load(libraryId: LibraryIdentification): Project = libraryService.loadLibrary(libraryId, isSystem = false) as Project
 
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
@@ -141,9 +141,9 @@ class ProjectManagementService(
 
 	/**
 	 * Loads and opens the [Project] with the specified [UUID], and opens its default [ContainerLibraryElement].
-	 * @throws IllegalArgumentException if a project with [uuid] doesn't exist
+	 * @throws IllegalArgumentException if a [Project] with [libraryId] doesn't exist
 	 */
-	fun open(uuid: UUID): Project = load(uuid).also { open(it) }
+	fun open(libraryId: LibraryIdentification): Project = load(libraryId).also { open(it) }
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project) {
@@ -157,8 +157,8 @@ class ProjectManagementService(
 	}
 
 	/** Opens the specified [Project] and [ContainerLibraryElement].*/
-	fun open(uuid: UUID, containerLibraryElement: UUID) {
-		val project = load(uuid)
+	fun open(libraryId: LibraryIdentification, containerLibraryElement: UUID) {
+		val project = load(libraryId)
 		eventBus.postVetoable(
 			event = OpenProjectRequest(project),
 			undoEvent = OpenProjectRequest(projectHolder.project),
@@ -182,16 +182,23 @@ class ProjectManagementService(
 
 	private fun openLibraryForProjectIfNecessary(project: Project) {
 		if (project.importedLibrary != libraryHolder.library.uuid) {
-			libraryManagementService.open(project.importedLibrary!!)
+			project.importedLibrary!!.also {
+				val id = if (libraryManagementService.isSystemLibrary(it)) {
+					LibraryIdentification(it, null)
+				} else {
+					LibraryIdentification(it, project.author)
+				}
+				libraryManagementService.open(id)
+			}
 		}
 	}
 
 	/** Deletes the [Project] with the specified name.*/
-	fun delete(uuid: UUID) {
-		if (projectHolder.project?.uuid == uuid) {
-			closeImpl { deleteImpl(uuid) }
+	fun delete(libraryId: LibraryIdentification) {
+		if (projectHolder.project?.uuid == libraryId.uuid) {
+			closeImpl { deleteImpl(libraryId) }
 		} else {
-			deleteImpl(uuid)
+			deleteImpl(libraryId)
 		}
 	}
 

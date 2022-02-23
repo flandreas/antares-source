@@ -35,6 +35,13 @@ interface Canvas : PropertyOwner<Any> {
     /** Returns the current location of the mouse pointer in view space.*/
     val mouseLocation: Point2D
 
+	/**
+	 * Determines whether this [Canvas] implementation is initially laid out and provides a stable
+	 * [dimension] property right from the start, allowing [View] to apply its default zoom strategy
+	 * without flickering.
+	 */
+	val initialLayout: Boolean
+
     /** Request the event focus from the window system for this [View] in order to receive key events.*/
     fun requestViewFocus()
 

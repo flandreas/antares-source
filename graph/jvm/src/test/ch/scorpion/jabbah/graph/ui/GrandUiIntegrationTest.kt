@@ -118,7 +118,7 @@ class GrandUiIntegrationTest {
 	private fun createAndOpenNewProject(name: String) {
 		val service = ProjectModule.projectManagementService
 		val project = service.invoke().create(LibraryProperties(name = TranslatableText(name)), LibraryModule.libraryHolder.library.uuid)
-		service.invoke().open(project.uuid)
+		service.invoke().open(project.identification)
 	}
 
 	private fun editGraphView(): GraphView {

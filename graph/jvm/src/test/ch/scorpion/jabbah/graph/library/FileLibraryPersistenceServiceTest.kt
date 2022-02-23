@@ -76,7 +76,7 @@ class FileLibraryPersistenceServiceTest {
 	fun shouldLoadLibrary() {
 		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
 
-		val loadedLibrary = persistenceService.loadLibrary(LibraryModule.libraryHolder.library.uuid)
+		val loadedLibrary = persistenceService.loadLibrary(LibraryModule.libraryHolder.library.identification)
 
 		assertEquals(LibraryModule.libraryHolder.library.uuid, loadedLibrary.uuid)
 	}
@@ -87,7 +87,7 @@ class FileLibraryPersistenceServiceTest {
 		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph)
 		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
 
-		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.uuid)
+		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.identification)
 
 		assertFalse(Files.exists(libraryDirPath()))
 		assertFalse(Files.exists(metaGraphPath(origMetaGraph)))
@@ -100,8 +100,8 @@ class FileLibraryPersistenceServiceTest {
 		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)
 		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
 
-		persistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, zipFile.toAbsolutePath().toString())
-		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.uuid)
+		persistenceService.exportLibrary(LibraryModule.libraryHolder.library.identification, zipFile.toAbsolutePath().toString())
+		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.identification)
 		persistenceService.importLibrary(zipFile.toAbsolutePath().toString(), 1, GraphQuota.UNLIMITED)
 
 		assertTrue(Files.exists(libraryFilePath()))

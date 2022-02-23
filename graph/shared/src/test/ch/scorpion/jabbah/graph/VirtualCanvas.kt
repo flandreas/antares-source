@@ -35,6 +35,8 @@ class VirtualCanvas(
 	override var mouseLocation: Point2D = Point2D.ZERO
 		private set
 
+	override val initialLayout: Boolean get() = true
+
 	override fun requestViewFocus() { }
 
 	override fun setCursor(cursor: Cursor) { }

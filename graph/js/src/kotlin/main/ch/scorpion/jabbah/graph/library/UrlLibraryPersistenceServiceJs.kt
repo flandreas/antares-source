@@ -51,9 +51,9 @@ class UrlLibraryPersistenceServiceJs(
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun loadLibrary(uuid: UUID): Library {
+    override fun loadLibrary(libraryId: LibraryIdentification): Library {
 	    val request = XMLHttpRequest()
-	    request.open("GET", buildLibraryFilePath(uuid), async = false)
+	    request.open("GET", buildLibraryFilePath(libraryId.uuid), async = false)
 	    request.overrideMimeType("text/xml")
 	    request.send()
 	    return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library
@@ -63,7 +63,7 @@ class UrlLibraryPersistenceServiceJs(
         throw UnsupportedOperationException("not implemented")
     }
 
-	override fun deleteLibrary(uuid: UUID) {
+	override fun deleteLibrary(libraryId: LibraryIdentification) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
@@ -71,15 +71,15 @@ class UrlLibraryPersistenceServiceJs(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
+	override fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun exportLibrary(uuid: UUID, outputPath: String) {
+	override fun exportLibrary(libraryId: LibraryIdentification, outputPath: String) {
         throw UnsupportedOperationException("not implemented")
     }
 
-	override fun exportLibraryTemporarily(uuid: UUID): String {
+	override fun exportLibraryTemporarily(libraryId: LibraryIdentification): String {
 		throw UnsupportedOperationException("not implemented")
 	}
 

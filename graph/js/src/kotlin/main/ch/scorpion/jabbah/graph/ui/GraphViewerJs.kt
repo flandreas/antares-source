@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView

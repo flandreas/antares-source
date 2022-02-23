@@ -46,8 +46,8 @@ abstract class AbstractLibraryManagementService(
 	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
 	abstract fun existsName(name: TranslatableText, except: UUID? = null): Boolean
 
-	fun export(uuid: UUID, outputPath: String) {
-		libraryService.exportLibrary(uuid, outputPath)
+	fun export(libraryId: LibraryIdentification, outputPath: String) {
+		libraryService.exportLibrary(libraryId, outputPath)
 	}
 
 	fun import(inputPath: String, replaceIfUuidExists: Boolean): LibraryImportResult {
@@ -57,7 +57,7 @@ abstract class AbstractLibraryManagementService(
 			library = libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
 		} catch (e: LibraryImportConflictException) {
 			if (replaceIfUuidExists) {
-				deleteImpl(e.uuid)
+				deleteImpl(e.libraryId)
 				try {
 					library =
 						libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
@@ -75,13 +75,13 @@ abstract class AbstractLibraryManagementService(
 
 		if (existsName(library.name.translation)) {
 			LOG.trace("Name of imported project already exists")
-			libraryService.purgeLibrary(library.uuid)
+			libraryService.purgeLibrary(library.identification)
 			return NameAlreadyExists.result()
 		}
 
 		if (hasStaleImportReferences(library)) {
 			LOG.trace("Library for imported project doesn't exist")
-			libraryService.purgeLibrary(library.uuid)
+			libraryService.purgeLibrary(library.identification)
 			return StaleLibraryReference.result()
 		}
 
@@ -90,8 +90,8 @@ abstract class AbstractLibraryManagementService(
 		return Success.result()
 	}
 
-	protected fun deleteImpl(uuid: UUID) {
-		libraryService.deleteLibrary(uuid)
-		dictionaryService.remove(uuid)
+	protected fun deleteImpl(libraryId: LibraryIdentification) {
+		libraryService.deleteLibrary(libraryId)
+		dictionaryService.remove(libraryId.uuid)
 	}
 }

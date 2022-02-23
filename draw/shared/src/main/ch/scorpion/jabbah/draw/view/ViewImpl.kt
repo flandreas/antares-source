@@ -51,6 +51,7 @@ open class ViewImpl<C : InputEventContext>(
 	 * Used to wait drawing this [View] until [Canvas] has been laid out and therefore has a proper [Dimension2D].
 	 * Without this, this [View] would draw initial content before the [defaultZoomStrategy] has been applied,
 	 * followed by drawing it after [defaultZoomStrategy] has been applied, which results in flickering.
+	 * See also the [Canvas.initialLayout] property.
 	 * */
 	private var canvasLaidOut: Boolean = false
 
@@ -65,6 +66,8 @@ open class ViewImpl<C : InputEventContext>(
 
 			space.viewDimension = canvas.dimension
 			space.addPropertyChangeListener(propertyChangeHandler)
+
+			canvasLaidOut = canvas.initialLayout
 
 			firePropertyChange(View.PROP_CANVAS, null, _canvas)
 		}

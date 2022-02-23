@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.auth0.useAuth0
 import ch.scorpion.jabbah.base.util.encodeURI
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.MButtonSize
@@ -54,7 +55,9 @@ class ShaulaMock {
 		EditAuthModule.userHolder = AnonymousWebUserHolder
 
 		AntaresAkrabProtectedModuleJs.require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(AntaresApplication.DEF_LIBRARY_UUID, isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null),
+			isSystem = true)
 
 		AntaresThemes.install()
 		LogSystem.level = LogLevel.Info

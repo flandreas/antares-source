@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
@@ -78,13 +79,13 @@ class GraphDataViewController(
 	 * */
 	override fun open(savable: Savable) {
 		if (savable is DefaultSavable) {
-			openProject(UUID(savable.identification!!))
+			openProject(LibraryIdentification(UUID(savable.identification!!), EditAuthModule.userHolder.user.identity))
 		}
 		super.open(savable)
 	}
 
-	fun openProject(uuid: UUID) {
-		System.invokeLater { ProjectModule.projectManagementService.invoke().open(uuid) }
+	fun openProject(identification: LibraryIdentification) {
+		System.invokeLater { ProjectModule.projectManagementService.invoke().open(identification) }
 	}
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {

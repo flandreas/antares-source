@@ -69,7 +69,7 @@ class LibraryTest {
 		val customNand = TestLibraryBuilder().addCustomNand(libraryHolder.library)
 
 		val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl, LibraryModule.libraryService)
-		LibraryModule.libraryHolder.l = restoredLibrary
+		libraryHolder.l = restoredLibrary
 
 		restoredLibrary.getMetaGraph(customNot.uuid)
 		restoredLibrary.getMetaGraph(customNand.uuid)
@@ -98,19 +98,19 @@ class LibraryTest {
 		val circuitView = GraphViewImpl()
 		circuitView.add(vvr)
 
-		var graphStorable = GraphStorable(circuitView)
+		val graphStorable = GraphStorable(circuitView)
 		StorableCloner.cloneUsingCreator(graphStorable, IOModule.storableCreator)
 	}
 
 	@Test
 	fun shouldExportLibrary() {
-		TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
+		TestLibraryBuilder().addCustomNot(libraryHolder.library)
 		val file = File.createTempFile("library", ".zip")
-		LibraryModule.userLibraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, file.absolutePath)
+		LibraryModule.userLibraryPersistenceService.exportLibrary(libraryHolder.library.identification, file.absolutePath)
 	}
 
 	private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
 		service.storeLibrary(library)
-		return LibraryModule.libraryService.loadLibrary(library.uuid, isSystem = false)
+		return LibraryModule.libraryService.loadLibrary(library.identification, isSystem = false)
 	}
 }

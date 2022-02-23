@@ -4,8 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -22,7 +21,8 @@ import java.util.zip.ZipOutputStream
  * @property directoryName the name of the directory within [dataPath] that holds the [Library] files (e.g. "libraries")
  * @property metaGraphFileExtension the file name extension of [MetaGraph] files
  * @property libraryFileName the name of the [Library] file
- * @property userHolder if provided, the identification of the [User] is part of the file system path
+ * @property useOwner if `true`, [LibraryIdentification.owner] is part of the file system path. Typically `false`
+ * for single-user environments, `true` for multi-user environments
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class FileLibraryPersistenceService(
@@ -30,7 +30,7 @@ class FileLibraryPersistenceService(
 	private val directoryName: String,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
-	private val userHolder: UserHolder<User>? = null
+	private val useOwner: Boolean = false
 ) : AbstractFileLibraryPersistenceService() {
 
 	companion object {
@@ -41,23 +41,23 @@ class FileLibraryPersistenceService(
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
 		LOG.trace("delete MetaGraph $uuid in Library ${library.uuid}")
-		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
+		File(buildMetaGraphFilePath(library.identification, uuid)).delete()
 	}
 
-	override fun loadLibrary(uuid: UUID): Library {
-		LOG.trace("load Library $uuid")
-		return createLibraryFileInputStream(uuid).use {
-			loadLibrary(uuid, it)
+	override fun loadLibrary(libraryId: LibraryIdentification): Library {
+		LOG.trace("load Library $${libraryId.uuid}")
+		return createLibraryFileInputStream(libraryId).use {
+			loadLibrary(libraryId, it)
 		}
 	}
 
-	override fun deleteLibrary(uuid: UUID) {
-		LOG.trace("delete Library $uuid")
-		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(uuid)))
+	override fun deleteLibrary(libraryId: LibraryIdentification) {
+		LOG.trace("delete Library $${libraryId.uuid}")
+		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(libraryId)))
 	}
 
-	private fun copyUserLibrary(uuid: UUID, destinationDirectory: String) {
-		val sourceDirectory = buildLibraryDirectoryPath(uuid)
+	private fun copyUserLibrary(libraryId: LibraryIdentification, destinationDirectory: String) {
+		val sourceDirectory = buildLibraryDirectoryPath(libraryId)
 		copyLibrary(sourceDirectory, destinationDirectory)
 	}
 
@@ -68,30 +68,30 @@ class FileLibraryPersistenceService(
 		)
 	}
 
-	override fun exportLibrary(uuid: UUID, outputPath: String) {
-		LOG.trace("Exporting library to $outputPath")
-		exportLibrary(uuid, FileOutputStream(outputPath))
+	override fun exportLibrary(libraryId: LibraryIdentification, outputPath: String) {
+		LOG.trace("Exporting library ${libraryId.uuid} to $outputPath")
+		exportLibrary(libraryId, FileOutputStream(outputPath))
 	}
 
-	fun exportLibrary(uuid: UUID, outputStream: FileOutputStream) {
+	fun exportLibrary(libraryId: LibraryIdentification, outputStream: FileOutputStream) {
 		outputStream.use { output ->
 			ZipOutputStream(output).use {
-				val fileToZip = File(buildLibraryDirectoryPath(uuid))
+				val fileToZip = File(buildLibraryDirectoryPath(libraryId))
 				ZipUtil.zipFile(fileToZip, fileToZip.name, it)
 			}
 		}
 	}
 
-	override fun exportLibraryTemporarily(uuid: UUID): String {
+	override fun exportLibraryTemporarily(libraryId: LibraryIdentification): String {
 		val tempDir = Files.createTempDirectory(null)
-		val outputLibDir = Path.of(tempDir.toString(), uuid.toString()).toAbsolutePath().toString()
-		copyUserLibrary(uuid, outputLibDir)
+		val outputLibDir = Path.of(tempDir.toString(), libraryId.uuid.toString()).toAbsolutePath().toString()
+		copyUserLibrary(libraryId, outputLibDir)
 
 		return outputLibDir
 	}
 
-	override fun importTemporaryLibrary(uuid: UUID, temporaryPath: String) {
-		copyLibrary(temporaryPath, buildLibraryDirectoryPath(uuid))
+	override fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String) {
+		copyLibrary(temporaryPath, buildLibraryDirectoryPath(libraryId))
 	}
 
 	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
@@ -101,15 +101,15 @@ class FileLibraryPersistenceService(
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
-	override fun ensureLibraryDirectory(libraryUuid: UUID) {
-		val path = Paths.get(buildLibraryDirectoryPath(libraryUuid))
+	override fun ensureLibraryDirectory(libraryId: LibraryIdentification) {
+		val path = Paths.get(buildLibraryDirectoryPath(libraryId))
 		if (!Files.exists(path)) {
 			Files.createDirectories(path)
 		}
 	}
 
-	override fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream {
-		val path = buildMetaGraphFilePath(libraryUuid, metaGraphUuid)
+	override fun createMetaGraphInputStream(libraryId: LibraryIdentification, metaGraphUuid: UUID): InputStream {
+		val path = buildMetaGraphFilePath(libraryId, metaGraphUuid)
 		try {
 			return FileInputStream(path)
 		} catch (e: FileNotFoundException) {
@@ -118,8 +118,8 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	override fun createMetaGraphOutputStream(libraryUuid: UUID, metaGraphUuid: UUID): OutputStream {
-		val path = buildMetaGraphFilePath(libraryUuid, metaGraphUuid)
+	override fun createMetaGraphOutputStream(libraryId: LibraryIdentification, metaGraphUuid: UUID): OutputStream {
+		val path = buildMetaGraphFilePath(libraryId, metaGraphUuid)
 		try {
 			return FileOutputStream(path)
 		} catch (e: FileNotFoundException) {
@@ -128,8 +128,8 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	override fun createLibraryFileInputStream(libraryUuid: UUID): InputStream =
-		createLibraryFileInputStream(buildLibraryFilePath(libraryUuid))
+	override fun createLibraryFileInputStream(libraryId: LibraryIdentification): InputStream =
+		createLibraryFileInputStream(buildLibraryFilePath(libraryId))
 
 	private fun createLibraryFileInputStream(path: String): InputStream {
 		try {
@@ -140,8 +140,8 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	override fun createLibraryFileOutputStream(libraryUuid: UUID): OutputStream {
-		val path = buildLibraryFilePath(libraryUuid)
+	override fun createLibraryFileOutputStream(libraryId: LibraryIdentification): OutputStream {
+		val path = buildLibraryFilePath(libraryId)
 		try {
 			return FileOutputStream(path)
 		} catch (e: FileNotFoundException) {
@@ -152,12 +152,13 @@ class FileLibraryPersistenceService(
 
 	/** ---- [FileLibraryPersistenceService] */
 
-	private val baseName: String get() {
-		val sep = FileSystems.getDefault().separator
-		return if (userHolder == null) {
-			"$dataPath$sep$directoryName"
+	private fun getBaseName(owner: UserIdentity?): String {
+		val separator = FileSystems.getDefault().separator
+
+		return if (useOwner && owner != null) {
+			"$dataPath$separator${owner.id}$separator$directoryName"
 		} else {
-			"$dataPath$sep${userHolder.user.identity}$sep$directoryName"
+			"$dataPath$separator$directoryName"
 		}
 	}
 
@@ -207,12 +208,12 @@ class FileLibraryPersistenceService(
 		}
 
 		// Check if UUID already exists
-		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
+		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.identification))
 		val exists = Files.exists(newDirectory)
 		if (exists && !replaceExisting) {
 			val msg = "Library ${library.uuid} already exists"
 			LOG.trace(msg)
-			throw LibraryImportConflictException(library.uuid)
+			throw LibraryImportConflictException(library.identification)
 		}
 
 		if (library.metaGraphCount > quota.maxGraphPerLibrary) {
@@ -235,15 +236,15 @@ class FileLibraryPersistenceService(
 		return library
 	}
 
-	override fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
-		FileSystems.getDefault().getPath(baseName, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
+	override fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String =
+		FileSystems.getDefault().getPath(getBaseName(libraryId.owner), libraryId.uuid.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
-	private fun buildLibraryFilePath(libraryUuid: UUID): String =
-		buildLibraryFilePath(baseName, libraryUuid.toString())
+	private fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
+		buildLibraryFilePath(getBaseName(libraryId.owner), libraryId.uuid.toString())
 
 	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =
 		FileSystems.getDefault().getPath(directoryPath, libraryDirName, libraryFileName).toString()
 
-	private fun buildLibraryDirectoryPath(libraryUuid: UUID): String =
-		FileSystems.getDefault().getPath(baseName, libraryUuid.toString()).toString()
+	private fun buildLibraryDirectoryPath(libraryId: LibraryIdentification): String =
+		FileSystems.getDefault().getPath(getBaseName(libraryId.owner), libraryId.uuid.toString()).toString()
 }

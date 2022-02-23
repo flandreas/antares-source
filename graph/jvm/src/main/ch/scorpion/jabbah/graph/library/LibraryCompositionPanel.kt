@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -86,7 +85,7 @@ class LibraryCompositionPanel(
 
 	private val isDestinationFolderSelected: Boolean get() = destinationTreeController.selectedItem is LibraryDirectory
 
-	private val selectedSourceLibraryUuid: UUID get() = (sourceLibraries.selectedItem as LibraryDictionaryEntry).uuid
+	private val selectedSourceLibraryId: LibraryIdentification get() = (sourceLibraries.selectedItem as LibraryDictionaryEntry).identification
 
 	private val librarySelectionListener = TreeSelectionListener {
 		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
@@ -128,9 +127,8 @@ class LibraryCompositionPanel(
 		destinationTreeController.dispose()
 	}
 
-	private fun getSelectedSourceLibrary(): Library {
-		return libraryManagementService.loadLibrary(selectedSourceLibraryUuid)
-	}
+	private fun getSelectedSourceLibrary(): Library =
+		libraryManagementService.loadLibrary(selectedSourceLibraryId)
 
 	private fun fillSourceLibraries() {
 		libraryManagementService
