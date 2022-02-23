@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 object BaseModuleJvm : AbstractModule() {
 
 	private const val PREF_TREE_ROOT = "base.preferences.group.root"
-	private const val PREF_TREE_GENERAL = "base.preferences.group.general"
+	const val PREF_TREE_GENERAL = "base.preferences.group.general"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
@@ -74,7 +74,6 @@ object BaseModuleJvm : AbstractModule() {
 
 		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
-		root.getGroup(PREF_TREE_GENERAL).add(DataLocationPreference())
 
 		// Needs restart because ToolTips are usually cached
 		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(

@@ -2,11 +2,14 @@ package ch.scorpion.jabbah.graph.module
 
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.DataLocation
+import ch.scorpion.jabbah.base.DataLocationPreference
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.StringPreference
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
@@ -116,6 +119,17 @@ object GraphModuleJvm : AbstractModule() {
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
+
+		if (supportWeb) {
+			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(DataLocationPreference())
+			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(
+				StringPreference(
+				id = DataLocation.PROP_SERVER_URL,
+				nameKey = "base.preferences.serverUrl",
+				columns = 15
+			))
+		}
+
 		root.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).add(IntPreference(
 			id = InconsistentNetError.PROP_ALLOWED_DURATION,
 			nameKey = "graph.preferences.InconsistentNetError.allowedDuration"

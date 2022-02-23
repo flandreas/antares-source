@@ -195,10 +195,11 @@ class FloatPreference(
 class StringPreference(
 	id: String,
 	nameKey: String,
-	needsRestart: Boolean = false
+	needsRestart: Boolean = false,
+	columns: Int = 10
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
-	private val editor = JTextField(10)
+	private val editor = JTextField(columns)
 
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel

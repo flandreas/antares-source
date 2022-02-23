@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -35,8 +36,6 @@ import java.awt.Taskbar
 import java.awt.Toolkit
 import java.io.FileInputStream
 import java.lang.System
-import java.net.MalformedURLException
-import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -67,7 +66,6 @@ class AntaresSwing(
 		private const val FILE_STORE_BASE_OPTION = "fs"
 		private const val PROJECT_DIR_OPTION = "p"
 		private const val USER_LIBRARY_DIR_OPTION = "l"
-		private const val URL_OPTION = "url"
 
 		const val ICON_PATH = "img/Logo.png"
 
@@ -99,13 +97,6 @@ class AntaresSwing(
 				.required(false)
 				.longOpt("userLibraries")
 				.desc("User library directory name")
-				.hasArg()
-				.build())
-
-			options.addOption(Option.builder(URL_OPTION)
-				.required(false)
-				.longOpt("url")
-				.desc("Server URL")
 				.hasArg()
 				.build())
 
@@ -207,9 +198,6 @@ class AntaresSwing(
 
 	override val dataLocation: DataLocation get() = DataLocation.withName(BaseModule.properties.getString(DataLocation.PROP_DATA_LOCATION))
 
-	override var dataUrl: URL? = null
-		private set
-
 	/** ---- [AbstractApplication] */
 
 	override val aboutInfo: AboutInfo get() = AboutInfo(
@@ -261,9 +249,6 @@ class AntaresSwing(
 		if (commandLine.hasOption(USER_LIBRARY_DIR_OPTION)) {
 			consumeUserLibraryDirectoryName(USER_LIBRARY_DIR_OPTION)
 		}
-		if (commandLine.hasOption(URL_OPTION)) {
-			consumeUrl(commandLine.getOptionValue(URL_OPTION))
-		}
 	}
 
 	private fun consumeSystemLibraryBasePath(path: String) {
@@ -296,14 +281,6 @@ class AntaresSwing(
 
 	private fun consumeUserLibraryDirectoryName(name: String) {
 		customUserLibraryDirectoryName = name
-	}
-
-	private fun consumeUrl(url: String) {
-		try {
-			dataUrl = URL(url)
-		} catch (e: MalformedURLException) {
-			println("Invalid URL $url")
-		}
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {

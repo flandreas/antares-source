@@ -61,6 +61,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
+import java.net.URL
 import java.nio.file.FileSystems
 
 /**
@@ -133,8 +134,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		if (app.dataLocation == DataLocation.Local) {
 			GraphModuleJvm.projectAkrabClientServiceJvm = {
+				val serverUrl = try {
+					URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
+				} catch (e: Exception) {
+					URL("http://localhost")
+				}
 				ProjectAkrabClientServiceJvm(
-					app.dataUrl!!,
+					serverUrl,
 					ProjectModule.projectLibraryPersistenceService as FileLibraryPersistenceService
 				)
 			}
@@ -152,6 +158,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun customizeProperties(properties: Properties) {
+		properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:9999")
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")

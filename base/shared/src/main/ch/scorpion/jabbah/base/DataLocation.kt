@@ -7,6 +7,7 @@ enum class DataLocation(val customName: String) {
 
 	companion object {
 		const val PROP_DATA_LOCATION = "base.dataLocation"
+		const val PROP_SERVER_URL = "base.serverUrl"
 
 		fun withName(customName: String): DataLocation =
 			values().firstOrNull { it.customName == customName }
