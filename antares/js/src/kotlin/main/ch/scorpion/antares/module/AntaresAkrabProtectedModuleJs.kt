@@ -13,7 +13,7 @@ object AntaresAkrabProtectedModuleJs : AbstractModule() {
 		AntaresModuleJs.require()
 
 		ProjectModule.projectLibraryPersistenceService = AkrabRestLibraryPersistenceServiceJs(
-			baseUrl = "http://localhost:9999/api/projects",
+			baseUrl = "/api/projects",
 			dictionaryName = "circuits"
 		)
 	}
