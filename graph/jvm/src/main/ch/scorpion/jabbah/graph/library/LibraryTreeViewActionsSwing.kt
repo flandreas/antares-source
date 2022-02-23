@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.MetaGraphEmbedAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -25,6 +26,7 @@ class LibraryTreeViewActionsSwing(
 	private val collapseAllAction = CollapseAllAction(controller)
 	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
 	private val newGraphViewerAction = NewGraphViewerAction(application.displayName, controller)
+	private val embedMetaGraphAction = MetaGraphEmbedAction(controller)
 
 	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
@@ -149,6 +151,9 @@ class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+		if (GraphModuleJvm.supportWeb) {
+			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
+		}
 
 		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 

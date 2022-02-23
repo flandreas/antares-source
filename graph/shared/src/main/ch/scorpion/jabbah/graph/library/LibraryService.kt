@@ -1,18 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.graph.GraphQuota
-import ch.scorpion.jabbah.graph.GraphQuotaException
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.MetaGraphBundle
+import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
@@ -81,7 +75,8 @@ class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val metaGraphRepository: CombinedMetaGraphRepository = GraphModule.metaGraphRepository
 ) {
 
 	companion object {
@@ -366,7 +361,7 @@ class LibraryService(
 	 */
 	fun exportMetaGraphBundle(element: ContainerLibraryElement, outputPath: String) {
 		ensureMetaGraph(element.library!!, element)
-		val bundle = GraphModule.metaGraphRepository.createBundle(element.metaGraph!!)
+		val bundle = metaGraphRepository.createBundle(element.metaGraph!!)
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
 	}
 
@@ -402,8 +397,30 @@ class LibraryService(
 		return MetaGraphBundleImportResult.Success
 	}
 
+	/** Returns the code snippet to embed the [MetaGraph] with [UUID] as a HTML <iframe>.*/
+	fun getEmbeddingIFrame(uuid: UUID): String {
+		val metaGraph = metaGraphRepository.getMetaGraph(uuid)
+		val library = metaGraphRepository.getContainingLibrary(uuid)!!
+		val src = StringBuilder(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
+			.append("/jabbah/iframe/iframe.html?")
+			.append("project=${library.uuid.id}")
+			.append("&owner=${library.author.id}")
+			.append("&circuit=${uuid.id}")
+			.toString()
+
+		return """
+			|<iframe
+			|   style="border:none;"
+			|   title="${metaGraph.name}"
+			|   width="500px"
+			|   height="500px"
+			|   src="$src"
+			|/>
+		""".trimMargin()
+	}
+
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
-		bundle.metaGraphs.any { GraphModule.metaGraphRepository.containsMetaGraph(it.uuid) }
+		bundle.metaGraphs.any { metaGraphRepository.containsMetaGraph(it.uuid) }
 
 	private fun checkBundleLibrary(bundle: MetaGraphBundle, destination: Library): Boolean {
 		if (bundle.referencedSystemLibrary == null) {
