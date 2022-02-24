@@ -130,69 +130,77 @@ class AntaresViewJs(
 	}
 
 	override fun RBuilder.render() {
-		mCssBaseline()
-
-		styledDiv {
-			css {
-				display = Display.flex
-				height = 100.vh
-				width = 100.vw
-				flexDirection = FlexDirection.column
-			}
+		themeContext.Consumer { theme ->
+			mCssBaseline()
 
 			styledDiv {
 				css {
 					display = Display.flex
+					height = 100.vh
+					width = 100.vw
 					flexDirection = FlexDirection.column
-					flexGrow = 1.0
 				}
-				if (state.isLoading) {
-					mBackdrop(open = true) {
-						mCircularProgress(color = MCircularProgressColor.inherit)
+
+				styledDiv {
+					css {
+						display = Display.flex
+						flexDirection = FlexDirection.column
+						flexGrow = 1.0
 					}
-				} else {
-					mAppBar(position = MAppBarPosition.static) {
-						mToolbar {
-							if (props.projectName != null) {
-								mToolbarTitle("Antares Desktop - ${props.projectName}")
-							} else {
-								mToolbarTitle("Antares Desktop")
+					if (state.isLoading) {
+						mBackdrop(open = true) {
+							mCircularProgress(color = MCircularProgressColor.inherit)
+						}
+					} else {
+						mAppBar(position = MAppBarPosition.static) {
+							css {
+								zIndex = theme.zIndex.drawer + 1
 							}
-							saveAction = SaveFileAction(props.application, applicationContextHolder.eventBus)
-							jmButton(saveAction!!)
-							props.returnUri?.let { returnUri ->
-								mButton("Close", color = MColor.inherit, variant = MButtonVariant.outlined, size = MButtonSize.small,
-									onClick = { window.location.href = decodeURI(returnUri) }) {
-									css {
-										marginLeft = 10.px
+							mToolbar {
+								if (props.projectName != null) {
+									mToolbarTitle("${props.projectName}")
+								} else {
+									mToolbarTitle("Antares Desktop")
+								}
+								saveAction = SaveFileAction(props.application, applicationContextHolder.eventBus)
+								jmButton(saveAction!!)
+								props.returnUri?.let { returnUri ->
+									mButton("Close",
+										color = MColor.inherit,
+										variant = MButtonVariant.outlined,
+										size = MButtonSize.small,
+										onClick = { window.location.href = decodeURI(returnUri) }) {
+										css {
+											marginLeft = 10.px
+										}
 									}
 								}
 							}
 						}
-					}
 
-					antaresMenuBar {  }
-					graphExecutionToolbar {
-						currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
-						scheduler = applicationContextHolder.scheduler
-						eventBus = BaseModule.eventBus
-						toggleApplicationModeAction = controller.toggleApplicationModeAction
-						singleStepModeAction = controller.singleStepModeAction
-						pauseOrResumeAction = controller.pauseOrResumeAction
-						backgroundColor = null
-					}
-
-					styledDiv {
-						css {
-							flexGrow = 1.0
-							position = Position.relative
+						antaresMenuBar { }
+						graphExecutionToolbar {
+							currentSystemSpeedCategory = controller.applicationContextHolder.currentSystemSpeedCategory
+							scheduler = applicationContextHolder.scheduler
+							eventBus = BaseModule.eventBus
+							toggleApplicationModeAction = controller.toggleApplicationModeAction
+							singleStepModeAction = controller.singleStepModeAction
+							pauseOrResumeAction = controller.pauseOrResumeAction
+							backgroundColor = null
 						}
-						graphPanelView {
-							controller = this@AntaresViewJs.controller
-							application = this@AntaresViewJs.props.application
-							canvasId = props.canvasId
-							size = props.size
-							metaGraph = props.metaGraph
+
+						styledDiv {
+							css {
+								flexGrow = 1.0
+								position = Position.relative
+							}
+							graphPanelView {
+								controller = this@AntaresViewJs.controller
+								application = this@AntaresViewJs.props.application
+								canvasId = props.canvasId
+								size = props.size
+								metaGraph = props.metaGraph
+							}
 						}
 					}
 				}

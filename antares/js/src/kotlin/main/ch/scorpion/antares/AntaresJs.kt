@@ -20,7 +20,10 @@ import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
+import com.ccfraser.muirwik.components.mThemeProvider
 import com.ccfraser.muirwik.components.mTypography
+import com.ccfraser.muirwik.components.styles.ThemeOptions
+import com.ccfraser.muirwik.components.styles.createMuiTheme
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
@@ -98,7 +101,6 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 			null
 		}
 		render(document.getElementById("root")) {
-
 			child(Auth0Provider) {
 				attrs {
 					domain = "dev-wq7i977v.eu.auth0.com"
@@ -129,6 +131,7 @@ interface AntaresJsProps : Props {
 
 val antaresJs = fc<AntaresJsProps> { props ->
 	val auth0 = useAuth0()
+	var themeColor: String by useState("light")
 	var accessToken: String? by useState(null)
 
 	useEffectOnce {
@@ -160,14 +163,21 @@ val antaresJs = fc<AntaresJsProps> { props ->
 			*/
 		}
 
-		child(AntaresViewJs::class) {
-			attrs.application = props.application
-			attrs.applicationDataHolder = props.applicationDataHolder
-			attrs.canvasId = "kotlinCanvas"
-			attrs.size = null
-			attrs.projectName = ProjectModule.projectHolder.project?.name?.getTranslation()
-			attrs.returnUri = props.returnUri
-			attrs.metaGraph = props.metaGraph
+		// Same colors as in Shaula App
+		@Suppress("UnsafeCastFromDynamic")
+		val themeOptions: ThemeOptions = js("({palette: { type: 'placeholder', primary: {main: '#f5c344'}, secondary: {main: '#0336FF'}}})")
+		themeOptions.palette?.type = themeColor
+
+		mThemeProvider(createMuiTheme(themeOptions)) {
+			child(AntaresViewJs::class) {
+				attrs.application = props.application
+				attrs.applicationDataHolder = props.applicationDataHolder
+				attrs.canvasId = "kotlinCanvas"
+				attrs.size = null
+				attrs.projectName = ProjectModule.projectHolder.project?.name?.getTranslation()
+				attrs.returnUri = props.returnUri
+				attrs.metaGraph = props.metaGraph
+			}
 		}
 	}
 }
