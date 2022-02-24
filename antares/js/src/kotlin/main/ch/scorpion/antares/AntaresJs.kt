@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
+import ch.scorpion.antares.akrabapi.UserInfoTO
 import ch.scorpion.antares.module.AntaresAkrabProtectedModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
 import ch.scorpion.antares.view.theme.AntaresThemes
@@ -11,9 +12,7 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.auth0.Auth0Provider
 import ch.scorpion.jabbah.base.auth0.useAuth0
-import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.auth.*
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AkrabRestLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
@@ -29,7 +28,10 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.w3c.dom.url.URLSearchParams
+import org.w3c.xhr.XMLHttpRequest
 import react.Props
 import react.dom.render
 import react.fc
@@ -136,7 +138,23 @@ val antaresJs = fc<AntaresJsProps> { props ->
 
 	useEffectOnce {
 		mainScope.launch {
-			accessToken = auth0.getAccessTokenSilently().await()
+			val localAccessToken = auth0.getAccessTokenSilently().await()
+
+			// TODO: Extract into separate Hook
+			val request = XMLHttpRequest()
+			request.open("GET", "/api/user", async = false)
+			request.setRequestHeader("Authorization", "Bearer $localAccessToken")
+			request.send()
+			console.log("Received UserInfo, status = ${request.status}")
+			val localUserInfo = Json.decodeFromString<UserInfoTO>(request.responseText)
+			console.log("UserInfo.id = ${localUserInfo.userId}")
+			EditAuthModule.userHolder = DesktopUserHolder(DesktopUser(
+				UserIdentity(localUserInfo.userId),
+				name = "unknown",
+				isDeveloper = false
+			))
+
+			accessToken = localAccessToken
 		}
 	}
 

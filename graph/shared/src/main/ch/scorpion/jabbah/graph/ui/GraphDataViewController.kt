@@ -100,7 +100,6 @@ class GraphDataViewController(
 			}
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")
-			e.printStackTrace()
 			view.showModalMessage(
 				ModalMessageType.Error,
 				actionName,
