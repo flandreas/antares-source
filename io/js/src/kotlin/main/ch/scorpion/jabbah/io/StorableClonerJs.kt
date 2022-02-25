@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.io.module.DomXmlWriter
 actual object StorableCloner : AbstractStorableCloner() {
 
 	actual fun serialize(storable: Storable): String =
-		serializeImpl(storable, GlobalIdentityCreator()).data.toString()
+		serializeImpl(storable, GlobalIdentityCreator()).data.decodeToString()
 
 	actual fun deserialize(s: String): Storable {
 		val byteArray = s.encodeToByteArray()
