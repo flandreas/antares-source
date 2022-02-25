@@ -37,6 +37,16 @@ enum class Bit(private val value: Int?) {
 			return of(if (value) 1 else 0)
 		}
 
+		fun of(char: Char): Bit {
+			return when(char) {
+				'0' -> False
+				'1' -> True
+				ALL_UNDEFINED_CHAR -> Undefined
+				ERROR_CHAR -> Error
+				else -> throw IllegalArgumentException("not a Bit charachter")
+			}
+		}
+
 		fun random(): Bit = of(kotlin.random.Random.nextBoolean())
 
 		/**
