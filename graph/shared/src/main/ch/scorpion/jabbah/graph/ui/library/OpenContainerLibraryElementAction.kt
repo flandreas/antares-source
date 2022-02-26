@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -23,14 +24,21 @@ class OpenContainerLibraryElementAction(
 	controller
 ) {
 
-	init {
-		eventBus.register(OpenContainerLibraryElementRequest::class) {
-			if (!applicationMode.isEdit()) {
-				eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
-			} else {
-				openAsSavable(it.element)
-			}
+	private val openHandler: EventHandler<OpenContainerLibraryElementRequest> = {
+		if (!applicationMode.isEdit()) {
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
+		} else {
+			openAsSavable(it.element)
 		}
+	}
+
+	init {
+		eventBus.register(OpenContainerLibraryElementRequest::class, openHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(openHandler)
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

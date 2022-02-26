@@ -46,10 +46,6 @@ open class DefaultSavable(val identification: String?) : Savable {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun save(application: Application): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
-
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
 		return if (defined) {
 			appDataViewController.saveWithSavable()

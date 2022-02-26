@@ -42,12 +42,6 @@ class ProjectSavable(
 		return true
 	}
 
-	override fun save(application: Application): Boolean {
-		libraryService.updateContainerLibraryElement(project, element)
-		application.controller.data = application.controller.data!!.withSavable(this)
-		return true
-	}
-
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
 		libraryService.updateContainerLibraryElement(project, element)
 		appDataViewController.data = appDataViewController.data!!.withSavable(this)

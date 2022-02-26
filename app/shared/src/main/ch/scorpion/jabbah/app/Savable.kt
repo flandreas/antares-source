@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.app
 
 /**
- * An object that can be saved by [Application.save].
+ * An object that can be saved by [ApplicationDataViewController.save].
  */
 interface Savable {
 
@@ -35,14 +35,6 @@ interface Savable {
      * @return `true` if this [Savable] has been opened, `false` if the open process has been aborted by the user
      */
     fun open(application: Application): Boolean
-
-    /**
-     * Saves this [Savable] using the specified [Application].
-     * @param application the [Application] within which this [Savable] is saved.
-     * @return `true` if this [Savable] has been saved, `false` if the save process has been aborted by the user
-     */
-    @Deprecated("Replaced by method using controller")
-    fun save(application: Application): Boolean
 
 	/**
 	 * Saves this [Savable] using the specified [ApplicationDataViewController].

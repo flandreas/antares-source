@@ -76,12 +76,12 @@ open class LibraryTreeViewActionsSwing(
 	protected val libraryRootMenu = JPopupMenu()
 	private val libraryBasePopupMenu = JPopupMenu()
 
-	private var isFilled = false
+	protected var isFilled = false
+		private set
 
-	fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
+	open fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
 		if (!isFilled) {
-			fillPopupMenus(type)
-			isFilled = true
+			fillPopupMenus()
 		}
 
 		return when (treeNode.userObject) {
@@ -120,12 +120,13 @@ open class LibraryTreeViewActionsSwing(
 		}
 	}
 
-	private fun fillPopupMenus(type: LibraryTreeViewType) {
+	protected fun fillPopupMenus() {
 		when (type) {
 			LibraryTreeViewType.Main -> fillMain()
 			LibraryTreeViewType.CompositionSource -> fillCompositionSource()
 			LibraryTreeViewType.CompositionDestination -> fillCompositionDestination()
 		}
+		isFilled = true
 	}
 
 	protected open fun fillMainProjectDirectoryPopupMenu() {
@@ -180,15 +181,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 	}
 
-	private fun fillMain() {
-		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-
-		// Project actions
-
-		fillMainProjectDirectoryPopupMenu()
-		fillMainProjectRootPopupMenu()
-
+	private fun fillMainProjectContainerPopupMenu() {
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
@@ -199,6 +192,26 @@ open class LibraryTreeViewActionsSwing(
 		if (GraphModuleJvm.supportWeb) {
 			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
 		}
+	}
+
+	private fun fillMainLibraryContainerPopupMenu() {
+		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(renameLibraryMetaGraphAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+	}
+
+	protected open fun fillMain() {
+		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+
+		// Project actions
+
+		fillMainProjectDirectoryPopupMenu()
+		fillMainProjectRootPopupMenu()
+		fillMainProjectContainerPopupMenu()
 
 		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
 
@@ -206,13 +219,7 @@ open class LibraryTreeViewActionsSwing(
 
 		fillMainLibraryDirectoryPopupMenu()
 		fillMainLibraryRootPopupMenu()
-
-		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(renameLibraryMetaGraphAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+		fillMainLibraryContainerPopupMenu()
 
 		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}

@@ -107,6 +107,12 @@ class GraphDataViewController(
 		}
 	}
 
+	fun openAsStorable(content: Storable, savable: Savable) {
+		open {
+			ApplicationData(content, savable)
+		}
+	}
+
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenProjectRequest) {
 		if (!canReplaceSavable("project.action.open.name")) {
 			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))

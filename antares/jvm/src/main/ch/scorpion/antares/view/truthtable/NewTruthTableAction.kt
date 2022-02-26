@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.truthtable
 
+import ch.scorpion.antares.model.truthtable.OpenTruthTableItemRequest
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.jabbah.base.StringUtils
@@ -37,7 +38,8 @@ class NewTruthTableAction(
 		val library = directory.library!!
 		val truthTableItem = TruthTableLibraryItem(TruthTable(newName))
 
-		val item = library.libraryService.addLibraryItem(library, truthTableItem, directory)
+		library.libraryService.addLibraryItem(library, truthTableItem, directory)
+		eventBus.post(OpenTruthTableItemRequest(truthTableItem))
 	}
 
 	override val operationAuthorized: Boolean

@@ -4,17 +4,27 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItem
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * Represents a request to open the [TruthTable] of a [TruthTableLibraryItem].
+ */
+data class OpenTruthTableItemRequest(val item: TruthTableLibraryItem)
+
+/**
+ * A [LibraryItem] that contains a [TruthTable].
+ */
 class TruthTableLibraryItem(
 	truthTable: TruthTable = TruthTable()
 ) : AbstractLibraryItem(TranslatableText(Translations.getString("library.element.truthTable.name")), iconPath = "/img/openInPopup-20.png") {
 
-	private var truthTable: TruthTable = truthTable
+	var truthTable: TruthTable = truthTable
+		private set
 
 	override var name: Name
 		get() = truthTable.name

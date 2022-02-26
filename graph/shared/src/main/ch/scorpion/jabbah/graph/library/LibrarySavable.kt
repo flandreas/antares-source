@@ -31,11 +31,7 @@ class LibrarySavable(
 		return true
 	}
 
-	override fun save(application: Application): Boolean = saveImpl()
-
-	override fun save(appDataViewController: ApplicationDataViewController): Boolean = saveImpl()
-
-	private fun saveImpl(): Boolean {
+	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
 		service.updateContainerLibraryElement(library, element)
 		return true
 	}

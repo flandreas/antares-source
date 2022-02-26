@@ -248,6 +248,17 @@ class LibraryService(
 	}
 
 	/**
+	 * Persistently stores a [LibraryItem] whose content is stored withing the [Library]
+	 * (e.g. not in separate files) simply by storing the [Library].
+	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
+	 */
+	fun updateLibraryItem(library: Library, item: LibraryItem) {
+		LOG.trace("Updating LibraryItem")
+		storeLibrary(library)
+		eventBus.post(LibraryItemUpdatedEvent(library, item))
+	}
+
+	/**
 	 * Returns the [MetaGraph] of a [ContainerLibraryElement], loading it if not already loaded.
 	 */
 	fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
