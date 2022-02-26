@@ -133,8 +133,9 @@ class LibraryService(
 	}
 
 	/**
-	 * Adds a [LibraryItem] at the end position of a [LibraryDirectory] and makes the change persistent.
+	 * Adds a [LibraryItem] at the specified index of a [LibraryDirectory] and makes the change persistent.
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
+	 * @param index the position within [directory] to add [item], or `null` to add at the end
 	 */
 	fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int? = null) {
 		LOG.trace("Adding LibraryItem ${item.name}'")

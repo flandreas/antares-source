@@ -3,6 +3,9 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.edit.model.text.description.observableName
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -15,9 +18,10 @@ import ch.scorpion.jabbah.io.*
  * [TruthTable] uses [Bit.Undefined] to represent "any value".
  */
 class TruthTable(
+	initialName: String = "",
 	inputColumnNames: List<String> = emptyList(),
 	outputColumnNames: List<String> = emptyList()
-) : AbstractStorable() {
+) : AbstractStorable(), Namable {
 
 	private val inputColumns: MutableList<TruthTableInputColumn> =
 		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
@@ -65,16 +69,23 @@ class TruthTable(
 		}
 	}
 
+
+	/** ---- [Namable] interface */
+
+	override var name: Name by observableName(Name(initialName))
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
+		name.write("name", writer)
 		writer.writeStorables("inputs", inputColumns.iterator())
 		writer.writeStorables("outputs", outputColumns.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
+		name = Name.read("name", reader)
 		inputColumns.clear()
 		inputColumns.addAll(reader.readStorables("inputs"))
 

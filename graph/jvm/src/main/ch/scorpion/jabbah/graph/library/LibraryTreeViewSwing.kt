@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
@@ -32,7 +33,8 @@ class LibraryTreeViewSwing(
 
 	private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
 
-	val actions = LibraryTreeViewActionsSwing(controller, controller.type, application)
+	val actions = GraphModuleJvm.libraryTreeViewActionsProvider.provide(
+		LibraryTreeViewActionsParams(controller, controller.type, application))
 
 	init {
 		controller.view = this

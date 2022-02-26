@@ -13,14 +13,24 @@ import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode
 
-class LibraryTreeViewActionsSwing(
+fun interface LibraryTreeViewActionsProvider {
+	fun provide(params: LibraryTreeViewActionsParams): LibraryTreeViewActionsSwing
+}
+
+class LibraryTreeViewActionsParams(
+	val controller: LibraryTreeViewController,
+	val type: LibraryTreeViewType,
+	val application: Application
+)
+
+open class LibraryTreeViewActionsSwing(
 	controller: LibraryTreeViewController,
-	type: LibraryTreeViewType,
+	private val type: LibraryTreeViewType,
 	application: Application
 ) : LibraryTreeViewActions(controller, application) {
 
-	private val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
-	private val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
+	protected val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
+	protected val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
 
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
@@ -56,21 +66,24 @@ class LibraryTreeViewActionsSwing(
 	private val editLibraryAction = EditLibraryAction(controller, application)
 
 	private val desktopPopupMenu = JPopupMenu()
-	private val projectDirectoryPopupMenu = JPopupMenu()
+	protected val projectDirectoryPopupMenu = JPopupMenu()
 	private val projectContainerPopupMenu = JPopupMenu()
-	private val projectRootMenu = JPopupMenu()
+	protected val projectRootMenu = JPopupMenu()
 	private val projectBasePopupMenu = JPopupMenu()
 
-	private val libraryDirectoryPopupMenu = JPopupMenu()
+	protected val libraryDirectoryPopupMenu = JPopupMenu()
 	private val libraryContainerPopupMenu = JPopupMenu()
-	private val libraryRootMenu = JPopupMenu()
+	protected val libraryRootMenu = JPopupMenu()
 	private val libraryBasePopupMenu = JPopupMenu()
 
-	init {
-		fillPopupMenus(type)
-	}
+	private var isFilled = false
 
 	fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
+		if (!isFilled) {
+			fillPopupMenus(type)
+			isFilled = true
+		}
+
 		return when (treeNode.userObject) {
 			is Project -> projectRootMenu
 			is Library -> libraryRootMenu
@@ -108,19 +121,14 @@ class LibraryTreeViewActionsSwing(
 	}
 
 	private fun fillPopupMenus(type: LibraryTreeViewType) {
-		when(type) {
+		when (type) {
 			LibraryTreeViewType.Main -> fillMain()
 			LibraryTreeViewType.CompositionSource -> fillCompositionSource()
 			LibraryTreeViewType.CompositionDestination -> fillCompositionDestination()
 		}
 	}
 
-	private fun fillMain() {
-		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-
-		// Project actions
-
+	protected open fun fillMainProjectDirectoryPopupMenu() {
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectDirectoryPopupMenu.addSeparator()
@@ -130,7 +138,9 @@ class LibraryTreeViewActionsSwing(
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(projectFolderPropertiesAction))
+	}
 
+	protected open fun fillMainProjectRootPopupMenu() {
 		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
 		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectRootMenu.addSeparator()
@@ -143,6 +153,41 @@ class LibraryTreeViewActionsSwing(
 			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
 		}
 		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
+	}
+
+	protected open fun fillMainLibraryDirectoryPopupMenu() {
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+		libraryDirectoryPopupMenu.addSeparator()
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryDirectoryPopupMenu.addSeparator()
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
+	}
+
+	protected open fun fillMainLibraryRootPopupMenu() {
+		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
+		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
+		libraryRootMenu.addSeparator()
+		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
+		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryRootMenu.addSeparator()
+		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
+	}
+
+	private fun fillMain() {
+		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+
+		// Project actions
+
+		fillMainProjectDirectoryPopupMenu()
+		fillMainProjectRootPopupMenu()
 
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
@@ -159,26 +204,8 @@ class LibraryTreeViewActionsSwing(
 
 		// Library actions
 
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-		libraryDirectoryPopupMenu.addSeparator()
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
-		libraryDirectoryPopupMenu.addSeparator()
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
-
-		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
-		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
-		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
-		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
-		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
-		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
+		fillMainLibraryDirectoryPopupMenu()
+		fillMainLibraryRootPopupMenu()
 
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))

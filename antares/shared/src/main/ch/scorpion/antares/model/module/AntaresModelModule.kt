@@ -15,6 +15,7 @@ import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableInputColumn
+import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableOutputColumn
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.DigitalPortFactory
@@ -107,6 +108,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("truthTable", TruthTable::class)
 		typeMap.register("truthTableInputColumn", TruthTableInputColumn::class)
 		typeMap.register("truthTableOutputColumn", TruthTableOutputColumn::class)
+		typeMap.register("truthTableLibraryItem", TruthTableLibraryItem::class)
 	}
 
 	private fun registerGraphParamTypes() {
