@@ -1,7 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.draw.CloseViewRequest
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.ui.canvasWithToolbar
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import kotlinx.css.*
 import react.*
 import styled.css
@@ -73,4 +79,20 @@ private class GraphNavigationViewJs(
 	}
 
 	override fun dispose() { }
+
+	/** ---- [GraphDesktopViewItem] */
+
+	override val drawingView: DrawingView<GraphView> get() = props.controller.drawingView
+
+	override var contextColor: CompositeColor? = null
+
+	override val isDetached: Boolean get() = false
+
+	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
+
+	override fun createCloseRequest(): Any = CloseViewRequest(drawingView)
+
+	override fun disposeItem() {
+		dispose()
+	}
 }

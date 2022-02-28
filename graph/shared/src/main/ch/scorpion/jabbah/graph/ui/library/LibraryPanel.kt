@@ -28,7 +28,7 @@ class LibraryPanelController(
 	applicationModeHolder: ApplicationModeHolder,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val eventBus: EventBus = BaseModule.eventBus
+	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
 	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, applicationModeHolder, eventBus)
@@ -48,12 +48,5 @@ class LibraryPanelController(
 		eventBus.unregister(themeHandler)
 		eventBus.unregister(currentLibraryHandler)
 		eventBus.unregister(currentProjectHandler)
-	}
-
-	fun requestOpenSelectedContainerLibraryElement() {
-		val item = libraryTreeViewController.selectedItem
-		if (item is ContainerLibraryElement) {
-			eventBus.post(OpenContainerLibraryElementRequest(item))
-		}
 	}
 }

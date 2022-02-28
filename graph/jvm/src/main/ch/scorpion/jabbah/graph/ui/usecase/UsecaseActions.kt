@@ -45,7 +45,8 @@ abstract class AbstractUsecaseAction(
 		eventBus.unregister(usecaseSelectionHandler)
 	}
 
-	protected val graphView: GraphView get() = (application.controller.data!!.content as MetaGraph).graph.graphView
+	protected val graphView: GraphView? get() =
+		(application.controller.data!!.content as? MetaGraph)?.graph?.graphView
 }
 
 /** Asks the user for the name of a new [Usecase] and adds it to the current [GraphView].*/
@@ -108,7 +109,7 @@ class RunUsecaseAction(
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseRunner(it, graphView, scheduler, applicationModeHolder).run()
+			UsecaseRunner(it, graphView!!, scheduler, applicationModeHolder).run()
 		}
 	}
 
@@ -127,7 +128,7 @@ class RunSingleUsecaseTestAction(
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseTestRunner(listOf(it), graphView, scheduler,applicationModeHolder).run()
+			UsecaseTestRunner(listOf(it), graphView!!, scheduler,applicationModeHolder).run()
 		}
 	}
 
@@ -144,9 +145,9 @@ class RunAllTestsAction(
 ) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		UsecaseTestRunner(graphView.usecases.withTests(), graphView, scheduler, applicationModeHolder).run()
+		UsecaseTestRunner(graphView!!.usecases.withTests(), graphView!!, scheduler, applicationModeHolder).run()
 	}
 
 	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && graphView.usecases.hasTest
+		super.calculateEnabled() && graphView?.usecases?.hasTest == true
 }

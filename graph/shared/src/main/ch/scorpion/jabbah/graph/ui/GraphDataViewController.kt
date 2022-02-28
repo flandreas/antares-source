@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.io.Storable
 
 /**

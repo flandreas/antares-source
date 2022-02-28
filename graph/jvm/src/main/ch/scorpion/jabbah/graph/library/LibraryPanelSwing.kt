@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities
 class LibraryPanelSwing(
 	private val controller: LibraryPanelController,
 	application: Application,
-    eventBus: EventBus
+    private val eventBus: EventBus
 ): JPanel(), LibraryPanelView {
 
 	private val libraryTreePanel: LibraryTreePanel
@@ -56,16 +56,16 @@ class LibraryPanelSwing(
 
 	private inner class DoubleClickListener : MouseAdapter() {
 		override fun mousePressed(e: MouseEvent) {
-			if (e.clickCount == 2 && selectedTreeItem is ContainerLibraryElement) {
-				controller.requestOpenSelectedContainerLibraryElement()
+			if (e.clickCount == 2 && selectedTreeItem is LibraryItem) {
+				(selectedTreeItem as LibraryItem).open(eventBus)
 			}
 		}
 	}
 
 	private inner class EnterKeyListener : KeyAdapter() {
 		override fun keyPressed(e: KeyEvent) {
-			if (e.keyCode == KeyEvent.VK_ENTER && selectedTreeItem is ContainerLibraryElement) {
-				controller.requestOpenSelectedContainerLibraryElement()
+			if (e.keyCode == KeyEvent.VK_ENTER && selectedTreeItem is LibraryItem) {
+				(selectedTreeItem as LibraryItem).open(eventBus)
 				SwingUtilities.invokeLater { libraryTreeView.requestFocusInWindow() }
 			}
 		}

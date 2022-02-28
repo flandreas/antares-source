@@ -43,7 +43,7 @@ class LibraryPanelViewJs(
 	private fun onDoubleClick(node: LibraryTreeNode) {
 		if (node.item is ContainerLibraryElement) {
 			console.info("DoubleClick on '${node.item.name}'")
-			props.controller.requestOpenSelectedContainerLibraryElement()
+			node.item.open(props.controller.eventBus)
 		}
 	}
 }

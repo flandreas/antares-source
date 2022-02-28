@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
@@ -28,14 +28,14 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
- * Displays a main [GraphDesktopViewItem] and multiple additional [GraphDesktopViewItem] that
+ * Displays an optional main [GraphDesktopViewItem] and multiple additional [GraphDesktopViewItem] that
  * are associated with [VerticeView]s in the main [GraphDesktopViewItem]. A typical implementation
  * might display the main [GraphDesktopViewItem] in a large area at the left side, and additional
  * [GraphDesktopViewItem]s below each other in a area at the right side.
  */
 interface GraphDesktopView : UIView {
 
-	val mainDesktopViewItem: GraphDesktopViewItem
+	val mainDesktopViewItem: GraphDesktopViewItem?
 
 	fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
@@ -48,7 +48,11 @@ interface GraphDesktopView : UIView {
 
 	fun closeItem(item: GraphDesktopViewItem)
 
-	fun closeAll(establishSingleView: Boolean)
+	/** Closes all open [GraphDesktopViewItem]s. */
+	fun closeAll()
+
+	/** Closes all open [GraphDesktopViewItem]s and shows [item] as the main [GraphDesktopViewItem]. */
+	fun show(item: GraphDesktopViewItem)
 }
 
 /**
@@ -131,11 +135,6 @@ class GraphDesktopViewController(
 
 	/** ---- [GraphDesktopViewController] */
 
-	/** Closes all additional [GraphDesktopViewItem]s and shows only the main [GraphDesktopViewItem].*/
-	fun showMainOnly() {
-		closeAll(true)
-	}
-
 	/**
 	 * Creates and opens a new [GraphDesktopViewItem] that shows the contents of a [VerticeView].
 	 *
@@ -169,7 +168,7 @@ class GraphDesktopViewController(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentProjectEvent) {
-		closeAll(false)
+		closeAll()
 	}
 
 	private fun handle(request: OpenSubGraphRequest) {
@@ -188,11 +187,12 @@ class GraphDesktopViewController(
 			event.replacements.forEach {
 				assoc.item.drawingView?.highlighter?.replaceColor(
 					displayedReferenceColor(it.oldColor),
-					displayedReferenceColor(it.newColor))
+					displayedReferenceColor(it.newColor)
+				)
 			}
 		}
 		event.replacements.forEach {
-			view.mainDesktopViewItem.drawingView?.highlighter?.replaceColor(displayedReferenceColor(it.oldColor), displayedReferenceColor(it.newColor))
+			view.mainDesktopViewItem?.drawingView?.highlighter?.replaceColor(displayedReferenceColor(it.oldColor), displayedReferenceColor(it.newColor))
 		}
 	}
 
@@ -205,7 +205,7 @@ class GraphDesktopViewController(
 	fun closeItem(item: GraphDesktopViewItem) {
 		LOG.debug("Close single desktop item")
 		if (item === view.mainDesktopViewItem) {
-			closeAll(false)
+			closeAll()
 		} else {
 			deassociate(item)
 			item.disposeItem()
@@ -214,21 +214,20 @@ class GraphDesktopViewController(
 		}
 	}
 
-	fun closeAll(establishSingleView: Boolean = false) {
-		if (establishSingleView) {
-			LOG.trace("Close all child GraphDesktopItems")
-		} else {
-			LOG.trace("Close all GraphDesktopItems")
-		}
+	fun show(item: GraphDesktopViewItem) {
+		deassociateAdditionals()
+		view.show(item)
+	}
 
+	fun closeAll() {
+		deassociateAdditionals()
+		view.closeAll()
+	}
+
+	private fun deassociateAdditionals() {
 		additionalDesktopItems.forEach {
 			deassociate(it)
 			it.disposeItem()
-		}
-
-		view.closeAll(establishSingleView)
-		if (!establishSingleView) {
-			viewManager.activeView = null
 		}
 	}
 
@@ -259,7 +258,7 @@ class GraphDesktopViewController(
 
 	/** Finds the [GraphDesktopViewItem] that contains the specified [VerticeView]. */
 	private fun itemContaining(vv: VerticeView<*>): GraphDesktopViewItem? {
-		if (view.mainDesktopViewItem.drawingView!!.drawing.contains(vv)) {
+		if (view.mainDesktopViewItem?.drawingView?.drawing?.contains(vv) == true) {
 			return view.mainDesktopViewItem
 		}
 		return additionalDesktopItems.firstOrNull { it.drawingView?.drawing?.contains(vv) ?: false }

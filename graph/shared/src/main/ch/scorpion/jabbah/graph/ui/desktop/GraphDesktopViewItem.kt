@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBus

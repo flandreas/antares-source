@@ -29,10 +29,10 @@ import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
-import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.NavigationStackViewSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -70,7 +70,7 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
+		properties.set(GraphDesktopItemHeaderPanelSwing.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackViewSwing.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
 		properties.set(NavigationStackViewSwing.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)

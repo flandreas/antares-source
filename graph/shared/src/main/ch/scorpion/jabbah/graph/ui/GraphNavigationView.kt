@@ -21,6 +21,9 @@ import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
@@ -33,7 +36,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
  * to navigate within the [GraphView] hierarchy.
  */
-interface GraphNavigationView : UIView {
+interface GraphNavigationView : UIView, GraphDesktopViewItem {
 
 	fun refresh()
 }

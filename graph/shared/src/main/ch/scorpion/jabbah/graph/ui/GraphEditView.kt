@@ -21,7 +21,9 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * Consists of a [GraphNavigationView] at the left side and a side bar at the right side
  * for displaying a [ScenarioView] and a [UsecaseView].
  */
-interface GraphEditView : UIView
+interface GraphEditView : UIView {
+	val graphNavigationView: GraphNavigationView
+}
 
 class GraphEditViewController(
 	val editor: Editor,

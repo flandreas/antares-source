@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanel
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemMockBuilder
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView

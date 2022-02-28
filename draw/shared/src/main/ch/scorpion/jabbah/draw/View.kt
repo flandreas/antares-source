@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.draw.view.ViewSpace
  * Typically processed by UI classes that contain the [View]. The system can refuse to accept the request,
  * for example if changes by the user have not yet been saved.
  */
-data class CloseViewRequest(val view: View<*>)
+data class CloseViewRequest(val view: Any)
 
 /**
  * The main content of a [View] to be used when exporting or printing the contents of that [View],

@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewController
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import react.*
 
@@ -53,7 +56,11 @@ class GraphDesktopViewJs(
 		TODO("closeItem not implemented")
 	}
 
-	override fun closeAll(establishSingleView: Boolean) {
+	override fun closeAll() {
 		// TODO not used so far. Implement once desktop management is used
+	}
+
+	override fun show(item: GraphDesktopViewItem) {
+		TODO("closeItem not implemented")
 	}
 }

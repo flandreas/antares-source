@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.every

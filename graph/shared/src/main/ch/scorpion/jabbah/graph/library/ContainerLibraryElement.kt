@@ -79,6 +79,10 @@ class ContainerLibraryElement(
 
 	override val isFixed: Boolean get() = false
 
+	override fun open(eventBus: EventBus) {
+		eventBus.post(OpenContainerLibraryElementRequest(this))
+	}
+
 	override fun dispose() {
 		super.dispose()
 		metaGraph?.dispose()

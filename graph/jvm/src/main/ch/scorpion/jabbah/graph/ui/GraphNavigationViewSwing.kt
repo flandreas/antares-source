@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Container
@@ -31,7 +33,7 @@ class GraphNavigationViewSwing(
 	contextBorderColor: CompositeColor? = null,
 	eventBus: EventBus = BaseModule.eventBus,
 	allowCloseInHeader: Boolean = true
-) : AbstractGraphDesktopItemPanel(), GraphNavigationView {
+) : AbstractGraphDesktopItemPanelSwing(), GraphNavigationView {
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
 
@@ -39,7 +41,7 @@ class GraphNavigationViewSwing(
 
 	private val navigationStackView = NavigationStackViewSwing(controller.navigationStackViewController)
 
-	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = allowCloseInHeader)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, navigationStackView, eventBus, allowClose = allowCloseInHeader)
 
 	private val layeredPane = JLayeredPane()
 

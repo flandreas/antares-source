@@ -7,24 +7,28 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JLabel
 
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
-class AddressableContentGraphDesktopItem(
+class AddressableContentGraphDesktopItemSwing(
 	drawingView: DrawingView<GraphView>,
 	addressableId: Int,
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
 	cmdManager: CommandManager = EditModule.commandManager,
 	contextColor: CompositeColor
-) : AbstractGraphDesktopItemPanel() {
+) : AbstractGraphDesktopItemPanelSwing() {
 
 	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, addressableId, cmdManager)
 
-	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, JLabel(title), allowClose = true)
 
 	init {
 		buildUI(contextColor)

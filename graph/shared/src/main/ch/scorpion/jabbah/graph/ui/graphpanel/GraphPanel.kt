@@ -48,7 +48,11 @@ import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectHolder
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.GraphEditView
+import ch.scorpion.jabbah.graph.ui.GraphEditViewController
+import ch.scorpion.jabbah.graph.ui.GraphNavigationView
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewController
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
@@ -79,6 +83,7 @@ data class IssuesSummary(
  */
 interface GraphPanelView : UIView {
 	var issuesSummary: IssuesSummary?
+	val graphEditView: GraphEditView
 }
 
 /**
@@ -215,8 +220,13 @@ class GraphPanelViewController(
 		stopSimulationWhenClosingApplicationData(event.newData)
 
 		val editable = event.newData?.savable?.editable ?: false
-		LOG.trace("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
-		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
+
+		if (event.newData?.content == null) {
+			setGraphViewApplicationData(null, editable)
+		} else if (event.newData?.content is MetaGraph) {
+			setGraphViewApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
+			LOG.trace("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
+		}
 	}
 
 	private fun stopSimulationWhenClosingApplicationData(data: ApplicationData?) {
@@ -225,7 +235,7 @@ class GraphPanelViewController(
 		}
 	}
 
-	fun setApplicationData(graphView: GraphView?, editable: Boolean) {
+	fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
 		isSavableEditable = editable
 		if (graphView == null) {
 			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when
@@ -234,12 +244,18 @@ class GraphPanelViewController(
 
 			desktopController.closeAll()
 		} else if (rootGraphView != graphView) {
-			desktopController.showMainOnly()
+			desktopController.show(view.graphEditView.graphNavigationView)
 			System.invokeLater {
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
 				setRootGraphView(graphView, applyZoomStrategy = true)
 			}
+		} else {
+			closeRootGraphView()
 		}
+	}
+
+	private fun closeRootGraphView() {
+		setRootGraphView(null, false)
 	}
 
 	private fun handle(event: ApplicationDataContentEvent) {

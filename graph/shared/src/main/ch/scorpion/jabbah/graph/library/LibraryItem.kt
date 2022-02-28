@@ -29,6 +29,9 @@ interface LibraryItem : Storable, Namable {
     /** Asks this [LibraryItem] to remember a reference to the [Library] to which it belongs. */
     fun bindTo(library: Library)
 
+	/** Asks this [LibraryItem] to initiate opening its content in the environment. */
+	fun open(eventBus: EventBus) {}
+
     /**
      * Called when the head representation of this [LibraryItem] is not used any more.
      * Implementations should reset any head references, such as unregister from [EventBus],

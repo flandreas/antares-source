@@ -29,7 +29,7 @@ class GraphEditViewSwing(
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel(), GraphEditView {
 
-	val graphNavigationView = GraphNavigationViewSwing(
+	override val graphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
 		drawingView = controller.editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,

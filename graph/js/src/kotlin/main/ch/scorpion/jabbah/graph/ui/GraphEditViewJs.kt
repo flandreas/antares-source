@@ -42,6 +42,8 @@ class GraphEditViewJs(
 		props.controller.view = this
 	}
 
+	override val graphNavigationView: GraphNavigationView get() = props.controller.graphNavigationViewController.view
+
 	override fun RBuilder.render() {
 		graphNavigationView {
 			canvasId = props.canvasId

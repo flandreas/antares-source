@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -140,13 +139,15 @@ class ContainerPanel(
 			editedContainerDrawing = null
 			editable = false
 			removeAll()
-		} else {
+		} else if (event.newData?.content is MetaGraph) {
 			if (event.oldData == null) {
 				add(mainSplitPane)
 			}
 			val metaGraph = event.newData!!.content as MetaGraph
 			editedContainerDrawing = metaGraph.containerDrawing
 			setData(metaGraph.graph.graphView, editedContainerDrawing!!, event.newData?.savable?.editable ?: false)
+		} else {
+			editable = false
 		}
 		updateEditability()
 	}

@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
@@ -36,7 +37,7 @@ import javax.swing.*
 class GraphPanelViewSwing(
 	controller: GraphPanelViewController,
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
@@ -47,10 +48,10 @@ class GraphPanelViewSwing(
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, application, viewManager, propertySheetFactory, eventBus)
+	override val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, application, viewManager, propertySheetFactory, eventBus)
 
 	/** Allows opening multiple Graphs.*/
-	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController, graphEditView)
+	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController)
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
 	private val propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "graph", propertySheetFactory)
@@ -128,6 +129,7 @@ class GraphPanelViewSwing(
 		issuesPanel.dispose()
 		logPanel.dispose()
 		executionToolbar.dispose()
+		graphEditView.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}

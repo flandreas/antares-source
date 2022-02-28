@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
@@ -13,6 +12,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.Dimension
 import java.awt.Graphics
@@ -42,7 +42,7 @@ class NavigationStackViewSwing(
 		private const val V_INSETS = 4
 
 		/** The fix height of this view.  */
-		private const val HEIGHT = GraphDesktopItemHeaderPanel.PREF_HEIGHT - 2 * V_INSETS
+		private const val HEIGHT = GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT - 2 * V_INSETS
 
 		/** Horizontal insets between view border and arrow border.*/
 		private const val H_INSETS = 5
@@ -69,7 +69,7 @@ class NavigationStackViewSwing(
 	init {
 		controller.view = this
 		isEnabled = true
-		background = GraphDesktopItemHeaderPanel.headerBackgroundColor
+		background = GraphDesktopItemHeaderPanelSwing.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
 		refresh()
 	}

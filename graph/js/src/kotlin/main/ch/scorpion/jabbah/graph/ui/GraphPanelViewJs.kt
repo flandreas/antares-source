@@ -41,7 +41,7 @@ class GraphPanelViewJs(
 		props.controller.view = this
 	}
 
-	private val graphEditView = RBuilder().apply { graphEditView {
+	private val graphEditViewElement = RBuilder().apply { graphEditView {
 		canvasId = props.canvasId
 		controller = props.controller.editViewController
 		size = props.size
@@ -70,13 +70,15 @@ class GraphPanelViewJs(
 
 	override var issuesSummary: IssuesSummary? = null
 
+	override val graphEditView: GraphEditView get() = props.controller.editViewController.view
+
 	override fun dispose() { }
 
 	/** ---- [RComponent] */
 
 	override fun componentDidMount() {
 		if (props.metaGraph != null) {
-			props.controller.setApplicationData(props.metaGraph!!.graph.graphView, editable = true)
+			props.controller.setGraphViewApplicationData(props.metaGraph!!.graph.graphView, editable = true)
 		}
 		DrawViewModule.viewManager.activeView = props.controller.editor.view
 
@@ -97,7 +99,7 @@ class GraphPanelViewJs(
 			}
 			graphDesktopView {
 				controller = props.controller.desktopController
-				graphEditView = this@GraphPanelViewJs.graphEditView
+				graphEditView = this@GraphPanelViewJs.graphEditViewElement
 			}
 		}
 	}
