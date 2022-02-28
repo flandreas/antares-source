@@ -7,15 +7,14 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
-abstract class AbstractLibrarySavable(
-	val element: ContainerLibraryElement,
+abstract class AbstractContainerLibraryElementSavable(
+	element: ContainerLibraryElement,
 	val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke()
-) : Savable {
+) : AbstractLibraryItemSavable(element) {
+
+	val element: ContainerLibraryElement get() = item as ContainerLibraryElement
 
 	/** ---- [Savable] */
 
-	override val defined: Boolean get() = true
-
 	override val supportsMostRecent: Boolean get() = true
-
 }

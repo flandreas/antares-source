@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.AbstractLibrarySavable
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryService
@@ -20,7 +20,7 @@ class ProjectSavable(
 	val project: Project = ProjectModule.projectHolder.project!!,
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
-) : AbstractLibrarySavable(element, libraryService) {
+) : AbstractContainerLibraryElementSavable(element, libraryService) {
 
 	/** ---- [Any] */
 

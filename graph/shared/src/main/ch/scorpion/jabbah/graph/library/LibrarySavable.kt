@@ -16,9 +16,9 @@ import ch.scorpion.jabbah.graph.MetaGraph
 class LibrarySavable(
 	element: ContainerLibraryElement,
 	val library: Library = LibraryModule.libraryHolder.library,
-	val service: LibraryService = LibraryModule.libraryService,
+	service: LibraryService = LibraryModule.libraryService,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibrarySavable(element, service) {
+) : AbstractContainerLibraryElementSavable(element, service) {
 
 	/** ---- [Savable] */
 
@@ -32,7 +32,7 @@ class LibrarySavable(
 	}
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-		service.updateContainerLibraryElement(library, element)
+		libraryService.updateContainerLibraryElement(library, element)
 		return true
 	}
 

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.io.Storable
 
@@ -38,5 +39,20 @@ interface LibraryItem : Storable, Namable {
      * but *not* delete any physical assets associated with them.
      */
     fun dispose()
+}
 
+/**
+ * A [LibraryItem] that contains (a references) a [Storable] that can be saved within
+ * its own [Savable]. In order to conform with undoable snapshot recovery, such objects
+ * must react to changing references to that [Storable].
+ *
+ * @param T the type of the referenced [Storable]
+ */
+interface UndoableStateLibraryItem<T : Storable> : LibraryItem {
+
+	/**
+	 * Asks this [UndoableStateLibraryItem] to update its reference to its [Storable],
+	 * e.g. as a consequence of recovery from an undoable snapshot.
+	 */
+	fun updateStorable(storable: T)
 }

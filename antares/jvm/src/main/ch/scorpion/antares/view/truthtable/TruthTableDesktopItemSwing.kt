@@ -1,14 +1,16 @@
 package ch.scorpion.antares.view.truthtable
 
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.truthtable.TruthTable
+import ch.scorpion.antares.model.truthtable.TruthTableCommand
+import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
@@ -25,8 +27,8 @@ import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 import javax.swing.table.DefaultTableCellRenderer
 
 class TruthTableDesktopItemSwing(
-	private val truthTable: TruthTable,
-	viewManager: ViewManager,
+	item: TruthTableLibraryItem,
+	private val commandManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopItemPanelSwing() {
 
@@ -35,11 +37,13 @@ class TruthTableDesktopItemSwing(
 		private const val COLUMN_WIDTH = 80
 	}
 
+	private val ref = TruthTableReference(item)
+
 	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, JLabel("TODO: Truth Table"), allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
-	private val table = FocusJTable(TruthTableTableModel(truthTable))
+	private val table = FocusJTable(TruthTableTableModel(ref))
 
 	private val scrollPane = JScrollPane(table)
 
@@ -77,6 +81,7 @@ class TruthTableDesktopItemSwing(
 
 	override fun disposeItem() {
 		eventBus.unregister(closeViewRequestHandler)
+		ref.dispose()
 	}
 
 	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
@@ -112,7 +117,7 @@ class TruthTableDesktopItemSwing(
 
 	private fun updateColumnModels() {
 		table.columnModel.columns.asSequence().forEachIndexed { index, tableColumn ->
-			if (index < truthTable.inputColumnCount) {
+			if (index < ref.truthTable.inputColumnCount) {
 				tableColumn.cellRenderer = InputCellRenderer()
 			} else {
 				tableColumn.cellRenderer = OutputCellRenderer()
@@ -143,7 +148,7 @@ class TruthTableDesktopItemSwing(
 		}
 	}
 
-	private inner class OutputCellEditor(val textField: JTextField) : DefaultCellEditor(textField) {
+	private inner class OutputCellEditor(textField: JTextField) : DefaultCellEditor(textField) {
 		override fun isCellEditable(anEvent: EventObject?): Boolean = false
 	}
 
@@ -153,9 +158,8 @@ class TruthTableDesktopItemSwing(
 			val row = table.selectedRow
 			var column = table.selectedColumn
 
-			if (column in truthTable.inputColumnCount until table.columnCount) {
-				// TODO: Issue Command
-				truthTable.setValue(row, column, bit)
+			if (column in ref.truthTable.inputColumnCount until table.columnCount) {
+				commandManager.execute(TruthTableCommand(ref, row, column, bit))
 			}
 
 			forwardSelection(row, column)
@@ -167,9 +171,9 @@ class TruthTableDesktopItemSwing(
 
 			c++
 			if (c >= table.columnCount) {
-				c = truthTable.inputColumnCount
+				c = ref.truthTable.inputColumnCount
 				r++
-				if (r >= truthTable.rowsCount) {
+				if (r >= ref.truthTable.rowsCount) {
 					r = 0
 				}
 			}

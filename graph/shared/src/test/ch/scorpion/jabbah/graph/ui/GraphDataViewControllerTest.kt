@@ -29,7 +29,7 @@ class GraphDataViewControllerTest {
 	private val projectSavable = ProjectSavable(containerLibraryElement, project)
 
 	init {
-		containerLibraryElement.updateMetaGraph(metaGraph)
+		containerLibraryElement.updateStorable(metaGraph)
 	}
 
 	@Test

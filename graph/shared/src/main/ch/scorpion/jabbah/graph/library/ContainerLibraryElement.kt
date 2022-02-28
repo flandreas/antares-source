@@ -34,7 +34,7 @@ class ContainerLibraryElement(
 	initialName: TranslatableText = TranslatableText(),
 	iconPath: String? = null,
 	val eventBus: EventBus = BaseModule.eventBus
-) : LibraryElement(initialName, iconPath) {
+) : LibraryElement(initialName, iconPath), UndoableStateLibraryItem<MetaGraph> {
 
 	companion object {
 		val LOG by logger(ContainerLibraryElement::class)
@@ -129,11 +129,9 @@ class ContainerLibraryElement(
 		return instance as GraphElementView<T>
 	}
 
-	/** ---- [ContainerLibraryElement] */
-
-	fun updateMetaGraph(metaGraph: MetaGraph) {
-		uuid = metaGraph.uuid
-		name = Name(metaGraph.translatableName)
-		this.metaGraph = metaGraph
+	override fun updateStorable(storable: MetaGraph) {
+		uuid = storable.uuid
+		name = Name(storable.translatableName)
+		this.metaGraph = storable
 	}
 }

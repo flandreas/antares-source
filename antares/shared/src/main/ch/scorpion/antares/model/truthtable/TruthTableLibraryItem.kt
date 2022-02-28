@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItem
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.graph.library.UndoableStateLibraryItem
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.ReferenceResolver
@@ -32,7 +33,10 @@ data class ShowTruthTableItemRequest(val item: TruthTableLibraryItem)
  */
 class TruthTableLibraryItem(
 	truthTable: TruthTable = TruthTable()
-) : AbstractLibraryItem(TranslatableText(Translations.getString("library.element.truthTable.name")), iconPath = "/img/openInPopup-20.png") {
+) : AbstractLibraryItem(
+	TranslatableText(Translations.getString("library.element.truthTable.name")),
+	iconPath = "/img/openInPopup-20.png"
+), UndoableStateLibraryItem<TruthTable> {
 
 	var truthTable: TruthTable = truthTable
 		private set
@@ -50,6 +54,10 @@ class TruthTableLibraryItem(
 	}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
+
+	override fun updateStorable(storable: TruthTable) {
+		truthTable = storable
+	}
 
 	/** ---- [Storable] interface */
 

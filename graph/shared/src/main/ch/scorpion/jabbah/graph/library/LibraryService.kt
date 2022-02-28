@@ -467,7 +467,7 @@ class LibraryService(
 		LOG.trace("Storing MetaGraph")
 		if (doClone) {
 			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
-			element.updateMetaGraph(clone)
+			element.updateStorable(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {
 			persister(library.isSystem).storeMetaGraph(library, metaGraph)
@@ -487,7 +487,7 @@ class LibraryService(
 			val ref = "'${element.metaGraph?.name}' ${element.uuid}"
 			val metaGraph = persister(library.isSystem).loadMetaGraph(library, element.uuid)
 			LOG.trace("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
-			element.updateMetaGraph(metaGraph)
+			element.updateStorable(metaGraph)
 		}
 	}
 

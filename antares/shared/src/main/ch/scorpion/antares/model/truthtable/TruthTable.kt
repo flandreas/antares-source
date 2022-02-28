@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName
@@ -16,6 +17,9 @@ import ch.scorpion.jabbah.io.*
  * The data is organized in columns, where the input columns precede the output columns.
  * Accessing individual table cell values, which hold [Bits][Bit], is organized to suit a UI-oriented
  * table model, where row and column indices span the entire range of all columns.
+ *
+ * If used within a [TruthTableSavable], make sure that no one keeps references to [TruthTable]
+ * without reacting to [ApplicationDataContentEvent] resulting from recovering from undoable snapshots.
  *
  * [TruthTable] uses [Bit.Error] to represent "any value".
  */
@@ -40,6 +44,8 @@ class TruthTable(
 	private val outputColumns: MutableList<TruthTableOutputColumn> =
 		outputColumnNames.map { TruthTableOutputColumn(it) }.toMutableList()
 
+	private val listeners = mutableListOf<TruthTableListener>()
+
 	init {
 		updateRowsCounts()
 		fillInputCells()
@@ -52,9 +58,25 @@ class TruthTable(
 			throw IllegalArgumentException("Cannot set input column")
 		}
 		outputColumns[column - inputColumnCount].setValue(row, value)
+		notifyListeners(row, column, value)
 	}
 
 	fun getColumnName(column: Int): String = getColumn(column).name
+
+	fun addListener(l: TruthTableListener) {
+		if (!listeners.contains(l)) {
+			listeners.add(l)
+		}
+	}
+
+	fun removeListener(l: TruthTableListener) {
+		listeners.remove(l)
+	}
+
+	private fun notifyListeners(row: Int, column: Int, value: Bit) {
+		val event = TruthTableEvent(this, row, column, value)
+		listeners.forEach { it.dataChanged(event) }
+	}
 
 	private fun getColumn(columnIndex: Int): AbstractTruthTableColumn =
 		if (columnIndex < inputColumnCount) {
@@ -108,73 +130,13 @@ class TruthTable(
 	}
 }
 
-abstract class AbstractTruthTableColumn(
-	var name: String = ""
-) : AbstractStorable() {
+data class TruthTableEvent(
+	val source: TruthTable,
+	val row: Int,
+	val column: Int,
+	val newValue: Bit
+)
 
-	private var values: Array<Bit> = arrayOf()
-
-	var rowsCount: Int = 0
-		set(value) {
-			if (field != value) {
-				field = value
-				values = Array(rowsCount) { Bit.False }
-			}
-		}
-
-	fun getValue(row: Int): Bit = values[row]
-
-	fun setValue(row: Int, value: Bit) {
-		values[row] = value
-	}
-
-	override fun write(writer: StoreWriter) {
-		writer.writeString("name", name)
-	}
-
-	override fun read(reader: StoreReader) {
-		name = reader.readString("name")
-	}
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
-}
-
-class TruthTableInputColumn(
-	name: String = "",
-) : AbstractTruthTableColumn(name)
-
-/** Implements special logic for writing and reading user-editable cell values. */
-class TruthTableOutputColumn(
-	name: String = "",
-) : AbstractTruthTableColumn(name) {
-
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		writer.writeString("values", createValuesString())
-	}
-
-	override fun read(reader: StoreReader) {
-		super.read(reader)
-		parseValuesString(reader.readString("values"))
-	}
-
-	private fun createValuesString(): String {
-		val buffer = StringBuilder()
-		for (row in 0 until rowsCount) {
-			buffer.append(getValue(row).toString())
-		}
-		return buffer.toString()
-	}
-
-	private fun parseValuesString(valuesString: String) {
-		var row = 0
-		val bits = mutableListOf<Bit>()
-		for (c in valuesString) {
-			bits.add(Bit.of(c))
-			row++
-		}
-
-		rowsCount = bits.size
-		bits.forEachIndexed { i, bit -> setValue(i, bit) }
-	}
+fun interface TruthTableListener {
+	fun dataChanged(event: TruthTableEvent)
 }

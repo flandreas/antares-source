@@ -40,7 +40,7 @@ class AntaresFrameSwing(
 			contextColor = contextColor)
 
 	override fun createTruthTableDesktopViewItem(request: ShowTruthTableItemRequest): GraphDesktopViewItem =
-		TruthTableDesktopItemSwing(request.item.truthTable, viewManager)
+		TruthTableDesktopItemSwing(request.item, editor.commandManager)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(
