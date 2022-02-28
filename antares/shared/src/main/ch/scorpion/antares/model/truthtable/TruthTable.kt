@@ -3,6 +3,8 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName
@@ -15,7 +17,7 @@ import ch.scorpion.jabbah.io.*
  * Accessing individual table cell values, which hold [Bits][Bit], is organized to suit a UI-oriented
  * table model, where row and column indices span the entire range of all columns.
  *
- * [TruthTable] uses [Bit.Undefined] to represent "any value".
+ * [TruthTable] uses [Bit.Error] to represent "any value".
  */
 class TruthTable(
 	initialName: String = "",
@@ -23,11 +25,8 @@ class TruthTable(
 	outputColumnNames: List<String> = emptyList()
 ) : AbstractStorable(), Namable {
 
-	private val inputColumns: MutableList<TruthTableInputColumn> =
-		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
-
-	private val outputColumns: MutableList<TruthTableOutputColumn> =
-		outputColumnNames.map { TruthTableOutputColumn(it) }.toMutableList()
+	var uuid: UUID = System.createUUID()
+		private set
 
 	val inputColumnCount: Int get() = inputColumns.size
 
@@ -35,17 +34,18 @@ class TruthTable(
 
 	val rowsCount: Int get() = BitOperation.power(inputColumnCount.toByte()).toInt()
 
+	private val inputColumns: MutableList<TruthTableInputColumn> =
+		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
+
+	private val outputColumns: MutableList<TruthTableOutputColumn> =
+		outputColumnNames.map { TruthTableOutputColumn(it) }.toMutableList()
+
 	init {
 		updateRowsCounts()
 		fillInputCells()
 	}
 
-	fun getValue(row: Int, column: Int): Bit =
-		if (column < inputColumnCount) {
-			inputColumns[column].getValue(row)
-		} else {
-			outputColumns[column - inputColumnCount].getValue(row)
-		}
+	fun getValue(row: Int, column: Int): Bit = getColumn(column).getValue(row)
 
 	fun setValue(row: Int, column: Int, value: Bit) {
 		if (column < inputColumnCount) {
@@ -53,6 +53,15 @@ class TruthTable(
 		}
 		outputColumns[column - inputColumnCount].setValue(row, value)
 	}
+
+	fun getColumnName(column: Int): String = getColumn(column).name
+
+	private fun getColumn(columnIndex: Int): AbstractTruthTableColumn =
+		if (columnIndex < inputColumnCount) {
+			inputColumns[columnIndex]
+		} else {
+			outputColumns[columnIndex - inputColumnCount]
+		}
 
 	private fun updateRowsCounts() {
 		inputColumns.forEach { it.rowsCount = rowsCount }
@@ -79,12 +88,14 @@ class TruthTable(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
+		writer.writeString("uuid", uuid.toString())
 		name.write("name", writer)
 		writer.writeStorables("inputs", inputColumns.iterator())
 		writer.writeStorables("outputs", outputColumns.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
+		uuid = UUID(reader.readString("uuid"))
 		name = Name.read("name", reader)
 		inputColumns.clear()
 		inputColumns.addAll(reader.readStorables("inputs"))

@@ -36,7 +36,7 @@ class NewTruthTableAction(
 
 		val directory = controller.selectedItem as LibraryDirectory
 		val library = directory.library!!
-		val truthTableItem = TruthTableLibraryItem(TruthTable(newName))
+		val truthTableItem = TruthTableLibraryItem(TruthTable(newName, listOf("A", "B", "C"), listOf("Y", "X")))
 
 		library.libraryService.addLibraryItem(library, truthTableItem, directory)
 		eventBus.post(OpenTruthTableItemRequest(truthTableItem))

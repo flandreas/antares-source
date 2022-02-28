@@ -65,12 +65,12 @@ class TruthTableTest {
 	fun shouldBeStorable() {
 		val truthTable = create2to1TruthTable()
 		truthTable.setValue(0, 2, True)
-		truthTable.setValue(1, 2, Undefined)
+		truthTable.setValue(1, 2, Error)
 
 		val clone = StorableCloner.clone(truthTable)
 
 		assertEquals(True, clone.getValue(0, 2))
-		assertEquals(Undefined, clone.getValue(1, 2))
+		assertEquals(Error, clone.getValue(1, 2))
 		assertEquals(False, clone.getValue(2, 2))
 		assertEquals(False, clone.getValue(3, 2))
 	}
