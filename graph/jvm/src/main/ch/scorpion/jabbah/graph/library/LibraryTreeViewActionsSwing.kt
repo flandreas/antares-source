@@ -42,7 +42,7 @@ open class LibraryTreeViewActionsSwing(
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
 	private val newLibraryGraphAction = NewGraphAction(controller, libraryOperationTarget)
 	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(controller, libraryOperationTarget)
-	private val deleteLibraryElementAction = DeleteLibraryElementAction(controller, libraryOperationTarget)
+	protected val deleteLibraryItemAction = DeleteLibraryItemAction(controller, libraryOperationTarget)
 	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
 	private val importLibraryMetaGraphAction = ImportMetaGraphAction(controller, libraryOperationTarget)
 	private val renameLibraryMetaGraphAction = RenameMetaGraphAction(controller, libraryOperationTarget)
@@ -51,7 +51,7 @@ open class LibraryTreeViewActionsSwing(
 	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
 	private val newProjectGraphAction = NewGraphAction(controller, operationTarget = projectOperationTarget)
 	private val projectFolderPropertiesAction = LibraryFolderPropertiesAction(controller, projectOperationTarget)
-	private val deleteProjectElementAction = DeleteLibraryElementAction(controller, projectOperationTarget)
+	protected val deleteProjectItemAction = DeleteLibraryItemAction(controller, projectOperationTarget)
 	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)
 	private val duplicateProjectGraphAction = DuplicateGraphAction(controller, projectOperationTarget)
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
@@ -183,7 +183,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private fun fillMainProjectContainerPopupMenu() {
 		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
-		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
 		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
 		projectContainerPopupMenu.add(ActionWrapperSwing(renameProjectMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
@@ -196,7 +196,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private fun fillMainLibraryContainerPopupMenu() {
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(renameLibraryMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
@@ -213,7 +213,7 @@ open class LibraryTreeViewActionsSwing(
 		fillMainProjectRootPopupMenu()
 		fillMainProjectContainerPopupMenu()
 
-		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
+		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
 
 		// Library actions
 
@@ -221,7 +221,7 @@ open class LibraryTreeViewActionsSwing(
 		fillMainLibraryRootPopupMenu()
 		fillMainLibraryContainerPopupMenu()
 
-		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 
 	private fun fillCompositionSource() {
@@ -259,8 +259,8 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 
-		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 
-		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 }

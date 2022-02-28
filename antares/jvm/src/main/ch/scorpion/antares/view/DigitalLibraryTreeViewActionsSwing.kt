@@ -51,7 +51,10 @@ class DigitalLibraryTreeViewActionsSwing(
 		super.fillMain()
 
 		projectTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
+		projectTruthTablePopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
+
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
+		libraryTruthTablePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 
 	override fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {

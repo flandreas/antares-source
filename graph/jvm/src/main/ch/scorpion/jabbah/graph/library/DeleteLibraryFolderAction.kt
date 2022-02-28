@@ -22,7 +22,7 @@ class DeleteLibraryFolderAction(
 ) {
 
 	companion object {
-		private val LOG by logger(DeleteLibraryElementAction::class)
+		private val LOG by logger(DeleteLibraryItemAction::class)
 	}
 
 	override val operationAuthorized: Boolean

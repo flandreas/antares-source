@@ -6,14 +6,15 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
 import java.awt.Component
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
 /**
- * An [Action] for deleting the currently selected [LibraryElement].
+ * An [Action] for deleting the currently selected [LibraryItem].
  */
-class DeleteLibraryElementAction(
+class DeleteLibraryItemAction(
 	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?
 ) : AbstractLibraryAction(
@@ -23,10 +24,11 @@ class DeleteLibraryElementAction(
 ) {
 
 	companion object {
-		private val LOG by logger(DeleteLibraryElementAction::class)
+		private val LOG by logger(DeleteLibraryItemAction::class)
 		private const val BASE_RESOURCE_NAME = "graph.action.deleteBaseElement"
 		private const val CONTAINER_RESOURCE_NAME = "graph.action.deleteContainerElement"
 		private const val DIRECTORY_RESOURCE_NAME = "graph.action.deleteLibraryDirectory"
+		private const val ITEM_RESOURCE_NAME = "graph.action.deleteItem"
 	}
 
 	private val baseName: String
@@ -34,7 +36,7 @@ class DeleteLibraryElementAction(
 			is BaseLibraryElement -> BASE_RESOURCE_NAME
 			is ContainerLibraryElement -> CONTAINER_RESOURCE_NAME
 			is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
-			else -> BASE_RESOURCE_NAME
+			else -> ITEM_RESOURCE_NAME
 		}
 
 	override val operationAuthorized: Boolean
@@ -54,7 +56,11 @@ class DeleteLibraryElementAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
+		// Deletion of directories is handled by a separate Action
+		return super.calculateEnabledness() && (
+			controller.type == LibraryTreeViewType.CompositionDestination && selectedItem is BaseLibraryElement
+				|| selectedItem is UndoableStateLibraryItem<*>
+		)
 	}
 
 	override fun handleSelectionChanged() {

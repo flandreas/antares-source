@@ -33,13 +33,13 @@ class TruthTableDesktopItemSwing(
 ) : AbstractGraphDesktopItemPanelSwing() {
 
 	companion object {
-		private const val CELL_FONT_SIZE = 25
-		private const val COLUMN_WIDTH = 80
+		private const val CELL_FONT_SIZE = 20
+		private const val COLUMN_WIDTH = 60
 	}
 
 	private val ref = TruthTableReference(item)
 
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, JLabel("TODO: Truth Table"), allowClose = true)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, JLabel(item.truthTable.name.getTranslation()), allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
@@ -58,7 +58,7 @@ class TruthTableDesktopItemSwing(
 
 	private fun buildUI() {
 		table.font = cellFont
-		table.rowHeight = CELL_FONT_SIZE + 5
+		table.rowHeight = CELL_FONT_SIZE + 8
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 		table.setShowGrid(true)
 		table.cellSelectionEnabled = true
@@ -132,6 +132,7 @@ class TruthTableDesktopItemSwing(
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 			renderer.horizontalAlignment = SwingConstants.CENTER
+			renderer.verticalAlignment = SwingConstants.CENTER
 			renderer.font = cellFont
 			renderer.foreground = UIManager.getColor("TextField.inactiveForeground")
 			return renderer

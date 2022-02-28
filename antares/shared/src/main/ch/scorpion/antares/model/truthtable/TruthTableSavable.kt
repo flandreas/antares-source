@@ -2,11 +2,13 @@ package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataViewController
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
+import ch.scorpion.jabbah.graph.project.Project
 
 class TruthTableSavable(
 	item: TruthTableLibraryItem,
@@ -15,7 +17,11 @@ class TruthTableSavable(
 
 	private val truthTableLibraryItem: TruthTableLibraryItem get() = item as TruthTableLibraryItem
 
-	override val description: String = "TODO: SavableDesc"
+	override val description: String = if (item.library is Project) {
+		"${Translations.getString("project.savable.prefix")} \"${item.truthTable.name.getTranslation()}\""
+	} else {
+		"${Translations.getString("library.savable.prefix")} \"${item.truthTable.name.getTranslation()}\""
+	}
 
 	override val editable: Boolean
 		get() = item.library?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
