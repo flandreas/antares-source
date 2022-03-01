@@ -3,8 +3,6 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -28,9 +26,6 @@ class TruthTable(
 	inputColumnNames: List<String> = emptyList(),
 	outputColumnNames: List<String> = emptyList()
 ) : AbstractStorable(), Namable {
-
-	var uuid: UUID = System.createUUID()
-		private set
 
 	val inputColumnCount: Int get() = inputColumns.size
 
@@ -110,14 +105,12 @@ class TruthTable(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
-		writer.writeString("uuid", uuid.toString())
 		name.write("name", writer)
 		writer.writeStorables("inputs", inputColumns.iterator())
 		writer.writeStorables("outputs", outputColumns.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
-		uuid = UUID(reader.readString("uuid"))
 		name = Name.read("name", reader)
 		inputColumns.clear()
 		inputColumns.addAll(reader.readStorables("inputs"))
