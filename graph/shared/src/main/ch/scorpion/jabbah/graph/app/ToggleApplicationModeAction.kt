@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 
 /**
  * An [Action] for toggling the [ApplicationMode] of the [ApplicationModeHolder].
@@ -56,7 +57,7 @@ class ToggleApplicationModeAction(
 	}
 
 	private fun updateState() {
-		enabled = applicationDataHolder == null || applicationDataHolder.data != null
+		enabled = applicationDataHolder == null || applicationDataHolder.data?.savable is AbstractContainerLibraryElementSavable
 
 		when (applicationModeHolder.currentMode) {
 			ApplicationMode.EDIT -> {

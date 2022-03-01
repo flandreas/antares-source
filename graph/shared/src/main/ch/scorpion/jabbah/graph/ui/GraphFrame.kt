@@ -1,14 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -25,6 +23,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -70,7 +69,7 @@ interface GraphFrameActions {
 }
 
 open class GraphFrameController<T: GraphFrame>(
-	applicationDataHolder: ApplicationDataHolder,
+	private val applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val properties: Properties = BaseModule.properties
 ) : AbstractUIController<T>(), GraphFrameActions {
@@ -127,6 +126,8 @@ open class GraphFrameController<T: GraphFrame>(
 
 	override fun dispose() {
 		super.dispose()
+		viewDesktopAction.dispose()
+		viewContainerAction.dispose()
 		graphPanelViewController.dispose()
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
@@ -158,16 +159,27 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 	}
 
-	private inner class ViewDesktopAction(eventBus: EventBus) : AbstractAction("graph.action.showDesktop") {
+	private inner class ViewDesktopAction(
+		private val eventBus: EventBus
+	) : AbstractAction("graph.action.showDesktop") {
+
+		private val graphFrameHandler: EventHandler<GraphFrameEvent> = { update() }
+		private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
+			if (it.source === applicationModeHolder) {
+				update()
+			}
+		}
 
 		init {
 			imagePath = "/img/drawing-24.png"
-			eventBus.register(GraphFrameEvent::class) { update() }
-			eventBus.register(ApplicationModeEvent::class) {
-				if (it.source === applicationModeHolder) {
-					update()
-				}
-			}
+			eventBus.register(GraphFrameEvent::class, graphFrameHandler)
+			eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+		}
+
+		override fun dispose() {
+			super.dispose()
+			eventBus.unregister(graphFrameHandler)
+			eventBus.unregister(applicationModeHandler)
 		}
 
 		override fun execute(event: ActionEvent) {
@@ -180,12 +192,26 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 	}
 
-	private inner class ViewContainerAction(eventBus: EventBus) : AbstractAction("graph.action.showContainer") {
+	private inner class ViewContainerAction(
+		private val eventBus: EventBus
+	) : AbstractAction("graph.action.showContainer") {
+
+		private val graphFrameHandler: EventHandler<GraphFrameEvent> = { update() }
+		private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { update() }
+		private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { update() }
 
 		init {
 			imagePath = "/img/container-24.png"
-			eventBus.register(GraphFrameEvent::class) { update() }
-			eventBus.register(ApplicationModeEvent::class) { update() }
+			eventBus.register(GraphFrameEvent::class, graphFrameHandler)
+			eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+			eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
+		}
+
+		override fun dispose() {
+			super.dispose()
+			eventBus.unregister(graphFrameHandler)
+			eventBus.unregister(applicationModeHandler)
+			eventBus.unregister(applicationDataHandler)
 		}
 
 		override fun execute(event: ActionEvent) {
@@ -194,7 +220,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 		private fun update() {
 			selected = view.displayedView == GraphFrame.DisplayedView.Container
-			enabled = view.applicationMode.isEdit()
+			enabled = view.applicationMode.isEdit() && applicationDataHolder.data?.savable is AbstractContainerLibraryElementSavable
 		}
 	}
 }
