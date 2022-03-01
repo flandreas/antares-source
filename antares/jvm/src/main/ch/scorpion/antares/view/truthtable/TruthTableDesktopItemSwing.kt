@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.CommandManager
@@ -36,6 +35,11 @@ class TruthTableDesktopItemSwing(
 	companion object {
 		private const val CELL_FONT_SIZE = 18
 		private const val COLUMN_WIDTH = 40
+
+		private val FOREGROUND = UIManager.getColor("TextField.foreground")
+		private val BACKGROUND = UIManager.getColor("TextField.background")
+		private val INACTIVE_FOREGROUND = UIManager.getColor("TextField.inactiveForeground")
+		private val INACTIVE_BACKGROUND = UIManager.getColor("TextField.inactiveBackground")
 	}
 
 	private val ref = TruthTableReference(item)
@@ -47,7 +51,7 @@ class TruthTableDesktopItemSwing(
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
-	private val table = FocusJTable(TruthTableTableModel(ref))
+	private val table = JTable(TruthTableTableModel(ref))
 
 	private val scrollPane = JScrollPane(table)
 
@@ -66,6 +70,8 @@ class TruthTableDesktopItemSwing(
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 		table.setShowGrid(true)
 		table.cellSelectionEnabled = true
+		table.rowMargin = 1
+		table.columnModel.columnMargin = 1
 
 		scrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
@@ -131,25 +137,43 @@ class TruthTableDesktopItemSwing(
 		}
 	}
 
+	private fun applyZebra(label: JLabel, row: Int, output: Boolean) {
+		label.foreground = if (output) FOREGROUND else INACTIVE_FOREGROUND
+		if (row.and(4) == 0) {
+			label.background = BACKGROUND
+		} else {
+			label.background = INACTIVE_BACKGROUND
+		}
+	}
+
 	private inner class InputCellRenderer : DefaultTableCellRenderer() {
 
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-			val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-			renderer.horizontalAlignment = SwingConstants.CENTER
-			renderer.verticalAlignment = SwingConstants.CENTER
-			renderer.font = cellFont
-			renderer.foreground = UIManager.getColor("TextField.inactiveForeground")
-			return renderer
+			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
+			label.horizontalAlignment = SwingConstants.CENTER
+			label.verticalAlignment = SwingConstants.CENTER
+			label.font = cellFont
+
+			if (!isSelected && !hasFocus) {
+				applyZebra(label, row, output = false)
+			}
+
+			return label
 		}
 	}
 
 	private inner class OutputCellRenderer : DefaultTableCellRenderer() {
 
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-			val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-			renderer.horizontalAlignment = SwingConstants.CENTER
-			renderer.font = cellFont
-			return renderer
+			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
+			label.horizontalAlignment = SwingConstants.CENTER
+			label.font = cellFont
+
+			if (!isSelected && !hasFocus) {
+				applyZebra(label, row, output = true)
+			}
+
+			return label
 		}
 	}
 
@@ -182,7 +206,8 @@ class TruthTableDesktopItemSwing(
 					r = 0
 				}
 			}
-			table.changeSelection(r, c, toggle = false, extend = false)
+			//table.changeSelection(r, c, toggle = false, extend = false)
+			table.changeSelection(r, c, false, false)
 		}
 	}
 }
