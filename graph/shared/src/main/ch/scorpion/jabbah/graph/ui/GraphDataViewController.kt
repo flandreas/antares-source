@@ -137,7 +137,7 @@ class GraphDataViewController(
 	}
 
 	private fun handle(event: LibraryItemRemovedEvent) {
-		if (event.item is ContainerLibraryElement && event.item == (data?.savable as AbstractContainerLibraryElementSavable?)?.element) {
+		if (event.item is UndoableStateLibraryItem<*> && event.item == (data?.savable as? AbstractLibraryItemSavable?)?.item) {
 			System.invokeLater { closeData() }
 		}
 	}
