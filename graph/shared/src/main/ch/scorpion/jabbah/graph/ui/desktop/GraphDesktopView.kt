@@ -215,16 +215,18 @@ class GraphDesktopViewController(
 	}
 
 	fun show(item: GraphDesktopViewItem) {
-		deassociateAdditionals()
+		deassociateAdditional()
+		viewManager.activeView = null
 		view.show(item)
 	}
 
 	fun closeAll() {
-		deassociateAdditionals()
+		deassociateAdditional()
 		view.closeAll()
+		viewManager.activeView = null
 	}
 
-	private fun deassociateAdditionals() {
+	private fun deassociateAdditional() {
 		additionalDesktopItems.forEach {
 			deassociate(it)
 			it.disposeItem()
