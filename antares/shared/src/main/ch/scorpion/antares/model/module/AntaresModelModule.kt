@@ -13,10 +13,7 @@ import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
-import ch.scorpion.antares.model.truthtable.TruthTable
-import ch.scorpion.antares.model.truthtable.TruthTableInputColumn
-import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
-import ch.scorpion.antares.model.truthtable.TruthTableOutputColumn
+import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
@@ -35,6 +32,8 @@ import ch.scorpion.jabbah.io.TypeMap
  * Module definitions for the [ch.scorpion.antares.model] module.
  */
 object AntaresModelModule : AbstractModule() {
+
+	val truthTableService = TruthTableService()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
@@ -56,6 +55,8 @@ object AntaresModelModule : AbstractModule() {
 	private fun customizeProperties(properties: Properties) {
 		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
 		properties.set(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR, UndefinedGateInputBehavior.ReadAs0.customName)
+		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_INPUTS, 8)
+		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_OUTPUTS, 8)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

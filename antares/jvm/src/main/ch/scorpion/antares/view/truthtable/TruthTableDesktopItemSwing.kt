@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.truthtable.TruthTableCommand
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -33,13 +34,16 @@ class TruthTableDesktopItemSwing(
 ) : AbstractGraphDesktopItemPanelSwing() {
 
 	companion object {
-		private const val CELL_FONT_SIZE = 20
-		private const val COLUMN_WIDTH = 60
+		private const val CELL_FONT_SIZE = 18
+		private const val COLUMN_WIDTH = 40
 	}
 
 	private val ref = TruthTableReference(item)
 
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, JLabel(item.truthTable.name.getTranslation()), allowClose = true)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
+		this,
+		JLabel("${Translations.getString("library.element.truthTable.name")} \"${item.truthTable.name.getTranslation()}\""),
+		allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
