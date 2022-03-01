@@ -80,7 +80,14 @@ class TruthTableDesktopItemSwing(
 
 		layout = BorderLayout()
 		add(headerPanel, BorderLayout.NORTH)
-		add(scrollPane, BorderLayout.CENTER)
+
+		val contentPanel = JPanel(BorderLayout())
+		val tipLabel = JLabel(Translations.getString("library.element.truthTable.tip"))
+		tipLabel.border = BorderFactory.createEmptyBorder(5, 2, 5, 0)
+		contentPanel.add(tipLabel, BorderLayout.NORTH)
+		contentPanel.add(scrollPane, BorderLayout.CENTER)
+
+		add(contentPanel, BorderLayout.CENTER)
 	}
 
 	override fun addContextColorBorder(color: Color) { }
