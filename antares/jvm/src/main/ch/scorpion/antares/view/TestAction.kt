@@ -3,6 +3,7 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
@@ -18,7 +19,11 @@ class TestAction(
 ) : AbstractViewAction("view.action.test") {
 
 	override fun execute(event: ActionEvent) {
-		windowSize16to9()
+		showToast()
+	}
+
+	private fun showToast() {
+		Toast.show("Hallo Antares!")
 	}
 
 	private fun setBitWidthGraphParam() {

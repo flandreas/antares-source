@@ -26,11 +26,13 @@ class ControlledTimer(val timeService: ControlledTimeService) : Timer {
 
 	/** ---- [Timer] interface */
 
-	override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit) {
+	override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit): Timer {
 		ensureUninitialized()
 		this.interval = interval
 		this.handler = handler
 		this.repeats = repeats
+
+		return this
 	}
 
 	override fun start() {

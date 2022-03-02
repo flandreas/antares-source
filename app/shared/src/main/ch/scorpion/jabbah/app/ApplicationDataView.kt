@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.UndoableDataHolder
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.Storable
 
@@ -184,7 +184,7 @@ open class ApplicationDataViewController(
 			if (it.savable.save(this)) {
 				commandManager.reset()
 				eventBus.post(CurrentSavableEvent(it.savable))
-				eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
+				Toast.show(Translations.getString("application.data.saved.msg"))
 			}
 		} ?: throw IllegalStateException("Request to save without present data")
 	}

@@ -19,13 +19,15 @@ class RealTimeTimerJs : Timer {
 
     /** ---- [Timer] interface */
 
-    override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit) {
+    override fun initialize(interval: Int, repeats: Boolean, handler: (ActionEvent) -> Unit): Timer {
         if (this.interval > 0) {
             throw IllegalStateException("already initialized")
         }
         this.interval = interval
         this.handler = handler
 	    this.repeats = repeats
+
+	    return this
     }
 
     override fun start() {

@@ -21,7 +21,7 @@ interface Timer {
 	 * @param interval the interval in milliseconds
 	 * @param handler the handler of an [ActionEvent] to be called after every timing interval
 	 */
-	fun initialize(interval: Int, repeats: Boolean = true, handler: (ActionEvent) -> Unit)
+	fun initialize(interval: Int, repeats: Boolean = true, handler: (ActionEvent) -> Unit): Timer
 
 	fun start()
 
