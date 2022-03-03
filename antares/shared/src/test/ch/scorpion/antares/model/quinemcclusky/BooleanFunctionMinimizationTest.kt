@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.quinemcclusky
 
+import ch.scorpion.antares.model.quinemccluskey.MinTerm
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,4 +32,41 @@ class BooleanFunctionMinimizationTest {
 		assertTrue(minimalDNF.contains(listOf(-1, 2))) // AB'
 		assertTrue(minimalDNF.contains(listOf(-1, -3))) // AC
 	}
+
+	@Test
+	fun shouldMinimizeToConstantTrue() {
+		val minTerms = listOf(
+			"11"
+		).map { it.toInt(2) }
+
+		val dontCares = listOf(
+			"00",
+			"01",
+			"10",
+			//"11"
+		).map { it.toInt(2) }
+
+		// Contains a single empty list => "true"
+		val minimalDNF = minimizeToDNF(minTerms, dontCares, n = 2)
+
+		println(minimalDNF)
+	}
+
+	@Test
+	fun shouldMinimizeToConstantFalse() {
+		val minTerms = listOf<MinTerm>()
+
+		val dontCares = listOf(
+			"00",
+			"01",
+			"10",
+			//"11"
+		).map { it.toInt(2) }
+
+		// Contains nothing => "false"
+		val minimalDNF = minimizeToDNF(minTerms, dontCares, n = 2)
+
+		println(minimalDNF)
+	}
+
 }

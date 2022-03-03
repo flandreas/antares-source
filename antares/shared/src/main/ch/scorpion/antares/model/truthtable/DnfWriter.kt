@@ -11,18 +11,29 @@ class DnfWriter(
 	fun write(outputColumn: Int): String {
 		val builder = StringBuilder()
 
-		for (term in dnf) {
-			val termBuilder = StringBuilder()
-			for (literal in term) {
-				if (builder.isNotEmpty() && termBuilder.isEmpty()) {
-					termBuilder.append(" + ")
+		if (dnf.isEmpty()) {
+			builder.append("0")
+		} else {
+			for (term in dnf) {
+				val termBuilder = StringBuilder()
+				if (term.isEmpty()) {
+					if (builder.isNotEmpty()) {
+						termBuilder.append(" + ")
+					}
+					termBuilder.append("1")
+				} else {
+					for (literal in term) {
+						if (builder.isNotEmpty() && termBuilder.isEmpty()) {
+							termBuilder.append(" + ")
+						}
+						termBuilder.append(truthTable.getColumnName(abs(literal) - 1))
+						if (literal > 0) {
+							termBuilder.append("'")
+						}
+					}
 				}
-				termBuilder.append(truthTable.getColumnName(abs(literal) - 1))
-				if (literal > 0) {
-					termBuilder.append("'")
-				}
+				builder.append(termBuilder.toString())
 			}
-			builder.append(termBuilder.toString())
 		}
 
 		return "${truthTable.getColumnName(outputColumn)} = $builder"
