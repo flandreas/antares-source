@@ -35,7 +35,7 @@ class TruthTableLibraryItem(
 	truthTable: TruthTable = TruthTable()
 ) : AbstractLibraryItem(
 	TranslatableText(Translations.getString("library.element.truthTable.name")),
-	iconPath = "/img/openInPopup-20.png"
+	iconPath = "/img/truth-table.png"
 ), UndoableStateLibraryItem<TruthTable> {
 
 	var truthTable: TruthTable = truthTable
