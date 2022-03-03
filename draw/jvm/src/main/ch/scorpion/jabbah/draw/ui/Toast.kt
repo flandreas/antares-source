@@ -21,6 +21,8 @@ actual object Toast {
 
 	private const val SHOW_DURATION_MS = 2000
 	private const val FADE_DURATION_MS = 600.0
+	private const val BOTTOM_DIST = 70
+	private const val POSITION_CENTER = true
 
 	actual fun show(message: String, animator: Animator) {
 		val frame = ToastFrame(message)
@@ -74,7 +76,12 @@ actual object Toast {
 			contentPane.add(textPane, BorderLayout.CENTER)
 
 			pack()
-			positionAtCenterBottomOfMainFrame()
+
+			if (POSITION_CENTER) {
+				positionAtCenterOfMainFrame()
+			} else {
+				positionAtCenterBottomOfMainFrame()
+			}
 
 			addComponentListener(object : ComponentAdapter() {
 				override fun componentResized(e: ComponentEvent?) {
@@ -105,8 +112,11 @@ actual object Toast {
 			textPane.styledDocument.setParagraphAttributes(0, textPane.styledDocument.length, attr, false)
 		}
 
+		private fun positionAtCenterOfMainFrame() {
+			setLocationRelativeTo(Frame.getFrames()[0])
+		}
+
 		private fun positionAtCenterBottomOfMainFrame() {
-			val BOTTOM_DIST = 70
 			val mainBounds = Frame.getFrames()[0].bounds
 			val toastBounds = bounds
 
