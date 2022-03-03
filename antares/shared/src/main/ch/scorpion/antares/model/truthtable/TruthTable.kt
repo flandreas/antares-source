@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.truthtable
 
+import ch.scorpion.antares.model.quinemccluskey.MinTerm
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -63,6 +64,23 @@ class TruthTable(
 			listeners.add(l)
 		}
 	}
+
+	fun getMinTerms(outputColumn: Int): List<MinTerm> = getMinTerms(outputColumn, Bit.True)
+
+	fun getDontCares(outputColumn: Int): List<MinTerm> = getMinTerms(outputColumn, Bit.Error)
+
+	private fun getMinTerms(outputColumn: Int, bit: Bit): List<MinTerm> =
+		(0 until rowsCount)
+			.filter { getValue(it, outputColumn) == bit }
+			.map { getMinTerm(it) }
+
+	fun getMinTerm(row: Int): MinTerm =
+		(inputColumnCount - 1 downTo 0)
+			.mapIndexedNotNull { i, col ->
+				getValue(row, col)
+					.takeIf { bit -> bit == Bit.False }
+					?.let { BitOperation.power(i.toByte()) } }
+			.sum().toInt()
 
 	fun removeListener(l: TruthTableListener) {
 		listeners.remove(l)

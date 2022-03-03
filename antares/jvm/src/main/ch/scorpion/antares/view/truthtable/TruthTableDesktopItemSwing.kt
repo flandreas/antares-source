@@ -1,9 +1,12 @@
 package ch.scorpion.antares.view.truthtable
 
+import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.truthtable.DnfWriter
 import ch.scorpion.antares.model.truthtable.TruthTableCommand
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -25,6 +28,7 @@ import javax.swing.*
 import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 import javax.swing.table.DefaultTableCellRenderer
+import kotlin.math.max
 
 class TruthTableDesktopItemSwing(
 	item: TruthTableLibraryItem,
@@ -51,20 +55,39 @@ class TruthTableDesktopItemSwing(
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
-	private val table = JTable(TruthTableTableModel(ref))
+	private val tableModel = TruthTableTableModel(ref)
+
+	private val table = JTable(tableModel)
 
 	private val scrollPane = JScrollPane(table)
 
 	private val cellFont = table.font.deriveFont(CELL_FONT_SIZE.toFloat())
+
+	private val generateExpressionsAction = GenerateExpressionsAction()
+
+	private val expressionsTextArea = JTextArea()
 
 	init {
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
 
 		defineSetActions()
+
+		ref.addDataListener {
+			expressionsTextArea.text = ""
+		}
 	}
 
 	private fun buildUI() {
+		border = BorderFactory.createEmptyBorder(0, 0, 0, 5)
+		layout = BorderLayout(10, 10)
+
+		add(headerPanel, BorderLayout.NORTH)
+		add(createContentsPanel(), BorderLayout.CENTER)
+		add(createExpressionsPanel(), BorderLayout.SOUTH)
+	}
+
+	private fun createContentsPanel(): JComponent {
 		table.font = cellFont
 		table.rowHeight = CELL_FONT_SIZE + 8
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
@@ -78,16 +101,36 @@ class TruthTableDesktopItemSwing(
 
 		updateColumnModels()
 
-		layout = BorderLayout()
-		add(headerPanel, BorderLayout.NORTH)
-
-		val contentPanel = JPanel(BorderLayout())
+		val panel = JPanel(BorderLayout())
 		val tipLabel = JLabel(Translations.getString("library.element.truthTable.tip"))
 		tipLabel.border = BorderFactory.createEmptyBorder(5, 2, 5, 0)
-		contentPanel.add(tipLabel, BorderLayout.NORTH)
-		contentPanel.add(scrollPane, BorderLayout.CENTER)
+		panel.add(tipLabel, BorderLayout.NORTH)
+		panel.add(scrollPane, BorderLayout.CENTER)
 
-		add(contentPanel, BorderLayout.CENTER)
+		return panel
+	}
+
+	private fun createExpressionsPanel(): JComponent {
+		val panel = JPanel()
+		panel.layout = BoxLayout(panel, BoxLayout.PAGE_AXIS)
+
+		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
+		expressionsTextArea.isEditable = false
+		expressionsTextArea.rows = max(4, ref.truthTable.outputColumnCount)
+
+		val expressionScrollPane = JScrollPane(expressionsTextArea)
+		expressionScrollPane.alignmentX = Component.LEFT_ALIGNMENT
+		expressionScrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
+		expressionScrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
+
+		val expressionsButton = JButton(ActionWrapperSwing(generateExpressionsAction))
+		expressionsButton.alignmentX = Component.LEFT_ALIGNMENT
+
+		panel.add(expressionsButton)
+		panel.add(Box.createVerticalStrut(5))
+		panel.add(expressionScrollPane)
+
+		return panel
 	}
 
 	override fun addContextColorBorder(color: Color) { }
@@ -153,6 +196,19 @@ class TruthTableDesktopItemSwing(
 		}
 	}
 
+	private fun generateExpressions() {
+		val builder = StringBuilder()
+		with (ref.truthTable) {
+			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
+				builder.append(
+					DnfWriter(this, minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount))
+						.write(col))
+				builder.append("\n")
+			}
+		}
+		expressionsTextArea.text = builder.toString()
+	}
+
 	private inner class InputCellRenderer : DefaultTableCellRenderer() {
 
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
@@ -213,8 +269,15 @@ class TruthTableDesktopItemSwing(
 					r = 0
 				}
 			}
-			//table.changeSelection(r, c, toggle = false, extend = false)
 			table.changeSelection(r, c, false, false)
+		}
+	}
+
+	private inner class GenerateExpressionsAction
+		: ch.scorpion.jabbah.base.AbstractAction("antares.action.truthTable.expressions")
+	{
+		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+			generateExpressions()
 		}
 	}
 }

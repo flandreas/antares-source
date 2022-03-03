@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class TruthTableTest {
 
@@ -73,6 +74,31 @@ class TruthTableTest {
 		assertEquals(Error, clone.getValue(1, 2))
 		assertEquals(False, clone.getValue(2, 2))
 		assertEquals(False, clone.getValue(3, 2))
+	}
+
+	@Test
+	fun shouldCreateMinTerm() {
+		val truthTable = create2to1TruthTable()
+
+		assertEquals(3, truthTable.getMinTerm(0))
+		assertEquals(2, truthTable.getMinTerm(1))
+		assertEquals(1, truthTable.getMinTerm(2))
+		assertEquals(0, truthTable.getMinTerm(3))
+	}
+
+	@Test
+	fun shouldGetMinTerms() {
+		val truthTable = create2to1TruthTable()
+		truthTable.setValue(0, 2, True)
+		truthTable.setValue(1, 2, Error)
+		truthTable.setValue(2, 2, False)
+		truthTable.setValue(3, 2, True)
+
+		val midTerms = truthTable.getMinTerms(2)
+
+		assertEquals(2, midTerms.size)
+		assertTrue(midTerms.contains(3)) // Values 00 inverted
+		assertTrue(midTerms.contains(0)) // Values 11 inverted
 	}
 
 	private fun create2to1TruthTable(): TruthTable =
