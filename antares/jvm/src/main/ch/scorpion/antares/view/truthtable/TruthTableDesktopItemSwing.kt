@@ -97,6 +97,8 @@ class TruthTableDesktopItemSwing(
 		table.rowMargin = 1
 		table.columnModel.columnMargin = 1
 
+		expressionsTextArea.font = cellFont
+
 		scrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
 
