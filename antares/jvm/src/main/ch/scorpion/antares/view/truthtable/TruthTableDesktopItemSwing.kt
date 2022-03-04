@@ -3,10 +3,7 @@ package ch.scorpion.antares.view.truthtable
 import ch.scorpion.antares.model.quinemccluskey.QmcToBooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.truthtable.DnfWriter
-import ch.scorpion.antares.model.truthtable.TruthTableCommand
-import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
-import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -205,8 +202,8 @@ class TruthTableDesktopItemSwing(
 			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
 				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
 				builder.append(
-					DnfWriter(this, QmcToBooleanExpression(ref.truthTable, dnf).build())
-						.write(col)
+					StandardDnfWriter.ARITHMETIC
+						.write(this, QmcToBooleanExpression(ref.truthTable, dnf).build(), col)
 				)
 				builder.append("\n")
 			}
