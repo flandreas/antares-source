@@ -43,9 +43,9 @@ open class Lexer(private val text: String) {
 		private val DIFF_TOKEN = Token<Unit>(DIFF)
 		private val IF_TOKEN = Token<String>(IF)
 		private val ELSE_TOKEN = Token<String>(ELSE)
-		private val AND_TOKEN = Token<String>(AND)
-		private val OR_TOKEN = Token<String>(OR)
-		private val NOT_TOKEN = Token<String>(NOT)
+		val AND_TOKEN = Token<String>(AND)
+		val OR_TOKEN = Token<String>(OR)
+		val NOT_TOKEN = Token<String>(NOT)
 		private val GREATER_TOKEN = Token<Unit>(GREATER)
 		private val GREATER_EQUAL_TOKEN = Token<Unit>(GREATER_EQUAL)
 		private val SMALLER_TOKEN = Token<Unit>(SMALLER)
@@ -86,6 +86,10 @@ open class Lexer(private val text: String) {
 			"init" to INIT_TOKEN
 		)
 
+		// Factory methods for [Token]s with values
+		fun idToken(value: String) = Token(ID, value)
+		fun literalToken(value: Any) = Token(LITERAL, value)
+
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
 	}
 
@@ -125,10 +129,6 @@ open class Lexer(private val text: String) {
 	private val peekState = State()
 
 	val location: CodeLocation get() = state.location
-
-	// Factory methods for [Token]s with values
-	private fun idToken(value: String) = Token(ID, value)
-	protected fun literalToken(value: Any) = Token(LITERAL, value)
 
 	/**
 	 * Scans more text and returns the next [Token].

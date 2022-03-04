@@ -13,20 +13,25 @@ package ch.scorpion.jabbah.base
  *
  *      fun accept(HierarchyVisitor v): Boolean {
  *          if (v.visitEnter(this)) {
- *              Iterator<Child> iter = children.iterator();
+ *              Iterator<Child> iter = children.iterator()
  *              while (iter.hasNext() {
- *                  if (!iter.next().accept(v) {
- *                      break;
+ *                  val child = iter.next()
+ *                  if (!child.accept(v) {
+ *                      break
+ *                  } else {
+ *                      if (!v.visitInfix(this, child)) {
+ *                          break
+*                       }
  *                  }
  *              }
  *          }
- *          return v.visitLeave(this);
+ *          return v.visitLeave(this)
  *      }
  *
  * The `accept` method of a leaf node should be implemented as follows:
  *
  *      fun accept(HierarchyVisitor v): Boolean {
- *          return v.visit(this);
+ *          return v.visit(this)
  *      }
  *
  * See http://c2.com/cgi/wiki?HierarchicalVisitorPattern.
@@ -47,6 +52,12 @@ interface HierarchyVisitor {
      */
     fun visit(node: Any): Boolean
 
+	/**
+	 * Called by a visited composite node in its accept method after a child node
+	 * has been visited. Used to implement infix processing in composite nodes.
+	 */
+	fun visitInfix(node: Any, child: Any): Boolean
+
     /**
      * Called by a visited composite node after the children have been visited.
      * @param node the visited composite node.
@@ -60,6 +71,8 @@ open class EmptyHierarchyVisitor : HierarchyVisitor {
     override fun visitEnter(node: Any): Boolean = true
 
     override fun visit(node: Any): Boolean = true
+
+	override fun visitInfix(node: Any, child: Any): Boolean = true
 
     override fun visitLeave(node: Any): Boolean = true
 }

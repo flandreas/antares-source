@@ -62,6 +62,7 @@ class BinaryOperation(
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
 			left.accept(visitor)
+			visitor.visitInfix(this, left)
 			right.accept(visitor)
 		}
 		return visitor.visitLeave(this)

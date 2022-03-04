@@ -1,41 +1,60 @@
 package ch.scorpion.antares.model.truthtable
 
-import ch.scorpion.antares.model.quinemccluskey.Literal
-import kotlin.math.abs
+import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.dsl.*
 
 class DnfWriter(
 	private val truthTable: TruthTable,
-	private val dnf: List<List<Literal>>
+	private val ast: Node
 ) {
 
 	fun write(outputColumn: Int): String {
 		val builder = StringBuilder()
+		ast.accept(Visitor(builder))
+		return "${truthTable.getColumnName(outputColumn)} = $builder"
+	}
 
-		if (dnf.isEmpty()) {
-			builder.append("0")
-		} else {
-			for (term in dnf) {
-				val termBuilder = StringBuilder()
-				if (term.isEmpty()) {
-					if (builder.isNotEmpty()) {
-						termBuilder.append(" + ")
-					}
-					termBuilder.append("1")
-				} else {
-					for (literal in term) {
-						if (builder.isNotEmpty() && termBuilder.isEmpty()) {
-							termBuilder.append(" + ")
-						}
-						termBuilder.append(truthTable.getColumnName(abs(literal) - 1))
-						if (literal > 0) {
-							termBuilder.append("'")
-						}
+	private class Visitor(private val builder: StringBuilder) : EmptyHierarchyVisitor() {
+
+		override fun visit(node: Any): Boolean {
+			when (node) {
+				is Variable -> {
+					builder.append(node.token.value)
+				}
+				is Literal -> {
+					when (node.token.value) {
+						true -> builder.append("1")
+						false -> builder.append("0")
+						else -> throw IllegalStateException("unsupported literal ${node.token.value}")
 					}
 				}
-				builder.append(termBuilder.toString())
 			}
+			return true
 		}
 
-		return "${truthTable.getColumnName(outputColumn)} = $builder"
+		override fun visitInfix(node: Any, child: Any): Boolean {
+			when (node) {
+				is BinaryOperation -> {
+					when (node.op.type) {
+						TokenType.OR -> builder.append(" + ")
+						TokenType.AND -> builder.append(" * ")
+						else -> throw IllegalStateException("unsupported binary operation ${node.op.type}")
+					}
+				}
+			}
+			return true
+		}
+
+		override fun visitLeave(node: Any): Boolean {
+			when (node) {
+				is UnaryOperation -> {
+					when (node.op.type) {
+						TokenType.NOT -> builder.append("'")
+						else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")
+					}
+				}
+			}
+			return true
+		}
 	}
 }
