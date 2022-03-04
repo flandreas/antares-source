@@ -35,4 +35,7 @@ object BooleanExpression {
 
 	fun const(value: Boolean): Node =
 		if (value) constantTrue else constantFalse
+
+	fun parenthesis(node: Node): Node =
+		Compound(CodeLocation.UNDEFINED, listOf(node))
 }

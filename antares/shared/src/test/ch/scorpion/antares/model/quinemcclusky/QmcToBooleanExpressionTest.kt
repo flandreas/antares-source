@@ -27,4 +27,26 @@ class QmcToBooleanExpressionTest {
 			-- B
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldApplyParenthesis() {
+		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
+		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
+
+		val node = QmcToBooleanExpression(truthTable, dnf, andParenthesis = true).build()
+
+		assertAST(node, """
+			or
+			- Compound
+			-- and
+			--- A
+			--- not
+			---- B
+			- Compound
+			-- and
+			--- not
+			---- A
+			--- B
+		""".trimIndent())
+	}
 }

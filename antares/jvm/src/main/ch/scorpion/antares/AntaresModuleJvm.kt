@@ -299,6 +299,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				id = BooleanExpressionNotation.PROP_OMIT_AND,
 				nameKey = "antares.preference.expression.omitAnd"
 			))
+			add(BooleanPreference(
+				id = BooleanExpressionNotation.PROP_AND_PARENTHESIS,
+				nameKey = "antares.preference.expression.andParenthesis"
+			))
 		}
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(

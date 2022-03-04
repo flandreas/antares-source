@@ -17,6 +17,7 @@ enum class BooleanExpressionNotation(
 
 		const val PROP_NOTATION = "antares.expression.notation"
 		const val PROP_OMIT_AND = "antares.expression.omitAnd"
+		const val PROP_AND_PARENTHESIS = "antares.expression.andParenthesis"
 
 		fun withName(customName: String): BooleanExpressionNotation =
 			values().firstOrNull { it.customName == customName } ?:

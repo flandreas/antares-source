@@ -60,6 +60,7 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_OUTPUTS, 8)
 		properties.set(BooleanExpressionNotation.PROP_NOTATION, BooleanExpressionNotation.ARITHMETIC.customName)
 		properties.set(BooleanExpressionNotation.PROP_OMIT_AND, true)
+		properties.set(BooleanExpressionNotation.PROP_AND_PARENTHESIS, false)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

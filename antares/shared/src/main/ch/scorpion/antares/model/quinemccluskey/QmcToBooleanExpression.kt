@@ -1,8 +1,10 @@
 package ch.scorpion.antares.model.quinemccluskey
 
 import ch.scorpion.antares.model.expression.BooleanExpression
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.abs
 
 /**
@@ -10,7 +12,8 @@ import kotlin.math.abs
  */
 class QmcToBooleanExpression(
 	private val truthTable: TruthTable,
-	private val dnf: DNF
+	private val dnf: DNF,
+	private val andParenthesis: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_AND_PARENTHESIS)
 ) {
 
 	fun build(): Node {
@@ -32,7 +35,12 @@ class QmcToBooleanExpression(
 		if (literals.isEmpty()) {
 			return BooleanExpression.const(true)
 		}
-		return buildAndTermNode(literals.map { buildFactorNode(it) })
+		val node = buildAndTermNode(literals.map { buildFactorNode(it) })
+		return if (andParenthesis) {
+			BooleanExpression.parenthesis(node)
+		} else {
+			node
+		}
 	}
 
 	private fun buildAndTermNode(nodes: List<Node>): Node =

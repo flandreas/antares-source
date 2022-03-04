@@ -70,6 +70,7 @@ abstract class AbstractDnfWriter(
 						}
 					}
 				}
+				is Compound -> builder.append('(')
 			}
 			return true
 		}
@@ -116,6 +117,7 @@ abstract class AbstractDnfWriter(
 						else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")
 					}
 				}
+				is Compound -> builder.append(')')
 			}
 			return true
 		}
