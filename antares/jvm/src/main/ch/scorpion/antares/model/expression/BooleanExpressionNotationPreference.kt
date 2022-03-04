@@ -12,8 +12,9 @@ class BooleanExpressionNotationPreference : AbstractPreference(
 	private val value: BooleanExpressionNotation get() = BooleanExpressionNotation.withName(panel!!.preferences.getString(id))
 
 	init {
-		editor.addItem(BooleanExpressionNotation.ARITHMETIC)
-		editor.addItem(BooleanExpressionNotation.LOGIC)
+		BooleanExpressionNotation.values().forEach {
+			editor.addItem(it)
+		}
 
 		editor.addActionListener {
 			panel?.preferences?.customize(this, (editor.selectedItem as BooleanExpressionNotation).customName)

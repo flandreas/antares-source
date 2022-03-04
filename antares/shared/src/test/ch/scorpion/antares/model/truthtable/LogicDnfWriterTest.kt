@@ -11,19 +11,23 @@ class LogicDnfWriterTest {
 	fun shouldWriteLogicDnf() {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
+		val expression = QmcToBooleanExpression(truthTable, dnf, andParenthesis = false).build()
 
-		assertEquals("X = A ∧ ¬B ∨ ¬A ∧ B",
-			StandardDnfWriter.LOGIC
-				.write(truthTable, QmcToBooleanExpression(truthTable, dnf).build(), 2))
+		val output = StandardDnfWriter.LOGIC
+			.write(truthTable, expression, 2, omitAndForSingleCharacterVariables = false)
+
+		assertEquals("X = A ∧ ¬B ∨ ¬A ∧ B", output)
 	}
 
 	@Test
 	fun shouldOmitAndOperator() {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
+		val expression = QmcToBooleanExpression(truthTable, dnf, andParenthesis = false).build()
 
-		assertEquals("X = A¬B ∨ ¬AB",
-			StandardDnfWriter.LOGIC
-				.write(truthTable, QmcToBooleanExpression(truthTable, dnf).build(), 2, omitAndForSingleCharacterVariables = true))
+		val output = StandardDnfWriter.LOGIC
+			.write(truthTable, expression, 2, omitAndForSingleCharacterVariables = true)
+
+		assertEquals("X = A¬B ∨ ¬AB", output)
 	}
 }

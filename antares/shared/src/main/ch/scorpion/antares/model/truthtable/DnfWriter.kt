@@ -33,11 +33,11 @@ interface DnfWriter {
 /**
  * Base class for implementing [DnfWriter].
  *
- * @property isNotPrefix `true` if NOT operators are to be written as prefix, i.e. prior to
+ * @property isNotPostfix `true` if NOT operators are to be written as postfix, i.e. after to
  * the negated factor
  */
 abstract class AbstractDnfWriter(
-	private val isNotPrefix: Boolean = false,
+	private val isNotPostfix: Boolean = false,
 ) : DnfWriter {
 
 	abstract fun writeAnd(builder: StringBuilder)
@@ -65,7 +65,7 @@ abstract class AbstractDnfWriter(
 			when (node) {
 				is UnaryOperation -> {
 					when (node.op.type) {
-						TokenType.NOT -> if (!isNotPrefix) {
+						TokenType.NOT -> if (!isNotPostfix) {
 							writeNot(builder)
 						}
 					}
@@ -111,7 +111,7 @@ abstract class AbstractDnfWriter(
 			when (node) {
 				is UnaryOperation -> {
 					when (node.op.type) {
-						TokenType.NOT -> if (isNotPrefix) {
+						TokenType.NOT -> if (isNotPostfix) {
 							writeNot(builder)
 						}
 						else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")
@@ -130,8 +130,8 @@ class StandardDnfWriter(
 	private val trueConst: String = "1",
 	private val falseConst: String = "0",
 	private val notOp: String = "'",
-	isNotPrefix: Boolean = false
-): AbstractDnfWriter(isNotPrefix) {
+	isNotPostfix: Boolean = false
+): AbstractDnfWriter(isNotPostfix) {
 
 	companion object {
 
@@ -142,7 +142,7 @@ class StandardDnfWriter(
 			trueConst = "1",
 			falseConst = "0",
 			notOp = "'",
-			isNotPrefix = true
+			isNotPostfix = true
 		)
 
 		val LOGIC = StandardDnfWriter(
@@ -151,7 +151,25 @@ class StandardDnfWriter(
 			trueConst = "1",
 			falseConst = "0",
 			notOp = "¬",
-			isNotPrefix = false
+			isNotPostfix = false
+		)
+
+		val PROGRAMMING = StandardDnfWriter(
+			andOp = "&&",
+			orOp = "||",
+			trueConst = "1",
+			falseConst = "0",
+			notOp = "!",
+			isNotPostfix = false
+		)
+
+		val VERBOSE = StandardDnfWriter(
+			andOp = "AND",
+			orOp = "OR",
+			trueConst = "true",
+			falseConst = "false",
+			notOp = "NOT ",
+			isNotPostfix = false
 		)
 	}
 

@@ -10,8 +10,10 @@ enum class BooleanExpressionNotation(
 	private val sample: String
 ) {
 
-	ARITHMETIC("arithmetic", StandardDnfWriter.ARITHMETIC, "A’B + AB’ + 0"),
-	LOGIC("logic", StandardDnfWriter.LOGIC, "A ∧ ¬B ∨ ¬A ∧ B ∨ 0");
+	ARITHMETIC("arithmetic", StandardDnfWriter.ARITHMETIC, "(A’ * B) + (A * B’) + 0"),
+	LOGIC("logic", StandardDnfWriter.LOGIC, "(A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0"),
+	PROGRAMMING("programming", StandardDnfWriter.PROGRAMMING, "(A && !B) || (!A && B) || false"),
+	VERBOSE("verbose", StandardDnfWriter.VERBOSE, "(A AND NOT B) OR (NOT A AND B) OR false");
 
 	companion object {
 
