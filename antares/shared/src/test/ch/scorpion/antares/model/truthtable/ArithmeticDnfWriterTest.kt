@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.quinemccluskey.QmcToBooleanExpression
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StandardDnfWriterTest {
+class ArithmeticDnfWriterTest {
 
 	@Test
 	fun shouldWriteDnf() {
@@ -38,12 +38,22 @@ class StandardDnfWriterTest {
 	}
 
 	@Test
-	fun shouldWriteLogicDnf() {
+	fun shouldOmitAndOperator() {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
 
-		assertEquals("X = A ∧ ¬B ∨ ¬A ∧ B",
-			StandardDnfWriter.LOGIC
-				.write(truthTable, QmcToBooleanExpression(truthTable, dnf).build(), 2))
+		assertEquals("X = AB' + A'B",
+			StandardDnfWriter.ARITHMETIC
+				.write(truthTable, QmcToBooleanExpression(truthTable, dnf).build(), 2, omitAndForSingleCharacterVariables = true))
+	}
+
+	@Test
+	fun shouldNotOmitAndOperatorWithMultiCharVariableNames() {
+		val truthTable = TruthTable(inputColumnNames = listOf("IN", "B"), outputColumnNames = listOf("X"))
+		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
+
+		assertEquals("X = IN * B' + IN' * B",
+			StandardDnfWriter.ARITHMETIC
+				.write(truthTable, QmcToBooleanExpression(truthTable, dnf).build(), 2, omitAndForSingleCharacterVariables = true))
 	}
 }

@@ -2,28 +2,63 @@ package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.antares.model.expression.BooleanExpression
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.jabbah.base.module.BaseModule
 
+/**
+ * Creates a textual representation of a [BooleanExpression] (represented by its root AST node)
+ * that was generated from the specified [TruthTable], containing the variable names.
+ */
 interface DnfWriter {
-	fun write(truthTable: TruthTable, ast: Node, outputColumn: Int) : String
+
+	/**
+	 * Creates the textual representation.
+	 *
+	 * @param truthTable the [TruthTable] containing variable names
+	 * @param ast contains the abstract syntax tree root
+	 * @param outputColumn the index of the output column in [TruthTable] to be written
+	 * @param omitAndForSingleCharacterVariables `true` if AND operators are generally to be omitted
+	 * if all variables of the expression consists of single characters. With longer variable names,
+	 * variable names wouldn't be distinguishable anymore without AND operators
+	 */
+	fun write(
+		truthTable: TruthTable,
+		ast: Node,
+		outputColumn: Int,
+		omitAndForSingleCharacterVariables: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_OMIT_AND)
+	) : String
 }
 
+/**
+ * Base class for implementing [DnfWriter].
+ *
+ * @property isNotPrefix `true` if NOT operators are to be written as prefix, i.e. prior to
+ * the negated factor
+ */
 abstract class AbstractDnfWriter(
-	private val isNotPrefix: Boolean = false
+	private val isNotPrefix: Boolean = false,
 ) : DnfWriter {
-
-	override fun write(truthTable: TruthTable, ast: Node, outputColumn: Int): String {
-		val builder = StringBuilder()
-		ast.accept(Visitor(builder))
-		return "${truthTable.getColumnName(outputColumn)} = $builder"
-	}
 
 	abstract fun writeAnd(builder: StringBuilder)
 	abstract fun writeOr(builder: StringBuilder)
 	abstract fun writeConstant(constant: Boolean, builder: StringBuilder)
 	abstract fun writeNot(builder: StringBuilder)
 
+	override fun write(
+		truthTable: TruthTable,
+		ast: Node,
+		outputColumn: Int,
+		omitAndForSingleCharacterVariables: Boolean
+	): String {
+		val builder = StringBuilder()
+		ast.accept(Visitor(builder, omitAndForSingleCharacterVariables && truthTable.allInputNamesAreSingleChar))
+		return "${truthTable.getColumnName(outputColumn)} = $builder"
+	}
+
 	private inner class Visitor(
-		private val builder: StringBuilder
+		private val builder: StringBuilder,
+		private val omitAndForSingleCharacterVariables: Boolean
 	) : EmptyHierarchyVisitor() {
 
 		override fun visitEnter(node: Any): Boolean {
@@ -61,7 +96,9 @@ abstract class AbstractDnfWriter(
 				is BinaryOperation -> {
 					when (node.op.type) {
 						TokenType.OR -> writeOr(builder)
-						TokenType.AND -> writeAnd(builder)
+						TokenType.AND -> if (!omitAndForSingleCharacterVariables) {
+							writeAnd(builder)
+						}
 						else -> throw IllegalStateException("unsupported binary operation ${node.op.type}")
 					}
 				}

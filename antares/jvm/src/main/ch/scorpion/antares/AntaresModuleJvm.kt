@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.BooleanExpressionNotationPreference
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehaviorPreference
 import ch.scorpion.antares.model.input.Switch
@@ -291,8 +292,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(PreferenceGroup(PREF_TREE_EXPRESSION))
 
-		root.getGroup(PREF_TREE_CIRCUIT).getGroup(PREF_TREE_EXPRESSION)
-			.add(BooleanExpressionNotationPreference())
+
+		root.getGroup(PREF_TREE_CIRCUIT).getGroup(PREF_TREE_EXPRESSION).apply {
+			add(BooleanExpressionNotationPreference())
+			add(BooleanPreference(
+				id = BooleanExpressionNotation.PROP_OMIT_AND,
+				nameKey = "antares.preference.expression.omitAnd"
+			))
+		}
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,

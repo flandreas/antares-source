@@ -34,6 +34,8 @@ class TruthTable(
 
 	val rowsCount: Int get() = BitOperation.power(inputColumnCount.toByte()).toInt()
 
+	val allInputNamesAreSingleChar: Boolean get() = inputColumns.all { it.name.length == 1 }
+
 	private val inputColumns: MutableList<TruthTableInputColumn> =
 		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
 
