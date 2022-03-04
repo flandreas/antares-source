@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.expression.BooleanExpressionNotationPreference
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehaviorPreference
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
@@ -71,6 +72,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	companion object {
 		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
+		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 	}
 
 	override fun initialize() {
@@ -286,6 +288,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			id = Switch.PROP_DEFAULT_DELAY,
 			nameKey = "antares.preference.SwitchPropDelay"
 		))
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(PreferenceGroup(PREF_TREE_EXPRESSION))
+
+		root.getGroup(PREF_TREE_CIRCUIT).getGroup(PREF_TREE_EXPRESSION)
+			.add(BooleanExpressionNotationPreference())
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,

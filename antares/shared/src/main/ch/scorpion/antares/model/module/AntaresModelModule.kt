@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
@@ -57,6 +58,7 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR, UndefinedGateInputBehavior.ReadAs0.customName)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_INPUTS, 8)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_OUTPUTS, 8)
+		properties.set(BooleanExpressionNotation.PROP_NOTATION, BooleanExpressionNotation.ARITHMETIC.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

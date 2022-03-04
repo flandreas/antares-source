@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.truthtable
 
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.quinemccluskey.QmcToBooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.antares.model.signal.Bit
@@ -202,7 +203,7 @@ class TruthTableDesktopItemSwing(
 			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
 				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
 				builder.append(
-					StandardDnfWriter.ARITHMETIC
+					BooleanExpressionNotation.fromProperties().dnfWriter
 						.write(this, QmcToBooleanExpression(ref.truthTable, dnf).build(), col)
 				)
 				builder.append("\n")
