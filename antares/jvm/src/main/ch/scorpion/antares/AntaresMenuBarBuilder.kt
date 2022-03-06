@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -69,7 +70,10 @@ class AntaresMenuBarBuilder(
     }
 
 	private fun fillSynthesisMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(NewTruthTableAction(graphFrame.controller.graphPanelViewController.libraryPanelController.libraryTreeViewController))))
+		with (graphFrame.controller.graphPanelViewController.libraryPanelController.libraryTreeViewController) {
+			menu.add(JMenuItem(ActionWrapperSwing(NewTruthTableAction(this))))
+			menu.add(JMenuItem(ActionWrapperSwing(CreateCircuitFromTruthTableAction(this))))
+		}
 		return menu
 	}
 }

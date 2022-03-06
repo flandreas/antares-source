@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -22,29 +23,28 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectTruthTablePopupMenu = JPopupMenu()
 	private val libraryTruthTablePopupMenu = JPopupMenu()
 
-	private val newProjectTruthTableAction = NewTruthTableAction(controller)
-	private val newLibraryTruthTableAction = NewTruthTableAction(controller)
-
+	private val newTruthTableAction = NewTruthTableAction(controller)
 	private val openTruthTableAction = OpenTruthTableAction(application.controller as GraphDataViewController, controller)
+	private val createCircuitAction = CreateCircuitFromTruthTableAction(controller)
 
 	override fun fillMainProjectDirectoryPopupMenu() {
 		super.fillMainProjectDirectoryPopupMenu()
-		projectDirectoryPopupMenu.add(ActionWrapperSwing(newProjectTruthTableAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
 	override fun fillMainProjectRootPopupMenu() {
 		super.fillMainProjectRootPopupMenu()
-		projectRootMenu.add(ActionWrapperSwing(newProjectTruthTableAction))
+		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
 	override fun fillMainLibraryDirectoryPopupMenu() {
 		super.fillMainLibraryDirectoryPopupMenu()
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryTruthTableAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
 	override fun fillMainLibraryRootPopupMenu() {
 		super.fillMainLibraryRootPopupMenu()
-		libraryRootMenu.add(ActionWrapperSwing(newLibraryTruthTableAction))
+		libraryRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
 	override fun fillMain() {
@@ -52,9 +52,11 @@ class DigitalLibraryTreeViewActionsSwing(
 
 		projectTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
 		projectTruthTablePopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
+		projectTruthTablePopupMenu.add(ActionWrapperSwing(createCircuitAction))
 
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
+		libraryTruthTablePopupMenu.add(ActionWrapperSwing(createCircuitAction))
 	}
 
 	override fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {

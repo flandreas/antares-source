@@ -25,6 +25,7 @@ import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.*
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.base.AbstractModule
@@ -74,6 +75,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	companion object {
 		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
+
+		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
 	}
 
 	override fun initialize() {
