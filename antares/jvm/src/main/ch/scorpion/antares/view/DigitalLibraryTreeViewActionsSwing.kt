@@ -22,8 +22,8 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectTruthTablePopupMenu = JPopupMenu()
 	private val libraryTruthTablePopupMenu = JPopupMenu()
 
-	private val newProjectTruthTableAction = NewTruthTableAction(controller, projectOperationTarget)
-	private val newLibraryTruthTableAction = NewTruthTableAction(controller, libraryOperationTarget)
+	private val newProjectTruthTableAction = NewTruthTableAction(controller)
+	private val newLibraryTruthTableAction = NewTruthTableAction(controller)
 
 	private val openTruthTableAction = OpenTruthTableAction(application.controller as GraphDataViewController, controller)
 

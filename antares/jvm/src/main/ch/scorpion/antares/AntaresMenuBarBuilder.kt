@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
+import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -28,8 +29,13 @@ class AntaresMenuBarBuilder(
 	eventBus: EventBus
 ) : GraphMenuBarBuilder(frame, eventBus) {
 
+	companion object {
+		fun createSynthesisMenu() = JMenu(Translations.getString("application.menu.synthesis"))
+	}
+
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
+	    menuBar.add(fillSynthesisMenu(createSynthesisMenu()))
 	    if (EditAuthModule.userHolder.user.isDeveloper) {
 		    menuBar.add(fillDevelopmentMenu(JMenu(Translations.getString("application.menu.development"))))
 	    }
@@ -61,4 +67,9 @@ class AntaresMenuBarBuilder(
 
         return menu
     }
+
+	private fun fillSynthesisMenu(menu: JMenu): JMenu {
+		menu.add(JMenuItem(ActionWrapperSwing(NewTruthTableAction(graphFrame.controller.graphPanelViewController.libraryPanelController.libraryTreeViewController))))
+		return menu
+	}
 }
