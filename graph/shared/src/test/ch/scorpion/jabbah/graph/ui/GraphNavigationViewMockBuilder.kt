@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import io.mockk.every
 import io.mockk.mockk
 
 class GraphNavigationViewMockBuilder(private val controller: GraphNavigationViewController) {
@@ -11,6 +12,8 @@ class GraphNavigationViewMockBuilder(private val controller: GraphNavigationView
 		withNavigationStackView(
 			NavigationStackViewMockBuilder(controller.navigationStackViewController)
 				.build())
+
+		every { view.drawingView } answers { controller.drawingView }
 	}
 
 	fun withNavigationStackView(view: NavigationStackView): GraphNavigationViewMockBuilder {

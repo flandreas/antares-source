@@ -12,18 +12,23 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphView
+import io.mockk.every
 import io.mockk.mockk
 
 class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController) {
 
-	private val view = mockk<GraphPanelView>(relaxed = true)
+	private val graphPanelView = mockk<GraphPanelView>(relaxed = true)
 
 	init {
-		controller.view = view
+		controller.view = graphPanelView
 		withLibraryPanel(LibraryPanelViewMockBuilder(controller.libraryPanelController).build())
-		withGraphEditView(GraphEditViewMockBuilder(controller.editViewController).build())
+
+		val editView = GraphEditViewMockBuilder(controller.editViewController).build()
+		withGraphEditView(editView)
 		withGraphDesktopView(GraphDesktopViewMockBuilder(controller.desktopController)
-			.withMainViewItem(GraphDesktopViewItemMockBuilder()
+			.withMainViewItem(editView.graphNavigationView)
+			.withMainViewItem(
+				GraphDesktopViewItemMockBuilder()
 				.withDrawingView(controller.editor.view as DrawingView<GraphView>)
 				.build())
 			.build()
@@ -39,6 +44,7 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 	}
 
 	fun withGraphEditView(view: GraphEditView): GraphPanelViewMockBuilder {
+		every { graphPanelView.graphEditView } returns view
 		controller.editViewController.view = view
 		return this
 	}
@@ -63,5 +69,5 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 		return this
 	}
 
-	fun build(): GraphPanelView = view
+	fun build(): GraphPanelView = graphPanelView
 }

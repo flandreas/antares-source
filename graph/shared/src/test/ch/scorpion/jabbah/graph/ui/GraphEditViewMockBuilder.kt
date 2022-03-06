@@ -4,33 +4,35 @@ import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewMockBuilder
+import io.mockk.every
 import io.mockk.mockk
 
 class GraphEditViewMockBuilder(private val controller: GraphEditViewController) {
 
-	private val view = mockk<GraphEditView>(relaxed = true)
+	private val graphEditView = mockk<GraphEditView>(relaxed = true)
 
 	init {
-		controller.view = view
+		controller.view = graphEditView
 		withGraphNavigationView(GraphNavigationViewMockBuilder(controller.graphNavigationViewController).build())
 		withScenarioView(ScenarioViewMockBuilder(controller.scenarioViewController).build())
 		withUsecaseView(UsecaseViewMockBuilder(controller.usecaseViewController).build())
 	}
 
-	fun withGraphNavigationView(view: GraphNavigationView): GraphEditViewMockBuilder {
+	private fun withGraphNavigationView(view: GraphNavigationView): GraphEditViewMockBuilder {
+		every { graphEditView.graphNavigationView } returns view
 		controller.graphNavigationViewController.view = view
 		return this
 	}
 
-	fun withScenarioView(view: ScenarioView): GraphEditViewMockBuilder {
+	private fun withScenarioView(view: ScenarioView): GraphEditViewMockBuilder {
 		controller.scenarioViewController.view = view
 		return this
 	}
 
-	fun withUsecaseView(view: UsecaseView): GraphEditViewMockBuilder {
+	private fun withUsecaseView(view: UsecaseView): GraphEditViewMockBuilder {
 		controller.usecaseViewController.view = view
 		return this
 	}
 
-	fun build(): GraphEditView = view
+	fun build(): GraphEditView = graphEditView
 }

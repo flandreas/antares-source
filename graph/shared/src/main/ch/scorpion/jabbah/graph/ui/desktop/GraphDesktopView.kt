@@ -216,7 +216,7 @@ class GraphDesktopViewController(
 
 	fun show(item: GraphDesktopViewItem) {
 		deassociateAdditional()
-		viewManager.activeView = null
+		viewManager.activeView = item.drawingView
 		view.show(item)
 	}
 
