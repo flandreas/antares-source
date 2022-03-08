@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import java.awt.BorderLayout
 import java.awt.Component
@@ -87,8 +88,20 @@ class CreateCircuitFromTruthTablePanel(
 
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
-			service.create(item, nameField.text)
-			closeHandler()
+			InvocationHandler.invoke {
+				try {
+					service.create(item, nameField.text)
+					closeHandler()
+				} catch (e: CircuitFromTruthTableBuilderError) {
+					JOptionPane.showConfirmDialog(
+						this@CreateCircuitFromTruthTablePanel,
+						e.message,
+						name,
+						JOptionPane.OK_OPTION,
+						JOptionPane.ERROR_MESSAGE
+					)
+				}
+			}
 		}
 	}
 

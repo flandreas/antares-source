@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
@@ -23,13 +24,14 @@ import ch.scorpion.jabbah.io.Storable
  */
 open class GraphViewBuilder<T : Any>(
 	graphStorable: GraphStorable,
+	private val edgeViewFactory: EdgeViewFactory<Any> = GraphViewModule.getEdgeViewFactory(),
 	private val undoableStateCallback: (GraphViewBuilder<*>) -> Unit = {}
 ) : UndoableDataHolder {
 
 	constructor(
 		name: String = Translations.getString("graph.name.unknown"),
 		undoableStateCallback: (GraphViewBuilder<*>) -> Unit = {}
-	): this(GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name))), undoableStateCallback)
+	): this(GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name))), undoableStateCallback = undoableStateCallback)
 
 	companion object {
 		private val LOG by logger(GraphViewBuilder::class)
@@ -88,6 +90,23 @@ open class GraphViewBuilder<T : Any>(
 			graphView, from.getPortView(fromPort)!!, to.getPortView(toPort)!!)
 	}
 
+	fun connect(
+		from: VerticeView<out Vertice>,
+		fromPort: OutputPort<T> = from.model.getOutput(),
+		to: VerticeView<out Vertice>,
+		toPort: InputPort<T> = to.model.getInput(),
+		points: List<Point2D>
+	): EdgeView<T> {
+		val edgeView = edgeViewFactory.createEdgeView() as EdgeView<T>
+		points.forEach { edgeView.addSegmentPoint(it) }
+		edgeView.layout.isAdjusted = true
+		graphView.add(edgeView)
+		GraphViewModule.graphViewConnectService.connect(
+			edgeView, from.getPortView(fromPort), to.getPortView(toPort)
+		)
+		return edgeView
+	}
+
 	fun connectOutputOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {
 		val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
 		edgeView.addSegmentPoint(Point2D.ZERO)
@@ -114,13 +133,14 @@ open class GraphViewBuilder<T : Any>(
 		return vv
 	}
 
-	fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
+	fun split(
+		edgeView: EdgeView<T>,
+		segmentIndex: Int,
+		location: Point2D,
+		dest: PortView<T>?
+	): SplitEdgeViewResult<T> {
 		val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.netView!!)
 		newEdgeView.addSegmentPoint(location)
-		var portView: PortView<T>? = null
-		if (dest != null) {
-			portView = dest.getPortView(dest.model.getPort())
-		}
 		val result = GraphViewModule.graphViewConnectService.split(
 			graphView,
 			edgeView,
@@ -128,11 +148,24 @@ open class GraphViewBuilder<T : Any>(
 			EdgeViewEndpointType.ORIGIN.getLocation(newEdgeView),
 			newEdgeView,
 			EdgeViewEndpointType.ORIGIN,
-			portView,
+			dest,
 			joinNetViews = false)
 		if (dest == null) {
 			newEdgeView.addSegmentPoint(location)
 		}
 		return result
+	}
+
+	fun split(
+		edgeView: EdgeView<T>,
+		segmentIndex: Int,
+		location: Point2D,
+		dest: VerticeView<out Vertice>?
+	): SplitEdgeViewResult<T> {
+		var portView: PortView<T>? = null
+		if (dest != null) {
+			portView = dest.getPortView(dest.model.getPort())
+		}
+		return split(edgeView, segmentIndex, location, portView)
 	}
 }

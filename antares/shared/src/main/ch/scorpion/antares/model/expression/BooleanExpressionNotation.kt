@@ -1,19 +1,17 @@
 package ch.scorpion.antares.model.expression
 
-import ch.scorpion.antares.model.truthtable.DnfWriter
-import ch.scorpion.antares.model.truthtable.StandardDnfWriter
 import ch.scorpion.jabbah.base.module.BaseModule
 
 enum class BooleanExpressionNotation(
 	val customName: String,
-	val dnfWriter: DnfWriter,
+	val dnfWriter: BooleanExpressionWriter,
 	private val sample: String
 ) {
 
-	ARITHMETIC("arithmetic", StandardDnfWriter.ARITHMETIC, "(A’ * B) + (A * B’) + 0"),
-	LOGIC("logic", StandardDnfWriter.LOGIC, "(A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0"),
-	PROGRAMMING("programming", StandardDnfWriter.PROGRAMMING, "(A && !B) || (!A && B) || false"),
-	VERBOSE("verbose", StandardDnfWriter.VERBOSE, "(A AND NOT B) OR (NOT A AND B) OR false");
+	ARITHMETIC("arithmetic", StandardBooleanExpressionWriter.ARITHMETIC, "(A’ * B) + (A * B’) + 0"),
+	LOGIC("logic", StandardBooleanExpressionWriter.LOGIC, "(A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0"),
+	PROGRAMMING("programming", StandardBooleanExpressionWriter.PROGRAMMING, "(A && !B) || (!A && B) || false"),
+	VERBOSE("verbose", StandardBooleanExpressionWriter.VERBOSE, "(A AND NOT B) OR (NOT A AND B) OR false");
 
 	companion object {
 

@@ -2,18 +2,18 @@ package ch.scorpion.antares.model.quinemcclusky
 
 import ch.scorpion.antares.model.expression.assertAST
 import ch.scorpion.antares.model.quinemccluskey.DNF
-import ch.scorpion.antares.model.quinemccluskey.QmcToBooleanExpression
+import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.truthtable.TruthTable
 import kotlin.test.Test
 
-class QmcToBooleanExpressionTest {
+class DnfToBooleanExpressionTest {
 
 	@Test
 	fun shouldCreateBooleanExpression() {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
 
-		val node = QmcToBooleanExpression(truthTable, dnf).build()
+		val node = DnfToBooleanExpression(truthTable, dnf).build()
 
 		assertAST(node, """
 			or
@@ -33,7 +33,7 @@ class QmcToBooleanExpressionTest {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
 
-		val node = QmcToBooleanExpression(truthTable, dnf, andParenthesis = true).build()
+		val node = DnfToBooleanExpression(truthTable, dnf, andParenthesis = true).build()
 
 		assertAST(node, """
 			or

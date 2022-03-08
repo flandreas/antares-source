@@ -10,7 +10,7 @@ import kotlin.math.abs
 /**
  * Converts the output of Quine-McCluskey's [minimizeToDNF] to [BooleanExpression].
  */
-class QmcToBooleanExpression(
+class DnfToBooleanExpression(
 	private val truthTable: TruthTable,
 	private val dnf: DNF,
 	private val andParenthesis: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_AND_PARENTHESIS)

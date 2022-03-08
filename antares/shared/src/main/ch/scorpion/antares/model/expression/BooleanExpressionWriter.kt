@@ -1,16 +1,14 @@
-package ch.scorpion.antares.model.truthtable
+package ch.scorpion.antares.model.expression
 
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.jabbah.base.dsl.*
-import ch.scorpion.antares.model.expression.BooleanExpression
-import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.truthtable.TruthTable
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Creates a textual representation of a [BooleanExpression] (represented by its root AST node)
  * that was generated from the specified [TruthTable], containing the variable names.
  */
-interface DnfWriter {
+interface BooleanExpressionWriter {
 
 	/**
 	 * Creates the textual representation.
@@ -31,14 +29,14 @@ interface DnfWriter {
 }
 
 /**
- * Base class for implementing [DnfWriter].
+ * Base class for implementing [BooleanExpressionWriter].
  *
  * @property isNotPostfix `true` if NOT operators are to be written as postfix, i.e. after to
  * the negated factor
  */
-abstract class AbstractDnfWriter(
-	private val isNotPostfix: Boolean = false,
-) : DnfWriter {
+abstract class AbstractBooleanExpressionWriter(
+	private val isNotPostfix: Boolean = false
+) : BooleanExpressionWriter {
 
 	abstract fun writeAnd(builder: StringBuilder)
 	abstract fun writeOr(builder: StringBuilder)
@@ -59,84 +57,53 @@ abstract class AbstractDnfWriter(
 	private inner class Visitor(
 		private val builder: StringBuilder,
 		private val omitAndForSingleCharacterVariables: Boolean
-	) : EmptyHierarchyVisitor() {
+	) : AbstractBooleanExpressionVisitor(isNotPostfix) {
 
-		override fun visitEnter(node: Any): Boolean {
-			when (node) {
-				is UnaryOperation -> {
-					when (node.op.type) {
-						TokenType.NOT -> if (!isNotPostfix) {
-							writeNot(builder)
-						}
-					}
-				}
-				is Compound -> builder.append('(')
+		override fun handleAnd() {
+			if (!omitAndForSingleCharacterVariables) {
+				writeAnd(builder)
 			}
-			return true
 		}
 
-		override fun visit(node: Any): Boolean {
-			when (node) {
-				is Variable -> {
-					builder.append(node.token.value)
-				}
-				is Literal -> {
-					when (node.token.value) {
-						true -> writeConstant(true, builder)
-						false -> writeConstant(false, builder)
-						else -> throw IllegalStateException("unsupported literal ${node.token.value}")
-					}
-				}
-
-			}
-			return true
+		override fun handleOr() {
+			writeOr(builder)
 		}
 
-		override fun visitInfix(node: Any, child: Any): Boolean {
-			when (node) {
-				is BinaryOperation -> {
-					when (node.op.type) {
-						TokenType.OR -> writeOr(builder)
-						TokenType.AND -> if (!omitAndForSingleCharacterVariables) {
-							writeAnd(builder)
-						}
-						else -> throw IllegalStateException("unsupported binary operation ${node.op.type}")
-					}
-				}
-			}
-			return true
+		override fun handleConstant(value: Boolean) {
+			writeConstant(value, builder)
 		}
 
-		override fun visitLeave(node: Any): Boolean {
-			when (node) {
-				is UnaryOperation -> {
-					when (node.op.type) {
-						TokenType.NOT -> if (isNotPostfix) {
-							writeNot(builder)
-						}
-						else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")
-					}
-				}
-				is Compound -> builder.append(')')
+		override fun handleNot() {
+			writeNot(builder)
+		}
+
+		override fun handleVariable(name: String) {
+			builder.append(name)
+		}
+
+		override fun handleCompound(begin: Boolean) {
+			if (begin) {
+				builder.append('(')
+			} else {
+				builder.append(')')
 			}
-			return true
 		}
 	}
 }
 
-class StandardDnfWriter(
+class StandardBooleanExpressionWriter(
 	private val andOp: String = "*",
 	private val orOp: String = "+",
 	private val trueConst: String = "1",
 	private val falseConst: String = "0",
 	private val notOp: String = "'",
 	isNotPostfix: Boolean = false
-): AbstractDnfWriter(isNotPostfix) {
+): AbstractBooleanExpressionWriter(isNotPostfix) {
 
 	companion object {
 
 		/** Format: A * B' + A' * B + 0 */
-		val ARITHMETIC = StandardDnfWriter(
+		val ARITHMETIC = StandardBooleanExpressionWriter(
 			andOp = "*",
 			orOp = "+",
 			trueConst = "1",
@@ -145,7 +112,7 @@ class StandardDnfWriter(
 			isNotPostfix = true
 		)
 
-		val LOGIC = StandardDnfWriter(
+		val LOGIC = StandardBooleanExpressionWriter(
 			andOp = "∧",
 			orOp = "∨",
 			trueConst = "1",
@@ -154,7 +121,7 @@ class StandardDnfWriter(
 			isNotPostfix = false
 		)
 
-		val PROGRAMMING = StandardDnfWriter(
+		val PROGRAMMING = StandardBooleanExpressionWriter(
 			andOp = "&&",
 			orOp = "||",
 			trueConst = "1",
@@ -163,7 +130,7 @@ class StandardDnfWriter(
 			isNotPostfix = false
 		)
 
-		val VERBOSE = StandardDnfWriter(
+		val VERBOSE = StandardBooleanExpressionWriter(
 			andOp = "AND",
 			orOp = "OR",
 			trueConst = "true",

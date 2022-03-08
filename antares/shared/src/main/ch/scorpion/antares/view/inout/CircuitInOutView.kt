@@ -59,7 +59,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 class CircuitInOutView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: CircuitInOut = CircuitInOutImpl(),
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	orientation: Direction = Direction.EAST
 ) : AbstractVerticeView<CircuitInOut>(styleProvider, model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
 
 	companion object {
@@ -77,7 +78,7 @@ class CircuitInOutView(
 			updateView()
 		}
 
-	var orientation: Direction = Direction.EAST
+	var orientation: Direction = orientation
 		set(value) {
 			if (field != value) {
 				invalidate()
