@@ -50,3 +50,11 @@ CAUTION: Since AND and OR gates in Antares can only have up to 8 input pins, the
 The created circuit is added to the same explorer tree folder in which the truth table is contained. Antares also automatically creates a default circuit symbol that contains an input pin for every variable and an output pins for every output column.
 
 image::user-manual/circuits/truth-table-circuit.png[Truth Table,700,align="center"]
+
+== User Preferences
+
+Use the preferences in menu:Antares[Preferences > Circuit > Expression] to specify the format of generated boolean expressions.
+
+- **Notation**: There are currently 4 different notations implemented. More are likely to follow.
+- **Omit AND for single character variable names**: If this option is selected, factors in AND terms are not separated by an operator (e.g. "AND" or "*") if all variable names consist of a single character only.
+- **Put AND terms in parenthesis**: If this option is not selected, the generated expressions rely on operator priority NOT > AND > OR, and parenthesis for DNF AND terms are therefore omitted.
