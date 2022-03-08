@@ -252,7 +252,11 @@ class LibraryTreeViewSwing(
 				val iconPath = (value.userObject as LibraryItem).iconPath
 				component.font = this@LibraryTreeViewSwing.font
 				if (StringUtils.isNotEmpty(iconPath)) {
-					component.icon = getIcon(iconPath!!)
+					if (controller.isCurrentItem(value.userObject as LibraryItem) &&(value.userObject as LibraryItem).activeIconPath != null) {
+						component.icon = getIcon((value.userObject as LibraryItem).activeIconPath!!)
+					} else {
+						component.icon = getIcon(iconPath!!)
+					}
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.baseElement.tip")
 					}
@@ -261,7 +265,7 @@ class LibraryTreeViewSwing(
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}
 					component.icon = containerLibElemIcon
-					if (controller.isCurrentElement(value.userObject as ContainerLibraryElement)) {
+					if (controller.isCurrentItem(value.userObject as ContainerLibraryElement)) {
 						component.icon = currentContainerLibElemIcon
 					}
 					if (controller.isDefaultElement(value.userObject as ContainerLibraryElement)) {

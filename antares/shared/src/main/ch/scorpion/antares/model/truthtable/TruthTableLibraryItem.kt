@@ -41,6 +41,8 @@ class TruthTableLibraryItem(
 	var truthTable: TruthTable = truthTable
 		private set
 
+	override val activeIconPath: String get() = "/img/truth-table-active.png"
+
 	/** ---- [LibraryItem] interface */
 
 	override var name: Name

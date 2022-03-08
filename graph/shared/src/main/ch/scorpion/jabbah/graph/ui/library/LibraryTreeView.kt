@@ -113,7 +113,7 @@ class LibraryTreeViewController (
 	}
 
 	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
-		currentSavable = if (it.savable is AbstractContainerLibraryElementSavable) {
+		currentSavable = if (it.savable is AbstractLibraryItemSavable) {
 			it.savable
 		} else {
 			null
@@ -211,8 +211,8 @@ class LibraryTreeViewController (
 		active = applicationModeHolder.currentMode.isEdit()
 	}
 
-	fun isCurrentElement(element: ContainerLibraryElement): Boolean =
-		currentSavable is AbstractContainerLibraryElementSavable && (currentSavable as AbstractContainerLibraryElementSavable).element == element
+	fun isCurrentItem(item: LibraryItem): Boolean =
+		currentSavable is AbstractLibraryItemSavable && (currentSavable as AbstractLibraryItemSavable).item == item
 
 	fun isDefaultElement(element: ContainerLibraryElement): Boolean =
 		element.library?.defaultElementUUID == element.uuid

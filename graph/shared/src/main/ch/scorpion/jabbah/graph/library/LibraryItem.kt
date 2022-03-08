@@ -25,6 +25,12 @@ interface LibraryItem : Storable, Namable {
      */
     val iconPath: String?
 
+	/**
+	 * The path of an icon to be used if this [LibraryItem] is the one whose content
+	 * is currently open in the using UI.
+	 */
+	val activeIconPath: String? get() = iconPath
+
     fun accept(visitor: HierarchyVisitor): Boolean
 
     /** Asks this [LibraryItem] to remember a reference to the [Library] to which it belongs. */
