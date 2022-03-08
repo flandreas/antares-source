@@ -1,10 +1,15 @@
 package ch.scorpion.antares.view.truthtable
 
+import ch.scorpion.antares.AntaresModuleJvm
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.truthtable.*
+import ch.scorpion.antares.model.truthtable.TruthTableCommand
+import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -21,6 +26,7 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.Frame
 import java.awt.event.ActionEvent
 import java.util.*
 import javax.swing.*
@@ -30,7 +36,8 @@ import javax.swing.table.DefaultTableCellRenderer
 import kotlin.math.max
 
 class TruthTableDesktopItemSwing(
-	item: TruthTableLibraryItem,
+	private val item: TruthTableLibraryItem,
+	private val service: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	private val commandManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopItemPanelSwing() {
@@ -64,6 +71,8 @@ class TruthTableDesktopItemSwing(
 
 	private val generateExpressionsAction = GenerateExpressionsAction()
 
+	private val createCircuitAction = CreateCircuitAction()
+
 	private val expressionsTextArea = JTextArea()
 
 	init {
@@ -71,9 +80,11 @@ class TruthTableDesktopItemSwing(
 		buildUI()
 
 		defineSetActions()
+		createCircuitAction.enabled = false
 
 		ref.addDataListener {
 			expressionsTextArea.text = ""
+			createCircuitAction.enabled = false
 		}
 	}
 
@@ -127,9 +138,14 @@ class TruthTableDesktopItemSwing(
 		val expressionsButton = JButton(ActionWrapperSwing(generateExpressionsAction))
 		expressionsButton.alignmentX = Component.LEFT_ALIGNMENT
 
+		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
+		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
+
 		panel.add(expressionsButton)
 		panel.add(Box.createVerticalStrut(5))
 		panel.add(expressionScrollPane)
+		panel.add(Box.createVerticalStrut(5))
+		panel.add(createCircuitButton)
 
 		return panel
 	}
@@ -210,6 +226,14 @@ class TruthTableDesktopItemSwing(
 			}
 		}
 		expressionsTextArea.text = builder.toString()
+		createCircuitAction.enabled = true
+	}
+
+	private fun createCircuit() {
+		CreateCircuitFromTruthTablePanel.showAsDialog(
+			Frame.getFrames()[0],
+			item,
+			service)
 	}
 
 	private inner class InputCellRenderer : DefaultTableCellRenderer() {
@@ -281,6 +305,14 @@ class TruthTableDesktopItemSwing(
 	{
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			generateExpressions()
+		}
+	}
+
+	private inner class CreateCircuitAction
+		: ch.scorpion.jabbah.base.AbstractAction("antares.synthesis.createCircuitFromTruthTable.action")
+	{
+		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+			createCircuit()
 		}
 	}
 }
