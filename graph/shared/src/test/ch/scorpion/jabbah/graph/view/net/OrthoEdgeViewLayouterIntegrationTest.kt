@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -115,7 +116,7 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
 		val ev = builder.connect(v1, v2)
 
-		val splitResult = builder.split(ev, 0, Point2D(150, 100), null)
+		val splitResult = builder.split(ev, 0, Point2D(150, 100), null as PortView<Boolean>?)
 		splitResult.newEdgeView.moveDestinationEndPoint(200.0, 200.0)
 
 		assertEquals(3, splitResult.newEdgeView.segmentPointCount)

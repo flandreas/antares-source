@@ -125,7 +125,7 @@ class CircuitFromTruthTableBuilder(
 
 	private fun buildAndGates(orTerm: OrTerm) {
 		for (andTerm in orTerm.andTerms) {
-			if (andTerm.factors.size == 1 && andTerm.factors[0].constant == true) {
+			if (andTerm.factors.size == 1 && andTerm.factors[0].constant != null) {
 				val constantView = circuitBuilder.addConstant(DigitalSignalFactory.of(true), Point2D(x, andY))
 				LOG.trace("Adding Constant ${orTerm.andOrConstantViews.size}")
 				orTerm.andOrConstantViews.add(constantView)
@@ -193,6 +193,11 @@ class CircuitFromTruthTableBuilder(
 	}
 
 	private fun buildOrGate(orTerm: OrTerm) {
+		if (orTerm.andTerms.size == 1) {
+			// Constant, not OR gate necessary
+			return
+		}
+
 		if (orTerm.andTerms.size > InputCount.values().last().count) {
 			throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxOrInputCountExceeded.error"))
 		}
@@ -207,18 +212,20 @@ class CircuitFromTruthTableBuilder(
 	}
 
 	private fun buildOrWires(orTerm: OrTerm) {
-		val firstPort = orTerm.orView!!.getPortConnectionPoint(orTerm.orView!!.getPort(1))
+		if (orTerm.orView != null) {
+			val firstPort = orTerm.orView!!.getPortConnectionPoint(orTerm.orView!!.getPort(1))
 
-		var upperX = firstPort.x - OR_WIRE_DIST
-		for (i in 1..orTerm.andTerms.size / 2) {
-			buildOrWire(orTerm, i, upperX)
-			upperX -= OR_WIRE_DIST
-		}
+			var upperX = firstPort.x - OR_WIRE_DIST
+			for (i in 1..orTerm.andTerms.size / 2) {
+				buildOrWire(orTerm, i, upperX)
+				upperX -= OR_WIRE_DIST
+			}
 
-		var lowerX = firstPort.x - OR_WIRE_DIST
-		for (i in orTerm.andTerms.size downTo orTerm.andTerms.size / 2) {
-			buildOrWire(orTerm, i, lowerX)
-			lowerX -= OR_WIRE_DIST
+			var lowerX = firstPort.x - OR_WIRE_DIST
+			for (i in orTerm.andTerms.size downTo orTerm.andTerms.size / 2) {
+				buildOrWire(orTerm, i, lowerX)
+				lowerX -= OR_WIRE_DIST
+			}
 		}
 	}
 
@@ -241,8 +248,16 @@ class CircuitFromTruthTableBuilder(
 	}
 
 	private fun buildOutput(orTerm: OrTerm) {
-		val p = Point2D(x, orTerm.orView!!.getPortConnectionPoint(orTerm.orView!!.model.getOutput<DigitalSignal>()).yInt)
+		val vv = if (orTerm.orView == null) {
+			// Wire from Constant to output
+			orTerm.andOrConstantViews[0]
+		} else {
+			// Wire from OR gate to output
+			orTerm.orView!!
+		}
+
+		val p = Point2D(x, vv.getPortConnectionPoint(vv.model.getOutput<DigitalSignal>()).yInt)
 		val outputView = circuitBuilder.addOutput(orTerm.outputName, p)
-		circuitBuilder.connect(orTerm.orView!!, outputView)
+		circuitBuilder.connect(vv, outputView)
 	}
 }

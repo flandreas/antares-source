@@ -46,10 +46,10 @@ class BooleanFunctionMinimizationTest {
 			//"11"
 		).map { it.toInt(2) }
 
-		// Contains a single empty list => "true"
 		val minimalDNF = minimizeToDNF(minTerms, dontCares, n = 2)
 
-		println(minimalDNF)
+		// Contains a single empty list => "true"
+		assertEquals(listOf(listOf()), minimalDNF)
 	}
 
 	@Test
@@ -63,10 +63,9 @@ class BooleanFunctionMinimizationTest {
 			//"11"
 		).map { it.toInt(2) }
 
-		// Contains nothing => "false"
 		val minimalDNF = minimizeToDNF(minTerms, dontCares, n = 2)
 
-		println(minimalDNF)
+		// Contains nothing => "false"
+		assertEquals(listOf(), minimalDNF)
 	}
-
 }

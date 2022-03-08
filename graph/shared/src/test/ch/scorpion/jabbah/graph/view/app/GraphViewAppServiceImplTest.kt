@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
@@ -76,7 +77,7 @@ class GraphViewAppServiceImplTest {
 	@Test
 	fun shouldUndoDeleteOpenBehindNode() {
 		val ev = builder.connectOutputOpen(vv1, Point2D(200, 100))
-		val result = builder.split(ev, 0, Point2D(150, 100), null)
+		val result = builder.split(ev, 0, Point2D(150, 100), null as PortView<Boolean>?)
 		result.newEdgeView.moveDestinationEndPoint(200.0, 200.0)
 		EditModule.commandManager.reset()
 

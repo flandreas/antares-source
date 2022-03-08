@@ -96,7 +96,10 @@ abstract class AbstractDigitalGate(
 		}
 
     init {
-        propagationDelay = DEFAULT_PROPAGATION_DELAY
+	    require(inputCount.count >= minInputCount.count) { "InputCount ${inputCount.count} below min ${minInputCount.count}" }
+	    require(inputCount.count <= maxInputCount.count) { "InputCount ${inputCount.count} above max ${maxInputCount.count}" }
+
+	    propagationDelay = DEFAULT_PROPAGATION_DELAY
 	    setupInputCount(inputCount)
     }
 

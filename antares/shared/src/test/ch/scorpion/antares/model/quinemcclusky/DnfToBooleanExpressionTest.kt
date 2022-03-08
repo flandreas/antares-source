@@ -49,4 +49,29 @@ class DnfToBooleanExpressionTest {
 			--- B
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldCreateConstantTrue() {
+		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
+		val dnf: DNF = listOf(listOf()) // An empty list means "constant true"
+
+		val node = DnfToBooleanExpression(truthTable, dnf, andParenthesis = false).build()
+
+		assertAST(node, """
+			true
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldCreateConstantFalse() {
+		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
+		val dnf: DNF = listOf() // Nothing means "constant false"
+
+		val node = DnfToBooleanExpression(truthTable, dnf, andParenthesis = false).build()
+
+		assertAST(node, """
+			false
+		""".trimIndent())
+	}
+
 }
