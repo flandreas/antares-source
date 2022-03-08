@@ -33,12 +33,6 @@ interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSign
     var signalRepresentation: DigitalSignalRepresentation
 
 	/**
-	 * Indicates that a circuit produces a signal at this [GraphPort] that can be undefined,
-	 * which allows to connect multiple [GraphOutput]s to the same [Net].
-	 */
-	//var triStateOutput: Boolean
-
-	/**
 	 * Toggles the bit at the specified index.
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].

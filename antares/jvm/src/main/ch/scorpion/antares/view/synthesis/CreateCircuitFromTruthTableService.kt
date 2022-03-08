@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.view.container.ContainerDrawingFiller
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -36,6 +37,7 @@ class CreateCircuitFromTruthTableService(
 	private fun createMetaGraph(truthTable: TruthTable, circuitName: String): MetaGraph {
 		val metaGraph = MetaGraph.withName(circuitName)
 		CircuitFromTruthTableBuilder(truthTable, metaGraph.graph).build()
+		ContainerDrawingFiller(metaGraph).fill()
 		return metaGraph
 	}
 }
