@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.Font
 import java.awt.Frame
 import java.awt.event.ActionEvent
 import java.util.*
@@ -44,12 +45,14 @@ class TruthTableDesktopItemSwing(
 
 	companion object {
 		private const val CELL_FONT_SIZE = 18
+		private val EXPRESSION_FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 		private const val COLUMN_WIDTH = 40
 
 		private val FOREGROUND = UIManager.getColor("TextField.foreground")
 		private val BACKGROUND = UIManager.getColor("TextField.background")
 		private val INACTIVE_FOREGROUND = UIManager.getColor("TextField.inactiveForeground")
 		private val INACTIVE_BACKGROUND = UIManager.getColor("TextField.inactiveBackground")
+
 	}
 
 	private val ref = TruthTableReference(item)
@@ -106,7 +109,7 @@ class TruthTableDesktopItemSwing(
 		table.rowMargin = 1
 		table.columnModel.columnMargin = 1
 
-		expressionsTextArea.font = cellFont
+		expressionsTextArea.font = EXPRESSION_FONT
 
 		scrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
