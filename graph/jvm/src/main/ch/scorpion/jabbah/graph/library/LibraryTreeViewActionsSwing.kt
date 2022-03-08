@@ -129,24 +129,29 @@ open class LibraryTreeViewActionsSwing(
 		isFilled = true
 	}
 
-	protected open fun fillMainProjectDirectoryPopupMenu() {
+	private fun fillMainProjectDirectoryPopupMenu() {
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectDirectoryPopupMenu.addSeparator()
-		projectDirectoryPopupMenu.add(ActionWrapperSwing(newProjectGraphAction))
-		projectDirectoryPopupMenu.add(ActionWrapperSwing(addProjectFolderAction))
+		fillMainProjectDirectoryCreateActions()
+		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(deleteProjectFolderAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(projectFolderPropertiesAction))
 	}
 
-	protected open fun fillMainProjectRootPopupMenu() {
+	protected open fun fillMainProjectDirectoryCreateActions() {
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newProjectGraphAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(addProjectFolderAction))
+	}
+
+	private fun fillMainProjectRootPopupMenu() {
 		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
 		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
-		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
+		fillMainProjectRootCreateActions()
+		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
@@ -156,29 +161,44 @@ open class LibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 	}
 
-	protected open fun fillMainLibraryDirectoryPopupMenu() {
+	protected open fun fillMainProjectRootCreateActions() {
+		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
+		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
+	}
+
+	private fun fillMainLibraryDirectoryPopupMenu() {
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 		libraryDirectoryPopupMenu.addSeparator()
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
-		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		fillMainLibraryDirectoryCreateActions()
+		libraryDirectoryPopupMenu.addSeparator()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
 		libraryDirectoryPopupMenu.addSeparator()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 	}
 
-	protected open fun fillMainLibraryRootPopupMenu() {
+	protected open fun fillMainLibraryDirectoryCreateActions() {
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+	}
+
+	private fun fillMainLibraryRootPopupMenu() {
 		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
 		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+		fillMainLibraryRootCreateActions()
+		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
+	}
+
+	protected open fun fillMainLibraryRootCreateActions() {
+		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
 	}
 
 	private fun fillMainProjectContainerPopupMenu() {

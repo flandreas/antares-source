@@ -27,23 +27,23 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val openTruthTableAction = OpenTruthTableAction(application.controller as GraphDataViewController, controller)
 	private val createCircuitAction = CreateCircuitFromTruthTableAction(controller)
 
-	override fun fillMainProjectDirectoryPopupMenu() {
-		super.fillMainProjectDirectoryPopupMenu()
+	override fun fillMainProjectDirectoryCreateActions() {
+		super.fillMainProjectDirectoryCreateActions()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
-	override fun fillMainProjectRootPopupMenu() {
-		super.fillMainProjectRootPopupMenu()
+	override fun fillMainProjectRootCreateActions() {
+		super.fillMainProjectRootCreateActions()
 		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
-	override fun fillMainLibraryDirectoryPopupMenu() {
-		super.fillMainLibraryDirectoryPopupMenu()
+	override fun fillMainLibraryDirectoryCreateActions() {
+		super.fillMainLibraryDirectoryCreateActions()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
-	override fun fillMainLibraryRootPopupMenu() {
-		super.fillMainLibraryRootPopupMenu()
+	override fun fillMainLibraryRootCreateActions() {
+		super.fillMainLibraryRootCreateActions()
 		libraryRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 	}
 
