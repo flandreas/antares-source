@@ -17,9 +17,9 @@ class DescendAnimationManager(
 ) {
 
     companion object {
-        private const val ZOOM_DURATION = 700.0
+        private const val ZOOM_DURATION = 600.0
         private const val OUTER_END_ZOOM_FACTOR = 16.0
-        private const val INNER_START_ZOOM_FACTOR = 0.3
+        private const val INNER_START_ZOOM_FACTOR = 0.1
     }
 
     /**
