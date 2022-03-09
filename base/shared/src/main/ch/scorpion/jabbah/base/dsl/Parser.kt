@@ -70,9 +70,9 @@ fun interface ParserFactory {
  * [EmptyHierarchyVisitor] to skip semantic analysis
  */
 open class Parser(
-	protected val lexer: Lexer,
+	lexer: Lexer,
 	private val semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
-) {
+) : AbstractBaseParser(lexer) {
 
 	constructor(program: String): this(Lexer(program))
 
@@ -84,15 +84,11 @@ open class Parser(
 		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
 	}
 
-	/** Contains the current [Token] as determined by [Lexer.nextToken].*/
-	protected var currentToken: Token<Any>? = lexer.nextToken()
-		private set
-
 	/**
 	 * Parses the program this [Parser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
-	fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
+	override fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
 
 	/**
 	 * Calls [parse] and catches [DslError] by posting an [Issue] on the system's [EventBus].
@@ -416,18 +412,5 @@ open class Parser(
 		eat(ID)
 		eat(DOUBLE_QUOTE)
 		return string
-	}
-
-	/**
-	 * Compares the current [TokenType] with the passed [TokenType] and, if they match,
-	 * then "eats" the current [Token] and assigns the next [Token] to [currentToken],
-	 * otherwise throws [SyntaxError].
-	 */
-	protected fun eat(type: TokenType) {
-		if (currentToken!!.type == type) {
-			currentToken = lexer.nextToken()
-		} else {
-			throw SyntaxError(lexer.location, Translations.getString("base.dsl.expectedToken.msg", type.id))
-		}
 	}
 }
