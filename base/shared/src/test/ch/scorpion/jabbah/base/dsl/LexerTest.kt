@@ -1,18 +1,11 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class LexerTest {
-
-	@BeforeTest
-	fun setup() {
-		Translations.withAnyKey()
-	}
+class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMultiplyTerm() {
@@ -360,31 +353,5 @@ class LexerTest {
 	fun shouldScanStringWithOperators() {
 		val lexer = Lexer("\"A+B\"")
 		assertString("A+B", lexer)
-	}
-
-	private fun assertEof(token: Token<Any>) {
-		assertEquals(EOF, token.type)
-	}
-
-	private fun assertLong(value: Long, lexer: Lexer) {
-		val token = lexer.nextToken()
-		assertEquals(LITERAL, token.type)
-		assertEquals(value, token.value)
-	}
-
-	private fun assertString(value: String, lexer: Lexer) {
-		val token = lexer.nextToken()
-		assertEquals(LITERAL, token.type)
-		assertEquals(value, token.value)
-	}
-
-	private fun assertId(name: String, lexer: Lexer) {
-		val token = lexer.nextToken()
-		assertEquals(ID, token.type)
-		assertEquals(name, token.value)
-	}
-
-	private fun assertToken(type: TokenType, lexer: Lexer) {
-		assertEquals(type, lexer.nextToken().type)
 	}
 }

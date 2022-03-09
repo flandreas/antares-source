@@ -18,8 +18,8 @@ import ch.scorpion.jabbah.base.dsl.*
  */
 object BooleanExpression {
 
-	private val constantTrue = Literal(CodeLocation.UNDEFINED, Lexer.literalToken(true))
-	private val constantFalse = Literal(CodeLocation.UNDEFINED, Lexer.literalToken(false))
+	private val constantTrue = Literal(CodeLocation.UNDEFINED, BaseLexer.literalToken(true))
+	private val constantFalse = Literal(CodeLocation.UNDEFINED, BaseLexer.literalToken(false))
 
 	fun or(left: Node, right: Node): Node =
 		BinaryOperation(CodeLocation.UNDEFINED, left, Lexer.OR_TOKEN, right)
@@ -31,7 +31,7 @@ object BooleanExpression {
 		UnaryOperation(CodeLocation.UNDEFINED, Lexer.NOT_TOKEN, node)
 
 	fun variable(name: String): Node =
-		Variable(CodeLocation.UNDEFINED, Lexer.idToken(name))
+		Variable(CodeLocation.UNDEFINED, BaseLexer.idToken(name))
 
 	fun const(value: Boolean): Node =
 		if (value) constantTrue else constantFalse

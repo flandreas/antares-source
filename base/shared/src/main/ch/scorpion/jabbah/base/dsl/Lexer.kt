@@ -1,28 +1,14 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
-/** Identifies a location in the code to identify error locations.*/
-data class CodeLocation(val pos: Int, val row: Int, val column: Int) {
-	companion object {
-		val UNDEFINED = CodeLocation(0, 0, 0)
-	}
-	override fun toString(): String = "$row:$column"
-}
-
 /**
- * Lexical analyser, also known as scanner or tokenizer.
- *
- * This class is responsible for breaking a sentence apart into [Token]s, one [Token] at a time.
- * Inspects the [Char] at the current position, advances the current position, and
- * returns the [Token] that corresponds with the consumed [Char].
- *
- * Line comments start with // and eliminate everything to the next newline character.
+ * Extends [BaseLexer] with tokens for simple languages supporting arithmetic expressions,
+ * control flow statements, and variables.
  *
  * @property text the text to be scanned
  */
-open class Lexer(private val text: String) {
+open class Lexer(text: String): BaseLexer(text) {
 
 	companion object {
 
@@ -33,7 +19,6 @@ open class Lexer(private val text: String) {
 		private val DIVIDE_TOKEN = Token<Unit>(DIVIDE)
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
-		private val EOF_TOKEN = Token<Unit>(EOF)
 		private val ASSIGN_TOKEN = Token<Unit>(ASSIGN)
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
@@ -68,7 +53,6 @@ open class Lexer(private val text: String) {
 		private val HASH_TOKEN = Token<Unit>(HASH)
 		private val DOT_TOKEN = Token<Unit>(DOT)
 		private val COMMA_TOKEN = Token<Unit>(COMMA)
-		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(DOUBLE_QUOTE)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"var" to VAR_TOKEN,
@@ -86,145 +70,63 @@ open class Lexer(private val text: String) {
 			"init" to INIT_TOKEN
 		)
 
-		// Factory methods for [Token]s with values
-		fun idToken(value: String) = Token(ID, value)
-		fun literalToken(value: Any) = Token(LITERAL, value)
-
 		fun getReservedWords(): Collection<String> = RESERVED_KEYWORDS.keys
 	}
 
-	protected inner class State {
-		/** An index into [text].*/
-		var pos = 0
+	override fun getReservedKeyword(name: String): Token<String>? =
+		RESERVED_KEYWORDS[name] ?: super.getReservedKeyword(name)
 
-		/** Contains the [Char] in [text] at position [pos], or `null` if the end of [text] has been reached.*/
-		var currentChar: Char? = if (text.isEmpty()) null else text.first()
-
-		/** Counts the processed number of rows (lines) for syntax error location indication.*/
-		var rowCounter = 1
-
-		/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
-		var columnCounter = 0
-
-		var posAtTokenStart = 0
-
-		var rowAtTokenStart = 1
-
-		var columnAtTokenStart = 0
-
-		val location: CodeLocation get() = CodeLocation(posAtTokenStart, rowAtTokenStart,columnAtTokenStart + 1)
-
-		fun applyFrom(other: State): State {
-			this.pos = other.pos
-			this.currentChar = other.currentChar
-			this.posAtTokenStart = other.posAtTokenStart
-			this.rowCounter = other.rowCounter
-			this.columnCounter = other.columnCounter
-			return this
+	override fun nextTokenImpl(state: State): Token<Any> {
+		if (isEqual(state)) {
+			return equal(state)
 		}
-	}
 
-	private val state = State()
-
-	private val peekState = State()
-
-	val location: CodeLocation get() = state.location
-
-	/**
-	 * Scans more text and returns the next [Token].
-	 * @throws [SyntaxError] if a syntax error was detected
-	 */
-	fun nextToken(): Token<Any> = nextToken(state)
-
-	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
-
-	private fun nextToken(state: State): Token<Any> {
-		state.posAtTokenStart = state.pos
-		state.rowAtTokenStart = state.rowCounter
-		state.columnAtTokenStart = state.columnCounter
-
-		while (state.currentChar != null) {
-
-			if (isWhitespace(state)) {
-				skipWhitespace(state)
-				continue
-			}
-
-			if (isComment(state)) {
-				advance(state)
-				advance(state)
-				skipComment(state)
-				continue
-			}
-
-			if (isLiteral(state)) {
-				return literal(state)
-			}
-
-			if (state.currentChar!! == '\'') {
-				return quotedId(state)
-			}
-
-			if (state.currentChar!!.isLetter()) {
-				return id(state)
-			}
-
-			if (isEqual(state)) {
-				return equal(state)
-			}
-
-			if (isDifferent(state)) {
-				return diff(state)
-			}
-
-			if (isSmallerEqual(state)) {
-				return smallerEqual(state)
-			}
-
-			if (isGreaterEqual(state)) {
-				return greaterEqual(state)
-			}
-
-			if (isShiftLeft(state)) {
-				return shiftLeft(state)
-			}
-
-			if (isShiftRight(state)) {
-				return shiftRight(state)
-			}
-
-			when (state.currentChar!!) {
-				'/' -> return advanceWith(state, DIVIDE_TOKEN)
-				'+' -> return advanceWith(state, PLUS_TOKEN)
-				'-' -> return advanceWith(state, MINUS_TOKEN)
-				'*' -> return advanceWith(state, MULTIPLY_TOKEN)
-				'(' -> return advanceWith(state, LPAREN_TOKEN)
-				')' -> return advanceWith(state, RPAREN_TOKEN)
-				'=' -> return advanceWith(state, ASSIGN_TOKEN)
-				'{' -> return advanceWith(state, LCURLEY_TOKEN)
-				'}' -> return advanceWith(state, RCURLEY_TOKEN)
-				'<' -> return advanceWith(state, SMALLER_TOKEN)
-				'>' -> return advanceWith(state, GREATER_TOKEN)
-				'%' -> return advanceWith(state, MOD_TOKEN)
-				':' -> return advanceWith(state, COLON_TOKEN)
-				'^' -> return advanceWith(state, CARET_TOKEN)
-				'[' -> return advanceWith(state, LEFT_BRACKET_TOKEN)
-				']' -> return advanceWith(state, RIGHT_BRACKET_TOKEN)
-				'?' -> return advanceWith(state, QUESTION_MARK_TOKEN)
-				'@' -> return advanceWith(state, AT_TOKEN)
-				'#' -> return advanceWith(state, HASH_TOKEN)
-				'.' -> return advanceWith(state, DOT_TOKEN)
-				',' -> return advanceWith(state, COMMA_TOKEN)
-				'"' -> return advanceWith(state, DOUBLE_QUOTE_TOKEN)
-			}
-
-			throw SyntaxError(state.location, Translations.getString("base.dsl.invalidCharacter.msg", "${state.currentChar}"))
+		if (isDifferent(state)) {
+			return diff(state)
 		}
-		return EOF_TOKEN
-	}
 
-	/** Determines whether the current character is the begin of a comment.*/
-	private fun isComment(state: State): Boolean = state.currentChar == '/' && peek(state) == '/'
+		if (isSmallerEqual(state)) {
+			return smallerEqual(state)
+		}
+
+		if (isGreaterEqual(state)) {
+			return greaterEqual(state)
+		}
+
+		if (isShiftLeft(state)) {
+			return shiftLeft(state)
+		}
+
+		if (isShiftRight(state)) {
+			return shiftRight(state)
+		}
+
+		when (state.currentChar!!) {
+			'/' -> return advanceWith(state, DIVIDE_TOKEN)
+			'+' -> return advanceWith(state, PLUS_TOKEN)
+			'-' -> return advanceWith(state, MINUS_TOKEN)
+			'*' -> return advanceWith(state, MULTIPLY_TOKEN)
+			'(' -> return advanceWith(state, LPAREN_TOKEN)
+			')' -> return advanceWith(state, RPAREN_TOKEN)
+			'=' -> return advanceWith(state, ASSIGN_TOKEN)
+			'{' -> return advanceWith(state, LCURLEY_TOKEN)
+			'}' -> return advanceWith(state, RCURLEY_TOKEN)
+			'<' -> return advanceWith(state, SMALLER_TOKEN)
+			'>' -> return advanceWith(state, GREATER_TOKEN)
+			'%' -> return advanceWith(state, MOD_TOKEN)
+			':' -> return advanceWith(state, COLON_TOKEN)
+			'^' -> return advanceWith(state, CARET_TOKEN)
+			'[' -> return advanceWith(state, LEFT_BRACKET_TOKEN)
+			']' -> return advanceWith(state, RIGHT_BRACKET_TOKEN)
+			'?' -> return advanceWith(state, QUESTION_MARK_TOKEN)
+			'@' -> return advanceWith(state, AT_TOKEN)
+			'#' -> return advanceWith(state, HASH_TOKEN)
+			'.' -> return advanceWith(state, DOT_TOKEN)
+			',' -> return advanceWith(state, COMMA_TOKEN)
+		}
+
+		return super.nextTokenImpl(state)
+	}
 
 	private fun isEqual(state: State): Boolean = state.currentChar == '=' && peek(state) == '='
 
@@ -237,125 +139,6 @@ open class Lexer(private val text: String) {
 	private fun isShiftLeft(state: State): Boolean = state.currentChar == '<' && peek(state) == '<'
 
 	private fun isShiftRight(state: State): Boolean = state.currentChar == '>' && peek(state) == '>'
-
-	private fun isLong(state: State): Boolean = state.currentChar!!.isDigit()
-
-	private fun isString(state: State): Boolean = state.currentChar!! == '\"'
-
-	protected open fun isNumber(state: State): Boolean = isLong(state)
-
-	protected open fun isLiteral(state: State): Boolean = isNumber(state) || isString(state)
-
-	private fun skipComment(state: State) {
-		while (state.currentChar != null && state.currentChar != '\n') {
-			advance(state)
-		}
-		advance(state)
-	}
-
-	protected open fun literal(state: State): Token<Any> = number(state)
-
-	protected open fun number(state: State): Token<Any> =
-		when {
-			isLong(state) -> literalToken(long(state))
-			isString(state) -> literalToken(string(state))
-			else -> throw SyntaxError(state.location, Translations.getString("base.dsl.unknownLiteral.msg"))
-		}
-
-	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
-	protected fun peek(state: State): Char? = peek(state, 1)
-
-	protected fun peek(state: State, count: Int): Char? {
-		val peekPos = state.pos + count
-		if (peekPos > text.length - 1) {
-			return null
-		}
-		return text[peekPos]
-	}
-
-	/** Advances [State.pos] one position and updates [State.currentChar].*/
-	protected fun advance(state: State) {
-		if (state.currentChar == '\n') {
-			state.rowCounter++
-			state.columnCounter = 0
-		}
-		state.columnCounter++
-		state.pos++
-		state.currentChar = if (state.pos > text.length - 1) null else text[state.pos]
-	}
-
-	private fun advanceWith(state: State, token: Token<Any>): Token<Any> {
-		advance(state)
-		return token
-	}
-
-	private fun isWhitespace(state: State): Boolean =
-		state.currentChar != null && state.currentChar!!.isWhitespace()
-
-	/** Advances until non-whitespace [State.currentChar] is non-whitespace.*/
-	private fun skipWhitespace(state: State) {
-		while (isWhitespace(state)) {
-			advance(state)
-		}
-	}
-
-	/** Returns a multi-digit [Long] consumed from the input text.*/
-	protected fun long(state: State): Long {
-		val result = StringBuilder()
-		while (state.currentChar != null && state.currentChar!!.isDigit()) {
-			result.append(state.currentChar!!)
-			advance(state)
-		}
-		try {
-			return result.toString().toLong()
-		} catch (e: NumberFormatException) {
-			throw SyntaxError(state.location, Translations.getString("base.dsl.illegalNumber.msg", "${result.ifEmpty { state.currentChar }}"))
-		}
-	}
-
-	private fun id(state: State): Token<String> {
-		val result = StringBuilder()
-		while (state.currentChar != null && state.currentChar!!.isLetterOrDigit()) {
-			result.append(state.currentChar)
-			advance(state)
-		}
-		val name = result.toString()
-		return RESERVED_KEYWORDS.getOrElse(name) { idToken(name) }
-	}
-
-	private fun quotedId(state: State): Token<String> {
-		val result = StringBuilder()
-		advance(state)
-		while (state.currentChar != null && state.currentChar != '\'') {
-			result.append(state.currentChar)
-			advance(state)
-		}
-		if (state.currentChar == '\'') {
-			advance(state)
-		} else {
-			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedSingleQuote.msg"))
-		}
-		val id = result.toString()
-		if (id.isBlank()) {
-			throw SyntaxError(state.location, Translations.getString("base.dsl.emptyIdentifier.msg"))
-		}
-		return idToken(id)
-	}
-
-	private fun string(state: State): String {
-		val result = StringBuilder()
-		advance(state)
-		while (state.currentChar != null && state.currentChar != '\"') {
-			result.append(state.currentChar)
-			advance(state)
-		}
-		if (state.currentChar == '\"') {
-			advance(state)
-		} else {
-			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedDoubleQuote.msg"))
-		}
-		return result.toString()
-	}
 
 	private fun equal(state: State): Token<Unit> {
 		advance(state)
