@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
-import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsProvider
+import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsParams
 import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsSwing
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
@@ -43,8 +43,9 @@ object GraphModuleJvm : AbstractModule() {
 
 	var projectAkrabClientServiceJvm: () -> ProjectAkrabClientServiceJvm = { throw UnsupportedOperationException() }
 
-	var libraryTreeViewActionsProvider: LibraryTreeViewActionsProvider =
-		LibraryTreeViewActionsProvider { params -> LibraryTreeViewActionsSwing(params.controller, params.type, params.application) }
+	// Tried a function interface, but the Java obfuscator didn't like it
+	var libraryTreeViewActionsProvider: (LibraryTreeViewActionsParams) -> LibraryTreeViewActionsSwing =
+		{ params -> LibraryTreeViewActionsSwing(params.controller, params.type, params.application) }
 
 	override fun initialize() {
 		BaseModuleJvm.require()

@@ -84,8 +84,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
-		GraphModuleJvm.libraryTreeViewActionsProvider = LibraryTreeViewActionsProvider {
-			params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
+		GraphModuleJvm.libraryTreeViewActionsProvider = {
+				params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
 		}
 
 		GraphModuleJvm.require()

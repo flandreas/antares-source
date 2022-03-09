@@ -33,7 +33,7 @@ class LibraryTreeViewSwing(
 
 	private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
 
-	val actions = GraphModuleJvm.libraryTreeViewActionsProvider.provide(
+	val actions = GraphModuleJvm.libraryTreeViewActionsProvider(
 		LibraryTreeViewActionsParams(controller, controller.type, application))
 
 	init {

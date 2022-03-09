@@ -13,10 +13,6 @@ import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode
 
-fun interface LibraryTreeViewActionsProvider {
-	fun provide(params: LibraryTreeViewActionsParams): LibraryTreeViewActionsSwing
-}
-
 class LibraryTreeViewActionsParams(
 	val controller: LibraryTreeViewController,
 	val type: LibraryTreeViewType,
