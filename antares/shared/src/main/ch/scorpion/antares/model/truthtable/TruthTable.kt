@@ -59,6 +59,12 @@ class TruthTable(
 		notifyListeners(row, column, value)
 	}
 
+	fun setColumnValues(column: Int, vararg values: Bit) {
+		for (row in values.indices) {
+			setValue(row, column, values[row])
+		}
+	}
+
 	fun getColumnName(column: Int): String = getColumn(column).name
 
 	fun addListener(l: TruthTableListener) {

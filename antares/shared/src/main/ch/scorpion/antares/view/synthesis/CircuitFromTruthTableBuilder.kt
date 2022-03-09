@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.gate.OrGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -40,15 +41,22 @@ class CircuitFromTruthTableBuilder(
 		private const val AND_Y = NOT_Y + SCALE * 8
 		private const val AND_DIST_X = SCALE * 12
 		private const val AND_GAP_Y = SCALE * 4
+		private const val EMPTY_AND_GATE_HEIGHT = SCALE * 12
 		private const val OR_WIRE_DIST = SCALE * 2
 		private const val OR_MIN_DIST_X = SCALE * 12
 		private const val OUTPUT_DIST_X = SCALE * 4
 	}
 
-	private data class OrTerm(
+	private data class AndTermView(
+		val andTerm: AndTerm,
+		var yPos: Int = 0,
+		var verticeView: VerticeView<*>? = null
+	)
+
+	private data class OrTermView(
 		val outputName: String,
-		val andTerms: List<AndTerm>,
-		val andOrConstantViews: MutableList<VerticeView<*>> = mutableListOf(),
+		val andTermViews: MutableList<AndTermView> = mutableListOf(),
+		var yPos: Int = 0,
 		var orView: OrGateView? = null
 	)
 
@@ -67,7 +75,7 @@ class CircuitFromTruthTableBuilder(
 	 * @throws CircuitFromTruthTableBuilderError if the required gate input counts exceed the system limit
 	 */
 	fun build() {
-		val orTerms = mutableListOf<OrTerm>()
+		val orTerms = mutableListOf<OrTermView>()
 
 		with (truthTable) {
 			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
@@ -85,18 +93,16 @@ class CircuitFromTruthTableBuilder(
 
 		buildInputWires()
 
-		orTerms.forEachIndexed { index, orTerm ->
-			buildAndWires(orTerm)
-		}
+		orTerms.forEach { buildAndWires(it) }
 
 		// Calculate the location of the OR stack such that there is enough space for
 		// wiring AND outputs to OR inputs
-		val maxOrInputCount = orTerms.maxOf { it.andTerms.size }
+		val maxOrInputCount = orTerms.maxOf { it.andTermViews.size }
 		x += OR_MIN_DIST_X + maxOrInputCount / 2 * OR_WIRE_DIST
 
 		orTerms.forEach {
 			buildOrGate(it)
-			buildOrWires(it)
+			buildOrInputWires(it)
 		}
 
 		x += OUTPUT_DIST_X
@@ -104,12 +110,12 @@ class CircuitFromTruthTableBuilder(
 		orTerms.forEach { buildOutput(it) }
 	}
 
-	private fun createOrTerm(outputColumn: Int): OrTerm {
+	private fun createOrTerm(outputColumn: Int): OrTermView {
 		with (truthTable) {
 			val andTerms = DnfToDigitalGateStructure(
 				minimizeToDNF(getMinTerms(outputColumn), getDontCares(outputColumn), inputColumnCount)
 			).build()
-			return OrTerm(getColumnName(outputColumn), andTerms)
+			return OrTermView(getColumnName(outputColumn), andTerms.map { AndTermView(it) }.toMutableList())
 		}
 	}
 
@@ -123,20 +129,27 @@ class CircuitFromTruthTableBuilder(
 		}
 	}
 
-	private fun buildAndGates(orTerm: OrTerm) {
-		for (andTerm in orTerm.andTerms) {
-			if (andTerm.factors.size == 1 && andTerm.factors[0].constant != null) {
-				val constantView = circuitBuilder.addConstant(DigitalSignalFactory.of(true), Point2D(x, andY))
-				LOG.trace("Adding Constant ${orTerm.andOrConstantViews.size}")
-				orTerm.andOrConstantViews.add(constantView)
-				andY += constantView.bounds.heightInt + AND_GAP_Y
+	private fun buildAndGates(orTerm: OrTermView) {
+		for (andTermView in orTerm.andTermViews) {
+			if (andTermView.andTerm.factors.size == 1) {
+				if (andTermView.andTerm.factors[0].constant == null) {
+					LOG.trace("Omit AND gate for single-factor AND term")
+					andTermView.yPos = andY
+					andTermView.verticeView = null
+					andY += EMPTY_AND_GATE_HEIGHT
+				} else {
+					val constantView = circuitBuilder.addConstant(DigitalSignalFactory.of(true), Point2D(x, andY))
+					andTermView.yPos = andY
+					andTermView.verticeView = constantView
+					andY += constantView.bounds.heightInt + AND_GAP_Y
+				}
 			} else {
-				if (andTerm.factors.size > InputCount.values().last().count) {
+				if (andTermView.andTerm.factors.size > InputCount.values().last().count) {
 					throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxAndInputCountExceeded.error"))
 				}
-				val andGateView = circuitBuilder.addAnd(InputCount.of(andTerm.factors.size), Point2D(x, andY))
-				LOG.trace("Adding AND gate ${orTerm.andOrConstantViews.size}")
-				orTerm.andOrConstantViews.add(andGateView)
+				val andGateView = circuitBuilder.addAnd(InputCount.of(andTermView.andTerm.factors.size), Point2D(x, andY))
+				andTermView.yPos = andY
+				andTermView.verticeView = andGateView
 				andY += andGateView.bounds.heightInt + AND_GAP_Y
 			}
 		}
@@ -158,106 +171,124 @@ class CircuitFromTruthTableBuilder(
 		}
 	}
 
-	private fun buildAndWires(orTerm: OrTerm) {
-		orTerm.andTerms.forEachIndexed { index, andTerm ->
-			if (andTerm.factors.size > 1 || andTerm.factors[0].inputIndex != null) {
-				val vv = orTerm.andOrConstantViews[index]
-				andTerm.factors.forEachIndexed { factorIndex, factor ->
-
-
-					val ev = if (factor.inverted!!) {
-						notEdgeViews[factor.inputIndex!!]
-					} else {
-						inputEdgeViews[factor.inputIndex!!]
-					}
-					val destPort = vv.model.getInput<DigitalSignal>(factorIndex + 1)
-					LOG.trace("Wiring Port ${destPort.portId} of AND ${index}: factorIndex=$factorIndex")
-
-					val destPortView = vv.getPortView(destPort)
-					val splitX = ev.polyline.getFirstPoint().x
-					val splitY = vv.getPortConnectionPoint(destPort).y
-
-					val tailEv = circuitBuilder
-						.split(ev, 0, Point2D(splitX, splitY), destPortView)
-						.tailEdgeView
-
-					// Replace vertical EdgeView with tail of current split result
-					if (factor.inverted) {
-						notEdgeViews[factor.inputIndex] = tailEv
-					} else {
-						inputEdgeViews[factor.inputIndex] = tailEv
-					}
+	private fun buildAndWires(orTerm: OrTermView) {
+		orTerm.andTermViews.forEachIndexed { index, andTermView ->
+			if (andTermView.verticeView is AndGateView) {
+				// vv is either and AndGateView (for multi-factor terms) or a ConstantView (for constant terms).
+				// If vv is empty, andTerm is a single-factor term (no AND gate) that doesn't need wiring
+				// in the "AND stack".
+				andTermView.andTerm.factors.forEachIndexed { factorIndex, factor ->
+					splitInputWire(factor, andTermView.verticeView!!, factorIndex + 1)
 				}
 			}
 		}
 	}
 
-	private fun buildOrGate(orTerm: OrTerm) {
-		if (orTerm.andTerms.size == 1) {
-			// Constant, not OR gate necessary
-			return
+	private fun splitInputWire(
+		factor: DnfToDigitalGateStructure.Companion.Factor,
+		destVerticeView: VerticeView<*>,
+		destPortId: Int
+	) {
+		val ev = if (factor.inverted!!) {
+			notEdgeViews[factor.inputIndex!!]
+		} else {
+			inputEdgeViews[factor.inputIndex!!]
 		}
+		val destPort = destVerticeView.model.getInput<DigitalSignal>(destPortId)
+		val destPortView = destVerticeView.getPortView(destPort)
+		val splitX = ev.polyline.getFirstPoint().x
+		val splitY = destVerticeView.getPortConnectionPoint(destPort).y
 
-		if (orTerm.andTerms.size > InputCount.values().last().count) {
+		val tailEv = circuitBuilder
+			.split(ev, 0, Point2D(splitX, splitY), destPortView)
+			.tailEdgeView
+
+		// Replace vertical EdgeView with tail of current split result
+		if (factor.inverted) {
+			notEdgeViews[factor.inputIndex] = tailEv
+		} else {
+			inputEdgeViews[factor.inputIndex] = tailEv
+		}
+	}
+
+	private fun buildOrGate(orTerm: OrTermView) {
+		if (orTerm.andTermViews.size > InputCount.values().last().count) {
 			throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxOrInputCountExceeded.error"))
 		}
 
-		val orY = orTerm
-			.andOrConstantViews
-			.map { it.getPortConnectionPoint(it.model.getOutput<DigitalSignal>()).yInt }
+		orTerm.yPos = orTerm
+			.andTermViews
+			.map { it.yPos }
 			.average()
 			.toInt()
 
-		orTerm.orView = circuitBuilder.addOr(InputCount.of(orTerm.andTerms.size), Point2D(x, orY))
+		if (orTerm.andTermViews.size == 1) {
+			// Constant or direct input value, not OR gate necessary
+			orTerm.orView = null
+			return
+		}
+
+		orTerm.orView = circuitBuilder.addOr(InputCount.of(orTerm.andTermViews.size), Point2D(x, orTerm.yPos))
 	}
 
-	private fun buildOrWires(orTerm: OrTerm) {
+	private fun buildOrInputWires(orTerm: OrTermView) {
 		if (orTerm.orView != null) {
 			val firstPort = orTerm.orView!!.getPortConnectionPoint(orTerm.orView!!.getPort(1))
 
 			var upperX = firstPort.x - OR_WIRE_DIST
-			for (i in 1..orTerm.andTerms.size / 2) {
-				buildOrWire(orTerm, i, upperX)
+			for (i in 1..orTerm.andTermViews.size / 2) {
+				buildOrInputWire(orTerm, i, upperX)
 				upperX -= OR_WIRE_DIST
 			}
 
 			var lowerX = firstPort.x - OR_WIRE_DIST
-			for (i in orTerm.andTerms.size downTo orTerm.andTerms.size / 2) {
-				buildOrWire(orTerm, i, lowerX)
+			for (i in orTerm.andTermViews.size downTo orTerm.andTermViews.size / 2) {
+				buildOrInputWire(orTerm, i, lowerX)
 				lowerX -= OR_WIRE_DIST
 			}
 		}
 	}
 
-	private fun buildOrWire(orTerm: OrTerm, portId: Int, wireX: Double) {
+	private fun buildOrInputWire(orTerm: OrTermView, portId: Int, wireX: Double) {
 		LOG.trace("Build wire for OR input port $portId")
-		val vv = orTerm.andOrConstantViews[portId - 1]
-		val destPort = orTerm.orView!!.model.getInput<DigitalSignal>(portId)
-		val origPoint = vv.getPortConnectionPoint(vv.model.getOutput<DigitalSignal>())
-		val destPoint = orTerm.orView!!.getPortConnectionPoint(destPort)
-		val points = mutableListOf<Point2D>()
+		val andTermView = orTerm.andTermViews[portId - 1]
 
-		points.add(origPoint)
-		points.add(Point2D(wireX, origPoint.y))
-		points.add(Point2D(wireX, destPoint.y))
-		points.add(destPoint)
+		if (andTermView.verticeView != null) {
+			// Connect OrGateView input with output of AndGateView or ConstantView
+			andTermView.verticeView?.let { vv ->
+				val destPort = orTerm.orView!!.model.getInput<DigitalSignal>(portId)
+				val destPoint = orTerm.orView!!.getPortConnectionPoint(destPort)
+				val origPoint = vv.getPortConnectionPoint(vv.model.getOutput<DigitalSignal>())
+				val points = mutableListOf<Point2D>()
 
-		if (!destPort.isConnected) {
-			circuitBuilder.connect(vv, vv.model.getOutput(), orTerm.orView!!, destPort, points)
+				points.add(origPoint)
+				points.add(Point2D(wireX, origPoint.y))
+				points.add(Point2D(wireX, destPoint.y))
+				points.add(destPoint)
+
+				if (!destPort.isConnected) {
+					circuitBuilder.connect(vv, vv.model.getOutput(), orTerm.orView!!, destPort, points)
+				}
+			}
+		} else {
+			// Connect OrGateView input with input wire
+			val factor = andTermView.andTerm.factors[0]
+			splitInputWire(factor, orTerm.orView!!, portId)
 		}
 	}
 
-	private fun buildOutput(orTerm: OrTerm) {
-		val vv = if (orTerm.orView == null) {
-			// Wire from Constant to output
-			orTerm.andOrConstantViews[0]
-		} else {
-			// Wire from OR gate to output
-			orTerm.orView!!
-		}
+	private fun buildOutput(orTerm: OrTermView) {
+		val outputView = circuitBuilder.addOutput(orTerm.outputName, Point2D(x, orTerm.yPos))
 
-		val p = Point2D(x, vv.getPortConnectionPoint(vv.model.getOutput<DigitalSignal>()).yInt)
-		val outputView = circuitBuilder.addOutput(orTerm.outputName, p)
-		circuitBuilder.connect(vv, outputView)
+		if (orTerm.orView != null) {
+			// Wire from OR gate to GraphOutput
+			circuitBuilder.connect(orTerm.orView!!, outputView)
+		} else if (orTerm.andTermViews[0].verticeView != null) {
+			// Wire from AndGateView or Constant to GraphOutput
+			circuitBuilder.connect(orTerm.andTermViews[0].verticeView!!, outputView)
+		} else {
+			// Wire from input wire to GraphOutput
+			splitInputWire(orTerm.andTermViews[0].andTerm.factors[0], outputView, 1)
+		}
 	}
 }
