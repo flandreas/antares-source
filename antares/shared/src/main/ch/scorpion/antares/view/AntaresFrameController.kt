@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.DigitalGraphViewService
@@ -19,6 +20,8 @@ interface AntaresFrame : GraphFrame {
 
 	fun createTruthTableDesktopViewItem(request: ShowTruthTableItemRequest): GraphDesktopViewItem
 
+	fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem
+
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
 	fun shouldReplaceLightColor(): Boolean
@@ -33,11 +36,13 @@ class AntaresFrameController(
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }
 	private val openTruthTableRequestHandler: EventHandler<ShowTruthTableItemRequest> = { handle(it) }
+	private val openBooleanExpressionRequestHandler: EventHandler<ShowBooleanExpressionItemRequest> = { handle(it) }
 	private val defaultLightColorHandler: EventHandler<DefaultLightColorEvent> = { handle(it) }
 
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class, openMemoryContentsRequestHandler)
 		eventBus.register(ShowTruthTableItemRequest::class, openTruthTableRequestHandler)
+		eventBus.register(ShowBooleanExpressionItemRequest::class, openBooleanExpressionRequestHandler)
 		eventBus.register(DefaultLightColorEvent::class, defaultLightColorHandler)
 	}
 
@@ -60,6 +65,10 @@ class AntaresFrameController(
 
 	private fun handle(event: ShowTruthTableItemRequest) {
 		graphPanelViewController.desktopController.show(view.createTruthTableDesktopViewItem(event))
+	}
+
+	private fun handle(event: ShowBooleanExpressionItemRequest) {
+		graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(event))
 	}
 
 	private fun handle(event: DefaultLightColorEvent) {

@@ -2,6 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
+import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
@@ -73,6 +74,7 @@ class AntaresMenuBarBuilder(
 		with (graphFrame.controller.graphPanelViewController.libraryPanelController.libraryTreeViewController) {
 			menu.add(JMenuItem(ActionWrapperSwing(NewTruthTableAction(this))))
 			menu.add(JMenuItem(ActionWrapperSwing(CreateCircuitFromTruthTableAction(this))))
+			menu.add(JMenuItem(ActionWrapperSwing(NewBooleanExpressionAction(this))))
 		}
 		return menu
 	}

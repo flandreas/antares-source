@@ -1,7 +1,10 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
+import ch.scorpion.antares.model.expression.OpenBooleanExpressionAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.app.Application
@@ -23,28 +26,37 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectTruthTablePopupMenu = JPopupMenu()
 	private val libraryTruthTablePopupMenu = JPopupMenu()
 
+	private val projectExpressionPopupMenu = JPopupMenu()
+	private val libraryExpressionPopupMenu = JPopupMenu()
+
 	private val newTruthTableAction = NewTruthTableAction(controller)
 	private val openTruthTableAction = OpenTruthTableAction(application.controller as GraphDataViewController, controller)
 	private val createCircuitAction = CreateCircuitFromTruthTableAction(controller)
+	private val newBooleanExpressionAction = NewBooleanExpressionAction(controller)
+	private val openBooleanExpressionAction = OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller)
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 	}
 
 	override fun fillMainProjectRootCreateActions() {
 		super.fillMainProjectRootCreateActions()
 		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
+		projectRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 	}
 
 	override fun fillMainLibraryDirectoryCreateActions() {
 		super.fillMainLibraryDirectoryCreateActions()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 	}
 
 	override fun fillMainLibraryRootCreateActions() {
 		super.fillMainLibraryRootCreateActions()
 		libraryRootMenu.add(ActionWrapperSwing(newTruthTableAction))
+		libraryRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 	}
 
 	override fun fillMain() {
@@ -57,6 +69,12 @@ class DigitalLibraryTreeViewActionsSwing(
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 		libraryTruthTablePopupMenu.add(ActionWrapperSwing(createCircuitAction))
+
+		projectExpressionPopupMenu.add(ActionWrapperSwing(openBooleanExpressionAction))
+		projectExpressionPopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
+
+		libraryExpressionPopupMenu.add(ActionWrapperSwing(openBooleanExpressionAction))
+		libraryExpressionPopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 
 	override fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
@@ -68,6 +86,13 @@ class DigitalLibraryTreeViewActionsSwing(
 				projectTruthTablePopupMenu
 			} else {
 				libraryTruthTablePopupMenu
+			}
+		}
+		if (treeNode.userObject is BooleanExpressionLibraryItem) {
+			return if ((treeNode.userObject as BooleanExpressionLibraryItem).library is Project) {
+				projectExpressionPopupMenu
+			} else {
+				libraryExpressionPopupMenu
 			}
 		}
 		return super.getPopupMenu(treeNode)

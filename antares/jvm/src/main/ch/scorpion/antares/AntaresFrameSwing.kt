@@ -1,18 +1,23 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.AntaresFrame
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItemSwing
 import ch.scorpion.antares.view.addressable.AddressableContentsPanel
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
+import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.GraphFrame
+import ch.scorpion.jabbah.graph.ui.GraphFrameActions
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import java.awt.Frame
 import java.awt.Toolkit
@@ -41,6 +46,9 @@ class AntaresFrameSwing(
 
 	override fun createTruthTableDesktopViewItem(request: ShowTruthTableItemRequest): GraphDesktopViewItem =
 		TruthTableDesktopItemSwing(request.item, commandManager = editor.commandManager)
+
+	override fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem =
+		BooleanExpressionDesktopItemSwing(request.item, commandManager = editor.commandManager)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

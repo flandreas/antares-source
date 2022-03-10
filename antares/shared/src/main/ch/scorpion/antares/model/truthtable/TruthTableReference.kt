@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.truthtable
 
+import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -7,7 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Encapsulates a reference to a [TruthTable] and updates the instance references
- * whenever
+ * whenever the [ApplicationData] changes due recovering from undoable snapshots.
  */
 class TruthTableReference(
 	private val item: TruthTableLibraryItem,
@@ -27,6 +28,7 @@ class TruthTableReference(
 
 	fun dispose() {
 		eventBus.unregister(applicationDataContentHandler)
+		dataListeners.forEach { truthTable.removeListener(it) }
 	}
 
 	fun addDataListener(l: TruthTableListener) {

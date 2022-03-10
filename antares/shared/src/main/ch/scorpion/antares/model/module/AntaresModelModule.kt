@@ -6,7 +6,9 @@ import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
+import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
@@ -114,6 +116,8 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("truthTableInputColumn", TruthTableInputColumn::class)
 		typeMap.register("truthTableOutputColumn", TruthTableOutputColumn::class)
 		typeMap.register("truthTableLibraryItem", TruthTableLibraryItem::class)
+		typeMap.register("expression", BooleanExpressionStorable::class)
+		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
 	}
 
 	private fun registerGraphParamTypes() {
