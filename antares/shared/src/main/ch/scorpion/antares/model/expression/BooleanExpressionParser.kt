@@ -25,9 +25,11 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  * </pre>
  */
 class BooleanExpressionParser(
+	private val expectAssignment: Boolean,
 	lexer: BooleanExpressionLexer
 ) : AbstractBaseParser(lexer) {
-	constructor(text: String): this(BooleanExpressionLexer(text))
+
+	constructor(expectAssignment: Boolean, text: String): this(expectAssignment, BooleanExpressionLexer(text))
 
 	companion object {
 		private val TERM_OPERATORS = setOf(PLUS)
@@ -35,7 +37,11 @@ class BooleanExpressionParser(
 
 	}
 
-	override fun parse(): Node = Compound(lexer.location, assignmentList())
+	override fun parse(): Node = if (expectAssignment) {
+		Compound(lexer.location, assignmentList())
+	} else {
+		expr()
+	}
 
 	private fun assignmentList(): List<Node> {
 		val node = assignment()

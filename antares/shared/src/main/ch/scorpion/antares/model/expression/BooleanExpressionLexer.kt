@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.expression
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseLexer
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.Token
 import ch.scorpion.jabbah.base.dsl.TokenType
 
@@ -27,4 +29,15 @@ class BooleanExpressionLexer(text: String): BaseLexer(text) {
 
 		return super.nextTokenImpl(state)
 	}
+
+	override fun literal(state: State): Token<Any> = literalToken(booleanLiteral(state))
+
+	private fun booleanLiteral(state: State): Boolean =
+		when (long(state)) {
+			0L -> false
+			1L -> true
+			else -> throw SyntaxError(
+				state.location,
+				Translations.getString("base.dsl.illegalNumber.msg", "${state.currentChar}"))
+		}
 }

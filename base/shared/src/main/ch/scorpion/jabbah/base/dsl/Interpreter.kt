@@ -1,77 +1,23 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.Issue
-import ch.scorpion.jabbah.base.IssueImpl
-import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.pow
 
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
  */
 open class Interpreter(
-	protected val rootNode: Node,
-	protected val memory: Memory = Memory()
-) {
+	rootNode: Node,
+	memory: Memory = Memory()
+) : AbstractBaseInterpreter(rootNode, memory) {
 
 	constructor(parser: Parser): this(parser.parse())
 	constructor(program: String): this(Parser(program))
 
-	protected var params: Any? = null
-		private set
-
-	/** Set by "return" statement to the expression to be returned and immediately quit interpretation.*/
-	private var returnValue: Any? = null
-
-	/**
-	 * Runs the program defined by the AST in [rootNode].
-	 *
-	 * @param params the optional parameters on which execution logic might depend on. The
-	 * values of these parameters might be different for every call of [interpret].
-	 */
-	fun interpret(params: Any? = null): Any {
-		returnValue = null
-		this.params = params
-		try {
-			return interpret(rootNode)
-		} finally {
-			// Don't clear memory BEFORE interpretation in order not to break Memory.preset()
-			memory.clear()
-		}
-	}
-
-	/**
-	 * Calls [interpret] and catches [DslError] by posting an [Issue] on the system's [EventBus].
-	 *
-	 * @param metaData used to describe [Issue]
-	 * @param params the optional parameters on which execution logic might depend on. The
-	 * values of these parameters might be different for every call of [interpret].
-	 */
-	fun interpretCatching(metaData: ScriptMetaData, params: Any? = null, rethrow: Boolean = false): Any {
-		return try {
-			interpret(params)
-		} catch (e: DslError) {
-			BaseModule.eventBus.post(IssueImpl(
-				severity = IssueSeverity.Error,
-				name = Translations.getString("base.dsl.scriptError.msg"),
-				description = e.toString(),
-				origin = metaData.origin,
-				context = metaData.context
-			))
-			if (rethrow) {
-				throw e
-			}
-			Unit
-		}
-	}
-
-	protected open fun interpret(node: Node): Any {
+	override fun interpret(node: Node): Any {
 		return when (node) {
 			is Block -> block(node)
-			is Compound -> compound(node)
 			is NoOp -> 0L
 			is UnaryOperation -> unaryOperation(node)
 			is BinaryOperation -> binaryOperation(node)
@@ -84,7 +30,7 @@ open class Interpreter(
 			is ForStatement -> forStatement(node)
 			is ReturnStatement -> returnStatement(node)
 			is FunctionCall -> functionCall(node)
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownASTNode.msg", "${node::class.simpleName}"))
+			else -> super.interpret(node)
 		}
 	}
 
@@ -92,18 +38,6 @@ open class Interpreter(
 		val result = interpret(node)
 		if (result !is Long) {
 			throw RuntimeError(node.location, Translations.getString("base.dsl.expectedNumber.msg"))
-		}
-		return result
-	}
-
-	private fun compound(node: Compound): Any {
-		var result: Any = 0L
-		// Tuning: Faster than with streams
-		for (i in 0 until node.children.size) {
-			result = interpret(node.children[i])
-			if (returnValue != null) {
-				return returnValue!!
-			}
 		}
 		return result
 	}
@@ -191,7 +125,7 @@ open class Interpreter(
 			PLUS -> +interpretAsLong(node.expr)
 			MINUS -> -interpretAsLong(node.expr)
 			NOT -> typedUnaryOp(node)
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
+			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownUnaryOperation.msg", node.op.type.id))
 		}
 
 	protected open fun typedUnaryOp(node: UnaryOperation): Any =
