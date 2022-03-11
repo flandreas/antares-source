@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.antares.model.expression.BooleanExpression
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.expression.StandardBooleanExpressionWriter
 import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.jabbah.base.Properties
@@ -78,7 +79,8 @@ class TruthTableService(
 			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
 				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
 				builder.append(
-					notation.dnfWriter
+					StandardBooleanExpressionWriter
+						.ofNotation(notation)
 						.write(this, DnfToBooleanExpression(truthTable, dnf).build(), col)
 				)
 				builder.append("\n")

@@ -92,71 +92,42 @@ abstract class AbstractBooleanExpressionWriter(
 }
 
 class StandardBooleanExpressionWriter(
-	private val andOp: String = "*",
-	private val orOp: String = "+",
-	private val trueConst: String = "1",
-	private val falseConst: String = "0",
-	private val notOp: String = "'",
-	isNotPostfix: Boolean = false
-): AbstractBooleanExpressionWriter(isNotPostfix) {
+	private val notation: BooleanExpressionNotation
+): AbstractBooleanExpressionWriter(notation.isNotPostfix) {
 
 	companion object {
 
-		/** Format: A * B' + A' * B + 0 */
-		val ARITHMETIC = StandardBooleanExpressionWriter(
-			andOp = "*",
-			orOp = "+",
-			trueConst = "1",
-			falseConst = "0",
-			notOp = "'",
-			isNotPostfix = true
-		)
+		val ARITHMETIC = StandardBooleanExpressionWriter(BooleanExpressionNotation.ARITHMETIC)
+		val LOGIC = StandardBooleanExpressionWriter(BooleanExpressionNotation.LOGIC)
+		val PROGRAMMING = StandardBooleanExpressionWriter(BooleanExpressionNotation.PROGRAMMING)
+		val VERBOSE = StandardBooleanExpressionWriter(BooleanExpressionNotation.VERBOSE)
 
-		val LOGIC = StandardBooleanExpressionWriter(
-			andOp = "∧",
-			orOp = "∨",
-			trueConst = "1",
-			falseConst = "0",
-			notOp = "¬",
-			isNotPostfix = false
-		)
-
-		val PROGRAMMING = StandardBooleanExpressionWriter(
-			andOp = "&&",
-			orOp = "||",
-			trueConst = "1",
-			falseConst = "0",
-			notOp = "!",
-			isNotPostfix = false
-		)
-
-		val VERBOSE = StandardBooleanExpressionWriter(
-			andOp = "AND",
-			orOp = "OR",
-			trueConst = "true",
-			falseConst = "false",
-			notOp = "NOT ",
-			isNotPostfix = false
-		)
+		fun ofNotation(notation: BooleanExpressionNotation): BooleanExpressionWriter =
+			when (notation) {
+				BooleanExpressionNotation.ARITHMETIC -> ARITHMETIC
+				BooleanExpressionNotation.LOGIC -> LOGIC
+				BooleanExpressionNotation.PROGRAMMING -> PROGRAMMING
+				BooleanExpressionNotation.VERBOSE -> VERBOSE
+			}
 	}
 
 	override fun writeAnd(builder: StringBuilder) {
-		builder.append(" $andOp ")
+		builder.append(" ${notation.andOp} ")
 	}
 
 	override fun writeOr(builder: StringBuilder) {
-		builder.append(" $orOp ")
+		builder.append(" ${notation.orOp} ")
 	}
 
 	override fun writeNot(builder: StringBuilder) {
-		builder.append(notOp)
+		builder.append(notation.notOp)
 	}
 
 	override fun writeConstant(constant: Boolean, builder: StringBuilder) {
 		if (constant) {
-			builder.append(trueConst)
+			builder.append(notation.trueConst)
 		} else {
-			builder.append(falseConst)
+			builder.append(notation.falseConst)
 		}
 	}
 }

@@ -4,14 +4,58 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 enum class BooleanExpressionNotation(
 	val customName: String,
-	val dnfWriter: BooleanExpressionWriter,
-	private val sample: String
+	private val sample: String,
+	val andOp: String,
+	val orOp: String,
+	val notOp: String,
+	val trueConst: String,
+	val falseConst: String,
+	val isNotPostfix: Boolean
 ) {
 
-	ARITHMETIC("arithmetic", StandardBooleanExpressionWriter.ARITHMETIC, "(A’ * B) + (A * B’) + 0"),
-	LOGIC("logic", StandardBooleanExpressionWriter.LOGIC, "(A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0"),
-	PROGRAMMING("programming", StandardBooleanExpressionWriter.PROGRAMMING, "(A && !B) || (!A && B) || false"),
-	VERBOSE("verbose", StandardBooleanExpressionWriter.VERBOSE, "(A AND NOT B) OR (NOT A AND B) OR false");
+	ARITHMETIC(
+		"arithmetic",
+		"(A’ * B) + (A * B’) + 0",
+		"*",
+		"+",
+		"'",
+		"1",
+		"0",
+		true
+	),
+
+	LOGIC(
+		"logic",
+		"(A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0",
+		"∧",
+		"∨",
+		"¬",
+		"1",
+		"0",
+		false
+	),
+
+	PROGRAMMING(
+		"programming",
+		"(A && !B) || (!A && B) || false",
+		"&&",
+		"||",
+		"!",
+		"1",
+		"0",
+		false
+	),
+
+	VERBOSE(
+		"verbose",
+		"(A AND NOT B) OR (NOT A AND B) OR false",
+		"AND",
+		"OR",
+		"NOT ", // Intentional trailing blank
+		"true",
+		"false",
+		false
+	);
 
 	companion object {
 
