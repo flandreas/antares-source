@@ -46,7 +46,7 @@ class BooleanExpressionParser(
 	private fun assignmentList(): List<Node> {
 		val node = assignment()
 		val list = mutableListOf(node)
-		while (currentToken!!.type != TokenType.EOF) {
+		while (currentToken!!.type != EOF) {
 			list.add(assignment())
 		}
 		return list

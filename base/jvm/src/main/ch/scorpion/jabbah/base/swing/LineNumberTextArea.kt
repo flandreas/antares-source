@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.base.swing
 
 import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.Font
 import javax.swing.JPanel
 import javax.swing.JScrollPane
@@ -15,15 +14,18 @@ import javax.swing.event.DocumentListener
 class LineNumberTextArea(
 	editable: Boolean = true,
 	text: String = "",
-	font: Font = FONT
+	font: Font = FONT,
+	rows: Int? = null,
+	columns: Int? = null
 ) : JPanel() {
 
 	companion object {
+		const val LINE_HEADER_COLUMN_COUNT = 4
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 	}
 
 	val mainTextArea = JTextArea(text)
-	private val lineNumberTextArea = JTextArea(getLineNumbers2())
+	private val lineNumberTextArea = JTextArea(getLineNumbers())
 	private val scrollPane = JScrollPane()
 
 	var text: String
@@ -40,8 +42,10 @@ class LineNumberTextArea(
 		mainTextArea.wrapStyleWord = true
 		mainTextArea.isEditable = editable
 		mainTextArea.font = font
-		mainTextArea.tabSize = 4
+		mainTextArea.tabSize = LINE_HEADER_COLUMN_COUNT
 		mainTextArea.document.addDocumentListener(TextListener())
+		rows?.let { mainTextArea.rows = it }
+		columns?.let { mainTextArea.columns = it }
 
 		lineNumberTextArea.isEditable = false
 		lineNumberTextArea.isEnabled = false
@@ -56,16 +60,15 @@ class LineNumberTextArea(
 		scrollPane.setRowHeaderView(lineNumberTextArea)
 		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
 		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-		scrollPane.preferredSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
 
 		add(scrollPane, BorderLayout.CENTER)
 	}
 
 	private fun updateLineNumbers() {
-		lineNumberTextArea.text = getLineNumbers2()
+		lineNumberTextArea.text = getLineNumbers()
 	}
 
-	private fun getLineNumbers2(): String {
+	private fun getLineNumbers(): String {
 		val text = StringBuilder()
 		for (i in 1..mainTextArea.lineCount) {
 			text.append("$i\n")

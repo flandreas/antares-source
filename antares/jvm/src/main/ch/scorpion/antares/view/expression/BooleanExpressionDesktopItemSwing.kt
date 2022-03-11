@@ -10,8 +10,9 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.LineNumberTextArea
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.CommandManager
@@ -24,6 +25,8 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.Dimension
+import java.awt.Font
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -37,7 +40,10 @@ class BooleanExpressionDesktopItemSwing(
 ) : AbstractGraphDesktopItemPanelSwing() {
 
 	companion object {
-		private val LOG by logger(BooleanExpressionDesktopItemSwing::class)
+		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
+		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
+
+		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 	}
 
 	private val ref = BooleanExpressionReference(item)
@@ -49,19 +55,18 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
-	private val expressionsTextArea = JTextArea()
+	private val expressionsTextArea = LineNumberTextArea(text = item.expressions.expressions, font = FONT, rows = 6, columns = 60)
 
 	private val minimizedTextArea = JTextArea()
 
 	private val applyAction = ApplyAction()
 
-	private val statusLabel = JLabel()
+	// Initially non-empty to provide a preferred height
+	private val messageLabel = JLabel(" ")
 
 	private val minimizedLabel = JLabel(Translations.getString("library.booleanExpression.minimized"))
 
 	init {
-		expressionsTextArea.text = item.expressions.expressions
-
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
 
@@ -74,13 +79,15 @@ class BooleanExpressionDesktopItemSwing(
 
 	private fun disableApplyActionForNoExpressionChanges() {
 		applyAction.enabled = false
-		expressionsTextArea.document.addDocumentListener(object : DocumentListener {
+		expressionsTextArea.mainTextArea.document.addDocumentListener(object : DocumentListener {
 			override fun insertUpdate(e: DocumentEvent?) { update() }
 			override fun removeUpdate(e: DocumentEvent?) { update() }
 			override fun changedUpdate(e: DocumentEvent?) { update() }
 
 			private fun update() {
 				applyAction.enabled = true
+				messageLabel.icon = null
+				messageLabel.text = null
 			}
 		})
 	}
@@ -101,16 +108,9 @@ class BooleanExpressionDesktopItemSwing(
 		tipLabel.border = BorderFactory.createEmptyBorder(5, 2, 5, 0)
 		panel.add(tipLabel)
 
-		expressionsTextArea.columns = 60
-		expressionsTextArea.rows = 6
+		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
 		expressionsTextArea.maximumSize = expressionsTextArea.preferredSize
-
-		val expressionsScrollPane = JScrollPane(expressionsTextArea)
-		expressionsScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
-		expressionsScrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-		expressionsScrollPane.alignmentX = Component.LEFT_ALIGNMENT
-		expressionsScrollPane.maximumSize = expressionsScrollPane.preferredSize
-		panel.add(expressionsScrollPane)
+		panel.add(expressionsTextArea)
 
 		val statusPanel = JPanel()
 		statusPanel.layout = BoxLayout(statusPanel, BoxLayout.LINE_AXIS)
@@ -120,11 +120,10 @@ class BooleanExpressionDesktopItemSwing(
 		applyButton.alignmentX = Component.LEFT_ALIGNMENT
 		statusPanel.add(applyButton)
 
-		statusLabel.alignmentX = Component.LEFT_ALIGNMENT
-		statusLabel.text = "This is the status"
-		statusLabel.foreground = java.awt.Color.RED
+		messageLabel.alignmentX = Component.LEFT_ALIGNMENT
+		messageLabel.preferredSize = Dimension(Integer.MAX_VALUE, messageLabel.preferredSize.height)
 		statusPanel.add(Box.createHorizontalStrut(10))
-		statusPanel.add(statusLabel)
+		statusPanel.add(messageLabel)
 		statusPanel.maximumSize = statusPanel.preferredSize
 
 		panel.add(Box.createVerticalStrut(3))
@@ -135,7 +134,8 @@ class BooleanExpressionDesktopItemSwing(
 		panel.add(minimizedLabel)
 
 		minimizedTextArea.isEditable = false
-		minimizedTextArea.columns = 60
+		minimizedTextArea.font = FONT
+		minimizedTextArea.columns = 60 + LineNumberTextArea.LINE_HEADER_COLUMN_COUNT
 		minimizedTextArea.rows = 6
 		minimizedTextArea.maximumSize = minimizedTextArea.preferredSize
 
@@ -143,7 +143,7 @@ class BooleanExpressionDesktopItemSwing(
 		minimizedScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		minimizedScrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 		minimizedScrollPane.alignmentX = Component.LEFT_ALIGNMENT
-		minimizedScrollPane.maximumSize = expressionsScrollPane.preferredSize
+		minimizedScrollPane.maximumSize = minimizedScrollPane.preferredSize
 		panel.add(minimizedScrollPane)
 
 		return panel
@@ -183,9 +183,12 @@ class BooleanExpressionDesktopItemSwing(
 			val result = expressionService.parseExpressions(expressionsTextArea.text, BooleanExpressionNotation.fromProperties())
 			val truthTable = expressionService.createTruthTable(result)
 			minimizedTextArea.text = truthTableService.generateExpressions(truthTable, BooleanExpressionNotation.fromProperties())
+			messageLabel.icon = CORRECT_ICON
+			messageLabel.text = Translations.getString("edit.dsl.check.success.msg")
 		} catch (e: DslError) {
-			// TODO Handle
-			LOG.debug("generate minimized expressions: ${e.message}")
+			messageLabel.icon = ERROR_ICON
+			messageLabel.text = e.toString()
+			minimizedTextArea.text = ""
 		}
 	}
 

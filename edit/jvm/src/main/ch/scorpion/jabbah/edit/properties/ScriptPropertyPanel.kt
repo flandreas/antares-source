@@ -21,8 +21,6 @@ class ScriptPropertyPanel(
 ) : JPanel() {
 
 	companion object {
-		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
-
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
 
@@ -49,7 +47,7 @@ class ScriptPropertyPanel(
 		}
 	}
 
-	private val scriptTextArea = LineNumberTextArea(editable, script, FONT)
+	private val scriptTextArea = LineNumberTextArea(editable, script)
 	private val messageTextField = JLabel("", SwingConstants.LEADING)
 
 	private var textToReturn: String? = null
@@ -62,8 +60,6 @@ class ScriptPropertyPanel(
 	private val closeButton = createButton(closeAction)
 
 	init {
-		messageTextField.background = Color.yellow
-
 		buildUI(editable)
 	}
 
@@ -75,6 +71,7 @@ class ScriptPropertyPanel(
 		textsPanel.layout = BoxLayout(textsPanel, BoxLayout.PAGE_AXIS)
 
 		scriptTextArea.alignmentX = Component.LEFT_ALIGNMENT
+		scriptTextArea.preferredSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
 		textsPanel.add(scriptTextArea)
 
 		textsPanel.add(Box.createVerticalStrut(8))
