@@ -2,12 +2,12 @@ package ch.scorpion.antares.view.truthtable
 
 import ch.scorpion.antares.AntaresModuleJvm
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
-import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
-import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
+import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.truthtable.TruthTableCommand
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -38,7 +38,8 @@ import kotlin.math.max
 
 class TruthTableDesktopItemSwing(
 	private val item: TruthTableLibraryItem,
-	private val service: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
+	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
+	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	private val commandManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopItemPanelSwing() {
@@ -217,18 +218,9 @@ class TruthTableDesktopItemSwing(
 	}
 
 	private fun generateExpressions() {
-		val builder = StringBuilder()
-		with (ref.truthTable) {
-			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
-				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
-				builder.append(
-					BooleanExpressionNotation.fromProperties().dnfWriter
-						.write(this, DnfToBooleanExpression(ref.truthTable, dnf).build(), col)
-				)
-				builder.append("\n")
-			}
-		}
-		expressionsTextArea.text = builder.toString()
+		expressionsTextArea.text = truthTableService.generateExpressions(
+			ref.truthTable,
+			BooleanExpressionNotation.fromProperties())
 		createCircuitAction.enabled = true
 	}
 
@@ -236,7 +228,7 @@ class TruthTableDesktopItemSwing(
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
 			item,
-			service)
+			createCircuitService)
 	}
 
 	private inner class InputCellRenderer : DefaultTableCellRenderer() {

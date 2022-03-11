@@ -84,10 +84,6 @@ open class Parser(
 		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
 	}
 
-	/**
-	 * Parses the program this [Parser] was created with and returns the corresponding AST.
-	 * @throws SyntaxError if the sentence is syntactically invalid
-	 */
 	override fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
 
 	/**

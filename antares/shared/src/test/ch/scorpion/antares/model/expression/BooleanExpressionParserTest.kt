@@ -34,6 +34,26 @@ class BooleanExpressionParserTest {
 	}
 
 	@Test
+	fun shouldParseAssignmentList() {
+		val parser = BooleanExpressionParser(expectAssignment = true, """
+			X = 0
+			Y = 1
+		""".trimIndent())
+
+		val ast = parser.parse()
+
+		assertAST(ast, """
+			Compound
+			- =
+			-- X
+			-- false
+			- =
+			-- Y
+			-- true
+		""".trimIndent())
+	}
+
+	@Test
 	fun shouldParseWithParenthesis() {
 		val parser = BooleanExpressionParser(expectAssignment = true, "X = (A * B') + (A' * B)")
 

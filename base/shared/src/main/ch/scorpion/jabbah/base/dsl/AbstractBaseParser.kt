@@ -9,8 +9,11 @@ abstract class AbstractBaseParser(
 	/** Contains the current [Token] as determined by [Lexer.nextToken].*/
 	protected var currentToken: Token<Any>? = lexer.nextToken()
 
+	/**
+	 * Parses the program this [Parser] was created with and returns the corresponding AST.
+	 * @throws SyntaxError if the sentence is syntactically invalid
+	 */
 	abstract fun parse(): Node
-
 
 	/**
 	 * Compares the current [TokenType] with the passed [TokenType] and, if they match,

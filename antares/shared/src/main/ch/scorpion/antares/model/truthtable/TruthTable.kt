@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
+import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName
@@ -65,6 +66,9 @@ class TruthTable(
 		}
 	}
 
+	fun getColumnValues(column: Int): List<Bit> =
+		(0 until rowsCount).map { getValue(it, column) }
+
 	fun getColumnName(column: Int): String = getColumn(column).name
 
 	fun addListener(l: TruthTableListener) {
@@ -72,6 +76,11 @@ class TruthTable(
 			listeners.add(l)
 		}
 	}
+
+	fun hasInputName(name: String): Boolean = inputColumns.any { it.name == name }
+
+	fun getInputColumn(name: String): Int? =
+		inputColumns.indexOfFirstOrNull { it.name == name }
 
 	fun getMinTerms(outputColumn: Int): List<MinTerm> = getMinTerms(outputColumn, Bit.True)
 

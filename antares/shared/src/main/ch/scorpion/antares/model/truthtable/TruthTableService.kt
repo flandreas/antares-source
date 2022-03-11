@@ -1,5 +1,9 @@
 package ch.scorpion.antares.model.truthtable
 
+import ch.scorpion.antares.model.expression.BooleanExpression
+import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
+import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -62,5 +66,24 @@ class TruthTableService(
 		}
 
 		return TruthTable(name, inputs, outputs)
+	}
+
+	/**
+	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified
+	 * [BooleanExpressionNotation].
+	 */
+	fun generateExpressions(truthTable: TruthTable, notation: BooleanExpressionNotation): String {
+		val builder = StringBuilder()
+		with (truthTable) {
+			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
+				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
+				builder.append(
+					notation.dnfWriter
+						.write(this, DnfToBooleanExpression(truthTable, dnf).build(), col)
+				)
+				builder.append("\n")
+			}
+		}
+		return builder.toString()
 	}
 }

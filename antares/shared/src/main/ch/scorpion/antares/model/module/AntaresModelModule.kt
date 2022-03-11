@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.expression.BooleanExpressionService
 import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
@@ -37,6 +38,7 @@ import ch.scorpion.jabbah.io.TypeMap
 object AntaresModelModule : AbstractModule() {
 
 	val truthTableService = TruthTableService()
+	val booleanExpressionService = BooleanExpressionService()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
