@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -43,8 +44,10 @@ class OpenBooleanExpressionAction(
 		super.calculateEnabledness() && selectedItem is BooleanExpressionLibraryItem
 
 	private fun openAsSavable(item: BooleanExpressionLibraryItem) {
-		LOG.debug("Open BooleanExpression as main view")
-		graphDataViewController.openAsStorable(item, BooleanExpressionSavable(item))
-		eventBus.post(ShowBooleanExpressionItemRequest(item))
+		InvocationHandler.invoke {
+			LOG.debug("Open BooleanExpression as main view")
+			graphDataViewController.openAsStorable(item, BooleanExpressionSavable(item))
+			eventBus.post(ShowBooleanExpressionItemRequest(item))
+		}
 	}
 }

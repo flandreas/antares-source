@@ -75,6 +75,7 @@ class BooleanExpressionDesktopItemSwing(
 		}
 
 		disableApplyActionForNoExpressionChanges()
+		generateMinimizedExpressions()
 	}
 
 	private fun disableApplyActionForNoExpressionChanges() {
