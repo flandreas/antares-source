@@ -5,7 +5,8 @@ import ch.scorpion.antares.model.truthtable.TruthTableReference
 import javax.swing.table.AbstractTableModel
 
 class TruthTableTableModel(
-	private val ref: TruthTableReference
+	private val ref: TruthTableReference,
+	private val editable: Boolean = true
 ) : AbstractTableModel() {
 
 	private val listener = TruthTableListener { event ->
@@ -30,5 +31,5 @@ class TruthTableTableModel(
 		ref.truthTable.getValue(rowIndex, columnIndex)
 
 	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean =
-		columnIndex >= ref.truthTable.inputColumnCount
+		editable && columnIndex >= ref.truthTable.inputColumnCount
 }

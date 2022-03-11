@@ -13,7 +13,8 @@ import javax.swing.table.DefaultTableCellRenderer
 
 class TruthTableTableView(
 	private val ref: TruthTableReference,
-	private val commandManager: CommandManager
+	private val commandManager: CommandManager,
+	private val editable: Boolean = true
 ) : JPanel() {
 
 	companion object {
@@ -26,14 +27,25 @@ class TruthTableTableView(
 		private val INACTIVE_BACKGROUND = UIManager.getColor("TextField.inactiveBackground")
 	}
 
-	private val table = JTable(TruthTableTableModel(ref))
+	private var tableModel = TruthTableTableModel(ref, editable)
+
+	private val table = JTable(tableModel)
 
 	private val cellFont = table.font.deriveFont(CELL_FONT_SIZE.toFloat())
 
 	init {
 		buildUI()
 		updateColumnModels()
-		defineSetActions()
+		if (editable) {
+			defineSetActions()
+		}
+	}
+
+	fun reloadModel() {
+		tableModel.dispose()
+		tableModel = TruthTableTableModel(ref, editable)
+		table.model = tableModel
+		updateColumnModels()
 	}
 
 	private fun buildUI() {

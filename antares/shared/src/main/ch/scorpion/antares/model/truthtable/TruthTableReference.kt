@@ -11,9 +11,13 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * whenever the [ApplicationData] changes due recovering from undoable snapshots.
  */
 class TruthTableReference(
-	private val item: TruthTableLibraryItem,
+	private val truthTableProvider: () -> TruthTable,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
+	constructor(
+		item: TruthTableLibraryItem,
+		eventBus: EventBus = BaseModule.eventBus
+	): this({item.truthTable}, eventBus)
 
 	lateinit var truthTable: TruthTable
 
@@ -45,7 +49,7 @@ class TruthTableReference(
 
 	private fun updateReference() {
 		dataListeners.forEach { truthTable.removeListener(it) }
-		truthTable = item.truthTable
+		truthTable = truthTableProvider()
 		dataListeners.forEach { truthTable.addListener(it) }
 	}
 }

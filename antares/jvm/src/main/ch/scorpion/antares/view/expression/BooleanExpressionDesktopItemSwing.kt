@@ -2,7 +2,10 @@ package ch.scorpion.antares.view.expression
 
 import ch.scorpion.antares.model.expression.*
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.truthtable.TruthTable
+import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
+import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -65,6 +68,20 @@ class BooleanExpressionDesktopItemSwing(
 	private val messageLabel = JLabel(" ")
 
 	private val minimizedLabel = JLabel(Translations.getString("library.booleanExpression.minimized"))
+
+	private val truthTableLabel = JLabel(Translations.getString("antares.booleanExpression.truthTable.tip"))
+
+	// The calculated minimized TruthTable. Initialized as "dummy" TruthTable in order to setup a TruthTableReference.
+	private var truthTable: TruthTable = TruthTable()
+		set(value) {
+			field = value
+			truthTableReference.truthTable = value
+			truthTableView.reloadModel()
+		}
+
+	private val truthTableReference = TruthTableReference({ truthTable })
+
+	private val truthTableView = TruthTableTableView(truthTableReference, commandManager, editable = false)
 
 	init {
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
@@ -147,6 +164,13 @@ class BooleanExpressionDesktopItemSwing(
 		minimizedScrollPane.maximumSize = minimizedScrollPane.preferredSize
 		panel.add(minimizedScrollPane)
 
+		truthTableLabel.border = BorderFactory.createEmptyBorder(25, 2, 5, 0)
+		truthTableLabel.alignmentX = Component.LEFT_ALIGNMENT
+		panel.add(truthTableLabel)
+
+		truthTableView.alignmentX = Component.LEFT_ALIGNMENT
+		panel.add(truthTableView)
+
 		return panel
 	}
 
@@ -182,7 +206,7 @@ class BooleanExpressionDesktopItemSwing(
 	private fun generateMinimizedExpressions() {
 		try {
 			val result = expressionService.parseExpressions(expressionsTextArea.text, BooleanExpressionNotation.fromProperties())
-			val truthTable = expressionService.createTruthTable(result)
+			truthTable = expressionService.createTruthTable(result)
 			minimizedTextArea.text = truthTableService.generateExpressions(truthTable, BooleanExpressionNotation.fromProperties())
 			messageLabel.icon = CORRECT_ICON
 			messageLabel.text = Translations.getString("edit.dsl.check.success.msg")
