@@ -59,7 +59,7 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
-	private val expressionsTextArea = LineNumberTextArea(text = item.expressions.expressions, font = FONT, rows = 6, columns = 60)
+	private val expressionsTextArea = LineNumberTextArea(text = item.expressions.expressions, font = FONT)
 
 	private val minimizedTextArea = JTextArea()
 

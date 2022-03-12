@@ -14,9 +14,7 @@ import javax.swing.event.DocumentListener
 class LineNumberTextArea(
 	editable: Boolean = true,
 	text: String = "",
-	font: Font = FONT,
-	rows: Int? = null,
-	columns: Int? = null
+	font: Font = FONT
 ) : JPanel() {
 
 	companion object {
@@ -38,14 +36,12 @@ class LineNumberTextArea(
 		buildUI()
 
 		mainTextArea.wrapStyleWord = true
-		mainTextArea.lineWrap = true
-		mainTextArea.wrapStyleWord = true
+		mainTextArea.lineWrap = false
+
 		mainTextArea.isEditable = editable
 		mainTextArea.font = font
 		mainTextArea.tabSize = LINE_HEADER_COLUMN_COUNT
 		mainTextArea.document.addDocumentListener(TextListener())
-		rows?.let { mainTextArea.rows = it }
-		columns?.let { mainTextArea.columns = it }
 
 		lineNumberTextArea.isEditable = false
 		lineNumberTextArea.isEnabled = false
@@ -58,7 +54,7 @@ class LineNumberTextArea(
 
 		scrollPane.setViewportView(mainTextArea)
 		scrollPane.setRowHeaderView(lineNumberTextArea)
-		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 
 		add(scrollPane, BorderLayout.CENTER)
