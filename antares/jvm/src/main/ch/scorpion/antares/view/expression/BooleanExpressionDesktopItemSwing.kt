@@ -46,8 +46,8 @@ class BooleanExpressionDesktopItemSwing(
 	companion object {
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
-
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
+		private const val PREF_TEXT_AREA_HEIGHT = 150
 	}
 
 	private val ref = BooleanExpressionReference(item)
@@ -86,6 +86,8 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val truthTableView = TruthTableTableView(truthTableReference, commandManager, editable = false)
 
+	private val exampleTextPane = JTextPane()
+
 	init {
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
@@ -122,16 +124,47 @@ class BooleanExpressionDesktopItemSwing(
 	}
 
 	private fun createContentsPanel(): JComponent {
+		val panel = JPanel(BorderLayout())
+		panel.add(buildExpressionsPanel(), BorderLayout.NORTH)
+		panel.add(buildTruthTablePanel(), BorderLayout.CENTER)
+		return panel
+	}
+
+	private fun buildTruthTablePanel(): JComponent {
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.PAGE_AXIS)
 
+		truthTableLabel.border = BorderFactory.createEmptyBorder(25, 2, 5, 0)
+		truthTableLabel.alignmentX = Component.LEFT_ALIGNMENT
+		panel.add(truthTableLabel)
+
+		truthTableView.alignmentX = Component.LEFT_ALIGNMENT
+		truthTableView.maximumSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
+		panel.add(truthTableView)
+
+		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
+		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
+		panel.add(Box.createVerticalStrut(5))
+		panel.add(createCircuitButton)
+
+		return panel
+	}
+
+	private fun buildExpressionsPanel(): JPanel {
+		val contentPanel = JPanel(BorderLayout(30, 10))
+
+		val centerPanel = JPanel()
+		centerPanel.layout = BoxLayout(centerPanel, BoxLayout.PAGE_AXIS)
+
 		val tipLabel = JLabel(Translations.getString("library.element.booleanExpression.tip"))
 		tipLabel.border = BorderFactory.createEmptyBorder(5, 2, 5, 0)
-		panel.add(tipLabel)
+		centerPanel.add(tipLabel)
 
 		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
+		expressionsTextArea.minimumSize = Dimension(expressionsTextArea.minimumSize.width, PREF_TEXT_AREA_HEIGHT)
+		expressionsTextArea.preferredSize = Dimension(Int.MAX_VALUE, PREF_TEXT_AREA_HEIGHT)
 		expressionsTextArea.maximumSize = expressionsTextArea.preferredSize
-		panel.add(expressionsTextArea)
+		centerPanel.add(expressionsTextArea)
 
 		val statusPanel = JPanel()
 		statusPanel.layout = BoxLayout(statusPanel, BoxLayout.LINE_AXIS)
@@ -147,39 +180,45 @@ class BooleanExpressionDesktopItemSwing(
 		statusPanel.add(messageLabel)
 		statusPanel.maximumSize = statusPanel.preferredSize
 
-		panel.add(Box.createVerticalStrut(3))
-		panel.add(statusPanel)
+		centerPanel.add(Box.createVerticalStrut(3))
+		centerPanel.add(statusPanel)
 
 		minimizedLabel.alignmentX = Component.LEFT_ALIGNMENT
 		minimizedLabel.border = BorderFactory.createEmptyBorder(25, 2, 5, 0)
-		panel.add(minimizedLabel)
+		centerPanel.add(minimizedLabel)
 
 		minimizedTextArea.isEditable = false
 		minimizedTextArea.font = FONT
 		minimizedTextArea.columns = 60 + LineNumberTextArea.LINE_HEADER_COLUMN_COUNT
 		minimizedTextArea.rows = 6
-		minimizedTextArea.maximumSize = minimizedTextArea.preferredSize
 
 		val minimizedScrollPane = JScrollPane(minimizedTextArea)
 		minimizedScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		minimizedScrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 		minimizedScrollPane.alignmentX = Component.LEFT_ALIGNMENT
+		minimizedScrollPane.minimumSize = Dimension(minimizedScrollPane.minimumSize.width, PREF_TEXT_AREA_HEIGHT)
+		minimizedScrollPane.preferredSize = Dimension(Int.MAX_VALUE, PREF_TEXT_AREA_HEIGHT)
 		minimizedScrollPane.maximumSize = minimizedScrollPane.preferredSize
-		panel.add(minimizedScrollPane)
+		centerPanel.add(minimizedScrollPane)
 
-		truthTableLabel.border = BorderFactory.createEmptyBorder(25, 2, 5, 0)
-		truthTableLabel.alignmentX = Component.LEFT_ALIGNMENT
-		panel.add(truthTableLabel)
+		exampleTextPane.contentType = "text/html"
+		exampleTextPane.isEditable = false
+		exampleTextPane.alignmentX = Component.LEFT_ALIGNMENT
+		exampleTextPane.text = """
+			${Translations.getString("antares.booleanExpression.example")}
+			<br>
+			<br>
+			U = AB' + A'B + 0<br>
+			V = (A*B') + (A'*B) + 0<br>
+			W = A ∧ ¬B ∨ ¬A ∧ B ∨ 0<br>
+			X = (A && !B) || (!A && B) || 0<br>
+			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
+		""".trimIndent()
 
-		truthTableView.alignmentX = Component.LEFT_ALIGNMENT
-		panel.add(truthTableView)
+		contentPanel.add(centerPanel, BorderLayout.CENTER)
+		contentPanel.add(exampleTextPane, BorderLayout.EAST)
 
-		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
-		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
-		panel.add(Box.createVerticalStrut(5))
-		panel.add(createCircuitButton)
-
-		return panel
+		return contentPanel
 	}
 
 	/** ---- [GraphDesktopViewItem] */
