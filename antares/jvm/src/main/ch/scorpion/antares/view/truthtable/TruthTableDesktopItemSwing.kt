@@ -157,6 +157,7 @@ class TruthTableDesktopItemSwing(
 	private fun createCircuit() {
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
+			item.truthTable,
 			item,
 			createCircuitService)
 	}

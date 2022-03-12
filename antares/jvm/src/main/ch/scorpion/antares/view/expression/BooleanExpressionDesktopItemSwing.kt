@@ -1,10 +1,13 @@
 package ch.scorpion.antares.view.expression
 
+import ch.scorpion.antares.AntaresModuleJvm
 import ch.scorpion.antares.model.expression.*
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
+import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -26,19 +29,17 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Font
+import java.awt.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 class BooleanExpressionDesktopItemSwing(
-	item: BooleanExpressionLibraryItem,
+	private val item: BooleanExpressionLibraryItem,
 	private val commandManager: CommandManager,
 	private val expressionService: BooleanExpressionService = AntaresModelModule.booleanExpressionService,
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
+	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopItemPanelSwing() {
 
@@ -64,6 +65,8 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val applyAction = ApplyAction()
 
+	private val createCircuitAction = CreateCircuitAction()
+
 	// Initially non-empty to provide a preferred height
 	private val messageLabel = JLabel(" ")
 
@@ -72,7 +75,7 @@ class BooleanExpressionDesktopItemSwing(
 	private val truthTableLabel = JLabel(Translations.getString("antares.booleanExpression.truthTable.tip"))
 
 	// The calculated minimized TruthTable. Initialized as "dummy" TruthTable in order to setup a TruthTableReference.
-	private var truthTable: TruthTable = TruthTable()
+	private var truthTable: TruthTable = TruthTable(item.name.value)
 		set(value) {
 			field = value
 			truthTableReference.truthTable = value
@@ -171,6 +174,11 @@ class BooleanExpressionDesktopItemSwing(
 		truthTableView.alignmentX = Component.LEFT_ALIGNMENT
 		panel.add(truthTableView)
 
+		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
+		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
+		panel.add(Box.createVerticalStrut(5))
+		panel.add(createCircuitButton)
+
 		return panel
 	}
 
@@ -207,10 +215,13 @@ class BooleanExpressionDesktopItemSwing(
 		try {
 			val result = expressionService.parseExpressions(expressionsTextArea.text, BooleanExpressionNotation.fromProperties())
 			truthTable = expressionService.createTruthTable(result)
+			truthTable.name = item.name
+			createCircuitAction.enabled = true
 			minimizedTextArea.text = truthTableService.generateExpressions(truthTable, BooleanExpressionNotation.fromProperties())
 			messageLabel.icon = CORRECT_ICON
 			messageLabel.text = Translations.getString("edit.dsl.check.success.msg")
 		} catch (e: DslError) {
+			createCircuitAction.enabled = false
 			messageLabel.icon = ERROR_ICON
 			messageLabel.text = e.toString()
 			minimizedTextArea.text = ""
@@ -226,9 +237,25 @@ class BooleanExpressionDesktopItemSwing(
 		}
 	}
 
+	private fun createCircuit() {
+		CreateCircuitFromTruthTablePanel.showAsDialog(
+			Frame.getFrames()[0],
+			truthTable,
+			item,
+			createCircuitService)
+	}
+
 	private inner class ApplyAction : AbstractAction("base.action.apply") {
 		override fun execute(event: ActionEvent) {
 			apply()
+		}
+	}
+
+	private inner class CreateCircuitAction
+		: AbstractAction("antares.synthesis.createCircuitFromTruthTable.action")
+	{
+		override fun execute(event: ActionEvent) {
+			createCircuit()
 		}
 	}
 }

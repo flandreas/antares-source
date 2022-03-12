@@ -1,13 +1,14 @@
 package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.AntaresModuleJvm
-import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.graph.library.LibraryItem
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Frame
@@ -16,7 +17,8 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 class CreateCircuitFromTruthTablePanel(
-	private val item: TruthTableLibraryItem,
+	private val truthTable: TruthTable,
+	private val item: LibraryItem,
 	private val service: CreateCircuitFromTruthTableService,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
@@ -24,11 +26,12 @@ class CreateCircuitFromTruthTablePanel(
 	companion object {
 		fun showAsDialog(
 			parent: Frame,
-			item: TruthTableLibraryItem,
+			truthTable: TruthTable,
+			item: LibraryItem,
 			service: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService
 		) {
 			DialogBuilder<CreateCircuitFromTruthTablePanel>(parent)
-				.content { dialog -> CreateCircuitFromTruthTablePanel(item, service, closeHandler = { dialog.dispose() }) }
+				.content { dialog -> CreateCircuitFromTruthTablePanel(truthTable, item, service, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("antares.synthesis.createCircuitFromTruthTable.title"))
 				.defaultButton { it.okButton }
 				.nonResizable()
@@ -64,7 +67,7 @@ class CreateCircuitFromTruthTablePanel(
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
 
-		nameField.text = item.truthTable.name.value
+		nameField.text = truthTable.name.value
 
 		nameLabel.horizontalAlignment = SwingConstants.RIGHT
 		nameLabel.alignmentX = Component.LEFT_ALIGNMENT
@@ -90,7 +93,7 @@ class CreateCircuitFromTruthTablePanel(
 		override fun execute(event: ActionEvent) {
 			InvocationHandler.invoke {
 				try {
-					service.create(item, nameField.text)
+					service.create(truthTable, item, nameField.text)
 					closeHandler()
 				} catch (e: CircuitFromTruthTableBuilderError) {
 					JOptionPane.showConfirmDialog(

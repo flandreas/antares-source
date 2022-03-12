@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.truthtable.TruthTable
-import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.container.ContainerDrawingFiller
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 
 /**
@@ -23,9 +23,10 @@ class CreateCircuitFromTruthTableService(
 	 * Creates a new [MetaGraph] for the given [TruthTable] in the same directory.
 	 * @throws CircuitFromTruthTableBuilderError if the required gate input counts exceed the system limit
 	 */
-	fun create(item: TruthTableLibraryItem, circuitName: String) {
-		val metaGraph = createMetaGraph(item.truthTable, circuitName)
+	fun create(truthTable: TruthTable, item: LibraryItem, circuitName: String) {
+		LOG.debug("Create Circuit from TruthTable in directory ${item.name.value}")
 
+		val metaGraph = createMetaGraph(truthTable, circuitName)
 		with (item.library!!) {
 			val dir = libraryService.getDirectoryOf(this, item)
 			val element = libraryService.addContainerLibraryElement(this, metaGraph, dir)

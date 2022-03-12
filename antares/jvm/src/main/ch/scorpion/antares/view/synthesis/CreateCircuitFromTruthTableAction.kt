@@ -21,9 +21,11 @@ class CreateCircuitFromTruthTableAction(
 	}
 
 	override fun execute(event: ActionEvent) {
+		val item = selectedItem as TruthTableLibraryItem
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
-			selectedItem as TruthTableLibraryItem,
+			item.truthTable,
+			item,
 			service)
 	}
 
