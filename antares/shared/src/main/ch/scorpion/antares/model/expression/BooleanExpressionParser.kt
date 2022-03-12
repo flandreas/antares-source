@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.expression
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.Lexer.Companion.NOT_TOKEN
+import ch.scorpion.jabbah.base.dsl.Lexer.Companion.OR_TOKEN
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
 /**
@@ -12,16 +13,21 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     assignmentList : assignment
  *               | assignment assignmentList
  *     assignment : variable "=" expr
- *     expr : term ("+" term)*
- *     term : factor ("*" factor)*
+ *     expr : term (orOp term)*
+ *     term : factor (andOp factor)*
  *     factor : literal
  *            | "(" expr ")"
- *            | factor unaryNot
+ *            | factor postfixNotOp
+ *            | prefixNotOp factor
  *            | variable
- *      unaryNot: "'"
- *      literal: "0" | "1"
- *      variable : identifier
- *      identifier : LETTER (LETTER | DIGIT)*
+ *     unaryNot: "'"
+ *     orOp : "+" | "∨" | "||" | "OR"
+ *     andOp : "*" | "∧ | "&&" | "AND"
+ *     postfixNotOp: "'"
+ *     prefixNotOp: "¬" | "!" | "NOT"
+ *     literal: "0" | "1" | "true" | "false"
+ *     variable : identifier
+ *     identifier : LETTER (LETTER | DIGIT)*
  * </pre>
  */
 class BooleanExpressionParser(
@@ -32,9 +38,10 @@ class BooleanExpressionParser(
 	constructor(expectAssignment: Boolean, text: String): this(expectAssignment, BooleanExpressionLexer(text))
 
 	companion object {
-		private val TERM_OPERATORS = setOf(PLUS)
-		private val FACTOR_OPERATORS = setOf(MULTIPLY)
-
+		private val OR_OPERATORS = setOf(PLUS, LOGIC_OR, PROGRAMMING_OR, OR)
+		private val AND_OPERATORS = setOf(MULTIPLY, LOGIC_AND, PROGRAMMING_AND, AND)
+		private val PREFIX_NOT_OPERATORS = setOf(LOGIC_NOT, PROGRAMMING_NOT, NOT)
+		private val POSTFIX_NOT_OPERATORS = setOf(SINGLE_QUOTE)
 	}
 
 	override fun parse(): Node = if (expectAssignment) {
@@ -62,24 +69,12 @@ class BooleanExpressionParser(
 		}
 	}
 
-	private fun variable(): Variable = Variable(lexer.location, identifier())
-
-	private fun identifier(): Token<String> {
-		val identifier = currentToken as Token<String>
-		eat(ID)
-		return identifier
-	}
-
 	private fun expr(): Node {
 		var node = term()
-		while (currentToken!!.type in TERM_OPERATORS) {
+		while (currentToken!!.type in OR_OPERATORS) {
 			lexer.location.let { location ->
-				val token = when (currentToken!!.type) {
-					PLUS -> Lexer.OR_TOKEN
-					else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
-				}
 				eat(currentToken!!.type)
-				node = BinaryOperation(location, left = node, op = token, right = term())
+				node = BinaryOperation(location, left = node, op = OR_TOKEN, right = term())
 			}
 		}
 		return node
@@ -87,14 +82,10 @@ class BooleanExpressionParser(
 
 	private fun term(): Node {
 		var node = factor()
-		while (currentToken!!.type in FACTOR_OPERATORS) {
+		while (currentToken!!.type in AND_OPERATORS) {
 			lexer.location.let { location ->
-				val token = when (currentToken!!.type) {
-					MULTIPLY -> Lexer.AND_TOKEN
-					else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
-				}
 				eat(currentToken!!.type)
-				node = BinaryOperation(location, left = node, op = token, right = factor())
+				node = BinaryOperation(location, left = node, op = Lexer.AND_TOKEN, right = factor())
 			}
 		}
 		return node
@@ -103,6 +94,12 @@ class BooleanExpressionParser(
 	private fun factor(): Node {
 		lexer.location.let { location ->
 			val token = currentToken!!
+
+			if (currentToken!!.type in PREFIX_NOT_OPERATORS) {
+				eat(currentToken!!.type)
+				return UnaryOperation(location, NOT_TOKEN, factor())
+			}
+
 			val node = when (token.type) {
 				LITERAL -> literal()
 				LPAREN -> {
@@ -115,12 +112,12 @@ class BooleanExpressionParser(
 				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 			}
 
-			return if (currentToken!!.type == SINGLE_QUOTE) {
-				eat(SINGLE_QUOTE)
-				UnaryOperation(location, NOT_TOKEN, node)
-			} else {
-				node
+			if (currentToken!!.type in POSTFIX_NOT_OPERATORS) {
+				eat(currentToken!!.type)
+				return UnaryOperation(location, NOT_TOKEN, node)
 			}
+
+			return node
 		}
 	}
 
@@ -128,5 +125,13 @@ class BooleanExpressionParser(
 		val literal = Literal(lexer.location, currentToken!!)
 		eat(LITERAL)
 		return literal
+	}
+
+	private fun variable(): Variable = Variable(lexer.location, identifier())
+
+	private fun identifier(): Token<String> {
+		val identifier = currentToken as Token<String>
+		eat(ID)
+		return identifier
 	}
 }

@@ -47,7 +47,13 @@ enum class TokenType(val id: String) {
 	DOT("."),
 	COMMA(","),
 	DOUBLE_QUOTE("\""),
-	SINGLE_QUOTE("'")
+	SINGLE_QUOTE("'"),
+	LOGIC_AND("∧"),
+	LOGIC_OR("∧"),
+	LOGIC_NOT("¬"),
+	PROGRAMMING_AND("&&"),
+	PROGRAMMING_OR("||"),
+	PROGRAMMING_NOT("!")
 }
 
 /**
