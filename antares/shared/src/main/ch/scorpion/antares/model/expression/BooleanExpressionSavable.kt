@@ -15,6 +15,8 @@ class BooleanExpressionSavable(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryItemSavable(item) {
 
+	override val typeName: String get() = Translations.getString("library.element.booleanExpression.name")
+
 	private val expressionLibraryItem: BooleanExpressionLibraryItem get() = item as BooleanExpressionLibraryItem
 
 	override val description: String = if (item.library is Project) {

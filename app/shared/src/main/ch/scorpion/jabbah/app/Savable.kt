@@ -5,6 +5,13 @@ package ch.scorpion.jabbah.app
  */
 interface Savable {
 
+	/**
+	 * The name of the type of this [Savable], which will be used for determining general messages like
+	 * "Savable has been saved. Unlike [description], this [typeName] doesn't contain a specific identification
+	 * like a file name.
+	 */
+	val typeName: String
+
     /**
      * Holds the description of this [Savable] that can be displayed in the UI, such as a file name to be
      * displayed in a main frame's title bar.

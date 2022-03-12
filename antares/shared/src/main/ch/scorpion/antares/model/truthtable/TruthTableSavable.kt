@@ -15,6 +15,8 @@ class TruthTableSavable(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryItemSavable(item) {
 
+	override val typeName: String get() = Translations.getString("library.element.truthTable.name")
+
 	private val truthTableLibraryItem: TruthTableLibraryItem get() = item as TruthTableLibraryItem
 
 	override val description: String = if (item.library is Project) {

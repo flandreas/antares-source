@@ -184,7 +184,7 @@ open class ApplicationDataViewController(
 			if (it.savable.save(this)) {
 				commandManager.reset()
 				eventBus.post(CurrentSavableEvent(it.savable))
-				Toast.show(Translations.getString("application.data.saved.msg"))
+				Toast.show(Translations.getString("application.data.saved.msg", it.savable.typeName))
 			}
 		} ?: throw IllegalStateException("Request to save without present data")
 	}

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.base.Translations
 import java.io.File
 
 /**
@@ -7,6 +8,8 @@ import java.io.File
  * Can only be used with [DesktopApplication].
  */
 data class FileSavable(val filePath: String?) : DefaultSavable(filePath) {
+
+	override val typeName: String get() = Translations.getString("application.savable.name")
 
     companion object {
 

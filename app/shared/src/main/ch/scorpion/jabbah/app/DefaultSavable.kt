@@ -35,6 +35,8 @@ open class DefaultSavable(val identification: String?) : Savable {
 			return sb.toString()
 		}
 
+	override val typeName: String get() = Translations.getString("application.savable.name")
+
 	override val defined: Boolean get() = StringUtils.isNotEmpty(identification)
 
 	override val supportsMostRecent: Boolean get() = true
