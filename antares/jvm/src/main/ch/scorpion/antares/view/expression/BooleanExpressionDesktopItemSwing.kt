@@ -97,7 +97,14 @@ class BooleanExpressionDesktopItemSwing(
 		}
 
 		disableApplyActionForNoExpressionChanges()
-		generateMinimizedExpressions()
+
+		if (item.expressions.expressions.isNotBlank()) {
+			generateMinimizedExpressions()
+		}
+
+		SwingUtilities.invokeLater {
+			expressionsTextArea.mainTextArea.requestFocusInWindow()
+		}
 	}
 
 	private fun disableApplyActionForNoExpressionChanges() {
