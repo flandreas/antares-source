@@ -196,7 +196,6 @@ class BooleanExpressionDesktopItemSwing(
 
 		minimizedTextArea.isEditable = false
 		minimizedTextArea.font = FONT
-		minimizedTextArea.columns = 60 + LineNumberTextArea.LINE_HEADER_COLUMN_COUNT
 		minimizedTextArea.rows = 6
 
 		val minimizedScrollPane = JScrollPane(minimizedTextArea)
