@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base.time
 
-import java.sql.Time
 import java.util.*
 
 /**

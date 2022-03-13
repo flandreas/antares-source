@@ -4,6 +4,7 @@ import ch.scorpion.antares.dsl.AntaresDslModule
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
@@ -39,6 +40,7 @@ object AntaresModelModule : AbstractModule() {
 
 	val truthTableService = TruthTableService()
 	val booleanExpressionService = BooleanExpressionService()
+	val circuitAnalysisService = CircuitAnalysisService()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
