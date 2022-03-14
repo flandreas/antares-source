@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItem
@@ -13,13 +14,14 @@ data class ShowBooleanExpressionItemRequest(val item: BooleanExpressionLibraryIt
 
 class BooleanExpressionLibraryItem(
 	initialName: TranslatableText = TranslatableText(),
-	expressions: String = ""
+	expressions: String = "",
+	singleCharIdentifier: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_OMIT_AND)
 ) : AbstractLibraryItem(
 	initialName,
 	iconPath = "/img/expression.png"
 ), UndoableStateLibraryItem<BooleanExpressionStorable> {
 
-	var expressions = BooleanExpressionStorable(expressions)
+	var expressions = BooleanExpressionStorable(expressions, singleCharIdentifier)
 
 	override val activeIconPath: String get() = "/img/expression-active.png"
 

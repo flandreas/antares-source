@@ -5,17 +5,18 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 class BooleanExpressionCommand(
 	private val ref: BooleanExpressionReference,
-	private val expressions: String
+	private val expressions: String,
+	private val singleCharIdentifier: Boolean
 ) : AbstractCommand("antares.command.booleanExpression", null), Undoable {
 
-	private lateinit var oldValue: String
+	private lateinit var oldValue: BooleanExpressionStorable
 
 	override fun execute() {
-		oldValue = ref.expressions.expressions
-		ref.expressions = BooleanExpressionStorable(expressions)
+		oldValue = BooleanExpressionStorable(ref.expressions.expressions, ref.expressions.singleCharIdentifier)
+		ref.expressions = BooleanExpressionStorable(expressions, singleCharIdentifier)
 	}
 
 	override fun undo() {
-		ref.expressions = BooleanExpressionStorable(oldValue)
+		ref.expressions = oldValue
 	}
 }

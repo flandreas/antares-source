@@ -72,4 +72,19 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		assertToken(TokenType.AND, lexer)
 		assertId("B", lexer)
 	}
+
+	@Test
+	fun shouldScanSingleCharacterIdentifiers() {
+		val lexer = BooleanExpressionLexer("X = AB' + A'B", singleCharIdentifier = true)
+
+		assertId("X", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("A", lexer)
+		assertId("B", lexer)
+		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertToken(TokenType.PLUS, lexer)
+		assertId("A", lexer)
+		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertId("B", lexer)
+	}
 }

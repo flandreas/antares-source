@@ -29,13 +29,25 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  *     variable : identifier
  *     identifier : LETTER (LETTER | DIGIT)*
  * </pre>
+ *
+ * If [singleCharIdentifier] is `true`, the following EBNF production rules apply instead:
+ *
+ * <pre>
+ *     term : factor ([andOp] factor)*
+ *     identifier : LETTER
+ * </pre>
  */
 class BooleanExpressionParser(
 	private val expectAssignment: Boolean,
-	lexer: BooleanExpressionLexer
+	lexer: BooleanExpressionLexer,
+	private val singleCharIdentifier: Boolean = lexer.singleCharIdentifier
 ) : AbstractBaseParser(lexer) {
 
-	constructor(expectAssignment: Boolean, text: String): this(expectAssignment, BooleanExpressionLexer(text))
+	constructor(
+		expectAssignment: Boolean,
+		text: String,
+		singleCharIdentifier: Boolean = false
+	): this(expectAssignment, BooleanExpressionLexer(text, singleCharIdentifier))
 
 	companion object {
 		private val OR_OPERATORS = setOf(PLUS, LOGIC_OR, PROGRAMMING_OR, OR)
@@ -80,11 +92,31 @@ class BooleanExpressionParser(
 		return node
 	}
 
-	private fun term(): Node {
+	private fun term(): Node =
+		if (singleCharIdentifier) {
+			singleCharIdentifierTerm()
+		} else {
+			multiCharIdentifierTerm()
+		}
+
+	private fun multiCharIdentifierTerm(): Node {
 		var node = factor()
 		while (currentToken!!.type in AND_OPERATORS) {
 			lexer.location.let { location ->
 				eat(currentToken!!.type)
+				node = BinaryOperation(location, left = node, op = Lexer.AND_TOKEN, right = factor())
+			}
+		}
+		return node
+	}
+
+	private fun singleCharIdentifierTerm(): Node {
+		var node = factor()
+		while (currentToken!!.type == ID || currentToken!!.type in AND_OPERATORS) {
+			lexer.location.let { location ->
+				if (currentToken!!.type in AND_OPERATORS) {
+					eat(currentToken!!.type)
+				}
 				node = BinaryOperation(location, left = node, op = Lexer.AND_TOKEN, right = factor())
 			}
 		}

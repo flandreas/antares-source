@@ -30,15 +30,16 @@ class BooleanExpressionService {
 	/**
 	 * Parses a list of boolean expressions..
 	 * @param text the newline-separated expressions to be parsed
-	 * @param notation the [BooleanExpressionNotation] used in [text]
+	 * @param singleCharIdentifier `true` if scanning/parsing should only recognize variable identifiers
+	 * with a single character, so that AND operators can be omitted
 	 * @throws DslError if parsing or semantic analysing fails
 	 */
 	fun parseExpressions(
 		text: String,
-		notation: BooleanExpressionNotation
+		singleCharIdentifier: Boolean = false
 	): BooleanExpressionParseResult {
 
-		val ast = BooleanExpressionParser(expectAssignment = true, text).parse()
+		val ast = BooleanExpressionParser(expectAssignment = true, text, singleCharIdentifier).parse()
 		val analyser = Analyser()
 		ast.accept(analyser)
 

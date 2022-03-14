@@ -50,6 +50,8 @@ open class BaseLexer(protected val text: String) {
 
 	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
 
+	protected fun isPeeking(state: State): Boolean = state === peekState
+
 	protected open fun nextToken(state: State): Token<Any> {
 		state.posAtTokenStart = state.pos
 		state.rowAtTokenStart = state.rowCounter
@@ -172,7 +174,7 @@ open class BaseLexer(protected val text: String) {
 		}
 	}
 
-	private fun id(state: State): Token<String> {
+	protected open fun id(state: State): Token<String> {
 		val result = StringBuilder()
 		while (state.currentChar != null && state.currentChar!!.isLetterOrDigit()) {
 			result.append(state.currentChar)

@@ -26,7 +26,7 @@ class BooleanExpressionServiceTest {
 			Y = B + 1
 		""".trimIndent()
 
-		val result = service.parseExpressions(expressions, BooleanExpressionNotation.ARITHMETIC)
+		val result = service.parseExpressions(expressions)
 
 		assertEquals(2, result.inputNames.size)
 		assertTrue(result.inputNames.contains("A"))
@@ -44,7 +44,7 @@ class BooleanExpressionServiceTest {
 		""".trimIndent()
 
 		assertFailsWith(SemanticError::class) {
-			service.parseExpressions(expressions, BooleanExpressionNotation.ARITHMETIC)
+			service.parseExpressions(expressions)
 		}
 	}
 
@@ -56,7 +56,7 @@ class BooleanExpressionServiceTest {
 		""".trimIndent()
 
 		assertFailsWith(SemanticError::class) {
-			service.parseExpressions(expressions, BooleanExpressionNotation.ARITHMETIC)
+			service.parseExpressions(expressions)
 		}
 	}
 
@@ -66,7 +66,7 @@ class BooleanExpressionServiceTest {
 			X = A * B' + A' * B
 			Y = B'
 		""".trimIndent()
-		val result = service.parseExpressions(expressions, BooleanExpressionNotation.ARITHMETIC)
+		val result = service.parseExpressions(expressions)
 
 		val truthTable = service.createTruthTable(result)
 

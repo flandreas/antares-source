@@ -39,6 +39,8 @@ class TruthTable(
 
 	val allInputNamesAreSingleChar: Boolean get() = inputColumns.all { it.name.length == 1 }
 
+	val allNamesAreSingleChar: Boolean get() = allInputNamesAreSingleChar && outputColumns.all { it.name.length == 1}
+
 	private val inputColumns: MutableList<TruthTableInputColumn> =
 		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
 

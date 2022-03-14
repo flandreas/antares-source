@@ -54,6 +54,15 @@ class BooleanExpressionParserTest {
 		assertXorAST(BooleanExpressionParser(expectAssignment = true, "X = (A * B') + (A' * B)").parse())
 	}
 
+	@Test
+	fun shouldParseSingleCharacterIdentifiers() {
+		assertXorAST(BooleanExpressionParser(
+			expectAssignment = true,
+			"X = AB' + A'B",
+			singleCharIdentifier = true
+		).parse())
+	}
+
 	private fun assertConstantsAST(ast: Node) {
 		assertAST(ast, """
 			Compound

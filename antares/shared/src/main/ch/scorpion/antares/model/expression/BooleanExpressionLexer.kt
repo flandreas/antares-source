@@ -6,7 +6,10 @@ import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.Token
 import ch.scorpion.jabbah.base.dsl.TokenType
 
-class BooleanExpressionLexer(text: String): BaseLexer(text) {
+class BooleanExpressionLexer(
+	text: String,
+	val singleCharIdentifier: Boolean = false
+): BaseLexer(text) {
 
 	companion object {
 		// General
@@ -78,6 +81,24 @@ class BooleanExpressionLexer(text: String): BaseLexer(text) {
 	}
 
 	override fun literal(state: State): Token<Any> = literalToken(booleanLiteral(state))
+
+	override fun id(state: State): Token<String> =
+		if (singleCharIdentifier && !isPeeking(state)) {
+			singleCharId(state)
+		} else {
+			super.id(state)
+		}
+
+	private fun singleCharId(state: State): Token<String> {
+		val id = peekNextToken() as Token<String>
+		return if (getReservedKeyword(id.value!!) != null) {
+			super.id(state)
+		} else {
+			val token = idToken(state.currentChar.toString())
+			advance(state)
+			token
+		}
+	}
 
 	private fun isProgrammingAnd(state: State): Boolean = state.currentChar == '&' && peek(state) == '&'
 	private fun isProgrammingOr(state: State): Boolean = state.currentChar == '|' && peek(state) == '|'

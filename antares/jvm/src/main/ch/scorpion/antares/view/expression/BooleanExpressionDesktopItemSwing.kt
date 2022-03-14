@@ -59,6 +59,10 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
+	private val singleCharIdentifierCheckbox = JCheckBox(
+		Translations.getString("antares.booleanExpression.singleCharIdentifier"),
+		item.expressions.singleCharIdentifier)
+
 	private val expressionsTextArea = LineNumberTextArea(text = item.expressions.expressions, font = FONT)
 
 	private val minimizedTextArea = JTextArea()
@@ -110,16 +114,20 @@ class BooleanExpressionDesktopItemSwing(
 	private fun disableApplyActionForNoExpressionChanges() {
 		applyAction.enabled = false
 		expressionsTextArea.mainTextArea.document.addDocumentListener(object : DocumentListener {
-			override fun insertUpdate(e: DocumentEvent?) { update() }
-			override fun removeUpdate(e: DocumentEvent?) { update() }
-			override fun changedUpdate(e: DocumentEvent?) { update() }
-
-			private fun update() {
-				applyAction.enabled = true
-				messageLabel.icon = null
-				messageLabel.text = null
-			}
+			override fun insertUpdate(e: DocumentEvent?) { disableApply() }
+			override fun removeUpdate(e: DocumentEvent?) { disableApply() }
+			override fun changedUpdate(e: DocumentEvent?) { disableApply() }
 		})
+		singleCharIdentifierCheckbox.addActionListener {
+			disableApply()
+			updateExpressionsExample()
+		}
+	}
+
+	private fun disableApply() {
+		applyAction.enabled = true
+		messageLabel.icon = null
+		messageLabel.text = null
 	}
 
 	private fun buildUI() {
@@ -163,8 +171,12 @@ class BooleanExpressionDesktopItemSwing(
 		val centerPanel = JPanel()
 		centerPanel.layout = BoxLayout(centerPanel, BoxLayout.PAGE_AXIS)
 
+		singleCharIdentifierCheckbox.alignmentX = Component.LEFT_ALIGNMENT
+		singleCharIdentifierCheckbox.border = BorderFactory.createEmptyBorder(10, 2, 0, 0)
+		centerPanel.add(singleCharIdentifierCheckbox)
+
 		val tipLabel = JLabel(Translations.getString("library.element.booleanExpression.tip"))
-		tipLabel.border = BorderFactory.createEmptyBorder(5, 2, 5, 0)
+		tipLabel.border = BorderFactory.createEmptyBorder(25, 2, 5, 0)
 		centerPanel.add(tipLabel)
 
 		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
@@ -210,21 +222,38 @@ class BooleanExpressionDesktopItemSwing(
 		exampleTextPane.contentType = "text/html"
 		exampleTextPane.isEditable = false
 		exampleTextPane.alignmentX = Component.LEFT_ALIGNMENT
-		exampleTextPane.text = """
-			${Translations.getString("antares.booleanExpression.example")}
-			<br>
-			<br>
-			U = AB' + A'B + 0<br>
-			V = (A*B') + (A'*B) + 0<br>
-			W = A ∧ ¬B ∨ ¬A ∧ B ∨ 0<br>
-			X = (A && !B) || (!A && B) || 0<br>
-			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
-		""".trimIndent()
+		updateExpressionsExample()
 
 		contentPanel.add(centerPanel, BorderLayout.CENTER)
 		contentPanel.add(exampleTextPane, BorderLayout.EAST)
 
 		return contentPanel
+	}
+
+	private fun updateExpressionsExample() {
+		exampleTextPane.text = if (singleCharIdentifierCheckbox.isSelected) {
+			"""
+			${Translations.getString("antares.booleanExpression.example")}
+			<br>
+			<br>
+			U = AB' + A'B + 0<br>
+			V = (A * B') + (A' * B) + 0<br>
+			W = (A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0<br>
+			X = (A && !B) || (!A && B) || 0<br>
+			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
+		""".trimIndent()
+		} else {
+			"""
+			${Translations.getString("antares.booleanExpression.example")}
+			<br>
+			<br>
+			U = A * B' + A * 'B + 0<br>
+			V = (A * B') + (A' * B) + 0<br>
+			W = (A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0<br>
+			X = (A && !B) || (!A && B) || 0<br>
+			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
+		""".trimIndent()
+		}
 	}
 
 	/** ---- [GraphDesktopViewItem] */
@@ -252,13 +281,13 @@ class BooleanExpressionDesktopItemSwing(
 	}
 
 	private fun applyChanges() {
-		commandManager.execute(BooleanExpressionCommand(ref, expressionsTextArea.text))
+		commandManager.execute(BooleanExpressionCommand(ref, expressionsTextArea.text, singleCharIdentifierCheckbox.isSelected))
 		applyAction.enabled = false
 	}
 
 	private fun generateMinimizedExpressions() {
 		try {
-			val result = expressionService.parseExpressions(expressionsTextArea.text, BooleanExpressionNotation.fromProperties())
+			val result = expressionService.parseExpressions(expressionsTextArea.text, singleCharIdentifierCheckbox.isSelected)
 			truthTable = expressionService.createTruthTable(result)
 			truthTable.name = item.name
 			createCircuitAction.enabled = true
