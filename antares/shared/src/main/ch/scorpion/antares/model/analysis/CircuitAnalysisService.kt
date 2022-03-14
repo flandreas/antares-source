@@ -7,6 +7,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.scheduler.ManualSchedulerTask
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -19,13 +21,19 @@ class CircuitAnalysisError(msg: String): Error(msg)
 class CircuitAnalysisService {
 
 	companion object {
-		private const val MAX_ITERATION_COUNT = 100
+		private val LOG by logger(CircuitAnalysisService::class)
+		private const val MAX_ITERATION_COUNT = 1000
 	}
 
+	private val timeService = ControlledTimeService()
+
 	fun analyse(circuit: DigitalGraph): TruthTable {
+		LOG.debug("Analyzing circuit ${circuit.name.value}")
+
 		val scheduler = SchedulerImpl(
 			currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.MAX_SPEED)),
-			task = ManualSchedulerTask()
+			task = ManualSchedulerTask(),
+			timeService = timeService
 		)
 		val truthTable = buildEmptyTruthTable(circuit)
 
@@ -55,9 +63,11 @@ class CircuitAnalysisService {
 	}
 
 	private fun fill(row: Int, circuit: DigitalGraph, truthTable: TruthTable, scheduler: Scheduler) {
-		startSimulation(circuit, scheduler)
-
 		try {
+			LOG.trace("Filling row $row")
+
+			timeService.reset()
+			startSimulation(circuit, scheduler)
 			setInputs(row, circuit, truthTable, scheduler)
 
 			var iterationCount = 0
@@ -65,10 +75,13 @@ class CircuitAnalysisService {
 				// Check for too many iterations
 				iterationCount++
 				if (iterationCount > MAX_ITERATION_COUNT) {
+					LOG.trace("Max. iterations exceeded")
 					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.tooManyIterations.msg"))
 				}
+				timeService.setTimeNanos(timeService.nowNanos() + 100)
 				scheduler.execute()
 			}
+
 			readOutputs(row, circuit, truthTable)
 		} catch (e: CircuitAnalysisError) {
 			throw e

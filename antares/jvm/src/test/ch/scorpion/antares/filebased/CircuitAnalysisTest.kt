@@ -5,8 +5,6 @@ import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.signal.Bit.False
 import ch.scorpion.antares.model.signal.Bit.True
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +15,6 @@ class CircuitAnalysisTest : AbstractFileBasedTest() {
 	companion object {
 		init {
 			configure()
-			BaseModule.timeService = RealTimeServiceJvm()
 		}
 	}
 
