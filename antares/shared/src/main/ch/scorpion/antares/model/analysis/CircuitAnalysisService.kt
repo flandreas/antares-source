@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.analysis
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
@@ -33,13 +35,20 @@ class CircuitAnalysisService {
 	}
 
 	private fun buildEmptyTruthTable(circuit: DigitalGraph): TruthTable {
-		val inputs = circuit.graphPorts.filter { it.portType == PortType.INPUT }
+		val inputs = circuit.graphPorts.filter { it.portType == PortType.INPUT }.map { it as CircuitInOut }
 		if (inputs.isEmpty()) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.noInputs.msg"))
 		}
-		val outputs = circuit.graphPorts.filter { it.portType == PortType.OUTPUT }
+		if (inputs.any { it.bitWidth != BitWidth.BW_1 }) {
+			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.multiBit.msg"))
+		}
+
+		val outputs = circuit.graphPorts.filter { it.portType == PortType.OUTPUT }.map { it as CircuitInOut }
 		if (outputs.isEmpty()) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.noOutputs.msg"))
+		}
+		if (outputs.any { it.bitWidth != BitWidth.BW_1 }) {
+			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.multiBit.msg"))
 		}
 
 		return TruthTable("Analysis Result", inputs.map { it.name!! }, outputs.map { it.name!! })
