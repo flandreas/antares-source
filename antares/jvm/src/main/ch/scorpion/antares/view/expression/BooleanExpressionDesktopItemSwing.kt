@@ -98,6 +98,7 @@ class BooleanExpressionDesktopItemSwing(
 
 		ref.addListener {
 			expressionsTextArea.text = ref.expressions.expressions
+			singleCharIdentifierCheckbox.isSelected = ref.expressions.singleCharIdentifier
 		}
 
 		disableApplyActionForNoExpressionChanges()
