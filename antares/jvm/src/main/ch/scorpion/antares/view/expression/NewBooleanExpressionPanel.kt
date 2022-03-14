@@ -1,15 +1,16 @@
 package ch.scorpion.antares.view.expression
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 /**
  * A [JPanel] for entering parameters for a new boolean expression.
@@ -42,6 +43,17 @@ class NewBooleanExpressionPanel(
 
 	init {
 		buildUI()
+		updateOkAction()
+
+		nameField.document.addDocumentListener(object : DocumentListener {
+			override fun insertUpdate(e: DocumentEvent?) { updateOkAction() }
+			override fun removeUpdate(e: DocumentEvent?) { updateOkAction() }
+			override fun changedUpdate(e: DocumentEvent?) { updateOkAction() }
+		})
+	}
+
+	private fun updateOkAction() {
+		okAction.enabled = StringUtils.isNotBlank(nameField.text)
 	}
 
 	private fun buildUI() {
