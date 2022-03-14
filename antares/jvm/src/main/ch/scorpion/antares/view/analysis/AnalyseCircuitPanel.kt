@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
+import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.expression.NewBooleanExpressionPanel
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
@@ -34,6 +35,7 @@ class AnalyseCircuitPanel(
 
 	companion object {
 		private val EXPRESSION_FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
+		private const val PREF_TEXT_AREA_HEIGHT = 150
 
 		fun showAsDialog(
 			parent: Frame,
@@ -105,6 +107,9 @@ class AnalyseCircuitPanel(
 		expressionScrollPane.alignmentX = Component.LEFT_ALIGNMENT
 		expressionScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		expressionScrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+		expressionScrollPane.minimumSize = Dimension(expressionScrollPane.minimumSize.width, PREF_TEXT_AREA_HEIGHT)
+		expressionScrollPane.preferredSize = Dimension(Int.MAX_VALUE, PREF_TEXT_AREA_HEIGHT)
+		expressionScrollPane.maximumSize = expressionScrollPane.preferredSize
 
 		panel.add(expressionScrollPane)
 
