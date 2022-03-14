@@ -71,7 +71,9 @@ To create a boolean expression, select a project/library node or a folder in a p
 
 === Editing Boolean Expressions
 
-The boolean expressions window contains a text area where you can enter your boolean expressions. A sample texts shows the various expression formats supported by Antares. Enter a separate expression for every variable on a separate line.
+The boolean expressions window contains a text area where you can enter your boolean expressions. A sample text shows the various expression formats supported by Antares. Enter a separate expression for every variable on a separate line.
+
+Select the checkbox "One-Character Variables" if the names of all variables in your expressions consist only of a single character. If this option is used, boolean operator priority NOT > AND > OR is applied when parsing the expressions, and you can omit AND operators in the expressions, even if you don't surround the AND terms with parentheses.
 
 After having entered your expressions, press btn:[Apply] to let Antares check the syntax of your expressions and generate a minimized version of them. Antares will also auto-fill the read-only truth table according to the logic of your expressions.
 
