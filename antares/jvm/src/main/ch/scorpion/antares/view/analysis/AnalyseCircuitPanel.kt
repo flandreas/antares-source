@@ -55,7 +55,7 @@ class AnalyseCircuitPanel(
 
 	private val ref = TruthTableReference(truthTableProvider = { truthTable })
 
-	private val tableView = TruthTableTableView(ref, commandManager)
+	private val tableView = TruthTableTableView(ref, commandManager, editable = false)
 
 	private val expressionsTextArea = JTextArea()
 
