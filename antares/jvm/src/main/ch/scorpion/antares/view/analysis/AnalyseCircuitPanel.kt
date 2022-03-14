@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.truthtable.TruthTable
+import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.expression.NewBooleanExpressionPanel
@@ -16,6 +17,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import java.awt.*
@@ -58,6 +60,8 @@ class AnalyseCircuitPanel(
 	private val tableView = TruthTableTableView(ref, commandManager, editable = false)
 
 	private val expressionsTextArea = JTextArea()
+
+	private val saveTruthTableAction = SaveTruthTableAction()
 
 	private val saveExpressionsAction = SaveExpressionsAction()
 
@@ -111,6 +115,8 @@ class AnalyseCircuitPanel(
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 
+		panel.add(JButton(ActionWrapperSwing(saveTruthTableAction)))
+		panel.add(Box.createHorizontalStrut(5))
 		panel.add(JButton(ActionWrapperSwing(saveExpressionsAction)))
 		panel.add(Box.createHorizontalStrut(5))
 		panel.add(Box.createHorizontalGlue())
@@ -122,6 +128,20 @@ class AnalyseCircuitPanel(
 	private inner class CloseAction : AbstractAction("base.action.close") {
 		override fun execute(event: ActionEvent) {
 			closeHandler()
+		}
+	}
+
+	private inner class SaveTruthTableAction : AbstractAction("antares.circuitAnalysis.saveTruthTable.action") {
+		override fun execute(event: ActionEvent) {
+			SaveTruthTablePanel.showAsDialog(Frame.getFrames()[0])
+				?.let {
+					truthTable.name = Name(it)
+					val library = containerLibraryElement.library!!
+					val directory = library.libraryService.getDirectoryOf(library, containerLibraryElement)
+					val item = TruthTableLibraryItem(truthTable)
+
+					library.libraryService.addLibraryItem(library, item, directory)
+				}
 		}
 	}
 
