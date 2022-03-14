@@ -1,10 +1,13 @@
 package ch.scorpion.antares.view.analysis
 
+import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
+import ch.scorpion.antares.view.expression.NewBooleanExpressionPanel
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -12,14 +15,17 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import java.awt.*
 import javax.swing.*
 import kotlin.math.max
 
 class AnalyseCircuitPanel(
+	private val containerLibraryElement: ContainerLibraryElement,
 	private val truthTable: TruthTable,
-	private val commandManager: CommandManager = EditModule.commandManager,
+	commandManager: CommandManager = EditModule.commandManager,
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
@@ -29,12 +35,13 @@ class AnalyseCircuitPanel(
 
 		fun showAsDialog(
 			parent: Frame,
+			containerLibraryElement: ContainerLibraryElement,
 			truthTable: TruthTable,
 			commandManager: CommandManager = EditModule.commandManager,
 			truthTableService: TruthTableService = AntaresModelModule.truthTableService
 		) {
 			DialogBuilder<AnalyseCircuitPanel>(parent)
-				.content { dialog -> AnalyseCircuitPanel(truthTable, commandManager, truthTableService, closeHandler = { dialog.dispose()} )}
+				.content { dialog -> AnalyseCircuitPanel(containerLibraryElement, truthTable, commandManager, truthTableService, closeHandler = { dialog.dispose()} )}
 				.title(Translations.getString("antares.circuitAnalysis.title"))
 				.defaultButton { it.closeButton }
 				.preferredSize(Dimension(600, 600))
@@ -51,6 +58,8 @@ class AnalyseCircuitPanel(
 	private val tableView = TruthTableTableView(ref, commandManager)
 
 	private val expressionsTextArea = JTextArea()
+
+	private val saveExpressionsAction = SaveExpressionsAction()
 
 	init {
 		buildUI()
@@ -101,6 +110,9 @@ class AnalyseCircuitPanel(
 	private fun buildButtonPanel(): JPanel {
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+
+		panel.add(JButton(ActionWrapperSwing(saveExpressionsAction)))
+		panel.add(Box.createHorizontalStrut(5))
 		panel.add(Box.createHorizontalGlue())
 		panel.add(closeButton)
 
@@ -110,6 +122,21 @@ class AnalyseCircuitPanel(
 	private inner class CloseAction : AbstractAction("base.action.close") {
 		override fun execute(event: ActionEvent) {
 			closeHandler()
+		}
+	}
+
+	private inner class SaveExpressionsAction : AbstractAction("antares.circuitAnalysis.saveExpressions.action") {
+		override fun execute(event: ActionEvent) {
+			NewBooleanExpressionPanel
+				.showAsDialog(Frame.getFrames()[0])
+				?.let { name ->
+					val library = containerLibraryElement.library!!
+					val directory = library.libraryService.getDirectoryOf(library, containerLibraryElement)
+					val item = BooleanExpressionLibraryItem(TranslatableText(name))
+					item.expressions = BooleanExpressionStorable(expressionsTextArea.text)
+
+					library.libraryService.addLibraryItem(library, item, directory)
+				}
 		}
 	}
 }

@@ -59,8 +59,6 @@ class CircuitAnalysisService {
 					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.tooManyIterations.msg"))
 				}
 				scheduler.execute()
-
-				scheduler.printSchedule()
 			}
 			readOutputs(row, circuit, truthTable)
 		} catch (e: CircuitAnalysisError) {
