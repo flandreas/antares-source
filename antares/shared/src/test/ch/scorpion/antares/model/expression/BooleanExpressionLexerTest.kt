@@ -23,6 +23,24 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 	}
 
 	@Test
+	fun shouldScanMultiLineArithmeticExpression() {
+		val lexer = BooleanExpressionLexer("""
+			X = A + BIN
+			Y = BIN
+		""".trimIndent(), singleCharIdentifier = false)
+
+		assertId("X", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("A", lexer)
+		assertToken(TokenType.PLUS, lexer)
+		assertId("BIN", lexer)
+
+		assertId("Y", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("BIN", lexer)
+	}
+
+	@Test
 	fun shouldScanLogicExpression() {
 		val lexer = BooleanExpressionLexer("X = A ∧ ¬B ∨ ¬A ∧ B")
 
@@ -85,6 +103,44 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		assertToken(TokenType.PLUS, lexer)
 		assertId("A", lexer)
 		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertId("B", lexer)
+	}
+
+	@Test
+	fun shouldScanMultiLineSingleCharacterIdentifiers() {
+		val lexer = BooleanExpressionLexer("""
+			X = A + B
+			Y = B
+		""".trimIndent(), singleCharIdentifier = true)
+
+		assertId("X", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("A", lexer)
+		assertToken(TokenType.PLUS, lexer)
+		assertId("B", lexer)
+
+		assertId("Y", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("B", lexer)
+	}
+
+	@Test
+	fun shouldScanMultiLineSingleWithTrailingNegationCharacterIdentifiers() {
+		val lexer = BooleanExpressionLexer("""
+			X = A + B'
+			Y' = B
+		""".trimIndent(), singleCharIdentifier = true)
+
+		assertId("X", lexer)
+		assertToken(TokenType.ASSIGN, lexer)
+		assertId("A", lexer)
+		assertToken(TokenType.PLUS, lexer)
+		assertId("B", lexer)
+		assertToken(TokenType.SINGLE_QUOTE, lexer)
+
+		assertId("Y", lexer)
+		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertToken(TokenType.ASSIGN, lexer)
 		assertId("B", lexer)
 	}
 }

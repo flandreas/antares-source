@@ -3,10 +3,7 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.jabbah.io.StorableCloner
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class TruthTableTest {
 
@@ -100,6 +97,37 @@ class TruthTableTest {
 		assertTrue(midTerms.contains(3)) // Values 00 inverted
 		assertTrue(midTerms.contains(0)) // Values 11 inverted
 	}
+
+	@Test
+	fun shouldGetNegatedOutputColumnInfo() {
+		val truthTable = TruthTable("Test", listOf("A", "B"), listOf("!OUT"))
+
+		val info = truthTable.getOutputColumnInfo(2)
+
+		assertEquals("OUT", info.plainName)
+		assertTrue(info.isNegated)
+	}
+
+	@Test
+	fun shouldGetNegatedParenthesesOutputColumnInfo() {
+		val truthTable = TruthTable("Test", listOf("A", "B"), listOf("!(OUT)"))
+
+		val info = truthTable.getOutputColumnInfo(2)
+
+		assertEquals("OUT", info.plainName)
+		assertTrue(info.isNegated)
+	}
+
+	@Test
+	fun shouldGetNonNegatedOutputColumnInfo() {
+		val truthTable = TruthTable("Test", listOf("A", "B"), listOf("OUT"))
+
+		val info = truthTable.getOutputColumnInfo(2)
+
+		assertEquals("OUT", info.plainName)
+		assertFalse(info.isNegated)
+	}
+
 
 	private fun create2to1TruthTable(): TruthTable =
 		TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("O"))

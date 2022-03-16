@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 
 /** Identifies a location in the code to identify error locations.*/
 data class CodeLocation(val pos: Int, val row: Int, val column: Int) {
@@ -25,6 +26,8 @@ open class BaseLexer(protected val text: String) {
 
 	companion object {
 
+		private val LOG by logger(BaseLexer::class)
+
 		private val RESERVED_KEYWORDS = mapOf<String, Token<String>>()
 
 		// Singleton instances of value-less [Token]s
@@ -41,6 +44,8 @@ open class BaseLexer(protected val text: String) {
 	private val peekState = State()
 
 	val location: CodeLocation get() = state.location
+
+	val row: Int get() = state.rowCounter
 
 	/**
 	 * Scans more text and returns the next [Token].
@@ -70,7 +75,12 @@ open class BaseLexer(protected val text: String) {
 				continue
 			}
 
-			return nextTokenImpl(state)
+			val token = nextTokenImpl(state)
+			if (LOG.isTraceEnabled() && state === this.state) {
+				LOG.trace(token.toString())
+			}
+
+			return token
 		}
 
 		return EOF_TOKEN

@@ -32,8 +32,8 @@ class BooleanExpressionServiceTest {
 		assertTrue(result.inputNames.contains("A"))
 		assertTrue(result.inputNames.contains("B"))
 		assertEquals(2, result.outputs.size)
-		assertTrue(result.outputs.keys.contains("X"))
-		assertTrue(result.outputs.keys.contains("Y"))
+		assertTrue(result.outputs.keys.any { it.token.value == "X" })
+		assertTrue(result.outputs.keys.any { it.token.value == "Y" })
 	}
 
 	@Test
@@ -61,7 +61,7 @@ class BooleanExpressionServiceTest {
 	}
 
 	@Test
-	fun shouldCalculateOutputColumns() {
+	fun shouldCreateTruthTable() {
 		val expressions = """
 			X = A * B' + A' * B
 			Y = B'
@@ -77,5 +77,19 @@ class BooleanExpressionServiceTest {
 		assertEquals(listOf(False, True, False, True), truthTable.getColumnValues(1))
 		assertEquals(listOf(False, True, True, False), truthTable.getColumnValues(2))
 		assertEquals(listOf(True, False, True, False), truthTable.getColumnValues(3))
+	}
+
+	@Test
+	fun shouldCreateTruthTableWithNegatedOutputColumn() {
+		val expressions = """
+			X = A * B' + A' * B
+			Y' = B
+		""".trimIndent()
+		val result = service.parseExpressions(expressions)
+
+		val truthTable = service.createTruthTable(result)
+
+		assertEquals("X", truthTable.getColumnName(2))
+		assertEquals("!Y", truthTable.getColumnName(3))
 	}
 }

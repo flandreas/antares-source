@@ -10,12 +10,23 @@ interface Node {
 
 fun filterNodes(node: Node, condition: (Node) -> Boolean): Collection<Node> {
 	val result = mutableSetOf<Node>()
+
 	node.accept(object : EmptyHierarchyVisitor() {
+
 		override fun visitEnter(node: Any): Boolean {
+			evaluate(node)
+			return true
+		}
+
+		override fun visit(node: Any): Boolean {
+			evaluate(node)
+			return true
+		}
+
+		private fun evaluate(node: Any) {
 			if (node is Node && condition(node)) {
 				result.add(node)
 			}
-			return true
 		}
 	})
 	return result
@@ -97,7 +108,10 @@ class Block(location: CodeLocation, children: List<Node>) : Compound(location, c
 	override fun toString(): String = "Block"
 }
 
-open class Variable(location: CodeLocation, val token: Token<String>) : AbstractNode(location) {
+open class Variable(location: CodeLocation, val token: Token<String>, val negated: Boolean = false) : AbstractNode(location) {
+
+	fun negate(): Variable = Variable(location, token, true)
+
 	override fun toString(): String = token.value!!
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)

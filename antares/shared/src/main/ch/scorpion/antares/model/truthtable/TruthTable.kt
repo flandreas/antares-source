@@ -29,6 +29,13 @@ class TruthTable(
 	outputColumnNames: List<String> = emptyList()
 ) : AbstractStorable(), Namable {
 
+	companion object {
+		private val outputRegex = listOf(
+			"^!?([a-zA-Z]\\w*)\$".toRegex(),
+			"^!\\(([a-zA-Z]\\w*)\\)\$".toRegex()
+		)
+	}
+
 	val inputColumnCount: Int get() = inputColumns.size
 
 	val outputColumnCount: Int get() = outputColumns.size
@@ -109,6 +116,19 @@ class TruthTable(
 		listeners.remove(l)
 	}
 
+	fun getOutputColumnInfo(column: Int): TruthTableOutputColumnInfo {
+		val columnName = getColumnName(column).trim()
+
+		outputRegex.forEach {
+			val result = it.matchEntire(columnName)
+			if (result != null && result.groupValues.size > 1) {
+				return TruthTableOutputColumnInfo(result.groupValues[1], columnName.startsWith('!'))
+			}
+		}
+
+		return TruthTableOutputColumnInfo(columnName, false)
+	}
+
 	private fun notifyListeners(row: Int, column: Int, value: Bit) {
 		val event = TruthTableEvent(this, row, column, value)
 		listeners.forEach { it.dataChanged(event) }
@@ -163,6 +183,16 @@ class TruthTable(
 		fillInputCells()
 	}
 }
+
+/**
+ * Used to extract negation information from a standard Antares port name of the form "!O" or "!(O).
+ * @property plainName the column name without negation operator or parentheses
+ * @property isNegated `true` if the original port name was negated
+ */
+data class TruthTableOutputColumnInfo(
+	val plainName: String,
+	val isNegated: Boolean
+)
 
 data class TruthTableEvent(
 	val source: TruthTable,

@@ -13,12 +13,12 @@ import ch.scorpion.jabbah.base.dsl.*
  * according to the parsed output expressions.
  *
  * @param inputNames the list of all input variable names
- * @param outputs maps names of output variables to their result expression AST [Node] ready
+ * @param outputs maps left side [Variable]s of output variable assignments to their result expression AST [Node] ready
  * to be interpreted by [BooleanExpressionInterpreter]
  */
 data class BooleanExpressionParseResult(
 	val inputNames: List<String>,
-	val outputs: Map<String, Node>
+	val outputs: Map<Variable, Node>
 )
 
 /**
@@ -53,7 +53,7 @@ class BooleanExpressionService {
 	fun createTruthTable(parseResult: BooleanExpressionParseResult): TruthTable {
 		val truthTable = TruthTable(
 			inputColumnNames = parseResult.inputNames,
-			outputColumnNames = parseResult.outputs.keys.toList()
+			outputColumnNames = parseResult.outputs.keys.map { createOutputColumnName(it) }
 		)
 		val activationRecord = TruthTableActivationRecord(truthTable)
 
@@ -62,6 +62,19 @@ class BooleanExpressionService {
 		}
 
 		return truthTable
+	}
+
+	private fun createOutputColumnName(variable: Variable): String {
+		val name = variable.token.value!!
+		return if (variable.negated) {
+			if (name.length > 1) {
+				"!($name)"
+			} else {
+				"!$name"
+			}
+		} else {
+			name
+		}
 	}
 
 	/**
@@ -93,7 +106,7 @@ class BooleanExpressionService {
 	private class Analyser : EmptyHierarchyVisitor() {
 
 		val inputNames = mutableListOf<String>()
-		val outputs = mutableMapOf<String, Node>()
+		val outputs = mutableMapOf<Variable, Node>()
 
 		private var assignedOutputName: String? = null
 
@@ -101,12 +114,12 @@ class BooleanExpressionService {
 			when (node) {
 				is Assignment -> {
 					val outputName = node.left.token.value as String
-					if (outputs.keys.contains(outputName)) {
+					if (outputs.any { it.key.token.value == outputName }) {
 						throw SemanticError(node.left.location, Translations.getString("antares.booleanExpression.outputAlreadyDefined.msg"))
 					} else if (inputNames.contains(outputName)) {
 						throw SemanticError(node.left.location, Translations.getString("antares.booleanExpression.outputAsInput.msg"))
 					} else {
-						outputs[outputName] = node.right
+						outputs[node.left] = node.right
 						assignedOutputName = outputName
 					}
 				}
@@ -125,7 +138,7 @@ class BooleanExpressionService {
 			when (node) {
 				is Variable -> {
 					val name = node.token.value!!
-					if (outputs.keys.contains(name)) {
+					if (outputs.any { it.key.token.value == name }) {
 						if (name != assignedOutputName) {
 							throw SemanticError(
 								node.location,

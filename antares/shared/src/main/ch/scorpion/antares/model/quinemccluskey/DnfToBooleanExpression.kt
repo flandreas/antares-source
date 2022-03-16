@@ -8,7 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.abs
 
 /**
- * Converts the output of Quine-McCluskey's [minimizeToDNF] to [BooleanExpression].
+ * Converts the output of Quine-McCluskey's [minimizeToDNF] to [BooleanExpression] reflecting
+ * the right sides of assignments.
  */
 class DnfToBooleanExpression(
 	private val truthTable: TruthTable,

@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.expression
 import ch.scorpion.jabbah.base.dsl.*
 
 /**
- * Boolean expressions are are defined by the following parts of the standard Antares DSL
+ * Boolean expressions are defined by the following parts of the standard Antares DSL
  * as defined by [Parser]:
  *
  * <pre>

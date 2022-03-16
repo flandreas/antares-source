@@ -238,7 +238,7 @@ class BooleanExpressionDesktopItemSwing(
 			<br>
 			<br>
 			U = AB' + A'B + 0<br>
-			V = (A * B') + (A' * B) + 0<br>
+			V' = (A * B') + (A' * B) + 0<br>
 			W = (A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0<br>
 			X = (A && !B) || (!A && B) || 0<br>
 			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
@@ -249,7 +249,7 @@ class BooleanExpressionDesktopItemSwing(
 			<br>
 			<br>
 			U = A * B' + A * 'B + 0<br>
-			V = (A * B') + (A' * B) + 0<br>
+			V' = (A * B') + (A' * B) + 0<br>
 			W = (A ∧ ¬B) ∨ (¬A ∧ B) ∨ 0<br>
 			X = (A && !B) || (!A && B) || 0<br>
 			Y = (A AND NOT B) OR (NOT A AND B) OR true<br>
@@ -296,6 +296,7 @@ class BooleanExpressionDesktopItemSwing(
 			messageLabel.icon = CORRECT_ICON
 			messageLabel.text = Translations.getString("edit.dsl.check.success.msg")
 		} catch (e: DslError) {
+			truthTable = TruthTable(item.name.value)
 			createCircuitAction.enabled = false
 			messageLabel.icon = ERROR_ICON
 			messageLabel.text = e.toString()

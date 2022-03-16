@@ -12,7 +12,11 @@ import ch.scorpion.jabbah.base.dsl.TokenType.*
  * <pre>
  *     assignmentList : assignment
  *               | assignment assignmentList
- *     assignment : variable "=" expr
+ *     assignment : output "=" expr
+ *     output : outputVar
+ *            | prefixNotOp outputVar
+ *            | outputVar postfixNotOp
+ *     outputVar : ["("] variable [")"]
  *     expr : term (orOp term)*
  *     term : factor (andOp factor)*
  *     factor : literal
@@ -73,11 +77,39 @@ class BooleanExpressionParser(
 
 	private fun assignment(): Assignment {
 		lexer.location.let { location ->
-			val variable = variable()
-			val op = currentToken as Token<Assignment>
+			val variable = output()
+			val op = currentToken
 			eat(ASSIGN)
 			val right = expr()
-			return Assignment(location, variable, op, right)
+			return Assignment(location, variable, op as Token<Assignment>, right)
+		}
+	}
+
+	private fun output(): Variable {
+
+		var variable = if (currentToken!!.type in PREFIX_NOT_OPERATORS) {
+			eat(currentToken!!.type)
+			outputVar(negated = true)
+		} else {
+			outputVar()
+		}
+
+		if (currentToken!!.type in POSTFIX_NOT_OPERATORS) {
+			eat(currentToken!!.type)
+			variable = variable.negate()
+		}
+
+		return variable
+	}
+
+	private fun outputVar(negated: Boolean = false): Variable {
+		return if (currentToken!!.type == LPAREN) {
+			eat(LPAREN)
+			val variable = variable(negated)
+			eat(RPAREN)
+			variable
+		} else {
+			variable(negated)
 		}
 	}
 
@@ -111,8 +143,10 @@ class BooleanExpressionParser(
 	}
 
 	private fun singleCharIdentifierTerm(): Node {
+		val row = lexer.row
 		var node = factor()
-		while (currentToken!!.type == ID || currentToken!!.type in AND_OPERATORS) {
+
+		while (currentToken!!.type in AND_OPERATORS || currentToken!!.type == ID && row == lexer.row) {
 			lexer.location.let { location ->
 				if (currentToken!!.type in AND_OPERATORS) {
 					eat(currentToken!!.type)
@@ -159,7 +193,7 @@ class BooleanExpressionParser(
 		return literal
 	}
 
-	private fun variable(): Variable = Variable(lexer.location, identifier())
+	private fun variable(negated: Boolean = false): Variable = Variable(lexer.location, identifier(), negated)
 
 	private fun identifier(): Token<String> {
 		val identifier = currentToken as Token<String>

@@ -2,7 +2,10 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.Variable
+import ch.scorpion.jabbah.base.dsl.filterNodes
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class BooleanExpressionParserTest {
 
@@ -63,6 +66,90 @@ class BooleanExpressionParserTest {
 		).parse())
 	}
 
+	@Test
+	fun shouldParseNegatedArithmeticOutput() {
+		val ast = BooleanExpressionParser(expectAssignment = true, "OUT' = A * B' + A' * B").parse()
+		assertXorAST(ast, "OUT")
+		assertNegatedOutput(ast, "OUT")
+	}
+
+	@Test
+	fun shouldParseNegatedSingleCharIdentifier() {
+		val ast = BooleanExpressionParser(
+			expectAssignment = true,
+			"X' = A * B' + A' * B",
+			singleCharIdentifier = true
+		).parse()
+
+		assertXorAST(ast)
+		assertNegatedOutput(ast)
+	}
+
+	@Test
+	fun shouldParseMultiLineSingleCharIdentifier() {
+		val ast = BooleanExpressionParser(
+			expectAssignment = true,
+			"""
+				X = A + B
+				Y = A 
+			""".trimIndent(),
+			singleCharIdentifier = true
+		).parse()
+
+		assertAST(ast, """
+			Compound
+			- =
+			-- X
+			-- or
+			--- A
+			--- B
+			- =
+			-- Y
+			-- A
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseMultiLineSingleCharIdentifierWithTrailingNegation() {
+		val ast = BooleanExpressionParser(
+			expectAssignment = true,
+			"""
+				X = A + B'
+				Y' = A 
+			""".trimIndent(),
+			singleCharIdentifier = true
+		).parse()
+
+		assertAST(ast, """
+			Compound
+			- =
+			-- X
+			-- or
+			--- A
+			--- not
+			---- B
+			- =
+			-- Y
+			-- A
+		""".trimIndent())
+
+		assertNegatedOutput(ast, "Y")
+	}
+
+	@Test
+	fun shouldParseNegatedArithmeticOutputWithParentheses() {
+		val ast = BooleanExpressionParser(expectAssignment = true, "(OUT)' = A * B' + A' * B").parse()
+		assertXorAST(ast, "OUT")
+		assertNegatedOutput(ast, "OUT")
+	}
+
+	@Test
+	fun shouldParseNegatedLogicOutput() {
+		val ast = BooleanExpressionParser(expectAssignment = true, "¬X = A ∧ ¬B ∨ ¬A ∧ B").parse()
+		assertXorAST(ast)
+		assertNegatedOutput(ast)
+	}
+
 	private fun assertConstantsAST(ast: Node) {
 		assertAST(ast, """
 			Compound
@@ -75,11 +162,11 @@ class BooleanExpressionParserTest {
 		""".trimIndent())
 	}
 
-	private fun assertXorAST(ast: Node) {
+	private fun assertXorAST(ast: Node, outputName: String = "X") {
 		assertAST(ast, """
 			Compound
 			- =
-			-- X
+			-- $outputName
 			-- or
 			--- and
 			---- A
@@ -90,5 +177,12 @@ class BooleanExpressionParserTest {
 			----- A
 			---- B
 		""".trimIndent())
+	}
+
+	private fun assertNegatedOutput(ast: Node, outputName: String = "X") {
+		assertTrue(
+			filterNodes(ast) { it is Variable && it.token.value == outputName}
+				.map { it as Variable }
+				.first().negated)
 	}
 }

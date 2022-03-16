@@ -24,6 +24,8 @@ image::user-manual/circuits/truth-table-dialog.png[Truth Table,400,align="center
 
 Enter the name of the truth table and a comma-separated list of the names of the inputs (variable) and outputs (results).
 
+TIP: Output colum names can be negated. Use the same negation notation you use when naming negated circuit port names, e.g. `!Q` or `!(OUT)`
+
 After pressing btn:[OK], Antares adds the newly created truth table to the project/library and opens the truth table in the main view.
 
 === Editing a Truth Table

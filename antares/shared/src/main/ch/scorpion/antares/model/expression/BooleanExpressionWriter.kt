@@ -26,6 +26,8 @@ interface BooleanExpressionWriter {
 		outputColumn: Int,
 		omitAndForSingleCharacterVariables: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_OMIT_AND)
 	) : String
+
+	fun writeOutput(truthTable: TruthTable, outputColumn: Int): String
 }
 
 /**
@@ -50,8 +52,27 @@ abstract class AbstractBooleanExpressionWriter(
 		omitAndForSingleCharacterVariables: Boolean
 	): String {
 		val builder = StringBuilder()
+		val output = writeOutput(truthTable, outputColumn)
+		builder.append("$output = ")
 		ast.accept(Visitor(builder, omitAndForSingleCharacterVariables && truthTable.allInputNamesAreSingleChar))
-		return "${truthTable.getColumnName(outputColumn)} = $builder"
+		return builder.toString()
+	}
+
+	override fun writeOutput(truthTable: TruthTable, outputColumn: Int): String {
+		val builder = StringBuilder()
+		val info = truthTable.getOutputColumnInfo(outputColumn)
+		if (info.isNegated) {
+			if (isNotPostfix) {
+				builder.append(info.plainName)
+				writeNot(builder)
+			} else {
+				writeNot(builder)
+				builder.append(info.plainName)
+			}
+		} else {
+			builder.append(info.plainName)
+		}
+		return builder.toString()
 	}
 
 	private inner class Visitor(
@@ -109,6 +130,8 @@ class StandardBooleanExpressionWriter(
 				BooleanExpressionNotation.PROGRAMMING -> PROGRAMMING
 				BooleanExpressionNotation.VERBOSE -> VERBOSE
 			}
+
+		fun ofPropertiesNotation(): BooleanExpressionWriter = ofNotation(BooleanExpressionNotation.fromProperties())
 	}
 
 	override fun writeAnd(builder: StringBuilder) {

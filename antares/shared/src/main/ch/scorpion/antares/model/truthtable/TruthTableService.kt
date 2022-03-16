@@ -17,6 +17,8 @@ class TruthTableService(
 	companion object {
 		const val PROP_TRUTH_TABLE_MAX_INPUTS = "antares.truthTable.maxInputs"
 		const val PROP_TRUTH_TABLE_MAX_OUTPUTS = "antares.truthTable.maxOutputs"
+
+		private val OUTPUT_REGEX = "!?[a-zA-Z][0-9a-zA-Z]*|!\\([a-zA-Z][0-9a-zA-Z]*\\)".toRegex()
 	}
 
 	/**
@@ -50,6 +52,11 @@ class TruthTableService(
 		if (inputs.distinct().size != inputs.size) {
 			throw IllegalArgumentException(Translations.getString("library.newTruthTable.error.duplicateInput", maxInputs))
 		}
+		inputs.forEach {
+			if (!checkInputName(it)) {
+				throw IllegalArgumentException(Translations.getString("library.newTruthTable.error.illegalInputName", it))
+			}
+		}
 
 		val outputs = outputNames.split(',').map { it.trim() }.filter { it.isNotBlank() }
 		if (outputs.isEmpty()) {
@@ -61,13 +68,22 @@ class TruthTableService(
 		if (outputs.distinct().size != outputs.size) {
 			throw IllegalArgumentException(Translations.getString("library.newTruthTable.error.duplicateOutput", maxInputs))
 		}
-
 		if (inputs.any { outputs.contains(it) }) {
 			throw IllegalArgumentException(Translations.getString("library.newTruthTable.error.intersection", maxOutputs))
+		}
+		outputs.forEach {
+			if (!checkOutputName(it)) {
+				throw IllegalArgumentException(Translations.getString("library.newTruthTable.error.illegalOutputName", it))
+			}
 		}
 
 		return TruthTable(name, inputs, outputs)
 	}
+
+	private fun checkInputName(name: String): Boolean =
+		name.first().isLetter() && name.all { it.isLetterOrDigit() }
+
+	private fun checkOutputName(name: String): Boolean = OUTPUT_REGEX.matches(name)
 
 	/**
 	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified
