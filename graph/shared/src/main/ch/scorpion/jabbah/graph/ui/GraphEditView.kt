@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -21,7 +22,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * Consists of a [GraphNavigationView] at the left side and a side bar at the right side
  * for displaying a [ScenarioView] and a [UsecaseView].
  */
-interface GraphEditView : UIView {
+interface GraphEditView : UIView, GraphDesktopViewItem {
 	val graphNavigationView: GraphNavigationView
 }
 

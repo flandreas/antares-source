@@ -244,7 +244,7 @@ class GraphPanelViewController(
 
 			desktopController.closeAll()
 		} else if (rootGraphView != graphView) {
-			desktopController.show(view.graphEditView.graphNavigationView)
+			desktopController.show(view.graphEditView)
 			System.invokeLater {
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
 				setRootGraphView(graphView, applyZoomStrategy = true)

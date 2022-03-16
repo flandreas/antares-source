@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewSwing
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewSwing
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -26,14 +27,13 @@ class GraphEditViewSwing(
 	application: Application,
 	viewManager: ViewManager,
 	propertySheetFactory: PropertySheetPanelFactory,
-	eventBus: EventBus = BaseModule.eventBus
-) : JPanel(), GraphEditView {
-
-	override val graphNavigationView = GraphNavigationViewSwing(
+	eventBus: EventBus = BaseModule.eventBus,
+	override val graphNavigationView: GraphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
 		drawingView = controller.editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
 		contextBorderColor = null)
+) : JPanel(), GraphEditView, GraphDesktopViewItem by graphNavigationView {
 
 	private val scenarioView = ScenarioViewSwing(controller.scenarioViewController, application, eventBus, propertySheetFactory)
 
@@ -46,7 +46,7 @@ class GraphEditViewSwing(
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,
-		mainContent = graphNavigationView,
+		mainContent = graphNavigationView as GraphNavigationViewSwing,
 		settingBaseName = "graphPanel.rightSidebar",
 		contents = listOf(
 			SidebarPaneContentImpl(

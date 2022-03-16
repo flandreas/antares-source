@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.CommandManager
@@ -54,7 +55,7 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
 		this,
-		JLabel("${Translations.getString("library.element.booleanExpression.name")} \"${item.name.getTranslation()}\""),
+		UIBasics.createHeaderLabel("${Translations.getString("library.element.booleanExpression.name")} \"${item.name.getTranslation()}\""),
 		allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }

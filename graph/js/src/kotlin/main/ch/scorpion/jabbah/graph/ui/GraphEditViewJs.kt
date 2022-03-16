@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -25,8 +26,9 @@ fun RBuilder.graphEditView(handler: GraphEditViewJsProps.() -> Unit) {
  * Contains so far only a [GraphNavigationView]. The [ScenarioView] and [UsecaseView] will come later.
  */
 class GraphEditViewJs(
-	props: GraphEditViewJsProps
-) : RComponent<GraphEditViewJsProps, State>(props), GraphEditView {
+	props: GraphEditViewJsProps,
+	override val graphNavigationView: GraphNavigationView = props.controller.graphNavigationViewController.view
+) : RComponent<GraphEditViewJsProps, State>(props), GraphEditView, GraphDesktopViewItem by graphNavigationView {
 
 	// Not used so for, but needed to satisfy controllers
 	private val scenarioView = ScenarioViewJs(object : ScenarioViewJsProps {
@@ -41,8 +43,6 @@ class GraphEditViewJs(
 	init {
 		props.controller.view = this
 	}
-
-	override val graphNavigationView: GraphNavigationView get() = props.controller.graphNavigationViewController.view
 
 	override fun RBuilder.render() {
 		graphNavigationView {

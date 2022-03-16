@@ -45,7 +45,7 @@ class GraphNavigationViewSwing(
 
 	private val layeredPane = JLayeredPane()
 
-	val showsNavigationRoot: Boolean get() = navigationStack.size == 1
+	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
 	init {
 		controller.view = this

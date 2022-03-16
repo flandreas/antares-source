@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.SidebarPane.Location
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -187,7 +188,7 @@ class SidebarPane(
 		val component: JComponent get() = content.component
 
 		/** Displays the name of the current content in the title bar.*/
-		private val titleLabel = JLabel()
+		private val titleLabel = UIBasics.createHeaderLabel("")
 
 		val headerPanel = JPanel()
 

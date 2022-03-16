@@ -40,6 +40,9 @@ private class GraphNavigationViewJs(
 		props.controller.view = this
 	}
 
+	override val showsNavigationRoot: Boolean
+		get() = props.controller.navigationStackViewController.navigationStack.size == 1
+
 	override fun componentWillUnmount() {
 		dispose()
 	}

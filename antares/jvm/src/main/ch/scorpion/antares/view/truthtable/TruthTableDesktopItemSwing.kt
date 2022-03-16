@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.CommandManager
@@ -47,7 +48,7 @@ class TruthTableDesktopItemSwing(
 
 	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
 		this,
-		JLabel("${Translations.getString("library.element.truthTable.name")} \"${item.truthTable.name.getTranslation()}\""),
+		UIBasics.createHeaderLabel("${Translations.getString("library.element.truthTable.name")} \"${item.truthTable.name.getTranslation()}\""),
 		allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }

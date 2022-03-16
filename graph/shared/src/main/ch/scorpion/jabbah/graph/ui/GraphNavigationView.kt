@@ -38,6 +38,8 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 interface GraphNavigationView : UIView, GraphDesktopViewItem {
 
+	val showsNavigationRoot: Boolean
+
 	fun refresh()
 }
 
