@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.EnumPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 
@@ -72,7 +73,13 @@ object BaseModuleJvm : AbstractModule() {
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
 
-		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
+		root.getGroup(PREF_TREE_GENERAL).add(EnumPreference(
+			id = Language.PROP_LANGUAGE,
+			nameKey = "base.preferences.language",
+			values = Language.values(),
+			withName = Language::withCode,
+			needsRestart = true
+		))
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
 
 		// Needs restart because ToolTips are usually cached

@@ -1,9 +1,10 @@
 package ch.scorpion.antares.model.expression
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.module.BaseModule
 
 enum class BooleanExpressionNotation(
-	val customName: String,
+	override val customName: String,
 	private val sample: String,
 	val andOp: String,
 	val orOp: String,
@@ -11,7 +12,7 @@ enum class BooleanExpressionNotation(
 	val trueConst: String,
 	val falseConst: String,
 	val isNotPostfix: Boolean
-) {
+) : EnumProperty<BooleanExpressionNotation> {
 
 	ARITHMETIC(
 		"arithmetic",

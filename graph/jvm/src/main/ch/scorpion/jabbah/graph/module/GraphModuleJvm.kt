@@ -3,10 +3,10 @@ package ch.scorpion.jabbah.graph.module
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
-import ch.scorpion.jabbah.base.DataLocationPreference
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.EnumPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.preferences.StringPreference
@@ -127,7 +127,13 @@ object GraphModuleJvm : AbstractModule() {
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 
 		if (supportWeb) {
-			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(DataLocationPreference())
+			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(EnumPreference(
+				id = DataLocation.PROP_DATA_LOCATION,
+				nameKey = "base.preferences.dataLocation",
+				values = DataLocation.values(),
+				withName = DataLocation::withName,
+				needsRestart = true
+			))
 			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(
 				StringPreference(
 				id = DataLocation.PROP_SERVER_URL,

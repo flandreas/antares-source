@@ -1,12 +1,13 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 
 enum class DigitalSignalNotation(
-	val customName: String,
+	override val customName: String,
 	private val translationKey: String
-) {
+) : EnumProperty<DigitalSignalNotation> {
 
 	PREFIX("prefix", "element.signal.notation.prefix") {
 

@@ -2,8 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
-import ch.scorpion.antares.model.expression.BooleanExpressionNotationPreference
-import ch.scorpion.antares.model.gate.UndefinedGateInputBehaviorPreference
+import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.PullDirection
@@ -11,6 +10,7 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
+import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
@@ -25,6 +25,7 @@ import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.*
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
@@ -35,6 +36,7 @@ import ch.scorpion.jabbah.base.auth0.Auth0LoginFlow
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.EnumPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.sound.WaveformType
@@ -266,18 +268,44 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(SymbolStylePreference())
-		root.getGroup(PREF_TREE_CIRCUIT).add(UndefinedGateInputBehaviorPreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = SymbolStyle.PROP_SYMBOL_STYLE,
+			nameKey = "antares.action.symbolStyle",
+			values = SymbolStyle.values(),
+			withName = SymbolStyle::withName
+		))
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
+			nameKey = "antares.preference.undefinedGateInputBehavior.name",
+			values = UndefinedGateInputBehavior.values(),
+			withName = UndefinedGateInputBehavior::withName
+		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = AndGateView.PROP_DATA_FLOW_ENABLED,
 			nameKey = "antares.preferences.AndGateDataFlow"
 		))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
-		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
-		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,
+			nameKey = "antares.preferences.DigitalSignalNotation",
+			values = DigitalSignalNotation.values(),
+			withName = DigitalSignalNotation::withName,
+			needsRestart = true
+		))
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = TunnelViewFace.PROP_TUNNEL_FACE,
+			nameKey = "antares.preference.TunnelViewFace",
+			values = TunnelViewFace.values(),
+			withName = TunnelViewFace::withName
+		))
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(TransistorSymbolPreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL,
+			nameKey = "antares.preference.transistorSymbol.name",
+			values = TransistorViewSymbol.values(),
+			withName = TransistorViewSymbol::withName
+		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
 			id = TransistorView.PROP_TRANSISTOR_CIRCLE,
 			nameKey = "antares.preference.TransistorCircle"
@@ -297,7 +325,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 
 		root.getGroup(PREF_TREE_CIRCUIT).getGroup(PREF_TREE_EXPRESSION).apply {
-			add(BooleanExpressionNotationPreference())
+			add(EnumPreference(
+				id = BooleanExpressionNotation.PROP_NOTATION,
+				nameKey = "antares.preference.expression.notation",
+				values = BooleanExpressionNotation.values(),
+				withName = BooleanExpressionNotation::withName
+			))
 			add(BooleanPreference(
 				id = BooleanExpressionNotation.PROP_OMIT_AND,
 				nameKey = "antares.preference.expression.omitAnd"

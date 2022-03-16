@@ -9,7 +9,6 @@ import javax.swing.JFormattedTextField
 import javax.swing.JTextField
 import javax.swing.text.NumberFormatter
 
-
 class PreferenceGroup(
 	private val nameKey: String
 ) {

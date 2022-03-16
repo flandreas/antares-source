@@ -1,8 +1,12 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.edit.snap.DottedGridPainter
+import ch.scorpion.jabbah.edit.snap.LineGridPainter
 
 /**
  * A [Grid] defines a two-dimensional array of points that are used for snapping in terms of a [Snapper].
@@ -41,5 +45,21 @@ interface Grid : Snapper, Unzoomable {
 
 	/** Paints the visual representation of this [Grid].*/
 	var gridPainter: GridPainter
+}
 
+enum class GridType(
+	val id: String,
+	val nameKey: String
+) : EnumProperty<GridType> {
+
+	Line(LineGridPainter.NAME, "edit.preferences.Grid.painter.line"),
+	Dot(DottedGridPainter.NAME,"edit.preferences.Grid.painter.dot");
+
+	companion object {
+		fun withId(id: String): GridType = values().first { it.id == id }
+	}
+
+	override val customName: String get() = id
+
+	override fun toString(): String = Translations.getString(nameKey)
 }

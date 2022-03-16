@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -17,7 +18,11 @@ interface LightEmitter {
 /**
  * Enumerates the colors of [VerticeView]s that emit light.
  */
-enum class LightColor(val customName: String, val onColor: Color, val offColor: Color) {
+enum class LightColor(
+	override val customName: String,
+	val onColor: Color,
+	val offColor: Color
+) : EnumProperty<LightColor> {
 
     RED("red", Color(255, 0, 0), Color(60, 0, 0)),
     YELLOW("yellow", Color(255, 255, 0), Color(60, 47, 0)),

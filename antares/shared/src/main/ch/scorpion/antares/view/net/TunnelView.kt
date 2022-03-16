@@ -5,10 +5,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -26,7 +23,9 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
-enum class TunnelViewFace(val customName: String) {
+enum class TunnelViewFace(
+	override val customName: String
+) : EnumProperty<TunnelViewFace> {
 
 	TUNNEL("tunnel") {
 

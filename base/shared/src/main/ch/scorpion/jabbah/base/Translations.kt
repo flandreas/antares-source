@@ -54,7 +54,7 @@ data class TranslationBundleAdded(val name: String)
  * Defines all languages supported by the Jabbah framework for translation of dynamic (i.e. user provided) text.
  * @property code the ISO 639-1 two-letter language code. Example: "en" for English.
  */
-enum class Language(val code: String) {
+enum class Language(val code: String) : EnumProperty<Language> {
 	English("en"),
 	German("de");
 
@@ -80,6 +80,8 @@ enum class Language(val code: String) {
 			return null
 		}
 	}
+
+	override val customName: String get() = code
 
 	val isDefault: Boolean get() = this === DEFAULT
 

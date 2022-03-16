@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.AbstractPreference
 import ch.scorpion.jabbah.base.preferences.PreferencesPanel
-import org.apache.log4j.Logger.*
+import org.apache.log4j.Logger.getRootLogger
 import org.slf4j.LoggerFactory
 import org.slf4j.spi.LocationAwareLogger
 import javax.swing.JComboBox
@@ -22,7 +22,7 @@ actual object LogSystem {
 
 	actual val PROP_LOG_LEVEL = "base.logLevel"
 
-	actual var level: LogLevel = LogLevel.Info
+	actual var level: LogLevel = Info
 		set(value) {
 			field = value
 			if (value != fromLog4jLevel(getRootLogger().level)) {

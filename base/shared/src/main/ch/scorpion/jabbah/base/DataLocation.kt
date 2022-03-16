@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base
 
 /** Determines the location where an application stores its data.*/
-enum class DataLocation(val customName: String) {
+enum class DataLocation(override val customName: String): EnumProperty<DataLocation> {
 	Local("local"),
 	Remote("remote");
 

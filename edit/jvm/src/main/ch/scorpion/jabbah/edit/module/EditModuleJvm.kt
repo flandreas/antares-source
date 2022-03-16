@@ -4,24 +4,25 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.DirectionEditor
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.EnumPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
 import ch.scorpion.jabbah.edit.Grid
-import ch.scorpion.jabbah.edit.GridPainterPreference
+import ch.scorpion.jabbah.edit.GridType
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.properties.*
@@ -148,7 +149,13 @@ object EditModuleJvm : AbstractModule() {
 			minValue = 2
 		))
 
-		root.getGroup(PREF_TREE_EDITOR).add(GridPainterPreference())
+		//root.getGroup(PREF_TREE_EDITOR).add(GridPainterPreference())
+		root.getGroup(PREF_TREE_EDITOR).add(EnumPreference(
+			Grid.PROP_GRID_PAINTER,
+			nameKey = "edit.preferences.Grid.painter",
+			values = GridType.values(),
+			withName = GridType::withId
+		))
 
 		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
 			id = SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT,

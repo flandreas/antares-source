@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -17,7 +18,9 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortView
 
-enum class TransistorViewSymbol(val customName: String) {
+enum class TransistorViewSymbol(
+	override val customName: String
+) : EnumProperty<TransistorViewSymbol> {
 
 	Bulk("bulk") {
 		private val gateLineX = DigitalPortView.LENGTH + 2.0 * SCALE

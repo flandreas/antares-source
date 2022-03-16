@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -25,7 +26,9 @@ import ch.scorpion.jabbah.edit.Component
  * [SymbolStyle] represents international standards for drawing digital gates.
  * The user can globally switch between the supported [SymbolStyle]s.
  */
-enum class SymbolStyle(val customName: String) {
+enum class SymbolStyle(
+	override val customName: String
+) : EnumProperty<SymbolStyle> {
 
 	EUROPEAN("IEC") {
 

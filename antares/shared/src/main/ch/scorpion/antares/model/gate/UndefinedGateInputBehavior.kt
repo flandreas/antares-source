@@ -4,11 +4,14 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 
-enum class UndefinedGateInputBehavior(val customName: String) {
+enum class UndefinedGateInputBehavior(
+	override val customName: String
+) : EnumProperty<UndefinedGateInputBehavior> {
 
 	ReadAs0("readAs0") {
 		override val definedBit: Bit get() = Bit.False
