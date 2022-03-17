@@ -129,7 +129,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		_signal = (data as GraphActorData).getSignal(1)
 		signalBuffer = _signal
 
-		stateChanged(signalHandler)
+		stateChanged(signalHandler, Net.STATE_CHANGE_SIGNAL)
 
 		// Tuning: Faster this way than with stream, filter and map
 		for (i in 0 until _ports.size) {

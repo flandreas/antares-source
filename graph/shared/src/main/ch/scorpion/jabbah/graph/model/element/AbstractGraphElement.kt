@@ -89,10 +89,14 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 
 	/** ---- [AbstractGraphElement] */
 
-	/** Notifies all registered [GraphElementListener]s that the state of this [GraphElement] has changed.*/
-	protected fun stateChanged(signalHandler: SignalHandler? = null) {
+	/**
+	 * Notifies all registered [GraphElementListener]s that the state of this [GraphElement] has changed.
+	 * @param signalHandler the [SignalHandler] if the change occurred during simulation
+	 * @param reason indicates the kind of change so listeners can take appropriate action
+	 */
+	protected fun stateChanged(signalHandler: SignalHandler? = null, reason: String? = null) {
 		if (listeners != null) {
-			val event = GraphElementEvent(this, signalHandler)
+			val event = GraphElementEvent(this, signalHandler, reason)
 			listeners!!.toList().forEach { it.stateChanged(event) }
 		}
 	}

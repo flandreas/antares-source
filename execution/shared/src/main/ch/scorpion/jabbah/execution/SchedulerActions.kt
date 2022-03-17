@@ -59,7 +59,7 @@ class PauseOrResumeAction(
 	}
 
 	private val pausedHandler: EventHandler<SystemSpeedPauseEvent> = {
-		if (it.source === scheduler.systemSpeed) {
+		if (it.source === scheduler.systemSpeedCategory.systemSpeed) {
 			updateSelected()
 		}
 	}
@@ -95,15 +95,15 @@ class PauseOrResumeAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		if (scheduler.systemSpeed.isPaused) {
-			scheduler.systemSpeed.resume()
+		if (scheduler.systemSpeedCategory.systemSpeed.isPaused) {
+			scheduler.systemSpeedCategory.systemSpeed.resume()
 		} else {
-			scheduler.systemSpeed.pause()
+			scheduler.systemSpeedCategory.systemSpeed.pause()
 		}
 	}
 
 	private fun updateSelected() {
-		selected = scheduler.isActive && scheduler.systemSpeed.isPaused
+		selected = scheduler.isActive && scheduler.systemSpeedCategory.systemSpeed.isPaused
 		description = if (selected) {
 			Translations.getString("execution.action.resume.desc")
 		} else {

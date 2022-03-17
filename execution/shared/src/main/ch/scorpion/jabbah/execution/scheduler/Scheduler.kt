@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 
 /**
  * A [Scheduler] receives requests of [Actor]s that want to be acting at a specific time in the future.
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
  */
 interface Scheduler : SignalHandler {
 
-	val systemSpeed: SystemSpeed
+	val systemSpeedCategory: CurrentSystemSpeedCategory
 
 	val signalHandler: SignalHandler
 

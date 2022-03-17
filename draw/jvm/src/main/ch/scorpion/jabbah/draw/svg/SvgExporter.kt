@@ -27,7 +27,7 @@ object SvgExporter {
 		svgGenerator.svgCanvasSize = Dimension(content.drawable.boundingBox.widthInt, content.drawable.boundingBox.heightInt)
 
 		// Draw
-		val drawContext = DrawModule.drawContextFactory(Graphics2DJvm(svgGenerator), null)
+		val drawContext = DrawModule.drawContextFactory(Graphics2DJvm(svgGenerator), null, null)
 		content.drawable.draw(drawContext)
 
 		// Getting the root clears the contents of the SVGGenerator

@@ -6,9 +6,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
-import ch.scorpion.jabbah.base.time.TimeService
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
+import ch.scorpion.jabbah.base.time.TimeService
 import ch.scorpion.jabbah.execution.ExecutionErrorHandler
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -83,7 +82,7 @@ class SchedulerImpl(
 	private val breakListener: EventHandler<BreakEvent> = {
 		hardBreakpointReceived = true
 		if (isSingleStepMode) {
-			systemSpeed.pause()
+			currentSystemSpeedCategory.systemSpeed.pause()
 		}
 	}
 
@@ -128,7 +127,7 @@ class SchedulerImpl(
 
 	override val signalHandler: SignalHandler get() = this
 
-	override val systemSpeed: SystemSpeed get() = currentSystemSpeedCategory.systemSpeed
+	override val systemSpeedCategory: CurrentSystemSpeedCategory get() = currentSystemSpeedCategory
 
 	override val numberOfRemainingSlots: Int get() = queue.size
 
@@ -173,7 +172,7 @@ class SchedulerImpl(
 			field = value
 			if (field) {
 				isInBreakpointPending = false
-				systemSpeed.pause()
+				currentSystemSpeedCategory.systemSpeed.pause()
 			}
 			LOG.trace("isInBreakpoint is $field")
 			eventBus.post(BreakpointEvent(this))
@@ -440,7 +439,7 @@ class SchedulerImpl(
 	}
 
 	private fun startTaskIfNeeded() {
-		if (!systemSpeed.isPaused) {
+		if (!currentSystemSpeedCategory.systemSpeed.isPaused) {
 			task.startIfNeeded()
 		}
 	}

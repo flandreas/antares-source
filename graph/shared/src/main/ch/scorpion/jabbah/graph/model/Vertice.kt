@@ -21,6 +21,13 @@ import ch.scorpion.jabbah.execution.SignalHandler
  */
 interface Vertice : GraphElement, Describable {
 
+	companion object {
+
+		/** Used in [GraphElementEvent]s sent to [GraphElementListener], typically views.*/
+		const val STATE_CHANGE_INPUT = "input"
+		const val STATE_CHANGE_OUTPUT = "output"
+	}
+
     /**
      * The name of this [Vertice]. Is often provided by the user and can serve to distinguish two [Vertice]s of the same type
      * It can also be empty. Example: "A".

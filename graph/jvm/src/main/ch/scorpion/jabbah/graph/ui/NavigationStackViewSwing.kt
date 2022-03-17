@@ -228,7 +228,7 @@ class NavigationStackViewSwing(
 			} else {
 				DrawModule.properties.getFont(PROP_FONT)
 			}
-			label.draw(DrawModule.drawContextFactory(g, null))
+			label.draw(DrawModule.drawContextFactory(g, null, null))
 
 			g.translate(-location.x, -location.y)
 		}

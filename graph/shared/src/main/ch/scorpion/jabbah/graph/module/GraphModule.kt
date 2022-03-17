@@ -16,11 +16,11 @@ object GraphModule : AbstractModule() {
 	override fun initialize() {
 		GraphViewModule.require()
 
-		DrawModule.drawContextFactory = { g, appContext ->
+		DrawModule.drawContextFactory = { g, mc, appContext ->
 			if (appContext == null) {
-				DrawContext(g, GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed())))
+				DrawContext(g, mc, GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed())))
 			} else {
-				DrawContext(g, appContext)
+				DrawContext(g, mc, appContext)
 			}
 		}
 	}

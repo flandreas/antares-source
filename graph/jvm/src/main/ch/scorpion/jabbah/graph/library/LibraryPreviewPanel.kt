@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -181,7 +180,7 @@ class LibraryPreviewPanel(
 			}
 
 			if (selection != null) {
-				drawableDrawer.process(DrawModule.drawContextFactory(Graphics2DJvm(g2), appContext), selection!!)
+				drawableDrawer.process(DrawModule.drawContextFactory(Graphics2DJvm(g2), null, appContext), selection!!)
 			}
 
 			if (scale != 1.0) {

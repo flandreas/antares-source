@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -7,8 +8,15 @@ import ch.scorpion.jabbah.draw.style.Stylable
 
 /**
  * A context used in all drawing activities.
+ * @param modelClip the optional clipping area in model space. [Drawable]s can avoid
+ * repaint themselves if their bounding box doesn't intersect this region. Usually `null`
+ * if the entire [View] area is to be drawn
  */
-open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
+class DrawContext(
+	val g: Graphics2D,
+	val modelClip: Rectangle2D? = null,
+	val appContext: Any? = null
+) {
 
 	/** Instructs a [Drawable] to use the colors of this [DrawContext] instead of its own colors.*/
 	var useContextColors: Boolean = false

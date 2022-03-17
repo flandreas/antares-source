@@ -9,6 +9,12 @@ import ch.scorpion.jabbah.execution.SignalHandler
  */
 interface Net<T: Any> : GraphElement {
 
+	companion object {
+
+		/** Used in [GraphElementEvent] sent to [GraphElementListener]s, typically views. */
+		const val STATE_CHANGE_SIGNAL = "signal"
+	}
+
     /** The signal of this [Net] after an execution step has been done.*/
     val signal: T?
 

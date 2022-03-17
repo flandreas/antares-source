@@ -46,11 +46,11 @@ abstract class AbstractVertice(
 		}
 
 		requestActingAfter(signalHandler, propagationDelay, createActorData(input, force))
-		stateChanged(signalHandler)
+		stateChanged(signalHandler, Vertice.STATE_CHANGE_INPUT)
 	}
 
 	override fun outputChanged(output: OutputPort<*>, signalHandler: SignalHandler) {
-		stateChanged(signalHandler)
+		stateChanged(signalHandler, Vertice.STATE_CHANGE_OUTPUT)
 	}
 
 	override fun <T : Any> addPort(port: Port<T>) {

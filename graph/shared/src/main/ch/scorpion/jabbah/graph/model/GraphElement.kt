@@ -86,7 +86,11 @@ interface GraphElement : Storable, Actor, Describable {
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */
-class GraphElementEvent(val element: GraphElement, val signalHandler: SignalHandler? = null)
+class GraphElementEvent(
+	val element: GraphElement,
+	val signalHandler: SignalHandler? = null,
+	val reason: String? = null
+)
 
 /** Listens for [GraphElementEvent]s from [GraphElement]s.*/
 interface GraphElementListener {

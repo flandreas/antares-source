@@ -246,6 +246,9 @@ open class ViewImpl<C : InputEventContext>(
 
 	val painter: ViewPainter = viewPainterFactory.invoke(this)
 
+	/** Reusable buffer instance for querying the clipping rectangle from [Graphics2D]. */
+	private val clipBuffer = Rectangle2D()
+
 	/* Listens for [DrawableEvent]s from child [Drawable]s.*/
 	private val childListener = ChildListener()
 
@@ -291,7 +294,17 @@ open class ViewImpl<C : InputEventContext>(
 	}
 
 	override fun paint(g: Graphics2D) {
-		painter.paintView(DrawModule.drawContextFactory(g, applicationContext))
+		var modelClip = if (g.supportClipping) {
+			g.getClipBounds(clipBuffer)
+			clipBuffer.x = viewToModelX(clipBuffer.x)
+			clipBuffer.y = viewToModelY(clipBuffer.y)
+			clipBuffer.width = viewToModelLength(clipBuffer.width)
+			clipBuffer.height = viewToModelLength(clipBuffer.height)
+			clipBuffer
+		} else {
+			null
+		}
+		painter.paintView(DrawModule.drawContextFactory(g, modelClip, applicationContext))
 	}
 
 	override fun draw(context: DrawContext) {

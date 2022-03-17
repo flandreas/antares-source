@@ -152,12 +152,12 @@ class SchedulerImplTest {
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
-		scheduler.systemSpeed.resume()
+		scheduler.systemSpeedCategory.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(250)
-		scheduler.systemSpeed.resume()
+		scheduler.systemSpeedCategory.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
 	}
@@ -173,12 +173,12 @@ class SchedulerImplTest {
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(50)
-		scheduler.systemSpeed.resume()
+		scheduler.systemSpeedCategory.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(80)
-		scheduler.systemSpeed.resume()
+		scheduler.systemSpeedCategory.systemSpeed.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
 	}
@@ -189,7 +189,7 @@ class SchedulerImplTest {
 		scheduler.isActive = true
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
-		scheduler.systemSpeed.pause()
+		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
 
 		verify(exactly = 0) { actor.act(any(), any()) }
@@ -201,11 +201,11 @@ class SchedulerImplTest {
 		scheduler.isActive = true
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
-		scheduler.systemSpeed.pause()
+		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
 		verify(exactly = 0) { actor.act(any(), any()) }
 
-		scheduler.systemSpeed.resume()
+		scheduler.systemSpeedCategory.systemSpeed.resume()
 		timeService.setTimeMillis(250)
 		verify(exactly = 1) { actor.act(any(), any()) }
 	}

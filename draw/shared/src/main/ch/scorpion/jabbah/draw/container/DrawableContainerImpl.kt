@@ -98,18 +98,30 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun draw(context: DrawContext) {
 		if (visible && children.isNotEmpty()) {
+			var clip = context.modelClip
+
 			if (useLocation) {
 				context.g.translate(location.x, location.y)
-			}
-			drawablesInDrawingOrder().forEach {
-				if (it.visible) {
-					drawableDrawer.process(context, it)
+				if (clip != null) {
+					clip = Rectangle2D(clip.x - location.x, clip.y - location.y, clip.width, clip.height)
 				}
 			}
+
+			drawablesInDrawingOrder().forEach {
+				if (it.visible) {
+					// Clipping
+					if (clip == null || it.intersects(clip)) {
+						drawableDrawer.process(context, it)
+					}
+				}
+			}
+
 			DrawModule.drawDebugBoundingBox(this, context.g)
+
 			if (useLocation) {
 				context.g.translate(-location.x, -location.y)
 			}
+
 			DrawModule.drawDebugBoundingBoxLocation(location, context)
 		}
 	}

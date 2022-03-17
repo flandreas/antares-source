@@ -7,7 +7,10 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import kotlin.test.*
 
 class DrawableContainerImplNestingTest {
@@ -107,5 +110,21 @@ class DrawableContainerImplNestingTest {
 		container.getInputEventHandler(context).mousePressed(context)
 
 		assertTrue(rect.mousePressed)
+	}
+
+	@Test
+	fun shouldClip() {
+		val rect1 = spyk(TestRectangle(Rectangle2D(0, 0, 10, 10)))
+		val rect2 = spyk(TestRectangle(Rectangle2D(90, 90, 10, 10)))
+		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		innerContainer.add(rect1)
+		innerContainer.add(rect2)
+		container.add(innerContainer)
+		every { context.modelClip } returns Rectangle2D(100, 100, 50, 50)
+
+		container.draw(context)
+
+		verify(exactly = 1) { rect1.draw(context) }
+		verify(exactly = 0) { rect2.draw(context) }
 	}
 }

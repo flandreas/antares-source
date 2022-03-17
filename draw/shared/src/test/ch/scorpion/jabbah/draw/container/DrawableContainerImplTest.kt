@@ -5,7 +5,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import kotlin.test.*
 
@@ -29,24 +31,22 @@ class DrawableContainerImplTest {
 	}
 
 	@Test
-	fun shouldNotContainUnaddedDrawable() {
+	fun shouldNotContainUnAddedDrawable() {
 		val drawable = DrawableMockBuilder().build()
 		assertFalse(container.contains(drawable))
 	}
 
 	@Test
-	fun shouldDrawVisibleDrawables() {
-		val drawable = DrawableMockBuilder().build()
-		container.add(drawable)
-		container.draw(context)
-		verify(atLeast = 1) { drawable.draw(context) }
-	}
-
-	@Test
 	fun shouldNotDrawInvisibleDrawables() {
-		val drawable = DrawableMockBuilder().invisible().build()
+		val drawable = DrawableMockBuilder()
+			.withBoundingBox(Rectangle2D(0, 0, 100, 100))
+			.invisible()
+			.build()
 		container.add(drawable)
+		every { context.modelClip } returns Rectangle2D(0, 0, 50, 50)
+
 		container.draw(context)
+
 		verify(exactly = 0) { drawable.draw(context) }
 	}
 
@@ -91,5 +91,19 @@ class DrawableContainerImplTest {
 		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(0, 0, 10, 10)).invisible().build())
 		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(10, 10, 10, 10)).build())
 		assertEquals(Rectangle2D(10, 10, 10, 10), container.boundingBox)
+	}
+
+	@Test
+	fun shouldClip() {
+		val rect1 = spyk(TestRectangle(Rectangle2D(0, 0, 10, 10)))
+		val rect2 = spyk(TestRectangle(Rectangle2D(90, 90, 10, 10)))
+		container.add(rect1)
+		container.add(rect2)
+		every { context.modelClip } returns Rectangle2D(5, 5, 10, 10)
+
+		container.draw(context)
+
+		verify(exactly = 1) { rect1.draw(context) }
+		verify(exactly = 0) { rect2.draw(context) }
 	}
 }

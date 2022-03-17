@@ -35,6 +35,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.*
@@ -309,6 +310,16 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (!arePortViewsStored) {
 			clearPortViews()
 		}
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		if (event.signalHandler is Scheduler && (event.reason == Vertice.STATE_CHANGE_INPUT || event.reason == Vertice.STATE_CHANGE_OUTPUT)) {
+			if (!GraphApplicationContext.isShowNetState(event.signalHandler)) {
+				// Avoid leading to unnecessary View repainting
+				return
+			}
+		}
+		super.handleStateChanged(event)
 	}
 
 	/** ---- [ActorView] interface */

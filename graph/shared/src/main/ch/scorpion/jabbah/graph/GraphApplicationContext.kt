@@ -26,6 +26,12 @@ data class GraphApplicationContext(
 	val mode: ApplicationMode = ApplicationMode.EDIT,
 	val isPausing: Boolean = false
 ) {
+
+	companion object {
+		fun isShowNetState(scheduler: Scheduler): Boolean =
+			// TODO: Combine with equivalent property below
+			scheduler.isActive && (scheduler.isSingleStepMode || scheduler.systemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use)
+	}
 	val isExecute: Boolean get() = mode.isExecute()
 
 	val showNetState: Boolean get() = isExecute && (isPausing || systemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use)

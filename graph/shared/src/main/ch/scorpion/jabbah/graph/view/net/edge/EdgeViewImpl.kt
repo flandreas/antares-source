@@ -23,6 +23,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -769,6 +771,12 @@ open class EdgeViewImpl<T : Any>(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
+		if (event.signalHandler is Scheduler && event.reason == Net.STATE_CHANGE_SIGNAL) {
+			if (!GraphApplicationContext.isShowNetState(event.signalHandler)) {
+				// Avoid leading to unnecessary View repainting
+				return
+			}
+		}
 		super.handleStateChanged(event)
 		if (event.signalHandler != null) {
 			tooltip.reset()

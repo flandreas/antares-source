@@ -115,7 +115,9 @@ class SubGraphVerticeRef(
 	override var graphName: Name = Name(TranslatableText())
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
-		LOG.trace("propagateOutput for Output '${outputPort.name}'")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("propagateOutput for Output '${outputPort.name}'")
+		}
 		if (state == ActorState.Waiting) {
 			signalHandler.actPrematurely(this, null)
 		}
