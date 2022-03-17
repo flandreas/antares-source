@@ -49,7 +49,7 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 		view.draw(context)
 	}
 
-	override fun invalidateRegion(region: RectangularShape?, ghost: Boolean) {
+	override fun invalidateRegion(region: RectangularShape?) {
 		if (region == null) {
 			dirtyView = true
 			RepaintingObserver.invalidated(Rectangle2D(0, 0, view.width, view.height))

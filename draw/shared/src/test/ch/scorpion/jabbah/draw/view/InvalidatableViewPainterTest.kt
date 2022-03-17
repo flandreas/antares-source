@@ -24,8 +24,8 @@ class InvalidatableViewPainterTest {
 
     @Test
     fun shouldSumInvalidAreas() {
-        viewPainter.invalidateRegion(Rectangle2D(100.0, 100.0, 10.0, 10.0), false)
-        viewPainter.invalidateRegion(Rectangle2D(200.0, 200.0, 10.0, 10.0), false)
+        viewPainter.invalidateRegion(Rectangle2D(100.0, 100.0, 10.0, 10.0))
+        viewPainter.invalidateRegion(Rectangle2D(200.0, 200.0, 10.0, 10.0))
         assertEquals(Rectangle2D(100.0, 100.0, 110.0, 110.0), viewPainter.dirtyRegion)
     }
 }

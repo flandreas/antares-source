@@ -251,7 +251,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	inner class ChildListener : DrawableListener {
 		override fun drawableInvalidated(event: DrawableEvent) {
-			painter.invalidateRegion(event.area, false)
+			painter.invalidateRegion(event.area)
 		}
 
 		override fun drawableRequestRedraw(event: DrawableEvent) {
@@ -272,7 +272,7 @@ open class ViewImpl<C : InputEventContext>(
 	 */
 	inner class OverlayListener : DrawableListener {
 		override fun drawableInvalidated(event: DrawableEvent) {
-			painter.invalidateRegion(null, false)
+			painter.invalidateRegion(null)
 		}
 
 		override fun drawableRequestRedraw(event: DrawableEvent) {
@@ -345,7 +345,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	protected fun invalidate(region: RectangularShape? = null) {
 		_canvas?.let {
-			painter.invalidateRegion(region, false)
+			painter.invalidateRegion(region)
 		}
 	}
 

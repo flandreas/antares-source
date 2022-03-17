@@ -23,7 +23,7 @@ class SimpleViewPainter(val view: View<out InputEventContext>) : ViewPainter {
         view.draw(context)
     }
 
-    override fun invalidateRegion(region: RectangularShape?, ghost: Boolean) {
+    override fun invalidateRegion(region: RectangularShape?) {
         // empty, because this simple strategy repaints the entire drawing
     }
 }

@@ -42,11 +42,10 @@ interface ViewPainter {
      * strategy work, the ghosts must not be painted into the drawing buffer of optimized implementations of this
      * [ViewPainter]. As a consequence, ghosts must be drawn by the [View] itself.
      *
-     * @param region the region of the view that has been invalidated and needs redrawing. If `code`, the entire
+     * @param region the region of the view that has been invalidated and needs redrawing. If `null`, the entire
      * [View] is invalidated.
-     * @param ghost `true` if the invalidation was caused by a ghost
      */
-    fun invalidateRegion(region: RectangularShape?, ghost: Boolean)
+    fun invalidateRegion(region: RectangularShape?)
 }
 
 typealias ViewPainterFactory<T> = (View<T>) -> ViewPainter
