@@ -209,12 +209,14 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * bounding box only after the last removal.
 	 */
 	private fun removeDrawableImpl(drawable: Drawable, last: Boolean) {
-		children.remove(drawable)
-		drawable.handleRemoved(this)
-		if (last) {
-			updateBoundingBox()
+		if (children.contains(drawable)) {
+			children.remove(drawable)
+			drawable.handleRemoved(this)
+			if (last) {
+				updateBoundingBox()
+			}
+			invalidate(childBoundingBox(drawable))
+			notifyDrawableRemoved(drawable)
 		}
-		invalidate(childBoundingBox(drawable))
-		notifyDrawableRemoved(drawable)
 	}
 }
