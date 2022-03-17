@@ -299,16 +299,21 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 	}
 
 	private fun removeAllHighlights() {
+		var removed = false
 		highlightX?.let {
 			LOG.trace("removing highlightX from view")
 			editor.view.ghostContainer.remove(highlightX!!)
+			removed = true
 			highlightX = null
 		}
 		highlightY?.let {
 			LOG.trace("removing highlightY from view")
 			editor.view.ghostContainer.remove(highlightY!!)
+			removed = true
 			highlightY = null
 		}
-		editor.view.ghostContainer.validate()
+		if (removed) {
+			editor.view.ghostContainer.validate()
+		}
 	}
 }

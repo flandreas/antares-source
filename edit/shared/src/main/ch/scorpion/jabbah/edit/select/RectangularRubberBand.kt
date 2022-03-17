@@ -87,9 +87,11 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mouseReleased(context)
+			if (isDragging) {
+				context.drawingView().ghostContainer.remove(this@RectangularRubberBand)
+				context.drawingView().ghostContainer.validate()
+			}
 			isDragging = false
-			context.drawingView().ghostContainer.remove(this@RectangularRubberBand)
-			context.drawingView().ghostContainer.validate()
 			return this
 		}
 	}

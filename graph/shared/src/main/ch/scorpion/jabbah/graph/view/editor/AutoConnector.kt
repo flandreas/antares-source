@@ -171,8 +171,10 @@ object AutoConnector : DragManagerPlugin {
 	}
 
 	private fun removeHighlight(drawingView: DrawingView<*>) {
-		drawingView.animationContainer.remove(highlight)
-		drawingView.drawing.validate()
+		if (drawingView.animationContainer.contains(highlight)) {
+			drawingView.animationContainer.remove(highlight)
+			drawingView.drawing.validate()
+		}
 		isHighlightDisplayed = false
 	}
 }
