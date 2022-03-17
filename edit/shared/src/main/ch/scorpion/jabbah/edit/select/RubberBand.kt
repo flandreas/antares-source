@@ -1,16 +1,22 @@
 package ch.scorpion.jabbah.edit.select
 
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.graphics.Paint
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.Properties
 
 
 /**
- * An [RubberBand] allows the user to interacively define a graphical region in order to select [Component]s
+ * An [RubberBand] allows the user to interactively define a graphical region in order to select [Component]s
  * in a [Drawing].
  *
  * A typical implementation of a [RubberBand] is a simple rectangle, but there are more fancy and complex
@@ -31,13 +37,13 @@ interface RubberBand : Unzoomable {
     companion object {
 
         /** The name of the border [Paint] in [Properties].  */
-        val PROP_STROKE_PAINT = "edit.select.rubberband.stroke.paint"
+        const val PROP_STROKE_PAINT = "edit.select.rubberband.stroke.paint"
 
-        /** The name of the border [BasicStroke] in [Properties].  */
-        val PROP_STROKE = "edit.select.rubberband.stroke"
+        /** The name of the border [Stroke] in [Properties].  */
+        const val PROP_STROKE = "edit.select.rubberband.stroke"
 
         /** The name of the fill [Paint] in [Properties].  */
-        val PROP_FILL_PAINT = "edit.select.rubberband.fill.paint"
+        const val PROP_FILL_PAINT = "edit.select.rubberband.fill.paint"
     }
 
     /**
@@ -63,7 +69,5 @@ interface RubberBand : Unzoomable {
      */
     fun contains(x: Double, y: Double, w: Double, h: Double): Boolean
 
-    fun contains(rect: RectangularShape): Boolean {
-        return contains(rect.x, rect.y, rect.width, rect.height)
-    }
+    fun contains(rect: RectangularShape): Boolean = contains(rect.x, rect.y, rect.width, rect.height)
 }

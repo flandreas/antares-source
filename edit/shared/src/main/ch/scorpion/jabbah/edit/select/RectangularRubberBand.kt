@@ -2,12 +2,10 @@ package ch.scorpion.jabbah.edit.select
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.select.RubberBand.Companion.PROP_FILL_PAINT
@@ -22,14 +20,14 @@ import kotlin.math.min
 class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 
 	companion object {
-		val LOG by logger(RectangularRubberBand::class)
+		private const val DRAG_THRESHOLD = 2
 	}
 
 	/** ---- [Unzoomable] interface */
 
 	override var zoomPan: ZoomPan? = null
 
-	/** ---- [Rubberband] interface */
+	/** ---- [RubberBand] interface */
 
 	override val inputEventHandler: InputEventHandler<EditInputEventContext> = EventHandler()
 
@@ -51,42 +49,45 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 
 	/** ---- [RectangularDrawable] */
 
-	override val lineWidth: Double
-		get() = DrawModule.properties.getStroke(PROP_STROKE).width.toDouble()
+	override val lineWidth: Double get() = DrawModule.properties.getStroke(PROP_STROKE).width.toDouble()
 
 	/** ---- [RectangularRubberBand] */
 
 	private inner class EventHandler : InputEventHandlerAdapter<EditInputEventContext>() {
-		private var pressedX: Double = 0.0
-		private var pressedY: Double = 0.0
+		private var pressedLocation = Point2D.ZERO
+		private var isDragging = false
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mousePressed(context)
 			zoomPan = context.view.zoomPan
-			pressedX = context.x
-			pressedY = context.y
-			// Add RubberBand before setting bounds, because otherwise the zoom factor is not yet set,
-			// which will result in an infinite bounding box
-			context.drawingView().ghostContainer.add(this@RectangularRubberBand)
-			setBounds(pressedX, pressedY, 0.0, 0.0)
+			pressedLocation = context.location
 			return this
 		}
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mouseDragged(context)
-			setBounds(
-				min(pressedX, context.x),
-				min(pressedY, context.y),
-				abs(pressedX - context.x),
-				abs(pressedY - context.y)
-			)
-			validate()
+
+			if (!isDragging && pressedLocation.distance(context.x, context.y) >= DRAG_THRESHOLD) {
+				isDragging = true
+				// Add RubberBand before setting bounds, because otherwise the zoom factor is not yet set,
+				// which will result in an infinite bounding box
+				context.drawingView().ghostContainer.add(this@RectangularRubberBand)
+			}
+			if (isDragging) {
+				setBounds(
+					min(pressedLocation.x, context.x),
+					min(pressedLocation.y, context.y),
+					abs(pressedLocation.x - context.x),
+					abs(pressedLocation.y - context.y)
+				)
+				validate()
+			}
 			return this
 		}
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
-			LOG.trace("mouseReleased")
 			super.mouseReleased(context)
+			isDragging = false
 			context.drawingView().ghostContainer.remove(this@RectangularRubberBand)
 			context.drawingView().ghostContainer.validate()
 			return this
