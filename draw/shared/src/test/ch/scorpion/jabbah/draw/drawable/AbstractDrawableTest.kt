@@ -99,9 +99,11 @@ class AbstractDrawableTest {
     }
 
     /** A [Drawable] implementation used in unit tests for [AbstractDrawable].*/
-    class TestDrawable : AbstractDrawable() {
+    class TestDrawable(bbox: Rectangle2D = Rectangle2D()) : AbstractDrawable() {
 
-        override val boundingBox: Rectangle2D = Rectangle2D()
+	    constructor(x: Int, y: Int, w: Int, h: Int): this(Rectangle2D(x, y, w, h))
+
+        override val boundingBox: Rectangle2D = bbox
 
         /** ---- [Drawable] interface */
 

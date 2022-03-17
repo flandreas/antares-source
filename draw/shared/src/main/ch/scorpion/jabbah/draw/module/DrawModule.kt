@@ -5,9 +5,8 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.DrawProperties
-import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.container.QuadTree
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -22,6 +21,7 @@ object DrawModule : AbstractModule() {
     var debugGfx = false
 
 	private val DEBUG_BBOX_COLOR = Color.RED
+	private val DEBUG_QUAD_TRE_COLOR = Color.YELLOW
 	val DEBUG_BBOX_COLOR_SECONDARY = Color.BLUE
 	val DEBUG_STROKE = Stroke(0.5f)
 
@@ -66,5 +66,15 @@ object DrawModule : AbstractModule() {
 			context.g.color = color
 			context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
 		}
+	}
+
+	fun <T: Drawable> drawQuadTree(container: DrawableContainer<T>, context: DrawContext) {
+		context.g.color = DEBUG_QUAD_TRE_COLOR
+		context.g.stroke = DEBUG_STROKE
+		val quadTree = QuadTree<Drawable>(container.boundingBox)
+		for (e in container.frontToBackIterator()) {
+			quadTree.add(e)
+		}
+		quadTree.drawGrid(context)
 	}
 }
