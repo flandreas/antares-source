@@ -83,7 +83,7 @@ object GraphViewModule : AbstractModule() {
 
 	val edgeToPortConnector: EdgeToPortConnector by lazy { EdgeToPortConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
-	val outputToInputConnector: OutputToInputConnector by lazy { OutputToInputConnector(graphViewConnectService, edgeViewFactoryImpl) }
+	val outputToInputOrEdgeConnector: OutputToInputOrEdgeConnector by lazy { OutputToInputOrEdgeConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
 	val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector by lazy { InputToOutputOrEdgeConnector(graphViewConnectService, edgeViewFactoryImpl) }
 

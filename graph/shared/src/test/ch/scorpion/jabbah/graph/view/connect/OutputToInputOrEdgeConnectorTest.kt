@@ -7,12 +7,14 @@ import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.TestPortView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.verify
 import kotlin.test.*
 
-class OutputToInputConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.outputToInputConnector.handler) {
+class OutputToInputOrEdgeConnectorTest
+	: AbstractInputEventHandlerTest(GraphViewModule.outputToInputOrEdgeConnector.handler) {
 
 	companion object {
 		init {
@@ -21,7 +23,7 @@ class OutputToInputConnectorTest
 	}
 
 	@Test
-	fun shouldConnect() {
+	fun shouldConnectToInput() {
 		mouseMoveTo(130, 100)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
@@ -270,5 +272,53 @@ class OutputToInputConnectorTest
 		assertFalse(edgeView.deletable)
 
 		dragMouseTo(170, 100)
+	}
+
+	@Test
+	fun shouldConnectToEdgeView() {
+		connectToEdgeView()
+		assertConnectedToEdgeView()
+	}
+
+	@Test
+	fun shouldNotConnectToEdgeViewWithPresentOutputPort() {
+		prepareConnection(outputCanBeUndefined = false)
+
+		mouseMoveTo(130, 200)
+		pressMouseAt(130, 200)
+		dragMouseTo(150, 100)
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+	}
+
+	private fun prepareConnection(outputCanBeUndefined: Boolean) {
+		v1.model.getOutput<Boolean>().customCanBeUndefined = outputCanBeUndefined
+		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+		editor.commandManager.reset()
+
+	}
+
+	private fun connectToEdgeView() {
+		prepareConnection(outputCanBeUndefined = true)
+
+		mouseMoveTo(130, 200)
+		pressMouseAt(130, 200)
+		dragMouseTo(150, 100)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		releaseMouseAt(150, 100)
+	}
+
+	private fun assertConnectedToEdgeView() {
+		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(nodeView.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(nodeView.model.isConnectedWith(newV2.model.getInput()))
+		assertTrue(nodeView.model.isConnectedWith(newV3.model.getOutput()))
+
+		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
+		assertEquals(7, builder.graphView.drawables.size)
 	}
 }

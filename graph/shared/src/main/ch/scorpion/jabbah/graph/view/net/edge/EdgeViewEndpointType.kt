@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
-
 /**
  * Represents the two possible types of endpoints of an [EdgeView].
  */
@@ -91,12 +90,28 @@ enum class EdgeViewEndpointType {
 	    }
     };
 
+	val opposite: EdgeViewEndpointType get() =
+		when (this) {
+			ORIGIN -> DESTINATION
+			DESTINATION -> ORIGIN
+		}
+
     /**
-     * Determines whether and endpoint of this type can connect to the specified [Port].
+     * Determines whether an endpoint of this type can connect to the specified [Port].
      * @param port the [Port] to connect to
      * @param net the [Net] to which [port] is supposed to be connected, if already existing
      */
     abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean
+
+	/**
+	 * Determines whether an endpoint of this type can connect to the specified [Net]
+	 * @param destNet the [Net] to connect to
+	 * @param origPort the [Port] to which [destNet] is supposed to be connected
+	 */
+	fun canConnectTo(destNet: Net<out Any>, origPort: Port<out Any>?): Boolean =
+		origPort == null
+			|| (origPort.portType.isInput)
+			|| (origPort is OutputPort<*>) && origPort.canConnectToNet(destNet)
 
     /** Moves this endpoint of an [EdgeView] to the specified location. */
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)

@@ -14,21 +14,22 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 
 /**
- * A connector that connects an [OutputPort] of a [VerticeView] with an [InputPort]
- * of a [VerticeView], or that leaves the created [EdgeView] open-ended.
+ * A connector that connects an [OutputPort] of a [VerticeView] with an [InputPort] of a [VerticeView],
+ * or with an [EdgeView], or that leaves the created [EdgeView] open-ended.
  */
-class OutputToInputConnector(
+class OutputToInputOrEdgeConnector(
 	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	edgeViewFactory: EdgeViewFactory<Any> = GraphViewModule.getEdgeViewFactory()
 ) : AbstractPortViewStartConnector(
 	portTypeCond = { it.isOutput },
 	connectService = connectService,
 	edgeViewFactory = edgeViewFactory,
-	draggedEndpointType = EdgeViewEndpointType.DESTINATION
+	draggedEndpointType = EdgeViewEndpointType.DESTINATION,
+	allowEdgeViewAsTarget = true
 ) {
 
 	companion object {
-		private val LOG by logger(OutputToInputConnector::class)
+		private val LOG by logger(OutputToInputOrEdgeConnector::class)
 	}
 
 	override fun createAdjustment(): EdgeViewAdjustmentView {

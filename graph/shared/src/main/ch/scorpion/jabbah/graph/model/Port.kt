@@ -205,7 +205,10 @@ interface OutputPort<T : Any> : Port<T> {
 	 * allowing to prevent clashes of signals from multiple [OutputPorts][OutputPort] on the same [Net].
 	 */
 	fun canConnectToNet(net: Net<*>): Boolean =
-		canBeUndefined || net.ports.none { it.portType.isOutput }
+		canBeUndefined || net.ports
+			.filter { it.portType == PortType.OUTPUT }
+			.filterIsInstance<OutputPort<*>>()
+			.all { it.customCanBeUndefined }
 }
 
 /** A [Port] that can act both as an [InputPort] and as an [OutputPort].*/

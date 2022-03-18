@@ -27,7 +27,7 @@ class GraphViewInputEventHandlerTest : AbstractInputEventHandlerTest(InputEventH
 	@Test
 	fun shouldForwardMouseMoveToInputToOutputConnector() {
 		mouseMoveTo(300, 100, modifiers = Modifier.Alt.mask)
-		assertSame(verticeView, GraphViewModule.outputToInputConnector.usedFor)
+		assertSame(verticeView, GraphViewModule.outputToInputOrEdgeConnector.usedFor)
 	}
 
 	@Test

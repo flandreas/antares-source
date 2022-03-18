@@ -226,6 +226,12 @@ open class EdgeViewImpl<T : Any>(
 		return null
 	}
 
+	override fun getConnection(endpointType: EdgeViewEndpointType): Connection<T>? =
+		when (endpointType) {
+			ORIGIN -> origin
+			DESTINATION -> destination
+		}
+
 	override fun getConnectionEndpointType(connection: Connection<*>): EdgeViewEndpointType? {
 		return when (connection) {
 			origin -> ORIGIN

@@ -69,7 +69,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
 				transitTo("insideTargetEdgeView") {
-					given { mouseDragged(it) && insideTargetEdgeView(it) }
+					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
 				}
 				transitTo("drag") {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it)}
@@ -106,11 +106,11 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			state("insideTargetEdgeView") {
 				onEntry { snapToTargetEdgeView(it) }
 				onExit { removePortViewHighlight() }
-				stayIf({ mouseDragged(it) && insideTargetEdgeView(it) }) {
+				stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
 					onTransit { snapToTargetEdgeView(it) }
 				}
 				transitTo("drag") {
-					given { mouseDragged(it) && !insideTargetEdgeView(it) }
+					given { mouseDragged(it) && !insideTargetEdgeView(draggedEndpointType, it) }
 				}
 				transitTo("connectedToEdge") {
 					given { mouseLeftReleased(it) }
@@ -169,6 +169,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 	// For testing
 	val usedFor: EdgeView<*>? get() = this.edgeView
+
+	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>): Boolean =
+		type.canConnectTo(edgeView.net!!, edgeView.getConnection(type.opposite)?.port)
 
 	protected fun getEndpointView(): EdgeEndpointView {
 		return draggedEndpointType.getEndpoint(edgeView!!)

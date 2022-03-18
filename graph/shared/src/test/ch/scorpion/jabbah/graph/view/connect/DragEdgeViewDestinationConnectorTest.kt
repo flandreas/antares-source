@@ -142,16 +142,29 @@ class DragEdgeViewDestinationConnectorTest
 		assertConnectedToEdgeView()
 	}
 
-	private fun connectToEdgeView() {
-		v2.location = Point2D(200, 200)
-		val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
-		builder.connect(v3, v2)
-
-		editor.commandManager.reset()
-
+	@Test
+	fun shouldNotConnectToEdgeViewWithPresentOutputPort() {
+		prepareConnection(outputCanBeUndefined = false)
 		mouseMoveTo(150, 100)
 		pressMouseAt(150, 100)
 		dragMouseTo(150, 200)
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+	}
+
+	private fun prepareConnection(outputCanBeUndefined: Boolean) {
+		v2.location = Point2D(200, 200)
+		val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+		v3.model.getOutput<Boolean>().customCanBeUndefined = outputCanBeUndefined
+		builder.connect(v3, v2)
+		editor.commandManager.reset()
+	}
+
+	private fun connectToEdgeView() {
+		prepareConnection(outputCanBeUndefined = true)
+		mouseMoveTo(150, 100)
+		pressMouseAt(150, 100)
+		dragMouseTo(150, 200)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		releaseMouseAt(150, 200)
 	}
 

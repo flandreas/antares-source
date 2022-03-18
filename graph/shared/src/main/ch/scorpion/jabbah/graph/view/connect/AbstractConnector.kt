@@ -91,9 +91,9 @@ abstract class AbstractConnector(
 		targetPortView = null
 	}
 
-	protected fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
+	protected fun insideTargetEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
 		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*>) {
+		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable)) {
 			clearTargetEdgeView()
 			return false
 		}
@@ -101,6 +101,10 @@ abstract class AbstractConnector(
 		clearTargetPortView()
 		targetEdgeView = destDrawable
 
+		return true
+	}
+
+	protected open fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>): Boolean {
 		return true
 	}
 

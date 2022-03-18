@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * for all kinds of connectors and possibly lots of other objects to inject.
  */
 class GraphViewInputEventHandler<T : GraphElementView<*>>(
-	private val dslOutputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
+	private val dslOutputToInputOrEdgeConnector: OutputToInputOrEdgeConnector = GraphViewModule.outputToInputOrEdgeConnector,
 	private val dslInputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
 	private val reconnectOriginConnector: ReconnectOriginConnector = GraphViewModule.reconnectOriginConnector,
 	private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector
@@ -43,8 +43,8 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 					}
 				} else {
 					if (portView.port.portType.isOutput) {
-						dslOutputToInputConnector.useFor(drawable, context)
-						return dslOutputToInputConnector.handler
+						dslOutputToInputOrEdgeConnector.useFor(drawable, context)
+						return dslOutputToInputOrEdgeConnector.handler
 					} else if (portView.port.portType.isInput) {
 						dslInputToOutputOrEdgeConnector.useFor(drawable, context)
 						return dslInputToOutputOrEdgeConnector.handler
