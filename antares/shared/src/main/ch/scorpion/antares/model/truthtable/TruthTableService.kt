@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.antares.model.expression.BooleanExpression
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.StandardBooleanExpressionWriter
+import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.jabbah.base.Properties
@@ -84,6 +85,13 @@ class TruthTableService(
 		name.first().isLetter() && name.all { it.isLetterOrDigit() }
 
 	private fun checkOutputName(name: String): Boolean = OUTPUT_REGEX.matches(name)
+
+	fun generateDnfs(truthTable: TruthTable): List<DNF> {
+		with (truthTable) {
+			return (inputColumnCount until inputColumnCount + outputColumnCount)
+				.map { minimizeToDNF(getMinTerms(it), getDontCares(it), inputColumnCount) }
+		}
+	}
 
 	/**
 	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified

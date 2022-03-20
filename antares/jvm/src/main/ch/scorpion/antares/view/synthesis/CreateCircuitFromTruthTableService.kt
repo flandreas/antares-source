@@ -1,6 +1,11 @@
 package ch.scorpion.antares.view.synthesis
 
+import ch.scorpion.antares.model.expression.DslBooleanExpressionWriter
+import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.quinemccluskey.DNF
+import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.truthtable.TruthTable
+import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.container.ContainerDrawingFiller
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -13,6 +18,7 @@ import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
  * Service for creating a combinational circuit from a [TruthTable].
  */
 class CreateCircuitFromTruthTableService(
+	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 	companion object {
@@ -26,18 +32,36 @@ class CreateCircuitFromTruthTableService(
 	fun create(truthTable: TruthTable, item: LibraryItem, circuitName: String) {
 		LOG.debug("Create Circuit from TruthTable in directory ${item.name.value}")
 
-		val metaGraph = createMetaGraph(truthTable, circuitName)
+		val dnfs = truthTableService.generateDnfs(truthTable)
+		val executionScript = createExecutionScript(truthTable, dnfs)
+
+		val metaGraph = createMetaGraph(truthTable, dnfs, circuitName, executionScript)
 		with (item.library!!) {
 			val dir = libraryService.getDirectoryOf(this, item)
 			val element = libraryService.addContainerLibraryElement(this, metaGraph, dir)
 			eventBus.post(OpenContainerLibraryElementRequest(element))
 		}
-
 	}
 
-	private fun createMetaGraph(truthTable: TruthTable, circuitName: String): MetaGraph {
+	private fun createExecutionScript(truthTable: TruthTable, dnfs: List<DNF>): String {
+		val result = StringBuilder()
+		dnfs.forEachIndexed { index, dnf ->
+			val expression = DnfToBooleanExpression(truthTable, dnf, andParenthesis = true).build()
+			val statement = DslBooleanExpressionWriter().write(
+				truthTable,
+				expression,
+				truthTable.inputColumnCount + index,
+				omitAndForSingleCharacterVariables = false)
+			result.append(statement)
+			result.appendLine()
+		}
+		return result.toString()
+	}
+
+	private fun createMetaGraph(truthTable: TruthTable, dnfs: List<DNF>, circuitName: String, executionScript: String): MetaGraph {
 		val metaGraph = MetaGraph.withName(circuitName)
-		CircuitFromTruthTableBuilder(truthTable, metaGraph.graph).build()
+		metaGraph.graph.model!!.script = executionScript
+		CircuitFromTruthTableBuilder(truthTable, dnfs, metaGraph.graph).build()
 		ContainerDrawingFiller(metaGraph).fill()
 		return metaGraph
 	}

@@ -2,9 +2,9 @@ package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.expression.BooleanExpression
+import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.quinemccluskey.DnfToDigitalGateStructure
 import ch.scorpion.antares.model.quinemccluskey.DnfToDigitalGateStructure.Companion.AndTerm
-import ch.scorpion.antares.model.quinemccluskey.minimizeToDNF
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
@@ -28,6 +28,7 @@ class CircuitFromTruthTableBuilderError(msg: String) : Error(msg)
  */
 class CircuitFromTruthTableBuilder(
 	private val truthTable: TruthTable,
+	private val dnfs: List<DNF>,
 	graphStorable: GraphStorable
 ) {
 	companion object {
@@ -111,12 +112,9 @@ class CircuitFromTruthTableBuilder(
 	}
 
 	private fun createOrTerm(outputColumn: Int): OrTermView {
-		with (truthTable) {
-			val andTerms = DnfToDigitalGateStructure(
-				minimizeToDNF(getMinTerms(outputColumn), getDontCares(outputColumn), inputColumnCount)
-			).build()
-			return OrTermView(getColumnName(outputColumn), andTerms.map { AndTermView(it) }.toMutableList())
-		}
+		val dnf = dnfs[outputColumn - truthTable.inputColumnCount]
+		val andTerms = DnfToDigitalGateStructure(dnf).build()
+		return OrTermView(truthTable.getColumnName(outputColumn), andTerms.map { AndTermView(it) }.toMutableList())
 	}
 
 	private fun buildInputs() {
