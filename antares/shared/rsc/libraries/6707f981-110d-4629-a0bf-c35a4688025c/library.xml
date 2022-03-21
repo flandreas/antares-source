@@ -127,6 +127,7 @@
           <items>
             <baseLibraryElement _id='56' id='ROM'/>
             <baseLibraryElement _id='57' id='RAM'/>
+            <baseLibraryElement _id='125' id='LUT'/>
             <containerLibraryElement _id='58' uuid='6f5dc317-07a6-498e-a379-b2a2fbde1b24'>
               <name>
                 <translation lang='de' text='Register n Bit'/>

@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.module
 
 import ch.scorpion.antares.dsl.AntaresDslModule
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
@@ -115,6 +116,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("bitExtender", BitExtender::class)
 		typeMap.register("buzzer", Buzzer::class)
 		typeMap.register("doubleThrowSwitch", DoubleThrowSwitch::class)
+		typeMap.register("lookupTable", LookupTable::class)
 
 		typeMap.register("truthTable", TruthTable::class)
 		typeMap.register("truthTableInputColumn", TruthTableInputColumn::class)

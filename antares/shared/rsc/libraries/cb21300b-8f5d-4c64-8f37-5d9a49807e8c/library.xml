@@ -103,6 +103,7 @@
           <items>
             <baseLibraryElement _id='31' id='RAM'/>
             <baseLibraryElement _id='32' id='ROM'/>
+            <baseLibraryElement _id='56' id='LUT'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='33'>

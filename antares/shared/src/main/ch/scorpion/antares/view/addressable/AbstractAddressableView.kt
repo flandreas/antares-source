@@ -11,31 +11,27 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.ROTATE_HALF
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.max
 
 abstract class AbstractAddressableView<T : Addressable>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	model: T
 ) : DigitalComponentView<T>(styleProvider, model) {
 
@@ -56,9 +52,6 @@ abstract class AbstractAddressableView<T : Addressable>(
 		const val LABEL_INSET = 20
 	}
 
-	private val inputEventHandler = DoubleClickHandler()
-	private val actorInteractionHandler = DoubleClickActorHandler()
-
 	val label = Label(
 		font = font,
 		text = buildLabelText(),
@@ -68,6 +61,11 @@ abstract class AbstractAddressableView<T : Addressable>(
 	)
 
 	protected var contentsView = AddressableContentsView(model)
+
+	private val inputEventHandler = AddressableInputEventHandler(
+		{ view, newDesktopView -> OpenMemoryContentsRequest(view, this, label.text, this.model, newDesktopView) },
+		eventBus
+	)
 
 	/** ---- UI properties */
 
@@ -139,12 +137,12 @@ abstract class AbstractAddressableView<T : Addressable>(
 	/** ---- [AbstractVerticeView] */
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
-		inputEventHandler
+		inputEventHandler.getInputEventHandler()
 
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		actorInteractionHandler
+		inputEventHandler.getActorInteractionHandler()
 
 	/** ---- [Component] */
 
@@ -331,27 +329,4 @@ abstract class AbstractAddressableView<T : Addressable>(
 
 	protected fun buildLabelText(): String =
 		"$type ${addressWidth.size}x${dataWidth.width}"
-
-	private fun requestOpenMemoryContents(view: DrawingView<GraphView>, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(view, this, label.text, model, newDesktopView))
-	}
-
-	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
-		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
-				return null
-			}
-			return super.mouseClicked(context)
-		}
-	}
-
-	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent?.clickCount == 2) {
-				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
-			}
-			return null
-		}
-	}
 }

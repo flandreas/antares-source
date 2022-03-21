@@ -49,7 +49,7 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 					} else {
 						vertice.currentSelectedAddress = addressInt
-						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
+						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.dataWidth, vertice.dataAt(addressInt)), signalHandler)
 					}
 				} else {
 					vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.dataWidth), signalHandler)

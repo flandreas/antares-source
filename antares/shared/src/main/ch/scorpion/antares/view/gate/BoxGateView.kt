@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
@@ -33,11 +34,14 @@ import kotlin.math.max
  * The location of a [BoxGateView] is at the connection point of the first output at the east side. Note that
  * adding and removing [PortView]s does **not** update the layout. Explicitly call
  * [updateLayout] after all [PortView]s have been added or removed.
+ *
+ * @property minWidth the minimum width in [Look.SCALE] units
  */
 open class BoxGateView<T : Vertice>(
 	styleProvider: StyleProvider,
 	text: String,
-	vertice: T
+	vertice: T,
+	private val minWidth: Int = DEF_MIN_WIDTH
 ) : DigitalComponentView<T>(styleProvider, vertice) {
 
 	/** Represents the supported styles for the [Label] of a [BoxGateView].*/
@@ -85,9 +89,9 @@ open class BoxGateView<T : Vertice>(
 	}
 
 	companion object {
-		const val MIN_WIDTH = 6
-		const val MIN_HEIGHT = 8
-		const val PIN_INSET = 2
+		private const val DEF_MIN_WIDTH = 6
+		private const val MIN_HEIGHT = 8
+		private const val PIN_INSET = 2
 
 		/** The distance between [Port]s if the number of [Port]s is smaller than three. */
 		const val BIG_PORT_DISTANCE = 4
@@ -189,13 +193,13 @@ open class BoxGateView<T : Vertice>(
 			}
 		}
 
-	open fun createInputPortView(inputPort: Port<DigitalSignal>): PortView<*> =
+	open fun createInputPortView(inputPort: Port<DigitalSignal>): DigitalPortView =
 		DigitalPortView(
 			styleProvider = styleProvider,
 			port = inputPort,
 			direction = Direction.WEST)
 
-	open fun createOutputPortView(outputPort: Port<DigitalSignal>): PortView<*> =
+	open fun createOutputPortView(outputPort: Port<DigitalSignal>): DigitalPortView =
 		DigitalPortView(
 			styleProvider = styleProvider,
 			port = outputPort,
@@ -215,7 +219,7 @@ open class BoxGateView<T : Vertice>(
 		val southPins = getPortViewsOfDirection(Direction.SOUTH)
 
 		val vPinCount = max(northPins.size, southPins.size)
-		val boxWidth = max(2 * PIN_INSET + max(0, (vPinCount - 1)) * portDistance(vPinCount), MIN_WIDTH)
+		val boxWidth = max(2 * PIN_INSET + max(0, (vPinCount - 1)) * portDistance(vPinCount), minWidth)
 
 		val hPinCount = max(westPins.size, eastPins.size)
 		val boxHeight = max(2 * PIN_INSET + max(0, (hPinCount - 1)) * portDistance(hPinCount), MIN_HEIGHT)

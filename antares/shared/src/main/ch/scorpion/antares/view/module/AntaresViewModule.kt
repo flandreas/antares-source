@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.view.*
+import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
@@ -118,6 +119,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private const val ROM = "ROM"
 	private const val RAM = "RAM"
+	private const val LUT = "LUT"
 
 	private const val RANDOM = "Random"
 	private const val BIT_EXTENDER = "BitExtender"
@@ -277,6 +279,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("buzzerView", BuzzerView::class)
 		typeMap.register("videoRamView", VideoRamView::class)
 		typeMap.register("doubleThrowSwitchView", DoubleThrowSwitchView::class)
+		typeMap.register("lookupTableView", LookupTableView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -333,6 +336,7 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LookupTableView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BitExtenderView::class) { SelectedColorSelectionModel(it) }
@@ -358,6 +362,7 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, LookupTableView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 
 		factory.register(SelectionDrawingStrategy.BELOW, PullResistorView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TransistorView::class) { TransistorViewBelowSelectionModel(it as TransistorView, styleType = EditStyleType.HIGHLIGHT) }
@@ -446,9 +451,9 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
 		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
 
-
 		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
 		repository.register(RAM, "library.element.RAM", { "/img/ram.png" }, RAMView::class)
+		repository.register(LUT, "library.element.LookupTable", { "/img/lut.png" }, LookupTableView::class)
 
 		repository.register(RANDOM, "library.element.Random", { "/img/random.png" }, RandomView::class)
 		repository.register(BIT_EXTENDER, "library.element.BitExtender", { "/img/bitextender.png" }, BitExtenderView::class)
@@ -518,6 +523,7 @@ object AntaresViewModule : AbstractModule() {
 		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
 		addLibraryItem(library, BaseLibraryElement(ROM), memory)
 		addLibraryItem(library, BaseLibraryElement(RAM), memory)
+		addLibraryItem(library, BaseLibraryElement(LUT), memory)
 		addLibraryItem(library, memory, library)
 
 		val arithmetic = LibraryFolder(Translations.getString("library.folder.arithmetic"))
