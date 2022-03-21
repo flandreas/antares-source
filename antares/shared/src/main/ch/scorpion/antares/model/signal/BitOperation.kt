@@ -81,7 +81,7 @@ object BitOperation {
 			if (value.length > 1) {
 				return null
 			}
-			if (value[0] !in '0'..bitWidth.maxValue.toInt().toChar()) {
+			if (value[0] !in '0'..('0'.code + bitWidth.maxValue.toInt()).toChar()) {
 				return null
 			}
 			return value

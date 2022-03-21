@@ -115,6 +115,9 @@ class BitOperationTest {
 
 	@Test
 	fun shouldNormalizeHex() {
+		assertEquals("1", BitOperation.normalizeHex("1", BitWidth.BW_1))
+		assertEquals("2", BitOperation.normalizeHex("2", BitWidth.BW_2))
+		assertEquals("3", BitOperation.normalizeHex("3", BitWidth.BW_3))
 		assertEquals("05", BitOperation.normalizeHex("05", BitWidth.BW_8))
 		assertEquals("AF", BitOperation.normalizeHex("AF", BitWidth.BW_8))
 		assertEquals("AF13", BitOperation.normalizeHex("AF13", BitWidth.BW_16))
