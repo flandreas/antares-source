@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidthImpl
 
 /** Defines the supported number of branches of a [Splitter] or a [Concentrator]. */
 enum class BranchCount(val count: Int) {
@@ -29,6 +30,8 @@ enum class BranchCount(val count: Int) {
 			BitWidth.BW_3 to listOf(BC_3),
 			BitWidth.BW_4 to listOf(BC_2, BC_4),
 			BitWidth.BW_5 to listOf(BC_5),
+			BitWidth.BW_6 to listOf(BC_2, BC_3, BC_6),
+			BitWidth.BW_7 to listOf(BC_7),
 			BitWidth.BW_8 to listOf(BC_2, BC_4, BC_8),
 			BitWidth.BW_12 to listOf(BC_3, BC_6, BC_12),
 			BitWidth.BW_16 to listOf(BC_2, BC_4, BC_8, BC_16),
