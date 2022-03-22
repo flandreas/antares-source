@@ -242,7 +242,7 @@ open class ViewImpl<C : InputEventContext>(
 			}
 		}
 
-	final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+	final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl(useViewCoordinates = true)
 
 	val painter: ViewPainter = viewPainterFactory.invoke(this)
 

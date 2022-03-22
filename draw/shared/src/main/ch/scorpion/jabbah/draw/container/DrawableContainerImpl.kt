@@ -17,11 +17,15 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * Standard implementation of the [DrawableContainer] interface.
+ *
+ * @param useViewCoordinates `true` if [Drawable]s in this [DrawableContainerImpl] use view coordinate space,
+ * `false` if they use model coordinate space. Relevant for clipping when repainting dirty regions.
  */
 open class DrawableContainerImpl<T : Drawable>(
 	override var location: Point2D = Point2D.ZERO,
 	override val useLocation: Boolean = false,
-	visible: Boolean = true
+	visible: Boolean = true,
+	private val useViewCoordinates: Boolean = false
 ) : AbstractDrawable(visible), DrawableContainer<T>, Locatable {
 
 	/**
@@ -39,6 +43,9 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * [contains] methods returns `true` for the events location.
 	 */
 	private val inputEventHandler: DrawableBagInputEventHandler<T, InputEventContext> by lazy { provideInputEventHandler() }
+
+	/** Used by [DrawableContainerImpl]s with [useViewCoordinates] `true` to fetch the clipping buffer. */
+	private val viewCoordinatesClipBuffer = Rectangle2D()
 
 	/** ---- [DrawableBag] interface */
 
@@ -98,7 +105,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun draw(context: DrawContext) {
 		if (visible && children.isNotEmpty()) {
-			var clip = context.modelClip
+			var clip = getClip(context)
 
 			if (useLocation) {
 				context.g.translate(location.x, location.y)
@@ -125,6 +132,18 @@ open class DrawableContainerImpl<T : Drawable>(
 			DrawModule.drawDebugBoundingBoxLocation(location, context)
 		}
 	}
+
+	private fun getClip(context: DrawContext): RectangularShape? =
+		if (useViewCoordinates) {
+			if (context.g.supportClipping) {
+				context.g.getClipBounds(viewCoordinatesClipBuffer)
+				viewCoordinatesClipBuffer
+			} else {
+				null
+			}
+		} else {
+			context.modelClip
+		}
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
 		inputEventHandler.useFor(this)
