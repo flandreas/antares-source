@@ -21,8 +21,10 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.library.FileMetaGraphHistoryService
 import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsParams
 import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsSwing
+import ch.scorpion.jabbah.graph.library.UnimplementedFileMetaGraphHistoryService
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
@@ -46,6 +48,8 @@ object GraphModuleJvm : AbstractModule() {
 	// Tried a function interface, but the Java obfuscator didn't like it
 	var libraryTreeViewActionsProvider: (LibraryTreeViewActionsParams) -> LibraryTreeViewActionsSwing =
 		{ params -> LibraryTreeViewActionsSwing(params.controller, params.type, params.application) }
+
+	var metaGraphHistoryService: FileMetaGraphHistoryService = UnimplementedFileMetaGraphHistoryService()
 
 	override fun initialize() {
 		BaseModuleJvm.require()

@@ -5,7 +5,10 @@ import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
-import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.io.ElectricXmlReader
+import ch.scorpion.jabbah.io.ElectricXmlWriter
+import ch.scorpion.jabbah.io.StoreXmlReader
+import ch.scorpion.jabbah.io.StoreXmlWriter
 import java.io.*
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -15,8 +18,12 @@ import java.util.zip.ZipOutputStream
 
 /**
  * An abstract implementation of [LibraryPersistenceService] that stores the libraries in the local file system.
+ *
+ * @property metaGraphHistoryService the optional [FileMetaGraphHistoryService] used for historizing saved [MetaGraph]s
  */
-abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService {
+abstract class AbstractFileLibraryPersistenceService(
+	protected val metaGraphHistoryService: FileMetaGraphHistoryService? = null
+) : LibraryPersistenceService {
 
 	companion object {
 		private val LOG by logger(AbstractFileLibraryPersistenceService::class)
@@ -61,6 +68,16 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
 		LOG.trace("store MetaGraph '${metaGraph.uuid} with ID ${metaGraph.hashCode()}'")
 		ensureLibraryDirectory(library.identification)
+
+		// Historize if required
+		metaGraphHistoryService?.let {
+			val filePath = buildMetaGraphFilePath(library.identification, metaGraph.uuid)
+			if (File(filePath).exists()) {
+				it.historize(library, metaGraph, filePath)
+			}
+		}
+
+		// Store
 		createMetaGraphOutputStream(library.identification, metaGraph.uuid).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))

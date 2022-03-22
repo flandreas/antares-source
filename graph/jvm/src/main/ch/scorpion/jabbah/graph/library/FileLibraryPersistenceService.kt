@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream
  * @property libraryFileName the name of the [Library] file
  * @property useOwner if `true`, [LibraryIdentification.owner] is part of the file system path. Typically `false`
  * for single-user environments, `true` for multi-user environments
+ * @property metaGraphHistoryService the optional [FileMetaGraphHistoryService] used for historizing saved [MetaGraph]s
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class FileLibraryPersistenceService(
@@ -30,8 +31,9 @@ class FileLibraryPersistenceService(
 	private val directoryName: String,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
-	private val useOwner: Boolean = false
-) : AbstractFileLibraryPersistenceService() {
+	private val useOwner: Boolean = false,
+	metaGraphHistoryService: FileMetaGraphHistoryService? = null
+) : AbstractFileLibraryPersistenceService(metaGraphHistoryService) {
 
 	companion object {
 		private val LOG by logger(FileLibraryPersistenceService::class)
@@ -41,6 +43,7 @@ class FileLibraryPersistenceService(
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
 		LOG.trace("delete MetaGraph $uuid in Library ${library.uuid}")
+		metaGraphHistoryService?.deleteHistory(uuid)
 		File(buildMetaGraphFilePath(library.identification, uuid)).delete()
 	}
 

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.MetaGraphEmbedAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
@@ -27,6 +28,8 @@ open class LibraryTreeViewActionsSwing(
 
 	protected val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
 	protected val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
+
+	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
@@ -205,6 +208,7 @@ open class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
 		if (GraphModuleJvm.supportWeb) {
 			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
 		}
@@ -217,6 +221,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
 	}
 
 	protected open fun fillMain() {

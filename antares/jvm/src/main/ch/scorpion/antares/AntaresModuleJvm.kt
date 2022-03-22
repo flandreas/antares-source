@@ -79,6 +79,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
+
 	}
 
 	override fun initialize() {
@@ -89,6 +90,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		GraphModuleJvm.libraryTreeViewActionsProvider = {
 				params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
 		}
+		GraphModuleJvm.metaGraphHistoryService = FileMetaGraphHistoryServiceImpl(app.fileStoreBasePath)
 
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
@@ -97,7 +99,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			dataPath = app.fileStoreBasePath,
 			directoryName = app.userLibraryDirectoryName,
 			metaGraphFileExtension = app.fileExtension,
-			libraryFileName = app.libraryFileName)
+			libraryFileName = app.libraryFileName,
+			metaGraphHistoryService = GraphModuleJvm.metaGraphHistoryService)
 
 		LibraryModule.systemLibraryPersistenceService = if (app.systemLibraryBasePath != null) {
 			FileLibraryPersistenceService(
@@ -138,7 +141,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			dataPath = app.fileStoreBasePath,
 			directoryName = app.projectDirectoryName,
 			metaGraphFileExtension = app.fileExtension,
-			libraryFileName = app.libraryFileName)
+			libraryFileName = app.libraryFileName,
+			metaGraphHistoryService = GraphModuleJvm.metaGraphHistoryService)
 
 		ProjectModule.projectManagementService = { ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown") }
