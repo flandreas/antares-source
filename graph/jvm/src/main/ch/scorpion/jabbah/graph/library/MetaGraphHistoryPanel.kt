@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Drawing
@@ -33,6 +35,9 @@ class ShowMetaGraphHistoryAction(
 	override fun execute(event: ActionEvent) {
 		MetaGraphHistoryPanel.showAsDialog(Frame.getFrames()[0], graphDataViewController, selectedItem as ContainerLibraryElement)
 	}
+
+	override fun calculateEnabledness(): Boolean =
+		super.calculateEnabledness() && BaseModule.properties.getBoolean(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY)
 }
 
 /**
@@ -46,6 +51,8 @@ class MetaGraphHistoryPanel(
 ) : JPanel() {
 
 	companion object {
+		private val LOG by logger(MetaGraphHistoryPanel::class)
+
 		fun showAsDialog(
 			parent: Frame,
 			graphDataViewController: GraphDataViewController,
@@ -55,7 +62,6 @@ class MetaGraphHistoryPanel(
 				.content { dialog -> MetaGraphHistoryPanel(graphDataViewController, element, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("graph.history.dialog.title"))
 				.defaultButton { it.closeButton }
-				//.nonResizable()
 				.show()
 		}
 	}
@@ -109,6 +115,8 @@ class MetaGraphHistoryPanel(
 
 	private fun restore(history: MetaGraphHistory) {
 		val metaGraph = historyService.getMetaGraph(element.library!!, element.uuid, history)
+		LOG.debug("Restoring historized version of ${metaGraph.uuid.id}")
+
 		element.updateStorable(metaGraph)
 		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, element)
 		graphDataViewController.openAsSavable(element, Translations.getString("graph.history.action.restore.name"))
@@ -127,7 +135,6 @@ class MetaGraphHistoryPanel(
 
 	private inner class RestoreAction : AbstractAction("graph.history.action.restore") {
 		override fun execute(event: ActionEvent) {
-			// TODO Confirmation
 			restore(historyList.selectedValue)
 			closeHandler.invoke()
 		}

@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -18,6 +20,11 @@ import kotlin.streams.toList
  * Service for creating and managing the save history of [MetaGraphs][MetaGraph].
  */
 interface FileMetaGraphHistoryService {
+
+	companion object {
+		/** The name of the [Boolean] property in [Properties] defining whether [MetaGraph] historizing is enabled. */
+		const val PREF_META_GRAPH_HISTORY = "graph.library.metaGraphHistory"
+	}
 
 	/**
 	 * Stores a history snapshot of [metaGraph] whose original to be copied is stored at [sourceFilePath].
@@ -88,7 +95,11 @@ class FileMetaGraphHistoryServiceImpl(
 	/** ---- [FileMetaGraphHistoryService] */
 
 	override fun historize(library: Library, metaGraph: MetaGraph, sourceFilePath: String) {
-		LOG.trace("Historizing MetaGra ${metaGraph.uuid}")
+		if (!BaseModule.properties.getBoolean(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY)) {
+			return
+		}
+
+		LOG.trace("Historizing MetaGraph ${metaGraph.uuid}")
 
 		ensureDirectory(historyDirectoryPath)
 

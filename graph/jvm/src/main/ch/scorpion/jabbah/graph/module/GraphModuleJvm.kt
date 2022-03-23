@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.EnumPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
-import ch.scorpion.jabbah.base.preferences.StringPreference
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
@@ -125,7 +122,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	@Suppress("UNUSED_PARAMETER")
 	private fun fillProperties(properties: Properties) {
-		// empty so far
+		properties.set(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY, true)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
@@ -149,6 +146,11 @@ object GraphModuleJvm : AbstractModule() {
 		root.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).add(IntPreference(
 			id = InconsistentNetError.PROP_ALLOWED_DURATION,
 			nameKey = "graph.preferences.InconsistentNetError.allowedDuration"
+		))
+
+		root.getGroup(EditModuleJvm.PREF_TREE_EDITOR).add(BooleanPreference(
+			id = FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY,
+			nameKey = "graph.history.preference.name"
 		))
 	}
 }
