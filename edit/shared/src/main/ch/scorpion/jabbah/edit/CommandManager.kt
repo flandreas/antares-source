@@ -57,6 +57,9 @@ interface CommandManager {
 
 	val isInTransaction: Boolean
 
+	/** The number of [Command] that could be undone, and therefore the number of unsaved changes.*/
+	val commandCount: Int
+
 	fun bindDataHolder(dataHolder: UndoableDataHolder)
 
     /**

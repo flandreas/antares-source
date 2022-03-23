@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -50,6 +51,7 @@ class SaveFileAction(
     private fun update() {
 	    controller.apply {
 		    enabled = data == null || !data!!.savable.defined || commandManager.canUndo()
+		    description = Translations.getString("file.action.save.desc", commandManager.commandCount)
 	    }
     }
 }

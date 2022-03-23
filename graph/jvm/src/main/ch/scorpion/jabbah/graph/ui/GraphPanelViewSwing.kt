@@ -59,7 +59,7 @@ class GraphPanelViewSwing(
 	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanelSwing(controller.libraryPanelController, application, eventBus)
 
-	private val drawingToolBar = createDrawingToolBar(controller)
+	private val drawingToolBar = createDrawingToolBar(application, controller)
 
 	private val settingsToolBar = createSettingsToolBar(controller)
 
@@ -205,9 +205,12 @@ class GraphPanelViewSwing(
 			controller.singleStepModeAction,
 			controller.pauseOrResumeAction)
 
-	private fun createDrawingToolBar(controller: GraphPanelViewController): ToolBar {
+	private fun createDrawingToolBar(application: Application, controller: GraphPanelViewController): ToolBar {
 		val toolbar = ToolBar(controller.editor)
 		toolbar.addSeparator()
+
+		toolbar.addAction(application.controller.saveAction)
+		toolbar.addGap()
 
 		toolbar.addTool(controller.editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
 		toolbar.addTool(controller.rectangleTool, "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))

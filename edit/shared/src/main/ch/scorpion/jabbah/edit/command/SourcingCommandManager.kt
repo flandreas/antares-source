@@ -51,6 +51,8 @@ class SourcingCommandManager(
 
 		val snapshotCount: Int get() = snapshots.size
 		val redoSnapshotCount: Int get() = redoSnapshots.size
+
+		val commandCount: Int get() = snapshots.items.sumOf { it.undoCommandCount }
 	}
 
 	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
@@ -79,6 +81,8 @@ class SourcingCommandManager(
 				eventBus.post(CommandManagerActiveEvent(this))
 			}
 		}
+
+	override val commandCount: Int get() = state.commandCount
 
 	override val isInTransaction: Boolean get() = state.transaction != null
 

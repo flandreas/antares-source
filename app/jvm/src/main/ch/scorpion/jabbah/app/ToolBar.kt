@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -30,7 +32,7 @@ open class ToolBar(val editor: Editor? = null) : JToolBar() {
 		if (editor == null) {
 			throw IllegalStateException("Cannot add Tool to ToolBar without Editor")
 		}
-		val button = createButton(imgPath, tooltipText)
+		val button = createToggleButton(imgPath, tooltipText)
 		val toolListener = ToolListener(tool, button)
 		button.isEnabled = editor.active
 		button.addActionListener(toolListener)
@@ -40,11 +42,15 @@ open class ToolBar(val editor: Editor? = null) : JToolBar() {
 		add(button)
 	}
 
+	fun addAction(action: Action) {
+		add(JButton(ActionWrapperSwing(action)))
+	}
+
 	fun addGap() {
 		add(Box.createHorizontalStrut(GAP_WIDTH))
 	}
 
-	private fun createButton(imgPath: String, tooltipText: String): JToggleButton {
+	private fun createToggleButton(imgPath: String, tooltipText: String): JToggleButton {
 		val button = JToggleButton(UiUtil.themedIcon(imgPath))
 		button.toolTipText = tooltipText
 		return button
