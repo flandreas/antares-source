@@ -65,6 +65,11 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
+	fun minimiumSize(size: Dimension): DialogBuilder<T> {
+		dialog.minimumSize = size
+		return this
+	}
+
 	fun onWindowOpened(handler: (T) -> Unit): DialogBuilder<T> {
 		this.onWindowOpened = handler
 		return this

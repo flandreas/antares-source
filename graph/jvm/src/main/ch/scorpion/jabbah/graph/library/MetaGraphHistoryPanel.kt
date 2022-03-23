@@ -61,6 +61,7 @@ class MetaGraphHistoryPanel(
 			DialogBuilder<MetaGraphHistoryPanel>(parent)
 				.content { dialog -> MetaGraphHistoryPanel(graphDataViewController, element, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("graph.history.dialog.title"))
+				.minimiumSize(Dimension(500, 300))
 				.defaultButton { it.closeButton }
 				.show()
 		}
@@ -97,6 +98,7 @@ class MetaGraphHistoryPanel(
 		add(scrollPane, BorderLayout.WEST)
 
 		preview.preferredSize = Dimension(300, 300)
+		(preview.view as DrawingView<*>).showGrid = false
 		add(preview, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
