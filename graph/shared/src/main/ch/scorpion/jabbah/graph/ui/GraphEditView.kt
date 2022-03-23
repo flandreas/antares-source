@@ -42,6 +42,10 @@ class GraphEditViewController(
 	val scenarioViewController = ScenarioViewController(editor, applicationContextHolder, applicationModeHolder, eventBus)
 	val usecaseViewController = UsecaseViewController(editor, applicationContextHolder, applicationModeHolder, eventBus)
 
+	override fun onViewInitialized() {
+		graphNavigationViewController.closeTarget = view
+	}
+
 	override fun dispose() {
 		super.dispose()
 		graphNavigationViewController.dispose()

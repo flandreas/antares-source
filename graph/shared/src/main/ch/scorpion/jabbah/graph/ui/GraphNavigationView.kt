@@ -67,6 +67,12 @@ class GraphNavigationViewController(
 		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
 	}
 
+	/**
+	 * The object to be referenced in [CloseViewRequest] sent by this [GraphNavigationView]. Usually  [drawingView], but can
+	 * be a different one if this object is wrapped by another object that must be the close target.
+	 * */
+	var closeTarget: Any = drawingView
+
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
 	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
 
@@ -180,10 +186,10 @@ class GraphNavigationViewController(
 	}
 
 	private fun handle(request: CloseViewRequest) {
-		if (request.view === drawingView && view is GraphDesktopViewItem) {
+		if (request.view === drawingView || request.view === closeTarget && closeTarget is GraphDesktopViewItem) {
 			eventBus.postTwoPhase(
-				prepareEvent = GraphDesktopViewItemCloseQuestion(view as GraphDesktopViewItem, isRoot),
-				execEvent = GraphDesktopViewItemCloseRequest(view as GraphDesktopViewItem, isRoot)
+				prepareEvent = GraphDesktopViewItemCloseQuestion(closeTarget as GraphDesktopViewItem, isRoot),
+				execEvent = GraphDesktopViewItemCloseRequest(closeTarget as GraphDesktopViewItem, isRoot)
 			)
 		}
 	}

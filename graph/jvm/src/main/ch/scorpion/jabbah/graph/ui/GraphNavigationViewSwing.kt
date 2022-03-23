@@ -84,7 +84,7 @@ class GraphNavigationViewSwing(
 		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
 	}
 
-	override fun createCloseRequest(): Any = CloseViewRequest(drawingView)
+	override fun createCloseRequest(): Any = CloseViewRequest(controller.closeTarget)
 
 	/** ---- [GraphNavigationViewSwing] */
 
