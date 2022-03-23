@@ -61,7 +61,7 @@ class MetaGraphHistoryPanel(
 			DialogBuilder<MetaGraphHistoryPanel>(parent)
 				.content { dialog -> MetaGraphHistoryPanel(graphDataViewController, element, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("graph.history.dialog.title"))
-				.minimiumSize(Dimension(500, 300))
+				.minimumSize(Dimension(500, 300))
 				.defaultButton { it.closeButton }
 				.show()
 		}

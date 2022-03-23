@@ -55,6 +55,7 @@ class PreferencesTreePanel(
 
 	init {
 		buildUI()
+		tree.setSelectionRow(0)
 	}
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Boolean>) {
