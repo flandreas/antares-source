@@ -3,7 +3,6 @@ package ch.scorpion.antares.ui
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.ApplicationDataViewJs
-import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.TranslationBundleAdded
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -68,8 +67,6 @@ class AntaresViewJs(
 	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = currentSystemSpeedCategory)
 
-	private var saveAction: SaveFileAction? = null
-
 	init {
 		console.info("AntaresViewJs.init")
 
@@ -93,7 +90,6 @@ class AntaresViewJs(
 	fun dispose() {
 		props.application.controller.dispose()
 		controller.dispose()
-		saveAction?.dispose()
 		BaseModule.eventBus.unregister(translationEventHandler)
 	}
 
@@ -162,8 +158,7 @@ class AntaresViewJs(
 								} else {
 									mToolbarTitle("Antares Desktop")
 								}
-								saveAction = SaveFileAction(props.application, applicationContextHolder.eventBus)
-								jmButton(saveAction!!)
+								jmButton(props.application.controller.saveAction)
 								props.returnUri?.let { returnUri ->
 									mButton("Close",
 										color = MColor.inherit,

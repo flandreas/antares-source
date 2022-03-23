@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
+import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -65,6 +66,13 @@ open class ApplicationDataViewController(
 	companion object {
 		private val LOG by logger(ApplicationDataViewController::class)
 	}
+
+	override fun dispose() {
+		super.dispose()
+		saveAction.dispose()
+	}
+
+	val saveAction by lazy { SaveFileAction(this, eventBus, commandManager) }
 
 	init {
 		commandManager.bindDataHolder(this)

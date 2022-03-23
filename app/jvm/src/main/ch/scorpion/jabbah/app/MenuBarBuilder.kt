@@ -74,7 +74,7 @@ open class MenuBarBuilder(
 	    menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(frame.application))))
         menu.add(openRecentMenu)
-        menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
+        menu.add(JMenuItem(ActionWrapperSwing(frame.application.controller.saveAction)))
 	    menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
         menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
 	    menu.addSeparator()

@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.app.action.AboutAction
 import ch.scorpion.jabbah.app.action.ExportLogfileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
-import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.auth0.LoginLogoutAction
@@ -67,7 +66,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.add(openRecentMenu)
-		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(frame.application.controller.saveAction)))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))

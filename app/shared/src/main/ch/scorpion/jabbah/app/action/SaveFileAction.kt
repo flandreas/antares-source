@@ -1,25 +1,26 @@
 package ch.scorpion.jabbah.app.action
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * An [Action] for saving the current [Storable] with the current file path.
  */
 class SaveFileAction(
-	application: Application,
+	private val controller: ApplicationDataViewController,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	val commandManager: CommandManager = EditModule.commandManager
-) : AbstractApplicationAction("file.action.save", application) {
+) : AbstractAction("file.action.save") {
 
 	private val commandEventHandler: EventHandler<CommandEvent> = { update() }
 	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = { update() }
@@ -37,7 +38,7 @@ class SaveFileAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		application.controller.apply {
+		controller.apply {
 			if (data?.savable != null && data!!.savable.defined) {
 				save()
 			} else {
@@ -47,7 +48,7 @@ class SaveFileAction(
 	}
 
     private fun update() {
-	    application.controller.apply {
+	    controller.apply {
 		    enabled = data == null || !data!!.savable.defined || commandManager.canUndo()
 	    }
     }
