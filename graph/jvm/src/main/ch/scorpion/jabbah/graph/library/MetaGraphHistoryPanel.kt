@@ -4,12 +4,19 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.draw.view.CanvasJvm
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -48,7 +55,7 @@ class MetaGraphHistoryPanel(
 				.content { dialog -> MetaGraphHistoryPanel(graphDataViewController, element, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("graph.history.dialog.title"))
 				.defaultButton { it.closeButton }
-				.nonResizable()
+				//.nonResizable()
 				.show()
 		}
 	}
@@ -59,12 +66,17 @@ class MetaGraphHistoryPanel(
 
 	private val historyList = JList(loadEntries())
 
+	private val preview = CanvasJvm(EditModule.drawingViewFactory.create(GraphViewImpl() as Drawing<ch.scorpion.jabbah.edit.Component>, null, displayGlobalMessages = false))
+
 	init {
 		buildUI()
 
 		restoreAction.enabled = false
 		historyList.addListSelectionListener {
 			restoreAction.enabled = historyList.selectedIndex > 0
+			InvocationHandler.invoke {
+				updatePreview(historyList.selectedValue)
+			}
 		}
 	}
 
@@ -75,8 +87,11 @@ class MetaGraphHistoryPanel(
 		historyList.cellRenderer = HistoryRenderer()
 
 		val scrollPane = JScrollPane(historyList)
-		scrollPane.preferredSize = Dimension(300, 300)
-		add(scrollPane, BorderLayout.CENTER)
+		scrollPane.preferredSize = Dimension(200, 300)
+		add(scrollPane, BorderLayout.WEST)
+
+		preview.preferredSize = Dimension(300, 300)
+		add(preview, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
@@ -97,6 +112,11 @@ class MetaGraphHistoryPanel(
 		element.updateStorable(metaGraph)
 		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, element)
 		graphDataViewController.openAsSavable(element, Translations.getString("graph.history.action.restore.name"))
+	}
+
+	private fun updatePreview(history: MetaGraphHistory) {
+		val metaGraph = historyService.getMetaGraph(element.library!!, element.uuid, history)
+		(preview.view as DrawingView<GraphView>).setDrawing(metaGraph.graph.graphView)
 	}
 
 	private inner class CloseAction : AbstractAction("file.action.close") {
