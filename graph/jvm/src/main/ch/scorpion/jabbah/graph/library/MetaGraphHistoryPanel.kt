@@ -80,7 +80,7 @@ class MetaGraphHistoryPanel(
 
 		restoreAction.enabled = false
 		historyList.addListSelectionListener {
-			restoreAction.enabled = historyList.selectedIndex > 0
+			restoreAction.enabled = historyList.selectedIndex >= 0
 			InvocationHandler.invoke {
 				updatePreview(historyList.selectedValue)
 			}
