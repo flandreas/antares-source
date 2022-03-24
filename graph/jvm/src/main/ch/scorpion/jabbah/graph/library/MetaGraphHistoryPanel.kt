@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -31,6 +32,10 @@ class ShowMetaGraphHistoryAction(
 	private val graphDataViewController: GraphDataViewController,
 	controller: LibraryTreeViewController
 ) : AbstractContainerLibraryElementAction("graph.history.action", Operation.Change, controller) {
+
+	override val operationAuthorized: Boolean get() =
+		selectedItem is ContainerLibraryElement
+			&& Authorizer.isCurrentUserAuthorizedTo(operation, (selectedItem as ContainerLibraryElement).library!!)
 
 	override fun execute(event: ActionEvent) {
 		MetaGraphHistoryPanel.showAsDialog(Frame.getFrames()[0], graphDataViewController, selectedItem as ContainerLibraryElement)
