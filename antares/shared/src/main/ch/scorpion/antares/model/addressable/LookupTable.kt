@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -115,6 +116,13 @@ class LookupTable(
 	override fun disassemblyAt(address: Int): String = ""
 
 	override fun commentAt(address: Int): String? = null
+
+	/** ---- [Actor] interface */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+	}
 
 	/** ---- [Storable] */
 
