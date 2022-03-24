@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.truthtable
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.truthtable.TruthTableCommand
 import ch.scorpion.antares.model.truthtable.TruthTableReference
+import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.edit.CommandManager
 import java.awt.BorderLayout
 import java.awt.Component
@@ -62,6 +63,10 @@ class TruthTableTableView(
 		val scrollPane = JScrollPane(table)
 		scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+
+		val rowHeaderTable = RowHeaderTable(table) { it.toString() }
+		scrollPane.setRowHeaderView(rowHeaderTable)
+		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
 		add(scrollPane, BorderLayout.CENTER)
 	}
