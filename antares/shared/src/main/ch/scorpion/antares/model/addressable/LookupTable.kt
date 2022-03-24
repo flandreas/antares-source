@@ -144,7 +144,12 @@ class LookupTable(
 
 	fun fillFromTruthTable(truthTable: TruthTable, outputColumn: Int) {
 		for (row in 0 until truthTable.rowsCount) {
-			memory.write(row, truthTable.getValue(row, outputColumn).numericalValue.toULong())
+			val value = truthTable.getValue(row, outputColumn)
+			if (value.isDefined) {
+				memory.write(row, value.numericalValue.toULong())
+			} else {
+				memory.write(row, 0UL)
+			}
 		}
 	}
 }
