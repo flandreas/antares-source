@@ -29,13 +29,13 @@ class CreateCircuitFromTruthTableService(
 	 * Creates a new [MetaGraph] for the given [TruthTable] in the same directory.
 	 * @throws CircuitFromTruthTableBuilderError if the required gate input counts exceed the system limit
 	 */
-	fun create(truthTable: TruthTable, item: LibraryItem, circuitName: String) {
+	fun create(truthTable: TruthTable, item: LibraryItem, circuitName: String, circuitType: CircuitSynthesisType) {
 		LOG.debug("Create Circuit from TruthTable in directory ${item.name.value}")
 
 		val dnfs = truthTableService.generateDnfs(truthTable)
 		val executionScript = createExecutionScript(truthTable, dnfs)
 
-		val metaGraph = createMetaGraph(truthTable, dnfs, circuitName, executionScript)
+		val metaGraph = createMetaGraph(truthTable, dnfs, circuitName, circuitType, executionScript)
 		with (item.library!!) {
 			val dir = libraryService.getDirectoryOf(this, item)
 			val element = libraryService.addContainerLibraryElement(this, metaGraph, dir)
@@ -58,10 +58,16 @@ class CreateCircuitFromTruthTableService(
 		return result.toString()
 	}
 
-	private fun createMetaGraph(truthTable: TruthTable, dnfs: List<DNF>, circuitName: String, executionScript: String): MetaGraph {
+	private fun createMetaGraph(
+		truthTable: TruthTable,
+		dnfs: List<DNF>,
+		circuitName: String,
+		circuitType: CircuitSynthesisType,
+		executionScript: String
+	): MetaGraph {
 		val metaGraph = MetaGraph.withName(circuitName)
 		metaGraph.graph.model!!.script = executionScript
-		CircuitFromTruthTableBuilder(truthTable, dnfs, metaGraph.graph).build()
+		circuitType.build(truthTable, dnfs, metaGraph.graph)
 		ContainerDrawingFiller(metaGraph).fill()
 		return metaGraph
 	}

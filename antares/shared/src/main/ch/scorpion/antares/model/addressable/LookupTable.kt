@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -133,4 +134,9 @@ class LookupTable(
 
 	/** ---- [LookupTable] */
 
+	fun fillFromTruthTable(truthTable: TruthTable, outputColumn: Int) {
+		for (row in 0 until truthTable.rowsCount) {
+			memory.write(row, truthTable.getValue(row, outputColumn).numericalValue.toULong())
+		}
+	}
 }

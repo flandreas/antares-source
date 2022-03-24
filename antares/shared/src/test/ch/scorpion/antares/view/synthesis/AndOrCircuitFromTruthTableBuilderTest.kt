@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class CircuitFromTruthTableBuilderTest {
+class AndOrCircuitFromTruthTableBuilderTest {
 
 	companion object {
 		init {
@@ -33,7 +33,7 @@ class CircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, True, True, False)
 
 		val metaGraph = MetaGraph.withName("Test")
-		CircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
 		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<NotGateView>().size)
@@ -50,7 +50,7 @@ class CircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, True, True, True, True)
 
 		val metaGraph = MetaGraph.withName("Test")
-		CircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -68,7 +68,7 @@ class CircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, False, False, False, False)
 
 		val metaGraph = MetaGraph.withName("Test")
-		CircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -84,7 +84,7 @@ class CircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, True, False, True, False, Error, False, True, True)
 
 		val metaGraph = MetaGraph.withName("Test")
-		CircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -105,7 +105,7 @@ class CircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, False, True, True)
 
 		val metaGraph = MetaGraph.withName("Test")
-		CircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)

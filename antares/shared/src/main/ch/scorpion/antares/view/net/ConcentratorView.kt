@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -17,8 +18,9 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
  */
 class ConcentratorView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    model: Concentrator = Concentrator()
-) : AbstractSplitterView<Concentrator>(styleProvider, model) {
+    model: Concentrator = Concentrator(),
+    handedness: Handedness = Handedness.RIGHT
+) : AbstractSplitterView<Concentrator>(styleProvider, model, handedness) {
 
 	override fun createWideSidePortView(height: Int): DigitalPortView {
 		val portView = DigitalPortView(

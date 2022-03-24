@@ -30,7 +30,8 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
  */
 abstract class AbstractSplitterView<T : AbstractSplitter>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: AbstractSplitter
+	model: AbstractSplitter,
+	handedness: Handedness = Handedness.RIGHT
 ) : DigitalComponentView<AbstractSplitter>(styleProvider, model) {
 
 	companion object {
@@ -47,7 +48,7 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 
 	}
 
-	var handedness: Handedness = Handedness.RIGHT
+	var handedness: Handedness = handedness
 		set(value) {
 			if (field != value) {
 				invalidate()

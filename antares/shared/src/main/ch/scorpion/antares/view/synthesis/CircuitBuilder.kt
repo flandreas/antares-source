@@ -1,15 +1,22 @@
 package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.gate.OrGate
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.net.BranchCount
+import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Constant
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.gate.OrGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
@@ -75,6 +82,29 @@ class CircuitBuilder(
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
 	): OrGateView = OrGateView(styleProvider, orGate = OrGate(inputCount)).also {
+		it.orientation = orientation
+		addVerticeView(it, location)
+	}
+
+	fun addConcentrator(
+		bitWidth: BitWidth,
+		branchCount: BranchCount,
+		handedness: Handedness = Handedness.RIGHT,
+		location: Point2D = Point2D.ZERO,
+		orientation: Direction = Direction.EAST
+	) : ConcentratorView {
+		return ConcentratorView(styleProvider, Concentrator(bitWidth, branchCount), handedness).also {
+			it.orientation = orientation
+			addVerticeView(it, location)
+		}
+	}
+
+	fun addLookupTable(
+		addressBitWidth: BitWidth,
+		dataBitWidth: BitWidth,
+		location: Point2D = Point2D.ZERO,
+		orientation: Direction = Direction.EAST
+	) : LookupTableView = LookupTableView(styleProvider, LookupTable(addressBitWidth, dataBitWidth)).also {
 		it.orientation = orientation
 		addVerticeView(it, location)
 	}

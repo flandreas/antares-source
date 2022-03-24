@@ -46,6 +46,9 @@ class CreateCircuitFromTruthTablePanel(
 	private val nameLabel = JLabel(Translations.getString("antares.synthesis.createCircuitFromTruthTable.circuitName"))
 	private val nameField = JTextField(20)
 
+	private val synthesisTypeLabel = JLabel(Translations.getString("antares.synthesis.type.name"))
+	private val synthesisTypeField = JComboBox(CircuitSynthesisType.values())
+
 	init {
 		buildUI()
 
@@ -76,7 +79,15 @@ class CreateCircuitFromTruthTablePanel(
 		contentPanel.add(nameLabel)
 		contentPanel.add(Box.createVerticalStrut(2))
 		contentPanel.add(nameField)
-		contentPanel.add(Box.createVerticalStrut(12))
+		contentPanel.add(Box.createVerticalStrut(6))
+
+		synthesisTypeLabel.alignmentX = Component.LEFT_ALIGNMENT
+		synthesisTypeField.alignmentX = Component.LEFT_ALIGNMENT
+		synthesisTypeField.selectedIndex = 0
+		contentPanel.add(synthesisTypeLabel)
+		contentPanel.add(Box.createVerticalStrut(2))
+		contentPanel.add(synthesisTypeField)
+		contentPanel.add(Box.createVerticalStrut(18))
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
@@ -93,7 +104,7 @@ class CreateCircuitFromTruthTablePanel(
 		override fun execute(event: ActionEvent) {
 			InvocationHandler.invoke {
 				try {
-					service.create(truthTable, item, nameField.text)
+					service.create(truthTable, item, nameField.text, synthesisTypeField.selectedItem as CircuitSynthesisType)
 					closeHandler()
 				} catch (e: CircuitFromTruthTableBuilderError) {
 					JOptionPane.showConfirmDialog(
