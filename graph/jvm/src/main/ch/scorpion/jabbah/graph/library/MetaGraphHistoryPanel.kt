@@ -34,7 +34,7 @@ class ShowMetaGraphHistoryAction(
 ) : AbstractContainerLibraryElementAction("graph.history.action", Operation.Change, controller) {
 
 	override val operationAuthorized: Boolean get() =
-		selectedItem is ContainerLibraryElement
+		selectedItem is ContainerLibraryElement && (selectedItem as ContainerLibraryElement).library != null
 			&& Authorizer.isCurrentUserAuthorizedTo(operation, (selectedItem as ContainerLibraryElement).library!!)
 
 	override fun execute(event: ActionEvent) {
