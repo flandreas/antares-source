@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -41,6 +42,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 		/** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
 		private const val MULTIBIT_INSET = 3.0
+
+		private val BASELINE_STROKE = Stroke(1f)
 
 		private const val BUFFER_END_CIRCLE_COUNT = 3
 		private const val BUFFER_END_CIRCLE_RADIUS = 2.0
@@ -86,6 +89,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 		// Draw horizontal axis
 		context.g.color = BACKGROUND_COLOR.foregroundColor
+		context.g.stroke = BASELINE_STROKE
 		context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
 
 		if (signalHistory == null || timeline == null || color == null) {
