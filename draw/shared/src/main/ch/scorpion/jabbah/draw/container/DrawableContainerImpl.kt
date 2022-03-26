@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -123,10 +124,11 @@ open class DrawableContainerImpl<T : Drawable>(
 				}
 			}
 
-			DrawModule.drawDebugBoundingBox(this, context.g)
-
 			if (useLocation) {
 				context.g.translate(-location.x, -location.y)
+				DrawModule.drawDebugBoundingBox(this, context.g)
+			} else {
+				DrawModule.drawDebugBoundingBox(this, context.g)
 			}
 
 			DrawModule.drawDebugBoundingBoxLocation(location, context)

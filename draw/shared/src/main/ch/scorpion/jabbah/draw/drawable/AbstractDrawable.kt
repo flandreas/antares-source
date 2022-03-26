@@ -161,6 +161,7 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 	/**
 	 * A wrapper class that listens to [DrawableEvent]s from an inner [AbstractDrawable] and that calls handling
 	 * methods of an owner [AbstractDrawable].
+	 * Needs to be inside [AbstractDrawable] in order to call protected methods of [owner].
 	 */
 	class DrawableOwner(val owner: AbstractDrawable, val inner: Drawable) : DrawableListener {
 

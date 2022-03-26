@@ -66,6 +66,8 @@ class OscilloscopeScaleRowView(
 
 	fun updateLocation() {
 		location = Point2D(0, TITLE_HEIGHT + factory.rowHeight * oscilloscopeView.signalRowViews.size)
+		updateBoundingBox()
+		update()
 	}
 
 	fun bindDrawer() {

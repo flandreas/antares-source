@@ -101,7 +101,7 @@ class OscilloscopeView(
 		private set(value) {
 			if (field != value) {
 				field = value
-				updateSate()
+				updateState()
 			}
 		}
 
@@ -116,7 +116,7 @@ class OscilloscopeView(
 
 		DrawableOwner(this, container)
 
-		updateSate()
+		updateState()
 	}
 
 	override fun dispose() {
@@ -130,7 +130,7 @@ class OscilloscopeView(
 		timeline = OscilloscopeViewTimeline(timelineScale, model)
 	}
 
-	private fun updateSate() {
+	private fun updateState() {
 		rows.forEach { it.updateState() }
 		scaleRow.updateState()
 	}
