@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  * `false` if they use model coordinate space. Relevant for clipping when repainting dirty regions.
  */
 open class DrawableContainerImpl<T : Drawable>(
-	override var location: Point2D = Point2D.ZERO,
+	location: Point2D = Point2D.ZERO,
 	override val useLocation: Boolean = false,
 	visible: Boolean = true,
 	private val useViewCoordinates: Boolean = false
@@ -46,6 +46,16 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	/** Used by [DrawableContainerImpl]s with [useViewCoordinates] `true` to fetch the clipping buffer. */
 	private val viewCoordinatesClipBuffer = Rectangle2D()
+
+	/** ---- [Locatable] interface */
+
+	override var location: Point2D = location
+		set(value) {
+			if (field != value) {
+				field = value
+				updateBoundingBox()
+			}
+		}
 
 	/** ---- [DrawableBag] interface */
 
