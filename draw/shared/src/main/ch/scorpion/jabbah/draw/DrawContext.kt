@@ -8,13 +8,15 @@ import ch.scorpion.jabbah.draw.style.Stylable
 
 /**
  * A context used in all drawing activities.
+ *
  * @param modelClip the optional clipping area in model space. [Drawable]s can avoid
  * repaint themselves if their bounding box doesn't intersect this region. Usually `null`
- * if the entire [View] area is to be drawn
+ * if the entire [View] area is to be drawn. Is writable in order to support clipping at local
+ * coordinate systems of [DrawableContainer]s along chains of drawing calls.
  */
 class DrawContext(
 	val g: Graphics2D,
-	val modelClip: Rectangle2D? = null,
+	var modelClip: Rectangle2D? = null,
 	val appContext: Any? = null
 ) {
 

@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -22,7 +21,7 @@ class DrawableContainerImplNestingTest {
 	fun setup() {
 		BaseModule.require()
 		container = DrawableContainerImpl()
-		context = mockk(relaxed = true)
+		context = DrawContext(mockk(relaxed = true))
 	}
 
 	@Test
@@ -120,11 +119,39 @@ class DrawableContainerImplNestingTest {
 		innerContainer.add(rect1)
 		innerContainer.add(rect2)
 		container.add(innerContainer)
-		every { context.modelClip } returns Rectangle2D(100, 100, 50, 50)
+		context.modelClip = Rectangle2D(100, 100, 50, 50)
 
 		container.draw(context)
 
 		verify(exactly = 1) { rect1.draw(context) }
 		verify(exactly = 0) { rect2.draw(context) }
+	}
+
+	@Test
+	fun shouldClipRecursively() {
+		val deepContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		val rect = spyk(TestRectangle(Rectangle2D(10, 10, 10, 10)))
+		deepContainer.add(rect)
+		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		innerContainer.add(deepContainer)
+		container.add(innerContainer)
+
+		context.modelClip = Rectangle2D(100, 100, 20, 20)
+		container.draw(context)
+		verify(exactly = 0) { rect.draw(context) }
+	}
+
+	@Test
+	fun shouldDrawRecursively() {
+		val deepContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		val rect = spyk(TestRectangle(Rectangle2D(10, 10, 10, 10)))
+		deepContainer.add(rect)
+		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		innerContainer.add(deepContainer)
+		container.add(innerContainer)
+
+		context.modelClip = Rectangle2D(200, 200, 20, 20)
+		container.draw(context)
+		verify(exactly = 1) { rect.draw(context) }
 	}
 }

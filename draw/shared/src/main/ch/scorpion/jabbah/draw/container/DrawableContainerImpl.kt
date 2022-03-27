@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -107,11 +106,15 @@ open class DrawableContainerImpl<T : Drawable>(
 	override fun draw(context: DrawContext) {
 		if (visible && children.isNotEmpty()) {
 			var clip = getClip(context)
+			val oldModelClip = context.modelClip
 
 			if (useLocation) {
 				context.g.translate(location.x, location.y)
 				if (clip != null) {
 					clip = Rectangle2D(clip.x - location.x, clip.y - location.y, clip.width, clip.height)
+					if (!useViewCoordinates && context.modelClip != null) {
+						context.modelClip = clip
+					}
 				}
 			}
 
@@ -132,6 +135,8 @@ open class DrawableContainerImpl<T : Drawable>(
 			}
 
 			DrawModule.drawDebugBoundingBoxLocation(location, context)
+
+			context.modelClip = oldModelClip
 		}
 	}
 
