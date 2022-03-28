@@ -59,6 +59,7 @@ class OscilloscopeView(
 		private val LOG by logger(OscilloscopeView::class)
 		private const val WIDTH = 700
 		private const val DEF_HEIGHT = 200
+		private const val INIT_SCALE = 5.0
 		const val TITLE_HEIGHT = 15
 		const val MAX_ROW_NUMBER = 9
 		const val ROW_INSET = 10
@@ -91,7 +92,7 @@ class OscilloscopeView(
 	private val removeListener = RemoveListener()
 
 	/** Replaced if model changes when reading from persistent store.*/
-	var timeline = OscilloscopeViewTimeline(1.0, model)
+	var timeline = OscilloscopeViewTimeline(INIT_SCALE, model)
 
 	private val applicationModeHandler: (ApplicationModeEvent) -> Unit = { applicationMode = it.applicationMode }
 
@@ -173,12 +174,15 @@ class OscilloscopeView(
 	override fun draw(context: DrawContext) {
 		super.draw(context)
 		context.g.translate(location.x, location.y)
+
 		context.g.color = context.choose(color).backgroundColor
 		context.g.fill(bounds)
 		context.g.color = context.choose(color).foregroundColor
 		context.g.stroke = stroke
 		context.g.draw(bounds)
+
 		context.g.translate(-location.x, -location.y)
+
 		container.draw(context)
 	}
 

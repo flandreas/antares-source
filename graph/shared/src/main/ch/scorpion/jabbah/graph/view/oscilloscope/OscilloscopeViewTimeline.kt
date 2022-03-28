@@ -10,13 +10,15 @@ class OscilloscopeViewTimeline(
 	private val model: Oscilloscope
 ) : SignalHistoryTimeline {
 
+	companion object {
+		private const val FACTOR = 100
+	}
+
 	override val maxTime: Long get() = model.maxTime
 
-	override fun getDx(duration: Long): Double {
-		return scale * duration / 20
-	}
+	override fun getDx(duration: Long): Double =
+		scale * duration / FACTOR
 
-	override fun getX(time: Long): Double {
-		return getDx(model.maxTime - time)
-	}
+	override fun getX(time: Long): Double =
+		getDx(model.maxTime - time)
 }

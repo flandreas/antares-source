@@ -58,7 +58,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 		h: Double = 0.0
 	) : this(styleProvider, model, Rectangle2D(x, y, w, h))
 
-	/** Contains the position relative to [location] and the size of the rectangle..*/
+	/** Contains the position relative to [location] and the size of the rectangle.*/
 	protected val rectangle: RectangularShape = rectangle
 
 	/** Contains the actual and absolute bounding box including all [PortView] bounding boxes. */
