@@ -49,13 +49,14 @@ class CircuitInOutKeyboard(
 	private val style: Style get() = styleProvider.getStyle(styleType)
 
 	init {
-		location = positioner.position(
+		val loc = positioner.position(
 			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT),
 			circuitInOutView.boundingBox,
 			view,
 			preferredBelow = true,
 			VERTICAL_DISTANCE)
-		bounds = Rectangle2D(location, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
+		bounds = Rectangle2D(loc, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
+		location = loc
 		buildHexadecimalUI()
 	}
 

@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.port.PortImpl
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,8 +13,7 @@ class OscilloscopeViewTimelineTest {
 
 	companion object {
 		init {
-			BaseModule.require()
-			Translations.withAnyKey()
+			GraphViewTestRule.configure()
 		}
 	}
 
@@ -37,7 +35,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(7.5, timeline.getX(0))
+		assertEquals(1.5, timeline.getX(0))
 	}
 
 	@Test
@@ -47,7 +45,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("2", 110, true)
-		assertEquals(5.5, timeline.getX(0))
+		assertEquals(1.1, timeline.getX(0))
 	}
 
 	@Test
@@ -57,7 +55,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(7.5, timeline.getX(0))
+		assertEquals(1.5, timeline.getX(0))
 	}
 
 	@Test
@@ -69,7 +67,7 @@ class OscilloscopeViewTimelineTest {
 		input("1", 1001, false)
 		input("1", 2002, true)
 		input("2", 2033, false)
-		assertEquals(101.65, timeline.getX(0))
+		assertEquals(20.33, timeline.getX(0))
 	}
 
 	private fun createPorts(portsCount: Int) {
