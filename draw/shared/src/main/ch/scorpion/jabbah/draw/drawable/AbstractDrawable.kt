@@ -34,6 +34,7 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 			if (value != visible) {
 				invalidate()
 				field = value
+				update()
 				validate()
 			}
 		}
