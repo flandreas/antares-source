@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeVisibilityAction
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
@@ -99,7 +100,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.actions.viewContainerAction)))
 		menu.addSeparator()
 		super.fillViewMenu(menu)
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeAction(DrawViewModule.viewManager, eventBus))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeVisibilityAction(DrawViewModule.viewManager, eventBus))))
 	}
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {

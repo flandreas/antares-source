@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** An [Action] for toggling the visibility of the currently active [DrawingView]'s [GraphView].*/
-class OscilloscopeAction(
+class OscilloscopeVisibilityAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
@@ -29,7 +29,6 @@ class OscilloscopeAction(
 
 	override fun calculateEnabled(): Boolean {
 		// Disable until entire Oscilloscope has been improved
-		//return false
 		return EditAuthModule.userHolder.user.isDeveloper
 	}
 
