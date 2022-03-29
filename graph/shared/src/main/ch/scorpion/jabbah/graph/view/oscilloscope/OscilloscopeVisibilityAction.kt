@@ -10,8 +10,8 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.app.OscilloscopeDisplayEvent
-import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeDisplayEvent
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** An [Action] for toggling the visibility of the currently active [DrawingView]'s [GraphView].*/
@@ -40,11 +40,10 @@ class OscilloscopeVisibilityAction(
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView
 		if (view is DrawingView<*>) {
-			val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView
 			if (selected) {
-				service.displayOscilloscope(graphView)
+				service.displayOscilloscope(view as DrawingView<GraphView>)
 			} else {
-				service.hideOscilloscope(graphView)
+				service.hideOscilloscope(view as DrawingView<GraphView>)
 			}
 		}
 	}

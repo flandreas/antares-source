@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 
 /**
  * Part of an [OscilloscopeView].

@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
@@ -110,7 +110,6 @@ class OscilloscopeView(
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
 
-		visible = false
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		container.add(scaleRow)
 		adjustSize()
@@ -209,12 +208,16 @@ class OscilloscopeView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeDouble("scale", timelineScale)
+		writer.writeBoolean("visible", visible)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("scale")) {
 			timelineScale = reader.readDouble("scale")
+		}
+		if (reader.hasAttribute("visible")) {
+			visible = reader.readBoolean("visible")
 		}
 	}
 
@@ -229,10 +232,9 @@ class OscilloscopeView(
 		scaleRow.updateState()
 		adjustSize()
 
-		parent!!
-			.getDrawables{ it is OscilloscopeProbeVerticeView<*> }
-			.map { it as OscilloscopeProbeVerticeView<Any> }
-			.forEach { rows.find { row -> row.name == it.name }!!.loadedWith(it) }
+		parent?.getDrawables{ it is OscilloscopeProbeVerticeView<*> }
+			?.map { it as OscilloscopeProbeVerticeView<Any> }
+			?.forEach { rows.find { row -> row.name == it.name }!!.loadedWith(it) }
 	}
 
 	/** ---- [OscilloscopeView] */

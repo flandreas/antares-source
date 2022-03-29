@@ -38,6 +38,8 @@ import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.*
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.editor.AutoConnector
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
@@ -102,7 +104,7 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
 
-	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl(EditModule.commandManager, BaseModule.eventBus)
+	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl()
 
 	var oscilloscopeProbeNameStrategy: OscilloscopeProbeNameStrategy = OscilloscopeProbeNameStrategyImpl()
 
