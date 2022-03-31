@@ -244,7 +244,7 @@ class OscilloscopeView(
 	/** ---- [OscilloscopeView] */
 
 	fun addRow() {
-		val name = createRowName()
+		val name = createRowName(null, rows.size + 1)
 
 		val port = portFactory.createOscilloscopeProbePort<Any>(name)
 		model.addPort(port)
@@ -256,8 +256,12 @@ class OscilloscopeView(
 		adjustSize()
 	}
 
-	private fun createRowName(): String {
-		var nameNumber = rows.size + 1
+	private fun createRowName(target: OscilloscopeSignalRowView?, prefNameNumber: Int): String {
+		if (rowWithName(prefNameNumber.toString()) === target) {
+			return prefNameNumber.toString()
+		}
+
+		var nameNumber = prefNameNumber
 		while (rowWithName(nameNumber.toString()) != null) {
 			nameNumber++
 		}
@@ -353,7 +357,10 @@ class OscilloscopeView(
 			if (event.child is OscilloscopeProbeVerticeView<*>) {
 				LOG.trace("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
-				rowWithName(comp.name)?.handleProbeViewRemovedFromDrawing()
+				rowWithName(comp.name)?.apply {
+					handleProbeViewRemovedFromDrawing()
+					name = createRowName(this, rows.indexOf(this) + 1)
+				}
 			}
 		}
 	}

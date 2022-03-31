@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.graph.model.net.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.StoreReader
 
 /**
  * A [Vertice] implementation to be used in [ch.scorpion.jabbah.graph] integration tests.
@@ -34,7 +35,7 @@ class TestVertice(
 
     init {
         addPort(PortImpl.createInput())
-        addPort(if (inOut) PortImpl.createInOut(canBeUndefined = true) else PortImpl.createOutput(canBeUndefined = canBeUndefined))
+        addPort(if (inOut) PortImpl.createInOut(name, canBeUndefined = true) else PortImpl.createOutput(name, canBeUndefined = canBeUndefined))
     }
 
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
@@ -46,4 +47,9 @@ class TestVertice(
 	}
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = true
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		getOutput<Boolean>().name = name
+	}
 }

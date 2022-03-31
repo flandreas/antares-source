@@ -8,7 +8,10 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.EditorToolDriver
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.every
@@ -41,11 +44,9 @@ class OscilloscopeEditIntegrationTest {
 
 	@BeforeTest
 	fun setupCircuit() {
-		val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("VV1", 0, 0))
-		vv1.model.getOutput<Boolean>().name = "P"
-		val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("VV2", 100, 0))
-		vv2.model.getOutput<Boolean>().name = "Q"
-		val vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("VV3", 200, 0))
+		val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("P", 0, 0))
+		val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("Q", 100, 0))
+		val vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("R", 200, 0))
 		builder.connect(vv1, vv2)
 		builder.connect(vv2, vv3)
 	}
@@ -118,8 +119,8 @@ class OscilloscopeEditIntegrationTest {
 
 	private fun assertDroppedProbeView() {
 		assertEquals(1, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
-		val pvv = view.drawing.getVerticeViews().first{ it is OscilloscopeProbeVerticeView<*> } as OscilloscopeProbeVerticeView<*>
-		val vv = view.drawing.getVerticeView("VV1")!!
+		val pvv = view.drawing.getVerticeViews().first { it is OscilloscopeProbeVerticeView<*> } as OscilloscopeProbeVerticeView<*>
+		val vv = view.drawing.getVerticeViews().first { it is TestVerticeView && it.model.name == "P" }
 		assertNotNull(pvv)
 		assertEquals("P", pvv.name) // Inherit defined Port name
 		assertEquals("P", getOscilloscopeView().getRow(0).name)
@@ -134,6 +135,7 @@ class OscilloscopeEditIntegrationTest {
 		EditModule.commandManager.undo()
 
 		assertNotDroppedPortView()
+		assertFalse(EditModule.commandManager.canUndo())
 	}
 
 	private fun assertNotDroppedPortView() {
@@ -141,7 +143,6 @@ class OscilloscopeEditIntegrationTest {
 		assertNull(pvv)
 		assertTrue(getOscilloscopeView().getRow(0).probeView.verticeViewPresent)
 		assertEquals("1", getOscilloscopeView().getRow(0).probeView.name) // Reset inherited Port name
-		assertFalse(EditModule.commandManager.canUndo())
 	}
 
 	@Test
@@ -149,8 +150,6 @@ class OscilloscopeEditIntegrationTest {
 		dropProbeViewIntoGraphView()
 		EditModule.commandManager.undo()
 
-		// Test artifact: TestVertice doesn't store port names, must re-establish it after replaying snapshot
-		view.drawing.getVerticeView("VV1")!!.model.getOutput<Boolean>().name = "P"
 		EditModule.commandManager.redo()
 
 		assertDroppedProbeView()
@@ -199,6 +198,43 @@ class OscilloscopeEditIntegrationTest {
 		EditModule.commandManager.redo()
 
 		assertMovedProbedView()
+	}
+
+	@Test
+	fun shouldResetProbeViewWhenDeleting() {
+		dropProbeViewIntoGraphView()
+
+		deleteProbeView()
+
+		assertNotDroppedPortView()
+		assertTrue(EditModule.commandManager.canUndo())
+	}
+
+	private fun deleteProbeView() {
+		GraphViewModule.graphViewAppService.delete(listOf(
+			view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().first()),
+			view)
+	}
+
+	@Test
+	fun shouldUndoResetProbeViewWhenDeleting() {
+		dropProbeViewIntoGraphView()
+		deleteProbeView()
+
+		EditModule.commandManager.undo()
+
+		assertDroppedProbeView()
+	}
+
+	@Test
+	fun shouldRedoResetProbeViewWhenDeleting() {
+		dropProbeViewIntoGraphView()
+		deleteProbeView()
+		EditModule.commandManager.undo()
+
+		EditModule.commandManager.redo()
+
+		assertNotDroppedPortView()
 	}
 
 	private fun moveProbeView() {
