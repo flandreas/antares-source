@@ -35,7 +35,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(1.5, timeline.getX(0))
+		assertEquals(0.015, timeline.getX(0))
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("2", 110, true)
-		assertEquals(1.1, timeline.getX(0))
+		assertEquals(0.011, timeline.getX(0))
 	}
 
 	@Test
@@ -55,7 +55,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStart(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(1.5, timeline.getX(0))
+		assertEquals(0.015, timeline.getX(0))
 	}
 
 	@Test
@@ -67,7 +67,7 @@ class OscilloscopeViewTimelineTest {
 		input("1", 1001, false)
 		input("1", 2002, true)
 		input("2", 2033, false)
-		assertEquals(20.33, timeline.getX(0))
+		assertEquals(0.2033, timeline.getX(0))
 	}
 
 	private fun createPorts(portsCount: Int) {

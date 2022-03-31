@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.AddIcon
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -93,6 +94,7 @@ class OscilloscopeScaleRowView(
 		override fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = MouseMoveHandler()
 
 		private inner class MouseMoveHandler : ActorHandler() {
+
 			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 
 				// Hover highlighting
@@ -101,6 +103,20 @@ class OscilloscopeScaleRowView(
 				}
 
 				return KnobLauncherImpl.launchAfterDelay(
+					initialValue = oscilloscopeView.timelineScale.toLong(),
+					location = boundingBox.center
+						.add(oscilloscopeView.location)
+						.add(this@OscilloscopeScaleRowView.location),
+					unit = "x",
+					mouseMovedCondition = { keepMouseMoved(it.location) },
+					displayHandler = { isHovering = false },
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+				)
+			}
+
+			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+				return KnobLauncherImpl.launchImmediately(
+					view = context.view as DrawingView<*>,
 					initialValue = oscilloscopeView.timelineScale.toLong(),
 					location = boundingBox.center
 						.add(oscilloscopeView.location)

@@ -44,6 +44,16 @@ interface KnobLauncher {
 		displayHandler: () -> Unit = {},
 		valueChangeHandler: (Long) -> Unit
 	): ActorInteractionHandler
+
+	fun launchImmediately(
+		view: DrawingView<*>,
+		initialValue: Long,
+		location: Point2D,
+		unit: String,
+		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
+		displayHandler: () -> Unit = {},
+		valueChangeHandler: (Long) -> Unit
+	): ActorInteractionHandler
 }
 
 /**
@@ -96,6 +106,27 @@ object KnobLauncherImpl : KnobLauncher {
 		this.mouseMovedCondition = mouseMovedCondition
 		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
+
+		return handler
+	}
+
+	override fun launchImmediately(
+		view: DrawingView<*>,
+		initialValue: Long,
+		location: Point2D,
+		unit: String,
+		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
+		displayHandler: () -> Unit,
+		valueChangeHandler: (Long) -> Unit
+	): ActorInteractionHandler {
+		this.initialValue = initialValue
+		this.location = location
+		this.unit = unit
+		this.mouseMovedCondition = mouseMovedCondition
+		this.displayHandler = displayHandler
+		this.valueChangeHandler = valueChangeHandler
+
+		display(view)
 
 		return handler
 	}

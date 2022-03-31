@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -179,6 +180,22 @@ class ClockView(
 			}
 
 			return KnobLauncherImpl.launchAfterDelay(
+				initialValue = model.propagationDelay / 1_000,
+				location = boundingBox.center,
+				unit = "µs",
+				mouseMovedCondition = { contains(it.x, it.y) },
+				valueChangeHandler = { model.propagationDelay = it * 1_000 }
+			)
+		}
+
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+
+			if (!isEnabled || !isKnobEnabled) {
+				return null
+			}
+
+			return KnobLauncherImpl.launchImmediately(
+				view = context.view as DrawingView<*>,
 				initialValue = model.propagationDelay / 1_000,
 				location = boundingBox.center,
 				unit = "µs",
