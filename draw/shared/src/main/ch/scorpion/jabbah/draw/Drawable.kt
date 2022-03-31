@@ -40,7 +40,7 @@ interface Drawable {
 	/**
 	 * Informs this [Drawable] that it is not actively used any more.
 	 * Implementing classes should release references to other objects, and especially de-register from listening
-	 * to events. However, it might be that a disposes [Drawable] might be re-activated later.
+	 * to events. However, it might be that a disposed [Drawable] might be re-activated later.
 	 */
 	fun dispose()
 

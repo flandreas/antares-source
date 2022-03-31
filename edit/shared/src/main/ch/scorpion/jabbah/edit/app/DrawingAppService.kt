@@ -93,8 +93,16 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
-		logComponentAction("Delete", components)
-		commandManager.execute(DeleteCommand(drawingView, components.map { it.id }))
+		val componentSet = expandDeleteBuddies(components)
+		logComponentAction("Delete", componentSet)
+		commandManager.execute(DeleteCommand(drawingView, componentSet.map { it.id }))
+	}
+
+	protected fun expandDeleteBuddies(components: Collection<Component>): Collection<Component> {
+		val componentSet: MutableSet<Component> = mutableSetOf()
+		componentSet.addAll(components)
+		componentSet.addAll(components.map { it.deleteBuddies }.flatten())
+		return componentSet
 	}
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {

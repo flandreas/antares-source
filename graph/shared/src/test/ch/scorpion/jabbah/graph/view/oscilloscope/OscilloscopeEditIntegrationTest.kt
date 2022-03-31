@@ -8,10 +8,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.EditorToolDriver
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.every
@@ -37,7 +35,7 @@ class OscilloscopeEditIntegrationTest {
 		val canvas = mockk<Canvas>(relaxed = true)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
 		every { canvas.devicePixelRatio } returns 1
-		view. canvas = canvas
+		view.canvas = canvas
 
 		editor.commandManager.bindDataHolder(builder)
 	}
@@ -120,7 +118,7 @@ class OscilloscopeEditIntegrationTest {
 	private fun assertDroppedProbeView() {
 		assertEquals(1, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
 		val pvv = view.drawing.getVerticeViews().first { it is OscilloscopeProbeVerticeView<*> } as OscilloscopeProbeVerticeView<*>
-		val vv = view.drawing.getVerticeViews().first { it is TestVerticeView && it.model.name == "P" }
+		val vv = getTestVerticeView("P")
 		assertNotNull(pvv)
 		assertEquals("P", pvv.name) // Inherit defined Port name
 		assertEquals("P", getOscilloscopeView().getRow(0).name)
@@ -175,6 +173,18 @@ class OscilloscopeEditIntegrationTest {
 		moveProbeView()
 
 		assertMovedProbedView()
+	}
+
+	private fun moveProbeView() {
+		editor.currentTool = editor.selectionTool
+		driver.mouseMoveTo(50, -20)
+		driver.pressMouseAt(50, -20)
+		driver.dragMouseTo(150, -20)
+		driver.releaseMouseAt(150, -20)
+	}
+
+	private fun assertMovedProbedView() {
+		assertEquals(1, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
 	}
 
 	@Test
@@ -237,18 +247,53 @@ class OscilloscopeEditIntegrationTest {
 		assertNotDroppedPortView()
 	}
 
-	private fun moveProbeView() {
-		editor.currentTool = editor.selectionTool
-		driver.mouseMoveTo(50, -20)
-		driver.pressMouseAt(50, -20)
-		driver.dragMouseTo(150, -20)
-		driver.releaseMouseAt(150, -20)
+	@Test
+	fun shouldDeleteOscilloscopeView() {
+		dropProbeViewIntoGraphView()
+
+		deleteOscilloscopeView()
+
+		assertNoOscilloscope()
 	}
 
-	private fun assertMovedProbedView() {
-		assertEquals(1, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
+	private fun deleteOscilloscopeView() {
+		GraphViewModule.graphViewAppService.delete(listOf(
+			view.drawing.getVerticeViews().filterIsInstance<OscilloscopeView>().first()),
+			view)
+	}
+
+	private fun assertNoOscilloscope() {
+		assertEquals(0, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
+		assertEquals(0, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeView>().size)
+		assertEquals(0, builder.graphView.graph!!.elements.filterIsInstance<OscilloscopeProbeVertice<*>>().size)
+		assertEquals(2, getTestVerticeView("P").model.getOutput<Boolean>().net!!.portsCount)
+	}
+
+	@Test
+	fun shouldUndoDeleteOscilloscopeView() {
+		dropProbeViewIntoGraphView()
+		deleteOscilloscopeView()
+
+		EditModule.commandManager.undo()
+
+		assertTrue(GraphViewModule.oscilloscopeViewService.isOscilloscopeDisplayed(view.drawing))
+		assertDroppedProbeView()
+	}
+
+	@Test
+	fun shouldRedoDeleteOscilloscopeView() {
+		dropProbeViewIntoGraphView()
+		deleteOscilloscopeView()
+		EditModule.commandManager.undo()
+
+		EditModule.commandManager.redo()
+
+		assertNoOscilloscope()
 	}
 
 	private fun getOscilloscopeView(): OscilloscopeView =
 		view.drawing.getVerticeViews().first { it is OscilloscopeView } as OscilloscopeView
+
+	private fun getTestVerticeView(name: String): VerticeView<*> =
+		view.drawing.getVerticeViews().first { it is TestVerticeView && it.model.name == name }
 }

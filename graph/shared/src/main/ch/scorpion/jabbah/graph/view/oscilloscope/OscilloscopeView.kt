@@ -159,6 +159,10 @@ class OscilloscopeView(
 		container.removeDrawableContainerListener(removeListener as DrawableContainerListener<T>)
 	}
 
+	/** ---- [Component] */
+
+	override val deleteBuddies: List<Component> get() = rows.mapNotNull { it.probeView.verticeView }
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {

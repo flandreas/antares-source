@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.io.StorableCloner
 
 /**
@@ -57,9 +58,11 @@ open class GraphViewAppServiceImpl(
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		logComponentAction("Delete", components)
 
+		val componentSet = expandDeleteBuddies(components)
+
 		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
 
-		for (component in components) {
+		for (component in componentSet) {
 			if (component is VerticeView<*>) {
 				unconnectDeletedVerticeView(component, drawingView as DrawingView<GraphView>)
 			} else if (component is EdgeView<*>) {
@@ -72,11 +75,15 @@ open class GraphViewAppServiceImpl(
 
 		commandManager.execute(DeleteCommand(
 			drawingView,
-			components
+			componentSet
 				.filter { drawingView.drawing.contains(it) }
 				.map { possibleWrapper(it, drawingView.drawing).id }))
 
 		commandManager.commitTransaction()
+
+		if (componentSet.any { it is OscilloscopeView }) {
+			GraphViewModule.oscilloscopeViewService.handleOscilloscopeDeleted(drawingView as DrawingView<GraphView>)
+		}
 	}
 
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
