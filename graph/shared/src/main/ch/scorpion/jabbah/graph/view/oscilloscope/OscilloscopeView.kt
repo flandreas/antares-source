@@ -76,6 +76,9 @@ class OscilloscopeView(
 			validate()
 		}
 
+	/** Used for restoring [timelineScale] after the simulation has ended. */
+	private var timelineScaleBuffer: Double = 0.0
+
 	/** Returns the number of rows of this [OscilloscopeView].*/
 	val rowsCount: Int get() = rows.size
 
@@ -201,12 +204,14 @@ class OscilloscopeView(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
+		timelineScaleBuffer = timelineScale
 		rows.forEach { it.bindDrawer() }
 		scaleRow.bindDrawer()
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
+		timelineScale = timelineScaleBuffer
 		rows.forEach { it.unbindDrawer() }
 		scaleRow.unbindDrawer()
 	}
