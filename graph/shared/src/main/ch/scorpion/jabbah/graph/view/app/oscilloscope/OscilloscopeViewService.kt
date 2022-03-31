@@ -5,12 +5,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -60,6 +57,13 @@ interface OscilloscopeViewService {
 	 * Does nothing if the [OscilloscopeView] doesn't yet exist.
 	 */
 	fun setOscilloscopeViewVisibility(view: DrawingView<GraphView>, visible: Boolean)
+
+	fun <T : Any> dropProbe(
+		view: DrawingView<GraphView>,
+		name: String,
+		location: Point2D,
+		probeVerticeViewId: Int?
+	): OscilloscopeProbeVerticeView<T>
 }
 
 /**
@@ -123,15 +127,52 @@ class OscilloscopeViewServiceImpl(
 		commandManager.execute(RemoveOscilloscopeRowCommand(view, name, oscilloscopeView.id))
 	}
 
+	override fun <T : Any> dropProbe(
+		view: DrawingView<GraphView>,
+		name: String,
+		location: Point2D,
+		probeVerticeViewId: Int?
+	): OscilloscopeProbeVerticeView<T> {
+		val oscilloscopeView = findOscilloscopeView(view.drawing)!!
+		val signalRowView = oscilloscopeView.rowWithName(name)!!
+		val probeVerticeView = if (probeVerticeViewId == null) {
+			OscilloscopeProbeVerticeView<T>(signalRowView.name, signalRowView.color.onBackground).also {
+				it.location = location
+				it.visible = true
+				view.drawing.add(it)
+			}
+		} else {
+			view.drawing.getWithId(probeVerticeViewId) as OscilloscopeProbeVerticeView<T>
+		}
+
+		// Must be done before setting the name, since Name event handling depends on
+		// OscilloscopeProbeVerticeView being set in OscilloscopeProbeView
+		signalRowView.probeView.handleProbeViewAddedToDrawing(probeVerticeView)
+
+		// Unconnect from old Net
+		val newEdgeView = view.drawing.getEdgeViews().firstOrNull { it.contains(probeVerticeView.connectionPoint()) }
+		if (probeVerticeView.model.getPort<T>().isConnected) {
+			probeVerticeView.model.getPort<T>().net!!.unconnect(probeVerticeView.model.getPort<T>())
+		}
+
+		// Connect to new Net
+		if (newEdgeView != null) {
+			(newEdgeView.model as Net<T>).connect(probeVerticeView.model.getPort())
+			GraphViewModule.oscilloscopeProbeNameStrategy
+				.getConnectedName(oscilloscopeView.model, newEdgeView)
+				?.let { probeVerticeView.name = it }
+		}
+
+		return probeVerticeView
+	}
+
 	/** ---- [OscilloscopeViewServiceImpl] */
 
-	private fun findOscilloscopeView(graphView: GraphView): OscilloscopeView? {
-		return graphView.getDrawable { it is OscilloscopeView } as OscilloscopeView?
-	}
+	private fun findOscilloscopeView(graphView: GraphView): OscilloscopeView? =
+		graphView.getDrawable { it is OscilloscopeView } as OscilloscopeView?
 
-	private fun findProbeViews(graphView: GraphView): ImmutableList<Component> {
-		return graphView.getDrawables { it is OscilloscopeProbeVerticeView<*> }
-	}
+	private fun findProbeViews(graphView: GraphView): ImmutableList<Component> =
+		graphView.getDrawables { it is OscilloscopeProbeVerticeView<*> }
 
 	/** Positions [OscilloscopeView] right beneath [GraphView]'s bounding box.*/
 	private fun positionOscilloscope(ov: OscilloscopeView, graphView: GraphView) {

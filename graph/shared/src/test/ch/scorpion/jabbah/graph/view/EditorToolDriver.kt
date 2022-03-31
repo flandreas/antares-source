@@ -7,9 +7,10 @@ import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.event.MouseEventType.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Tool
 
 /**
- * An API for drving an [Editor]'s current [Tool] during tests.
+ * An API for driving an [Editor]'s current [Tool] during tests.
  */
 class EditorToolDriver(
 	private val editor: Editor

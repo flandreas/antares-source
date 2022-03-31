@@ -96,7 +96,11 @@ class OscilloscopeView(
 
 	private val applicationModeHandler: (ApplicationModeEvent) -> Unit = { applicationMode = it.applicationMode }
 
-	private val probeNameHandler: (OscilloscopeProbeNameEvent) -> Unit = { handle(it) }
+	private val probeNameHandler: (OscilloscopeProbeNameEvent) -> Unit = {
+		if (containsProbeVerticeView(it.source)) {
+			handle(it)
+		}
+	}
 
 	var applicationMode: ApplicationMode = ApplicationMode.EDIT
 		private set(value) {
@@ -260,7 +264,10 @@ class OscilloscopeView(
 		return nameNumber.toString()
 	}
 
-	private fun rowWithName(name: String): OscilloscopeSignalRowView? = rows.firstOrNull { it.name == name }
+	/** Finds the [OscilloscopeSignalRowView] with the specified name, if existing.*/
+	fun rowWithName(name: String): OscilloscopeSignalRowView? = rows.firstOrNull { it.name == name }
+
+	fun getRow(index: Int): OscilloscopeSignalRowView = rows[index]
 
 	/** Removes the row with the specified rowNumber, starting with 1.*/
 	fun removeRow(name: String) {
@@ -282,11 +289,6 @@ class OscilloscopeView(
 
 	fun removeLastRow() {
 		removeRow(rows.last().name)
-	}
-
-	/** Finds the [SignalRowView] with the specified name, if existing.*/
-	private fun findRowView(name: String): OscilloscopeSignalRowView? {
-		return rows.firstOrNull { it.name == name }
 	}
 
 	private fun adjustSize() {
@@ -337,6 +339,9 @@ class OscilloscopeView(
 		}
 	}
 
+	private fun containsProbeVerticeView(pvv: OscilloscopeProbeVerticeView<*>): Boolean =
+		rows.any { it.probeView.verticeView === pvv }
+
 	/**
 	 * Listens for removals of [OscilloscopeProbeVerticeView]s in order to put them back in the list.
 	 * This is only necessary if the [OscilloscopeProbeVerticeView] has been directly removed in the [GraphView]
@@ -348,7 +353,7 @@ class OscilloscopeView(
 			if (event.child is OscilloscopeProbeVerticeView<*>) {
 				LOG.trace("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
-				findRowView(comp.name)?.handleProbeViewRemovedFromDrawing()
+				rowWithName(comp.name)?.handleProbeViewRemovedFromDrawing()
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.app.oscilloscope
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
@@ -53,5 +54,18 @@ internal class OscilloscopeVisibilityCommand(
 
 	override fun undo() {
 		service.setOscilloscopeViewVisibility(drawingView, !visible)
+	}
+}
+
+internal class DropOscilloscopeProbeCommand<T : Any>(
+	private val drawingView: DrawingView<GraphView>,
+	private var name: String,
+	private val location: Point2D,
+	private val probeVerticeViewId: Int?,
+	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
+) : AbstractCommand("graph.command.dropOscilloscopeProbe") {
+
+	override fun execute() {
+		service.dropProbe<T>(drawingView, name, location, probeVerticeViewId)
 	}
 }

@@ -47,31 +47,27 @@ class DragManagerImpl(
 
 	/** ---- [DragManager] interface */
 
-	/**
-	 * The method [setDropComponent] gets called hundreds of times each second even if the
-	 * mouse is not moved, especially on the JS platform. In order to limit the repainting load in the target [View],
-	 * keep the snapped [Component] location and update the [Component]'s location only it has changed.
-	 */
-	private var snappedDropLocation: Point2D? = null
-
 	/** The [Component] currently being dragged for dropping into the [Drawing].*/
 	override var dropComponent: Component? = null
 
 	override fun registerPlugin(plugin: DragManagerPlugin) {
 		plugins.add(plugin)
-		if (plugin is DragManagerPlugin) {
-			pluginsNeedDestination = true
-		}
+		pluginsNeedDestination = true
 	}
 
 	override fun prepareDrag(component: Component, x: Double, y: Double) {
-		movedReferenceComponent = component
-		moveStartLocation = Point2D(movedReferenceComponent!!.location)
-		moveLastLocation = Point2D(x, y)
+		if (!component.isDragManager) {
+			movedReferenceComponent = component
+			moveStartLocation = Point2D(movedReferenceComponent!!.location)
+			moveLastLocation = Point2D(x, y)
+		}
 	}
 
 	override fun mouseDragged(x: Double, y: Double) {
 		val selection = editor.view.selectionManager.selection
+		if (selection.size == 1 && selection.first().isDragManager) {
+			return
+		}
 
 		dragSnapped(selection, x, y)
 
@@ -122,6 +118,11 @@ class DragManagerImpl(
 	override fun mouseReleased(x: Double, y: Double) {
 		if (movedReferenceComponent != null) {
 			val selection = editor.view.selectionManager.selection
+
+			if (selection.size == 1 && selection.first().isDragManager) {
+				return
+			}
+
 			if (moveStartLocation != movedReferenceComponent?.location) {
 
 				val additionalCommands = if (selection.size == 1) {

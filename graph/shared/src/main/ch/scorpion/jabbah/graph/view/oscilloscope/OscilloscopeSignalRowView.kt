@@ -30,7 +30,7 @@ class OscilloscopeSignalRowView(
 
 	private val drawer = factory.createSignalHistoryDrawer()
 
-	private val probeView = OscilloscopeProbeView(
+	val probeView = OscilloscopeProbeView(
 		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 		name = name,
 		probeColor = color.onBackground,

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.style.Stylable
@@ -80,4 +81,10 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	 * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
 	 */
 	var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+
+	/**
+	 * Determines whether the [InputEventHandler] of this [Component] handles dragging by itself,
+	 * rather than letting it be done by the [DragManager] controlled by the [SelectionTool].
+	 */
+	val isDragManager: Boolean get() = false
 }

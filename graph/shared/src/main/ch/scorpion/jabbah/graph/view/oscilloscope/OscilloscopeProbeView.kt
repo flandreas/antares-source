@@ -62,7 +62,7 @@ class OscilloscopeProbeView(
 	 * Exists during dragging, and when being contained in the [GraphView].
 	 * Can be set by [OscilloscopeView] while reading from persistent store.
 	 */
-	var verticeView: OscilloscopeProbeVerticeView<Any>? = null
+	var verticeView: OscilloscopeProbeVerticeView<*>? = null
 		set(value) {
 			if (field !== value) {
 				field = value
@@ -74,7 +74,8 @@ class OscilloscopeProbeView(
 	private val probeIcon get() = (renderer as IconDrawableButtonRenderer).icon as OscilloscopeProbeViewIcon
 
 	/** Set to `false` if [verticeView] has been dragged into the [GraphView].*/
-	private var verticeViewPresent = true
+	var verticeViewPresent = true
+		private set
 
 	/** ---- [Drawable] */
 
@@ -98,6 +99,15 @@ class OscilloscopeProbeView(
 		verticeView = null
 		verticeViewPresent = true
 		probeIcon.filled = true
+		validate()
+	}
+
+	fun handleProbeViewAddedToDrawing(vv: OscilloscopeProbeVerticeView<*>) {
+		invalidate()
+		verticeView = vv
+		probeIcon.filled = false
+		isHovering = false
+		verticeViewPresent = false
 		validate()
 	}
 
@@ -131,11 +141,12 @@ class OscilloscopeProbeView(
 		private fun startDraggingOfCreatedVerticeView(context: EditInputEventContext): OscilloscopeProbeVerticeView<Any> {
 			invalidate()
 
-			probeIcon.filled = false
-			isHovering = false
-			verticeViewPresent = false
-
-			val vv = OscilloscopeProbeVerticeView<Any>(name = name, color = probeColor, styleProvider = styleProvider).let {
+			val vv = OscilloscopeProbeVerticeView<Any>(
+				name = name,
+				color = probeColor,
+				dragGhost = true,
+				styleProvider = styleProvider
+			).let {
 				it.location = origLocSource.invoke().add(location)
 					.add(Point2D(0.0, height)) // origin is at the tip of the bubble, i.e. the BOTTOM of the icon rectangle
 					.add(Point2D(DRAG_DISPLACEMENT, DRAG_DISPLACEMENT))
@@ -143,6 +154,8 @@ class OscilloscopeProbeView(
 				context.editor.drawing.add(it)
 				it
 			}
+
+			handleProbeViewAddedToDrawing(vv)
 
 			context.mouseEvent?.consume()
 			validate()

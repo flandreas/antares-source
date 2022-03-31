@@ -11,18 +11,22 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.app.oscilloscope.DropOscilloscopeProbeCommand
 import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.*
 
 data class OscilloscopeProbeNameEvent(
+	val source: OscilloscopeProbeVerticeView<*>,
 	val oldName: String,
 	val newName: String
 )
@@ -30,12 +34,16 @@ data class OscilloscopeProbeNameEvent(
 /**
  * The location of this [OscilloscopeProbeVerticeView] as a [Locatable] is the tip of the bubble shape, which is also
  * the connection point.
+ *
  * @param T the type of signal that this [OscilloscopeProbeVerticeView]'s [OscilloscopeProbeVertice] can consume.
+ * @param dragGhost `true` when dragging this [OscilloscopeProbeVerticeView] into the drawing, `false` if it already
+ * was part of the drawing at the start of a drag operation
  */
 class OscilloscopeProbeVerticeView<T : Any>(
 	name: String = "",
 	color: CompositeColor = CompositeColor(),
 	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name),
+	private val dragGhost: Boolean = false,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
@@ -60,7 +68,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 				invalidate()
 				model.getPort<T>().name = value
 				icon.name = value
-				BaseModule.eventBus.post(OscilloscopeProbeNameEvent(oldName, value))
+				BaseModule.eventBus.post(OscilloscopeProbeNameEvent(this, oldName, value))
 				validate()
 			}
 		}
@@ -78,13 +86,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	private val handler = Handler()
 
-	private var moveLastLocation = Point2D.ZERO
-
 	/** ---- [Drawable] interface */
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		return handler as InputEventHandler<T>
-	}
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		handler as InputEventHandler<T>
 
 	/** ---- [Storable] interface */
 
@@ -123,6 +128,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		icon.ownerRotation = rotation
 	}
 
+	override val isDragManager: Boolean get() = true
+
 	/** ---- [AbstractRectangularVerticeView] */
 
 	override fun modelExchanged(oldModel: OscilloscopeProbeVertice<T>?) {
@@ -154,11 +161,13 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	/** ---- [OscilloscopeProbeVerticeView] */
 
 	/** Returns the connection point at the tip of the drop shape in absolute coordinates.*/
-	private fun connectionPoint(): Point2D {
+	fun connectionPoint(): Point2D {
 		return getPortConnectionPoint(model.getPort<Any>())
 	}
 
 	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
+
+		private var moveLastLocation = Point2D.ZERO
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.trace("OscilloscopeProbeVerticeView pressed ${context.x},${context.y}")
@@ -197,34 +206,21 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			LOG.trace("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
 			ConnectionPointHighlighter.removePortViewHighlight()
 
-			// TODO Create Commands
-
-			invalidate()
-			val newEdgeView = findEdgeView(context) as EdgeView<T>?
-			if (edgeView != null && edgeView !== newEdgeView) {
-				edgeView!!.model.unconnect(model.getPort<T>())
+			if (dragGhost) {
+				context.drawingView().drawing.remove(this@OscilloscopeProbeVerticeView)
 			}
-			if (newEdgeView != null && newEdgeView !== edgeView) {
-				newEdgeView.model.connect(model.getPort())
 
-				GraphViewModule.oscilloscopeProbeNameStrategy
-					.getConnectedName(findOscilloscopeView(context).model, newEdgeView)
-					?.let { name = it }
-			}
-			edgeView = newEdgeView
-
-			invalidate()
-			validate()
+			val command = DropOscilloscopeProbeCommand<T>(
+				context.drawingView() as DrawingView<GraphView>,
+				name,
+				connectionPoint(),
+				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id)
+			EditModule.commandManager.execute(command)
 
 			return null
 		}
 
-		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? {
-			return context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
-		}
-
-		private fun findOscilloscopeView(context: EditInputEventContext): OscilloscopeView {
-			return context.drawingView().drawing.getDrawable { it is OscilloscopeView } as OscilloscopeView
-		}
+		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? =
+			context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
 	}
 }
