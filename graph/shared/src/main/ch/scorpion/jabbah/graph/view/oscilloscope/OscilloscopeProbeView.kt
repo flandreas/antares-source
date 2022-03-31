@@ -68,6 +68,7 @@ class OscilloscopeProbeView(
 				field = value
 				verticeViewPresent = false
 				probeIcon.filled = false
+				probeIcon.enabled = false
 			}
 		}
 
@@ -99,6 +100,7 @@ class OscilloscopeProbeView(
 		verticeView = null
 		verticeViewPresent = true
 		probeIcon.filled = true
+		probeIcon.enabled = true
 		validate()
 	}
 
@@ -106,6 +108,7 @@ class OscilloscopeProbeView(
 		invalidate()
 		verticeView = vv
 		probeIcon.filled = false
+		probeIcon.enabled = false
 		isHovering = false
 		verticeViewPresent = false
 		validate()

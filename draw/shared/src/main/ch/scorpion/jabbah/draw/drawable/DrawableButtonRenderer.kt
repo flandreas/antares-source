@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
@@ -35,7 +34,6 @@ class IconDrawableButtonRenderer(val icon: Icon) : AbstractIconDrawableButtonRen
 		val oldUseContextColors = context.useContextColors
 		context.useContextColors = true
 
-		//context.color = determineColor(button)
 		establishColor(button, context)
 
 		context.g.stroke = button.style.stroke

@@ -5,7 +5,9 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
@@ -42,6 +44,8 @@ class OscilloscopeProbeViewIcon(
 
 	var filled = true
 
+	var enabled = true
+
 	var name: String
 		get() = label.text
 		set(value) { label.text = value }
@@ -62,14 +66,22 @@ class OscilloscopeProbeViewIcon(
 		context.g.translate(location.x, location.y)
 
 		if (filled) {
-			context.g.color = context.choose(color).backgroundColor
+			setColor(context.g, context.choose(color).backgroundColor)
 			context.g.fill(PATH)
 		}
-		context.g.color = context.choose(color).foregroundColor
+		setColor(context.g, context.choose(color).foregroundColor)
 		context.g.draw(PATH)
-		context.g.color = context.choose(color).textColor
+		setColor(context.g, context.choose(color).textColor)
 		label.draw(context)
 
 		context.g.translate(-location.x, -location.y)
+	}
+
+	private fun setColor(g: Graphics2D, color: Color) {
+		g.color = if (enabled) {
+			color
+		} else {
+			color.withAlpha(128)
+		}
 	}
 }
