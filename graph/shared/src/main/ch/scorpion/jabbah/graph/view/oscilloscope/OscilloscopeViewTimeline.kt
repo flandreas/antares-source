@@ -11,7 +11,7 @@ class OscilloscopeViewTimeline(
 ) : SignalHistoryTimeline {
 
 	companion object {
-		private const val FACTOR = 100
+		private const val FACTOR = 10_000
 	}
 
 	override val maxTime: Long get() = model.maxTime
