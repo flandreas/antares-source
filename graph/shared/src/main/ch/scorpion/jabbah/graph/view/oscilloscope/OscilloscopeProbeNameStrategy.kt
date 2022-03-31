@@ -43,10 +43,10 @@ open class OscilloscopeProbeNameStrategyImpl : OscilloscopeProbeNameStrategy {
 	}
 
 	private fun ifFree(oscilloscope: Oscilloscope, name: String?): String? =
-		if(isFree(oscilloscope, name)) name else null
+		if (isFreeAndShortEnough(oscilloscope, name)) name else null
 
-	private fun isFree(oscilloscope: Oscilloscope, name: String?): Boolean =
-		name != null && !oscilloscope.hasPort(name)
+	private fun isFreeAndShortEnough(oscilloscope: Oscilloscope, name: String?): Boolean =
+		name != null && name.length <= OscilloscopeProbeVerticeView.MAX_PROBE_NAME_LENGTH && !oscilloscope.hasPort(name)
 
 	private fun destPortNameOfEdgeView(edgeView: EdgeView<*>): String? =
 		portName(edgeView.destination?.port)
@@ -63,7 +63,7 @@ open class OscilloscopeProbeNameStrategyImpl : OscilloscopeProbeNameStrategy {
 	private fun portTypeOfNet(oscilloscope: Oscilloscope, edgeView: EdgeView<*>, typeCond: (Port<*>) -> Boolean): String? =
 		edgeView.model.ports
 			.filter { typeCond.invoke(it) }
-			.firstOrNull { isFree(oscilloscope, portName(it)) }
+			.firstOrNull { isFreeAndShortEnough(oscilloscope, portName(it)) }
 			?.name
 
 	protected open fun portName(port: Port<*>?): String? =

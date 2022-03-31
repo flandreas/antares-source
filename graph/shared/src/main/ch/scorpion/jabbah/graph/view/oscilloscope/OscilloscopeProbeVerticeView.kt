@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -50,6 +51,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	companion object {
 		private val LOG by logger(OscilloscopeProbeVerticeView::class)
 		private const val CONN_POINT_SIZE = 4.0
+
+		const val MAX_PROBE_NAME_LENGTH = 3
 	}
 
 	init {
@@ -63,6 +66,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		get() = model.getPort<Any>().name!!
 		set(value) {
 			if (name != value) {
+				check(value.length <= MAX_PROBE_NAME_LENGTH) { Translations.getString("graph.property.probeNameTooLong.msg", MAX_PROBE_NAME_LENGTH) }
 				val oldName = name
 				invalidate()
 				model.getPort<T>().name = value
