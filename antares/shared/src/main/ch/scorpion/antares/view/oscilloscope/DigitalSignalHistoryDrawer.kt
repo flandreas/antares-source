@@ -44,6 +44,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		private const val MULTIBIT_INSET = 3.0
 
 		private val BASELINE_STROKE = Stroke(1f)
+		private val CURVE_STROKE = Stroke(1f)
+		private val GRID_LINE_STROKE = Stroke(0.5f)
 
 		private const val BUFFER_END_CIRCLE_COUNT = 3
 		private const val BUFFER_END_CIRCLE_RADIUS = 2.0
@@ -98,6 +100,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 		if (gridSignalHistory != null) {
 			// Draw vertical grid lines
+			context.g.stroke = GRID_LINE_STROKE
 			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
 				val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
 				if (x <= bounds.minX) {
@@ -139,6 +142,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
 		var effNextX: Double = rightBorder
+		context.g.stroke = CURVE_STROKE
+
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
 			val x = rightBorder - timeline!!.getX(entry.time)
 			val y = signalY(entry)
@@ -226,6 +231,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
 			context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
+			context.g.drawRect(xL, yL, xR - xL, baseLineY - yL)
 		}
 		context.g.color = color!!.foregroundColor
 		context.g.drawLine(xR, yR, xR, yL)

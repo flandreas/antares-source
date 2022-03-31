@@ -2,10 +2,13 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.DrawableButton
 import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -27,6 +30,10 @@ class OscilloscopeSignalRowView(
 	private val service: OscilloscopeViewService,
 	factory: OscilloscopeViewFactory
 ) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
+
+	companion object {
+		private val NON_INDIVIDUAL_SIGNAL_COLOR = CompositeColor(Color.LIGHT_GRAY, Color.DARK_GRAY)
+	}
 
 	private val drawer = factory.createSignalHistoryDrawer()
 
@@ -71,11 +78,17 @@ class OscilloscopeSignalRowView(
 	}
 
 	fun bindDrawer() {
+		val signalColor = if (BaseModule.properties.getBoolean(OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS)) {
+			color.onDark.withAlpha(164)
+		} else {
+			NON_INDIVIDUAL_SIGNAL_COLOR
+		}
+
 		drawer.bind(
 			oscilloscopeView.model.getSignalHistory(name),
 			oscilloscopeView.signalRowViews.firstOrNull()?.let { oscilloscopeView.model.getSignalHistory(it.name) },
 			oscilloscopeView.timeline,
-			color.onDark.withAlpha(164)
+			signalColor
 		)
 	}
 
