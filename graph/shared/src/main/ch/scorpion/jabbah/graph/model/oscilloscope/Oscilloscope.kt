@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * [SignalHistories.PROP_BUFFER_SIZE].
  */
 class Oscilloscope(
+	mode: SignalHistoriesType = SignalHistoriesType.Clocked,
 	private val portFactory: PortFactory = GraphModelModule.portFactory
 ) : AbstractVertice() {
 
@@ -33,7 +34,7 @@ class Oscilloscope(
 
 	private lateinit var signalHistories: SignalHistories
 
-	var mode: SignalHistoriesType = SignalHistoriesType.Clocked
+	var mode: SignalHistoriesType = mode
 
 	/** ---- [AbstractVertice] */
 

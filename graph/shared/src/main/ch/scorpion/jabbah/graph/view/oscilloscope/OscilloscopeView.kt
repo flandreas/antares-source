@@ -394,7 +394,7 @@ class OscilloscopeView(
 	private inner class RemoveListener : DrawableContainerAdapter<Drawable>() {
 		override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
 			super.drawableRemoved(event)
-			if (event.child is OscilloscopeProbeVerticeView<*>) {
+			if (event.child is OscilloscopeProbeVerticeView<*> && !(event.child as OscilloscopeProbeVerticeView<*>).dragGhost) {
 				LOG.trace("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
 				rowWithName(comp.name)?.apply {

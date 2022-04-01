@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 import ch.scorpion.jabbah.graph.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.BeforeTest
@@ -24,7 +25,7 @@ class OscilloscopeViewTimelineTest {
 	@BeforeTest
 	fun setup() {
 		signalHandler = SignalHandlerMockBuilder()
-		oscilloscope = Oscilloscope()
+		oscilloscope = Oscilloscope(SignalHistoriesType.Realtime)
 		timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope)
 	}
 

@@ -96,18 +96,41 @@ class OscilloscopeEditIntegrationTest {
 	}
 
 	@Test
+	fun shouldRemoveSignalRow() {
+		addRowAndDropProbeViewIntoGraphView()
+
+		GraphViewModule.oscilloscopeViewService.removeRow(view, "P", getOscilloscopeView())
+
+		assertEquals(0, getOscilloscopeView().rowsCount)
+		assertEquals(0, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
+	}
+
+	@Test
+	fun shouldAddAndDropRowAfterRemovingRowWithDroppedProbe() {
+		addRowAndDropProbeViewIntoGraphView()
+		GraphViewModule.oscilloscopeViewService.removeRow(view, "P", getOscilloscopeView())
+
+		addRowAndDropProbeViewIntoGraphView()
+
+		assertDroppedProbeView()
+	}
+
+	@Test
 	fun shouldDropProbeViewIntoGraphView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 
 		assertDroppedProbeView()
 		assertTrue(EditModule.commandManager.canUndo())
 	}
 
-	private fun dropProbeViewIntoGraphView() {
+	private fun addRowAndDropProbeViewIntoGraphView() {
 		GraphViewModule.oscilloscopeViewService.displayOscilloscope(view)
 		GraphViewModule.oscilloscopeViewService.addRow(view, getOscilloscopeView())
 		EditModule.commandManager.reset()
+		dropFirstRowProbeView()
+	}
 
+	private fun dropFirstRowProbeView() {
 		editor.currentTool = editor.selectionTool
 		driver.mouseMoveTo(-104, 45)
 		driver.pressMouseAt(-104, 45)
@@ -128,7 +151,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldUndoDropProbeViewIntoGraphView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 
 		EditModule.commandManager.undo()
 
@@ -146,7 +169,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldRedoDragProbeViewIntoGraphView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		EditModule.commandManager.undo()
 
 		EditModule.commandManager.redo()
@@ -157,7 +180,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldSelectProbeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 
 		driver.mouseMoveTo(50, -20)
 		driver.pressMouseAt(50, -20)
@@ -168,7 +191,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldMoveProbeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		EditModule.commandManager.reset()
 
 		moveProbeView()
@@ -190,7 +213,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldUndoMoveProbeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		EditModule.commandManager.reset()
 		moveProbeView()
 
@@ -201,7 +224,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldRedoMoveProbeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		EditModule.commandManager.reset()
 		moveProbeView()
 		EditModule.commandManager.undo()
@@ -213,7 +236,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldResetProbeViewWhenDeleting() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 
 		deleteProbeView()
 
@@ -229,7 +252,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldUndoResetProbeViewWhenDeleting() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		deleteProbeView()
 
 		EditModule.commandManager.undo()
@@ -239,7 +262,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldRedoResetProbeViewWhenDeleting() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		deleteProbeView()
 		EditModule.commandManager.undo()
 
@@ -250,7 +273,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldDeleteOscilloscopeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 
 		deleteOscilloscopeView()
 
@@ -272,7 +295,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldUndoDeleteOscilloscopeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		deleteOscilloscopeView()
 
 		EditModule.commandManager.undo()
@@ -283,7 +306,7 @@ class OscilloscopeEditIntegrationTest {
 
 	@Test
 	fun shouldRedoDeleteOscilloscopeView() {
-		dropProbeViewIntoGraphView()
+		addRowAndDropProbeViewIntoGraphView()
 		deleteOscilloscopeView()
 		EditModule.commandManager.undo()
 

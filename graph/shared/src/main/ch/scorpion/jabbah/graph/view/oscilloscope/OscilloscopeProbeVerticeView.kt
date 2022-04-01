@@ -44,7 +44,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	name: String = "",
 	color: CompositeColor = CompositeColor(),
 	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name),
-	private val dragGhost: Boolean = false,
+	val dragGhost: Boolean = false,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
