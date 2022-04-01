@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeDisplayEvent
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
@@ -25,11 +24,6 @@ class OscilloscopeVisibilityAction(
 
 	init {
 		eventBus.register(OscilloscopeDisplayEvent::class, oscilloscopeDisplayHandler)
-	}
-
-	override fun calculateEnabled(): Boolean {
-		// Disable until entire Oscilloscope has been improved
-		return EditAuthModule.userHolder.user.isDeveloper
 	}
 
 	override fun dispose() {
