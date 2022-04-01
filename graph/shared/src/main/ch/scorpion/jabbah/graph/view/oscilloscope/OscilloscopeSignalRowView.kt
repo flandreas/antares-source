@@ -25,11 +25,11 @@ import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 class OscilloscopeSignalRowView(
 	private val oscilloscopeView: OscilloscopeView,
 	name: String,
-	location: Point2D,
+	initLocation: Point2D,
 	val color: ReferenceColor,
 	private val service: OscilloscopeViewService,
 	factory: OscilloscopeViewFactory
-) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
+) : DrawableContainerImpl<Drawable>(location = initLocation, useLocation = true) {
 
 	companion object {
 		private val NON_INDIVIDUAL_SIGNAL_COLOR = CompositeColor(Color.LIGHT_GRAY, Color.DARK_GRAY)
