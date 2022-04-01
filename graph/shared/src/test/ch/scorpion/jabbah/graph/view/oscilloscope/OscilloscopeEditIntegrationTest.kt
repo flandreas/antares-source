@@ -141,6 +141,7 @@ class OscilloscopeEditIntegrationTest {
 		assertNull(pvv)
 		assertTrue(getOscilloscopeView().getRow(0).probeView.verticeViewPresent)
 		assertEquals("1", getOscilloscopeView().getRow(0).probeView.name) // Reset inherited Port name
+		assertEquals("1", getOscilloscopeView().model.getInput<Boolean>().name)
 	}
 
 	@Test

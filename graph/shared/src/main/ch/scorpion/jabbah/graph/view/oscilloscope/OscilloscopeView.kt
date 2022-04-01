@@ -344,12 +344,16 @@ class OscilloscopeView(
 	}
 
 	private fun handle(event: OscilloscopeProbeNameEvent) {
-		if (model.hasPort(event.oldName)) {
-			model.getPort<Any>(event.oldName).name = event.newName
+		if (rows.any { it.probeView.verticeView === event.source } && model.hasPort(event.oldName)) {
 			invalidate()
-			rowWithName(event.oldName)?.name = event.newName
+			changeProbeName(event.oldName, event.newName)
 			validate()
 		}
+	}
+
+	private fun changeProbeName(oldName: String, newName: String) {
+		model.getPort<Any>(oldName).name = newName
+		rowWithName(oldName)?.name = newName
 	}
 
 	private fun containsProbeVerticeView(pvv: OscilloscopeProbeVerticeView<*>): Boolean =
@@ -367,8 +371,10 @@ class OscilloscopeView(
 				LOG.trace("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
 				rowWithName(comp.name)?.apply {
+					val oldName = name
+					val newName = createRowName(this, rows.indexOf(this) + 1)
 					handleProbeViewRemovedFromDrawing()
-					name = createRowName(this, rows.indexOf(this) + 1)
+					changeProbeName(oldName, newName)
 				}
 			}
 		}
