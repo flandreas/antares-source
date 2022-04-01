@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -24,6 +25,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
@@ -53,10 +55,12 @@ class OscilloscopeView(
 ) {
 
 	companion object {
+
 		/** The name of the [Boolean] property in [Properties] that determines whether to use reference colors for probes.*/
 		const val PROP_INDIVIDUAL_PROBE_COLORS = "OscilloscopeView.individualProbeColors"
 
 		private val LOG by logger(OscilloscopeView::class)
+
 		private const val WIDTH = 700
 		private const val DEF_HEIGHT = 200
 		private const val INIT_SCALE = 5.0
@@ -66,6 +70,12 @@ class OscilloscopeView(
 		const val ICON_BUTTON_SIZE = 20
 		val DRAWER_X = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + OscilloscopeProbeViewIcon.SIZE
 		val DRAWER_W = WIDTH - DRAWER_X - ROW_INSET
+
+		private val CLOCKED_ANNOTATION = System.createPath()
+			.moveTo(0, -5)
+			.lineTo(-(ROW_INSET - 2), 0)
+			.lineTo(0, 5)
+			.close()
 	}
 
 	var timelineScale: Double
@@ -73,6 +83,14 @@ class OscilloscopeView(
 		set(value) {
 			invalidate()
 			timeline.scale = value
+			validate()
+		}
+
+	var mode: SignalHistoriesType
+		get() = model.mode
+		set(value) {
+			invalidate()
+			model.mode = value
 			validate()
 		}
 
@@ -194,6 +212,15 @@ class OscilloscopeView(
 		context.g.translate(-location.x, -location.y)
 
 		container.draw(context)
+
+		// "Clocked" annotation
+		if (rows.size >= 1 && model.mode == SignalHistoriesType.Clocked) {
+			context.g.color = color.foregroundColor
+			context.g.stroke = stroke
+			context.g.translate(location.x + bounds.width, location.y + TITLE_HEIGHT + factory.rowHeight / 2)
+			context.g.draw(CLOCKED_ANNOTATION)
+			context.g.translate(-(location.x + bounds.width), -(location.y + TITLE_HEIGHT + factory.rowHeight / 2))
+		}
 	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {

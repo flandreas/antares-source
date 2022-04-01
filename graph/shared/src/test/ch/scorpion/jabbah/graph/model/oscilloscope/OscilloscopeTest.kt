@@ -32,7 +32,7 @@ class OscilloscopeTest {
 
 	@Test
 	fun shouldTruncateEntries() {
-		BaseModule.properties.customize(Oscilloscope.PROP_BUFFER_SIZE, 2)
+		BaseModule.properties.customize(SignalHistories.PROP_BUFFER_SIZE, 2)
 		createPorts(1)
 		oscilloscope.executionInitialize(signalHandler.build())
 		oscilloscope.executionStart(signalHandler.build())

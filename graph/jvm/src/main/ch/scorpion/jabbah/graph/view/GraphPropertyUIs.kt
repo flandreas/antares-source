@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -105,5 +106,12 @@ class LibraryVisibilityEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(LibraryVisibility.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<LibraryVisibility>()
+	}
+}
+
+class SignalHistoriesTypeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(SignalHistoriesType.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<SignalHistoriesType>()
 	}
 }

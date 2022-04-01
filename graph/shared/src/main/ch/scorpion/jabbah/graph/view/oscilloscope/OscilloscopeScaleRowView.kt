@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
@@ -72,6 +73,7 @@ class OscilloscopeScaleRowView(
 	}
 
 	fun bindDrawer() {
+		timelineView.visible = oscilloscopeView.mode == SignalHistoriesType.Realtime
 		timelineView.bind(
 			oscilloscopeView.signalRowViews.firstOrNull()?.let { oscilloscopeView.model.getSignalHistory(it.name) },
 			oscilloscopeView.timeline)

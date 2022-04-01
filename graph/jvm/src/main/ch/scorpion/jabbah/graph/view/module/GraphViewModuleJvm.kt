@@ -28,7 +28,8 @@ import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.NavigationStackViewSwing
@@ -84,6 +85,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(LibraryVisibility::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(SignalHistoriesType::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -94,6 +96,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
 		registry.registerEditor(LibraryVisibility::class.java, LibraryVisibilityEditor::class.java)
+		registry.registerEditor(SignalHistoriesType::class.java, SignalHistoriesTypeEditor::class.java)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -116,7 +119,7 @@ object GraphViewModuleJvm : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_OSCILLOSCOPE))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(IntPreference(
-			id = Oscilloscope.PROP_BUFFER_SIZE,
+			id = SignalHistories.PROP_BUFFER_SIZE,
 			nameKey = "graph.preferences.Oscilloscope.bufferSize"
 		))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
