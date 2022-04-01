@@ -162,13 +162,11 @@ class OscilloscopeView(
 
 	/** ---- [Drawable] */
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		return container.getInputEventHandler(context)
-	}
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		container.getInputEventHandler(context)
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		return container.getTooltip(x, y) ?: super.getTooltip(x, y)
-	}
+	override fun getTooltip(x: Double, y: Double): Tooltip? =
+		container.getTooltip(x, y) ?: super.getTooltip(x, y)
 
 	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
 		super.handleAdded(container)
@@ -186,9 +184,8 @@ class OscilloscopeView(
 
 	/** ---- [AbstractVerticeView] */
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		return container.getExecutionTooltip(x, y) ?: super.getExecutionTooltip(x, y)
-	}
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? =
+		container.getExecutionTooltip(x, y) ?: super.getExecutionTooltip(x, y)
 
 	/** ---- [AbstractRectangularVerticeView] */
 
@@ -223,9 +220,8 @@ class OscilloscopeView(
 		}
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return container.getActorInteractionHandler(context)
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		container.getActorInteractionHandler(context)
 
 	/** ---- [ActorView] */
 
@@ -392,10 +388,11 @@ class OscilloscopeView(
 	 * and not indirectly by removing an [OscilloscopeProbeView] from this [OscilloscopeView].
 	 */
 	private inner class RemoveListener : DrawableContainerAdapter<Drawable>() {
+
 		override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
 			super.drawableRemoved(event)
 			if (event.child is OscilloscopeProbeVerticeView<*> && !(event.child as OscilloscopeProbeVerticeView<*>).dragGhost) {
-				LOG.trace("Removed OscilloscopeProbeView from drawing")
+				LOG.debug("Delete Oscilloscope probe from graph")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
 				rowWithName(comp.name)?.apply {
 					val oldName = name
