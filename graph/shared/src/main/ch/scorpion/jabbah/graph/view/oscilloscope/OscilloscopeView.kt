@@ -63,7 +63,7 @@ class OscilloscopeView(
 
 		private const val WIDTH = 700
 		private const val DEF_HEIGHT = 200
-		private const val INIT_SCALE = 5.0
+		private const val INIT_SCALE = 1_000.0
 		const val TITLE_HEIGHT = 15
 		const val MAX_ROW_NUMBER = 9
 		const val ROW_INSET = 10
