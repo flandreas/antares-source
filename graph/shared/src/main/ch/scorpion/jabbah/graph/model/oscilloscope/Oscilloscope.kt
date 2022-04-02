@@ -36,14 +36,18 @@ class Oscilloscope(
 
 	var mode: SignalHistoriesType = mode
 
+	var enabled: Boolean = true
+
 	/** ---- [AbstractVertice] */
 
 	override val type: String get() = TYPE
 	override val typeDesc: String get() = ""
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
-		signalHistories.storeSignal(input, signalHandler)
-		stateChanged(signalHandler)
+		if (enabled) {
+			signalHistories.storeSignal(input, signalHandler)
+			stateChanged(signalHandler)
+		}
 	}
 
 	/** ---- [Storable] */

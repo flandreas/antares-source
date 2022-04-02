@@ -227,9 +227,12 @@ class OscilloscopeView(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
-		timelineScaleBuffer = timelineScale
-		rows.forEach { it.bindDrawer() }
-		scaleRow.bindDrawer()
+		model.enabled = visible
+		if (visible) {
+			timelineScaleBuffer = timelineScale
+			rows.forEach { it.bindDrawer() }
+			scaleRow.bindDrawer()
+		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

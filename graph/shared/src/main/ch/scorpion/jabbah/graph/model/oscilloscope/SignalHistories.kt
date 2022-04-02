@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -47,7 +46,9 @@ interface SignalHistories {
 	}
 
 	val maxTime: Long
+
 	fun getSignalHistory(name: String): SignalHistory<Any>?
+
 	fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler)
 }
 
@@ -105,7 +106,6 @@ class ClockedSignalHistories(
 ) : AbstractSignalHistories(oscilloscope) {
 
 	companion object {
-		private val LOG by logger(ClockedSignalHistories::class)
 		private const val DELTA_TIME = 100
 	}
 
@@ -123,10 +123,6 @@ class ClockedSignalHistories(
 		val history = signalHistories[input.name!!]!!
 		if (input.name == clockPortName) {
 			val signal = input.getIncomingSignal()!!
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Update clocked input with $signal at $time")
-			}
-
 			history.add(SignalHistoryEntry(signal, time))
 
 			// Probe and add all other histories
@@ -139,9 +135,6 @@ class ClockedSignalHistories(
 			updateMaxTime(time)
 		} else {
 			val signal = input.getIncomingSignal()!!
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Update simple input ${input.name} with $signal at $time")
-			}
 			history.add(signal, time)
 		}
 	}
