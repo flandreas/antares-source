@@ -61,9 +61,11 @@ class Clock : CalculatingVertice(CALCULATOR) {
 
 	var periodOrFrequency: PeriodOrFrequency = PeriodOrFrequency(1_000_000_000, Nanosecond)
 		set(value) {
+			// Set propagationDelay even if periodOrFrequency hasn't changed in order to restore
+			// propagationDelay that might have changed during simulation
+			propagationDelay = value.asNanoseconds.value
 			if (field != value) {
 				field = value
-				propagationDelay = value.asNanoseconds.value
 				stateChanged()
 			}
 		}
