@@ -1,11 +1,15 @@
 package ch.scorpion.jabbah.base.preferences
 
-import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.event.PropertyChangeSupport
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.DialogBuilder
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Component
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
@@ -127,13 +131,12 @@ class PreferencesTreePanel(
 		}
 	}
 
-	private fun getPanelFor(group: PreferenceGroup): PreferencesPanel {
-		return panels.getOrPut(group) {
+	private fun getPanelFor(group: PreferenceGroup): PreferencesPanel =
+		panels.getOrPut(group) {
 			val panel = PreferencesPanel(group, localPreferences)
 			panel.load()
 			panel
 		}
-	}
 
 	private class TreeCellRenderer : DefaultTreeCellRenderer() {
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
@@ -174,73 +177,5 @@ class PreferencesTreePanel(
 			accumulator.clear()
 			needsRestart = false
 		}
-	}
-}
-
-/** An action for showing [PreferencesDialogPanel] within a dialog.*/
-class PreferencesAction : AbstractAction("base.preferences.action") {
-	override fun execute(event: ActionEvent) {
-		PreferencesDialogPanel.showAsDialog()
-	}
-}
-
-class PreferencesDialogPanel(
-	private val treePanel: PreferencesTreePanel = PreferencesTreePanel(),
-	private val closeHandler: () -> Unit
-) : JPanel() {
-
-	companion object {
-
-		private val LOG by logger(PreferencesDialogPanel::class)
-
-		fun showAsDialog(
-			parent: Frame = Frame.getFrames()[0],
-			treePanel: PreferencesTreePanel = PreferencesTreePanel()
-		) {
-			DialogBuilder<PreferencesDialogPanel>(parent)
-				.content { dialog -> PreferencesDialogPanel(treePanel) { dialog.dispose() } }
-				.defaultButton { it.applyButton }
-				.title(Translations.getString("base.preferences.title.name"))
-				.preferredSize(Dimension(800, 600))
-				.resizable()
-				.show()
-		}
-	}
-
-	private val closeAction = object : AbstractAction("base.action.close") {
-		override fun execute(event: ActionEvent) {
-			closeHandler.invoke()
-		}
-	}
-
-	private val applyAction = object : AbstractAction("base.action.apply") {
-		override fun execute(event: ActionEvent) {
-			treePanel.applyChanges()
-		}
-	}
-
-	val applyButton = JButton(ActionWrapperSwing(applyAction))
-
-	init {
-		applyAction.enabled = false
-		treePanel.addPropertyChangeListener(object : PropertyChangeListener<Boolean> {
-			override fun propertyChanged(e: PropertyChangeEvent<Boolean>) {
-				applyAction.enabled = treePanel.changed
-			}
-		})
-		buildUI()
-	}
-
-	private fun buildUI() {
-		layout = BorderLayout()
-		add(treePanel, BorderLayout.CENTER)
-		add(buildButtonPanel(), BorderLayout.SOUTH)
-	}
-
-	private fun buildButtonPanel(): JPanel {
-		val panel = JPanel(FlowLayout(FlowLayout.RIGHT))
-		panel.add(applyButton)
-		panel.add(JButton(ActionWrapperSwing(closeAction)))
-		return panel
 	}
 }

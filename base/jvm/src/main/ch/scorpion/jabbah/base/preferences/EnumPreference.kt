@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.base.preferences
 import ch.scorpion.jabbah.base.EnumProperty
 import javax.swing.JComboBox
 
-open class EnumPreference<T : Enum<T>>(
+class EnumPreference<T : Enum<T>>(
 	id: String,
 	nameKey: String,
 	values: Array<T>,
