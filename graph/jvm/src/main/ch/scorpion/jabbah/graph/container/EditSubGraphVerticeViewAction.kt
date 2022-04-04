@@ -55,7 +55,7 @@ class EditSubGraphVerticeViewAction(
 			viewManager)
 
 		val oldActiveView = viewManager.activeView
-		viewManager.registerView(containerPanel.editor.view)
+		//viewManager.registerView(containerPanel.editor.view)
 
 		containerPanel.initialize()
 
@@ -74,7 +74,7 @@ class EditSubGraphVerticeViewAction(
 			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
 		}
 
-		viewManager.unregisterView(containerPanel.editor.view)
+		//viewManager.unregisterView(containerPanel.editor.view)
 		viewManager.activeView = oldActiveView
 
 		editedVerticeView.invalidate()

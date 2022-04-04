@@ -84,6 +84,14 @@ open class ViewImpl<C : InputEventContext>(
 		space.removePropertyChangeListener(propertyChangeHandler)
 	}
 
+	/** ---- [ContentView] */
+
+	override val mainBean: Any? get() = null
+
+	override val mainUI: Any? get() = canvas
+
+	override val view: View<out C>? get() = this
+
 	/** ---- Life cycle */
 
 	override fun initialize() {

@@ -25,11 +25,11 @@ abstract class AbstractZoomPanAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		viewManager.activeView!!.zoomStrategy = zoomStrategy
+		viewManager.activeView!!.view!!.zoomStrategy = zoomStrategy
 	}
 
 	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && viewManager.activeView?.userZoomEnabled == true
+		super.calculateEnabled() && viewManager.activeView?.view?.userZoomEnabled == true
 
 	override fun handleViewPropertyChanged(e: PropertyChangeEvent<Any>) {
 		super.handleViewPropertyChanged(e)
@@ -43,7 +43,7 @@ abstract class AbstractZoomPanAction(
 		updateSelected()
 	}
 
-	protected open fun calculateSelected(): Boolean = viewManager.activeView?.zoomStrategy == zoomStrategy
+	protected open fun calculateSelected(): Boolean = viewManager.activeView?.view?.zoomStrategy == zoomStrategy
 
 	private fun updateSelected() {
 		selected = calculateSelected()
@@ -63,7 +63,7 @@ class ZoomInAction(
 ) : AbstractZoomPanAction(ZoomStrategy.NONE, "view.action.zoomIn", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val view = viewManager.activeView!!
+		val view = viewManager.activeView!!.view!!
 		view.navigator.multiplyZoomFactor(BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
 		view.zoomStrategy = ZoomStrategy.NONE
 	}
@@ -76,7 +76,7 @@ class ZoomOutAction(
 ) : AbstractZoomPanAction(ZoomStrategy.NONE,"view.action.zoomOut", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val view = viewManager.activeView!!
+		val view = viewManager.activeView!!.view!!
 		view.navigator.multiplyZoomFactor(1 / BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
 		view.zoomStrategy = ZoomStrategy.NONE
 	}

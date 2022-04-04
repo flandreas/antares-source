@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 
 /**
@@ -36,7 +35,7 @@ abstract class AbstractViewAction(
 
 	private val viewPropertyListener = ViewPropertyListener()
 
-	protected val view: View<*>? get() = viewManager.activeView
+	protected val view: View<*>? get() = viewManager.activeView?.view
 
 	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -48,10 +47,10 @@ abstract class AbstractViewAction(
 		// empty
 	}
 
-	private fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-		oldView?.removePropertyChangeListener(viewPropertyListener)
+	private fun activeViewChanged(oldView: ContentView<*>?, newView: ContentView<*>?) {
+		oldView?.view?.removePropertyChangeListener(viewPropertyListener)
 		updateEnabled()
-		newView?.addPropertyChangeListener(viewPropertyListener)
+		newView?.view?.addPropertyChangeListener(viewPropertyListener)
 		notifyActiveViewChanged()
 	}
 

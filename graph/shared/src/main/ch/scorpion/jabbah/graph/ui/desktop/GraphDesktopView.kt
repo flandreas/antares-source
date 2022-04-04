@@ -209,7 +209,7 @@ class GraphDesktopViewController(
 		} else {
 			deassociate(item)
 			item.disposeItem()
-			item.drawingView?.let { viewManager.unregisterView(it) }
+			//item.drawingView?.let { viewManager.unregisterView(it) }
 			view.closeItem(item)
 		}
 	}

@@ -67,7 +67,7 @@ object RepaintingObserver {
 
     val currentLog: RepaintingLogEntry get() = logEntries[logIndex]
 
-    private val view: View<*>? get() = DrawViewModule.viewManager.activeView
+    private val view: View<*>? get() = DrawViewModule.viewManager.activeView?.view
 
     private var repaintIndex = 0
 

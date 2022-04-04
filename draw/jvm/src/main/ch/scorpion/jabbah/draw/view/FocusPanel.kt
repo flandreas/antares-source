@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.draw.view
 
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.Canvas
 import java.awt.BorderLayout
-import java.awt.event.*
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.event.MouseEvent.BUTTON1
 import javax.swing.BorderFactory
 import javax.swing.JComponent
@@ -16,11 +17,11 @@ import javax.swing.UIManager
  * when it gets the focus.
  *
  * @param child the [JComponent] to be added as a direct child of this [FocusPanel]
- * @property view the [View] whose [Canvas] requests the focus
+ * @property contentView the [ContentView] whose mainUI requests the focus
  */
 class FocusPanel(
 	child: JComponent,
-	val view: View<out InputEventContext>,
+	val contentView: ContentView<*>,
 	viewManager: ViewManager
 ) : JPanel() {
 
@@ -31,11 +32,11 @@ class FocusPanel(
 	}
 
 	init {
-		(view.canvas as JComponent).addFocusListener(object : FocusAdapter() {
+		(contentView.view!!.mainUI as JComponent).addFocusListener(object : FocusAdapter() {
 			override fun focusGained(e: FocusEvent) {
 				if (!e.isTemporary) {
 					updateFocusBorder()
-					viewManager.activeView = view
+					viewManager.activeView = contentView.view
 				}
 			}
 
@@ -45,10 +46,10 @@ class FocusPanel(
 				}
 			}
 		})
-		(view.canvas as JComponent).addMouseListener(object : MouseAdapter() {
+		(contentView.view!!.mainUI as JComponent).addMouseListener(object : MouseAdapter() {
 			override fun mousePressed(e: MouseEvent) {
 				if (e.button == BUTTON1) {
-					view.requestFocus()
+					(contentView.view!!.mainUI as JComponent).requestFocus()
 				}
 			}
 		})
@@ -63,7 +64,7 @@ class FocusPanel(
 	}
 
 	private fun updateFocusBorder() {
-		border = if ((view.canvas as JComponent).isFocusOwner) {
+		border = if ((contentView.view!!.mainUI as JComponent).isFocusOwner) {
 			focusBorder
 		} else {
 			nonFocusBorder

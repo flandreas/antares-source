@@ -17,7 +17,7 @@ class SelectAllAction(
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectAll()
-		viewManager.activeView!!.repaint()
+		viewManager.activeView!!.view!!.repaint()
 	}
 }
 
@@ -29,7 +29,7 @@ class SelectNextAction(
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectNext()
-		viewManager.activeView!!.repaint()
+		viewManager.activeView!!.view!!.repaint()
 	}
 }
 
@@ -41,6 +41,6 @@ class SelectPreviousAction(
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectPrevious()
-		viewManager.activeView!!.repaint()
+		viewManager.activeView!!.view!!.repaint()
 	}
 }

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.draw.view.ViewSpace
 
 /**
@@ -45,7 +46,7 @@ data class ViewTransformation(
 
  * [View]s are platform independent. Adoption to platform-specifics is provided by [Canvas].
  */
-interface View<C : InputEventContext> : ViewToModelTransform {
+interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 
 	companion object {
 
