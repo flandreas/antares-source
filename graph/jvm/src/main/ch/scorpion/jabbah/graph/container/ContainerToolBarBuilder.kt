@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -20,19 +21,25 @@ import javax.swing.JToggleButton
 
 open class ContainerToolBarBuilder {
 
-	open fun buildToolBars(editor: ContainerEditor, separator: Boolean = false): ImmutableList<ToolBar> {
+	open fun buildToolBars(application: Application?, editor: ContainerEditor, separator: Boolean = false): ImmutableList<ToolBar> {
 		val toolBars = listOf(
-			buildDrawingToolsToolbar(editor, separator),
+			buildDrawingToolsToolbar(application, editor, separator),
 			buildSettingsToolbar(editor)).toImmutableList()
 		toolBars.forEach { it.isFloatable = false }
 		return toolBars
 	}
 
-	open fun buildDrawingToolsToolbar(editor: ContainerEditor, separator: Boolean): ToolBar {
+	open fun buildDrawingToolsToolbar(application: Application?, editor: ContainerEditor, separator: Boolean): ToolBar {
 		val toolbar = ToolBar(editor)
 		if (separator) {
 			toolbar.addSeparator()
 		}
+
+		if (application != null) {
+			toolbar.addAction(application.controller.saveAction)
+			toolbar.addGap()
+		}
+
 		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
 		toolbar.addTool(ComponentAtLocationTool(editor, cursor = Cursor.TEXT, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))

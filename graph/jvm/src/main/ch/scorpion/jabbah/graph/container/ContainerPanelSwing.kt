@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -16,6 +17,7 @@ import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import javax.swing.*
@@ -26,7 +28,8 @@ import javax.swing.*
  * The current [ContainerDrawing] is established by listening for [ApplicationDataEvent] on the specified
  * [EventBus].
  */
-class ContainerPanel(
+class ContainerPanelSwing(
+	application: Application?,
 	val editor: ContainerEditor,
 	propertySheetFactory: PropertySheetPanelFactory,
 	private val eventBus: EventBus,
@@ -34,9 +37,10 @@ class ContainerPanel(
 ) : JPanel() {
 
 	constructor(
+		application: Application,
 		editor: ContainerEditor,
 		viewManager: ViewManager
-	) : this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
+	) : this(application, editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
 	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 
@@ -54,6 +58,8 @@ class ContainerPanel(
 	private val applicationDataContentEventHandler : (ApplicationDataContentEvent) -> Unit = { handle (it)}
 
 	private var editable: Boolean = true
+
+	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, editor)
 
 	var active: Boolean = false
 		set(value) {
@@ -92,8 +98,8 @@ class ContainerPanel(
 	}
 
 	/**
-	 * Sets the data to be displayed by this [ContainerPanel]. This method is used if this
-	 * [ContainerPanel] is NOT used for the main application data (in which case it's [ContainerDrawing]
+	 * Sets the data to be displayed by this [ContainerPanelSwing]. This method is used if this
+	 * [ContainerPanelSwing] is NOT used for the main application data (in which case it's [ContainerDrawing]
 	 * would be indirectly set as of [ApplicationDataEvent]), but in additional / separate context,
 	 * e.g. when editing the symbol of a [SubGraphVerticeView].
 	 *

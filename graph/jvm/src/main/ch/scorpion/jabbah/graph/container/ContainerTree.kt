@@ -36,7 +36,7 @@ enum class ContainerTreeItemType {
 }
 
 /**
- * Controller class that incrementally builds and fills the [TreeModel] to be displayed in the [ContainerPanel].
+ * Controller class that incrementally builds and fills the [TreeModel] to be displayed in the [ContainerPanelSwing].
  * Balances the contents of the [TreeModel] and the [ContainerDrawing] by making sure that a particular
  * element is only contained in either one of them.
  */

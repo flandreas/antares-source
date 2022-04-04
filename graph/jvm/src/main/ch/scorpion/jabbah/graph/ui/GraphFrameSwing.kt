@@ -16,10 +16,9 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.container.ContainerPanel
+import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -45,7 +44,7 @@ open class GraphFrameSwing(
 
 	private val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), controller.applicationContextHolder, displayGlobalMessages = true)
 
-	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(containerDrawingView), viewManager)
+	private val containerPanel = ContainerPanelSwing(application, GraphViewModule.containerEditorFactory.invoke(containerDrawingView), viewManager)
 
 	init {
 		controller.view = this
@@ -98,7 +97,7 @@ open class GraphFrameSwing(
 
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
-			fillToolbarPanel(GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(containerPanel.editor))
+			fillToolbarPanel(containerPanel.toolbars)
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
 			contentPane.add(containerPanel, BorderLayout.CENTER)
 			contentPane.add(statusBar, BorderLayout.SOUTH)

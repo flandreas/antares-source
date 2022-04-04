@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -48,7 +47,8 @@ class EditSubGraphVerticeViewAction(
 		editedVerticeView.invalidate()
 
 		val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages = false)
-		val containerPanel = ContainerPanel(
+		val containerPanel = ContainerPanelSwing(
+			application = null,
 			GraphViewModule.containerEditorFactory.invoke(containerDrawingView),
 			EditModuleJvm.propertySheetPanelFactory,
 			eventBus,

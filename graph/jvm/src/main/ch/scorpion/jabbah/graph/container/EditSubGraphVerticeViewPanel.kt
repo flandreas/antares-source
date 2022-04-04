@@ -25,7 +25,7 @@ import javax.swing.*
  */
 class EditSubGraphVerticeViewPanel(
 	private val metaGraphRepository: MetaGraphRepository = GraphModule.metaGraphRepository,
-	private val containerPanel: ContainerPanel,
+	private val containerPanel: ContainerPanelSwing,
 	private val subGraphVerticeView: SubGraphVerticeView<*>,
 	private val closeHandler: (Boolean) -> Unit
 ) : JPanel() {
@@ -41,7 +41,7 @@ class EditSubGraphVerticeViewPanel(
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
 			metaGraphRepository: MetaGraphRepository,
-			containerPanel: ContainerPanel,
+			containerPanel: ContainerPanelSwing,
 			subGraphVerticeView: SubGraphVerticeView<*>,
 			commandManager: CommandManager
 		): Boolean {
@@ -147,7 +147,7 @@ class EditSubGraphVerticeViewPanel(
 	private fun createToolBarPanel(): JPanel {
 		val toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
-		GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(containerPanel.editor, separator = false).forEach { toolbarPanel.add(it) }
+		GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(null, containerPanel.editor, separator = false).forEach { toolbarPanel.add(it) }
 		return toolbarPanel
 	}
 
