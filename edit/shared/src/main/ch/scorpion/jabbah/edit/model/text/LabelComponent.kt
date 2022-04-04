@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -46,7 +47,7 @@ class LabelComponent(
 				horizontalAlignment = HorizontalAlignment.CENTER,
 				verticalAlignment = VerticalAlignment.CENTER,
 				location = Point2D.ZERO,
-				rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF)
+				rotationDisplayStrategy = RotationDisplayStrategy.IGNORE)
 		}
 	}
 
@@ -97,7 +98,12 @@ class LabelComponent(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D get() = label.boundingBox
+	override val boundingBox: Rectangle2D get() = if (rotation == Rotation.R0 || rotation == Rotation.R180) {
+		label.boundingBox
+	} else {
+		val bbox = label.boundingBox
+		rotation.rotateRectangleAround(bbox.center, bbox)
+	}
 
 	override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
@@ -109,7 +115,16 @@ class LabelComponent(
 		if (!context.useContextColors) {
 			context.g.color = transparent.applyTo(foregroundColor)
 		}
+
+		context.g.translate(location.x, location.y)
+		context.g.rotate(rotation.angle)
+		context.g.translate(-location.x, -location.y)
+
 		label.draw(context)
+
+		context.g.translate(location.x, location.y)
+		context.g.rotate(-rotation.angle)
+		context.g.translate(-location.x, -location.y)
 	}
 
 	override fun mirrorHorizontally(x: Double) {
@@ -135,6 +150,7 @@ class LabelComponent(
 			writer.writeStorables("text", text.allTranslations())
 		}
 		writer.writePoint("location", label.location)
+		writer.writeString("rot", rotation.customName)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -146,6 +162,10 @@ class LabelComponent(
 			text = TranslatableText(reader.readStorables("text"))
 		}
 		location = reader.readPoint("location")
+		if (reader.hasAttribute("rot")) {
+			// Backward compatibility
+			rotation = Rotation.withName(reader.readString("rot"))
+		}
 	}
 
 	/** ---- [Component] */
@@ -157,4 +177,10 @@ class LabelComponent(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
+
+	override val useRotation: Boolean get() = true
+
+	override fun rotationChanged(newRotation: Rotation) {
+		label.ownerRotation = rotation
+	}
 }

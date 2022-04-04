@@ -25,10 +25,7 @@ import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.edit.model.text.Labeled
-import ch.scorpion.jabbah.edit.model.text.Translatable
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -463,6 +460,7 @@ class SubGraphVerticeViewImpl(
 			DrawableOwner(this, drawable)
 		} else if (drawable is LabelComponent) {
 			drawable.label.ownerRotation = rotation
+			drawable.label.rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF
 		}
 		drawableBag.add(drawable)
 		_boundingBox.add(drawable.boundingBox)
