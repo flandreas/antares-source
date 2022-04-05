@@ -95,7 +95,8 @@ interface InputPort<T : Any> : Port<T> {
 
 	/**
 	 * Revokes the signal that has previously been set using [setIncomingSignal], giving this
-	 * [InputPort] a chance to reset the stored outgoing signal.
+	 * [InputPort] a chance to reset the stored outgoing signal, if this [InputPort] is also
+	 * a [OutputPort].
 	 *
 	 * This is needed when the signal on a connected [Net] is set to "undefined" immediately prior
 	 * to setting a new, defined signal by an [OutputPort] in the same [Net]. If [InputPort] would

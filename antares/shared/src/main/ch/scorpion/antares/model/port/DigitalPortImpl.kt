@@ -233,4 +233,17 @@ open class DigitalPortImpl(
 
 	override fun createAccess(): CombinedNetAccess<DigitalSignal> =
 		DigitalCombinedNetAccess(this, bitWidth, 0)
+
+	/** ---- [PortImpl] */
+
+	// Should this be a DigitalSignalUtil?
+	override fun differingInput(signal: DigitalSignal?): Boolean {
+		if (signal == null && (_incomingSignal == null || _incomingSignal!!.isFullyUndefined)) {
+			return false
+		}
+		if (_incomingSignal == null && (signal == null || signal.isFullyUndefined)) {
+			return false
+		}
+		return super.differingInput(signal)
+	}
 }

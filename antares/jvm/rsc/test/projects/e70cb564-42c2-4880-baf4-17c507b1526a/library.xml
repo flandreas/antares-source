@@ -1,4 +1,4 @@
-<project _id='0' defaultElement='dcdc4da3-90e7-46c7-a4b1-1b9518c44604' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='6f96b4ff-55dd-4f16-bba7-aa0996b94bc0' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -79,6 +79,16 @@
         <containerLibraryElement _id='16' uuid='dcdc4da3-90e7-46c7-a4b1-1b9518c44604'>
           <name>
             <translation lang='en' text='Circuit Analysis'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='17' uuid='26489bca-3db9-4b3c-bae1-1f787d486217'>
+          <name>
+            <translation lang='en' text='Bug 341 Transceiver'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='18' uuid='6f96b4ff-55dd-4f16-bba7-aa0996b94bc0'>
+          <name>
+            <translation lang='en' text='Tri-State Disabled'/>
           </name>
         </containerLibraryElement>
       </items>

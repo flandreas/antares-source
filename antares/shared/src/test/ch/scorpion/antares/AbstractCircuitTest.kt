@@ -76,8 +76,8 @@ abstract class AbstractCircuitTest {
 		getCircuitView().graph!!.executionStopped(scheduler)
 	}
 
-	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk()) {
-		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
+	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk(), maxIterationCount: Int = 1_000) {
+		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener, maxIterationCount)
 	}
 
 	protected fun proceedToMillis(timeMillis: Long) {
