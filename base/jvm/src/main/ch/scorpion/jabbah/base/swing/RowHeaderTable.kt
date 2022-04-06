@@ -24,7 +24,7 @@ class RowHeaderTable(
     private val rowHeaderTextProvider: (Int) -> String
 ) : JTable(), ChangeListener, PropertyChangeListener {
 
-    constructor(main: JTable): this(main, { Integer.toString(it + 1)})
+    constructor(main: JTable): this(main, { (it + 1).toString() })
 
     init {
         main.addPropertyChangeListener(this)
@@ -91,7 +91,7 @@ class RowHeaderTable(
         // Keep the row table in sync with the main table
 
         if ("selectionModel" == e.propertyName) {
-            setSelectionModel(main.getSelectionModel())
+            setSelectionModel(main.selectionModel)
         }
 
         if ("rowHeight" == e.propertyName) {
@@ -99,7 +99,7 @@ class RowHeaderTable(
         }
 
         if ("model" == e.propertyName) {
-            main.getModel().addTableModelListener(this)
+            main.model.addTableModelListener(this)
             revalidate()
         }
     }

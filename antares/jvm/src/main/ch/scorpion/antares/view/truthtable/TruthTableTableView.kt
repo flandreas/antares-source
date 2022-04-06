@@ -32,6 +32,8 @@ class TruthTableTableView(
 
 	private val table = JTable(tableModel)
 
+	private val scrollPane = JScrollPane(table)
+
 	private val cellFont = table.font.deriveFont(CELL_FONT_SIZE.toFloat())
 
 	init {
@@ -47,6 +49,7 @@ class TruthTableTableView(
 		tableModel = TruthTableTableModel(ref, editable)
 		table.model = tableModel
 		updateColumnModels()
+		updateRowHeaders()
 	}
 
 	private fun buildUI() {
@@ -60,15 +63,18 @@ class TruthTableTableView(
 		table.rowMargin = 1
 		table.columnModel.columnMargin = 1
 
-		val scrollPane = JScrollPane(table)
 		scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 
+		updateRowHeaders()
+
+		add(scrollPane, BorderLayout.CENTER)
+	}
+
+	private fun updateRowHeaders() {
 		val rowHeaderTable = RowHeaderTable(table) { it.toString() }
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
-
-		add(scrollPane, BorderLayout.CENTER)
 	}
 
 	private fun defineSetActions() {
