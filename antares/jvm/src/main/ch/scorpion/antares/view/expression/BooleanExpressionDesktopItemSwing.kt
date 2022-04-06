@@ -22,6 +22,8 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.view.ContentView
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -31,6 +33,8 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.*
+import java.awt.event.FocusEvent
+import java.awt.event.FocusListener
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -93,9 +97,13 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val exampleTextPane = JTextPane()
 
+	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
+
 	init {
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
+
+		setupViewActivationFocusListener()
 
 		ref.addListener {
 			expressionsTextArea.text = ref.expressions.expressions
@@ -111,6 +119,21 @@ class BooleanExpressionDesktopItemSwing(
 		SwingUtilities.invokeLater {
 			expressionsTextArea.mainTextArea.requestFocusInWindow()
 		}
+	}
+
+	private fun setupViewActivationFocusListener() {
+		val focusListener = object : FocusListener {
+			override fun focusGained(e: FocusEvent?) {
+				DrawViewModule.viewManager.activeView = this@BooleanExpressionDesktopItemSwing
+			}
+
+			override fun focusLost(e: FocusEvent?) { }
+		}
+		singleCharIdentifierCheckbox.addFocusListener(focusListener)
+		expressionsTextArea.mainTextArea.addFocusListener(focusListener)
+		minimizedTextArea.addFocusListener(focusListener)
+		truthTableView.table.addFocusListener(focusListener)
+		createCircuitButton.addFocusListener(focusListener)
 	}
 
 	private fun disableApplyActionForNoExpressionChanges() {
@@ -159,7 +182,6 @@ class BooleanExpressionDesktopItemSwing(
 		truthTableView.maximumSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
 		panel.add(truthTableView)
 
-		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
 		panel.add(Box.createVerticalStrut(5))
 		panel.add(createCircuitButton)
@@ -257,6 +279,10 @@ class BooleanExpressionDesktopItemSwing(
 		""".trimIndent()
 		}
 	}
+
+	/** ---- [ContentView] */
+
+	override val mainBean: Any get() = ref.expressions
 
 	/** ---- [GraphDesktopViewItem] */
 

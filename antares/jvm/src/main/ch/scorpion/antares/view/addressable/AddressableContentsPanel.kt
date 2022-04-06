@@ -21,6 +21,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.event.ActionEvent
+import java.awt.event.FocusListener
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.*
@@ -76,8 +77,14 @@ class AddressableContentsPanel(
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateEditable() }
 
 	private val importAction = ImportAction()
+	private val importButton = JButton(importAction)
+
 	private val exportAction = ExportAction()
+	private val exportButton = JButton(exportAction)
+
 	private val clearAction = ClearAction()
+	private val clearButton = JButton(clearAction)
+
 	private val closeAction = CloseAction()
 
 	private var editable: Boolean = false
@@ -125,12 +132,12 @@ class AddressableContentsPanel(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(importAction))
+		buttonPanel.add(importButton)
 
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(exportAction))
+		buttonPanel.add(exportButton)
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(clearAction))
+		buttonPanel.add(clearButton)
 
 		if (closeHandler != null) {
 			closeButton = JButton(closeAction)
@@ -139,6 +146,13 @@ class AddressableContentsPanel(
 		}
 
 		add(buttonPanel, BorderLayout.SOUTH)
+	}
+
+	fun addViewActivationFocusListener(focusListener: FocusListener) {
+		memoryDisplayPanel.addViewActivationFocusListener(focusListener)
+		importButton.addFocusListener(focusListener)
+		exportButton.addFocusListener(focusListener)
+		clearButton.addFocusListener(focusListener)
 	}
 
 	private fun executeCommand(command: Command) {

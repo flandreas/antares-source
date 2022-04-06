@@ -16,9 +16,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
@@ -27,6 +30,8 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Font
 import java.awt.Frame
+import java.awt.event.FocusEvent
+import java.awt.event.FocusListener
 import javax.swing.*
 import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -61,6 +66,10 @@ class TruthTableDesktopItemSwing(
 
 	private val expressionsTextArea = JTextArea()
 
+	private val expressionsButton = JButton(ActionWrapperSwing(generateExpressionsAction))
+
+	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
+
 	init {
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
@@ -71,6 +80,22 @@ class TruthTableDesktopItemSwing(
 			expressionsTextArea.text = ""
 			createCircuitAction.enabled = false
 		}
+
+		setupViewActivationFocusListener()
+	}
+
+	private fun setupViewActivationFocusListener() {
+		val focusListener = object : FocusListener {
+			override fun focusGained(e: FocusEvent?) {
+				DrawViewModule.viewManager.activeView = this@TruthTableDesktopItemSwing
+			}
+
+			override fun focusLost(e: FocusEvent?) { }
+		}
+		tableView.table.addFocusListener(focusListener)
+		expressionsTextArea.addFocusListener(focusListener)
+		expressionsButton.addFocusListener(focusListener)
+		createCircuitButton.addFocusListener(focusListener)
 	}
 
 	private fun buildUI() {
@@ -107,10 +132,8 @@ class TruthTableDesktopItemSwing(
 		expressionScrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
 		expressionScrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
 
-		val expressionsButton = JButton(ActionWrapperSwing(generateExpressionsAction))
 		expressionsButton.alignmentX = Component.LEFT_ALIGNMENT
 
-		val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
 
 		panel.add(expressionsButton)
@@ -122,9 +145,17 @@ class TruthTableDesktopItemSwing(
 		return panel
 	}
 
+	/** ---- [ContentView] */
+
+	override val mainBean: Any get() = ref.truthTable
+
+	/** ---- [AbstractGraphDesktopItemPanelSwing] */
+
 	override fun addContextColorBorder(color: Color) { }
 
 	override fun removeContextColorBorder() { }
+
+	/** ---- [GraphDesktopViewItem] */
 
 	override val drawingView: DrawingView<GraphView>? get() = null
 

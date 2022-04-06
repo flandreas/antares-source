@@ -2,13 +2,16 @@ package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /** Displays a [DrawingView] within a separate [GraphDesktopViewItem].*/
-interface GraphDesktopViewItem {
+interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 
 	val drawingView: DrawingView<GraphView>?
 
@@ -22,6 +25,12 @@ interface GraphDesktopViewItem {
 	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
 
 	fun createCloseRequest(): Any
+
+	override val view: View<out EditInputEventContext>? get() = drawingView
+
+	override val mainUI: Any? get() = this
+
+	override val mainBean: Any? get() = null
 }
 
 /**

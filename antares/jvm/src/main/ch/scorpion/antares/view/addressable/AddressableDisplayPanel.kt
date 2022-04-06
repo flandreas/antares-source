@@ -21,6 +21,7 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout
 import java.awt.Font
+import java.awt.event.FocusListener
 import javax.swing.*
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
@@ -94,6 +95,11 @@ class AddressableDisplayPanel(
 	    add(memoryLayoutPanel, BorderLayout.NORTH)
         add(scrollPane, BorderLayout.CENTER)
     }
+
+	fun addViewActivationFocusListener(focusListener: FocusListener) {
+		layoutComboBox.addFocusListener(focusListener)
+		table.addFocusListener(focusListener)
+	}
 
 	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout) {
 		table.model.removeTableModelListener(changeCollector)

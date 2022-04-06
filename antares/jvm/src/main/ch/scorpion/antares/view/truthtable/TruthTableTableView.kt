@@ -30,7 +30,7 @@ class TruthTableTableView(
 
 	private var tableModel = TruthTableTableModel(ref, editable)
 
-	private val table = JTable(tableModel)
+	val table = JTable(tableModel)
 
 	private val cellFont = table.font.deriveFont(CELL_FONT_SIZE.toFloat())
 

@@ -22,7 +22,7 @@ abstract class AbstractEditAction(
 ) : AbstractViewAction(baseName, eventBus, viewManager) {
 
 	@Suppress("UNCHECKED_CAST")
-	protected val drawingView: DrawingView<Drawing<Component>>? get() = viewManager.activeView as DrawingView<Drawing<Component>>?
+	protected val drawingView: DrawingView<Drawing<Component>>? get() = viewManager.activeView as? DrawingView<Drawing<Component>>?
 
 	override fun handleViewPropertyChanged(e: PropertyChangeEvent<Any>) {
 		super.handleViewPropertyChanged(e)
