@@ -220,10 +220,12 @@ class SchedulerImpl(
 		return executeImpl(resume = false)
 	}
 
-	override fun proceedTo(time: Long) {
+	override fun proceedTo(time: Long, maxIteration: Int) {
 		LOG.trace("Proceed to ${StringUtils.formatLong(time)} ns")
-		while (!queue.isEmpty && executionTime < time) {
+		var i = 0
+		while (!queue.isEmpty && executionTime < time && i < maxIteration) {
 			execute()
+			i++
 		}
 		// Repeat because time freezing slots update relative time at the end of executionStep
 		execute()
@@ -356,7 +358,12 @@ class SchedulerImpl(
 	 * Used only in testing for passing boot strapping activities before the real test can begin.
 	 * Should only be used for test scenarios without cyclic [Actor] dependencies.
 	 */
-	fun proceedUntilQueueIsEmpty(timeService: ControlledTimeService, actorListener: ActorListener) {
+	fun proceedUntilQueueIsEmpty(
+		timeService: ControlledTimeService,
+		actorListener: ActorListener,
+		maxIteration: Int = 1_000
+	) {
+		var i = 0
 		while (!queue.isEmpty) {
 			val slot = queue.peek()
 			slot!!.getRequests().forEach {
@@ -366,6 +373,10 @@ class SchedulerImpl(
 			}
 			timeService.setTimeNanos(slot.relativeTime)
 			execute()
+			i++
+			if (i > maxIteration) {
+				throw IllegalStateException("max iteration count exceeded")
+			}
 		}
 	}
 

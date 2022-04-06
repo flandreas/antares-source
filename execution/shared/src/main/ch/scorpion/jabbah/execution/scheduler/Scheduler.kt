@@ -55,10 +55,10 @@ interface Scheduler : SignalHandler {
 
     /**
      * Proceed executing scheduling requests until there are no more left, or until the specified execution time has
-     * been reached.
+     * been reached. Mainly used for testing.
      * @param time the relative execution time (in nanoseconds) to proceed to
      */
-    fun proceedTo(time: Long)
+    fun proceedTo(time: Long, maxIteration: Int = 1_000)
 
     /** Prints the pending scheduling request to the INFO log. Should only be used on explicit demand when debugging. */
     fun printSchedule()

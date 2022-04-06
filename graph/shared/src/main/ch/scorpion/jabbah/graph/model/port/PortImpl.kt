@@ -141,14 +141,17 @@ open class PortImpl<T : Any>(
 
 	/** ---- [InputPort] interface */
 
-	private var _incomingSignal: T? = null
+	protected var _incomingSignal: T? = null
+		private set
+
+	private var incomingSignalRevoked: Boolean = false
 
 	override fun getIncomingSignal(): T? {
 		return _incomingSignal ?: getDefaultSignal()
 	}
 
 	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
-		if (force || signal != _incomingSignal) {
+		if (force || differingInput(signal) || incomingSignalRevoked && portType == PortType.INOUT) {
 			storeIncomingSignal(signal)
 			owner?.inputChanged(this, signalHandler, force)
 		} else {
@@ -156,8 +159,11 @@ open class PortImpl<T : Any>(
 		}
 	}
 
+	protected open fun differingInput(signal: T?): Boolean =
+		SignalUtil.differ(signal, _incomingSignal)
+
 	override fun revokeSignal() {
-		_incomingSignal = null
+		incomingSignalRevoked = true
 	}
 
 	/** ---- [OutputPort] interface */
@@ -241,6 +247,7 @@ open class PortImpl<T : Any>(
 
 	protected fun storeIncomingSignal(signal: T?) {
 		_incomingSignal = signal
+		incomingSignalRevoked = false
 	}
 
 	protected fun storeOutgoingSignal(signal: T?) {
