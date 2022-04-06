@@ -16,7 +16,7 @@ abstract class AbstractZoomPanAction(
 	private val zoomStrategy: ZoomStrategy,
 	baseName: String,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractViewAction(baseName, eventBus, viewManager) {
 
 	companion object {
@@ -52,13 +52,13 @@ abstract class AbstractZoomPanAction(
 
 /** An action for zooming the currently active [View] to normal size and panning to the center.*/
 class ZoomNormalAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.NORMAL,"view.action.zoomNormal", eventBus, viewManager)
 
 /** An action for zooming into the currently active [View] .*/
 class ZoomInAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.NONE, "view.action.zoomIn", eventBus, viewManager) {
 
@@ -71,7 +71,7 @@ class ZoomInAction(
 
 /** An action for zooming out from the currently active [View] .*/
 class ZoomOutAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.NONE,"view.action.zoomOut", eventBus, viewManager) {
 
@@ -87,7 +87,7 @@ class ZoomOutAction(
  * available view space.
  */
 class ZoomFitAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.FIT, "view.action.zoomFit", eventBus, viewManager)
 
@@ -96,12 +96,12 @@ class ZoomFitAction(
  * available view space, but not larger than normal zoom.
  */
 class ZoomFitMaxNormalAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.FIT_MAX_NORMAL, "view.action.zoomFitMaxNormal", eventBus, viewManager)
 
 /** An action for centering the currently active [View] without changing the zoom factor.*/
 class ZoomCenterAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.CENTER, "view.action.zoomCenter", eventBus, viewManager)

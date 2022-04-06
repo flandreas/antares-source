@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewController
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -44,7 +44,7 @@ class GraphDesktopViewJs(
 	override val mainDesktopViewItem: GraphDesktopViewItem
 		get() = TODO("mainDesktopViewItem not implemented")
 
-	override fun createSubGraphDesktopItem(verticeView: SubGraphVerticeView<*>, referenceColor: CompositeColor, isParentDetached: Boolean, viewManager: ViewManager): GraphDesktopViewItem {
+	override fun createSubGraphDesktopItem(verticeView: SubGraphVerticeView<*>, referenceColor: CompositeColor, isParentDetached: Boolean, viewManager: ContentViewManager): GraphDesktopViewItem {
 		throw UnsupportedOperationException("createSubGraphDesktopItem not implemented")
 	}
 

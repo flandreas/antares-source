@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -29,7 +29,7 @@ import javax.swing.JPanel
 class GraphNavigationViewSwing(
 	private val controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
-	private val viewManager: ViewManager,
+	private val viewManager: ContentViewManager,
 	contextBorderColor: CompositeColor? = null,
 	eventBus: EventBus = BaseModule.eventBus,
 	allowCloseInHeader: Boolean = true

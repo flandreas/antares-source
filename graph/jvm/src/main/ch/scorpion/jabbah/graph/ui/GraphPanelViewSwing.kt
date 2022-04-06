@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
@@ -38,7 +38,7 @@ class GraphPanelViewSwing(
 	controller: GraphPanelViewController,
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager,
+	viewManager: ContentViewManager,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), GraphPanelView {

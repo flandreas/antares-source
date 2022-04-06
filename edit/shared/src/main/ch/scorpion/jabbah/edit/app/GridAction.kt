@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Grid
 
@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.edit.Grid
  */
 class GridAction(
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractEditAction("view.action.grid", eventBus, viewManager) {
 
 	init {

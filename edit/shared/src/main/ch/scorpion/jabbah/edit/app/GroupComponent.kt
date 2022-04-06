@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.Drawing
@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 /** An [Action] for grouping the selected [Component]s to a [GroupComponent].*/
 class GroupComponentsAction(
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractSelectionAwareAction("edit.action.group", eventBus, viewManager) {
 
@@ -34,7 +34,7 @@ class GroupComponentsAction(
 /** An [Action] for un-grouping the selected [GroupComponent].*/
 class UngroupComponentsAction(
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractSelectionAwareAction("edit.action.ungroup", eventBus, viewManager) {
 

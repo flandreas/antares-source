@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.Drawable
 
 /**
- * Represents a view that can be managed by [ViewManager] and therefore be the "current" view of the system.
+ * Represents a view that can be managed by [ContentViewManager] and therefore be the "current" view of the system.
  *
  * @param C the type of context supported by [view]
  */

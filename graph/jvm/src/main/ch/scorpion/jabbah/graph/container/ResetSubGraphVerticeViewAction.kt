@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -19,7 +19,7 @@ import javax.swing.Action
  */
 class ResetSubGraphVerticeViewAction(
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractSelectionAwareAction("graph.action.resetCustomView", eventBus, viewManager) {
 

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -100,7 +100,7 @@ class GraphDesktopViewSwing(
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor,
 		isParentDetached: Boolean,
-		viewManager: ViewManager
+		viewManager: ContentViewManager
 	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView(controller.applicationContextHolder.signalHandlerIfActive)
 		val drawingView = EditModule.drawingViewFactory.create(

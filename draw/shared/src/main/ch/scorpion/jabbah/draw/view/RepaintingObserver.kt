@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
  * A debugging utility class that observes invalidation and repainting action in the
- * [ViewManager]'s current [View].
+ * [ContentViewManager]'s current [View].
  */
 object RepaintingObserver {
 

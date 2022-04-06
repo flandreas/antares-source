@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.GraphElementCollector
@@ -16,7 +16,7 @@ import javax.swing.*
 
 /** Provides in-depth statistical information about the currently open [Graph].*/
 class GraphStatisticsAction(
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractViewAction("graph.action.statistics", viewManager = viewManager) {
 
 	override fun execute(event: ActionEvent) {

@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -25,7 +25,7 @@ import javax.swing.JPanel
 class GraphEditViewSwing(
 	controller: GraphEditViewController,
 	application: Application,
-	viewManager: ViewManager,
+	viewManager: ContentViewManager,
 	propertySheetFactory: PropertySheetPanelFactory,
 	eventBus: EventBus = BaseModule.eventBus,
 	override val graphNavigationView: GraphNavigationView = GraphNavigationViewSwing(

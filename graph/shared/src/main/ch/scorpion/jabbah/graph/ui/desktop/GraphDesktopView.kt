@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -41,7 +41,7 @@ interface GraphDesktopView : UIView {
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor,
 		isParentDetached: Boolean,
-		viewManager: ViewManager
+		viewManager: ContentViewManager
 	): GraphDesktopViewItem
 
 	fun addGraphDesktopItem(item: GraphDesktopViewItem)
@@ -76,7 +76,7 @@ interface GraphDesktopView : UIView {
  */
 class GraphDesktopViewController(
 	val applicationContextHolder: GraphApplicationContextHolder,
-	private val viewManager: ViewManager = DrawViewModule.viewManager,
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphDesktopView>() {
 
@@ -209,7 +209,6 @@ class GraphDesktopViewController(
 		} else {
 			deassociate(item)
 			item.disposeItem()
-			//item.drawingView?.let { viewManager.unregisterView(it) }
 			view.closeItem(item)
 		}
 	}

@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 
 /**
- * A base implementation of an [Action] that acts on the currently active [View] in a [ViewManager]
+ * A base implementation of an [Action] that acts on the currently active [View] in a [ContentViewManager]
  * and that disables itself if no [View] is active.
  *
  * Listens for [PropertyChangeEvent] from the active [View] and calls [handleViewPropertyChanged] to
@@ -19,13 +19,13 @@ import ch.scorpion.jabbah.draw.View
 abstract class AbstractViewAction(
 	baseName: String,
 	protected val eventBus: EventBus = BaseModule.eventBus,
-	val viewManager: ViewManager = DrawViewModule.viewManager
+	val viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractAction(baseName) {
 
-	private val activeViewHandler: EventHandler<ActiveViewChangedEvent> = { activeViewChanged(it.oldView, it.newView) }
+	private val activeViewHandler: EventHandler<ActiveContentViewChangedEvent> = { activeViewChanged(it.oldView, it.newView) }
 
 	init {
-		eventBus.register(ActiveViewChangedEvent::class, activeViewHandler)
+		eventBus.register(ActiveContentViewChangedEvent::class, activeViewHandler)
 	}
 
 	override fun dispose() {

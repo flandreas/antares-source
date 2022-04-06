@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
@@ -30,7 +30,7 @@ open class GraphFrameSwing(
 	val controller: GraphFrameController<GraphFrame>,
 	application: DesktopApplication,
 	private val eventBus: EventBus,
-	val viewManager: ViewManager,
+	val viewManager: ContentViewManager,
 	val actions: GraphFrameActions
 ) : AbstractApplicationFrame(application), GraphFrame {
 

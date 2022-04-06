@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -24,7 +24,7 @@ import javax.swing.Action
 class EditSubGraphVerticeViewAction(
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val metaGraphRepository: MetaGraphRepository = GraphModule.metaGraphRepository
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
@@ -55,7 +55,6 @@ class EditSubGraphVerticeViewAction(
 			viewManager)
 
 		val oldActiveView = viewManager.activeView
-		//viewManager.registerView(containerPanel.editor.view)
 
 		containerPanel.initialize()
 
@@ -74,7 +73,6 @@ class EditSubGraphVerticeViewAction(
 			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
 		}
 
-		//viewManager.unregisterView(containerPanel.editor.view)
 		viewManager.activeView = oldActiveView
 
 		editedVerticeView.invalidate()

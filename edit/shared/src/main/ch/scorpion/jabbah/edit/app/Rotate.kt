@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 
 class RotateAction(
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractSelectionAwareAction("edit.action.rotate", eventBus, viewManager) {
 

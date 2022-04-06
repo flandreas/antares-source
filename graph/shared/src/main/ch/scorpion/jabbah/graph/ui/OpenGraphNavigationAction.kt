@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * @param subGraphVerticeView set during execution, when there is no selection
  */
 class OpenGraphNavigationAction(
-	viewManager: ViewManager = DrawViewModule.viewManager,
+	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus,
 	var subGraphVerticeView: SubGraphVerticeView<*>? = null
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {

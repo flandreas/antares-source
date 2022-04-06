@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 abstract class AbstractEditAction(
 	baseName: String,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractViewAction(baseName, eventBus, viewManager) {
 
 	@Suppress("UNCHECKED_CAST")

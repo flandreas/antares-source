@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 class ApplicationModeHolderImpl(
 	val editor: Editor,
 	private val scheduler: Scheduler,
-	private val viewManager: ViewManager = DrawViewModule.viewManager,
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ApplicationModeHolder {
 

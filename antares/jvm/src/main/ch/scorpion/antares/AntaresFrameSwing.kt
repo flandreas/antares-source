@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameActions
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
@@ -27,7 +27,7 @@ class AntaresFrameSwing(
 	controller: AntaresFrameController,
 	application: DesktopApplication,
 	eventBus: EventBus,
-	viewManager: ViewManager,
+	viewManager: ContentViewManager,
 	actions: GraphFrameActions
 ) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, eventBus, viewManager, actions), AntaresFrame {
 

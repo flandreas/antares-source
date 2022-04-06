@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.draw.View
  */
 object DrawViewModule : AbstractModule() {
 
-    var viewManager: ViewManager = ViewManagerImpl(BaseModule.eventBus)
+    var viewManager: ContentViewManager = ContentViewManagerImpl(BaseModule.eventBus)
 
     override fun initialize() {
 	    BaseModule.require()

@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
-import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
+import ch.scorpion.jabbah.draw.view.ActiveContentViewChangedEvent
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
@@ -144,7 +144,7 @@ class GraphPanelViewController(
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
-	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { applicationModeHolder.updateEditorEditability() }
+	private val activeViewChangeHandler: EventHandler<ActiveContentViewChangedEvent> = { applicationModeHolder.updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
 	private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { propertyPanelController.refresh() }
@@ -156,7 +156,7 @@ class GraphPanelViewController(
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(ActiveViewChangedEvent::class, activeViewChangeHandler)
+		eventBus.register(ActiveContentViewChangedEvent::class, activeViewChangeHandler)
 		eventBus.register(IssueCollectorEvent::class, issuesCollectorHandler)
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, executionStoppedOnIssueHandler)
 		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenamedHandler)

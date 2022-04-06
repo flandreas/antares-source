@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -33,13 +33,13 @@ class ContainerPanelSwing(
 	val editor: ContainerEditor,
 	propertySheetFactory: PropertySheetPanelFactory,
 	private val eventBus: EventBus,
-	viewManager: ViewManager
+	viewManager: ContentViewManager
 ) : JPanel() {
 
 	constructor(
 		application: Application,
 		editor: ContainerEditor,
-		viewManager: ViewManager
+		viewManager: ContentViewManager
 	) : this(application, editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
 	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
@@ -113,7 +113,7 @@ class ContainerPanelSwing(
 		treeView.update(graphView, containerDrawing, editable)
 	}
 
-	private fun buildUI(viewManager: ViewManager) {
+	private fun buildUI(viewManager: ContentViewManager) {
 		layout = BorderLayout()
 
 		val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)

@@ -13,7 +13,7 @@ import javax.swing.JPanel
 import javax.swing.UIManager
 
 /**
- * A [JPanel] that displays focus ownership, and that activates its [View] in the [ViewManager]
+ * A [JPanel] that displays focus ownership, and that activates its [View] in the [ContentViewManager]
  * when it gets the focus.
  *
  * @param child the [JComponent] to be added as a direct child of this [FocusPanel]
@@ -22,7 +22,7 @@ import javax.swing.UIManager
 class FocusPanel(
 	child: JComponent,
 	val contentView: ContentView<*>,
-	viewManager: ViewManager
+	viewManager: ContentViewManager
 ) : JPanel() {
 
 	companion object {

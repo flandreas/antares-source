@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -50,7 +50,7 @@ import javax.swing.plaf.FontUIResource
  */
 class AntaresSwing(
 	commandLine: CommandLine,
-	private val viewManager: ViewManager = DrawViewModule.viewManager
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractDesktopApplicationSwing(
 	commandLine,
 	GraphDataViewController()

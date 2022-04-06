@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 class ToFrontAction(
 	private val cmdManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toFront", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
@@ -23,7 +23,7 @@ class ToFrontAction(
 class OneUpAction(
 	private val cmdManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneUp", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
@@ -34,7 +34,7 @@ class OneUpAction(
 class OneDownAction(
 	private val cmdManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneDown", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
@@ -45,7 +45,7 @@ class OneDownAction(
 class ToBackAction(
 	private val cmdManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toBack", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
