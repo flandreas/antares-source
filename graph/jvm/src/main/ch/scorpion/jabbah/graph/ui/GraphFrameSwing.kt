@@ -84,7 +84,6 @@ open class GraphFrameSwing(
 			editor.view.initialize()
 
 			displayedView = GraphFrame.DisplayedView.Desktop
-			viewManager.activeView = editor.view
 			containerPanel.active = false
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}

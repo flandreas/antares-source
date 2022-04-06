@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
@@ -71,7 +73,8 @@ interface GraphFrameActions {
 open class GraphFrameController<T: GraphFrame>(
 	private val applicationDataHolder: ApplicationDataHolder,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val properties: Properties = BaseModule.properties
+	private val properties: Properties = BaseModule.properties,
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractUIController<T>(), GraphFrameActions {
 
 	companion object {

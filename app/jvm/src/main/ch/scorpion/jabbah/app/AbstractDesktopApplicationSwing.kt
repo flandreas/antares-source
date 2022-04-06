@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -58,7 +57,6 @@ abstract class AbstractDesktopApplicationSwing(
 		mainFrame = createMainFrame()
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
 
-		DrawViewModule.viewManager.activeView = mainFrame.editor.view
 		BusyHandler.register(mainFrame, null)
 
 		SwingUtilities.invokeLater {

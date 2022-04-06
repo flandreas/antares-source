@@ -5,15 +5,15 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.view.AbstractViewAction
-import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.AbstractContentViewAction
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 
 /** Asks the [View] currently active in [ContentViewManager] to close.*/
 class CloseViewAction(
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.close", eventBus, viewManager) {
+) : AbstractContentViewAction("view.action.close", eventBus, viewManager) {
 
 	init {
 		updateEnabled()
