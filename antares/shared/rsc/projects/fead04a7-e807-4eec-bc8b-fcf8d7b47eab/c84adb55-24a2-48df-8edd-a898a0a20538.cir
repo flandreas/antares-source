@@ -2,9 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var a = elem.inputBit(1);
-var b = elem.inputBit(2);
-elem.setOutputBit(!(a || b));'>
+        <graph _id='2' script='O = not (A or B)'>
           <elements>
             <transistor _id='3' id='1' delay='20' bitWidth='1' type='n'/>
             <transistor _id='4' id='2' delay='20' bitWidth='1' type='n'/>
@@ -225,7 +223,7 @@ elem.setOutputBit(!(a || b));'>
             <digitalPortView _id='82' x='182.0' y='168.0' dir='east' textPos='hide' portId='83'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='84'>
+        <label _id='84' rot='0'>
           <text>
             <translation lang='en' text='≥1'/>
           </text>

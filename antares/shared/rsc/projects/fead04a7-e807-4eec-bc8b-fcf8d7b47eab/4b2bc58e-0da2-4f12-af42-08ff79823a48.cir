@@ -2,9 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var a = elem.inputBit(1);
-var b = elem.inputBit(2);
-elem.setOutputBit(a &amp;&amp; !b || !a &amp;&amp; b);'>
+        <graph _id='2' script='O = (A and not B) or (not A and B)'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='1'/>
@@ -533,7 +531,7 @@ elem.setOutputBit(a &amp;&amp; !b || !a &amp;&amp; b);'>
             <digitalPortView _id='203' x='182.0' y='168.0' dir='east' textPos='hide' portId='204'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='205'>
+        <label _id='205' rot='0'>
           <text>
             <translation lang='en' text='=1'/>
           </text>

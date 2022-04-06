@@ -2,6 +2,7 @@
 antares.log
 build/
 out/
+antares/shared/rsc/history/
 doc/model/model.mdj
 doc/model/model-img/
 doc/model/graffle-img
