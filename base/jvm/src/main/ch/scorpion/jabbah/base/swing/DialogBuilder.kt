@@ -70,6 +70,11 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
+	fun maximumSize(size: Dimension): DialogBuilder<T> {
+		dialog.maximumSize = size
+		return this
+	}
+
 	fun onWindowOpened(handler: (T) -> Unit): DialogBuilder<T> {
 		this.onWindowOpened = handler
 		return this

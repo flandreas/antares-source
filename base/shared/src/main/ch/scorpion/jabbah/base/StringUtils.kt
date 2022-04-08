@@ -26,13 +26,19 @@ object StringUtils {
         return s
     }
 
-	fun orElse(s: String?, alternative: String): String {
-		return if (!isBlank(s)) {
+	fun orElse(s: String?, alternative: String): String =
+		if (!isBlank(s)) {
 			s!!
 		} else {
 			alternative
 		}
-	}
+
+	fun orNull(s: String?): String? =
+		if (s == null || isBlank(s)) {
+			null
+		} else {
+			s
+		}
 
     /** Counts the number of occurrences of a particular [Char] in a [String].*/
     fun countChar(s: String, c: Char): Int = s.length - s.replace(c.toString(), "").length

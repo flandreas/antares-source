@@ -29,6 +29,9 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
+import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService
+import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService.Companion.PROP_PING_APPLICATION_ID
+import ch.scorpion.jabbah.app.rating.RailwayRatingService
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
@@ -175,8 +178,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	private fun customizeProperties(properties: Properties) {
 		properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:9999")
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
+		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
-		properties.set(RailwayAppUsageServiceImpl.PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
+		properties.set(RailwayRatingService.PROP_ASPECTS_URL, "https://click-metrics.up.railway.app/api/aspects")
+		properties.set(RailwayRatingService.PROP_RATING_URL, "https://click-metrics.up.railway.app/api/rating")
 
 		properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
 		properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
