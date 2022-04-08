@@ -79,11 +79,7 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
 		if (event.name == Editor.PROP_ACTIVE) {
-			bean = if (editor.active) {
-				defaultBean
-			} else {
-				null
-			}
+			bean = defaultBean
 		}
 	}
 

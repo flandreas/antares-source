@@ -40,7 +40,7 @@ class ComponentPropertyPanelController(
 			else -> bean.toString()
 		}
 
-	override val defaultBean: Any get() = editor.drawing
+	override val defaultBean: Any? get() = if (editor.active) editor.drawing else null
 
 	/** ---- [ComponentPropertyPanelController] */
 
@@ -50,7 +50,11 @@ class ComponentPropertyPanelController(
 		}
 
 		bean = if (event.type !== SelectionChangeEvent.Type.SELECTED) {
-			editor.view.drawing
+			if (editor.active) {
+				editor.view.drawing
+			} else {
+				null
+			}
 		} else {
 			getSelectedComponent(event)
 		}
