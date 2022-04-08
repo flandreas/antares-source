@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.io.Storable
 import io.mockk.mockk
 import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertNull
-import kotlin.test.assertSame
+import kotlin.test.*
 
 class ApplicationDataViewControllerTest {
 
@@ -214,5 +212,12 @@ class ApplicationDataViewControllerTest {
 
 		verify { repositoryBuilder.build().store(eq(newSavable), eq(controller.data!!.content)) }
 		verify(exactly = 3) { commandManagerMock.build().reset() }
+	}
+
+	@Test
+	fun shouldDisableSaveWithoutData() {
+		controller.newData()
+		controller.data = null
+		assertFalse(controller.saveAction.enabled)
 	}
 }

@@ -50,7 +50,7 @@ class SaveFileAction(
 
     private fun update() {
 	    controller.apply {
-		    enabled = data == null || !data!!.savable.defined || commandManager.canUndo()
+		    enabled = data != null && data!!.savable.defined && commandManager.canUndo()
 		    description = Translations.getString("file.action.save.desc", commandManager.commandCount)
 	    }
     }
