@@ -90,7 +90,7 @@ class BitExtender(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		inputBitWidth.write("inputBitWidth", writer)
-		inputBitWidth.write("outputBitWidth", writer)
+		outputBitWidth.write("outputBitWidth", writer)
 	}
 
 	override fun read(reader: StoreReader) {
