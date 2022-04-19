@@ -83,7 +83,7 @@ open class GraphMenuBarBuilder(
 			menu.addSeparator()
 			menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
 		}
-		menu.add(JMenuItem(ActionWrapperSwing(RatingAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(RatingAction(frame.application))))
 	}
 
 	override fun fillEditMenu(menu: JMenu) {

@@ -7,25 +7,43 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.TimeService
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.java.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.serialization.Serializable
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+/**
+ * A service allowing users to rate the current application.
+ */
 interface RatingService {
 
+	/**
+	 * Determines whether a rating is currently required. Depends on the date of the last
+	 * rating and the configured interval between multiple ratings.
+	 */
 	fun requiresRating(): Boolean
 
+	/**
+	 * Retrieves the configured [RatingAspect] for the current application from the server.
+	 */
 	suspend fun retrieveAspects(applicationId: String? = null): List<RatingAspect>
 
-	suspend fun sendRating(rating: Rating, applicationId: String? = null, userIdentifier: String? = null)
+	/**
+	 * Sends a [Rating] the user has given to the server.
+	 * @return `true` if sending was successful
+	 */
+	suspend fun sendRating(rating: Rating, applicationId: String? = null, userIdentifier: String? = null): Boolean
 
+	/**
+	 * Handles the decision of the user to be asked later for a [Rating].
+	 */
 	fun askLater()
 }
 
@@ -68,21 +86,24 @@ open class RailwayRatingService(
 		val projectId = getProjectId(applicationId)
 		val url = "${properties.getString(PROP_ASPECTS_URL)}/$projectId"
 
-		LOG.info("Fetching rating aspects from $url")
+		LOG.debug("Fetching rating aspects from $url")
 
-		val response: HttpResponse = client.get(url)
-		val body: ByteArray = response.receive()
-
-		println(body)
-
-		return emptyList()
+		val aspects: RatingAspects = client.get(url)
+		return aspects.aspects
 	}
 
-	override suspend fun sendRating(rating: Rating, applicationId: String?, userIdentifier: String?) {
-		try {
-			sendRatingImpl(rating, applicationId, userIdentifier)
-			storeNextRatingDate(today().plusDays(NEXT_RATING_DAYS))
+	override suspend fun sendRating(rating: Rating, applicationId: String?, userIdentifier: String?): Boolean {
+		return try {
+			val status = sendRatingImpl(rating, applicationId, userIdentifier)
+			if (status == HttpStatusCode.Created) {
+				storeNextRatingDate(today().plusDays(NEXT_RATING_DAYS))
+				true
+			} else {
+				LOG.error("Received status code ${status.value} while sending rating")
+				false
+			}
 		} catch (e: Throwable) {
+			LOG.error("Error while sending rating", e)
 			throw e
 		}
 	}
@@ -91,8 +112,15 @@ open class RailwayRatingService(
 		storeNextRatingDate(today().plusDays(ASK_ME_LATER_DAYS))
 	}
 
-	protected open fun sendRatingImpl(rating: Rating, applicationId: String?, userIdentifier: String?) {
-		TODO()
+	protected open suspend fun sendRatingImpl(rating: Rating, applicationId: String?, userIdentifier: String?): HttpStatusCode {
+		val url = properties.getString(PROP_RATING_URL)
+		LOG.debug("Sending rating to $url")
+
+		val response: HttpResponse =  client.post(url) {
+			contentType(ContentType.Application.Json)
+			body = createRatingRequest(rating, applicationId, userIdentifier)
+		}
+		return response.status
 	}
 
 	private fun readNextRatingDate(): LocalDate? =
@@ -108,21 +136,23 @@ open class RailwayRatingService(
 
 	private fun today(): LocalDate =
 		Instant.ofEpochMilli(timeService.nowMillis()).atZone(ZoneId.systemDefault()).toLocalDate()
+
+	private fun createRatingRequest(rating: Rating, applicationId: String?, userIdentifier: String?): RatingRequest =
+		RatingRequest(
+			project = getProjectId(applicationId),
+			identifier = userIdentifier ?: getIdentifier(),
+			rating = rating.overallRating,
+			comment = rating.remark,
+			most = rating.likeMost.id,
+			least = rating.likeLeast.id)
 }
 
-class DummyRatingService : RailwayRatingService() {
-
-	override suspend fun retrieveAspects(applicationId: String?): List<RatingAspect> {
-		return listOf(
-			RatingAspect("Bugs", "Few bugs", "Many bugs"),
-			RatingAspect("Features", "Rich feature set", "Missing features"),
-			RatingAspect("Performance", "Good performance", "Bad performance"),
-			RatingAspect("Usability", "Easy to use", "Awkward to use"),
-			RatingAspect("Other", "Other", "Other")
-		)
-	}
-
-	override fun sendRatingImpl(rating: Rating, applicationId: String?, userIdentifier: String?) {
-		// Do nothing
-	}
-}
+@Serializable
+data class RatingRequest(
+	val project: String,
+	val identifier: String,
+	val rating: Int,
+	val comment: String? = null,
+	val most: Int,
+	val least: Int
+)

@@ -29,6 +29,8 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	private var onWindowClosed: (T) -> Unit = {}
 
+	private var preventWindowClose: Boolean = false
+
 	fun content(factory: (JDialog) -> T): DialogBuilder<T> {
 		content = factory.invoke(dialog)
 		dialog.contentPane = content
@@ -85,10 +87,19 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 		return this
 	}
 
+	fun preventWindowClose(b: Boolean = true): DialogBuilder<T> {
+		this.preventWindowClose = b
+		return this
+	}
+
 	fun show(): DialogBuilder<T> {
 		BusyHandler.register(dialog, null)
 		setupWindowListener()
-		setupEscapeListener()
+		if (!preventWindowClose) {
+			setupEscapeListener()
+		} else {
+			dialog.defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
+		}
 		dialog.pack()
 		dialog.setLocationRelativeTo(parent)
 		dialog.isVisible = true

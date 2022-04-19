@@ -111,7 +111,8 @@ abstract class AbstractDesktopApplicationSwing(
 	override fun handleShutdown() {
 		super.handleShutdown()
 		if (ratingService.requiresRating()) {
-			RatingPanel.showAsDialog(mainFrame)
+			// Cannot use InvocationHandler, App would quit before dialog is shown
+			RatingPanel.showAsDialog(this, cancelable = false, mainFrame)
 		}
 	}
 
