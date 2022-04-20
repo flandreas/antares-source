@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.app.module
 
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.rating.RailwayRatingService
+import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -10,6 +12,7 @@ object AppModuleJvm : AbstractModule() {
 
 	var applicationVersionService: ApplicationVersionService = ApplicationVersionServiceImpl()
 	var applicationUsageService: ApplicationUsageService = RailwayAppUsageServiceImpl()
+	val ratingService: RatingService = RailwayRatingService()
 
 	override fun initialize() {
 		EditModuleJvm.require()

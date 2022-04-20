@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.app.action.AboutAction
 import ch.scorpion.jabbah.app.action.ExportLogfileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
+import ch.scorpion.jabbah.app.rating.RatingAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.auth0.LoginLogoutAction
@@ -82,6 +83,7 @@ open class GraphMenuBarBuilder(
 			menu.addSeparator()
 			menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
 		}
+		menu.add(JMenuItem(ActionWrapperSwing(RatingAction(frame.application))))
 	}
 
 	override fun fillEditMenu(menu: JMenu) {

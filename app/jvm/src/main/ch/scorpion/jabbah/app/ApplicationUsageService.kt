@@ -1,17 +1,16 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import java.math.BigInteger
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 
 interface ApplicationUsageService {
 
@@ -39,14 +38,12 @@ interface ApplicationUsageService {
 }
 
 class RailwayAppUsageServiceImpl(
-	private val properties: Properties = BaseModule.properties,
-	private val settings: Settings = BaseModule.settings
-) : ApplicationUsageService {
+	properties: Properties = BaseModule.properties,
+	settings: Settings = BaseModule.settings
+) : AbstractRailwayAppService(properties, settings), ApplicationUsageService {
 
 	companion object {
 		const val PROP_PING_URL = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.pingUrl"
-		const val PROP_PING_APPLICATION_ID = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.applicationId"
-		const val PROP_USER_IDENTIFIER = "ch.scorpion.jabbah.app.ApplicationUsageServiceImpl.userId"
 
 		// 1 day
 		private const val KEEP_ALIVE_MILLIS = 60 * 60 * 24 * 1_000
@@ -77,7 +74,7 @@ class RailwayAppUsageServiceImpl(
 
 	private fun sendPingRequest(applicationId: String?, userIdentifier: String?) {
 		val pingUrl = properties.getString(PROP_PING_URL)
-		val projectId = applicationId ?: URLEncoder.encode(properties.getString(PROP_PING_APPLICATION_ID), StandardCharsets.UTF_8)
+		val projectId = getProjectId(applicationId)
 		val identifier = URLEncoder.encode(userIdentifier ?: getIdentifier(), StandardCharsets.UTF_8)
 
 		val client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build()
@@ -91,23 +88,5 @@ class RailwayAppUsageServiceImpl(
 			.build()
 
 		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-	}
-
-	private fun getIdentifier(): String {
-		val userIdString = if (settings.containsKey(PROP_USER_IDENTIFIER)) {
-			settings.get(PROP_USER_IDENTIFIER)
-		} else {
-			val uuid = java.util.UUID.randomUUID().toString()
-			settings.set(PROP_USER_IDENTIFIER, uuid)
-			uuid
-		}
-		return hash(userIdString)
-	}
-
-	private fun hash(value: String): String {
-		val msgDigest = MessageDigest.getInstance("SHA-1")
-		val inputDigest = msgDigest.digest(value.toByteArray())
-		val inputDigestBigInt = BigInteger(1, inputDigest)
-		return inputDigestBigInt.toString(16).padStart(32, '0')
 	}
 }

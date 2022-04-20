@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.module.AppModuleJvm
+import ch.scorpion.jabbah.app.rating.RatingPanel
+import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
@@ -23,7 +25,8 @@ import javax.swing.SwingUtilities
 
 abstract class AbstractDesktopApplicationSwing(
 	commandLine: CommandLine,
-	controller: ApplicationDataViewController
+	controller: ApplicationDataViewController,
+	private val ratingService: RatingService = AppModuleJvm.ratingService
 ) : AbstractDesktopApplication(commandLine, controller) {
 
 	protected lateinit var mainFrame: AbstractApplicationFrame
@@ -105,9 +108,18 @@ abstract class AbstractDesktopApplicationSwing(
 
 	/** ---- [AbstractDesktopApplication] */
 
+	override fun handleShutdown() {
+		super.handleShutdown()
+		if (ratingService.requiresRating()) {
+			// Cannot use InvocationHandler, App would quit before dialog is shown
+			RatingPanel.showAsDialog(this, cancelable = false, mainFrame)
+		}
+	}
+
 	override fun shutdownUI() {
 		mainFrame.dispose()
 	}
+
 
 	/** ---- [AbstractDesktopApplicationSwing] */
 

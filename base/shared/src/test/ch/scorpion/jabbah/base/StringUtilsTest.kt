@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.StringUtils.fromList
 import ch.scorpion.jabbah.base.StringUtils.toList
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
  * Unit tests for [StringUtils].
@@ -54,9 +55,17 @@ class StringUtilsTest {
 	}
 
 	@Test
-	fun shouldListAndUnlist() {
+	fun shouldListAndUnList() {
 		assertList(listOf("A", "B", "C"))
 		assertList(listOf("A,B\\,Bla,C"))
+	}
+
+	@Test
+	fun shouldOrNull() {
+		assertNull(StringUtils.orNull(""))
+		assertNull(StringUtils.orNull(" "))
+		assertNull(StringUtils.orNull(null))
+		assertEquals("test", StringUtils.orNull("test"))
 	}
 
 	private fun assertList(list: List<String>) {
