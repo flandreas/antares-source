@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.TimeService
+import ch.scorpion.jabbah.edit.Bean
 import io.ktor.client.*
 import io.ktor.client.engine.java.*
 import io.ktor.client.features.json.*
@@ -83,13 +84,18 @@ open class RailwayRatingService(
 		readNextRatingDate()?.isBefore(today()) ?: true
 
 	override suspend fun retrieveAspects(applicationId: String?): List<RatingAspect> {
-		val projectId = getProjectId(applicationId)
-		val url = "${properties.getString(PROP_ASPECTS_URL)}/$projectId"
+		try {
+			val projectId = getProjectId(applicationId)
+			val url = "${properties.getString(PROP_ASPECTS_URL)}/$projectId"
 
-		LOG.debug("Fetching rating aspects from $url")
+			LOG.debug("Retrieving rating aspects from $url")
 
-		val aspects: RatingAspects = client.get(url)
-		return aspects.aspects
+			val aspects: RatingAspects = client.get(url)
+			return aspects.aspects
+		} catch (e: Throwable) {
+			LOG.error("Error while retrieving rating aspects", e)
+			throw e
+		}
 	}
 
 	override suspend fun sendRating(rating: Rating, applicationId: String?, userIdentifier: String?): Boolean {
@@ -155,4 +161,4 @@ data class RatingRequest(
 	val comment: String? = null,
 	val most: Int,
 	val least: Int
-)
+) : Bean

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app.rating
 
+import ch.scorpion.jabbah.edit.Bean
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,9 +18,9 @@ data class RatingAspect(
 	val id: Int,
 	val positive: String,
 	val negative: String
-)
+) : Bean
 
 @Serializable
 data class RatingAspects(
 	val aspects: List<RatingAspect>
-)
+) : Bean

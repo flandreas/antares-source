@@ -6,7 +6,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath("com.guardsquare:proguard-gradle:7.2.0-beta2")
+		classpath("com.guardsquare:proguard-gradle:7.2.1")
 	}
 }
 
