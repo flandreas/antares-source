@@ -161,7 +161,8 @@ class SubGraphVerticeViewImpl(
 	private val defaultLabelText: Translatable? get() = repository
 		.getMetaGraph(model.graphUUID!!)
 		.containerDrawing.drawables.filterIsInstance<LabelComponent>()
-		.firstOrNull()?.text
+		// the last one is the first one added (i.e. the bottom-most in the stacking order)
+		.lastOrNull()?.text
 
 	private fun updateLabelComponent(label: Translatable?) {
 		getLabelComponent()?.let { labelComponent ->
@@ -565,7 +566,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun resetLabel() {
-		repository.getMetaGraph(model.graphUUID!!).containerDrawing.drawables.filterIsInstance<LabelComponent>().firstOrNull()?.let {
+		repository.getMetaGraph(model.graphUUID!!).containerDrawing.drawables.filterIsInstance<LabelComponent>().lastOrNull()?.let {
 			label = it.text
 		}
 	}
