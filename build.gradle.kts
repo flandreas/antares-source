@@ -128,7 +128,7 @@ subprojects {
 				// (https://github.com/gradle/gradle/issues/17236)
 				tasks {
 					val jvmJar by getting(Jar::class) {
-						duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+						duplicatesStrategy = DuplicatesStrategy.INCLUDE
 					}
 				}
 			}
