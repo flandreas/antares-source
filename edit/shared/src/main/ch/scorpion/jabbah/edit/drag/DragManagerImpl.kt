@@ -4,18 +4,21 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
+import kotlin.math.abs
 
 class DragManagerImpl(
 	private val editor: Editor,
 	private val drawingAppService: DrawingAppService = EditModule.drawingAppService,
 	plugins: Collection<DragManagerPlugin> = emptySet()
-) : DragManager {
+) : InputEventHandlerAdapter<InputEventContext>(), DragManager {
 
 	companion object {
 		private val LOG by logger(DragManagerImpl::class)
@@ -34,6 +37,9 @@ class DragManagerImpl(
 
 	/** The location of [movedReferenceComponent] before moving it. */
 	private var moveStartLocation = Point2D.ZERO
+
+	/** The location of the mouse (model) at the start of dragging. */
+	private var mouseStartLocation = Point2D.ZERO
 
 	/** Stores the location of [movedReferenceComponent] before the last drag operation.*/
 	private var moveLastLocation = Point2D.ZERO
@@ -60,29 +66,43 @@ class DragManagerImpl(
 			movedReferenceComponent = component
 			moveStartLocation = Point2D(movedReferenceComponent!!.location)
 			moveLastLocation = Point2D(x, y)
+			mouseStartLocation = Point2D(x, y)
 		}
 	}
 
-	override fun mouseDragged(x: Double, y: Double) {
+	override fun mouseDragged(context: InputEventContext): InputEventHandler<InputEventContext>? {
 		val selection = editor.view.selectionManager.selection
 		if (selection.size == 1 && selection.first().isDragManager) {
-			return
+			return null
 		}
 
-		dragSnapped(selection, x, y)
+		dragSnapped(selection, context.x, context.y, orthogonal = context.mouseEvent?.isShiftDown == true)
 
 		if (selection.size == 1) {
 			involvePluginsDragged(selection.first())
 		}
 
 		editor.drawing.validate()
+		return null
 	}
 
-	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double) {
-		val dx = x - moveLastLocation.x
-		val dy = y - moveLastLocation.y
-		var snap = Point2D.ZERO
+	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean) {
+		// Calculate the mouse move vector
+		var dx = x - mouseStartLocation.x
+		var dy = y - mouseStartLocation.y
 
+		if (orthogonal) {
+			if (abs(dx) >= abs(dy)) {
+				// move horizontally
+				dy = 0.0
+			} else {
+				// move vertically
+				dx = 0.0
+			}
+		}
+
+		// Snap the new location
+		var snap = Point2D.ZERO
 		if (editor.snapManager.snapEnabled) {
 			if (components.size > 1) {
 				if (multiComponentSnappable == null) {
@@ -94,10 +114,11 @@ class DragManagerImpl(
 			}
 		}
 
-		val offset =  Point2D(dx + snap.x, dy + snap.y)
+		val overallMove =  Point2D(dx + snap.x, dy + snap.y)
+		val delta = moveStartLocation.add(overallMove).subtract(movedReferenceComponent!!.location)
 
 		// Move all selected [Components] by the same snapped offset
-		Movable.dragBy(components, offset)
+		Movable.dragBy(components, delta)
 		moveLastLocation = Point2D(x + snap.x, y + snap.y)
 	}
 
@@ -115,12 +136,12 @@ class DragManagerImpl(
 		}
 	}
 
-	override fun mouseReleased(x: Double, y: Double) {
+	override fun mouseReleased(context: InputEventContext): InputEventHandler<InputEventContext>? {
 		if (movedReferenceComponent != null) {
 			val selection = editor.view.selectionManager.selection
 
 			if (selection.size == 1 && selection.first().isDragManager) {
-				return
+				return null
 			}
 
 			if (moveStartLocation != movedReferenceComponent?.location) {
@@ -149,6 +170,29 @@ class DragManagerImpl(
 		}
 
 		involvePluginsDragTerminated()
+		return null
+	}
+
+	override fun keyPressed(context: InputEventContext): InputEventHandler<InputEventContext>? {
+		if (movedReferenceComponent != null && context.keyEvent?.key == KeyEvent.VK_SHIFT) {
+			val selection = editor.view.selectionManager.selection
+			if (selection.size == 1 && selection.first().isDragManager) {
+				return null
+			}
+			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = true)
+		}
+		return null
+	}
+
+	override fun keyReleased(context: InputEventContext): InputEventHandler<InputEventContext>? {
+		if (movedReferenceComponent != null &&  context.keyEvent?.key == KeyEvent.VK_SHIFT) {
+			val selection = editor.view.selectionManager.selection
+			if (selection.size == 1 && selection.first().isDragManager) {
+				return null
+			}
+			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = false)
+		}
+		return null
 	}
 
 	private fun involvePluginsDragFinished(component: Component): List<Command> {
@@ -183,7 +227,7 @@ class DragManagerImpl(
 	override fun setDropComponent(component: Component?, location: Point2D?) {
 		if (component != null) {
 			if (dropComponent != null) {
-				dragSnapped(listOf(component), location!!.x, location.y)
+				dragSnapped(listOf(component), location!!.x, location.y, orthogonal = false)
 				involvePluginsDragged(component)
 			} else {
 				component.location = location!!

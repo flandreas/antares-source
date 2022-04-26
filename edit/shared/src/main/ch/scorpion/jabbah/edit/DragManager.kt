@@ -2,7 +2,8 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
 
 typealias DragManagerFactory = (Editor) -> DragManager
 /**
@@ -15,7 +16,7 @@ typealias DragManagerFactory = (Editor) -> DragManager
  * dragging objects between UI elements in a platform-specific way, while "dragging" by [DragManager]
  * refers to dragging [Component]s within the same [Drawing] in a lightweight, platform-independent way.
  */
-interface DragManager {
+interface DragManager : InputEventHandler<InputEventContext> {
 
 	val dropComponent: Component?
 
@@ -25,19 +26,6 @@ interface DragManager {
 	 * Called when the user presses the mouse button at [x], [y] over [component].
 	 */
 	fun prepareDrag(component: Component, x: Double, y: Double)
-
-	/**
-	 * Called after the user has dragged the mouse with pressed button to [x], [y]
-	 * after [prepareDrag] has previously been called.
-	 * Moves all selected [Component]s while snapping the move offset using [SnapManager].
-	 */
-	fun mouseDragged(x: Double, y: Double)
-
-	/**
-	 * Called after the user has released the mouse at [x], [y] after [prepareDrag] has previously been called.
-	 * Completes moving the selected [Component]s by using an undoable [DrawingAppService] method.
-	 */
-	fun mouseReleased(x: Double, y: Double)
 
 	/** Determines whether [Component]s can be moved if the user pressed the key in [KeyEvent].*/
 	fun isMoveKey(event: KeyEvent): Boolean

@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.Tool
 
 /**
  * An API for driving an [Editor]'s current [Tool] during tests.
+ * TODO: Copy/Paste from corresponding class in ch.scorpion.jabbah.edit test package
+ * due to missing Kotlin MPP feature KT-35073.
  */
 class EditorToolDriver(
 	private val editor: Editor

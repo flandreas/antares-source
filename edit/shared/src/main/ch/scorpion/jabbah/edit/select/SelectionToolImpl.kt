@@ -43,12 +43,15 @@ class SelectionToolImpl(
 			return
 		}
 		LOG.trace("keyPressed")
+		val context = keyEventContext(e)
 		if (target != null) {
-			target = target?.keyPressed(keyEventContext(e))
+			target = target?.keyPressed(context)
 			return
 		}
 		if (editor.dragManager.isMoveKey(e) && editor.view.selectionManager.selectionCount > 0) {
 			editor.dragManager.moveByKeyEvent(e)
+		} else {
+			editor.dragManager.keyPressed(context)
 		}
 	}
 
@@ -57,7 +60,9 @@ class SelectionToolImpl(
 			return
 		}
 		LOG.trace("keyReleased")
-		target = target?.keyReleased(keyEventContext(e))
+		val context = keyEventContext(e)
+		editor.dragManager.keyReleased(context)
+		target = target?.keyReleased(context)
 	}
 
 	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
@@ -173,14 +178,15 @@ class SelectionToolImpl(
 			LOG.trace("drag to $x,$y, target is $target")
 		}
 
+		val context = mouseEventContext(e, x, y)
 		if (target != null) {
-			target = target?.mouseDragged(mouseEventContext(e, x, y))
+			target = target?.mouseDragged(context)
 			if (target != null) {
 				return
 			}
 		}
 
-		editor.dragManager.mouseDragged(x, y)
+		editor.dragManager.mouseDragged(context)
 	}
 
 	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
@@ -194,11 +200,12 @@ class SelectionToolImpl(
 
 		LOG.trace("mouseReleased at $x,$y")
 
+		val context = mouseEventContext(e, x, y)
 		if (target != null) {
-			target = target?.mouseReleased(mouseEventContext(e, x, y))
+			target = target?.mouseReleased(context)
 		}
 
-		editor.dragManager.mouseReleased(x, y)
+		editor.dragManager.mouseReleased(context)
 
 		if (target == null) {
 			updateCursor(editor.drawing.getDrawableAt(x, y))
