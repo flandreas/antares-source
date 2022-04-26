@@ -38,7 +38,9 @@ import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.DrawExecSymbolFunctions
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -432,6 +434,13 @@ class SubGraphVerticeViewImpl(
 			effectiveLabelText?.let {
 				labelComponent.text = it
 			}
+		}
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == Vertice.STATE_CHANGE_TYPE) {
+			tooltip.reset()
 		}
 	}
 
