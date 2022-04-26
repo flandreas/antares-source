@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.TimeService
 import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import io.ktor.client.*
 import io.ktor.client.engine.java.*
 import io.ktor.client.features.json.*
@@ -81,7 +82,7 @@ open class RailwayRatingService(
 	}
 
 	override fun requiresRating(): Boolean =
-		readNextRatingDate()?.isBefore(today()) ?: true
+		!EditAuthModule.userHolder.user.isDeveloper && (readNextRatingDate()?.isBefore(today()) ?: true)
 
 	override suspend fun retrieveAspects(applicationId: String?): List<RatingAspect> {
 		try {

@@ -5,6 +5,9 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.time.ControlledTimeService
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import java.time.LocalDate
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -24,7 +27,10 @@ class RailwayRatingServiceTest {
 	private val service = RailwayRatingService(timeService = timeService)
 
 	@BeforeTest
-	fun setNow() {
+	fun setup() {
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.anybody)
+
+		// Set now
 		BaseModule.timeService = timeService
 		BaseModule.settings.remove(RailwayRatingService.PROP_NEXT_RATING_DATE)
 		timeService.setTimeMillis(System.currentTimeMillis())

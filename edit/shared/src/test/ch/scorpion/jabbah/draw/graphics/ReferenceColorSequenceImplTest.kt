@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.edit.EditTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -8,6 +9,12 @@ import kotlin.test.assertFailsWith
  * Unit tests for [ReferenceColorSequenceImpl].
  */
 class ReferenceColorSequenceImplTest {
+
+	companion object {
+		init {
+			EditTestRule.configure()
+		}
+	}
 
 	private val sequence = ReferenceColorSequenceImpl(listOf(
 		ReferenceColor(CompositeColor(foregroundColor = Color.BLACK)),

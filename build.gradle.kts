@@ -123,6 +123,14 @@ subprojects {
 					implementation("mind:exml:7.0.0")
 					implementation("com.formdev:flatlaf:2.0.1")
 				}
+
+				// Workaround for bug in Gradle > 7.0 complaining about duplicate translation resources in generated JAR
+				// (https://github.com/gradle/gradle/issues/17236)
+				tasks {
+					val jvmJar by getting(Jar::class) {
+						duplicatesStrategy = DuplicatesStrategy.INCLUDE
+					}
+				}
 			}
 			val jvmTest by getting {
 				kotlin.srcDir("jvm/src/test")
@@ -188,6 +196,7 @@ tasks {
 		outputDir = file("build/doc/user-manual")
 	}
 }
+
 
 /*
 // jsBrowserDevelopmentRun fails with webPack 5: Workaround https://youtrack.jetbrains.com/issue/KT-48273

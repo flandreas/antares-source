@@ -15,6 +15,10 @@ interface DrawableBag<T: Drawable> {
 
 	val useLocation: Boolean
 
+	/**
+	 * Holds the [Drawable]s that this [DrawableBag] contains. The topmost [Drawable] is stored
+	 * at the first position of the list.
+	 */
 	val drawables: List<T>
 
 	/** Holds the location for relocating [InputEventContext] when forwarding events to the inner [Drawable]s.*/

@@ -38,7 +38,9 @@ import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.DrawExecSymbolFunctions
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -161,7 +163,8 @@ class SubGraphVerticeViewImpl(
 	private val defaultLabelText: Translatable? get() = repository
 		.getMetaGraph(model.graphUUID!!)
 		.containerDrawing.drawables.filterIsInstance<LabelComponent>()
-		.firstOrNull()?.text
+		// the last one is the first one added (i.e. the bottom-most in the stacking order)
+		.lastOrNull()?.text
 
 	private fun updateLabelComponent(label: Translatable?) {
 		getLabelComponent()?.let { labelComponent ->
@@ -434,6 +437,13 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == Vertice.STATE_CHANGE_TYPE) {
+			tooltip.reset()
+		}
+	}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun addPortView(portView: PortView<*>) {
@@ -565,7 +575,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun resetLabel() {
-		repository.getMetaGraph(model.graphUUID!!).containerDrawing.drawables.filterIsInstance<LabelComponent>().firstOrNull()?.let {
+		repository.getMetaGraph(model.graphUUID!!).containerDrawing.drawables.filterIsInstance<LabelComponent>().lastOrNull()?.let {
 			label = it.text
 		}
 	}

@@ -178,9 +178,7 @@ open class TextComponentJvm(
 		if (!text.isEmpty) {
 			writer.writeStorables("text", text.allTranslations())
 		}
-		if (horizontalAlignment != HorizontalAlignment.CENTER) {
-			writer.writeString("hAlign", horizontalAlignment.customName)
-		}
+		writer.writeString("hAlign", horizontalAlignment.customName)
 	}
 
 	override fun read(reader: StoreReader) {

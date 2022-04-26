@@ -26,6 +26,7 @@ interface Vertice : GraphElement, Describable {
 		/** Used in [GraphElementEvent]s sent to [GraphElementListener], typically views.*/
 		const val STATE_CHANGE_INPUT = "input"
 		const val STATE_CHANGE_OUTPUT = "output"
+		const val STATE_CHANGE_TYPE = "type"
 	}
 
     /**

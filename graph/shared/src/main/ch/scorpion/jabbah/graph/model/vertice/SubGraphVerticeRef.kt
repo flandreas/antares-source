@@ -84,7 +84,13 @@ class SubGraphVerticeRef(
 
 	/** ---- [GraphElement] interface */
 
-	override lateinit var type: String
+	override var type: String = "" // lateinit not possible with custom setter
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged(null, Vertice.STATE_CHANGE_TYPE)
+			}
+		}
 
 	private var _typeDesc: String? = null
 	override val typeDesc: String? get() = _typeDesc
@@ -344,20 +350,12 @@ class SubGraphVerticeRef(
 	}
 
 	fun isDeepExecution(deepExecution: Boolean): Boolean {
-		//return !graph!!.purelyScripted && signalHandler.isDeepExecution || graph!!.script == null || graph!!.script == ""
-
 		if (isDeepExecutionCache == null) {
 			isDeepExecutionCache = (graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
 				!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
 			}
 		}
 		return isDeepExecutionCache!!
-
-		/*
-		return (graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
-			!it.purelyScripted && deepExecution ||  it.script == null || it.script == ""
-		}
-		 */
 	}
 
 	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =

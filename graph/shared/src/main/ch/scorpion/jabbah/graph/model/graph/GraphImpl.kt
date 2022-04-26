@@ -13,11 +13,13 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -48,12 +50,24 @@ open class GraphImpl(
 		}
 	}
 
+	private val containerLibraryElementRenameHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { event ->
+		_elements
+			.filterIsInstance<SubGraphVerticeRef>()
+			.filter { it.graphUUID == event.element.uuid }
+			.forEach { vRef ->
+				vRef.graphName = event.element.name
+				vRef.type = event.element.name.value
+			}
+	}
+
 	init {
 		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
+		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenameHandler)
 	}
 
 	override fun dispose() {
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
+		eventBus.unregister(containerLibraryElementRenameHandler)
 	}
 
 	/** ---- [Namable], [Describable] interfaces */
