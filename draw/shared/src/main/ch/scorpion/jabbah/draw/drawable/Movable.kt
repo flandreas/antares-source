@@ -12,14 +12,13 @@ interface Movable : Locatable {
 
 		/** Moves a [Collection] of [Locatable]s all by the same offset.*/
 		fun moveBy(movables: Collection<Movable>, offset: Point2D) {
-			movables.forEach { it.prepareMoveBy(movables) }
-			movables.forEach { it.moveBy(offset.x, offset.y) }
-			movables.forEach { it.completeMoveBy() }
+			moveBy(movables, offset.x, offset.y)
 		}
 
-		/** Drags a [Collection] of [Locatable]s all by the same offset.*/
-		fun dragBy(movables: Collection<Movable>, offset: Point2D) {
-			moveBy(movables, offset)
+		fun moveBy(movables: Collection<Movable>, dx: Double, dy: Double) {
+			movables.forEach { it.prepareMoveBy(movables) }
+			movables.forEach { it.moveBy(dx, dy) }
+			movables.forEach { it.completeMoveBy() }
 		}
 	}
 

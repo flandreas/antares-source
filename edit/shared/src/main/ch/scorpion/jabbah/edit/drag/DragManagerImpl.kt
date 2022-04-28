@@ -87,7 +87,8 @@ class DragManagerImpl(
 	}
 
 	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean) {
-		// Calculate the mouse move vector
+		// Calculate the total mouse move vector (non-snapped), because switching from/to
+		// orthogonal move must refer to the initial Component location
 		var dx = x - mouseStartLocation.x
 		var dy = y - mouseStartLocation.y
 
@@ -101,6 +102,10 @@ class DragManagerImpl(
 			}
 		}
 
+		// Calculate the delta move using the reference Component
+		val delta = Point2D(moveStartLocation.x + dx, moveStartLocation.y + dy)
+			.subtract(movedReferenceComponent!!.location)
+
 		// Snap the new location
 		var snap = Point2D.ZERO
 		if (editor.snapManager.snapEnabled) {
@@ -108,17 +113,15 @@ class DragManagerImpl(
 				if (multiComponentSnappable == null) {
 					multiComponentSnappable = MultiComponentSnappable(components)
 				}
-				snap = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
+				snap = editor.snapManager.snap(multiComponentSnappable!!, delta.x, delta.y)
 			} else if (components.size == 1) {
-				snap = editor.snapManager.snap(components.first(), dx, dy)
+				snap = editor.snapManager.snap(components.first(), delta.x, delta.y)
 			}
 		}
 
-		val overallMove =  Point2D(dx + snap.x, dy + snap.y)
-		val delta = moveStartLocation.add(overallMove).subtract(movedReferenceComponent!!.location)
-
 		// Move all selected [Components] by the same snapped offset
-		Movable.dragBy(components, delta)
+		Movable.moveBy(components, delta.x + snap.x, delta.y + snap.y)
+
 		moveLastLocation = Point2D(x + snap.x, y + snap.y)
 	}
 
