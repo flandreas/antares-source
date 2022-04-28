@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.view.GraphView
+import org.apache.commons.lang3.SystemUtils
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -283,10 +284,17 @@ class NavigationStackViewSwing(
 
 		override fun mousePressed(e: MouseEvent) {
 			if (e.button == MouseEvent.BUTTON1 && hoveredElement != null) {
-				navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
+				navigationStack.navigateBackTo(hoveredElement!!.entry, isQuickMode(e))
 				hoveredElement = null
 			}
 		}
+
+		private fun isQuickMode(e: MouseEvent): Boolean =
+			if (SystemUtils.IS_OS_MAC) {
+				e.isMetaDown
+			} else {
+				e.isControlDown
+			}
 
 		private fun resetHover() {
 			if (hoveredElement != null) {

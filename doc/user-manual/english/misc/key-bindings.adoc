@@ -19,8 +19,8 @@ include::../../page-variables.txt[]
 | Zoom to Fit| kbd:[CMD]+kbd:[F]| kbd:[CTRL]+kbd:[F]
 | Zoom to Fit (Max. 100%)| kbd:[ALT]+kbd:[CMD]+kbd:[F]| kbd:[ALT]+kbd:[CTRL]+kbd:[F]
 3+|*Subcircuit Navigation*
-| Omit dive animation (double-click on symbol)| kbd:[CMD] | -
-| Omit emmerge animation (click on breadcrumb)| kbd:[CMD] | -
+| Omit dive animation (double-click on symbol)| kbd:[CMD] | kbd:[CTRL]
+| Omit emmerge animation (click on breadcrumb)| kbd:[CMD] | kbd:[CTRL]
 | Additional view (double-click on symbol)| kbd:[ALT] | kbd:[ALT]
 |===
 

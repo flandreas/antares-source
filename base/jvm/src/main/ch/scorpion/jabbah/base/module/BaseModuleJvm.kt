@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.EnumPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
+import java.awt.Toolkit
 
 /**
  * Setup of the [ch.scorpion.jabbah.base] module for the JVM target.
@@ -37,6 +39,7 @@ object BaseModuleJvm : AbstractModule() {
 	}
 
 	private fun defineKeyCodes() {
+		Modifier.Meta.mask = Toolkit.getDefaultToolkit().menuShortcutKeyMaskEx
 		defineKeyCodesSwing()
 	}
 
