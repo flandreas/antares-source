@@ -110,13 +110,13 @@ class ClockedSignalHistories(
 	}
 
 	/** The name of the [InputPort] that corresponds with the "clocked" [SignalHistory]. */
-	private val clockPortName: String
+	private val clockPortName: String?
 
 	/** The current artificial time. */
 	private var time: Long = 0
 
 	init {
-		clockPortName = oscilloscope.getPorts().first().name!!
+		clockPortName = oscilloscope.getPorts().firstOrNull()?.name
 	}
 
 	override fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
