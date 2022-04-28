@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import java.awt.Frame
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import javax.swing.JOptionPane
@@ -65,7 +66,7 @@ class GraphPanelTransferHandler(
         if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
             LOG.trace("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
             JOptionPane.showMessageDialog(
-                null,
+                Frame.getFrames()[0],
                 Translations.getString("graph.cycleError.msg"),
                 Translations.getString("graph.action.addElementToGraph.name"),
                 JOptionPane.ERROR_MESSAGE)
