@@ -76,7 +76,7 @@ class DragManagerImpl(
 			return null
 		}
 
-		dragSnapped(selection, context.x, context.y, orthogonal = context.mouseEvent?.isShiftDown == true)
+		dragSnapped(selection, context.x, context.y, orthogonal = context.mouseEvent?.isShiftDown == true, doSnap = context.mouseEvent?.isAltDown != true)
 
 		if (selection.size == 1) {
 			involvePluginsDragged(selection.first())
@@ -86,7 +86,7 @@ class DragManagerImpl(
 		return null
 	}
 
-	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean) {
+	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean, doSnap: Boolean) {
 		// Calculate the total mouse move vector (non-snapped), because switching from/to
 		// orthogonal move must refer to the initial Component location
 		var dx = x - mouseStartLocation.x
@@ -108,7 +108,7 @@ class DragManagerImpl(
 
 		// Snap the new location
 		var snap = Point2D.ZERO
-		if (editor.snapManager.snapEnabled) {
+		if (doSnap && editor.snapManager.snapEnabled) {
 			if (components.size > 1) {
 				if (multiComponentSnappable == null) {
 					multiComponentSnappable = MultiComponentSnappable(components)
@@ -182,7 +182,7 @@ class DragManagerImpl(
 			if (selection.size == 1 && selection.first().isDragManager) {
 				return null
 			}
-			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = true)
+			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = true, doSnap = true)
 		}
 		return null
 	}
@@ -193,7 +193,7 @@ class DragManagerImpl(
 			if (selection.size == 1 && selection.first().isDragManager) {
 				return null
 			}
-			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = false)
+			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = false, doSnap = true)
 		}
 		return null
 	}
@@ -230,7 +230,7 @@ class DragManagerImpl(
 	override fun setDropComponent(component: Component?, location: Point2D?) {
 		if (component != null) {
 			if (dropComponent != null) {
-				dragSnapped(listOf(component), location!!.x, location.y, orthogonal = false)
+				dragSnapped(listOf(component), location!!.x, location.y, orthogonal = false, doSnap = true)
 				involvePluginsDragged(component)
 			} else {
 				component.location = location!!
