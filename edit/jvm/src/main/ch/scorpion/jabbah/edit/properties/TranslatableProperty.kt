@@ -167,6 +167,8 @@ class TranslatablePropertyEditor(
 		button.icon = UiUtil.themedIcon("/img/translation-16.png")
 		button.border = BorderFactory.createEmptyBorder(0, 2, 0, 2)
 		button.toolTipText = Translations.getString("edit.action.translateText.tooltip")
+		button.isOpaque = false
+		button.isContentAreaFilled = false // NOTE: This also disables hover highlighting
 		button.addActionListener { showDialog() }
 		return button
 	}
