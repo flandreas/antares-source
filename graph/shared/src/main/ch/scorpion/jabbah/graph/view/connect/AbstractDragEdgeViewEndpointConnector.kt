@@ -91,6 +91,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				onExit { removePortViewHighlight() }
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+					onTransit {
+						snapToTargetPortView(it)
+					}
 				}
 				transitTo("drag") {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
