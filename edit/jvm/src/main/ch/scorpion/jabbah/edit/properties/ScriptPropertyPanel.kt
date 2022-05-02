@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -16,7 +17,7 @@ import javax.swing.*
 class ScriptPropertyPanel(
 	script: String,
 	editable: Boolean = true,
-	private val parserFactory: ParserFactory = BaseModule.parserFactory,
+	private val parserFactory: ParserFactory? = BaseModule.parserFactory,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -26,6 +27,7 @@ class ScriptPropertyPanel(
 
 		/**
 		 * Allows the user to edit a script in a popup dialog.
+		 * @param parserFactory creates the [Parser] used in the "check" function, or `null` if "check" is not supported
 		 * @return the edited script, or `null` if the user closed the popup dialog with 'Cancel'.
 		 */
 		fun showAsDialog(
@@ -33,7 +35,7 @@ class ScriptPropertyPanel(
 			script: String,
 			propertyName: String,
 			editable: Boolean = true,
-			parserFactory: ParserFactory = BaseModule.parserFactory
+			parserFactory: ParserFactory? = BaseModule.parserFactory
 		): String? {
 			val builder = DialogBuilder<ScriptPropertyPanel>(parent)
 				.content { dialog -> ScriptPropertyPanel(script, editable, parserFactory) { dialog.dispose() } }
@@ -54,7 +56,7 @@ class ScriptPropertyPanel(
 
 	private val okAction = OkAction()
 	private val cancelAction = CancelAction()
-	private val checkAction = CheckAction()
+	private val checkAction = CheckAction() // only used if parserFactory available
 	private val closeAction = CloseAction()
 	private val okButton = createButton(okAction)
 	private val closeButton = createButton(closeAction)
@@ -95,16 +97,20 @@ class ScriptPropertyPanel(
 
 	private fun fillEditableButtonPanel(panel: JPanel) {
 		panel.add(Box.createHorizontalGlue())
-		panel.add(createButton(checkAction))
-		panel.add(Box.createHorizontalStrut(9))
+		if (parserFactory != null) {
+			panel.add(createButton(checkAction))
+			panel.add(Box.createHorizontalStrut(9))
+		}
 		panel.add(createButton(cancelAction))
 		panel.add(Box.createHorizontalStrut(2))
 		panel.add(okButton)
 	}
 
 	private fun buildNonEditableButtonPanel(panel: JPanel) {
-		panel.add(createButton(checkAction))
-		panel.add(Box.createHorizontalStrut(9))
+		if (parserFactory != null) {
+			panel.add(createButton(checkAction))
+			panel.add(Box.createHorizontalStrut(9))
+		}
 		panel.add(closeButton)
 	}
 
@@ -138,6 +144,9 @@ class ScriptPropertyPanel(
 
 	private inner class CheckAction : AbstractAction("edit.dsl.check.action") {
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+			if (parserFactory == null) {
+				return
+			}
 			try {
 				parserFactory.create(scriptTextArea.text, null).parse()
 

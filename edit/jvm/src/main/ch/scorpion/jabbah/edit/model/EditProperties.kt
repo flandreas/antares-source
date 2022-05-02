@@ -150,7 +150,7 @@ object EditProperties {
 		name: String,
 		baseKey: String,
 		beanProvider: BeanProvider = componentBeanProvider,
-		parserFactory: ParserFactory = BaseModule.parserFactory
+		parserFactory: ParserFactory? = BaseModule.parserFactory
 	): CommandPropertySwing<ScriptProperty> {
 		return ScriptPropertySwing(name, baseKey, beanProvider, parserFactory)
 	}

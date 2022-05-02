@@ -20,7 +20,10 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 		private val showContents = CommandPropertySwing("showContents", "element.property.Addressable.showContents", Boolean::class.java, componentBeanProvider)
 		private val contentsRowCount = CommandPropertySwing("contentRowsCount", "element.property.Addressable.rowsCount", Int::class.java, componentBeanProvider)
 		private val contentsColumnsCount = CommandPropertySwing("contentColumnsCount", "element.property.Addressable.columnsCount", Int::class.java, componentBeanProvider)
-		private val disassemblerConfig = EditProperties.script("disassemblerConfig", "element.property.ROM.disassemblerConfig", beanProvider = componentBeanProvider)
+
+		// No Parser for disassemblerConfig because content is a RegEx and not an Antares DSL script
+		private val disassemblerConfig = EditProperties.script("disassemblerConfig", "element.property.ROM.disassemblerConfig", beanProvider = componentBeanProvider, parserFactory = null)
+
 		private val showDisassembler = CommandPropertySwing("showDisassembler", "element.property.ROM.disassemblerDisplay", Boolean::class.java, componentBeanProvider)
 		private val highlightCurrentCellWhenNotSelected = CommandPropertySwing("highlightCurrentCellWhenNotSelected", "element.property.ROM.highlightCurrentCellWhenNotSelected", Boolean::class.java, componentBeanProvider)
 	}

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Parser
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,11 +15,13 @@ import javax.swing.*
 /**
  * An editor that provides more space for editing a [ScriptProperty] by using a multi-row [JTextArea].
  * Additionally contains a button to open a non-modal dialog that provides even more space.
+ *
+ * @param parserFactory creates the [Parser] used in the "check" function, or `null` if "check" is not supported
  */
 class ScriptPropertyEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
-	private val parserFactory: ParserFactory = BaseModule.parserFactory
+	private val parserFactory: ParserFactory? = BaseModule.parserFactory
 ) : AbstractPropertyEditor() {
 
 	companion object {
