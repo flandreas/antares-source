@@ -189,9 +189,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
     /** ---- [DrawingViewImpl] */
 
     private fun setupContent() {
-	    // The DrawableContainer for REPLACE is expected to be invisible, because its SelectionModels are
-	    // drawn by DrawingDrawer instead of the DrawableContainer. It must still be added to the View
-	    // to avoid repainting issues (invalid regions would be wrong)
         super.addDrawable(ghostContainer)
         super.addDrawable(animationContainer)
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
@@ -239,12 +236,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	        if (selectionManager.isSelected(drawable)) {
 	        	val replacingSelectionModel = content.getReplacingSelectionModel(drawable)
-		        if (replacingSelectionModel != null) {
-		        	replacingSelectionModel.draw(context)
-		        } else {
+		        if (replacingSelectionModel == null) {
 					draw(drawable, context)
 		        }
-
 	        } else {
 				draw(drawable, context)
 	        }

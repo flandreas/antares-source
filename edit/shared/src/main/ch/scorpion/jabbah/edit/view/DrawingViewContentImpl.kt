@@ -32,7 +32,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	init {
 		selectionContainers[SelectionDrawingStrategy.ABOVE] = DrawableContainerImpl()
-		selectionContainers[SelectionDrawingStrategy.REPLACE] = DrawableContainerImpl(visible = false)
+		selectionContainers[SelectionDrawingStrategy.REPLACE] = DrawableContainerImpl()
 		selectionContainers[SelectionDrawingStrategy.BELOW] = DrawableContainerImpl()
 		unzoomableSelectionContainers[SelectionDrawingStrategy.ABOVE] = UnzoomableContainer()
 		drawing.addDrawableContainerListener(componentRemoveListener)
