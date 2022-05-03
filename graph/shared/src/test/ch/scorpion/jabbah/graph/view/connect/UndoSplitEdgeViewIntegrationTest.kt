@@ -79,13 +79,11 @@ class UndoSplitEdgeViewIntegrationTest {
 		assertEquals(3, builder.graphView.getEdgeViews().size)
 
 		// Undo split
-		println("--- Before undo")
 		StorableCloner.clone(builder.graphStorable)
 
 		editor.commandManager.undo()
 		assertEquals(1, builder.graphView.getEdgeViews().size)
 
-		println("--- After undo")
 		StorableCloner.clone(builder.graphStorable)
 
 		// Connect v2 and v4

@@ -137,7 +137,12 @@ abstract class AbstractPortViewStartConnector(
 					state("insideTargetPortView") {
 						onEntry { snapToTargetPortView(it) }
 						onExit { removePortViewHighlight() }
-						stayIf { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+						transitTo("insideTargetPortView") {
+							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+							onTransit {
+								snapToTargetPortView(it)
+							}
+						}
 						transitTo("drag") {
 							given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
