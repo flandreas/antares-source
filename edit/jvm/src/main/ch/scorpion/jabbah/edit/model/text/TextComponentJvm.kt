@@ -235,10 +235,13 @@ open class TextComponentJvm(
 		}
 	}
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		@Suppress("UNCHECKED_CAST")
-		return eventHandler as InputEventHandler<T>
-	}
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		if (context is EditInputEventContext) {
+			@Suppress("UNCHECKED_CAST")
+			eventHandler as InputEventHandler<T>
+		} else {
+			InputEventHandlerAdapter.EMPTY_HANDLER
+		}
 
 	/** ---- [Component] interface */
 
@@ -336,7 +339,7 @@ open class TextComponentJvm(
 		}
 
 		override fun paintBorder(c: Component?, g: Graphics?, x: Int, y: Int, width: Int, height: Int) {
-			(g as java.awt.Graphics2D).stroke = STROKE
+			(g as Graphics2D).stroke = STROKE
 			super.paintBorder(c, g, x, y, width, height)
 		}
 	}
