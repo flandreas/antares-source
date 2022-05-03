@@ -95,6 +95,7 @@ class ContainerTreeModel(
 	private fun fillGraphPortViews(graphView: GraphView, containerDrawing: ContainerDrawing) {
 		graphView.getGraphPortViews()
 			.filter { containerDrawing.getPortViewComponent(it.model.name!!) == null }
+			.reversed()
 			.forEach { addGraphPortView(it) }
 	}
 
