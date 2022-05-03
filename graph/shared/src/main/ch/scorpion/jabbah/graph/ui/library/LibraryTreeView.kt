@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
@@ -218,6 +220,9 @@ class LibraryTreeViewController (
 		element.library?.defaultElementUUID == element.uuid
 
 	fun allowMove(item: LibraryItem, destination: LibraryDirectory): Boolean {
+		if (!canEdit(destination.library!!) || !canEdit(item.library!!)) {
+			return false
+		}
 		if (item is LibraryElement) {
 			return true
 		}
@@ -227,6 +232,9 @@ class LibraryTreeViewController (
 		}
 		return false
 	}
+
+	private fun canEdit(library: Library): Boolean =
+		Authorizer.isCurrentUserAuthorizedTo(Operation.Change, library)
 
 	/**
 	 * Creates a new [GraphElementView] instance from the currently selected [LibraryElement]
