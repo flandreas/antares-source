@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
+import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
@@ -8,6 +10,7 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -79,5 +82,27 @@ class GraphViewCopyPasteServiceTest {
 		service.paste(contents, view.build(), Point2D(10, 10))
 
 		assertEquals(3, drawing.drawables.size)
+	}
+
+	@Test
+	fun shouldCopyPasteNetViewProperties() {
+		val builder = GraphViewBuilder<Boolean>()
+		val view = DrawingViewMockBuilder().withDrawing(builder.graphView)
+		val vv1 = TestVerticeView()
+		val vv2 = TestVerticeView()
+		builder.addVerticeView(vv1)
+		builder.addVerticeView(vv2)
+		val ev = builder.connect(vv1, vv2)
+		ev.netView!!.style = NetViewStyle.BLOCK
+		ev.netView!!.customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Blue)
+
+		val contents = service.copy(listOf(ev.id), builder.graphView)
+		service.paste(contents, view.build(), Point2D(10, 10))
+
+		assertEquals(2, builder.graphView.netViewsCount)
+
+		val newEv = builder.graphView.getEdgeViews().first()
+		assertEquals(NetViewStyle.BLOCK, newEv.netView!!.style)
+		assertEquals(PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Blue), newEv.netView!!.customColor)
 	}
 }

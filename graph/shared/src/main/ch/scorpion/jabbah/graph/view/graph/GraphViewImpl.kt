@@ -377,7 +377,7 @@ open class GraphViewImpl(
 	private fun addNetViewElement(elem: NetViewElement<Any>) {
 		var netView = netViewMap[elem.net]
 		if (netView == null) {
-			netView = NetViewImpl(elem.net!!)
+			netView = elem.netView?.clone() ?: NetViewImpl(elem.net!!)
 			addNetView(netView)
 		}
 		netView.add(elem)

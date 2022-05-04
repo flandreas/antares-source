@@ -27,6 +27,9 @@ class NetViewImpl<T : Any>(
 
 	/** ---- [NetView] interface */
 
+	override fun clone(): NetViewImpl<T> =
+		NetViewImpl(net, style, customColor)
+
 	override var style: NetViewStyle = style
 		set(value) {
 			field = value

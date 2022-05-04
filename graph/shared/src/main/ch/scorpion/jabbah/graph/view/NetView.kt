@@ -34,6 +34,8 @@ interface NetView<T : Any> : Storable, Bean {
 
     var customColor: PredefinedColor?
 
+	fun clone(): NetView<T>
+
     fun add(elem: NetViewElement<T>)
 
     fun remove(elem: NetViewElement<T>)
