@@ -42,8 +42,9 @@ abstract class AbstractConnector(
 		context.view.setCursor(Cursor.CROSSHAIR)
 	}
 
-	protected fun removePortViewHighlight() {
+	protected fun removePortViewHighlight(context: EditInputEventContext) {
 		ConnectionPointHighlighter.removePortViewHighlight()
+		context.editor.snapManager.done()
 	}
 
 	protected fun moveEdgeViewEndpoint(context: EditInputEventContext) {
@@ -109,9 +110,9 @@ abstract class AbstractConnector(
 	}
 
 	protected fun snapToTargetEdgeView(context: EditInputEventContext) {
-		targetEdgeView!!.snap(context.x, context.y, context.editor.view.grid)?.let { snapResult ->
+		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
-			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
+			displayPortViewHighlight(context.drawingView(), snapResult.location)
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
 			draggedEndpointType.layout(edgeView!!, null)
 			edgeView!!.layout

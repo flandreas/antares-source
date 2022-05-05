@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.DrawableListener
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
+import ch.scorpion.jabbah.edit.SnapManager
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -253,7 +254,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	 * @return a [EdgeViewSnapLocatorResult] or `null` if no suitable location was found, for example if too far
 	 * away from the [EdgeView], or not on a perpendicular segment.
 	 */
-	fun snap(x: Double, y: Double, backgroundSnapper: Snapper? = null): EdgeViewSnapLocatorResult?
+	fun snap(x: Double, y: Double, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult?
 }
 
 data class EdgeViewSnapLocatorResult(val segmentIndex: Int, val x: Double, val y: Double) {

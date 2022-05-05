@@ -90,4 +90,10 @@ interface SnapManager {
      */
     fun snap(snappable: Snappable, dx: Double, dy: Double): Point2D
 
+	/**
+	 * Asks this [SnapManager] to complete its last snap operation and resetting any related state,
+	 * such as displayed snap highlighters.
+	 */
+	fun done()
+
 }

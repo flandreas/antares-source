@@ -64,13 +64,13 @@ class EdgeToPortConnector(
 				}
 				transitTo("sense") {
 					given { mouseMoved(it) && snap(it) == null }
-					onTransit { removePortViewHighlight() }
+					onTransit { removePortViewHighlight(it) }
 				}
 				transitTo("drag") {
 					given { mouseLeftPressed(it) }
 					onTransit {
 						beginConnecting(it)
-						removePortViewHighlight()
+						removePortViewHighlight(it)
 					}
 				}
 			}
@@ -98,7 +98,7 @@ class EdgeToPortConnector(
 			// a common State builder for this State, we would loose the insight in the entire StateMachine here.
 			state("insideTargetPortView") {
 				onEntry { snapToTargetPortView(it) }
-				onExit { removePortViewHighlight() }
+				onExit { removePortViewHighlight(it) }
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
@@ -133,7 +133,7 @@ class EdgeToPortConnector(
 	}
 
 	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {
-		val result = branchedEdgeView!!.snap(context.x, context.y, context.editor.view.grid)
+		val result = branchedEdgeView!!.snap(context.x, context.y, context.editor.snapManager)
 		branchedSegmentIndex = result?.segmentIndex
 		return result
 	}
@@ -142,7 +142,7 @@ class EdgeToPortConnector(
 		LOG.debug("Start creating junction of EdgeView")
 		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		context.drawingView().drawing.remove(edgeView!!)
-		removePortViewHighlight()
+		removePortViewHighlight(context)
 
 		val command = createSplitEdgeViewCommand(context.editor)
 		context.editor.commandManager.beginTransaction(command)

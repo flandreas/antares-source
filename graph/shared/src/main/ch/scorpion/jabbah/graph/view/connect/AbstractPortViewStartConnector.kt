@@ -73,7 +73,7 @@ abstract class AbstractPortViewStartConnector(
 
 			state("insideStartDrag") {
 				onEntry { displayPortViewHighlight(it) }
-				onExit { removePortViewHighlight() }
+				onExit { removePortViewHighlight(it) }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -94,7 +94,7 @@ abstract class AbstractPortViewStartConnector(
 
 			state("insideStartAdjust") {
 				onEntry { displayAlternativePortViewHighlight(it) }
-				onExit { removePortViewHighlight() }
+				onExit { removePortViewHighlight(it) }
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
 					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
@@ -136,7 +136,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetPortView") {
 						onEntry { snapToTargetPortView(it) }
-						onExit { removePortViewHighlight() }
+						onExit { removePortViewHighlight(it) }
 						transitTo("insideTargetPortView") {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 							onTransit {
@@ -156,7 +156,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetEdgeView") {
 						onEntry { snapToTargetEdgeView(it) }
-						onExit { removePortViewHighlight() }
+						onExit { removePortViewHighlight(it) }
 						stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}
@@ -223,7 +223,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetPortView") {
 						onEntry { adjustToTargetPortView(it) }
-						onExit { removePortViewHighlight() }
+						onExit { removePortViewHighlight(it) }
 						stayIf { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo("move") {
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -240,7 +240,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("insideTargetEdgeView") {
 						onEntry { snapToTargetEdgeView(it) }
-						onExit { removePortViewHighlight() }
+						onExit { removePortViewHighlight(it) }
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}

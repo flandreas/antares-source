@@ -535,8 +535,8 @@ open class EdgeViewImpl<T : Any>(
 	override fun join(edgeView: EdgeView<T>): EdgeView<*> =
 		EdgeViewSplitterJoiner.join(this, edgeView)
 
-	override fun snap(x: Double, y: Double, backgroundSnapper: Snapper?): EdgeViewSnapLocatorResult? =
-		EdgeViewSnapLocator.snap(this, x, y, backgroundSnapper)
+	override fun snap(x: Double, y: Double, snapManager: SnapManager?): EdgeViewSnapLocatorResult? =
+		EdgeViewSnapLocator.snap(this, x, y, snapManager)
 
 	/** ---- [Locatable] interface */
 

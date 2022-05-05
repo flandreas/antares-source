@@ -262,6 +262,10 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 		return Point2D(result.dx, result.dy)
 	}
 
+	override fun done() {
+		removeAllHighlights()
+	}
+
 	/** ---- [SnapManagerImpl] */
 
 	private fun highlightSnapX(y: Double) {

@@ -1,8 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.SnapResult
-import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.edit.SnapManager
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.*
@@ -56,18 +55,13 @@ class EdgeViewSnapLocatorTest {
 
 	@Test
 	fun shouldSnapToGridOnEdgeView() {
-		val grid = mockk<Snapper>()
-		val result = slot<SnapResult>()
-		every { grid.snap(any(), any(), capture(result)) } answers {
-			result.captured.x = 55.0
-			result.captured.y = 0.0
-			Unit
-		}
+		val snapManager = mockk<SnapManager>()
+		every { snapManager.snap(any(), any(), any()) } returns Point2D(5, 0)
 
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val locatorResult = EdgeViewSnapLocator.snap(ev, 50.0, 1.0, grid)!!
+		val locatorResult = EdgeViewSnapLocator.snap(ev, 50.0, 1.0, snapManager)!!
 
 		assertEquals(0, locatorResult.segmentIndex)
 		assertEquals(55.0, locatorResult.x)

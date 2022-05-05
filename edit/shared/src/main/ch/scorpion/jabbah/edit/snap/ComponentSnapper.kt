@@ -135,7 +135,7 @@ class ComponentSnapper(
 
 			otherSnappableY = comp.snappableY
 			for (i in otherSnappableY.indices) {
-				if (!initSnappableY.accept(otherSnappableY[i]) || !otherSnappableY[i].accept(initSnappableY)) {
+				if (!initSnappableY.accept(otherSnappableY[i]) && !otherSnappableY[i].accept(initSnappableY)) {
 					continue
 				}
 
