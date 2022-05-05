@@ -470,6 +470,10 @@ class LibraryService(
 			element.updateStorable(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {
+			element.updateStorable(metaGraph)
+			metaGraph.graph.model?.let { graph ->
+				element.metaGraph?.containerDrawing?.completeFromGraph(graph)
+			}
 			persister(library.isSystem).storeMetaGraph(library, metaGraph)
 		}
 	}
