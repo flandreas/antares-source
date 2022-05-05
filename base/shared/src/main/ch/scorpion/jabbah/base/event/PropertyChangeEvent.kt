@@ -53,7 +53,7 @@ interface PropertyOwner<T : Any> {
 	fun fire(name: String, oldValue: T?, newValue: T?)
 }
 
-class PropertyOwnerImpl<T: Any>() : PropertyOwner<T> {
+class PropertyOwnerImpl<T: Any> : PropertyOwner<T> {
 
 	private lateinit var pcSupport: PropertyChangeSupport<T>
 

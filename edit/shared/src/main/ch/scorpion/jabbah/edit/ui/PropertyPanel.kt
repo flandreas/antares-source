@@ -32,9 +32,9 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 	var bean: Any? = null
 		protected set(value) {
 			if (value !== field) {
+				val oldValue = field
 				field = value
-				updateTitle()
-				view.handleBeanReplaced()
+				handleBeanChanged(oldValue)
 			}
 		}
 
@@ -62,6 +62,16 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	fun refresh() {
 		view.handleBeanReplaced()
+	}
+
+	private fun handleBeanChanged(oldValue: Any?) {
+		updateTitle()
+		view.handleBeanReplaced()
+		handleBeanChangedHandler(oldValue)
+	}
+
+	protected open fun handleBeanChangedHandler(oldValue: Any?) {
+		// empty, can be implemented by subclasses
 	}
 
 	private fun updateTitle() {

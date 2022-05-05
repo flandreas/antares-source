@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableAdapter
+import ch.scorpion.jabbah.draw.DrawableEvent
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SelectionChangeEvent
@@ -19,6 +22,18 @@ class ComponentPropertyPanelController(
 ) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor) {
 
 	private val selectionChangeHandler: EventHandler<SelectionChangeEvent> = { handle(it) }
+
+	/**
+	 * Listens for property changes of the currently selected [Component] that are NOT initiated by this
+	 * [ComponentPropertyPanel], such as rotations requested by keyboard or menu interactions, in order
+	 * to update the contents of the [ComponentPropertyPanel] and avoiding to set outdated property values
+	 * the next time the user changes any other properties.
+	 *
+	 * Ideally, this mechanisms would use regular PropertyEvents from editable [Component] properties,
+	 * but such a mechanism doesn't (yet) exist, so for the moment we use [DrawableEvent]s, assuming that
+	 * all relevant property changes will result in [Drawable.update].
+	 */
+	private val propertyListener = PropertyListener()
 
 	init {
 		eventBus.register(SelectionChangeEvent::class, selectionChangeHandler)
@@ -44,6 +59,17 @@ class ComponentPropertyPanelController(
 
 	/** ---- [ComponentPropertyPanelController] */
 
+	override fun handleBeanChangedHandler(oldValue: Any?) {
+		oldValue?.let {
+			if (it is Component) {
+				it.removeDrawableListener(propertyListener)
+			}
+			if (bean is Component) {
+				(bean as Drawable).addDrawableListener(propertyListener)
+			}
+		}
+	}
+
 	private fun handle(event: SelectionChangeEvent) {
 		if (event.view !== editor.view) {
 			return
@@ -65,5 +91,11 @@ class ComponentPropertyPanelController(
 			return event.components.iterator().next()
 		}
 		return null
+	}
+
+	private inner class PropertyListener : DrawableAdapter() {
+		override fun drawableUpdated(event: DrawableEvent) {
+			refresh()
+		}
 	}
 }
