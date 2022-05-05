@@ -232,6 +232,8 @@ class SubGraphVerticeViewImpl(
 	}
 
 	override fun drawImpl(context: DrawContext) {
+		drawImplBeforeBorder(context)
+
 		drawableBag.drawables
 			.filter { controlViewVisibility.drawFilter(it, context) }
 			.forEach { it.draw(context) }
@@ -248,7 +250,8 @@ class SubGraphVerticeViewImpl(
 				}
 			}
 		}
-		super.drawImpl(context)
+
+		drawImplAfterBorder(context)
 	}
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {

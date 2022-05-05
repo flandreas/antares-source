@@ -104,6 +104,14 @@ open class PortViewComponent<T : Any>(
 		return portView!!.contains(x, y)
 	}
 
+	fun drawAboveOwner(context: DrawContext) {
+		portView?.drawAboveOwner(context)
+	}
+
+	fun drawBelowOwner(context: DrawContext) {
+		portView?.drawBelowOwner(context)
+	}
+
 	/** ---- [Locatable] */
 
 	override var location: Point2D
