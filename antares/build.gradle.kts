@@ -90,6 +90,7 @@ tasks {
 		from(kotlin.jvm().compilations.getByName("main").output)
 		configurations =
 			mutableListOf(kotlin.jvm().compilations.getByName("main").runtimeDependencyFiles as Configuration)
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	}
 
 	val copySplash by register<Copy>("copySplash") {
