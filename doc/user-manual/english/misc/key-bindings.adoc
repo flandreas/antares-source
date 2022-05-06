@@ -1,8 +1,8 @@
-== Key Bindings
+= Key Bindings
 include::../../page-variables.txt[]
 :page-permalink: /user-manual/english/misc/key-bindings
 
-=== General
+== General
 
 [%header, cols="3,1,1"]
 |===
@@ -24,7 +24,7 @@ include::../../page-variables.txt[]
 | Additional view (double-click on symbol)| kbd:[ALT] | kbd:[ALT]
 |===
 
-=== Edit Mode
+== Edit Mode
 
 [%header, cols="3,1,1"]
 |===
@@ -51,7 +51,7 @@ include::../../page-variables.txt[]
 | Reconnect wire | kbd:[ALT] | kbd:[ALT]
 |===
 
-=== Simulation Mode
+== Simulation Mode
 
 [%header, cols="3,1,1"]
 |===
