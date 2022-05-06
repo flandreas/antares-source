@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.input.Terminal
 import ch.scorpion.antares.model.input.TerminalRow
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -37,6 +38,7 @@ class TerminalView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Terminal = Terminal(),
 	lightColor: LightColor? = null,
+	handedness: Handedness = Handedness.LEFT,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Terminal>(
 	styleProvider,
@@ -71,6 +73,16 @@ class TerminalView(
 				field = value
 				postControlViewSourceChangeEvent(eventBus)
 				validate()
+			}
+		}
+
+	var handedness: Handedness = handedness
+		set(value) {
+			if (value != field) {
+				invalidate()
+				field = value
+				updateGeometry()
+				invalidate()
 			}
 		}
 
@@ -128,12 +140,16 @@ class TerminalView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("size", size.customName)
+		writer.writeString("handedness", handedness.customName)
 		lightColor?.let { writer.writeString("lightColor", it.customName) }
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		size = Size.withName(reader.readString("size"))
+		if (reader.hasAttribute("handedness")) {
+			handedness = Handedness.withName(reader.readString("handedness"))
+		}
 		if (reader.hasAttribute("lightColor")) {
 			lightColor = LightColor.withName(reader.readString("lightColor"));
 		}
@@ -147,35 +163,23 @@ class TerminalView(
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.clockInput,
-			direction = Direction.WEST,
-			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH,
-			y = 0))
+			portLabelPosition = PortLabelPosition.EXTERNAL))
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.dataInput,
-			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			showBitWidthAnnotation = false,
-			x = DigitalPortView.LENGTH,
-			y = -4 * Look.SCALE))
+			showBitWidthAnnotation = false))
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.writeEnableInput,
-			direction = Direction.SOUTH,
-			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 3 * Look.SCALE,
-			y = 3 * Look.SCALE))
+			portLabelPosition = PortLabelPosition.EXTERNAL))
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.clearInput,
-			direction = Direction.SOUTH,
-			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 7 * Look.SCALE,
-			y = 3 * Look.SCALE))
+			portLabelPosition = PortLabelPosition.EXTERNAL))
 
 		updateGeometry()
 	}
@@ -188,6 +192,45 @@ class TerminalView(
 			w = calculatedWidth,
 			h = calculatedHeight
 		)
+
+		when (handedness) {
+			Handedness.RIGHT -> {
+				with(getPortView(model.dataInput)!!) {
+					direction = Direction.EAST
+					location = Point2D(DigitalPortView.LENGTH + width, -4.0 * Look.SCALE)
+				}
+				with(getPortView(model.clockInput)!!) {
+					direction = Direction.EAST
+					location = Point2D(DigitalPortView.LENGTH + width, 0.0)
+				}
+				with(getPortView(model.writeEnableInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(DigitalPortView.LENGTH + width - 7.0 * Look.SCALE, 3.0 * Look.SCALE)
+				}
+				with(getPortView(model.clearInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(DigitalPortView.LENGTH + width - 3.0 * Look.SCALE, 3.0 * Look.SCALE)
+				}
+			}
+			Handedness.LEFT -> {
+				with(getPortView(model.dataInput)!!) {
+					direction = Direction.WEST
+					location = Point2D(DigitalPortView.LENGTH, -4 * Look.SCALE)
+				}
+				with(getPortView(model.clockInput)!!) {
+					direction = Direction.WEST
+					location = Point2D(DigitalPortView.LENGTH, 0)
+				}
+				with(getPortView(model.writeEnableInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(DigitalPortView.LENGTH + 3 * Look.SCALE, 3 * Look.SCALE)
+				}
+				with(getPortView(model.clearInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(DigitalPortView.LENGTH + 7 * Look.SCALE, 3 * Look.SCALE)
+				}
+			}
+		}
 	}
 
 	/** ---- [AbstractVerticeView] */

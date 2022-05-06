@@ -16,6 +16,7 @@ class TerminalViewBeanInfo : VerticeViewBeanInfo<TerminalView>() {
 		private val columnsCount = CommandPropertySwing("columnsCount", "element.property.Terminal.columnsCount", Int::class.java, componentBeanProvider)
 		private val size = EditProperties.size()
 		private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.Terminal.textColor")
+		private val handedness = AntaresProperties.handedness(baseKey = "element.property.Terminal.handedness")
 	}
 
 	override fun addProperties(bean: TerminalView, editor: Editor, properties: MutableList<Property>) {
@@ -25,5 +26,6 @@ class TerminalViewBeanInfo : VerticeViewBeanInfo<TerminalView>() {
 		properties.add(columnsCount.bind(editor, bean.id))
 		properties.add(size.bind(editor, bean.id))
 		properties.add(lightColor.bind(editor, bean.id, optional = true))
+		properties.add(handedness.bind(editor, bean.id))
 	}
 }

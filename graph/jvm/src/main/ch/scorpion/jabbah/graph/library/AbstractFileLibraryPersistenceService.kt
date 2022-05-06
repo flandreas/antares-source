@@ -59,7 +59,7 @@ abstract class AbstractFileLibraryPersistenceService(
 				LOG.trace("loaded MetaGraph '$uuid' with ID ${metaGraph.hashCode()}")
 				return metaGraph
 			} catch (e: Throwable) {
-				LOG.error("Error while loading MetaGraph $uuid: ${e.message}")
+				LOG.error("Error while loading MetaGraph $uuid", e)
 				throw LibraryPersistenceServiceException()
 			}
 		}
