@@ -87,6 +87,10 @@ class DragManagerImpl(
 	}
 
 	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean, doSnap: Boolean) {
+		if (components.isEmpty() || movedReferenceComponent == null) {
+			return
+		}
+
 		// Calculate the total mouse move vector (non-snapped), because switching from/to
 		// orthogonal move must refer to the initial Component location
 		var dx = x - mouseStartLocation.x
