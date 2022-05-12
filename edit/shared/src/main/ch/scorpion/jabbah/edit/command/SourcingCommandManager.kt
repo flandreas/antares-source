@@ -53,6 +53,11 @@ class SourcingCommandManager(
 		val redoSnapshotCount: Int get() = redoSnapshots.size
 
 		val commandCount: Int get() = snapshots.items.sumOf { it.undoCommandCount }
+
+		val tags: MutableSet<String> = mutableSetOf()
+
+		fun hasCommandWithTag(name: String): Boolean =
+			snapshots.items.any { it.hasTag(name) }
 	}
 
 	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
@@ -115,6 +120,7 @@ class SourcingCommandManager(
 			beginTransaction(command, register = true)
 			commitTransaction()
 		} else {
+			command.setTags(*state.tags.toTypedArray())
 			state.transaction!!.add(command)
 			command.validate()
 		}
@@ -128,6 +134,7 @@ class SourcingCommandManager(
 			beginTransaction(command, register = false)
 			commitTransaction()
 		} else {
+			command.setTags(*state.tags.toTypedArray())
 			state.transaction!!.add(command)
 			try {
 				command.execute()
@@ -139,6 +146,7 @@ class SourcingCommandManager(
 			command.validate()
 		}
 	}
+
 	override fun undo() {
 		if (!canUndo()) {
 			throw IllegalStateException("no undoable command")
@@ -189,6 +197,7 @@ class SourcingCommandManager(
 		}
 		state.transactionLevel++
 		state.transaction?.let {
+			command.setTags(*state.tags.toTypedArray())
 			it.add(command)
 			if (!register) {
 				try {
@@ -260,6 +269,17 @@ class SourcingCommandManager(
 		eventBus.post(CommandEvent(this))
 	}
 
+	override fun addTag(name: String) {
+		state.tags.add(name)
+	}
+
+	override fun removeTag(name: String) {
+		state.tags.remove(name)
+	}
+
+	override fun hasCommandWithTag(name: String): Boolean =
+		state.hasCommandWithTag(name)
+
 	/** ---- [SourcingCommandManager] */
 
 	private inner class Snapshot(private val data: Storable) {
@@ -299,6 +319,9 @@ class SourcingCommandManager(
 			redoStack.clear()
 		}
 
+		fun hasTag(name: String): Boolean =
+			undoStack.items.any { it.hasTag(name) }
+
 		private fun replayFromSnapshot() {
 			val clonedData = StorableCloner.clone(data)
 			LOG.trace("Clone snapshot and set as new undoable data $clonedData")
@@ -336,6 +359,9 @@ class SourcingCommandManager(
 				it.validate()
 			}
 		}
+
+		fun hasTag(name: String): Boolean =
+			commands.any { it.hasTag(name) }
 	}
 
 	/**

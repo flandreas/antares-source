@@ -18,6 +18,8 @@ object LibraryModule : AbstractModule() {
 
 	var systemLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
+	val libraryServiceCallbacks = mutableListOf<LibraryServiceCallback>()
+
 	var libraryService: LibraryService = LibraryService()
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()

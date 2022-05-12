@@ -60,6 +60,12 @@ class MetaGraph(
 
 	var parameterDefinitions: GraphParamDefinitions = GraphParamDefinitions()
 
+	/**
+	 * Determines whether the [ContainerDrawing] of this [MetaGraph] has been manually edited by the user.
+	 * Set to `false` if the [ContainerDrawing] is automatically created by the system.
+	 */
+	var isManualContainer: Boolean = false
+
 	val name: String get() = graph.model!!.name.value
 
 	val uuid: UUID get() = graph.model!!.uuid
@@ -109,6 +115,7 @@ class MetaGraph(
 		if (parameterDefinitions.isNotEmpty) {
 			writer.writeStorable("params", parameterDefinitions)
 		}
+		writer.writeBoolean("manualContainer", isManualContainer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -130,6 +137,13 @@ class MetaGraph(
 
 		if (reader.hasElement("params")) {
 			parameterDefinitions = reader.readStorable("params")
+		}
+		isManualContainer = if (reader.hasAttribute("manualContainer")) {
+			reader.readBoolean("manualContainer")
+		} else {
+			// The default value is `true` for backward compatibility reasons: Before introduction of this property,
+			// all symbols have been manually edited by the user.
+			true
 		}
 	}
 

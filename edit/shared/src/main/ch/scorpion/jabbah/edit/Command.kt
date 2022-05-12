@@ -27,7 +27,9 @@ interface Undoable {
  * redoable.
  *
  * [Command] that want to provide their own (simple!) undo logic can implement the [Undoable] interface,
- * thereby avoiding the need to replay from snapshots when undoing this [Command]
+ * thereby avoiding the need to replay from snapshots when undoing this [Command].
+ *
+ * A [Command] can have tags set by the [CommandManager] to which it belongs.
  */
 interface Command {
 
@@ -57,4 +59,10 @@ interface Command {
      * [Drawing] after [execute] or [Undoable.undo] has been done.
      */
     fun validate()
+
+	/** Sets a set of tags in this [Command].*/
+	fun setTags(vararg names: String)
+
+	/** Determines if tag [name] has previously been set using [setTags].*/
+	fun hasTag(name: String): Boolean
 }

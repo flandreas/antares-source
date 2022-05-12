@@ -14,6 +14,8 @@ abstract class AbstractCommand(
 
     private val _description = Translations.getString(descriptionKey)
 
+	private val tags: MutableSet<String> by lazy { mutableSetOf() }
+
     /** ---- [Command] interface */
 
     override fun getDescription(): String = _description
@@ -21,4 +23,11 @@ abstract class AbstractCommand(
 	override fun validate() {
         editor?.drawing?.validate()
     }
+
+	override fun setTags(vararg names: String) {
+		tags.addAll(names)
+	}
+
+	override fun hasTag(name: String): Boolean =
+		tags.contains(name)
 }

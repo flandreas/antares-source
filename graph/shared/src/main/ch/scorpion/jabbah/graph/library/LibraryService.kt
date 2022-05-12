@@ -68,8 +68,23 @@ enum class MetaGraphBundleImportResult {
 }
 
 /**
+ * Called by [LibraryService] in various situations.
+ * Register implementations in [LibraryModule.libraryServiceCallbacks].
+ */
+interface LibraryServiceCallback {
+
+	/** Called before [MetaGraph] is stored. */
+	fun beforeStoreMetaGraph(metaGraph: MetaGraph)
+}
+
+open class LibraryServiceCallbackAdapter : LibraryServiceCallback {
+	override fun beforeStoreMetaGraph(metaGraph: MetaGraph) { }
+}
+
+/**
  * Provides methods for accessing and manipulating a single [Library].
  * Implementations will use a [LibraryPersistenceService] to make these manipulations persistent.
+ * Calls all registered [LibraryModule.libraryServiceCallbacks] in the corresponding situations.
  */
 class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
@@ -467,9 +482,11 @@ class LibraryService(
 		LOG.trace("Storing MetaGraph")
 		if (doClone) {
 			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
+			LibraryModule.libraryServiceCallbacks.forEach { it.beforeStoreMetaGraph(clone) }
 			element.updateStorable(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {
+			LibraryModule.libraryServiceCallbacks.forEach { it.beforeStoreMetaGraph(metaGraph) }
 			element.updateStorable(metaGraph)
 			metaGraph.graph.model?.let { graph ->
 				element.metaGraph?.containerDrawing?.completeFromGraph(graph)

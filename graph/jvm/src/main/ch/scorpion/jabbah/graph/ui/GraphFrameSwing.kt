@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.app.StatusBar
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContentViewManager
@@ -17,7 +16,6 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
-import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import javax.swing.*
@@ -29,7 +27,6 @@ import javax.swing.*
 open class GraphFrameSwing(
 	val controller: GraphFrameController<GraphFrame>,
 	application: DesktopApplication,
-	private val eventBus: EventBus,
 	val viewManager: ContentViewManager,
 	val actions: GraphFrameActions
 ) : AbstractApplicationFrame(application), GraphFrame {
@@ -51,13 +48,9 @@ open class GraphFrameSwing(
 
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction)
-
-		showDesktop()
 	}
 
 	/** ---- [GraphFrame] */
-
-	override var displayedView: GraphFrame.DisplayedView = GraphFrame.DisplayedView.Container
 
 	override val applicationMode: ApplicationMode get() = controller.applicationModeHolder.currentMode
 
@@ -67,10 +60,14 @@ open class GraphFrameSwing(
 
 	override val desktopViewShowsNavigationRoot: Boolean get() = graphPanel.showsNavigationRoot
 
-	override fun showDesktop() {
-		if (displayedView == GraphFrame.DisplayedView.Desktop) {
-			return
+	override fun notifyDisplayedView() {
+		when (controller.displayedView) {
+			GraphFrameController.DisplayedView.Desktop -> showDesktop()
+			GraphFrameController.DisplayedView.Container -> showContainer()
 		}
+	}
+
+	private fun showDesktop() {
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
 			fillToolbarPanel(graphPanel.toolbars)
@@ -83,17 +80,11 @@ open class GraphFrameSwing(
 
 			editor.view.initialize()
 
-			displayedView = GraphFrame.DisplayedView.Desktop
 			containerPanel.active = false
-			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
 
-	override fun showContainer() {
-		if (displayedView == GraphFrame.DisplayedView.Container) {
-			return
-		}
-
+	private fun showContainer() {
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
 			fillToolbarPanel(containerPanel.toolbars)
@@ -106,14 +97,10 @@ open class GraphFrameSwing(
 
 			containerPanel.initialize()
 
-			displayedView = GraphFrame.DisplayedView.Container
 			viewManager.activeView = containerPanel.editor.view
 			containerPanel.active = true
-			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
-
-	protected open fun createContainerToolBarBuilder(): ContainerToolBarBuilder = ContainerToolBarBuilder()
 
 	/** ---- [AbstractApplicationFrame] */
 
@@ -140,14 +127,14 @@ open class GraphFrameSwing(
 		viewDesktopAction.imagePath?.let { viewDesktopButton.icon = UiUtil.themedIcon(it) }
 		viewDesktopButton.text = null
 		viewDesktopButton.toolTipText = viewDesktopAction.name
-		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, GraphFrame.DisplayedView.Desktop))
+		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, GraphFrameController.DisplayedView.Desktop))
 		toolbar.add(viewDesktopButton)
 
 		val viewContainerButton = JToggleButton(ActionWrapperSwing(viewContainerAction))
 		viewContainerAction.imagePath?.let { viewContainerButton.icon = UiUtil.themedIcon(it) }
 		viewContainerButton.text = null
 		viewContainerButton.toolTipText = viewContainerAction.name
-		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrame.DisplayedView.Container))
+		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrameController.DisplayedView.Container))
 		toolbar.add(viewContainerButton)
 
 		return toolbar
@@ -157,9 +144,9 @@ open class GraphFrameSwing(
 	 * Establishes a [JToggleButton] with [JRadioButton] behaviour (i.e. cannot be deselected)
 	 * by listening for [java.awt.event.ActionEvent]s and selecting it again, if necessary.
 	 */
-	private inner class MainToolBarActionListener(private val button: JToggleButton, private val targetDisplayedView: GraphFrame.DisplayedView) : java.awt.event.ActionListener {
+	private inner class MainToolBarActionListener(private val button: JToggleButton, private val targetDisplayedView: GraphFrameController.DisplayedView) : java.awt.event.ActionListener {
 		override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-			if (!button.isSelected && displayedView == targetDisplayedView) {
+			if (!button.isSelected && controller.displayedView == targetDisplayedView) {
 				button.doClick()
 				button.requestFocus()
 			}

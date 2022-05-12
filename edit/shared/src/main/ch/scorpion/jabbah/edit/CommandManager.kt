@@ -42,6 +42,12 @@ interface UndoableDataHolder {
  * the dialog is opened, and closing the checkpoint when the dialog is closed. It is up to the client code to
  * execute or register a special [Command] that represents the changes performed since opening the checkpoint,
  * or to resign to do so if these changes should be abandoned.
+ *
+ * [CommandManager] supports a tagging system. Systems that use a [CommandManager] can set a tag in this [CommandManager].
+ * Every [Command] that is subsequently added will automatically received that tag as well. This allows systems to
+ * determine whether [Command]s from a particular subsystem have been added since the last storing operation.
+ * Use [addTag] to add a tag and [removeTag] to remove it, and [hasCommandWithTag] to check if a [Command]
+ * with a particular tags exists.
  */
 interface CommandManager {
 
@@ -152,4 +158,19 @@ interface CommandManager {
 	 * @throws IllegalStateException if no checkpoint has been opened
 	 */
 	fun closeCheckpoint()
+
+	/**
+	 * Adds a tag with the specified name. This tag will be attached to all subsequently added [Command]s.
+	 */
+	fun addTag(name: String)
+
+	/**
+	 * Removes the tag with the specified name. This tag will not be attached anymore to all subsequently added [Command]s.
+	 */
+	fun removeTag(name: String)
+
+	/**
+	 * Checks if there is any [Command] with the specified tag name.
+	 */
+	fun hasCommandWithTag(name: String): Boolean
 }

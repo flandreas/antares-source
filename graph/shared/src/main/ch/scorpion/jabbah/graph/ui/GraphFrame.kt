@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
@@ -22,10 +24,13 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -38,13 +43,6 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  */
 interface GraphFrame : UIView {
 
-	enum class DisplayedView {
-		Desktop,
-		Container
-	}
-
-	val displayedView: DisplayedView
-
 	val applicationMode: ApplicationMode
 
 	val desktopView: View<*>
@@ -53,15 +51,14 @@ interface GraphFrame : UIView {
 
 	val desktopViewShowsNavigationRoot: Boolean
 
-	fun showDesktop()
-
-	fun showContainer()
+	/** Called by [GraphFrameController] when [GraphFrameController.displayedView] has changed.*/
+	fun notifyDisplayedView()
 }
 
-/** Posted by [GraphFrame] on [EventBus] when [GraphFrame.DisplayedView] has changed.*/
+/** Posted by [GraphFrameController] on [EventBus] when [GraphFrameController.displayedView] has changed.*/
 data class GraphFrameEvent(
-	val graphFrame: GraphFrame,
-	val displayedView: GraphFrame.DisplayedView
+	val source: GraphFrameController<*>,
+	val displayedView: GraphFrameController.DisplayedView
 )
 
 /** Defines the part of the controller that is used by the view.*/
@@ -72,12 +69,19 @@ interface GraphFrameActions {
 
 open class GraphFrameController<T: GraphFrame>(
 	private val applicationDataHolder: ApplicationDataHolder,
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val properties: Properties = BaseModule.properties,
 	private val viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractUIController<T>(), GraphFrameActions {
 
+	enum class DisplayedView {
+		Desktop,
+		Container
+	}
+
 	companion object {
+
+		private val LOG by logger(GraphFrameController::class)
 
 		/** The name of the [Boolean] property in [Properties] that controls whether extreme zoom factors should initiate mode switching.*/
 		const val PROP_AUTO_SWITCH = "graph.GraphFrame.autoSwitch"
@@ -87,7 +91,13 @@ open class GraphFrameController<T: GraphFrame>(
 
 		/** The percentage of the maximal zoom factor that switches this [GraphFrame] to display the desktop.*/
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
+
+		/** The name of the tag set in [CommandManager] when [GraphFrameController.DisplayedView.Container] is displayed.*/
+		private const val CONTAINER_TAG = "containerEditor"
 	}
+
+	var displayedView: DisplayedView = DisplayedView.Desktop
+		private set
 
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 
@@ -123,8 +133,12 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val zoomEventHandler = ZoomEventHandler()
 
+	private val customSymbolHandler = CustomSymbolHandler()
+
 	override fun onViewInitialized() {
 		registerZoomEventHandlers()
+		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
+		showDesktop()
 	}
 
 	override fun dispose() {
@@ -134,6 +148,24 @@ open class GraphFrameController<T: GraphFrame>(
 		graphPanelViewController.dispose()
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
+		LibraryModule.libraryServiceCallbacks.remove(customSymbolHandler)
+	}
+
+	private fun showDesktop() {
+		// Unconditional due to initialization
+		displayedView = DisplayedView.Desktop
+		view.notifyDisplayedView()
+		editor.commandManager.removeTag(CONTAINER_TAG)
+		eventBus.post(GraphFrameEvent(this, displayedView))
+	}
+
+	private fun showContainer() {
+		if (displayedView != DisplayedView.Container) {
+			displayedView = DisplayedView.Container
+			view.notifyDisplayedView()
+			editor.commandManager.addTag(CONTAINER_TAG)
+			eventBus.post(GraphFrameEvent(this, displayedView))
+		}
 	}
 
 	private fun registerZoomEventHandlers() {
@@ -151,11 +183,11 @@ open class GraphFrameController<T: GraphFrame>(
 			if (e.name == View.PROP_TRANSFORMATION && properties.getBoolean(PROP_AUTO_SWITCH) && applicationModeHolder.currentMode == ApplicationMode.EDIT) {
 				if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {
 					if (view.desktopView.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)) {
-						view.showContainer()
+						showContainer()
 					}
 				} else if (e.source === view.containerView) {
 					if (view.containerView.zoomFactor >= SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)) {
-						view.showDesktop()
+						showDesktop()
 					}
 				}
 			}
@@ -167,6 +199,7 @@ open class GraphFrameController<T: GraphFrame>(
 	) : AbstractAction("graph.action.showDesktop") {
 
 		private val graphFrameHandler: EventHandler<GraphFrameEvent> = { update() }
+
 		private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
 			if (it.source === applicationModeHolder) {
 				update()
@@ -186,11 +219,11 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		override fun execute(event: ActionEvent) {
-			view.showDesktop()
+			showDesktop()
 		}
 
 		private fun update() {
-			selected = view.displayedView == GraphFrame.DisplayedView.Desktop
+			selected = displayedView == DisplayedView.Desktop
 			enabled = view.applicationMode.isEdit()
 		}
 	}
@@ -218,12 +251,21 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		override fun execute(event: ActionEvent) {
-			view.showContainer()
+			showContainer()
 		}
 
 		private fun update() {
-			selected = view.displayedView == GraphFrame.DisplayedView.Container
+			selected = displayedView == DisplayedView.Container
 			enabled = view.applicationMode.isEdit() && applicationDataHolder.data?.savable is AbstractContainerLibraryElementSavable
+		}
+	}
+
+	private inner class CustomSymbolHandler : LibraryServiceCallbackAdapter() {
+		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
+			if (editor.commandManager.hasCommandWithTag(CONTAINER_TAG)) {
+				LOG.debug("Container (Symbol) has been customized manually")
+				metaGraph.isManualContainer = true
+			}
 		}
 	}
 }
