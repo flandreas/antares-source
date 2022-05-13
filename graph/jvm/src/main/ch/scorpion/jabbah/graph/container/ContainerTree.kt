@@ -58,14 +58,14 @@ class ContainerTree(
 	private val balancer = Balancer()
 
 	private val graphPortViewEventHandler: EventHandler<GraphPortViewEvent> = {
-		when(it.type) {
+		when (it.type) {
 			GraphPortViewEvent.Type.ADD -> model.addGraphPortView(it.graphPortView)
 			GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
 		}
 	}
 
 	private val controlViewSourceEventHandler: EventHandler<ControlViewSourceEvent> = {
-		when(it.type) {
+		when (it.type) {
 			ControlViewSourceEvent.Type.ADD -> model.addControlViewSource(it.source)
 			ControlViewSourceEvent.Type.REMOVE -> model.removeControlViewSource(it.source.controlId)
 			ControlViewSourceEvent.Type.CHANGE -> model.updateControlViewSource(it.source)
@@ -73,7 +73,7 @@ class ContainerTree(
 	}
 
 	private val subGraphVerticeViewEventHandler: EventHandler<SubGraphVerticeViewEvent> = {
-		when(it.type) {
+		when (it.type) {
 			SubGraphVerticeViewEvent.Type.ADD -> model.addSubGraphVerticeView(it.subGraphVerticeView)
 			SubGraphVerticeViewEvent.Type.REMOVE -> model.removeSubGraphVerticeView(it.subGraphVerticeView)
 		}

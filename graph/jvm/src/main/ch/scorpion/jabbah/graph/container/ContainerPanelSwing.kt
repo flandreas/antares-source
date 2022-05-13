@@ -91,6 +91,7 @@ class ContainerPanelSwing(
 		eventBus.unregister(applicationDataEventHandler)
 		eventBus.unregister(applicationDataEventHandler)
 		propertyPanelController.dispose()
+		treeView.dispose()
 	}
 
 	fun initialize() {

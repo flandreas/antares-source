@@ -25,7 +25,7 @@ open class ContainerTreeView(
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	companion object {
@@ -44,6 +44,10 @@ open class ContainerTreeView(
         dragEnabled = true
         dropMode = DropMode.ON
     }
+
+	open fun dispose() {
+		containerTree?.dispose()
+	}
 
     /**
      * Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].
