@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.ZoomStrategy
@@ -23,7 +24,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 open class ContainerEditor(
 	view: DrawingView<Drawing<Component>>,
-	eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
 	companion object {
@@ -33,34 +34,45 @@ open class ContainerEditor(
 		const val PROP_DEFAULT_ZOOM_FACTOR = "graph.container.defaultZoomFactor"
 	}
 
+	private val graphPortViewHandler: EventHandler<GraphPortViewEvent> = {
+		if (it.type == GraphPortViewEvent.Type.REMOVE) {
+			removePortViewComponent(it.graphPortView.model.name!!)
+		}
+	}
+
+	private val controlViewSourceHandler: EventHandler<ControlViewSourceEvent> = {
+		when (it.type) {
+			ControlViewSourceEvent.Type.CHANGE -> {
+				val cvc = getControlViewComponent(it.source.model.id)
+				if (cvc != null && it.source !== cvc.controlView) {
+					LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
+					cvc.controlView.sourcePropertiesChanged(it.source)
+				}
+			}
+			ControlViewSourceEvent.Type.REMOVE -> {
+				getControlViewComponent(it.source.model.id)?.let { c -> getContainerDrawing().remove(c) }
+			}
+			ControlViewSourceEvent.Type.ADD -> {
+				// nothing to do for ADD
+			}
+		}
+	}
+
+	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { configureDefaultZoomFactor() }
+
 	init {
 		configureDefaultZoomFactor()
 
-		eventBus.register(GraphPortViewEvent::class) {
-			if (it.type == GraphPortViewEvent.Type.REMOVE) {
-				removePortViewComponent(it.graphPortView.model.name!!)
-			}
-		}
+		eventBus.register(GraphPortViewEvent::class, graphPortViewHandler)
+		eventBus.register(ControlViewSourceEvent::class, controlViewSourceHandler)
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
+	}
 
-		eventBus.register(ControlViewSourceEvent::class) {
-			when (it.type) {
-				ControlViewSourceEvent.Type.CHANGE -> {
-					val cvc = getControlViewComponent(it.source.model.id)
-					if (cvc != null && it.source !== cvc.controlView) {
-						LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
-						cvc.controlView.sourcePropertiesChanged(it.source)
-					}
-				}
-				ControlViewSourceEvent.Type.REMOVE -> {
-					getControlViewComponent(it.source.model.id)?.let { c -> getContainerDrawing().remove(c) }
-				}
-				ControlViewSourceEvent.Type.ADD -> {
-					// nothing to do for ADD
-				}
-			}
-		}
-
-		eventBus.register(PreferencesChangedEvent::class) { configureDefaultZoomFactor() }
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(graphPortViewHandler)
+		eventBus.unregister(controlViewSourceHandler)
+		eventBus.unregister(preferencesChangedHandler)
 	}
 
 	private fun configureDefaultZoomFactor() {

@@ -271,4 +271,9 @@ open class EditorImpl(
         view.drawing.addDrawableContainerListener(drawingListener)
         view.addPropertyChangeListener(drawingViewListener)
     }
+
+	override fun dispose() {
+		view.drawing.addDrawableContainerListener(drawingListener)
+		view.removePropertyChangeListener(drawingViewListener)
+	}
 }

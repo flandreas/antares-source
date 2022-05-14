@@ -79,6 +79,9 @@ interface Editor {
 	/** Determines if the current [drawing] has changed in terms of undo/redo operations. */
 	val dataChanged: Boolean get() = commandManager.canUndo()
 
+	/** Called by the owner upon destruction. */
+	fun dispose()
+
     fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
 
 	fun addPropertyChangeListener(l: (PropertyChangeEvent<Any>) -> Unit): PropertyChangeListener<Any>

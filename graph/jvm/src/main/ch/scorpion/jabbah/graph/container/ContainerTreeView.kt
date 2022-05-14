@@ -33,7 +33,7 @@ open class ContainerTreeView(
 	}
 
 	/** Fills an manages the [DynamicTreeModel] displayed by this [ContainerTreeView].*/
-    var containerTree: ContainerTree? = null
+    protected var containerTree: ContainerTree? = null
 		private set
 
     init {

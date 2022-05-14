@@ -47,9 +47,10 @@ class EditSubGraphVerticeViewAction(
 		editedVerticeView.invalidate()
 
 		val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages = false)
+		val editor = GraphViewModule.containerEditorFactory.invoke(containerDrawingView)
 		val containerPanel = ContainerPanelSwing(
 			application = null,
-			GraphViewModule.containerEditorFactory.invoke(containerDrawingView),
+			editor,
 			EditModuleJvm.propertySheetPanelFactory,
 			eventBus,
 			viewManager)
@@ -58,10 +59,10 @@ class EditSubGraphVerticeViewAction(
 
 		containerPanel.initialize()
 
-		UiUtil.invokeLater(Runnable {
+		UiUtil.invokeLater {
 			containerPanel.editor.view.navigator.fitMaxNormal()
 			containerPanel.active = true
-		})
+		}
 
 		if (EditSubGraphVerticeViewPanel.showAsDialog(
 				metaGraphRepository = metaGraphRepository,
@@ -79,5 +80,6 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
+		editor.dispose()
 	}
 }
