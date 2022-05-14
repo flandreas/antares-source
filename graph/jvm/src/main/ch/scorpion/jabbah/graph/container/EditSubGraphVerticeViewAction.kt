@@ -4,16 +4,14 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action
 
@@ -46,21 +44,19 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
-		val containerDrawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages = false)
-		val editor = GraphViewModule.containerEditorFactory.invoke(containerDrawingView)
 		val containerPanel = ContainerPanelSwing(
 			application = null,
-			editor,
-			EditModuleJvm.propertySheetPanelFactory,
-			eventBus,
-			viewManager)
+			applicationContextHolder,
+			displayGlobalMessages = false,
+			eventBus = eventBus,
+			viewManager = viewManager)
 
 		val oldActiveView = viewManager.activeView
 
 		containerPanel.initialize()
 
 		UiUtil.invokeLater {
-			containerPanel.editor.view.navigator.fitMaxNormal()
+			containerPanel.view.navigator.fitMaxNormal()
 			containerPanel.active = true
 		}
 
@@ -80,6 +76,5 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
-		editor.dispose()
 	}
 }

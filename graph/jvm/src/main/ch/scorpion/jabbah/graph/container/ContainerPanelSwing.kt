@@ -8,15 +8,19 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
@@ -30,17 +34,16 @@ import javax.swing.*
  */
 class ContainerPanelSwing(
 	application: Application?,
-	val editor: ContainerEditor,
-	propertySheetFactory: PropertySheetPanelFactory,
-	private val eventBus: EventBus,
-	viewManager: ContentViewManager
+	applicationContextHolder: GraphApplicationContextHolder,
+	displayGlobalMessages: Boolean = true,
+	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : JPanel() {
 
-	constructor(
-		application: Application,
-		editor: ContainerEditor,
-		viewManager: ContentViewManager
-	) : this(application, editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
+	val view = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
+
+	val editor = GraphViewModule.containerEditorFactory(view)
 
 	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 
@@ -92,6 +95,7 @@ class ContainerPanelSwing(
 		eventBus.unregister(applicationDataEventHandler)
 		propertyPanelController.dispose()
 		treeView.dispose()
+		editor.dispose()
 	}
 
 	fun initialize() {
