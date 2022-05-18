@@ -3,12 +3,16 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.FocusPanel
+import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -19,6 +23,7 @@ import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
@@ -56,13 +61,34 @@ class ContainerPanelSwing(
 
 	private var editedContainerDrawing: ContainerDrawing? = null
 
-	private val applicationDataEventHandler: (ApplicationDataEvent) -> Unit = { handle(it) }
+	private val applicationDataEventHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 
-	private val applicationDataContentEventHandler : (ApplicationDataContentEvent) -> Unit = { handle (it)}
+	private val applicationDataContentEventHandler : EventHandler<ApplicationDataContentEvent> = { handle (it) }
+
+	private val commandHandler: EventHandler<CommandEvent> = { handle(it) }
 
 	private var editable: Boolean = true
 
-	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, editor)
+	/** Displays the value of [isManualContainerCurrent] in the UI.*/
+	private val isGeneratedContainerCheckbox = JCheckBox(Translations.getString("graph.property.ContainerDrawing.generated"))
+
+	/** The "manual Container" property in its persistent state, i.e. when read from store. */
+	private var isManualContainerOrig: Boolean = false
+		set(value) {
+			field = value
+			isGeneratedContainerCheckbox.isSelected = !field
+			treeView.isManualContainer = field
+		}
+
+	/** The current "manual Container" property, i.e. after symbol has possibly been changed by the user. */
+	private var isManualContainerCurrent: Boolean = false
+		set(value) {
+			field = value
+			isGeneratedContainerCheckbox.isSelected = !field
+			treeView.isManualContainer = field
+		}
+
+	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, editor, separator = true)
 
 	var active: Boolean = false
 		set(value) {
@@ -81,6 +107,7 @@ class ContainerPanelSwing(
 
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
+		eventBus.register(CommandEvent::class, commandHandler)
 
 		propertyPanel = ComponentPropertyPanelSwing(propertyPanelController, "container", propertySheetFactory)
 
@@ -88,11 +115,18 @@ class ContainerPanelSwing(
 		(editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(editor, eventBus, ComponentTransferable.FLAVOR)
 
 		buildUI(viewManager)
+
+		val miscellaneousToolbar = ToolBar(null)
+		miscellaneousToolbar.addSeparator()
+		isGeneratedContainerCheckbox.isEnabled = false
+		miscellaneousToolbar.add(isGeneratedContainerCheckbox)
+		toolbars.add(miscellaneousToolbar)
 	}
 
 	fun dispose() {
 		eventBus.unregister(applicationDataEventHandler)
 		eventBus.unregister(applicationDataEventHandler)
+		eventBus.unregister(commandHandler)
 		propertyPanelController.dispose()
 		treeView.dispose()
 		editor.dispose()
@@ -112,8 +146,15 @@ class ContainerPanelSwing(
 	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
 	 * @param editable `true` if the user is authorized to edit the [ContainerDrawing]
 	 */
-	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing, editable: Boolean, applyZoomStrategy: Boolean = true) {
+	fun setData(
+		graphView: GraphView,
+		containerDrawing: ContainerDrawing,
+		editable: Boolean,
+		isManualContainer: Boolean,
+		applyZoomStrategy: Boolean = true
+	) {
 		this.editable = editable
+		this.isManualContainerOrig = isManualContainer
 		editor.view.setDrawing(containerDrawing, applyZoomStrategy)
 		treeView.update(graphView, containerDrawing, editable)
 	}
@@ -156,7 +197,7 @@ class ContainerPanelSwing(
 			}
 			val metaGraph = event.newData!!.content as MetaGraph
 			editedContainerDrawing = metaGraph.containerDrawing
-			setData(metaGraph.graph.graphView, editedContainerDrawing!!, event.newData?.savable?.editable ?: false)
+			setData(metaGraph.graph.graphView, editedContainerDrawing!!, event.newData?.savable?.editable ?: false, isManualContainer = metaGraph.isManualContainer)
 		} else {
 			editable = false
 		}
@@ -166,6 +207,12 @@ class ContainerPanelSwing(
 	private fun handle(event: ApplicationDataContentEvent) {
 		val metaGraph = event.data.content as MetaGraph
 		editedContainerDrawing = metaGraph.containerDrawing
-		setData(metaGraph.graph.graphView, editedContainerDrawing!!, editable, applyZoomStrategy = false)
+		setData(metaGraph.graph.graphView, editedContainerDrawing!!, editable, isManualContainer = metaGraph.isManualContainer, applyZoomStrategy = false)
+	}
+
+	private fun handle(event: CommandEvent) {
+		if (editor.commandManager === event.commandManager) {
+			isManualContainerCurrent = isManualContainerOrig || editor.commandManager.hasCommandWithTag(GraphFrameController.CONTAINER_TAG)
+		}
 	}
 }

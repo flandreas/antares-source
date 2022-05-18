@@ -53,14 +53,24 @@ class ContainerTree(
 		private val LOG by logger(ContainerTree::class)
 	}
 
+	var isManualContainer: Boolean = false
+
 	val model = ContainerTreeModel(portFactory, portViewFactory, styleProvider, this, mainGraphView, containerDrawing)
 
 	private val balancer = Balancer()
 
 	private val graphPortViewEventHandler: EventHandler<GraphPortViewEvent> = {
-		when (it.type) {
-			GraphPortViewEvent.Type.ADD -> model.addGraphPortView(it.graphPortView)
-			GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
+		if (isManualContainer) {
+			// Update tree model
+			when (it.type) {
+				GraphPortViewEvent.Type.ADD -> model.addGraphPortView(it.graphPortView)
+				GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
+			}
+		} else {
+			// Update ContainerDrawing
+			containerDrawing.removeDrawableContainerListener(balancer)
+			ContainerDrawingLayouter.layout(mainGraphView, containerDrawing)
+			containerDrawing.addDrawableContainerListener(balancer)
 		}
 	}
 

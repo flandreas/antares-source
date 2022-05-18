@@ -36,6 +36,12 @@ open class ContainerTreeView(
     protected var containerTree: ContainerTree? = null
 		private set
 
+	var isManualContainer: Boolean = false
+		set(value) {
+			field = value
+			containerTree?.isManualContainer = value
+		}
+
     init {
         setRowHeight(22)
         rootVisible = false

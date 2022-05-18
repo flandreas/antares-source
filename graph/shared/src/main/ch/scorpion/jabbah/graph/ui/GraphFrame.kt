@@ -93,7 +93,7 @@ open class GraphFrameController<T: GraphFrame>(
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 
 		/** The name of the tag set in [CommandManager] when [GraphFrameController.DisplayedView.Container] is displayed.*/
-		private const val CONTAINER_TAG = "containerEditor"
+		const val CONTAINER_TAG = "containerEditor"
 	}
 
 	var displayedView: DisplayedView = DisplayedView.Desktop

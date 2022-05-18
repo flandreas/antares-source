@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
@@ -21,10 +19,16 @@ import javax.swing.JToggleButton
 
 open class ContainerToolBarBuilder {
 
-	open fun buildToolBars(application: Application?, editor: ContainerEditor, separator: Boolean = false): ImmutableList<ToolBar> {
-		val toolBars = listOf(
+	fun buildToolBars(
+		application: Application?,
+		editor: ContainerEditor,
+		separator: Boolean = false,
+	): MutableList<ToolBar> {
+		val toolBars = mutableListOf(
 			buildDrawingToolsToolbar(application, editor, separator),
-			buildSettingsToolbar(editor)).toImmutableList()
+			buildSettingsToolbar(editor)
+		)
+
 		toolBars.forEach { it.isFloatable = false }
 		return toolBars
 	}
@@ -49,7 +53,7 @@ open class ContainerToolBarBuilder {
 		return toolbar
 	}
 
-	fun buildSettingsToolbar(editor: ContainerEditor): ToolBar {
+	private fun buildSettingsToolbar(editor: ContainerEditor): ToolBar {
 		val toolBar = ToolBar(editor)
 		toolBar.addSeparator()
 

@@ -141,7 +141,8 @@ class EditSubGraphVerticeViewPanel(
 		containerPanel.setData(
 			graphView = libraryGraph.graph.graphView,
 			containerDrawing = StorableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()),
-			editable = true)
+			editable = true,
+			isManualContainer = true)
 	}
 
 	private fun createToolBarPanel(): JPanel {
