@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 object ContainerDrawingLayouter {
 
-	fun layout(graphView: GraphView, containerDrawing: ContainerDrawing) {
-		ContainerDrawingFiller(graphView, containerDrawing).fill()
+	fun layout(graphView: GraphView, containerDrawing: ContainerDrawing, addLabel: Boolean = false) {
+		ContainerDrawingFiller(graphView, containerDrawing, addLabel).fill()
 	}
 }

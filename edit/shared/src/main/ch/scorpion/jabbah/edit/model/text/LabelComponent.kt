@@ -9,9 +9,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.FontFamily
-import ch.scorpion.jabbah.draw.graphics.FontImpl
-import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -38,7 +35,6 @@ class LabelComponent(
 	companion object {
 		private val TYPE = Translations.getString("edit.component.label")
 		const val DEFAULT_TEXT = "text"
-		private val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
 
 		private fun createLabel(text: String, styleProvider: StyleProvider): Label {
 			return Label(

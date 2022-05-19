@@ -140,7 +140,7 @@ class ContainerTree(
 
 	private fun updateContainerDrawing() {
 		containerDrawing.removeDrawableContainerListener(balancer)
-		ContainerDrawingLayouter.layout(mainGraphView, containerDrawing)
+		ContainerDrawingLayouter.layout(mainGraphView, containerDrawing, addLabel = true)
 		containerDrawing.addDrawableContainerListener(balancer)
 	}
 

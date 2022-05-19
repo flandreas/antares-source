@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.graph.GraphNameAbbreviator
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -20,6 +22,7 @@ import kotlin.math.max
 class ContainerDrawingFiller(
 	private val graphView: GraphView,
 	private val containerDrawing: ContainerDrawing,
+	private val addLabel: Boolean = false,
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory
 ) {
@@ -33,6 +36,7 @@ class ContainerDrawingFiller(
 		private const val PIN_DIST = 4 * SCALE
 		private const val MIN_WIDTH = 8.0 * SCALE
 		private const val LABEL_INSET_X = SCALE
+		private const val LABEL_INSET_Y =2 * SCALE
 	}
 
 	fun fill() {
@@ -67,11 +71,19 @@ class ContainerDrawingFiller(
 			outputs.add(portViewFactory.createPortViewComponent(portView))
 		}
 
-		// TODO Add label
-		val labelWidth = 0
+		var labelWidth = 0
+		var label: LabelComponent? = null
 
-		val widthRaw = max(
-			MIN_WIDTH, maxInputWidth + LABEL_INSET_X + labelWidth + LABEL_INSET_X + maxOutputWidth)
+		if (addLabel) {
+			label = LabelComponent(GraphNameAbbreviator.abbreviate(graphView.name))
+			labelWidth = label.boundingBox.widthInt
+		}
+
+		val widthRaw = if (addLabel) {
+			max(MIN_WIDTH, 2 * max(maxInputWidth, maxOutputWidth) + labelWidth + 2 * LABEL_INSET_X)
+		} else {
+			max(MIN_WIDTH, maxInputWidth + LABEL_INSET_X + labelWidth + 2 * LABEL_INSET_X + maxOutputWidth)
+		}
 
 		// Snap width to grid
 		val width = ceil(widthRaw / GRID) * GRID
@@ -90,6 +102,11 @@ class ContainerDrawingFiller(
 			output.location = Point2D(width, pinY.toDouble())
 			containerDrawing.add(output)
 			pinY += PIN_DIST
+		}
+
+		if (label != null) {
+			label.location = Point2D(width / 2, LABEL_INSET_Y.toDouble())
+			containerDrawing.add(label)
 		}
 
 		containerDrawing.add(OriginIndicator(x = -LENGTH.toDouble(), y = 0.0))
