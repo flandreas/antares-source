@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -67,10 +68,7 @@ class ContainerTree(
 				GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
 			}
 		} else {
-			// Update ContainerDrawing
-			containerDrawing.removeDrawableContainerListener(balancer)
-			ContainerDrawingLayouter.layout(mainGraphView, containerDrawing)
-			containerDrawing.addDrawableContainerListener(balancer)
+			updateContainerDrawing()
 		}
 	}
 
@@ -89,10 +87,22 @@ class ContainerTree(
 		}
 	}
 
+	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
+		if (!isManualContainer) {
+			// Also check for old name to be independent of event dispatching order
+			if (it.newName != null && containerDrawing.getPortViewComponent(it.newName) != null
+				|| it.oldName != null && containerDrawing.getPortViewComponent(it.oldName) != null
+			) {
+				updateContainerDrawing()
+			}
+		}
+	}
+
 	init {
 		eventBus.register(GraphPortViewEvent::class, graphPortViewEventHandler)
 		eventBus.register(ControlViewSourceEvent::class, controlViewSourceEventHandler)
 		eventBus.register(SubGraphVerticeViewEvent::class, subGraphVerticeViewEventHandler)
+		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
 		containerDrawing.addDrawableContainerListener(balancer)
 	}
 
@@ -100,6 +110,7 @@ class ContainerTree(
 		eventBus.unregister(GraphPortViewEvent::class, graphPortViewEventHandler)
 		eventBus.unregister(ControlViewSourceEvent::class, controlViewSourceEventHandler)
 		eventBus.unregister(SubGraphVerticeViewEvent::class, subGraphVerticeViewEventHandler)
+		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
 		containerDrawing.removeDrawableContainerListener(balancer)
 	}
 
@@ -126,6 +137,12 @@ class ContainerTree(
 
 
 	/** ---- [ContainerTree] */
+
+	private fun updateContainerDrawing() {
+		containerDrawing.removeDrawableContainerListener(balancer)
+		ContainerDrawingLayouter.layout(mainGraphView, containerDrawing)
+		containerDrawing.addDrawableContainerListener(balancer)
+	}
 
 	/**
 	 * Balances the contents of the [ContainerTreeView] and the [ContainerDrawing] such that each object
