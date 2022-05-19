@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.Port
 
@@ -8,7 +9,7 @@ import ch.scorpion.jabbah.graph.model.Port
  */
 interface PortViewFactory {
 
-	fun <T: Any> createPortView(port: Port<T>): PortView<T>
+	fun <T: Any> createPortView(port: Port<T>, direction: Direction? = null): PortView<T>
 
 	fun <T: Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T>
 
@@ -16,7 +17,7 @@ interface PortViewFactory {
 
 class UndefinedPortViewFactory : PortViewFactory {
 
-	override fun <T : Any> createPortView(port: Port<T>): PortView<T> {
+	override fun <T : Any> createPortView(port: Port<T>, direction: Direction?): PortView<T> {
 		throw UnsupportedOperationException("not implemented")
 	}
 
