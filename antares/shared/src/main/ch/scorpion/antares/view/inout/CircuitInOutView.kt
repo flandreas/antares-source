@@ -155,14 +155,6 @@ class CircuitInOutView(
 			updateView()
 		}
 
-	/*
-	@Suppress("unused")
-	var triStateOutput: Boolean
-		get() = model.triStateOutput
-		set(value) {
-			model.triStateOutput = value
-		}
-	 */
 	@Suppress("unused")
 	var customCanBeUndefined: Boolean
 		get() = model.customCanBeUndefined
