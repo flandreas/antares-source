@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
@@ -98,11 +99,18 @@ class ContainerTree(
 		}
 	}
 
+	private val graphNameHandler: EventHandler<NameChangedEvent> = {
+		if (it.owner === mainGraphView.graph && !isManualContainer) {
+			updateContainerDrawing()
+		}
+	}
+
 	init {
 		eventBus.register(GraphPortViewEvent::class, graphPortViewEventHandler)
 		eventBus.register(ControlViewSourceEvent::class, controlViewSourceEventHandler)
 		eventBus.register(SubGraphVerticeViewEvent::class, subGraphVerticeViewEventHandler)
 		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		containerDrawing.addDrawableContainerListener(balancer)
 	}
 
@@ -111,6 +119,7 @@ class ContainerTree(
 		eventBus.unregister(ControlViewSourceEvent::class, controlViewSourceEventHandler)
 		eventBus.unregister(SubGraphVerticeViewEvent::class, subGraphVerticeViewEventHandler)
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
 		containerDrawing.removeDrawableContainerListener(balancer)
 	}
 
