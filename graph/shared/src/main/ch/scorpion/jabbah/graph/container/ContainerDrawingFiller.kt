@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -165,7 +166,7 @@ class WideContainerDrawingFiller(
 		private const val LABEL_INSET_Y = 5
 	}
 
-	private val label = LabelComponent(graphView.name)
+	private val label = LabelComponent(graphView.name, inverse = true)
 
 	private val labelHeight: Int get() = label.boundingBox.height.toInt() + 2 * LABEL_INSET_Y
 
@@ -176,12 +177,16 @@ class WideContainerDrawingFiller(
 		outputPortViews: List<GraphPortView<*>>
 	): Int = super.calculateHeight(inputPortViews, outputPortViews) + labelHeight
 
-	override fun createLabel(): LabelComponent? = label
+	override fun createLabel(): LabelComponent = label
 
 	override fun calculateWidth(maxInputWidth: Double, maxOutputWidth: Double, labelComponent: LabelComponent?): Double =
 		max(super.calculateWidthWithoutLabel(maxInputWidth, maxOutputWidth), label.boundingBox.width + 2 * LABEL_INSET_X)
 
 	override fun positionLabel(label: LabelComponent, rectangle: RectangularShape) {
-		label.location = Point2D(rectangle.centerX, rectangle.maxY - labelHeight / 2)
+		// CAUTION: labelHeight is derived from the label's boundingBox, which in turn depends on the dimension, if set.
+		// Therefore, first request the pure labelHeight (without dimension), then set the dimension using labelHeight
+		val height = labelHeight
+		label.dimension = Dimension2D(rectangle.width, height.toDouble())
+		label.location = Point2D(rectangle.centerX, rectangle.maxY - height / 2)
 	}
 }

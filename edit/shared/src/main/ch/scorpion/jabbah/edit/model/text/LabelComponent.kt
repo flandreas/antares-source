@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -24,13 +21,15 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class LabelComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	override val label: Label = createLabel(DEFAULT_TEXT, styleProvider)
+	override val label: Label = createLabel(DEFAULT_TEXT, styleProvider),
+	inverse: Boolean = false
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent, Labeled {
 
 	constructor(
 		text: String,
+		inverse: Boolean = false,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	): this(label = createLabel(text, styleProvider))
+	): this(label = createLabel(text, styleProvider), inverse = inverse)
 
 	companion object {
 		private val TYPE = Translations.getString("edit.component.label")
@@ -46,6 +45,19 @@ class LabelComponent(
 				rotationDisplayStrategy = RotationDisplayStrategy.IGNORE)
 		}
 	}
+
+	/** If `true`, the text is drawn in background color and the bounds are filled in foreground color.*/
+	var inverse: Boolean = inverse
+		set(value) {
+			field = value
+			label.inverse = field
+		}
+
+	/**
+	 * The optional width and height of this [LabelComponent]. Overrides the default bounding box determined
+	 * by the size of the text. Typically used along [inverse] to choose the size of the "background" box.
+	 */
+	var dimension: Dimension2D? = null
 
 	init {
 		DrawableOwner(this, label)
@@ -94,11 +106,17 @@ class LabelComponent(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D get() = if (rotation == Rotation.R0 || rotation == Rotation.R180) {
-		label.boundingBox
-	} else {
-		val bbox = label.boundingBox
-		rotation.rotateRectangleAround(bbox.center, bbox)
+	override val boundingBox: Rectangle2D get() {
+		val bbox = if (dimension == null) {
+			label.boundingBox
+		} else {
+			Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height)
+		}
+		return if (rotation == Rotation.R0 || rotation == Rotation.R180) {
+			bbox
+		} else {
+			rotation.rotateRectangleAround(bbox.center, bbox)
+		}
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
@@ -108,13 +126,27 @@ class LabelComponent(
 	override fun intersects(rect: RectangularShape): Boolean = label.intersects(rect)
 
 	override fun draw(context: DrawContext) {
-		if (!context.useContextColors) {
-			context.g.color = transparent.applyTo(foregroundColor)
-		}
-
 		context.g.translate(location.x, location.y)
 		context.g.rotate(rotation.angle)
 		context.g.translate(-location.x, -location.y)
+
+
+		if (inverse) {
+			context.g.color = if (context.useContextColors) {
+				context.color!!.foregroundColor
+			} else {
+				transparent.applyTo(foregroundColor)
+			}
+			context.g.fill(boundingBox)
+		}
+
+		if (!context.useContextColors) {
+			context.g.color = if (inverse) {
+				transparent.applyTo(backgroundColor)
+			} else {
+				transparent.applyTo(foregroundColor)
+			}
+		}
 
 		label.draw(context)
 
@@ -147,6 +179,13 @@ class LabelComponent(
 		}
 		writer.writePoint("location", label.location)
 		writer.writeString("rot", rotation.customName)
+		if (inverse) {
+			writer.writeBoolean("inverse", inverse)
+		}
+		dimension?.let {
+			writer.writeDouble("w", it.width)
+			writer.writeDouble("h", it.height)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -161,6 +200,12 @@ class LabelComponent(
 		if (reader.hasAttribute("rot")) {
 			// Backward compatibility
 			rotation = Rotation.withName(reader.readString("rot"))
+		}
+		if (reader.hasAttribute("inverse")) {
+			inverse = reader.readBoolean("inverse")
+		}
+		if (reader.hasAttribute("w") && reader.hasAttribute("h")) {
+			dimension = Dimension2D(reader.readDouble("w"), reader.readDouble("h"))
 		}
 	}
 

@@ -120,7 +120,7 @@ class Label(
 			}
 		}
 
-	/** Only used for unrotating the drawn text if the rotation angle is 180 degrees */
+	/** Only used for un-rotating the drawn text if the rotation angle is 180 degrees */
 	var ownerRotation: Rotation = ownerRotation
 
 	/** The displayable text after conversion of negated representation. */
@@ -132,12 +132,13 @@ class Label(
 	/** The point at which the text's baseline starts relative to the location.*/
 	private var baselinePoint = Point2D.ZERO
 
+	/** If `true`, the text is drawn in background color (only with [DrawContext.useContextColors]).*/
+	var inverse: Boolean = false
+
 	init {
 		displayableText = calculateDisplayableText()
 		updateGeometry()
 	}
-
-
 
 	/** ---- [Drawable] */
 
@@ -180,7 +181,11 @@ class Label(
 		DrawModule.drawDebugBoundingBox(this, context.g, Color.GRAY)
 
 		context.g.color = if (context.useContextColors) {
-			context.color!!.textColor
+			if (inverse) {
+				context.color!!.backgroundColor
+			} else {
+				context.color!!.textColor
+			}
 		} else {
 			color ?: context.g.color
 		}
