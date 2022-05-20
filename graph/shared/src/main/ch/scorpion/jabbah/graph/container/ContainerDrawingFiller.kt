@@ -162,7 +162,7 @@ class WideContainerDrawingFiller(
 ) : AbstractContainerDrawingFiller(graphView, containerDrawing, addLabel = true, portFactory, portViewFactory) {
 
 	companion object {
-		private const val LABEL_INSET_Y = 5
+		private const val LABEL_INSET_Y = 3
 	}
 
 	private val label = LabelComponent(graphView.name, inverse = true)
