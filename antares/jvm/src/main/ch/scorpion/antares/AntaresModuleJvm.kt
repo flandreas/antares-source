@@ -58,6 +58,7 @@ import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
+import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -287,6 +288,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			nameKey = "antares.action.symbolStyle",
 			values = SymbolStyle.values(),
 			withName = SymbolStyle::withName
+		))
+		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
+			id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,
+			nameKey = "graph.containerLayout",
+			values = ContainerDrawingLayouter.values(),
+			withName = ContainerDrawingLayouter::withName
 		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
 			id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,

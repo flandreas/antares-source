@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
+import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.library.FileMetaGraphHistoryService
 import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsParams
@@ -120,9 +121,9 @@ object GraphModuleJvm : AbstractModule() {
 		)
 	}
 
-	@Suppress("UNUSED_PARAMETER")
 	private fun fillProperties(properties: Properties) {
 		properties.set(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY, true)
+		properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

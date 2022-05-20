@@ -63,7 +63,7 @@ class ContainerTree(
 	private val balancer = Balancer()
 
 	private val graphPortViewEventHandler: EventHandler<GraphPortViewEvent> = {
-		if (isManualContainer) {
+		if (!requiresAutoLayout) {
 			// Update tree model
 			when (it.type) {
 				GraphPortViewEvent.Type.ADD -> model.addGraphPortView(it.graphPortView)
@@ -90,7 +90,7 @@ class ContainerTree(
 	}
 
 	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
-		if (!isManualContainer) {
+		if (requiresAutoLayout) {
 			// Also check for old name to be independent of event dispatching order
 			if (it.newName != null && containerDrawing.getPortViewComponent(it.newName) != null
 				|| it.oldName != null && containerDrawing.getPortViewComponent(it.oldName) != null
@@ -107,7 +107,7 @@ class ContainerTree(
 	}
 
 	private val portTypeHandler: EventHandler<GraphPortTypeChanged<*>> = {
-		if (!isManualContainer) {
+		if (requiresAutoLayout) {
 			if (mainGraphView.graph!!.graphPorts.contains(it.graphPort)) {
 				updateContainerDrawing()
 			}
@@ -136,9 +136,8 @@ class ContainerTree(
 
 	/** ---- [DynamicInitializer] */
 
-	override fun createInitializerTreeNode(parent: TreeNode): TreeNode {
-		return InitializerTreeNode(parent, Translations.getString("graph.action.loading.desc"))
-	}
+	override fun createInitializerTreeNode(parent: TreeNode): TreeNode =
+		InitializerTreeNode(parent, Translations.getString("graph.action.loading.desc"))
 
 	override fun initialize(value: Any, receiver: DynamicReceiver) {
 		LOG.trace("ContainerTree/DynamicInitializer: initialize $receiver")
@@ -155,12 +154,14 @@ class ContainerTree(
 		}
 	}
 
-
 	/** ---- [ContainerTree] */
+
+	private val requiresAutoLayout: Boolean get() = !isManualContainer &&
+		CurrentContainerDrawingLayouter.value.doesLayout
 
 	private fun updateContainerDrawing() {
 		containerDrawing.removeDrawableContainerListener(balancer)
-		ContainerDrawingLayouter.layout(mainGraphView, containerDrawing, addLabel = true)
+		CurrentContainerDrawingLayouter.value.layout(mainGraphView, containerDrawing, addLabel = true)
 		containerDrawing.addDrawableContainerListener(balancer)
 	}
 
