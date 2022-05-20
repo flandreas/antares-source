@@ -6,11 +6,11 @@ import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.quinemccluskey.DnfToBooleanExpression
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableService
-import ch.scorpion.jabbah.graph.container.ContainerDrawingFiller
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.container.NarrowContainerDrawingFiller
 import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 
@@ -68,7 +68,7 @@ class CreateCircuitFromTruthTableService(
 		val metaGraph = MetaGraph.withName(circuitName)
 		metaGraph.graph.model!!.script = executionScript
 		circuitType.build(truthTable, dnfs, metaGraph.graph)
-		ContainerDrawingFiller(metaGraph.graph.graphView, metaGraph.containerDrawing).fill()
+		NarrowContainerDrawingFiller(metaGraph.graph.graphView, metaGraph.containerDrawing).fill()
 		return metaGraph
 	}
 }

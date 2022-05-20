@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /**
  * Updates the layout of a [ContainerDrawing] after relevant elements
  * have been added, removed or changed.
- * Might support various styles of layouts in the future.
  */
 enum class ContainerDrawingLayouter(
 	override val customName: String
@@ -24,7 +23,15 @@ enum class ContainerDrawingLayouter(
 		override val doesLayout: Boolean get() = true
 
 		override fun layout(graphView: GraphView, containerDrawing: ContainerDrawing, addLabel: Boolean) {
-			ContainerDrawingFiller(graphView, containerDrawing, addLabel).fill()
+			NarrowContainerDrawingFiller(graphView, containerDrawing, addLabel).fill()
+		}
+	},
+
+	Wide("wide") {
+		override val doesLayout: Boolean get() = true
+
+		override fun layout(graphView: GraphView, containerDrawing: ContainerDrawing, addLabel: Boolean) {
+			WideContainerDrawingFiller(graphView, containerDrawing).fill()
 		}
 	};
 
@@ -44,6 +51,7 @@ enum class ContainerDrawingLayouter(
 		return when (this) {
 			None -> Translations.getString("graph.containerLayout.none")
 			Narrow -> Translations.getString("graph.containerLayout.narrow")
+			Wide -> Translations.getString("graph.containerLayout.wide")
 		}
 	}
 }
