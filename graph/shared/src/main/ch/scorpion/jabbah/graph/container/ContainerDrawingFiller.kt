@@ -69,7 +69,7 @@ abstract class AbstractContainerDrawingFiller(
 		val inputPortViews = graphView.getGraphPortViews().filter { it.model.portType.isInput }.reversed()
 		val outputPortViews = graphView.getGraphPortViews().filter { !inputPortViews.contains(it) }.reversed()
 
-		val height = calculateHeight(inputPortViews, outputPortViews)
+		val height = snap(calculateHeight(inputPortViews, outputPortViews).toDouble())
 
 		val inputs = mutableListOf<PortViewComponent<*>>()
 		val outputs = mutableListOf<PortViewComponent<*>>()
@@ -90,10 +90,7 @@ abstract class AbstractContainerDrawingFiller(
 
 		val label = createLabel()
 
-		val widthRaw = calculateWidth(maxInputWidth, maxOutputWidth, label)
-
-		// Snap width to grid
-		val width = ceil(widthRaw / GRID) * GRID
+		val width = snap(calculateWidth(maxInputWidth, maxOutputWidth, label))
 
 		val rectangle = RectangleComponent(0.0, -PIN_INSET.toDouble(), width, height.toDouble())
 		containerDrawing.add(rectangle)
@@ -119,6 +116,8 @@ abstract class AbstractContainerDrawingFiller(
 
 		containerDrawing.add(OriginIndicator(x = -LENGTH.toDouble(), y = pinStartY.toDouble()))
 	}
+
+	private fun snap(value: Double): Double = ceil(value / GRID) * GRID
 }
 
 class NarrowContainerDrawingFiller(
