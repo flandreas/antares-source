@@ -110,7 +110,7 @@ class LabelComponent(
 		val bbox = if (dimension == null) {
 			label.boundingBox
 		} else {
-			Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height)
+			Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height).expandBy(stroke.width / 2.0) as Rectangle2D
 		}
 		return if (rotation == Rotation.R0 || rotation == Rotation.R180) {
 			bbox
@@ -131,17 +131,20 @@ class LabelComponent(
 		context.g.translate(-location.x, -location.y)
 
 
-		if (inverse) {
+		if (inverse && dimension != null) {
 			context.g.color = if (context.useContextColors) {
 				context.color!!.foregroundColor
 			} else {
 				transparent.applyTo(foregroundColor)
 			}
-			context.g.fill(boundingBox)
+			val rect = Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height)
+			context.g.fill(rect)
+			context.g.stroke = stroke
+			context.g.draw(rect)
 		}
 
 		if (!context.useContextColors) {
-			context.g.color = if (inverse) {
+			context.g.color = if (inverse && dimension != null) {
 				transparent.applyTo(backgroundColor)
 			} else {
 				transparent.applyTo(foregroundColor)

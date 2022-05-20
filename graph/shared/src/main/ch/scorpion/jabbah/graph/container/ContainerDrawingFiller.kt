@@ -179,7 +179,7 @@ class WideContainerDrawingFiller(
 	override fun createLabel(): LabelComponent = label
 
 	override fun calculateWidth(maxInputWidth: Double, maxOutputWidth: Double, labelComponent: LabelComponent?): Double =
-		max(super.calculateWidthWithoutLabel(maxInputWidth, maxOutputWidth), label.boundingBox.width + 2 * LABEL_INSET_X)
+		max(super.calculateWidthWithoutLabel(maxInputWidth, maxOutputWidth), label.label.boundingBox.width + 2 * LABEL_INSET_X)
 
 	override fun positionLabel(label: LabelComponent, rectangle: RectangularShape) {
 		// CAUTION: labelHeight is derived from the label's boundingBox, which in turn depends on the dimension, if set.
