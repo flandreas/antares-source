@@ -261,6 +261,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 */
 	var autoPanningEnabled: Boolean
 
+	fun applyDefaultZoomStrategy()
 
 	/** ---- Content management */
 

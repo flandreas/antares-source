@@ -70,7 +70,7 @@ class ContainerTree(
 				GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
 			}
 		} else {
-			updateContainerDrawing()
+			generateContainerDrawing()
 		}
 	}
 
@@ -95,21 +95,21 @@ class ContainerTree(
 			if (it.newName != null && containerDrawing.getPortViewComponent(it.newName) != null
 				|| it.oldName != null && containerDrawing.getPortViewComponent(it.oldName) != null
 			) {
-				updateContainerDrawing()
+				generateContainerDrawing()
 			}
 		}
 	}
 
 	private val graphNameHandler: EventHandler<NameChangedEvent> = {
 		if (it.owner === mainGraphView.graph && !isManualContainer) {
-			updateContainerDrawing()
+			generateContainerDrawing()
 		}
 	}
 
 	private val portTypeHandler: EventHandler<GraphPortTypeChanged<*>> = {
 		if (requiresAutoLayout) {
 			if (mainGraphView.graph!!.graphPorts.contains(it.graphPort)) {
-				updateContainerDrawing()
+				generateContainerDrawing()
 			}
 		}
 	}
@@ -159,7 +159,7 @@ class ContainerTree(
 	private val requiresAutoLayout: Boolean get() = !isManualContainer &&
 		CurrentContainerDrawingLayouter.value.doesLayout
 
-	private fun updateContainerDrawing() {
+	fun generateContainerDrawing() {
 		containerDrawing.removeDrawableContainerListener(balancer)
 		CurrentContainerDrawingLayouter.value.layout(mainGraphView, containerDrawing, addLabel = true)
 		containerDrawing.addDrawableContainerListener(balancer)

@@ -421,7 +421,7 @@ open class ViewImpl<C : InputEventContext>(
 			controller.autoPanningEnabled = value
 		}
 
-	protected fun applyDefaultZoomStrategy() {
+	override fun applyDefaultZoomStrategy() {
 		zoomStrategy = defaultZoomStrategy
 		applyZoomStrategy()
 	}

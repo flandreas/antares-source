@@ -4,7 +4,10 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -15,6 +18,7 @@ import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
@@ -29,6 +33,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
+import java.awt.Frame
 import javax.swing.*
 
 /**
@@ -52,7 +57,10 @@ class ContainerPanelSwing(
 
 	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 
-	/** The [ContainerTreeView] containing all objects of the underlying [GraphView] that have not yet been added to the [ContainerDrawing].*/
+	/**
+	 * The [ContainerTreeView] containing all objects of the underlying [GraphView]
+	 * that have not yet been added to the [ContainerDrawing].
+	 */
 	private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
 
 	private val propertyPanel: ComponentPropertyPanelSwing
@@ -71,6 +79,8 @@ class ContainerPanelSwing(
 
 	/** Displays the value of [isManualContainerCurrent] in the UI.*/
 	private val isGeneratedContainerCheckbox = JCheckBox(Translations.getString("graph.property.ContainerDrawing.generated"))
+
+	private val generateContainerAction = GenerateContainerAction()
 
 	/** The "manual Container" property in its persistent state, i.e. when read from store. */
 	private var isManualContainerOrig: Boolean = false
@@ -116,11 +126,7 @@ class ContainerPanelSwing(
 
 		buildUI(viewManager)
 
-		val miscellaneousToolbar = ToolBar(null)
-		miscellaneousToolbar.addSeparator()
-		isGeneratedContainerCheckbox.isEnabled = false
-		miscellaneousToolbar.add(isGeneratedContainerCheckbox)
-		toolbars.add(miscellaneousToolbar)
+		toolbars.add(createMiscellaneousToolbar())
 	}
 
 	fun dispose() {
@@ -157,6 +163,24 @@ class ContainerPanelSwing(
 		this.isManualContainerOrig = isManualContainer
 		editor.view.setDrawing(containerDrawing, applyZoomStrategy)
 		treeView.update(graphView, containerDrawing, editable)
+	}
+
+	private fun createMiscellaneousToolbar(): ToolBar {
+		val toolbar = ToolBar(null)
+		toolbar.addSeparator()
+
+		isGeneratedContainerCheckbox.isEnabled = false
+
+		// Create JPanel so that JButton displays a border
+		val panel = JPanel()
+		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+		panel.add(isGeneratedContainerCheckbox)
+		panel.add(Box.createHorizontalStrut(10))
+		panel.add(JButton(ActionWrapperSwing(generateContainerAction)))
+		panel.add(Box.createHorizontalGlue())
+		toolbar.add(panel)
+
+		return toolbar
 	}
 
 	private fun buildUI(viewManager: ContentViewManager) {
@@ -197,7 +221,11 @@ class ContainerPanelSwing(
 			}
 			val metaGraph = event.newData!!.content as MetaGraph
 			editedContainerDrawing = metaGraph.containerDrawing
-			setData(metaGraph.graph.graphView, editedContainerDrawing!!, event.newData?.savable?.editable ?: false, isManualContainer = metaGraph.isManualContainer)
+			setData(
+				metaGraph.graph.graphView,
+				editedContainerDrawing!!,
+				editable = event.newData?.savable?.editable ?: false,
+				isManualContainer = metaGraph.isManualContainer)
 		} else {
 			editable = false
 		}
@@ -207,12 +235,43 @@ class ContainerPanelSwing(
 	private fun handle(event: ApplicationDataContentEvent) {
 		val metaGraph = event.data.content as MetaGraph
 		editedContainerDrawing = metaGraph.containerDrawing
-		setData(metaGraph.graph.graphView, editedContainerDrawing!!, editable, isManualContainer = metaGraph.isManualContainer, applyZoomStrategy = false)
+		setData(
+			metaGraph.graph.graphView,
+			editedContainerDrawing!!,
+			editable,
+			isManualContainer = metaGraph.isManualContainer,
+			applyZoomStrategy = false)
 	}
 
 	private fun handle(event: CommandEvent) {
 		if (editor.commandManager === event.commandManager) {
 			isManualContainerCurrent = isManualContainerOrig || editor.commandManager.hasCommandWithTag(GraphFrameController.CONTAINER_TAG)
+		}
+	}
+
+	private fun generateContainerDrawing() {
+		//TODO How to reset isManualContainerCurrent?
+		treeView.containerTree?.generateContainerDrawing()
+	}
+
+	private inner class GenerateContainerAction : AbstractAction("graph.action.containerLayout") {
+
+		override fun execute(event: ActionEvent) {
+			if (JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.action.containerLayout.question"),
+				name,
+				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
+			) {
+				editor.commandManager.execute(GenerateContainerCommand())
+				editor.view.applyDefaultZoomStrategy()
+			}
+		}
+	}
+
+	private inner class GenerateContainerCommand : AbstractCommand("graph.action.containerLayout.name") {
+		override fun execute() {
+			generateContainerDrawing()
 		}
 	}
 }
