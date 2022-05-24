@@ -418,6 +418,66 @@ class SourcingCommandManagerTest {
 		assertEquals("", application.mandatoryData.value)
 	}
 
+	/** ---- [Iterable] tests */
+
+	@Test
+	fun shouldIterateNoCommands() {
+		assertFalse(cmdManager.iterator().hasNext())
+	}
+
+	@Test
+	fun shouldIterateSimpleCommands() {
+		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand("b"))
+		val iterator = cmdManager.iterator()
+
+		assertEquals("a", (iterator.next() as AppendCommand).s)
+		assertEquals("b", (iterator.next() as AppendCommand).s)
+		assertFalse(iterator.hasNext())
+	}
+
+	@Test
+	fun shouldIterateTransactionCommands() {
+		cmdManager.execute(AppendCommand("a"))
+		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.execute(AppendCommand("c"))
+		cmdManager.commitTransaction()
+		cmdManager.beginTransaction(AppendCommand("d"))
+		cmdManager.execute(AppendCommand("e"))
+		cmdManager.commitTransaction()
+		val iterator = cmdManager.iterator()
+
+		assertEquals("a", (iterator.next() as AppendCommand).s)
+		assertEquals("b", (iterator.next() as AppendCommand).s)
+		assertEquals("c", (iterator.next() as AppendCommand).s)
+		assertEquals("d", (iterator.next() as AppendCommand).s)
+		assertEquals("e", (iterator.next() as AppendCommand).s)
+		assertFalse(iterator.hasNext())
+	}
+
+	@Test
+	fun shouldIterateSnapshotCommands() {
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 1)
+		cmdManager = SourcingCommandManager()
+		cmdManager.bindDataHolder(application)
+
+		cmdManager.execute(AppendCommand("a"))
+		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.execute(AppendCommand("c"))
+		cmdManager.commitTransaction()
+		cmdManager.beginTransaction(AppendCommand("d"))
+		cmdManager.execute(AppendCommand("e"))
+		cmdManager.commitTransaction()
+		val iterator = cmdManager.iterator()
+
+		assertEquals("a", (iterator.next() as AppendCommand).s)
+		assertEquals("b", (iterator.next() as AppendCommand).s)
+		assertEquals("c", (iterator.next() as AppendCommand).s)
+		assertEquals("d", (iterator.next() as AppendCommand).s)
+		assertEquals("e", (iterator.next() as AppendCommand).s)
+		assertFalse(iterator.hasNext())
+	}
+
 	/** ---- Helper classes and methods */
 
 	private class Application(
@@ -436,7 +496,7 @@ class SourcingCommandManagerTest {
 	}
 
 	private inner class AppendCommand(
-		private val s: String
+		val s: String
 	) : AbstractCommand("anyDescription") {
 
 		override fun execute() {

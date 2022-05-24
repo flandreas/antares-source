@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.Undoable
 
 /** A [Transaction] in a [SourcingCommandManager] contains multiple [Command]s. */
 internal class Transaction {
-	private val commands = mutableListOf<Command>()
+	val commands = mutableListOf<Command>()
 	val headCommand: Command get() = commands.first()
 
 	val canUndo: Boolean get() = commands.all { it is Undoable && it.canUndo }

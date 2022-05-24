@@ -58,6 +58,65 @@ class SourcingCommandManager(
 	val snapshotCount: Int get() = state.snapshotCount
 	val redoSnapshotCount: Int get() = state.redoSnapshotCount
 
+	/** ---- [Iterable] interface */
+
+	override fun iterator(): Iterator<Command> = CommandIterator()
+
+	private inner class CommandIterator : AbstractIterator<Command>() {
+		private val snapshotIterator = state.snapshots.items.iterator()
+		private var transactionsIterator: Iterator<Transaction>? = if (snapshotIterator.hasNext()) {
+			snapshotIterator.next().undoStack.items.iterator()
+		} else {
+			null
+		}
+		private var commandsIterator: Iterator<Command>? = if (transactionsIterator?.hasNext() == true) {
+			transactionsIterator!!.next().commands.iterator()
+		} else {
+			null
+		}
+
+		override fun computeNext() {
+			if (nextFromCommandIterator()) {
+				return
+			}
+			if (nextFromTransactionIterator()) {
+				return
+			}
+			if (nextFromSnapshotIterator()) {
+				return
+			}
+			done()
+		}
+
+		private fun nextFromCommandIterator(): Boolean {
+			if (commandsIterator?.hasNext() == true) {
+				setNext(commandsIterator!!.next())
+				return true
+			}
+			return false
+		}
+
+		private fun nextFromTransactionIterator(): Boolean {
+			if (transactionsIterator?.hasNext() == true) {
+				commandsIterator = transactionsIterator!!.next().commands.iterator()
+				if (nextFromCommandIterator()) {
+					return true
+				}
+			}
+			return false
+		}
+
+		private fun nextFromSnapshotIterator(): Boolean {
+			if (snapshotIterator.hasNext()) {
+				transactionsIterator = snapshotIterator.next().undoStack.items.iterator()
+				if (nextFromTransactionIterator()) {
+					return true
+				}
+			}
+			return false
+		}
+	}
+
 	/** ---- [CommandManager] interface */
 
 	override var active: Boolean = true

@@ -49,7 +49,7 @@ interface UndoableDataHolder {
  * Use [addTag] to add a tag and [removeTag] to remove it, and [hasCommandWithTag] to check if a [Command]
  * with a particular tags exists.
  */
-interface CommandManager {
+interface CommandManager : Iterable<Command> {
 
 	/**
 	 * Determines whether this [CommandManager] is active.
