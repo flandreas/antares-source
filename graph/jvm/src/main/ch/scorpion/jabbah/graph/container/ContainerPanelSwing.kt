@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
@@ -245,13 +244,13 @@ class ContainerPanelSwing(
 
 	private fun handle(event: CommandEvent) {
 		if (editor.commandManager === event.commandManager) {
-			isManualContainerCurrent = isManualContainerOrig || editor.commandManager.hasCommandWithTag(GraphFrameController.CONTAINER_TAG)
+			isManualContainerCurrent = isManualContainer(isManualContainerOrig, editor.commandManager)
 		}
 	}
 
-	private fun generateContainerDrawing() {
-		//TODO How to reset isManualContainerCurrent?
+	fun generateContainerDrawing() {
 		treeView.containerTree?.generateContainerDrawing()
+		isManualContainerCurrent = false
 	}
 
 	private inner class GenerateContainerAction : AbstractAction("graph.action.containerLayout") {
@@ -263,15 +262,14 @@ class ContainerPanelSwing(
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
 			) {
-				editor.commandManager.execute(GenerateContainerCommand())
-				editor.view.applyDefaultZoomStrategy()
+				try {
+					editor.commandManager.addTag(GraphFrameController.GENERATE_CONTAINER_TAG)
+					editor.commandManager.execute(GenerateContainerCommand(this@ContainerPanelSwing))
+					editor.view.applyDefaultZoomStrategy()
+				} finally {
+					editor.commandManager.removeTag(GraphFrameController.GENERATE_CONTAINER_TAG)
+				}
 			}
-		}
-	}
-
-	private inner class GenerateContainerCommand : AbstractCommand("graph.action.containerLayout.name") {
-		override fun execute() {
-			generateContainerDrawing()
 		}
 	}
 }

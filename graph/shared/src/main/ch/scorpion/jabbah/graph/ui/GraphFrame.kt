@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
+import ch.scorpion.jabbah.graph.container.isManualContainer
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
@@ -93,7 +94,9 @@ open class GraphFrameController<T: GraphFrame>(
 		const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
 
 		/** The name of the tag set in [CommandManager] when [GraphFrameController.DisplayedView.Container] is displayed.*/
-		const val CONTAINER_TAG = "containerEditor"
+		const val EDIT_CONTAINER_TAG = "editContainer"
+
+		const val GENERATE_CONTAINER_TAG = "generateContainer"
 	}
 
 	var displayedView: DisplayedView = DisplayedView.Desktop
@@ -155,7 +158,7 @@ open class GraphFrameController<T: GraphFrame>(
 		// Unconditional due to initialization
 		displayedView = DisplayedView.Desktop
 		view.notifyDisplayedView()
-		editor.commandManager.removeTag(CONTAINER_TAG)
+		editor.commandManager.removeTag(EDIT_CONTAINER_TAG)
 		eventBus.post(GraphFrameEvent(this, displayedView))
 	}
 
@@ -163,7 +166,7 @@ open class GraphFrameController<T: GraphFrame>(
 		if (displayedView != DisplayedView.Container) {
 			displayedView = DisplayedView.Container
 			view.notifyDisplayedView()
-			editor.commandManager.addTag(CONTAINER_TAG)
+			editor.commandManager.addTag(EDIT_CONTAINER_TAG)
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
@@ -262,7 +265,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private inner class CustomSymbolHandler : LibraryServiceCallbackAdapter() {
 		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
-			if (editor.commandManager.hasCommandWithTag(CONTAINER_TAG)) {
+			if (isManualContainer(metaGraph.isManualContainer, editor.commandManager)) {
 				LOG.debug("Container (Symbol) has been customized manually")
 				metaGraph.isManualContainer = true
 			}
