@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.command.SourcingCommandManager.Snapshot
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCloner
 
@@ -40,24 +39,6 @@ class SourcingCommandManager(
 		private val LOG by logger(SourcingCommandManager::class)
 		const val PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT = "edit.commandManager.cmdPerSnapshot"
 		private const val DEFAULT_STATE_NAME = "default"
-	}
-
-	/** Used to implement checkpoints.*/
-	private class State(val name: String) {
-		val snapshots = Stack<Snapshot>()
-		val redoSnapshots = Stack<Snapshot>()
-		var transaction: Transaction? = null
-		var transactionLevel: Int = 0
-
-		val snapshotCount: Int get() = snapshots.size
-		val redoSnapshotCount: Int get() = redoSnapshots.size
-
-		val commandCount: Int get() = snapshots.items.sumOf { it.undoCommandCount }
-
-		val tags: MutableSet<String> = mutableSetOf()
-
-		fun hasCommandWithTag(name: String): Boolean =
-			snapshots.items.any { it.hasTag(name) }
 	}
 
 	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
@@ -282,113 +263,6 @@ class SourcingCommandManager(
 
 	/** ---- [SourcingCommandManager] */
 
-	private inner class Snapshot(private val data: Storable) {
-		val undoStack = Stack<Transaction>()
-		val redoStack = Stack<Transaction>()
-
-		val undoCommandCount: Int get() = undoStack.size
-		val undoDescription: String get() = undoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
-		val redoDescription: String get() = redoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
-		val canUndo: Boolean get() = !undoStack.empty
-		val canRedo: Boolean get() = !redoStack.empty
-
-		fun add(transaction: Transaction) {
-			undoStack.push(transaction)
-		}
-
-		fun undo(forRedo: Boolean) {
-			val transaction = undoStack.pop()
-			if (forRedo) {
-				redoStack.push(transaction)
-			}
-
-			if (transaction.canUndo) {
-				transaction.undo()
-			} else {
-				replayFromSnapshot()
-			}
-		}
-
-		fun redo() {
-			val command = redoStack.pop()
-			undoStack.push(command)
-			command.execute()
-		}
-
-		fun resetRedo() {
-			redoStack.clear()
-		}
-
-		fun hasTag(name: String): Boolean =
-			undoStack.items.any { it.hasTag(name) }
-
-		private fun replayFromSnapshot() {
-			val clonedData = StorableCloner.clone(data)
-			LOG.trace("Clone snapshot and set as new undoable data $clonedData")
-			undoableDataHolder.setUndoableState(clonedData)
-
-			LOG.trace("Replaying")
-			undoStack.items.forEach {
-				LOG.trace(".. replaying transaction ${it.headCommand.getDescription()}")
-				it.execute()
-			}
-		}
-	}
-
-	private class Transaction {
-		private val commands = mutableListOf<Command>()
-		val headCommand: Command get() = commands.first()
-
-		val canUndo: Boolean get() = commands.all { it is Undoable && it.canUndo }
-
-		fun add(command: Command) {
-			commands.add(command)
-		}
-
-		fun execute() {
-			for (c in commands) {
-				c.execute()
-				c.validate()
-			}
-		}
-
-		fun undo() {
-			check(canUndo) { "Cannot undo Transaction" }
-			commands.reversed().forEach {
-				(it as Undoable).undo()
-				it.validate()
-			}
-		}
-
-		fun hasTag(name: String): Boolean =
-			commands.any { it.hasTag(name) }
-	}
-
-	/**
-	 * A [Command] implementation that does nothing, but serves only as a dummy [Command]
-	 * for holding inner transaction [Command]s.
-	 *
-	 * @param descriptionKey the translation key of the transaction's description
-	 * @property drawingView the [DrawingView] to validate, if any
-	 */
-	private class TransactionCommand(
-		descriptionKey: String,
-		private val drawingView: DrawingView<*>? = null
-	) : AbstractCommand(descriptionKey, null), Undoable {
-
-		override fun execute() {
-			// empty
-		}
-
-		override fun undo() {
-			// empty
-		}
-
-		override fun validate() {
-			drawingView?.drawing?.validate()
-		}
-	}
-
 	private fun resetUndo() {
 		state.snapshots.clear()
 	}
@@ -415,7 +289,7 @@ class SourcingCommandManager(
 	}
 
 	private fun addSnapshot() {
-		state.snapshots.push(Snapshot(createSnapshotData()))
+		state.snapshots.push(Snapshot(createSnapshotData(), undoableDataHolder))
 	}
 
 	private fun createSnapshotData(): Storable {
