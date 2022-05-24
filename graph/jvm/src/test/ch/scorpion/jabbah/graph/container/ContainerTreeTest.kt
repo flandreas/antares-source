@@ -42,6 +42,7 @@ class ContainerTreeTest {
 
 		init {
 			GraphUITestRule.configure()
+			BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
 		}
 	}
 
@@ -249,6 +250,7 @@ class ContainerTreeTest {
 
 		fun build(): Setup {
 			_containerTree = ContainerTree(mainGraphView = graphViewBuilder.build(), containerDrawing = containerDrawing)
+			_containerTree!!.isManualContainer = true
 			return this
 		}
 
