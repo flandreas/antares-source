@@ -36,7 +36,6 @@ abstract class AbstractContainerDrawingFiller(
 		private const val LENGTH = 2 * SCALE
 		const val PIN_INSET = 2 * SCALE
 		const val PIN_DIST = 4 * SCALE
-		const val MIN_HEIGHT = 8 * SCALE
 		const val MIN_WIDTH = 8.0 * SCALE
 		const val LABEL_INSET_X = SCALE
 	}
@@ -50,11 +49,13 @@ abstract class AbstractContainerDrawingFiller(
 
 	protected abstract val pinStartY: Int
 
+	protected abstract val minHeight: Int
+
 	open fun calculateHeight(
 		inputPortViews: List<GraphPortView<*>>,
 		outputPortViews: List<GraphPortView<*>>
 	): Int =
-		max(MIN_HEIGHT, max(2 * PIN_INSET + PIN_DIST * (inputPortViews.size - 1), 2 * PIN_INSET + PIN_DIST * (outputPortViews.size - 1)))
+		max(minHeight, max(2 * PIN_INSET + PIN_DIST * (inputPortViews.size - 1), 2 * PIN_INSET + PIN_DIST * (outputPortViews.size - 1)))
 
 	protected abstract fun createLabel(): LabelComponent?
 
@@ -129,10 +130,13 @@ class NarrowContainerDrawingFiller(
 ) : AbstractContainerDrawingFiller(graphView, containerDrawing, addLabel, portFactory, portViewFactory) {
 
 	companion object {
+		private const val MIN_HEIGHT = 8 * SCALE
 		private const val LABEL_INSET_Y = 2 * SCALE
 	}
 
 	override val pinStartY: Int get() = 0
+
+	override val minHeight: Int get() = MIN_HEIGHT
 
 	override fun createLabel(): LabelComponent? =
 		if (addLabel) {
@@ -162,6 +166,7 @@ class WideContainerDrawingFiller(
 ) : AbstractContainerDrawingFiller(graphView, containerDrawing, addLabel = true, portFactory, portViewFactory) {
 
 	companion object {
+		private const val MIN_HEIGHT = 4 * SCALE
 		private const val LABEL_INSET_Y = 3
 	}
 
@@ -170,6 +175,8 @@ class WideContainerDrawingFiller(
 	private val labelHeight: Int get() = label.boundingBox.height.toInt() + 2 * LABEL_INSET_Y
 
 	override val pinStartY: Int get() = 0
+
+	override val minHeight: Int get() = MIN_HEIGHT
 
 	override fun calculateHeight(
 		inputPortViews: List<GraphPortView<*>>,
