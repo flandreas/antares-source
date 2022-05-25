@@ -21,16 +21,19 @@ interface KeyEvent : InputEvent {
          * The codes given here are completely arbitrary and only used for testing of 'common' code.
          */
 
-        var VK_LEFT = 0x01
-        var VK_RIGHT = 0x02
-	    var VK_UP = 0x03
-	    var VK_DOWN = 0x04
-        var VK_ESCAPE = 0x05
-        var VK_ENTER = 0x06
-	    var VK_ALT = 0x07
-	    var VK_DELETE = 0x08
-	    var VK_SPACE = 0x09
-	    var VK_SHIFT = 0xA0
+        var VK_LEFT = 1
+        var VK_RIGHT = 2
+	    var VK_UP = 3
+	    var VK_DOWN = 4
+        var VK_ESCAPE = 5
+        var VK_ENTER =6
+	    var VK_ALT = 7
+	    var VK_DELETE = 8
+	    var VK_SPACE = 9
+	    var VK_SHIFT = 10
+	    var VK_META = 11
+	    var VK_CTRL = 12
+	    var VK_ALT_GRAPH = 13
 	    var VK_0 = 48
 	    var VK_1 = 49
 	    var VK_2 = 50

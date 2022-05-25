@@ -553,13 +553,18 @@ class CircuitInOutView(
 	}
 
 	/** Consumes a key the user pressed during simulation while this [CircuitInOutView] has focus.*/
-	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null) {
+		val skipAnimation = false
 		invalidate()
-		if (key == KeyEvent.VK_ESCAPE) {
+		if (keyEvent?.modifiers != 0) {
+			// Ignore everything that should be handled by MenuItem accelerators
+		} else if (key == KeyEvent.VK_ESCAPE) {
 			hideKeyboard()
 		} else if (key == KeyEvent.VK_SPACE) {
 			// Ignore. This triggers PauseOrResumeAction. A key that triggers the KeyAccelerator of a MenuItem
 			// shouldn't be forwarded to the focus component, but didn't find out why it is.
+		} else if (key == KeyEvent.VK_META || key == KeyEvent.VK_SHIFT || key == KeyEvent.VK_ALT || key == KeyEvent.VK_CTRL || key == KeyEvent.VK_ALT_GRAPH) {
+			// Ignore menu item accelerator meta keys
 		} else if (key == KeyEvent.VK_LEFT) {
 			numberView!!.transferFocusLeft()
 		} else if (key == KeyEvent.VK_RIGHT) {
@@ -700,7 +705,7 @@ class CircuitInOutView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder)
+				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder, context.keyEvent)
 			}
 			return null
 		}
