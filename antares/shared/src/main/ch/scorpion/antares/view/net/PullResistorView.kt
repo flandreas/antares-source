@@ -71,7 +71,12 @@ class PullResistorView(
 
 	var pullDirection: PullDirection
 		get() = model.pullDirection
-		set(value) { model.pullDirection = value }
+		set(value) {
+			if (value != model.pullDirection) {
+				model.pullDirection = value
+				tooltip.reset()
+			}
+		}
 
 	/** ---- [AbstractDrawable] */
 

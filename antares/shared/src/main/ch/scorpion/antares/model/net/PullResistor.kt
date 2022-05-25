@@ -23,9 +23,10 @@ class PullResistor(
 	companion object{
 
 		private const val BASE_RESOURCE_KEY = "library.element.PullResistor"
-		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_LOW_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.low.desc")
-		private val TYPE_HIGH_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.high.desc")
+		private const val PULL_UP_BASE_RESOURCE_KEY = "library.element.PullUpResistor"
+		private const val PULL_DOWN_BASE_RESOURCE_KEY = "library.element.PullDownResistor"
+		private val TYPE_LOW_DESC get() = Translations.getString("$BASE_RESOURCE_KEY.low.desc")
+		private val TYPE_HIGH_DESC get() = Translations.getString("$BASE_RESOURCE_KEY.high.desc")
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<PullResistor> {
@@ -53,7 +54,10 @@ class PullResistor(
 			}
 	}
 
-	override val type: String get() = TYPE
+	override val type: String get() = when (pullDirection) {
+		LOW -> Translations.getString("$PULL_DOWN_BASE_RESOURCE_KEY.name")
+		HIGH -> Translations.getString("$PULL_UP_BASE_RESOURCE_KEY.name")
+	}
 
 	override val typeDesc: String? get() = when (pullDirection) {
 		LOW -> TYPE_LOW_DESC
