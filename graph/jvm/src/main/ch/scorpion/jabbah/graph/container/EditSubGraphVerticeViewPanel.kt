@@ -51,7 +51,7 @@ class EditSubGraphVerticeViewPanel(
 			var dialog = DialogBuilder<EditSubGraphVerticeViewPanel>(parent)
 				.content { dialog ->
 					EditSubGraphVerticeViewPanel(metaGraphRepository, containerPanel, subGraphVerticeView) {
-						okPressed = true
+						okPressed = it
 						dialog.dispose()
 					}
 				}
