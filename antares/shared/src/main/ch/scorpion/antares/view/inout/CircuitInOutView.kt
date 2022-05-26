@@ -553,8 +553,7 @@ class CircuitInOutView(
 	}
 
 	/** Consumes a key the user pressed during simulation while this [CircuitInOutView] has focus.*/
-	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null) {
-		val skipAnimation = false
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false) {
 		invalidate()
 		if (keyEvent?.modifiers != 0) {
 			// Ignore everything that should be handled by MenuItem accelerators
