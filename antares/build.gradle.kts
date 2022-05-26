@@ -77,6 +77,7 @@ tasks {
 			exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.5.30"))
 			exclude(dependency("org.jetbrains.kotlin:kotlin-reflect:1.5.30"))
 		}
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	}
 
 
