@@ -86,6 +86,8 @@ class PullResistorView(
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+		} else if (!context.useContextColors) {
+			context.g.color = foregroundColor
 		}
 		drawPullDirection(context)
 
