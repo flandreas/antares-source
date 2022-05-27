@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.base.time.TimeService
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ExecutionErrorHandler
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -63,15 +64,15 @@ class SchedulerImpl(
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
 
-	/** The time (ns) when execution has been paused. Used to "freeze" real time while [isPaused] is `true`.*/
+	/** The time (ns) when execution has been paused. Used to "freeze" real time while [SystemSpeed.isPaused] is `true`.*/
 	private var pauseTime: Long = 0
 
-	/** The duration (ns) while execution was paused. Used to "freeze" real time while [isPaused] is `true` */
+	/** The duration (ns) while execution was paused. Used to "freeze" real time while [SystemSpeed.isPaused] is `true` */
 	private var accumulatedPauseTime: Long = 0
 
 	private val issueCollectorListener: EventHandler<IssueCollectorEvent> = {
 		if (isActive && isStopOnIssue && it.issue != null) {
-			isSingleStepMode = true
+			systemSpeedCategory.systemSpeed.pause()
 			System.invokeLater {
 				LOG.trace("execution stopped due to Issue '${it.issue.name}'")
 				eventBus.post(ExecutionStoppedOnIssueEvent(it.issue, this))
