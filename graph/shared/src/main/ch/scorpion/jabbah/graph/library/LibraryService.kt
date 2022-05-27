@@ -249,17 +249,15 @@ class LibraryService(
 	 * and makes the change persistent.
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
-	fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
+	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
 		LOG.trace("Updating ContainerLibraryElement")
-		element.metaGraph?.let {
-			val nameChanged = it.translatableName != element.name.translation
-			storeContainerLibraryElement(library, it, element, doClone = false)
-			if (nameChanged) {
-				element.name = Name(it.translatableName)
-				storeLibrary(library)
-			}
-			eventBus.post(LibraryItemUpdatedEvent(library, element))
+		val nameChanged = metaGraph.translatableName != element.name.translation
+		storeContainerLibraryElement(library, metaGraph, element, doClone = false)
+		if (nameChanged) {
+			element.name = Name(metaGraph.translatableName)
+			storeLibrary(library)
 		}
+		eventBus.post(LibraryItemUpdatedEvent(library, element))
 	}
 
 	/**

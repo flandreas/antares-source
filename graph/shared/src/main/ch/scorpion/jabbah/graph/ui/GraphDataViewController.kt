@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * An [ApplicationDataViewController] that treats [ApplicationData.content] as [MetaGraph]
@@ -101,7 +102,7 @@ class GraphDataViewController(
 			open {
 				val library = element.library!!
 				library.libraryService.loadMetaGraph(library, element)
-				ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus)
+				ApplicationData(StorableCloner.clone(element.metaGraph!!), library.createSavable(element), eventBus)
 			}
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")

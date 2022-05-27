@@ -80,7 +80,7 @@ class SubGraphVerticeViewDslDrawSymbolTest {
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library, inputName = inputName, outputName = outputName)
 		metaGraph.containerDrawing.execDrawScript = ScriptProperty(drawExecScript)
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
-		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
+		LibraryModule.libraryService.updateContainerLibraryElement(library, metaGraph, libraryElement)
 		return libraryElement
 	}
 }

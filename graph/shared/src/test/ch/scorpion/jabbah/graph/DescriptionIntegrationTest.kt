@@ -92,7 +92,7 @@ class DescriptionIntegrationTest {
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library)
 		metaGraph.graph.model!!.description = Description(desc)
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
-		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
+		LibraryModule.libraryService.updateContainerLibraryElement(library, metaGraph, libraryElement)
 		return libraryElement
 	}
 }

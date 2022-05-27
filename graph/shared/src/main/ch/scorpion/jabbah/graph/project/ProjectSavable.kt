@@ -43,7 +43,7 @@ class ProjectSavable(
 	}
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-		libraryService.updateContainerLibraryElement(project, element)
+		libraryService.updateContainerLibraryElement(project, appDataViewController.data!!.content as MetaGraph, element)
 		appDataViewController.data = appDataViewController.data!!.withSavable(this)
 		return true
 	}

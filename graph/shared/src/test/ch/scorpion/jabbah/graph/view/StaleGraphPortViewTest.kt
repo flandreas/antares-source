@@ -56,7 +56,7 @@ class StaleGraphPortViewTest {
 
 		LibraryModule.libraryService.updateContainerLibraryElement(
 			LibraryModule.libraryHolder.library,
-			ContainerLibraryElement(inner.uuid)
-		)
+			inner,
+			ContainerLibraryElement(inner.uuid))
 	}
 }

@@ -114,7 +114,7 @@ class SubGraphVerticeRefDslExecutionTest {
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library, inputName = inputName, outputName = outputName)
 		metaGraph.graph.model!!.script = script
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
-		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
+		LibraryModule.libraryService.updateContainerLibraryElement(library, metaGraph, libraryElement)
 		return libraryElement
 	}
 }

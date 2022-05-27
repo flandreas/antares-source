@@ -69,7 +69,7 @@ class AntaresDslGraphExecutionTest {
 		val library = LibraryModule.libraryHolder.library
 		val metaGraph = TestLibraryBuilder().addScriptedBinaryFunction(library, i1, i2, o, script)
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
-		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
+		LibraryModule.libraryService.updateContainerLibraryElement(library, metaGraph, libraryElement)
 		return libraryElement
 	}
 }

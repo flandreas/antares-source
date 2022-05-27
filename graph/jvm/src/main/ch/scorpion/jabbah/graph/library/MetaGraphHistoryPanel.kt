@@ -125,7 +125,7 @@ class MetaGraphHistoryPanel(
 		LOG.debug("Restoring historized version of ${metaGraph.uuid.id}")
 
 		element.updateStorable(metaGraph)
-		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, element)
+		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, metaGraph, element)
 		graphDataViewController.openAsSavable(element, Translations.getString("graph.history.action.restore.name"))
 	}
 
