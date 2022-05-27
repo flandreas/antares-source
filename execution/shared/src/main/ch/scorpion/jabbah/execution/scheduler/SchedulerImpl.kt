@@ -443,11 +443,15 @@ class SchedulerImpl(
 		LOG.trace("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
+		pauseTime = 0
 		accumulatedPauseTime = 0
-		activationState = ACTIVE
+		currentSystemSpeedCategory.systemSpeed.resume()
 		isInBreakpoint = false
-		eventBus.post(SchedulerActivationStateEvent(this))
+		isInBreakpointPending = false
+		hardBreakpointReceived = false
+		activationState = ACTIVE
 		startTaskIfNeeded()
+		eventBus.post(SchedulerActivationStateEvent(this))
 	}
 
 	private fun startTaskIfNeeded() {
