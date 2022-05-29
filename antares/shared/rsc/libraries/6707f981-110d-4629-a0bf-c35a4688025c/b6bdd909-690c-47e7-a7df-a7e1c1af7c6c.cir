@@ -153,14 +153,14 @@
             <digitalPortView _id='46' x='-98.0' y='-42.0' dir='west' textPos='external' portId='47'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='48' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='48' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true' largeExtLabelDist='true'>
           <portView>
-            <digitalPortView _id='49' x='-70.0' y='-28.0' dir='south' textPos='hide' portId='50'/>
+            <digitalPortView _id='49' x='-70.0' y='-28.0' dir='south' textPos='external' portId='50'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='51' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='52' x='-70.0' y='-56.0' dir='north' textPos='hide' portId='53'/>
+            <digitalPortView _id='52' x='-70.0' y='-56.0' dir='north' textPos='external' portId='53'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='54' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
@@ -177,25 +177,9 @@
         <polyline _id='59' id='9' style='figure' filled='true' stroked='true' points='-98.0,-42.0 -98.0,-14.0 -70.0,-28.0 -98.0,-42.0'/>
         <polyline _id='60' id='10' style='figure' filled='true' stroked='true' points='-42.0,-70.0 -70.0,-56.0 -42.0,-42.0 -42.0,-70.0'/>
         <polyline _id='61' id='11' style='figure' filled='true' stroked='true' points='-42.0,-42.0 -70.0,-28.0 -42.0,-14.0 -42.0,-42.0'/>
-        <label _id='62' rot='0'>
-          <text>
-            <translation lang='en' text='S'/>
-          </text>
-          <location>
-            <point x='-77.0' y='-14.0'/>
-          </location>
-        </label>
-        <label _id='63' rot='0'>
-          <text>
-            <translation lang='en' text='!S'/>
-          </text>
-          <location>
-            <point x='-77.0' y='-70.0'/>
-          </location>
-        </label>
       </components>
       <model>
-        <subGraphVertice _id='64' id='0' delay='0' uuid='b6bdd909-690c-47e7-a7df-a7e1c1af7c6c'>
+        <subGraphVertice _id='62' id='0' delay='0' uuid='b6bdd909-690c-47e7-a7df-a7e1c1af7c6c'>
           <desc>
             <translation lang='en' text='An unidirectional switch built from a NMOS and a PMOS transistor working in parallel. A 1 at control input S let signals flow from I to O.'/>
             <translation lang='de' text='Ein unidirektionaler Schalter, der aus einem NMOS- und einem PMOS-Transistor besteht, die parallel geschaltet sind. Eine 1 am Steuereingang S lässt Signale von I zu O fliessen.'/>
@@ -215,9 +199,9 @@
     </containerDrawing>
   </container>
   <params>
-    <graphParamDefs _id='65'>
+    <graphParamDefs _id='63'>
       <paramDefs>
-        <graphParamDef _id='66' name='BW' type='bitWidth' defaultValue='1'/>
+        <graphParamDef _id='64' name='BW' type='bitWidth' defaultValue='1'/>
       </paramDefs>
     </graphParamDefs>
   </params>

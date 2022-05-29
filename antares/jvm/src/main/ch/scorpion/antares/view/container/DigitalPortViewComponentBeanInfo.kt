@@ -23,6 +23,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    private val portViewStyle = CommandPropertySwing("portViewStyle", "element.property.DigitalPortViewStyle", DigitalPortViewStyle::class.java, componentBeanProvider)
 	    private val direction = CommandPropertySwing("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
 		private val portLabelPos = CommandPropertySwing("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
+	    private val largeExtLabelDist = CommandPropertySwing("largeExternalPortLabelDist", "element.property.DigitalPortViewComponent.largeLabelDist", Boolean::class.java, componentBeanProvider)
 	    private val showBitWidth = CommandPropertySwing("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
 	    private val logic = CommandPropertySwing("logic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 	    private val trigger = CommandPropertySwing("trigger", "element.property.trigger", Trigger::class.java, componentBeanProvider)
@@ -37,6 +38,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    properties.add(portViewStyle.bind(editor, bean.id))
 	    properties.add(direction.bind(editor, bean.id))
 	    properties.add(portLabelPos.bind(editor, bean.id))
+	    properties.add(largeExtLabelDist.bind(editor, bean.id, editable = bean.portLabelPosition == PortLabelPosition.EXTERNAL))
 	    properties.add(showBitWidth.bind(editor, bean.id))
 	    properties.add(logic.bind(editor, bean.id))
 	    if (bean.port.portType == PortType.INPUT) {

@@ -86,6 +86,12 @@ class DigitalPortViewComponent(
 			portView!!.validate()
 		}
 
+	var largeExternalPortLabelDist: Boolean
+		get() = digitalPortView.largeExternalPortLabelDistance
+		set(value) {
+			digitalPortView.largeExternalPortLabelDistance = value
+		}
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
@@ -94,6 +100,9 @@ class DigitalPortViewComponent(
 	    if (portViewStyle != DigitalPortViewStyle.Line) {
 	    	writer.writeString("portViewStyle", portViewStyle.customName)
 	    }
+	    if (largeExternalPortLabelDist) {
+			writer.writeBoolean("largeExtLabelDist", largeExternalPortLabelDist)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -101,6 +110,9 @@ class DigitalPortViewComponent(
         showBitWidthAnnotation = reader.readBoolean("showBitWidthAnnotation")
 	    if (reader.hasAttribute("portViewStyle")) {
 	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
+	    }
+	    if (reader.hasAttribute("largeExtLabelDist")) {
+			largeExternalPortLabelDist = reader.readBoolean("largeExtLabelDist")
 	    }
     }
 

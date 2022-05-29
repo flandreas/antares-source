@@ -57,9 +57,10 @@ class DigitalPortView(
 
 	companion object {
 		const val LENGTH: Int = 2 * Look.SCALE
-		const val INT_BORDER_DIST = 5
-		const val EXT_BORDER_DIST = 4
+		private const val INT_BORDER_DIST = 5
 		const val LOGIC_SIZE = (2 * Look.SCALE / 1.7f).toInt()
+		private const val SMALL_EXT_BORDER_DIST = 4
+		private const val LARGE_EXT_BORDER_DIST = SMALL_EXT_BORDER_DIST + LOGIC_SIZE
 		const val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
 
 		val EDGE_TRIGGER_PATH: Path = System.createPath()
@@ -106,6 +107,17 @@ class DigitalPortView(
 			if (value != field) {
 				invalidate()
 				field = value
+				invalidate()
+				validate()
+			}
+		}
+
+	var largeExternalPortLabelDistance: Boolean = false
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				buildPortLabel()
 				invalidate()
 				validate()
 			}
@@ -448,11 +460,12 @@ class DigitalPortView(
 
 	private fun getExternalLabelLocation(direction: Direction): Point2D {
 		val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
+		val dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
 		return when (direction) {
-			Direction.WEST -> Point2D(-EXT_BORDER_DIST - ea, -1)
-			Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, -1)
-			Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
-			Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
+			Direction.WEST -> Point2D(-dist - ea, -1)
+			Direction.EAST -> Point2D(dist + ea, -1)
+			Direction.NORTH -> Point2D(0, -dist - ea)
+			Direction.SOUTH -> Point2D(0, dist + ea)
 		}
 	}
 
