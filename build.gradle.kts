@@ -17,6 +17,9 @@ plugins {
 	id("maven-publish")
 }
 
+val version_project: String by project
+val group_project = rootProject.name
+
 allprojects {
 
 	repositories {
@@ -27,10 +30,16 @@ allprojects {
 		flatDir {
 			dirs("../lib")
 		}
-	}
 
-	val version_project: String by project
-	val group_project = rootProject.name
+		maven {
+			name = "bytesafe"
+			url = uri("https://antares.bytesafe.dev/maven/antares/")
+			credentials {
+				username = "bytesafe"
+				password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+			}
+		}
+	}
 
 	group = group_project
 	version = version_project
@@ -50,6 +59,8 @@ val commonsCodecVersion: String by extra
 val l2fprodVersion: String by extra
 
 subprojects {
+
+	val projectName = this.name
 
 	// jsBrowserTest doesn't work in JS targets due to open issues with mockk-js
 	// See https://github.com/mockk/mockk/issues/100
@@ -180,6 +191,27 @@ subprojects {
 			}
 		}
 	}
+
+	publishing {
+		publications {
+			create<MavenPublication>("maven") {
+				groupId = group_project
+				artifactId = projectName
+				version = version_project
+			}
+		}
+		repositories {
+			maven {
+				name = "bytesafe"
+				url = uri("https://antares.bytesafe.dev/maven/antares/")
+				credentials {
+					username = "bytesafe"
+					password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+				}
+			}
+		}
+	}
+
 }
 
 tasks {
