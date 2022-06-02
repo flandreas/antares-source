@@ -74,6 +74,8 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = width
+
     override val controlName: String
 	    get() {
 		    if (StringUtils.isEmpty(model.name)) {

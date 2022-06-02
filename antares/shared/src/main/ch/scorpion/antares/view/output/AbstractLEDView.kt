@@ -137,6 +137,8 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractLEDView) {
 			copyControlViewProperties(source, this)
@@ -172,7 +174,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.REPLACE
-		set(value) {super.preferredSelectionDrawingStrategy = value}
+		set(value) { super.preferredSelectionDrawingStrategy = value }
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)

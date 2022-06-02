@@ -31,6 +31,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.abs
 import kotlin.math.round
 
 /** A view representation of a [Terminal].*/
@@ -318,6 +319,10 @@ class TerminalView(
 	/** ---- [ControlView] */
 
 	override var isActiveControlView: Boolean = false
+
+	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+
+	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Terminal) {
 		this.model = model

@@ -45,37 +45,33 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 	fun mirrorVertically(y: Double) = Point2D(this.x, y + (y - this.y))
 
 	/** Determines whether this [Point2D] is near the specified point in respect of the sensitive [area].*/
-	fun isNear(x: Double, y: Double, area: Int): Boolean {
-		return this.x >= x - area && this.x <= x + area && this.y >= y - area && this.y <= y + area
-	}
+	fun isNear(x: Double, y: Double, area: Int): Boolean =
+		this.x >= x - area && this.x <= x + area && this.y >= y - area && this.y <= y + area
 
 	/** Returns a new [Point2D] by adding this [Point2D] to the specified offset.*/
-	fun add(dx: Double, dy: Double): Point2D {
-		return Point2D(x + dx, y + dy)
-	}
+	fun add(dx: Double, dy: Double): Point2D = Point2D(x + dx, y + dy)
 
 	/** Returns a new [Point2D] by adding this [Point2D] to the specified offset.*/
-	fun add(p: Point2D): Point2D {
-		return add(p.x, p.y)
-	}
+	fun add(p: Point2D): Point2D = add(p.x, p.y)
 
 	/** Creates a new [Point2D] that is the result of subtracting the specified [Point2D] from this [Point2D].*/
-	fun subtract(p: Point2D): Point2D {
-		return Point2D(x - p.x, y - p.y)
-	}
+	fun subtract(p: Point2D): Point2D = Point2D(x - p.x, y - p.y)
 
 	/** Creates a new [Point2D] by multiplying the coordinates of this [Point2D] with the specified factor.*/
-	fun multiply(factor: Double): Point2D {
-		return Point2D(x * factor, y * factor)
-	}
+	fun multiply(factor: Double): Point2D = Point2D(x * factor, y * factor)
+
+	/** Creates a new [Point2D] by keeping [y] and adding [dx] to [x].*/
+	fun addX(dx: Double): Point2D = Point2D(x + dx, y)
+
+	/** Creates a new [Point2D] by keeping [x] and adding [dy] to [y].*/
+	fun addY(dy: Double): Point2D = Point2D(x, y + dy)
 
 	/**
 	 * Returns a [Rectangle2D] of the specified half size whose center is this [Point2D].
 	 * @param halfSize the half of the rectangle's size.
 	 */
-	fun toRect(halfSize: Double): Rectangle2D {
-		return Rectangle2D(x - halfSize, y - halfSize, 2 * halfSize, 2 * halfSize)
-	}
+	fun toRect(halfSize: Double): Rectangle2D =
+		Rectangle2D(x - halfSize, y - halfSize, 2 * halfSize, 2 * halfSize)
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

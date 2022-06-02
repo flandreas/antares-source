@@ -59,4 +59,14 @@ class Point2DTest {
 	fun shouldMirrorVertically() {
 		assertEquals(Point2D(10, -20), Point2D(10, 20).mirrorVertically(0.0))
 	}
+
+	@Test
+	fun shouldAddX() {
+		assertEquals(Point2D(15, 20), Point2D(10, 20).addX(5.0))
+	}
+
+	@Test
+	fun shouldAddY() {
+		assertEquals(Point2D(10, 25), Point2D(10, 20).addY(5.0))
+	}
 }

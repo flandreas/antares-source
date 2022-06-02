@@ -191,6 +191,10 @@ class SevenSegmentDisplayView(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = width
+
+	override val mirrorHeight: Double get() = -height
+
 	override val controlId: String get() = "7seg:" + model.id
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: SevenSegmentDisplay) {

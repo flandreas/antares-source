@@ -40,6 +40,12 @@ interface ControlView<T : Vertice> : Component, Transparent, ActorView {
 	 */
 	var isActiveControlView: Boolean
 
+	/** The dislocation of the location's x coordinate when mirroring this [ControlView] horizontally.*/
+	val mirrorWidth: Double get() = 0.0
+
+	/** The dislocation of the location's y coordinate when mirroring this [ControlView] vertically.*/
+	val mirrorHeight: Double get() = 0.0
+
 	/**
      * Binds this [ControlView] to the corresponding [Vertice] of the [Graph] that is contained in the
      * [SubGraphVerticeView] that owns this [ControlView]. Used for establishing a process to update this [ControlView]

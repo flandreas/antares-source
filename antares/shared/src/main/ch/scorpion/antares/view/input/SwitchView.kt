@@ -282,6 +282,8 @@ class SwitchView(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = -(2 * DigitalPortView.LENGTH + width)
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
 		this.model = model
 	}

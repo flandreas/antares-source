@@ -128,14 +128,14 @@ class ControlViewComponent(
 
 	override fun mirrorHorizontally(x: Double) {
 		invalidate()
-		location = location.mirrorHorizontally(x)
+		location = location.mirrorHorizontally(x).addX(-controlView.mirrorWidth)
 		invalidate()
 		update()
 	}
 
 	override fun mirrorVertically(y: Double) {
 		invalidate()
-		location = location.mirrorVertically(y)
+		location = location.mirrorVertically(y).addY(controlView.mirrorHeight)
 		invalidate()
 		update()
 	}

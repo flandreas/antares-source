@@ -28,7 +28,7 @@ class LEDView(
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     square: Boolean = false,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter, ControlView<LED>, ControlViewSource<LED> {
+) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter {
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"

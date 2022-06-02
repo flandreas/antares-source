@@ -89,6 +89,10 @@ class ClockControlView(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = width
+
+	override val mirrorHeight: Double get() = -height
+
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = iconButton.getActorInteractionHandler(context)
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null

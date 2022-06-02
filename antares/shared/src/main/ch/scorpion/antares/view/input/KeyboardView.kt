@@ -173,6 +173,8 @@ class KeyboardView(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Keyboard) {
 		this.model = model
 	}

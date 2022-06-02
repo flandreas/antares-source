@@ -124,6 +124,10 @@ class LEDMatrixView(
 
 	override var isActiveControlView: Boolean = false
 
+	override val mirrorWidth: Double get() = width
+
+	override val mirrorHeight: Double get() = -height
+
 	override val controlId: String
 		get() = "ledMatrix:${model.id}"
 
