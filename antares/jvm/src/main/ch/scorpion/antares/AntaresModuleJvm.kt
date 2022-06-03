@@ -34,6 +34,7 @@ import ch.scorpion.antares.view.signal.BitWidthRenderer
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
+import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService.Companion.PROP_PING_APPLICATION_ID
 import ch.scorpion.jabbah.app.rating.RailwayRatingService
@@ -181,6 +182,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
+	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
 		properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:9999")
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
@@ -189,10 +191,20 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		properties.set(RailwayRatingService.PROP_ASPECTS_URL, "https://click-metrics.up.railway.app/api/aspects")
 		properties.set(RailwayRatingService.PROP_RATING_URL, "https://click-metrics.up.railway.app/api/rating")
 
-		properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
-		properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
-		properties.set(Auth0LoginFlow.PROP_AUTH0_AUDIENCE, "https://antarescircuit.io/api")
+		// Auth0 parameters
 		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
+		properties.set(Auth0LoginFlow.PROP_AUTH0_AUDIENCE, "https://antarescircuit.io/api")
+		when (app.environment) {
+			Environment.Development -> {
+				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
+				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
+			}
+			Environment.Production -> {
+				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "antarescircuit.eu.auth0.com")
+				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "pnSg326RRJOMfMCs09D2fjaKK5Q5mlb5")
+			}
+			else -> throw IllegalStateException("no Auth0 settings for environment ${app.environment}")
+		}
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

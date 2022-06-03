@@ -62,6 +62,13 @@ abstract class AbstractDesktopApplication(
 				.hasArg(false)
 				.build())
 
+			options.addOption(Option.builder("env")
+				.required(false)
+				.longOpt("environment")
+				.desc("Run environment")
+				.hasArg()
+				.build())
+
 			return options
 		}
 
@@ -85,6 +92,18 @@ abstract class AbstractDesktopApplication(
 			System.setProperty(PROP_USER_DATA_DIRECTORY, absolutePath)
 			System.setProperty(PROP_LOGFILE_PATH, Paths.get(absolutePath, calculateLogfileName(systemName)).toString())
 			return path
+		}
+
+		private fun determineEnvironment(commandLine: CommandLine): Environment {
+			if (!commandLine.hasOption("env")) {
+				return Environment.Production
+			}
+			try {
+				return Environment.withName(commandLine.getOptionValue("env"))
+			} catch (e: IllegalArgumentException) {
+				System.err.println(e.message)
+				exitProcess(1)
+			}
 		}
 
 		private fun getDefaultUserDataDirectory(): String {
@@ -118,6 +137,7 @@ abstract class AbstractDesktopApplication(
 
 	override fun init() {
 		super.init()
+		LOG.info("Running in environment '$environment'")
 		loadPreferences()
 		LogSystem.level = LogLevel.valueOf(BaseModule.properties.getString(LogSystem.PROP_LOG_LEVEL))
 		if (Translations.language.code != BaseModule.properties.getString(Language.PROP_LANGUAGE)) {
@@ -126,6 +146,8 @@ abstract class AbstractDesktopApplication(
 	}
 
 	/** ---- [DesktopApplication] */
+
+	override val environment: Environment = determineEnvironment(commandLine)
 
 	override fun quit() {
 		if (controller.canReplaceSavable("file.action.quit.name")) {

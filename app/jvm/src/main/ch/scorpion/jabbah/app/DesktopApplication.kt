@@ -18,6 +18,9 @@ interface DesktopApplication : Application {
 	/** The [Path] to the user's data directory, i.e. the directory where the user's data is stored.*/
 	val userDataDirectoryPath: Path
 
+	/** The [Environment] in which this [DesktopApplication] runs. */
+	val environment: Environment get() = Environment.Production
+
 	fun readVersion(): ApplicationVersion
 
 	fun exportLogfile(destinationPath: String)
