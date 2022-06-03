@@ -84,7 +84,7 @@ class UploadProjectAction(
 				} catch (e: Exception) {
 					JOptionPane.showConfirmDialog(
 						SwingUtilities.getWindowAncestor(controller.view as Component),
-						"General Error",
+						Translations.getString("project.action.upload.netError.msg", e.message ?: ""),
 						name,
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.ERROR_MESSAGE)
