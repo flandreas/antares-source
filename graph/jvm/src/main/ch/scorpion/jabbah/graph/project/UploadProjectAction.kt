@@ -72,7 +72,7 @@ class UploadProjectAction(
 						JOptionPane.INFORMATION_MESSAGE)
 				} catch (e: AkrabApiException) {
 					val message = when (e.error.type) {
-						"quota" -> e.error.msg!!
+						AkrabApiError.TYPE_QUOTA -> e.error.msg!!
 						else -> Translations.getString("project.action.upload.error.msg")
 					}
 					JOptionPane.showConfirmDialog(

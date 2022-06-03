@@ -184,12 +184,22 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
-		properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:9999")
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
 		properties.set(RailwayRatingService.PROP_ASPECTS_URL, "https://click-metrics.up.railway.app/api/aspects")
 		properties.set(RailwayRatingService.PROP_RATING_URL, "https://click-metrics.up.railway.app/api/rating")
+
+		// Akrab REST API
+		when (app.environment) {
+			Environment.Development -> {
+				properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:9999")
+			}
+			Environment.Production -> {
+				properties.set(DataLocation.PROP_SERVER_URL, "https://api.antarescircuit.io")
+			}
+			else -> throw IllegalStateException("no Akrab REST settings for environment ${app.environment}")
+		}
 
 		// Auth0 parameters
 		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
