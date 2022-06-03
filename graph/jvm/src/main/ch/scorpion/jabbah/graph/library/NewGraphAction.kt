@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities
  */
 class NewGraphAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
 ) : AbstractLibraryFolderAction(
 	actionBaseName = "library.action.newGraph",
 	operation = Operation.Change,
@@ -25,6 +24,14 @@ class NewGraphAction(
 
 	companion object {
 		private val LOG by logger(NewGraphAction::class)
+	}
+
+	private val operationTarget: () -> Any? get() = {
+		if (selectedItem is LibraryDirectory) {
+			selectedFolder.library!!
+		} else {
+			null
+		}
 	}
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

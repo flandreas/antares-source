@@ -39,7 +39,7 @@ open class LibraryTreeViewActionsSwing(
 
 	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
-	private val newLibraryGraphAction = NewGraphAction(controller, libraryOperationTarget)
+	private val newLibraryGraphAction = NewGraphAction(controller)
 	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(controller, libraryOperationTarget)
 	protected val deleteLibraryItemAction = DeleteLibraryItemAction(controller, libraryOperationTarget)
 	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
@@ -48,7 +48,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
 	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
-	private val newProjectGraphAction = NewGraphAction(controller, operationTarget = projectOperationTarget)
+	private val newProjectGraphAction = NewGraphAction(controller)
 	private val projectFolderPropertiesAction = LibraryFolderPropertiesAction(controller, projectOperationTarget)
 	protected val deleteProjectItemAction = DeleteLibraryItemAction(controller, projectOperationTarget)
 	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(controller, projectOperationTarget)

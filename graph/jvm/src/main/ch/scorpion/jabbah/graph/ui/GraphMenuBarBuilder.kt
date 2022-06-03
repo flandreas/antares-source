@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.library.NewGraphAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
@@ -65,14 +66,19 @@ open class GraphMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
 			menu.addSeparator()
 		}
-		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
-		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
+		menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction(graphFrame.controller.graphPanelViewController.libraryPanelController.libraryTreeViewController))))
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(frame.application.controller.saveAction)))
 		menu.addSeparator()
+
+		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
+		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
+		menu.addSeparator()
+
 		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 		menu.addSeparator()
+
 		if (GraphModuleJvm.supportWeb) {
 			// Public available not before server has been released
 			menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
