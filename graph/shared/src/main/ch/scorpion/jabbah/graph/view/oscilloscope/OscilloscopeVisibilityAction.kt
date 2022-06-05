@@ -32,7 +32,7 @@ class OscilloscopeVisibilityAction(
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		val view = viewManager.activeView
+		val view = viewManager.activeView?.view
 		if (view is DrawingView<*>) {
 			if (selected) {
 				service.displayOscilloscope(view as DrawingView<GraphView>)
@@ -48,8 +48,8 @@ class OscilloscopeVisibilityAction(
 	}
 
 	private fun updateState() {
-		selected = viewManager.activeView is DrawingView<*>
-			&& (viewManager.activeView as DrawingView<*>).drawing is GraphView
-			&& service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView)
+		selected = viewManager.activeView?.view is DrawingView<*>
+			&& (viewManager.activeView!!.view as DrawingView<*>).drawing is GraphView
+			&& service.isOscilloscopeDisplayed((viewManager.activeView!!.view as DrawingView<*>).drawing as GraphView)
 	}
 }

@@ -199,7 +199,7 @@ class ContainerPanelSwing(
 
 		mainSplitPane.dividerLocation = 250
 		mainSplitPane.add(leftSplitPane)
-		mainSplitPane.add(FocusPanel(editor.view.canvas as JComponent, editor.view, viewManager))
+		mainSplitPane.add(FocusPanel(editor.view.canvas as JComponent, editor.view, editor.view.canvas as JComponent, viewManager))
 
 		add(mainSplitPane)
 	}

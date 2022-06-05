@@ -51,7 +51,7 @@ class ApplicationModeHolderImpl(
 
 	override fun updateEditorEditability() {
 		val editable =
-			viewManager.activeView === editor.view
+			viewManager.activeView?.view === editor.view
 				&& !scheduler.isActive
 
 		LOG.trace("Setting editor active=$editable")

@@ -29,8 +29,6 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	override val view: View<out EditInputEventContext>? get() = drawingView
 
 	override val mainUI: Any? get() = this
-
-	override val mainBean: Any? get() = null
 }
 
 /**

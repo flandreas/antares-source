@@ -86,8 +86,6 @@ open class ViewImpl<C : InputEventContext>(
 
 	/** ---- [ContentView] */
 
-	override val mainBean: Any? get() = null
-
 	override val mainUI: Any? get() = canvas
 
 	override val view: View<out C>? get() = this

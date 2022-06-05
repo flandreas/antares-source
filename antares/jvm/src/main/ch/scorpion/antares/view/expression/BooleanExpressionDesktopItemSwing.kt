@@ -280,10 +280,6 @@ class BooleanExpressionDesktopItemSwing(
 		}
 	}
 
-	/** ---- [ContentView] */
-
-	override val mainBean: Any get() = ref.expressions
-
 	/** ---- [GraphDesktopViewItem] */
 
 	override fun addContextColorBorder(color: Color) { }

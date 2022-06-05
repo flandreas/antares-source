@@ -163,10 +163,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
         return component.preferredSelectionDrawingStrategy ?: defaultSelectionDrawingStrategy
     }
 
-	/** ---- [ContentView] */
-
-	override val mainBean: Any get() = drawing
-
 	/** ---- [View] interface */
 
 	override val mainContent: MainContent get() = MainContent(

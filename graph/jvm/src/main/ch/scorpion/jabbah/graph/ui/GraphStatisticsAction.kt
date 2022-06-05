@@ -20,7 +20,7 @@ class GraphStatisticsAction(
 ) : AbstractViewAction("graph.action.statistics", viewManager = viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val graphView = (viewManager.activeView as DrawingView<*>).drawing as GraphView
+		val graphView = (viewManager.activeView!!.view as DrawingView<*>).drawing as GraphView
 		GraphInfoPanel.showAsDialog(title = Translations.getString("graph.action.statistics.name"), graph = graphView.graph!!)
 	}
 }

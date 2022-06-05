@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.app.*
+import ch.scorpion.jabbah.draw.view.find.FindAction
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JFrame
@@ -90,6 +91,8 @@ open class MenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(UndoAction())))
         menu.add(JMenuItem(ActionWrapperSwing(RedoAction())))
         menu.addSeparator()
+	    menu.add(JMenuItem(ActionWrapperSwing(FindAction())))
+	    menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(DeleteAction())))
         menu.add(JMenuItem(ActionWrapperSwing(RotateAction())))
         menu.add(JMenuItem(ActionWrapperSwing(GroupComponentsAction())))

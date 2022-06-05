@@ -22,7 +22,8 @@ import javax.swing.UIManager
 class FocusPanel(
 	child: JComponent,
 	val contentView: ContentView<*>,
-	viewManager: ContentViewManager
+	private val focusSource: JComponent = contentView.mainUI as JComponent,
+	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : JPanel() {
 
 	companion object {
@@ -32,11 +33,11 @@ class FocusPanel(
 	}
 
 	init {
-		(contentView.view!!.mainUI as JComponent).addFocusListener(object : FocusAdapter() {
+		focusSource.addFocusListener(object : FocusAdapter() {
 			override fun focusGained(e: FocusEvent) {
 				if (!e.isTemporary) {
 					updateFocusBorder()
-					viewManager.activeView = contentView.view
+					viewManager.activeView = contentView
 				}
 			}
 
@@ -46,10 +47,10 @@ class FocusPanel(
 				}
 			}
 		})
-		(contentView.view!!.mainUI as JComponent).addMouseListener(object : MouseAdapter() {
+		focusSource.addMouseListener(object : MouseAdapter() {
 			override fun mousePressed(e: MouseEvent) {
 				if (e.button == BUTTON1) {
-					(contentView.view!!.mainUI as JComponent).requestFocus()
+					focusSource.requestFocus()
 				}
 			}
 		})
@@ -64,7 +65,7 @@ class FocusPanel(
 	}
 
 	private fun updateFocusBorder() {
-		border = if ((contentView.view!!.mainUI as JComponent).isFocusOwner) {
+		border = if (focusSource.isFocusOwner) {
 			focusBorder
 		} else {
 			nonFocusBorder

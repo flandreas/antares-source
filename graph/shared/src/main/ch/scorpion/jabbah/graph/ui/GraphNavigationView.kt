@@ -47,7 +47,7 @@ interface GraphNavigationView : UIView, GraphDesktopViewItem {
  * A controller of a [GraphNavigationView].
  */
 class GraphNavigationViewController(
-	private val isRoot: Boolean,
+	val isRoot: Boolean,
 	override val drawingView: DrawingView<GraphView>,
 	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
@@ -191,7 +191,7 @@ class GraphNavigationViewController(
 	}
 
 	private fun handle(request: CloseViewRequest) {
-		if (request.view === drawingView || request.view === closeTarget && closeTarget is GraphDesktopViewItem) {
+		if (request.view === view || request.view === closeTarget && closeTarget is GraphDesktopViewItem) {
 			eventBus.postTwoPhase(
 				prepareEvent = GraphDesktopViewItemCloseQuestion(closeTarget, isRoot),
 				execEvent = GraphDesktopViewItemCloseRequest(closeTarget, isRoot)

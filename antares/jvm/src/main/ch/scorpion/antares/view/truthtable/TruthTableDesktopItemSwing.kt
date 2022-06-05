@@ -145,10 +145,6 @@ class TruthTableDesktopItemSwing(
 		return panel
 	}
 
-	/** ---- [ContentView] */
-
-	override val mainBean: Any get() = ref.truthTable
-
 	/** ---- [AbstractGraphDesktopItemPanelSwing] */
 
 	override fun addContextColorBorder(color: Color) { }
