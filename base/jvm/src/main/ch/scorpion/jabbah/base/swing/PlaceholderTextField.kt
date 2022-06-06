@@ -11,6 +11,10 @@ class PlaceholderTextField(
 	private val showClearButton: Boolean = false
 ) : JTextField(columns) {
 
+	companion object {
+		private val CLEAR_STROKE = BasicStroke(1.5f)
+	}
+
 	var placeholder: String = placeholder
 
 	init {
@@ -44,12 +48,13 @@ class PlaceholderTextField(
 		g2.fillOval(rect.x, rect.y, rect.width, rect.height)
 
 		g2.color = background
+		g2.stroke = CLEAR_STROKE
 		g2.drawLine(
-			rect.x + rect.width / 4, rect.y + rect.height / 4,
-			rect.x + 3 * rect.width / 4, rect.y + 3 * rect.height / 4)
+			(rect.x + rect.width * 0.3 + 1).toInt(), (rect.y + rect.height * 0.3 + 1).toInt(),
+			(rect.x + rect.width * 0.7 + 1).toInt(), (rect.y + rect.height * 0.7 + 1).toInt())
 		g2.drawLine(
-			rect.x + rect.width / 4, rect.y + 3 * rect.height / 4,
-			rect.x + 3 * rect.width / 4, rect.y + rect.height / 4)
+			(rect.x + rect.width * 0.3 + 1).toInt(), (rect.y + rect.height * 0.7 + 1).toInt(),
+			(rect.x + rect.width * 0.7 + 1).toInt(), (rect.y + rect.height * 0.3 + 1).toInt())
 	}
 
 	private fun getClearIconRectangle(): Rectangle {

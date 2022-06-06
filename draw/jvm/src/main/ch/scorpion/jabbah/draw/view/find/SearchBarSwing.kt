@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.view.find
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.swing.PlaceholderTextField
 import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.Dimension
 import javax.swing.*
@@ -21,8 +22,11 @@ class SearchBarSwing(
 		private const val DEFAULT_IGNORE_CASE = true
 	}
 
-	private val searchLabel = JLabel("${Translations.getString("draw.search.text")}:")
-	private val searchField = JTextField()
+	private val searchField = PlaceholderTextField(
+		placeholder = Translations.getString("draw.search.text"),
+		columns = 20,
+		showClearButton = true
+	)
 
 	private val matchLabel = JLabel("${Translations.getString("draw.search.match")}:")
 	private val matchField = JComboBox<SearchMatch>()
@@ -55,8 +59,6 @@ class SearchBarSwing(
 
 		searchField.maximumSize = Dimension(SEARCH_FIELD_SIZE, searchField.preferredSize.height)
 		searchField.preferredSize = Dimension(SEARCH_FIELD_SIZE, searchField.preferredSize.height)
-		add(searchLabel)
-		add(Box.createHorizontalStrut(LABEL_DIST))
 		add(searchField)
 		add(Box.createHorizontalStrut(FIELD_DIST))
 

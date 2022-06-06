@@ -30,8 +30,6 @@ class LibraryTreePanel(
 	private fun buildUI() {
 		layout = BorderLayout()
 
-		searchField.columns = 30
-
 		val treeViewScrollPane = JScrollPane(
 			controller.view as Component,
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
