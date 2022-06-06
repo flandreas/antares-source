@@ -15,6 +15,7 @@ import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.container.DilCase
 import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
+import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
@@ -144,6 +145,8 @@ object AntaresViewModule : AbstractModule() {
 				AttentionDrawerImpl()
 			}
 		}
+
+		EditModule.drawingViewSearchFactory = { DigitalGraphViewSearch() }
 
 		GraphViewModule.graphViewFactory = { DigitalGraphView(it ?: Translations.getString("graph.name.unknown")) }
 		GraphViewModule.graphViewAppService = EditModule.drawingAppService as GraphViewAppService

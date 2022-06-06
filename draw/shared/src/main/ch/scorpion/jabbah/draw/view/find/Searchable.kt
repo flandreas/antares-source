@@ -16,8 +16,15 @@ interface Searchable {
 		if (!canSearch) {
 			throw IllegalStateException("Searchable can't search")
 		}
-		throw UnsupportedOperationException("No implementation of showSearchBar()")
+		throw UnsupportedOperationException("No implementation of Searchable.showSearchBar")
 	}
 
 	fun hideSearchBar() {}
+
+	fun execute(request: SearchRequest) {
+		if (!canSearch) {
+			throw IllegalStateException("Searchable can't search")
+		}
+		throw UnsupportedOperationException("No implementation of Searchable.execute")
+	}
 }

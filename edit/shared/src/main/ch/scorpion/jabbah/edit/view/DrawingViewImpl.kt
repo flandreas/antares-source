@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.edit.*

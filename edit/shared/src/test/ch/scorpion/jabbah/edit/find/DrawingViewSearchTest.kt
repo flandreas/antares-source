@@ -1,0 +1,62 @@
+package ch.scorpion.jabbah.edit.find
+
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.view.find.SearchRequest
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.ComponentMockBuilder
+import ch.scorpion.jabbah.edit.EditTestRule
+import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.module.EditModule
+import io.mockk.every
+import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
+class DrawingViewSearchTest {
+
+	init {
+		EditTestRule.configure()
+	}
+
+	private val drawing = DrawingImpl<Component>()
+
+	private val view = EditModule.drawingViewFactory.create(drawing, null, false)
+
+	init {
+		view.canvas = createCanvas()
+	}
+
+	@Test
+	fun shouldFindComponentIds() {
+		val c1 = ComponentMockBuilder().withId(7).build().also { drawing.add(it) }
+		val c2 = ComponentMockBuilder().withId(42).build().also { drawing.add(it) }
+
+		EditModule.drawingViewSearchFactory().execute(view, SearchRequest("7"))
+
+		assertEquals(1, view.selectionManager.selectionCount)
+		assertTrue(view.selectionManager.isSelected(c1))
+		assertFalse(view.selectionManager.isSelected(c2))
+	}
+
+	@Test
+	fun shouldFindTypeNames() {
+		val c1 = ComponentMockBuilder().withType("Hello").build().also { drawing.add(it) }
+		val c2 = ComponentMockBuilder().withType("World").build().also { drawing.add(it) }
+
+		EditModule.drawingViewSearchFactory().execute(view, SearchRequest("World"))
+
+		assertEquals(1, view.selectionManager.selectionCount)
+		assertFalse(view.selectionManager.isSelected(c1))
+		assertTrue(view.selectionManager.isSelected(c2))
+	}
+
+	private fun createCanvas(): Canvas {
+		val canvas: Canvas = mockk(relaxed = true)
+		every { canvas.view } returns view
+		every { canvas.dimension } returns Dimension2D(100, 100)
+		return canvas
+	}
+}

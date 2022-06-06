@@ -13,6 +13,11 @@ import ch.scorpion.jabbah.draw.view.find.Searchable
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.draw.view.find.SearchBarSwing
+import ch.scorpion.jabbah.draw.view.find.SearchRequest
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.find.DrawingViewSearch
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
@@ -104,6 +109,10 @@ class GraphNavigationViewSwing(
 		actionMap.put("hideSearch", hideSearchBarAction)
 
 		searchBar.handleShown()
+	}
+
+	override fun execute(request: SearchRequest) {
+		EditModule.drawingViewSearchFactory.invoke().execute(drawingView as DrawingView<Drawing<Component>>, request)
 	}
 
 	override fun hideSearchBar() {

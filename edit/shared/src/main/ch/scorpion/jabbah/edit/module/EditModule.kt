@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.drag.EditDragModule
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.find.DrawingViewSearch
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.curve.EditModuleQuadCurveModule
@@ -53,6 +54,8 @@ object EditModule : AbstractModule() {
 	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
 		DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
 	}
+
+	var drawingViewSearchFactory: () -> DrawingViewSearch = { DrawingViewSearch() }
 
     /**
      * Creates an [AttentionDrawer] that produces an animation for drawing the attention
