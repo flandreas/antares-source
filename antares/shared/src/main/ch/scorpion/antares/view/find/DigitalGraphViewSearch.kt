@@ -18,13 +18,13 @@ class DigitalGraphViewSearch : DrawingViewSearch() {
 
 	private fun findInOuts(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
 		result.addAll(
-			drawing.getDrawables { it is CircuitInOutView && it.name?.contains(request.searchString, ignoreCase = true) == true }
+			drawing.getDrawables { it is CircuitInOutView && compare(it.name, request) }
 		)
 	}
 
 	private fun findTunnels(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
 		result.addAll(
-			drawing.getDrawables { it is TunnelView && it.name?.contains(request.searchString, ignoreCase = true) == true }
+			drawing.getDrawables { it is TunnelView && compare(it.name, request) }
 		)
 	}
 }

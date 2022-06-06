@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.find
 
+import ch.scorpion.jabbah.draw.view.find.SearchMatch
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -25,6 +26,13 @@ open class DrawingViewSearch {
 		findMatchingType(drawing, request, result)
 	}
 
+	protected fun compare(text: String?, request: SearchRequest): Boolean =
+		when (request.match) {
+			SearchMatch.StartsWidth -> text?.startsWith(request.searchString, request.ignoreCase) == true
+			SearchMatch.Contains -> text?.contains(request.searchString, request.ignoreCase) == true
+			SearchMatch.EntireWord -> text?.equals(request.searchString, request.ignoreCase) == true
+	}
+
 	private fun findMatchingId(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
 		request.searchString.toIntOrNull()?.let { id ->
 			drawing.getWithId(id)?.let {
@@ -34,8 +42,6 @@ open class DrawingViewSearch {
 	}
 
 	private fun findMatchingType(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
-		result.addAll(
-			drawing.getDrawables { it.type.contains(request.searchString, ignoreCase = true) }
-		)
+		result.addAll(drawing.getDrawables { compare(it.type, request)  })
 	}
 }
