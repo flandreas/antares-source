@@ -24,10 +24,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.Alignment
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -41,7 +38,7 @@ class ProbeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	probe: Probe = Probe(),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractNumberViewComponent<Probe>(styleProvider, probe, Direction.EAST), ControlViewSource<Probe> {
+) : AbstractNumberViewComponent<Probe>(styleProvider, probe, Direction.EAST), ControlViewSource<Probe>, Labeled {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
@@ -54,7 +51,7 @@ class ProbeView(
 			.close()
 	}
 
-	private val label = Label(
+	override val label = Label(
 		font = font,
 		text = probe.name)
 

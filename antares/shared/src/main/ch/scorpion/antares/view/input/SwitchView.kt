@@ -52,7 +52,7 @@ class SwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Switch = Switch(),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractSwitchView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
+) : AbstractSwitchView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch>, Labeled {
 
 	companion object {
 
@@ -147,6 +147,12 @@ class SwitchView(
 		portView.setLocation(-portView.length.toDouble(), 0.0)
 		addPortView(portView)
 		updateLabels()
+	}
+
+	override val label: Label get() = when (labelPosition) {
+		VerticeLabelPosition.HIDE -> internalLabel
+		VerticeLabelPosition.INTERNAL -> internalLabel
+		VerticeLabelPosition.EXTERNAL -> externalLabel.label
 	}
 
 	/** ---- [Storable] interface */

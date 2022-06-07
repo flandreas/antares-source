@@ -35,6 +35,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -61,7 +62,7 @@ class CircuitInOutView(
 	model: CircuitInOut = CircuitInOutImpl(),
 	private val eventBus: EventBus = BaseModule.eventBus,
 	orientation: Direction = Direction.EAST
-) : AbstractVerticeView<CircuitInOut>(styleProvider, model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
+) : AbstractVerticeView<CircuitInOut>(styleProvider, model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut>, Labeled {
 
 	companion object {
 		const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
@@ -100,7 +101,7 @@ class CircuitInOutView(
 
 	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
-	private val label = Label(
+	override val label = Label(
 		font = font,
 		text = model.name)
 

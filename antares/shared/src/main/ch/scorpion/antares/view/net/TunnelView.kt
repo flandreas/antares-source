@@ -21,6 +21,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 enum class TunnelViewFace(
@@ -142,7 +144,7 @@ enum class TunnelViewFace(
 class TunnelView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Tunnel = Tunnel()
-) : DigitalComponentView<Tunnel>(styleProvider, model) {
+) : DigitalComponentView<Tunnel>(styleProvider, model), Labeled {
 
 	constructor(
 		name: String,
@@ -154,7 +156,7 @@ class TunnelView(
 		private val face: TunnelViewFace get() = TunnelViewFace.withName(BaseModule.properties.getString(TunnelViewFace.PROP_TUNNEL_FACE))
 	}
 
-	private val label = HorizontalLabel(
+	private val horizontalLabel = HorizontalLabel(
 		owner = this,
 		relLocation = Point2D(SIZE / 2 + (DigitalPortView.LENGTH + SIZE / 2) + face.labelDist, 0),
 		font = font
@@ -199,7 +201,7 @@ class TunnelView(
 	override fun draw(context: DrawContext) {
 		super.draw(context)
 		context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).textColor
-		label.draw(context)
+		horizontalLabel.draw(context)
 	}
 
 	override fun drawImpl(context: DrawContext) {
@@ -211,24 +213,28 @@ class TunnelView(
 	override val boundingBox: Rectangle2D
 		get() {
 			val bb = super.boundingBox
-			val lbb = label.boundingBox.moveBy(location)
+			val lbb = horizontalLabel.boundingBox.moveBy(location)
 			bb.add(lbb)
 			return bb
 		}
+
+	/** ---- [Labeled] */
+
+	override val label: Label get() = horizontalLabel.label
 
 	/** ---- [AbstractComponent] */
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
-		label.rotationChanged()
+		horizontalLabel.rotationChanged()
 	}
 
 	/** ---- [TunnelView] */
 
 	private fun updateLabel() {
 		invalidate()
-		label.text = StringUtils.orEmpty(name)
-		label.rotationChanged()
+		horizontalLabel.text = StringUtils.orEmpty(name)
+		horizontalLabel.rotationChanged()
 		invalidate()
 	}
 }

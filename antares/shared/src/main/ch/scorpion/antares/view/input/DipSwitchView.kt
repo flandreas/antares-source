@@ -24,10 +24,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.model.text.Alignment
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -48,7 +45,7 @@ class DipSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: DipSwitch = DipSwitch(),
 	orientation: Direction = Direction.NORTH
-) : DigitalComponentView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch> {
+) : DigitalComponentView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch>, Labeled {
 
 	companion object {
 		private val LOG by logger(DipSwitchView::class)
@@ -78,7 +75,7 @@ class DipSwitchView(
 		verticalAlignment = VerticalAlignment.TOP)
 
 	/** The [Label] that displays the name of this [DipSwitchView].*/
-	private val label = Label(
+	override val label = Label(
 		font = font,
 		text = model.name)
 

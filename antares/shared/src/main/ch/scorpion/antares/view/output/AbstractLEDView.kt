@@ -21,6 +21,8 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -40,7 +42,7 @@ abstract class AbstractLEDView<T: Vertice>(
 	model: T,
 	square: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T> {
+) : DigitalComponentView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T>, Labeled {
 
 	companion object {
 		const val LABEL_DIST = Look.SCALE
@@ -81,14 +83,14 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	private val label = HorizontalLabel(
+	private val horizontalLabel = HorizontalLabel(
 		owner = this,
 		relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0),
 		font = font)
 
 	private fun updateGeometry() {
 		setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
-		label.relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0)
+		horizontalLabel.relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0)
 	}
 
 	init {
@@ -106,6 +108,10 @@ abstract class AbstractLEDView<T: Vertice>(
 		addPortView(portView)
 		updateLabel()
 	}
+
+	/** ---- [Labeled] */
+
+	override val label: Label get() = horizontalLabel.label
 
 	/** ---- [Storable] interface */
 
@@ -178,7 +184,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
-		label.rotationChanged()
+		horizontalLabel.rotationChanged()
 	}
 
 	/** ---- [AbstractDrawable] */
@@ -186,7 +192,7 @@ abstract class AbstractLEDView<T: Vertice>(
 	override val boundingBox: Rectangle2D
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = label.boundingBox.moveBy(location)
+			val lbb = horizontalLabel.boundingBox.moveBy(location)
 			bb.add(lbb)
 			return bb
 		}
@@ -205,7 +211,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	private fun drawLabel(context: DrawContext) {
 		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-		label.draw(context)
+		horizontalLabel.draw(context)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -231,7 +237,7 @@ abstract class AbstractLEDView<T: Vertice>(
 					widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
 			}
 		}
-		label.draw(context)
+		horizontalLabel.draw(context)
 	}
 
 	/** ---- [AbstractLEDView] */
@@ -262,8 +268,8 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	private fun updateLabel() {
 		invalidate()
-		label.text = StringUtils.orEmpty(name)
-		label.rotationChanged()
+		horizontalLabel.text = StringUtils.orEmpty(name)
+		horizontalLabel.rotationChanged()
 		invalidate()
 		update()
 	}

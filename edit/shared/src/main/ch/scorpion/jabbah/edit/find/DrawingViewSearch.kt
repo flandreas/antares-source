@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.view.find.SearchRequest
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.Labeled
 
 open class DrawingViewSearch {
 
@@ -24,6 +25,7 @@ open class DrawingViewSearch {
 	protected open fun findImpl(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
 		findMatchingId(drawing, request, result)
 		findMatchingType(drawing, request, result)
+		findLabeled(drawing, request, result)
 	}
 
 	protected fun compare(text: String?, request: SearchRequest): Boolean =
@@ -43,5 +45,9 @@ open class DrawingViewSearch {
 
 	private fun findMatchingType(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
 		result.addAll(drawing.getDrawables { compare(it.type, request)  })
+	}
+
+	private fun findLabeled(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+		result.addAll(drawing.getDrawables { it is Labeled && compare(it.label.text, request) })
 	}
 }

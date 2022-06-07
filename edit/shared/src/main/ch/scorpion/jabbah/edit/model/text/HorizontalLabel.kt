@@ -28,7 +28,7 @@ class HorizontalLabel(
 	font: Font,
 	color: Color? = null) {
 
-	private val label = Label(location = relLocation, text = text, font = font, color = color)
+	val label = Label(location = relLocation, text = text, font = font, color = color)
 
 	var text: String
 		get() = label.text
