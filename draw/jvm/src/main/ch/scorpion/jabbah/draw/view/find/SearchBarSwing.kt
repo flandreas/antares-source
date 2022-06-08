@@ -80,9 +80,7 @@ class SearchBarSwing(
 		}
 	}
 
-	fun handleHidden() {
-		searchField.text = ""
-	}
+	fun handleHidden() { }
 
 	private fun search() {
 		searchable.execute(createRequest())
