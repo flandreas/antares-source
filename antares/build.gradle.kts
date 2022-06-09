@@ -182,6 +182,7 @@ tasks {
 			"--icon", "jvm/rsc/antares.icns",
 			"--java-options", "-splash:\$APPDIR/splash.png",
 			"--java-options", "-Dapple.awt.application.name=Antares",
+			"--java-options", "-Dapple.awt.application.appearance=system",
 			"--type", "pkg"
 		)
 	}
