@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.net.TransistorViewSymbol
+import ch.scorpion.antares.view.net.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.jabbah.edit.BeanProvider
@@ -49,4 +50,7 @@ object AntaresProperties {
 
 	fun canBeUndefined(name: String = "customCanBeUndefined", baseKey: String = "element.property.CircuitOutput.triState"): CommandPropertySwing<Boolean> =
 		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
+
+	fun tunnelFlowDirection(name: String = "flowDirection"): CommandPropertySwing<TunnelFlowDirection> =
+		CommandPropertySwing(name, "element.property.tunnelFlowDirection", TunnelFlowDirection::class.java, componentBeanProvider)
 }

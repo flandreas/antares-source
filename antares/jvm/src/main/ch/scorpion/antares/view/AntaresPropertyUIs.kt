@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
+import ch.scorpion.antares.view.net.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
@@ -167,6 +168,13 @@ class VideoRamColorModelEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(VideoRamColorModel.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<VideoRamColorModel>()
+	}
+}
+
+class TunnelFlowDirectionEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(TunnelFlowDirection.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<TunnelFlowDirection>()
 	}
 }
 

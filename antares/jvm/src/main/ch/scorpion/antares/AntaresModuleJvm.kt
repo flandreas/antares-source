@@ -18,10 +18,7 @@ import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.antares.view.net.DigitalEdgeView
-import ch.scorpion.antares.view.net.TransistorView
-import ch.scorpion.antares.view.net.TransistorViewSymbol
-import ch.scorpion.antares.view.net.TunnelViewFace
+import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
@@ -241,6 +238,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(PortViewSpacing::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(WaveformType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(VideoRamColorModel::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(TunnelFlowDirection::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -262,6 +260,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(PortViewSpacing::class.java, PortViewSpacingEditor::class.java)
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
 		registry.registerEditor(VideoRamColorModel::class.java, VideoRamColorModelEditor::class.java)
+		registry.registerEditor(TunnelFlowDirection::class.java, TunnelFlowDirectionEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(
