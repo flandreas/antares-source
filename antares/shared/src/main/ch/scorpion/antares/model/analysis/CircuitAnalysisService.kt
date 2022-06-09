@@ -28,7 +28,7 @@ class CircuitAnalysisService {
 	private val timeService = ControlledTimeService()
 
 	fun analyse(circuit: DigitalGraph): TruthTable {
-		LOG.debug("Analyzing circuit ${circuit.name.value}")
+		LOG.userTrail("Analyzing circuit ${circuit.name.value}")
 
 		val scheduler = SchedulerImpl(
 			currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.MAX_SPEED)),

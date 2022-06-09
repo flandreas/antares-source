@@ -70,7 +70,7 @@ class ProjectAkrabClientServiceJvm(
 	 */
 	@OptIn(KtorExperimentalAPI::class)
 	suspend fun upload(project: Project) {
-		LOG.debug("Uploading project ${project.uuid}")
+		LOG.userTrail("Uploading project ${project.uuid}")
 
 		if (!Auth0Session.exists) {
 			throw IllegalStateException("no session")

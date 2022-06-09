@@ -173,7 +173,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		private var moveLastLocation = Point2D.ZERO
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("Start dragging Oscilloscope probe")
+			LOG.userTrail("Start dragging Oscilloscope probe")
 			moveLastLocation = Point2D(context.location)
 			return this
 		}
@@ -203,7 +203,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		}
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("Drop Oscilloscope probe into graph")
+			LOG.userTrail("Drop Oscilloscope probe into graph")
 			ConnectionPointHighlighter.removePortViewHighlight()
 
 			if (dragGhost) {

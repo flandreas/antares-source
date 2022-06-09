@@ -260,9 +260,9 @@ class DragManagerImpl(
 	private fun logMove(action: String) {
 		val selection = editor.view.selectionManager.selection
 		if (selection.size == 1) {
-			LOG.debug("Move component '${selection.first().type}' with ID ${selection.first().id} by $action")
+			LOG.userTrail("Move component '${selection.first().type}' with ID ${selection.first().id} by $action")
 		} else {
-			LOG.debug("Move ${selection.size} components by $action")
+			LOG.userTrail("Move ${selection.size} components by $action")
 		}
 	}
 

@@ -52,7 +52,7 @@ class UsecaseTestRunner(
 			val usecase = nextUsecases.first()
 			nextUsecases.removeAt(0)
 
-			LOG.debug("Running test of usecase '${usecase.name.value}'")
+			LOG.userTrail("Running test of usecase '${usecase.name.value}'")
 
 			_usecase = usecase
 			scriptMetaData = ScriptMetaData(usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
@@ -85,7 +85,7 @@ class UsecaseTestRunner(
 	) : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			if (!condition.invoke()) {
-				LOG.debug("Test '${usecase.name.value}' failed")
+				LOG.userTrail("Test '${usecase.name.value}' failed")
 				rememberTestFailure(data.dataToString())
 				if (throwFailureException) {
 					throw UsecaseTestFailureException(usecase)

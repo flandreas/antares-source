@@ -71,7 +71,7 @@ class PreferencesTreePanel(
 	}
 
 	fun applyChanges() {
-		LOG.debug("applying ${localPreferences.size} changes")
+		LOG.userTrail("Applying ${localPreferences.size} changes")
 
 		if (localPreferences.needsRestart) {
 			showRestartRequiredMessage()

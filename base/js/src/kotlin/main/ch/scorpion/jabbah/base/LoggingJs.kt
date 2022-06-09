@@ -14,12 +14,15 @@ actual object LogSystem {
 
 	actual var level: LogLevel = Warning
 
-	actual fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
-        return loggers.getOrPut(clazz, { lazy { Logger() } })
-    }
+	actual fun getLogger(clazz: KClass<out Any>): Lazy<Logger> =
+		loggers.getOrPut(clazz) { lazy { Logger() } }
 }
 
 actual class Logger(private var localLevel: LogLevel? = null) {
+
+	actual fun userTrail(msg: String) {
+		console.info(msg)
+	}
 
 	actual fun error(msg: String, t: Throwable?) {
 		if (level().ordinal >= Error.ordinal) {

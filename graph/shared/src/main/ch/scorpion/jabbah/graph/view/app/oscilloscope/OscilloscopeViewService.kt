@@ -102,10 +102,10 @@ class OscilloscopeViewServiceImpl(
 
 	override fun displayOscilloscope(view: DrawingView<GraphView>) {
 		if (findOscilloscopeView(view.drawing) == null) {
-			LOG.debug("Display Oscilloscope by creating")
+			LOG.userTrail("Display Oscilloscope by creating")
 			createOscilloscopeView(view)
 		} else {
-			LOG.debug("Display Oscilloscope by making visible")
+			LOG.userTrail("Display Oscilloscope by making visible")
 			commandManager.execute(OscilloscopeVisibilityCommand(view, true))
 		}
 		eventBus.post(OscilloscopeDisplayEvent(view.drawing))
@@ -113,7 +113,7 @@ class OscilloscopeViewServiceImpl(
 
 	override fun hideOscilloscope(view: DrawingView<GraphView>) {
 		findOscilloscopeView(view.drawing)?.let {
-			LOG.debug("Hiding Oscilloscope")
+			LOG.userTrail("Hiding Oscilloscope")
 			commandManager.execute(OscilloscopeVisibilityCommand(view, false))
 		}
 	}
@@ -127,12 +127,12 @@ class OscilloscopeViewServiceImpl(
 	}
 
 	override fun addRow(view: DrawingView<*>, oscilloscopeView: OscilloscopeView) {
-		LOG.debug("Add Oscilloscope row")
+		LOG.userTrail("Add Oscilloscope row")
 		commandManager.execute(AddOscilloscopeRowCommand(view, oscilloscopeView.id))
 	}
 
 	override fun removeRow(view: DrawingView<*>, name: String, oscilloscopeView: OscilloscopeView) {
-		LOG.debug("Remove Oscilloscope row")
+		LOG.userTrail("Remove Oscilloscope row")
 		commandManager.execute(RemoveOscilloscopeRowCommand(view, name, oscilloscopeView.id))
 	}
 

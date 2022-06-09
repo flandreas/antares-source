@@ -199,11 +199,11 @@ class GraphDesktopViewController(
 	private fun openSubGraphVerticeView(verticeView: SubGraphVerticeView<*>) {
 		openVerticeView(verticeView) { color, isParentDetached ->
 			view.createSubGraphDesktopItem(verticeView, color, isParentDetached, viewManager) }
-		LOG.debug("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
+		LOG.userTrail("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
 	}
 
 	fun closeItem(item: GraphDesktopViewItem) {
-		LOG.debug("Close single desktop item")
+		LOG.userTrail("Close single desktop item")
 		if (item === view.mainDesktopViewItem) {
 			closeAll()
 		} else {

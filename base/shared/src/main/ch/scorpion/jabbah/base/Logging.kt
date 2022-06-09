@@ -29,6 +29,9 @@ expect object LogSystem {
 
 expect class Logger {
 
+	/** Used for logging main user interactions used for replaying them in support cases. */
+	fun userTrail(msg: String)
+
 	/** Used for a few important information like statistics etc.*/
 	fun info(msg: String)
 

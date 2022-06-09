@@ -49,7 +49,7 @@ class ImportMetaGraphAction(
 		var replaceIfUuidExists = false
 		do {
 			var repeat = false
-			LOG.debug("Import bundle '${bundleName}', replace if UUID exists = $replaceIfUuidExists")
+			LOG.userTrail("Import bundle '${bundleName}', replace if UUID exists = $replaceIfUuidExists")
 
 			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists)) {
 				Success -> handleSuccessfulImport(bundleName)

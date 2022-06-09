@@ -70,7 +70,7 @@ class ApplicationModeHolderImpl(
 	}
 
 	private fun enterEditMode(init: Boolean) {
-		LOG.debug("Enter edit mode mode")
+		LOG.userTrail("Enter edit mode")
 
 		currentMode = ApplicationMode.EDIT
 		if (!init) {
@@ -82,7 +82,7 @@ class ApplicationModeHolderImpl(
 	}
 
 	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
-		LOG.debug("Enter execution mode (deep = ${scheduler.isDeepExecution})")
+		LOG.userTrail("Enter execution mode (deep = ${scheduler.isDeepExecution})")
 
 		eventBus.post(ApplicationModeBeginEvent(this, mode))
 
@@ -97,7 +97,7 @@ class ApplicationModeHolderImpl(
 			}
 		} else {
 			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
-			LOG.debug("execution not started due to design errors")
+			LOG.userTrail("Execution not started due to design errors")
 		}
 	}
 

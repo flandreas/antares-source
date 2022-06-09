@@ -112,7 +112,7 @@ open class ApplicationDataViewController(
 	 */
 	fun newData() {
 		if (canReplaceSavable("file.action.new.name")) {
-			LOG.debug("Set new empty application data")
+			LOG.userTrail("Set new empty application data")
 			data = ApplicationData(newStorableProvider.invoke(), repository.createUndefinedSavable())
 		}
 	}
@@ -125,7 +125,7 @@ open class ApplicationDataViewController(
 	 */
 	fun open(provider: () -> ApplicationData) {
 		if (canReplaceSavable("file.action.open.name")) {
-			LOG.debug("Open application data")
+			LOG.userTrail("Open application data")
 			this.data = provider.invoke()
 		}
 	}
@@ -142,7 +142,7 @@ open class ApplicationDataViewController(
 	fun open() {
 		if (canReplaceSavable("file.action.open.name")) {
 			view.defineSavableForLoading()?.let {
-				LOG.debug("Open application data from ${it.description}")
+				LOG.userTrail("Open application data from ${it.description}")
 				val storable = repository.load(it)
 				data = ApplicationData(storable, it)
 			}
@@ -151,7 +151,7 @@ open class ApplicationDataViewController(
 
 	open fun open(savable: Savable) {
 		if (canReplaceSavable("file.action.open.name")) {
-			LOG.debug("Open application data from ${savable.description}")
+			LOG.userTrail("Open application data from ${savable.description}")
 			val storable = repository.load(savable)
 			data = ApplicationData(storable, savable)
 		}
@@ -171,7 +171,7 @@ open class ApplicationDataViewController(
 
 	protected fun closeDataAfterConfirmation() {
 		if (data != null) {
-			LOG.debug("Close application data")
+			LOG.userTrail("Close application data")
 			data = null
 		}
 	}
@@ -221,7 +221,7 @@ open class ApplicationDataViewController(
 	 */
 	fun saveAs(): Boolean {
 		return view.defineSavableForStoring(data!!.content, data!!.savable)?.let { newSavable ->
-			LOG.debug("Store application data")
+			LOG.userTrail("Store application data")
 			repository.store(newSavable, data!!.content)
 			data = data!!.withSavable(newSavable)
 			true

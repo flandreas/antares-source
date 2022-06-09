@@ -43,9 +43,9 @@ class InputToOutputOrEdgeConnector(
 
 	private fun logConnect() {
 		if (targetPortView != null) {
-			LOG.debug("Connect input of ${startPortView?.owner?.type} with output of ${targetPortView?.owner?.type}")
+			LOG.userTrail("Connect input ${startPortView!!.port!!.portId} of ${startPortView?.owner?.id} with output ${targetPortView!!.port!!.portId} of ${targetPortView?.owner?.id}")
 		} else {
-			LOG.debug("Connect input of ${startPortView?.owner?.type} open-ended")
+			LOG.userTrail("Connect input ${startPortView!!.port!!.portId} of ${startPortView?.owner?.id} open-ended")
 		}
 	}
 

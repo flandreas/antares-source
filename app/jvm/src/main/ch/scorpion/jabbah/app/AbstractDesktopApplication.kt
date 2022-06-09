@@ -156,7 +156,7 @@ abstract class AbstractDesktopApplication(
 	}
 
 	override fun exportLogfile(destinationPath: String) {
-		LOG.debug("Exporting log file to $destinationPath")
+		LOG.userTrail("Exporting log file to $destinationPath")
 		FileOutputStream(destinationPath).use { output ->
 			ZipOutputStream(output).use {
 				val fileToZip = File(Paths.get(userDataDirectoryPath.toAbsolutePath().toString(), logfileName).toUri())
@@ -212,7 +212,7 @@ abstract class AbstractDesktopApplication(
 	private fun ensureUserDataDirectory() {
 		val path = userDataDirectoryPath
 		if (Files.notExists(path)) {
-			LOG.debug("Creating home directory '$path'")
+			LOG.userTrail("Creating home directory '$path'")
 			Files.createDirectories(path)
 		}
 	}

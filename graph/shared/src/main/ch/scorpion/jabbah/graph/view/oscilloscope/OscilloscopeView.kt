@@ -395,7 +395,7 @@ class OscilloscopeView(
 		override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
 			super.drawableRemoved(event)
 			if (event.child is OscilloscopeProbeVerticeView<*> && !(event.child as OscilloscopeProbeVerticeView<*>).dragGhost) {
-				LOG.debug("Delete Oscilloscope probe from graph")
+				LOG.userTrail("Delete Oscilloscope probe from graph")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
 				rowWithName(comp.name)?.apply {
 					val oldName = name

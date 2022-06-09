@@ -40,7 +40,7 @@ class DeleteLibraryFolderAction(
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
-			LOG.debug("Delete folder '${libraryItem.name.getOptionalTranslation()}'")
+			LOG.userTrail("Delete folder '${libraryItem.name.getOptionalTranslation()}'")
 			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
 		}
 	}

@@ -192,7 +192,7 @@ class SourcingCommandManager(
 			throw IllegalStateException("no undoable command")
 		}
 		val snapshot = state.snapshots.peek()
-		LOG.debug("Undo command '${snapshot.undoDescription}'")
+		LOG.userTrail("Undo command '${snapshot.undoDescription}'")
 		snapshot.undo(forRedo = true)
 
 		transferUndoneSnapshotIfNecessary(storeForRedo = true)
@@ -223,7 +223,7 @@ class SourcingCommandManager(
 			state.snapshots.push(state.redoSnapshots.pop())
 		}
 
-		LOG.debug("Redo command '${state.snapshots.peek().redoDescription}'")
+		LOG.userTrail("Redo command '${state.snapshots.peek().redoDescription}'")
 		state.snapshots.peek().redo()
 
 		eventBus.post(CommandEvent(this))
@@ -340,7 +340,7 @@ class SourcingCommandManager(
 	private fun addableSnapshot(): Snapshot {
 		if (state.snapshots.empty || maxSnapshotSizeReached) {
 			if (maxSnapshotSizeReached) {
-				LOG.debug("Max snapshot size reached. Create new snapshot.")
+				LOG.userTrail("Max snapshot size reached. Create new snapshot.")
 			}
 			addSnapshot()
 		}

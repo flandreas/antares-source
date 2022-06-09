@@ -215,7 +215,7 @@ class GraphNavigationViewController(
 		if (!shouldDescendFor(request)) {
 			return
 		}
-		LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
+		LOG.userTrail("Descending into SubGraphVerticeView")
 
 		rememberZoomPanOfCurrentNavigationStack()
 		if (isDescendAnimationRequired(request)) {

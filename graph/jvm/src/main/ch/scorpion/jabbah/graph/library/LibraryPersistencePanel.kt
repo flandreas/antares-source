@@ -197,7 +197,7 @@ class LibraryPersistencePanel(
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
-				LOG.debug("open library '${it.uuid}'")
+				LOG.userTrail("open library '${it.uuid}'")
 				InvocationHandler.invoke {
 					managementService.open(getLibraryIdentity(it.uuid))
 					closeHandler.invoke()
@@ -215,7 +215,7 @@ class LibraryPersistencePanel(
 	private inner class NewAction : AbstractAction("library.dialog.new.action") {
 
 		override fun execute(event: ActionEvent) {
-			LOG.debug("new library")
+			LOG.userTrail("new library")
 
 			val parent = SwingUtilities.windowForComponent(this@LibraryPersistencePanel)
 			var info: CreateLibraryPanel.CreateLibraryInfo
@@ -248,7 +248,7 @@ class LibraryPersistencePanel(
 				}
 			}
 
-			LOG.debug("creating new library '${info.name.getTranslation()}'")
+			LOG.userTrail("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
 				managementService.open(
 					managementService.create(LibraryProperties(info.name), info.templateUuid?.let { getLibraryIdentity(it) }),

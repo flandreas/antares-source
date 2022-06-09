@@ -139,7 +139,7 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		LOG.debug("Start creating junction of EdgeView")
+		LOG.userTrail("Start creating junction of EdgeView ${edgeView!!.id}")
 		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		context.drawingView().drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
@@ -162,9 +162,9 @@ class EdgeToPortConnector(
 
 	private fun logConnect() {
 		if (targetPortView != null) {
-			LOG.debug("Create junction from EdgeView ${branchedEdgeView?.id} to port of ${targetPortView?.owner?.type}")
+			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.id}")
 		} else {
-			LOG.debug("Create junction from EdgeView ${branchedEdgeView?.id} open-ended")
+			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} open-ended")
 		}
 	}
 

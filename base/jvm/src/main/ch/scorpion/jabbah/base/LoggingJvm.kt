@@ -71,6 +71,10 @@ actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 
 	private val fqcn = Logger::class.java.name
 
+	actual fun userTrail(msg: String) {
+		info(msg)
+	}
+
 	actual fun info(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
 			slf4jLogger.log(null, fqcn, LocationAwareLogger.INFO_INT, msg, null, null)

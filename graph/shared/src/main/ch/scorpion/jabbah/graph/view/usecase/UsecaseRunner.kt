@@ -44,7 +44,7 @@ class UsecaseRunner(
 	fun run() {
 		check(!didRun) { "Attempt to repeatedly run UsecaseRunner" }
 
-		LOG.debug("Running usecase '${usecase.name.value}'")
+		LOG.userTrail("Running usecase '${usecase.name.value}'")
 		applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
 			GraphDslModule.usecaseActionExternalFunctions.bind(this, usecase.name.value, "Usecase logic")
 			usecase.run()

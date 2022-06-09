@@ -84,7 +84,7 @@ class GraphViewerController(
 
 	override fun dispose() {
 		super.dispose()
-		LOG.debug("Close separate viewer for '${graphNavigationViewController.drawingView.drawing.graph!!.name.value}'")
+		LOG.userTrail("Close separate viewer for '${graphNavigationViewController.drawingView.drawing.graph!!.name.value}'")
 		eventBus.unregister(translationBundleAddedHandler)
 		applicationContextHolder.scheduler.dispose()
 		graphNavigationViewController.dispose()
@@ -96,7 +96,7 @@ class GraphViewerController(
 
 	fun setMetaGraph(metaGraph: MetaGraph) {
 		val clone = metaGraph.cloneGraphGraphStorable()
-		LOG.debug("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
+		LOG.userTrail("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
 		graphNavigationViewController.setRootGraphView(clone.graphView, editable = false)
 	}
 

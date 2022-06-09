@@ -55,7 +55,7 @@ abstract class AbstractLibraryPersistencePanel(
 				fileChooser.dialogTitle = name
 				fileChooser.selectedFile = File("${it.name.value}.${EXPORT_FILE_EXTENSION}")
 				if (fileChooser.showSaveDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {
-					LOG.debug("Export $logName ${it.uuid}")
+					LOG.userTrail("Export $logName ${it.uuid}")
 
 					managementService.export(getLibraryIdentity(it.uuid), fileChooser.selectedFile.absolutePath)
 					JOptionPane.showConfirmDialog(
@@ -84,7 +84,7 @@ abstract class AbstractLibraryPersistencePanel(
 			var replaceIfUuidExists = false
 			do {
 				var repeat = false
-				LOG.debug("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
+				LOG.userTrail("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
 				val result = managementService.import(path, replaceIfUuidExists)
 				when (result.type) {
 					Success -> handleSuccessfulImport(name)

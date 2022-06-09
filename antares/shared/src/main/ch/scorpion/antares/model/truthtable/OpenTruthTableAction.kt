@@ -45,7 +45,7 @@ class OpenTruthTableAction(
 		super.calculateEnabledness() && selectedItem is TruthTableLibraryItem
 
 	private fun openAsSavable(item: TruthTableLibraryItem) {
-		LOG.debug("Open TruthTable as main view")
+		LOG.userTrail("Open TruthTable as main view")
 		graphDataViewController.openAsStorable(item.truthTable, TruthTableSavable(item))
 		eventBus.post(ShowTruthTableItemRequest(item))
 	}

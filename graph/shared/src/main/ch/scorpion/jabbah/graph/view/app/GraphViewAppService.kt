@@ -97,7 +97,7 @@ open class GraphViewAppServiceImpl(
 		location: Point2D,
 		editor: Editor
 	): Component {
-		LOG.debug("Add Component '${libraryElement.name}' from library/project")
+		LOG.userTrail("Add Component '${libraryElement.name}' from library/project")
 
 		val command = AddGraphElementViewFromLibraryCommand(
 			editor,

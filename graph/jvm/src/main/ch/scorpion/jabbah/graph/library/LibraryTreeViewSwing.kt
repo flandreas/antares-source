@@ -143,7 +143,7 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun openLibrary(library: Library) {
-		LOG.debug("open Library '${library.name}'")
+		LOG.userTrail("Open Library '${library.name}'")
 		val root = model.root as DefaultMutableTreeNode
 		val oldLibraryNode = getLibraryNode()
 		val newLibraryNode = DefaultMutableTreeNode(library)
@@ -159,7 +159,7 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun openProject(project: Project) {
-		LOG.debug("open Project '${project.name}'")
+		LOG.userTrail("Open Project '${project.name}'")
 		val root = model.root as DefaultMutableTreeNode
 		val oldProjectNode = getProjectNode()
 		val newProjectNode = DefaultMutableTreeNode(project)
@@ -179,7 +179,7 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun closeProject() {
-		LOG.debug("close Project")
+		LOG.userTrail("Close Project")
 		val projectNode = getProjectNode()
 		if (projectNode != null) {
 			val root = model.root as DefaultMutableTreeNode

@@ -121,7 +121,7 @@ open class RailwayRatingService(
 
 	protected open suspend fun sendRatingImpl(rating: Rating, applicationId: String?, userIdentifier: String?): HttpStatusCode {
 		val url = properties.getString(PROP_RATING_URL)
-		LOG.debug("Sending rating to $url")
+		LOG.userTrail("Sending rating to $url")
 
 		val response: HttpResponse =  client.post(url) {
 			contentType(ContentType.Application.Json)

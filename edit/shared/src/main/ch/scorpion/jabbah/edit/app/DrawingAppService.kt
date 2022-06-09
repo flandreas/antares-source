@@ -162,15 +162,15 @@ open class DrawingAppServiceImpl(
 
 	protected fun logComponentAction(action: String, components: Collection<Component>) {
 		if (components.size == 1) {
-			LOG.debug("$action component '${components.first().type}' with ID ${components.first().id}")
+			LOG.userTrail("$action component '${components.first().type}' with ID ${components.first().id}")
 		} else {
-			LOG.debug("$action ${components.size} components")
+			LOG.userTrail("$action ${components.size} components")
 		}
 	}
 
 	override fun paste(drawingView: DrawingView<Drawing<Component>>) {
 		Clipboard.getStringContents()?.let {
-			LOG.debug("Preparing paste from clipboard")
+			LOG.userTrail("Preparing paste from clipboard")
 			val pasteInfo = copyPasteService.paste(it, drawingView)
 			logComponentAction("Paste", pasteInfo.components)
 			commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))

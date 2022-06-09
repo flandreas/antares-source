@@ -36,7 +36,7 @@ class EditSubGraphVerticeViewAction(
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		LOG.debug("opening EditSubGraphVerticeViewPanel")
+		LOG.userTrail("opening EditSubGraphVerticeViewPanel")
 
 		val editedVerticeView = singleSelection as SubGraphVerticeView<*>
 		val editedDrawingView = drawingView

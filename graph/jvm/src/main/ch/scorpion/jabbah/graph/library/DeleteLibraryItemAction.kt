@@ -50,7 +50,7 @@ class DeleteLibraryItemAction(
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
-			LOG.debug("Delete library element ${libraryItem.name.getOptionalTranslation()}")
+			LOG.userTrail("Delete library element ${libraryItem.name.getOptionalTranslation()}")
 			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
 		}
 	}

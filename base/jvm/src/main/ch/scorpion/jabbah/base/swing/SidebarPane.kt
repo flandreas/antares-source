@@ -230,7 +230,7 @@ class SidebarPane(
 	private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
 	private fun activate(entry: Entry?) {
-		LOG.debug(entry?.let { "Open SideBarPane '${it.name}'" } ?: "Close SideBarPane '${current?.name}'")
+		LOG.userTrail(entry?.let { "Open SideBarPane '${it.name}'" } ?: "Close SideBarPane '${current?.name}'")
 		val oldOpen = isOpen
 
 		current?.also {
@@ -256,7 +256,7 @@ class SidebarPane(
 	}
 
 	private fun collapse() {
-		LOG.debug("Collapse SideBarPane")
+		LOG.userTrail("Collapse SideBarPane")
 		activate(null)
 	}
 

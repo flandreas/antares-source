@@ -346,7 +346,7 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		LOG.debug("Start creating new EdgeView at PortView")
+		LOG.userTrail("Start creating new EdgeView at Port ${startPortView!!.port!!.portId} of VerticeView ${startVerticeView!!.id}")
 		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
@@ -401,10 +401,6 @@ abstract class AbstractPortViewStartConnector(
 		edgeView!!.validate()
 
 		return false
-	}
-
-	private fun logConnect() {
-		LOG.debug("Connect port of ${startPortView?.owner?.type} with existing EdgeView ${targetEdgeView?.id}")
 	}
 
 	private fun completeConnectingToEdge(context: EditInputEventContext) {

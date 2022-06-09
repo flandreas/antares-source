@@ -122,7 +122,7 @@ class MetaGraphHistoryPanel(
 
 	private fun restore(history: MetaGraphHistory) {
 		val metaGraph = historyService.getMetaGraph(element.library!!, element.uuid, history)
-		LOG.debug("Restoring historized version of ${metaGraph.uuid.id}")
+		LOG.userTrail("Restoring historized version of ${metaGraph.uuid.id}")
 
 		element.updateStorable(metaGraph)
 		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, metaGraph, element)

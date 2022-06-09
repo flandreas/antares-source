@@ -22,13 +22,13 @@ class DragEdgeViewDestinationConnector(
 	}
 
 	override fun completeDragOpen(context: EditInputEventContext) {
-		LOG.debug("Move EdgeView endpoint open-ended")
+		LOG.userTrail("Move EdgeView ${edgeView!!.id} endpoint open-ended")
 		context.editor.commandManager.beginTransaction(createMoveCommand(context))
 		context.editor.commandManager.commitTransaction()
 	}
 
 	override fun completeDragConnecting(context: EditInputEventContext) {
-		LOG.debug("Move EdgeView endpoint to connect port of ${targetPortView?.owner?.type}")
+		LOG.userTrail("Move EdgeView ${edgeView!!.id} endpoint to connect port ${targetPortView!!.port.portId} of ${targetPortView?.owner?.id}")
 		context.editor.commandManager.beginTransaction(createMoveCommand(context))
 		context.editor.commandManager.execute(createConnectCommand(context))
 		context.editor.commandManager.commitTransaction()

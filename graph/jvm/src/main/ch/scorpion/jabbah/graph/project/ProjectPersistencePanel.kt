@@ -217,7 +217,7 @@ class ProjectPersistencePanel(
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
-				LOG.debug("open project '${it.uuid}'")
+				LOG.userTrail("Open project '${it.uuid}'")
 				InvocationHandler.invoke {
 					managementService.open(getLibraryIdentity(it.uuid))
 					closeHandler.invoke()
@@ -268,7 +268,7 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("Create new project '${properties!!.name.getTranslation()}'")
+			LOG.userTrail("Create new project '${properties!!.name.getTranslation()}'")
 			val project = managementService.create(properties)
 			LOG.debug("Created new project ${project.uuid}")
 
@@ -287,7 +287,7 @@ class ProjectPersistencePanel(
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 				) {
-					LOG.debug("Delete project '${it.uuid}'")
+					LOG.userTrail("Delete project '${it.uuid}'")
 					managementService.delete(getLibraryIdentity(it.uuid))
 					refreshLibraries()
 				}

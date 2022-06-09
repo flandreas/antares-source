@@ -36,7 +36,7 @@ class PreferencesDialogPanel(
 			parent: Frame = Frame.getFrames()[0],
 			treePanel: PreferencesTreePanel = PreferencesTreePanel()
 		) {
-			LOG.debug("Show preferences")
+			LOG.userTrail("Show preferences")
 			DialogBuilder<PreferencesDialogPanel>(parent)
 				.content { dialog -> PreferencesDialogPanel(treePanel) { dialog.dispose() } }
 				.defaultButton { it.applyButton }
@@ -55,7 +55,7 @@ class PreferencesDialogPanel(
 
 	private val applyAction = object : AbstractAction("base.action.apply") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("Apply preferences")
+			LOG.userTrail("Apply preferences")
 			treePanel.applyChanges()
 		}
 	}

@@ -31,7 +31,7 @@ class CreateCircuitFromTruthTableService(
 	 * @throws CircuitFromTruthTableBuilderError if the required gate input counts exceed the system limit
 	 */
 	fun create(truthTable: TruthTable, item: LibraryItem, circuitName: String, circuitType: CircuitSynthesisType) {
-		LOG.debug("Create Circuit from TruthTable in directory ${item.name.value}")
+		LOG.userTrail("Create Circuit from TruthTable in directory ${item.name.value}")
 
 		val dnfs = truthTableService.generateDnfs(truthTable)
 		val executionScript = createExecutionScript(truthTable, dnfs)
