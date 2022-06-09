@@ -20,15 +20,14 @@ class GroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.group", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
+		val drawingView = viewManager.activeView!!.view as DrawingView<Drawing<Component>>
 		service.group(
 			drawingView.selectionManager.selection.toCollection(mutableListOf()),
 			drawingView)
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && selectionCount >= 2
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectionCount >= 2
 }
 
 /** An [Action] for un-grouping the selected [GroupComponent].*/
@@ -39,13 +38,12 @@ class UngroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.ungroup", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
+		val drawingView = viewManager.activeView!!.view as DrawingView<Drawing<Component>>
 		service.ungroup(
 			singleSelection!!.propertyOwner as GroupComponent,
 			drawingView)
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && selectionCount == 1 && singleSelection!!.propertyOwner is GroupComponent
-	}
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectionCount == 1 && singleSelection!!.propertyOwner is GroupComponent
 }
