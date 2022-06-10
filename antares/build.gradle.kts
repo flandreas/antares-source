@@ -183,7 +183,9 @@ tasks {
 			"--java-options", "-splash:\$APPDIR/splash.png",
 			"--java-options", "-Dapple.awt.application.name=Antares",
 			"--java-options", "-Dapple.awt.application.appearance=system",
-			"--type", "pkg"
+			"--type", "pkg",
+			"--resource-dir", "jvm/rsc/",
+			"--verbose"
 		)
 	}
 
@@ -205,6 +207,7 @@ tasks {
 			"--icon", "jvm\\rsc\\antares.ico",
 			"--java-options", "-splash:\$APPDIR/splash.png",
 			"--type", "msi",
+			"--resource-dir", "jvm/rsc/",
 			"--win-shortcut"
 		)
 	}
