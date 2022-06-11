@@ -29,12 +29,8 @@ import com.jthemedetecor.OsThemeDetector
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
-import java.awt.Image
-import java.awt.SplashScreen
-import java.awt.Taskbar
-import java.awt.Toolkit
+import java.awt.*
 import java.io.FileInputStream
 import java.lang.System
 import java.nio.file.Files
@@ -146,25 +142,39 @@ class AntaresSwing(
 			}
 		}
 
-		private fun configureSplash() {
+		private fun configureSplash(font: Font) {
+			val version = readVersion()
+
 			val splash = SplashScreen.getSplashScreen()
 			if (splash == null) {
 				LOG.value.debug("No splash screen configured")
 				return
 			}
 
-			val factor = when (UiUtil.getScaleFactor()) {
+			val isDark = OsThemeDetector.getDetector().isDark
+			val imageFactor = when (UiUtil.getScaleFactor()) {
 				2 -> "@2x"
 				else -> ""
 			}
 
-			if (OsThemeDetector.getDetector().isDark) {
+			if (isDark) {
 				LOG.value.debug("Dark theme detected, showing dark splash screen")
-				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-dark$factor.png")
+				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-dark$imageFactor.png")
 			} else {
 				LOG.value.debug("Light/normal theme detected, showing light splash screen")
-				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-light$factor.png")
+				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-light$imageFactor.png")
 			}
+
+			val g2 = splash.createGraphics()
+			g2.font = font
+			g2.color = if (isDark) {
+				Color(104, 104, 104)
+			} else {
+				Color.LIGHT_GRAY
+			}
+
+			g2.drawString("Version $version", 175, 250)
+			splash.update()
 		}
 
 		@JvmStatic
@@ -186,12 +196,13 @@ class AntaresSwing(
 			establishUserLanguage(preferences)
 			establishTheme(preferences)
 
-			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
+			val font = FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size)
+			UiUtil.setUIFont(font)
 
 			BaseModuleJvm.require()
 
 			// After logging has been initialized
-			configureSplash()
+			configureSplash(font)
 
 			AntaresSwing(commandLine).start()
 		}
@@ -230,10 +241,7 @@ class AntaresSwing(
 		iconPath = "/$ICON_PATH",
 		name = displayName,
 		claim = Translations.getString("antares.claim"),
-		version = readVersion())
-
-	override fun readVersion(): ApplicationVersion = ApplicationVersion.parse(
-		IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8"))
+		version = version)
 
 	/** ---- [AbstractDesktopApplication] */
 

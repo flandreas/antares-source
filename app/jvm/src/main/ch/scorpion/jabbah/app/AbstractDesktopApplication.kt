@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.auth.DesktopUser
 import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import org.apache.commons.cli.*
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
 import java.io.File
 import java.io.FileInputStream
@@ -116,6 +117,9 @@ abstract class AbstractDesktopApplication(
 		}
 
 		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
+
+		fun readVersion(): ApplicationVersion = ApplicationVersion.parse(
+			IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8"))
 	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
@@ -148,6 +152,8 @@ abstract class AbstractDesktopApplication(
 	/** ---- [DesktopApplication] */
 
 	override val environment: Environment = determineEnvironment(commandLine)
+
+	override val version: ApplicationVersion by lazy { readVersion() }
 
 	override fun quit() {
 		if (controller.canReplaceSavable("file.action.quit.name")) {

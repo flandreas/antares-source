@@ -21,7 +21,7 @@ interface DesktopApplication : Application {
 	/** The [Environment] in which this [DesktopApplication] runs. */
 	val environment: Environment get() = Environment.Production
 
-	fun readVersion(): ApplicationVersion
+	val version: ApplicationVersion
 
 	fun exportLogfile(destinationPath: String)
 
