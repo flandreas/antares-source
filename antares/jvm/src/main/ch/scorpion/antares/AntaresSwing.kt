@@ -7,7 +7,6 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -15,8 +14,8 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -26,12 +25,14 @@ import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
+import com.jthemedetecor.OsThemeDetector
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Image
+import java.awt.SplashScreen
 import java.awt.Taskbar
 import java.awt.Toolkit
 import java.io.FileInputStream
@@ -145,6 +146,27 @@ class AntaresSwing(
 			}
 		}
 
+		private fun configureSplash() {
+			val splash = SplashScreen.getSplashScreen()
+			if (splash == null) {
+				LOG.value.debug("No splash screen configured")
+				return
+			}
+
+			val factor = when (UiUtil.getScaleFactor()) {
+				2 -> "@2x"
+				else -> ""
+			}
+
+			if (OsThemeDetector.getDetector().isDark) {
+				LOG.value.debug("Dark theme detected, showing dark splash screen")
+				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-dark$factor.png")
+			} else {
+				LOG.value.debug("Light/normal theme detected, showing light splash screen")
+				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-light$factor.png")
+			}
+		}
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 
@@ -167,6 +189,10 @@ class AntaresSwing(
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 
 			BaseModuleJvm.require()
+
+			// After logging has been initialized
+			configureSplash()
+
 			AntaresSwing(commandLine).start()
 		}
 	}

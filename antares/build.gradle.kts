@@ -12,7 +12,7 @@ val win_jpackage_home: String by extra
 
 repositories {
 	mavenCentral()
-	jcenter()
+	maven { url = uri("https://jitpack.io") }
 }
 
 plugins {
@@ -48,6 +48,7 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
+				implementation("com.github.Dansoftowner:jSystemThemeDetector:3.8")
 			}
 		}
 	}
@@ -85,7 +86,7 @@ tasks {
 		dependsOn(assemble)
 		manifest {
 			attributes["Main-Class"] = "ch.scorpion.antares.AntaresSwing"
-			attributes["SplashScreen-Image"] = "img/splash.png"
+			attributes["SplashScreen-Image"] = "img/splash-empty.png"
 		}
 		archiveClassifier.set("all")
 		from(kotlin.jvm().compilations.getByName("main").output)
@@ -123,6 +124,13 @@ tasks {
 		keep("class com.formdev.** { *; }")
 		keep("class io.ktor.** { *; }")
 		keep("class kotlinx.coroutines.** { *; }")
+
+		// Reflection in OsThemeDetector
+		keep("class com.sun.** { *; }")
+		keep("class net.java.dev.** { *; }")
+		keep("class sun.awt.** { *; }")
+		keep("class de.jangassen.** { *; }")
+		keep("class com.jthemedetecor.** { *; }")
 
 		// Logging using reflection
 		keep("enum ch.scorpion.jabbah.base.LogLevel { *; }")
@@ -180,12 +188,11 @@ tasks {
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
 			"--icon", "jvm/rsc/antares.icns",
-			"--java-options", "-splash:\$APPDIR/splash.png",
+			"--java-options", "-splash:\$APPDIR/splash-empty.png",
 			"--java-options", "-Dapple.awt.application.name=Antares",
 			"--java-options", "-Dapple.awt.application.appearance=system",
 			"--type", "pkg",
-			"--resource-dir", "jvm/rsc/",
-			"--verbose"
+			"--resource-dir", "jvm/rsc/"
 		)
 	}
 
@@ -205,7 +212,7 @@ tasks {
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
 			"--icon", "jvm\\rsc\\antares.ico",
-			"--java-options", "-splash:\$APPDIR/splash.png",
+			"--java-options", "-splash:\$APPDIR/splash-empty.png",
 			"--type", "msi",
 			"--resource-dir", "jvm/rsc/",
 			"--win-shortcut"
