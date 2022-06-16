@@ -34,9 +34,9 @@ class FileLibraryServiceTest {
 	@Test
 	fun shouldDuplicateContainerLibraryElement() {
 		libraryBuilder.addContainerLibraryElement("Element")
-		val orig = library.get("Element") as ContainerLibraryElement
+		val orig = library.directory.get("Element") as ContainerLibraryElement
 
-		val duplicate = service.duplicateContainerLibraryElement(library, orig, TranslatableText("NewName"))
+		val duplicate = service.duplicateContainerLibraryElement(library.directory, orig, TranslatableText("NewName"))
 		service.loadMetaGraph(library, orig)
 		service.loadMetaGraph(library, duplicate)
 
@@ -48,7 +48,7 @@ class FileLibraryServiceTest {
 	@Test
 	fun shouldExportImportMetaGraphBundle() {
 		libraryBuilder.addContainerLibraryElement("Element")
-		val orig = library.get("Element") as ContainerLibraryElement
+		val orig = library.directory.get("Element") as ContainerLibraryElement
 		libraryBuilder.addDirectory("Directory")
 
 		val tempDir = Files.createTempDirectory(null)

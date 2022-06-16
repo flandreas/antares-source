@@ -47,11 +47,11 @@ class RepositoryServiceImplTest {
 			.addDirectory("Directory")
 			.library
 
-		service.move(project.getRecursively("Element") as ContainerLibraryElement, library.getRecursively("Directory") as LibraryDirectory)
+		service.move(project.directory.getRecursively("Element") as ContainerLibraryElement, library.directory.getRecursively("Directory") as LibraryDirectory)
 
-		assertNull(project.getRecursively("Element"))
-		assertNotNull(library.getRecursively("Element"))
-		assertTrue((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem))
+		assertNull(project.directory.getRecursively("Element"))
+		assertNotNull(library.directory.getRecursively("Element"))
+		assertTrue((library.directory.getRecursively("Directory") as LibraryDirectory).contains(library.directory.getRecursively("Element") as LibraryItem))
 	}
 
 	@Test
@@ -64,14 +64,14 @@ class RepositoryServiceImplTest {
 			.library
 
 		service.move(
-			project.getRecursively("Element") as ContainerLibraryElement,
-			project.getRecursively("ProjectDirectory") as LibraryDirectory,
+			project.directory.getRecursively("Element") as ContainerLibraryElement,
+			project.directory.getRecursively("ProjectDirectory") as LibraryDirectory,
 			3)
 
-		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
-		assertEquals(0, directory.indexOf(project.getRecursively("Element2") as ContainerLibraryElement))
-		assertEquals(1, directory.indexOf(project.getRecursively("Element3") as ContainerLibraryElement))
-		assertEquals(2, directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement))
+		val directory = project.directory.getRecursively("ProjectDirectory") as LibraryDirectory
+		assertEquals(0, directory.indexOf(project.directory.getRecursively("Element2") as ContainerLibraryElement))
+		assertEquals(1, directory.indexOf(project.directory.getRecursively("Element3") as ContainerLibraryElement))
+		assertEquals(2, directory.indexOf(project.directory.getRecursively("Element") as ContainerLibraryElement))
 	}
 
 	@Test
@@ -82,12 +82,12 @@ class RepositoryServiceImplTest {
 			.library
 
 		service.move(
-			project.getRecursively("Element") as ContainerLibraryElement,
-			project.getRecursively("ProjectDirectory") as LibraryDirectory
+			project.directory.getRecursively("Element") as ContainerLibraryElement,
+			project.directory.getRecursively("ProjectDirectory") as LibraryDirectory
 		)
 
-		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
-		val element = project.getRecursively("Element") as ContainerLibraryElement
+		val directory = project.directory.getRecursively("ProjectDirectory") as LibraryDirectory
+		val element = project.directory.getRecursively("Element") as ContainerLibraryElement
 		projectLibraryService.loadMetaGraph(project, element)
 		assertEquals(0, directory.indexOf(element))
 		assertNotNull(projectLibraryService.getMetaGraph(project, element))
@@ -97,7 +97,7 @@ class RepositoryServiceImplTest {
 	fun shouldNotMoveProjectDependenciesToLibrary() {
 		assertFailsWith<LibraryDependencyException> {
 			projectBuilder.addContainerLibraryElement("ReferencedVertice")
-			val referencedVertice = projectBuilder.library.get("ReferencedVertice") as ContainerLibraryElement
+			val referencedVertice = projectBuilder.library.directory.get("ReferencedVertice") as ContainerLibraryElement
 			val graphViewBuilder = GraphViewBuilder<Boolean>()
 			graphViewBuilder.reference(referencedVertice.uuid)
 			val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
@@ -105,10 +105,10 @@ class RepositoryServiceImplTest {
 			projectBuilder.addContainerLibraryElement(referencingMetaGraph)
 
 			try {
-				service.move(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library as LibraryDirectory)
+				service.move(projectBuilder.library.directory.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library.directory as LibraryDirectory)
 			} catch (e: LibraryDependencyException) {
-				assertNotNull(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
-				assertNull(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
+				assertNotNull(projectBuilder.library.directory.get("ReferencingVertice") as ContainerLibraryElement?)
+				assertNull(libraryBuilder.library.directory.get("ReferencingVertice") as ContainerLibraryElement?)
 				throw e
 			}
 		}

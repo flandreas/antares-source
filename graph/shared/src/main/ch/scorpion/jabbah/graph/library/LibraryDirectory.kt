@@ -49,5 +49,7 @@ interface LibraryDirectory : LibraryItem {
 	 * @throws IllegalArgumentException if `item` is not contained
 	 */
 	fun move(item: LibraryItem, newIndex: Int)
+
+	fun replaceWith(libraryDirectory: LibraryDirectory)
 }
 

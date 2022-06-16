@@ -51,7 +51,7 @@ class LibraryTest {
 	fun shouldInstantiateSubCircuit() {
 		TestLibraryBuilder().addCustomNot(libraryHolder.library)
 
-		val item = libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement
+		val item = libraryHolder.library.directory.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement
 		val vvr = item.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
 		assertEquals(TestLibraryBuilder.CUSTOM_NOT, vvr.type)
@@ -74,7 +74,7 @@ class LibraryTest {
 		restoredLibrary.getMetaGraph(customNot.uuid)
 		restoredLibrary.getMetaGraph(customNand.uuid)
 
-		val nandItem = restoredLibrary.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
+		val nandItem = restoredLibrary.directory.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
 		val vvr = nandItem.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
 		assertEquals(TestLibraryBuilder.CUSTOM_NAND, vvr.type)
@@ -92,7 +92,7 @@ class LibraryTest {
 		TestLibraryBuilder().addCustomNot(libraryHolder.library)
 		TestLibraryBuilder().addCustomNand(libraryHolder.library)
 
-		val nandItem = libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
+		val nandItem = libraryHolder.library.directory.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
 		val vvr = nandItem.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
 		val circuitView = GraphViewImpl()

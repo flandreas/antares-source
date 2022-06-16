@@ -48,7 +48,7 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		setupLibrary()
 
 		TestLibraryBuilder().addNOP(LibraryModule.libraryHolder.library)
-		nop = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.NOP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		nop = (LibraryModule.libraryHolder.library.directory.get(TestLibraryBuilder.NOP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 			as SubGraphVerticeView<out SubGraphVertice>
 
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)

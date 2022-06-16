@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -20,8 +19,6 @@ class LibraryFolder(
 	constructor(initialName: String): this(TranslatableText(initialName))
 
 	private val items: MutableList<LibraryItem> = mutableListOf()
-
-	var defaultElementUUID: UUID? = null
 
 	/** ---- [AbstractLibraryItem] */
 
@@ -48,17 +45,11 @@ class LibraryFolder(
 
 	override fun write(writer: StoreWriter) {
 		name.write("name", writer)
-		if (defaultElementUUID != null) {
-			writer.writeString("defaultElement", defaultElementUUID.toString())
-		}
 		writer.writeStorables("items", items.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
 		name = Name.read("name", reader)
-		if (reader.hasAttribute("defaultElement")) {
-			defaultElementUUID = UUID(reader.readString("defaultElement"))
-		}
 		items.clear()
 		for (item in reader.readStorables<LibraryItem>("items")) {
 			reader.requestResolution(this, Reference(
@@ -137,9 +128,9 @@ class LibraryFolder(
 
 	/** ---- [LibraryFolder] */
 
-	fun replaceWith(libraryFolder: LibraryFolder) {
+	override fun replaceWith(libraryDirectory: LibraryDirectory) {
 		items.clear()
-		items.addAll(libraryFolder.items)
+		items.addAll(libraryDirectory.getItems())
 	}
 
 	/**

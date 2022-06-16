@@ -76,9 +76,9 @@ class LibraryTreeViewJs(
 				onLabelClick = { props.controller.selectedItem = null }
 			) {
 				props.controller.project?.let {
-					addItems(LibraryDirectoryTreeModelBuilder(it).build())
+					addItems(LibraryDirectoryTreeModelBuilder(it.directory).build())
 				}
-				addItems(LibraryDirectoryTreeModelBuilder(props.controller.library).build())
+				addItems(LibraryDirectoryTreeModelBuilder(props.controller.library.directory).build())
 			}
 		}
 	}

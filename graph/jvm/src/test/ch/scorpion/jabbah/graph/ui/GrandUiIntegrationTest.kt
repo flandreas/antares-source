@@ -141,7 +141,7 @@ class GrandUiIntegrationTest {
 	private fun createAndOpenNewMetaGraph() {
 		val project = ProjectModule.projectHolder.project!!
 		val metaGraph = MetaGraph.withName("Usage")
-		val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
+		val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project.directory)
 		BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
 	}
 

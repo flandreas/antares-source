@@ -37,7 +37,7 @@ class SubGraphVerticeRefTest {
 		TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
 
 		// Create a new instance of the custom NOT circuit in the Library
-		val customNOT = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		val customNOT = (LibraryModule.libraryHolder.library.directory.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
 		customNOT.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
@@ -58,7 +58,7 @@ class SubGraphVerticeRefTest {
 		TestLibraryBuilder().addCustomNand(LibraryModule.libraryHolder.library)
 
 		// Create a new instance of the custom NAND circuit
-		val customNAND = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		val customNAND = (LibraryModule.libraryHolder.library.directory.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
 		customNAND.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
 

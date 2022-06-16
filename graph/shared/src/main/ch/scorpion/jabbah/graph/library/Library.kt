@@ -7,9 +7,11 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [Library] is a hierarchically structured [MetaGraphRepository] that has been composed by a particular user
@@ -17,7 +19,7 @@ import ch.scorpion.jabbah.graph.model.Graph
  *
  * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
  */
-interface Library : LibraryDirectory, MetaGraphRepository, Describable {
+interface Library : MetaGraphRepository, Storable, Namable, Describable {
 
 	/** Returns the [LibraryIdentification] used for building persistent paths to this [Library]. */
 	val identification: LibraryIdentification get() = if (isSystem) {
@@ -39,6 +41,9 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	 * A [Library] and its elements can only be edited by the author of the [Library].
 	 */
 	var author: UserIdentity
+
+	/** The description of the contents of this [Library], i.e. its inner [LibraryItem]s. */
+	var directory: LibraryDirectory
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
@@ -63,8 +68,7 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	/** Returns the number of [MetaGraph] contained in this [Library]. */
 	val metaGraphCount: Int
 
-    /** Replaces the contents of this [Library] with the content of the specified [LibraryFolder].*/
-    fun replaceContentsWith(libraryFolder: LibraryFolder)
+	fun dispose()
 
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     fun bindLibraryItems()

@@ -2,9 +2,6 @@ import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 buildscript {
-	repositories {
-		jcenter()
-	}
 	dependencies {
 		classpath("com.guardsquare:proguard-gradle:7.2.1")
 	}
@@ -31,6 +28,7 @@ allprojects {
 			dirs("../lib")
 		}
 
+		// Publish Jabbah core libraries to Bytesave, so that Akrab can fetch from Bytesave
 		maven {
 			name = "bytesafe"
 			url = uri("https://antares.bytesafe.dev/maven/antares/")

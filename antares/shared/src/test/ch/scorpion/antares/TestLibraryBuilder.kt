@@ -37,14 +37,14 @@ class TestLibraryBuilder(
 	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
 		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
 		val metaGraph = MetaGraph(GraphStorable(nop), createContainerDrawing(nop))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addOuterNOP(library: Library): MetaGraph {
-		val outerNOP = TestCircuitBuilder(OUTER_NOP).buildOuterNOP(createSubGraphVerticeView(NOP, library))
+		val outerNOP = TestCircuitBuilder(OUTER_NOP).buildOuterNOP(createSubGraphVerticeView(NOP, library.directory))
 		val metaGraph = MetaGraph(GraphStorable(outerNOP), createContainerDrawing(outerNOP))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
@@ -56,43 +56,43 @@ class TestLibraryBuilder(
 		val customNOT = TestCircuitBuilder(CUSTOM_NOT).buildCustomNot()
 		val containerDrawing = createContainerDrawing(customNOT)
 		val metaGraph = MetaGraph(GraphStorable(customNOT), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addCustomNand(library: Library): MetaGraph {
-		val myNandCircuit = TestCircuitBuilder(CUSTOM_NAND).buildCustomNAND(createSubGraphVerticeView(CUSTOM_NOT, library))
+		val myNandCircuit = TestCircuitBuilder(CUSTOM_NAND).buildCustomNAND(createSubGraphVerticeView(CUSTOM_NOT, library.directory))
 		val containerDrawing = createContainerDrawing(myNandCircuit)
 		val metaGraph = MetaGraph(GraphStorable(myNandCircuit), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addInOutToOut(library: Library): MetaGraph {
 		val inOutToOut = TestCircuitBuilder(INOUT_TO_OUT).buildInOutToOut()
 		val metaGraph = MetaGraph(GraphStorable(inOutToOut), createContainerDrawing(inOutToOut))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addInOutToInOut(library: Library): MetaGraph {
 		val inOutToInOut = TestCircuitBuilder(INOUT_TO_INOUT).buildInOutToInOut()
 		val metaGraph = MetaGraph(GraphStorable(inOutToInOut), createContainerDrawing(inOutToInOut))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addScriptedBinaryFunction(library: Library, input1Name: String, input2Name: String, outputName: String, script: String): MetaGraph {
 		val binaryFunction = TestCircuitBuilder(BINARY_FUNCTION).buildScriptedBinaryFunction(input1Name, input2Name, outputName, script)
 		val metaGraph = MetaGraph(GraphStorable(binaryFunction), createContainerDrawing(binaryFunction))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 
 	fun addBitWidthExpressionInputOutput(library: Library, inputExpression: String, outputExpression: String, graphScript: String? = null): MetaGraph {
 		val graphView = TestCircuitBuilder(BIT_WITH_EXPRESSION).buildBitWidthExpressionInputOutput(inputExpression, outputExpression, graphScript)
 		val metaGraph = MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		libraryService.addContainerLibraryElement(library, metaGraph, library.directory)
 		return metaGraph
 	}
 

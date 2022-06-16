@@ -304,7 +304,7 @@ class LibraryService(
 	 */
 	fun getDirectoryOf(library: Library, item: LibraryItem): LibraryDirectory {
 		val finder = LibraryItemFinder(item)
-		library.accept(finder)
+		library.directory.accept(finder)
 		if (finder.result != null) {
 			return finder.result!!
 		}

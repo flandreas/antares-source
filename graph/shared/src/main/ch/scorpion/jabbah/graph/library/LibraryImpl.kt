@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -25,7 +24,7 @@ open class LibraryImpl(
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
 	userHolder: UserHolder<User> = EditAuthModule.userHolder
-) : AbstractStorable(), Library, LibraryDirectory, Describable {
+) : AbstractStorable(), Library, Describable {
 
 	constructor(
 		name: TranslatableText = TranslatableText(),
@@ -54,7 +53,7 @@ open class LibraryImpl(
 
 	override var visibility: LibraryVisibility = LibraryVisibility.Private
 
-	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
+	override var directory: LibraryDirectory = LibraryFolder(properties.name)
 
 	override var description: Description = Description(properties.description)
 
@@ -65,11 +64,11 @@ open class LibraryImpl(
 		}
 
 	init {
-		libraryFolder.bindTo(this)
+		directory.bindTo(this)
 	}
 
 	override fun dispose() {
-		libraryFolder.dispose()
+		directory.dispose()
 	}
 
 	/** ---- [Any] */
@@ -80,43 +79,15 @@ open class LibraryImpl(
 
 	/** ---- [LibraryDirectory] */
 
-	override val size: Int get() = libraryFolder.size
-
-	override fun isEmpty(): Boolean = libraryFolder.isEmpty()
-
-	override fun add(item: LibraryItem): LibraryDirectory = libraryFolder.add(item)
-
-	override fun add(index: Int, item: LibraryItem): LibraryDirectory = libraryFolder.add(index, item)
-
-	override fun remove(item: LibraryItem): Boolean = libraryFolder.remove(item)
-
-	override fun contains(item: LibraryItem): Boolean = libraryFolder.contains(item)
-
-	override fun containsRecursively(item: LibraryItem): Boolean = libraryFolder.containsRecursively(item)
-
-	override fun get(name: String): LibraryItem? = libraryFolder.get(name)
-
-	override fun getRecursively(name: String): LibraryItem? = libraryFolder.getRecursively(name)
-
-	override fun getItems(): ImmutableList<LibraryItem> = libraryFolder.getItems()
-
-	override fun indexOf(item: LibraryItem): Int = libraryFolder.indexOf(item)
-
-	override val library: Library? get() = libraryFolder.library
-
-	override val isFixed: Boolean get() = libraryFolder.isFixed
-
 	override var name: Name
-		get() = libraryFolder.name
-		set(value) { libraryFolder.name = value }
+		get() = directory.name
+		set(value) { directory.name = value }
 
-	override val iconPath: String? get() = libraryFolder.iconPath
-
-	override fun accept(visitor: HierarchyVisitor): Boolean {
+	fun accept(visitor: HierarchyVisitor): Boolean {
 		// Don't use libraryFolder.accept(visitor) in order to achieve that this Library is the resulting instance,
 		// and not its folder (which should be transparent to the outside world)
 		if (visitor.visitEnter(this)) {
-			val iter = libraryFolder.getItems().iterator()
+			val iter = directory.getItems().iterator()
 			while (iter.hasNext()) {
 				if (!iter.next().accept(visitor)) {
 					break
@@ -124,14 +95,6 @@ open class LibraryImpl(
 			}
 		}
 		return visitor.visitLeave(this)
-	}
-
-	override fun bindTo(library: Library) {
-		libraryFolder.bindTo(library)
-	}
-
-	override fun move(item: LibraryItem, newIndex: Int) {
-		libraryFolder.move(item, newIndex)
 	}
 
 	/** ---- [MetaGraphRepository] */
@@ -156,7 +119,7 @@ open class LibraryImpl(
 		if (defaultElementUUID != null) {
 			writer.writeString("defaultElement", defaultElementUUID.toString())
 		}
-		writer.writeStorable("folder", libraryFolder)
+		writer.writeStorable("folder", directory)
 		writer.writeString("uuid", uuid.toString())
 		writer.writeString("author", author.toString())
 		description.write("desc", writer)
@@ -172,7 +135,7 @@ open class LibraryImpl(
 		if (reader.hasAttribute("defaultElement")) {
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}
-		libraryFolder = reader.readStorable("folder") as LibraryFolder
+		directory = reader.readStorable("folder") as LibraryFolder
 		uuid = System.createUUID(reader.readString("uuid"))
 		author = UserIdentity(reader.readString("author"))
 		description = Description.read("desc", reader)
@@ -195,11 +158,6 @@ open class LibraryImpl(
 			description = Description(value.description)
 			visibility = value.visibility
 		}
-
-	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
-		this.libraryFolder.replaceWith(libraryFolder)
-		this.libraryFolder.defaultElementUUID = libraryFolder.defaultElementUUID
-	}
 
 	override fun bindLibraryItems() {
 		this.accept(object : EmptyHierarchyVisitor() {
@@ -250,7 +208,7 @@ open class LibraryImpl(
 	 */
 	private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
 		val graphFinder = GraphFinder(uuid)
-		libraryFolder.accept(graphFinder)
+		directory.accept(graphFinder)
 		return graphFinder.result
 	}
 

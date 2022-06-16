@@ -35,7 +35,7 @@ class TestLibraryBuilder(
 		return libraryService.addContainerLibraryElement(
 			library,
 			builder.buildMetaGraph(builder.buildInnerCustomComponent(inputName, outputName), label),
-			library
+			library.directory
 		).metaGraph!!
 	}
 
@@ -44,9 +44,9 @@ class TestLibraryBuilder(
 		return libraryService.addContainerLibraryElement(
 			library,
 			builder.buildMetaGraph(
-				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library)),
+				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library.directory)),
 				label),
-			library
+			library.directory
 		).metaGraph!!
 	}
 
