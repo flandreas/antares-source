@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -43,25 +44,7 @@ open class LibraryImpl(
 		private val LOG by logger(LibraryImpl::class)
 	}
 
-	override var uuid: UUID = System.createUUID()
-
-	override var isSystem: Boolean = false
-
-	override var author: UserIdentity = userHolder.user.identity
-
-	override var defaultElementUUID: UUID? = null
-
-	override var visibility: LibraryVisibility = LibraryVisibility.Private
-
 	override var directory: LibraryDirectory = LibraryFolder(properties.name)
-
-	override var description: Description = Description(properties.description)
-
-	override val metaGraphCount: Int get() =
-		MetaGraphCounter().run {
-			accept(this)
-			result
-		}
 
 	init {
 		directory.bindTo(this)
@@ -77,13 +60,13 @@ open class LibraryImpl(
 		return "${Translations.getString(objectTypeKey)} \"${name.value}\""
 	}
 
-	/** ---- [LibraryDirectory] */
+	/** ---- [LibraryItem] */
 
 	override var name: Name
 		get() = directory.name
 		set(value) { directory.name = value }
 
-	fun accept(visitor: HierarchyVisitor): Boolean {
+	override fun accept(visitor: HierarchyVisitor): Boolean {
 		// Don't use libraryFolder.accept(visitor) in order to achieve that this Library is the resulting instance,
 		// and not its folder (which should be transparent to the outside world)
 		if (visitor.visitEnter(this)) {
@@ -96,6 +79,42 @@ open class LibraryImpl(
 		}
 		return visitor.visitLeave(this)
 	}
+
+	override val library: Library? get() = directory.library
+
+	override val isFixed: Boolean get() = directory.isFixed
+
+	override val iconPath: String? get() = directory.iconPath
+
+	override fun bindTo(library: Library) { directory.bindTo(library) }
+
+	/** ---- [LibraryDirectory] */
+
+	override val size: Int get() = directory.size
+
+	override fun isEmpty(): Boolean = directory.isEmpty()
+
+	override fun add(item: LibraryItem): LibraryDirectory = directory.add(item)
+
+	override fun add(index: Int, item: LibraryItem): LibraryDirectory = directory.add(index, item)
+
+	override fun remove(item: LibraryItem): Boolean = directory.remove(item)
+
+	override fun contains(item: LibraryItem): Boolean = directory.contains(item)
+
+	override fun containsRecursively(item: LibraryItem): Boolean = containsRecursively(item)
+
+	override fun get(name: String): LibraryItem? = directory.get(name)
+
+	override fun getRecursively(name: String): LibraryItem? = directory.getRecursively(name)
+
+	override fun getItems(): ImmutableList<LibraryItem> = directory.getItems()
+
+	override fun indexOf(item: LibraryItem): Int = directory.indexOf(item)
+
+	override fun move(item: LibraryItem, newIndex: Int) { directory.move(item, newIndex) }
+
+	override fun replaceWith(libraryDirectory: LibraryDirectory) { directory.replaceWith(libraryDirectory) }
 
 	/** ---- [MetaGraphRepository] */
 
@@ -150,6 +169,27 @@ open class LibraryImpl(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	/** ---- [Library] interface */
+
+	override var uuid: UUID = System.createUUID()
+
+	override var isSystem: Boolean = false
+
+	override var author: UserIdentity = userHolder.user.identity
+
+	override var defaultElementUUID: UUID? = null
+
+	override var visibility: LibraryVisibility = LibraryVisibility.Private
+
+	override var description: Description = Description(properties.description)
+
+	override val metaGraphCount: Int get() = metaGraphIds.size
+
+	override val metaGraphIds: List<UUID> get() {
+		return MetaGraphIdCollector().run {
+			directory.accept(this)
+			uuids
+		}
+	}
 
 	override var properties: LibraryProperties
 		get() = LibraryProperties.ofLibrary(this)
@@ -245,12 +285,12 @@ open class LibraryImpl(
 		}
 	}
 
-	private class MetaGraphCounter : EmptyHierarchyVisitor() {
-		var result: Int = 0
+	private class MetaGraphIdCollector : EmptyHierarchyVisitor() {
+		val uuids = mutableListOf<UUID>()
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is ContainerLibraryElement) {
-				result++
+				uuids.add(node.uuid)
 			}
 			return true
 		}

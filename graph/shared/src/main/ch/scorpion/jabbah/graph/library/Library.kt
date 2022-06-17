@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.io.Storable
  *
  * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
  */
-interface Library : MetaGraphRepository, Storable, Namable, Describable {
+interface Library : MetaGraphRepository, Storable, Namable, Describable, LibraryDirectory {
 
 	/** Returns the [LibraryIdentification] used for building persistent paths to this [Library]. */
 	val identification: LibraryIdentification get() = if (isSystem) {
@@ -68,7 +68,7 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable {
 	/** Returns the number of [MetaGraph] contained in this [Library]. */
 	val metaGraphCount: Int
 
-	fun dispose()
+	val metaGraphIds: List<UUID>
 
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     fun bindLibraryItems()

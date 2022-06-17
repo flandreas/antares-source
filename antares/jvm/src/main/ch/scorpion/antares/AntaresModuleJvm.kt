@@ -204,7 +204,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		when (app.environment) {
 			Environment.Development -> {
 				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
-				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "mYdmErbSZxQUtlr9BW2UHUOmxtHN8WNO")
+				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "RvRibJnRdmdHZ2LGhQ9sLiLtqiXrLOsX")
 			}
 			Environment.Production -> {
 				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "antarescircuit.eu.auth0.com")

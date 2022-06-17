@@ -30,6 +30,9 @@ abstract class AbstractFileLibraryPersistenceService(
 		const val RESOURCE_PATH = "/libraries"
 		const val DEF_META_GRAPH_FILE_EXTENSION = "cir"
 		const val DEF_LIBRARY_FILE_NAME = "library.xml"
+
+		fun loadLibrary(inputStream: InputStream): Library =
+			StoreXmlReader(ElectricXmlReader(inputStream)).readStorable() as Library
 	}
 
 	protected abstract fun ensureLibraryDirectory(libraryId: LibraryIdentification)
@@ -165,9 +168,6 @@ abstract class AbstractFileLibraryPersistenceService(
 			throw LibraryPersistenceServiceException(e.message)
 		}
 	}
-
-	protected fun loadLibrary(inputStream: InputStream): Library =
-		StoreXmlReader(ElectricXmlReader(inputStream)).readStorable() as Library
 
 	protected fun buildResourceLibraryDirectoryPath(libraryId: LibraryIdentification): String =
 		"$RESOURCE_PATH/${libraryId.uuid.id}"
