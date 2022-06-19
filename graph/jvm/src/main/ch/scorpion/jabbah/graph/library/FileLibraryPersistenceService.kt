@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -22,8 +21,6 @@ import java.util.zip.ZipOutputStream
  * @property directoryName the name of the directory within [dataPath] that holds the [Library] files (e.g. "libraries")
  * @property metaGraphFileExtension the file name extension of [MetaGraph] files
  * @property libraryFileName the name of the [Library] file
- * @property useOwner if `true`, [LibraryIdentification.owner] is part of the file system path. Typically `false`
- * for single-user environments, `true` for multi-user environments
  * @property metaGraphHistoryService the optional [FileMetaGraphHistoryService] used for historizing saved [MetaGraph]s
  */
 @Suppress("MemberVisibilityCanBePrivate")
@@ -32,7 +29,6 @@ class FileLibraryPersistenceService(
 	private val directoryName: String?,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
-	private val useOwner: Boolean = false,
 	metaGraphHistoryService: FileMetaGraphHistoryService? = null
 ) : AbstractFileLibraryPersistenceService(metaGraphHistoryService) {
 
@@ -159,21 +155,12 @@ class FileLibraryPersistenceService(
 
 	/** ---- [FileLibraryPersistenceService] */
 
-	private fun getBaseName(owner: UserIdentity?): String {
+	private fun getBaseName(): String {
 		val separator = FileSystems.getDefault().separator
-
-		return if (useOwner && owner != null) {
-			if (directoryName == null) {
-				"$dataPath$separator${owner.id}"
-			} else {
-				"$dataPath$separator${owner.id}$separator$directoryName"
-			}
+		return if (directoryName == null) {
+			dataPath
 		} else {
-			if (directoryName == null) {
-				dataPath
-			} else {
-				"$dataPath$separator$directoryName"
-			}
+			"$dataPath$separator$directoryName"
 		}
 	}
 
@@ -196,14 +183,14 @@ class FileLibraryPersistenceService(
 		inputStream, replaceExisting, currentLibraryCount, quota)
 
 	override fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String =
-		FileSystems.getDefault().getPath(getBaseName(libraryId.owner), libraryId.uuid.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
+		FileSystems.getDefault().getPath(getBaseName(), libraryId.uuid.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
 	private fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
-		buildLibraryFilePath(getBaseName(libraryId.owner), libraryId.uuid.toString())
+		buildLibraryFilePath(getBaseName(), libraryId.uuid.toString())
 
 	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =
 		FileSystems.getDefault().getPath(directoryPath, libraryDirName, libraryFileName).toString()
 
 	fun buildLibraryDirectoryPath(libraryId: LibraryIdentification): String =
-		FileSystems.getDefault().getPath(getBaseName(libraryId.owner), libraryId.uuid.toString()).toString()
+		FileSystems.getDefault().getPath(getBaseName(), libraryId.uuid.toString()).toString()
 }
