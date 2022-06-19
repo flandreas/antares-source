@@ -35,6 +35,14 @@ class AkrabRestLibraryPersistenceServiceJs(
 	/** ---- [LibraryPersistenceService] interface. */
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
+		try {
+			return StoreXmlReader(DomXmlReader(loadMetaGraphXML(library, uuid))).readStorable() as MetaGraph
+		} catch (e: Throwable) {
+			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load graph: ${e.message}"))
+		}
+	}
+
+	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
 		val path = buildMetaGraphPath(library.uuid, uuid)
 		LOG.debug("Loading MetaGraph with GET $path")
 
@@ -50,7 +58,7 @@ class AkrabRestLibraryPersistenceServiceJs(
 		}
 
 		try {
-			return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
+			return request.responseText
 		} catch (e: Throwable) {
 			throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load graph: ${e.message}"))
 		}

@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
+import org.apache.commons.io.IOUtils
 import java.io.*
+import java.nio.charset.Charset
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -53,6 +55,12 @@ abstract class AbstractFileLibraryPersistenceService(
 	abstract fun createLibraryFileOutputStream(libraryId: LibraryIdentification): OutputStream
 
 	/** ---- [LibraryPersistenceService] */
+
+	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
+		createMetaGraphInputStream(library.identification, uuid).use {
+			return IOUtils.toString(it, Charset.defaultCharset())
+		}
+	}
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
 		createMetaGraphInputStream(library.identification, uuid).use {

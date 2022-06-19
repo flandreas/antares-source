@@ -37,6 +37,16 @@ class UrlLibraryPersistenceServiceJs(
         return StoreXmlReader(DomXmlReader(doc)).readStorable() as MetaGraph
     }
 
+	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
+		val request = XMLHttpRequest()
+		val url = "$baseUrl/$libraryDirectoryName/${library.uuid.id}/${uuid.id}.cir"
+		LOG.trace("Calling GET $url")
+		request.open("GET", url, async = false)
+		request.overrideMimeType("text/xml")
+		request.send()
+		return request.responseText
+	}
+
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =
 		"${buildLibraryDirectoryPath(libraryUuid)}/$libraryFileName"
 

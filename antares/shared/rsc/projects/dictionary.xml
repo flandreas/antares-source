@@ -1,6 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <libraryDictionary _id='0'>
   <entries>
-    <libraryDictionaryEntry _id='1' uuid='d10cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='1' uuid='d10cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='public'>
       <name>
         <translation lang='en' text='Microcomputer (Tanenbaum)'/>
         <translation lang='de' text='Mikrocomputer (Tanenbaum)'/>
@@ -10,7 +11,7 @@
         <translation lang='de' text='Ein voll funktionsfähiger Mikrocomputer mit mikroprogrammierbarer CPU nach Tanenbaum'/>
       </desc>
     </libraryDictionaryEntry>
-    <libraryDictionaryEntry _id='2' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='2' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
       <name>
         <translation lang='de' text='Hexadezimale Tastatur'/>
         <translation lang='en' text='Hexadecimal Keyboard'/>
@@ -20,18 +21,18 @@
         <translation lang='en' text='Sample project featuring &quot;controls&quot; in symbols of subcircuits'/>
       </desc>
     </libraryDictionaryEntry>
-    <libraryDictionaryEntry _id='3' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='3' uuid='fead04a7-e807-4eec-bc8b-fcf8d7b47eab' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
       <name>
         <translation lang='en' text='Logic Gates from transistors'/>
       </name>
     </libraryDictionaryEntry>
-    <libraryDictionaryEntry _id='4' uuid='00b0c75e-a466-45ae-b2e8-e18817f69eea' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='4' uuid='00b0c75e-a466-45ae-b2e8-e18817f69eea' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
       <name>
         <translation lang='de' text='Bidirektionaler Splitter'/>
         <translation lang='en' text='Bidirectional Splitter'/>
       </name>
     </libraryDictionaryEntry>
-    <libraryDictionaryEntry _id='5' uuid='d7954ba2-2d6b-47a8-89b9-2b3a8ac7965f' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+    <libraryDictionaryEntry _id='5' uuid='d7954ba2-2d6b-47a8-89b9-2b3a8ac7965f' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
       <name>
         <translation lang='en' text='Sine Wave'/>
       </name>

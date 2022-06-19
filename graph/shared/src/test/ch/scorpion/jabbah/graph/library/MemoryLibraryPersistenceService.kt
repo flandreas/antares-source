@@ -16,6 +16,10 @@ class MemoryLibraryPersistenceService(
 	/** Maps the [UUID] of a [MetaGraph] to the [MetaGraph]. */
 	private val map = mutableMapOf<UUID, MetaGraph>()
 
+	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
+		throw UnsupportedOperationException("not implemented")
+	}
+
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
 		return StorableCloner.clone(map[uuid]!!)
 	}

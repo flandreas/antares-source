@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.graph.MetaGraphBundle
  */
 interface LibraryPersistenceService {
 
+	/** Loads the entire XML representation of the [MetaGraph] with the specified [UUID].*/
+	fun loadMetaGraphXML(library: Library, uuid: UUID): String
+
 	/** Loads the entire [MetaGraph] with the specified [UUID].*/
 	fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph
 
@@ -63,6 +66,10 @@ data class LibraryImportConflictException(val libraryId: LibraryIdentification) 
 
 /** Null pattern.*/
 class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
+
+	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
+		throw UnsupportedOperationException("not implemented")
+	}
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph =
 		throw UnsupportedOperationException("not implemented")
