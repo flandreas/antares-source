@@ -75,20 +75,31 @@ class SignalHistoryTimelineViewImpl : AbstractRectangle(), SignalHistoryTimeline
 		var lastLabelMinX: Double? = null
 
 		for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
-			val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
-			if (x <= bounds.minX) {
-				break
-			}
-
-			label.text = (entry.time - refTime).toString()
-			label.location = Point2D(x, LINE_LENGTH + LABEL_INSET)
-
-			if (lastLabelMinX == null || label.boundingBox.maxX + MIN_LABEL_GAP < lastLabelMinX) {
-				lastLabelMinX = label.boundingBox.minX
-				context.g.drawLine(x, 0.0, x, LINE_LENGTH)
-				label.draw(context)
-			}
+			lastLabelMinX = drawLabel(context, entry.time, refTime, lastLabelMinX)
 		}
+
+		drawLabel(context, timeline!!.maxTime, refTime, lastLabelMinX)
+	}
+
+	private fun drawLabel(context: DrawContext, time: Long, refTime: Long, lastLabelMinX: Double?): Double? {
+		var newLastLabelMinX = lastLabelMinX
+
+		val x = max(rightBorder - timeline!!.getX(time), bounds.minX)
+		if (x <= bounds.minX) {
+			//break
+			return null
+		}
+
+		label.text = (time - refTime).toString()
+		label.location = Point2D(x, LINE_LENGTH + LABEL_INSET)
+
+		if (newLastLabelMinX == null || label.boundingBox.maxX + MIN_LABEL_GAP < newLastLabelMinX) {
+			newLastLabelMinX = label.boundingBox.minX
+			context.g.drawLine(x, 0.0, x, LINE_LENGTH)
+			label.draw(context)
+		}
+
+		return newLastLabelMinX
 	}
 
 	override val lineWidth: Double get() = 0.0
