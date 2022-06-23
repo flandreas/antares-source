@@ -44,6 +44,7 @@ abstract class AbstractLibraryPersistencePanel(
 	protected abstract fun getStaleReferenceMsg(name: String): String
 	protected abstract fun getUuidAlreadyExistsMsg(): String
 	protected abstract fun refreshLibraries()
+	protected abstract fun selectLibrary(uuid: UUID?)
 
 	protected fun getLibraryIdentity(uuid: UUID): LibraryIdentification =
 		LibraryIdentification(uuid, userHolder.user.identity)
@@ -87,7 +88,7 @@ abstract class AbstractLibraryPersistencePanel(
 				LOG.userTrail("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
 				val result = managementService.import(path, replaceIfUuidExists)
 				when (result.type) {
-					Success -> handleSuccessfulImport(name)
+					Success -> handleSuccessfulImport(name, result.library)
 					NameAlreadyExists -> handleImportNameAlreadyExists(name)
 					Invalid -> handleInvalidImportFile(name)
 					StaleLibraryReference -> handleStaleLibraryReference(name)
@@ -102,7 +103,7 @@ abstract class AbstractLibraryPersistencePanel(
 
 		private fun createFilter(): FileFilter = FileExtensionFilter(EXPORT_FILE_EXTENSION, fileExtensionFilterName)
 
-		fun handleSuccessfulImport(libraryName: String) {
+		fun handleSuccessfulImport(libraryName: String, library: Library?) {
 			JOptionPane.showConfirmDialog(
 				this@AbstractLibraryPersistencePanel,
 				getImportSuccessMsg(libraryName),
@@ -110,6 +111,7 @@ abstract class AbstractLibraryPersistencePanel(
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE)
 			refreshLibraries()
+			selectLibrary(library?.uuid)
 		}
 
 		fun handleImportNameAlreadyExists(libraryName: String) {

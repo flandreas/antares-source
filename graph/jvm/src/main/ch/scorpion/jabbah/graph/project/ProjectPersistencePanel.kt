@@ -8,10 +8,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.library.AbstractLibraryPersistencePanel
-import ch.scorpion.jabbah.graph.library.LibraryProperties
-import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
-import ch.scorpion.jabbah.graph.library.LibraryVisibility
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
@@ -111,16 +108,22 @@ class ProjectPersistencePanel(
 	override val fileExtensionFilterName: String
 		get() = Translations.getString("project.dialog.import.filter.name")
 
-	private fun currentProjectIndex(): Int? {
+	private fun currentProjectIndex(): Int? = projectIndex(projectHolder.project?.uuid)
+
+	private fun projectIndex(uuid: UUID?): Int? {
 		if (projectsList.model.size == 0) {
 			return null
 		}
 		for (index in 0 until projectsList.model.size) {
-			if (projectsList.model.getElementAt(index).uuid == projectHolder.project?.uuid) {
+			if (projectsList.model.getElementAt(index).uuid == uuid) {
 				return index
 			}
 		}
 		return null
+	}
+
+	override fun selectLibrary(uuid: UUID?) {
+		projectIndex(uuid)?.let { projectsList.selectedIndex = it }
 	}
 
 	private fun updateActions() {

@@ -96,6 +96,10 @@ class LibraryPersistencePanel(
 		libraryDictionaryEntries.model = loadLibraryDirectoryEntries()
 	}
 
+	override fun selectLibrary(uuid: UUID?) {
+		libraryIndex(uuid)?.let { libraryDictionaryEntries.selectedIndex = it }
+	}
+
 	init {
 		libraryDictionaryEntries.addListSelectionListener {
 			updateDescription()
@@ -115,12 +119,14 @@ class LibraryPersistencePanel(
 		currentLibraryIndex()?.let { libraryDictionaryEntries.selectedIndex = it }
 	}
 
-	private fun currentLibraryIndex(): Int? {
+	private fun currentLibraryIndex(): Int? = libraryIndex(libraryHolder.library.uuid)
+
+	private fun libraryIndex(uuid: UUID?): Int? {
 		if (libraryDictionaryEntries.model.size == 0) {
 			return null
 		}
 		for (index in 0 until libraryDictionaryEntries.model.size) {
-			if (libraryDictionaryEntries.model.getElementAt(index).uuid == libraryHolder.library.uuid) {
+			if (libraryDictionaryEntries.model.getElementAt(index).uuid == uuid) {
 				return index
 			}
 		}

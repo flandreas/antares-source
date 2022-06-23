@@ -19,11 +19,13 @@ enum class LibraryImportResultType {
 	UuidAlreadyExists,
 	QuotaExceeded;
 
-	fun result(param: String? = null): LibraryImportResult = LibraryImportResult(this, param)
+	fun result(param: String? = null, library: Library? = null): LibraryImportResult = LibraryImportResult(this, param, library)
 }
 
 data class LibraryImportResult(
-	val type: LibraryImportResultType, val param: String? = null)
+	val type: LibraryImportResultType,
+	val param: String? = null,
+	val library: Library? = null)
 
 /**
  * Base service class for managing [Libraries][Library] as well as [Projects][Project].
@@ -87,7 +89,7 @@ abstract class AbstractLibraryManagementService(
 
 		dictionaryService.add(library)
 
-		return Success.result()
+		return Success.result(library = library)
 	}
 
 	protected fun deleteImpl(libraryId: LibraryIdentification) {
