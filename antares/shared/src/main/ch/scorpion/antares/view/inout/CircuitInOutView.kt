@@ -556,7 +556,7 @@ class CircuitInOutView(
 	/** Consumes a key the user pressed during simulation while this [CircuitInOutView] has focus.*/
 	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false) {
 		invalidate()
-		if (keyEvent?.modifiers != 0) {
+		if (keyEvent != null && keyEvent.modifiers != 0) {
 			// Ignore everything that should be handled by MenuItem accelerators
 		} else if (key == KeyEvent.VK_ESCAPE) {
 			hideKeyboard()
