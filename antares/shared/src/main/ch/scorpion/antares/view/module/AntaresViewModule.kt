@@ -88,6 +88,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val TRANSISTOR_P = "TransistorP"
 	private const val GROUND = "Ground"
 	private const val POWER = "Power"
+	private const val WIRE_TAP = "WireTap"
 
 	private const val AND = "AND"
 	private const val OR = "OR"
@@ -283,6 +284,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("videoRamView", VideoRamView::class)
 		typeMap.register("doubleThrowSwitchView", DoubleThrowSwitchView::class)
 		typeMap.register("lookupTableView", LookupTableView::class)
+		typeMap.register("wireTapView", WireTapView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -307,6 +309,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, TransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, GroundView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, PowerView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, WireTapView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
@@ -396,6 +399,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(GROUND, "library.element.Ground", { "/img/ground.png" }, GroundView::class)
 		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
 		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
+		repository.register(WIRE_TAP, "library.element.WireTap", { "/img/splitter.png" }, WireTapView::class)
 
 		repository.register(AND,
 			"library.element.AndGate",
@@ -488,6 +492,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(POWER), net)
 		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
 		addLibraryItem(library, BaseLibraryElement(DOUBLE_THROW_SWITCH), net)
+		addLibraryItem(library, BaseLibraryElement(WIRE_TAP), net)
 		addLibraryItem(library, net, library.directory)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))

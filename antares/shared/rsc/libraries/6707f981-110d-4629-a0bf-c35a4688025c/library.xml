@@ -47,6 +47,7 @@
             <baseLibraryElement _id='23' id='Power'/>
             <baseLibraryElement _id='24' id='RealSwitch'/>
             <baseLibraryElement _id='25' id='DoubleThrowSwitch'/>
+            <baseLibraryElement _id='129' id='WireTap'/>
             <containerLibraryElement _id='26' uuid='74c772de-7336-48a7-814a-7d5bc7d1829b'>
               <name>
                 <translation lang='en' text='Bus Transceiver n Bit'/>

@@ -132,6 +132,7 @@ class LibraryPreviewPanel(
 	}
 
 	private fun handleLoadError(e: Throwable) {
+		LOG.error("Error when loading preview", e)
 		val msgKey = when(e) {
 			is FileNotFoundException -> "graph.action.load.error.fileNotFound.desc"
 			else -> "graph.action.load.error.general.desc"
