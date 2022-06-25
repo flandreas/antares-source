@@ -118,7 +118,7 @@ class DigitalGraphViewService(
 		if (newOutputCount.count > wireTapView.tapCount.count) {
 			increaseOutputCount(wireTapView, newOutputCount)
 		} else if (newOutputCount.count < wireTapView.tapCount.count) {
-			decreaseOutputCount(wireTapView, newOutputCount)
+			decreaseOutputCount(wireTapView, newOutputCount, drawingView)
 		}
 	}
 
@@ -134,8 +134,20 @@ class DigitalGraphViewService(
 		}
 	}
 
-	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount) {
-		// TODO
+	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount, drawingView: DrawingView<GraphView>) {
+		wireTapView.model.apply {
+			val ports = getPorts().filter { it.portId > 1 }.sortedBy { it.portId }.toMutableList()
+			for (i in ports.size - 1 downTo newOutputCount.count) {
+				val port = ports.removeLast()
+				val portView = wireTapView.getPortView(port)!!
+				unconnectDeletedPortView(portView, drawingView)
+				wireTapView.removePortView(portView)
+				removePort(port)
+			}
+
+			wireTapView.model.notifyStateChanged()
+			wireTapView.updateGeometry()
+		}
 	}
 
 	private fun unconnectDeletedPortView(portView: PortView<*>, drawingView: DrawingView<GraphView>) {

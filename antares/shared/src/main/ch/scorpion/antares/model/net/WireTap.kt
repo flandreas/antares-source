@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -100,6 +101,11 @@ class WireTap(
 		outputBitWidth = BitWidth.read("outputWidth", reader)
 		tapPositions = mutableListOf(*reader.readIntegers("positions").toTypedArray())
 		updateOutputPorts()
+	}
+
+	override fun removePort(port: Port<*>) {
+		tapPositions.removeAt(port.portId - 2)
+		super.removePort(port)
 	}
 
 	/** ---- [WireTap] */
