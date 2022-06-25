@@ -1,13 +1,13 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.base.EnumProperty
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
- * Enumerates the possible number of [InputPort]s of an [AbstractDigitalGate].
+ * Enumerates the possible number of [Port]s of a [Vertice].
  */
-enum class InputCount(val count: Int) : EnumProperty<InputCount> {
+enum class PortCount(val count: Int) : EnumProperty<PortCount> {
     ZERO(0),
     ONE(1),
     TWO(2),
@@ -20,11 +20,12 @@ enum class InputCount(val count: Int) : EnumProperty<InputCount> {
 
     companion object {
 
-	    const val BASE_KEY = "element.property.inputCount"
+	    const val INPUT_COUNT_BASE_KEY = "element.property.inputCount"
+	    const val OUTPUT_COUNT_BASE_KEY = "element.property.outputCount"
 
-        fun of(value: Int): InputCount = values().first { it.count == value }
+        fun of(value: Int): PortCount = values().first { it.count == value }
 
-        fun withName(customName: String): InputCount {
+        fun withName(customName: String): PortCount {
             for (inputCount in values()) {
                 if (inputCount.customName == customName) {
                     return inputCount

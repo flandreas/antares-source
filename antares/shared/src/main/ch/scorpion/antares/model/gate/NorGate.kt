@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
@@ -25,7 +25,7 @@ class NorCalculator : AbstractDigitalGateCalculator() {
 }
 
 class NorGate(
-	inputCount: InputCount = InputCount.TWO,
+	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 

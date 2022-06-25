@@ -1,10 +1,13 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.net.WireTap
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -13,8 +16,8 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -31,6 +34,43 @@ class WireTapView(
 		private const val Y_DISPLACEMENT = 2 * Look.SCALE
 		private const val INPUT_PIN_LENGTH = 0
 	}
+
+	/** Use [DigitalGraphViewService] for changing this value.*/
+	val tapCount: PortCount get() = model.tapCount
+
+	// Explicit properties for tapPosition needed for reflective Commands on the JVM platform
+
+	var tapPosition0: Int
+		get() = model.getTapPosition(0)
+		set(value) = model.setTapPosition(0, value)
+
+	var tapPosition1: Int
+		get() = model.getTapPosition(1)
+		set(value) = model.setTapPosition(1, value)
+
+	var tapPosition2: Int
+		get() = model.getTapPosition(2)
+		set(value) = model.setTapPosition(2, value)
+
+	var tapPosition3: Int
+		get() = model.getTapPosition(3)
+		set(value) = model.setTapPosition(3, value)
+
+	var tapPosition4: Int
+		get() = model.getTapPosition(4)
+		set(value) = model.setTapPosition(4, value)
+
+	var tapPosition5: Int
+		get() = model.getTapPosition(5)
+		set(value) = model.setTapPosition(5, value)
+
+	var tapPosition6: Int
+		get() = model.getTapPosition(6)
+		set(value) = model.setTapPosition(6, value)
+
+	var tapPosition7: Int
+		get() = model.getTapPosition(7)
+		set(value) = model.setTapPosition(7, value)
 
 	var inputBitWidth: BitWidth
 		get() = model.inputBitWidth
@@ -67,8 +107,8 @@ class WireTapView(
 		super.modelExchanged(oldModel)
 
 		addPortView(createInputPortView())
-		for (i in 0 until model.tapCount) {
-			addPortView(createOutputPortView(i))
+		for (i in 0 until model.tapCount.count) {
+			addPortView(createOutputPortView(model.getPort(i + 2)))
 		}
 
 		updateGeometry()
@@ -83,22 +123,22 @@ class WireTapView(
 			showBitWidthAnnotation = false)
 	}
 
-	private fun createOutputPortView(index: Int): DigitalPortView {
+	fun createOutputPortView(port: Port<DigitalSignal>): DigitalPortView {
 		return DigitalPortView(
 			styleProvider,
-			model.getPort(index + 2),
+			port,
 			direction = Direction.EAST,
 			showBitWidthAnnotation = false,
 			portLabelPosition = PortLabelPosition.EXTERNAL)
 	}
 
-	private fun updateGeometry() {
+	fun updateGeometry() {
 		val width = X_DISPLACEMENT
-		val height = INSET + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount - 1)
+		val height = INSET + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
 		setBounds(Rectangle2D(0, INPUT_PIN_LENGTH, width, height))
 
 		var y = INSET + Y_DISPLACEMENT
-		for (i in 0 until model.tapCount) {
+		for (i in 0 until model.tapCount.count) {
 			getPortView(model.getPort(i + 2))!!.location = Point2D(X_DISPLACEMENT, y)
 			y += portViewSpacing.value
 		}
@@ -116,13 +156,7 @@ class WireTapView(
 	}
 
 	private fun drawImpl(context: DrawContext, lineColor: Color) {
-		/*
-		// TODO Choose Stroke according to outputBitWidth
-		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
-		context.g.color = transparent.applyTo(lineColor)
-		*/
-
-		for (i in 0 until model.tapCount) {
+		for (i in 0 until model.tapCount.count) {
 			val pv = getPortView(model.getPort(i + 2))!!
 			val pvLoc = pv.location
 			pv.prepareConnectionDrawContext(context)

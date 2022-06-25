@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -50,7 +50,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	fun evenNumberOfInputShouldCalculateTrue() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xnor = XnorGate(InputCount.THREE)
+		val xnor = XnorGate(PortCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -62,7 +62,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	fun oddNumberOfInputShouldCalculateFalse() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xnor = XnorGate(InputCount.THREE)
+		val xnor = XnorGate(PortCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)

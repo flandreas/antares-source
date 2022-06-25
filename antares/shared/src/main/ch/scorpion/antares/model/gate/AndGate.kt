@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.Error
 import ch.scorpion.antares.model.signal.Bit.True
@@ -40,7 +40,7 @@ class AndCalculator : AbstractDigitalGateCalculator() {
 
 /** A digital gate that performs a logical AND operation. */
 class AndGate(
-	inputCount: InputCount = InputCount.TWO,
+	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 

@@ -59,10 +59,10 @@ class HandednessEditor : ComboBoxPropertyEditor() {
     }
 }
 
-class InputCountEditor(filter: (InputCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
+class PortCountEditor(filter: (PortCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(InputCount.values().filter { filter.invoke(it) }.toTypedArray())
-        (editor as JComboBox<*>).renderer = EnumRenderer<InputCount>()
+        setAvailableValues(PortCount.values().filter { filter.invoke(it) }.toTypedArray())
+        (editor as JComboBox<*>).renderer = EnumRenderer<PortCount>()
     }
 }
 

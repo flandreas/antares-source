@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.net
 
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -15,9 +17,9 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class WireTap(
+	outputCount: PortCount = PortCount.ONE,
 	inputBitWidth: BitWidth = BitWidth.BW_2,
-	outputBitWidth: BitWidth = BitWidth.BW_1,
-	tapPositions: List<Int> = listOf(0, 1)
+	outputBitWidth: BitWidth = BitWidth.BW_1
 ) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
@@ -44,6 +46,7 @@ class WireTap(
 		set(value) {
 			if (field != value) {
 				field = value
+				resetTapPositions()
 				updatePorts()
 				stateChanged()
 			}
@@ -58,29 +61,87 @@ class WireTap(
 			}
 		}
 
-	private var tapPositions = mutableListOf(*tapPositions.toTypedArray())
+	private var tapPositions = mutableListOf<Int>()
 
-	val tapCount: Int get() = tapPositions.size
+	val tapCount: PortCount get() = PortCount.of(tapPositions.size)
 
 	init {
 		propagationDelay = 0
-		createPorts()
+		createPorts(outputCount)
 	}
 
-	private fun createPorts() {
+	private fun createPorts(outputCount: PortCount) {
 		clearPorts()
+		tapPositions.clear()
+
 		addInputPort()
-		addOutputPorts()
+		addOutputPorts(outputCount)
 		updatePorts()
+	}
+
+	/** ---- [Vertice] */
+
+	override val requireUniquePortNames: Boolean get() = false
+
+	/** ---- [Storable] */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeInt("outputCount", tapCount.count)
+		writer.writeInt("inputWidth", inputBitWidth.width)
+		writer.writeInt("outputWidth", outputBitWidth.width)
+		writer.writeIntegers("positions", tapPositions)
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		createPorts(PortCount.of(reader.readInt("outputCount")))
+		inputBitWidth = BitWidth.read("inputWidth", reader)
+		outputBitWidth = BitWidth.read("outputWidth", reader)
+		tapPositions = mutableListOf(*reader.readIntegers("positions").toTypedArray())
+		updateOutputPorts()
+	}
+
+	/** ---- [WireTap] */
+
+	fun getTapPosition(index: Int): Int = tapPositions[index]
+
+	fun setTapPosition(index: Int, pos: Int) {
+		tapPositions[index] = pos
+		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
+	}
+
+	/**
+	 * TODO: This leads to creating of Commands that re-establish the values in the UI property editors
+	 * when changing the inputBitWidth.
+	 * This is a design challenge: Handle calculated properties displayed in PropertyPanel.
+	 */
+	private fun resetTapPositions() {
+		tapPositions = MutableList(tapPositions.size) { 0 }
+		updateOutputPorts()
+	}
+
+	/** ---- Dynamic Port management */
+
+	/** Also used by application service to increase [tapCount]. */
+	fun addOutputPort(tapPosition: Int): DigitalPort {
+		if (tapPosition >= MAX_TAP_COUNT) {
+			throw IllegalArgumentException("Max. $MAX_TAP_COUNT output ports allowed in WireTap")
+		}
+		val port = DigitalPortImpl(PortType.INOUT, bitWidth = outputBitWidth)
+		addPort(port)
+		tapPositions.add(tapPosition)
+		updateOutputPort(port, tapPositions.size - 1)
+		return port
 	}
 
 	private fun addInputPort() {
 		addPort(DigitalPortImpl(PortType.INOUT, bitWidth = inputBitWidth))
 	}
 
-	private fun addOutputPorts() {
-		for (i in 0 until tapCount) {
-			addPort(DigitalPortImpl(PortType.INOUT, name, bitWidth = outputBitWidth))
+	private fun addOutputPorts(outputCount: PortCount) {
+		for (i in 0 until outputCount.count) {
+			addOutputPort(i * outputBitWidth.width)
 		}
 	}
 
@@ -94,11 +155,15 @@ class WireTap(
 	}
 
 	private fun updateOutputPorts() {
-		for (i in 0 until tapCount) {
-			(getPort<DigitalSignal>(i + 2) as DigitalPort).apply {
-				bitWidth = outputBitWidth
-				name = createOutputPortName(i)
-			}
+		for (i in 0 until tapCount.count) {
+			updateOutputPort((getPort<DigitalSignal>(i + 2) as DigitalPort), i)
+		}
+	}
+
+	private fun updateOutputPort(port: DigitalPort, index: Int) {
+		port.apply {
+			bitWidth = outputBitWidth
+			name = createOutputPortName(index)
 		}
 	}
 
@@ -109,21 +174,5 @@ class WireTap(
 		} else {
 			"$pos..${pos + outputBitWidth.width - 1}"
 		}
-	}
-
-	/** ---- [Storable] */
-
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		writer.writeInt("inputWidth", inputBitWidth.width)
-		writer.writeInt("outputWidth", outputBitWidth.width)
-		writer.writeIntegers("positions", tapPositions)
-	}
-
-	override fun read(reader: StoreReader) {
-		super.read(reader)
-		inputBitWidth = BitWidth.read("inputWidth", reader)
-		outputBitWidth = BitWidth.read("outputWidth", reader)
-		tapPositions = mutableListOf(*reader.readIntegers("positions").toTypedArray())
 	}
 }

@@ -220,7 +220,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.registerRenderer(LightColor::class.java, LightColorRenderer::class.java)
-		registry.registerRenderer(InputCount::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(PortCount::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(InputPortNumber::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Handedness::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Logic::class.java, EnumRenderer::class.java)
@@ -243,7 +243,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
 		registry.register(LightColor::class.java) { LightColorEditor((it as CommandPropertySwing<LightColor>).optional) }
-		registry.register(InputCount::class.java) { InputCountEditor((it as CommandPropertySwing<InputCount>).filter) }
+		registry.register(PortCount::class.java) { PortCountEditor((it as CommandPropertySwing<PortCount>).filter) }
 		registry.register(InputPortNumber::class.java) { InputPortNumberEditor((it as CommandPropertySwing<InputPortNumber>).filter) }
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)

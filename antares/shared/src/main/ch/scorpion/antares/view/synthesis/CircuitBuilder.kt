@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.synthesis
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.gate.OrGate
@@ -60,7 +60,7 @@ class CircuitBuilder(
 		}
 
 	fun addAnd(
-		inputCount: InputCount,
+		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
 	): AndGateView = AndGateView(styleProvider, andGate = AndGate(inputCount)).also {
@@ -78,7 +78,7 @@ class CircuitBuilder(
 	}
 
 	fun addOr(
-		inputCount: InputCount,
+		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
 	): OrGateView = OrGateView(styleProvider, orGate = OrGate(inputCount)).also {

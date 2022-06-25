@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -71,19 +71,19 @@ fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<DigitalSignal
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractDigitalGate(
-    calculator: AbstractDigitalGateCalculator,
-    inputCount: InputCount,
-    bitWidth: BitWidth = BitWidth.BW_1
+	calculator: AbstractDigitalGateCalculator,
+	inputCount: PortCount,
+	bitWidth: BitWidth = BitWidth.BW_1
 ) : CalculatingVertice(calculator), MultiSignalSource<DigitalSignal> {
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)
 	    const val DEFAULT_PROPAGATION_DELAY = 20L
-        val DEF_MIN_INPUT_COUNT = InputCount.TWO
-        val DEF_MAX_INPUT_COUNT = InputCount.EIGHT
+        val DEF_MIN_INPUT_COUNT = PortCount.TWO
+        val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
     }
 
-	val chosenInputCount: InputCount get() = InputCount.of(inputCount)
+	val chosenInputCount: PortCount get() = PortCount.of(inputCount)
 
 	var bitWidth: BitWidth = bitWidth
 		set(value) {
@@ -103,7 +103,7 @@ abstract class AbstractDigitalGate(
 	    setupInputCount(inputCount)
     }
 
-	private fun setupInputCount(inputCount: InputCount) {
+	private fun setupInputCount(inputCount: PortCount) {
 		clearPorts()
 		for (i in 1..inputCount.count) {
 			addPort(createInputPort())
@@ -133,7 +133,7 @@ abstract class AbstractDigitalGate(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-	    setupInputCount(InputCount.of(reader.readInt("inputCount")))
+	    setupInputCount(PortCount.of(reader.readInt("inputCount")))
         if (reader.hasAttribute("outputName")) {
             getOutput<DigitalSignal>().name = reader.readString("outputName")
         }
@@ -165,9 +165,9 @@ abstract class AbstractDigitalGate(
 
     /** ---- [AbstractDigitalGate] */
 
-    open val minInputCount: InputCount get() = DEF_MIN_INPUT_COUNT
+    open val minInputCount: PortCount get() = DEF_MIN_INPUT_COUNT
 
-    open val maxInputCount: InputCount get() = DEF_MAX_INPUT_COUNT
+    open val maxInputCount: PortCount get() = DEF_MAX_INPUT_COUNT
 
 	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput(logic = Logic.POSITIVE, name = null, bitWidth = bitWidth)
 

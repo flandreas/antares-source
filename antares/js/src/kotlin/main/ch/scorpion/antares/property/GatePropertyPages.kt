@@ -1,6 +1,6 @@
 package ch.scorpion.antares.property
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
@@ -30,7 +30,7 @@ open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComp
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
-			propertyRow(InputCount.BASE_KEY) {
+			propertyRow(PortCount.INPUT_COUNT_BASE_KEY) {
 				it.jmInputCount(editor, { bean.chosenInputCount}, bean.id) {
 					filter = { inputCount -> inputCount.ordinal >= 2 }
 				}

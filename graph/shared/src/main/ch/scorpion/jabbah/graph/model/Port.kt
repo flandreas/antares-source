@@ -34,6 +34,7 @@ interface Port<T : Any> : Describable, Bean {
 
 	/**
 	 * The displayable name of this [Port] that can help the user to distinguish different [Port]s in a [Vertice].
+	 * Must be unique in [Vertice] unless [Vertice.requireUniquePortNames] is `false`.
 	 */
 	var name: String?
 

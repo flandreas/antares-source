@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.gate
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.effectiveGateInputBit
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
@@ -466,7 +466,7 @@ object GateMnemonic {
 	}
 
 	/**
-	 * Determines whether gate mnemonics have to be drawn (depending on the [InputCount], the zoom level,
+	 * Determines whether gate mnemonics have to be drawn (depending on the [PortCount], the zoom level,
 	 * the [ApplicationMode]) and the general enabledness, and prepares drawing by setting up the
 	 * coordinate system origin if drawing is required.
 	 */

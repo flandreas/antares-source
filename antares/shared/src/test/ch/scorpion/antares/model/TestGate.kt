@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 class TestGate(
 	calculator: AbstractDigitalGateCalculator
-) : AbstractDigitalGate(calculator, InputCount.TWO) {
+) : AbstractDigitalGate(calculator, PortCount.TWO) {
 
 	override val type: String get() = "TestVertice"
 	override val typeDesc: String? get() = null

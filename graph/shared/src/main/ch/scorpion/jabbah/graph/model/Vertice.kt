@@ -49,6 +49,9 @@ interface Vertice : GraphElement, Describable {
 
     val hasAnyOutput: Boolean
 
+	/** Determines whether all [Port.name] in this [Vertice] must be unique.*/
+	val requireUniquePortNames: Boolean get() = true
+
     /**
      * Notifies this [Vertice] that one of its [InputPort]s has changed its signal.
      * Typical implementations will request the [SignalHandler] for re-execution after their propagation delay.

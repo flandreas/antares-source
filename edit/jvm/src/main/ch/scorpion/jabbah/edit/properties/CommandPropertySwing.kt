@@ -15,7 +15,7 @@ open class CommandPropertySwing<V>(
 	baseKey: String,
 	valueClass: Class<V>,
 	protected val beanProvider: BeanProvider,
-	private val setterPropertyName: String = propertyName,
+	protected val setterPropertyName: String = propertyName,
 	getterPropertyName: String = propertyName,
 	interactive: Boolean = false,
 	displayName: String? = null

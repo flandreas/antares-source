@@ -72,7 +72,7 @@ open class PortImpl<T : Any>(
 				return
 			}
 			if (owner != null && value != null) {
-				if (owner!!.hasPort(value)) {
+				if (owner!!.requireUniquePortNames && owner!!.hasPort(value)) {
 					throw IllegalArgumentException("Port name $value not unique in Vertice")
 				}
 			}

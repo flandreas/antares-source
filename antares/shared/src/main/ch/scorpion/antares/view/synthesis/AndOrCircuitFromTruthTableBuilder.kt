@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.synthesis
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.quinemccluskey.DnfToDigitalGateStructure
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -105,10 +105,10 @@ class AndOrCircuitFromTruthTableBuilder(
 					andY += constantView.bounds.heightInt + AND_GAP_Y
 				}
 			} else {
-				if (andTermView.andTerm.factors.size > InputCount.values().last().count) {
+				if (andTermView.andTerm.factors.size > PortCount.values().last().count) {
 					throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxAndInputCountExceeded.error"))
 				}
-				val andGateView = circuitBuilder.addAnd(InputCount.of(andTermView.andTerm.factors.size), Point2D(x, andY))
+				val andGateView = circuitBuilder.addAnd(PortCount.of(andTermView.andTerm.factors.size), Point2D(x, andY))
 				andTermView.yPos = andY
 				andTermView.verticeView = andGateView
 				andY += andGateView.bounds.heightInt + AND_GAP_Y
@@ -130,7 +130,7 @@ class AndOrCircuitFromTruthTableBuilder(
 	}
 
 	private fun buildOrGate(orTerm: OrTermView) {
-		if (orTerm.andTermViews.size > InputCount.values().last().count) {
+		if (orTerm.andTermViews.size > PortCount.values().last().count) {
 			throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxOrInputCountExceeded.error"))
 		}
 
@@ -146,7 +146,7 @@ class AndOrCircuitFromTruthTableBuilder(
 			return
 		}
 
-		orTerm.orView = circuitBuilder.addOr(InputCount.of(orTerm.andTermViews.size), Point2D(x, orTerm.yPos))
+		orTerm.orView = circuitBuilder.addOr(PortCount.of(orTerm.andTermViews.size), Point2D(x, orTerm.yPos))
 	}
 
 	private fun buildOrInputWires(orTerm: OrTermView) {

@@ -5,15 +5,18 @@ import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 
-class InputCountPropertySwing(
-	beanProvider: BeanProvider,
+class OutputCountPropertySwing(
+	propertyName: String = "chosenOutputCount",
+	beanProvider: BeanProvider
 ) : CommandPropertySwing<PortCount>(
-	"chosenInputCount",
-	PortCount.INPUT_COUNT_BASE_KEY,
+	propertyName,
+	PortCount.OUTPUT_COUNT_BASE_KEY,
 	PortCount::class.java,
-	beanProvider
+	beanProvider,
+	setterPropertyName = propertyName,
+	getterPropertyName = propertyName,
 ) {
 
 	override fun createCommand(newValue: PortCount?): AbstractPropertyCommand<PortCount> =
-		ChangeInputCountCommandSwing(editor!!, beanProvider, beanIds, newValue!!)
+		ChangeOutputCountCommandSwing(editor!!, beanProvider, beanIds, newValue!!, getterPropertyName, setterPropertyName)
 }

@@ -1,10 +1,11 @@
 package ch.scorpion.antares.view.app
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
+import ch.scorpion.antares.view.net.WireTapView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.jabbah.base.Properties
@@ -52,12 +53,12 @@ class DigitalGraphViewService(
 		graphView.defaultLightColor ?: LightColor.getSystemDefault(properties)
 
 	/**
-	 * Changes the [InputCount] of an [AbstractDigitalGateView] (undoable), which might involve
+	 * Changes the [PortCount] of an [AbstractDigitalGateView] (undoable), which might involve
 	 * unconnecting [PortView]s that are being removed.
 	 */
 	fun changeInputCount(
 		gateView: AbstractDigitalGateView<AbstractDigitalGate>,
-		newInputCount: InputCount,
+		newInputCount: PortCount,
 		drawingView: DrawingView<GraphView>
 	) {
 		require(newInputCount.count >= gateView.model.minInputCount.count) { "InputCount must not be smaller than minimum ${gateView.model.minInputCount.count}" }
@@ -70,7 +71,7 @@ class DigitalGraphViewService(
 		}
 	}
 
-	private fun increaseInputCount(gateView: AbstractDigitalGateView<AbstractDigitalGate>, newInputCount: InputCount) {
+	private fun increaseInputCount(gateView: AbstractDigitalGateView<AbstractDigitalGate>, newInputCount: PortCount) {
 		gateView.model.apply {
 			// Temporarily "hide" Port.id of OutputPort
 			getOutput<DigitalSignal>().portId = -1
@@ -90,7 +91,7 @@ class DigitalGraphViewService(
 		}
 	}
 
-	private fun decreaseInputCount(gateView: AbstractDigitalGateView<AbstractDigitalGate>, newInputCount: InputCount, drawingView: DrawingView<GraphView>) {
+	private fun decreaseInputCount(gateView: AbstractDigitalGateView<AbstractDigitalGate>, newInputCount: PortCount, drawingView: DrawingView<GraphView>) {
 		gateView.model.apply {
 			val ports = getInputs().sortedBy { it.portId }.toMutableList()
 			for (i in chosenInputCount.count - 1 downTo newInputCount.count) {
@@ -107,6 +108,34 @@ class DigitalGraphViewService(
 			gateView.model.notifyStateChanged()
 			gateView.updateLayout()
 		}
+	}
+
+	fun changeOutputCount(
+		wireTapView: WireTapView,
+		newOutputCount: PortCount,
+		drawingView: DrawingView<GraphView>
+	) {
+		if (newOutputCount.count > wireTapView.tapCount.count) {
+			increaseOutputCount(wireTapView, newOutputCount)
+		} else if (newOutputCount.count < wireTapView.tapCount.count) {
+			decreaseOutputCount(wireTapView, newOutputCount)
+		}
+	}
+
+	private fun increaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount) {
+		wireTapView.model.apply {
+			for (i in tapCount.count + 1 .. newOutputCount.count) {
+				val port = wireTapView.model.addOutputPort(0)
+				wireTapView.addPortView(wireTapView.createOutputPortView(port))
+			}
+
+			wireTapView.model.notifyStateChanged()
+			wireTapView.updateGeometry()
+		}
+	}
+
+	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount) {
+		// TODO
 	}
 
 	private fun unconnectDeletedPortView(portView: PortView<*>, drawingView: DrawingView<GraphView>) {

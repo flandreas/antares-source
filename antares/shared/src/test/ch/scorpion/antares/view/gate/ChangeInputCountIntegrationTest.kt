@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -18,7 +18,7 @@ import io.mockk.mockk
 import kotlin.test.*
 
 /**
- * Integration test for increasing and decreasing [InputCount] of [AbstractDigitalGateView],
+ * Integration test for increasing and decreasing [PortCount] of [AbstractDigitalGateView],
  * using [AndGateView] as an example.
  */
 class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
@@ -43,7 +43,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 		every { drawingView.drawing } answers { getCircuitView() }
 
-		val model = AndGate(InputCount.THREE)
+		val model = AndGate(PortCount.THREE)
 		builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		andGateView = builder.addVerticeView(AndGateView(andGate = model))
 		switchView1 = builder.addVerticeView(SwitchView())
@@ -59,7 +59,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldIncreaseInputCount() {
-		service.changeInputCount(andGateView as AbstractDigitalGateView<AbstractDigitalGate>, InputCount.FOUR, drawingView)
+		service.changeInputCount(andGateView as AbstractDigitalGateView<AbstractDigitalGate>, PortCount.FOUR, drawingView)
 
 		assertTrue(evIn1.model.isConnectedWith(andGateView.model.getInput(1)))
 		assertTrue(evIn2.model.isConnectedWith(andGateView.model.getInput(2)))
@@ -75,7 +75,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldDecreaseInputCount() {
-		service.changeInputCount(andGateView as AbstractDigitalGateView<AbstractDigitalGate>, InputCount.TWO, drawingView)
+		service.changeInputCount(andGateView as AbstractDigitalGateView<AbstractDigitalGate>, PortCount.TWO, drawingView)
 
 		assertTrue(evIn1.model.isConnectedWith(andGateView.model.getInput(1)))
 		assertTrue(evIn2.model.isConnectedWith(andGateView.model.getInput(2)))
@@ -89,10 +89,10 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldDecreaseInputCountBy2() {
-		val model = AndGate(InputCount.FOUR)
+		val model = AndGate(PortCount.FOUR)
 		val andGateView2 = AndGateView(andGate = model)
 
-		service.changeInputCount(andGateView2 as AbstractDigitalGateView<AbstractDigitalGate>, InputCount.TWO, drawingView)
+		service.changeInputCount(andGateView2 as AbstractDigitalGateView<AbstractDigitalGate>, PortCount.TWO, drawingView)
 
 		assertEquals(2, andGateView2.model.inputCount)
 	}

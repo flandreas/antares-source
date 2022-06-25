@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
@@ -26,7 +26,7 @@ class XnorCalculator : AbstractDigitalGateCalculator() {
 }
 
 class XnorGate(
-	inputCount: InputCount = InputCount.TWO,
+	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
 
@@ -44,8 +44,8 @@ class XnorGate(
 		val CALCULATOR = XnorCalculator()
 	}
 
-	override val type: String get() = if (inputCount == InputCount.TWO.count) XNOR_TYPE else EVEN_TYPE
-	override val typeDesc: String? get() = if (inputCount == InputCount.TWO.count) XNOR_TYPE_DESC else EVEN_TYPE_DESC
+	override val type: String get() = if (inputCount == PortCount.TWO.count) XNOR_TYPE else EVEN_TYPE
+	override val typeDesc: String? get() = if (inputCount == PortCount.TWO.count) XNOR_TYPE_DESC else EVEN_TYPE_DESC
 
 	override fun createOutputPort(): OutputPort<DigitalSignal> = DigitalPortImpl.createOutput(Logic.NEGATIVE)
 }
