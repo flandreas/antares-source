@@ -113,6 +113,7 @@ class WireTap(
 	fun getTapPosition(index: Int): Int = tapPositions[index]
 
 	fun setTapPosition(index: Int, pos: Int) {
+		require(pos < inputBitWidth.width) { "Position must be between 0 and ${inputBitWidth.width}" }
 		tapPositions[index] = pos
 		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
 	}

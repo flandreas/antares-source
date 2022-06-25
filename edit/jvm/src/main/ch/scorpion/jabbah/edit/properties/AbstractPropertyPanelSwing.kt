@@ -58,7 +58,7 @@ abstract class AbstractPropertyPanelSwing(
 	private val propertyStorer: java.beans.PropertyChangeListener = object : java.beans.PropertyChangeListener {
 		override fun propertyChange(evt: java.beans.PropertyChangeEvent?) {
 			if (evt?.source is AbstractReflectionPropertySwing<*>) {
-				(evt.source as AbstractReflectionPropertySwing<*>).writeToBean(false)
+				storeProperty(evt.source as AbstractReflectionPropertySwing<*>)
 			} else {
 				storeProperties()
 			}
@@ -148,6 +148,18 @@ abstract class AbstractPropertyPanelSwing(
 			}
 			readBackCalculatedProperties()
 		}
+	}
+
+	private fun storeProperty(property: AbstractReflectionPropertySwing<*>) {
+		try {
+			LOG.trace("storeProperty")
+			property.writeToBean()
+			controller.editor.view.drawing.validate()
+			hideMessage()
+		} catch (e: Throwable) {
+			e.message?.let { showMessage(it) }
+		}
+		readBackCalculatedProperties()
 	}
 
 	private fun readBackCalculatedProperties() {
