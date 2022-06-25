@@ -57,7 +57,11 @@ abstract class AbstractPropertyPanelSwing(
 
 	private val propertyStorer: java.beans.PropertyChangeListener = object : java.beans.PropertyChangeListener {
 		override fun propertyChange(evt: java.beans.PropertyChangeEvent?) {
-			storeProperties()
+			if (evt?.source is AbstractReflectionPropertySwing<*>) {
+				(evt.source as AbstractReflectionPropertySwing<*>).writeToBean(false)
+			} else {
+				storeProperties()
+			}
 		}
 	}
 

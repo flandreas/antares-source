@@ -111,11 +111,6 @@ class WireTap(
 		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
 	}
 
-	/**
-	 * TODO: This leads to creating of Commands that re-establish the values in the UI property editors
-	 * when changing the inputBitWidth.
-	 * This is a design challenge: Handle calculated properties displayed in PropertyPanel.
-	 */
 	private fun resetTapPositions() {
 		tapPositions = MutableList(tapPositions.size) { 0 }
 		updateOutputPorts()
