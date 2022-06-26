@@ -74,6 +74,21 @@ class CommandPropertySwingTest {
 		assertEquals("", app.mandatoryData.value)
 	}
 
+	@Test
+	fun shouldRollbackOnExceptionWithEmptyUndoStack() {
+		try {
+			property.value = StorableString("throwException")
+			property.writeToBean()
+		} catch (e: Throwable) {
+			// This emulates the PropertyPanel catching and displaying the exception
+		}
+
+		cmdManager.execute(AppendCommand(app, "a"))
+		assertTrue(cmdManager.canUndo())
+		cmdManager.undo()
+		assertEquals("", app.mandatoryData.value)
+	}
+
 	private fun createEditor(): Editor {
 		val editor =  mockk<Editor>(relaxed = true)
 		every { editor.commandManager } returns cmdManager
