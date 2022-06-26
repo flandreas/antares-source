@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.edit.command
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.io.*
 import kotlin.test.*
 
@@ -19,18 +17,18 @@ class SourcingCommandManagerTest {
 		}
 	}
 
-	private var application = Application()
+	private var app = ApplicationDummy()
 	private var cmdManager = SourcingCommandManager()
 
 	init {
-		cmdManager.bindDataHolder(application)
+		cmdManager.bindDataHolder(app)
 	}
 
 	/** ---- Initialization and querying tests */
 
 	@Test
 	fun shouldNotCreateSnapshotWithoutData() {
-		application.data = null
+		app.data = null
 		cmdManager.reset()
 	}
 
@@ -48,13 +46,13 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldGetUndoDescription() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 		assertEquals("anyDescription", cmdManager.getUndoDescription())
 	}
 
 	@Test
 	fun shouldGetRedoDescription() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 		cmdManager.undo()
 
 		assertEquals("anyDescription", cmdManager.getRedoDescription())
@@ -64,32 +62,32 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldExecute() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
-		assertEquals("abc", application.mandatoryData.value)
+		assertEquals("abc", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldUndo() {
-		cmdManager.execute(AppendCommand("abc"))
+		cmdManager.execute(AppendCommand(app, "abc"))
 
 		cmdManager.undo()
 
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("", app.mandatoryData.value)
 		assertEquals(1, cmdManager.snapshotCount)
 		assertEquals(0, cmdManager.redoSnapshotCount)
 	}
 
 	@Test
 	fun shouldRedo() {
-		cmdManager.execute(AppendCommand("abc"))
+		cmdManager.execute(AppendCommand(app, "abc"))
 		cmdManager.undo()
 
 		cmdManager.redo()
 
-		assertEquals("abc", application.mandatoryData.value)
+		assertEquals("abc", app.mandatoryData.value)
 		assertEquals(1, cmdManager.snapshotCount)
 		assertEquals(0, cmdManager.redoSnapshotCount)
 	}
@@ -98,11 +96,11 @@ class SourcingCommandManagerTest {
 	fun shouldCreateAdditionalSnapshot() {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
 		cmdManager = SourcingCommandManager()
-		cmdManager.bindDataHolder(application)
+		cmdManager.bindDataHolder(app)
 
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
 		assertEquals(2, cmdManager.snapshotCount)
 	}
@@ -111,20 +109,20 @@ class SourcingCommandManagerTest {
 	fun shouldUndoWithAdditionalSnapshot() {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
 		cmdManager = SourcingCommandManager()
-		cmdManager.bindDataHolder(application)
+		cmdManager.bindDataHolder(app)
 
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
-
-		cmdManager.undo()
-		assertEquals("ab", application.mandatoryData.value)
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
 		cmdManager.undo()
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 
 		cmdManager.undo()
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
+
+		cmdManager.undo()
+		assertEquals("", app.mandatoryData.value)
 
 		assertEquals(1, cmdManager.snapshotCount)
 		assertEquals(1, cmdManager.redoSnapshotCount)
@@ -134,24 +132,24 @@ class SourcingCommandManagerTest {
 	fun shouldRedoWithAdditionalSnapshot() {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
 		cmdManager = SourcingCommandManager()
-		cmdManager.bindDataHolder(application)
+		cmdManager.bindDataHolder(app)
 
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
 		cmdManager.undo()
 		cmdManager.undo()
 		cmdManager.undo()
 
 		cmdManager.redo()
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 
 		cmdManager.redo()
-		assertEquals("ab", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 
 		cmdManager.redo()
-		assertEquals("abc", application.mandatoryData.value)
+		assertEquals("abc", app.mandatoryData.value)
 
 		assertEquals(2, cmdManager.snapshotCount)
 		assertEquals(0, cmdManager.redoSnapshotCount)
@@ -159,41 +157,41 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldNotExecuteRegister() {
-		application.mandatoryData.append("a")
+		app.mandatoryData.append("a")
 
-		cmdManager.register(AppendCommand("a"))
+		cmdManager.register(AppendCommand(app, "a"))
 
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldUseSnapshotForNonUndoableCommand() {
-		val oldData = application.data
-		cmdManager.execute(AppendCommand("abc"))
+		val oldData = app.data
+		cmdManager.execute(AppendCommand(app, "abc"))
 
 		cmdManager.undo()
 
-		assertNotSame(oldData, application.data)
+		assertNotSame(oldData, app.data)
 	}
 
 	@Test
 	fun shouldNotUseSnapshotForUndoableCommand() {
-		val oldData = application.data
-		cmdManager.execute(UndoableAppendCommand("abc"))
+		val oldData = app.data
+		cmdManager.execute(UndoableAppendCommand(app, "abc"))
 
 		cmdManager.undo()
 
-		assertSame(oldData, application.data)
+		assertSame(oldData, app.data)
 	}
 
 	@Test
 	fun shouldClearRedoAfterUndoAndExecute() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.undo()
 
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
 		assertFalse(cmdManager.canRedo())
 	}
@@ -209,109 +207,118 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldAutoCommitExecute() {
-		cmdManager.execute(AppendCommand("a"))
-		assertEquals("a", application.mandatoryData.value)
+		cmdManager.execute(AppendCommand(app, "a"))
+		assertEquals("a", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldAutoCommitRegister() {
-		application.mandatoryData.append("a")
+		app.mandatoryData.append("a")
 
-		cmdManager.register(AppendCommand("a"))
+		cmdManager.register(AppendCommand(app, "a"))
 
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldDoSingleTransaction() {
-		cmdManager.beginTransaction(AppendCommand("a"))
+		cmdManager.beginTransaction(AppendCommand(app, "a"))
 		cmdManager.commitTransaction()
 
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldExecuteCommandInExistingTransaction() {
-		cmdManager.beginTransaction(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.beginTransaction(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.commitTransaction()
 
-		assertEquals("ab", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldNotCommitInnerTransaction() {
-		cmdManager.beginTransaction(AppendCommand("a"))
-		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.beginTransaction(AppendCommand(app, "a"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
 		cmdManager.commitTransaction()
 
-		assertEquals("ab", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 		assertFalse(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldCommitOuterTransaction() {
-		cmdManager.beginTransaction(AppendCommand("a"))
-		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.beginTransaction(AppendCommand(app, "a"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
 		cmdManager.commitTransaction()
 		cmdManager.commitTransaction()
 
-		assertEquals("ab", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldRollback() {
-		cmdManager.beginTransaction(AppendCommand("a"))
+		cmdManager.beginTransaction(AppendCommand(app, "a"))
 
 		cmdManager.rollbackTransaction()
 
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("", app.mandatoryData.value)
 		assertFalse(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldRollbackOnExceptionInBeginTransaction() {
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
 		try {
 			cmdManager.beginTransaction(ExceptionCommand())
 		} catch (e: Exception) {
 			// empty
 		}
 
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "c"))
 
+		assertEquals("ac", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
+		cmdManager.undo()
+		assertEquals("a", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldRollbackOnExceptionInExecute() {
+		cmdManager.execute(AppendCommand(app, "a"))
 		try {
 			cmdManager.execute(ExceptionCommand())
 		} catch (e: Exception) {
 			// empty
 		}
 
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "b"))
 
+		assertEquals("ab", app.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
+		cmdManager.undo()
+		assertEquals("a", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldNotRedoRolledBackTransaction() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.beginTransaction(AppendCommand("b"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
 		cmdManager.rollbackTransaction()
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 
 		cmdManager.undo()
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("", app.mandatoryData.value)
 
 		cmdManager.redo()
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 
 		assertFalse(cmdManager.canRedo())
 	}
@@ -320,7 +327,7 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldNotBeUndoableWithNewCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
 
@@ -329,93 +336,93 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldBeUndoableAfterOpeningCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldUndoInCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 
 		cmdManager.undo()
 
-		assertEquals("a", application.mandatoryData.value)
+		assertEquals("a", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldRedoInCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.undo()
 
 		cmdManager.redo()
 
-		assertEquals("ab", application.mandatoryData.value)
+		assertEquals("ab", app.mandatoryData.value)
 
 	}
 
 	@Test
 	fun shouldPurgeCommandsWhenClosingCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.closeCheckpoint()
 
 		cmdManager.undo()
 
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldUseCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 		cmdManager.closeCheckpoint()
 
 		// The data in Application has changed since checkpoint, but checkpoint command are thrown away when
 		// closing a checkpoint, therefore register a Command for the accumulated changes since the checkpoint
-		cmdManager.register(AppendCommand("bc"))
+		cmdManager.register(AppendCommand(app, "bc"))
 
-		assertEquals("abc", application.mandatoryData.value)
+		assertEquals("abc", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldUndoAfterOpeningCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 		cmdManager.undo()
 
-		cmdManager.register(AppendCommand("b"))
-		assertEquals("ab", application.mandatoryData.value)
+		cmdManager.register(AppendCommand(app, "b"))
+		assertEquals("ab", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldAbandonCheckpointChanges() {
-		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand(app, "a"))
 
 		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.closeCheckpoint()
 		// Abandon checkpoint changes by not registering a corresponding command
 
 		cmdManager.undo()
-		assertEquals("", application.mandatoryData.value)
+		assertEquals("", app.mandatoryData.value)
 	}
 
 	/** ---- [Iterable] tests */
@@ -427,8 +434,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldIterateSimpleCommands() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		val iterator = cmdManager.iterator()
 
 		assertEquals("a", (iterator.next() as AppendCommand).s)
@@ -438,12 +445,12 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldIterateTransactionCommands() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.beginTransaction(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 		cmdManager.commitTransaction()
-		cmdManager.beginTransaction(AppendCommand("d"))
-		cmdManager.execute(AppendCommand("e"))
+		cmdManager.beginTransaction(AppendCommand(app, "d"))
+		cmdManager.execute(AppendCommand(app, "e"))
 		cmdManager.commitTransaction()
 		val iterator = cmdManager.iterator()
 
@@ -459,14 +466,14 @@ class SourcingCommandManagerTest {
 	fun shouldIterateSnapshotCommands() {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 1)
 		cmdManager = SourcingCommandManager()
-		cmdManager.bindDataHolder(application)
+		cmdManager.bindDataHolder(app)
 
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.beginTransaction(AppendCommand("b"))
-		cmdManager.execute(AppendCommand("c"))
+		cmdManager.execute(AppendCommand(app, "a"))
+		cmdManager.beginTransaction(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "c"))
 		cmdManager.commitTransaction()
-		cmdManager.beginTransaction(AppendCommand("d"))
-		cmdManager.execute(AppendCommand("e"))
+		cmdManager.beginTransaction(AppendCommand(app, "d"))
+		cmdManager.execute(AppendCommand(app, "e"))
 		cmdManager.commitTransaction()
 		val iterator = cmdManager.iterator()
 
@@ -476,74 +483,5 @@ class SourcingCommandManagerTest {
 		assertEquals("d", (iterator.next() as AppendCommand).s)
 		assertEquals("e", (iterator.next() as AppendCommand).s)
 		assertFalse(iterator.hasNext())
-	}
-
-	/** ---- Helper classes and methods */
-
-	private class Application(
-		var data: StorableString? = StorableString()
-	) : UndoableDataHolder {
-
-		val mandatoryData: StorableString get() = data!!
-
-		override fun getUndoableState(): Storable? {
-			return data
-		}
-
-		override fun setUndoableState(state: Storable) {
-			data = state as StorableString
-		}
-	}
-
-	private inner class AppendCommand(
-		val s: String
-	) : AbstractCommand("anyDescription") {
-
-		override fun execute() {
-			application.mandatoryData.append(s)
-		}
-	}
-
-	private inner class ExceptionCommand : AbstractCommand("anyDescription") {
-		override fun execute() {
-			throw RuntimeException("Error")
-		}
-	}
-
-	private inner class UndoableAppendCommand(
-		private val s: String
-	) : AbstractCommand("anyDescription"), Undoable {
-
-		override fun execute() {
-			application.mandatoryData.append(s)
-		}
-
-		override fun undo() {
-			application.mandatoryData.dropLast(s.length)
-		}
-	}
-}
-
-class StorableString(value: String = "") : AbstractStorable() {
-
-	var value: String = value
-		private set
-
-	fun append(s: String) {
-		value = "$value$s"
-	}
-
-	fun dropLast(charCount: Int) {
-		value = value.dropLast(charCount)
-	}
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
-
-	override fun write(writer: StoreWriter) {
-		writer.writeString("value", value)
-	}
-
-	override fun read(reader: StoreReader) {
-		value = reader.readString("value")
 	}
 }
