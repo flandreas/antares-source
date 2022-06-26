@@ -25,7 +25,7 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 		super.addProperties(bean, editor, properties)
 
 		properties.add(inputBitWidth.bind(editor, bean.id))
-		properties.add(outputBitWidth.bind(editor, bean.id))
+		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width <= bean.inputBitWidth.width }))
 		properties.add(portViewSpacing.bind(editor, bean.id))
 		properties.add(outputCount.bind(editor, bean.id, filter = { it.count >= 1 }))
 
