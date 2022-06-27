@@ -50,10 +50,14 @@ class OriginIndicator(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
+		writer.writeInt("id", id)
 		writer.writePoint("location", location)
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("id")) {
+			id = reader.readInt("id")
+		}
 		location = reader.readPoint("location")
 	}
 

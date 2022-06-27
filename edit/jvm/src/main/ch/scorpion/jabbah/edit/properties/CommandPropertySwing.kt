@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationTargetException
 /**
  * An implementation of a [Property] that uses reflection to read the properties and that creates
  * a [PropertyCommandSwing] for every changed property.
+ *
+ * @param V the type of the property's value
  */
 open class CommandPropertySwing<V>(
 	propertyName: String,

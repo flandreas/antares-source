@@ -177,6 +177,7 @@ class LabelComponent(
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {
+		writer.writeInt("id", id)
 		if (!text.isEmpty) {
 			writer.writeStorables("text", text.allTranslations())
 		}
@@ -192,6 +193,9 @@ class LabelComponent(
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("id")) {
+			id = reader.readInt("id")
+		}
 		if (reader.hasAttribute("text")) {
 			// Backward compatibility
 			text = TranslatableText(reader.readString("text"))

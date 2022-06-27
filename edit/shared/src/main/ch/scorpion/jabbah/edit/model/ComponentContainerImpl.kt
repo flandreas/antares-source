@@ -97,7 +97,16 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
 	override fun allResolutionDone() {
 		super.allResolutionDone()
+		fixMissingComponentIds()
 		updateBoundingBox()
+	}
+
+	/**
+	 * Due du bug #401 (Auto-generating symbols incompatible with already created symbols),
+	 * some [Component]s didn't store an ID, leading to possibly multiple [Component]s with ID 0.
+	 */
+	private fun fixMissingComponentIds() {
+		drawables.filter { it.id == 0 }.forEach { it.id = getMaxId() + 1 }
 	}
 
     /** ---- [ComponentContainerImpl] */
