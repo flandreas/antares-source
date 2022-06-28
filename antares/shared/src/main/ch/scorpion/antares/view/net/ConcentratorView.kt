@@ -20,7 +20,7 @@ class ConcentratorView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Concentrator = Concentrator(),
     handedness: Handedness = Handedness.RIGHT
-) : AbstractSplitterView<Concentrator>(styleProvider, model, handedness) {
+) : AbstractBranchCountSplitterView<Concentrator>(styleProvider, model, handedness) {
 
 	override fun createWideSidePortView(height: Int): DigitalPortView {
 		val portView = DigitalPortView(

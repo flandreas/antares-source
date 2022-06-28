@@ -40,46 +40,55 @@ class WireTapView(
 
 	// Explicit properties for tapPosition needed for reflective Commands on the JVM platform
 
+	@Suppress("unused") // Reflection
 	var tapPosition0: Int
 		get() = model.getTapPosition(0)
 		set(value) = model.setTapPosition(0, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition1: Int
 		get() = model.getTapPosition(1)
 		set(value) = model.setTapPosition(1, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition2: Int
 		get() = model.getTapPosition(2)
 		set(value) = model.setTapPosition(2, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition3: Int
 		get() = model.getTapPosition(3)
 		set(value) = model.setTapPosition(3, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition4: Int
 		get() = model.getTapPosition(4)
 		set(value) = model.setTapPosition(4, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition5: Int
 		get() = model.getTapPosition(5)
 		set(value) = model.setTapPosition(5, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition6: Int
 		get() = model.getTapPosition(6)
 		set(value) = model.setTapPosition(6, value)
 
+	@Suppress("unused") // Reflection
 	var tapPosition7: Int
 		get() = model.getTapPosition(7)
 		set(value) = model.setTapPosition(7, value)
 
-	var inputBitWidth: BitWidth
-		get() = model.inputBitWidth
+	var bitWidth: BitWidth
+		get() = model.bitWidth
 		set(value) {
-			if (value != inputBitWidth) {
-				model.inputBitWidth = value
+			if (value != bitWidth) {
+				model.bitWidth = value
 			}
 		}
 
+	@Suppress("unused") // Reflection
 	var outputBitWidth: BitWidth
 		get() = model.outputBitWidth
 		set(value) {

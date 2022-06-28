@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 class BidirectionalSplitter(
 	bitWidth: BitWidth = BitWidth.BW_8,
 	branchCount: BranchCount = BranchCount.BC_4
-) : AbstractSplitter(bitWidth, branchCount, CALCULATOR) {
+) : AbstractBranchCountSplitter(bitWidth, branchCount, CALCULATOR) {
 
 	companion object {
 
@@ -52,5 +52,7 @@ class BidirectionalSplitter(
 
 	override val wideSidePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 
-	override val narrowSidePorts: List<DigitalPort> get() = getPorts().filterIndexed { index, _ -> index > 0 }.map { it as DigitalPort }
+	override val narrowSidePorts: List<DigitalPort> get() = getPorts()
+		.filterIndexed { index, _ -> index > 0 }
+		.map { it as DigitalPort }
 }

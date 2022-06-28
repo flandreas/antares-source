@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -19,9 +18,9 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class WireTap(
 	outputCount: PortCount = PortCount.ONE,
-	inputBitWidth: BitWidth = BitWidth.BW_2,
+	bitWidth: BitWidth = BitWidth.BW_2,
 	outputBitWidth: BitWidth = BitWidth.BW_1
-) : CalculatingVertice(CALCULATOR) {
+) : AbstractSplitter(CALCULATOR) {
 
 	companion object {
 
@@ -33,25 +32,25 @@ class WireTap(
 
 		private val CALCULATOR = Calculator()
 
-		private class Calculator : VerticeCalculator<WireTap> {
-			override fun calculate(vertice: WireTap, data: GraphActorData, signalHandler: SignalHandler) {
+		private class Calculator : VerticeCalculator<AbstractSplitter> {
+			override fun calculate(vertice: AbstractSplitter, data: GraphActorData, signalHandler: SignalHandler) {
 				TODO()
 			}
 		}
 	}
 
-	override val type: String get() = TYPE
-	override val typeDesc: String? get() = TYPE_DESC
-
-	var inputBitWidth: BitWidth = inputBitWidth
+	override var bitWidth: BitWidth = bitWidth
 		set(value) {
 			if (field != value) {
 				field = value
-				resetTapPositions()
 				updatePorts()
+				resetTapPositions()
 				stateChanged()
 			}
 		}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var outputBitWidth: BitWidth = outputBitWidth
 		set(value) {
@@ -80,6 +79,16 @@ class WireTap(
 		updatePorts()
 	}
 
+	/** ---- [AbstractSplitter] */
+
+	override val narrowSideBitWidth: BitWidth get() = outputBitWidth
+
+	override val wideSidePort: DigitalPort get() = getPort<DigitalPort>(1) as DigitalPort
+
+	override val narrowSidePorts: List<DigitalPort> get() = getPorts()
+		.filterIndexed { index, _ ->  index > 0}
+		.map { it as DigitalPort }
+
 	/** ---- [Vertice] */
 
 	override val requireUniquePortNames: Boolean get() = false
@@ -89,7 +98,7 @@ class WireTap(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeInt("outputCount", tapCount.count)
-		writer.writeInt("inputWidth", inputBitWidth.width)
+		writer.writeInt("inputWidth", bitWidth.width)
 		writer.writeInt("outputWidth", outputBitWidth.width)
 		writer.writeIntegers("positions", tapPositions)
 	}
@@ -97,7 +106,7 @@ class WireTap(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		createPorts(PortCount.of(reader.readInt("outputCount")))
-		inputBitWidth = BitWidth.read("inputWidth", reader)
+		bitWidth = BitWidth.read("inputWidth", reader)
 		outputBitWidth = BitWidth.read("outputWidth", reader)
 		tapPositions = mutableListOf(*reader.readIntegers("positions").toTypedArray())
 		updateOutputPorts()
@@ -113,7 +122,7 @@ class WireTap(
 	fun getTapPosition(index: Int): Int = tapPositions[index]
 
 	fun setTapPosition(index: Int, pos: Int) {
-		require(pos < inputBitWidth.width) { "Position must be between 0 and ${inputBitWidth.width}" }
+		require(pos < bitWidth.width) { "Position must be between 0 and ${bitWidth.width - 1}" }
 		tapPositions[index] = pos
 		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
 	}
@@ -138,7 +147,7 @@ class WireTap(
 	}
 
 	private fun addInputPort() {
-		addPort(DigitalPortImpl(PortType.INOUT, bitWidth = inputBitWidth))
+		addPort(DigitalPortImpl(PortType.INOUT, bitWidth = bitWidth))
 	}
 
 	private fun addOutputPorts(outputCount: PortCount) {
@@ -153,7 +162,7 @@ class WireTap(
 	}
 
 	private fun updateInputPort() {
-		(getPort<DigitalSignal>(1) as DigitalPort).bitWidth = inputBitWidth
+		(getPort<DigitalSignal>(1) as DigitalPort).bitWidth = bitWidth
 	}
 
 	private fun updateOutputPorts() {

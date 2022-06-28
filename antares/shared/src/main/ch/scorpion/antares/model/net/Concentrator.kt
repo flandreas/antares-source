@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 class Concentrator(
 	bitWidth: BitWidth = BitWidth.BW_8,
 	branchCount: BranchCount = BranchCount.BC_4
-) : AbstractSplitter(bitWidth, branchCount, CALCULATOR) {
+) : AbstractBranchCountSplitter(bitWidth, branchCount, CALCULATOR) {
 
 	companion object {
 

@@ -13,7 +13,7 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 
 	companion object {
 		private val outputCount = OutputCountPropertySwing("tapCount", componentBeanProvider)
-		private val inputBitWidth = AntaresProperties.bitWidth("inputBitWidth", "library.element.WireTap.inputBitWidth")
+		private val bitWidth = AntaresProperties.bitWidth("bitWidth", "library.element.WireTap.inputBitWidth")
 		private val outputBitWidth = AntaresProperties.bitWidth("outputBitWidth", "library.element.WireTap.outputBitWidth")
 		private val portViewSpacing = AntaresProperties.portViewSpacing()
 		private val tapPosition = Array(8) { index ->
@@ -24,8 +24,8 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 	override fun addProperties(bean: WireTapView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(inputBitWidth.bind(editor, bean.id))
-		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width <= bean.inputBitWidth.width }))
+		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width <= bean.bitWidth.width }))
 		properties.add(portViewSpacing.bind(editor, bean.id))
 		properties.add(outputCount.bind(editor, bean.id, filter = { it.count >= 1 }))
 

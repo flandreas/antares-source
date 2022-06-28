@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class SplitterView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Splitter = Splitter()
-) : AbstractSplitterView<Splitter>(styleProvider, model) {
+) : AbstractBranchCountSplitterView<Splitter>(styleProvider, model) {
 
 	override fun createWideSidePortView(height: Int): DigitalPortView {
 		val portView = DigitalPortView(

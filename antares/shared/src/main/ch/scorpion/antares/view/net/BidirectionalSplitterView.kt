@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class BidirectionalSplitterView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: BidirectionalSplitter = BidirectionalSplitter()
-) : AbstractSplitterView<BidirectionalSplitter>(styleProvider, model) {
+) : AbstractBranchCountSplitterView<BidirectionalSplitter>(styleProvider, model) {
 
 	companion object {
 		private const val DIR_PATH_WIDTH_HALF = Look.SCALE / 2.0

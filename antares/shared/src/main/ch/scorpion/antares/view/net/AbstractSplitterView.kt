@@ -30,9 +30,9 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
  */
 abstract class AbstractSplitterView<T : AbstractSplitter>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: AbstractSplitter,
+	model: T,
 	handedness: Handedness = Handedness.RIGHT
-) : DigitalComponentView<AbstractSplitter>(styleProvider, model) {
+) : DigitalComponentView<T>(styleProvider, model) {
 
 	companion object {
 		const val WIDTH = 2 * Look.GRID
@@ -71,18 +71,6 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 			}
 		}
 
-	var branchCount: BranchCount
-		get() = model.branchCount
-		set(value) {
-			if (value != branchCount) {
-				invalidate()
-				model.branchCount = value
-				modelExchanged(model)
-				invalidate()
-				update()
-			}
-		}
-
 	var signalRepresentation: DigitalSignalRepresentation
 		get() = model.signalRepresentation
 		set(value) {
@@ -105,7 +93,7 @@ abstract class AbstractSplitterView<T : AbstractSplitter>(
 		modelExchanged(null)
 	}
 
-	override fun modelExchanged(oldModel: AbstractSplitter?) {
+	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
 
 		val height = 2 * PORT_INSET + portViewSpacing.value * (model.narrowSidePorts.count() - 1)
