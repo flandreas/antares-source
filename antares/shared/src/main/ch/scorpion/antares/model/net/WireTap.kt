@@ -3,8 +3,8 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -34,7 +34,12 @@ class WireTap(
 
 		private class Calculator : VerticeCalculator<AbstractSplitter> {
 			override fun calculate(vertice: AbstractSplitter, data: GraphActorData, signalHandler: SignalHandler) {
-				TODO()
+				val changedPortId = data.changedPort!!.portId
+				if (changedPortId == 1) {
+					vertice.split(data.getSignal(1)!!, signalHandler)
+				} else {
+					vertice.concentrate(signalHandler)
+				}
 			}
 		}
 	}
@@ -61,7 +66,7 @@ class WireTap(
 			}
 		}
 
-	private var tapPositions = mutableListOf<Int>()
+	private var tapPositions = MutableList(outputCount.count) { it }
 
 	val tapCount: PortCount get() = PortCount.of(tapPositions.size)
 
@@ -92,6 +97,28 @@ class WireTap(
 	/** ---- [Vertice] */
 
 	override val requireUniquePortNames: Boolean get() = false
+
+	override fun split(signal: DigitalSignal, signalHandler: SignalHandler) {
+		for (portId in 2 until 2 + tapCount.count) {
+			val port = getOutput<DigitalSignal>(portId)
+			val outputBits = mutableListOf<Bit>()
+			for (bitIndex in 0 until outputBitWidth.width) {
+				outputBits.add(signal.bitAt(tapPositions[portId - 2] + bitIndex))
+			}
+			(port as DigitalPort).setOutgoingSignalBuffered(DigitalSignalFactory.ofBits(outputBits), signalHandler)
+		}
+	}
+
+	override fun concentrate(signalHandler: SignalHandler) {
+		val bits = Word.createListWithBit(bitWidth, Bit.Undefined).toMutableList()
+		for (portId in 2 until 2 + tapCount.count) {
+			val signal = getInput<DigitalSignal>(portId).getIncomingSignal()!!
+			for (bitIndex in 0 until outputBitWidth.width) {
+				bits[tapPositions[portId - 2] + bitIndex] = signal.bitAt(bitIndex)
+			}
+		}
+		(getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(DigitalSignalFactory.ofBits(bits), signalHandler)
+	}
 
 	/** ---- [Storable] */
 
@@ -125,6 +152,13 @@ class WireTap(
 		require(pos < bitWidth.width) { "Position must be between 0 and ${bitWidth.width - 1}" }
 		tapPositions[index] = pos
 		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
+	}
+
+	fun setTapPositions(pos: List<Int>) {
+		require(pos.size == tapCount.count) { "Number of tap positions must be same as tapCount"}
+		require(pos.all { it < bitWidth.width }) { "Every positions must be between 0 and ${bitWidth.width - 1}"}
+		tapPositions = pos.toMutableList()
+		updateOutputPorts()
 	}
 
 	private fun resetTapPositions() {

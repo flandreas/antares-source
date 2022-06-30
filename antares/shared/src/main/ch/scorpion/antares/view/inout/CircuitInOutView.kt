@@ -398,8 +398,12 @@ class CircuitInOutView(
 
 	fun clearByUser(signalHandler: SignalHandler) {
 		model.setSignalManually(DigitalSignalFactory.of(bitWidth, 0), signalHandler)
-
 	}
+
+	/** Returns the [DigitalSignal] actually displayed. Mainly for testing.*/
+	fun getDigitSignal(digitIndex: Int): DigitalSignal =
+		numberView!!.getDigitSignal(digitIndex)
+
 
 	/**
 	 * Returns the translation vector to be applied to the [ArrowPath] for drawing and bounding box calculation.

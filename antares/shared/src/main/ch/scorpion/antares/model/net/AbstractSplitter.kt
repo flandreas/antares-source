@@ -181,20 +181,7 @@ abstract class AbstractSplitter(
 
 	abstract val narrowSidePorts: List<DigitalPort>
 
-	fun split(signal: DigitalSignal, signalHandler: SignalHandler) {
-		for (portId in 2..portsCount) {
-			val outputPort = getPort<DigitalSignal>(portId) as DigitalPort
-			outputPort.setOutgoingSignalBuffered(signal.getSubword(narrowSideBitWidth, portId - 2), signalHandler)
-		}
-	}
+	abstract fun split(signal: DigitalSignal, signalHandler: SignalHandler)
 
-	fun concentrate(signalHandler: SignalHandler) {
-		val words = mutableListOf<DigitalSignal>()
-		for (portId in 2..portsCount) {
-			val signal = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as DigitalSignal
-			words.add(signal)
-		}
-		val output = DigitalSignalFactory.of(words)
-		(getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(output, signalHandler)
-	}
+	abstract fun concentrate(signalHandler: SignalHandler)
 }

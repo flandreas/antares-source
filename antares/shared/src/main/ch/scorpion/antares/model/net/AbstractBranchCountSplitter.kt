@@ -2,6 +2,9 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -54,6 +57,23 @@ abstract class AbstractBranchCountSplitter(
 	/** ---- [AbstractSplitter] */
 
 	override val narrowSideBitWidth: BitWidth get() = BitWidth.of(bitWidth.width / branchCount.count)
+
+	override fun split(signal: DigitalSignal, signalHandler: SignalHandler) {
+		for (portId in 2..portsCount) {
+			val outputPort = getPort<DigitalSignal>(portId) as DigitalPort
+			outputPort.setOutgoingSignalBuffered(signal.getSubword(narrowSideBitWidth, portId - 2), signalHandler)
+		}
+	}
+
+	override fun concentrate(signalHandler: SignalHandler) {
+		val words = mutableListOf<DigitalSignal>()
+		for (portId in 2..portsCount) {
+			val signal = (getPort<DigitalPort>(portId) as DigitalPort).getIncomingSignal() as DigitalSignal
+			words.add(signal)
+		}
+		val output = DigitalSignalFactory.of(words)
+		(getPort<DigitalSignal>(1) as DigitalPort).setOutgoingSignalBuffered(output, signalHandler)
+	}
 
 	/** ---- [Storable] */
 

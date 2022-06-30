@@ -50,8 +50,8 @@ class DigitView(
         location = Point2D(WIDTH / 2, HEIGHT / 2))
 
     /** The [DigitalSignal] whose digit at [index] is displayed by this [DigitView]. */
-    private var signalDigit: DigitalSignal = DigitalSignalFactory.of(false)
-        set(value) {
+    var signalDigit: DigitalSignal = DigitalSignalFactory.of(false)
+        private set(value) {
             field = value
             label.text = representation.represent(field)
             invalidate()

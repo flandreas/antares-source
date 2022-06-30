@@ -114,7 +114,7 @@ internal data class Word(
 		}
 
 		/** Creates a list with all the same [Bit]s of the length as defined by the specified [BitWidth].*/
-		private fun createListWithBit(bitWidth: BitWidth, bit: Bit): List<Bit> {
+		fun createListWithBit(bitWidth: BitWidth, bit: Bit): List<Bit> {
 			val list = mutableListOf<Bit>()
 			for (i in 0 until bitWidth.width) {
 				list.add(bit)

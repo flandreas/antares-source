@@ -121,6 +121,9 @@ class NumberView(
 		validate()
 	}
 
+	fun getDigitSignal(digitIndex: Int): DigitalSignal =
+		digitViews[digitIndex].signalDigit
+
 	/**
 	 * Returns the index of the digit at the specified relative coordinates.
 	 * @param x the relative x-coordinate
