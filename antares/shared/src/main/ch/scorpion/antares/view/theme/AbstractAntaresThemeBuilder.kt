@@ -30,9 +30,9 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 		val HIGHLIGHT_STROKE = Stroke(8.0f, LineCap.ROUND, LineJoin.ROUND)
 
-		val EDGE_STROKE = Stroke(1.0f)
+		val EDGE_STROKE = Stroke(1.0f, LineCap.ROUND, LineJoin.ROUND)
 
-		val EDGE_EXECUTION_STROKE = Stroke(1.3f)
+		val EDGE_EXECUTION_STROKE = Stroke(1.3f, LineCap.ROUND, LineJoin.ROUND)
 
 		val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.MITER)
 

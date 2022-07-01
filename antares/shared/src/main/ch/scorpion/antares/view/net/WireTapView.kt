@@ -9,7 +9,9 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
@@ -29,10 +31,20 @@ class WireTapView(
 ) : DigitalComponentView<WireTap>(styleProvider, model) {
 
 	companion object {
-		private const val INSET = 0
+		private const val INSET_Y = 0
 		private const val X_DISPLACEMENT = 2 * Look.SCALE
 		private const val Y_DISPLACEMENT = 2 * Look.SCALE
 		private const val INPUT_PIN_LENGTH = 0
+
+		private val PATH_NARROW = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
+			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Narrow.value)
+
+		private val PATH_WIDE = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
+			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Wide.value)
 	}
 
 	/** Use [DigitalGraphViewService] for changing this value.*/
@@ -144,10 +156,10 @@ class WireTapView(
 
 	fun updateGeometry() {
 		val width = X_DISPLACEMENT
-		val height = INSET + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
+		val height = INSET_Y + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
 		setBounds(Rectangle2D(0, INPUT_PIN_LENGTH, width, height))
 
-		var y = INSET + Y_DISPLACEMENT
+		var y = INSET_Y + Y_DISPLACEMENT
 		for (i in 0 until model.tapCount.count) {
 			getPortView(model.getPort(i + 2))!!.location = Point2D(X_DISPLACEMENT, y)
 			y += portViewSpacing.value
@@ -170,18 +182,29 @@ class WireTapView(
 			val pv = getPortView(model.getPort(i + 2))!!
 			val pvLoc = pv.location
 			pv.prepareConnectionDrawContext(context)
-			
-			context.g.drawLine(pvLoc.x, pvLoc.y, pvLoc.x - X_DISPLACEMENT, pvLoc.y - Y_DISPLACEMENT)
+
+			context.g.translate(pvLoc)
+
 			if (i > 0) {
-				context.g.drawLine(
-					pvLoc.x - X_DISPLACEMENT, pvLoc.y - Y_DISPLACEMENT,
-					pvLoc.x - X_DISPLACEMENT, pvLoc.y - Y_DISPLACEMENT - portViewSpacing.value)
-			} else if (INSET > 0) {
-				context.g.drawLine(
-					pvLoc.x - X_DISPLACEMENT, pvLoc.y - Y_DISPLACEMENT,
-					pvLoc.x - X_DISPLACEMENT, pvLoc.y - Y_DISPLACEMENT - INSET)
+				context.g.draw(getPath())
+			} else {
+				context.g.drawLine(0, 0, -X_DISPLACEMENT, -Y_DISPLACEMENT)
+				if (INSET_Y > 0) {
+					// TODO: This should also be a path
+					context.g.drawLine(
+						-X_DISPLACEMENT, -Y_DISPLACEMENT,
+						-X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y
+					)
+				}
 			}
+
+			context.g.translate(pvLoc.negate)
 		}
+	}
+
+	private fun getPath(): Path = when (portViewSpacing) {
+		PortViewSpacing.Narrow -> PATH_NARROW
+		PortViewSpacing.Wide -> PATH_WIDE
 	}
 
 	/** ---- [Storable] interface */
