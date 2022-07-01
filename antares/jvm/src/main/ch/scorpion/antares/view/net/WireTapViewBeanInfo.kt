@@ -13,6 +13,7 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 
 	companion object {
 		private val outputCount = OutputCountPropertySwing("tapCount", componentBeanProvider)
+		private val handedness = AntaresProperties.handedness(baseKey = "library.element.WireTap.handedness")
 		private val bitWidth = AntaresProperties.bitWidth("bitWidth", "library.element.WireTap.inputBitWidth")
 		private val outputBitWidth = AntaresProperties.bitWidth("narrowSideBitWidth", "library.element.WireTap.narrowSideBitWidth")
 		private val portViewSpacing = AntaresProperties.portViewSpacing()
@@ -26,6 +27,7 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 
 		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width <= bean.bitWidth.width }))
+		properties.add(handedness.bind(editor, bean.id))
 		properties.add(portViewSpacing.bind(editor, bean.id))
 		properties.add(outputCount.bind(editor, bean.id, filter = { it.count >= 1 }))
 

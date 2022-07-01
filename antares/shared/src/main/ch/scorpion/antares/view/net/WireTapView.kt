@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.WireTap
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
 import ch.scorpion.antares.view.app.DigitalGraphViewService
@@ -27,7 +28,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class WireTapView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: WireTap = WireTap()
+	model: WireTap = WireTap(),
+	handedness: Handedness = Handedness.RIGHT
 ) : DigitalComponentView<WireTap>(styleProvider, model) {
 
 	companion object {
@@ -36,15 +38,25 @@ class WireTapView(
 		private const val Y_DISPLACEMENT = 2 * Look.SCALE
 		private const val INPUT_PIN_LENGTH = 0
 
-		private val PATH_NARROW = System.createPath()
+		private val RIGHT_NARROW_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
 			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Narrow.value)
 
-		private val PATH_WIDE = System.createPath()
+		private val RIGHT_WIDE_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
 			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Wide.value)
+
+		private val LEFT_NARROW_PATH = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT)
+			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT - PortViewSpacing.Narrow.value)
+
+		private val LEFT_WIDE_PATH = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT)
+			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT - PortViewSpacing.Wide.value)
 	}
 
 	/** Use [DigitalGraphViewService] for changing this value.*/
@@ -91,6 +103,17 @@ class WireTapView(
 	var tapPosition7: Int
 		get() = model.getTapPosition(7)
 		set(value) = model.setTapPosition(7, value)
+
+	var handedness: Handedness = handedness
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				modelExchanged(model)
+				invalidate()
+				update()
+			}
+		}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
@@ -149,7 +172,10 @@ class WireTapView(
 		return DigitalPortView(
 			styleProvider,
 			port,
-			direction = Direction.EAST,
+			direction = when (handedness) {
+				Handedness.RIGHT -> Direction.EAST
+				Handedness.LEFT -> Direction.WEST
+			},
 			showBitWidthAnnotation = false,
 			portLabelPosition = PortLabelPosition.EXTERNAL)
 	}
@@ -157,11 +183,18 @@ class WireTapView(
 	fun updateGeometry() {
 		val width = X_DISPLACEMENT
 		val height = INSET_Y + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
-		setBounds(Rectangle2D(0, INPUT_PIN_LENGTH, width, height))
+		when (handedness) {
+			Handedness.RIGHT -> setBounds(Rectangle2D(0, INPUT_PIN_LENGTH, width, height))
+			Handedness.LEFT -> setBounds(Rectangle2D(-X_DISPLACEMENT, INPUT_PIN_LENGTH, width, height))
+		}
 
+		val x = when (handedness) {
+			Handedness.RIGHT -> X_DISPLACEMENT
+			Handedness.LEFT -> -X_DISPLACEMENT
+		}
 		var y = INSET_Y + Y_DISPLACEMENT
 		for (i in 0 until model.tapCount.count) {
-			getPortView(model.getPort(i + 2))!!.location = Point2D(X_DISPLACEMENT, y)
+			getPortView(model.getPort(i + 2))!!.location = Point2D(x, y)
 			y += portViewSpacing.value
 		}
 	}
@@ -188,13 +221,17 @@ class WireTapView(
 			if (i > 0) {
 				context.g.draw(getPath())
 			} else {
-				context.g.drawLine(0, 0, -X_DISPLACEMENT, -Y_DISPLACEMENT)
+				when (handedness) {
+					Handedness.RIGHT -> context.g.drawLine(0, 0, -X_DISPLACEMENT, -Y_DISPLACEMENT)
+					Handedness.LEFT -> context.g.drawLine(0, 0, X_DISPLACEMENT, -Y_DISPLACEMENT)
+				}
+
 				if (INSET_Y > 0) {
 					// TODO: This should also be a path
-					context.g.drawLine(
-						-X_DISPLACEMENT, -Y_DISPLACEMENT,
-						-X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y
-					)
+					when (handedness) {
+						Handedness.RIGHT -> context.g.drawLine(-X_DISPLACEMENT, -Y_DISPLACEMENT, -X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y)
+						Handedness.LEFT -> context.g.drawLine(X_DISPLACEMENT, -Y_DISPLACEMENT, X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y)
+					}
 				}
 			}
 
@@ -203,14 +240,21 @@ class WireTapView(
 	}
 
 	private fun getPath(): Path = when (portViewSpacing) {
-		PortViewSpacing.Narrow -> PATH_NARROW
-		PortViewSpacing.Wide -> PATH_WIDE
+		PortViewSpacing.Narrow -> when (handedness) {
+			Handedness.RIGHT -> RIGHT_NARROW_PATH
+			Handedness.LEFT -> LEFT_NARROW_PATH
+		}
+		PortViewSpacing.Wide -> when (handedness) {
+			Handedness.RIGHT -> RIGHT_WIDE_PATH
+			Handedness.LEFT -> LEFT_WIDE_PATH
+		}
 	}
 
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
+		writer.writeString("handedness", handedness.customName)
 		if (portViewSpacing != PortViewSpacing.Narrow) {
 			writer.writeString("portViewSpacing", portViewSpacing.customName)
 		}
@@ -218,6 +262,7 @@ class WireTapView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
+		handedness = Handedness.withName(reader.readString("handedness"))
 		if (reader.hasAttribute("portViewSpacing")) {
 			portViewSpacing = PortViewSpacing.withName(reader.readString("portViewSpacing"))
 		}
