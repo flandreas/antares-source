@@ -399,7 +399,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(GROUND, "library.element.Ground", { "/img/ground.png" }, GroundView::class)
 		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
 		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
-		repository.register(WIRE_TAP, "library.element.WireTap", { "/img/splitter.png" }, WireTapView::class)
+		repository.register(WIRE_TAP, "library.element.WireTap", { "/img/wire-tap.png" }, WireTapView::class)
 
 		repository.register(AND,
 			"library.element.AndGate",
