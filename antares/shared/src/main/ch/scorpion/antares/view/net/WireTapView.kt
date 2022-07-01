@@ -101,11 +101,11 @@ class WireTapView(
 		}
 
 	@Suppress("unused") // Reflection
-	var outputBitWidth: BitWidth
-		get() = model.outputBitWidth
+	var narrowSideBitWidth: BitWidth
+		get() = model.narrowSideBitWidth
 		set(value) {
-			if (value != outputBitWidth) {
-				model.outputBitWidth = value
+			if (value != narrowSideBitWidth) {
+				model.narrowSideBitWidth = value
 			}
 		}
 

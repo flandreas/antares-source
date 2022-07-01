@@ -41,7 +41,7 @@ class WireTapViewIntegrationTest : AbstractCircuitTest() {
 		inoutView4B = builder.addVerticeView(CircuitInOutView(orientation = Direction.EAST, model = CircuitInOutImpl(portType = PortType.INOUT, bitWidth = BitWidth.BW_4)))
 		inoutView4B.location = Point2D(200, 0)
 
-		wireTapView = builder.addVerticeView(WireTapView(model = WireTap(outputBitWidth = BitWidth.BW_1, bitWidth = BitWidth.BW_4, outputCount = PortCount.TWO)))
+		wireTapView = builder.addVerticeView(WireTapView(model = WireTap(narrowBitWidth = BitWidth.BW_1, bitWidth = BitWidth.BW_4, narrowPortCount = PortCount.TWO)))
 		wireTapView.model.setTapPositions(listOf(0, 1))
 		wireTapView.location = Point2D(200, 200)
 		edgeView = builder.connect(inoutView4A, inoutView4B)

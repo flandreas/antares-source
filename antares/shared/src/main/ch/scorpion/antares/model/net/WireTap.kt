@@ -17,9 +17,9 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class WireTap(
-	outputCount: PortCount = PortCount.ONE,
+	narrowPortCount: PortCount = PortCount.ONE,
 	bitWidth: BitWidth = BitWidth.BW_2,
-	outputBitWidth: BitWidth = BitWidth.BW_1
+	narrowBitWidth: BitWidth = BitWidth.BW_1
 ) : AbstractSplitter(CALCULATOR) {
 
 	companion object {
@@ -57,7 +57,7 @@ class WireTap(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	var outputBitWidth: BitWidth = outputBitWidth
+	override var narrowSideBitWidth: BitWidth = narrowBitWidth
 		set(value) {
 			if (field != value) {
 				field = value
@@ -66,27 +66,25 @@ class WireTap(
 			}
 		}
 
-	private var tapPositions = MutableList(outputCount.count) { it }
+	private var tapPositions = MutableList(narrowPortCount.count) { it }
 
 	val tapCount: PortCount get() = PortCount.of(tapPositions.size)
 
 	init {
 		propagationDelay = 0
-		createPorts(outputCount)
+		createPorts(narrowPortCount)
 	}
 
 	private fun createPorts(outputCount: PortCount) {
 		clearPorts()
 		tapPositions.clear()
 
-		addInputPort()
-		addOutputPorts(outputCount)
+		addWidePort()
+		addNarrowPort(outputCount)
 		updatePorts()
 	}
 
 	/** ---- [AbstractSplitter] */
-
-	override val narrowSideBitWidth: BitWidth get() = outputBitWidth
 
 	override val wideSidePort: DigitalPort get() = getPort<DigitalPort>(1) as DigitalPort
 
@@ -102,7 +100,7 @@ class WireTap(
 		for (portId in 2 until 2 + tapCount.count) {
 			val port = getOutput<DigitalSignal>(portId)
 			val outputBits = mutableListOf<Bit>()
-			for (bitIndex in 0 until outputBitWidth.width) {
+			for (bitIndex in 0 until narrowSideBitWidth.width) {
 				outputBits.add(signal.bitAt(tapPositions[portId - 2] + bitIndex))
 			}
 			(port as DigitalPort).setOutgoingSignalBuffered(DigitalSignalFactory.ofBits(outputBits), signalHandler)
@@ -113,7 +111,7 @@ class WireTap(
 		val bits = Word.createListWithBit(bitWidth, Bit.Undefined).toMutableList()
 		for (portId in 2 until 2 + tapCount.count) {
 			val signal = getInput<DigitalSignal>(portId).getIncomingSignal()!!
-			for (bitIndex in 0 until outputBitWidth.width) {
+			for (bitIndex in 0 until narrowSideBitWidth.width) {
 				bits[tapPositions[portId - 2] + bitIndex] = signal.bitAt(bitIndex)
 			}
 		}
@@ -124,19 +122,19 @@ class WireTap(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("outputCount", tapCount.count)
-		writer.writeInt("inputWidth", bitWidth.width)
-		writer.writeInt("outputWidth", outputBitWidth.width)
+		writer.writeInt("tapCount", tapCount.count)
+		writer.writeInt("wideBitWidth", bitWidth.width)
+		writer.writeInt("narrowBitWidth", narrowSideBitWidth.width)
 		writer.writeIntegers("positions", tapPositions)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		createPorts(PortCount.of(reader.readInt("outputCount")))
-		bitWidth = BitWidth.read("inputWidth", reader)
-		outputBitWidth = BitWidth.read("outputWidth", reader)
+		createPorts(PortCount.of(reader.readInt("tapCount")))
+		bitWidth = BitWidth.read("wideBitWidth", reader)
+		narrowSideBitWidth = BitWidth.read("narrowBitWidth", reader)
 		tapPositions = mutableListOf(*reader.readIntegers("positions").toTypedArray())
-		updateOutputPorts()
+		updateNarrowPorts()
 	}
 
 	override fun removePort(port: Port<*>) {
@@ -151,19 +149,19 @@ class WireTap(
 	fun setTapPosition(index: Int, pos: Int) {
 		require(pos < bitWidth.width) { "Position must be between 0 and ${bitWidth.width - 1}" }
 		tapPositions[index] = pos
-		updateOutputPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
+		updateNarrowPort(getPort<DigitalSignal>(index + 2) as DigitalPort, index)
 	}
 
 	fun setTapPositions(pos: List<Int>) {
 		require(pos.size == tapCount.count) { "Number of tap positions must be same as tapCount"}
 		require(pos.all { it < bitWidth.width }) { "Every positions must be between 0 and ${bitWidth.width - 1}"}
 		tapPositions = pos.toMutableList()
-		updateOutputPorts()
+		updateNarrowPorts()
 	}
 
 	private fun resetTapPositions() {
 		tapPositions = MutableList(tapPositions.size) { 0 }
-		updateOutputPorts()
+		updateNarrowPorts()
 	}
 
 	/** ---- Dynamic Port management */
@@ -173,51 +171,51 @@ class WireTap(
 		if (tapPosition >= MAX_TAP_COUNT) {
 			throw IllegalArgumentException("Max. $MAX_TAP_COUNT output ports allowed in WireTap")
 		}
-		val port = DigitalPortImpl(PortType.INOUT, bitWidth = outputBitWidth)
+		val port = DigitalPortImpl(PortType.INOUT, bitWidth = narrowSideBitWidth)
 		addPort(port)
 		tapPositions.add(tapPosition)
-		updateOutputPort(port, tapPositions.size - 1)
+		updateNarrowPort(port, tapPositions.size - 1)
 		return port
 	}
 
-	private fun addInputPort() {
+	private fun addWidePort() {
 		addPort(DigitalPortImpl(PortType.INOUT, bitWidth = bitWidth))
 	}
 
-	private fun addOutputPorts(outputCount: PortCount) {
+	private fun addNarrowPort(outputCount: PortCount) {
 		for (i in 0 until outputCount.count) {
-			addOutputPort(i * outputBitWidth.width)
+			addOutputPort(i * narrowSideBitWidth.width)
 		}
 	}
 
 	private fun updatePorts() {
-		updateInputPort()
-		updateOutputPorts()
+		updateWidePort()
+		updateNarrowPorts()
 	}
 
-	private fun updateInputPort() {
+	private fun updateWidePort() {
 		(getPort<DigitalSignal>(1) as DigitalPort).bitWidth = bitWidth
 	}
 
-	private fun updateOutputPorts() {
+	private fun updateNarrowPorts() {
 		for (i in 0 until tapCount.count) {
-			updateOutputPort((getPort<DigitalSignal>(i + 2) as DigitalPort), i)
+			updateNarrowPort((getPort<DigitalSignal>(i + 2) as DigitalPort), i)
 		}
 	}
 
-	private fun updateOutputPort(port: DigitalPort, index: Int) {
+	private fun updateNarrowPort(port: DigitalPort, index: Int) {
 		port.apply {
-			bitWidth = outputBitWidth
-			name = createOutputPortName(index)
+			bitWidth = narrowSideBitWidth
+			name = createNarrowPortName(index)
 		}
 	}
 
-	private fun createOutputPortName(i: Int): String {
+	private fun createNarrowPortName(i: Int): String {
 		val pos = tapPositions[i]
-		return if (outputBitWidth == BitWidth.BW_1) {
+		return if (narrowSideBitWidth == BitWidth.BW_1) {
 			"$pos"
 		} else {
-			"$pos..${pos + outputBitWidth.width - 1}"
+			"$pos..${pos + narrowSideBitWidth.width - 1}"
 		}
 	}
 }
