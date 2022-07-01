@@ -129,6 +129,7 @@ class WireTapView(
 			model.getPort(1),
 			direction = Direction.NORTH,
 			length = INPUT_PIN_LENGTH,
+			customUnconnectedLength = INPUT_PIN_LENGTH,
 			showBitWidthAnnotation = false)
 	}
 
