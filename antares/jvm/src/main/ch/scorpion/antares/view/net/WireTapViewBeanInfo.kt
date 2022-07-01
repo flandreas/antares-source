@@ -25,9 +25,11 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 	override fun addProperties(bean: WireTapView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width <= bean.bitWidth.width }))
-		properties.add(handedness.bind(editor, bean.id))
+		val connected = bean.model.isConnected
+
+		properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
+		properties.add(outputBitWidth.bind(editor, bean.id, editable = !connected, filter = { it.width <= bean.bitWidth.width }))
+		properties.add(handedness.bind(editor, bean.id, editable = !connected))
 		properties.add(portViewSpacing.bind(editor, bean.id))
 		properties.add(outputCount.bind(editor, bean.id, filter = { it.count >= 1 }))
 
