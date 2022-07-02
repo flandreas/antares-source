@@ -118,6 +118,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("doubleThrowSwitch", DoubleThrowSwitch::class)
 		typeMap.register("lookupTable", LookupTable::class)
 		typeMap.register("wireTap", WireTap::class)
+		typeMap.register("wireTapConfig", WireTapConfig::class)
 
 		typeMap.register("truthTable", TruthTable::class)
 		typeMap.register("truthTableInputColumn", TruthTableInputColumn::class)

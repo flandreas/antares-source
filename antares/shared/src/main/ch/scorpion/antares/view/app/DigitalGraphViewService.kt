@@ -124,14 +124,13 @@ class DigitalGraphViewService(
 
 	private fun increaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount) {
 		wireTapView.model.apply {
-			for (i in tapCount.count + 1 .. newOutputCount.count) {
-				val port = wireTapView.model.addOutputPort(0)
-				wireTapView.addPortView(wireTapView.createOutputPortView(port))
+			addNarrowPorts(newOutputCount.count - tapCount.count)
+			.forEach {
+				wireTapView.addPortView(wireTapView.createOutputPortView(it))
 			}
-
-			wireTapView.model.notifyStateChanged()
-			wireTapView.updateGeometry()
+			notifyStateChanged()
 		}
+		wireTapView.updateGeometry()
 	}
 
 	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount, drawingView: DrawingView<GraphView>) {
