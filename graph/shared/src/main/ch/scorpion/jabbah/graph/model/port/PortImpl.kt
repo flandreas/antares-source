@@ -209,7 +209,7 @@ open class PortImpl<T : Any>(
 	fun syncIncomingSignalWithNegotiatedOutgoingSignal(always: Boolean = false) {
 		// Don't synchronize with Net signal, as that one is not available before the
 		// next simulation cycle
-		if (always || !isOutputFullyUndefined) {
+		if (always || net == null || !isOutputFullyUndefined) {
 			storeIncomingSignal(_outgoingSignal)
 		}
 	}
