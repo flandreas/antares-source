@@ -57,7 +57,7 @@ class DoubleThrowSwitch(
 
 						// Make sure that re-propagation from origin OutputPort is not blocked at InputPort
 						// of this DoubleThrowSwitch because incoming signal is already set
-						(output as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
+						(output as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 					}
 
 				// Re-flush the dominant signals in the Nets of the switched Ports

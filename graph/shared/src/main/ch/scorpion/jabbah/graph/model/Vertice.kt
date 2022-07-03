@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.net.NetTopologyChangeEvent
 
 /**
  * A [Vertice] is a node in a [Graph] that can be connected with other [Vertice]s using [Net]s that are attached
@@ -151,4 +152,11 @@ interface Vertice : GraphElement, Describable {
     fun <T: Any> getOutput(id: Int): OutputPort<T>
 
     fun <T: Any> replaceUndefinedOutput(signal: T?)
+
+	/**
+	 * Notifies this [Vertice] that one of its [OutputPort] was asked to resend its current
+	 * outgoing signal in order to re-establish it on a [Net] due to a [NetTopologyChangeEvent].
+	 * [Vertices][Vertice] that store the signal separately have a chance to update it accordingly.
+	 */
+	fun <T: Any> notifyResendSignal(port: OutputPort<T>, signalHandler: SignalHandler)
 }

@@ -44,8 +44,8 @@ class RealSwitch(
 				if (vertice.isOn) {
 					// Make sure that re-propagation from origin OutputPort is not blocked at InputPort
 					// of this RealSwitch because incoming signal is already set
-					(port1 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
-					(port2 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal(always = true)
+					(port1 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+					(port2 as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 				} else {
 					port1.flush(signalHandler, data.force)
 					port2.flush(signalHandler, data.force)
