@@ -40,8 +40,6 @@ class RealSwitchViewUndefinedSimulationTest : AbstractCircuitTest() {
 		circuitView = builder.build()
 	}
 
-	// Still failing
-	@Ignore
 	@Test
 	fun shouldResetInOutToUndefined() {
 		startSimulation()

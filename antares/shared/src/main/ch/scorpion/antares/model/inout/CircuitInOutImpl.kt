@@ -164,6 +164,11 @@ class CircuitInOutImpl(
 		}
 	}
 
+	override fun <T : Any> notifyResendSignal(port: OutputPort<T>, signalHandler: SignalHandler) {
+		signal = getDigitalPort().getOutgoingSignal()
+		stateChanged(signalHandler)
+	}
+
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {

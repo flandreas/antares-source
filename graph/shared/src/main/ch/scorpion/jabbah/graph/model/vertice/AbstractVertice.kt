@@ -127,6 +127,8 @@ abstract class AbstractVertice(
 
 	override fun <T : Any> replaceUndefinedOutput(signal: T?) { }
 
+	override fun <T : Any> notifyResendSignal(port: OutputPort<T>, signalHandler: SignalHandler) { }
+
 	/** ---- [Storable] interface */
 
 	/**
