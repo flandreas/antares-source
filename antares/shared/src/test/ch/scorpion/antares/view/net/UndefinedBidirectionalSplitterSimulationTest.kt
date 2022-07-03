@@ -17,12 +17,13 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class IncompleteBidirectionalSplitterSimulationTest : AbstractCircuitTest() {
+class UndefinedBidirectionalSplitterSimulationTest : AbstractCircuitTest() {
 
 	private lateinit var circuitView: GraphView
 	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BW_8, portType = PortType.INOUT))
 	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BW_8, BranchCount.BC_8))
 	private val b = CircuitInOutView(model = CircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val c = CircuitInOutView(model = CircuitInOutImpl(name = "C", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 
@@ -33,9 +34,11 @@ class IncompleteBidirectionalSplitterSimulationTest : AbstractCircuitTest() {
 		builder.addVerticeView(a)
 		builder.addVerticeView(splitterView)
 		builder.addVerticeView(b)
+		builder.addVerticeView(c)
 
 		builder.connect(a, splitterView, splitterView.model.getInput(1))
 		builder.connect(splitterView, splitterView.model.getOutput(3), b)
+		builder.connect(splitterView, splitterView.model.getOutput(8), c)
 
 		circuitView = builder.build()
 	}

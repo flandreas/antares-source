@@ -206,12 +206,10 @@ open class PortImpl<T : Any>(
 		forwardSignal(signalHandler, force)
 	}
 
-	fun syncIncomingSignalWithNegotiatedOutgoingSignal(always: Boolean = false) {
+	fun syncIncomingSignalWithNegotiatedOutgoingSignal() {
 		// Don't synchronize with Net signal, as that one is not available before the
 		// next simulation cycle
-		if (always || net == null || !isOutputFullyUndefined) {
-			storeIncomingSignal(_outgoingSignal)
-		}
+		storeIncomingSignal(_outgoingSignal)
 	}
 
 	/** ---- [BidirectionalPort] */
