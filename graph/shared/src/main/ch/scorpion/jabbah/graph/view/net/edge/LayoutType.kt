@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 
 /**
  * Represents the supported types for laying out the segments of an [EdgeView].
@@ -21,6 +22,9 @@ enum class LayoutType(
 ) : EnumProperty<LayoutType> {
 
 	STRAIGHT("straight", EdgeViewInputEventHandler()) {
+
+		override fun supportsNetViewStyle(netViewStyle: NetViewStyle): Boolean =
+			netViewStyle == NetViewStyle.LINE
 
 		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
 			StraightEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
@@ -41,6 +45,8 @@ enum class LayoutType(
 
 	ORTHOGONAL("ortho", DragEdgeSegmentHandler()) {
 
+		override fun supportsNetViewStyle(netViewStyle: NetViewStyle): Boolean = true
+
 		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
 			OrthoEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
 		}
@@ -55,6 +61,9 @@ enum class LayoutType(
 	},
 
 	NONE("none", DragEdgePointHandler()) {
+
+		override fun supportsNetViewStyle(netViewStyle: NetViewStyle): Boolean =
+			netViewStyle == NetViewStyle.LINE
 
 		override fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean) {
 			NoneEdgeViewLayouter.layoutOrigin(edgeView, graphView, begin, end, destPointIndex, compact)
@@ -123,6 +132,8 @@ enum class LayoutType(
 
 		return alternative.invoke()
 	}
+
+	abstract fun supportsNetViewStyle(netViewStyle: NetViewStyle): Boolean
 
 	abstract fun layoutOrigin(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary, destPointIndex: Int, compact: Boolean)
 

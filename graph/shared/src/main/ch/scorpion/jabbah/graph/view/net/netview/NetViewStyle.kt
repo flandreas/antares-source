@@ -12,28 +12,30 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewBlockStyling
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewDotStyling
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 
 enum class NetViewStyle(override val customName: String) : EnumProperty<NetViewStyle> {
 
     LINE("line") {
 
-        override fun createEdgeViewStyling(styleProvider: StyleProvider, edgeView: EdgeView<*>): EdgeViewStyling {
-            return EdgeViewLineStyling(edgeView)
-        }
+        override fun createEdgeViewStyling(styleProvider: StyleProvider, edgeView: EdgeView<*>): EdgeViewStyling =
+	        EdgeViewLineStyling(edgeView)
 
-        override fun createNodeViewStyling(styleProvider: StyleProvider, nodeView: NodeView<*>): NodeViewStyling {
-            return NodeViewDotStyling(nodeView)
-        }
+        override fun createNodeViewStyling(styleProvider: StyleProvider, nodeView: NodeView<*>): NodeViewStyling =
+	        NodeViewDotStyling(nodeView)
+
+	    override fun supportsLayoutType(layoutType: LayoutType): Boolean = true
     },
 
     BLOCK("block") {
-        override fun createEdgeViewStyling(styleProvider: StyleProvider, edgeView: EdgeView<*>): EdgeViewStyling {
-            return EdgeViewBlockStyling(edgeView)
-        }
+        override fun createEdgeViewStyling(styleProvider: StyleProvider, edgeView: EdgeView<*>): EdgeViewStyling =
+	        EdgeViewBlockStyling(edgeView)
 
-        override fun createNodeViewStyling(styleProvider: StyleProvider, nodeView: NodeView<*>): NodeViewStyling {
-            return NodeViewBlockStyling(nodeView)
-        }
+        override fun createNodeViewStyling(styleProvider: StyleProvider, nodeView: NodeView<*>): NodeViewStyling =
+	        NodeViewBlockStyling(nodeView)
+
+	    override fun supportsLayoutType(layoutType: LayoutType): Boolean =
+			layoutType == LayoutType.ORTHOGONAL
     };
 
     companion object {
@@ -64,5 +66,7 @@ enum class NetViewStyle(override val customName: String) : EnumProperty<NetViewS
     abstract fun createEdgeViewStyling(styleProvider: StyleProvider, edgeView: EdgeView<*>): EdgeViewStyling
 
     abstract fun createNodeViewStyling(styleProvider: StyleProvider, nodeView: NodeView<*>): NodeViewStyling
+
+	abstract fun supportsLayoutType(layoutType: LayoutType): Boolean
 
 }

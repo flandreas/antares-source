@@ -67,16 +67,16 @@ class PortTypeEditor : ComboBoxPropertyEditor() {
 	}
 }
 
-class LayoutEditor : ComboBoxPropertyEditor() {
+class LayoutEditor(filter: (LayoutType) -> Boolean = { _ -> true} ) : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(LayoutType.values())
+		setAvailableValues(LayoutType.values().filter { filter.invoke(it) }.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<LayoutType>()
 	}
 }
 
-class NetViewStyleEditor : ComboBoxPropertyEditor() {
+class NetViewStyleEditor(filter: (NetViewStyle) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(NetViewStyle.values())
+		setAvailableValues(NetViewStyle.values().filter { filter.invoke(it) }.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<NetViewStyle>()
 	}
 }

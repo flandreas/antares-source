@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
@@ -89,11 +90,11 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
-		registry.registerEditor(LayoutType::class.java, LayoutEditor::class.java)
+		registry.register(LayoutType::class.java) { LayoutEditor((it as CommandPropertySwing<LayoutType>).filter) }
 		registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)
 		registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
-		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
+		registry.register(NetViewStyle::class.java) { NetViewStyleEditor((it as CommandPropertySwing<NetViewStyle>).filter) }
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
 		registry.registerEditor(LibraryVisibility::class.java, LibraryVisibilityEditor::class.java)
 		registry.registerEditor(SignalHistoriesType::class.java, SignalHistoriesTypeEditor::class.java)
