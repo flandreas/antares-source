@@ -21,6 +21,8 @@ import java.awt.Component
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -106,10 +108,11 @@ class ScenarioTreeView(
 		}
 	}
 
-	init {
+	private val rightMouseAdapter = RightMouseListener()
 
+	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
-		selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
+		addMouseListener(rightMouseAdapter)
 
 		setCellRenderer(ScenarioTreeRenderer())
 		setRowHeight(24)
@@ -182,18 +185,25 @@ class ScenarioTreeView(
 	/** Casts the generic model property to [ScenarioTreeModel]. */
 	private val scenarioTreeModel: ScenarioTreeModel get() = model as ScenarioTreeModel
 
-	/** Setup the popup menu according to the currently selected [TreeNode]' user object.*/
-	private fun setupPopupMenu(newSelectionPath: TreePath?) {
-		if (newSelectionPath == null) {
-			componentPopupMenu = null
-			return
-		}
+	private inner class RightMouseListener : MouseAdapter() {
+		override fun mousePressed(e: MouseEvent?) {
+			if (e?.button == MouseEvent.BUTTON3) {
+				getPathForLocation(e.x, e.y)?.let { path ->
+					requestFocusInWindow()
+					selectionPath = path
 
-		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
-			is GraphView -> graphViewPopupMenu
-			is Scenario -> scenarioPopupMenu
-			is ScenarioStep -> scenarioStepPopupMenu
-			else -> null
+					val menu = when ((path.lastPathComponent as DefaultMutableTreeNode).userObject) {
+						is GraphView -> graphViewPopupMenu
+						is Scenario -> scenarioPopupMenu
+						is ScenarioStep -> scenarioStepPopupMenu
+						else -> null
+					}
+
+					menu?.let {
+						it.show(this@ScenarioTreeView, e.x, e.y)
+					}
+				}
+			}
 		}
 	}
 

@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
 import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
 import java.awt.Component
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.JLabel
 import javax.swing.JPopupMenu
 import javax.swing.JTree
@@ -35,9 +37,11 @@ class UsecaseTreeView(
 	/** The [JPopupMenu] to be displayed for a [Usecase] node.*/
 	private val usecasePopupMenu = JPopupMenu()
 
+	private val rightMouseListener = RightMouseListener()
+
 	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
-		selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
+		addMouseListener(rightMouseListener)
 
 		setCellRenderer(UsecaseTreeRenderer())
 		setRowHeight(24)
@@ -103,16 +107,24 @@ class UsecaseTreeView(
 
 	private val usecaseTreeModel: UsecaseTreeModel get() = model!! as UsecaseTreeModel
 
-	private fun setupPopupMenu(newSelectionPath: TreePath?) {
-		if (newSelectionPath == null) {
-			componentPopupMenu = null
-			return
-		}
+	private inner class RightMouseListener : MouseAdapter() {
+		override fun mousePressed(e: MouseEvent?) {
+			if (e?.button == MouseEvent.BUTTON3) {
+				getPathForLocation(e.x, e.y)?.let { path ->
+					requestFocusInWindow()
+					selectionPath = path
 
-		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
-			is GraphView -> graphViewPopupMenu
-			is Usecase -> usecasePopupMenu
-			else -> null
+					val menu = when ((path.lastPathComponent as DefaultMutableTreeNode).userObject) {
+						is GraphView -> graphViewPopupMenu
+						is Usecase -> usecasePopupMenu
+						else -> null
+					}
+
+					menu?.let {
+						it.show(this@UsecaseTreeView, e.x, e.y)
+					}
+				}
+			}
 		}
 	}
 

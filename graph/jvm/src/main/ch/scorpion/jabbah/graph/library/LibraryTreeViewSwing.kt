@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
 import javax.swing.*
 import javax.swing.tree.*
@@ -33,14 +35,17 @@ class LibraryTreeViewSwing(
 
 	private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
 
+	private val rightMouseListener = RightMouseListener()
+
 	val actions = GraphModuleJvm.libraryTreeViewActionsProvider(
 		LibraryTreeViewActionsParams(controller, controller.type, application))
 
 	init {
 		controller.view = this
 
+		addMouseListener(rightMouseListener)
+
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
-		selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
 
 		transferHandler = LibraryTreeViewTransferHandler(controller)
 
@@ -135,11 +140,15 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun expandAllFromSelection() {
-		JTreeUtil.expandAll(this, selectionPath)
+		selectionPath?.let {
+			JTreeUtil.expandAll(this, it)
+		}
 	}
 
 	override fun collapseAtSelection() {
-		JTreeUtil.collapseAll(this, selectionPath)
+		selectionPath?.let {
+			JTreeUtil.collapseAll(this, it)
+		}
 	}
 
 	override fun openLibrary(library: Library) {
@@ -198,15 +207,6 @@ class LibraryTreeViewSwing(
 		return null
 	}
 
-	/** Setup the popup menu according to the currently selected [TreeNode]' user object.*/
-	private fun setupPopupMenu(newSelectionPath: TreePath?) {
-		if (newSelectionPath == null) {
-			componentPopupMenu = null
-			return
-		}
-		componentPopupMenu = actions.getPopupMenu(newSelectionPath.lastPathComponent as DefaultMutableTreeNode)
-	}
-
 	private fun getProjectNode(): DefaultMutableTreeNode? {
 		val root = model.root as DefaultMutableTreeNode
 		if (root.childCount > 1) {
@@ -232,6 +232,19 @@ class LibraryTreeViewSwing(
 		return findTreeNode(model.root as TreeNode) {
 			(it as DefaultMutableTreeNode).userObject == item
 		} as DefaultMutableTreeNode?
+	}
+
+	private inner class RightMouseListener : MouseAdapter() {
+		override fun mousePressed(e: MouseEvent?) {
+			if (e?.button == MouseEvent.BUTTON3) {
+				getPathForLocation(e.x, e.y)?.let { path ->
+					requestFocusInWindow()
+					selectionPath = path
+					val menu = actions.getPopupMenu(path.lastPathComponent as DefaultMutableTreeNode)
+					menu?.show(this@LibraryTreeViewSwing, e.x, e.y)
+				}
+			}
+		}
 	}
 
 	private inner class Renderer : DefaultTreeCellRenderer() {
