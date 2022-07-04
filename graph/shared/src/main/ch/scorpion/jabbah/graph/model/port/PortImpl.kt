@@ -232,6 +232,7 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun resendSignal(signalHandler: SignalHandler) {
+		owner?.notifyResendSignal(this, signalHandler)
 		flush(signalHandler, force = true)
 	}
 
