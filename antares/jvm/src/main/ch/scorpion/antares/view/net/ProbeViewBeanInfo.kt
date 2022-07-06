@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
@@ -17,6 +18,8 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 	    private val signalRep = AntaresProperties.signalRepresentation()
 	    private val output = CommandPropertySwing("hasOutput", "element.property.hasOutput", Boolean::class.java, componentBeanProvider)
 	    private val logging = CommandPropertySwing("logging", "element.property.logging", Boolean::class.java, componentBeanProvider)
+	    private val fixedPointConfigFraction = AntaresProperties.fixedPointConfigFraction()
+	    private val fixedPointConfigSigned = AntaresProperties.fixedPointConfigSigned()
     }
 
     override fun addProperties(bean: ProbeView, editor: Editor, properties: MutableList<Property>) {
@@ -24,8 +27,12 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
 	    properties.add(name.bind(editor, bean.id))
 	    properties.add(bitWidth.bind(editor, bean.id))
-	    properties.add(signalRep.bind(editor, bean.id))
+	    properties.add(signalRep.bind(editor, bean.id, filter = { true }))
 	    properties.add(output.bind(editor, bean.id, editable = !bean.model.isConnected))
 	    properties.add(logging.bind(editor, bean.id))
+	    if (bean.signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {
+		    properties.add(fixedPointConfigFraction.bind(editor, bean.id))
+		    properties.add(fixedPointConfigSigned.bind(editor, bean.id))
+	    }
     }
 }

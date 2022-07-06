@@ -1,9 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Probe
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
@@ -62,6 +60,7 @@ class ProbeView(
 
 	override fun modelExchanged(oldModel: Probe?) {
 		super.modelExchanged(oldModel)
+		createInnerView()
 		updatePortViews()
 		updateView()
 		updateLabel()
@@ -105,6 +104,7 @@ class ProbeView(
 
 			invalidate()
 			model.hasOutput = value
+			createInnerView()
 			updatePortViews()
 			updateView()
 		}
@@ -126,6 +126,15 @@ class ProbeView(
 				return
 			}
 			model.isLogging = value
+		}
+
+	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
+	var fixedPointConfig: FixedPointConfig
+		get() = model.fixedPointConfig
+		set(value) {
+			if (value != fixedPointConfig) {
+				model.fixedPointConfig = value
+			}
 		}
 
 	/** ---- [AbstractDrawable] */
@@ -160,6 +169,7 @@ class ProbeView(
 			if (value != bitWidth) {
 				clear()
 				model.bitWidth = value
+				createInnerView()
 				updateView()
 				postControlViewSourceChangeEvent(eventBus)
 			}
@@ -178,10 +188,10 @@ class ProbeView(
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
-			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView.height / 2 - insets)
-			Direction.NORTH -> Point2D(-numberView.width / 2 - insets, -DigitalPortView.LENGTH - numberView.height - 2 * insets)
-			Direction.SOUTH -> Point2D(-numberView.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
-			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView.width - 2 * insets, -numberView.height / 2 - insets)
+			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -innerBounds.height / 2 - insets)
+			Direction.NORTH -> Point2D(-innerBounds.width / 2 - insets, -DigitalPortView.LENGTH - innerBounds.height - 2 * insets)
+			Direction.SOUTH -> Point2D(-innerBounds.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
+			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - innerBounds.width - 2 * insets, -innerBounds.height / 2 - insets)
 		}
 
 	override fun updateViewImpl() {
@@ -190,10 +200,10 @@ class ProbeView(
 		if (hasOutput) {
 			getOutput().direction = orientation
 			when (orientation) {
-				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView.width, 0.0)
-				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView.height)
-				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView.width, 0.0)
-				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView.height)
+				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + innerBounds.width, 0.0)
+				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - innerBounds.height)
+				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - innerBounds.width, 0.0)
+				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + innerBounds.height)
 			}
 		}
 		updateLabelPosition()
@@ -233,7 +243,7 @@ class ProbeView(
 
 	private fun drawSimulated(context: DrawContext) {
 		drawEdited(context)
-		drawNumberView(context, true)
+		drawInnerView(context, true)
 	}
 
 	private fun drawEdited(context: DrawContext) {

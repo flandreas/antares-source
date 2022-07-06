@@ -71,6 +71,34 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
         override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.hexString)
         override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.hexDigitToWord(bitWidth, digit)
 	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
+    },
+
+    FIXED_POINT("fixedPoint") {
+	    override val prefix: String get() = ""
+	    override val base: Int get() = 10
+	    override val suffix: String get() = ""
+	    override val bitCount: Int get() = 4
+	    override val digitGroupSize: Int get() = 3
+
+	    override fun digitCount(bitWidth: BitWidth): Int {
+		    throw UnsupportedOperationException("not supported")
+	    }
+
+	    override fun represent(signal: DigitalSignal): String {
+		    throw UnsupportedOperationException("not supported")
+	    }
+
+	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal {
+		    throw UnsupportedOperationException("not supported")
+	    }
+
+	    override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? {
+		    throw UnsupportedOperationException("not supported")
+	    }
+
+	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal? {
+		    throw UnsupportedOperationException("not supported")
+	    }
     };
 
     companion object {
@@ -129,6 +157,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
             BINARY -> Translations.getString("element.property.DigitalSignalRepresentation.binary")
             DECIMAL -> Translations.getString("element.property.DigitalSignalRepresentation.decimal")
             HEXADECIMAL -> Translations.getString("element.property.DigitalSignalRepresentation.hexadecimal")
+            FIXED_POINT -> Translations.getString("element.property.DigitalSignalRepresentation.fixedPoint")
         }
     }
 

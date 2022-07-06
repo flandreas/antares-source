@@ -87,6 +87,8 @@ class Probe(
 			stateChanged()
 		}
 
+	var fixedPointConfig: FixedPointConfig = FixedPointConfig(0, false)
+
 	init {
 		addPort(DigitalPortImpl(PortType.INPUT, defaultBit = Bit.Undefined))
 		this.hasOutput = hasOutput
@@ -127,6 +129,7 @@ class Probe(
 		if (isLogging) {
 			writer.writeBoolean("logging", isLogging)
 		}
+		fixedPointConfig?.let { writer.writeStorable("fixedPoint", it) }
 	}
 
 	override fun read(reader: StoreReader) {
@@ -135,6 +138,9 @@ class Probe(
 		hasOutput = reader.readBoolean("hasOutput")
 		if (reader.hasAttribute("logging")) {
 			isLogging = reader.readBoolean("logging")
+		}
+		if (reader.hasAttribute("fixedPoint")) {
+			fixedPointConfig = reader.readStorable("fixedPoint")
 		}
 	}
 

@@ -67,7 +67,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
-        drawNumberView(context, context.castedAppContext<GraphApplicationContext>()!!.isExecute)
+        drawInnerView(context, context.castedAppContext<GraphApplicationContext>()!!.isExecute)
     }
 
     /** ---- [ControlView] interface */
@@ -124,7 +124,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
     override val signal: DigitalSignal get() = model.signal!!
 
     override val upperLeftBoundsEdge: Point2D
-        get() = Point2D(0.0, -numberView.height / 2 - insets)
+        get() = Point2D(0.0, -bounds.height / 2 - insets)
 
     override val insets: Int get() = 4
 

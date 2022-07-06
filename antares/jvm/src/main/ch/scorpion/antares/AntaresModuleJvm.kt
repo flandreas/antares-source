@@ -249,7 +249,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
 		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
-		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
+		registry.register(DigitalSignalRepresentation::class.java) { DigitalSignalRepresentationEditor((it as CommandPropertySwing<DigitalSignalRepresentation>).filter)}
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 		registry.registerEditor(PullDirection::class.java, PullDirectionEditor::class.java)

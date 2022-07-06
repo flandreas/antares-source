@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.FixedPointConfig
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
@@ -53,4 +54,10 @@ object AntaresProperties {
 
 	fun tunnelFlowDirection(name: String = "flowDirection"): CommandPropertySwing<TunnelFlowDirection> =
 		CommandPropertySwing(name, "element.property.tunnelFlowDirection", TunnelFlowDirection::class.java, componentBeanProvider)
+
+	fun fixedPointConfigFraction(name: String = "fixedPointConfig.fractionSize"): CommandPropertySwing<Int> =
+		CommandPropertySwing(name, "element.property.fixedPointConfig.fractionSize", Int::class.java, componentBeanProvider)
+
+	fun fixedPointConfigSigned(name: String = "fixedPointConfig.signed"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, "element.property.fixedPointConfig.signed", Boolean::class.java, componentBeanProvider)
 }
