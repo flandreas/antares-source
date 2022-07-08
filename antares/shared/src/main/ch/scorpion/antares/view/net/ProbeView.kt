@@ -57,7 +57,6 @@ class ProbeView(
 		modelExchanged(null)
 	}
 
-
 	override fun modelExchanged(oldModel: Probe?) {
 		super.modelExchanged(oldModel)
 		createInnerView()
@@ -129,22 +128,13 @@ class ProbeView(
 		}
 
 	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
-	/*
-	var fixedPointConfig: FixedPointConfig?
-		get() = model.fixedPointConfig
-		set(value) {
-			if (value != fixedPointConfig) {
-				model.fixedPointConfig = value
-			}
-		}
-	 */
-
 	var fixedPointFractionSize: Int?
 		get() = model.fixedPointFractionSize
 		set(value) {
 			model.fixedPointFractionSize = value
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
 	var fixedPointSigned: Boolean?
 		get() = model.fixedPointSigned
 		set(value) {

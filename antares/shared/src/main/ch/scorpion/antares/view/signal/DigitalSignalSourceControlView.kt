@@ -36,6 +36,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
+	    createInnerView()
         updateView()
     }
 
