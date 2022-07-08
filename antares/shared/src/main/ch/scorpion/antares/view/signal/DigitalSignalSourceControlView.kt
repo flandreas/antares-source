@@ -142,6 +142,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 		override val type: String get() = TYPE
 		override val typeDesc: String? get() = TYPE_DESC
 
+		override var fixedPointConfig: FixedPointConfig? = null
 		override var bitWidth: BitWidth = BitWidth.BW_1
 		override var signal: DigitalSignal? get() = DigitalSignalFactory.falseValue(bitWidth)
 			set(value) {

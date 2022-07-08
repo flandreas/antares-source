@@ -14,7 +14,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
         override val bitCount: Int get() = 1
 	    override val digitGroupSize: Int get() = 4
 	    override fun digitCount(bitWidth: BitWidth): Int = bitWidth.width
-        override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.binaryString)
+        override fun represent(signal: DigitalSignal, properties: Any?): String = trimLeadingZeros(signal.binaryString)
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
         override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.binaryDigitToWord(digit)
 	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
@@ -39,7 +39,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 			return DigitalSignalFactory.of(bitWidth, (s[s.length - 1 - index].code - '0'.code).toLong())
 
 		}
-		override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.decimalString)
+		override fun represent(signal: DigitalSignal, properties: Any?): String = trimLeadingZeros(signal.decimalString)
 		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.decimalDigitToWord(bitWidth, digit)
 		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal? {
 			return try {
@@ -68,7 +68,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	    override val digitGroupSize: Int get() = 4
 	    override fun digitCount(bitWidth: BitWidth): Int = ceil(bitWidth.width.toDouble() / bitCount).toInt()
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
-        override fun represent(signal: DigitalSignal): String = trimLeadingZeros(signal.hexString)
+        override fun represent(signal: DigitalSignal, properties: Any?): String = trimLeadingZeros(signal.hexString)
         override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.hexDigitToWord(bitWidth, digit)
 	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
     },
@@ -84,9 +84,12 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		    throw UnsupportedOperationException("not supported")
 	    }
 
-	    override fun represent(signal: DigitalSignal): String {
-		    throw UnsupportedOperationException("not supported")
-	    }
+	    override fun represent(signal: DigitalSignal, properties: Any?): String =
+			if (properties is FixedPointConfig) {
+			    FixedPoint(properties, signal).toString()
+		    } else {
+			    "?"
+		    }
 
 	    override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal {
 		    throw UnsupportedOperationException("not supported")
@@ -130,7 +133,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
     abstract fun digitCount(bitWidth: BitWidth): Int
 
     /** Represents the specified [DigitalSignal] as a [String].*/
-    abstract fun represent(signal: DigitalSignal): String
+    abstract fun represent(signal: DigitalSignal, properties: Any? = null): String
 
     /** Returns the sub-signal of a [DigitalSignal] at the specified digit index, where the least significant index is 0*/
 	abstract fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal
@@ -161,8 +164,6 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
         }
     }
 
-	protected fun trimLeadingZeros(representation: String): String {
-		val trimmed = representation.trimStart('0')
-		return if (trimmed.isEmpty()) { "0" } else { trimmed }
-	}
+	protected fun trimLeadingZeros(representation: String): String =
+		representation.trimStart('0').ifEmpty { "0" }
 }

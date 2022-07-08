@@ -61,6 +61,10 @@ class CircuitInOutImpl(
 		}
 	}
 
+	/** ---- [DigitalSignalSource] */
+
+	override var fixedPointConfig: FixedPointConfig? = null
+
 	/** ---- [GraphElement] */
 
 	override val type: String

@@ -2,16 +2,14 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.io.*
 
+/**
+ * A configuration for [FixedPoint].
+ * Setters must be public for reflective access by property editors on JVM.
+ */
 class FixedPointConfig(
-	fractionSize: Int,
-	signed: Boolean = false
+	var fractionSize: Int = 0,
+	var signed: Boolean = false
 ) : AbstractStorable() {
-
-	var fractionSize: Int = fractionSize
-		private set
-
-	var signed: Boolean = signed
-		private set
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 

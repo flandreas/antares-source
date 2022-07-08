@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.signal
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.geom.Direction
@@ -94,7 +95,11 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	override val useOrientation: Boolean get() = true
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		numberView?.setSignal(signal)
+		if (signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {
+			fixedPointView?.text = signalRepresentation.represent(signal, (model as DigitalSignalSource).fixedPointConfig)
+		} else {
+			numberView?.setSignal(signal)
+		}
 		super.handleStateChanged(event)
 	}
 

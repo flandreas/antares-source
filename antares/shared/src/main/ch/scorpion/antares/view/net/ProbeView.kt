@@ -129,7 +129,7 @@ class ProbeView(
 		}
 
 	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
-	var fixedPointConfig: FixedPointConfig
+	var fixedPointConfig: FixedPointConfig?
 		get() = model.fixedPointConfig
 		set(value) {
 			if (value != fixedPointConfig) {
@@ -179,6 +179,11 @@ class ProbeView(
 		get() = super.signalRepresentation
 		set(value) {
 			if (super.signalRepresentation != value) {
+				if (value == DigitalSignalRepresentation.FIXED_POINT) {
+					if (fixedPointConfig == null) {
+						fixedPointConfig = FixedPointConfig(0, false)
+					}
+				}
 				super.signalRepresentation = value
 				postControlViewSourceChangeEvent(eventBus)
 			}

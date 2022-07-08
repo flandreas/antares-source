@@ -67,6 +67,8 @@ class Random(
 
 	/** [DigitalSignalSource] interface */
 
+	override var fixedPointConfig: FixedPointConfig? = null
+
 	override var bitWidth: BitWidth
 		get() = (getOutput<DigitalSignal>() as DigitalPort).bitWidth
 		set(value) {

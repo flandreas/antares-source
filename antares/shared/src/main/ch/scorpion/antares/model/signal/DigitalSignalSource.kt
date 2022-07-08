@@ -10,4 +10,6 @@ interface DigitalSignalSource : Vertice {
     var bitWidth: BitWidth
 
     var signal: DigitalSignal?
+
+	var fixedPointConfig: FixedPointConfig?
 }

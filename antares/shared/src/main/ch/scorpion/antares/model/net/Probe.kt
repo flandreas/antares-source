@@ -87,8 +87,6 @@ class Probe(
 			stateChanged()
 		}
 
-	var fixedPointConfig: FixedPointConfig = FixedPointConfig(0, false)
-
 	init {
 		addPort(DigitalPortImpl(PortType.INPUT, defaultBit = Bit.Undefined))
 		this.hasOutput = hasOutput
@@ -101,6 +99,8 @@ class Probe(
 	}
 
 	/** ---- [DigitalSignalSource] interface */
+
+	override var fixedPointConfig: FixedPointConfig? = null
 
 	@Suppress("UNUSED_PARAMETER")
 	override var signal: DigitalSignal?
@@ -139,7 +139,7 @@ class Probe(
 		if (reader.hasAttribute("logging")) {
 			isLogging = reader.readBoolean("logging")
 		}
-		if (reader.hasAttribute("fixedPoint")) {
+		if (reader.hasElement("fixedPoint")) {
 			fixedPointConfig = reader.readStorable("fixedPoint")
 		}
 	}
