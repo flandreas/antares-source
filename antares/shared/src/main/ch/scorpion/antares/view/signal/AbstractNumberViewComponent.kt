@@ -11,14 +11,19 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -38,7 +43,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	companion object {
 		const val DEFAULT_INSETS = Look.SCALE
 		private const val FIXED_POINT_WIDTH = 150.0
-		private const val FIXED_POINT_HEIGHT = DigitView.HEIGHT
+		private const val FIXED_POINT_HEIGHT = DigitView.HEIGHT.toDouble()
 	}
 
 	override var orientation: Direction = orientation
@@ -66,7 +71,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	private var numberView: NumberView? = null
 
 	/** Displays the current signal for [DigitalSignalRepresentation.FIXED_POINT].*/
-	private var fixedPointView: Label? = null
+	private var fixedPointView: FixedPointView? = null
 
 	/** ---- [Storable] interface */
 
@@ -96,7 +101,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {
-			fixedPointView?.text = signalRepresentation.represent(signal, (model as DigitalSignalSource).fixedPointConfig)
+			fixedPointView?.label?.text = signalRepresentation.represent(signal, (model as DigitalSignalSource).fixedPointConfig)
 		} else {
 			numberView?.setSignal(signal)
 		}
@@ -157,11 +162,16 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 				numberView!!.widthInt, numberView!!.heightInt)
 		} else {
 			numberView = null
-			fixedPointView = Label("", font, color.textColor, HorizontalAlignment.LEFT)
-			fixedPointView!!.location = Point2D(upperLeftBoundsEdge.x + insets, upperLeftBoundsEdge.y + insets + FIXED_POINT_HEIGHT / 2)
+			fixedPointView = FixedPointView(this is ControlView<*>)
+			fixedPointView!!.adjustBounds(
+				Rectangle2D(
+					upperLeftBoundsEdge.x + insets, upperLeftBoundsEdge.y + insets,
+					FIXED_POINT_WIDTH, FIXED_POINT_HEIGHT
+				)
+			)
 			setBounds(
 				upperLeftBoundsEdge.x, upperLeftBoundsEdge.y,
-				FIXED_POINT_WIDTH + 2 * insets, FIXED_POINT_HEIGHT.toDouble() + 2 * insets)
+				FIXED_POINT_WIDTH + 2 * insets, FIXED_POINT_HEIGHT + 2 * insets)
 		}
 	}
 
@@ -180,5 +190,39 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	protected fun clear() {
 		numberView?.clear()
+	}
+
+	private inner class FixedPointView(private val drawEditingBox: Boolean) : AbstractRectangle() {
+
+		val label = Label(
+			"",
+			font,
+			color.textColor,
+			HorizontalAlignment.LEFT)
+
+		fun adjustBounds(rect: Rectangle2D) {
+			bounds.setFrame(rect)
+			label.location = Point2D(rect.minX + 5, rect.minY + rect.height / 2)
+		}
+
+		override fun draw(context: DrawContext) {
+			if (context.useContextColors) {
+				drawImpl(context, context.color!!.foregroundColor, context.color!!.textColor)
+			} else {
+				drawImpl(context, transparent.applyTo(foregroundColor), transparent.applyTo(textColor))
+			}
+		}
+
+		private fun drawImpl(context: DrawContext, strokeColor: Color, textColor: Color) {
+			if (drawEditingBox && !context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = strokeColor
+				context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
+				context.g.draw(bounds)
+			}
+			context.g.color = textColor
+			label.draw(context)
+		}
+
+		override val lineWidth: Double get() = 1.0
 	}
 }
