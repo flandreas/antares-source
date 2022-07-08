@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.io.*
+import kotlin.math.min
 
 /**
  * A configuration for [FixedPoint].
@@ -59,7 +60,8 @@ class FixedPointConfig(
 	 * the specified [bitWidth].
 	 */
 	fun decimalDigitCount(bitWidth: BitWidth): Int {
-		val p: Int = BitOperation.power(integerSize(bitWidth)).toInt()
+		val s = min(63U, integerSize(bitWidth).toUInt())
+		val p: ULong = BitOperation.power(s.toByte())
 		val q: Double = 1.0 /  BitOperation.power(fractionSize.toByte()).toDouble()
 		return 1 + p.toString().length + q.toString().length
 	}
