@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
@@ -27,6 +28,7 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.max
 
 /**
  * Abstract base class for [DigitalComponentView]s that display a [NumberView]
@@ -42,7 +44,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	companion object {
 		const val DEFAULT_INSETS = Look.SCALE
-		private const val FIXED_POINT_WIDTH = 150.0
+		private const val MIN_FIXED_POINT_WIDTH = 40.0
 		private const val FIXED_POINT_HEIGHT = DigitView.HEIGHT.toDouble()
 	}
 
@@ -72,6 +74,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	/** Displays the current signal for [DigitalSignalRepresentation.FIXED_POINT].*/
 	private var fixedPointView: FixedPointView? = null
+
+	private var fixedPointViewWidth: Double? = null
 
 	/** ---- [Storable] interface */
 
@@ -132,7 +136,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 		get() = if (signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {
 			Rectangle2D(
 				fixedPointView!!.location.x, fixedPointView!!.location.y - FIXED_POINT_HEIGHT / 2,
-				FIXED_POINT_WIDTH, FIXED_POINT_HEIGHT.toDouble()
+				fixedPointViewWidth!!, FIXED_POINT_HEIGHT
 			)
 		} else {
 			numberView!!.bounds
@@ -149,6 +153,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	protected fun createInnerView() {
 		if (signalRepresentation != DigitalSignalRepresentation.FIXED_POINT) {
 			fixedPointView = null
+			fixedPointViewWidth = null
 			numberView = NumberView(signalRepresentation, bitWidth, drawDigitBorder)
 			numberView!!.setSignal(signal)
 
@@ -163,15 +168,16 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 		} else {
 			numberView = null
 			fixedPointView = FixedPointView(this is ControlView<*>)
+			updateFixedPointViewWidth()
 			fixedPointView!!.adjustBounds(
 				Rectangle2D(
 					upperLeftBoundsEdge.x + insets, upperLeftBoundsEdge.y + insets,
-					FIXED_POINT_WIDTH, FIXED_POINT_HEIGHT
+					fixedPointViewWidth!!, FIXED_POINT_HEIGHT
 				)
 			)
 			setBounds(
 				upperLeftBoundsEdge.x, upperLeftBoundsEdge.y,
-				FIXED_POINT_WIDTH + 2 * insets, FIXED_POINT_HEIGHT + 2 * insets)
+				fixedPointViewWidth!! + 2 * insets, FIXED_POINT_HEIGHT + 2 * insets)
 		}
 	}
 
@@ -190,6 +196,22 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
 	protected fun clear() {
 		numberView?.clear()
+	}
+
+	private fun updateFixedPointViewWidth() {
+		fixedPointViewWidth = calculateFixedPointViewWidth()
+	}
+
+	private fun calculateFixedPointViewWidth(): Double {
+		var width = MIN_FIXED_POINT_WIDTH
+
+		if (model != null && (model as DigitalSignalSource).fixedPointConfig != null) {
+			val config = (model as DigitalSignalSource).fixedPointConfig!!
+			val sampleValue = "0".repeat(config.decimalDigitCount(bitWidth))
+			width = max(width, TextRenderInfoFactory.measureSingleLineText(sampleValue, font).textBounds.width)
+		}
+
+		return width
 	}
 
 	private inner class FixedPointView(private val drawEditingBox: Boolean) : AbstractRectangle() {

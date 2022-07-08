@@ -131,14 +131,28 @@ class ProbeView(
 	var fixedPointFractionSize: Int?
 		get() = model.fixedPointFractionSize
 		set(value) {
-			model.fixedPointFractionSize = value
+			if (model.fixedPointFractionSize != value) {
+				invalidate()
+				model.fixedPointFractionSize = value
+				createInnerView()
+				updateView()
+				invalidate()
+				update()
+			}
 		}
 
 	@Suppress("MemberVisibilityCanBePrivate", "unused") // Reflection
 	var fixedPointSigned: Boolean?
 		get() = model.fixedPointSigned
 		set(value) {
-			model.fixedPointSigned = value
+			if (model.fixedPointSigned != value) {
+				invalidate()
+				model.fixedPointSigned = value
+				createInnerView()
+				updateView()
+				invalidate()
+				update()
+			}
 		}
 
 	/** ---- [AbstractDrawable] */

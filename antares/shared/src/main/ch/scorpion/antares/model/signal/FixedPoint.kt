@@ -3,40 +3,6 @@ package ch.scorpion.antares.model.signal
 import ch.scorpion.jabbah.io.*
 
 /**
- * A configuration for [FixedPoint].
- * Setters must be public for reflective access by property editors on JVM.
- */
-class FixedPointConfig(
-	fractionSize: Int = 0,
-	signed: Boolean = false
-) : AbstractStorable() {
-
-	var fractionSize: Int = fractionSize
-		private set
-
-	var signed: Boolean = signed
-		private set
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
-
-	override fun write(writer: StoreWriter) {
-		writer.writeInt("fraction", fractionSize)
-		writer.writeBoolean("signed", signed)
-	}
-
-	override fun read(reader: StoreReader) {
-		fractionSize = reader.readInt("fraction")
-		signed = reader.readBoolean("signed")
-	}
-
-	fun withFractionSize(fractionSize: Int): FixedPointConfig =
-		FixedPointConfig(fractionSize, this.signed)
-
-	fun withSigned(signed: Boolean): FixedPointConfig =
-		FixedPointConfig(this.fractionSize, signed)
-}
-
-/**
  * A signed fixed-point value consisting of bits from a [DigitalSignal], where
  * the most-left [FixedPointConfig.fractionSize] bits are interpreted as fraction value.
  * If the most-significant bit is 1, the overall number is negative.
