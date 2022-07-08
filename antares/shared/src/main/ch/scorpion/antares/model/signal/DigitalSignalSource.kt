@@ -11,5 +11,5 @@ interface DigitalSignalSource : Vertice {
 
     var signal: DigitalSignal?
 
-	var fixedPointConfig: FixedPointConfig?
+	val fixedPointConfig: FixedPointConfig?
 }

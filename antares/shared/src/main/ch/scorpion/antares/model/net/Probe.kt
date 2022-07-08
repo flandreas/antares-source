@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Displays the value of a [DigitalSignal] within a circuit.
  */
 class Probe(
+	bitWidth: BitWidth = BitWidth.BW_1,
 	hasOutput: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
@@ -48,14 +49,6 @@ class Probe(
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	private fun sendLogEvent(data: GraphActorData, time: Long) {
-		eventBus.post(LogEvent(
-			source = this,
-			name = StringUtils.orElse(name, "<Unknown>"),
-			value = data.getSignal<DigitalSignal>(1)?.hexString ?: "<empty>",
-			time = time))
-	}
-
 	/** Write a log message whenever the input changes */
 	var isLogging: Boolean = false
 
@@ -66,6 +59,9 @@ class Probe(
 				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
 				if (hasOutput) {
 					(getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+				}
+				if (fixedPointFractionSize != null) {
+					fixedPointConfig = FixedPointConfig(0)
 				}
 				stateChanged()
 			}
@@ -87,8 +83,29 @@ class Probe(
 			stateChanged()
 		}
 
+	var fixedPointFractionSize: Int?
+		get() = fixedPointConfig?.fractionSize
+		set(value) {
+			fixedPointConfig = if (value == null) {
+				null
+			} else {
+				require(value >= 0 && value <= bitWidth.width) { Translations.getString("element.property.fixedPointConfig.fractionSizeRange.error", bitWidth.width) }
+				ensureFixedPointConfig().withFractionSize(value)
+			}
+		}
+
+	var fixedPointSigned: Boolean?
+		get() = fixedPointConfig?.signed
+		set(value) {
+			fixedPointConfig = if (value == null) {
+				null
+			} else {
+				ensureFixedPointConfig().withSigned(value)
+			}
+		}
+
 	init {
-		addPort(DigitalPortImpl(PortType.INPUT, defaultBit = Bit.Undefined))
+		addPort(DigitalPortImpl(PortType.INPUT, bitWidth = bitWidth, defaultBit = Bit.Undefined))
 		this.hasOutput = hasOutput
 	}
 
@@ -101,6 +118,13 @@ class Probe(
 	/** ---- [DigitalSignalSource] interface */
 
 	override var fixedPointConfig: FixedPointConfig? = null
+
+	private fun ensureFixedPointConfig(): FixedPointConfig {
+		if (fixedPointConfig == null) {
+			fixedPointConfig = FixedPointConfig()
+		}
+		return fixedPointConfig!!
+	}
 
 	@Suppress("UNUSED_PARAMETER")
 	override var signal: DigitalSignal?
@@ -151,5 +175,13 @@ class Probe(
 		if (outputCount > 0) {
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
 		}
+	}
+
+	private fun sendLogEvent(data: GraphActorData, time: Long) {
+		eventBus.post(LogEvent(
+			source = this,
+			name = StringUtils.orElse(name, "<Unknown>"),
+			value = data.getSignal<DigitalSignal>(1)?.hexString ?: "<empty>",
+			time = time))
 	}
 }

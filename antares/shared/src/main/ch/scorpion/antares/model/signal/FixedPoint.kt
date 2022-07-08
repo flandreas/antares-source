@@ -7,9 +7,15 @@ import ch.scorpion.jabbah.io.*
  * Setters must be public for reflective access by property editors on JVM.
  */
 class FixedPointConfig(
-	var fractionSize: Int = 0,
-	var signed: Boolean = false
+	fractionSize: Int = 0,
+	signed: Boolean = false
 ) : AbstractStorable() {
+
+	var fractionSize: Int = fractionSize
+		private set
+
+	var signed: Boolean = signed
+		private set
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
@@ -22,6 +28,12 @@ class FixedPointConfig(
 		fractionSize = reader.readInt("fraction")
 		signed = reader.readBoolean("signed")
 	}
+
+	fun withFractionSize(fractionSize: Int): FixedPointConfig =
+		FixedPointConfig(fractionSize, this.signed)
+
+	fun withSigned(signed: Boolean): FixedPointConfig =
+		FixedPointConfig(this.fractionSize, signed)
 }
 
 /**
