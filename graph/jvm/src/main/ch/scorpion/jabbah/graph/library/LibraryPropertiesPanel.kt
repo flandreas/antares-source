@@ -53,6 +53,8 @@ class LibraryPropertiesPanel(
 
 	init {
 		preferredSize = Dimension(400, 180)
+		visibilityField.customEditor.isEnabled = editable
+
 		buildUI()
 
 		properties?.let {
