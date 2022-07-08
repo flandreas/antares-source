@@ -27,7 +27,7 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
 	    properties.add(name.bind(editor, bean.id))
 	    properties.add(bitWidth.bind(editor, bean.id))
-	    properties.add(signalRep.bind(editor, bean.id, filter = { true }))
+	    properties.add(signalRep.bind(editor, bean.id))
 	    properties.add(output.bind(editor, bean.id, editable = !bean.model.isConnected))
 	    properties.add(logging.bind(editor, bean.id))
 	    if (bean.signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {

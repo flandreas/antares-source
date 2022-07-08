@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.inout
 
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.edit.Editor
@@ -36,7 +37,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    properties.add(bitWidth.bind(editor, bean.id))
 	    properties.add(orientation.bind(editor, bean.id))
 	    properties.add(color.bind(editor, bean.id))
-	    properties.add(signalRepresentation.bind(editor, bean.id))
+	    properties.add(signalRepresentation.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 	    if (bean.model.portType.isInput) {
 		    properties.add(toggle.bind(editor, bean.id))
 	    }

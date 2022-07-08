@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import javax.swing.JComboBox
 import javax.swing.JList
@@ -95,11 +94,7 @@ class TriggerEditor : ComboBoxPropertyEditor() {
     }
 }
 
-/**
- * Interpret `null` filter as standard case without the special case [DigitalSignalRepresentation.FIXED_POINT].
- * To include [DigitalSignalRepresentation.FIXED_POINT], provide a special filter in [AbstractReflectionPropertySwing.bind]
- */
-class DigitalSignalRepresentationEditor(filter: (DigitalSignalRepresentation) -> Boolean = { it != DigitalSignalRepresentation.FIXED_POINT }) : ComboBoxPropertyEditor() {
+class DigitalSignalRepresentationEditor(filter: (DigitalSignalRepresentation) -> Boolean = { true }) : ComboBoxPropertyEditor() {
     init {
         setAvailableValues(DigitalSignalRepresentation.values().filter { filter.invoke(it)}.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<DigitalSignalRepresentation>()

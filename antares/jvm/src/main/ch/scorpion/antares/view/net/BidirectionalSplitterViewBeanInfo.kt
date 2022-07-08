@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.BranchCount
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
@@ -31,6 +32,6 @@ class BidirectionalSplitterViewBeanInfo : DigitalComponentBeanInfo<Bidirectional
 		properties.add(branchCount.bind(editor, bean.id, editable = !connected, filter = { bean.model.supportedBranchCounts.contains(it)} ))
 		properties.add(handedness.bind(editor, bean.id, editable = !connected))
 		properties.add(portViewSpacing.bind(editor, bean.id))
-		properties.add(signalRep.bind(editor, bean.id))
+		properties.add(signalRep.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 	}
 }

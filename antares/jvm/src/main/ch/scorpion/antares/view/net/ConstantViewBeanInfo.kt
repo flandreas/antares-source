@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
@@ -20,7 +21,7 @@ class ConstantViewBeanInfo : DigitalComponentBeanInfo<ConstantView>() {
 		super.addProperties(bean, editor, properties)
 
 		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(signalRep.bind(editor, bean.id))
+		properties.add(signalRep.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 		properties.add(value.bind(editor, bean.id))
 	}
 }
