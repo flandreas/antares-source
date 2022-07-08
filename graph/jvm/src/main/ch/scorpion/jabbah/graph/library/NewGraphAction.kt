@@ -28,7 +28,7 @@ class NewGraphAction(
 
 	private val operationTarget: () -> Any? get() = {
 		if (selectedItem is LibraryDirectory) {
-			selectedFolder.library!!
+			selectedFolder.library
 		} else {
 			null
 		}
