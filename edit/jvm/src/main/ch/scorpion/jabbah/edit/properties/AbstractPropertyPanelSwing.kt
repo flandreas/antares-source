@@ -163,13 +163,13 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	private fun readBackCalculatedProperties() {
-		sheet.removePropertySheetChangeListener(propertyStorer)
 		propertyObject?.let { loadProperties(it) }
-		sheet.addPropertySheetChangeListener(propertyStorer)
 	}
 
 	protected fun loadProperties(bean: Any, classPath: String) {
 		try {
+			sheet.removePropertySheetChangeListener(propertyStorer)
+
 			val beanInfoClass = Class.forName(classPath)
 			@Suppress("UNCHECKED_CAST")
 			val beanInfo = beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
@@ -189,6 +189,8 @@ abstract class AbstractPropertyPanelSwing(
 		} catch (e: Throwable) {
 			LOG.warn("Could not instantiate Properties for $classPath: Exception $e")
 			clearProperties()
+		} finally {
+			sheet.addPropertySheetChangeListener(propertyStorer)
 		}
 	}
 
