@@ -1,50 +1,58 @@
 package ch.scorpion.jabbah.base.swing
 
-import javax.swing.plaf.basic.BasicLabelUI
 import java.awt.*
 import javax.swing.*
+import javax.swing.plaf.basic.BasicLabelUI
 import kotlin.math.PI
 
-class VerticalLabel {
+class VerticalLabel(
+	text: String = "",
+	icon: Icon? = null,
+	horizontalAlignment: Int = SwingConstants.LEFT,
+	val clockwise: Boolean
+) : JLabel(text, icon, horizontalAlignment) {
 
     companion object {
-
-        fun create(
-            text: String = "",
-            icon: Icon? = null,
-            horizontalAlignment: Int = SwingConstants.LEFT,
-            clockwise: Boolean = true
-        ): JLabel {
-            val label = JLabel(text, icon, horizontalAlignment)
-	        label.setUI(VerticalLabelUI.getUI(clockwise))
-            return label
-        }
+		const val UI_CLASS_ID = "VerticalLabelUI"
     }
+
+	private fun setUI(ui: VerticalLabelUI) {
+		super.setUI(ui)
+	}
+
+	override fun getUI(): VerticalLabelUI = ui as VerticalLabelUI
+
+	override fun getUIClassID(): String = UI_CLASS_ID
+
+	override fun updateUI() {
+		if (UIManager.get(uiClassID) != null) {
+			setUI(UIManager.getUI(this) as VerticalLabelUI)
+		} else {
+			throw IllegalStateException("Could not set VerticalLabelUI")
+		}
+	}
 }
 
-class VerticalLabelUI(private val clockwise: Boolean = true) : BasicLabelUI() {
+class VerticalLabelUI : BasicLabelUI() {
 
     companion object {
-        private val labelUI = VerticalLabelUI()
-	    private val antiClockwiseLabelUI = VerticalLabelUI(false)
         private val paintIconRect = Rectangle()
         private val paintTextRect = Rectangle()
         private val paintViewRect = Rectangle()
         private val paintViewInsets = Insets(0, 0, 0, 0)
 
-	    fun getUI(clockwise: Boolean): VerticalLabelUI {
-		    return if (clockwise) {
-			    labelUI
-		    } else {
-			    antiClockwiseLabelUI
-		    }
+	    @Suppress("unused") // Reflection
+	    @JvmStatic
+	    fun createUI(@Suppress("UNUSED_PARAMETER") c: JComponent): VerticalLabelUI {
+		    return VerticalLabelUI()
 	    }
     }
 
-    override fun getPreferredSize(c: JComponent?): Dimension {
-        val dim = super.getPreferredSize(c)
-        return Dimension(dim.height, dim.width)
-    }
+    override fun getPreferredSize(c: JComponent?): Dimension =
+		rotateSize(super.getPreferredSize(c))
+
+	private fun rotateSize(dim: Dimension): Dimension =
+		Dimension(dim.height, dim.width)
 
     override fun paint(g: Graphics?, c: JComponent?) {
         val label: JLabel = c as JLabel
@@ -77,7 +85,7 @@ class VerticalLabelUI(private val clockwise: Boolean = true) : BasicLabelUI() {
 
         val g2 = g as Graphics2D
         val oldTransform = g2.transform
-        if (clockwise) {
+        if ((c as VerticalLabel).clockwise) {
             g2.rotate(PI / 2)
             g2.translate(-0, -c.getWidth())
         } else {

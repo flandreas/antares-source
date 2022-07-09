@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.swing.VerticalLabel
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
@@ -38,6 +39,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.swing.JOptionPane
+import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
 
 
@@ -191,6 +193,8 @@ class AntaresSwing(
 
 			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
 			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
+
+			UIManager.getDefaults()[VerticalLabel.UI_CLASS_ID] = "ch.scorpion.jabbah.base.swing.VerticalLabelUI"
 
 			val preferences = prefetchPreferences(userDataDirectoryPath)
 			establishUserLanguage(preferences)

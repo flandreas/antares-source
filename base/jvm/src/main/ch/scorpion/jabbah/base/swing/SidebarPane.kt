@@ -56,7 +56,7 @@ class SidebarPane(
 			override val iconPath: String = "/img/double-arrow-right-16.png"
 
 			override fun createLabel(name: String, icon: Icon): JLabel =
-				VerticalLabel.create(name, icon)
+				VerticalLabel(name, icon, clockwise = true)
 
 			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
 				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
@@ -71,7 +71,7 @@ class SidebarPane(
 			override val iconPath: String = "/img/double-arrow-left-16.png"
 
 			override fun createLabel(name: String, icon: Icon): JLabel =
-				VerticalLabel.create(name, icon, clockwise = false)
+				VerticalLabel(name, icon, clockwise = false)
 
 			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
 				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
