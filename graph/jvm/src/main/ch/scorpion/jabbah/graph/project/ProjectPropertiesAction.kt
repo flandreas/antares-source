@@ -16,6 +16,8 @@ class ProjectPropertiesAction(
 
 	override val isEditable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, projectHolder.project!!)
 
+	override val isSystem: Boolean get() = false
+
 	override val currentProperties: LibraryProperties get() = projectHolder.project!!.properties
 
 	override val dialogTitle: String get() = Translations.getString("project.dialog.properties.title", currentProperties.name.getTranslation())

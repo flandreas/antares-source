@@ -197,6 +197,7 @@ open class LibraryImpl(
 			name = Name(value.name)
 			description = Description(value.description)
 			visibility = value.visibility
+			value.author?.let { author = it }
 		}
 
 	override fun bindLibraryItems() {

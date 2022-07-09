@@ -17,6 +17,7 @@ abstract class AbstractLibraryPropertiesAction(
 ) : AbstractAction(baseName) {
 
 	protected abstract val isEditable: Boolean
+	protected abstract val isSystem: Boolean
 	protected abstract val currentProperties: LibraryProperties
 	protected abstract val dialogTitle: String
 	protected abstract val emptyMessage: String
@@ -30,6 +31,8 @@ abstract class AbstractLibraryPropertiesAction(
 		while (true) {
 			properties = LibraryPropertiesPanel.showAsDialog(
 				title = title,
+				supportOwnership = true,
+				isSystem = isSystem,
 				properties = properties,
 				editable = isEditable
 			)
@@ -72,6 +75,8 @@ class LibraryPropertiesAction(
 	baseName = "library.action.properties"
 ) {
 	override val isEditable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, libraryHolder.library)
+
+	override val isSystem: Boolean get() = libraryHolder.library.isSystem
 
 	override val currentProperties: LibraryProperties get() = libraryHolder.library.properties
 

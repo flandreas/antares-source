@@ -241,6 +241,8 @@ class ProjectPersistencePanel(
 			var properties: LibraryProperties?
 			while (true) {
 				properties = LibraryPropertiesPanel.showAsDialog(
+					supportOwnership = false,
+					isSystem = false,
 					parent = this@ProjectPersistencePanel,
 					title = Translations.getString("project.dialog.new.dialog.title"))
 				if (properties == null) {

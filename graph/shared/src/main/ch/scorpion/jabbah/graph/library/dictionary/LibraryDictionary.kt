@@ -142,5 +142,6 @@ class LibraryDictionaryEntry(
 		name = Name(properties.name)
 		description = Description(properties.description)
 		visibility = properties.visibility
+		properties.author?.let { author = it }
 	}
 }

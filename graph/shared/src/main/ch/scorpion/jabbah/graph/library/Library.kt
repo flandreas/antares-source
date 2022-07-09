@@ -106,14 +106,16 @@ data class LibraryIdentification(
 data class LibraryProperties(
 	val name: TranslatableText = TranslatableText(),
 	val description: TranslatableText = TranslatableText(),
-	val visibility: LibraryVisibility = LibraryVisibility.Private
+	val visibility: LibraryVisibility = LibraryVisibility.Private,
+	val author: UserIdentity? = null
 ) {
 	companion object {
 		fun ofLibrary(library: Library): LibraryProperties =
 			LibraryProperties(
 				library.name.translation,
 				library.description.translation,
-				library.visibility)
+				library.visibility,
+				library.author)
 	}
 }
 

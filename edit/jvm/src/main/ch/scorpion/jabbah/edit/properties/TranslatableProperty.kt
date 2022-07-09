@@ -68,7 +68,7 @@ class TranslatablePropertyEditor(
 	private val editable: Boolean = true
 ) : AbstractPropertyEditor() {
 
-	private val textComponent: JTextComponent
+	val textComponent: JTextComponent
 	private var text: Translatable = TranslatableText()
 
 	init {

@@ -133,6 +133,10 @@ class ProjectManagementService(
 			dictionaryService.rename(project, properties.name)
 		}
 
+		if (properties.author != null && properties.author != project.author) {
+			LOG.userTrail("Changing author of Project ${project.uuid}")
+		}
+
 		project.properties = properties
 		libraryService.storeLibrary(project)
 		dictionaryService.update(project, properties)
