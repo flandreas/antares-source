@@ -1,5 +1,6 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.gate.effectiveGateInputWord
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
@@ -17,6 +18,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("bits", 3, ::bitsImpl))
+			define(ExternalFunctionSymbol("gated", 1, ::gatedImpl))
 		}
 	}
 
@@ -41,6 +43,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
 	/**
 	 * Extracts [size] bits at position [pos] from [signal], where bit positions start with 0.
+	 *
 	 * Example: bits(31, 3, 2) = 3.
 	 */
 	private fun bits(signal: DigitalSignal, pos: Long, size: Long): Long =
@@ -48,10 +51,28 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
 	/**
 	 * Extracts [size] bits at position [pos] from [signal], where bit positions start with 0.
+	 *
 	 * Example: bits(31, 3, 2) = 3.
 	 */
 	private fun bits(signal: Long, pos: Long, size: Long): Long =
 		BitOperation.bits(signal.toULong(), pos.toInt(), size.toInt()).toLong()
+
+	private fun gatedImpl(params: List<Any>): Any {
+		if (params.isEmpty()) {
+			throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
+		}
+		return gated(digitalSignalParam(0, params))
+	}
+
+	/**
+	 * Treats [signal] like an input signal to a logic gate, thereby possibly converting
+	 * undefined (floating) bits according to the current system preference
+	 * "Undefined Gate Input Behaviour".
+	 *
+	 * Example: gated(I) returns 0 if I is 0x?8 and "Undefined Gate Input Behaviour"
+	 * is "Read as O"
+	 */
+	private fun gated(signal: DigitalSignal): DigitalSignal = effectiveGateInputWord(signal)
 }
 
 fun digitalSignalParam(index: Int, params: List<Any>): DigitalSignal {

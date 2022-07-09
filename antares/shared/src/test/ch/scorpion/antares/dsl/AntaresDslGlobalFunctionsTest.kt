@@ -1,7 +1,7 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
@@ -24,7 +24,7 @@ class AntaresDslGlobalFunctionsTest {
 		val parser = AntaresParser(AntaresLexer("bits(I, 3, 2)"), analyser)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
-		memory.preset("I", DigitalSignalFactory.of(BitWidth.BW_8, 15))
+		memory.preset("I", DigitalSignalFactory.of(BW_8, 15))
 
 		val result = interpreter.interpret()
 
@@ -43,5 +43,19 @@ class AntaresDslGlobalFunctionsTest {
 		val result = interpreter.interpret()
 
 		assertEquals(1L, result)
+	}
+
+	@Test
+	fun shouldGateInputSignal() {
+		val analyser = SemanticAnalyser(null)
+		analyser.scope.define(Symbol("I"))
+		val parser = AntaresParser(AntaresLexer("gated(I)"), analyser)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("I", DigitalSignalFactory.undefined(BW_8))
+
+		val result = interpreter.interpret()
+
+		assertEquals(DigitalSignalFactory.falseValue(BW_8), result)
 	}
 }
