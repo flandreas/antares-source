@@ -179,7 +179,10 @@ class SourcingCommandManager(
 			try {
 				command.execute()
 			} catch (e: Exception) {
-				LOG.error("Exception in CommandManager.execute", e)
+				// Exceptions in Command execution are not necessarily to be considered as errors.
+				// Property Commands e.g. can perform validations which result in displaying an error
+				// message to the user. Therefore, log on Trace and not Error channel.
+				LOG.trace("Exception in CommandManager.execute: ${e.message}")
 				rollbackTransaction()
 				throw e
 			}
@@ -273,11 +276,16 @@ class SourcingCommandManager(
 			throw IllegalStateException("no transaction to rollback")
 		}
 		LOG.debug("Rollback transaction")
-		state.snapshots.peek().undo(forRedo = false)
-		transferUndoneSnapshotIfNecessary(storeForRedo = false)
-
-		state.transactionLevel = 0
-		state.transaction = null
+		try {
+			state.snapshots.peek().undo(forRedo = false)
+		} catch (e: Throwable) {
+			LOG.error("Error in undo during rollbackTransaction", e)
+			throw e
+		} finally {
+			transferUndoneSnapshotIfNecessary(storeForRedo = false)
+			state.transactionLevel = 0
+			state.transaction = null
+		}
 	}
 
 	override fun getUndoDescription(): String? {

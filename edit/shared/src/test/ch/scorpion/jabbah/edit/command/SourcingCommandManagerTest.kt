@@ -323,6 +323,21 @@ class SourcingCommandManagerTest {
 		assertFalse(cmdManager.canRedo())
 	}
 
+	/** GitHub issue #410. */
+	@Test
+	fun shouldHandleExceptionInUndoDuringRollback() {
+		assertFails("Error in execute") {
+			cmdManager.execute(UndoableExceptionCommand())
+		}
+
+		cmdManager.execute(AppendCommand(app, "a"))
+
+		assertEquals("a", app.mandatoryData.value)
+		assertTrue(cmdManager.canUndo())
+		cmdManager.undo()
+		assertEquals("", app.mandatoryData.value)
+	}
+
 	/** ---- Checkpoint tests */
 
 	@Test

@@ -68,6 +68,16 @@ class ExceptionCommand : AbstractCommand("anyDescription") {
 	}
 }
 
+class UndoableExceptionCommand : AbstractCommand("anyDescription"), Undoable {
+	override fun execute() {
+		throw RuntimeException("Error in execute")
+	}
+
+	override fun undo() {
+		throw RuntimeException("Error in undo")
+	}
+}
+
 class UndoableAppendCommand(
 	private val app: ApplicationDummy,
 	private val s: String

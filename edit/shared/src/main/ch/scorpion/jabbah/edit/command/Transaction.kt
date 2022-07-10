@@ -1,10 +1,16 @@
 package ch.scorpion.jabbah.edit.command
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Undoable
 
 /** A [Transaction] in a [SourcingCommandManager] contains multiple [Command]s. */
 internal class Transaction {
+
+	companion object {
+		private val LOG by logger(Transaction::class)
+	}
+
 	val commands = mutableListOf<Command>()
 	val headCommand: Command get() = commands.first()
 
@@ -23,9 +29,14 @@ internal class Transaction {
 
 	fun undo() {
 		check(canUndo) { "Cannot undo Transaction" }
-		commands.reversed().forEach {
-			(it as Undoable).undo()
-			it.validate()
+		try {
+			commands.reversed().forEach {
+				(it as Undoable).undo()
+				it.validate()
+			}
+		} catch (e: Throwable) {
+			LOG.error("Error in undoing Transaction", e)
+			throw e
 		}
 	}
 
