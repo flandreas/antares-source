@@ -262,7 +262,7 @@ class ProjectPersistencePanel(
 					if (JOptionPane.showConfirmDialog(
 							this@ProjectPersistencePanel,
 							Translations.getString("project.duplicate.msg", properties.name.getTranslation()),
-							Translations.getString("project.dialog.new.name.dialog.title"),
+							Translations.getString("project.dialog.new.dialog.title"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
 					) {
