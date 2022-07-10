@@ -11,10 +11,9 @@ import ch.scorpion.jabbah.graph.view.LibraryVisibilityEditor
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
-import javax.swing.JCheckBox
-import javax.swing.JLabel
-import javax.swing.JOptionPane
-import javax.swing.JPanel
+import javax.swing.*
+import javax.swing.event.AncestorEvent
+import javax.swing.event.AncestorListener
 
 /** A [JPanel] for editing the properties of a [Library].*/
 class LibraryPropertiesPanel(
@@ -34,6 +33,19 @@ class LibraryPropertiesPanel(
 			editable: Boolean = true,
 		): LibraryProperties? {
 			val panel = LibraryPropertiesPanel(supportOwnership, isSystem, properties, editable)
+			(panel.nameField.textComponent as JComponent).addAncestorListener(object : AncestorListener {
+				override fun ancestorAdded(event: AncestorEvent?) {
+					SwingUtilities.invokeLater {
+						event?.let {
+							it.component.requestFocus()
+							it.component.removeAncestorListener(this)
+						}
+					}
+				}
+				override fun ancestorRemoved(event: AncestorEvent?) { }
+				override fun ancestorMoved(event: AncestorEvent?) { }
+			})
+
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -55,7 +67,7 @@ class LibraryPropertiesPanel(
 
 	private val nameLabel = Translations.getString("library.property.name.name")
 	private val descLabel = Translations.getString("library.property.desc.name")
-	private val nameField = TranslatablePropertyEditor(nameLabel, editable = editable)
+	val nameField = TranslatablePropertyEditor(nameLabel, editable = editable)
 	private val descField = TranslatablePropertyEditor(descLabel, multiline = { true }, rows = 8, editable = editable)
 	private val visibilityLabel = Translations.getString("library.property.visibility.name")
 	private val visibilityField = LibraryVisibilityEditor()
