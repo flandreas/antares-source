@@ -157,6 +157,10 @@ tasks {
 		keeppackagenames("ch.scorpion.jabbah.graph.library,ch.scorpion.jabbah.graph.library.ResourceLibraryPersistenceService")
 		keepdirectories("libraries/**,ch/scorpion/jabbah/graph/library,ch/scorpion/jabbah/graph/library/ResourceLibraryPersistenceService")
 
+
+		// Other reflective classes
+		keep("class ch.scorpion.jabbah.base.swing.VerticalLabelUI { *; }")
+
 		printmapping("$buildDir/libs/antares-${version_project}-proguard.map")
 		renamesourcefileattribute("SourceFile")
 		keepattributes("SourceFile,LineNumberTable")
