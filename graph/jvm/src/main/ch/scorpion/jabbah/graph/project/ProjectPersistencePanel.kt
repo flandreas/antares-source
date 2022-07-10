@@ -248,7 +248,7 @@ class ProjectPersistencePanel(
 				if (properties == null) {
 					return
 				}
-				if (StringUtils.isBlank(properties.name.getTranslation())) {
+				if (properties.name.isEmpty || StringUtils.isBlank(properties.name.getTranslation())) {
 					if (JOptionPane.showConfirmDialog(
 							this@ProjectPersistencePanel,
 							Translations.getString("project.emptyName.msg"),
