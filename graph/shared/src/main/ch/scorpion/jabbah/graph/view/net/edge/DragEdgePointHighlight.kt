@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
@@ -25,6 +26,8 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 
 		/** The name of the [Int] property in [Properties] that determines the size of the drawn square.*/
 		const val PROP_HALF_SIZE = "graph.view.DragEdgePointHighlight.size"
+
+		private val STROKE = DrawModule.properties.getStroke(Handle.PROP_STROKE)
 	}
 
 	/** The index of the [Point2D] to be manipulated, if any. */
@@ -40,12 +43,15 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 		get() {
 			val size = DrawModule.properties.getInt(PROP_HALF_SIZE)
 			val bbox = edgeView.boundingBox
-			return Rectangle2D(bbox.x - size - 1, bbox.y - size - 1, bbox.width + 2 * size + 1, bbox.height + 2 * size + 1)
+			return Rectangle2D(
+				bbox.x - size - STROKE.width, bbox.y - size - STROKE.width,
+				bbox.width + 2 * size + STROKE.width, bbox.height + 2 * size + STROKE.width)
 		}
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		context.g.color = DrawModule.properties.getColor(PROP_COLOR)
+		context.g.stroke = STROKE
 		val size = DrawModule.properties.getInt(PROP_HALF_SIZE)
 
 		for (i in 1..edgeView.segmentPointCount - 2) {
