@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
 import ch.scorpion.jabbah.graph.model.net.NetTopologyChangeListener
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A [Port] is an object in a [Vertice] to which [Net]s are attached.
@@ -206,8 +207,8 @@ interface OutputPort<T : Any> : Port<T> {
 	 * Determines whether this [OutputPort] can be connected with the specified [Net],
 	 * allowing to prevent clashes of signals from multiple [OutputPorts][OutputPort] on the same [Net].
 	 */
-	fun canConnectToNet(net: Net<*>): Boolean =
-		canBeUndefined || net.ports
+	fun canConnectToNet(net: Net<*>, graphView: GraphView): Boolean =
+		graphView.allowMultipleOutputsPerNet || canBeUndefined || net.ports
 			.filter { it.portType == PortType.OUTPUT }
 			.filterIsInstance<OutputPort<*>>()
 			.all { it.customCanBeUndefined }

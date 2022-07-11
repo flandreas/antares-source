@@ -100,6 +100,8 @@ open class GraphViewImpl(
 
 	/** ---- [GraphView] interface */
 
+	override val allowMultipleOutputsPerNet: Boolean get() = false
+
 	override var snapper: Snapper? = null
 
 	override var scenarios: Scenarios = ScenariosImpl(this, eventBus)

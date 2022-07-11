@@ -88,7 +88,7 @@ object AutoConnector : DragManagerPlugin {
 		mode = Mode.Points
 		points.clear()
 		graphView.getDrawableIntersection(verticeView).forEach {
-			matchOtherDrawable(verticeView, it)
+			matchOtherDrawable(verticeView, it, graphView)
 		}
 		lastMatchLocation = verticeView.location
 	}
@@ -97,32 +97,32 @@ object AutoConnector : DragManagerPlugin {
 		mode = Mode.Commands
 		commands.clear()
 		graphView.getDrawableIntersection(verticeView).forEach {
-			matchOtherDrawable(verticeView, it)
+			matchOtherDrawable(verticeView, it, graphView)
 		}
 		return commands
 	}
 
-	private fun matchOtherDrawable(verticeView: VerticeView<*>, drawable: Drawable) {
+	private fun matchOtherDrawable(verticeView: VerticeView<*>, drawable: Drawable, graphView: GraphView) {
 		when (drawable) {
 			is VerticeView<*> -> {
 				verticeView.getPortViews()
 					.filter { !it.port.isConnected }
-					.forEach { matchPortViewOfOtherVerticeView(verticeView, it, drawable) }
+					.forEach { matchPortViewOfOtherVerticeView(verticeView, it, drawable, graphView) }
 			}
 			is EdgeView<*> -> {
 				verticeView.getPortViews()
 					.filter { !it.port.isConnected }
-					.forEach { matchOpenEndpointOfOtherEdgeView(verticeView, it, drawable) }
+					.forEach { matchOpenEndpointOfOtherEdgeView(verticeView, it, drawable, graphView) }
 			}
 			else -> {}
 		}
 	}
 
-	private fun matchOpenEndpointOfOtherEdgeView(verticeView: VerticeView<*>, portView: PortView<*>, ev: EdgeView<*>) {
+	private fun matchOpenEndpointOfOtherEdgeView(verticeView: VerticeView<*>, portView: PortView<*>, ev: EdgeView<*>, graphView: GraphView) {
 		val p = portView.owner!!.getPortConnectionPoint(portView.port)
 		if (ev.origin == null && p == ev.originEndpointView.location) {
 			ev.net?.let { net ->
-				if (!ORIGIN.canConnectTo(portView.port, net)) {
+				if (!ORIGIN.canConnectTo(portView.port, net, graphView)) {
 					return
 				}
 			}
@@ -134,7 +134,7 @@ object AutoConnector : DragManagerPlugin {
 		}
 		if (ev.destination == null && p == ev.destinationEndpointView.location) {
 			ev.net?.let { net ->
-				if (!DESTINATION.canConnectTo(portView.port, net)) {
+				if (!DESTINATION.canConnectTo(portView.port, net, graphView)) {
 					return
 				}
 			}
@@ -146,13 +146,13 @@ object AutoConnector : DragManagerPlugin {
 		}
 	}
 
-	private fun matchPortViewOfOtherVerticeView(verticeView: VerticeView<*>, portView: PortView<*>, otherVerticeView: VerticeView<*>) {
+	private fun matchPortViewOfOtherVerticeView(verticeView: VerticeView<*>, portView: PortView<*>, otherVerticeView: VerticeView<*>, graphView: GraphView) {
 		otherVerticeView.getPortViews()
 			.filter { !it.port.isConnected }
 			.forEach {
 				if (portView.owner!!.getPortConnectionPoint(portView.port) == it.owner!!.getPortConnectionPoint(it.port)) {
-					if (ORIGIN.canConnectTo(portView.port, null) && DESTINATION.canConnectTo(it.port, null)
-						|| DESTINATION.canConnectTo(portView.port, null) && ORIGIN.canConnectTo(it.port, null)
+					if (ORIGIN.canConnectTo(portView.port, null, graphView) && DESTINATION.canConnectTo(it.port, null, graphView)
+						|| DESTINATION.canConnectTo(portView.port, null, graphView) && ORIGIN.canConnectTo(it.port, null, graphView)
 					) {
 						when (mode) {
 							Mode.Points -> points.add(portView.owner!!.getPortConnectionPoint(portView.port))

@@ -48,6 +48,12 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	val netViewsCount: Int
 
 	/**
+	 * Determines whether the UI allows the user to connect multiple [OutputPorts][OutputPort]
+	 * to the same [Net], which can lead to signal conflicts during simulation.
+	 */
+	val allowMultipleOutputsPerNet: Boolean
+
+	/**
 	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
 	 *
 	 * This method is automatically called typically before simulation is started and is needed because [GraphView]s

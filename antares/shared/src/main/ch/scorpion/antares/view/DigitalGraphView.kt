@@ -43,6 +43,12 @@ class DigitalGraphView(
 			(graph as DigitalGraph).netSignalApplierChoice = value
 		}
 
+	override val allowMultipleOutputsPerNet: Boolean get() =
+		when (netSignalApplierChoice) {
+			NetSignalApplierChoice.Conflict -> false
+			NetSignalApplierChoice.WiredOr -> true
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

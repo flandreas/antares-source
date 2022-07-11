@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -311,8 +312,8 @@ abstract class AbstractPortViewStartConnector(
 		adjustment = null
 	}
 
-	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>): Boolean =
-		type.canConnectTo(edgeView.net!!, startPortView!!.port)
+	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean =
+		type.canConnectTo(edgeView.net!!, startPortView!!.port, graphView)
 
 	private fun insideStartPortView(location: Point2D): Boolean {
 		val pv = startVerticeView!!.getPortViewAtConnectionPoint(location)

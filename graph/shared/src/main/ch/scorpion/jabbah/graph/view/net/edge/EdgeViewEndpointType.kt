@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
@@ -15,8 +16,8 @@ enum class EdgeViewEndpointType {
 
     ORIGIN {
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean {
-        	return port.portType.isOutput
+        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean {
+        	return graphView.allowMultipleOutputsPerNet || port.portType.isOutput
         }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
@@ -54,8 +55,8 @@ enum class EdgeViewEndpointType {
 
     DESTINATION {
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean =
-	        port.portType.isInput || (port is OutputPort && net != null && port.canConnectToNet(net))
+        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean =
+	        port.portType.isInput || (port is OutputPort && net != null && port.canConnectToNet(net, graphView))
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
             edgeView.moveDestinationEndPoint(point.x, point.y)
@@ -101,17 +102,17 @@ enum class EdgeViewEndpointType {
      * @param port the [Port] to connect to
      * @param net the [Net] to which [port] is supposed to be connected, if already existing
      */
-    abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>?): Boolean
+    abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean
 
 	/**
 	 * Determines whether an endpoint of this type can connect to the specified [Net]
 	 * @param destNet the [Net] to connect to
 	 * @param origPort the [Port] to which [destNet] is supposed to be connected
 	 */
-	fun canConnectTo(destNet: Net<out Any>, origPort: Port<out Any>?): Boolean =
+	fun canConnectTo(destNet: Net<out Any>, origPort: Port<out Any>?, graphView: GraphView): Boolean =
 		origPort == null
 			|| (origPort.portType.isInput)
-			|| (origPort is OutputPort<*>) && origPort.canConnectToNet(destNet)
+			|| (origPort is OutputPort<*>) && origPort.canConnectToNet(destNet, graphView)
 
     /** Moves this endpoint of an [EdgeView] to the specified location. */
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)

@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -173,8 +174,8 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	// For testing
 	val usedFor: EdgeView<*>? get() = this.edgeView
 
-	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>): Boolean =
-		type.canConnectTo(edgeView.net!!, edgeView.getConnection(type.opposite)?.port)
+	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean =
+		type.canConnectTo(edgeView.net!!, edgeView.getConnection(type.opposite)?.port, graphView)
 
 	protected fun getEndpointView(): EdgeEndpointView {
 		return draggedEndpointType.getEndpoint(edgeView!!)

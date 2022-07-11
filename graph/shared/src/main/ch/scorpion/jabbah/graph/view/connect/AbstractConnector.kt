@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter.displayPortViewHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -63,7 +64,7 @@ abstract class AbstractConnector(
 		}
 
 		val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
-		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port, edgeView!!.net!!)) {
+		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port, edgeView!!.net!!, context.drawingView().drawing as GraphView)) {
 			clearTargetPortView()
 			return false
 		}
@@ -94,7 +95,7 @@ abstract class AbstractConnector(
 
 	protected fun insideTargetEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
 		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable)) {
+		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable, context.drawingView().drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
@@ -105,7 +106,7 @@ abstract class AbstractConnector(
 		return true
 	}
 
-	protected open fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>): Boolean {
+	protected open fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean {
 		return true
 	}
 
