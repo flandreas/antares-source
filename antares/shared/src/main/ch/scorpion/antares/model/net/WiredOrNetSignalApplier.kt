@@ -1,7 +1,10 @@
 package ch.scorpion.antares.model.net
 
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.OutputPort
 
 /**
  * Performs a "Wired OR" function when applying multiple [DigitalSignals][DigitalSignal]
@@ -19,13 +22,20 @@ object WiredOrNetSignalApplier : DigitalNetSignalApplier {
 		return a.bitWidth == b.bitWidth
 	}
 
-	override fun calculateSignal(signal: DigitalSignal?, netSignal: DigitalSignal?): DigitalSignal? {
-		if (signal == null) {
-			return null
-		}
-		if (netSignal == null) {
-			return signal
-		}
-		return netSignal.or(signal)
+	override fun calculateSignal(
+		signal: DigitalSignal?,
+		net: Net<DigitalSignal>,
+		excludePort: OutputPort<DigitalSignal>
+	): DigitalSignal? {
+		var result = signal ?: DigitalSignalFactory.undefined((excludePort as DigitalPort).bitWidth)
+		net.ports
+			.filter { it is OutputPort<*> && it !== excludePort }
+			.map { it as OutputPort<DigitalSignal> }
+			.forEach { port ->
+				port.getOutgoingSignal()?.let {
+					result = result.or(it)
+				}
+			}
+		return result
 	}
 }

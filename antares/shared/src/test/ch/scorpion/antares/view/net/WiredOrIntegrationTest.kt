@@ -4,6 +4,7 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.NetSignalApplierChoice
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -46,6 +47,39 @@ class WiredOrIntegrationTest : AbstractCircuitTest() {
 		proceedUntilQueueIsEmpty()
 
 		assertNull(edgeView.net?.executionError)
+		assertTrue(ledView.model.isOn)
+	}
+
+	@Test
+	fun shouldReturnFromOneTrue() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		switchViewA.model.on(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		switchViewA.model.off(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(DigitalSignalFactory.of(false), edgeView.model.signal)
+		assertFalse(ledView.model.isOn)
+	}
+
+	@Test
+	fun shouldReturnFromBothTrue() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+
+		switchViewA.model.on(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		switchViewB.model.on(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		switchViewB.model.off(scheduler)
+		proceedUntilQueueIsEmpty()
+
+		assertEquals(DigitalSignalFactory.of(true), edgeView.model.signal)
 		assertTrue(ledView.model.isOn)
 	}
 }
