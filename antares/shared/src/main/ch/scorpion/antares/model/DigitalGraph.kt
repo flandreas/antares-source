@@ -1,15 +1,18 @@
 package ch.scorpion.antares.model
 
-import ch.scorpion.antares.model.net.DigitalNet
-import ch.scorpion.antares.model.net.Tunnel
+import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphExecutionContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Extends [GraphImpl] in order to create temporary [Net]s for [Tunnel]s during execution.
@@ -18,6 +21,14 @@ class DigitalGraph(
 	name: String = Translations.getString("graph.name.unknown"),
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphImpl(name = name, eventBus = eventBus) {
+
+	companion object {
+		private val DEF_NET_SIGNAL_APPLIER_CHOICE = NetSignalApplierChoice.Conflict
+	}
+
+	var netSignalApplierChoice: NetSignalApplierChoice = DEF_NET_SIGNAL_APPLIER_CHOICE
+
+	/** ---- [GraphImpl] */
 
 	override fun formNet(signalHandler: SignalHandler) {
 		createTunnelNets()
@@ -28,6 +39,27 @@ class DigitalGraph(
 		super.executionStopped(signalHandler)
 		destroyTunnelNets()
 	}
+
+	override fun <T : Any> createGraphExecutionContext(): GraphExecutionContext<T> =
+		GraphExecutionContext(netSignalApplierChoice.netSignalApplier) as GraphExecutionContext<T>
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (netSignalApplierChoice != DEF_NET_SIGNAL_APPLIER_CHOICE) {
+			writer.writeString("netSignalApplier", netSignalApplierChoice.customName)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("netSignalApplier")) {
+			netSignalApplierChoice = NetSignalApplierChoice.withName(reader.readString("netSignalApplier"))
+		}
+	}
+
+	/** ---- [DigitalGraph] */
 
 	private fun createTunnelNets() {
 		val tunnelNets = mutableMapOf<String, Net<DigitalSignal>>()

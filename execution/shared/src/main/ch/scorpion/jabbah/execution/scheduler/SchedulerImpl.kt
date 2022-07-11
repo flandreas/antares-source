@@ -134,6 +134,8 @@ class SchedulerImpl(
 
 	override val isQueueEmpty: Boolean get() = queue.isEmpty
 
+	override val hasDeferredExecutionError: Boolean get() = executionErrorHandler.executionErrorCount > 0
+
 	override var isActive: Boolean
 		get() = activationState == ACTIVE
 		set(value) {
@@ -250,6 +252,8 @@ class SchedulerImpl(
 		}
 
 	override val executionTime: Long get() = relativeTime
+
+	override var executionContext: Any? = null
 
 	override val isLogTrace: Boolean get() = LOG.isTraceEnabled()
 

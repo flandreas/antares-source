@@ -27,6 +27,14 @@ interface SignalHandler : ExecutionErrorHandler {
 
 	val isLogTrace: Boolean
 
+	/**
+	 * An optional object set by the main object being executed when execution is started.
+	 * [Actors][Actor] to which this [SignalHandler] gets passed in all relevant methods
+	 * can then access this context object.
+	 * The concrete type of the context is determined by higher-level modules.
+	 */
+	var executionContext: Any?
+
     /** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
     fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String)
 

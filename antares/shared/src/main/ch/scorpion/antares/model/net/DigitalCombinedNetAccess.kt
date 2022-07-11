@@ -4,8 +4,8 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphExecutionContext
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
 
@@ -21,8 +21,16 @@ class DigitalCombinedNetAccess(
 	override val assertedSignal: DigitalSignal?
 		get() = port.getOutgoingSignal()?.getSubword(width, index)
 
-	override fun isConsistentWith(signal: DigitalSignal?): Boolean =
-		port.isOutputFullyUndefined || assertedSignal?.isConsistentWith(signal) ?: false
+	override fun isConsistentWith(signal: DigitalSignal?, signalHandler: SignalHandler): Boolean {
+		if (port.isOutputFullyUndefined) {
+			return true
+		}
+		if (signalHandler.executionContext is GraphExecutionContext<*>) {
+			return (signalHandler.executionContext as GraphExecutionContext<DigitalSignal>)
+				.netSignalApplier.signalsAreConsistent(assertedSignal, signal)
+		}
+		return false
+	}
 
 	override val isFullyUndefined: Boolean get() = assertedSignal?.isFullyUndefined ?: true
 

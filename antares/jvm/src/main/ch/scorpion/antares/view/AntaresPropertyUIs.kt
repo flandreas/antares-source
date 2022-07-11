@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.net.BranchCount
+import ch.scorpion.antares.model.net.NetSignalApplierChoice
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
@@ -175,6 +176,13 @@ class TunnelFlowDirectionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(TunnelFlowDirection.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<TunnelFlowDirection>()
+	}
+}
+
+class NetSignalApplierChoiceEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(NetSignalApplierChoice.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<NetSignalApplierChoice>()
 	}
 }
 

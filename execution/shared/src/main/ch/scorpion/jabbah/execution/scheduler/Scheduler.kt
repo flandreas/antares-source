@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 
 /**
@@ -47,6 +48,12 @@ interface Scheduler : SignalHandler {
 	var isSimulationTimeStatusEnabled: Boolean
 
 	var isSoftBreakpointsEnabled: Boolean
+
+	/**
+	 * Determines whether there is a deferred [ExecutionError] pending for possible resolution,
+	 * or leading to a simulation error if it can't be resolved.
+	 */
+	val hasDeferredExecutionError: Boolean
 
 	fun dispose()
 

@@ -210,6 +210,7 @@ open class GraphImpl(
 	}
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
+		signalHandler.executionContext = createGraphExecutionContext<Any>()
 		_elements.forEach { it.executionInitialize(signalHandler) }
 	}
 
@@ -288,6 +289,8 @@ open class GraphImpl(
 	}
 
 	/** ---- [GraphImpl] */
+
+	protected open fun <T: Any> createGraphExecutionContext(): GraphExecutionContext<T> = GraphExecutionContext()
 
 	/** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
 	protected open fun handleGraphElementAdded(graphElem: GraphElement) {

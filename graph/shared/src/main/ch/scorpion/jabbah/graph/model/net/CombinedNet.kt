@@ -47,7 +47,7 @@ open class CombinedNetAccess<T : Any>(
 	/** Returns the signal that the [OutputPort] currently asserts to the [CombinedNet].*/
 	open val assertedSignal: T? get() = port.getOutgoingSignal()
 
-	open fun isConsistentWith(signal: T?): Boolean =
+	open fun isConsistentWith(signal: T?, signalHandler: SignalHandler): Boolean =
 		port.isOutputFullyUndefined || SignalUtil.equals(port.getOutgoingSignal(), signal)
 
 	open val isFullyUndefined: Boolean get() = port.isOutputFullyUndefined
@@ -175,7 +175,7 @@ class CombinedNet<T : Any> {
 	 * output value of the specified [originOutputPort].
 	 * @return [SignalConflict] if a conflict is detected, `null` otherwise
 	 */
-	fun checkAllForConflict(originOutputPort: OutputPort<T>): SignalConflict<T>? {
+	fun checkAllForConflict(originOutputPort: OutputPort<T>, signalHandler: SignalHandler): SignalConflict<T>? {
 		if (accessOf(originOutputPort)!!.isFullyUndefined) {
 			return null
 		}
@@ -184,17 +184,15 @@ class CombinedNet<T : Any> {
 
 		return _accesses
 			.filterNot { it.port === originOutputPort }
-			.mapNotNull { checkForConflict(signal, it) }
-			.firstOrNull()
+			.firstNotNullOfOrNull { checkForConflict(signal, it, signalHandler) }
 	}
 
-	private fun checkForConflict(signal: T?, access: CombinedNetAccess<T>): SignalConflict<T>? {
-		return if (access.isConsistentWith(signal)) {
+	private fun checkForConflict(signal: T?, access: CombinedNetAccess<T>, signalHandler: SignalHandler): SignalConflict<T>? =
+		if (access.isConsistentWith(signal, signalHandler)) {
 			null
 		} else {
 			SignalConflict(signal, this, access.port)
 		}
-	}
 
 	fun setExecutionError(error: ExecutionError?) {
 		_nets.forEach { it.executionError = error }
@@ -216,7 +214,7 @@ class CombinedNet<T : Any> {
 	 * that doesn't conflict with any other [OutputPort]s.
 	 * Returns `null` if there are no or multiple such [CombinedNetAccess]es.
 	 */
-	val consistentAccess: CombinedNetAccess<T>? get() {
+	fun getConsistentAccess(signalHandler: SignalHandler): CombinedNetAccess<T>? {
 		var result: CombinedNetAccess<T>? = null
 		accesses
 			.forEach {
@@ -224,7 +222,7 @@ class CombinedNet<T : Any> {
 					if (result == null) {
 						result = it
 					} else {
-						if (checkAllForConflict(result!!.port) != null) {
+						if (checkAllForConflict(result!!.port, signalHandler) != null) {
 							return null
 						}
 					}

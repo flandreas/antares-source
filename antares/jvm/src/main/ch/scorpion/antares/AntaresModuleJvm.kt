@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
+import ch.scorpion.antares.model.net.NetSignalApplierChoice
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
@@ -239,6 +240,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(WaveformType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(VideoRamColorModel::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TunnelFlowDirection::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(NetSignalApplierChoice::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -261,6 +263,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(WaveformType::class.java, WaveformTypeEditor::class.java)
 		registry.registerEditor(VideoRamColorModel::class.java, VideoRamColorModelEditor::class.java)
 		registry.registerEditor(TunnelFlowDirection::class.java, TunnelFlowDirectionEditor::class.java)
+		registry.registerEditor(NetSignalApplierChoice::class.java, NetSignalApplierChoiceEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

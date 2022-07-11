@@ -288,11 +288,11 @@ open class PortImpl<T : Any>(
 
 		var anyConflict = false
 		combinedNets.forEach {
-			if (it.checkAllForConflict(this) != null) {
+			if (it.checkAllForConflict(this, signalHandler) != null) {
 				// Try to withdraw all weak signal in the net that might be the cause of inconsistency
 				withdrawWeakSignals(it, signalHandler)
 
-				it.checkAllForConflict(this)?.let { conflict ->
+				it.checkAllForConflict(this, signalHandler)?.let { conflict ->
 					anyConflict = true
 					raiseInconsistentNetError(conflict, signalHandler)
 				}
@@ -322,7 +322,17 @@ open class PortImpl<T : Any>(
 		// Check if there is a Port that asserts a defined signal to the net, and let it re-assert its signal
 		val replacement = replaceOwnUndefinedSignals(signalHandler)
 		resetExecutionError()
-		net!!.setSignal(replacement.signal, replacement.originPort, this, signalHandler, force)
+
+		val appliedSignal = if (signalHandler.executionContext is GraphExecutionContext<*>) {
+			(signalHandler.executionContext as GraphExecutionContext<T>).netSignalApplier.calculateSignal(
+				replacement.signal,
+				net!!.signal
+			)
+		} else {
+			replacement.signal
+		}
+
+		net!!.setSignal(appliedSignal, replacement.originPort, this, signalHandler, force)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {
@@ -346,7 +356,7 @@ open class PortImpl<T : Any>(
 		combinedNets.forEach { combinedNet ->
 			val thisAccess = combinedNet.accessOf(this)!!
 			if (thisAccess.isPartiallyUndefined) {
-				combinedNet.consistentAccess?.let { consistentAccess ->
+				combinedNet.getConsistentAccess(signalHandler)?.let { consistentAccess ->
 					signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal and using signal of consistent Port" }
 					replacement = SignalReplacement(
 						thisAccess.replaceUndefinedFrom(replacement.signal, consistentAccess.assertedSignal, signalHandler),

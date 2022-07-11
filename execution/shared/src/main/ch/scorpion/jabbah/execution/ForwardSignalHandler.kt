@@ -22,6 +22,8 @@ class ForwardSignalHandler : SignalHandler {
 
 	override val isLogTrace: Boolean get() = false
 
+	override var executionContext: Any? = null
+
 	override fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String) {
 		// empty
 	}

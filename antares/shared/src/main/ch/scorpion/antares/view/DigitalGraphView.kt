@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.net.NetSignalApplierChoice
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -33,6 +34,13 @@ class DigitalGraphView(
 					System.invokeLater { eventBus.post(DefaultLightColorEvent(this)) }
 				}
 			}
+		}
+
+	@Suppress("unused") // Reflection
+	var netSignalApplierChoice: NetSignalApplierChoice
+		get() = (graph as DigitalGraph).netSignalApplierChoice
+		set(value) {
+			(graph as DigitalGraph).netSignalApplierChoice = value
 		}
 
 	/** ---- [Storable] interface */
