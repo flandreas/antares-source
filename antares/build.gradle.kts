@@ -131,6 +131,7 @@ tasks {
 		keep("class sun.awt.** { *; }")
 		keep("class de.jangassen.** { *; }")
 		keep("class com.jthemedetecor.** { *; }")
+		keep("class oshi.** { *; }")
 
 		// Logging using reflection
 		keep("enum ch.scorpion.jabbah.base.LogLevel { *; }")
