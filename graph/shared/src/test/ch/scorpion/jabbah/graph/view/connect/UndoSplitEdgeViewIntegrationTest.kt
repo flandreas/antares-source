@@ -1,61 +1,17 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.Modifier
-import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.command.SourcingCommandManager
-import ch.scorpion.jabbah.edit.editor.EditEditorModule
-import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.EditorToolDriver
-import ch.scorpion.jabbah.graph.view.GraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /** Regression test for GitHub bug #218. */
-class UndoSplitEdgeViewIntegrationTest {
+class UndoSplitEdgeViewIntegrationTest: AbstractGraphViewEditingTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder {
-		builder -> drawingView.setDrawing(builder.graphView as Drawing<Component>)
-	}
-	private val drawingView = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false)
-	private val editor: Editor = EditEditorModule.createEditor(drawingView)
-	private val driver = EditorToolDriver(editor)
-	private val service = GraphViewModule.graphViewAppService
-
-	init {
-		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
-
-		setupCircuit()
-
-		val canvas = mockk<Canvas>(relaxed = true)
-		every { canvas.dimension } returns Dimension2D(1000, 1000)
-		every { canvas.devicePixelRatio } returns 1
-		drawingView. canvas = canvas
-
-		GraphViewImpl.inputEventHandler = null
-		editor.commandManager.bindDataHolder(builder)
-	}
-
-	private fun setupCircuit() {
+	override fun setupCircuit() {
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 100))
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
