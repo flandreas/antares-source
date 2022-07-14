@@ -39,15 +39,16 @@ abstract class AbstractGraphViewEditingTest {
 	init {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
 
-		setupCircuit()
-
 		val canvas = mockk<Canvas>(relaxed = true)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
 		every { canvas.devicePixelRatio } returns 1
-		view. canvas = canvas
+		view.canvas = canvas
+
+		setupCircuit()
 
 		GraphViewImpl.inputEventHandler = null
 		editor.commandManager.bindDataHolder(builder)
+
 	}
 
 	protected abstract fun setupCircuit()

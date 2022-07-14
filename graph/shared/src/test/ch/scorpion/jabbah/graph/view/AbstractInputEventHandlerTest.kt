@@ -20,11 +20,6 @@ abstract class AbstractInputEventHandlerTest(
 	EditEditorModule.createEditor(viewMock.build()),
 	handler
 ) {
-
-	companion object {
-		const val WIDTH = 20
-	}
-
 	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
 	protected val draggedEdgeView get() = builder.graphView.getEdgeViews().first()
 

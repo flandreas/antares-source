@@ -80,7 +80,7 @@ class EdgeToPortConnectorTest
 			loc = Point2D(200, 300),
 			inputDirection = Direction.WEST,
 			outputDirection = Direction.EAST,
-			width = WIDTH
+			width = TestVerticeView.DEF_SIZE
 		)
 		builder.addVerticeView(vv4)
 
