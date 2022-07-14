@@ -1,47 +1,16 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.AbstractGraphViewEditingTest
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.*
 
-class OscilloscopeEditIntegrationTest {
+class OscilloscopeEditIntegrationTest : AbstractGraphViewEditingTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder {
-		builder -> view.setDrawing(builder.graphView)
-	}
-	private val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false) as DrawingView<GraphView>
-	private val editor: Editor = EditEditorModule.createEditor(view as DrawingView<Drawing<Component>>)
-	private val driver = EditorToolDriver(editor)
-
-	init {
-		val canvas = mockk<Canvas>(relaxed = true)
-		every { canvas.dimension } returns Dimension2D(1000, 1000)
-		every { canvas.devicePixelRatio } returns 1
-		view.canvas = canvas
-
-		editor.commandManager.bindDataHolder(builder)
-	}
-
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setupCircuit() {
 		val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("P", 0, 0))
 		val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("Q", 100, 0))
 		val vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("R", 200, 0))

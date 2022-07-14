@@ -162,7 +162,7 @@ class GraphViewConnectServiceImpl(
 		connectToDestination(splitEdgeView, Connection(nodeView), destinationDirection)
 
 		graphView.add(tail)
-		connectToOrigin(tail, Connection(nodeView))
+		connectToOrigin(tail, Connection(nodeView), tail.getSegmentDirection(0))
 
 		// Connect newEdgeView
 		val oldNet = newEdgeView.net
