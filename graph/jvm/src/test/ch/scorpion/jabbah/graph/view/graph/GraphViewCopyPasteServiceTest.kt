@@ -5,13 +5,19 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.OriginIndicator
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,6 +30,13 @@ class GraphViewCopyPasteServiceTest {
 	}
 
 	private val service = GraphViewCopyPasteService()
+
+	@BeforeTest
+	fun setup() {
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
+	}
 
 	@Test
 	fun shouldCopyPasteInGraphView() {
@@ -104,5 +117,34 @@ class GraphViewCopyPasteServiceTest {
 		val newEv = builder.graphView.getEdgeViews().first()
 		assertEquals(NetViewStyle.BLOCK, newEv.netView!!.style)
 		assertEquals(PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Blue), newEv.netView!!.customColor)
+	}
+
+	/** Regression test for GitHub bug #426. */
+	@Test
+	fun shouldCopyPasteSubGraphVerticeViewWithEditedSymbol() {
+		val builder = GraphViewBuilder<Boolean>()
+		val view = DrawingViewMockBuilder().withDrawing(builder.graphView)
+
+		val libraryElement = createMetaGraph()
+		val vv = libraryElement.getNewInstance<Vertice>() as SubGraphVerticeView
+		builder.addVerticeView(vv)
+
+		// Edit ContainerDrawing
+		val containerDrawing = vv.getEditableContainerDrawing()
+		containerDrawing.add(TestVerticeView.createEastOutputVerticeView("Hello", 100, 100))
+		vv.setEditedContainerDrawing(containerDrawing)
+
+		val contents = service.copy(listOf(vv.id), builder.graphView)
+
+		// The bug #425 threw an IllegalArgumentException
+		service.paste(contents, view.build(), Point2D(10, 10))
+	}
+
+	private fun createMetaGraph(): ContainerLibraryElement {
+		val library = LibraryModule.libraryHolder.library
+		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library)
+		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
+		LibraryModule.libraryService.updateContainerLibraryElement(library, metaGraph, libraryElement)
+		return libraryElement
 	}
 }

@@ -13,8 +13,10 @@ class StoreXmlWriter(
 	private val xmlWriter: XmlWriter,
 	private val typeMap: TypeMap,
 	private val identityProvider: GlobalIdentityProvider,
-	private val filter: (Storable) -> Boolean = { true }
+	private val filter: (s: Storable, isToplevel: Boolean) -> Boolean = { _, _ -> true }
 ) : StoreWriter {
+
+	private var level: Int = 0
 
 	@Suppress("unused")
 	constructor(xmlWriter: XmlWriter) : this(
@@ -60,13 +62,18 @@ class StoreXmlWriter(
 	}
 
 	override fun writeStorables(name: String, iterator: Iterator<Storable>) {
-		xmlWriter.addElementAndDescend(name)
-		for (storable in iterator) {
-			if (filter.invoke(storable)) {
-				writeStorable(storable)
+		try {
+			xmlWriter.addElementAndDescend(name)
+			level++
+			for (storable in iterator) {
+				if (filter.invoke(storable, level <= 1)) {
+					writeStorable(storable)
+				}
 			}
+			xmlWriter.ascend()
+		} finally {
+			level--
 		}
-		xmlWriter.ascend()
 	}
 
 	override fun writeInt(name: String, value: Int) {

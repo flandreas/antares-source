@@ -43,7 +43,7 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	fun addDrawable(drawable: Drawable)
 
 	/**
-	 * Returns the [ContainerDrawing] that can be customized by the user, which is either the one of the reference
+	 * Returns a clone of the [ContainerDrawing] that can be customized by the user, which is either the one of the reference
 	 * [Library] [MetaGraph] (if the user hasn't customized it yet), or the previously customized
 	 * [ContainerDrawing].
 	 */

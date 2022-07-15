@@ -19,7 +19,9 @@ import io.mockk.mockk
  * Provides an [EditorToolDriver] in a [DrawingView] to support
  * tests of editing a [GraphView].
  */
-abstract class AbstractGraphViewEditingTest {
+abstract class AbstractGraphViewEditingTest(
+	snapshotSize: Int = 2
+) {
 
 	companion object {
 		init {
@@ -37,7 +39,7 @@ abstract class AbstractGraphViewEditingTest {
 	protected val service = GraphViewModule.graphViewAppService
 
 	init {
-		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, snapshotSize)
 
 		val canvas = mockk<Canvas>(relaxed = true)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
