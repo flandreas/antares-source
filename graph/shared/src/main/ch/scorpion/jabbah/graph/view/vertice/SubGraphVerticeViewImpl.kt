@@ -351,7 +351,7 @@ class SubGraphVerticeViewImpl(
 			}
 		}
 		if ("label" == reference.name) {
-			label = reference.additionalInfo as Translatable?
+			_label = reference.additionalInfo as Translatable?
 		}
 		if ("mirrorH" == reference.name) {
 			isHorizontallyMirrored = reference.additionalInfo as Boolean
@@ -368,6 +368,12 @@ class SubGraphVerticeViewImpl(
 		if (customizedContainerDrawing != null && model.designError == null) {
 			repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
+		}
+
+		// Set the label loaded in resolve() not before here, because at the time of resolve(),
+		// the DrawableBag is still empty
+		if (_label != null) {
+			label = _label
 		}
 	}
 
