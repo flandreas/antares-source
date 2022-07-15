@@ -19,6 +19,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
 	private var lastX: Double = 0.0
 	private var lastY: Double = 0.0
+	private var origSegmentIndex: Int? = null
 	private var segmentIndex: Int? = null
 	private var totalOffset: Double = 0.0
 
@@ -47,7 +48,8 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 		lastX = context.x + context.editor.snapManager.snapX(context.x, context.y)
 		lastY = context.y + context.editor.snapManager.snapY(context.x, context.y)
-		segmentIndex = edgeView!!.polyline.findSegment(context.x, context.y)
+		origSegmentIndex = edgeView!!.polyline.findSegment(context.x, context.y)
+		segmentIndex = origSegmentIndex
 		updateCursor(segmentIndex, context)
 		totalOffset = 0.0
 		return this
@@ -78,7 +80,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 		if (totalOffset != 0.0) {
 			LOG.userTrail("Move segment ${segmentIndex!!} of EdgeView ${edgeView?.id}")
-			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, segmentIndex!!, totalOffset))
+			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, origSegmentIndex!!, totalOffset))
 		}
 		return null
 	}
