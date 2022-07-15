@@ -69,7 +69,7 @@ class IOIntegrationTest {
         val buffer = ByteArrayOutputStream()
         val xmlWriter = ElectricXmlWriter(buffer)
 
-        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator()) {true}
+        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator()) { _,_ -> true}
 	    storeXmlWriter.writeStorable(document)
 
         // Read in order to check
