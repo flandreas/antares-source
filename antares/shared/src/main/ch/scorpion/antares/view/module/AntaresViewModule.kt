@@ -475,7 +475,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(AND), fu)
 		addLibraryItem(library, BaseLibraryElement(OR), fu)
 		addLibraryItem(library, BaseLibraryElement(NOT), fu)
-		addLibraryItem(library, fu, library.directory)
+		addLibraryItem(library, fu, library)
 
 		val net = LibraryFolder(Translations.getString("library.folder.net"))
 		addLibraryItem(library, BaseLibraryElement(CONSTANT), net)
@@ -493,7 +493,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
 		addLibraryItem(library, BaseLibraryElement(DOUBLE_THROW_SWITCH), net)
 		addLibraryItem(library, BaseLibraryElement(WIRE_TAP), net)
-		addLibraryItem(library, net, library.directory)
+		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
 		addLibraryItem(library, BaseLibraryElement(AND), base)
@@ -506,7 +506,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(BUFFER), base)
 		addLibraryItem(library, BaseLibraryElement(TRISTATE_BUFFER), base)
 		addLibraryItem(library, BaseLibraryElement(DELAY), base)
-		addLibraryItem(library, base, library.directory)
+		addLibraryItem(library, base, library)
 
 		val input = LibraryFolder(Translations.getString("library.folder.input"))
 		addLibraryItem(library, BaseLibraryElement(INPUT), input)
@@ -515,7 +515,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(CLOCK), input)
 		addLibraryItem(library, BaseLibraryElement(KEYBOARD), input)
 		addLibraryItem(library, BaseLibraryElement(JOYSTICK), input)
-		addLibraryItem(library, input, library.directory)
+		addLibraryItem(library, input, library)
 
 		val output = LibraryFolder(Translations.getString("library.folder.output"))
 		addLibraryItem(library, BaseLibraryElement(OUTPUT), output)
@@ -526,18 +526,18 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(TERMINAL), output)
 		addLibraryItem(library, BaseLibraryElement(BUZZER), output)
 		addLibraryItem(library, BaseLibraryElement(VIDEO_RAM), output)
-		addLibraryItem(library, output, library.directory)
+		addLibraryItem(library, output, library)
 
 		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
 		addLibraryItem(library, BaseLibraryElement(ROM), memory)
 		addLibraryItem(library, BaseLibraryElement(RAM), memory)
 		addLibraryItem(library, BaseLibraryElement(LUT), memory)
-		addLibraryItem(library, memory, library.directory)
+		addLibraryItem(library, memory, library)
 
 		val arithmetic = LibraryFolder(Translations.getString("library.folder.arithmetic"))
 		addLibraryItem(library, BaseLibraryElement(RANDOM), arithmetic)
 		addLibraryItem(library, BaseLibraryElement(BIT_EXTENDER), arithmetic)
-		addLibraryItem(library, arithmetic, library.directory)
+		addLibraryItem(library, arithmetic, library)
 	}
 
 	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {

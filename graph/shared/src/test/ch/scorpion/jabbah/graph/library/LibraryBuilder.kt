@@ -15,7 +15,7 @@ class LibraryBuilder(
 	private val stack = Stack<LibraryDirectory>()
 
 	init {
-		stack.push(library.directory)
+		stack.push(library)
 	}
 
 	/** Steps back from the current [LibraryDirectory].*/

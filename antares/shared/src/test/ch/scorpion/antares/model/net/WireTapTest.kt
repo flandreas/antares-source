@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.Bit.*
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4

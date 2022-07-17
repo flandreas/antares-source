@@ -263,7 +263,7 @@ class ContainerTreeTest {
 		fun addInnerCustomSubGraphVerticeView(): Setup {
 			val library = LibraryModule.libraryHolder.library
 			TestLibraryBuilder().addInnerCustomComponent(library)
-			val vv = (library.directory.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as VerticeView<*>
+			val vv = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as VerticeView<*>
 			graphViewBuilder.addVerticeView(vv)
 			// TODO This shouldn't be necessary any more
 			//containerTree.model.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
