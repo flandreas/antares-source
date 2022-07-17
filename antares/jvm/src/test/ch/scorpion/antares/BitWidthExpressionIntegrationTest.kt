@@ -37,7 +37,7 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 		setupLibrary()
 		TestLibraryBuilder().addBitWidthExpressionInputOutput(library, "BW", "BW * 2")
 
-		subGraphVV = (library.directory.get(TestLibraryBuilder.BIT_WITH_EXPRESSION) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		subGraphVV = (library.get(TestLibraryBuilder.BIT_WITH_EXPRESSION) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 			as SubGraphVerticeViewImpl
 
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)

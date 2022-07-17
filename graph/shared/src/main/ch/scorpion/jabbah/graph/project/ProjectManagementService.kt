@@ -101,7 +101,7 @@ class ProjectManagementService(
 		libraryService.storeLibrary(project)
 		dictionaryService.add(project)
 
-		libraryService.addContainerLibraryElement(project, metaGraph, project.directory)
+		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
 		return project
 	}

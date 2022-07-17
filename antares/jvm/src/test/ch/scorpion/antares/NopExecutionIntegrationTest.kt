@@ -43,7 +43,7 @@ class NopExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		setupLibrary()
 
 		TestLibraryBuilder().addNOP(library)
-		subGraphVV = (library.directory.get(TestLibraryBuilder.NOP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		subGraphVV = (library.get(TestLibraryBuilder.NOP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 			as SubGraphVerticeView<out SubGraphVertice>
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 

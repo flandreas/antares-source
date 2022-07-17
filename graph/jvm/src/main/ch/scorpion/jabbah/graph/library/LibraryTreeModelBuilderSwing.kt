@@ -28,7 +28,7 @@ class LibraryTreeModelBuilderSwing(
 		}
 
 		fun addLibrary(parentSwingNode: DefaultMutableTreeNode, library: Library, filter: LibraryFilter? = null) {
-			addItems(parentSwingNode, LibraryDirectoryTreeModelBuilder(library.directory, filter).build())
+			addItems(parentSwingNode, LibraryDirectoryTreeModelBuilder(library, filter).build())
 		}
 	}
 

@@ -26,7 +26,7 @@ class LibraryImplTest {
 			.back()
 			.addDirectory("Folder3")
 
-		assertEquals(2, library.directory.indexOf(library.directory.getRecursively("Folder3")!!))
+		assertEquals(2, library.indexOf(library.getRecursively("Folder3")!!))
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class LibraryImplTest {
 			.back()
 			.addDirectory("Folder3")
 
-		assertEquals(2, library.directory.indexOf(library.directory.getRecursively("Folder3")!!))
+		assertEquals(2, library.indexOf(library.getRecursively("Folder3")!!))
 	}
 
 	@Test

@@ -236,7 +236,16 @@ class SourcingCommandManager(
 		LOG.trace("Begin transaction for '${command.getDescription()}'")
 		if (state.transaction == null) {
 			state.transaction = Transaction()
-			addableSnapshot().add(state.transaction!!)
+
+			if (register && !state.snapshots.empty) {
+				// Registered Command must always be added to the current Snapshot, because
+				// the business layer has always performed the Command's logic (hence only registration),
+				// and the resulting changes would be done twice in a Snapshot replay when it was
+				// added to a new Snapshot. GitHub issue #369.
+				state.snapshots.peek().add(state.transaction!!)
+			} else {
+				addableSnapshot().add(state.transaction!!)
+			}
 		}
 		state.transactionLevel++
 		state.transaction?.let {
@@ -355,7 +364,8 @@ class SourcingCommandManager(
 		return state.snapshots.peek()
 	}
 
-	private fun addSnapshot() {
+	// Visible for testing
+	fun addSnapshot() {
 		state.snapshots.push(Snapshot(createSnapshotData(), undoableDataHolder))
 	}
 

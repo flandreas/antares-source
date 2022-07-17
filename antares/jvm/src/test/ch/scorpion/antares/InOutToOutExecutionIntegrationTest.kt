@@ -48,7 +48,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		setupLibrary()
 
 		TestLibraryBuilder().addInOutToOut(library)
-		subGraphVV = (library.directory.get(TestLibraryBuilder.INOUT_TO_OUT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		subGraphVV = (library.get(TestLibraryBuilder.INOUT_TO_OUT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 			as SubGraphVerticeView<out SubGraphVertice>
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 

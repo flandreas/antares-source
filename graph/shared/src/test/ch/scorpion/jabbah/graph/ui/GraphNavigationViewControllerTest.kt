@@ -162,7 +162,7 @@ class GraphNavigationViewControllerTest {
 	private fun createSubGraphVerticeView(): SubGraphVerticeView<*> {
 		val library = LibraryModule.libraryHolder.library
 		TestLibraryBuilder().addInnerCustomComponent(library)
-		return (library.directory.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement)
+		return (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement)
 			.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView<*>
 	}
 }
