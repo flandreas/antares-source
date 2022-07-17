@@ -3,9 +3,11 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.GraphProperties
@@ -18,12 +20,21 @@ class TestAction(
 	private val editor: Editor
 ) : AbstractViewAction("view.action.test") {
 
+	companion object {
+		private val LOG by logger(TestAction::class)
+	}
+
 	override fun execute(event: ActionEvent) {
-		showToast()
+		createCommandSnapshot()
 	}
 
 	private fun showToast() {
 		Toast.show("Hallo Antares!")
+	}
+
+	private fun createCommandSnapshot() {
+		LOG.info("Create new snapshot")
+		(editor.commandManager as SourcingCommandManager).addSnapshot()
 	}
 
 	private fun setBitWidthGraphParam() {

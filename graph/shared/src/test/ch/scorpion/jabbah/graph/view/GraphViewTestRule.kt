@@ -3,9 +3,12 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.DesktopUser
 import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.select.EditSelectModule
+import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
@@ -47,6 +50,8 @@ object GraphViewTestRule {
 		IOModule.typeMap.register("graphOutputImpl", GraphOutputImpl::class)
 		IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
 		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
+
+		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, TestVerticeView::class) { SelectedColorSelectionModel(it) }
 
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
