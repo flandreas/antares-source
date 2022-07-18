@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.ui
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.text.FormattedText
@@ -89,7 +90,11 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
 		if (event.name == Editor.PROP_ACTIVE) {
-			bean = defaultBean
+			// Invoke later in order to give the View time to update its enabledness,
+			// because enabledness of the property editors depend on it
+			System.invokeLater {
+				bean = defaultBean
+			}
 		}
 	}
 
