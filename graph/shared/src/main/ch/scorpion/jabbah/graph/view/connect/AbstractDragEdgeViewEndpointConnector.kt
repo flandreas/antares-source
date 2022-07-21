@@ -85,6 +85,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				transitTo("drag") {
 					given { altReleased(it) }
 				}
+				stayOtherwise()
 			}
 
 			state("insideTargetPortView") {
