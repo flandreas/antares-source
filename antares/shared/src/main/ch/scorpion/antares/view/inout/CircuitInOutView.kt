@@ -228,7 +228,7 @@ class CircuitInOutView(
 
 	override val controlId: String get() = "circuitInOut:$id"
 
-	override val controlName: String get() = "$type ${model.name}"
+	override val controlName: String get() = "$type: ${model.name}"
 
 	override fun createControlView(): ControlView<CircuitInOut> {
 		val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model, controlName)

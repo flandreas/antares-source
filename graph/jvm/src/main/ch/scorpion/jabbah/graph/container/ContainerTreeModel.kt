@@ -199,12 +199,11 @@ class ContainerTreeModel(
 	 * from the given [ControlViewSource]. The specified [DeepVerticeLink] reaches to the model of the [SubGraphVerticeView]
 	 * that contains ´source´, but does NOT include the ID of the [ControlView]'s model.
 	 */
-	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
-		return DefaultMutableTreeNode(ContainerTreeControlItem(
+	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode =
+		DefaultMutableTreeNode(ContainerTreeControlItem(
 			source,
 			{ ControlViewComponent(styleProvider, source, baseLink) },
 			source.iconPath))
-	}
 
 	/**
 	 * Finds the index of the [ContainerTreeControlItem] with the given control ID in the toplevel [controlsNode]
@@ -301,9 +300,7 @@ class ContainerTreePortItem(
 	val portName: String get() = graphPortView.model.name!!
 	private val portLabel: String get() = FormattedText.replaceNegation(graphPortView.model.name!!).textWithOverline
 
-	override fun getDescription(): String {
-		return "${graphPortView.model.portType} $portLabel"
-	}
+	override fun getDescription(): String = "${graphPortView.model.portType}: $portLabel"
 }
 
 private class ContainerTreeControlItem(
@@ -316,7 +313,7 @@ private class ContainerTreeControlItem(
 	val controlModelId: Int get() = source.model.id
 	val controlName: String get() = FormattedText.replaceNegation(source.controlName).textWithOverline
 
-		override fun getDescription(): String = controlName
+	override fun getDescription(): String = controlName
 }
 
 private class ContainerTreeFolderItem(
