@@ -83,6 +83,8 @@ class TranslatablePropertyEditor(
 		textComponent.isEditable = editable
 
 		buildUI()
+
+		editor?.isFocusable = true
 	}
 
 	/** ---- [AbstractPropertyEditor] */
@@ -100,8 +102,15 @@ class TranslatablePropertyEditor(
 		textComponent.text = text.getOptionalTranslation()
 	}
 
+	private inner class FocusPanel : JPanel() {
+		override fun requestFocus() {
+			textComponent.requestFocus()
+			textComponent.selectAll()
+		}
+	}
+
 	private fun buildUI() {
-		val panel = JPanel()
+		val panel = FocusPanel()
 
 		panel.layout = EGBL.getLayout()
 		panel.background = UIManager.getColor("Table.background")
