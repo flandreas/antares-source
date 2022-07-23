@@ -52,7 +52,7 @@ abstract class AbstractBranchCountSplitterView<T : AbstractBranchCountSplitter>(
 			if (field != value) {
 				invalidate()
 				field = value
-				modelExchanged(model)
+				updateGeometry()
 				invalidate()
 				update()
 			}
