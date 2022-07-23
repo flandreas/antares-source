@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawProperties
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -30,7 +29,7 @@ interface ConnectionPointHighlight : Unzoomable {
 	companion object {
 		/** The name of the [Color] property in [DrawProperties] */
 		const val PROP_COLOR = "graph.view.isPort.highlight.color"
-		const val SIZE_HALF = 6.0
+		const val SIZE_HALF = 10.0
 	}
 
 	var location: Point2D
@@ -62,7 +61,7 @@ object ConnectionPointHighlighter {
 			portViewHighlight = highlight
 			portViewHighlight!!.location = location
 			portViewHighlight!!.alternativeView = alternativeView
-			getHighlightContainer(view).add(portViewHighlight!!)
+			view.ghostContainer.add(portViewHighlight!!)
 			this.view = view
 		} else {
 			portViewHighlight!!.location = location
@@ -75,15 +74,15 @@ object ConnectionPointHighlighter {
 		if (portViewHighlight != null) {
 			view?.let {
 				LOG.trace("removePortViewHighlight")
-				getHighlightContainer(it).remove(portViewHighlight!!)
-				getHighlightContainer(it).validate()
+				it.ghostContainer.remove(portViewHighlight!!)
+				it.ghostContainer.validate()
 				portViewHighlight = null
 				view = null
 			}
 		}
 	}
 
-	private fun getHighlightContainer(view: DrawingView<*>): DrawableContainer<Drawable> = view.animationContainer
+	//private fun getHighlightContainer(view: DrawingView<*>): DrawableContainer<Drawable> = view.animationContainer
 }
 
 /**
@@ -93,7 +92,7 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 
 	companion object {
 
-		private const val INSET = 2
+		private const val INSET = 3
 
 		val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width)
 
@@ -141,32 +140,34 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 class ConnectionPointReconnect : AbstractRectangularUnzoomable(SIZE_HALF), ConnectionPointHighlight {
 
 	companion object {
-		private const val SIZE_HALF = 6.0
-		private const val INSET = 3
+		private const val F = 3.0
+		private const val SIZE_HALF = F * 6.0
+		private const val INSET = F * 3.0
+		private const val ARROW = F * 2.0
 		private val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width)
 
 		private val NORTH = System.createPath()
 			.moveTo(0.0, -SIZE_HALF)
-			.lineTo(2.0, -SIZE_HALF + 2)
-			.lineTo(-2.0, -SIZE_HALF + 2)
+			.lineTo(ARROW, -SIZE_HALF + ARROW)
+			.lineTo(-ARROW, -SIZE_HALF + ARROW)
 			.close()
 
 		private val SOUTH = System.createPath()
 			.moveTo(0.0, SIZE_HALF)
-			.lineTo(2.0, SIZE_HALF - 2)
-			.lineTo(-2.0, SIZE_HALF - 2)
+			.lineTo(ARROW, SIZE_HALF - ARROW)
+			.lineTo(-ARROW, SIZE_HALF - ARROW)
 			.close()
 
 		private val EAST = System.createPath()
 			.moveTo(SIZE_HALF, 0.0)
-			.lineTo(SIZE_HALF - 2, -2.0)
-			.lineTo(SIZE_HALF - 2, 2.0)
+			.lineTo(SIZE_HALF - ARROW, -ARROW)
+			.lineTo(SIZE_HALF - ARROW, ARROW)
 			.close()
 
 		private val WEST = System.createPath()
 			.moveTo(-SIZE_HALF, 0.0)
-			.lineTo(-SIZE_HALF + 2, -2.0)
-			.lineTo(-SIZE_HALF + 2, 2.0)
+			.lineTo(-SIZE_HALF + ARROW, -ARROW)
+			.lineTo(-SIZE_HALF + ARROW, ARROW)
 			.close()
 	}
 
@@ -178,7 +179,9 @@ class ConnectionPointReconnect : AbstractRectangularUnzoomable(SIZE_HALF), Conne
 		context.g.stroke = stroke
 
 		val rect = getViewRectangle()
-		context.g.fillOval(rect.x.toInt() + INSET, rect.y.toInt() + INSET, rect.width.toInt() - 2* INSET, rect.height.toInt() - 2* INSET)
+		context.g.fillOval(
+			rect.x.toInt() + INSET, rect.y.toInt() + INSET,
+			rect.width.toInt() - 2 * INSET, rect.height.toInt() - 2* INSET)
 
 		context.g.translate(rect.centerX, rect.centerY)
 		context.g.fill(NORTH)
