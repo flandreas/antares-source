@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -34,6 +35,7 @@ abstract class AbstractPortView<T : Any>(
 	y: Int,
 	direction: Direction,
 	open var portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
+	open var internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int,
 	override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
@@ -285,6 +287,9 @@ abstract class AbstractPortView<T : Any>(
 		writer.writeDouble("y", location.y)
 		writer.writeString("dir", direction.customName)
 		writer.writeString("textPos", portLabelPosition.customName)
+		if (internalLabelOrientation != InternalLabelOrientation.Horizontal) {
+			writer.writeString("intLabelOrient", internalLabelOrientation.customName)
+		}
 		if (port is Storable) {
 			writer.writeInt("portId", writer.provideIdentity(port as Storable))
 		}
@@ -296,6 +301,9 @@ abstract class AbstractPortView<T : Any>(
 		// There was a bug in the older version that wrote enum names "INTERNAL" to physical files.
 		// Use toLower() in order to be able to read these files as well
 		portLabelPosition = PortLabelPosition.withName(reader.readString("textPos").lowercase())
+		if (reader.hasAttribute("intLabelOrient")) {
+			internalLabelOrientation = InternalLabelOrientation.withName(reader.readString("intLabelOrient"))
+		}
 		if (reader.hasAttribute("portId")) {
 			val portId = reader.readInt("portId")
 			reader.requestResolution(this, Reference(name = "portRef", referenceId = portId))

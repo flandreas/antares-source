@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.io.Storable
@@ -67,6 +68,17 @@ class DigitalPortViewComponent(
             portView!!.invalidate()
             portView!!.validate()
         }
+
+	var internalLabelOrientation: InternalLabelOrientation
+		get() = digitalPortView.internalLabelOrientation
+		set(value) {
+			if (value != digitalPortView.internalLabelOrientation) {
+				portView!!.invalidate()
+				digitalPortView.internalLabelOrientation = value
+				portView!!.invalidate()
+				portView!!.validate()
+			}
+		}
 
     var outputAnnotation: OutputAnnotation
         get() = digitalPort.outputAnnotation

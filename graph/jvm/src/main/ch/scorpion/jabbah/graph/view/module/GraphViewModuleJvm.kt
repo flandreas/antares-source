@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
@@ -82,6 +83,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(LayoutType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PortType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(InternalLabelOrientation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
@@ -93,6 +95,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.register(LayoutType::class.java) { LayoutEditor((it as CommandPropertySwing<LayoutType>).filter) }
 		registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)
 		registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
+		registry.registerEditor(InternalLabelOrientation::class.java, InternalLabelOrientationEditor::class.java)
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
 		registry.register(NetViewStyle::class.java) { NetViewStyleEditor((it as CommandPropertySwing<NetViewStyle>).filter) }
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)

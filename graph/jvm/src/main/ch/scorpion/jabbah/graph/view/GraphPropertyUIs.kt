@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
@@ -85,6 +86,13 @@ class PortLabelPositionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(PortLabelPosition.values())
 		(editor as JComboBox<*>).renderer = EnumRenderer<PortLabelPosition>()
+	}
+}
+
+class InternalLabelOrientationEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(InternalLabelOrientation.values())
+		(editor as JComboBox<*>).renderer = EnumRenderer<InternalLabelOrientation>()
 	}
 }
 
