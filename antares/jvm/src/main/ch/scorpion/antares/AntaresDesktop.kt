@@ -3,15 +3,20 @@ package ch.scorpion.antares
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_DIRECTORY
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_FILENAME
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_PROJECT_DIRECTORY
-import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL
+import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL_DEV
+import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL_PROD
 import ch.scorpion.antares.AntaresApplication.Companion.FILE_EXTENSION_NAME
 import ch.scorpion.jabbah.app.DesktopApplication
+import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.graph.library.Library
 
 interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
-	override val documentationUrl: String? get() = DOC_URL
+	override val documentationUrl: String? get() = when (environment) {
+		Environment.Development -> DOC_URL_DEV
+		Environment.Production -> DOC_URL_PROD
+	}
 
 	/** ---- [DesktopApplication] */
 

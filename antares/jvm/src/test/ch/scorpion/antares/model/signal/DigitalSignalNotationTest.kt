@@ -7,7 +7,6 @@ import kotlin.test.Test
 class DigitalSignalNotationTest {
 
 	private val value = DigitalSignalFactory.of(BitWidth.BW_8, 17)
-	private val singleDigitValue = DigitalSignalFactory.of(BitWidth.BW_1, 1)
 
 	@Test
 	fun shouldNotateWithPrefix() {

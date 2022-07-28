@@ -32,6 +32,8 @@ object BaseModule : AbstractModule() {
 
 	var dslGlobalFunctions: DslGlobalFunctions = DslGlobalFunctions()
 
+	var baseDocumentationUrl: (() -> String)? = null
+
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")
 	    fillProperties(properties)

@@ -8,12 +8,12 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.Frame
-import javax.swing.JButton
-import javax.swing.JPanel
+import javax.swing.*
 
 
 /** An action for showing [PreferencesDialogPanel] within a dialog.*/
@@ -60,6 +60,8 @@ class PreferencesDialogPanel(
 		}
 	}
 
+	private val helpAction = HelpAction("/misc/preferences")
+
 	val applyButton = JButton(ActionWrapperSwing(applyAction))
 
 	init {
@@ -79,8 +81,13 @@ class PreferencesDialogPanel(
 	}
 
 	private fun buildButtonPanel(): JPanel {
-		val panel = JPanel(FlowLayout(FlowLayout.RIGHT))
+		val panel = JPanel()
+		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+		panel.border = BorderFactory.createEmptyBorder(7, 10, 7, 10)
+		panel.add(UiUtil.createToolBarButton(helpAction))
+		panel.add(Box.createHorizontalGlue())
 		panel.add(applyButton)
+		panel.add(Box.createHorizontalStrut(6))
 		panel.add(JButton(ActionWrapperSwing(closeAction)))
 		return panel
 	}

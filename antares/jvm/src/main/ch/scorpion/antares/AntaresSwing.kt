@@ -213,6 +213,10 @@ class AntaresSwing(
 	}
 
 	init {
+		documentationUrl?.let {
+			BaseModule.baseDocumentationUrl = { it }
+		}
+
 		if (SystemUtils.IS_OS_MAC) {
 			Taskbar.getTaskbar().iconImage = UiUtil.themedIcon("/$ICON_PATH", AntaresSwing::class.java).image
 		}
