@@ -70,6 +70,10 @@ Grid dot step:: The number of "Grid distance" units between two grid dots (or gr
 
 Minimum grid dot distance:: The minimum distance between two grid dots (or grid lines, depending on "Grid rendering") in view coordinate space. Below this value, the grid is not drawn any more, which avoids drawing grid that are too dense and therefore useless.
 
+Grid rendering:: The way the editor grid is drawn.
+- **Lines**: A vertical and horizontal line is drawn at every grid location
+- **Dots**: A dot is drawn at every grid location
+
 Number of undo per Snapshot:: The undo system uses snapshots (copies of the circuit) from which recorded actions are replayed when the user requests undoing or redoing them. This value determines how many actions are recorded before a new snapshot is created. Smaller values result in better performance, but more memory consumption, larger values may lead to worse performance. The default value is 10.
 
 Save history:: If enabled, Antares saves a copy of the previous version whenever a circuit is saved, which allows you to view the save history using menu:Popup[Show History..] and to restore old versions of a circuit.

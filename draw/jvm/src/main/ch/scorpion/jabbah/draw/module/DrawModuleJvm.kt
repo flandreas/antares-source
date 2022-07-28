@@ -3,14 +3,15 @@ package ch.scorpion.jabbah.draw.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.*
+import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.FloatPreference
+import ch.scorpion.jabbah.base.preferences.IntPreference
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.BufferedImageJvm
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
-import ch.scorpion.jabbah.draw.style.Theme
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.draw.view.TooltipManager
@@ -25,6 +26,9 @@ object DrawModuleJvm : AbstractModule() {
 	const val PREF_TREE_RENDERING = "draw.preferences.group.rendering"
 	const val PREF_TREE_VIEW = "draw.preferences.group.view"
 	const val PREF_TREE_VIEW_NAVIGATION = "draw.preferences.group.view.navigation"
+
+	private const val MIN_ZOOM_FACTOR = 0.01f
+	private const val MAX_ZOOM_FACTOR = 100f
 
 	var contextMenuProvider: ContextMenuProvider = object : ContextMenuProvider {
 		override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
@@ -62,18 +66,18 @@ object DrawModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_RENDERING).add(IntPreference(
 			id = DropShadow.PROP_OFFSET,
 			nameKey = "draw.preferences.DropShadow.offset",
-			minValue = 0,
+			minValue = 1,
 			maxValue = 10))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = AbstractZoomPanAction.PROP_ZOOM_STEP,
 			nameKey = "draw.preferences.ViewAction.zoomStep",
-			minValue = 1.01f))
+			minValue = 0.01f))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = ZoomPanController.PROP_WHEEL_ZOOM_STEP,
 			nameKey = "draw.preferences.ZoomPanController.wheelZoomStep",
-			minValue = 1.01f))
+			minValue = 0.01f))
 
 		root.getGroup(PREF_TREE_VIEW).add(IntPreference(
 			id = ZoomPanController.PROP_WHEEL_PAN_STEP,
@@ -82,19 +86,26 @@ object DrawModuleJvm : AbstractModule() {
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = View.PROP_DEFAULT_ZOOM_FACTOR,
-			nameKey = "draw.preferences.View.defaultZoomFactor"))
+			nameKey = "draw.preferences.View.defaultZoomFactor",
+			minValue = MIN_ZOOM_FACTOR,
+			maxValue = MAX_ZOOM_FACTOR))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = View.PROP_MIN_ZOOM_FACTOR,
-			nameKey = "draw.preferences.View.minZoomFactor"))
+			nameKey = "draw.preferences.View.minZoomFactor",
+			minValue = MIN_ZOOM_FACTOR,
+			maxValue = MAX_ZOOM_FACTOR))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = View.PROP_MAX_ZOOM_FACTOR,
-			nameKey = "draw.preferences.View.maxZoomFactor"))
+			nameKey = "draw.preferences.View.maxZoomFactor",
+			minValue = MIN_ZOOM_FACTOR,
+			maxValue = MAX_ZOOM_FACTOR))
 
 		root.getGroup(PREF_TREE_VIEW).add(IntPreference(
 			id = TooltipManager.PROP_DELAY,
-			nameKey = "draw.preference.TooltipManager.delay"
-		))
+			nameKey = "draw.preference.TooltipManager.delay",
+			minValue = 100,
+			maxValue = 3000))
 	}
 }

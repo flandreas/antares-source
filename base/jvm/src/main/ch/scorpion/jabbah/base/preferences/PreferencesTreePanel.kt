@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultTreeCellRenderer
  * @property origPreferences the [Properties] object that stores the editable preferences
  */
 class PreferencesTreePanel(
+	private val messageDisplay: PreferencesMessageDisplay,
 	private val origPreferences: Properties = BaseModule.properties,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
@@ -32,7 +33,7 @@ class PreferencesTreePanel(
 
 	private val tree: JTree = JTree()
 
-	private val holder: JPanel = JPanel(BorderLayout())
+	private val contentHolder: JPanel = JPanel(BorderLayout())
 
 	/** Maps a [PreferenceGroup] to its lazily created [PreferencesPanel].*/
 	private val panels = mutableMapOf<PreferenceGroup, PreferencesPanel>()
@@ -106,7 +107,7 @@ class PreferencesTreePanel(
 		treeScroll.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		treeScroll.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 
-		val holderScroll = JScrollPane(holder)
+		val holderScroll = JScrollPane(contentHolder)
 		treeScroll.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		treeScroll.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 
@@ -120,20 +121,21 @@ class PreferencesTreePanel(
 
 	private fun updateGroup() {
 		val group = selectedGroup
-		holder.removeAll()
+		contentHolder.removeAll()
 		if (group != null) {
 			val content = getPanelFor(group)
 			content.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-			holder.add(content, BorderLayout.CENTER)
+			contentHolder.add(content, BorderLayout.CENTER)
 			invalidate()
 			revalidate()
 			repaint()
 		}
+		messageDisplay.hideMessage()
 	}
 
 	private fun getPanelFor(group: PreferenceGroup): PreferencesPanel =
 		panels.getOrPut(group) {
-			val panel = PreferencesPanel(group, localPreferences)
+			val panel = PreferencesPanel(group, localPreferences, messageDisplay)
 			panel.load()
 			panel
 		}

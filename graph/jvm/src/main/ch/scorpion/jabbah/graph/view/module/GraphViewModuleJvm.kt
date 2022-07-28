@@ -124,7 +124,9 @@ object GraphViewModuleJvm : AbstractModule() {
 		root.add(PreferenceGroup(PREF_TREE_OSCILLOSCOPE))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(IntPreference(
 			id = SignalHistories.PROP_BUFFER_SIZE,
-			nameKey = "graph.preferences.Oscilloscope.bufferSize"
+			nameKey = "graph.preferences.Oscilloscope.bufferSize",
+			minValue = 10,
+			maxValue = 500
 		))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS,

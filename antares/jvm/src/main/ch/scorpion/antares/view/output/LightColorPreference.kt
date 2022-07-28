@@ -23,6 +23,7 @@ class LightColorPreference : AbstractPreference(
 				panel?.preferences?.customize(this, (combobox.selectedItem as LightColor).customName)
 			}
 		}
+		registerEditor(editor.customEditor as JComponent)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {

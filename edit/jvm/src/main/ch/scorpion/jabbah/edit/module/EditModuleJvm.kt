@@ -149,7 +149,6 @@ object EditModuleJvm : AbstractModule() {
 			minValue = 2
 		))
 
-		//root.getGroup(PREF_TREE_EDITOR).add(GridPainterPreference())
 		root.getGroup(PREF_TREE_EDITOR).add(EnumPreference(
 			Grid.PROP_GRID_PAINTER,
 			nameKey = "edit.preferences.Grid.painter",
@@ -160,7 +159,8 @@ object EditModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
 			id = SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT,
 			nameKey = "edit.preferences.CommandManager.maxCmdPerSnapshot",
-			minValue = 5
+			minValue = 5,
+			maxValue = 100
 		))
 	}
 }

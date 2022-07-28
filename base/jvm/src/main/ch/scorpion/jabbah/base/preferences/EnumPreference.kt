@@ -18,6 +18,7 @@ class EnumPreference<T : Enum<T>>(
 		editor.addActionListener {
 			panel?.preferences?.customize(this, (editor.selectedItem as EnumProperty<T>).customName)
 		}
+		registerEditor(editor)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
