@@ -100,7 +100,7 @@ class PreferencesDialogPanel(
 	private class MyMessageDisplay : JLabel(), PreferencesMessageDisplay {
 
 		init {
-			foreground = Color.RED
+			foreground = UiUtil.errorTextColor
 		}
 
 		override fun showMessage(message: String) {

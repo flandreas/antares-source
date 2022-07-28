@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -96,7 +97,7 @@ class NewTruthTablePanel(
 		contentPanel.add(outputField)
 		contentPanel.add(Box.createVerticalStrut(12))
 
-		errorLabel.foreground = Color.RED
+		errorLabel.foreground = UiUtil.errorTextColor
 		contentPanel.add(errorLabel)
 		contentPanel.add(Box.createVerticalGlue())
 

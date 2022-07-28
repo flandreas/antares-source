@@ -21,7 +21,14 @@ object UiUtil {
 
 	private const val DIVERT = 24
 	private val VARIANT_QUALIFIERS = listOf("", "@125pct", "@150pct", "@2x")
+	private val ERROR_COLOR_DARK = Color(255, 107, 104)
+	private val ERROR_COLOR_LIGHT = Color.RED
 
+	val errorTextColor: Color get() = if (UI.isDark) {
+		ERROR_COLOR_DARK
+	} else {
+		ERROR_COLOR_LIGHT
+	}
 
 	/**
 	 * Invokes the specified invokable on the [EventQueue] an returns immediately.
