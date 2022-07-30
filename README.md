@@ -41,7 +41,10 @@ Tag the release and push it to the remote repository:
 
 * On a macOS machine
   * `gradlew clean :antares:distributeMac`
-  * Collect the macOS package `build/antares/distributions/Antares-<version>.pkg`
+  * Wait for notarization success mail from Apple (or check manually using `xcrun altool 
+    --notarization-info`)
+  * `gradlew stapleMacNotarization`
+  * Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
   * Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and
    store it in a save place. You will need it for un-obfuscating stack traces from bug reports.
 * On a windows machine (after pulling changes from remote repository)

@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
-import com.jthemedetecor.OsThemeDetector
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -144,6 +143,8 @@ class AntaresSwing(
 			}
 		}
 
+		// Disabled because OsThemeDetector requires a native library that leads to app signing problems
+		/*
 		private fun configureSplash(font: Font) {
 			val version = readVersion()
 
@@ -178,6 +179,7 @@ class AntaresSwing(
 			g2.drawString("Version $version", 175, 250)
 			splash.update()
 		}
+		*/
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -206,7 +208,7 @@ class AntaresSwing(
 			BaseModuleJvm.require()
 
 			// After logging has been initialized
-			configureSplash(font)
+			// configureSplash(font)
 
 			AntaresSwing(commandLine).start()
 		}
