@@ -228,8 +228,8 @@ class Label(
 			textRenderInfo.textBounds.height + 2 * BOUNDS_INSET
 		)
 
-		// 2 is a magic number derived from manual/visual optimization
-		baselinePoint = Point2D(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent + 2)
+		// 1 is a magic number derived from manual/visual optimization
+		baselinePoint = Point2D(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent + 1)
 
 		invalidate()
 		update()
