@@ -216,6 +216,7 @@ class WireTapView(
 			val pvLoc = pv.location
 			pv.prepareConnectionDrawContext(context)
 
+			context.g.color = lineColor
 			context.g.translate(pvLoc)
 
 			if (i > 0) {

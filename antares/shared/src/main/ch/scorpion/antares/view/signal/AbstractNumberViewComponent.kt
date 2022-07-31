@@ -205,7 +205,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	private fun calculateFixedPointViewWidth(): Double {
 		var width = MIN_FIXED_POINT_WIDTH
 
-		if (model != null && (model as DigitalSignalSource).fixedPointConfig != null) {
+		if ((model as DigitalSignalSource).fixedPointConfig != null) {
 			val config = (model as DigitalSignalSource).fixedPointConfig!!
 			val sampleValue = "0".repeat(config.decimalDigitCount(bitWidth))
 			width = max(width, TextRenderInfoFactory.measureSingleLineText(sampleValue, font).textBounds.width)

@@ -79,7 +79,7 @@ class NavigationStack<T : GraphView>(
 		set(value) {
 			require(value != null)
 			entries.clear()
-			push(value!!)
+			push(value)
 		}
 
 	fun dispose() {

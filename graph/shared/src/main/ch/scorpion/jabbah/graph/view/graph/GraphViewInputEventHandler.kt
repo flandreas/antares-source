@@ -24,7 +24,7 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 	private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector
 ) : DrawableBagInputEventHandler<T, EditInputEventContext>() {
 
-	fun graphElementViewRemoved(graphElementView: GraphElementView<*>) {
+	fun graphElementViewRemoved() {
 		ConnectionPointHighlighter.removePortViewHighlight()
 	}
 

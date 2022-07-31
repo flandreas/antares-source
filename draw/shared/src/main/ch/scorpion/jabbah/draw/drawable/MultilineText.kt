@@ -46,7 +46,7 @@ class MultilineText(
 	init {
 		var lAscent = 0
 		var maxWidth = 0.0
-		var x = 0.0
+		var x: Double
 		var y = font.size.toDouble() - lineHeight
 
 		val blankWidth = textMeasurer.measureSingleLineText(" ", font).textBounds.width

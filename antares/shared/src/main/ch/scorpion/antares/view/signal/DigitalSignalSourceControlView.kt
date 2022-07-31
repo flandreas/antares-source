@@ -145,6 +145,8 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
 		override var fixedPointConfig: FixedPointConfig? = null
 		override var bitWidth: BitWidth = BitWidth.BW_1
+
+		@Suppress("UNUSED_PARAMETER")
 		override var signal: DigitalSignal? get() = DigitalSignalFactory.falseValue(bitWidth)
 			set(value) {
 				// empty

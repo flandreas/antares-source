@@ -191,7 +191,7 @@ class GraphNavigationViewController(
 	}
 
 	private fun handle(request: CloseViewRequest) {
-		if (request.view === view || request.view === closeTarget && closeTarget is GraphDesktopViewItem) {
+		if (request.view === view || request.view === closeTarget) {
 			eventBus.postTwoPhase(
 				prepareEvent = GraphDesktopViewItemCloseQuestion(closeTarget, isRoot),
 				execEvent = GraphDesktopViewItemCloseRequest(closeTarget, isRoot)

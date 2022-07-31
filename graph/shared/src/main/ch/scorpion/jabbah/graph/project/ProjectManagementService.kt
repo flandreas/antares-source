@@ -49,20 +49,16 @@ class ProjectManagementService(
 		eventBus.register(CurrentLibraryEvent::class) { close() }
 	}
 
-	/** Returns the currently open [Project], if any.*/
-	val currentProject: Project? get() = projectHolder.project
-
 	/** Determines whether the directory for storing the project [LibraryDictionary] already exists.*/
 	val directoryExists: Boolean get() = dictionaryService.directoryExists
-
 
 	/** ---- [AbstractLibraryManagementService] */
 
 	override fun hasStaleImportReferences(library: Library): Boolean =
 		!libraryManagementService.contains((library as Project).importedLibrary!!)
 
-	override fun existsName(projectName: TranslatableText, except: UUID?): Boolean =
-		dictionaryService.existsName(projectName, except)
+	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
+		dictionaryService.existsName(name, except)
 
 	/** ---- [ProjectManagementService] */
 

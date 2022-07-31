@@ -346,7 +346,7 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		LOG.userTrail("Start creating new EdgeView at Port ${startPortView!!.port!!.portId} of VerticeView ${startVerticeView!!.id}")
+		LOG.userTrail("Start creating new EdgeView at Port ${startPortView!!.port.portId} of VerticeView ${startVerticeView!!.id}")
 		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()

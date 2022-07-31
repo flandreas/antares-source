@@ -340,7 +340,7 @@ open class GraphViewImpl(
 			if (drawable is NetViewElement<*>) {
 				removeNetViewElement(drawable as NetViewElement<Any>)
 			}
-			inputEventHandler?.graphElementViewRemoved(drawable)
+			inputEventHandler?.graphElementViewRemoved()
 		}
 		return super.remove(drawable)
 	}
