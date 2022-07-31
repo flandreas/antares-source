@@ -5,7 +5,9 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -17,11 +19,14 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Focusable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -42,6 +47,7 @@ class JoystickView(
 		const val SIZE = 8
 		const val KNOB_RADIUS = 1.0 * SCALE
 		const val MAX_DISPLACEMENT = 2.0 * SCALE
+		private const val FOCUS_INSET = 3
 	}
 
 	/** The position of the knob relative to the center of the rectangle.*/
@@ -100,6 +106,10 @@ class JoystickView(
 			}
 		}
 
+	/** ---- [Focusable] interface */
+
+	override var isFocusable: Boolean = true
+
 	/** ---- [AbstractVerticeView] */
 
 	override val useRotation: Boolean get() = false
@@ -118,6 +128,10 @@ class JoystickView(
 		deflection.drawDeflection(this, context, transparent.applyTo(context.choose(color).foregroundColor))
 		drawContent(context)
 		drawBorder(context, transparent.applyTo(context.choose(color).foregroundColor))
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawFocus(context)
+		}
 	}
 
 	private fun drawBackground(context: DrawContext, color: Color) {
@@ -142,6 +156,14 @@ class JoystickView(
 
 		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
 		context.g.fillCircle(bounds.centerX + knobPosition.x, bounds.centerY + knobPosition.y, KNOB_RADIUS)
+	}
+
+	private fun drawFocus(context: DrawContext) {
+		if (isFocusOwner) {
+			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
+			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
+			context.g.drawRect(bounds.x + FOCUS_INSET, bounds.y + FOCUS_INSET, bounds.width - 2 * FOCUS_INSET, bounds.height - 2 * FOCUS_INSET)
+		}
 	}
 
 	/** ---- [Storable] interface */
@@ -236,11 +258,16 @@ class JoystickView(
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
 		private var mousePressed = false
+		private var leftDown = false
+		private var rightDown = false
+		private var upDown = false
+		private var downDown = false
 
 		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			if (context.mouseEvent?.button != Button.BUTTON1) {
 				return null
 			}
+			requestFocus()
 			mousePressed = true
 			return this
 		}
@@ -249,7 +276,7 @@ class JoystickView(
 			if (!mousePressed) {
 				return null
 			}
-			setKnobPosition(calculateKnobPosition(context.location), context.signalHandler)
+			setKnobPosition(calculateMouseKnobPosition(context.location), context.signalHandler)
 			return this
 		}
 
@@ -262,7 +289,32 @@ class JoystickView(
 			return null
 		}
 
-		private fun calculateKnobPosition(mouseLocation: Point2D): Point2D =
+		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			when (context.keyEvent?.key) {
+				KeyEvent.VK_LEFT -> leftDown = true
+				KeyEvent.VK_RIGHT -> rightDown = true
+				KeyEvent.VK_UP -> upDown = true
+				KeyEvent.VK_DOWN -> downDown = true
+			}
+			setKnobPosition(calculateKeyKnobPosition(), context.signalHandler)
+			return null
+		}
+
+		override fun keyReleased(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			when (context.keyEvent?.key) {
+				KeyEvent.VK_LEFT -> leftDown = false
+				KeyEvent.VK_RIGHT -> rightDown = false
+				KeyEvent.VK_UP -> upDown = false
+				KeyEvent.VK_DOWN -> downDown = false
+			}
+			setKnobPosition(calculateKeyKnobPosition(), context.signalHandler)
+			return null
+		}
+
+		private fun calculateMouseKnobPosition(mouseLocation: Point2D): Point2D =
 			deflection.calculateContinuousKnobPosition(this@JoystickView, mouseLocation)
+
+		private fun calculateKeyKnobPosition(): Point2D =
+			deflection.calculateKeyKnobPosition(leftDown, rightDown, upDown, downDown)
 	}
 }
