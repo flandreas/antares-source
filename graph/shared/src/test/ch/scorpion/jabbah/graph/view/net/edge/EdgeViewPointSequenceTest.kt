@@ -19,36 +19,51 @@ class EdgeViewPointSequenceTest {
 
     @Test
     fun shouldBuildSequence() {
-        val edgeView = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView()
-
-        edgeView.addSegmentPoint(Point2D(0, 0))
-        edgeView.addSegmentPoint(Point2D(10, 0))
-        edgeView.addSegmentPoint(Point2D(10, 10))
-
-        val sequence = EdgeViewPointSequence.of(edgeView)
+        val sequence = EdgeViewPointSequence.of(
+	        GraphViewModule.getEdgeViewFactory<Boolean>()
+		        .createEdgeView()
+		        .addSegmentPoint(Point2D(0, 0))
+		        .addSegmentPoint(Point2D(10, 0))
+		        .addSegmentPoint(Point2D(10, 10)))
 
         assertEquals(sequence.size, (20.0))
 
         assertEquals(Point2D(0, 0), sequence.getNext(10.0))
         assertEquals(Point2D(10, 0), sequence.getNext(10.0))
-        assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+	    // Don't return the same value twice
         assertEquals(Point2D(10, 10), sequence.getNext(10.0))
     }
 
     @Test
     fun shouldBuildReverseSequence() {
-        val edgeView = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView()
-
-        edgeView.addSegmentPoint(Point2D(0, 0))
-        edgeView.addSegmentPoint(Point2D(10, 0))
-        edgeView.addSegmentPoint(Point2D(10, 10))
-
-        val sequence = EdgeViewPointSequence.reverseOf(edgeView)
+	    val sequence = EdgeViewPointSequence.reverseOf(
+		    GraphViewModule.getEdgeViewFactory<Boolean>()
+		        .createEdgeView()
+		        .addSegmentPoint(Point2D(0, 0))
+		        .addSegmentPoint(Point2D(10, 0))
+		        .addSegmentPoint(Point2D(10, 10)))
 
         assertEquals(20.0, sequence.size)
         assertEquals(Point2D(10, 10), sequence.getNext(10.0))
 		assertEquals(Point2D(10, 0), sequence.getNext(10.0))
-		assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+	    // Don't return the same value twice
 		assertEquals(Point2D(0, 0), sequence.getNext(10.0))
     }
+
+	@Test
+	fun shouldNotLooseMomentumAtSegmentPoints() {
+		val sequence = EdgeViewPointSequence.of(
+			GraphViewModule.getEdgeViewFactory<Boolean>()
+				.createEdgeView()
+				.addSegmentPoint(Point2D(0, 0))
+				.addSegmentPoint(Point2D(10, 0))
+				.addSegmentPoint(Point2D(10, 10)))
+
+		assertEquals(Point2D(0, 0), sequence.getNext(7.0))
+		assertEquals(Point2D(7, 0), sequence.getNext(7.0))
+		// Don't return end segment point, leave reminder to next segment
+		assertEquals(Point2D(10, 0), sequence.getNext(7.0))
+		// Add remainder from previous segment
+		assertEquals(Point2D(10, 7 + 3), sequence.getNext(7.0))
+	}
 }
