@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -41,6 +40,9 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	 * A [Library] and its elements can only be edited by the author of the [Library].
 	 */
 	var author: UserIdentity
+
+	/** The [UUIDs][UUID] of the [Libraries][Library] imported by this [Library].*/
+	val importedLibraryIds: Set<UUID>
 
 	/** The description of the contents of this [Library], i.e. its inner [LibraryItem]s. */
 	var directory: LibraryDirectory
@@ -87,6 +89,12 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 
 	/** Creates an appropriate [Savable] for the specified [ContainerLibraryElement].*/
 	fun createSavable(element: ContainerLibraryElement): Savable
+
+	/** Adds the [Library] with the specified [UUID] to the ones imported by this [Library]. */
+	fun addImport(libraryId: UUID)
+
+	/** Removes the [Library] with the specified [UUID] from the ones imported by this [Library]. */
+	fun removeImport(libraryId: UUID)
 }
 
 /**
@@ -119,8 +127,3 @@ data class LibraryProperties(
 	}
 }
 
-/**
- * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.
- * Note that this event is NOT posted by [Library] itself.
- */
-data class LibraryPropertiesEvent(val library: Library, val properties: LibraryProperties)

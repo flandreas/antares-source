@@ -1,55 +1,28 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
-import ch.scorpion.jabbah.graph.project.ProjectManagementService
+import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryProperties
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import java.nio.file.Files
-import kotlin.io.path.absolutePathString
 import kotlin.test.*
 
 class GrandUiIntegrationTest {
 
 	companion object {
 		init {
-			GraphViewTestRule.configure()
-			BaseModule.eventBus = EventBusImpl()
-
-			val tempDir = Files.createTempDirectory(null)
-
-			val librariesDir = "${tempDir}/libraries"
-			LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "libraries")
-			LibraryModule.libraryService = LibraryService()
-			LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
-			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
-			LibraryModule.libraryFactory = EmptyLibraryFactory()
-			LibraryModule.libraryManagementService = LibraryManagementService()
-
-			val projectsDir = "${tempDir}/projects"
-			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "projects")
-			ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService )}
-			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(projectsDir))
-			ProjectModule.projectManagementService = { ProjectManagementService() }
-		}
-
-		private fun createUserLibrary(name: String) {
-			val service = LibraryModule.libraryManagementService
-			val library = service.create(LibraryProperties(name = TranslatableText(name)), null)
-			LibraryModule.libraryHolder.l = library
+			TempFileLibraryTestRule.configure()
 		}
 	}
 
@@ -67,7 +40,7 @@ class GrandUiIntegrationTest {
 
 	@Test
 	fun shouldUseVirginSubGraphVerticeView() {
-		createUserLibrary("Lib1")
+		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("Lib1")
 		application = TestGraphApplication()
 		GraphFrameMockBuilder(application.graphFrameController)
 		application.start()
@@ -90,7 +63,7 @@ class GrandUiIntegrationTest {
 
 	@Test
 	fun shouldDetachFromModelsWhenClosingSecondView() {
-		createUserLibrary("Lib2")
+		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("Lib2")
 		application = TestGraphApplication()
 		GraphFrameMockBuilder(application.graphFrameController)
 		application.start()

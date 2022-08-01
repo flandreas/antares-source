@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.io
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
@@ -94,4 +95,6 @@ interface StoreReader {
 
     /** Reads a list of [Int] with the specified attribute name.*/
     fun readIntegers(name: String): List<Int>
+
+	fun readUuids(name: String): Set<UUID>
 }

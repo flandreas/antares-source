@@ -141,6 +141,9 @@ open class LibraryImpl(
 		writer.writeStorable("folder", directory)
 		writer.writeString("uuid", uuid.toString())
 		writer.writeString("author", author.toString())
+		if (importedLibraryIds.isNotEmpty()) {
+			writer.writeUuids("imports", importedLibraryIds)
+		}
 		description.write("desc", writer)
 		if (isSystem) {
 			writer.writeBoolean("system", isSystem)
@@ -157,6 +160,10 @@ open class LibraryImpl(
 		directory = reader.readStorable("folder") as LibraryFolder
 		uuid = System.createUUID(reader.readString("uuid"))
 		author = UserIdentity(reader.readString("author"))
+		if (reader.hasAttribute("imports")) {
+			importedLibraryIds.clear()
+			importedLibraryIds.addAll(reader.readUuids("imports"))
+		}
 		description = Description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
@@ -175,6 +182,8 @@ open class LibraryImpl(
 	override var isSystem: Boolean = false
 
 	override var author: UserIdentity = userHolder.user.identity
+
+	override var importedLibraryIds = mutableSetOf<UUID>()
 
 	override var defaultElementUUID: UUID? = null
 
@@ -241,6 +250,14 @@ open class LibraryImpl(
 	}
 
 	override fun createSavable(element: ContainerLibraryElement): Savable = LibrarySavable(element)
+
+	override fun addImport(libraryId: UUID) {
+		importedLibraryIds.add(libraryId)
+	}
+
+	override fun removeImport(libraryId: UUID) {
+		importedLibraryIds.remove(libraryId)
+	}
 
 	/** ---- [LibraryImpl] */
 

@@ -29,6 +29,16 @@ data class OpenLibraryRequest(val library: Library)
 data class LibraryCreatedEvent(val library: Library)
 
 /**
+ * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.
+ */
+data class LibraryPropertiesEvent(val library: Library, val properties: LibraryProperties)
+
+/**
+ * Posted by [LibraryManagementService] if [Library.importedLibraryIds] has been changed.
+ */
+data class LibraryImportsEvent(val library: Library)
+
+/**
  * Provides methods for managing multiple [Libraries][Library].
  */
 class LibraryManagementService(
@@ -84,7 +94,7 @@ class LibraryManagementService(
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.info("Create new library '${properties.name.getTranslation()}' with template ${templateLibraryId?.uuid}")
+		LOG.userTrail("Create new library '${properties.name.getTranslation()}' with template ${templateLibraryId?.uuid}")
 
 		val library = if (templateLibraryId == null) {
 			val library = libraryFactory.createEmptyLibrary(properties)
@@ -158,6 +168,48 @@ class LibraryManagementService(
 			throw IllegalArgumentException("illegal attempt to delete the currently open library ${libraryId.uuid}")
 		}
 		deleteImpl(libraryId)
+	}
+
+	/**
+	 * Adds the specified [Library] as an imported [Library] to the [Library] currently held by
+	 * [LibraryHolder] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
+	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
+	 */
+	fun addImport(libraryId: UUID) {
+		if (libraryHolder.l == null) {
+			throw IllegalStateException("no Library to add an import to")
+		}
+		if (!userDictionaryService.contains(libraryId) && !systemDictionaryService.contains(libraryId)) {
+			throw IllegalArgumentException("library $libraryId to import doesn't exist")
+		}
+		LOG.userTrail("Import library $libraryId in ${libraryHolder.library.uuid}")
+
+		libraryHolder.library.addImport(libraryId)
+		libraryService.storeLibrary(libraryHolder.library)
+
+		eventBus.post(LibraryImportsEvent(libraryHolder.library))
+	}
+
+	/**
+	 * Removes the specified [Library] as an imported [Library] from the [Library] currently held by
+	 * [LibraryHolder] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] isn't currently imported
+	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
+	 */
+	fun removeImport(libraryId: UUID) {
+		if (libraryHolder.l == null) {
+			throw IllegalStateException("no Library to remove an import from")
+		}
+		if (!libraryHolder.library.importedLibraryIds.contains(libraryId)) {
+			throw IllegalArgumentException("library $libraryId not imported by ${libraryHolder.library.uuid}")
+		}
+		LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
+
+		libraryHolder.library.removeImport(libraryId)
+		libraryService.storeLibrary(libraryHolder.library)
+
+		eventBus.post(LibraryImportsEvent(libraryHolder.library))
 	}
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

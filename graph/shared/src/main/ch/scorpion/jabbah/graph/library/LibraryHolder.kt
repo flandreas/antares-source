@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Holds the one and only [Library].
- * TODO Make sure that the current Library is never null.
  */
 class LibraryHolder(
 	l: Library? = null,
