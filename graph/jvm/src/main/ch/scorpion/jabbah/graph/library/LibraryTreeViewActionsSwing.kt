@@ -31,6 +31,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
+	private val addLibraryToDesktopAction = AddLibraryToDesktopAction(controller.applicationModeHolder)
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
 	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
@@ -225,6 +226,7 @@ open class LibraryTreeViewActionsSwing(
 	}
 
 	protected open fun fillMain() {
+		desktopPopupMenu.add(ActionWrapperSwing(addLibraryToDesktopAction))
 		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 

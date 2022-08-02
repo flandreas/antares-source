@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -20,7 +21,7 @@ import javax.swing.*
  */
 abstract class AbstractLibrarySelectionPanel(
 	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
-	private val isOpen: (entry: LibraryDictionaryEntry) -> Boolean
+	protected val isOpen: (entry: LibraryDictionaryEntry) -> Boolean
 ) : JPanel() {
 
 	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>()
@@ -62,6 +63,13 @@ abstract class AbstractLibrarySelectionPanel(
 				libraryDictionaryEntries.selectedIndex = index
 				libraryDictionaryEntries.ensureIndexIsVisible(index)
 			}
+		}
+	}
+
+	protected fun selectFirstLibrary() {
+		libraryDictionaryEntries.requestFocusInWindow()
+		if (libraryDictionaryEntries.model.size > 0) {
+			libraryDictionaryEntries.selectedIndex = 0
 		}
 	}
 
@@ -116,4 +124,6 @@ abstract class AbstractLibrarySelectionPanel(
 	private fun updateDescription() {
 		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""
 	}
+
+	protected fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
 }

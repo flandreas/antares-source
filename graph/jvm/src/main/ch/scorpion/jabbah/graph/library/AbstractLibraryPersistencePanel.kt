@@ -44,8 +44,6 @@ abstract class AbstractLibraryPersistencePanel(
 	protected fun getLibraryIdentity(uuid: UUID): LibraryIdentification =
 		LibraryIdentification(uuid, userHolder.user.identity)
 
-	protected fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
-
 	private inner class ExportAction : AbstractAction(exportActionNameKey) {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
