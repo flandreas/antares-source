@@ -128,6 +128,12 @@ class LibraryTreeViewController (
 		}
 	}
 
+	private val libraryImportsHandler: EventHandler<LibraryImportsEvent> = {
+		if (displaysLibrary(it.library)) {
+			view.openLibrary(it.library)
+		}
+	}
+
 	var active: Boolean = applicationModeHolder.currentMode.isEdit()
 		private set(value) {
 			if (field != value) {
@@ -184,6 +190,7 @@ class LibraryTreeViewController (
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
 		eventBus.register(LibraryDirectoryRenamedEvent::class, libraryItemDirectoryRenamedHandler)
 		eventBus.register(ContainerLibraryElementRenamedEvent::class, renameContainerLibraryElementHandler)
+		eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
 
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -199,6 +206,7 @@ class LibraryTreeViewController (
 		eventBus.unregister(libraryItemMovedHandler)
 		eventBus.unregister(libraryItemDirectoryRenamedHandler)
 		eventBus.unregister(renameContainerLibraryElementHandler)
+		eventBus.unregister(libraryImportsHandler)
 
 		eventBus.unregister(currentSavableHandler)
 		eventBus.unregister(applicationModeHandler)

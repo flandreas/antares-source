@@ -81,6 +81,13 @@ class LibraryManagementService(
 		).flatten().toImmutableList()
 	}
 
+	fun getOptionalLibrary(uuid: UUID): Library? {
+		val dictionaryEntry = userDictionaryService.getEntry(uuid) ?: systemDictionaryService.getEntry(uuid)
+		return dictionaryEntry?.let {
+			loadLibrary(LibraryIdentification(it.uuid, it.author))
+		}
+	}
+
 	/**
 	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].

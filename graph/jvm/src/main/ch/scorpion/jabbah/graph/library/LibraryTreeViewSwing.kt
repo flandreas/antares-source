@@ -154,15 +154,18 @@ class LibraryTreeViewSwing(
 	override fun openLibrary(library: Library) {
 		LOG.userTrail("Open Library '${library.name}'")
 		val root = model.root as DefaultMutableTreeNode
-		val oldLibraryNode = getLibraryNode()
-		val newLibraryNode = DefaultMutableTreeNode(library)
-		LibraryTreeModelBuilderSwing.addLibrary(newLibraryNode, library)
-		val libraryNodeIndex = if (getProjectNode() == null) 0 else 1
 
-		root.remove(libraryNodeIndex)
-		(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(libraryNodeIndex), arrayOf(oldLibraryNode))
-		root.insert(newLibraryNode, libraryNodeIndex)
-		(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(libraryNodeIndex))
+		val imports = LibraryImports.calculate(library)
+		// TODO Handle stale imports, e.g. display warning dialog
+
+		root.removeAllChildren()
+		for (import in imports.libraries) {
+			val libraryNode = DefaultMutableTreeNode(import)
+			LibraryTreeModelBuilderSwing.addLibrary(libraryNode, import)
+			root.add(libraryNode)
+		}
+
+		(model as DefaultTreeModel).nodeStructureChanged(root)
 
 		expandRow(0)
 	}
@@ -284,12 +287,10 @@ class LibraryTreeViewSwing(
 					if (controller.isDefaultElement(value.userObject as ContainerLibraryElement)) {
 						component.font = defaultElemFont
 					}
+				} else if (value.userObject is Project) {
+					component.icon = projectIcon
 				} else if (value.userObject is Library) {
-					if (value.userObject == controller.library) {
-						component.icon = libraryIcon
-					} else {
-						component.icon = projectIcon
-					}
+					component.icon = libraryIcon
 				} else if (value.userObject is LibraryFolder) {
 					component.icon = folderIcon
 				}

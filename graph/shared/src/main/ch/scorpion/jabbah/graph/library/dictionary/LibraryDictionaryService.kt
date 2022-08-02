@@ -29,6 +29,8 @@ class LibraryDictionaryService(
 
 	fun getEntries(): ImmutableList<LibraryDictionaryEntry> = dictionary.getEntries()
 
+	fun getEntry(uuid: UUID): LibraryDictionaryEntry? = dictionary.getEntry(uuid)
+
 	fun add(library: Library) {
 		dictionary.add(library)
 		store()
