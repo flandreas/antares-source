@@ -155,7 +155,7 @@ class LibraryPersistencePanel(
 			LOG.userTrail("new library")
 
 			val parent = SwingUtilities.windowForComponent(this@LibraryPersistencePanel)
-			var info: CreateLibraryPanel.CreateLibraryInfo
+			var info: CreateLibraryInfo
 
 			while(true) {
 				info = CreateLibraryPanel.showAsDialog(parent = parent, service = managementService) ?: return
@@ -188,7 +188,7 @@ class LibraryPersistencePanel(
 			LOG.userTrail("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
 				managementService.open(
-					managementService.create(LibraryProperties(info.name), info.templateUuid?.let { getLibraryIdentity(it) }),
+					managementService.create(LibraryProperties(info.name), info.importUuid?.let { getLibraryIdentity(it) }),
 				)
 				closeHandler.invoke()
 			}

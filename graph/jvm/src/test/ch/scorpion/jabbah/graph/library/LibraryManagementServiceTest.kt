@@ -42,14 +42,14 @@ class LibraryManagementServiceTest {
 
 	@Test
 	fun shouldRemoveImportedLibrary() {
-		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("A")
-		val libraryB = TempFileLibraryTestRule.createLibrary("B")
-		LibraryModule.libraryManagementService.addImport(libraryB.uuid)
+		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("C")
+		val libraryD = TempFileLibraryTestRule.createLibrary("D")
+		LibraryModule.libraryManagementService.addImport(libraryD.uuid)
 
-		LibraryModule.libraryManagementService.removeImport(libraryB.uuid)
+		LibraryModule.libraryManagementService.removeImport(libraryD.uuid)
 
-		assertFalse(LibraryModule.libraryHolder.library.importedLibraryIds.contains(libraryB.uuid))
-		assertFalse(LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.identification, isSystem = false).importedLibraryIds.contains(libraryB.uuid))
+		assertFalse(LibraryModule.libraryHolder.library.importedLibraryIds.contains(libraryD.uuid))
+		assertFalse(LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.identification, isSystem = false).importedLibraryIds.contains(libraryD.uuid))
 		assertTrue(libraryImportEventSent)
 	}
 }

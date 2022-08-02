@@ -155,11 +155,10 @@ class LibraryTreeViewSwing(
 		LOG.userTrail("Open Library '${library.name}'")
 		val root = model.root as DefaultMutableTreeNode
 
-		val imports = LibraryImports.calculate(library)
 		// TODO Handle stale imports, e.g. display warning dialog
 
 		root.removeAllChildren()
-		for (import in imports.libraries) {
+		for (import in library.imports.libraries) {
 			val libraryNode = DefaultMutableTreeNode(import)
 			LibraryTreeModelBuilderSwing.addLibrary(libraryNode, import)
 			root.add(libraryNode)

@@ -92,24 +92,18 @@ class LibraryManagementService(
 	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
-	 * @param templateLibraryId the [LibraryIdentification] of the [Library] to be copied as a template.
-	 *      If `null`, an empty [Library] is created.
+	 * @param importedLibraryId the [LibraryIdentification] of the [Library] to be imported,
+	 *      or `null` if a standalone [Library] is to be created.
 	 * @return the created [Library]
 	 * @throws IllegalArgumentException if a [Library] with the name in [properties] already exists
 	 */
-	fun create(properties: LibraryProperties, templateLibraryId: LibraryIdentification?): Library {
+	fun create(properties: LibraryProperties, importedLibraryId: LibraryIdentification?): Library {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.userTrail("Create new library '${properties.name.getTranslation()}' with template ${templateLibraryId?.uuid}")
+		LOG.userTrail("Create new library '${properties.name.getTranslation()}' with import '${importedLibraryId?.uuid}'")
 
-		val library = if (templateLibraryId == null) {
-			val library = libraryFactory.createEmptyLibrary(properties)
-			libraryService.storeLibrary(library)
-			library
-		} else {
-			libraryService.duplicateLibrary(loadLibrary(templateLibraryId), properties.name, userHolder.user.identity)
-		}
+		val library = libraryFactory.createEmptyLibrary(properties, importedLibraryId)
 
 		library.bindLibraryItems()
 		userDictionaryService.add(library)

@@ -185,6 +185,10 @@ open class LibraryImpl(
 
 	override var importedLibraryIds = mutableSetOf<UUID>()
 
+	private val _imports = resettableLazy { LibraryImports.calculate(this) }
+
+	override val imports: LibraryImports get() = _imports.value
+
 	override var defaultElementUUID: UUID? = null
 
 	override var visibility: LibraryVisibility = LibraryVisibility.Private
@@ -253,10 +257,12 @@ open class LibraryImpl(
 
 	override fun addImport(libraryId: UUID) {
 		importedLibraryIds.add(libraryId)
+		_imports.reset()
 	}
 
 	override fun removeImport(libraryId: UUID) {
 		importedLibraryIds.remove(libraryId)
+		_imports.reset()
 	}
 
 	/** ---- [LibraryImpl] */
@@ -265,8 +271,17 @@ open class LibraryImpl(
 	 * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
 	 */
 	private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
+		if (importedLibraryIds.isEmpty()) {
+			return findContainerLibraryElement(directory, uuid)
+		}
+		return imports
+			.libraries
+			.firstNotNullOfOrNull { findContainerLibraryElement(it, uuid) }
+	}
+
+	private fun findContainerLibraryElement(dir: LibraryDirectory, uuid: UUID): ContainerLibraryElement? {
 		val graphFinder = GraphFinder(uuid)
-		directory.accept(graphFinder)
+		dir.accept(graphFinder)
 		return graphFinder.result
 	}
 
