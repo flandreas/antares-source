@@ -44,8 +44,11 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	/** The [UUIDs][UUID] of the [Libraries][Library] imported by this [Library].*/
 	val importedLibraryIds: Set<UUID>
 
-	/** A lazily initialized collection of the imported [Libraries][Library] according to [importedLibraryIds]. */
-	val imports: LibraryImports
+	/**
+	 * A lazily initialized collection of the transitively expanded imported [Libraries][Library]
+	 * according to [importedLibraryIds], including this [Library].
+	 */
+	val expandedImports: LibraryImports
 
 	/** The description of the contents of this [Library], i.e. its inner [LibraryItem]s. */
 	val directory: LibraryDirectory

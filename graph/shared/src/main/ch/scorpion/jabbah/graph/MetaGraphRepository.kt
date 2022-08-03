@@ -34,7 +34,10 @@ interface MetaGraphRepository {
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	fun containsMetaGraph(uuid: UUID): Boolean
 
-	fun getContainingLibrary(uuid: UUID): Library? = null
+	/**
+	 * Returns the [Library] containing the [MetaGraph] with the specified [UUID].
+	 */
+	fun getContainingLibrary(uuid: UUID): Library?
 }
 
 /** Combines the current [Library] and the current [Project] (if any) to a single [MetaGraphRepository].*/
@@ -63,15 +66,8 @@ class CombinedMetaGraphRepository(
 	override fun containsMetaGraph(uuid: UUID): Boolean =
 		libraryHolder.library.containsMetaGraph(uuid) || projectHolder.project?.containsMetaGraph(uuid) == true
 
-	override fun getContainingLibrary(uuid: UUID): Library? {
-		return if (libraryHolder.library.containsMetaGraph(uuid)) {
-			libraryHolder.library
-		} else if (projectHolder.project?.containsMetaGraph(uuid) == true) {
-			projectHolder.project
-		} else {
-			null
-		}
-	}
+	override fun getContainingLibrary(uuid: UUID): Library? =
+		libraryHolder.library.getContainingLibrary(uuid) ?: projectHolder.project?.getContainingLibrary(uuid)
 
 	/** ---- [CombinedMetaGraphRepository] */
 
@@ -96,29 +92,29 @@ class CombinedMetaGraphRepository(
 	 * or indirectly referenced by [metaGraph].
 	 */
 	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
-		var referencesSystemLibrary = false
+		val systemLibReferences = mutableSetOf<UUID>()
 		return MetaGraphBundle()
 			.add(metaGraph)
 			.also { bundle ->
 				ContainerLibraryElementCollector(this)
 					.collect(metaGraph.graph.graphView.graph!!)
-					.forEach {
-						if (isFromSystemLibrary(it)) {
-							referencesSystemLibrary = true
+					.forEach { metaGraphId ->
+						val sourceSystemLib = getOptionalSystemLibraryId(metaGraphId)
+						if (sourceSystemLib != null) {
+							systemLibReferences.add(sourceSystemLib)
 						} else {
-							bundle.add(getMetaGraph(it))
+							bundle.add(getMetaGraph(metaGraphId))
 						}
 					}
-				if (referencesSystemLibrary) {
-					bundle.referencedSystemLibrary = libraryHolder.library.uuid
-				}
+				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)
 			}
 	}
 
-	private fun isFromSystemLibrary(uuid: UUID): Boolean {
-		if (libraryHolder.library.getOptionalMetaGraph(uuid) != null) {
-			return libraryHolder.library.isSystem
+	private fun getOptionalSystemLibraryId(metaGraphId: UUID): UUID? {
+		val elem = getContainerLibraryElement(metaGraphId)
+		if (elem != null && elem.library?.isSystem == true) {
+			return elem.library!!.uuid
 		}
-		return false
+		return null
 	}
 }

@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
@@ -447,14 +446,17 @@ class LibraryService(
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
 		bundle.metaGraphs.any { metaGraphRepository.containsMetaGraph(it.uuid) }
 
+	/**
+	 * Checks whether the destination [Library] into which [MetaGraphBundle] is to be imported
+	 * imports all required system [Libraries][Library].
+	 */
 	private fun checkBundleLibrary(bundle: MetaGraphBundle, destination: Library): Boolean {
-		if (bundle.referencedSystemLibrary == null) {
+		if (bundle.referencedSystemLibraryIds.isEmpty()) {
 			return true
 		}
-		if (destination is Project) {
-			return bundle.referencedSystemLibrary == destination.importedLibrary
+		return bundle.referencedSystemLibraryIds.all { libId ->
+			destination.library!!.expandedImports.libraries.map { it.uuid }.contains(libId)
 		}
-		return bundle.referencedSystemLibrary == destination.uuid
 	}
 
 	private fun importMetaGraphBundle(bundle: MetaGraphBundle, bundleName: String, destination: LibraryDirectory) {

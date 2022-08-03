@@ -26,8 +26,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
 			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
-			LibraryModule.libraryManagementService = LibraryManagementService()
 			LibraryModule.libraryService = LibraryService()
+			LibraryModule.libraryManagementService = LibraryManagementService()
 
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(path.toString()))
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path.parent.toString(), "projects")

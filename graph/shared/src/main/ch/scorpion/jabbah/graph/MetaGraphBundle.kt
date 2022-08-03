@@ -18,11 +18,11 @@ class MetaGraphBundle : AbstractStorable() {
 	private val _metaGraphs = mutableListOf<MetaGraph>()
 
 	/**
-	 * The [UUID] of the system [Library] this [MetaGraphBundle] depends on while NOT containing [MetaGraph]'s of it.
-	 * `null` if this [MetaGraphBundle] is fully self-contained. Must be set by the client of this class, if it is
-	 * not deserialized from persistent store.
+	 * The [UUIDS][UUID] of the system [Library] this [MetaGraphBundle] depends on while
+	 * NOT containing [MetaGraph]'s of it. `null` if this [MetaGraphBundle] is fully self-contained.
+	 * Must be set by the client of this class, if it is not deserialized from persistent store.
 	 */
-	var referencedSystemLibrary: UUID? = null
+	val referencedSystemLibraryIds = mutableSetOf<UUID>()
 
 	val metaGraphs: List<MetaGraph> get() = _metaGraphs
 
@@ -36,8 +36,8 @@ class MetaGraphBundle : AbstractStorable() {
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
-		referencedSystemLibrary?.let {
-			writer.writeString("systemLib", it.toString())
+		if (referencedSystemLibraryIds.isNotEmpty()) {
+			writer.writeUuids("systemLibs", referencedSystemLibraryIds)
 		}
 		writer.writeStorables("metaGraphs", metaGraphs.iterator())
 	}
@@ -45,7 +45,11 @@ class MetaGraphBundle : AbstractStorable() {
 	override fun read(reader: StoreReader) {
 		_metaGraphs.clear()
 		if (reader.hasAttribute("systemLib")) {
-			referencedSystemLibrary = System.createUUID(reader.readString("systemLib"))
+			// Backward compatibility
+			referencedSystemLibraryIds.add(System.createUUID(reader.readString("systemLib")))
+		}
+		if (reader.hasAttribute("systemLibs")) {
+			referencedSystemLibraryIds.addAll(reader.readUuids("systemLibs"))
 		}
 		for (metaGraph in reader.readStorables<MetaGraph>("metaGraphs")) {
 			reader.requestResolution(this, Reference(

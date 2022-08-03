@@ -158,7 +158,7 @@ class LibraryTreeViewSwing(
 		// TODO Handle stale imports, e.g. display warning dialog
 
 		root.removeAllChildren()
-		for (import in library.imports.libraries) {
+		for (import in library.expandedImports.libraries) {
 			val libraryNode = DefaultMutableTreeNode(import)
 			LibraryTreeModelBuilderSwing.addLibrary(libraryNode, import)
 			root.add(libraryNode)

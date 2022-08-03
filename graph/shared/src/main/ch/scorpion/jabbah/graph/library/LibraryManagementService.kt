@@ -58,20 +58,17 @@ class LibraryManagementService(
 
 	/** ---- [AbstractLibraryManagementService] */
 
-	/** Always `false`, because [Library] doesn't (yet) reference other [Libraries][Library]*/
-	override fun hasStaleImportReferences(library: Library): Boolean = false
-
-	override fun existsName(name: TranslatableText, except: UUID?): Boolean
-		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
+	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
+		userDictionaryService.existsName(name, except)
 
 	/** ---- [LibraryManagementService] */
 
-	fun isSystemLibrary(uuid: UUID): Boolean =
+	private fun isSystemLibrary(uuid: UUID): Boolean =
 		systemDictionaryService.contains(uuid)
 
 	/** Determines whether [uuid] exists as the [UUID] of either a user or a system [Library]. */
 	fun contains(uuid: UUID): Boolean
-		= userDictionaryService.contains(uuid) || systemDictionaryService.contains(uuid)
+		= systemDictionaryService.contains(uuid) || userDictionaryService.contains(uuid)
 
 	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
 	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
@@ -82,7 +79,7 @@ class LibraryManagementService(
 	}
 
 	fun getOptionalLibrary(uuid: UUID): Library? {
-		val dictionaryEntry = userDictionaryService.getEntry(uuid) ?: systemDictionaryService.getEntry(uuid)
+		val dictionaryEntry = systemDictionaryService.getEntry(uuid) ?: userDictionaryService.getEntry(uuid)
 		return dictionaryEntry?.let {
 			loadLibrary(LibraryIdentification(it.uuid, it.author))
 		}

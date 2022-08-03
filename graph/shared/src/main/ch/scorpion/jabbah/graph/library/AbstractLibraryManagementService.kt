@@ -42,9 +42,6 @@ abstract class AbstractLibraryManagementService(
 		private val LOG by logger(AbstractLibraryManagementService::class)
 	}
 
-	/** Checks whether [library] to be imported references another non-existing [Library]. */
-	abstract fun hasStaleImportReferences(library: Library): Boolean
-
 	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
 	abstract fun existsName(name: TranslatableText, except: UUID? = null): Boolean
 
@@ -95,5 +92,12 @@ abstract class AbstractLibraryManagementService(
 	protected fun deleteImpl(libraryId: LibraryIdentification) {
 		libraryService.deleteLibrary(libraryId)
 		dictionaryService.remove(libraryId.uuid)
+	}
+
+	/** Checks whether [library] to be imported references another non-existing [Library]. */
+	private fun hasStaleImportReferences(library: Library): Boolean {
+		return library.importedLibraryIds.any {
+			!dictionaryService.contains(it)
+		}
 	}
 }

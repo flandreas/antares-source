@@ -132,6 +132,9 @@ open class LibraryImpl(
 	override fun containsMetaGraph(uuid: UUID): Boolean =
 		findContainerLibraryElementFor(uuid) != null
 
+	override fun getContainingLibrary(uuid: UUID): Library? =
+		findContainerLibraryElementFor(uuid)?.library
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -187,7 +190,7 @@ open class LibraryImpl(
 
 	private val _imports = resettableLazy { LibraryImports.calculate(this) }
 
-	override val imports: LibraryImports get() = _imports.value
+	override val expandedImports: LibraryImports get() = _imports.value
 
 	override var defaultElementUUID: UUID? = null
 
@@ -274,7 +277,7 @@ open class LibraryImpl(
 		if (importedLibraryIds.isEmpty()) {
 			return findContainerLibraryElement(directory, uuid)
 		}
-		return imports
+		return expandedImports
 			.libraries
 			.firstNotNullOfOrNull { findContainerLibraryElement(it, uuid) }
 	}

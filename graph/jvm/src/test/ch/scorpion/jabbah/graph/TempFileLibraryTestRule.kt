@@ -20,12 +20,17 @@ object TempFileLibraryTestRule {
 
 		val tempDir = Files.createTempDirectory(null)
 
+		LibraryModule.libraryFactory = EmptyLibraryFactory()
+
+		val systemLibDir = "${tempDir}/systemLibs"
+		LibraryModule.systemLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "systemLibs")
+		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(systemLibDir))
+
 		val librariesDir = "${tempDir}/libraries"
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "libraries")
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
-		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
-		LibraryModule.libraryFactory = EmptyLibraryFactory()
+
+		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		val projectsDir = "${tempDir}/projects"

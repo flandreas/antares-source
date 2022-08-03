@@ -54,9 +54,6 @@ class ProjectManagementService(
 
 	/** ---- [AbstractLibraryManagementService] */
 
-	override fun hasStaleImportReferences(library: Library): Boolean =
-		!libraryManagementService.contains((library as Project).importedLibrary!!)
-
 	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
 		dictionaryService.existsName(name, except)
 
@@ -80,7 +77,7 @@ class ProjectManagementService(
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties, library: UUID = libraryHolder.library.uuid): Project {
+	fun create(properties: LibraryProperties, library: UUID? = null): Project {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
@@ -91,7 +88,9 @@ class ProjectManagementService(
 
 		val project = projectFactory.invoke(properties.name)
 		project.description = Description(properties.description)
-		project.importedLibrary = library
+		library?.let {
+			project.addImport(it)
+		}
 		project.defaultElementUUID = metaGraph.uuid
 
 		libraryService.storeLibrary(project)
@@ -103,9 +102,8 @@ class ProjectManagementService(
 	}
 
 	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/
-	fun createHelloProject(library: UUID): Project {
-		return create(LibraryProperties(TranslatableText(Translations.getString("project.hello.name"))), library)
-	}
+	fun createHelloProject(library: UUID?): Project =
+		create(LibraryProperties(TranslatableText(Translations.getString("project.hello.name"))), library)
 
 	/**
 	 * Updates the currently open [Project] with the specified properties and stores it in persistent store.
@@ -170,25 +168,11 @@ class ProjectManagementService(
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
 		LOG.trace("open project ${project.uuid} with default element $elementUUID")
-		openLibraryForProjectIfNecessary(project)
 		projectHolder.p = project
 		if (elementUUID != null) {
 			val element = project.getContainerLibraryElement(elementUUID)
 			if (element != null) {
 				eventBus.post(OpenContainerLibraryElementRequest(element))
-			}
-		}
-	}
-
-	private fun openLibraryForProjectIfNecessary(project: Project) {
-		if (project.importedLibrary != libraryHolder.library.uuid) {
-			project.importedLibrary!!.also {
-				val id = if (libraryManagementService.isSystemLibrary(it)) {
-					LibraryIdentification(it, null)
-				} else {
-					LibraryIdentification(it, project.author)
-				}
-				libraryManagementService.open(id)
 			}
 		}
 	}
