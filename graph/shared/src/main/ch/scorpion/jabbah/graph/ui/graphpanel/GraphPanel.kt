@@ -107,7 +107,6 @@ class GraphPanelViewController(
 	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>() {
 
 	companion object {
@@ -115,7 +114,7 @@ class GraphPanelViewController(
 	}
 
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
-	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
+	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)

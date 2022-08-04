@@ -27,14 +27,17 @@ interface LibraryPanelView : UIView {
 class LibraryPanelController(
 	applicationModeHolder: ApplicationModeHolder,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
-	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, applicationModeHolder, eventBus)
+	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, applicationModeHolder, eventBus)
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
-	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { libraryTreeViewController.project = it.project }
+	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = {
+		if (it.project != null) {
+			libraryTreeViewController.library = it.project
+		}
+	}
 
 	init {
 		eventBus.register(ThemeEvent::class, themeHandler)

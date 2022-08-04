@@ -43,11 +43,9 @@ interface LibraryTreeView : UIView {
 
 	fun collapseAtSelection()
 
-	fun openLibrary(library: Library)
+	fun openMainLibrary(library: Library)
 
-	fun openProject(project: Project)
-
-	fun closeProject()
+	fun closeMainLibrary()
 
 	fun handle(event: LibraryItemAddedEvent)
 
@@ -74,8 +72,7 @@ interface LibraryTreeView : UIView {
  */
 class LibraryTreeViewController (
 	val type: LibraryTreeViewType,
-	library: Library,
-	project: Project? = null,
+	library: Library?,
 	val applicationModeHolder: ApplicationModeHolder,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryTreeView>() {
@@ -130,7 +127,7 @@ class LibraryTreeViewController (
 
 	private val libraryImportsHandler: EventHandler<LibraryImportsEvent> = {
 		if (displaysLibrary(it.library)) {
-			view.openLibrary(it.library)
+			view.openMainLibrary(it.library)
 		}
 	}
 
@@ -143,23 +140,14 @@ class LibraryTreeViewController (
 		}
 
 	/** Holds the [Library] to display.*/
-	var library: Library = library
+	var library: Library? = library
 		set(value) {
 			if (field !== value) {
 				field = value
-				view.openLibrary(library)
-			}
-		}
-
-	/** Holds the [Project] to display.*/
-	var project: Project? = project
-		set(value) {
-			if (field !== value) {
-				field = value
-				if (project == null) {
-					view.closeProject()
+				if (field != null) {
+					view.openMainLibrary(value!!)
 				} else {
-					view.openProject(project!!)
+					view.closeMainLibrary()
 				}
 			}
 		}
@@ -256,6 +244,6 @@ class LibraryTreeViewController (
 		return (selectedItem as LibraryElement).getNewInstance()
 	}
 
-	private fun displaysLibrary(library: Library?): Boolean = library === this.library || library === project
+	private fun displaysLibrary(library: Library?): Boolean = library === this.library
 }
 

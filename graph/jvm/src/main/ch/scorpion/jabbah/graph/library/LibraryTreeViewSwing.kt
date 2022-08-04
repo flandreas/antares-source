@@ -27,7 +27,7 @@ class LibraryTreeViewSwing(
 	private val controller: LibraryTreeViewController,
 	application: Application,
 	showWorkspaceNode: Boolean = true
-) : JTree(LibraryTreeModelBuilderSwing(controller.library, controller.project).build()), LibraryTreeView {
+) : JTree(LibraryTreeModelBuilderSwing(controller.library,).build()), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewSwing::class)
@@ -151,8 +151,8 @@ class LibraryTreeViewSwing(
 		}
 	}
 
-	override fun openLibrary(library: Library) {
-		LOG.userTrail("Open Library '${library.name}'")
+	override fun openMainLibrary(library: Library) {
+		LOG.userTrail("Open main Library/Project '${library.name}'")
 		val root = model.root as DefaultMutableTreeNode
 
 		// TODO Handle stale imports, e.g. display warning dialog
@@ -169,34 +169,11 @@ class LibraryTreeViewSwing(
 		expandRow(0)
 	}
 
-	override fun openProject(project: Project) {
-		LOG.userTrail("Open Project '${project.name}'")
+	override fun closeMainLibrary() {
+		LOG.userTrail("Close main Library/Project")
 		val root = model.root as DefaultMutableTreeNode
-		val oldProjectNode = getProjectNode()
-		val newProjectNode = DefaultMutableTreeNode(project)
-		LibraryTreeModelBuilderSwing.addLibrary(newProjectNode, project)
-
-		if (oldProjectNode == null) {
-			root.insert(newProjectNode, 0)
-			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
-		} else {
-			root.remove(0)
-			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(oldProjectNode))
-			root.insert(newProjectNode, 0)
-			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
-		}
-
-		expandRow(0)
-	}
-
-	override fun closeProject() {
-		LOG.userTrail("Close Project")
-		val projectNode = getProjectNode()
-		if (projectNode != null) {
-			val root = model.root as DefaultMutableTreeNode
-			root.remove(0)
-			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(projectNode))
-		}
+		root.removeAllChildren()
+		(model as DefaultTreeModel).nodeStructureChanged(root)
 	}
 
 	/** ---- [LibraryTreeViewSwing] */
@@ -215,14 +192,6 @@ class LibraryTreeViewSwing(
 			return root.getChildAt(0) as DefaultMutableTreeNode
 		}
 		return null
-	}
-
-	private fun getLibraryNode(): DefaultMutableTreeNode {
-		val root = model.root as DefaultMutableTreeNode
-		if (root.childCount > 1) {
-			return root.getChildAt(1) as DefaultMutableTreeNode
-		}
-		return root.getChildAt(0) as DefaultMutableTreeNode
 	}
 
 	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/

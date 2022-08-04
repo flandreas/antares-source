@@ -32,8 +32,11 @@ class EditLibraryAction(
 	controller
 ) {
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(controller.library, Frame.getFrames()[0], application, eventBus)
+		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, eventBus)
 	}
+
+	override fun calculateEnabledness(): Boolean =
+		super.calculateEnabledness() && controller.library != null
 }
 
 /**
@@ -67,7 +70,6 @@ class LibraryCompositionPanel(
 	private val destinationTreeController = LibraryTreeViewController(
 		type = LibraryTreeViewType.CompositionDestination,
 		library = destinationLibrary,
-		project = null,
 		applicationModeHolder = ConstantApplicationModeHolder(ApplicationMode.EDIT),
 		eventBus = eventBus
 	)
@@ -100,7 +102,6 @@ class LibraryCompositionPanel(
 			type = LibraryTreeViewType.CompositionSource,
 			applicationModeHolder = ConstantApplicationModeHolder(ApplicationMode.EDIT),
 			library = getSelectedSourceLibrary(),
-			project = null,
 			eventBus = eventBus
 		)
 
