@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
+import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -112,7 +113,7 @@ class GrandUiIntegrationTest {
 	}
 
 	private fun createAndOpenNewMetaGraph() {
-		val project = ProjectModule.projectHolder.project!!
+		val project = LibraryModule.libraryHolder.library as Project
 		val metaGraph = MetaGraph.withName("Usage")
 		val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
 		BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
@@ -120,7 +121,7 @@ class GrandUiIntegrationTest {
 
 	private fun useContainerLibraryElement(componentUuid: UUID): SubGraphVerticeView<*> {
 		val service = GraphViewModule.graphViewAppService
-		val project = ProjectModule.projectHolder.project!!
+		val project = LibraryModule.libraryHolder.library as Project
 		val element = project.getContainerLibraryElement(componentUuid)!!
 		val editor = application.editor
 

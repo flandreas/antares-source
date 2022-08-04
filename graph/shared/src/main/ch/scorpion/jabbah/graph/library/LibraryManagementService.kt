@@ -6,9 +6,6 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
@@ -21,6 +18,8 @@ import ch.scorpion.jabbah.io.StorableCloner
  * changes of the current [Library]'s or current project's open [MetaGraph].
  */
 data class OpenLibraryRequest(val library: Library)
+
+class CloseLibraryRequest
 
 /**
  * Posted on [EventBus] when a new [Library] has been created
@@ -47,7 +46,6 @@ class LibraryManagementService(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
-	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
 
@@ -148,13 +146,17 @@ class LibraryManagementService(
 	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library) {
 		LOG.trace("open library ${library.uuid}")
-		eventBus.postVetoable(
-			event = OpenLibraryRequest(library),
-			undoEvent = OpenLibraryRequest(libraryHolder.library),
-			thenHandler = {
-				libraryHolder.l = library
-			}
-		)
+		if (libraryHolder.l == null) {
+			libraryHolder.l = library
+		} else {
+			eventBus.postVetoable(
+				event = OpenLibraryRequest(library),
+				undoEvent = OpenLibraryRequest(libraryHolder.library),
+				thenHandler = {
+					libraryHolder.l = library
+				}
+			)
+		}
 	}
 
 	/**

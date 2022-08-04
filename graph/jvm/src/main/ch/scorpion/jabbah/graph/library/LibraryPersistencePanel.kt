@@ -36,7 +36,7 @@ class LibraryPersistencePanel(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == libraryHolder.library.uuid }, "library") {
+) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == libraryHolder.l?.uuid }, "library") {
 
 	companion object {
 

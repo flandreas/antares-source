@@ -126,7 +126,7 @@ open class LibraryImpl(
 
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
 		val element = findContainerLibraryElementFor(uuid) ?: return null
-		return libraryService.getMetaGraph(this, element)
+		return element.library!!.libraryService.getMetaGraph(element.library!!, element)
 	}
 
 	override fun containsMetaGraph(uuid: UUID): Boolean =

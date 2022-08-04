@@ -23,9 +23,7 @@ class LibraryHolder(
 		        val oldValue = field
 		        field?.dispose()
 		        field = value
-		        if (oldValue != null) {
-			        eventBus.post(CurrentLibraryEvent(field!!))
-		        }
+		        eventBus.post(CurrentLibraryEvent(field))
 	        }
         }
 
@@ -33,4 +31,4 @@ class LibraryHolder(
 }
 
 /** Posted on [EventBus] when the current [Library] has changed.*/
-data class CurrentLibraryEvent(val library: Library)
+data class CurrentLibraryEvent(val library: Library?)

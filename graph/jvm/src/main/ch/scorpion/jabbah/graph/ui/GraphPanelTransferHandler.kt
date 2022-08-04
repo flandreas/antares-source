@@ -8,10 +8,10 @@ import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
@@ -73,7 +73,7 @@ class GraphPanelTransferHandler(
 	        return false
         }
 
-	    if (data.libraryElement.library == ProjectModule.projectHolder.project && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
+	    if (data.libraryElement.library == LibraryModule.libraryHolder.l && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
 		    LOG.trace("Prevent dropping project component into library graph")
 		    JOptionPane.showMessageDialog(
 			    null,

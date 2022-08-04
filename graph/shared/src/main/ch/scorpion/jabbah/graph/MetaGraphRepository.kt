@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectModule.projectHolder
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
@@ -47,27 +46,23 @@ class CombinedMetaGraphRepository(
 
 	/** ---- [MetaGraphRepository] */
 
-	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
-		return libraryHolder.library.getContainerLibraryElement(uuid)
-			?: projectHolder.project!!.getContainerLibraryElement(uuid)
-	}
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? =
+		libraryHolder.library.getContainerLibraryElement(uuid)
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
 	override fun getMetaGraph(uuid: UUID): MetaGraph =
-		libraryHolder.library.getOptionalMetaGraph(uuid)
-			?: projectHolder.project!!.getMetaGraph(uuid)
+		libraryHolder.library.getMetaGraph(uuid)
 
 	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? =
 		libraryHolder.library.getOptionalMetaGraph(uuid)
-			?: projectHolder.project?.getOptionalMetaGraph(uuid)
 
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	override fun containsMetaGraph(uuid: UUID): Boolean =
-		libraryHolder.library.containsMetaGraph(uuid) || projectHolder.project?.containsMetaGraph(uuid) == true
+		libraryHolder.library.containsMetaGraph(uuid)
 
 	override fun getContainingLibrary(uuid: UUID): Library? =
-		libraryHolder.library.getContainingLibrary(uuid) ?: projectHolder.project?.getContainingLibrary(uuid)
+		libraryHolder.library.getContainingLibrary(uuid)
 
 	/** ---- [CombinedMetaGraphRepository] */
 

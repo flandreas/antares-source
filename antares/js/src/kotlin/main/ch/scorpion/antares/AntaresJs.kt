@@ -192,7 +192,7 @@ val antaresJs = fc<AntaresJsProps> { props ->
 				attrs.applicationDataHolder = props.applicationDataHolder
 				attrs.canvasId = "kotlinCanvas"
 				attrs.size = null
-				attrs.projectName = ProjectModule.projectHolder.project?.name?.getTranslation()
+				attrs.projectName = LibraryModule.libraryHolder.l?.name?.getTranslation()
 				attrs.returnUri = props.returnUri
 				attrs.metaGraph = props.metaGraph
 			}

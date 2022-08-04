@@ -46,8 +46,6 @@ import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.project.ProjectHolder
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphEditView
 import ch.scorpion.jabbah.graph.ui.GraphEditViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView

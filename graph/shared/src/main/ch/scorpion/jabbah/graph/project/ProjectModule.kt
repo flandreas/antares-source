@@ -13,8 +13,6 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object ProjectModule : AbstractModule() {
 
-	var projectHolder: ProjectHolder = ProjectHolder()
-
 	var projectLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
 	var projectLibraryService: () -> LibraryService = {

@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectImpl
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.*
@@ -34,7 +32,6 @@ class RepositoryServiceImplTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.libraryHolder.l = libraryBuilder.library
-		ProjectModule.projectHolder.p = projectBuilder.library as Project
 	}
 
 	@Test

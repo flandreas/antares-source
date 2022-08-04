@@ -58,10 +58,11 @@ abstract class AbstractLibrarySelectionPanel(
 	protected fun selectCurrentLibrary(library: Library? = null) {
 		SwingUtilities.invokeLater {
 			libraryDictionaryEntries.requestFocusInWindow()
-			library?.let {
-				val index = getLibraryIndex(it.uuid)!!
-				libraryDictionaryEntries.selectedIndex = index
-				libraryDictionaryEntries.ensureIndexIsVisible(index)
+			library?.let { lib ->
+				getLibraryIndex(lib.uuid)?.let { index ->
+					libraryDictionaryEntries.selectedIndex = index
+					libraryDictionaryEntries.ensureIndexIsVisible(index)
+				}
 			}
 		}
 	}

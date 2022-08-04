@@ -55,7 +55,7 @@ class BinaryAddition {
 		val projectId = LibraryIdentification(
 			UUID("532f0477-722c-4c88-ada3-c419a386d06a"),
 			UserIdentity("5ecf330b-e395-4e17-88b0-0883834b384a"))
-		ProjectModule.projectHolder.p = ProjectModule.projectManagementService.invoke().load(projectId)
+		LibraryModule.libraryHolder.l = ProjectModule.projectManagementService.invoke().load(projectId)
 	}
 
 	private fun display() {

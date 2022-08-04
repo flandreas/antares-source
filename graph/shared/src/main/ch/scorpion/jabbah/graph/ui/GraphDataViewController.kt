@@ -37,19 +37,21 @@ class GraphDataViewController(
 		private val LOG by logger(GraphDataViewController::class)
 	}
 
-	private val openProjectRequestHandler: EventHandler<OpenProjectRequest> = { handle(it) }
-	private val closeProjectRequestHandler: EventHandler<CloseProjectRequest> = { handle(it) }
-	private val currentProjectEventHandler: EventHandler<CurrentProjectEvent> = { closeData() }
 	private val openLibraryRequestHandler: EventHandler<OpenLibraryRequest> = { handle(it) }
-	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = { closeData() }
+	private val closeLibraryRequestHandler: EventHandler<CloseLibraryRequest> = { handle(it) }
+	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = {
+		if (it.library == null) {
+			closeData()
+		}
+	}
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
 	private val closeQuestionHandler: EventHandler<GraphDesktopViewItemCloseQuestion> = { handle(it) }
 	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
 
 	init {
-		eventBus.register(OpenProjectRequest::class, openProjectRequestHandler)
-		eventBus.register(CloseProjectRequest::class, closeProjectRequestHandler)
-		eventBus.register(CurrentProjectEvent::class, currentProjectEventHandler)
+		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
+		eventBus.register(CloseLibraryRequest::class, closeLibraryRequestHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryEventHandler)
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryEventHandler)
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
@@ -59,9 +61,9 @@ class GraphDataViewController(
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(openProjectRequestHandler)
-		eventBus.unregister(closeProjectRequestHandler)
-		eventBus.unregister(currentProjectEventHandler)
+		eventBus.unregister(openLibraryRequestHandler)
+		eventBus.unregister(closeLibraryRequestHandler)
+		eventBus.unregister(currentLibraryEventHandler)
 		eventBus.unregister(openLibraryRequestHandler)
 		eventBus.unregister(currentLibraryEventHandler)
 		eventBus.unregister(libraryItemRemovedHandler)
@@ -119,20 +121,14 @@ class GraphDataViewController(
 		}
 	}
 
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenProjectRequest) {
-		if (!canReplaceSavable("project.action.open.name")) {
-			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
-		}
-	}
-
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenLibraryRequest) {
 		if (!canReplaceSavable("library.action.open.name")) {
 			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 		}
 	}
 
-	private fun handle(event: CloseProjectRequest) {
-		if (data?.savable is ProjectSavable && (data!!.savable as ProjectSavable).project == event.project && !canReplaceSavable("project.action.close.name")) {
+	private fun handle(event: CloseLibraryRequest) {
+		if (!canReplaceSavable("project.action.close.name")) {
 			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 		}
 	}

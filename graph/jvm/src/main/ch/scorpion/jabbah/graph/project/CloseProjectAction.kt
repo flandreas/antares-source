@@ -5,30 +5,33 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
+import ch.scorpion.jabbah.graph.library.LibraryHolder
+import ch.scorpion.jabbah.graph.library.LibraryModule
 
 /**
  * Closes the currently open [Project].
  */
 class CloseProjectAction(
 	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
-	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("project.action.close") {
 
-	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { updateEnabledness() }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
 
 	init {
-		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		updateEnabledness()
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(currentProjectHandler)
+		eventBus.unregister(currentLibraryHandler)
 	}
 
 	private fun updateEnabledness() {
-		enabled = projectHolder.p != null
+		enabled = libraryHolder.l != null
 	}
 
 	override fun execute(event: ActionEvent) {

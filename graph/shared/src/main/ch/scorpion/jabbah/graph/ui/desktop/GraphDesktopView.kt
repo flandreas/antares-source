@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
+import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -72,7 +72,7 @@ interface GraphDesktopView : UIView {
  * Listens for [GraphDesktopViewItemCloseRequest]s and closes the referenced [GraphDesktopViewItem].
  * If the main [GraphDesktopViewItem] is closed, all associated [GraphDesktopViewItem]s are closed as well.
  *
- * Listens for [CurrentProjectEvent] and closes all open [GraphDesktopViewItem]s.
+ * Listens for [CurrentLibraryEvent] and closes all open [GraphDesktopViewItem]s.
  */
 class GraphDesktopViewController(
 	val applicationContextHolder: GraphApplicationContextHolder,
@@ -109,7 +109,7 @@ class GraphDesktopViewController(
 	/** Replace reference color in all Associations */
 	private val referenceColorHandler: EventHandler<ReferenceColorEvent> = { handle(it) }
 
-	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { handle(it) }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { handle(it) }
 
 	/** Closes an open [GraphDesktopViewItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
@@ -121,7 +121,7 @@ class GraphDesktopViewController(
 		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
 		eventBus.register(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
-		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 	}
 
 	override fun dispose() {
@@ -130,7 +130,7 @@ class GraphDesktopViewController(
 		eventBus.unregister(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.unregister(ReferenceColorEvent::class, referenceColorHandler)
-		eventBus.unregister(CurrentProjectEvent::class, currentProjectHandler)
+		eventBus.unregister(CurrentLibraryEvent::class, currentLibraryHandler)
 	}
 
 	/** ---- [GraphDesktopViewController] */
@@ -167,7 +167,7 @@ class GraphDesktopViewController(
 		event.newGraphView?.addDrawableContainerListener(removeListener)
 	}
 
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentProjectEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentLibraryEvent) {
 		closeAll()
 	}
 

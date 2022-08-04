@@ -7,17 +7,14 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryDirectory
-import ch.scorpion.jabbah.graph.library.LibraryService
+import ch.scorpion.jabbah.graph.library.*
 
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
 class ProjectSavable(
 	element: ContainerLibraryElement,
-	val project: Project = ProjectModule.projectHolder.project!!,
+	val project: Project = LibraryModule.libraryHolder.library as Project,
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
 ) : AbstractContainerLibraryElementSavable(element, libraryService) {

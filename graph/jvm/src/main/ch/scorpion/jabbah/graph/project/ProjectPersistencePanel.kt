@@ -11,10 +11,7 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.library.AbstractLibraryPersistencePanel
-import ch.scorpion.jabbah.graph.library.AbstractLibrarySelectionPanel
-import ch.scorpion.jabbah.graph.library.LibraryProperties
-import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
@@ -38,10 +35,10 @@ class ShowProjectsDialogAction(
  */
 class ProjectPersistencePanel(
 	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
-	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == projectHolder.project?.uuid }, "project") {
+) : AbstractLibraryPersistencePanel(managementService, userHolder, isOpen = { it.uuid == libraryHolder.l?.uuid }, "project") {
 
 	companion object {
 
@@ -66,7 +63,7 @@ class ProjectPersistencePanel(
 	init {
 		buildUI()
 		load()
-		selectCurrentLibrary(projectHolder.project)
+		selectCurrentLibrary(libraryHolder.l)
 	}
 
 	/** ---- [AbstractLibrarySelectionPanel] */
@@ -107,7 +104,7 @@ class ProjectPersistencePanel(
 	}
 
 	override fun currentLibraryIndex(): Int? =
-		projectHolder.project?.uuid?.let {
+		libraryHolder.l?.uuid?.let {
 			getLibraryIndex(it)
 		}
 
@@ -137,7 +134,7 @@ class ProjectPersistencePanel(
 		get() = Translations.getString("project.dialog.import.filter.name")
 
 	override fun handleSelectionChanged() {
-		openAction.enabled = selectedLibrary?.uuid != projectHolder.p?.uuid
+		openAction.enabled = selectedLibrary?.uuid != libraryHolder.l?.uuid
 		deleteAction.enabled = selectedLibrary != null
 		exportAction.enabled = selectedLibrary != null
 		importAction.enabled = true

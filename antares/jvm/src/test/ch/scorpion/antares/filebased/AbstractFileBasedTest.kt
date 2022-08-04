@@ -47,7 +47,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 	protected fun openCircuit(uuid: UUID) {
 		ProjectModule.projectManagementService.invoke().open(
 			LibraryIdentification(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"), null))
-		val metaGraph = ProjectModule.projectHolder.p!!.getMetaGraph(uuid)
+		val metaGraph = LibraryModule.libraryHolder.library.getMetaGraph(uuid)
 		openedCircuitView = metaGraph.graph.graphView
 	}
 

@@ -26,8 +26,8 @@ open class LibraryTreeViewActionsSwing(
 	application: Application
 ) : LibraryTreeViewActions(controller, application) {
 
-	protected val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
-	protected val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
+	protected val libraryOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
+	protected val projectOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
 
 	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
