@@ -2,33 +2,45 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
 import java.awt.Frame
 import javax.swing.*
 
 class AddLibraryToDesktopAction(
-	applicationModeHolder: ApplicationModeHolder
+	applicationModeHolder: ApplicationModeHolder,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
 ) : AbstractApplicationModeEditAction("library.selectionDialog.action", applicationModeHolder) {
 
 	override fun calculateEnabledness(): Boolean = true
 
 	override fun execute(event: ActionEvent) {
-		LibrarySelectionPanel.showAsDialog(Frame.getFrames()[0])
+		LibrarySelectionPanel.showAsDialog(Frame.getFrames()[0])?.let {
+			InvocationHandler.invoke {
+				val service = if (libraryHolder.library is Project) {
+					ProjectModule.projectManagementService.invoke()
+				} else {
+					LibraryModule.libraryManagementService
+				}
+				service.addImport(it)
+			}
+		}
 	}
 }
 
 /**
- * Displays a list of all existing [Libraries][Library] and allows the user to open them.
+ * Displays a list of all existing [Libraries][Library] and allows the user to select one of them.
  */
 class LibrarySelectionPanel(
 	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService,
@@ -38,20 +50,25 @@ class LibrarySelectionPanel(
 ) : AbstractLibrarySelectionPanel(userHolder, isOpen = { it.uuid == libraryHolder.l?.uuid }) {
 
 	companion object {
-		private val LOG by logger(LibrarySelectionPanel::class)
 
-		fun showAsDialog(parent: Frame) {
-			DialogBuilder<LibrarySelectionPanel>(parent)
+		fun showAsDialog(parent: Frame): UUID? {
+			val builder = DialogBuilder<LibrarySelectionPanel>(parent)
 				.content { dialog -> LibrarySelectionPanel(closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("library.selectionDialog.title"))
 				.defaultButton { it.openButton }
 				.nonResizable()
 				.show()
+
+			return builder.content.result
 		}
 	}
 
 	private val openAction = OpenAction()
 	val openButton = createButton(openAction)
+
+	/** Contains the [UUID] of the selected [Library] after the user has closed the dialog.*/
+	var result: UUID? = null
+		private set
 
 	init {
 		buildUI()
@@ -84,28 +101,22 @@ class LibrarySelectionPanel(
 	}
 
 	override fun handleListDoubleClick(event: ActionEvent) {
-		importSelectedLibrary()
+		result = selectedLibrary?.identification?.uuid
+		closeHandler.invoke()
 	}
 
 	override fun handleSelectionChanged() { }
 
-	private fun importSelectedLibrary() {
-		selectedLibrary?.let {
-			InvocationHandler.invoke {
-				managementService.addImport(it.uuid)
-				closeHandler.invoke()
-			}
-		}
-	}
-
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
-			importSelectedLibrary()
+			result = selectedLibrary?.identification?.uuid
+			closeHandler.invoke()
 		}
 	}
 
 	private inner class CancelAction : AbstractAction("library.dialog.cancel.action") {
 		override fun execute(event: ActionEvent) {
+			result = null
 			closeHandler.invoke()
 		}
 	}

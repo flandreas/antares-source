@@ -43,11 +43,11 @@ data class LibraryImportsEvent(val library: Library)
 class LibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	libraryService: LibraryService = LibraryModule.libraryService,
-	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
+) : AbstractLibraryManagementService(libraryHolder, libraryService, userDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(LibraryManagementService::class)
@@ -168,27 +168,6 @@ class LibraryManagementService(
 			throw IllegalArgumentException("illegal attempt to delete the currently open library ${libraryId.uuid}")
 		}
 		deleteImpl(libraryId)
-	}
-
-	/**
-	 * Adds the specified [Library] as an imported [Library] to the [Library] currently held by
-	 * [LibraryHolder] and makes this change persistent.
-	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
-	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
-	 */
-	fun addImport(libraryId: UUID) {
-		if (libraryHolder.l == null) {
-			throw IllegalStateException("no Library to add an import to")
-		}
-		if (!userDictionaryService.contains(libraryId) && !systemDictionaryService.contains(libraryId)) {
-			throw IllegalArgumentException("library $libraryId to import doesn't exist")
-		}
-		LOG.userTrail("Import library $libraryId in ${libraryHolder.library.uuid}")
-
-		libraryHolder.library.addImport(libraryId)
-		libraryService.storeLibrary(libraryHolder.library)
-
-		eventBus.post(LibraryImportsEvent(libraryHolder.library))
 	}
 
 	/**

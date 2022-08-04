@@ -33,6 +33,7 @@ data class LibraryImportResult(
  * @param dictionaryService the service that allows changes of a [LibraryDictionary] by the user
  */
 abstract class AbstractLibraryManagementService(
+	protected val libraryHolder: LibraryHolder,
 	protected val libraryService: LibraryService,
 	protected val dictionaryService: LibraryDictionaryService,
 	protected val eventBus: EventBus
@@ -44,6 +45,24 @@ abstract class AbstractLibraryManagementService(
 
 	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
 	abstract fun existsName(name: TranslatableText, except: UUID? = null): Boolean
+
+	/**
+	 * Adds the specified [Library] as an imported [Library] to the [Library] currently held by
+	 * [LibraryHolder] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
+	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
+	 */
+	fun addImport(libraryId: UUID) {
+		if (libraryHolder.l == null) {
+			throw IllegalStateException("no Library to add an import to")
+		}
+		LOG.userTrail("Import library $libraryId in ${libraryHolder.library.uuid}")
+
+		libraryHolder.library.addImport(libraryId)
+		libraryService.storeLibrary(libraryHolder.library)
+
+		eventBus.post(LibraryImportsEvent(libraryHolder.library))
+	}
 
 	fun export(libraryId: LibraryIdentification, outputPath: String) {
 		libraryService.exportLibrary(libraryId, outputPath)
