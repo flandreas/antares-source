@@ -18,27 +18,6 @@ import java.awt.BorderLayout
 import java.awt.Frame
 import javax.swing.*
 
-class AddLibraryToDesktopAction(
-	applicationModeHolder: ApplicationModeHolder,
-	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
-) : AbstractApplicationModeEditAction("library.selectionDialog.action", applicationModeHolder) {
-
-	override fun calculateEnabledness(): Boolean = true
-
-	override fun execute(event: ActionEvent) {
-		LibrarySelectionPanel.showAsDialog(Frame.getFrames()[0])?.let {
-			InvocationHandler.invoke {
-				val service = if (libraryHolder.library is Project) {
-					ProjectModule.projectManagementService.invoke()
-				} else {
-					LibraryModule.libraryManagementService
-				}
-				service.addImport(it)
-			}
-		}
-	}
-}
-
 /**
  * Displays a list of all existing [Libraries][Library] and allows the user to select one of them.
  */

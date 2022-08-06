@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
+import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import kotlin.test.*
 
 class LibraryManagementServiceTest {
@@ -51,5 +52,19 @@ class LibraryManagementServiceTest {
 		assertFalse(LibraryModule.libraryHolder.library.importedLibraryIds.contains(libraryD.uuid))
 		assertFalse(LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.identification, isSystem = false).importedLibraryIds.contains(libraryD.uuid))
 		assertTrue(libraryImportEventSent)
+	}
+
+	@Test
+	fun shouldDetectLibraryReference() {
+		val libraryE = TempFileLibraryTestRule.createLibrary("E")
+		val builder = TestLibraryBuilder()
+		builder.addInnerCustomComponent(libraryE)
+
+		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("F")
+		LibraryModule.libraryManagementService.addImport(libraryE.uuid)
+		builder.addOuterCustomComponent(LibraryModule.libraryHolder.library, innerLibrary = libraryE)
+
+		// F contains a MetaGraph with a SubGraphVerticeRef E
+		assertTrue(LibraryModule.libraryManagementService.containsLibraryReference(LibraryModule.libraryHolder.library, libraryE))
 	}
 }

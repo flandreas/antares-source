@@ -76,6 +76,7 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	/** Returns the number of [MetaGraph] contained in this [Library]. */
 	val metaGraphCount: Int
 
+	/** Returns the [UUID] of a [MetaGraphs][MetaGraph] directly contained in this [Library]. */
 	val metaGraphIds: List<UUID>
 
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */

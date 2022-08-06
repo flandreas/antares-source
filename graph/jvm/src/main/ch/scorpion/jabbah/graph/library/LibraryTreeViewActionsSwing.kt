@@ -32,6 +32,7 @@ open class LibraryTreeViewActionsSwing(
 	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
 	private val addLibraryToDesktopAction = AddLibraryToDesktopAction(controller.applicationModeHolder)
+	private val removeLibraryAction = RemoveLibraryAction(controller)
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
 	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
@@ -192,6 +193,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 	}
