@@ -4,16 +4,11 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
-import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
 import java.awt.Frame
 import javax.swing.*
@@ -22,17 +17,18 @@ import javax.swing.*
  * Displays a list of all existing [Libraries][Library] and allows the user to select one of them.
  */
 class LibrarySelectionPanel(
+	openActionNameBaseKey: String,
 	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val closeHandler: () -> Unit
-) : AbstractLibrarySelectionPanel(userHolder, isOpen = { it.uuid == libraryHolder.l?.uuid }) {
+) : AbstractLibrarySelectionPanel(userHolder, isOpen = { libraryHolder.library.expandedImports.libraries.map { it.uuid }.contains(it.uuid) }) {
 
 	companion object {
 
-		fun showAsDialog(parent: Frame): UUID? {
+		fun showAsDialog(parent: Frame, openActionNameBaseKey: String = "library.dialog.open.action"): UUID? {
 			val builder = DialogBuilder<LibrarySelectionPanel>(parent)
-				.content { dialog -> LibrarySelectionPanel(closeHandler = { dialog.dispose() }) }
+				.content { dialog -> LibrarySelectionPanel(openActionNameBaseKey, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("library.selectionDialog.title"))
 				.defaultButton { it.openButton }
 				.nonResizable()
@@ -42,7 +38,7 @@ class LibrarySelectionPanel(
 		}
 	}
 
-	private val openAction = OpenAction()
+	private val openAction = OpenAction(openActionNameBaseKey)
 	val openButton = createButton(openAction)
 
 	/** Contains the [UUID] of the selected [Library] after the user has closed the dialog.*/
@@ -86,7 +82,7 @@ class LibrarySelectionPanel(
 
 	override fun handleSelectionChanged() { }
 
-	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
+	private inner class OpenAction(baseNameKey: String) : AbstractAction(baseNameKey) {
 		override fun execute(event: ActionEvent) {
 			result = selectedLibrary?.identification?.uuid
 			closeHandler.invoke()

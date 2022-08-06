@@ -31,7 +31,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
-	private val addLibraryToDesktopAction = AddLibraryToDesktopAction(controller.applicationModeHolder)
+	private val addLibraryToDesktopAction = AddLibraryToDesktopAction(controller)
 	private val removeLibraryAction = RemoveLibraryAction(controller)
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
