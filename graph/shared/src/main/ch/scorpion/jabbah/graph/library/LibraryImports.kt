@@ -19,11 +19,13 @@ class LibraryImports(val root: Library) {
 		private fun calculateImpl(library: Library, service: LibraryManagementService, imports: LibraryImports) {
 			imports.addImport(library)
 			for (uuid in library.importedLibraryIds) {
-				val import = service.getOptionalLibrary(uuid)
-				if (import == null) {
-					imports.incrementStateImportCount()
-				} else {
-					calculateImpl(import, service, imports)
+				if (imports._libraries.none { it.uuid == uuid }) {
+					val import = service.getOptionalLibrary(uuid)
+					if (import == null) {
+						imports.incrementStateImportCount()
+					} else {
+						calculateImpl(import, service, imports)
+					}
 				}
 			}
 		}
