@@ -27,7 +27,7 @@ class LibraryPanelController(
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
-	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, applicationModeHolder, eventBus)
+	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.l, applicationModeHolder, eventBus)
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
 

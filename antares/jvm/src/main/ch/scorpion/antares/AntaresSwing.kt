@@ -19,7 +19,6 @@ import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -260,7 +259,6 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
 
 		super.init()
 
@@ -342,9 +340,10 @@ class AntaresSwing(
 
 	override fun handleShutdown() {
 		super.handleShutdown()
+
 		if (controller.data?.savable is ProjectSavable) {
 			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (controller.data!!.savable as ProjectSavable).project.uuid.toString())
-		} else if (controller.data?.savable != null) {
+		} else {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}
 	}
