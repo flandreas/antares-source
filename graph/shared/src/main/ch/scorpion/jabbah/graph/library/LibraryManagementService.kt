@@ -102,7 +102,9 @@ class LibraryManagementService(
 
 		library.bindLibraryItems()
 		userDictionaryService.add(library)
+		libraryService.storeLibrary(library)
 		eventBus.post(LibraryCreatedEvent(library))
+
 		return library
 	}
 
@@ -164,7 +166,7 @@ class LibraryManagementService(
 	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
 	fun delete(libraryId: LibraryIdentification) {
-		if (libraryHolder.library.uuid == libraryId.uuid) {
+		if (libraryHolder.l?.uuid == libraryId.uuid) {
 			throw IllegalArgumentException("illegal attempt to delete the currently open library ${libraryId.uuid}")
 		}
 		deleteImpl(libraryId)

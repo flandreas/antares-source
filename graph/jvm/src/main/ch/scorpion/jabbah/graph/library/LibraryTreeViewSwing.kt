@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
+import java.awt.Frame
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
@@ -154,10 +155,29 @@ class LibraryTreeViewSwing(
 	override fun openMainLibrary(library: Library) {
 		LOG.userTrail("Open main Library/Project '${library.name}'")
 
-		// TODO Handle stale imports, e.g. display warning dialog
 		model = LibraryTreeModelBuilderSwing(library).build()
-
 		expandRow(0)
+
+		if (library.expandedImports.staleImportCount > 0) {
+			var title = ""
+			var text = ""
+			if (library is Project) {
+				title = Translations.getString("library.open.staleReferenceFromProject.name")
+				text = Translations.getString("library.open.staleReferenceFromProject.msg")
+			} else {
+				title = Translations.getString("library.open.staleReferenceFromLibrary.name")
+				text = Translations.getString("library.open.staleReferenceFromLibrary.msg")
+			}
+			SwingUtilities.invokeLater {
+				JOptionPane.showConfirmDialog(
+					Frame.getFrames()[0],
+					text,
+					title,
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.WARNING_MESSAGE
+				)
+			}
+		}
 	}
 
 	override fun closeMainLibrary() {
