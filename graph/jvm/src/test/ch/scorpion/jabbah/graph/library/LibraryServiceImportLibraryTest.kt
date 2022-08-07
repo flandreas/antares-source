@@ -6,7 +6,8 @@ import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import kotlin.test.*
 
-class LibraryManagementServiceTest {
+
+class LibraryServiceImportLibraryTest {
 
 	companion object {
 		init {
@@ -34,7 +35,7 @@ class LibraryManagementServiceTest {
 		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("A")
 		val libraryB = TempFileLibraryTestRule.createLibrary("B")
 
-		LibraryModule.libraryManagementService.addImport(libraryB.uuid)
+		LibraryModule.libraryHolder.library.libraryService.addImport(LibraryModule.libraryHolder.library, libraryB.uuid)
 
 		assertTrue(LibraryModule.libraryHolder.library.importedLibraryIds.contains(libraryB.uuid))
 		assertTrue(LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.identification, isSystem = false).importedLibraryIds.contains(libraryB.uuid))
@@ -45,7 +46,7 @@ class LibraryManagementServiceTest {
 	fun shouldRemoveImportedLibrary() {
 		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("C")
 		val libraryD = TempFileLibraryTestRule.createLibrary("D")
-		LibraryModule.libraryManagementService.addImport(libraryD.uuid)
+		LibraryModule.libraryHolder.library.libraryService.addImport(LibraryModule.libraryHolder.library, libraryD.uuid)
 
 		LibraryModule.libraryManagementService.removeImport(libraryD.uuid)
 
@@ -61,10 +62,11 @@ class LibraryManagementServiceTest {
 		builder.addInnerCustomComponent(libraryE)
 
 		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("F")
-		LibraryModule.libraryManagementService.addImport(libraryE.uuid)
+		LibraryModule.libraryHolder.library.libraryService.addImport(LibraryModule.libraryHolder.library, libraryE.uuid)
+
 		builder.addOuterCustomComponent(LibraryModule.libraryHolder.library, innerLibrary = libraryE)
 
 		// F contains a MetaGraph with a SubGraphVerticeRef E
-		assertTrue(LibraryModule.libraryManagementService.containsLibraryReference(LibraryModule.libraryHolder.library, libraryE))
+		assertTrue(LibraryModule.libraryHolder.library.libraryService.containsLibraryReference(LibraryModule.libraryHolder.library, libraryE))
 	}
 }

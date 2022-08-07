@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -21,14 +20,8 @@ class RemoveLibraryAction(
 			&& (selectedItem!!.library!!.isBrokenImport || libraryHolder.library.importedLibraryIds.contains(selectedItem!!.library!!.uuid))
 
 	override fun execute(event: ActionEvent) {
-		val service = if (selectedItem!!.library is Project) {
-			ProjectModule.projectManagementService.invoke()
-		} else {
-			LibraryModule.libraryManagementService
-		}
-
 		InvocationHandler.invoke {
-			if (service.containsLibraryReference(libraryHolder.library, selectedItem!!.library!!)) {
+			if (libraryHolder.library.libraryService.containsLibraryReference(libraryHolder.library, selectedItem!!.library!!)) {
 				val text = if (libraryHolder.library is Project) {
 					Translations.getString("library.removeImport.stateReferenceFromProject.txt")
 				} else {
@@ -41,7 +34,7 @@ class RemoveLibraryAction(
 					JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE)
 			} else {
-				service.removeImport(selectedItem!!.library!!)
+				libraryHolder.library.libraryService.removeImport(libraryHolder.library, selectedItem!!.library!!.uuid)
 			}
 		}
 	}

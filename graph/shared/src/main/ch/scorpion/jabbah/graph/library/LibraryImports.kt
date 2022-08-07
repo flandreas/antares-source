@@ -30,6 +30,7 @@ class LibraryImports(val root: Library) {
 							LibraryProperties(name = TranslatableText(Translations.getString("library.stateReference.name")))
 						).also {
 							it.isBrokenImport = true
+							it.uuid = uuid
 							imports.addImport(it)
 						}
 					} else {
