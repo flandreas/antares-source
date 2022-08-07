@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+
 /**
  * Contains the transitive hull of imported [Libraries][Library] of a particular root [Library].
  */
@@ -23,6 +26,12 @@ class LibraryImports(val root: Library) {
 					val import = service.getOptionalLibrary(uuid)
 					if (import == null) {
 						imports.incrementStateImportCount()
+						LibraryModule.libraryFactory.createEmptyLibrary(
+							LibraryProperties(name = TranslatableText(Translations.getString("library.stateReference.name")))
+						).also {
+							it.isBrokenImport = true
+							imports.addImport(it)
+						}
 					} else {
 						calculateImpl(import, service, imports)
 					}

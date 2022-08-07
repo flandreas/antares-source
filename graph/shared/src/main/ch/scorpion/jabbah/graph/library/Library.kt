@@ -79,6 +79,9 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	/** Returns the [UUID] of a [MetaGraphs][MetaGraph] directly contained in this [Library]. */
 	val metaGraphIds: List<UUID>
 
+	/** Volatile property to mark an imported [Library] not found on the current system.*/
+	var isBrokenImport: Boolean
+
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     fun bindLibraryItems()
 

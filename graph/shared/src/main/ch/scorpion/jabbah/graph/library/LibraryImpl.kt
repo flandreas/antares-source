@@ -197,6 +197,8 @@ open class LibraryImpl(
 
 	override var visibility: LibraryVisibility = LibraryVisibility.Private
 
+	override var isBrokenImport: Boolean = false
+
 	override var description: Description = Description(properties.description)
 
 	override val metaGraphCount: Int get() = metaGraphIds.size

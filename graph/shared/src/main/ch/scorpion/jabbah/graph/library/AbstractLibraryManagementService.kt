@@ -71,22 +71,27 @@ abstract class AbstractLibraryManagementService(
 	 * Removes the specified [Library] as import from the current [Library] in [LibraryHolder],
 	 * as well as all [Libraries][Library] imported by [library].
 	 *
-	 * First checks whether any [MetaGraph] of the current [Library] contains a reference to
-	 * one of the [MetaGraphs][MetaGraph] in the transitive hull of [library].
-	 *
-	 * This check can be costly, because every [MetaGraph] in the current [Library]has to be
-	 * read and scanned for [SubGraphVerticeRefs][SubGraphVerticeRef] that would become
-	 * broken when removing [library] from the imports.
+	 * Clients like UI should first call [containsLibraryReference] to check whether removing
+	 * the current [Library] contains a reference to one of the [MetaGraphs][MetaGraph] in the
+	 * transitive hull of [library], and if that's the case, not allowing the user to remove it.
 	 *
 	 * @param library the [Library] not to be imported any more
 	 */
 	fun removeImport(library: Library) {
-		// TODO
+		LOG.userTrail("Remove import ${library.uuid} from ${libraryHolder.library.uuid}")
+		libraryHolder.library.removeImport(library.uuid)
+		libraryService.storeLibrary(libraryHolder.library)
+
+		eventBus.post(LibraryImportsEvent(libraryHolder.library))
 	}
 
 	/**
 	 * Determines whether [master] contains a [MetaGraph] with a reference to any [MetaGraph] in [target]
 	 * (or any [Library] imported by [target]).
+	 *
+	 * This check can be costly, because every [MetaGraph] in the current [Library]has to be
+	 * read and scanned for [SubGraphVerticeRefs][SubGraphVerticeRef] that would become
+	 * broken when removing [target] from the imports.
 	 */
 	fun containsLibraryReference(master: Library, target: Library): Boolean {
 		for (metaGraphId in master.metaGraphIds) {
