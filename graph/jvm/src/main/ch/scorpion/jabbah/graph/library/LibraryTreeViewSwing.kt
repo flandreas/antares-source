@@ -153,18 +153,9 @@ class LibraryTreeViewSwing(
 
 	override fun openMainLibrary(library: Library) {
 		LOG.userTrail("Open main Library/Project '${library.name}'")
-		val root = model.root as DefaultMutableTreeNode
 
 		// TODO Handle stale imports, e.g. display warning dialog
-
-		root.removeAllChildren()
-		for (import in library.expandedImports.libraries) {
-			val libraryNode = DefaultMutableTreeNode(import)
-			LibraryTreeModelBuilderSwing.addLibrary(libraryNode, import)
-			root.add(libraryNode)
-		}
-
-		(model as DefaultTreeModel).nodeStructureChanged(root)
+		model = LibraryTreeModelBuilderSwing(library).build()
 
 		expandRow(0)
 	}
