@@ -238,6 +238,7 @@ class LibraryTreeViewSwing(
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
 		private val libraryImportIcon = UiUtil.themedIcon("/img/imported-library.png")
+		private val brokenImportIcon = UiUtil.themedIcon("/img/broken-import.png")
 		private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
 		private val desktopIcon = UiUtil.themedIcon("/img/table-20.png")
 
@@ -273,7 +274,11 @@ class LibraryTreeViewSwing(
 					if (value.userObject === controller.library) {
 						component.icon = libraryIcon
 					} else {
-						component.icon = libraryImportIcon
+						if ((value.userObject as Library).isBrokenImport) {
+							component.icon = brokenImportIcon
+						} else {
+							component.icon = libraryImportIcon
+						}
 					}
 				} else if (value.userObject is LibraryFolder) {
 					component.icon = folderIcon
