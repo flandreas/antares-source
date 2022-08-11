@@ -244,6 +244,7 @@ class LibraryTreeViewController (
 		return (selectedItem as LibraryElement).getNewInstance()
 	}
 
-	private fun displaysLibrary(library: Library?): Boolean = library === this.library
+	private fun displaysLibrary(library: Library?): Boolean =
+		this.library?.expandedImports?.libraries?.contains(library) == true
 }
 
