@@ -29,6 +29,11 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
         super.addProperties(bean, editor, properties)
 
 	    properties.add(modelId.bind(editor, bean.id, editable = false))
+
+	    if (bean.model.designError != null) {
+		    return
+	    }
+
 	    properties.add(propDelay.bind(editor, bean.id))
 	    properties.add(orientation.bind(editor, bean.id))
 	    properties.add(mirrorH.bind(editor, bean.id))
