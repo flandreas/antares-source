@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.module.GraphModule
@@ -73,10 +72,11 @@ class GraphPanelTransferHandler(
 	        return false
         }
 
-	    if (data.libraryElement.library == LibraryModule.libraryHolder.l && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
-		    LOG.trace("Prevent dropping project component into library graph")
+	    val targetLibrary = repository.getContainingLibrary(targetUUID)!!
+	    if (!targetLibrary.expandedImports.libraries.contains(data.libraryElement.library)) {
+			LOG.trace("Prevent dropping '${dropVertice.name}' from non-importing Library")
 		    JOptionPane.showMessageDialog(
-			    null,
+			    Frame.getFrames()[0],
 			    Translations.getString("graph.dependencyError.msg"),
 			    Translations.getString("graph.action.addElementToGraph.name"),
 			    JOptionPane.ERROR_MESSAGE)
