@@ -20,6 +20,16 @@ class RemoveLibraryAction(
 			&& (selectedItem!!.library!!.isBrokenImport || libraryHolder.library.importedLibraryIds.contains(selectedItem!!.library!!.uuid))
 
 	override fun execute(event: ActionEvent) {
+		if (JOptionPane.showConfirmDialog(
+			JFrame.getFrames()[0],
+			Translations.getString("library.removeImport.confirmation", selectedItem!!.library!!.name.value),
+			name,
+			JOptionPane.OK_CANCEL_OPTION,
+			JOptionPane.QUESTION_MESSAGE
+		) != JOptionPane.OK_OPTION) {
+			return
+		}
+
 		InvocationHandler.invoke {
 			if (libraryHolder.library.libraryService.containsLibraryReference(libraryHolder.library, selectedItem!!.library!!)) {
 				val text = if (libraryHolder.library is Project) {
