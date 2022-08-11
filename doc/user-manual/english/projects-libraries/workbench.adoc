@@ -32,6 +32,14 @@ A library can be opened by selecting the main menu menu:File[Libraries] and then
 
 NOTE: It is rarely necessary to open a library manually. When you are working on a project, Antares will automatically open the libraries the project uses. However, if you are developing a library, you can open the library directly by yourself. You can also have a test project open for the library you are using and still edit circuits in the library.
 
+== Adding/removing a library import
+
+Projects and libraries can be based on multiple other libraries.
+
+To add a library to the list of imported libraries of the currently open main project/library, select the "Desktop" tree node and choose "Add Library.." in the popup menu.
+
+To remove a library from the list of imported libraries of the currently open main project/library, select the library to be removed and choose "Remove Library" in the popup menu.
+
 == Opening a circuit
 
 You can open a circuit of a project or a library by double-clicking on the workbench element or by selecting its pop-up menu menu:Open circuit[]. The currently open circuit is indicated by an orange icon in the workbench tree.
