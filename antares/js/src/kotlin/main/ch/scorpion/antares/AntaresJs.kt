@@ -1,6 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.akrabapi.UserInfoTO
 import ch.scorpion.antares.module.AntaresAkrabProtectedModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
@@ -62,7 +61,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 		AntaresAkrabProtectedModuleJs.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 
 		AntaresThemes.install()
 

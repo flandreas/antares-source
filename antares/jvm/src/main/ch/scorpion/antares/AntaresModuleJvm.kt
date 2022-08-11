@@ -90,6 +90,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	override fun initialize() {
+		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+
 		GraphViewModule.containerEditorFactory = { DigitalContainerEditor(it) }
 
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }

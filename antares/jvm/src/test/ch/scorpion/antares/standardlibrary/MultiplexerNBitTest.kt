@@ -1,7 +1,6 @@
 package ch.scorpion.antares.standardlibrary
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -38,7 +37,7 @@ class MultiplexerNBitTest : AbstractCircuitTest() {
 		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null), isSystem = true)
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 	}
 
 	private fun setupCircuit() {

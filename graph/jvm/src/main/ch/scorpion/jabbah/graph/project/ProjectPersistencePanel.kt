@@ -167,6 +167,7 @@ class ProjectPersistencePanel(
 			while (true) {
 				properties = LibraryPropertiesPanel.showAsDialog(
 					supportOwnership = false,
+					supportImport = true,
 					isSystem = false,
 					parent = this@ProjectPersistencePanel,
 					title = Translations.getString("project.dialog.new.dialog.title"))

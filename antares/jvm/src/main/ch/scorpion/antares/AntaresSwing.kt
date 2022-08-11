@@ -1,6 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
@@ -19,6 +18,7 @@ import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -365,7 +365,7 @@ class AntaresSwing(
 
 		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
 			ProjectModule.projectManagementService.invoke()
-				.createHelloProject(DEF_LIBRARY_UUID)
+				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
 				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
 			return
 		}

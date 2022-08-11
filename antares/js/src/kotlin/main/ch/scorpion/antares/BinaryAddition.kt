@@ -41,7 +41,7 @@ class BinaryAddition {
 
 		AntaresAkrabPublicModule.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null),
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null),
 			isSystem = true)
 
 		loadProject()

@@ -32,6 +32,7 @@ abstract class AbstractLibraryPropertiesAction(
 			properties = LibraryPropertiesPanel.showAsDialog(
 				title = title,
 				supportOwnership = true,
+				supportImport = false,
 				isSystem = isSystem,
 				properties = properties,
 				editable = isEditable

@@ -65,7 +65,7 @@ class ProjectManagementService(
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties, library: UUID? = null): Project {
+	fun create(properties: LibraryProperties): Project {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
@@ -76,7 +76,7 @@ class ProjectManagementService(
 
 		val project = projectFactory.invoke(properties.name)
 		project.description = Description(properties.description)
-		library?.let {
+		properties.importUuid?.let {
 			project.addImport(it)
 		}
 		project.defaultElementUUID = metaGraph.uuid
@@ -91,7 +91,10 @@ class ProjectManagementService(
 
 	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/
 	fun createHelloProject(library: UUID?): Project =
-		create(LibraryProperties(TranslatableText(Translations.getString("project.hello.name"))), library)
+		create(LibraryProperties(
+			TranslatableText(Translations.getString("project.hello.name")),
+			importUuid = library
+		))
 
 	/**
 	 * Updates the currently open [Project] with the specified properties and stores it in persistent store.

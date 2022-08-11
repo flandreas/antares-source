@@ -28,6 +28,17 @@ class CreateLibraryPanel(
 
 	companion object {
 
+		/** Makes sure the `null` entry gets rendered with a special text denoting the "empty library".*/
+		class LibraryNameRenderer : DefaultListCellRenderer() {
+			override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+				val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
+				if (value == null) {
+					renderer.text = Translations.getString("library.dialog.new.emptyTemplate.name")
+				}
+				return renderer
+			}
+		}
+
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
 			service: LibraryManagementService
@@ -180,16 +191,5 @@ class CreateLibraryPanel(
 			EGBL.NORTHWEST,
 			EGBL.BOTH
 		)
-	}
-
-	/** Makes sure the `null` entry gets rendered with a special text denoting the "empty library".*/
-	private class LibraryNameRenderer : DefaultListCellRenderer() {
-		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
-			if (value == null) {
-				renderer.text = Translations.getString("library.dialog.new.emptyTemplate.name")
-			}
-			return renderer
-		}
 	}
 }

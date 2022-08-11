@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.LibraryVisibilityEditor
 import java.awt.Component
@@ -18,9 +19,11 @@ import javax.swing.event.AncestorListener
 /** A [JPanel] for editing the properties of a [Library].*/
 class LibraryPropertiesPanel(
 	supportOwnership: Boolean,
+	supportImport: Boolean,
 	isSystem: Boolean,
 	properties: LibraryProperties? = null,
-	editable: Boolean = true
+	editable: Boolean = true,
+	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService
 ) : JPanel() {
 
 	companion object {
@@ -28,11 +31,12 @@ class LibraryPropertiesPanel(
 			parent: Component = Frame.getFrames()[0],
 			title: String,
 			supportOwnership: Boolean,
+			supportImport: Boolean,
 			isSystem: Boolean,
 			properties: LibraryProperties? = null,
 			editable: Boolean = true,
 		): LibraryProperties? {
-			val panel = LibraryPropertiesPanel(supportOwnership, isSystem, properties, editable)
+			val panel = LibraryPropertiesPanel(supportOwnership, supportImport, isSystem, properties, editable)
 			(panel.nameField.textComponent as JComponent).addAncestorListener(object : AncestorListener {
 				override fun ancestorAdded(event: AncestorEvent?) {
 					SwingUtilities.invokeLater {
@@ -58,7 +62,8 @@ class LibraryPropertiesPanel(
 					panel.nameField.value as TranslatableText,
 					panel.descField.value as TranslatableText,
 					panel.visibilityField.value as LibraryVisibility,
-					if (panel.ownedByMeField.isSelected) EditAuthModule.userHolder.user.identity else panel.oldAuthor
+					if (panel.ownedByMeField.isSelected) EditAuthModule.userHolder.user.identity else panel.oldAuthor,
+					importUuid = (panel.importField.selectedItem as LibraryDictionaryEntry?)?.uuid
 				)
 				else -> null
 			}
@@ -66,18 +71,26 @@ class LibraryPropertiesPanel(
 	}
 
 	private val nameLabel = Translations.getString("library.property.name.name")
-	private val descLabel = Translations.getString("library.property.desc.name")
 	val nameField = TranslatablePropertyEditor(nameLabel, editable = editable)
+
+	private val descLabel = Translations.getString("library.property.desc.name")
 	private val descField = TranslatablePropertyEditor(descLabel, multiline = { true }, rows = 8, editable = editable)
+
 	private val visibilityLabel = Translations.getString("library.property.visibility.name")
 	private val visibilityField = LibraryVisibilityEditor()
+
+	private val importLabel = Translations.getString("library.property.import.name")
+	private val importField = JComboBox<LibraryDictionaryEntry>()
+
 	private val ownedByMeLabel = Translations.getString("library.property.ownedByMe.name")
 	private val ownedByMeField = JCheckBox()
+
 	private val oldAuthor: UserIdentity? = properties?.author
 
 	init {
 		preferredSize = Dimension(400, 180)
 		visibilityField.customEditor.isEnabled = editable
+		importField.isEnabled = editable
 
 		ownedByMeField.isEnabled = !isSystem && oldAuthor != EditAuthModule.userHolder.user.identity
 		ownedByMeField.addActionListener {
@@ -88,7 +101,11 @@ class LibraryPropertiesPanel(
 			}
 		}
 
-		buildUI(supportOwnership)
+		if (supportImport) {
+			setupImportComboBox()
+		}
+
+		buildUI(supportOwnership, supportImport)
 
 		properties?.let {
 			nameField.value = it.name
@@ -109,7 +126,16 @@ class LibraryPropertiesPanel(
 		visibilityField.customEditor.isEnabled = enabled
 	}
 
-	private fun buildUI(supportOwnership: Boolean) {
+	private fun setupImportComboBox() {
+		val entries = managementService.getLibraryDirectoryEntries()
+		entries.forEach {
+			importField.addItem(it)
+		}
+		importField.renderer = CreateLibraryPanel.Companion.LibraryNameRenderer()
+		importField.selectedItem = entries.first { it.uuid == LibraryModule.DEF_LIBRARY_UUID }
+	}
+
+	private fun buildUI(supportOwnership: Boolean, supportImport: Boolean) {
 		var row = -1
 		val inset = 5
 		val rowDist = 5
@@ -159,6 +185,30 @@ class LibraryPropertiesPanel(
 			EGBL.HORIZONTAL,
 			rowDist, inset, 0, 0
 		)
+
+		if (supportImport) {
+			EGBL.add(
+				this,
+				JLabel("$importLabel:"),
+				0, ++row,
+				1, 1,
+				0.0, 0.0,
+				EGBL.NORTHWEST,
+				EGBL.NONE,
+				4 + rowDist, inset, 0, 0
+			)
+
+			EGBL.add(
+				this,
+				importField,
+				1, row,
+				EGBL.REMAINDER, 1,
+				0.0, 0.0,
+				EGBL.WEST,
+				EGBL.NONE,
+				rowDist, inset, 0, 0
+			)
+		}
 
 		if (supportOwnership) {
 			EGBL.add(

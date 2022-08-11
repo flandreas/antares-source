@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.dictionary.*
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -9,6 +10,8 @@ import ch.scorpion.jabbah.io.TypeMap
  * Module definitions for the [ch.scorpion.jabbah.graph.library] module.
  */
 object LibraryModule : AbstractModule() {
+
+	lateinit var DEF_LIBRARY_UUID: UUID
 
 	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
 
