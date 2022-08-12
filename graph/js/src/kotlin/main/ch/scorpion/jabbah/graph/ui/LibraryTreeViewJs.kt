@@ -75,10 +75,9 @@ class LibraryTreeViewJs(
 				icon = buildElement { mIcon("table_restaurant", className = "material-icons-outlined") },
 				onLabelClick = { props.controller.selectedItem = null }
 			) {
-				props.controller.project?.let {
-					addItems(LibraryDirectoryTreeModelBuilder(it).build())
+				if (props.controller.library != null) {
+					addItems(LibraryDirectoryTreeModelBuilder(props.controller.library!!).build())
 				}
-				addItems(LibraryDirectoryTreeModelBuilder(props.controller.library).build())
 			}
 		}
 	}
@@ -114,15 +113,11 @@ class LibraryTreeViewJs(
 		LOG.warn("collapseAtSelection not yet implemented")
 	}
 
-	override fun openLibrary(library: Library) {
+	override fun openMainLibrary(library: Library) {
 		refresh()
 	}
 
-	override fun openProject(project: Project) {
-		refresh()
-	}
-
-	override fun closeProject() {
+	override fun closeMainLibrary() {
 		refresh()
 	}
 
@@ -165,9 +160,11 @@ class LibraryTreeViewJs(
 			label = buildElement { mTypography(node.item.toString()) },
 			nodeId = nextNodeId(),
 			icon = if (node.item === props.controller.library) {
-				buildElement { mIcon("account_balance", className = "material-icons-outlined") }
-			} else if (node.item === props.controller.project) {
-				buildElement { mIcon("assignment", className = "material-icons-outlined") }
+				if (node.item is Project) {
+					buildElement { mIcon("assignment", className = "material-icons-outlined") }
+				} else {
+					buildElement { mIcon("account_balance", className = "material-icons-outlined") }
+				}
 			} else {
 				if (node.item is LibraryFolder) {
 					buildElement { mIcon("folder", className = "material-icons-outlined") }

@@ -23,18 +23,19 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 		protected fun configure() {
 			val path = Paths.get("jvm/rsc/test/projects").toAbsolutePath()
 			AntaresTestRule.configure()
+			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
 			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
-			LibraryModule.libraryManagementService = LibraryManagementService()
 			LibraryModule.libraryService = LibraryService()
+			LibraryModule.libraryManagementService = LibraryManagementService()
 
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(path.toString()))
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path.parent.toString(), "projects")
 			ProjectModule.projectManagementService = { ProjectManagementService() }
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-				LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null), isSystem = true)
+				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 		}
 	}
 
@@ -47,7 +48,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 	protected fun openCircuit(uuid: UUID) {
 		ProjectModule.projectManagementService.invoke().open(
 			LibraryIdentification(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"), null))
-		val metaGraph = ProjectModule.projectHolder.p!!.getMetaGraph(uuid)
+		val metaGraph = LibraryModule.libraryHolder.library.getMetaGraph(uuid)
 		openedCircuitView = metaGraph.graph.graphView
 	}
 

@@ -30,14 +30,17 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphAuthorizations
 import ch.scorpion.jabbah.graph.container.*
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationControllerExtension
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.app.*
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
+import ch.scorpion.jabbah.graph.view.app.ScenarioAppService
+import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
@@ -236,20 +239,16 @@ object GraphViewModule : AbstractModule() {
 		nodeViewFactory = factory as NodeViewFactory<Any>
 	}
 
-	fun createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView {
-		return createGraphView(GraphModelModule.graphFactory.invoke(name))
-	}
+	fun createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView =
+		createGraphView(GraphModelModule.graphFactory.invoke(name))
 
-	fun createGraphView(graph: Graph): GraphView {
-		return GraphViewImpl(graph, BaseModule.eventBus)
-	}
+	fun createGraphView(graph: Graph): GraphView = GraphViewImpl(graph, BaseModule.eventBus)
 
-	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing {
-		return ContainerDrawing(
+	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing =
+		ContainerDrawing(
 			name,
 			IOModule.storableCreator,
 			BaseModule.eventBus,
-			GraphModule.metaGraphRepository,
+			LibraryModule.libraryHolder,
 			DrawStyleModule.styleProvider)
-	}
 }

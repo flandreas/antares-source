@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -22,10 +23,12 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.*
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
@@ -46,14 +49,15 @@ class DigitalPortView(
 	port: Port<DigitalSignal> = DigitalPortImpl.createInput(),
 	x: Int = 0,
 	y: Int = 0,
-	direction: Direction = Direction.EAST,
+	direction: Direction = EAST,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
+	internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int? = null,
 	customUnconnectedLength: Int? = null,
 	showBitWidthAnnotation: Boolean = true,
 	showLogicAnnotation: Boolean = true,
 	style: DigitalPortViewStyle = DigitalPortViewStyle.Line
-) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition,  length ?: style.unconnectedLength) {
+) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: style.unconnectedLength) {
 
 	companion object {
 		const val LENGTH: Int = 2 * Look.SCALE
@@ -350,6 +354,16 @@ class DigitalPortView(
 			validate()
 		}
 
+	override var internalLabelOrientation: InternalLabelOrientation
+		get() = super.internalLabelOrientation
+		set(value) {
+			super.internalLabelOrientation = value
+			invalidate()
+			buildPortLabel()
+			invalidate()
+			validate()
+		}
+
 	override val minSegmentLength: Int get() = LENGTH
 
 	override fun ownerRotationChanged() {
@@ -384,60 +398,82 @@ class DigitalPortView(
 	}
 
 	private fun buildInternalLabel(port: Port<DigitalSignal>): Label {
+		val rotation = when (internalLabelOrientation) {
+			InternalLabelOrientation.Horizontal -> Rotation.R0
+			InternalLabelOrientation.Aligned -> getLabelRotation()
+		}
 		return Label(
-			horizontalAlignment = getHorizontalInternalLabelAlignment(direction),
-			verticalAlignment = getVerticalInternalLabelAlignment(direction),
+			horizontalAlignment = getInternalLabelHorizontalAlignment(direction),
+			verticalAlignment = getInternalLabelVerticalAlignment(direction),
 			font = Look.INT_PIN_FONT,
 			text = port.name,
 			location = getInternalLabelLocation(direction),
-			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
-			ownerRotation = ownerRotation)
-	}
-
-	private fun buildExternalLabel(port: Port<DigitalSignal>): Label {
-		val rotation: Rotation = when (direction) {
-			Direction.NORTH -> Rotation.R90
-			Direction.SOUTH -> Rotation.R90
-			else -> Rotation.R0
-		}
-		return Label(
-			horizontalAlignment = getHorizontalExternalLabelAlignment(direction),
-			verticalAlignment = getVerticalExternalLabelAlignment(),
-			font = Look.EXT_PIN_FONT,
-			text = port.name,
-			location = getExternalLabelLocation(direction),
 			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
 			rotation = rotation,
 			ownerRotation = ownerRotation)
 	}
 
-	private fun getHorizontalInternalLabelAlignment(direction: Direction): HorizontalAlignment =
+	private fun buildExternalLabel(port: Port<DigitalSignal>): Label {
+		return Label(
+			horizontalAlignment = getExternalLabelHorizontalAlignment(direction),
+			verticalAlignment = getExternalLabelVerticalAlignment(),
+			font = Look.EXT_PIN_FONT,
+			text = port.name,
+			location = getExternalLabelLocation(direction),
+			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
+			rotation = getLabelRotation(),
+			ownerRotation = ownerRotation)
+	}
+
+	private fun getLabelRotation(): Rotation =
 		when (direction) {
-			Direction.WEST -> HorizontalAlignment.LEFT
-			Direction.EAST -> HorizontalAlignment.RIGHT
-			Direction.NORTH -> HorizontalAlignment.CENTER
-			Direction.SOUTH -> HorizontalAlignment.CENTER
+			NORTH -> Rotation.R90
+			SOUTH -> Rotation.R90
+			else -> Rotation.R0
 		}
 
-	private fun getHorizontalExternalLabelAlignment(direction: Direction): HorizontalAlignment =
-		when (direction) {
-			Direction.WEST -> HorizontalAlignment.RIGHT
-			Direction.EAST -> HorizontalAlignment.LEFT
-			Direction.NORTH -> HorizontalAlignment.LEFT
-			Direction.SOUTH -> HorizontalAlignment.RIGHT
+	private fun getInternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
+		when (internalLabelOrientation) {
+			InternalLabelOrientation.Horizontal -> when (direction) {
+				WEST -> LEFT
+				EAST -> RIGHT
+				NORTH, SOUTH -> CENTER
+			}
+			InternalLabelOrientation.Aligned -> when (direction) {
+				WEST -> LEFT
+				EAST -> RIGHT
+				NORTH -> RIGHT
+				SOUTH -> LEFT
+			}
 		}
 
-	private fun getVerticalInternalLabelAlignment(direction: Direction): VerticalAlignment =
+	private fun getExternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
 		when (direction) {
-			Direction.WEST -> VerticalAlignment.CENTER
-			Direction.EAST -> VerticalAlignment.CENTER
-			Direction.NORTH -> VerticalAlignment.TOP
-			Direction.SOUTH -> VerticalAlignment.BOTTOM
+			WEST -> RIGHT
+			EAST -> LEFT
+			NORTH -> LEFT
+			SOUTH -> RIGHT
+		}
+
+	private fun getInternalLabelVerticalAlignment(direction: Direction): VerticalAlignment =
+		when (internalLabelOrientation) {
+			InternalLabelOrientation.Horizontal -> when (direction) {
+				WEST -> VerticalAlignment.CENTER
+				EAST -> VerticalAlignment.CENTER
+				NORTH -> VerticalAlignment.TOP
+				SOUTH -> VerticalAlignment.BOTTOM
+			}
+			InternalLabelOrientation.Aligned -> when (direction) {
+				WEST -> VerticalAlignment.CENTER
+				EAST -> VerticalAlignment.CENTER
+				NORTH -> VerticalAlignment.CENTER
+				SOUTH -> VerticalAlignment.CENTER
+			}
 		}
 
 	private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
 
-	private fun getVerticalExternalLabelAlignment(): VerticalAlignment =
+	private fun getExternalLabelVerticalAlignment(): VerticalAlignment =
 		if (centerExternalLabel)
 			VerticalAlignment.CENTER
 		else
@@ -451,10 +487,10 @@ class DigitalPortView(
 		}
 
 		return when (direction) {
-			Direction.WEST -> Point2D(INT_BORDER_DIST + ia, 0)
-			Direction.EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
-			Direction.NORTH -> Point2D(0, INT_BORDER_DIST + ia)
-			Direction.SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
+			WEST -> Point2D(INT_BORDER_DIST + ia, 0)
+			EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
+			NORTH -> Point2D(0, INT_BORDER_DIST + ia)
+			SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
 		}
 	}
 
@@ -462,10 +498,10 @@ class DigitalPortView(
 		val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
 		val dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
 		return when (direction) {
-			Direction.WEST -> Point2D(-dist - ea, -1)
-			Direction.EAST -> Point2D(dist + ea, -1)
-			Direction.NORTH -> Point2D(0, -dist - ea)
-			Direction.SOUTH -> Point2D(0, dist + ea)
+			WEST -> Point2D(-dist - ea, -1)
+			EAST -> Point2D(dist + ea, -1)
+			NORTH -> Point2D(0, -dist - ea)
+			SOUTH -> Point2D(0, dist + ea)
 		}
 	}
 

@@ -1,7 +1,6 @@
 package ch.scorpion.antares.standardlibrary
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -10,7 +9,6 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
@@ -38,12 +36,12 @@ class MultiplexerNBitTest : AbstractCircuitTest() {
 		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(AntaresApplication.DEF_LIBRARY_UUID, null), isSystem = true)
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 	}
 
 	private fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-		multiplexerView = builder.add(GraphModule.metaGraphRepository
+		multiplexerView = builder.add(LibraryModule.libraryHolder
 			.getContainerLibraryElement(UUID("ae0652c3-7ad1-4664-9758-c4d2050e76a5"))!!
 			.getNewInstance()) as SubGraphVerticeView<*>
 		circuitView = builder.build()

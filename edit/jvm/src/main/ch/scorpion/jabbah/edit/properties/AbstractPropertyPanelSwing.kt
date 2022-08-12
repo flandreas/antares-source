@@ -80,7 +80,7 @@ abstract class AbstractPropertyPanelSwing(
 		messageTextArea = JTextArea()
 		messageTextArea.rows = 3
 		messageTextArea.isEditable = false
-		messageTextArea.foreground = Color.RED
+		messageTextArea.foreground = UiUtil.errorTextColor
 		messageTextArea.background = background
 		messageTextArea.wrapStyleWord = true
 		messageTextArea.lineWrap = true

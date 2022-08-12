@@ -89,7 +89,7 @@ class AntaresInterpreter(
 		val index = getBitAccessIndex(bitAccess)
 		val bitToSet = getBitAccessSetValue(bitAccess, value)
 		val oldValue = super.loadValue(bitAccess)
-		val newValue = when (oldValue) {
+		val newValue: Any = when (oldValue) {
 			is DigitalSignal -> {
 				if (index >= oldValue.bitWidth.width) {
 					throw RuntimeError(bitAccess.location, Translations.getString("antares.dsl.indexOutOfRange.msg"))

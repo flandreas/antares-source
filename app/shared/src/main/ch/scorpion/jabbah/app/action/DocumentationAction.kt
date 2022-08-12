@@ -13,6 +13,6 @@ class DocumentationAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		System.browse(application.documentationUrl!!, name)
+		System.browse("${application.documentationUrl!!}/usermanual", name)
 	}
 }

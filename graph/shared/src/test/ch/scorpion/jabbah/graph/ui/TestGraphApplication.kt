@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.VirtualCanvas
 import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 
@@ -14,12 +13,15 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 
 	val graphFrameController = GraphFrameController<GraphFrame>(controller)
-	val canvas = VirtualCanvas(graphFrameController.editor.view)
 
-	// Used to create an instance of OpenContainerLibraryElementAction
+	// Required to create an instance of OpenContainerLibraryElementAction
 	private val actions = LibraryTreeViewActions(
 		graphFrameController.graphPanelViewController.libraryPanelController.libraryTreeViewController,
 		this)
+
+	init {
+		VirtualCanvas(graphFrameController.editor.view)
+	}
 
 	/** ---- [Application] */
 
@@ -45,7 +47,7 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 
 		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
 			ProjectModule.projectManagementService.invoke()
-				.createHelloProject(LibraryModule.libraryHolder.library.uuid)
+				.createHelloProject(null)
 				.also { dataViewController.openProject(it.identification) }
 			return
 		}

@@ -28,6 +28,9 @@ class LibraryDictionary : AbstractStorable() {
 	/** Determines whether this [LibraryDictionary] contains a mapping with the given [UUID].*/
 	fun contains(uuid: UUID): Boolean = entries.contains(uuid)
 
+	/** Returns the [LibraryDictionaryEntry] with the specified [UUID], or `null` if it doesn't exist.*/
+	fun getEntry(uuid: UUID): LibraryDictionaryEntry? = entries[uuid]
+
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String> = entries.values.map { it.name.value }.sorted().toImmutableList()
 

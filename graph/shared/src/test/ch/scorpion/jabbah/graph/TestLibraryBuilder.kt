@@ -39,12 +39,12 @@ class TestLibraryBuilder(
 		).metaGraph!!
 	}
 
-	fun addOuterCustomComponent(library: Library, label: String? = null): MetaGraph {
+	fun addOuterCustomComponent(library: Library, label: String? = null, innerLibrary: Library = library): MetaGraph {
 		val builder = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP, portFactory, portViewFactory)
 		return libraryService.addContainerLibraryElement(
 			library,
 			builder.buildMetaGraph(
-				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library)),
+				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, innerLibrary)),
 				label),
 			library
 		).metaGraph!!

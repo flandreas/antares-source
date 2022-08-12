@@ -119,7 +119,7 @@ abstract class AbstractDesktopApplication(
 		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
 
 		fun readVersion(): ApplicationVersion = ApplicationVersion.parse(
-			IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8"))
+			IOUtils.toString(this::class.java.getResourceAsStream("/version.txt"), "UTF-8"))
 	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order

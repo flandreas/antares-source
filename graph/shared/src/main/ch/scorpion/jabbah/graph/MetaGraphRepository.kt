@@ -3,16 +3,9 @@ package ch.scorpion.jabbah.graph
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.library.LibraryModule.libraryHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectModule.projectHolder
-import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [MetaGraphRepository] is a repository of reusable [MetaGraph].
@@ -34,91 +27,20 @@ interface MetaGraphRepository {
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	fun containsMetaGraph(uuid: UUID): Boolean
 
-	fun getContainingLibrary(uuid: UUID): Library? = null
-}
-
-/** Combines the current [Library] and the current [Project] (if any) to a single [MetaGraphRepository].*/
-class CombinedMetaGraphRepository(
-	private val storableCreator: StorableCreator = IOModule.storableCreator
-) : MetaGraphRepository {
-
-	/** ---- [MetaGraphRepository] */
-
-	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
-		return libraryHolder.library.getContainerLibraryElement(uuid)
-			?: projectHolder.project!!.getContainerLibraryElement(uuid)
-	}
-
-	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
-	override fun getMetaGraph(uuid: UUID): MetaGraph =
-		libraryHolder.library.getOptionalMetaGraph(uuid)
-			?: projectHolder.project!!.getMetaGraph(uuid)
-
-	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
-	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? =
-		libraryHolder.library.getOptionalMetaGraph(uuid)
-			?: projectHolder.project?.getOptionalMetaGraph(uuid)
-
-	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
-	override fun containsMetaGraph(uuid: UUID): Boolean =
-		libraryHolder.library.containsMetaGraph(uuid) || projectHolder.project?.containsMetaGraph(uuid) == true
-
-	override fun getContainingLibrary(uuid: UUID): Library? {
-		return if (libraryHolder.library.containsMetaGraph(uuid)) {
-			libraryHolder.library
-		} else if (projectHolder.project?.containsMetaGraph(uuid) == true) {
-			projectHolder.project
-		} else {
-			null
-		}
-	}
-
-	/** ---- [CombinedMetaGraphRepository] */
+	/**
+	 * Returns the [Library] containing the [MetaGraph] with the specified [UUID].
+	 */
+	fun getContainingLibrary(uuid: UUID): Library?
 
 	/**
 	 * Determines whether a [Graph] contains directly or recursively a [GraphElement]
 	 * with the specified UUID.
 	 */
-	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
-		val metaGraph = getMetaGraph(graphUUID)
-		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
-			return true
-		}
-		return SubGraphVerticeLocator(
-			graph = metaGraph.graph.model!!,
-			repository = this,
-			storableCreator = storableCreator
-		).contains(graphElementUUID)
-	}
+	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean
 
 	/**
 	 * Creates a [MetaGraphBundle] for [metaGraph] containing [metaGraph] and all [MetaGraph]s directly
 	 * or indirectly referenced by [metaGraph].
 	 */
-	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
-		var referencesSystemLibrary = false
-		return MetaGraphBundle()
-			.add(metaGraph)
-			.also { bundle ->
-				ContainerLibraryElementCollector(this)
-					.collect(metaGraph.graph.graphView.graph!!)
-					.forEach {
-						if (isFromSystemLibrary(it)) {
-							referencesSystemLibrary = true
-						} else {
-							bundle.add(getMetaGraph(it))
-						}
-					}
-				if (referencesSystemLibrary) {
-					bundle.referencedSystemLibrary = libraryHolder.library.uuid
-				}
-			}
-	}
-
-	private fun isFromSystemLibrary(uuid: UUID): Boolean {
-		if (libraryHolder.library.getOptionalMetaGraph(uuid) != null) {
-			return libraryHolder.library.isSystem
-		}
-		return false
-	}
+	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle
 }

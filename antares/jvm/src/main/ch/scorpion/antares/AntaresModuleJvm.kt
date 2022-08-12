@@ -91,6 +91,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	override fun initialize() {
+		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+
 		GraphViewModule.containerEditorFactory = { DigitalContainerEditor(it) }
 
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
@@ -363,7 +365,9 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(
 			id = Switch.PROP_DEFAULT_DELAY,
-			nameKey = "antares.preference.SwitchPropDelay"
+			nameKey = "antares.preference.SwitchPropDelay",
+			minValue = 1,
+			maxValue = 1_000_000
 		))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(PreferenceGroup(PREF_TREE_EXPRESSION))

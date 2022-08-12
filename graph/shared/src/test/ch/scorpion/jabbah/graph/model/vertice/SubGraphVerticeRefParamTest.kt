@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -37,7 +36,7 @@ class SubGraphVerticeRefParamTest {
 		val paramDef = createParamDef()
 		val metaGraph = createLibraryMetaGraph(paramDef)
 
-		val subGraphVerticeRef = SubGraphVerticeRef.fromSubGraphVertice(metaGraph.containerDrawing.createSubGraphVertice(), GraphModule.metaGraphRepository)
+		val subGraphVerticeRef = SubGraphVerticeRef.fromSubGraphVertice(metaGraph.containerDrawing.createSubGraphVertice(), LibraryModule.libraryHolder)
 
 		assertEquals("Sepp", subGraphVerticeRef.paramValues.getValue("test")?.value)
 	}

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.polyline
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import kotlin.math.sqrt
 import kotlin.test.*
 
 /**
@@ -141,5 +142,27 @@ class PolylineShapeImplTest {
 		assertEquals(Point2D(200, 200), polyline.getPointAt(0))
 		assertEquals(Point2D(200, 100), polyline.getPointAt(1))
 		assertEquals(Point2D(300, 100), polyline.getPointAt(2))
+	}
+
+	@Test
+	fun shouldCalculateOrthogonalLength() {
+		val polyline = PolylineShapeImpl(listOf(
+			Point2D(0, 0),
+			Point2D(100, 0),
+			Point2D(100, 100),
+			Point2D(200, 100)))
+
+		assertEquals(300.0, polyline.length)
+	}
+
+	@Test
+	fun shouldCalculateNonOrthogonalLength() {
+		val polyline = PolylineShapeImpl(listOf(
+			Point2D(0, 0),
+			Point2D(20, 0),
+			Point2D(180, 100),
+			Point2D(200, 100)))
+
+		assertEquals(20 + sqrt(100.0 * 100.0 + 160.0 * 160.0) + 20, polyline.length)
 	}
 }

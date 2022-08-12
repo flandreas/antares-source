@@ -1,6 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
@@ -26,7 +25,6 @@ import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
-import com.jthemedetecor.OsThemeDetector
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -144,6 +142,8 @@ class AntaresSwing(
 			}
 		}
 
+		// Disabled because OsThemeDetector requires a native library that leads to app signing problems
+		/*
 		private fun configureSplash(font: Font) {
 			val version = readVersion()
 
@@ -178,6 +178,7 @@ class AntaresSwing(
 			g2.drawString("Version $version", 175, 250)
 			splash.update()
 		}
+		*/
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -206,13 +207,17 @@ class AntaresSwing(
 			BaseModuleJvm.require()
 
 			// After logging has been initialized
-			configureSplash(font)
+			// configureSplash(font)
 
 			AntaresSwing(commandLine).start()
 		}
 	}
 
 	init {
+		documentationUrl?.let {
+			BaseModule.baseDocumentationUrl = { it }
+		}
+
 		if (SystemUtils.IS_OS_MAC) {
 			Taskbar.getTaskbar().iconImage = UiUtil.themedIcon("/$ICON_PATH", AntaresSwing::class.java).image
 		}
@@ -254,7 +259,6 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
 
 		super.init()
 
@@ -336,9 +340,10 @@ class AntaresSwing(
 
 	override fun handleShutdown() {
 		super.handleShutdown()
+
 		if (controller.data?.savable is ProjectSavable) {
 			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (controller.data!!.savable as ProjectSavable).project.uuid.toString())
-		} else if (controller.data?.savable != null) {
+		} else {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}
 	}
@@ -360,7 +365,7 @@ class AntaresSwing(
 
 		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
 			ProjectModule.projectManagementService.invoke()
-				.createHelloProject(DEF_LIBRARY_UUID)
+				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
 				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
 			return
 		}

@@ -160,11 +160,11 @@ class TruthTableView(
 	 * values of the [vertice].
 	 */
 	private fun getCurrentRowIndex(): Int {
-		if (vertice == null || passive) {
+		if (passive) {
 			return -1
 		}
 		val signals = mutableListOf<Bit>()
-		vertice!!.getInputs()
+		vertice.getInputs()
 			.map { it as InputPort<DigitalSignal> }
 			.forEach { signals.add(it.getIncomingSignal()!!.bitAt(0)) }
 		return model.rowIndex(Array(signals.size) { signals[it] })

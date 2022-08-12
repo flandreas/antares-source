@@ -115,6 +115,13 @@ open class EdgeViewImpl<T : Any>(
 		model = model.cloneEmpty()
 	}
 
+	/** ---- [Component] */
+
+	override fun getSelectBuddies(drawing: Drawing<Component>): Set<Component>? =
+		mutableSetOf<Component>().apply {
+			addAll(netView!!.getElements().filter { it !== this@EdgeViewImpl })
+		}
+
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = NO_OP_ACTOR_HANDLER

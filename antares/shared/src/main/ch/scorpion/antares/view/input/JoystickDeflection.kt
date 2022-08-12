@@ -69,4 +69,26 @@ enum class JoystickDeflection(val customName: String) {
 	abstract fun drawDeflection(joystickView: JoystickView, context: DrawContext, color: Color)
 
 	abstract fun calculateContinuousKnobPosition(joystickView: JoystickView, mouseLocation: Point2D): Point2D
+
+	fun calculateKeyKnobPosition(leftDown: Boolean, rightDown: Boolean, upDown: Boolean, downDown: Boolean): Point2D {
+		var dx = 0
+		var dy = 0
+		if (!(leftDown && rightDown)) {
+			if (leftDown) {
+				dx = -1
+			}
+			if (rightDown) {
+				dx = 1
+			}
+		}
+		if (!(upDown && downDown)) {
+			if (upDown) {
+				dy = -1
+			}
+			if (downDown) {
+				dy = 1
+			}
+		}
+		return Point2D(dx * JoystickView.MAX_DISPLACEMENT, dy * JoystickView.MAX_DISPLACEMENT)
+	}
 }

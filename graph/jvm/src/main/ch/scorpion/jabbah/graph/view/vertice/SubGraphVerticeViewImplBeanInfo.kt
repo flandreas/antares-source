@@ -5,8 +5,8 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -29,6 +29,11 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
         super.addProperties(bean, editor, properties)
 
 	    properties.add(modelId.bind(editor, bean.id, editable = false))
+
+	    if (bean.model.designError != null) {
+		    return
+	    }
+
 	    properties.add(propDelay.bind(editor, bean.id))
 	    properties.add(orientation.bind(editor, bean.id))
 	    properties.add(mirrorH.bind(editor, bean.id))
@@ -41,7 +46,7 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
 	    properties.add(description.bind(editor, bean.id))
 
 	    bean.model.graphUUID?.let {
-	        GraphModule.metaGraphRepository.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
+	        LibraryModule.libraryHolder.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
 		        for (def in defs.iterator()) {
 			        val property = GraphParamValuePropertyFactoryRegistry.createProperty(def, editor, componentBeanProvider)
 			        properties.add(property.bind(editor, bean.id))

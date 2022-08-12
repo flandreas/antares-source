@@ -3,15 +3,17 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
@@ -29,7 +31,7 @@ class GraphPanelTransferHandler(
 	editor: Editor,
 	eventBus: EventBus,
 	flavour: DataFlavor,
-	private val repository: CombinedMetaGraphRepository = GraphModule.metaGraphRepository
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) : ComponentTransferHandler(editor, eventBus, flavour) {
 
 	companion object {
@@ -49,6 +51,10 @@ class GraphPanelTransferHandler(
         }
 	    val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
         if (!editor.view.editable) {
+			BaseModule.eventBus.post(ComponentMessage(
+				ComponentMessageType.Error,
+				null,
+				"graph.readonly.cannotDrop.msg"))
             return false
         }
 
@@ -73,10 +79,11 @@ class GraphPanelTransferHandler(
 	        return false
         }
 
-	    if (data.libraryElement.library == ProjectModule.projectHolder.project && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
-		    LOG.trace("Prevent dropping project component into library graph")
+	    val targetLibrary = repository.getContainingLibrary(targetUUID)!!
+	    if (!targetLibrary.expandedImports.libraries.contains(data.libraryElement.library)) {
+			LOG.trace("Prevent dropping '${dropVertice.name}' from non-importing Library")
 		    JOptionPane.showMessageDialog(
-			    null,
+			    Frame.getFrames()[0],
 			    Translations.getString("graph.dependencyError.msg"),
 			    Translations.getString("graph.action.addElementToGraph.name"),
 			    JOptionPane.ERROR_MESSAGE)

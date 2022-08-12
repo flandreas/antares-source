@@ -104,7 +104,7 @@ object StringUtils {
 
 	fun limit(s: String, length: Int, moreIndicator: String = ".."): String =
 		if (s.length > length) {
-			"${s.take(length)}.."
+			"${s.take(length)}$moreIndicator"
 		} else {
 			s
 		}

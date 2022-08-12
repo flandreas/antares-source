@@ -33,6 +33,7 @@ class XorCalculator : AbstractDigitalGateCalculator() {
 			when (effectiveGateInputBit(input.getSignal(i).bitAt(0))) {
 				True -> trueCount++
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(trueCount.rem(2) == 1)

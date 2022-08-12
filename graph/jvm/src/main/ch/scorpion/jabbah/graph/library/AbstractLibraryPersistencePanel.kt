@@ -15,14 +15,14 @@ import org.apache.commons.io.FilenameUtils
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
-import javax.swing.JPanel
 import javax.swing.filechooser.FileFilter
 
 abstract class AbstractLibraryPersistencePanel(
 	private val managementService: AbstractLibraryManagementService,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	isOpen: (entry: LibraryDictionaryEntry) -> Boolean,
 	private val logName: String,
-	private val userHolder: UserHolder<User> = EditAuthModule.userHolder
-) : JPanel() {
+) : AbstractLibrarySelectionPanel(userHolder, isOpen) {
 
 	companion object {
 		private val LOG by logger(AbstractLibraryPersistencePanel::class)
@@ -33,7 +33,6 @@ abstract class AbstractLibraryPersistencePanel(
 
 	protected val importAction: Action = ImportAction()
 
-	protected abstract val selectedLibrary: LibraryDictionaryEntry?
 	protected abstract val exportActionNameKey: String
 	protected abstract val importActionNameKey: String
 	protected abstract val fileExtensionFilterName: String
@@ -43,8 +42,6 @@ abstract class AbstractLibraryPersistencePanel(
 	protected abstract fun getInvalidMsg(name: String): String
 	protected abstract fun getStaleReferenceMsg(name: String): String
 	protected abstract fun getUuidAlreadyExistsMsg(): String
-	protected abstract fun refreshLibraries()
-	protected abstract fun selectLibrary(uuid: UUID?)
 
 	protected fun getLibraryIdentity(uuid: UUID): LibraryIdentification =
 		LibraryIdentification(uuid, userHolder.user.identity)
@@ -88,7 +85,7 @@ abstract class AbstractLibraryPersistencePanel(
 				LOG.userTrail("Import $logName '${name}', replace if UUID exists = $replaceIfUuidExists")
 				val result = managementService.import(path, replaceIfUuidExists)
 				when (result.type) {
-					Success -> handleSuccessfulImport(name, result.library)
+					Success -> handleSuccessfulImport(name, result.library!!)
 					NameAlreadyExists -> handleImportNameAlreadyExists(name)
 					Invalid -> handleInvalidImportFile(name)
 					StaleLibraryReference -> handleStaleLibraryReference(name)
@@ -103,15 +100,15 @@ abstract class AbstractLibraryPersistencePanel(
 
 		private fun createFilter(): FileFilter = FileExtensionFilter(EXPORT_FILE_EXTENSION, fileExtensionFilterName)
 
-		fun handleSuccessfulImport(libraryName: String, library: Library?) {
+		fun handleSuccessfulImport(libraryName: String, library: Library) {
 			JOptionPane.showConfirmDialog(
 				this@AbstractLibraryPersistencePanel,
 				getImportSuccessMsg(libraryName),
 				name,
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE)
-			refreshLibraries()
-			selectLibrary(library?.uuid)
+			load()
+			selectLibrary(library.uuid)
 		}
 
 		fun handleImportNameAlreadyExists(libraryName: String) {

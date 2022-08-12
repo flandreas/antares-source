@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.io
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.formatRounded
 
 /**
@@ -108,7 +109,7 @@ class StoreXmlWriter(
 
 	override fun writePoints(name: String, points: List<Point2D>) {
 		val list = StringBuilder()
-		for (i in 0 until points.size) {
+		for (i in points.indices) {
 			list.append("${points[i].x.formatRounded()},${points[i].y.formatRounded()} ")
 		}
 		writeString(name, list.toString().trim())
@@ -134,6 +135,12 @@ class StoreXmlWriter(
 	override fun writeIntegers(name: String, integers: List<Int>) {
 		if (integers.isNotEmpty()) {
 			writeString(name, integers.joinToString(","))
+		}
+	}
+
+	override fun writeUuids(name: String, uuids: Set<UUID>) {
+		if (uuids.isNotEmpty()) {
+			writeString(name, uuids.joinToString(","))
 		}
 	}
 }

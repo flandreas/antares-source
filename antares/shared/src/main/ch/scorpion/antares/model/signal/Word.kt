@@ -419,15 +419,15 @@ internal data class Word(
 			of(bitWidth, (longValue ?: asDefined().getValue()).mod(value))
 		}
 
-	override fun isGreaterThan(other: ULong): Boolean =
-		(longValue ?: asDefined().getValue()) > other
+	override fun isGreaterThan(value: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) > value
 
-	override fun isGreaterEqualThan(other: ULong): Boolean =
-		(longValue ?: asDefined().getValue()) >= other
+	override fun isGreaterEqualThan(value: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) >= value
 
-	override fun isSmallerThan(other: ULong): Boolean =
-		(longValue ?: asDefined().getValue()) < other
+	override fun isSmallerThan(value: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) < value
 
-	override fun isSmallerEqualThan(other: ULong): Boolean =
-		(longValue ?: asDefined().getValue()) <= other
+	override fun isSmallerEqualThan(value: ULong): Boolean =
+		(longValue ?: asDefined().getValue()) <= value
 }

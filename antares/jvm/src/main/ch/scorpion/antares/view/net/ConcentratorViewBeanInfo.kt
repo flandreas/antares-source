@@ -29,7 +29,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 
 	    properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
 	    properties.add(branchCount.bind(editor, bean.id, editable = !connected, filter = { bean.model.supportedBranchCounts.contains(it) }))
-	    properties.add(handedness.bind(editor, bean.id, editable = !connected))
+	    properties.add(handedness.bind(editor, bean.id))
 		properties.add(portViewSpacing.bind(editor, bean.id))
 	    properties.add(signalRep.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
     }

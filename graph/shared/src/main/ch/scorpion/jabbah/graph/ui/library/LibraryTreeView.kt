@@ -43,11 +43,9 @@ interface LibraryTreeView : UIView {
 
 	fun collapseAtSelection()
 
-	fun openLibrary(library: Library)
+	fun openMainLibrary(library: Library)
 
-	fun openProject(project: Project)
-
-	fun closeProject()
+	fun closeMainLibrary()
 
 	fun handle(event: LibraryItemAddedEvent)
 
@@ -74,8 +72,7 @@ interface LibraryTreeView : UIView {
  */
 class LibraryTreeViewController (
 	val type: LibraryTreeViewType,
-	library: Library,
-	project: Project? = null,
+	library: Library?,
 	val applicationModeHolder: ApplicationModeHolder,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryTreeView>() {
@@ -128,6 +125,12 @@ class LibraryTreeViewController (
 		}
 	}
 
+	private val libraryImportsHandler: EventHandler<LibraryImportsEvent> = {
+		if (displaysLibrary(it.library)) {
+			view.openMainLibrary(it.library)
+		}
+	}
+
 	var active: Boolean = applicationModeHolder.currentMode.isEdit()
 		private set(value) {
 			if (field != value) {
@@ -137,23 +140,14 @@ class LibraryTreeViewController (
 		}
 
 	/** Holds the [Library] to display.*/
-	var library: Library = library
+	var library: Library? = library
 		set(value) {
 			if (field !== value) {
 				field = value
-				view.openLibrary(library)
-			}
-		}
-
-	/** Holds the [Project] to display.*/
-	var project: Project? = project
-		set(value) {
-			if (field !== value) {
-				field = value
-				if (project == null) {
-					view.closeProject()
+				if (field != null) {
+					view.openMainLibrary(value!!)
 				} else {
-					view.openProject(project!!)
+					view.closeMainLibrary()
 				}
 			}
 		}
@@ -184,6 +178,7 @@ class LibraryTreeViewController (
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
 		eventBus.register(LibraryDirectoryRenamedEvent::class, libraryItemDirectoryRenamedHandler)
 		eventBus.register(ContainerLibraryElementRenamedEvent::class, renameContainerLibraryElementHandler)
+		eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
 
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -199,6 +194,7 @@ class LibraryTreeViewController (
 		eventBus.unregister(libraryItemMovedHandler)
 		eventBus.unregister(libraryItemDirectoryRenamedHandler)
 		eventBus.unregister(renameContainerLibraryElementHandler)
+		eventBus.unregister(libraryImportsHandler)
 
 		eventBus.unregister(currentSavableHandler)
 		eventBus.unregister(applicationModeHandler)
@@ -248,6 +244,7 @@ class LibraryTreeViewController (
 		return (selectedItem as LibraryElement).getNewInstance()
 	}
 
-	private fun displaysLibrary(library: Library?): Boolean = library === this.library || library === project
+	private fun displaysLibrary(library: Library?): Boolean =
+		this.library?.expandedImports?.libraries?.contains(library) == true
 }
 

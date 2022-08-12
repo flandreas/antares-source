@@ -13,6 +13,11 @@ import javax.swing.*
 import javax.swing.event.AncestorEvent
 import javax.swing.event.AncestorListener
 
+data class CreateLibraryInfo(
+	val name: TranslatableText,
+	val description: TranslatableText?,
+	val importUuid: UUID?
+)
 
 /**
  * A [JPanel] for collecting the input used for creating a new [Library].
@@ -21,9 +26,18 @@ class CreateLibraryPanel(
 	service: LibraryManagementService = LibraryModule.libraryManagementService
 ) : JPanel() {
 
-	data class CreateLibraryInfo(val name: TranslatableText, val templateUuid: UUID?)
-
 	companion object {
+
+		/** Makes sure the `null` entry gets rendered with a special text denoting the "empty library".*/
+		class LibraryNameRenderer : DefaultListCellRenderer() {
+			override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+				val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
+				if (value == null) {
+					renderer.text = Translations.getString("library.dialog.new.emptyTemplate.name")
+				}
+				return renderer
+			}
+		}
 
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
@@ -38,7 +52,10 @@ class CreateLibraryPanel(
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
 				) {
-				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.value as TranslatableText, panel.selectedTemplate?.uuid)
+				JOptionPane.OK_OPTION -> CreateLibraryInfo(
+					panel.nameField.value as TranslatableText,
+					panel.descriptionField.value as TranslatableText,
+					panel.selectedImport?.uuid)
 				else -> null
 			}
 		}
@@ -48,17 +65,26 @@ class CreateLibraryPanel(
 
 	private val nameField = TranslatablePropertyEditor(nameLabel)
 
-	private val templateComboBox = JComboBox<LibraryDictionaryEntry>()
+	private val descriptionLabel = Translations.getString("library.property.desc.name")
 
-	private val selectedTemplate: LibraryDictionaryEntry? get() = templateComboBox.selectedItem as LibraryDictionaryEntry?
+	private val descriptionField = TranslatablePropertyEditor(descriptionLabel, multiline = { true } )
+
+	private val importComboBox = JComboBox<LibraryDictionaryEntry>()
+
+	private val selectedImport: LibraryDictionaryEntry? get() = importComboBox.selectedItem as LibraryDictionaryEntry?
 
 	init {
-		setupTemplateComboBox(service)
+		setupImportComboBox(service)
 		buildEGBLLayout()
 
-		(nameField.customEditor as JComponent).addAncestorListener(object : AncestorListener {
+		(nameField.textComponent as JComponent).addAncestorListener(object : AncestorListener {
 			override fun ancestorAdded(event: AncestorEvent?) {
-				nameField.customEditor.requestFocusInWindow()
+				SwingUtilities.invokeLater {
+					event?.let {
+						it.component.requestFocus()
+						it.component.removeAncestorListener(this)
+					}
+				}
 			}
 
 			override fun ancestorMoved(event: AncestorEvent?) {}
@@ -66,20 +92,25 @@ class CreateLibraryPanel(
 		})
 	}
 
-	private fun setupTemplateComboBox(service: LibraryManagementService) {
-		templateComboBox.addItem(null)
-		service.getLibraryDirectoryEntries().forEach { templateComboBox.addItem(it) }
-		templateComboBox.renderer = LibraryNameRenderer()
+	private fun setupImportComboBox(service: LibraryManagementService) {
+		importComboBox.addItem(null)
+		service.getLibraryDirectoryEntries().forEach { importComboBox.addItem(it) }
+		importComboBox.renderer = LibraryNameRenderer()
 	}
 
 	private fun buildEGBLLayout() {
+		val width = 250
 		val inset = 5
+		val rowDist = 5
+		var row = 0
 		layout = EGBL.getLayout()
+
+		// Name
 
 		EGBL.add(
 			this,
 			JLabel("$nameLabel:"),
-			0, 0,    // x, y
+			0, row,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
 			EGBL.WEST,    // anchor
@@ -87,12 +118,12 @@ class CreateLibraryPanel(
 			0, inset, 0, 0
 		)
 
-		nameField.customEditor.preferredSize = Dimension(200, nameField.customEditor.preferredSize.height)
-		nameField.customEditor.minimumSize = Dimension(200, nameField.customEditor.preferredSize.height)
+		nameField.customEditor.preferredSize = Dimension(width, nameField.customEditor.preferredSize.height)
+		nameField.customEditor.minimumSize = Dimension(width, nameField.customEditor.preferredSize.height)
 		EGBL.add(
 			this,
 			nameField.customEditor,
-			1, 0,
+			1, row,
 			EGBL.REMAINDER, 1,
 			0.0, 0.0,
 			EGBL.WEST,
@@ -100,49 +131,65 @@ class CreateLibraryPanel(
 			0, 10, 0, inset
 		)
 
+		// Description
+
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("library.dialog.new.template.label") + ":"),
-			0, 1,
+			JLabel("$descriptionLabel:"),
+			0, ++row,    // x, y
+			1, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
+			rowDist, inset, 0, 0
+		)
+		descriptionField.customEditor.preferredSize = Dimension(width, descriptionField.customEditor.preferredSize.height)
+		descriptionField.customEditor.minimumSize = Dimension(width, descriptionField.customEditor.preferredSize.height)
+		EGBL.add(
+			this,
+			descriptionField.customEditor,
+			1, row,
+			EGBL.REMAINDER, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
+			rowDist, 10, 0, inset
+		)
+
+		// Imported library
+
+		EGBL.add(
+			this,
+			JLabel(Translations.getString("library.dialog.new.import.label") + ":"),
+			0, ++row,
 			1, 1,
 			0.0, 0.0,
 			EGBL.WEST,
 			EGBL.NONE,
-			0, inset, 0, 0
+			rowDist, inset, 0, 0
 		)
 
-		templateComboBox.preferredSize = Dimension(200, templateComboBox.preferredSize.height)
+		importComboBox.preferredSize = Dimension(width, importComboBox.preferredSize.height)
 		EGBL.add(
 			this,
-			templateComboBox,
-			1, 1,    // x, y
+			importComboBox,
+			1, row,    // x, y
 			EGBL.REMAINDER, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
 			EGBL.WEST,    // anchor
 			EGBL.NONE,    // fill
-			0, 10, 0, inset
+			rowDist, 10, 0, inset
 		)
 
 		val filler = JPanel()
 		EGBL.add(
 			this,
 			filler,
-			10, 10,
+			10, ++row,
 			EGBL.REMAINDER, EGBL.REMAINDER,
 			1.0, 1.0,
 			EGBL.NORTHWEST,
 			EGBL.BOTH
 		)
-	}
-
-	/** Makes sure the `null` entry gets rendered with a special text denoting the "empty library".*/
-	private class LibraryNameRenderer : DefaultListCellRenderer() {
-		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
-			if (value == null) {
-				renderer.text = Translations.getString("library.dialog.new.emptyTemplate.name")
-			}
-			return renderer
-		}
 	}
 }

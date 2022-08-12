@@ -10,6 +10,12 @@ val l2fprodVersion: String by extra
 val macOS_jpackage_home: String by extra
 val win_jpackage_home: String by extra
 
+// Values expected to be in user's home gradle.properties (NOT in project's gradle.properties under SCS!)
+// Used for notarizing macOS package. The user name is Andreas' Apple ID for Antares, the password
+// is an "Application Specific Password" defined in the Apple Account.
+val appleNotarizationUser: String by extra
+val appleNotarizationPassword: String by extra
+
 repositories {
 	mavenCentral()
 	maven { url = uri("https://jitpack.io") }
@@ -48,7 +54,6 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
-				implementation("com.github.Dansoftowner:jSystemThemeDetector:3.8")
 			}
 		}
 	}
@@ -169,43 +174,81 @@ tasks {
 		ignorewarnings()
 	}
 
-
 	val run by creating(JavaExec::class) {
 		dependsOn(shadowCreate)
 		classpath = files("$buildDir/libs/antares-${version_project}-all.jar")
 		main = "ch.scorpion.antares.AntaresSwing"
 	}
 
-	val distributeMac by creating(Exec::class) {
+	fun distributeMacSteps() {
+
+		// Packaging and signing
+		exec {
+			workingDir = projectDir
+			commandLine(
+				"${macOS_jpackage_home}/bin/jpackage",
+				"--dest", "${buildDir}/distributions",
+				"--input", "${buildDir}/package",
+				"--name", "Antares",
+				"--main-jar", "antares-${version_project}.jar",
+				"--app-version", "$version_project",
+				"--copyright", "Copyright (c) 2022 Andreas Fleischmann",
+				"--vendor", "antarescircuit.io",
+				"--icon", "jvm/rsc/antares.icns",
+				"--java-options", "-splash:\$APPDIR/splash-empty.png",
+				"--java-options", "-Dapple.awt.application.name=Antares",
+				"--java-options", "-Dapple.awt.application.appearance=system",
+				"--resource-dir", "jvm/rsc/",
+				"--mac-package-name", "Antares",
+				"--mac-sign",
+				"--mac-package-signing-prefix", "io.antarescircuit.Antares",
+				"--mac-signing-key-user-name", "Andreas Fleischmann (WX94PVQXHK)",
+			)
+		}
+
+		// Notarization (asynchronous call)
+		exec {
+			workingDir = projectDir
+			commandLine(
+				"xcrun", "altool",
+				"--notarize-app",
+				"--primary-bundle-id", "io.antarescircuit.Antares.$version_project",
+				"--username", appleNotarizationUser,
+				"--password", appleNotarizationPassword,
+				"--file", "${buildDir}/distributions/Antares-$version_project.dmg"
+			)
+		}
+	}
+
+	/**
+	 * Stapling of Apple notarization result not yet automized.
+	 * Wait for notarization success confirmation mail from Apple and execute this task manually.
+	 *
+	 * Alternative notarization status check:
+	 * xcrun altool --verbose --notarization-info [ID] --username appleNotarizationUser --password appleNotarizationPassword
+	 */
+	fun stapleMacNotarization() {
+		exec {
+			workingDir = projectDir
+			commandLine(
+				"xcrun", "stapler",
+				"staple", "${buildDir}/distributions/Antares-$version_project.dmg"
+			)
+		}
+	}
+
+	val distributeMac by creating() {
 		dependsOn(obfuscate)
 		dependsOn(copySplash)
 
-		val version = file("shared/rsc/version.txt").readText().trim()
-
-		workingDir = projectDir
-
-		commandLine(
-			"${macOS_jpackage_home}/bin/jpackage",
-			"--name", "Antares",
-			"--mac-package-name", "Antares",
-			"--input", "${buildDir}/package",
-			"--dest", "${buildDir}/distributions",
-			"--main-jar", "antares-${version_project}.jar",
-			"--app-version", "$version",
-			"--icon", "jvm/rsc/antares.icns",
-			"--java-options", "-splash:\$APPDIR/splash-empty.png",
-			"--java-options", "-Dapple.awt.application.name=Antares",
-			"--java-options", "-Dapple.awt.application.appearance=system",
-			"--type", "pkg",
-			"--resource-dir", "jvm/rsc/"
-		)
+		doLast {
+			distributeMacSteps()
+		}
 	}
 
 	val distributeWindows by creating(Exec::class) {
 		dependsOn(obfuscate)
 		dependsOn(copySplash)
-
-		val version = file("shared/rsc/version.txt").readText().trim()
 
 		workingDir = projectDir
 

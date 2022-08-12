@@ -17,13 +17,13 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.*
 
@@ -32,7 +32,7 @@ import ch.scorpion.jabbah.io.*
  */
 class SubGraphVerticeRef(
 	graphUUID: UUID? = null,
-	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
 
 	companion object {

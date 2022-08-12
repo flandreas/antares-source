@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
@@ -23,6 +24,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    private val portViewStyle = CommandPropertySwing("portViewStyle", "element.property.DigitalPortViewStyle", DigitalPortViewStyle::class.java, componentBeanProvider)
 	    private val direction = CommandPropertySwing("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
 		private val portLabelPos = CommandPropertySwing("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
+	    private val internalLabelOrientation = CommandPropertySwing("internalLabelOrientation", "graph.property.internalLabelOrientation", InternalLabelOrientation::class.java, componentBeanProvider)
 	    private val largeExtLabelDist = CommandPropertySwing("largeExternalPortLabelDist", "element.property.DigitalPortViewComponent.largeLabelDist", Boolean::class.java, componentBeanProvider)
 	    private val showBitWidth = CommandPropertySwing("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)
 	    private val logic = CommandPropertySwing("logic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
@@ -38,6 +40,9 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    properties.add(portViewStyle.bind(editor, bean.id))
 	    properties.add(direction.bind(editor, bean.id))
 	    properties.add(portLabelPos.bind(editor, bean.id))
+	    if (bean.portLabelPosition == PortLabelPosition.INTERNAL) {
+		    properties.add(internalLabelOrientation.bind(editor, bean.id))
+	    }
 	    properties.add(largeExtLabelDist.bind(editor, bean.id, editable = bean.portLabelPosition == PortLabelPosition.EXTERNAL))
 	    properties.add(showBitWidth.bind(editor, bean.id))
 	    properties.add(logic.bind(editor, bean.id))

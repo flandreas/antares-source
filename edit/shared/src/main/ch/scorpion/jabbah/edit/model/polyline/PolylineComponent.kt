@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
@@ -108,5 +109,9 @@ class PolylineComponent(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		polyline.setPoints(reader.readPoints("points"))
+	}
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		polyline.rotate(direction, pivot)
 	}
 }

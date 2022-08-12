@@ -12,9 +12,11 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
+import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -24,7 +26,8 @@ open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
-	userHolder: UserHolder<User> = EditAuthModule.userHolder
+	userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) : AbstractStorable(), Library, Describable {
 
 	constructor(
@@ -119,18 +122,61 @@ open class LibraryImpl(
 	/** ---- [MetaGraphRepository] */
 
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
-		val metaGraph = libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
+		val element = findContainerLibraryElementFor(uuid)!!
+		val metaGraph = element.library!!.libraryService.getMetaGraph(element.library!!, element)
 		LOG.trace("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
 		return metaGraph
 	}
 
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
 		val element = findContainerLibraryElementFor(uuid) ?: return null
-		return libraryService.getMetaGraph(this, element)
+		return element.library!!.libraryService.getMetaGraph(element.library!!, element)
 	}
 
 	override fun containsMetaGraph(uuid: UUID): Boolean =
 		findContainerLibraryElementFor(uuid) != null
+
+	override fun getContainingLibrary(uuid: UUID): Library? =
+		findContainerLibraryElementFor(uuid)?.library
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		val metaGraph = getMetaGraph(graphUUID)
+		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
+			return true
+		}
+		return SubGraphVerticeLocator(
+			graph = metaGraph.graph.model!!,
+			repository = this,
+			storableCreator = storableCreator
+		).contains(graphElementUUID)
+	}
+
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+		val systemLibReferences = mutableSetOf<UUID>()
+		return MetaGraphBundle()
+			.add(metaGraph)
+			.also { bundle ->
+				ContainerLibraryElementCollector(this)
+					.collect(metaGraph.graph.graphView.graph!!)
+					.forEach { metaGraphId ->
+						val sourceSystemLib = getOptionalSystemLibraryId(metaGraphId)
+						if (sourceSystemLib != null) {
+							systemLibReferences.add(sourceSystemLib)
+						} else {
+							bundle.add(getMetaGraph(metaGraphId))
+						}
+					}
+				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)
+			}
+	}
+
+	private fun getOptionalSystemLibraryId(metaGraphId: UUID): UUID? {
+		val elem = getContainerLibraryElement(metaGraphId)
+		if (elem != null && elem.library?.isSystem == true) {
+			return elem.library!!.uuid
+		}
+		return null
+	}
 
 	/** ---- [Storable] interface */
 
@@ -141,6 +187,9 @@ open class LibraryImpl(
 		writer.writeStorable("folder", directory)
 		writer.writeString("uuid", uuid.toString())
 		writer.writeString("author", author.toString())
+		if (importedLibraryIds.isNotEmpty()) {
+			writer.writeUuids("imports", importedLibraryIds)
+		}
 		description.write("desc", writer)
 		if (isSystem) {
 			writer.writeBoolean("system", isSystem)
@@ -157,6 +206,10 @@ open class LibraryImpl(
 		directory = reader.readStorable("folder") as LibraryFolder
 		uuid = System.createUUID(reader.readString("uuid"))
 		author = UserIdentity(reader.readString("author"))
+		if (reader.hasAttribute("imports")) {
+			importedLibraryIds.clear()
+			importedLibraryIds.addAll(reader.readUuids("imports"))
+		}
 		description = Description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
@@ -176,9 +229,17 @@ open class LibraryImpl(
 
 	override var author: UserIdentity = userHolder.user.identity
 
+	override var importedLibraryIds = mutableSetOf<UUID>()
+
+	private val _imports = resettableLazy { LibraryImports.calculate(this) }
+
+	override val expandedImports: LibraryImports get() = _imports.value
+
 	override var defaultElementUUID: UUID? = null
 
 	override var visibility: LibraryVisibility = LibraryVisibility.Private
+
+	override var isBrokenImport: Boolean = false
 
 	override var description: Description = Description(properties.description)
 
@@ -242,14 +303,33 @@ open class LibraryImpl(
 
 	override fun createSavable(element: ContainerLibraryElement): Savable = LibrarySavable(element)
 
+	override fun addImport(libraryId: UUID) {
+		importedLibraryIds.add(libraryId)
+		_imports.reset()
+	}
+
+	override fun removeImport(libraryId: UUID) {
+		importedLibraryIds.remove(libraryId)
+		_imports.reset()
+	}
+
 	/** ---- [LibraryImpl] */
 
 	/**
 	 * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
 	 */
 	private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
+		if (importedLibraryIds.isEmpty()) {
+			return findContainerLibraryElement(directory, uuid)
+		}
+		return expandedImports
+			.libraries
+			.firstNotNullOfOrNull { findContainerLibraryElement(it, uuid) }
+	}
+
+	private fun findContainerLibraryElement(dir: LibraryDirectory, uuid: UUID): ContainerLibraryElement? {
 		val graphFinder = GraphFinder(uuid)
-		directory.accept(graphFinder)
+		dir.accept(graphFinder)
 		return graphFinder.result
 	}
 

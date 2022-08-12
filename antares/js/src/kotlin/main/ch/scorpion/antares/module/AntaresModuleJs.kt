@@ -37,6 +37,8 @@ object AntaresModuleJs : AbstractModule() {
 			baseUrl = ".."
 		)
 
+		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+
 		GraphViewModuleJs.require()
 		AntaresViewModule.require()
 

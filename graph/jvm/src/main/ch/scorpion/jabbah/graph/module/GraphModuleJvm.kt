@@ -146,7 +146,9 @@ object GraphModuleJvm : AbstractModule() {
 
 		root.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).add(IntPreference(
 			id = InconsistentNetError.PROP_ALLOWED_DURATION,
-			nameKey = "graph.preferences.InconsistentNetError.allowedDuration"
+			nameKey = "graph.preferences.InconsistentNetError.allowedDuration",
+			minValue = 0,
+			maxValue = 1_000_000
 		))
 
 		root.getGroup(EditModuleJvm.PREF_TREE_EDITOR).add(BooleanPreference(

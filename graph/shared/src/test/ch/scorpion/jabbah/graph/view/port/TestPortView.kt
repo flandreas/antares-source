@@ -14,7 +14,7 @@ class TestPortView<T: Any>(
 	portLabelPosition: PortLabelPosition = PortLabelPosition.EXTERNAL,
 	length: Int? = null,
 	position: Point2D = Point2D.ZERO
-) : AbstractPortView<T>(port, position.x.toInt(), position.y.toInt(), direction, portLabelPosition, length ?: LENGTH) {
+) : AbstractPortView<T>(port, position.x.toInt(), position.y.toInt(), direction, portLabelPosition, length = length ?: LENGTH) {
 
 	companion object {
 		const val LENGTH = 10

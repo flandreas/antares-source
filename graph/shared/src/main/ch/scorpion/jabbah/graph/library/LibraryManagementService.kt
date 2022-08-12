@@ -6,9 +6,6 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
@@ -22,6 +19,8 @@ import ch.scorpion.jabbah.io.StorableCloner
  */
 data class OpenLibraryRequest(val library: Library)
 
+class CloseLibraryRequest
+
 /**
  * Posted on [EventBus] when a new [Library] has been created
  * @property library the created [Library]
@@ -29,17 +28,26 @@ data class OpenLibraryRequest(val library: Library)
 data class LibraryCreatedEvent(val library: Library)
 
 /**
+ * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.
+ */
+data class LibraryPropertiesEvent(val library: Library, val properties: LibraryProperties)
+
+/**
+ * Posted by [LibraryManagementService] if [Library.importedLibraryIds] has been changed.
+ */
+data class LibraryImportsEvent(val library: Library)
+
+/**
  * Provides methods for managing multiple [Libraries][Library].
  */
 class LibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	libraryService: LibraryService = LibraryModule.libraryService,
-	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
-	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryService, userDictionaryService, eventBus) {
+) : AbstractLibraryManagementService(libraryHolder, libraryService, userDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(LibraryManagementService::class)
@@ -48,20 +56,17 @@ class LibraryManagementService(
 
 	/** ---- [AbstractLibraryManagementService] */
 
-	/** Always `false`, because [Library] doesn't (yet) reference other [Libraries][Library]*/
-	override fun hasStaleImportReferences(library: Library): Boolean = false
-
-	override fun existsName(name: TranslatableText, except: UUID?): Boolean
-		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
+	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
+		userDictionaryService.existsName(name, except)
 
 	/** ---- [LibraryManagementService] */
 
-	fun isSystemLibrary(uuid: UUID): Boolean =
+	private fun isSystemLibrary(uuid: UUID): Boolean =
 		systemDictionaryService.contains(uuid)
 
 	/** Determines whether [uuid] exists as the [UUID] of either a user or a system [Library]. */
 	fun contains(uuid: UUID): Boolean
-		= userDictionaryService.contains(uuid) || systemDictionaryService.contains(uuid)
+		= systemDictionaryService.contains(uuid) || userDictionaryService.contains(uuid)
 
 	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
 	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
@@ -71,32 +76,35 @@ class LibraryManagementService(
 		).flatten().toImmutableList()
 	}
 
+	fun getOptionalLibrary(uuid: UUID): Library? {
+		val dictionaryEntry = systemDictionaryService.getEntry(uuid) ?: userDictionaryService.getEntry(uuid)
+		return dictionaryEntry?.let {
+			loadLibrary(LibraryIdentification(it.uuid, it.author))
+		}
+	}
+
 	/**
 	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
-	 * @param templateLibraryId the [LibraryIdentification] of the [Library] to be copied as a template.
-	 *      If `null`, an empty [Library] is created.
+	 * @param importedLibraryId the [LibraryIdentification] of the [Library] to be imported,
+	 *      or `null` if a standalone [Library] is to be created.
 	 * @return the created [Library]
 	 * @throws IllegalArgumentException if a [Library] with the name in [properties] already exists
 	 */
-	fun create(properties: LibraryProperties, templateLibraryId: LibraryIdentification?): Library {
+	fun create(properties: LibraryProperties, importedLibraryId: LibraryIdentification?): Library {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.info("Create new library '${properties.name.getTranslation()}' with template ${templateLibraryId?.uuid}")
+		LOG.userTrail("Create new library '${properties.name.getTranslation()}' with import '${importedLibraryId?.uuid}'")
 
-		val library = if (templateLibraryId == null) {
-			val library = libraryFactory.createEmptyLibrary(properties)
-			libraryService.storeLibrary(library)
-			library
-		} else {
-			libraryService.duplicateLibrary(loadLibrary(templateLibraryId), properties.name, userHolder.user.identity)
-		}
+		val library = libraryFactory.createEmptyLibrary(properties, importedLibraryId)
 
 		library.bindLibraryItems()
 		userDictionaryService.add(library)
+		libraryService.storeLibrary(library)
 		eventBus.post(LibraryCreatedEvent(library))
+
 		return library
 	}
 
@@ -140,13 +148,17 @@ class LibraryManagementService(
 	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library) {
 		LOG.trace("open library ${library.uuid}")
-		eventBus.postVetoable(
-			event = OpenLibraryRequest(library),
-			undoEvent = OpenLibraryRequest(libraryHolder.library),
-			thenHandler = {
-				libraryHolder.l = library
-			}
-		)
+		if (libraryHolder.l == null) {
+			libraryHolder.l = library
+		} else {
+			eventBus.postVetoable(
+				event = OpenLibraryRequest(library),
+				undoEvent = OpenLibraryRequest(libraryHolder.library),
+				thenHandler = {
+					libraryHolder.l = library
+				}
+			)
+		}
 	}
 
 	/**
@@ -154,10 +166,31 @@ class LibraryManagementService(
 	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
 	fun delete(libraryId: LibraryIdentification) {
-		if (libraryHolder.library.uuid == libraryId.uuid) {
+		if (libraryHolder.l?.uuid == libraryId.uuid) {
 			throw IllegalArgumentException("illegal attempt to delete the currently open library ${libraryId.uuid}")
 		}
 		deleteImpl(libraryId)
+	}
+
+	/**
+	 * Removes the specified [Library] as an imported [Library] from the [Library] currently held by
+	 * [LibraryHolder] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] isn't currently imported
+	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
+	 */
+	fun removeImport(libraryId: UUID) {
+		if (libraryHolder.l == null) {
+			throw IllegalStateException("no Library to remove an import from")
+		}
+		if (!libraryHolder.library.importedLibraryIds.contains(libraryId)) {
+			throw IllegalArgumentException("library $libraryId not imported by ${libraryHolder.library.uuid}")
+		}
+		LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
+
+		libraryHolder.library.removeImport(libraryId)
+		libraryService.storeLibrary(libraryHolder.library)
+
+		eventBus.post(LibraryImportsEvent(libraryHolder.library))
 	}
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

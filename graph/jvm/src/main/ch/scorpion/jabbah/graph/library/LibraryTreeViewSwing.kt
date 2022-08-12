@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
+import java.awt.Frame
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
@@ -27,7 +28,7 @@ class LibraryTreeViewSwing(
 	private val controller: LibraryTreeViewController,
 	application: Application,
 	showWorkspaceNode: Boolean = true
-) : JTree(LibraryTreeModelBuilderSwing(controller.library, controller.project).build()), LibraryTreeView {
+) : JTree(LibraryTreeModelBuilderSwing(controller.library,).build()), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewSwing::class)
@@ -151,50 +152,39 @@ class LibraryTreeViewSwing(
 		}
 	}
 
-	override fun openLibrary(library: Library) {
-		LOG.userTrail("Open Library '${library.name}'")
-		val root = model.root as DefaultMutableTreeNode
-		val oldLibraryNode = getLibraryNode()
-		val newLibraryNode = DefaultMutableTreeNode(library)
-		LibraryTreeModelBuilderSwing.addLibrary(newLibraryNode, library)
-		val libraryNodeIndex = if (getProjectNode() == null) 0 else 1
+	override fun openMainLibrary(library: Library) {
+		LOG.userTrail("Open main Library/Project '${library.name}'")
 
-		root.remove(libraryNodeIndex)
-		(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(libraryNodeIndex), arrayOf(oldLibraryNode))
-		root.insert(newLibraryNode, libraryNodeIndex)
-		(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(libraryNodeIndex))
-
+		model = LibraryTreeModelBuilderSwing(library).build()
 		expandRow(0)
+
+		if (library.expandedImports.staleImportCount > 0) {
+			var title = ""
+			var text = ""
+			if (library is Project) {
+				title = Translations.getString("library.open.staleReferenceFromProject.name")
+				text = Translations.getString("library.open.staleReferenceFromProject.msg")
+			} else {
+				title = Translations.getString("library.open.staleReferenceFromLibrary.name")
+				text = Translations.getString("library.open.staleReferenceFromLibrary.msg")
+			}
+			SwingUtilities.invokeLater {
+				JOptionPane.showConfirmDialog(
+					Frame.getFrames()[0],
+					text,
+					title,
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.WARNING_MESSAGE
+				)
+			}
+		}
 	}
 
-	override fun openProject(project: Project) {
-		LOG.userTrail("Open Project '${project.name}'")
+	override fun closeMainLibrary() {
+		LOG.userTrail("Close main Library/Project")
 		val root = model.root as DefaultMutableTreeNode
-		val oldProjectNode = getProjectNode()
-		val newProjectNode = DefaultMutableTreeNode(project)
-		LibraryTreeModelBuilderSwing.addLibrary(newProjectNode, project)
-
-		if (oldProjectNode == null) {
-			root.insert(newProjectNode, 0)
-			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
-		} else {
-			root.remove(0)
-			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(oldProjectNode))
-			root.insert(newProjectNode, 0)
-			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
-		}
-
-		expandRow(0)
-	}
-
-	override fun closeProject() {
-		LOG.userTrail("Close Project")
-		val projectNode = getProjectNode()
-		if (projectNode != null) {
-			val root = model.root as DefaultMutableTreeNode
-			root.remove(0)
-			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(projectNode))
-		}
+		root.removeAllChildren()
+		(model as DefaultTreeModel).nodeStructureChanged(root)
 	}
 
 	/** ---- [LibraryTreeViewSwing] */
@@ -213,14 +203,6 @@ class LibraryTreeViewSwing(
 			return root.getChildAt(0) as DefaultMutableTreeNode
 		}
 		return null
-	}
-
-	private fun getLibraryNode(): DefaultMutableTreeNode {
-		val root = model.root as DefaultMutableTreeNode
-		if (root.childCount > 1) {
-			return root.getChildAt(1) as DefaultMutableTreeNode
-		}
-		return root.getChildAt(0) as DefaultMutableTreeNode
 	}
 
 	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/
@@ -255,6 +237,8 @@ class LibraryTreeViewSwing(
 		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
+		private val libraryImportIcon = UiUtil.themedIcon("/img/imported-library.png")
+		private val brokenImportIcon = UiUtil.themedIcon("/img/broken-import.png")
 		private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
 		private val desktopIcon = UiUtil.themedIcon("/img/table-20.png")
 
@@ -284,11 +268,17 @@ class LibraryTreeViewSwing(
 					if (controller.isDefaultElement(value.userObject as ContainerLibraryElement)) {
 						component.font = defaultElemFont
 					}
+				} else if (value.userObject is Project) {
+					component.icon = projectIcon
 				} else if (value.userObject is Library) {
-					if (value.userObject == controller.library) {
+					if (value.userObject === controller.library) {
 						component.icon = libraryIcon
 					} else {
-						component.icon = projectIcon
+						if ((value.userObject as Library).isBrokenImport) {
+							component.icon = brokenImportIcon
+						} else {
+							component.icon = libraryImportIcon
+						}
 					}
 				} else if (value.userObject is LibraryFolder) {
 					component.icon = folderIcon

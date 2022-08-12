@@ -87,6 +87,9 @@ open class GraphImpl(
 			field = if (value == 0L) {
 				null
 			} else {
+				if (value != null) {
+					require(value >= 0) {"Startup time must be greater than 0"}
+				}
 				value
 			}
 		}

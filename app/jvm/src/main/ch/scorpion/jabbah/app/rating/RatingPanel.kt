@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import kotlinx.coroutines.runBlocking
 import java.awt.*
 import javax.swing.*
@@ -133,7 +134,7 @@ class RatingPanel(
 		contentPanel.add(Box.createVerticalStrut(20))
 
 		errorText.text = " "
-		errorText.foreground = Color.RED
+		errorText.foreground = UiUtil.errorTextColor
 		contentPanel.add(errorText)
 		contentPanel.add(Box.createVerticalStrut(30))
 

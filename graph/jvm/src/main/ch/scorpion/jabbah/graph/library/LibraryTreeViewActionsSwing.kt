@@ -26,11 +26,13 @@ open class LibraryTreeViewActionsSwing(
 	application: Application
 ) : LibraryTreeViewActions(controller, application) {
 
-	protected val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
-	protected val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
+	protected val libraryOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
+	protected val projectOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
 
 	private val showLibraryMetaGraphHistoryAction = ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller)
 
+	private val addLibraryToDesktopAction = AddLibraryToDesktopAction(controller)
+	private val removeLibraryAction = RemoveLibraryAction(controller)
 	private val expandAllAction = ExpandAllAction(controller)
 	private val collapseAllAction = CollapseAllAction(controller)
 	private val exportMetaGraphAction = ExportMetaGraphAction(controller)
@@ -191,6 +193,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 	}
@@ -225,6 +228,7 @@ open class LibraryTreeViewActionsSwing(
 	}
 
 	protected open fun fillMain() {
+		desktopPopupMenu.add(ActionWrapperSwing(addLibraryToDesktopAction))
 		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 

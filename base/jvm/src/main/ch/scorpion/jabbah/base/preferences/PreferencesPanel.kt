@@ -5,7 +5,8 @@ import ch.scorpion.jabbah.base.swing.DataFormPanel
 /** Displays editors for all [Preference]s of a particular [PreferenceGroup].*/
 class PreferencesPanel(
 	private val group: PreferenceGroup,
-	val preferences: Preferences
+	val preferences: Preferences,
+	val messageDisplay: PreferencesMessageDisplay
 ) : DataFormPanel() {
 
 	init {

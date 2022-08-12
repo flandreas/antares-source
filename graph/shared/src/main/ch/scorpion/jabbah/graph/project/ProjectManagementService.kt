@@ -15,54 +15,35 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 
-/**
- * Posted on [EventBus] when a [Project] is to be opened and is to replace the currently open [Project], if any.
- * Subscribers for this event can raise their veto, such as the application class that keeps track of
- * changes of the current [Project]'s open [MetaGraph].
- */
-data class OpenProjectRequest (val project: Project?)
-
-/**
- * Posted on [EventBus] when the currently open [Project] is to be closed.
- * Subscribers for this event can raise their veto, such as the application class that keeps track of
- * changes of the current [Project]'s open [MetaGraph].
- */
-data class CloseProjectRequest (val project: Project)
-
 /** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
 class ProjectManagementService(
 	private val projectFactory: (TranslatableText) -> Project = ProjectModule.projectFactory,
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
-	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryService, projectDictionaryService, eventBus) {
+) : AbstractLibraryManagementService(libraryHolder, libraryService, projectDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(ProjectManagementService::class)
 	}
 
 	init {
-		eventBus.register(CurrentLibraryEvent::class) { close() }
+		eventBus.register(CurrentLibraryEvent::class) {
+			if (it.library == null) {
+				close()
+			}
+		}
 	}
-
-	/** Returns the currently open [Project], if any.*/
-	val currentProject: Project? get() = projectHolder.project
 
 	/** Determines whether the directory for storing the project [LibraryDictionary] already exists.*/
 	val directoryExists: Boolean get() = dictionaryService.directoryExists
 
-
 	/** ---- [AbstractLibraryManagementService] */
 
-	override fun hasStaleImportReferences(library: Library): Boolean =
-		!libraryManagementService.contains((library as Project).importedLibrary!!)
-
-	override fun existsName(projectName: TranslatableText, except: UUID?): Boolean =
-		dictionaryService.existsName(projectName, except)
+	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
+		dictionaryService.existsName(name, except)
 
 	/** ---- [ProjectManagementService] */
 
@@ -84,7 +65,7 @@ class ProjectManagementService(
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties, library: UUID = libraryHolder.library.uuid): Project {
+	fun create(properties: LibraryProperties): Project {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
@@ -95,7 +76,9 @@ class ProjectManagementService(
 
 		val project = projectFactory.invoke(properties.name)
 		project.description = Description(properties.description)
-		project.importedLibrary = library
+		properties.importUuid?.let {
+			project.addImport(it)
+		}
 		project.defaultElementUUID = metaGraph.uuid
 
 		libraryService.storeLibrary(project)
@@ -107,9 +90,11 @@ class ProjectManagementService(
 	}
 
 	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/
-	fun createHelloProject(library: UUID): Project {
-		return create(LibraryProperties(TranslatableText(Translations.getString("project.hello.name"))), library)
-	}
+	fun createHelloProject(library: UUID?): Project =
+		create(LibraryProperties(
+			TranslatableText(Translations.getString("project.hello.name")),
+			importUuid = library
+		))
 
 	/**
 	 * Updates the currently open [Project] with the specified properties and stores it in persistent store.
@@ -119,10 +104,10 @@ class ProjectManagementService(
 	 * Posts [LibraryPropertiesEvent] on this [ProjectManagementService]'s [EventBus].
 	 */
 	fun update(properties: LibraryProperties) {
-		if (projectHolder.project == null) {
+		if (libraryHolder.l == null) {
 			throw IllegalStateException("cannot update properties, no project open")
 		}
-		val project = projectHolder.project!!
+		val project = libraryHolder.library as Project
 		LOG.trace("updating project '${project.name}'")
 
 		if (project.name.translation != properties.name) {
@@ -151,31 +136,38 @@ class ProjectManagementService(
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project) {
-		eventBus.postVetoable(
-			event = OpenProjectRequest(project),
-			undoEvent = OpenProjectRequest(projectHolder.project),
-			thenHandler = {
-				openImpl(project, project.defaultElementUUID)
-			}
-		)
+		if (libraryHolder.l == null) {
+			openImpl(project, project.defaultElementUUID)
+		} else {
+			eventBus.postVetoable(
+				event = OpenLibraryRequest(project),
+				undoEvent = OpenLibraryRequest(libraryHolder.library),
+				thenHandler = {
+					openImpl(project, project.defaultElementUUID)
+				}
+			)
+		}
 	}
 
 	/** Opens the specified [Project] and [ContainerLibraryElement].*/
 	fun open(libraryId: LibraryIdentification, containerLibraryElement: UUID) {
 		val project = load(libraryId)
-		eventBus.postVetoable(
-			event = OpenProjectRequest(project),
-			undoEvent = OpenProjectRequest(projectHolder.project),
-			thenHandler = {
-				openImpl(project, containerLibraryElement)
-			}
-		)
+		if (libraryHolder.l == null) {
+			openImpl(project, containerLibraryElement)
+		} else {
+			eventBus.postVetoable(
+				event = OpenLibraryRequest(project),
+				undoEvent = OpenLibraryRequest(libraryHolder.library),
+				thenHandler = {
+					openImpl(project, containerLibraryElement)
+				}
+			)
+		}
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
 		LOG.trace("open project ${project.uuid} with default element $elementUUID")
-		openLibraryForProjectIfNecessary(project)
-		projectHolder.p = project
+		libraryHolder.l = project
 		if (elementUUID != null) {
 			val element = project.getContainerLibraryElement(elementUUID)
 			if (element != null) {
@@ -184,22 +176,9 @@ class ProjectManagementService(
 		}
 	}
 
-	private fun openLibraryForProjectIfNecessary(project: Project) {
-		if (project.importedLibrary != libraryHolder.library.uuid) {
-			project.importedLibrary!!.also {
-				val id = if (libraryManagementService.isSystemLibrary(it)) {
-					LibraryIdentification(it, null)
-				} else {
-					LibraryIdentification(it, project.author)
-				}
-				libraryManagementService.open(id)
-			}
-		}
-	}
-
 	/** Deletes the [Project] with the specified name.*/
 	fun delete(libraryId: LibraryIdentification) {
-		if (projectHolder.project?.uuid == libraryId.uuid) {
+		if (libraryHolder.l?.uuid == libraryId.uuid) {
 			closeImpl { deleteImpl(libraryId) }
 		} else {
 			deleteImpl(libraryId)
@@ -212,16 +191,18 @@ class ProjectManagementService(
 	}
 
 	private fun closeImpl(additionalThenHandler: () -> Unit) {
-		val project = projectHolder.project
-		if (project != null) {
-			eventBus.postVetoable(
-				event = CloseProjectRequest(project),
-				undoEvent = OpenProjectRequest(project),
-				thenHandler = {
-					projectHolder.p = null
-					additionalThenHandler.invoke()
-				}
-			)
+		if (libraryHolder.l != null) {
+			val project = libraryHolder.library
+			if (project != null) {
+				eventBus.postVetoable(
+					event = CloseLibraryRequest(),
+					undoEvent = OpenLibraryRequest(project),
+					thenHandler = {
+						libraryHolder.l = null
+						additionalThenHandler.invoke()
+					}
+				)
+			}
 		}
 	}
 }

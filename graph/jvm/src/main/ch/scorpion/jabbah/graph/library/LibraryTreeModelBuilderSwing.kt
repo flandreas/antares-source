@@ -8,8 +8,7 @@ import javax.swing.tree.TreeModel
 
 /** Builds the [TreeModel] for displaying a [Library] and an optional [Project] as a tree.*/
 class LibraryTreeModelBuilderSwing(
-	private val library: Library,
-	private val project: Project?,
+	private val library: Library?,
 	private val filter: LibraryFilter? =  null
 ) {
 	companion object {
@@ -27,7 +26,7 @@ class LibraryTreeModelBuilderSwing(
 			}
 		}
 
-		fun addLibrary(parentSwingNode: DefaultMutableTreeNode, library: Library, filter: LibraryFilter? = null) {
+		private fun addLibrary(parentSwingNode: DefaultMutableTreeNode, library: Library, filter: LibraryFilter? = null) {
 			addItems(parentSwingNode, LibraryDirectoryTreeModelBuilder(library, filter).build())
 		}
 	}
@@ -35,15 +34,13 @@ class LibraryTreeModelBuilderSwing(
 	fun build(): TreeModel {
 		val root = DefaultMutableTreeNode(Translations.getString("graph.desktop.name"))
 
-		project?.let {
-			val node = DefaultMutableTreeNode(it)
-			addLibrary(node, it, filter)
-			root.add(node)
+		if (library != null) {
+			for (l in library.expandedImports.libraries) {
+				val node = DefaultMutableTreeNode(l)
+				addLibrary(node, l, filter)
+				root.add(node)
+			}
 		}
-
-		val node = DefaultMutableTreeNode(library)
-		addLibrary(node, library, filter)
-		root.add(node)
 
 		return DefaultTreeModel(root)
 	}

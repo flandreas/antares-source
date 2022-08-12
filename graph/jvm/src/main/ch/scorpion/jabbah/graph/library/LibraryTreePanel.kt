@@ -48,7 +48,6 @@ class LibraryTreePanel(
 
 		(controller.view as LibraryTreeViewSwing).model = LibraryTreeModelBuilderSwing(
 			controller.library,
-			controller.project,
 			filter
 		).build()
 		SwingUtilities.invokeLater {

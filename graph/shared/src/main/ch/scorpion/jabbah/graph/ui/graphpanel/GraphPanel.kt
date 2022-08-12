@@ -46,8 +46,6 @@ import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.project.ProjectHolder
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphEditView
 import ch.scorpion.jabbah.graph.ui.GraphEditViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView
@@ -107,7 +105,6 @@ class GraphPanelViewController(
 	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : AbstractUIController<GraphPanelView>() {
 
 	companion object {
@@ -115,7 +112,7 @@ class GraphPanelViewController(
 	}
 
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
-	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, projectHolder, eventBus)
+	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)

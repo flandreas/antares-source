@@ -8,10 +8,7 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectHolder
-import ch.scorpion.jabbah.graph.project.ProjectModule
 
 interface LibraryPanelView : UIView {
 	fun refresh()
@@ -27,19 +24,16 @@ interface LibraryPanelView : UIView {
 class LibraryPanelController(
 	applicationModeHolder: ApplicationModeHolder,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
-	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, applicationModeHolder, eventBus)
+	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.l, applicationModeHolder, eventBus)
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
-	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { libraryTreeViewController.project = it.project }
 
 	init {
 		eventBus.register(ThemeEvent::class, themeHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
-		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
 	}
 
 	override fun dispose() {
@@ -47,6 +41,5 @@ class LibraryPanelController(
 		libraryTreeViewController.dispose()
 		eventBus.unregister(themeHandler)
 		eventBus.unregister(currentLibraryHandler)
-		eventBus.unregister(currentProjectHandler)
 	}
 }

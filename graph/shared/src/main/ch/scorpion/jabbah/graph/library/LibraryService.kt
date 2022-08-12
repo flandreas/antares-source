@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
-import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
@@ -91,14 +91,12 @@ class LibraryService(
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val metaGraphRepository: CombinedMetaGraphRepository = GraphModule.metaGraphRepository
+	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 
 	companion object {
 		private val LOG by logger(LibraryService::class)
 	}
-
-	/** ---- [LibraryService] interface */
 
 	private fun persister(system: Boolean): LibraryPersistenceService =
 		if (system) systemLibraryPersister else userLibraryPersister
@@ -444,17 +442,75 @@ class LibraryService(
 		""".trimMargin()
 	}
 
+	/**
+	 * Adds the specified [Library] as an imported [Library] to [ownerLibrary] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
+	 */
+	fun addImport(ownerLibrary: Library, libraryId: UUID) {
+		LOG.userTrail("Import library $libraryId in ${ownerLibrary.uuid}")
+
+		ownerLibrary.addImport(libraryId)
+		storeLibrary(ownerLibrary)
+
+		eventBus.post(LibraryImportsEvent(ownerLibrary))
+	}
+
+	/**
+	 * Removes the specified [Library] as import from the current [Library] in [LibraryHolder],
+	 * as well as all [Libraries][Library] imported by [library].
+	 *
+	 * Clients like UI should first call [containsLibraryReference] to check whether removing
+	 * the current [Library] contains a reference to one of the [MetaGraphs][MetaGraph] in the
+	 * transitive hull of [library], and if that's the case, not allowing the user to remove it.
+	 *
+	 * @param library the [Library] not to be imported any more
+	 */
+	fun removeImport(ownerLibrary: Library, libraryId: UUID) {
+		LOG.userTrail("Remove import $libraryId from ${ownerLibrary.uuid}")
+		ownerLibrary.removeImport(libraryId)
+		storeLibrary(ownerLibrary)
+
+		eventBus.post(LibraryImportsEvent(ownerLibrary))
+	}
+
+	/**
+	 * Determines whether [master] contains a [MetaGraph] with a reference to any [MetaGraph] in [target]
+	 * (or any [Library] imported by [target]).
+	 *
+	 * This check can be costly, because every [MetaGraph] in the current [Library]has to be
+	 * read and scanned for [SubGraphVerticeRefs][SubGraphVerticeRef] that would become
+	 * broken when removing [target] from the imports.
+	 */
+	fun containsLibraryReference(master: Library, target: Library): Boolean {
+		for (metaGraphId in master.metaGraphIds) {
+			val metaGraph = master.getMetaGraph(metaGraphId)
+			ContainerLibraryElementCollector()
+				.collect(metaGraph.graph.model!!)
+				.forEach { ref ->
+					val elem = master.getContainerLibraryElement(ref)
+					if (elem != null && target.expandedImports.libraries.map { it.uuid }.any { it == elem.library!!.uuid }) {
+						return true
+					}
+				}
+
+		}
+		return false
+	}
+
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
 		bundle.metaGraphs.any { metaGraphRepository.containsMetaGraph(it.uuid) }
 
+	/**
+	 * Checks whether the destination [Library] into which [MetaGraphBundle] is to be imported
+	 * imports all required system [Libraries][Library].
+	 */
 	private fun checkBundleLibrary(bundle: MetaGraphBundle, destination: Library): Boolean {
-		if (bundle.referencedSystemLibrary == null) {
+		if (bundle.referencedSystemLibraryIds.isEmpty()) {
 			return true
 		}
-		if (destination is Project) {
-			return bundle.referencedSystemLibrary == destination.importedLibrary
+		return bundle.referencedSystemLibraryIds.all { libId ->
+			destination.library!!.expandedImports.libraries.map { it.uuid }.contains(libId)
 		}
-		return bundle.referencedSystemLibrary == destination.uuid
 	}
 
 	private fun importMetaGraphBundle(bundle: MetaGraphBundle, bundleName: String, destination: LibraryDirectory) {

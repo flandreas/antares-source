@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.BasicStyle
+import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 
@@ -19,7 +20,7 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 			backgroundColor = Color.WHITE,
 			textColor = Color.BLACK)
 
-		val BACKGROUND_STYLE = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT,)
+		private val BACKGROUND_STYLE = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT,)
 
 		private val TEXT_COLOR = CompositeColor(
 			foregroundColor = Color.BLACK,
@@ -80,20 +81,22 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 			backgroundColor = Color(33, 33, 33),
 			textColor = Color.LIGHT_GRAY)
 
+		private fun createBackgroundStyle(backgroundColor: CompositeColor = BACKGROUND_COLOR): Style =
+			BasicStyle(color = backgroundColor, stroke = ANNOTATION_STROKE, font = FONT)
 	}
 
-	protected fun standardForColor(color: CompositeColor): AntaresTheme {
+	protected fun standardForColor(objectColor: CompositeColor, backgroundColor: CompositeColor = BACKGROUND_COLOR): AntaresTheme {
 		return AntaresTheme(
 			name = name,
 			dark = false,
-			background = BACKGROUND_STYLE,
+			background = createBackgroundStyle(backgroundColor),
 			text = TEXT_STYLE,
-			figure = BasicStyle(color = color, stroke = BOX_STROKE, font = FONT, shadow = true),
+			figure = BasicStyle(color = objectColor, stroke = BOX_STROKE, font = FONT, shadow = true),
 			tooltip = TOOLTIP_STYLE,
 			highlight = HIGHLIGHT_STYLE,
-			vertice = BasicStyle(color = color, stroke = BOX_STROKE, font = FONT, shadow = true),
+			vertice = BasicStyle(color = objectColor, stroke = BOX_STROKE, font = FONT, shadow = true),
 			edge = EDGE_STYLE,
-			annotation = BasicStyle(color = color, stroke = ANNOTATION_STROKE, font = ANNOTATION_FONT),
+			annotation = BasicStyle(color = objectColor, stroke = ANNOTATION_STROKE, font = ANNOTATION_FONT),
 			explanation = EXPLANATION_STYLE,
 			subsystem = SUBSYSTEM_STYLE,
 			selection = SELECTION_STYLE,

@@ -1,6 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.AntaresApplication.Companion.DEF_LIBRARY_UUID
 import ch.scorpion.antares.akrabapi.UserInfoTO
 import ch.scorpion.antares.module.AntaresAkrabProtectedModuleJs
 import ch.scorpion.antares.ui.AntaresViewJs
@@ -62,7 +61,7 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 
 		AntaresAkrabProtectedModuleJs.require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(DEF_LIBRARY_UUID, null), isSystem = true)
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 
 		AntaresThemes.install()
 
@@ -192,7 +191,7 @@ val antaresJs = fc<AntaresJsProps> { props ->
 				attrs.applicationDataHolder = props.applicationDataHolder
 				attrs.canvasId = "kotlinCanvas"
 				attrs.size = null
-				attrs.projectName = ProjectModule.projectHolder.project?.name?.getTranslation()
+				attrs.projectName = LibraryModule.libraryHolder.l?.name?.getTranslation()
 				attrs.returnUri = props.returnUri
 				attrs.metaGraph = props.metaGraph
 			}

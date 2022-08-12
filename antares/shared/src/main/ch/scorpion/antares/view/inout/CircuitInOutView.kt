@@ -7,6 +7,8 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.signal.NumberView
+import ch.scorpion.jabbah.animation.AnimationTask
+import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
@@ -120,6 +122,9 @@ class CircuitInOutView(
 	/** The [DrawingView] in which [popupKeyboard] is displayed.*/
 	private var popupKeyboardView: DrawingView<*>? = null
 
+	/** Determines if there is a [ShakeLocatableAnimation] running due to an invalid data entry.*/
+	private var isShaking: Boolean = false
+
 	private val numberViewFocusListener: PropertyChangeListener<Any> = PropertyChangeListener {
 		if (numberView?.focusIndex == null) {
 			hideKeyboard()
@@ -228,7 +233,7 @@ class CircuitInOutView(
 
 	override val controlId: String get() = "circuitInOut:$id"
 
-	override val controlName: String get() = "$type ${model.name}"
+	override val controlName: String get() = "$type: ${model.name}"
 
 	override fun createControlView(): ControlView<CircuitInOut> {
 		val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model, controlName)
@@ -604,9 +609,15 @@ class CircuitInOutView(
 	}
 
 	private fun rejectSignal(contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean) {
-		if (!skipAnimation) {
+		if (!skipAnimation && !isShaking) {
+			isShaking = true
 			contextHolder.animator
 				.schedule(ShakeLocatableAnimation(numberView!!))
+				.addListener(object : AnimationTaskAdapter() {
+					override fun ended(task: AnimationTask) {
+						isShaking = false
+					}
+				})
 				.start()
 		}
 	}

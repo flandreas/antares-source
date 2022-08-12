@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 
 class GenericPortView<T : Any>(
@@ -13,8 +14,9 @@ class GenericPortView<T : Any>(
 	y: Int = 0,
 	direction: Direction = Direction.SOUTH,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
+	internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	connectable: Boolean = false
-) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable = connectable) {
+) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, internalLabelOrientation, 0, connectable = connectable) {
 
 	override var transparency: Int = Transparent.FULLY_OPAQUE
 

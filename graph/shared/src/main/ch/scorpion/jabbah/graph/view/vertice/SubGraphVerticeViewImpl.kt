@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.DrawExecSymbolFunctions
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
@@ -44,10 +45,9 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.module.GraphModule
+import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
@@ -60,7 +60,7 @@ class SubGraphVerticeViewImpl(
 	graphElement: SubGraphVerticeRef = SubGraphVerticeRef(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
 	styleProvider,

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.io
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
@@ -191,6 +192,9 @@ class StoreXmlReader(
 
 	override fun readIntegers(name: String): List<Int> =
 		xmlReader.getAttributeValue(name).split(",").map { it.toInt() }
+
+	override fun readUuids(name: String): Set<UUID> =
+		xmlReader.getAttributeValue(name).split(",").map { UUID(it) }.toSet()
 
 	/** ---- [StoreXmlReader] */
 

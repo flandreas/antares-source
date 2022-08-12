@@ -25,10 +25,10 @@ class GraphDataViewControllerTest {
 	private val controller = GraphDataViewController(commandManagerMock.build())
 	private val metaGraph = MetaGraph()
 	private val containerLibraryElement = ContainerLibraryElement()
-	private val project = mockk<Project>()
-	private val projectSavable = ProjectSavable(containerLibraryElement, project)
+	private val projectSavable = ProjectSavable(containerLibraryElement)
 
 	init {
+		containerLibraryElement.bindTo(mockk<Project>())
 		containerLibraryElement.updateStorable(metaGraph)
 	}
 

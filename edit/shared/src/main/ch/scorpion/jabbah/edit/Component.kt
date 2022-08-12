@@ -92,4 +92,11 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	 * Returns the [Component]s to be deleted as well when this [Component] is deleted.
 	 */
 	val deleteBuddies: List<Component> get() = emptyList()
+
+	/**
+	 * Returns the [Component]s to be selected in addition to this [Component] when selected by mouse,
+	 * or `null` if only this [Component] is to be selected.
+	 */
+	fun getSelectBuddies(drawing: Drawing<Component>): Set<Component>? = null
+
 }

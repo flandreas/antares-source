@@ -49,10 +49,10 @@ class ImportMetaGraphAction(
 		var replaceIfUuidExists = false
 		do {
 			var repeat = false
-			LOG.userTrail("Import bundle '${bundleName}', replace if UUID exists = $replaceIfUuidExists")
+			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists")
 
 			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists)) {
-				Success -> handleSuccessfulImport(bundleName)
+				Success -> handleSuccessfulImport()
 				Invalid -> handleInvalidImportFile(bundleName)
 				StaleLibraryReference -> handleStaleLibraryReference(bundleName)
 				UuidAlreadyExists -> {
@@ -71,7 +71,7 @@ class ImportMetaGraphAction(
 	private fun createFilter(): javax.swing.filechooser.FileFilter =
 		FileExtensionFilter(ExportMetaGraphAction.EXPORT_FILE_EXTENSION, Translations.getString("library.action.importMetaGraph.filer.name"))
 
-	private fun handleSuccessfulImport(bundleName: String) {
+	private fun handleSuccessfulImport() {
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.importMetaGraph.success.msg"),

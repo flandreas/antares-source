@@ -11,7 +11,7 @@ internal fun getAdditionalCoveringPrimeImplicants(
 		.minWithOrNull(
 			compareBy(
 				{ subset -> subset.size },
-				{ subset -> subset.sumBy { it.literals.size } }
+				{ subset -> subset.sumOf { it.literals.size } }
 			)
 		)!!
 }

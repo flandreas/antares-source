@@ -20,6 +20,7 @@ class ThemePreference : AbstractPreference(
 		editor.addActionListener {
 			panel?.preferences?.customize(this, (editor.selectedItem as Theme).name)
 		}
+		registerEditor(editor)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {

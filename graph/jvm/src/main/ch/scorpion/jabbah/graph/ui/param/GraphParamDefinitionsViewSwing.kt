@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.*
 import java.awt.*
@@ -50,7 +51,7 @@ class GraphParamDefinitionsViewSwing(
 	init {
 		controller.view = this
 
-		errorMessageLabel.foreground = Color.RED
+		errorMessageLabel.foreground = UiUtil.errorTextColor
 		errorMessageLabel.alignmentX = Component.LEFT_ALIGNMENT
 
 		buildUI()

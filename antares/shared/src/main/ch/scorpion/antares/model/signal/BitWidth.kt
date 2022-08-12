@@ -27,6 +27,8 @@ interface BitWidth {
 		val BW_32 = BitWidthImpl(32, "4G")
 		val BW_64 = BitWidthImpl(64, "16E")
 
+		val MAX: BitWidth get() = BW_64
+
 		val PREDEFINED: List<BitWidth> = listOf(BW_1, BW_2, BW_3, BW_4, BW_5, BW_6, BW_7, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
 
 		fun of(width: Int): BitWidth =

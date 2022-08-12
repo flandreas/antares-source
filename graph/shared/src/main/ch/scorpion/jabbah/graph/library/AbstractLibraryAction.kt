@@ -56,7 +56,7 @@ abstract class AbstractLibraryAction(
 		noStateChangeInterference && operationAuthorized
 
 	protected open val operationAuthorized: Boolean get() =
-		Authorizer.isCurrentUserAuthorizedTo(operation, LibraryModule.libraryHolder.library)
+		LibraryModule.libraryHolder.l != null && Authorizer.isCurrentUserAuthorizedTo(operation, LibraryModule.libraryHolder.library)
 
 	private val noStateChangeInterference: Boolean get() =
 		operation != Change || !commandManager.canUndo()

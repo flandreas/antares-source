@@ -133,19 +133,25 @@ class SelectionToolImpl(
 	private fun selectionLogic(e: MouseEvent, x: Double, y: Double, allowRubberband: Boolean) {
 		val component: Component? = editor.drawing.getDrawableAt(x, y)
 		if (component != null) {
+			val scope = mutableListOf(component)
+			if (e.isMetaDown) {
+				component.getSelectBuddies(editor.drawing)?.let {
+					scope.addAll(it)
+				}
+			}
 			if (e.isShiftDown) {
 				if (editor.view.selectionManager.isSelected(component)) {
 					LOG.trace("Removing component from selection")
-					editor.view.selectionManager.deselect(component)
+					editor.view.selectionManager.deselect(scope)
 				} else {
 					LOG.trace("Adding component to selection")
-					editor.view.selectionManager.select(component)
+					editor.view.selectionManager.select(scope)
 				}
 			} else {
 				if (!editor.view.selectionManager.isSelected(component)) {
 					LOG.trace("Selecting only single component")
 					editor.view.selectionManager.deselectAll()
-					editor.view.selectionManager.select(component)
+					editor.view.selectionManager.select(scope)
 				}
 			}
 

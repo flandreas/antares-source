@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -42,8 +41,17 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	 */
 	var author: UserIdentity
 
+	/** The [UUIDs][UUID] of the [Libraries][Library] imported by this [Library].*/
+	val importedLibraryIds: Set<UUID>
+
+	/**
+	 * A lazily initialized collection of the transitively expanded imported [Libraries][Library]
+	 * according to [importedLibraryIds], including this [Library].
+	 */
+	val expandedImports: LibraryImports
+
 	/** The description of the contents of this [Library], i.e. its inner [LibraryItem]s. */
-	var directory: LibraryDirectory
+	val directory: LibraryDirectory
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
@@ -68,7 +76,11 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	/** Returns the number of [MetaGraph] contained in this [Library]. */
 	val metaGraphCount: Int
 
+	/** Returns the [UUID] of a [MetaGraphs][MetaGraph] directly contained in this [Library]. */
 	val metaGraphIds: List<UUID>
+
+	/** Volatile property to mark an imported [Library] not found on the current system.*/
+	var isBrokenImport: Boolean
 
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     fun bindLibraryItems()
@@ -87,6 +99,12 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 
 	/** Creates an appropriate [Savable] for the specified [ContainerLibraryElement].*/
 	fun createSavable(element: ContainerLibraryElement): Savable
+
+	/** Adds the [Library] with the specified [UUID] to the ones imported by this [Library]. */
+	fun addImport(libraryId: UUID)
+
+	/** Removes the [Library] with the specified [UUID] from the ones imported by this [Library]. */
+	fun removeImport(libraryId: UUID)
 }
 
 /**
@@ -107,7 +125,8 @@ data class LibraryProperties(
 	val name: TranslatableText = TranslatableText(),
 	val description: TranslatableText = TranslatableText(),
 	val visibility: LibraryVisibility = LibraryVisibility.Private,
-	val author: UserIdentity? = null
+	val author: UserIdentity? = null,
+	val importUuid: UUID? = null
 ) {
 	companion object {
 		fun ofLibrary(library: Library): LibraryProperties =
@@ -119,8 +138,3 @@ data class LibraryProperties(
 	}
 }
 
-/**
- * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.
- * Note that this event is NOT posted by [Library] itself.
- */
-data class LibraryPropertiesEvent(val library: Library, val properties: LibraryProperties)

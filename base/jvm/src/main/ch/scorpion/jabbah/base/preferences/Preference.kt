@@ -3,10 +3,12 @@ package ch.scorpion.jabbah.base.preferences
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.PropertiesProxy
 import ch.scorpion.jabbah.base.Translations
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
 import java.text.DecimalFormat
-import javax.swing.JCheckBox
-import javax.swing.JFormattedTextField
-import javax.swing.JTextField
+import java.text.ParseException
+import javax.swing.*
+import javax.swing.text.JTextComponent
 import javax.swing.text.NumberFormatter
 
 class PreferenceGroup(
@@ -88,6 +90,19 @@ abstract class AbstractPreference(
 	override val name: String get() = Translations.getString(nameKey)
 
 	protected var panel: PreferencesPanel? = null
+
+	protected fun registerEditor(editor: JComponent) {
+		editor.addFocusListener(object : FocusAdapter() {
+			override fun focusGained(e: FocusEvent?) {
+				if (editor is JTextComponent) {
+					SwingUtilities.invokeLater { editor.selectAll() }
+				}
+			}
+			override fun focusLost(e: FocusEvent?) {
+				SwingUtilities.invokeLater { panel?.messageDisplay?.hideMessage() }
+			}
+		})
+	}
 }
 
 /** A [Preference] used for [Boolean] values.*/
@@ -107,6 +122,7 @@ class BooleanPreference(
 				panel?.preferences?.customize(this, editor.isSelected)
 			}
 		}
+		registerEditor(editor)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
@@ -129,7 +145,7 @@ class IntPreference(
 	maxValue: Int = Int.MAX_VALUE
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
-	private val editor: JFormattedTextField
+	private val editor: MessagingFormattedTextField
 
 	private val value: Int get() = panel!!.preferences.getInt(id)
 
@@ -137,17 +153,21 @@ class IntPreference(
 		val numberFormatter = NumberFormatter(DecimalFormat.getIntegerInstance())
 		numberFormatter.minimum = minValue
 		numberFormatter.maximum = maxValue
-		editor = JFormattedTextField(numberFormatter)
+		editor = MessagingFormattedTextField(numberFormatter) {
+			"'$name' must be between $minValue and $maxValue"
+		}
 		editor.columns = 5
 		editor.addPropertyChangeListener("value") {
 			if (it.oldValue != null && it.oldValue != editor.value) {
 				panel?.preferences?.customize(this, editor.value)
 			}
 		}
+		registerEditor(editor)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel
+		editor.panel = panel
 		panel.addLabeledRow(name, editor)
 	}
 
@@ -161,27 +181,31 @@ class FloatPreference(
 	id: String,
 	nameKey: String,
 	needsRestart: Boolean = false,
-	minValue: Float = Float.MIN_VALUE,
+	minValue: Float = -Float.MIN_VALUE,
 	maxValue: Float = Float.MAX_VALUE
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
-	private val editor: JFormattedTextField
+	private val editor: MessagingFormattedTextField
 
 	init {
 		val numberFormatter = NumberFormatter(DecimalFormat.getInstance())
 		numberFormatter.minimum = minValue
 		numberFormatter.maximum = maxValue
-		editor = JFormattedTextField(numberFormatter)
+		editor = MessagingFormattedTextField(numberFormatter) {
+			"'$name' must be between $minValue and $maxValue"
+		}
 		editor.columns = 5
 		editor.addPropertyChangeListener("value") {
 			if (it.oldValue != null && it.oldValue != editor.value) {
 				panel?.preferences?.customize(this, editor.value)
 			}
 		}
+		registerEditor(editor)
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel
+		editor.panel = panel
 		panel.addLabeledRow(name, editor)
 	}
 
@@ -200,6 +224,10 @@ class StringPreference(
 
 	private val editor = JTextField(columns)
 
+	init {
+		registerEditor(editor)
+	}
+
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel
 		panel.addLabeledRow(name, editor)
@@ -207,5 +235,23 @@ class StringPreference(
 
 	override fun load() {
 		editor.text = panel!!.preferences.getString(id)
+	}
+}
+
+private class MessagingFormattedTextField(
+	formatter: AbstractFormatter,
+	var panel: PreferencesPanel? = null,
+	private val messageProvider: () -> String
+) : JFormattedTextField(formatter) {
+
+	override fun commitEdit() {
+		try {
+			super.commitEdit()
+		} catch (e: ParseException) {
+			SwingUtilities.invokeLater {
+				panel?.messageDisplay?.showMessage(messageProvider())
+			}
+			throw e;
+		}
 	}
 }

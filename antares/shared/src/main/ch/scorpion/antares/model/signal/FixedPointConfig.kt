@@ -12,8 +12,12 @@ class FixedPointConfig(
 	signed: Boolean = false
 ) : AbstractStorable() {
 
+	/** The number of bits of the fraction part.*/
 	var fractionSize: Int = fractionSize
-		private set
+		private set(value) {
+			require(value >= 0 && value <= BitWidth.MAX.width) { "Fraction size must be between 0 and ${BitWidth.MAX.width}" }
+			field = value
+		}
 
 	var signed: Boolean = signed
 		private set

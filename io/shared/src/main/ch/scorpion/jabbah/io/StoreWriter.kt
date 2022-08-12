@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.io
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
@@ -93,4 +94,6 @@ interface StoreWriter : GlobalIdentityProvider {
 
 	/** Writes a list of [Int] as an attribute with the given name.*/
 	fun writeIntegers(name: String, integers: List<Int>)
+
+	fun writeUuids(name: String, uuids: Set<UUID>)
 }

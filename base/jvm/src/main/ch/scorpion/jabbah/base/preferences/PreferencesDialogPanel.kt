@@ -8,12 +8,13 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.Frame
-import javax.swing.JButton
-import javax.swing.JPanel
+import javax.swing.*
 
 
 /** An action for showing [PreferencesDialogPanel] within a dialog.*/
@@ -24,7 +25,8 @@ class PreferencesAction : AbstractAction("base.preferences.action") {
 }
 
 class PreferencesDialogPanel(
-	private val treePanel: PreferencesTreePanel = PreferencesTreePanel(),
+	private val messageDisplay: PreferencesMessageDisplay,
+	private val treePanel: PreferencesTreePanel = PreferencesTreePanel(messageDisplay),
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -32,13 +34,12 @@ class PreferencesDialogPanel(
 
 		private val LOG by logger(PreferencesDialogPanel::class)
 
-		fun showAsDialog(
-			parent: Frame = Frame.getFrames()[0],
-			treePanel: PreferencesTreePanel = PreferencesTreePanel()
-		) {
+		fun showAsDialog(parent: Frame = Frame.getFrames()[0]) {
+			val messageDisplay = MyMessageDisplay()
+			val treePanel = PreferencesTreePanel(messageDisplay)
 			LOG.userTrail("Show preferences")
 			DialogBuilder<PreferencesDialogPanel>(parent)
-				.content { dialog -> PreferencesDialogPanel(treePanel) { dialog.dispose() } }
+				.content { dialog -> PreferencesDialogPanel(messageDisplay, treePanel) { dialog.dispose() } }
 				.defaultButton { it.applyButton }
 				.title(Translations.getString("base.preferences.title.name"))
 				.preferredSize(Dimension(800, 600))
@@ -60,6 +61,8 @@ class PreferencesDialogPanel(
 		}
 	}
 
+	private val helpAction = HelpAction("/misc/preferences")
+
 	val applyButton = JButton(ActionWrapperSwing(applyAction))
 
 	init {
@@ -78,10 +81,34 @@ class PreferencesDialogPanel(
 		add(buildButtonPanel(), BorderLayout.SOUTH)
 	}
 
+	/** ---- [PreferencesDialogPanel] */
+
 	private fun buildButtonPanel(): JPanel {
-		val panel = JPanel(FlowLayout(FlowLayout.RIGHT))
+		val panel = JPanel()
+		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+		panel.border = BorderFactory.createEmptyBorder(7, 10, 7, 10)
+		panel.add(UiUtil.createToolBarButton(helpAction))
+		panel.add(Box.createHorizontalStrut(16))
+		panel.add(messageDisplay as JComponent)
+		panel.add(Box.createHorizontalGlue())
 		panel.add(applyButton)
+		panel.add(Box.createHorizontalStrut(6))
 		panel.add(JButton(ActionWrapperSwing(closeAction)))
 		return panel
+	}
+
+	private class MyMessageDisplay : JLabel(), PreferencesMessageDisplay {
+
+		init {
+			foreground = UiUtil.errorTextColor
+		}
+
+		override fun showMessage(message: String) {
+			this.text = message
+		}
+
+		override fun hideMessage() {
+			this.text = ""
+		}
 	}
 }

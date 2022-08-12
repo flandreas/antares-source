@@ -20,7 +20,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -54,7 +53,6 @@ class GraphPanelViewControllerTest {
 	init {
 		drawingView.canvas = mockk(relaxed = true)
 		LibraryModule.libraryHolder.l = mockk(relaxed = true)
-		ProjectModule.projectHolder.p = mockk(relaxed = true)
 
 		controller = GraphPanelViewController(editor, mockk(relaxed = true), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
 		GraphPanelViewMockBuilder(controller)
