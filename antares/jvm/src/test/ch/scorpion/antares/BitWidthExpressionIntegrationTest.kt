@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.IOModule
@@ -47,8 +46,8 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 
 	@Test
 	fun shouldUpdateCircuit() {
-		val input = subGraphVV.model.getGraph(GraphModule.metaGraphRepository, IOModule.storableCreator).getGraphInput<DigitalSignal>("I") as CircuitInOut
-		val output = subGraphVV.model.getGraph(GraphModule.metaGraphRepository, IOModule.storableCreator).getGraphOutput<DigitalSignal>("O") as CircuitInOut
+		val input = subGraphVV.model.getGraph(LibraryModule.libraryHolder, IOModule.storableCreator).getGraphInput<DigitalSignal>("I") as CircuitInOut
+		val output = subGraphVV.model.getGraph(LibraryModule.libraryHolder, IOModule.storableCreator).getGraphOutput<DigitalSignal>("O") as CircuitInOut
 
 		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
 

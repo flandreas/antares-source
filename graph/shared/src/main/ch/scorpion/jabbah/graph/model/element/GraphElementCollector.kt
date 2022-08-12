@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.element
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -20,7 +21,7 @@ data class GraphElementCollectorResult(
  * Can be used for debugging, for gathering statistical information, or for any other funny purpose.
  */
 class GraphElementCollector(
-	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) {
 

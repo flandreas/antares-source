@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
@@ -42,7 +41,7 @@ class MultiplexerNBitTest : AbstractCircuitTest() {
 
 	private fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-		multiplexerView = builder.add(GraphModule.metaGraphRepository
+		multiplexerView = builder.add(LibraryModule.libraryHolder
 			.getContainerLibraryElement(UUID("ae0652c3-7ad1-4664-9758-c4d2050e76a5"))!!
 			.getNewInstance()) as SubGraphVerticeView<*>
 		circuitView = builder.build()

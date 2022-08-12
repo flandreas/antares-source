@@ -1,8 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 /**
  * Holds the one and only [Library].
@@ -10,7 +14,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 class LibraryHolder(
 	l: Library? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) {
+) : MetaGraphRepository {
 
 	companion object {
 		private val LOG by logger(LibraryHolder::class)
@@ -28,6 +32,24 @@ class LibraryHolder(
         }
 
     val library: Library get() = l!!
+
+	/** ---- [MetaGraphRepository] */
+
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? =
+		library.getContainerLibraryElement(uuid)
+
+	override fun getMetaGraph(uuid: UUID): MetaGraph = library.getMetaGraph(uuid)
+
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? = library.getOptionalMetaGraph(uuid)
+
+	override fun containsMetaGraph(uuid: UUID): Boolean = library.containsMetaGraph(uuid)
+
+	override fun getContainingLibrary(uuid: UUID): Library? = library.getContainingLibrary(uuid)
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean =
+		library.graphContainsRecursively(graphUUID, graphElementUUID)
+
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle = library.createBundle(metaGraph)
 }
 
 /** Posted on [EventBus] when the current [Library] has changed.*/

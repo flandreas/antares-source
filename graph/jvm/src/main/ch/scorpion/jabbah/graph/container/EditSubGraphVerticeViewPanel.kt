@@ -1,15 +1,16 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.module.GraphModule
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
@@ -24,7 +25,7 @@ import javax.swing.*
  * [ContainerDrawing] using a [ContainerEditor].
  */
 class EditSubGraphVerticeViewPanel(
-	private val metaGraphRepository: MetaGraphRepository = GraphModule.metaGraphRepository,
+	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val containerPanel: ContainerPanelSwing,
 	private val subGraphVerticeView: SubGraphVerticeView<*>,
 	private val closeHandler: (Boolean) -> Unit

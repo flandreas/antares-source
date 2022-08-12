@@ -9,9 +9,8 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.ui.GraphViewDisplayHandler
 import ch.scorpion.jabbah.graph.ui.GraphViewExecutionHandler
 import ch.scorpion.jabbah.graph.ui.GraphViewUI
@@ -35,7 +34,7 @@ class GraphViewExecutionController(
 	private val rootGraphProvider: () -> Graph?,
 	private val graphViewsProvider: () -> Collection<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	private val repository: MetaGraphRepository = GraphModule.metaGraphRepository,
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {

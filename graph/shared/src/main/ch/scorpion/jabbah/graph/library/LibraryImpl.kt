@@ -12,9 +12,11 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
+import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -24,7 +26,8 @@ open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
-	userHolder: UserHolder<User> = EditAuthModule.userHolder
+	userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) : AbstractStorable(), Library, Describable {
 
 	constructor(
@@ -135,6 +138,45 @@ open class LibraryImpl(
 
 	override fun getContainingLibrary(uuid: UUID): Library? =
 		findContainerLibraryElementFor(uuid)?.library
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		val metaGraph = getMetaGraph(graphUUID)
+		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
+			return true
+		}
+		return SubGraphVerticeLocator(
+			graph = metaGraph.graph.model!!,
+			repository = this,
+			storableCreator = storableCreator
+		).contains(graphElementUUID)
+	}
+
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+		val systemLibReferences = mutableSetOf<UUID>()
+		return MetaGraphBundle()
+			.add(metaGraph)
+			.also { bundle ->
+				ContainerLibraryElementCollector(this)
+					.collect(metaGraph.graph.graphView.graph!!)
+					.forEach { metaGraphId ->
+						val sourceSystemLib = getOptionalSystemLibraryId(metaGraphId)
+						if (sourceSystemLib != null) {
+							systemLibReferences.add(sourceSystemLib)
+						} else {
+							bundle.add(getMetaGraph(metaGraphId))
+						}
+					}
+				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)
+			}
+	}
+
+	private fun getOptionalSystemLibraryId(metaGraphId: UUID): UUID? {
+		val elem = getContainerLibraryElement(metaGraphId)
+		if (elem != null && elem.library?.isSystem == true) {
+			return elem.library!!.uuid
+		}
+		return null
+	}
 
 	/** ---- [Storable] interface */
 
