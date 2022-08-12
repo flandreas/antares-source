@@ -14,10 +14,10 @@ import ch.scorpion.jabbah.graph.library.*
  */
 class ProjectSavable(
 	element: ContainerLibraryElement,
-	val project: Project = LibraryModule.libraryHolder.library as Project,
-	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
-) : AbstractContainerLibraryElementSavable(element, libraryService) {
+) : AbstractContainerLibraryElementSavable(element) {
+
+	val project: Project get() = element.library as Project
 
 	/** ---- [Any] */
 
@@ -25,7 +25,8 @@ class ProjectSavable(
 		if (other !is ProjectSavable) {
 			return false
 		}
-		return project.name == other.project.name && element.uuid == other.element.uuid
+		return element.library?.name == other.element.library?.name
+			&& element.uuid == other.element.uuid
 	}
 
 	/** ---- [Savable] */
@@ -40,7 +41,7 @@ class ProjectSavable(
 	}
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-		libraryService.updateContainerLibraryElement(project, appDataViewController.data!!.content as MetaGraph, element)
+		project.libraryService.updateContainerLibraryElement(project, appDataViewController.data!!.content as MetaGraph, element)
 		appDataViewController.data = appDataViewController.data!!.withSavable(this)
 		return true
 	}
