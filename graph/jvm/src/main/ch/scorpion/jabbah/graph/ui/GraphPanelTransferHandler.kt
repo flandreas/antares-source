@@ -3,9 +3,12 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -48,6 +51,10 @@ class GraphPanelTransferHandler(
         }
 	    val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
         if (!editor.view.editable) {
+			BaseModule.eventBus.post(ComponentMessage(
+				ComponentMessageType.Error,
+				null,
+				"graph.readonly.cannotDrop.msg"))
             return false
         }
 
