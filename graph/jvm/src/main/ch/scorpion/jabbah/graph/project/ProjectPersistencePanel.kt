@@ -90,14 +90,10 @@ class ProjectPersistencePanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
-	override fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
-		val list = DefaultListModel<LibraryDictionaryEntry>()
+	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
 		managementService
 			.getProjectDirectoryEntries()
 			.sortedBy { it.name.value }
-			.forEach { list.addElement(it) }
-		return list
-	}
 
 	override fun handleListDoubleClick(event: ActionEvent) {
 		openAction.execute(event)
@@ -220,7 +216,7 @@ class ProjectPersistencePanel(
 				) {
 					LOG.userTrail("Delete project '${it.uuid}'")
 					managementService.delete(getLibraryIdentity(it.uuid))
-					refreshLibraries()
+					load()
 				}
 			}
 		}

@@ -11,7 +11,9 @@ import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
 import java.awt.Frame
-import javax.swing.*
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JPanel
 
 /**
  * Displays a list of all existing [Libraries][Library] and allows the user to select one of them.
@@ -65,15 +67,8 @@ class LibrarySelectionPanel(
 
 	override fun currentLibraryIndex(): Int? = null
 
-	override fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
-		val list = DefaultListModel<LibraryDictionaryEntry>()
-		managementService.getLibraryDirectoryEntries().forEach {
-			if (!isOpen(it)) {
-				list.addElement(it)
-			}
-		}
-		return list
-	}
+	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
+		managementService.getLibraryDirectoryEntries().filter { !isOpen(it) }
 
 	override fun handleListDoubleClick(event: ActionEvent) {
 		result = selectedLibrary?.identification?.uuid

@@ -11,12 +11,14 @@ import javax.swing.JList
 class LibraryListRenderer(
 	private val normalFont: Font,
 	private val isOpen: (entry: LibraryDictionaryEntry) -> Boolean,
-	private val isReadOnly: (entry: LibraryDictionaryEntry) -> Boolean
+	private val isReadOnly: (entry: LibraryDictionaryEntry) -> Boolean,
+	private val displayIcon: () -> Boolean = { true }
 ) : DefaultListCellRenderer() {
 
 	companion object {
 		private val lockedIcon = UiUtil.themedIcon("/img/locked-16.png")
 		private val unlockedIcon = UiUtil.themedIcon("/img/unlocked-16.png")
+		private val emptyIcon = UiUtil.themedIcon("/img/empty-16.png")
 	}
 
 	private val openLibraryFont: Font = normalFont.deriveFont(Font.BOLD)
@@ -32,7 +34,7 @@ class LibraryListRenderer(
 		val entry = value as LibraryDictionaryEntry
 
 		renderer.font = if (isOpen(entry)) openLibraryFont else normalFont
-		renderer.icon = if (isReadOnly(entry)) lockedIcon else unlockedIcon
+		renderer.icon = if (isReadOnly(entry)) lockedIcon else if (displayIcon()) emptyIcon else null
 
 		return renderer
 	}

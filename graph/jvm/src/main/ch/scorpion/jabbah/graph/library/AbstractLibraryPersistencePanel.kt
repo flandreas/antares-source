@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
@@ -10,7 +13,6 @@ import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import org.apache.commons.io.FilenameUtils
 import java.io.File
-import javax.swing.JButton
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.filechooser.FileFilter
@@ -105,7 +107,7 @@ abstract class AbstractLibraryPersistencePanel(
 				name,
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE)
-			refreshLibraries()
+			load()
 			selectLibrary(library.uuid)
 		}
 

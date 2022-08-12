@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -27,11 +28,9 @@ abstract class AbstractLibrarySelectionPanel(
 	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>()
 	private val descriptionTextArea = JTextArea()
 
-	val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+	private var entries = listOf<LibraryDictionaryEntry>()
 
-	fun refreshLibraries() {
-		libraryDictionaryEntries.model = loadLibraryDirectoryEntries()
-	}
+	val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
 
 	init {
 		libraryDictionaryEntries.addListSelectionListener {
@@ -52,7 +51,10 @@ abstract class AbstractLibrarySelectionPanel(
 	}
 
 	protected fun load() {
-		libraryDictionaryEntries.model = loadLibraryDirectoryEntries()
+		entries = loadLibraryDirectoryEntries()
+		val model = DefaultListModel<LibraryDictionaryEntry>()
+		model.addAll(entries)
+		libraryDictionaryEntries.model = model
 	}
 
 	protected fun selectCurrentLibrary(library: Library? = null) {
@@ -95,11 +97,12 @@ abstract class AbstractLibrarySelectionPanel(
 		libraryDictionaryEntries.cellRenderer = LibraryListRenderer(
 			normalFont = libraryDictionaryEntries.font,
 			isOpen = isOpen,
-			isReadOnly = ::isReadonly
+			isReadOnly = ::isReadonly,
+			displayIcon = ::needsLockIcon
 		)
 	}
 
-	protected abstract fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry>
+	protected abstract fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry>
 
 	protected abstract fun handleListDoubleClick(event: ActionEvent)
 
@@ -121,6 +124,8 @@ abstract class AbstractLibrarySelectionPanel(
 		}
 		return null
 	}
+
+	private fun needsLockIcon(): Boolean = entries.any { isReadonly(it) }
 
 	private fun updateDescription() {
 		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""

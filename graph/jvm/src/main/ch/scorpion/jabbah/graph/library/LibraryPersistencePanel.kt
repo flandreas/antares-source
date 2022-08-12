@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
@@ -86,11 +87,8 @@ class LibraryPersistencePanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
-	override fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
-		val list = DefaultListModel<LibraryDictionaryEntry>()
-		managementService.getLibraryDirectoryEntries().forEach { list.addElement(it) }
-		return list
-	}
+	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
+		managementService.getLibraryDirectoryEntries()
 
 	override fun handleListDoubleClick(event: ActionEvent) {
 		openAction.execute(event)
