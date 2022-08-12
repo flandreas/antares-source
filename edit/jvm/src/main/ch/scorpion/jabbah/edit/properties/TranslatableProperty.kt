@@ -113,7 +113,7 @@ class TranslatablePropertyEditor(
 		val panel = FocusPanel()
 
 		panel.layout = EGBL.getLayout()
-		panel.background = UIManager.getColor("Table.background")
+		panel.isOpaque = false
 
 		val button = createButton()
 
