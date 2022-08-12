@@ -116,7 +116,7 @@ enum class ActorState {
 
 open class ActorImpl(
 	override val id: Int = 0,
-	override var propagationDelay: Long = 0
+	propagationDelay: Long = 0
 ) : Actor {
 
 	/** Manages [Actor] behaviour on behalf of this [Actor].*/
@@ -125,6 +125,12 @@ open class ActorImpl(
 	private var _state: ActorState = ActorState.NonExecuting
 
 	/** ---- [Actor] interface */
+
+	override var propagationDelay: Long = propagationDelay
+		set(value) {
+			require(value >= 0) { "Propagation delay must be greater than 0" }
+			field = value
+		}
 
 	override var executionError: ExecutionError? = null
 
