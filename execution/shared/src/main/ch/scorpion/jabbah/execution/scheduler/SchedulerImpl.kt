@@ -217,6 +217,8 @@ class SchedulerImpl(
 			eventBus.post(EnableSoftBreakpointsEvent(this))
 		}
 
+	override var softBreakpointsArmTime: Long = 0
+
 	override fun execute(): ExecutionStepResult {
 		return executeImpl(resume = false)
 	}
@@ -435,6 +437,7 @@ class SchedulerImpl(
 	/** Resets the [Scheduler].*/
 	private fun reset() {
 		relativeTime = 0
+		softBreakpointsArmTime = 0
 		queue.clear()
 		executionErrorHandler.reset()
 	}
@@ -553,7 +556,7 @@ class SchedulerImpl(
 
 	private fun checkForBreakpoint(slot: Slot): Boolean =
 		isSingleStepMode
-			&& executionTime > 0
+			&& executionTime > softBreakpointsArmTime
 			&&(hardBreakpointReceived || isSoftBreakpointsEnabled && slot.getRequests().any { it.isActable && it.actor.isBreakpoint })
 
 	/**
