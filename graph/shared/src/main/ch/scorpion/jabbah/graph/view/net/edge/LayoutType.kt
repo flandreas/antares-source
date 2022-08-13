@@ -117,7 +117,7 @@ enum class LayoutType(
 		}
 	): InputEventHandler<T> {
 
-		if (context.mouseEvent != null) {
+		if (context is EditInputEventContext && context.mouseEvent != null) {
 			if (edgeView.destination == null && edgeView.destinationEndpointView.contains(context.x, context.y)) {
 				return edgeView.destinationEndpointView.getInputEventHandler(context)
 			}

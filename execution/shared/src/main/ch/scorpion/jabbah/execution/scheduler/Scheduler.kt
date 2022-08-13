@@ -55,6 +55,13 @@ interface Scheduler : SignalHandler {
 	 */
 	val hasDeferredExecutionError: Boolean
 
+	/**
+	 * The time (in nanoseconds) after simulation start during which soft breakpoints are not yet active.
+	 * Can be set by the main [Actor] during simulation initialization. Is reset by this [Scheduler] after
+	 * simulation has stopped.
+	 * */
+	var softBreakpointsArmTime: Long
+
 	fun dispose()
 
 	/** Repeatedly called by a [SchedulerTask] to drive the execution. */

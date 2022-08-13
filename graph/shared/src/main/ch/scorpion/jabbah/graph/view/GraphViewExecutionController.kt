@@ -96,6 +96,9 @@ class GraphViewExecutionController(
 				if (event.scheduler.isActive) {
 					if (isRoot) {
 						bind(event.scheduler.isDeepExecution, repository, storableCreator)
+						startupTime?.let {
+							event.scheduler.softBreakpointsArmTime = it
+						}
 					}
 					graphViewsProvider.invoke().forEach {
 						it.bind(event.scheduler.isDeepExecution)

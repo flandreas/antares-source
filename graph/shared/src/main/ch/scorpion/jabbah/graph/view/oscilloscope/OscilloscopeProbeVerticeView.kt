@@ -106,6 +106,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		if (edgeView != null) {
 			writer.writeInt("edgeView", writer.provideIdentity(edgeView!!))
 		}
+		writer.writeBoolean("visible", visible)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -114,6 +115,9 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			reader.requestResolution(this, Reference(
 				name = "edgeView",
 				referenceId = reader.readInt("edgeView")))
+		}
+		if (reader.hasAttribute("visible")) {
+			visible = reader.readBoolean("visible")
 		}
 	}
 
