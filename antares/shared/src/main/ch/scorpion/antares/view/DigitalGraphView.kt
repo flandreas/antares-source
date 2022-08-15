@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.net.NetSignalApplierChoice
+import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -37,16 +37,16 @@ class DigitalGraphView(
 		}
 
 	@Suppress("unused") // Reflection
-	var netSignalApplierChoice: NetSignalApplierChoice
-		get() = (graph as DigitalGraph).netSignalApplierChoice
+	var netSignalApplierStrategy: NetSignalApplierStrategy
+		get() = (graph as DigitalGraph).netSignalApplierStrategy
 		set(value) {
-			(graph as DigitalGraph).netSignalApplierChoice = value
+			(graph as DigitalGraph).netSignalApplierStrategy = value
 		}
 
 	override val allowMultipleOutputsPerNet: Boolean get() =
-		when (netSignalApplierChoice) {
-			NetSignalApplierChoice.Conflict -> false
-			NetSignalApplierChoice.WiredOr -> true
+		when (netSignalApplierStrategy) {
+			NetSignalApplierStrategy.Conflict -> false
+			NetSignalApplierStrategy.WiredOr -> true
 		}
 
 	/** ---- [Storable] interface */

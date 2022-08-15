@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.net.NetSignalApplierChoice
+import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.input.SwitchView
@@ -35,7 +35,7 @@ class WiredOrIntegrationTest : AbstractCircuitTest() {
 		edgeView = builder.connect(switchViewA, ledView)
 		builder.split(edgeView, 0, Point2D(50, 0), switchViewB)
 
-		(getCircuitView().graph as DigitalGraph).netSignalApplierChoice = NetSignalApplierChoice.WiredOr
+		(getCircuitView().graph as DigitalGraph).netSignalApplierStrategy = NetSignalApplierStrategy.WiredOr
 	}
 
 	@Test

@@ -23,10 +23,10 @@ class DigitalGraph(
 ) : GraphImpl(name = name, eventBus = eventBus) {
 
 	companion object {
-		private val DEF_NET_SIGNAL_APPLIER_CHOICE = NetSignalApplierChoice.Conflict
+		private val DEF_NET_SIGNAL_APPLIER_STRATEGY = NetSignalApplierStrategy.Conflict
 	}
 
-	var netSignalApplierChoice: NetSignalApplierChoice = DEF_NET_SIGNAL_APPLIER_CHOICE
+	var netSignalApplierStrategy: NetSignalApplierStrategy = DEF_NET_SIGNAL_APPLIER_STRATEGY
 
 	/** ---- [GraphImpl] */
 
@@ -41,21 +41,21 @@ class DigitalGraph(
 	}
 
 	override fun <T : Any> createGraphExecutionContext(): GraphExecutionContext<T> =
-		GraphExecutionContext(netSignalApplierChoice.netSignalApplier) as GraphExecutionContext<T>
+		GraphExecutionContext(netSignalApplierStrategy.netSignalApplier) as GraphExecutionContext<T>
 
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (netSignalApplierChoice != DEF_NET_SIGNAL_APPLIER_CHOICE) {
-			writer.writeString("netSignalApplier", netSignalApplierChoice.customName)
+		if (netSignalApplierStrategy != DEF_NET_SIGNAL_APPLIER_STRATEGY) {
+			writer.writeString("netSignalApplier", netSignalApplierStrategy.customName)
 		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("netSignalApplier")) {
-			netSignalApplierChoice = NetSignalApplierChoice.withName(reader.readString("netSignalApplier"))
+			netSignalApplierStrategy = NetSignalApplierStrategy.withName(reader.readString("netSignalApplier"))
 		}
 	}
 

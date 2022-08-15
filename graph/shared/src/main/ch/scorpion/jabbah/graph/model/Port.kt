@@ -130,6 +130,11 @@ interface WeakOutputPortBehaviour<T : Any> {
 	fun activateWeakOutput(netSignal: T?, port: OutputPort<T>, signalHandler: SignalHandler): T
 }
 
+data class SignalReplacement<T: Any>(
+	val signal: T?,
+	val originPort: OutputPort<T>
+)
+
 /**
  * An [OutputPort] is a [Port] in a [Vertice] that forwards signal produced by its [Vertice] to a
  * connected [Net].

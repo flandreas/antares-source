@@ -151,6 +151,7 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
+		isOutputDominant = false
 		if (force || differingInput(signal) || incomingSignalRevoked && portType == PortType.INOUT) {
 			storeIncomingSignal(signal)
 			owner?.inputChanged(this, signalHandler, force)
@@ -194,10 +195,12 @@ open class PortImpl<T : Any>(
 		isOutputFullyUndefined || SignalUtil.equals(_outgoingSignal, signal)
 
 	override fun setOutgoingSignalBuffered(signal: T?, signalHandler: SignalHandler) {
+		isOutputDominant = true
 		storeOutgoingSignal(signal)
 	}
 
 	override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
+		isOutputDominant = true
 		storeOutgoingSignal(signal)
 		forwardSignal(signalHandler, force = false)
 	}
@@ -348,44 +351,11 @@ open class PortImpl<T : Any>(
 		}
 	}
 
-	private data class SignalReplacement<T: Any>(
-		val signal: T?,
-		val originPort: OutputPort<T>
-	)
-
-	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): SignalReplacement<T> {
-		var replacement = SignalReplacement(_outgoingSignal, this)
-
-		// First replace undefined signal with signals from other consistent accesses
-		combinedNets.forEach { combinedNet ->
-			val thisAccess = combinedNet.accessOf(this)!!
-			if (thisAccess.isPartiallyUndefined) {
-				combinedNet.getConsistentAccess(signalHandler)?.let { consistentAccess ->
-					signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal and using signal of consistent Port" }
-					replacement = SignalReplacement(
-						thisAccess.replaceUndefinedFrom(replacement.signal, consistentAccess.assertedSignal, signalHandler),
-						consistentAccess.port)
-				}
-				combinedNet.revokeSignal()
-			}
+	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): SignalReplacement<T> =
+		if (signalHandler.executionContext is GraphExecutionContext<*>) {
+			(signalHandler.executionContext as GraphExecutionContext<T>).netSignalApplier
+				.replaceOwnUndefinedSignals(this, _outgoingSignal, signalHandler)
+		} else {
+			SignalReplacement(_outgoingSignal, this)
 		}
-
-		// Then replace undefined signals with signals from other weak accesses
-		combinedNets.forEach { combinedNet ->
-			val thisAccess = combinedNet.accessOf(this)!!
-			if (thisAccess.isPartiallyUndefined) {
-				combinedNet.weakOutputPorts.firstOrNull()?.let { weakPortToActivate ->
-					signalHandler.logTrace(System.getClass(this), portId) { "forwarding weak signal into net '${net!!.id}'" }
-					val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(thisAccess.assertedSignal, weakPortToActivate, signalHandler)
-					replacement = SignalReplacement(
-						thisAccess.replaceUndefinedFrom(replacement.signal, weakSignal, signalHandler),
-						weakPortToActivate
-					)
-				}
-				combinedNet.revokeSignal()
-			}
-		}
-
-		return replacement
-	}
 }
