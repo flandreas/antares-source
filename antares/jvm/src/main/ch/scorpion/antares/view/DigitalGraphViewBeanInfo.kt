@@ -13,7 +13,7 @@ class DigitalGraphViewBeanInfo : GraphViewImplBeanInfo<DigitalGraphView>() {
 
 	companion object {
 		private val defaultLightColor = CommandPropertySwing("defaultLightColor", "element.property.DigitalGraphView.lightColor", LightColor::class.java, drawingBeanProvider)
-		private val netSignalApplierStrategy = CommandPropertySwing("netSignalApplierChoice", NetSignalApplierStrategy.BASE_KEY, NetSignalApplierStrategy::class.java, drawingBeanProvider)
+		private val netSignalApplierStrategy = CommandPropertySwing("netSignalApplierStrategy", NetSignalApplierStrategy.BASE_KEY, NetSignalApplierStrategy::class.java, drawingBeanProvider)
 	}
 
 	override fun addProperties(bean: DigitalGraphView, editor: Editor, properties: MutableList<Property>) {
