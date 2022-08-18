@@ -102,7 +102,6 @@ class AddressableContentsPanel(
 		eventBus.unregister(applicationModeHandler)
 		addressableRef.removeGraphElementListener(addressableListener)
 		addressableRef.dispose()
-		memoryDisplayPanel.dispose()
 	}
 
 	/** ---- [AddressableContentsPanel] */

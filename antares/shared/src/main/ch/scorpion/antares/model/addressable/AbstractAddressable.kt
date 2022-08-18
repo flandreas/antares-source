@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -8,6 +10,62 @@ abstract class AbstractAddressable<T : Addressable>(
 ) : CalculatingVertice(calculator), Addressable {
 
 	private val dataListeners = mutableListOf<AddressableDataListener>()
+
+	/** ---- [Addressable] interface */
+
+	override val memory = Memory()
+
+	override val data: ULong
+		get() {
+			val address = currentAddress
+			if (address >= 0) {
+				return memory.read(address)
+			}
+			return 0UL
+		}
+
+	override var addressWidth: BitWidth
+		get() = getAddressInput().bitWidth
+		set(value) {
+			getAddressInput().bitWidth = value
+			stateChanged()
+		}
+
+	override var dataWidth: BitWidth
+		get() = getDataPort().bitWidth
+		set(value) {
+			getDataPort().bitWidth = value
+			stateChanged()
+		}
+
+	override fun dataAt(address: Int): ULong = memory.read(address)
+
+	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
+		val oldValue = memory.read(address)
+		memory.write(address, value)
+		update()
+		notifyDataChanged(address, oldValue, value)
+		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
+	}
+
+	override fun commentAt(address: Int): String? = memory.readComment(address)
+
+	override fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?) {
+		val oldValue = memory.readComment(address)
+		memory.writeComment(address, value)
+		update()
+		notifyCommentChanged(address, oldValue, value)
+	}
+
+	override fun clear() {
+		memory.clear()
+		update()
+		notifyDataChanged(null, null, null)
+	}
+
+	override fun update() {
+		stateChanged()
+	}
 
 	override fun addDataListener(listener: AddressableDataListener) {
 		if (!dataListeners.contains(listener)) {
@@ -19,8 +77,15 @@ abstract class AbstractAddressable<T : Addressable>(
 		dataListeners.remove(listener)
 	}
 
+	/** ---- [AbstractAddressable] */
+
 	protected fun notifyDataChanged(address: Int?, oldValue: ULong?, newValue: ULong?) {
 		val event = AddressableDataEvent(address, oldValue, newValue)
 		dataListeners.forEach { it.dataChanged(event) }
+	}
+
+	protected fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
+		val event = AddressableCommentEvent(address, oldValue, newValue)
+		dataListeners.forEach { it.commentChanged(event) }
 	}
 }

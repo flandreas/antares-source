@@ -1,16 +1,12 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableDataListener
-import ch.scorpion.antares.model.addressable.AddressableDataEvent
 import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import java.util.*
 import javax.swing.JLabel
-import javax.swing.JTable
-import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.TableModel
 import kotlin.math.ceil
@@ -32,13 +28,6 @@ interface AddressableDisplayLayout {
 
 	fun getCellAddress(rowIndex: Int, columnIndex: Int): Int
 }
-
-class AddressableTableModelEvent(
-	source: TableModel,
-	row: Int,
-	column: Int,
-	val oldValue: ULong
-) : TableModelEvent(source, row, column, UPDATE)
 
 abstract class AbstractAddressableDisplayLayout(
 	protected val addressableRef: AddressableReference
@@ -90,9 +79,6 @@ class FixedWidthLayout(
 
 /**
  * Wraps an [Addressable] as a [TableModel] for displaying and editing.
- *
- * Listens for [AddressableDataEvent]s from [Addressable] and fires [AddressableTableModelEvent]
- * to initiate redrawing of the [JTable] that displays this [AbstractAddressableTableModel].
  */
 abstract class AbstractAddressableTableModel(
 	private val cellsPerRow: Int,
@@ -102,25 +88,7 @@ abstract class AbstractAddressableTableModel(
 
 	private val format: String = "%${max(2, addressableRef.addressable.dataWidth.width / 4)}s"
 
-	private val dataChangeListener = AddressableDataListener { event ->
-		if (event.address != null && event.oldValue != null) {
-			fireTableChanged(AddressableTableModelEvent(
-				this@AbstractAddressableTableModel,
-				rowOf(event.address),
-				columnOf(event.address),
-				event.oldValue))
-		} else {
-			fireTableDataChanged()
-		}
-	}
-
-	init {
-		addressableRef.addDataListener(dataChangeListener)
-	}
-
-	fun dispose() {
-		addressableRef.removeDataListener(dataChangeListener)
-	}
+	abstract fun isCommentColumn(column: Int): Boolean
 
 	override fun getRowCount(): Int = rowCount
 
@@ -132,10 +100,13 @@ abstract class AbstractAddressableTableModel(
 	protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String =
 		BitOperation.longToHexPadded(getCellValue(rowIndex, columnIndex), addressableRef.addressable.dataWidth)
 
-	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
+	protected open fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
 
 	private fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
 		addressableRef.addressable.dataAt(getCellAddress(rowIndex, columnIndex))
+
+	protected fun getComment(rowIndex: Int, columnIndex: Int): String? =
+		addressableRef.addressable.commentAt(getCellAddress(rowIndex, columnIndex))
 
 	private fun rowOf(address: Int): Int = address / cellsPerRow
 
@@ -152,16 +123,27 @@ private open class AddressableTableModel(
 
 	/** ---- [AbstractTableModel] */
 
-	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? =
-		getMemoryValue(rowIndex, columnIndex)
+	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
+		return if (isCommentColumn(columnIndex)) {
+			getComment(rowIndex, columnIndex)
+		} else {
+			getMemoryValue(rowIndex, columnIndex)
+		}
+	}
 
 	override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-		setMemoryValue(aValue as String, rowIndex, columnIndex)
+		if (isCommentColumn(columnIndex)) {
+			setComment(aValue as String?, rowIndex, columnIndex)
+		} else {
+			setMemoryValue(aValue as String, rowIndex, columnIndex)
+		}
 	}
+
+	override fun isCommentColumn(column: Int): Boolean = false
 
 	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable()
 
-	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
+	protected fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
 		try {
 			BitOperation.normalizeHex(value.trim(), addressableRef.addressable.dataWidth)?.let {
 				addressableRef.addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(it), signalHandler)
@@ -169,6 +151,10 @@ private open class AddressableTableModel(
 		} catch (e: IllegalArgumentException) {
 			// empty
 		}
+	}
+
+	protected fun setComment(value: String?, rowIndex: Int, columnIndex: Int) {
+		addressableRef.addressable.setCommentAt(getCellAddress(rowIndex, columnIndex), value, signalHandler)
 	}
 }
 
@@ -184,10 +170,14 @@ private class SingleColumnTableModel(
 	private val commentsColumnName = Translations.getString("antares.memory.layout.comment")
 	private val disassemblyColumnName = Translations.getString("antares.memory.layout.disassembly")
 
+	override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex
+
 	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean =
-		super.isCellEditable(rowIndex, columnIndex) && columnIndex == 0
+		super.isCellEditable(rowIndex, columnIndex) && (columnIndex == 0 || columnIndex == 1 && !showDisassembly)
 
 	override fun getColumnCount(): Int = if (showDisassembly) 3 else 2
+
+	override fun isCommentColumn(column: Int): Boolean = column == 1 && !showDisassembly
 
 	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? =
 		when (columnIndex) {

@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -58,7 +59,7 @@ if (^C) {
                 <translation lang='en' text='Stores bit 7'/>
               </desc>
             </subGraphVerticeRef>
-            <splitter _id='11' id='9' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
+            <splitter _id='11' id='9' delay='0' bitWidth='8' representation='binary' branchCount='8'/>
             <circuitInOut _id='12' id='10' name='D' type='input' bitWidth='8'>
               <desc>
                 <translation lang='de' text='Dateineingang'/>
@@ -125,7 +126,7 @@ if (^C) {
                 <translation lang='en' text='Clock input'/>
               </desc>
             </circuitInOut>
-            <concentrator _id='41' id='22' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
+            <concentrator _id='41' id='22' delay='0' bitWidth='8' representation='binary' branchCount='8'/>
             <circuitInOut _id='42' id='23' name='O' type='output' bitWidth='8'>
               <desc>
                 <translation lang='de' text='Datenausgang'/>
@@ -461,7 +462,7 @@ if (^C) {
     <containerDrawing _id='155'>
       <components>
         <rectangle _id='156' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='98.0' h='56.0'/>
-        <originIndicator _id='157'>
+        <originIndicator _id='157' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -481,7 +482,7 @@ if (^C) {
             <digitalPortView _id='165' x='238.0' y='168.0' dir='east' textPos='internal' portId='166'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='167'>
+        <label _id='167' id='6' rot='0'>
           <text>
             <translation lang='de' text='REG'/>
           </text>
@@ -489,9 +490,14 @@ if (^C) {
             <point x='189.0' y='161.0'/>
           </location>
         </label>
+        <controlViewComponent _id='168' id='8' style='figure' filled='true' stroked='true' controlModelId='23' name='Circuit Output: O'>
+          <controlView>
+            <digitalSignalSourceCV _id='169' id='44' filled='true' stroked='true' modelId='42' x='166.5' y='184.5' representation='hex' orientation='east' controlId='circuitInOut:44' bitWidth='8' name='Circuit Output: O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='168' id='0' delay='0' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
+        <subGraphVertice _id='170' id='0' delay='0' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
           <desc>
             <translation lang='de' text='8-Bit-Speicherregister mit positiver Flankensteuerung. Speichert mit ansteigender Taktflanke C die Daten, die am Dateneingang D anliegen, und gibt sie am Datenausgang O aus.'/>
             <translation lang='en' text='8-bit data register with positive edge-triggering. Stores the value at D with a rising edge of C and outputs it at output O.'/>
