@@ -94,8 +94,6 @@ class RAM(
 
 	/** ---- [Addressable] interface */
 
-	override val memory = Memory()
-
 	override val storesCells: Boolean get() = false
 
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
@@ -104,60 +102,9 @@ class RAM(
 
 	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
-	override val data: ULong
-		get() {
-			val address = currentAddress
-			if (address >= 0) {
-				return memory.read(address)
-			}
-			return 0UL
-		}
-
-	override var addressWidth: BitWidth
-		get() = getAddressInput().bitWidth
-		set(value) {
-			getAddressInput().bitWidth = value
-			stateChanged()
-		}
-
-	override var dataWidth: BitWidth
-		get() = getDataPort().bitWidth
-		set(value) {
-			getDataPort().bitWidth = value
-			stateChanged()
-		}
-
 	override val disassemblyWidth: Int get() = 0
 
-	override fun clear() {
-		memory.clear()
-		update()
-	}
-
-	override fun update() {
-		stateChanged()
-	}
-
-	override fun dataAt(address: Int): ULong = memory.read(address)
-
-	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
-		val oldValue = memory.read(address)
-		memory.write(address, value)
-		update()
-		notifyDataChanged(address, oldValue, value)
-		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
-	}
-
 	override fun disassemblyAt(address: Int): String = ""
-
-	override fun commentAt(address: Int): String? = memory.readComment(address)
-
-	override fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?) {
-		val oldValue = memory.readComment(address)
-		memory.writeComment(address, value)
-		update()
-		notifyCommentChanged(address, oldValue, value)
-	}
 
 	/** ---- [Storable] */
 
