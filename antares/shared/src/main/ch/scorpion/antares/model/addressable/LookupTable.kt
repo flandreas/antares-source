@@ -117,6 +117,13 @@ class LookupTable(
 
 	override fun commentAt(address: Int): String? = null
 
+	override fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?) {
+		val oldValue = memory.readComment(address)
+		memory.writeComment(address, value)
+		update()
+		notifyCommentChanged(address, oldValue, value)
+	}
+
 	/** ---- [Actor] interface */
 
 	override fun executionStart(signalHandler: SignalHandler) {

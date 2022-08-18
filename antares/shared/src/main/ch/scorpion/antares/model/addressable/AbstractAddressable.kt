@@ -23,4 +23,9 @@ abstract class AbstractAddressable<T : Addressable>(
 		val event = AddressableDataEvent(address, oldValue, newValue)
 		dataListeners.forEach { it.dataChanged(event) }
 	}
+
+	protected fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
+		val event = AddressableCommentEvent(address, oldValue, newValue)
+		dataListeners.forEach { it.commentChanged(event) }
+	}
 }

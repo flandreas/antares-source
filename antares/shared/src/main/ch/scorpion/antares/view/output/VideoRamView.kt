@@ -1,5 +1,7 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.antares.model.addressable.AddressableCommentEvent
+import ch.scorpion.antares.model.addressable.AddressableDataEvent
 import ch.scorpion.antares.model.addressable.AddressableDataListener
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.signal.BitWidth
@@ -120,17 +122,22 @@ class VideoRamView(
 
 	private lateinit var bufferedImage: BufferedImage
 
-	private val dataChangeListener = AddressableDataListener { event ->
-		event.address?.let { address ->
-			val value = event.newValue!!
-			val color = colorModel.getColor(value.toInt())
-			val x = address.rem(columnsCount) * pixelSize
-			val y = (address / rowsCount) * pixelSize
-			fillPixel(x, y, color)
-		} ?: fillImage()
+	private val dataChangeListener = object : AddressableDataListener {
 
-		invalidate()
-		validate()
+		override fun dataChanged(event: AddressableDataEvent) {
+			event.address?.let { address ->
+				val value = event.newValue!!
+				val color = colorModel.getColor(value.toInt())
+				val x = address.rem(columnsCount) * pixelSize
+				val y = (address / rowsCount) * pixelSize
+				fillPixel(x, y, color)
+			} ?: fillImage()
+
+			invalidate()
+			validate()
+		}
+
+		override fun commentChanged(event: AddressableCommentEvent) { }
 	}
 
 	init {

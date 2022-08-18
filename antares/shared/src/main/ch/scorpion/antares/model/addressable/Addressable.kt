@@ -16,9 +16,16 @@ data class AddressableDataEvent(
 	val newValue: ULong?
 )
 
+data class AddressableCommentEvent(
+	val address: Int,
+	val oldValue: String?,
+	val newValue: String?
+)
+
 /** Listens for cell values changes in [Addressable]. */
-fun interface AddressableDataListener {
+interface AddressableDataListener {
 	fun dataChanged(event: AddressableDataEvent)
+	fun commentChanged(event: AddressableCommentEvent)
 }
 
 /**
@@ -81,6 +88,8 @@ interface Addressable : Vertice {
 
 	/** Returns the comment at the specified address.*/
 	fun commentAt(address: Int): String?
+
+	fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?)
 
     /** Disassembles the data at the specified address and returns the result, or returns an empty
      * [String] if this [Addressable] doesn't support disassembling.

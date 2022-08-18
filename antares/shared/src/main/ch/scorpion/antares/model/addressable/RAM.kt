@@ -152,6 +152,13 @@ class RAM(
 
 	override fun commentAt(address: Int): String? = memory.readComment(address)
 
+	override fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?) {
+		val oldValue = memory.readComment(address)
+		memory.writeComment(address, value)
+		update()
+		notifyCommentChanged(address, oldValue, value)
+	}
+
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {

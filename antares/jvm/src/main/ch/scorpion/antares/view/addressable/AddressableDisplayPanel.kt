@@ -1,11 +1,8 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableCellChange
-import ch.scorpion.antares.model.addressable.AddressableCellChangeCommand
+import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.edit.CommandManager
@@ -32,10 +29,6 @@ class AddressableDisplayPanel(
 	private val view: DrawingView<GraphView>,
 	private val cmdManager: CommandManager = EditModule.commandManager
 ) : JPanel() {
-
-	companion object {
-		private val LOG by logger(AddressableDisplayPanel::class)
-	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
 		FixedWidthLayout(1, addressableRef, editable, applicationContextHolder.scheduler),
@@ -82,7 +75,8 @@ class AddressableDisplayPanel(
 	}
 
 	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout) {
-		table.model = addressableDisplayLayout.createTableModel()
+		val tableModel = addressableDisplayLayout.createTableModel()
+		table.model = tableModel
 
 		val rowHeaderTable = RowHeaderTable(table) {
 			BitOperation.longToHexPadded(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressableRef.addressable.addressWidth)
@@ -90,18 +84,26 @@ class AddressableDisplayPanel(
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
-		val tableCellEditor = AddressableValueEditor(addressableRef, addressableDisplayLayout, ::consumeCellChange)
+		for (i in 0 until table.columnCount) {
+			val column = table.columnModel.getColumn(i)
 
-		table.columnModel.columns.asSequence().forEach {
-			it.cellEditor = tableCellEditor
+			column.cellEditor = if (tableModel.isCommentColumn(i)) {
+				AddressableCommentEditor(addressableRef, addressableDisplayLayout, ::consumeCommentChange)
+			} else {
+				AddressableValueEditor(addressableRef, addressableDisplayLayout, ::consumeValueChange)
+			}
 
 			val tableCellRenderer = AddressableCellRenderer(applicationContextHolder, addressableRef, addressableDisplayLayout)
-			tableCellRenderer.horizontalAlignment = addressableDisplayLayout.columnAlignment(it.modelIndex)
-			it.cellRenderer = tableCellRenderer
+			tableCellRenderer.horizontalAlignment = addressableDisplayLayout.columnAlignment(i)
+			column.cellRenderer = tableCellRenderer
 		}
 	}
 
-	private fun consumeCellChange(change: AddressableCellChange) {
+	private fun consumeValueChange(change: AddressableCellChange) {
 		cmdManager.register(AddressableCellChangeCommand(view, addressableRef.id, listOf(change)))
+	}
+
+	private fun consumeCommentChange(change: AddressableCommentChange) {
+		cmdManager.register(AddressableCommentChangeCommand(view, addressableRef.id, listOf(change)))
 	}
 }
