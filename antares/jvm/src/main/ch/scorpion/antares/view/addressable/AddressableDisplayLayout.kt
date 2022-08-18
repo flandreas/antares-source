@@ -1,16 +1,12 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableDataListener
-import ch.scorpion.antares.model.addressable.AddressableDataEvent
 import ch.scorpion.antares.model.addressable.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import java.util.*
 import javax.swing.JLabel
-import javax.swing.JTable
-import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.TableModel
 import kotlin.math.ceil
@@ -32,13 +28,6 @@ interface AddressableDisplayLayout {
 
 	fun getCellAddress(rowIndex: Int, columnIndex: Int): Int
 }
-
-class AddressableTableModelEvent(
-	source: TableModel,
-	row: Int,
-	column: Int,
-	val oldValue: ULong
-) : TableModelEvent(source, row, column, UPDATE)
 
 abstract class AbstractAddressableDisplayLayout(
 	protected val addressableRef: AddressableReference
@@ -90,9 +79,6 @@ class FixedWidthLayout(
 
 /**
  * Wraps an [Addressable] as a [TableModel] for displaying and editing.
- *
- * Listens for [AddressableDataEvent]s from [Addressable] and fires [AddressableTableModelEvent]
- * to initiate redrawing of the [JTable] that displays this [AbstractAddressableTableModel].
  */
 abstract class AbstractAddressableTableModel(
 	private val cellsPerRow: Int,
@@ -101,26 +87,6 @@ abstract class AbstractAddressableTableModel(
 ) : AbstractTableModel() {
 
 	private val format: String = "%${max(2, addressableRef.addressable.dataWidth.width / 4)}s"
-
-	private val dataChangeListener = AddressableDataListener { event ->
-		if (event.address != null && event.oldValue != null) {
-			fireTableChanged(AddressableTableModelEvent(
-				this@AbstractAddressableTableModel,
-				rowOf(event.address),
-				columnOf(event.address),
-				event.oldValue))
-		} else {
-			fireTableDataChanged()
-		}
-	}
-
-	init {
-		addressableRef.addDataListener(dataChangeListener)
-	}
-
-	fun dispose() {
-		addressableRef.removeDataListener(dataChangeListener)
-	}
 
 	override fun getRowCount(): Int = rowCount
 
