@@ -271,7 +271,7 @@ class SubGraphVerticeRef(
 
 	override fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		super.bind(deep, repository, storableCreator)
-		if (deep && !hasDesignError) {
+		if (!hasDesignError && isDeepExecution(deep)) {
 			ensureGraph(storableCreator).bind(deep, repository, storableCreator)
 		}
 	}
