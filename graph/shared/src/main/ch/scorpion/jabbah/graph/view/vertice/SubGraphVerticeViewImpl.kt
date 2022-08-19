@@ -254,6 +254,32 @@ class SubGraphVerticeViewImpl(
 		drawImplAfterBorder(context)
 	}
 
+	override val canMirror: Boolean get() = drawableBag.drawables.all { it.canMirror }
+
+	override fun mirrorHorizontally(x: Double) {
+		if (!canMirror) {
+			LOG.error("Unsupported request to mirror horizontally")
+			throw UnsupportedOperationException("cannot mirror horizontally")
+		}
+		invalidate()
+		drawableBag.drawables.forEach { it.mirrorHorizontally(x - location.x) }
+		getPortViews().forEach { it.mirrorHorizontally(x - location.x) }
+		updateBoxes()
+		invalidate()
+	}
+
+	override fun mirrorVertically(y: Double) {
+		if (!canMirror) {
+			LOG.error("Unsupported request to mirror vertically")
+			throw UnsupportedOperationException("cannot mirror vertically")
+		}
+		invalidate()
+		drawableBag.drawables.forEach { it.mirrorVertically(y - location.y) }
+		getPortViews().forEach { it.mirrorVertically(y - location.y) }
+		updateBoxes()
+		invalidate()
+	}
+
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) { c ->
 			drawableBag.drawables
@@ -530,32 +556,6 @@ class SubGraphVerticeViewImpl(
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
 		drawableBag.getActorInteractionHandler(context)
 
-	override val canMirror: Boolean get() = drawableBag.drawables.all { it.canMirror }
-
-	override fun mirrorHorizontally(x: Double) {
-		if (!canMirror) {
-			LOG.error("Unsupported request to mirror horizontally")
-			throw UnsupportedOperationException("cannot mirror horizontally")
-		}
-		invalidate()
-		drawableBag.drawables.forEach { it.mirrorHorizontally(x - location.x) }
-		getPortViews().forEach { it.mirrorHorizontally(x - location.x) }
-		updateBoxes()
-		invalidate()
-	}
-
-	override fun mirrorVertically(y: Double) {
-		if (!canMirror) {
-			LOG.error("Unsupported request to mirror vertically")
-			throw UnsupportedOperationException("cannot mirror vertically")
-		}
-		invalidate()
-		drawableBag.drawables.forEach { it.mirrorVertically(y - location.y) }
-		getPortViews().forEach { it.mirrorVertically(y - location.y) }
-		updateBoxes()
-		invalidate()
-	}
-
 	/** ---- [SubGraphVerticeViewImpl] */
 
 	fun getControlViewComponents(): ImmutableList<ControlViewComponent> =
@@ -617,10 +617,10 @@ class SubGraphVerticeViewImpl(
 
 	private fun mirrorIfNecessary(drawable: Drawable) {
 		if (isHorizontallyMirrored) {
-			drawable.mirrorHorizontally(location.x)
+			drawable.mirrorHorizontally(0.0)
 		}
 		if (isVerticallyMirrored) {
-			drawable.mirrorVertically(location.y)
+			drawable.mirrorVertically(0.0)
 		}
 	}
 
