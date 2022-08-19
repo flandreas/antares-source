@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.*
  * Performs a "Wired OR" function when applying multiple [DigitalSignals][DigitalSignal]
  * to the same [Net].
  */
-object WiredOrNetSignalApplier : NetSignalApplier<DigitalSignal> {
+object WiredOrNetSignalApplier : DefaultNetSignalApplier<DigitalSignal>() {
 
 	override fun signalsAreConsistent(a: DigitalSignal?, b: DigitalSignal?): Boolean {
 		if (a == null || b == null) {
@@ -22,25 +22,6 @@ object WiredOrNetSignalApplier : NetSignalApplier<DigitalSignal> {
 		return a.bitWidth == b.bitWidth
 	}
 
-	override fun calculateSignal(
-		signal: DigitalSignal?,
-		net: Net<DigitalSignal>,
-		excludePort: OutputPort<DigitalSignal>
-	): DigitalSignal {
-		var result = signal ?: DigitalSignalFactory.undefined((excludePort as DigitalPort).bitWidth)
-		net.ports
-			.filter { it is OutputPort<*> && it !== excludePort }
-			.map { it as OutputPort<DigitalSignal> }
-			.forEach { port ->
-				if (port !is BidirectionalPort<*> || (port as BidirectionalPort<*>).isOutputDominant) {
-					port.getOutgoingSignal()?.let {
-						result = result.or(it)
-					}
-				}
-			}
-		return result
-	}
-
 	override fun replaceOwnUndefinedSignals(
 		outputPort: OutputPort<DigitalSignal>,
 		outgoingSignal: DigitalSignal?,
@@ -48,7 +29,7 @@ object WiredOrNetSignalApplier : NetSignalApplier<DigitalSignal> {
 	): SignalReplacement<DigitalSignal> {
 		var replacement = SignalReplacement(outgoingSignal, outputPort)
 
-		if (outputPort.net == null || outgoingSignal?.isPartiallyUndefined == false) {
+		if (outputPort.net == null) {
 			return replacement
 		}
 

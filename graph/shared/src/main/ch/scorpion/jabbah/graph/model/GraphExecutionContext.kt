@@ -19,12 +19,6 @@ interface NetSignalApplier<T : Any> {
 	 */
 	fun signalsAreConsistent(a: T?, b: T?): Boolean
 
-	/**
-	 * Calculates the resulting signal when applying [signal] coming from [excludePort]
-	 * to [net].
-	 */
-	fun calculateSignal(signal: T?, net: Net<T>, excludePort: OutputPort<T>): T?
-
 	fun replaceOwnUndefinedSignals(outputPort: OutputPort<T>, outgoingSignal: T?, signalHandler: SignalHandler): SignalReplacement<T>
 }
 
@@ -32,8 +26,6 @@ open class DefaultNetSignalApplier<T : Any> : NetSignalApplier<T> {
 
 	override fun signalsAreConsistent(a: T?, b: T?): Boolean =
 		SignalUtil.equals(a, b)
-
-	override fun calculateSignal(signal: T?, net: Net<T>, excludePort: OutputPort<T>): T? = signal
 
 	override fun replaceOwnUndefinedSignals(
 		outputPort: OutputPort<T>,

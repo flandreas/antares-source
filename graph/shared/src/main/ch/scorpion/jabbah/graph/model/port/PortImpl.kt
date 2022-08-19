@@ -308,7 +308,7 @@ open class PortImpl<T : Any>(
 
 		// All CombinedNets are consistent
 		if (net!!.executionError == null) {
-			val replacement = replaceOwnUndefinedSignals(signalHandler)
+ 			val replacement = replaceOwnUndefinedSignals(signalHandler)
 			assertSignalToNet(replacement.signal, replacement.originPort, signalHandler, force)
 			return
 		}
@@ -330,16 +330,7 @@ open class PortImpl<T : Any>(
 	}
 
 	private fun assertSignalToNet(signal: T?, originPort: OutputPort<T>, signalHandler: SignalHandler, force: Boolean) {
-		val appliedSignal = if (signalHandler.executionContext is GraphExecutionContext<*>) {
-			(signalHandler.executionContext as GraphExecutionContext<T>).netSignalApplier.calculateSignal(
-				signal,
-				net!!,
-				this)
-		} else {
-			signal
-		}
-
-		net!!.setSignal(appliedSignal, originPort, this, signalHandler, force)
+		net!!.setSignal(signal, originPort, this, signalHandler, force)
 	}
 
 	private fun withdrawWeakSignals(combinedNet: CombinedNet<T>, signalHandler: SignalHandler) {
