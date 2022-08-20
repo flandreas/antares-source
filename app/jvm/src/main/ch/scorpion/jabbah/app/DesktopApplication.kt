@@ -25,5 +25,9 @@ interface DesktopApplication : Application {
 
 	fun exportLogfile(destinationPath: String)
 
-	fun quit()
+	/**
+	 * Request to quit the [Application], which can be denied by the user.
+	 * @return `true` if quitting was confirmed by the user, or confirmation was not required.
+	 */
+	fun quit(): Boolean
 }

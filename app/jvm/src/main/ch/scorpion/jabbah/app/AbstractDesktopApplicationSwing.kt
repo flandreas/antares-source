@@ -151,8 +151,10 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun installMacOSQuitHandler() {
-		Desktop.getDesktop().setQuitHandler { _, _ ->
-			this.quit()
+		Desktop.getDesktop().setQuitHandler { _, response ->
+			if (!this.quit()) {
+				response.cancelQuit()
+			}
 		}
 	}
 
