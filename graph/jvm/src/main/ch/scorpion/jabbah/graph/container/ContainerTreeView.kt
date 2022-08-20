@@ -64,6 +64,7 @@ open class ContainerTreeView(
 
 	    containerTree?.dispose()
 	    containerTree = ContainerTree(portFactory, portViewFactory, styleProvider, mainGraphView, containerDrawing, eventBus)
+	    containerTree!!.isManualContainer = isManualContainer
 	    model = containerTree?.model?.treeModel
     }
 

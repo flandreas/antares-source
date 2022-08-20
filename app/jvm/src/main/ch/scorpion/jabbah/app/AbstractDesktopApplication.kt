@@ -155,10 +155,12 @@ abstract class AbstractDesktopApplication(
 
 	override val version: ApplicationVersion by lazy { readVersion() }
 
-	override fun quit() {
+	override fun quit(): Boolean {
 		if (controller.canReplaceSavable("file.action.quit.name")) {
 			shutdown()
+			return true
 		}
+		return false
 	}
 
 	override fun exportLogfile(destinationPath: String) {
