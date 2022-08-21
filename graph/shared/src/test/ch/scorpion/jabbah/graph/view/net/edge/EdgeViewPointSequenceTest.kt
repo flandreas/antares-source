@@ -19,7 +19,7 @@ class EdgeViewPointSequenceTest {
 
     @Test
     fun shouldBuildSequence() {
-        val sequence = EdgeViewPointSequence.of(
+        val sequence = EdgeViewPointSequence(
 	        GraphViewModule.getEdgeViewFactory<Boolean>()
 		        .createEdgeView()
 		        .addSegmentPoint(Point2D(0, 0))
@@ -36,12 +36,13 @@ class EdgeViewPointSequenceTest {
 
     @Test
     fun shouldBuildReverseSequence() {
-	    val sequence = EdgeViewPointSequence.reverseOf(
+	    val sequence = EdgeViewPointSequence(
 		    GraphViewModule.getEdgeViewFactory<Boolean>()
 		        .createEdgeView()
 		        .addSegmentPoint(Point2D(0, 0))
 		        .addSegmentPoint(Point2D(10, 0))
-		        .addSegmentPoint(Point2D(10, 10)))
+		        .addSegmentPoint(Point2D(10, 10)),
+	        isReverse = true)
 
         assertEquals(20.0, sequence.size)
         assertEquals(Point2D(10, 10), sequence.getNext(10.0))
@@ -52,7 +53,7 @@ class EdgeViewPointSequenceTest {
 
 	@Test
 	fun shouldNotLooseMomentumAtSegmentPoints() {
-		val sequence = EdgeViewPointSequence.of(
+		val sequence = EdgeViewPointSequence(
 			GraphViewModule.getEdgeViewFactory<Boolean>()
 				.createEdgeView()
 				.addSegmentPoint(Point2D(0, 0))

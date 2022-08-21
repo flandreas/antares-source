@@ -10,13 +10,10 @@ import ch.scorpion.jabbah.graph.view.EdgeView
  */
 class EdgeViewPointSequence(
 	private val edgeView: EdgeView<*>,
-	private val isReverse: Boolean = false
+	private val isReverse: Boolean = false,
+	returnEndPoint: Boolean = edgeView.segmentPointCount == 2,
+	offset: Double = 0.0
 ) : Sequence<Point2D> {
-
-	companion object {
-		fun of(edgeView: EdgeView<*>): EdgeViewPointSequence = EdgeViewPointSequence(edgeView)
-		fun reverseOf(edgeView: EdgeView<*>): EdgeViewPointSequence = EdgeViewPointSequence(edgeView, isReverse = true)
-	}
 
 	private var currSegmentPointIndex: Int = if (isReverse) {
 		edgeView.segmentPointCount - 1
@@ -25,7 +22,7 @@ class EdgeViewPointSequence(
 	}
 
 	/** Creation depends on [currSegmentPointIndex] already set. */
-	private var currPointRange: PointRange = createCurrentPointRange(edgeView.segmentPointCount == 2, 0.0)
+	private var currPointRange: PointRange = createCurrentPointRange(returnEndPoint, offset)
 
 	/** ---- [Sequence] interface */
 
@@ -49,6 +46,8 @@ class EdgeViewPointSequence(
 	override fun getCurrent(): Point2D = currPointRange.getCurrent()
 
 	/** ---- [EdgeViewPointSequence] */
+
+	val remainder: Double get() = currPointRange.remainder
 
 	private fun createCurrentPointRange(returnEndPoint: Boolean, offset: Double): PointRange =
 		if (isReverse) {

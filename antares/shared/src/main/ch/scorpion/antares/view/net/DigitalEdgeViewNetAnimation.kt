@@ -5,8 +5,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
-import ch.scorpion.jabbah.animation.Sequence
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.MoveLocatableAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -64,13 +62,12 @@ class DigitalEdgeViewNetAnimation(
 	 * Contains management information associated with every [AnimationTask].
 	 * @property animationTask the [AnimationTask] the information belongs to
 	 * @property overallLength the overall length of the entire net to travers
-	 * @property remainingLength the length of the remaining net to travers
 	 * @property visitedLength the added length of all visited [DigitalEdgeView]s
 	 */
 	private data class AnimationInfo(
+		val edgeViewPointSequence: EdgeViewPointSequence,
 		val animationTask: AnimationTask?,
 		val overallLength: Double,
-		val remainingLength: Double,
 		val visitedLength: Double)
 
 	/** Maps a [DigitalEdgeView] to the [AnimationInfo] of its predecessor [DigitalEdgeView]. */
@@ -106,7 +103,11 @@ class DigitalEdgeViewNetAnimation(
 			.forEach { setupEdgeAnimation(predecessor, it, nodeView) }
 	}
 
-	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, startConnectable: ConnectableView) {
+	private fun setupEdgeAnimation(
+		predecessor: DigitalEdgeView?,
+		edgeView: DigitalEdgeView,
+		startConnectable: ConnectableView
+	) {
 		val isReverse = edgeView.getConnectionEndpointType(startConnectable) != EdgeViewEndpointType.ORIGIN
 		val animationView = DigitalEdgeAnimationView(
 			edgeView,
@@ -119,11 +120,11 @@ class DigitalEdgeViewNetAnimation(
 
 		val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
 
-		val sequence: Sequence<Point2D> = if (isReverse) {
-			EdgeViewPointSequence.reverseOf(edgeView)
-		} else {
-			EdgeViewPointSequence.of(edgeView)
-		}
+		val returnEndPoint = edgeView.getConnectionEndpointType(startConnectable)?.opposite?.let {
+			edgeView.getConnection(it)?.connectableView !is NodeView<*>
+		} ?: true
+		val offset: Double = predecessorInfo?.edgeViewPointSequence?.remainder ?: 0.0
+		val sequence = EdgeViewPointSequence(edgeView, isReverse, returnEndPoint, offset)
 
 		val overallLength: Double = predecessorInfo?.overallLength ?: sequence.size
 		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
@@ -133,9 +134,9 @@ class DigitalEdgeViewNetAnimation(
 		bitAnimationTask.addListener(animationSplitter)
 
 		val animationInfo = AnimationInfo(
+			edgeViewPointSequence = sequence,
 			animationTask = bitAnimationTask,
 			overallLength = overallLength,
-			remainingLength = sequence.size,
 			visitedLength = oldVisitedLength + edgeView.polyline.length
 		)
 
