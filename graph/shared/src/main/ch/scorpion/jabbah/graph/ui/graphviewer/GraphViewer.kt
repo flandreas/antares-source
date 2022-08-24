@@ -35,7 +35,8 @@ interface GraphViewerView : UIView {
 
 /**
  * Displays a single [GraphView] and allows the user to start execution of this [GraphView].
- * Doesn't feature editing capabilities.
+ * Doesn't feature editing capabilities. Has its own independent [GraphApplicationContextHolder]
+ * to start independent simulations of the [GraphView].
  */
 class GraphViewerController(
 	private val eventBus: EventBus = BaseModule.eventBus

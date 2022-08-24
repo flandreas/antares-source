@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.draw.Drawable
  */
 interface ContextMenuProvider {
 
+	var applicationName: String
+
 	/**
 	 * Fills the specified [JPopupMenu] requested at a particular location within a [View].
 	 * Note that the location coordinates are in model space to ease finding the target [Drawable].

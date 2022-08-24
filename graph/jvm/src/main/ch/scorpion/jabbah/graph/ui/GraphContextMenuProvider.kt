@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.ui.graphviewer.OpenSubGraphViewerAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
 
@@ -19,6 +20,7 @@ open class GraphContextMenuProvider : EditContextMenuProvider() {
 		private val cutAction by lazy { ActionWrapperSwing(CutAction()) }
 		private val copyAction by lazy { ActionWrapperSwing(CopyAction()) }
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
+		private val openGraphActionWrapper by lazy { ActionWrapperSwing(openGraphAction) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
 	}
 
@@ -42,8 +44,9 @@ open class GraphContextMenuProvider : EditContextMenuProvider() {
 	override fun addActions(view: View<*>, popupMenu: JPopupMenu) {
 		super.addActions(view, popupMenu)
 		popupMenu.addSeparator()
-		popupMenu.add(ActionWrapperSwing(openGraphAction))
+		popupMenu.add(openGraphActionWrapper)
 		getGraphApplicationContextHolder(view)?.let {
+			popupMenu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
 			popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
 		}
 		popupMenu.add(resetSubGraphAction)
@@ -53,15 +56,18 @@ open class GraphContextMenuProvider : EditContextMenuProvider() {
 		menu.removeAll()
 		val drawable = (view as DrawingView<*>).drawing.getDrawableAt(x, y)
 		if (drawable is ActorView) {
-			addExecutionActions(drawable, menu)
+			addExecutionActions(view, drawable, menu)
 		}
 	}
 
-	private fun addExecutionActions(actorView: ActorView, menu: JPopupMenu) {
+	private fun addExecutionActions(view: View<*>, actorView: ActorView, menu: JPopupMenu) {
 		if (actorView is SubGraphVerticeView<*>) {
 			openGraphAction.subGraphVerticeView = actorView
 			openGraphAction.enabled = true
-			menu.add(ActionWrapperSwing(openGraphAction))
+			menu.add(openGraphActionWrapper)
+			getGraphApplicationContextHolder(view)?.let {
+				menu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
+			}
 		}
 	}
 }

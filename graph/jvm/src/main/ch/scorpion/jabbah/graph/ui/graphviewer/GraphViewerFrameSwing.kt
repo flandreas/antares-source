@@ -43,7 +43,7 @@ class GraphViewerFrameSwing(
 
 		addWindowListener(object : WindowAdapter() {
 			override fun windowClosing(e: WindowEvent?) {
-				controller.dispose()
+				dispose()
 			}
 		})
 		pack()
@@ -63,6 +63,7 @@ class GraphViewerFrameSwing(
 		eventBus.unregister(closeRequestHandler)
 		executionToolbar.dispose()
 		menuBar.dispose()
+		controller.dispose()
 	}
 
 	override fun notifyAllResourcesLoaded() { }
@@ -70,8 +71,8 @@ class GraphViewerFrameSwing(
 	private fun buildUI() {
 		graphNavigationView.preferredSize = Dimension(1000, 800)
 		layout = BorderLayout()
-		add(BorderLayout.NORTH, executionToolbar)
-		add(BorderLayout.CENTER, graphNavigationView)
+		add(executionToolbar, BorderLayout.NORTH)
+		add(graphNavigationView, BorderLayout.CENTER)
 	}
 
 	private fun createExecutionToolbar(): ExecutionToolbarSwing =

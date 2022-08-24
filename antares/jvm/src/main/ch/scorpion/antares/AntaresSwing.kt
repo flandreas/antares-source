@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.swing.VerticalLabel
 import ch.scorpion.jabbah.base.ui.UI
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -271,6 +272,8 @@ class AntaresSwing(
 		customProjectsDirectoryPath?.let {
 			LOG.value.info("Using custom projects directory $customProjectsDirectoryPath")
 		}
+
+		DrawModuleJvm.contextMenuProvider.applicationName = displayName
 	}
 
 	override fun shutdownUI() {
