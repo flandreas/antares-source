@@ -43,13 +43,14 @@ class FontIdentificationPreference : AbstractPreference(
 			if (panel != null) {
 				val selectedItem = editor.selectedItem
 				if (selectedItem == null) {
-					showChooser()?.let {
-						panel?.preferences?.customize(this, it.externalize())
-						SwingUtilities.invokeLater {
+					SwingUtilities.invokeLater {
+						showChooser()?.let {
+							panel?.preferences?.customize(this, it.externalize())
 							refreshEditor(it)
 							editor.selectedItem = it
 						}
 					}
+
 				} else {
 					panel?.preferences?.customize(this, (selectedItem as FontIdentification).externalize())
 				}
@@ -59,7 +60,7 @@ class FontIdentificationPreference : AbstractPreference(
 
 	private fun showChooser(): FontIdentification? {
 		val dialog = FontDialog(Frame.getFrames()[0], name, true)
-		dialog.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE;
+		dialog.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
 		dialog.setLocationRelativeTo(panel)
 		dialog.isVisible = true
 		if (!dialog.isCancelSelected) {
