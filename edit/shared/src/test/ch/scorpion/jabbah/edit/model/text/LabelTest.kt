@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
-import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.edit.EditTestRule
 import kotlin.test.BeforeTest
@@ -20,7 +20,7 @@ class LabelTest {
 
     @Test
     fun shouldConstructWithText() {
-        val label = Label(text = "Test", font = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 10))
+        val label = Label(text = "Test", font = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 10))
         assertEquals("Test", label.text)
     }
 }

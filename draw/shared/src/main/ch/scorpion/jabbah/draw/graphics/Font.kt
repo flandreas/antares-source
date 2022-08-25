@@ -6,27 +6,32 @@ enum class FontStyle(val value: Int) {
 	ITALIC(2)
 }
 
-enum class FontFamily(val javaName: String, val jsName: String) {
+interface FontFamily {
+	val fontName: String
+}
+
+class PhysicalFontFamily(override val fontName: String) : FontFamily
+
+enum class LogicalFontFamily(val javaName: String, val jsName: String): FontFamily {
 	SERIF("Serif", "serif"),
 	SANS_SERIF("SansSerif", "sans-serif"),
 	MONOSPACED("Monospaced", "monospace"),
 	DIALOG("Dialog", "sans-serif");
 
 	companion object {
-		fun fromJavaName(name: String): FontFamily {
-			values()
-				.filter { name.startsWith(it.javaName, ignoreCase = true)}
-				.forEach { return it }
-			throw IllegalArgumentException("unknown Java FontFamily name $name")
-		}
 
-		fun fromJsName(name: String): FontFamily {
-			FontFamily.values()
-				.filter { it.jsName == name }
-				.forEach { return it }
-			throw IllegalArgumentException("unknown JavaScript FontFamily name $name")
-		}
+		fun fromJavaName(name: String): FontFamily =
+			values()
+				.firstOrNull { name.startsWith(it.javaName, ignoreCase = true)}
+				?: throw IllegalArgumentException("unknown Java FontFamily name $name")
+
+		fun fromJsName(name: String): FontFamily =
+			values()
+				.firstOrNull { it.jsName == name }
+				?: throw IllegalArgumentException("unknown JavaScript FontFamily name $name")
 	}
+
+	override val fontName: String get() = javaName
 }
 
 /**
@@ -47,7 +52,7 @@ interface Font {
 }
 
 data class FontImpl(
-	override val family: FontFamily = FontFamily.SANS_SERIF,
+	override val family: FontFamily = LogicalFontFamily.SANS_SERIF,
 	override val style: Int = FontStyle.PLAIN.value,
 	override val size: Int = 12
 ) : Font {

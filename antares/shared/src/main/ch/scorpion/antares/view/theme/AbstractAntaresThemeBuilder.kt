@@ -12,9 +12,9 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 	companion object {
 
-		val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
+		val FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 
-		val TEXT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
+		val TEXT_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
 		val SELECTION_FOREGROUND_COLOR = Color.ORANGE
 
@@ -26,7 +26,7 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 		val TOOLTIP_STROKE = Stroke(1.0f)
 
-		val TOOLTIP_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
+		val TOOLTIP_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
 		val HIGHLIGHT_STROKE = Stroke(8.0f, LineCap.ROUND, LineJoin.ROUND)
 
@@ -36,7 +36,7 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 
 		val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.MITER)
 
-		val SUBSYSTEM_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * Look.SCALE).toInt())
+		val SUBSYSTEM_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * Look.SCALE).toInt())
 
 		val SUBSYSTEM_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 5.0f, floatArrayOf(5.0f), 0.0f)
 
@@ -46,7 +46,7 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 			textColor = Color.WHITE)
 		val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
-		val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
+		val EXPLANATION_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 
 		// Signal colors
 

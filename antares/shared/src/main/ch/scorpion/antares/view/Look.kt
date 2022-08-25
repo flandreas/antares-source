@@ -5,10 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.ui.UI
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.FontFamily
-import ch.scorpion.jabbah.draw.graphics.FontImpl
-import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.style.EditTheme
 import kotlin.math.ceil
@@ -23,11 +20,11 @@ object Look {
 	const val SCALE: Int = 7
 	const val GRID: Int = 1 * SCALE
 
-	val UI_FONT = FontImpl(FontFamily.DIALOG, FontStyle.PLAIN.value, 11)
-	val INT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
-	val EXT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
-	val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * SCALE).toInt())
-	val ADDRESSABLE_CONTENTS_FONT = FontImpl(FontFamily.MONOSPACED, FontStyle.PLAIN.value, (1.8 * SCALE).toInt())
+	val UI_FONT = FontImpl(LogicalFontFamily.DIALOG, FontStyle.PLAIN.value, 11)
+	val INT_PIN_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
+	val EXT_PIN_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
+	val ANNOTATION_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * SCALE).toInt())
+	val ADDRESSABLE_CONTENTS_FONT = FontImpl(LogicalFontFamily.MONOSPACED, FontStyle.PLAIN.value, (1.8 * SCALE).toInt())
 
 	fun initialize(eventBus: EventBus) {
 		eventBus.register(PreferencesChangedEvent::class) { updateFillBasicComponents() }

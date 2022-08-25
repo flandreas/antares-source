@@ -64,7 +64,7 @@ class FontIdentificationPreference : AbstractPreference(
 		dialog.isVisible = true
 		if (!dialog.isCancelSelected) {
 			return FontIdentification(
-				dialog.selectedFont.fontName,
+				dialog.selectedFont.family,
 				dialog.selectedFont.style,
 				dialog.selectedFont.size)
 		}

@@ -26,8 +26,15 @@ class Graphics2DJs(
 			return sb.toString()
 		}
 
+		private fun toJsFontName(font: Font): String {
+			return LogicalFontFamily.values()
+				.firstOrNull { it.name == font.family.fontName }
+				?.javaName
+				?: LogicalFontFamily.SANS_SERIF.jsName
+		}
+
 		fun toJsFont(font: Font): String {
-			return "${toJsFontStyle(font)} ${font.size}px ${font.family.jsName}"
+			return "${toJsFontStyle(font)} ${font.size}px ${toJsFontName(font)}"
 		}
 	}
 

@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -100,7 +101,7 @@ class TerminalView(
 			Size.LARGE -> 1.5f
 		}
 
-	private val textFont get() = font.deriveFont(FontFamily.MONOSPACED).deriveFont(round(font.size * sizeFactor).toInt())
+	private val textFont get() = font.deriveFont(LogicalFontFamily.MONOSPACED).deriveFont(round(font.size * sizeFactor).toInt())
 
 	private val textRenderInfo get() = TextRenderInfoFactory.measureSingleLineText("A", textFont)
 

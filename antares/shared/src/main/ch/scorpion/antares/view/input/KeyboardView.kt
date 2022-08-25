@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -61,7 +62,7 @@ class KeyboardView(
 
 	private val label = Label(
 		text = "Test",
-		font = font.deriveFont(FontFamily.MONOSPACED),
+		font = font.deriveFont(LogicalFontFamily.MONOSPACED),
 		color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor,
 		horizontalAlignment = HorizontalAlignment.LEFT,
 		verticalAlignment = VerticalAlignment.CENTER,
