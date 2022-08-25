@@ -266,4 +266,29 @@ tasks {
 			"--win-shortcut"
 		)
 	}
+	
+	val distributeLinux by creating(Exec::class) {
+		dependsOn(obfuscate)
+		dependsOn(copySplash)
+
+		workingDir = projectDir
+		
+		commandLine(
+			"jpackage",
+			"--dest", "${buildDir}/distributions",
+			"--input", "${buildDir}/package",
+			"--name", "Antares",
+			"--main-jar", "antares-${version_project}.jar",
+			"--app-version", "$version_project",
+			"--copyright", "Copyright (c) 2022 Andreas Fleischmann",
+			"--vendor", "antarescircuit.io",
+			"--icon", "jvm/rsc/antares-icon64.png",
+			"--java-options", "-splash:\$APPDIR/splash-empty.png",
+			"--java-options", "-Dapple.awt.application.name=Antares",
+			"--java-options", "-Dapple.awt.application.appearance=system",
+			"--type", "rpm",
+			"--resource-dir", "jvm/rsc/",
+			"--linux-shortcut"
+		)
+	}
 }
