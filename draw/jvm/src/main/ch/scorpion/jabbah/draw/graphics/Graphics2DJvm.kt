@@ -56,11 +56,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 		    Color(color.red, color.green, color.blue, color.alpha)
 
         fun toAwtFont(font: Font): java.awt.Font {
-            return Font(font.family.javaName, fromFontStyle(font), font.size)
+            return Font(font.family.fontName, fromFontStyle(font), font.size)
         }
 
 	    fun fromAwtFont(font: java.awt.Font): Font {
-	    	return FontImpl(FontFamily.fromJavaName(font.fontName), toFontStyle(font), font.size)
+	    	return FontImpl(LogicalFontFamily.fromJavaName(font.fontName), toFontStyle(font), font.size)
 	    }
 
 	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
@@ -141,7 +141,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     override var font: Font
         get() {
             val f = g.font
-            return FontImpl(FontFamily.fromJavaName(f.name), toFontStyle(f), f.size)
+            return FontImpl(LogicalFontFamily.fromJavaName(f.name), toFontStyle(f), f.size)
         }
         set(value) {
             g.font = toAwtFont(value)

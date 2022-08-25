@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.draw.ui
 
 import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.drawable.MultilineText
+import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.graphics.PhysicalFontFamily
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.event.ComponentAdapter
@@ -16,6 +18,11 @@ import javax.swing.JPanel
 class MultilineTextDisplayJvm: JPanel() {
 
 	private var text: MultilineText? = null
+
+	private val g2Font = FontImpl(
+		PhysicalFontFamily(font.name),
+		font.style,
+		font.size)
 
 	var styledText: StyledText? = null
 		set(value) {
@@ -36,13 +43,14 @@ class MultilineTextDisplayJvm: JPanel() {
 		text?.let {
 			val jg = Graphics2DJvm(g as Graphics2D)
 			jg.antialiasing = true
+			jg.font = g2Font
 			it.draw(jg)
 		}
 	}
 
 	private fun updateMultilineText() {
 		if (styledText != null) {
-			text = MultilineText(styledText!!, Graphics2DJvm.fromAwtFont(font!!), width.toDouble())
+			text = MultilineText(styledText!!, g2Font, width.toDouble())
 			invalidate()
 			repaint()
 		} else {

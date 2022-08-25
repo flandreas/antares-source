@@ -149,6 +149,8 @@ class GraphDesktopViewController(
 			return
 		}
 
+		// If no GraphDesktopViewItem found, the VerticeView is contained in another top-level view
+		// and doesn't need to be opened in this GraphDesktopView
 		itemContaining(vv)?.let {
 			val refColor = referenceColorSequence.next()
 			val displayedColor = displayedReferenceColor(refColor)
@@ -159,7 +161,7 @@ class GraphDesktopViewController(
 
 			it.drawingView?.highlighter?.highlight(vv, displayedColor)
 			it.drawingView?.repaint()
-		} ?: LOG.error("VerticeView to be opened not found in open panels")
+		}
 	}
 
 	private fun handle(event: EditedGraphViewEvent) {

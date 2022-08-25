@@ -10,9 +10,11 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.FontIdentification
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.swing.VerticalLabel
 import ch.scorpion.jabbah.base.ui.UI
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -142,6 +144,16 @@ class AntaresSwing(
 			}
 		}
 
+		private fun establishUiFont(preferences: java.util.Properties) {
+			val fontId = FontIdentification.parse(preferences.getProperty(FontIdentification.PROP_FONT_IDENTIFICATION))
+			val fontResource = if (fontId.isDefault) {
+				FontUIResource(Look.UI_FONT.family.fontName, Look.UI_FONT.style, Look.UI_FONT.size)
+			} else {
+				FontUIResource(fontId.fontName, fontId.style, fontId.size)
+			}
+			UiUtil.setUIFont(fontResource)
+		}
+
 		// Disabled because OsThemeDetector requires a native library that leads to app signing problems
 		/*
 		private fun configureSplash(font: Font) {
@@ -200,9 +212,7 @@ class AntaresSwing(
 			val preferences = prefetchPreferences(userDataDirectoryPath)
 			establishUserLanguage(preferences)
 			establishTheme(preferences)
-
-			val font = FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size)
-			UiUtil.setUIFont(font)
+			establishUiFont(preferences)
 
 			BaseModuleJvm.require()
 
@@ -271,6 +281,8 @@ class AntaresSwing(
 		customProjectsDirectoryPath?.let {
 			LOG.value.info("Using custom projects directory $customProjectsDirectoryPath")
 		}
+
+		DrawModuleJvm.contextMenuProvider.applicationName = displayName
 	}
 
 	override fun shutdownUI() {

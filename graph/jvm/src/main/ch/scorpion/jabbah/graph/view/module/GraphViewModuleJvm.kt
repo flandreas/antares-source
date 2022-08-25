@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.FontFamily
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -74,8 +74,6 @@ object GraphViewModuleJvm : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(GraphDesktopItemHeaderPanelSwing.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
-		properties.set(NavigationStackViewSwing.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
-		properties.set(NavigationStackViewSwing.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
 	}
 

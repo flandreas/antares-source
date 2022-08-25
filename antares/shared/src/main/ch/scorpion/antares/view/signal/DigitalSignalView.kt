@@ -11,10 +11,7 @@ import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.graphics.FontFamily
-import ch.scorpion.jabbah.draw.graphics.FontImpl
-import ch.scorpion.jabbah.draw.graphics.FontStyle
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -32,7 +29,7 @@ class DigitalSignalView(
 ) : AbstractRectangle(RoundRectangle2D(0.0, 0.0, 0.0, 0.0, ARCH_SIZE, ARCH_SIZE)) {
 
 	companion object {
-		private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+		private val FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
 		private const val V_INSET = 3
 		private const val H_INSET = 6
 		private const val ARCH_SIZE = 12.0

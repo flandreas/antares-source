@@ -35,7 +35,7 @@ class DigitView(
     companion object {
         const val WIDTH = 20
         const val HEIGHT = 20
-        val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+        val FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
     }
 
     /** Controls whether this [DigitView] has the focus and should draw a focus border.*/

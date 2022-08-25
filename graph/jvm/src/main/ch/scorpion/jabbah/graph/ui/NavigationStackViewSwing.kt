@@ -3,10 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -35,10 +32,6 @@ class NavigationStackViewSwing(
 
 	companion object {
 
-		const val PROP_FONT = "graph.ui.NavigationStackView.font"
-
-		const val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
-
 		/** Vertical insets between view border and arrow border.*/
 		private const val V_INSETS = 4
 
@@ -60,6 +53,13 @@ class NavigationStackViewSwing(
 
 		private val lockedIcon = ResourceImageJvm.themedImage("/img/locked-16.png")
 	}
+
+	private val tailFont = FontImpl(
+		PhysicalFontFamily(font.name),
+		font.style,
+		font.size)
+
+	private val headFont = tailFont.deriveFont(FontStyle.BOLD)
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
 
@@ -133,8 +133,7 @@ class NavigationStackViewSwing(
 	/** ---- [NavigationStackViewSwing] */
 
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(
-			entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, tailFont)
 		val textLength = textRenderInfo.textBounds.width
 		val showLock = first && !editable
 		return Element(
@@ -184,7 +183,7 @@ class NavigationStackViewSwing(
 
 		private val label: Label = Label(
 			text = entry.content.drawing.graph!!.name.value,
-			font = DrawModule.properties.getFont(PROP_FONT),
+			font = tailFont,
 			horizontalAlignment = if (showLock) HorizontalAlignment.LEFT else HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
 			location = Point2D(
@@ -225,9 +224,9 @@ class NavigationStackViewSwing(
 
 			label.color = Graphics2DJvm.fromAwtColor(elementTextColor)
 			label.font = if (isHead) {
-				DrawModule.properties.getFont(PROP_HEAD_FONT)
+				headFont
 			} else {
-				DrawModule.properties.getFont(PROP_FONT)
+				tailFont
 			}
 			label.draw(DrawModule.drawContextFactory(g, null, null))
 

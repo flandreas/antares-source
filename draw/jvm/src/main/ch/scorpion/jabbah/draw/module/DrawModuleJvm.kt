@@ -23,7 +23,6 @@ import javax.swing.JPopupMenu
  */
 object DrawModuleJvm : AbstractModule() {
 
-	const val PREF_TREE_RENDERING = "draw.preferences.group.rendering"
 	const val PREF_TREE_VIEW = "draw.preferences.group.view"
 	const val PREF_TREE_VIEW_NAVIGATION = "draw.preferences.group.view.navigation"
 
@@ -31,6 +30,8 @@ object DrawModuleJvm : AbstractModule() {
 	private const val MAX_ZOOM_FACTOR = 100f
 
 	var contextMenuProvider: ContextMenuProvider = object : ContextMenuProvider {
+		override var applicationName: String = ""
+
 		override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
 			menu.removeAll()
 		}
@@ -53,17 +54,17 @@ object DrawModuleJvm : AbstractModule() {
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
-		root.add(PreferenceGroup(PREF_TREE_RENDERING))
+
 		root.add(PreferenceGroup(PREF_TREE_VIEW))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))
 
-		root.getGroup(PREF_TREE_RENDERING).add(ThemePreference())
+		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(ThemePreference())
 
-		root.getGroup(PREF_TREE_RENDERING).add(BooleanPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
 			id = DropShadow.PROP_SHADOW,
 			nameKey = "draw.preferences.DropShadow.enable"))
 
-		root.getGroup(PREF_TREE_RENDERING).add(IntPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(IntPreference(
 			id = DropShadow.PROP_OFFSET,
 			nameKey = "draw.preferences.DropShadow.offset",
 			minValue = 1,
