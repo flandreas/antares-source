@@ -52,7 +52,7 @@ open class MenuBarBuilder(
 
         fillViewMenu(viewMenu)
 	    viewMenu.addSeparator()
-	    viewMenu.add(JMenuItem(ActionWrapperSwing(CloseViewAction())))
+	    viewMenu.add(JMenuItem(ActionWrapperSwing(CloseActiveViewAction())))
 
 	    fillHelpMenu(helpMenu)
         fillMenuBar(menuBar)

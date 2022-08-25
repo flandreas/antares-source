@@ -13,9 +13,9 @@ class GraphViewerMenuBar(
 	controller: GraphViewerController
 ) : JMenuBar() {
 
-	private val closeViewAction = CloseViewAction()
-
+	private val closeViewAction = CloseViewAction(controller.drawingView)
 	private val closeViewWrapper = ActionWrapperSwing(closeViewAction)
+
 	private val toggleApplicationModeWrapper = ActionWrapperSwing(controller.toggleApplicationModeAction)
 	private val pauseOrResumeWrapper = ActionWrapperSwing(controller.pauseOrResumeAction)
 
