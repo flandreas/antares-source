@@ -6,9 +6,7 @@ import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.EnumPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import java.awt.Toolkit
 
@@ -19,6 +17,7 @@ object BaseModuleJvm : AbstractModule() {
 
 	private const val PREF_TREE_ROOT = "base.preferences.group.root"
 	const val PREF_TREE_GENERAL = "base.preferences.group.general"
+	const val PREF_TREE_RENDERING = "base.preferences.group.rendering"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
@@ -36,6 +35,7 @@ object BaseModuleJvm : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR, true)
+		properties.set(FontIdentification.PROP_FONT_IDENTIFICATION, "")
 	}
 
 	private fun defineKeyCodes() {
@@ -79,6 +79,7 @@ object BaseModuleJvm : AbstractModule() {
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
+		root.add(PreferenceGroup(PREF_TREE_RENDERING))
 
 		root.getGroup(PREF_TREE_GENERAL).add(EnumPreference(
 			id = Language.PROP_LANGUAGE,
@@ -98,5 +99,7 @@ object BaseModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
 			id = InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR,
 			nameKey = "base.preferences.showUnexpectedErrors"))
+
+		root.getGroup(PREF_TREE_RENDERING).add(FontIdentificationPreference())
 	}
 }

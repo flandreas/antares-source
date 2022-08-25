@@ -11,10 +11,12 @@ import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.GraphProperties
+import org.drjekyll.fontchooser.FontDialog
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.Point
 import javax.swing.JOptionPane
+import javax.swing.WindowConstants
 
 class TestAction(
 	private val editor: Editor
@@ -25,7 +27,7 @@ class TestAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		createCommandSnapshot()
+		showFontChooser()
 	}
 
 	private fun showToast() {
@@ -66,5 +68,14 @@ class TestAction(
 			name,
 			JOptionPane.DEFAULT_OPTION
 		)
+	}
+
+	private fun showFontChooser() {
+		val dialog = FontDialog(Frame.getFrames()[0], "Main Font", true)
+		dialog.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE;
+		dialog.isVisible = true
+		if (!dialog.isCancelSelected) {
+			println("Selected font is: ${dialog.selectedFont}")
+		}
 	}
 }

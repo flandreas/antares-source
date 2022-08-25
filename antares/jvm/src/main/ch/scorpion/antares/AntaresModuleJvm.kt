@@ -302,7 +302,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
-		root.getGroup(DrawModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
 			id = Look.PROP_FILL_BASIC_COMPONENTS,
 			nameKey = "antares.preference.fillBasicComponents"
 		))

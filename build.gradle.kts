@@ -131,6 +131,7 @@ subprojects {
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:2.0.1")
+					implementation("org.drjekyll:fontchooser:2.4")
 				}
 
 				// Workaround for bug in Gradle > 7.0 complaining about duplicate translation resources in generated JAR
