@@ -43,7 +43,7 @@ class GraphViewerFrameSwing(
 
 		addWindowListener(object : WindowAdapter() {
 			override fun windowClosing(e: WindowEvent?) {
-				dispose()
+				controller.dispose()
 			}
 		})
 		pack()
@@ -63,7 +63,6 @@ class GraphViewerFrameSwing(
 		eventBus.unregister(closeRequestHandler)
 		executionToolbar.dispose()
 		menuBar.dispose()
-		controller.dispose()
 	}
 
 	override fun notifyAllResourcesLoaded() { }
