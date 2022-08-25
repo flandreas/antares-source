@@ -119,8 +119,11 @@ class OscilloscopeViewServiceImpl(
 	}
 
 	override fun setOscilloscopeViewVisibility(view: DrawingView<GraphView>, visible: Boolean) {
-		findOscilloscopeView(view.drawing)?.let {
-			it.visible = visible
+		findOscilloscopeView(view.drawing)?.let { ov ->
+			if (oscilloscopeViewOverlapsCircuit(ov, view.drawing)) {
+				positionOscilloscope(ov, view.drawing)
+			}
+			ov.visible = visible
 			findProbeViews(view.drawing).forEach { it.visible = visible }
 			eventBus.post(OscilloscopeDisplayEvent(view.drawing))
 		}
@@ -198,6 +201,13 @@ class OscilloscopeViewServiceImpl(
 		ov.visible = true
 		positionOscilloscope(ov, view.drawing)
 		graphViewAppService.add(ov, view as DrawingView<Drawing<Component>>)
+	}
+
+	private fun oscilloscopeViewOverlapsCircuit(ov: OscilloscopeView, graphView: GraphView): Boolean {
+		val bbox = ov.boundingBox
+		return graphView.drawables
+			.filter { it !== ov }
+			.any { it.intersects(bbox) }
 	}
 }
 
