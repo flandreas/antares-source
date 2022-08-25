@@ -145,7 +145,8 @@ class AntaresSwing(
 		}
 
 		private fun establishUiFont(preferences: java.util.Properties) {
-			val fontId = FontIdentification.parse(preferences.getProperty(FontIdentification.PROP_FONT_IDENTIFICATION))
+			val s = preferences.getProperty(FontIdentification.PROP_FONT_IDENTIFICATION)
+			val fontId = s?.let { FontIdentification.parse(it) } ?: FontIdentification()
 			val fontResource = if (fontId.isDefault) {
 				FontUIResource(Look.UI_FONT.family.fontName, Look.UI_FONT.style, Look.UI_FONT.size)
 			} else {
