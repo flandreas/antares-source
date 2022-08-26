@@ -201,6 +201,7 @@ class AddressableContentsView(
 	private fun drawRow(address: Int, y: Double, context: DrawContext) {
 		var x = location.x + HORIZONTAL_INSET
 		context.g.font = font
+		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
 		// Draw address
 		addressLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).disabledTextColor
@@ -214,12 +215,13 @@ class AddressableContentsView(
 			val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
 			if (isCurrent && (addressable.isSelected || highlightCurrentCellWhenNotSelected)) {
 				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).foregroundColor
-				context.g.fillRect(
-					x - COL_DIST / 2 - 0.5,
-					y - rowHeight / 2,
-					dataColumnWidth.toDouble() + COL_DIST,
-					rowHeight.toDouble())
-				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).backgroundColor
+				if (addressable.isSelected) {
+					context.g.fillRect(x - COL_DIST / 2 - 0.5, y - rowHeight / 2, dataColumnWidth.toDouble() + COL_DIST, rowHeight.toDouble())
+					dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).backgroundColor
+				} else {
+					context.g.drawRect(x - COL_DIST / 2 - 0.5, y - rowHeight / 2, dataColumnWidth.toDouble() + COL_DIST, rowHeight.toDouble())
+					dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).textColor
+				}
 			} else {
 				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).textColor
 			}

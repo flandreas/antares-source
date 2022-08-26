@@ -74,7 +74,8 @@ class ROMView(
 			}
 		}
 
-	var highlightCurrentCellWhenNotSelected: Boolean = false
+	@Suppress("unused") // Reflection
+	var highlightCurrentCellWhenNotSelected: Boolean = true
 		set(value) {
 			if (field != value) {
 				field = value
