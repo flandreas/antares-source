@@ -70,7 +70,9 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	 * Displays the current signal. Dynamically created and initialized. Ony set if [signalRepresentation]
 	 * is NOT [DigitalSignalRepresentation.FIXED_POINT].
 	 */
-	private var numberView: NumberView? = null
+	// Visible for testing
+	var numberView: NumberView? = null
+		private set
 
 	/** Displays the current signal for [DigitalSignalRepresentation.FIXED_POINT].*/
 	private var fixedPointView: FixedPointView? = null
