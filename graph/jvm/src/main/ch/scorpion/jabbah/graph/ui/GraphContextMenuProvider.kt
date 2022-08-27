@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.OpenSubGraphViewerAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView

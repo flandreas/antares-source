@@ -342,55 +342,59 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldNotBeUndoableWithNewCheckpoint() {
+		val checkpointApp = ApplicationDummy()
 		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.openCheckpoint("test")
+		cmdManager.openCheckpoint("test", checkpointApp)
 
 		assertFalse(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldBeUndoableAfterOpeningCheckpoint() {
+		val checkpointApp = ApplicationDummy()
 		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
 
 		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
 	fun shouldUndoInCheckpoint() {
-		cmdManager.execute(AppendCommand(app, "a"))
-
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
+		val checkpointApp = ApplicationDummy()
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "a"))
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
 
 		cmdManager.undo()
 
-		assertEquals("a", app.mandatoryData.value)
+		assertEquals("a", checkpointApp.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldRedoInCheckpoint() {
-		cmdManager.execute(AppendCommand(app, "a"))
+		val checkpointApp = ApplicationDummy()
 
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "a"))
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
 		cmdManager.undo()
 
 		cmdManager.redo()
 
-		assertEquals("ab", app.mandatoryData.value)
+		assertEquals("ab", checkpointApp.mandatoryData.value)
 
 	}
 
 	@Test
 	fun shouldPurgeCommandsWhenClosingCheckpoint() {
+		val checkpointApp = ApplicationDummy()
 		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
 		cmdManager.closeCheckpoint()
 
 		cmdManager.undo()
@@ -400,16 +404,17 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldUseCheckpoint() {
+		val checkpointApp = ApplicationDummy()
 		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
-		cmdManager.execute(AppendCommand(app, "c"))
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
+		cmdManager.execute(AppendCommand(checkpointApp, "c"))
 		cmdManager.closeCheckpoint()
 
 		// The data in Application has changed since checkpoint, but checkpoint command are thrown away when
 		// closing a checkpoint, therefore register a Command for the accumulated changes since the checkpoint
-		cmdManager.register(AppendCommand(app, "bc"))
+		cmdManager.execute(AppendCommand(app, "bc"))
 
 		assertEquals("abc", app.mandatoryData.value)
 	}
@@ -417,21 +422,23 @@ class SourcingCommandManagerTest {
 	@Test
 	fun shouldUndoAfterOpeningCheckpoint() {
 		cmdManager.execute(AppendCommand(app, "a"))
+		val checkpointApp = ApplicationDummy(StorableString(app.mandatoryData.value))
 
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand(app, "b"))
-		cmdManager.execute(AppendCommand(app, "c"))
+		cmdManager.openCheckpoint("test", checkpointApp)
+		cmdManager.execute(AppendCommand(checkpointApp, "b"))
+		cmdManager.execute(AppendCommand(checkpointApp, "c"))
 		cmdManager.undo()
 
-		cmdManager.register(AppendCommand(app, "b"))
+		cmdManager.execute(AppendCommand(app, "b"))
 		assertEquals("ab", app.mandatoryData.value)
 	}
 
 	@Test
 	fun shouldAbandonCheckpointChanges() {
+		val checkpointApp = ApplicationDummy()
 		cmdManager.execute(AppendCommand(app, "a"))
 
-		cmdManager.openCheckpoint("test")
+		cmdManager.openCheckpoint("test", checkpointApp)
 		cmdManager.execute(AppendCommand(app, "b"))
 		cmdManager.closeCheckpoint()
 		// Abandon checkpoint changes by not registering a corresponding command

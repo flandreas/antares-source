@@ -46,14 +46,8 @@ class SourcingCommandManager(
 	private val maxSnapshotSizeReached: Boolean get() =
 		!state.snapshots.empty && state.snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot
 
-	private lateinit var undoableDataHolder: UndoableDataHolder
-
 	private val states = Stack<State>()
 	private val state: State get() = states.peek()
-
-	init {
-		states.push(State(DEFAULT_STATE_NAME))
-	}
 
 	val snapshotCount: Int get() = state.snapshotCount
 	val redoSnapshotCount: Int get() = state.redoSnapshotCount
@@ -133,7 +127,7 @@ class SourcingCommandManager(
 
 	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
 		LOG.trace("Binding to $dataHolder")
-		undoableDataHolder = dataHolder
+		states.push(State(DEFAULT_STATE_NAME, dataHolder))
 		reset()
 	}
 
@@ -149,7 +143,9 @@ class SourcingCommandManager(
 		LOG.trace("reset, creating snapshot")
 		resetUndo()
 		resetRedo()
-		undoableDataHolder.getUndoableState()?.let { addableSnapshot() }
+		if (state.dataHolder.getUndoableState() != null) {
+			addableSnapshot()
+		}
 		eventBus.post(CommandEvent(this))
 	}
 
@@ -311,9 +307,10 @@ class SourcingCommandManager(
 		return state.snapshots.peek().redoDescription
 	}
 
-	override fun openCheckpoint(name: String) {
+	override fun openCheckpoint(name: String, dataHolder: UndoableDataHolder) {
 		LOG.trace("Open checkpoint '$name'")
-		states.push(State(name))
+		states.push(State(name, dataHolder))
+		addableSnapshot()
 		eventBus.post(CommandEvent(this))
 	}
 
@@ -366,11 +363,11 @@ class SourcingCommandManager(
 
 	// Visible for testing
 	fun addSnapshot() {
-		state.snapshots.push(Snapshot(createSnapshotData(), undoableDataHolder))
+		state.snapshots.push(Snapshot(createSnapshotData(), state.dataHolder))
 	}
 
 	private fun createSnapshotData(): Storable {
 		LOG.trace("Create new snapshot")
-		return StorableCloner.clone(undoableDataHolder.getUndoableState()!!)
+		return StorableCloner.clone(state.dataHolder.getUndoableState()!!)
 	}
 }

@@ -149,9 +149,11 @@ interface CommandManager : Iterable<Command> {
 
 	/**
 	 * Creates a new, stacked [CommandManager] state. See the class comment for more information.
-	 * @name the name of the checkpoint. Only used for logging.
+	 * @param name the name of the checkpoint. Only used for logging.
+	 * @param dataHolder the [UndoableDataHolder] associated with the newly created checkpoint and
+	 * therefore the one providing the data from which [Commands][Command] are replayed in case of undo
 	 */
-	fun openCheckpoint(name: String)
+	fun openCheckpoint(name: String, dataHolder: UndoableDataHolder)
 
 	/**
 	 * Closes the previously opened checkpoint.

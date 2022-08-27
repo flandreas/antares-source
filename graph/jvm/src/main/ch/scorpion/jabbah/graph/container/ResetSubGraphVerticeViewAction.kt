@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewCommand
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action

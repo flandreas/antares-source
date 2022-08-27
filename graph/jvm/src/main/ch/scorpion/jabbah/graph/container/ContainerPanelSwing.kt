@@ -164,6 +164,13 @@ class ContainerPanelSwing(
 		treeView.update(graphView, containerDrawing, editable)
 	}
 
+	/**
+	 * Similar to [setData], but used in the context of [UndoableDataHolder].
+	 */
+	fun updateData(containerDrawing: ContainerDrawing) {
+		editor.view.setDrawing(containerDrawing)
+	}
+
 	private fun createMiscellaneousToolbar(): ToolBar {
 		val toolbar = ToolBar(null)
 		toolbar.addSeparator()

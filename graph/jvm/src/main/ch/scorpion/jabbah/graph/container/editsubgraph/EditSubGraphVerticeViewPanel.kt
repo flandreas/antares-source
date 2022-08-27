@@ -1,18 +1,20 @@
-package ch.scorpion.jabbah.graph.container
+package ch.scorpion.jabbah.graph.container.editsubgraph
 
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.app.*
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -28,16 +30,14 @@ class EditSubGraphVerticeViewPanel(
 	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val containerPanel: ContainerPanelSwing,
 	private val subGraphVerticeView: SubGraphVerticeView<*>,
-	private val closeHandler: (Boolean) -> Unit
-) : JPanel() {
+	private var closeHandler: () -> Unit = {}
+) : JPanel(), UndoableDataHolder {
 
 	companion object {
 
-		private val actions = mutableListOf<Action>()
-
 		/**
 		 * Shows an [EditSubGraphVerticeViewPanel] within a modal dialog.
-		 * @return `true` if the user confirmed his changed by clicking "OK", `false` if he clicked "Cancel".
+		 * @return the edited [ContainerDrawing] if the user closed the dialog with OK, `null` otherwise
 		 */
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
@@ -45,85 +45,59 @@ class EditSubGraphVerticeViewPanel(
 			containerPanel: ContainerPanelSwing,
 			subGraphVerticeView: SubGraphVerticeView<*>,
 			commandManager: CommandManager
-		): Boolean {
-			var okPressed = false
-			actions.clear()
-
-			var dialog = DialogBuilder<EditSubGraphVerticeViewPanel>(parent)
+		): ContainerDrawing? {
+			val panel = EditSubGraphVerticeViewPanel(metaGraphRepository, containerPanel, subGraphVerticeView)
+			val dialog = DialogBuilder<EditSubGraphVerticeViewPanel>(parent)
 				.content { dialog ->
-					EditSubGraphVerticeViewPanel(metaGraphRepository, containerPanel, subGraphVerticeView) {
-						okPressed = it
-						dialog.dispose()
-					}
+					panel.closeHandler = { dialog.dispose() }
+					panel
 				}
-				.title(Translations.getString("graph.action.editSubGraphVerticeView.name"))
+				.title(Translations.getString("graph.action.editSubGraphVerticeView.title"))
 				.defaultButton { it.cancelButton }
-				.menu(createMenuBar())
+				.menu(panel.menuBar)
 				.resizable()
 
 			try {
-				commandManager.openCheckpoint("subgraphContainerView")
+				commandManager.openCheckpoint("subgraphContainerView", panel)
 				dialog.show()
 			} finally {
 				commandManager.closeCheckpoint()
-				actions.forEach { it.dispose() }
+				panel.dispose()
 			}
 
-			return okPressed
-		}
-
-		private fun createMenuBar(): JMenuBar {
-			val menuBar = JMenuBar()
-
-			val editMenu = JMenu(Translations.getString("application.menu.edit"))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(UndoAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(RedoAction()))))
-			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(DeleteAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(RotateAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(GroupComponentsAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(UngroupComponentsAction()))))
-			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(SelectAllAction()))))
-			editMenu.addSeparator()
-			val arrangeMenu = JMenu(Translations.getString("edit.action.stackingOrder.name"))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(ToFrontAction()))))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(OneUpAction()))))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(OneDownAction()))))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(ToBackAction()))))
-			editMenu.add(arrangeMenu)
-			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(CutAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(CopyAction()))))
-			editMenu.add(JMenuItem(ActionWrapperSwing(register(PasteAction()))))
-
-			menuBar.add(editMenu)
-
-			val viewMenu = JMenu(Translations.getString("application.menu.view"))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomInAction()))))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomNormalAction()))))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomOutAction()))))
-			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomCenterAction()))))
-			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomFitAction()))))
-			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomFitMaxNormalAction()))))
-			viewMenu.addSeparator()
-			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(GridAction()))))
-			menuBar.add(viewMenu)
-
-			return menuBar
-		}
-
-		private fun register(action: Action): Action {
-			actions.add(action)
-			return action
+			return if (panel.okPressed) {
+				panel.containerPanel.editor.drawing as ContainerDrawing
+			} else {
+				null
+			}
 		}
 	}
 
 	val cancelButton = JButton(ActionWrapperSwing(CancelAction()))
 
+	val menuBar = EditSubGraphVerticeViewMenu()
+
+	var okPressed: Boolean = false
+		private set
+
 	init {
 		buildUI()
 	}
+
+	fun dispose() {
+		menuBar.dispose()
+	}
+
+	/** ---- [UndoableDataHolder] interface*/
+
+	override fun getUndoableState(): Storable =
+		containerPanel.editor.drawing
+
+	override fun setUndoableState(state: Storable) {
+		containerPanel.updateData(state as ContainerDrawing)
+	}
+
+	/** ---- [EditSubGraphVerticeViewPanel] */
 
 	private fun buildUI() {
 		layout = BorderLayout()
@@ -166,13 +140,16 @@ class EditSubGraphVerticeViewPanel(
 
 	private inner class OKAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
-			closeHandler.invoke(true)
+			okPressed = true
+			closeHandler.invoke()
 		}
 	}
 
 	private inner class CancelAction : AbstractAction("base.action.cancel") {
 		override fun execute(event: ActionEvent) {
-			closeHandler.invoke(false)
+			okPressed = false
+			closeHandler.invoke()
 		}
 	}
+
 }

@@ -1,9 +1,11 @@
 package ch.scorpion.jabbah.edit.command
 
 import ch.scorpion.jabbah.base.collection.Stack
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 
 /** Used to implement checkpoints in [SourcingCommandManager].*/
-internal class State(val name: String) {
+internal class State(val name: String, val dataHolder: UndoableDataHolder) {
+
 	val snapshots = Stack<Snapshot>()
 	val redoSnapshots = Stack<Snapshot>()
 	var transaction: Transaction? = null

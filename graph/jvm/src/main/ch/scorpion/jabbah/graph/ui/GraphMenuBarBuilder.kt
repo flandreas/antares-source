@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.NewGraphAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu

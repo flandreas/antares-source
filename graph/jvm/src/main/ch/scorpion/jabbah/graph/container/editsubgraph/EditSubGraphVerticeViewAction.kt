@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.container
+package ch.scorpion.jabbah.graph.container.editsubgraph
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action
@@ -60,14 +62,15 @@ class EditSubGraphVerticeViewAction(
 			containerPanel.active = true
 		}
 
-		if (EditSubGraphVerticeViewPanel.showAsDialog(
+		val editedContainerDrawing = EditSubGraphVerticeViewPanel.showAsDialog(
 				metaGraphRepository = metaGraphRepository,
 				containerPanel = containerPanel,
 				subGraphVerticeView = editedVerticeView,
 				commandManager = commandManager
-			)) {
-			// User has pressed "OK"
-			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
+			)
+
+		editedContainerDrawing?.let {
+			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, it))
 		}
 
 		viewManager.activeView = oldActiveView
