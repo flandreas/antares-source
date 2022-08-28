@@ -2,7 +2,9 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.edit.CommandManager
@@ -27,8 +29,15 @@ class AddressableDisplayPanel(
 	editable: () -> Boolean,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val view: DrawingView<GraphView>,
-	private val cmdManager: CommandManager = EditModule.commandManager
+	private val cmdManager: CommandManager = EditModule.commandManager,
+	private val settings: Settings = BaseModule.settings
 ) : JPanel() {
+
+	companion object {
+		private const val SETTING_COMMENT_COLUMN_WIDTH = "addressable.commentWidth"
+		private const val DEF_VALUE_COLUMN_WIDTH = 50
+		private const val DEF_COMMENT_COLUMN_WIDTH = 200
+	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
 		FixedWidthLayout(1, addressableRef, editable, applicationContextHolder.scheduler),
@@ -44,9 +53,13 @@ class AddressableDisplayPanel(
 
     init {
         buildUI()
-	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout) }
+	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout, exchange = true) }
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
     }
+
+	fun dispose() {
+		storeCommentColumnWidth()
+	}
 
 	fun refresh() {
 		table.invalidate()
@@ -74,7 +87,11 @@ class AddressableDisplayPanel(
 		table.addFocusListener(focusListener)
 	}
 
-	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout) {
+	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout, exchange: Boolean = false) {
+		if (exchange) {
+			storeCommentColumnWidth()
+		}
+
 		val tableModel = addressableDisplayLayout.createTableModel()
 		table.model = tableModel
 
@@ -87,10 +104,12 @@ class AddressableDisplayPanel(
 		for (i in 0 until table.columnCount) {
 			val column = table.columnModel.getColumn(i)
 
-			column.cellEditor = if (tableModel.isCommentColumn(i)) {
-				AddressableCommentEditor(addressableRef, addressableDisplayLayout, ::consumeCommentChange)
+			if (tableModel.isCommentColumn(i)) {
+				column.cellEditor = AddressableCommentEditor(addressableRef, addressableDisplayLayout, ::consumeCommentChange)
+				column.preferredWidth = settings.getInt(SETTING_COMMENT_COLUMN_WIDTH, DEF_COMMENT_COLUMN_WIDTH)
 			} else {
-				AddressableValueEditor(addressableRef, addressableDisplayLayout, ::consumeValueChange)
+				column.cellEditor = AddressableValueEditor(addressableRef, addressableDisplayLayout, ::consumeValueChange)
+				column.preferredWidth = DEF_VALUE_COLUMN_WIDTH
 			}
 
 			val tableCellRenderer = AddressableCellRenderer(applicationContextHolder, addressableRef, addressableDisplayLayout)
@@ -105,5 +124,11 @@ class AddressableDisplayPanel(
 
 	private fun consumeCommentChange(change: AddressableCommentChange) {
 		cmdManager.register(AddressableCommentChangeCommand(view, addressableRef.id, listOf(change)))
+	}
+
+	private fun storeCommentColumnWidth() {
+		if (table.model.columnCount == 2) {
+			settings.set(SETTING_COMMENT_COLUMN_WIDTH, table.columnModel.getColumn(1).width)
+		}
 	}
 }
