@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -94,7 +95,7 @@ class MetaGraphHistoryPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(0, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		historyList.cellRenderer = HistoryRenderer()
 
@@ -110,7 +111,7 @@ class MetaGraphHistoryPanel(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(JButton(ActionWrapperSwing(restoreAction)))
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(Box.createHorizontalStrut(5))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(closeButton)
 		add(buttonPanel, BorderLayout.SOUTH)
 	}

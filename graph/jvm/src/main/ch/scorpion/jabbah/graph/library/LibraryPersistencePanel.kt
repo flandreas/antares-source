@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -73,14 +74,15 @@ class LibraryPersistencePanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(openButton)
-		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(createButton(NewAction()))
-		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(createButton(deleteAction))
-		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GROUP_GAP))
 		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(createButton(importAction))
-		buttonPanel.add(Box.createHorizontalStrut(9))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GROUP_GAP))
 
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(createButton(CancelAction()))

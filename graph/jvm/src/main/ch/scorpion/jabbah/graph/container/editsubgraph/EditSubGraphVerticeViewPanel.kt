@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -130,11 +131,10 @@ class EditSubGraphVerticeViewPanel(
 	private fun createButtonPanel(): JPanel {
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+		panel.border = UIBasics.createDialogBorder()
 		panel.add(Box.createHorizontalGlue())
-		panel.add(JButton(ActionWrapperSwing(OKAction())))
-		panel.add(Box.createHorizontalStrut(2))
-		panel.add(cancelButton)
-		panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		UIBasics.addButtons(panel, JButton(ActionWrapperSwing(OKAction())), cancelButton)
+
 		return panel
 	}
 

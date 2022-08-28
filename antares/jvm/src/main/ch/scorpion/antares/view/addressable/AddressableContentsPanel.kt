@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
@@ -127,15 +128,15 @@ class AddressableContentsPanel(
 		add(contentsView, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
-		buttonPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		buttonPanel.border = UIBasics.createDialogBorder()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
-		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(importButton)
 
-		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(exportButton)
-		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(clearButton)
 
 		if (closeHandler != null) {

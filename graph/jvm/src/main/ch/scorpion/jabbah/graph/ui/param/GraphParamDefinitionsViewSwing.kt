@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.*
 import java.awt.*
@@ -163,7 +164,7 @@ class GraphParamDefinitionsViewSwing(
 	private fun buildUI() {
 		val buttonDist = 4
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		defaultValueFieldHolder.layout = BorderLayout()
 
@@ -197,9 +198,7 @@ class GraphParamDefinitionsViewSwing(
 		val southButtonPanel = JPanel()
 		southButtonPanel.layout = BoxLayout(southButtonPanel, BoxLayout.LINE_AXIS)
 		southButtonPanel.add(Box.createHorizontalGlue())
-		southButtonPanel.add(createButton(controller.cancelAction))
-		southButtonPanel.add(Box.createHorizontalStrut(buttonDist))
-		southButtonPanel.add(createButton(controller.saveAction))
+		UIBasics.addButtons(southButtonPanel, createButton(controller.saveAction), createButton(controller.cancelAction))
 		southPanel.add(Box.createVerticalStrut(20))
 		southPanel.add(southButtonPanel)
 

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
@@ -45,7 +46,7 @@ class NewVersionPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		val iconPanel = JPanel()
 		iconPanel.layout = BoxLayout(iconPanel, BoxLayout.PAGE_AXIS)

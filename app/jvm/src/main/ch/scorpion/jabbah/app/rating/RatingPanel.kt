@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import kotlinx.coroutines.runBlocking
 import java.awt.*
 import javax.swing.*
@@ -78,7 +79,7 @@ class RatingPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
+		border = UIBasics.createDialogBorder()
 
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
@@ -144,10 +145,10 @@ class RatingPanel(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(askLaterButton)
-		buttonPanel.add(Box.createHorizontalStrut(5))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		if (cancelable) {
 			buttonPanel.add(cancelButton)
-			buttonPanel.add(Box.createHorizontalStrut(5))
+			buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		}
 		buttonPanel.add(sendButton)
 

@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -142,7 +143,7 @@ class LibraryCompositionPanel(
 	private fun buildUI() {
 		layout = BorderLayout()
 		preferredSize = Dimension(700, 500)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		add(buildContentPanel(), BorderLayout.CENTER)
 

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Frame
@@ -58,7 +59,7 @@ class NewBooleanExpressionPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
+		border = UIBasics.createDialogBorder()
 
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
@@ -75,9 +76,7 @@ class NewBooleanExpressionPanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(createButton(cancelAction))
-		buttonPanel.add(Box.createHorizontalStrut(5))
-		buttonPanel.add(okButton)
+		UIBasics.addButtons(buttonPanel, okButton, createButton(cancelAction))
 
 		add(contentPanel, BorderLayout.CENTER)
 		add(buttonPanel, BorderLayout.SOUTH)

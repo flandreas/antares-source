@@ -10,8 +10,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
@@ -65,7 +65,7 @@ class NewTruthTablePanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
+		border = UIBasics.createDialogBorder()
 
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
@@ -104,9 +104,7 @@ class NewTruthTablePanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(createButton(cancelAction))
-		buttonPanel.add(Box.createHorizontalStrut(5))
-		buttonPanel.add(okButton)
+		UIBasics.addButtons(buttonPanel, okButton, createButton(cancelAction))
 
 		add(contentPanel, BorderLayout.CENTER)
 		add(buttonPanel, BorderLayout.SOUTH)

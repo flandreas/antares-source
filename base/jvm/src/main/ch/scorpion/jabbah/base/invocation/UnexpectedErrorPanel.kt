@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.Clipboard
+import ch.scorpion.jabbah.base.ui.UIBasics
 import org.apache.commons.io.output.StringBuilderWriter
 import java.awt.BorderLayout
 import java.awt.Component
@@ -44,7 +45,7 @@ class UnexpectedErrorPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		val iconPanel = JPanel()
 		iconPanel.layout = BoxLayout(iconPanel, BoxLayout.PAGE_AXIS)

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -59,9 +60,8 @@ class LibrarySelectionPanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(createButton(CancelAction()))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(openButton)
+		UIBasics.addButtons(buttonPanel, openButton, createButton(CancelAction()))
+
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 

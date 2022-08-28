@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
-import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.expression.NewBooleanExpressionPanel
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
@@ -16,6 +15,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -73,7 +73,7 @@ class AnalyseCircuitPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
+		border = UIBasics.createDialogBorder()
 
 		add(buildContentsPanel(), BorderLayout.CENTER)
 		add(buildButtonPanel(), BorderLayout.SOUTH)
@@ -121,9 +121,9 @@ class AnalyseCircuitPanel(
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 
 		panel.add(JButton(ActionWrapperSwing(saveTruthTableAction)))
-		panel.add(Box.createHorizontalStrut(5))
+		panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		panel.add(JButton(ActionWrapperSwing(saveExpressionsAction)))
-		panel.add(Box.createHorizontalStrut(5))
+		panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		panel.add(Box.createHorizontalGlue())
 		panel.add(closeButton)
 

@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.*
 import javax.swing.*
 
@@ -67,7 +68,7 @@ class ScriptPropertyPanel(
 
 	private fun buildUI(editable: Boolean) {
 		layout = BorderLayout(0, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		val textsPanel = JPanel()
 		textsPanel.layout = BoxLayout(textsPanel, BoxLayout.PAGE_AXIS)
@@ -99,17 +100,15 @@ class ScriptPropertyPanel(
 		panel.add(Box.createHorizontalGlue())
 		if (parserFactory != null) {
 			panel.add(createButton(checkAction))
-			panel.add(Box.createHorizontalStrut(9))
+			panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GROUP_GAP))
 		}
-		panel.add(createButton(cancelAction))
-		panel.add(Box.createHorizontalStrut(2))
-		panel.add(okButton)
+		UIBasics.addButtons(panel, okButton, createButton(cancelAction))
 	}
 
 	private fun buildNonEditableButtonPanel(panel: JPanel) {
 		if (parserFactory != null) {
 			panel.add(createButton(checkAction))
-			panel.add(Box.createHorizontalStrut(9))
+			panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GROUP_GAP))
 		}
 		panel.add(closeButton)
 	}

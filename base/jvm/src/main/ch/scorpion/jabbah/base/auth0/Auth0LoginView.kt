@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.ui.UIBasics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -61,7 +62,6 @@ class Auth0LoginView(
 ) : JPanel() {
 
 	companion object {
-		private const val INSET = 10
 
 		fun showAsDialog() {
 			DialogBuilder<Auth0LoginView>(Frame.getFrames()[0])
@@ -99,7 +99,7 @@ class Auth0LoginView(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(INSET, INSET, INSET, INSET)
+		border = UIBasics.createDialogBorder()
 
 		iconPanel.layout = BoxLayout(iconPanel, BoxLayout.PAGE_AXIS)
 		iconPanel.add(JLabel(UIManager.getIcon("OptionPane.informationIcon"), SwingConstants.LEFT))
@@ -117,9 +117,7 @@ class Auth0LoginView(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(JButton(ActionWrapperSwing(cancelAction)))
-		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(continueButton)
+		UIBasics.addButtons(buttonPanel, continueButton, JButton(ActionWrapperSwing(cancelAction)))
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 

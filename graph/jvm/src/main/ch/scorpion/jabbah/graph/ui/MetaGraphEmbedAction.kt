@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.Clipboard
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
@@ -61,7 +62,7 @@ internal class MetaGraphEmbedPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+		border = UIBasics.createDialogBorder()
 
 		addPage(
 			Translations.getString("graph.action.embed.iframe.name"),
@@ -73,6 +74,7 @@ internal class MetaGraphEmbedPanel(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
 		buttonPanel.add(createButton(copyToClipboardAction))
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(closeButton)
 		add(buttonPanel, BorderLayout.SOUTH)
