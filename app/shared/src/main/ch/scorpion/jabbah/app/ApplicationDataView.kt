@@ -242,7 +242,10 @@ open class ApplicationDataViewController(
 			return true
 		}
 		return when(view.decideSaveChangedData(actionKey)) {
-			No -> true
+			No -> {
+				commandManager.reset()
+				true
+			}
 			Cancel -> false
 			Yes -> data?.savable?.save(this) ?: true
 		}

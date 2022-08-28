@@ -43,7 +43,11 @@ class LibraryPreviewPanel(
 	}
 
 	init {
-		eventBus.register(CurrentSavableEvent::class) { updateWithSelectedItem() }
+		eventBus.register(CurrentSavableEvent::class) {
+			SwingUtilities.invokeLater {
+				updateWithSelectedItem()
+			}
+		}
 	}
 
 	@Suppress("unused")
