@@ -1,5 +1,6 @@
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.gradle.internal.os.OperatingSystem
 
 buildscript {
 	dependencies {
@@ -91,8 +92,10 @@ subprojects {
 			}
 		}
 
-		js {
-			browser()
+		if (OperatingSystem.current().isMacOsX) {
+			js {
+				browser()
+			}
 		}
 
 		sourceSets {
@@ -150,25 +153,28 @@ subprojects {
 					implementation("io.mockk:mockk:$mockkVersion")
 				}
 			}
-			val jsMain by getting {
-				kotlin.srcDir("js/src/kotlin/main")
-				resources.srcDir("js/rsc")
 
-				dependencies {
-					implementation("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}")
-					implementation(npm("react-hot-loader", "^4.12.20"))
-					implementation("org.jetbrains.kotlin-wrappers:kotlin-styled")
-					implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
-					implementation(npm("react-resize-detector", "~6.7.0"))
-					implementation(npm("react-split-pane", "~0.1.92"))
-					implementation(npm("@auth0/auth0-react", "~1.8.0"))
+			if (OperatingSystem.current().isMacOsX) {
+				val jsMain by getting {
+					kotlin.srcDir("js/src/kotlin/main")
+					resources.srcDir("js/rsc")
+
+					dependencies {
+						implementation("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}")
+						implementation(npm("react-hot-loader", "^4.12.20"))
+						implementation("org.jetbrains.kotlin-wrappers:kotlin-styled")
+						implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
+						implementation(npm("react-resize-detector", "~6.7.0"))
+						implementation(npm("react-split-pane", "~0.1.92"))
+						implementation(npm("@auth0/auth0-react", "~1.8.0"))
+					}
 				}
-			}
-			val jsTest by getting {
-				kotlin.srcDir("js/src/kotlin/test")
-				dependencies {
-					implementation(kotlin("test-js"))
-					implementation("io.mockk:mockk-js:1.7.17")
+				val jsTest by getting {
+					kotlin.srcDir("js/src/kotlin/test")
+					dependencies {
+						implementation(kotlin("test-js"))
+						implementation("io.mockk:mockk-js:1.7.17")
+					}
 				}
 			}
 
@@ -228,16 +234,10 @@ tasks {
 	}
 }
 
-
-/*
-// jsBrowserDevelopmentRun fails with webPack 5: Workaround https://youtrack.jetbrains.com/issue/KT-48273
-rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
-	rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.webpackDevServer.version = "4.0.0-rc.0"
-}
-*/
-
-afterEvaluate {
-	rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-		versions.webpackDevServer.version = "4.0.0"
+if (OperatingSystem.current().isMacOsX) {
+	afterEvaluate {
+		rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+			versions.webpackDevServer.version = "4.0.0"
+		}
 	}
 }

@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.konan.file.File.Companion.javaHome
+import org.gradle.internal.os.OperatingSystem
 
 val version_project: String by extra
 val mockkVersion: String by extra
@@ -27,11 +28,13 @@ plugins {
 
 kotlin {
 
-	js(LEGACY) {
-		browser {
-			binaries.executable()
-			commonWebpackConfig {
-				cssSupport.enabled = true
+	if (OperatingSystem.current().isMacOsX) {
+		js(LEGACY) {
+			browser {
+				binaries.executable()
+				commonWebpackConfig {
+					cssSupport.enabled = true
+				}
 			}
 		}
 	}
@@ -237,7 +240,7 @@ tasks {
 		}
 	}
 
-	val distributeMac by creating() {
+	val distributeMac by creating {
 		dependsOn(obfuscate)
 		dependsOn(copySplash)
 
@@ -246,25 +249,47 @@ tasks {
 		}
 	}
 
-	val distributeWindows by creating(Exec::class) {
+	fun distributeWindowsSteps() {
+
+		// Packaging
+		exec {
+			workingDir = projectDir
+			commandLine(
+				"${win_jpackage_home}\\bin\\jpackage",
+				"--name", "Antares",
+				"--input", "${buildDir}\\package",
+				"--dest", "${buildDir}\\distributions",
+				"--main-jar", "antares-${version_project}.jar",
+				"--app-version", "$version",
+				"--icon", "jvm\\rsc\\antares.ico",
+				"--java-options", "-splash:\$APPDIR/splash-empty.png",
+				"--type", "msi",
+				"--resource-dir", "jvm/rsc/",
+				"--win-shortcut"
+			)
+		}
+
+		// Signing
+		exec {
+			workingDir = projectDir
+			commandLine(
+				"C:\\\"Program Files (x86)\"\\\"Windows Kits\"\\10\\bin\\x64\\signtool",
+				"sign",
+				"/fd", "SHA256",
+				"/f", "C:\\Users\\Andreas\\Desktop\\AndreasFleischmann.pfx",
+				"/t", "http://timestamp.digicert.com",
+				"${buildDir}\\distributions\\Antares-$version_project.msi"
+			)
+		}
+	}
+
+	val distributeWindows by creating {
 		dependsOn(obfuscate)
 		dependsOn(copySplash)
 
-		workingDir = projectDir
-
-		commandLine(
-			"${win_jpackage_home}\\bin\\jpackage",
-			"--name", "Antares",
-			"--input", "${buildDir}\\package",
-			"--dest", "${buildDir}\\distributions",
-			"--main-jar", "antares-${version_project}.jar",
-			"--app-version", "$version",
-			"--icon", "jvm\\rsc\\antares.ico",
-			"--java-options", "-splash:\$APPDIR/splash-empty.png",
-			"--type", "msi",
-			"--resource-dir", "jvm/rsc/",
-			"--win-shortcut"
-		)
+		doLast {
+			distributeWindowsSteps()
+		}
 	}
 	
 	val distributeLinux by creating(Exec::class) {
