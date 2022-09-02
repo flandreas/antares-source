@@ -120,6 +120,7 @@
             <baseLibraryElement _id='52' id='LED'/>
             <baseLibraryElement _id='53' id='RgbLED'/>
             <baseLibraryElement _id='54' id='SevenSegmentDisplay'/>
+            <baseLibraryElement _id='131' id='SixteenSegmentDisplay'/>
             <baseLibraryElement _id='55' id='LEDMatrix'/>
             <baseLibraryElement _id='56' id='Terminal'/>
             <baseLibraryElement _id='57' id='Buzzer'/>

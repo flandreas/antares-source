@@ -116,6 +116,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val LED = "LED"
 	private const val RGB_LED = "RgbLED"
 	private const val SEVEN_SEGMENT_DISPLAY = "SevenSegmentDisplay"
+	private const val SIXTEEN_SEGMENT_DISPLAY = "SixteenSegmentDisplay"
 	private const val LED_MATRIX = "LEDMatrix"
 	private const val BUZZER = "Buzzer"
 
@@ -216,6 +217,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(RgbLEDView.PROP_ICON_PATH, "/img/rgb-led.png")
 		properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
 		properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
+		properties.set(SixteenSegmentDisplayView.PROP_ICON_PATH, "/img/16segment.png")
 		properties.set(TerminalView.PROP_ICON_PATH, "/img/terminal.png")
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
@@ -259,6 +261,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("ledView", LEDView::class)
 		typeMap.register("RgbLedView", RgbLEDView::class)
 		typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
+		typeMap.register("sixteenSegmentDisplayView", SixteenSegmentDisplayView::class)
 		typeMap.register("bidirectionalSplitterView", BidirectionalSplitterView::class)
 		typeMap.register("splitterView", SplitterView::class)
 		typeMap.register("concentratorView", ConcentratorView::class)
@@ -336,7 +339,8 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SixteenSegmentDisplayView::class) { SegmentDisplayViewSelectionModel(it as SixteenSegmentDisplayView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BuzzerView::class) { SelectedColorSelectionModel(it) }
 
@@ -455,6 +459,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LED, "library.element.LED", { "/img/led.png" }, LEDView::class)
 		repository.register(RGB_LED, "library.element.RgbLED", { "/img/rgb-led.png" }, RgbLEDView::class)
 		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", { "/img/7segment.png" }, SevenSegmentDisplayView::class)
+		repository.register(SIXTEEN_SEGMENT_DISPLAY, "library.element.SixteenSegmentDisplay", { "/img/16segment.png" }, SixteenSegmentDisplayView::class)
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
 		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
 

@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.output
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -11,7 +10,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class SevenSegmentDisplay(
 	portScheme: SevenSegmentDisplayScheme = SevenSegmentDisplayScheme.COMBINED
-) : CalculatingVertice(CALCULATOR) {
+) : AbstractSegmentDisplay<SevenSegmentDisplay>(CALCULATOR) {
 
 	companion object {
 
@@ -44,6 +43,8 @@ class SevenSegmentDisplay(
 	init {
 		portScheme.createPorts(this)
 	}
+
+	override fun inputValueOf(bitName: String): Boolean = portScheme.inputValueOf(this, bitName)
 
 	/** ---- [Storable] interface */
 
