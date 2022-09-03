@@ -93,9 +93,11 @@ class CreateLibraryPanel(
 	}
 
 	private fun setupImportComboBox(service: LibraryManagementService) {
+		val entries = service.getLibraryDirectoryEntries()
 		importComboBox.addItem(null)
-		service.getLibraryDirectoryEntries().forEach { importComboBox.addItem(it) }
+		entries.forEach { importComboBox.addItem(it) }
 		importComboBox.renderer = LibraryNameRenderer()
+		importComboBox.selectedItem = entries.first { it.uuid == LibraryModule.DEF_LIBRARY_UUID }
 	}
 
 	private fun buildEGBLLayout() {
