@@ -109,15 +109,14 @@ class LibraryManagementService(
 	}
 
 	/**
-	 * Updates the currently open [Library] with the specified properties and stores it in persistent store.
+	 * Updates the specified [Library] with the specified properties and stores it in persistent store.
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Library]
 	 * with the specified name already exists.
 	 * @throws IllegalStateException if no [Library] is currently open
 	 * Posts [LibraryPropertiesEvent] on this [LibraryManagementService]'s [EventBus].
 	 */
-	fun update(properties: LibraryProperties) {
-		val library = libraryHolder.library
-		LOG.trace("updating library ${library.uuid}")
+	fun update(library: Library, properties: LibraryProperties) {
+		LOG.userTrail("Updating library ${library.uuid}")
 
 		if (library.name.translation != properties.name) {
 			if (existsName(properties.name, except = library.uuid)) {

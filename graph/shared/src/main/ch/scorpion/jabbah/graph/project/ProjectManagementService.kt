@@ -108,7 +108,7 @@ class ProjectManagementService(
 			throw IllegalStateException("cannot update properties, no project open")
 		}
 		val project = libraryHolder.library as Project
-		LOG.trace("updating project '${project.name}'")
+		LOG.userTrail("Updating project '${project.uuid}'")
 
 		if (project.name.translation != properties.name) {
 			if (existsName(properties.name, except = project.uuid)) {

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.view.LibraryVisibilityEditor
 import java.awt.Component
 import java.awt.Dimension
@@ -16,7 +17,14 @@ import javax.swing.*
 import javax.swing.event.AncestorEvent
 import javax.swing.event.AncestorListener
 
-/** A [JPanel] for editing the properties of a [Library].*/
+/**
+ * A [JPanel] for editing the properties of a [Library].
+ *
+ * @param supportImport `true` if this [LibraryPropertiesPanel] shows a combo box for selecting a [Library]
+ * to be imported. Only needed when creating a new [Library] or a new [Project].
+ * @param managementService the service for retrieving the [Library] to be imported, if enabled by `supportImport`.
+ * Is always [Library], so no need to support the corresponding [Project] management service
+ */
 class LibraryPropertiesPanel(
 	supportOwnership: Boolean,
 	supportImport: Boolean,

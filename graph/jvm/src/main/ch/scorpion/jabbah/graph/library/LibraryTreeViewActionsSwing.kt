@@ -39,6 +39,7 @@ open class LibraryTreeViewActionsSwing(
 	private val newGraphViewerAction = NewGraphViewerAction(application.displayName, controller)
 	private val embedMetaGraphAction = MetaGraphEmbedAction(controller)
 
+	private val libraryPropertiesAction = LibraryPropertiesAction(controller)
 	val addLibraryFolderAction = AddLibraryFolderAction(controller, libraryOperationTarget)
 	val deleteLibraryFolderAction = DeleteLibraryFolderAction(controller, libraryOperationTarget)
 	private val newLibraryGraphAction = NewGraphAction(controller)
@@ -48,6 +49,7 @@ open class LibraryTreeViewActionsSwing(
 	private val importLibraryMetaGraphAction = ImportMetaGraphAction(controller, libraryOperationTarget)
 	private val renameLibraryMetaGraphAction = RenameMetaGraphAction(controller, libraryOperationTarget)
 
+	private val projectPropertiesAction = ProjectPropertiesAction(controller)
 	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
 	private val deleteProjectFolderAction = DeleteLibraryFolderAction(controller, projectOperationTarget)
 	private val newProjectGraphAction = NewGraphAction(controller)
@@ -155,7 +157,7 @@ open class LibraryTreeViewActionsSwing(
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
+		projectRootMenu.add(ActionWrapperSwing(projectPropertiesAction))
 		if (uploadProjectAction != null) {
 			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
 		}
@@ -195,7 +197,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
 		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
+		libraryRootMenu.add(ActionWrapperSwing(libraryPropertiesAction))
 	}
 
 	protected open fun fillMainLibraryRootCreateActions() {
