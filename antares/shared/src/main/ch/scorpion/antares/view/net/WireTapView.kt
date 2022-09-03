@@ -19,8 +19,10 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -33,7 +35,6 @@ class WireTapView(
 ) : DigitalComponentView<WireTap>(styleProvider, model) {
 
 	companion object {
-		private const val INSET_Y = 0
 		private const val X_DISPLACEMENT = 2 * Look.SCALE
 		private const val Y_DISPLACEMENT = 2 * Look.SCALE
 		private const val INPUT_PIN_LENGTH = 0
@@ -41,22 +42,18 @@ class WireTapView(
 		private val RIGHT_NARROW_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
-			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Narrow.value)
 
 		private val RIGHT_WIDE_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-X_DISPLACEMENT, -Y_DISPLACEMENT)
-			.lineTo(-X_DISPLACEMENT,-Y_DISPLACEMENT - PortViewSpacing.Wide.value)
 
 		private val LEFT_NARROW_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT)
-			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT - PortViewSpacing.Narrow.value)
 
 		private val LEFT_WIDE_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT)
-			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT - PortViewSpacing.Wide.value)
 	}
 
 	/** Use [DigitalGraphViewService] for changing this value.*/
@@ -182,7 +179,7 @@ class WireTapView(
 
 	fun updateGeometry() {
 		val width = X_DISPLACEMENT
-		val height = INSET_Y + Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
+		val height = Y_DISPLACEMENT + portViewSpacing.value * (model.tapCount.count - 1)
 		when (handedness) {
 			Handedness.RIGHT -> setBounds(Rectangle2D(0, INPUT_PIN_LENGTH, width, height))
 			Handedness.LEFT -> setBounds(Rectangle2D(-X_DISPLACEMENT, INPUT_PIN_LENGTH, width, height))
@@ -192,7 +189,7 @@ class WireTapView(
 			Handedness.RIGHT -> X_DISPLACEMENT
 			Handedness.LEFT -> -X_DISPLACEMENT
 		}
-		var y = INSET_Y + Y_DISPLACEMENT
+		var y = Y_DISPLACEMENT
 		for (i in 0 until model.tapCount.count) {
 			getPortView(model.getPort(i + 2))!!.location = Point2D(x, y)
 			y += portViewSpacing.value
@@ -206,7 +203,7 @@ class WireTapView(
 		if (context.useContextColors) {
 			drawImpl(context, context.color!!.foregroundColor)
 		} else {
-			drawImpl(context, foregroundColor)
+			drawImpl(context, styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor)
 		}
 	}
 
@@ -216,28 +213,18 @@ class WireTapView(
 			val pvLoc = pv.location
 			pv.prepareConnectionDrawContext(context)
 
-			context.g.color = lineColor
-			context.g.translate(pvLoc)
-
-			if (i > 0) {
-				context.g.draw(getPath())
-			} else {
-				when (handedness) {
-					Handedness.RIGHT -> context.g.drawLine(0, 0, -X_DISPLACEMENT, -Y_DISPLACEMENT)
-					Handedness.LEFT -> context.g.drawLine(0, 0, X_DISPLACEMENT, -Y_DISPLACEMENT)
-				}
-
-				if (INSET_Y > 0) {
-					// TODO: This should also be a path
-					when (handedness) {
-						Handedness.RIGHT -> context.g.drawLine(-X_DISPLACEMENT, -Y_DISPLACEMENT, -X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y)
-						Handedness.LEFT -> context.g.drawLine(X_DISPLACEMENT, -Y_DISPLACEMENT, X_DISPLACEMENT, -Y_DISPLACEMENT - INSET_Y)
-					}
-				}
+			if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = lineColor
 			}
 
+			context.g.translate(pvLoc)
+			context.g.draw(getPath())
 			context.g.translate(pvLoc.negate)
 		}
+
+		val pv1 = getPortView(model.getPort(1))!!
+		pv1.prepareConnectionDrawContext(context)
+		context.g.drawLine(0, 0, 0, portViewSpacing.value * (model.portsCount - 2))
 	}
 
 	private fun getPath(): Path = when (portViewSpacing) {
