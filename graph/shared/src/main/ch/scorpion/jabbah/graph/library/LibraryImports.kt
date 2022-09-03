@@ -2,12 +2,17 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.collection.DirectedGraph
+import ch.scorpion.jabbah.base.collection.TopologicalSort
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 /**
  * Contains the transitive hull of imported [Libraries][Library] of a particular root [Library].
  */
-class LibraryImports(val root: Library) {
+class LibraryImports private constructor(
+	val root: Library,
+	private val graph: DirectedGraph<UUID> = DirectedGraph()
+) {
 
 	companion object {
 
@@ -17,12 +22,19 @@ class LibraryImports(val root: Library) {
 		fun calculate(
 			root: Library,
 			service: LibraryManagementService = LibraryModule.libraryManagementService
-		): LibraryImports =
-			LibraryImports(root).also { calculateImpl(root, service, it) }
+		): LibraryImports {
+			return LibraryImports(root).also {
+				calculateImpl(root, service, it)
+				it.sort()
+			}
+		}
 
 		private fun calculateImpl(library: Library, service: LibraryManagementService, imports: LibraryImports) {
 			imports.addImport(library)
+
 			for (uuid in library.importedLibraryIds) {
+				imports.graph.addNode(uuid)
+				imports.graph.addEdge(library.uuid, uuid)
 				if (imports._libraries.none { it.uuid == uuid }) {
 					val import = service.getOptionalLibrary(uuid)
 					if (import == null) {
@@ -33,6 +45,8 @@ class LibraryImports(val root: Library) {
 							it.isBrokenImport = true
 							it.uuid = uuid
 							imports.addImport(it)
+							imports.graph.addNode(uuid)
+							imports.graph.addEdge(library.uuid, uuid)
 						}
 					} else {
 						calculateImpl(import, service, imports)
@@ -55,9 +69,20 @@ class LibraryImports(val root: Library) {
 
 	private fun addImport(library: Library) {
 		_libraries.add(library)
+		graph.addNode(library.uuid)
 	}
 
 	private fun incrementStateImportCount() {
 		staleImportCount++
+	}
+
+	private fun sort() {
+		val sortedLibraries = TopologicalSort
+			.sort(graph)
+			.mapNotNull { uuid -> _libraries.firstOrNull { it.uuid == uuid } }
+			.toList()
+
+		_libraries.clear()
+		_libraries.addAll(sortedLibraries)
 	}
 }
