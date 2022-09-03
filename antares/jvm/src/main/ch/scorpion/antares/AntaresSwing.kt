@@ -155,18 +155,14 @@ class AntaresSwing(
 			UiUtil.setUIFont(fontResource)
 		}
 
-		// Disabled because OsThemeDetector requires a native library that leads to app signing problems
-		/*
-		private fun configureSplash(font: Font) {
-			val version = readVersion()
-
+		private fun configureSplash() {
 			val splash = SplashScreen.getSplashScreen()
 			if (splash == null) {
 				LOG.value.debug("No splash screen configured")
 				return
 			}
 
-			val isDark = OsThemeDetector.getDetector().isDark
+			val isDark = UI.isDark
 			val imageFactor = when (UiUtil.getScaleFactor()) {
 				2 -> "@2x"
 				else -> ""
@@ -179,19 +175,7 @@ class AntaresSwing(
 				LOG.value.debug("Light/normal theme detected, showing light splash screen")
 				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-light$imageFactor.png")
 			}
-
-			val g2 = splash.createGraphics()
-			g2.font = font
-			g2.color = if (isDark) {
-				Color(104, 104, 104)
-			} else {
-				Color.LIGHT_GRAY
-			}
-
-			g2.drawString("Version $version", 175, 250)
-			splash.update()
 		}
-		*/
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -217,8 +201,8 @@ class AntaresSwing(
 
 			BaseModuleJvm.require()
 
-			// After logging has been initialized
-			// configureSplash(font)
+			// After logging and theme has been initialized
+			configureSplash()
 
 			AntaresSwing(commandLine).start()
 		}
