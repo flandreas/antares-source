@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 /**
@@ -47,6 +48,8 @@ class LibraryImports(val root: Library) {
 	/** Returns the number of referenced [Libraries][Library] not available in the system.*/
 	var staleImportCount: Int = 0
 		private set
+
+	fun contains(uuid: UUID): Boolean = _libraries.any { it.uuid == uuid }
 
 	private val _libraries = mutableListOf<Library>()
 

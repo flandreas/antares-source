@@ -80,7 +80,7 @@ class GraphPanelTransferHandler(
         }
 
 	    val targetLibrary = repository.getContainingLibrary(targetUUID)!!
-	    if (!targetLibrary.expandedImports.libraries.contains(data.libraryElement.library)) {
+	    if (!targetLibrary.expandedImports.contains(data.libraryElement.library!!.uuid)) {
 			LOG.trace("Prevent dropping '${dropVertice.name}' from non-importing Library")
 		    JOptionPane.showMessageDialog(
 			    Frame.getFrames()[0],

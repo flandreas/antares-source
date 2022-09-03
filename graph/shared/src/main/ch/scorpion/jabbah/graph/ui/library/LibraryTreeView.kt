@@ -245,6 +245,6 @@ class LibraryTreeViewController (
 	}
 
 	private fun displaysLibrary(library: Library?): Boolean =
-		this.library?.expandedImports?.libraries?.contains(library) == true
+		library != null && this.library?.expandedImports?.contains(library.uuid) == true
 }
 
