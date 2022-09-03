@@ -42,6 +42,9 @@ class LibrarySavable(
 		if (other !is LibrarySavable) {
 			return false
 		}
+		if (element.library == null) {
+			return false
+		}
 		return library.name == other.library.name && element.uuid == other.element.uuid
 	}
 }
