@@ -47,16 +47,9 @@ object JTreeUtil {
 		while (children.hasMoreElements()) {
 			val child = children.nextElement() as TreeNode
 			if (child.childCount > 0) {
-				JTreeUtil.expandAll(child)
-			}
-		}
-		/*
-		for (child in node.children()) {
-			if (child.childCount > 0) {
 				expandAll(child)
 			}
 		}
-		*/
 	}
 
 	fun expandAll(tree: JTree) {
@@ -72,6 +65,10 @@ object JTreeUtil {
 			}
 		}
 		tree.expandPath(parent)
+	}
+
+	fun collapseAll(tree: JTree) {
+		collapseAll(tree, TreePath(tree.model.root))
 	}
 
 	fun collapseAll(tree: JTree, parent: TreePath) {

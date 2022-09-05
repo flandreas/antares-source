@@ -140,6 +140,16 @@ class LibraryTreeViewSwing(
 		}
 	}
 
+	override fun expandToCurrentSavable() {
+		expandRow(0)
+		if (controller.currentSavable is AbstractLibraryItemSavable) {
+			val treeNode = findTreeNode((controller.currentSavable as AbstractLibraryItemSavable).item)
+			if (treeNode.userObject is ContainerLibraryElement) {
+				expandTo(treeNode.userObject as ContainerLibraryElement)
+			}
+		}
+	}
+
 	override fun expandAllFromSelection() {
 		selectionPath?.let {
 			JTreeUtil.expandAll(this, it)

@@ -39,6 +39,8 @@ interface LibraryTreeView : UIView {
 	 */
 	fun expandTo(element: ContainerLibraryElement)
 
+	fun expandToCurrentSavable()
+
 	fun expandAllFromSelection()
 
 	fun collapseAtSelection()
@@ -65,7 +67,7 @@ interface LibraryTreeView : UIView {
 }
 
 /**
- * Displays the current [Project] and the current [Library] as a tree.
+ * Displays the current [Library] and its imported [Libraries][Library] as a tree.
  *
  * Instances of this class post the following events on the [EventBus]:
  * - A [LibrarySelectionChangedEvent] when the user selects a [LibraryItem]

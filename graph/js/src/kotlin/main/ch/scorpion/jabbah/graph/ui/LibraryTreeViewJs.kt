@@ -108,6 +108,11 @@ class LibraryTreeViewJs(
 		LOG.warn("expandAllFromSelection not yet implemented")
 	}
 
+	override fun expandToCurrentSavable() {
+		// TODO
+		LOG.warn("expandToCurrentSavable not yet implemented")
+	}
+
 	override fun collapseAtSelection() {
 		// TODO
 		LOG.warn("collapseAtSelection not yet implemented")

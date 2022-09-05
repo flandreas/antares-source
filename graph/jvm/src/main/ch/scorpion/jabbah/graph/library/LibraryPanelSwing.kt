@@ -28,7 +28,7 @@ class LibraryPanelSwing(
     init {
 	    controller.view = this
 
-	    libraryTreePanel = LibraryTreePanel(controller.libraryTreeViewController)
+	    libraryTreePanel = LibraryTreePanel(controller.libraryTreeViewController, libraryTreeView)
 
 	    libraryTreeView.addMouseListener(doubleClickListener)
 	    libraryTreeView.addKeyListener(enterKeyListener)
