@@ -22,8 +22,9 @@ class ProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
+	systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryHolder, libraryService, projectDictionaryService, eventBus) {
+) : AbstractLibraryManagementService(libraryHolder, libraryService, projectDictionaryService, systemDictionaryService,  eventBus) {
 
 	companion object {
 		private val LOG by logger(ProjectManagementService::class)
@@ -38,20 +39,20 @@ class ProjectManagementService(
 	}
 
 	/** Determines whether the directory for storing the project [LibraryDictionary] already exists.*/
-	val directoryExists: Boolean get() = dictionaryService.directoryExists
+	val directoryExists: Boolean get() = userDictionaryService.directoryExists
 
 	/** ---- [AbstractLibraryManagementService] */
 
 	override fun existsName(name: TranslatableText, except: UUID?): Boolean =
-		dictionaryService.existsName(name, except)
+		userDictionaryService.existsName(name, except)
 
 	/** ---- [ProjectManagementService] */
 
 	fun contains(projectUUID: UUID): Boolean =
-		dictionaryService.contains(projectUUID)
+		userDictionaryService.contains(projectUUID)
 
 	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
-		dictionaryService.getEntries()
+		userDictionaryService.getEntries()
 
 	/**
 	 * Loads the [Project] with the specified [LibraryIdentification].
@@ -82,7 +83,7 @@ class ProjectManagementService(
 		project.defaultElementUUID = metaGraph.uuid
 
 		libraryService.storeLibrary(project)
-		dictionaryService.add(project)
+		userDictionaryService.add(project)
 
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
@@ -115,7 +116,7 @@ class ProjectManagementService(
 				throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 			}
 			libraryService.renameLibrary(project, properties.name)
-			dictionaryService.rename(project, properties.name)
+			userDictionaryService.rename(project, properties.name)
 		}
 
 		if (properties.author != null && properties.author != project.author) {
@@ -124,7 +125,7 @@ class ProjectManagementService(
 
 		project.properties = properties
 		libraryService.storeLibrary(project)
-		dictionaryService.update(project, properties)
+		userDictionaryService.update(project, properties)
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 

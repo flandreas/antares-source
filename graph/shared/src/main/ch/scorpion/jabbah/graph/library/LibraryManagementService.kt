@@ -44,10 +44,10 @@ class LibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	libraryService: LibraryService = LibraryModule.libraryService,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
-	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
+	userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
+	systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryHolder, libraryService, userDictionaryService, eventBus) {
+) : AbstractLibraryManagementService(libraryHolder, libraryService, userDictionaryService, systemDictionaryService, eventBus) {
 
 	companion object {
 		private val LOG by logger(LibraryManagementService::class)

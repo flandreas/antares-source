@@ -30,12 +30,14 @@ data class LibraryImportResult(
 /**
  * Base service class for managing [Libraries][Library] as well as [Projects][Project].
  *
- * @param dictionaryService the service that allows changes of a [LibraryDictionary] by the user
+ * @param userDictionaryService the service that allows changes of a [LibraryDictionary] by the user
+ * @param systemDictionaryService the service for accessing the dictionary of system [Libraries][Library]
  */
 abstract class AbstractLibraryManagementService(
 	protected val libraryHolder: LibraryHolder,
 	protected val libraryService: LibraryService,
-	protected val dictionaryService: LibraryDictionaryService,
+	protected val userDictionaryService: LibraryDictionaryService,
+	protected val systemDictionaryService: LibraryDictionaryService,
 	protected val eventBus: EventBus
 ) {
 
@@ -54,13 +56,13 @@ abstract class AbstractLibraryManagementService(
 		lateinit var library: Library
 
 		try {
-			library = libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
+			library = libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
 		} catch (e: LibraryImportConflictException) {
 			if (replaceIfUuidExists) {
 				deleteImpl(e.libraryId)
 				try {
 					library =
-						libraryService.importLibrary(inputPath, dictionaryService.entriesCount, GraphQuota.UNLIMITED)
+						libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
 				} catch (e: Throwable) {
 					return Invalid.result()
 				}
@@ -85,20 +87,19 @@ abstract class AbstractLibraryManagementService(
 			return StaleLibraryReference.result()
 		}
 
-		dictionaryService.add(library)
+		userDictionaryService.add(library)
 
 		return Success.result(library = library)
 	}
 
 	protected fun deleteImpl(libraryId: LibraryIdentification) {
 		libraryService.deleteLibrary(libraryId)
-		dictionaryService.remove(libraryId.uuid)
+		userDictionaryService.remove(libraryId.uuid)
 	}
 
 	/** Checks whether [library] to be imported references another non-existing [Library]. */
-	private fun hasStaleImportReferences(library: Library): Boolean {
-		return library.importedLibraryIds.any {
-			!dictionaryService.contains(it)
+	private fun hasStaleImportReferences(library: Library): Boolean =
+		library.importedLibraryIds.any {
+			!userDictionaryService.contains(it) && !systemDictionaryService.contains(it)
 		}
-	}
 }
