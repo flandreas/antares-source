@@ -230,14 +230,12 @@ tasks {
 	 * Alternative notarization status check:
 	 * xcrun altool --verbose --notarization-info [ID] --username appleNotarizationUser --password appleNotarizationPassword
 	 */
-	fun stapleMacNotarization() {
-		exec {
-			workingDir = projectDir
-			commandLine(
-				"xcrun", "stapler",
-				"staple", "${buildDir}/distributions/Antares-$version_project.dmg"
-			)
-		}
+	val stapleMacNotarization by creating(Exec::class) {
+		workingDir = projectDir
+		commandLine(
+			"xcrun", "stapler",
+			"staple", "${buildDir}/distributions/Antares-$version_project.dmg"
+		)
 	}
 
 	val distributeMac by creating {
