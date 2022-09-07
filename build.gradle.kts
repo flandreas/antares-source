@@ -78,7 +78,7 @@ subprojects {
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
 				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_13.toString()
+					jvmTarget = JavaVersion.VERSION_1_8.toString()
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
 						"-Xno-optimized-callable-references",
@@ -87,7 +87,7 @@ subprojects {
 			}
 			val test by compilations.getting {
 				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_13.toString()
+					jvmTarget = JavaVersion.VERSION_1_8.toString()
 				}
 			}
 		}
