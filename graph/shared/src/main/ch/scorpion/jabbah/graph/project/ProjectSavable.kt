@@ -33,7 +33,7 @@ class ProjectSavable(
 
 	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name.value}\""
 
-	override val editable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Change, project)
+	override val editable: Boolean get() = element.library != null && Authorizer.isCurrentUserAuthorizedTo(Change, project)
 
 	override fun open(application: Application): Boolean {
 		projectManagementService.open(project.identification, element.uuid)
