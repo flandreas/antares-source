@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.Project
 
 /**
@@ -13,7 +15,9 @@ import ch.scorpion.jabbah.graph.project.Project
  * if either [referencedSystemLibrary] is `null`, or the destination [Library] (if it is a [Project]) depends
  * on the referenced system [Library].
  */
-class MetaGraphBundle : AbstractStorable() {
+class MetaGraphBundle(
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
+) : AbstractStorable(), MetaGraphRepository {
 
 	private val _metaGraphs = mutableListOf<MetaGraph>()
 
@@ -51,18 +55,59 @@ class MetaGraphBundle : AbstractStorable() {
 		if (reader.hasAttribute("systemLibs")) {
 			referencedSystemLibraryIds.addAll(reader.readUuids("systemLibs"))
 		}
-		for (metaGraph in reader.readStorables<MetaGraph>("metaGraphs")) {
-			reader.requestResolution(this, Reference(
-				name = "metaGraph",
-				additionalInfo = metaGraph,
-				resolveAfter = listOf(reader.getGlobalId(metaGraph))
-			))
+
+		try {
+			LibraryModule.libraryHolder.wrapWith(this)
+			// Make sure that resolutionDone() gets called
+			reader.requestResolution(this, Reference("unwrap"))
+
+			reader.readStorables<MetaGraph>("metaGraphs") {
+				_metaGraphs.add(it)
+			}
+		} catch(e: Throwable) {
+			LibraryModule.libraryHolder.unwrap()
 		}
 	}
 
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		if ("metaGraph" == reference.name) {
-			_metaGraphs.add(reference.additionalInfo as MetaGraph)
-		}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+
+	override fun resolutionDone() {
+		super.resolutionDone()
+		LibraryModule.libraryHolder.unwrap()
+	}
+
+	/** ---- [MetaGraphRepository] */
+
+	private fun resolveLocalUuid(uuid: UUID): MetaGraph? =
+		_metaGraphs.firstOrNull { it.containerDrawing.model.graphUUID == uuid }
+
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? = null
+
+	override fun getMetaGraphUnwrapped(uuid: UUID): MetaGraph =
+		getMetaGraph(uuid)
+
+	override fun getMetaGraph(uuid: UUID): MetaGraph =
+		resolveLocalUuid(uuid) ?: repository.getMetaGraphUnwrapped(uuid)
+
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? =
+		resolveLocalUuid(uuid)
+
+	override fun containsMetaGraph(uuid: UUID): Boolean =
+		resolveLocalUuid(uuid) != null
+
+	override fun getContainingLibrary(uuid: UUID): Library? = null
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean = false
+
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun wrapWith(wrapper: MetaGraphRepository) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun unwrap() {
+		throw UnsupportedOperationException("not implemented")
 	}
 }

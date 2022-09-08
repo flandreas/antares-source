@@ -53,9 +53,10 @@ interface StoreReader {
     /**
      * Reads a group of [Storable]s with the specified name.
      * @param name the name of the [Storable] group.
+     * @param afterReadCallback called after each read [Storable]
      * @return an [Iterator] over the read [Storable]s.
      */
-    fun <T : Storable> readStorables(name: String): List<T>
+    fun <T : Storable> readStorables(name: String, afterReadCallback: ((T) -> Unit)? = null): List<T>
 
     /** Reads the next `int` attribute with the given name.*/
     fun readInt(name: String): Int

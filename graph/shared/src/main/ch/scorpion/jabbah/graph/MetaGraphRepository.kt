@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -43,4 +44,18 @@ interface MetaGraphRepository {
 	 * or indirectly referenced by [metaGraph].
 	 */
 	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle
+
+	/**
+	 * Establishes [wrapper] such that it is asked first when retrieving [MetaGraphs][MetaGraph].
+	 * If [wrapper] doesn't contain the requested [MetaGraph], this [MetaGraphRepository] is then asked.
+	 * Needed instead of a regular wrapper because objects like [SubGraphVertice] are constructed with
+	 * fixed references to a global [MetaGraphRepository], such as that of [LibraryModule.libraryHolder].
+	 */
+	fun wrapWith(wrapper: MetaGraphRepository)
+
+	/** Only used by wrappers which can't call [getMetaGraph] without infinite recursion. */
+	fun getMetaGraphUnwrapped(uuid: UUID): MetaGraph
+
+	/** Removes the wrapper previously installed by [wrapWith]. */
+	fun unwrap()
 }

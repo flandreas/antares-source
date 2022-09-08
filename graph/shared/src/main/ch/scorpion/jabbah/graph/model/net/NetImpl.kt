@@ -156,7 +156,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 			reader.requestResolution(this, Reference(
 				name = "portRef",
 				referenceId = portRef.verticeId,
-				additionalInfo = portRef
+				additionalInfo = portRef,
+				resolveAfter = listOf(portRef.verticeId)
 			))
 		}
 	}

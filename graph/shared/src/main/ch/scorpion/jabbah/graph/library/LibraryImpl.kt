@@ -121,25 +121,48 @@ open class LibraryImpl(
 
 	/** ---- [MetaGraphRepository] */
 
-	override fun getMetaGraph(uuid: UUID): MetaGraph {
+	/** The optional wrapper established by [wrapWith] and [unwrap]. */
+	private var repositoryWrapper: MetaGraphRepository? = null
+
+	override fun getMetaGraph(uuid: UUID): MetaGraph =
+		repositoryWrapper?.getMetaGraph(uuid) ?: getMetaGraphImpl(uuid)
+
+	override fun getMetaGraphUnwrapped(uuid: UUID): MetaGraph =
+		getMetaGraphImpl(uuid)
+
+	private fun getMetaGraphImpl(uuid: UUID): MetaGraph {
 		val element = findContainerLibraryElementFor(uuid)!!
 		val metaGraph = element.library!!.libraryService.getMetaGraph(element.library!!, element)
 		LOG.trace("Retrieved MetaGraph for UUID '${uuid.id}' with ID ${metaGraph.hashCode()}")
 		return metaGraph
 	}
 
-	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? =
+		repositoryWrapper?.getOptionalMetaGraph(uuid) ?: getOptionalMetaGraphImpl(uuid)
+
+	private fun getOptionalMetaGraphImpl(uuid: UUID): MetaGraph? {
 		val element = findContainerLibraryElementFor(uuid) ?: return null
 		return element.library!!.libraryService.getMetaGraph(element.library!!, element)
 	}
 
 	override fun containsMetaGraph(uuid: UUID): Boolean =
-		findContainerLibraryElementFor(uuid) != null
+		repositoryWrapper?.containsMetaGraph(uuid) ?: containsMetaGraphImpl(uuid)
+
+	private fun containsMetaGraphImpl(uuid: UUID): Boolean {
+		return findContainerLibraryElementFor(uuid) != null
+	}
 
 	override fun getContainingLibrary(uuid: UUID): Library? =
+		repositoryWrapper?.getContainingLibrary(uuid) ?: getContainingLibraryImpl(uuid)
+
+	private fun getContainingLibraryImpl(uuid: UUID): Library? =
 		findContainerLibraryElementFor(uuid)?.library
 
-	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean =
+		repositoryWrapper?.graphContainsRecursively(graphUUID, graphElementUUID)
+			?: graphContainsRecursivelyImpl(graphUUID, graphElementUUID)
+
+	private fun graphContainsRecursivelyImpl(graphUUID: UUID, graphElementUUID: UUID): Boolean {
 		val metaGraph = getMetaGraph(graphUUID)
 		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
 			return true
@@ -151,13 +174,19 @@ open class LibraryImpl(
 		).contains(graphElementUUID)
 	}
 
-	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle {
+	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle =
+		repositoryWrapper?.createBundle(metaGraph) ?: createBundleImpl(metaGraph)
+
+	private fun createBundleImpl(metaGraph: MetaGraph): MetaGraphBundle {
 		val systemLibReferences = mutableSetOf<UUID>()
 		return MetaGraphBundle()
-			.add(metaGraph)
 			.also { bundle ->
 				ContainerLibraryElementCollector(this)
 					.collect(metaGraph.graph.graphView.graph!!)
+					.asSortedDependencies()
+					// Make sure that referenced MetaGraph are added first, so they get read first as well
+					// when importing bundles.
+					.reversed()
 					.forEach { metaGraphId ->
 						val sourceSystemLib = getOptionalSystemLibraryId(metaGraphId)
 						if (sourceSystemLib != null) {
@@ -168,6 +197,14 @@ open class LibraryImpl(
 					}
 				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)
 			}
+	}
+
+	override fun wrapWith(wrapper: MetaGraphRepository) {
+		repositoryWrapper = wrapper
+	}
+
+	override fun unwrap() {
+		repositoryWrapper = null
 	}
 
 	private fun getOptionalSystemLibraryId(metaGraphId: UUID): UUID? {
@@ -291,15 +328,14 @@ open class LibraryImpl(
 		return finder.result
 	}
 
-	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
-		return findContainerLibraryElementFor(uuid)
-	}
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? =
+		findContainerLibraryElementFor(uuid)
 
-	override fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean {
-		return ContainerLibraryElementCollector(repository = this)
+	override fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean =
+		ContainerLibraryElementCollector(repository = this)
 			.collect(graph)
+			.asUuids()
 			.all { containsMetaGraph(it) }
-	}
 
 	override fun createSavable(element: ContainerLibraryElement): Savable = LibrarySavable(element)
 

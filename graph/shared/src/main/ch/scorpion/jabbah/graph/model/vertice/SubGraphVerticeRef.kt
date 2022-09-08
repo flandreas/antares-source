@@ -144,36 +144,47 @@ class SubGraphVerticeRef(
 	}
 
 	override fun read(reader: StoreReader) {
+		super.read(reader)
 		graphUUID = UUID(reader.readString("uuid"))
 
-		val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
-		if (metaGraph != null) {
-			name = metaGraph.name
-			graphName = metaGraph.containerDrawing.model.graphName
-			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
+		reader.requestResolution(this, Reference("metaGraph"))
 
-			// Establish GraphParamValues AFTER GraphElements have been read
-			if (reader.hasElement("params")) {
-				paramValues = reader.readStorable("params")
+		// Establish GraphParamValues AFTER GraphElements have been read
+		if (reader.hasElement("params")) {
+			//paramValues = reader.readStorable("params")
+			reader.requestResolution(this, Reference("params", additionalInfo = reader.readStorable("params")))
+		}
+	}
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		super.resolve(reference, referenceResolver)
+
+		if (reference.name == "params") {
+			paramValues = reference.additionalInfo as GraphParamValues
+		}
+
+		if (reference.name == "metaGraph") {
+			val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
+			if (metaGraph != null) {
+				name = metaGraph.name
+				graphName = metaGraph.containerDrawing.model.graphName
+				fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
+
+				if (paramValues.isNotEmpty) {
+					getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
+					synchronizePorts()
+				}
+
+				if (metaGraph.graph.model!!.propagationDelay != null) {
+					propagationDelay = metaGraph.graph.model!!.propagationDelay!!
+				}
+			} else {
+				// Broken reference to library component
+				LOG.warn("broken reference $graphUUID")
+				graphName = Name(BrokenReferenceView.NAME)
+				type = graphName.value
+				_designError = DesignError("graph.designError.brokenSubGraphRef.text")
 			}
-
-			if (paramValues.isNotEmpty) {
-				getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
-				synchronizePorts()
-			}
-
-			super.read(reader)
-
-			if (metaGraph.graph.model!!.propagationDelay != null) {
-				propagationDelay = metaGraph.graph.model!!.propagationDelay!!
-			}
-		} else {
-			// Broken reference to library component
-			LOG.warn("broken reference $graphUUID")
-			graphName = Name(BrokenReferenceView.NAME)
-			type = graphName.value
-			super.read(reader)
-			_designError = DesignError("graph.designError.brokenSubGraphRef.text")
 		}
 	}
 

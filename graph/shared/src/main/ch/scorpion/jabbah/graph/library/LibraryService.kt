@@ -399,6 +399,7 @@ class LibraryService(
 		try {
 			bundle = userLibraryPersister.importMetaGraphBundle(inputPath)
 		} catch (e: Throwable) {
+			LOG.error("Error while importing bundle", e)
 			return MetaGraphBundleImportResult.Invalid
 		}
 
@@ -412,6 +413,7 @@ class LibraryService(
 		}
 
 		if (conflict) {
+			// Replace MetaGraphs that already exist
 			deleteBundleMetaGraphs(bundle, destination.library!!)
 		}
 
@@ -486,6 +488,7 @@ class LibraryService(
 			val metaGraph = master.getMetaGraph(metaGraphId)
 			ContainerLibraryElementCollector()
 				.collect(metaGraph.graph.model!!)
+				.asUuids()
 				.forEach { ref ->
 					val elem = master.getContainerLibraryElement(ref)
 					if (elem != null && target.expandedImports.libraries.map { it.uuid }.any { it == elem.library!!.uuid }) {
@@ -498,7 +501,13 @@ class LibraryService(
 	}
 
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
-		bundle.metaGraphs.any { metaGraphRepository.containsMetaGraph(it.uuid) }
+		bundle.metaGraphs.any { metaGraph ->
+			metaGraphRepository.containsMetaGraph(metaGraph.uuid).also {
+				if (it) {
+					LOG.debug("MetaGraph ${metaGraph.uuid} in bundle already exists in Library")
+				}
+			}
+		}
 
 	/**
 	 * Checks whether the destination [Library] into which [MetaGraphBundle] is to be imported

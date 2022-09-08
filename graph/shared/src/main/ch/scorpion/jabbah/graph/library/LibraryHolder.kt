@@ -40,6 +40,8 @@ class LibraryHolder(
 
 	override fun getMetaGraph(uuid: UUID): MetaGraph = library.getMetaGraph(uuid)
 
+	override fun getMetaGraphUnwrapped(uuid: UUID): MetaGraph = library.getMetaGraphUnwrapped(uuid)
+
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? = library.getOptionalMetaGraph(uuid)
 
 	override fun containsMetaGraph(uuid: UUID): Boolean = library.containsMetaGraph(uuid)
@@ -50,6 +52,14 @@ class LibraryHolder(
 		library.graphContainsRecursively(graphUUID, graphElementUUID)
 
 	override fun createBundle(metaGraph: MetaGraph): MetaGraphBundle = library.createBundle(metaGraph)
+
+	override fun wrapWith(wrapper: MetaGraphRepository) {
+		library.wrapWith(wrapper)
+	}
+
+	override fun unwrap() {
+		library.unwrap()
+	}
 }
 
 /** Posted on [EventBus] when the current [Library] has changed.*/

@@ -104,7 +104,7 @@ class StoreXmlReader(
 		return storable
 	}
 
-	override fun <T : Storable> readStorables(name: String): List<T> {
+	override fun <T : Storable> readStorables(name: String, afterReadCallback: ((T) -> Unit)?): List<T> {
 		if (!xmlReader.hasElement(name)) {
 			return listOf()
 		}
@@ -113,7 +113,9 @@ class StoreXmlReader(
 		for (i in 1..xmlReader.getElementsCount()) {
 			xmlReader.descend(i)
 
-			storables.add(readStorableImpl() as T)
+			val s = readStorableImpl() as T
+			storables.add(s)
+			afterReadCallback?.invoke(s)
 
 			xmlReader.ascend()
 		}
