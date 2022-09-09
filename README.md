@@ -77,7 +77,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 ### Assets (Installers and examples)
 
 * Create a new release in the github project, e.g. "Release 0.3.0"
-* Upload the two installers as attachments to the release
+* Upload the three installers as attachments to the release
 * Upload the example projects (zip) as attachments to the release
     * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
@@ -106,6 +106,18 @@ Commit, push and tag the website repo with release version (e.g. "v0.4.0"). Afte
 
 Delete your local release, download the new release from the website, download a sample project
 , import it, and do some smoke testing.
+
+### Installation
+
+On Linux/Ubuntu, the .rpm package is installed as follows:
+
+`sudo alien -i <name of package>.rpm`
+
+Installation takes a while. Antares is installed in `/opt/antares`. Start it in a shell with 
+`/opt/antares/bin/Antares`. The 
+user's 
+application 
+directory is `/home/<user>/Antares`.
 
 ## Support
 
