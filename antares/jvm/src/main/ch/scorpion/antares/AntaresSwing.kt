@@ -155,28 +155,6 @@ class AntaresSwing(
 			UiUtil.setUIFont(fontResource)
 		}
 
-		private fun configureSplash() {
-			val splash = SplashScreen.getSplashScreen()
-			if (splash == null) {
-				LOG.value.debug("No splash screen configured")
-				return
-			}
-
-			val isDark = UI.isDark
-			val imageFactor = when (UiUtil.getScaleFactor()) {
-				2 -> "@2x"
-				else -> ""
-			}
-
-			if (isDark) {
-				LOG.value.debug("Dark theme detected, showing dark splash screen")
-				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-dark$imageFactor.png")
-			} else {
-				LOG.value.debug("Light/normal theme detected, showing light splash screen")
-				splash.imageURL = AntaresSwing::class.java.getResource("/img/splash-light$imageFactor.png")
-			}
-		}
-
 		@JvmStatic
 		fun main(args: Array<String>) {
 
@@ -200,9 +178,6 @@ class AntaresSwing(
 			establishUiFont(preferences)
 
 			BaseModuleJvm.require()
-
-			// After logging and theme has been initialized
-			configureSplash()
 
 			AntaresSwing(commandLine).start()
 		}

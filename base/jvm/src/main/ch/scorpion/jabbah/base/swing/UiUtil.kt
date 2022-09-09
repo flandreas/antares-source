@@ -2,10 +2,10 @@ package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
 import java.awt.EventQueue
-import java.awt.GraphicsEnvironment
 import java.awt.image.BaseMultiResolutionImage
 import java.lang.reflect.InvocationTargetException
 import javax.swing.*
@@ -19,6 +19,7 @@ import kotlin.math.min
  */
 object UiUtil {
 
+	private val LOG by lazy { logger(UiUtil::class) }
 	private const val DIVERT = 24
 	private val VARIANT_QUALIFIERS = listOf("", "@125pct", "@150pct", "@2x")
 	private val ERROR_COLOR_DARK = Color(255, 107, 104)
@@ -159,26 +160,6 @@ object UiUtil {
 		} else {
 			getMultiResolutionIcon(path, ::getVariantPath, clazz)
 		}
-	}
-
-	/**
-	 * Tries to determine the screen scale factor of the main display.
-	 * Screens with high DPI return 2, all others return 1.
-	 * Source: https://stackoverflow.com/questions/40399643/how-to-find-real-display-density-dpi-from-java-code
-	 */
-	fun getScaleFactor(): Int {
-		try {
-			val screen = Class.forName("sun.awt.CGraphicsDevice").cast(GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice)
-			val method = screen.javaClass.getDeclaredMethod("getScaleFactor")
-			val obj = method.invoke(screen)
-			if (obj is Int) {
-				return obj
-			}
-		} catch (e: Throwable) {
-			// Cannot determine screen scale factor
-			return 1
-		}
-		return 1
 	}
 
 	private fun isDark(color: Color): Boolean =

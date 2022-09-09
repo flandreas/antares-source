@@ -132,6 +132,7 @@ abstract class AbstractDesktopApplication(
 
 	init {
 		LOG.info("Starting $displayName version ${readVersion()}")
+		LOG.info("Using Java ${Runtime.version()}")
 		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
 		consumeCommandLine(commandLine)
 		loadSettings()

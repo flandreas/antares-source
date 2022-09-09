@@ -39,17 +39,23 @@ Tag the release and push it to the remote repository:
 
 ### Build Installers
 
-* On a macOS machine
-  * `gradlew clean :antares:distributeMac`
-  * Wait for notarization success mail from Apple (or check manually using `xcrun altool 
+- On a macOS machine
+  - `gradlew clean :antares:distributeMac`
+  - Wait for notarization success mail from Apple (or check manually using `xcrun altool 
     --notarization-info`)
-  * `gradlew stapleMacNotarization`
-  * Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
-  * Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and
+  - `gradlew stapleMacNotarization`
+  - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
+  - Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and
    store it in a save place. You will need it for un-obfuscating stack traces from bug reports.
-* On a windows machine (after pulling changes from remote repository)
-  * `gradlew clean :antares:distributeWindows`
-  * Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
+- On a windows machine (after pulling changes from remote repository)
+  - `gradlew clean :antares:distributeWindows`
+  - `cd Desktop`
+  - Signing doesn't yet work from within gradle (permissions?), so call it manually:
+    - `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool sign /fd SHA256 /f 
+      AndreasFleischmann.pfx /t http://timestamp.digicert.com 
+      C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
+  - Verify signature: `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool verify /pa C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
+  - Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
   
 Install the releases and do some some testing.
 

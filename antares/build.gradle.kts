@@ -94,7 +94,7 @@ tasks {
 		dependsOn(assemble)
 		manifest {
 			attributes["Main-Class"] = "ch.scorpion.antares.AntaresSwing"
-			attributes["SplashScreen-Image"] = "img/splash-empty.png"
+			attributes["SplashScreen-Image"] = "img/splash-light.png"
 		}
 		archiveClassifier.set("all")
 		from(kotlin.jvm().compilations.getByName("main").output)
