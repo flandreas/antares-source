@@ -313,7 +313,7 @@ class AntaresSwing(
 	override fun handleShutdown() {
 		super.handleShutdown()
 
-		if (controller.data?.savable is ProjectSavable) {
+		if (controller.data?.savable is ProjectSavable && (controller.data!!.savable as ProjectSavable).element.library != null) {
 			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (controller.data!!.savable as ProjectSavable).project.uuid.toString())
 		} else {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
