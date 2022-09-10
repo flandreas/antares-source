@@ -11,7 +11,10 @@ import ch.scorpion.jabbah.base.EnumProperty
  */
 enum class Logic(override val customName: String) : EnumProperty<Logic> {
 
+	/** A [DigitalPort] is active with [Bit.True]. */
 	POSITIVE("positive"),
+
+	/** A [DigitalPort] is active with [Bit.False] .*/
 	NEGATIVE("negative");
 
     companion object {

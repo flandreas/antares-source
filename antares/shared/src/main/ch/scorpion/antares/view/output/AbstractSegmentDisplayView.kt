@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
 import ch.scorpion.antares.view.DigitalComponentView
@@ -98,6 +99,12 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 				model.name = value
 				postControlViewSourceChangeEvent(eventBus)
 			}
+		}
+
+	var logic: Logic
+		get() = model.logic
+		set(value) {
+			model.logic = value
 		}
 
 	/** ---- [LightEmitter] interface */
@@ -217,7 +224,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		}
 	}
 
-	protected fun drawDot(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
+	private fun drawDot(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
 		g.translate(relX.toDouble(), relY.toDouble())
 		g.color = getColor(value, isExecute)
 		g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
@@ -227,7 +234,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	protected fun getColor(value: Boolean, isExecute: Boolean): Color =
 		transparent.applyTo(
 			if (isExecute) {
-				if (value) lightColor.onColor else lightColor.offColor
+				if (logic.evaluate(value)) lightColor.onColor else lightColor.offColor
 			} else {
 				foregroundColor
 			}

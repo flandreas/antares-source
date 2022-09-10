@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
@@ -17,6 +18,7 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    private val name = EditProperties.untranslatableName()
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val portScheme = CommandPropertySwing("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
+	    private val logic = CommandPropertySwing("logic", "element.property.segmentDisplay.logic", Logic::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()
 	    private val hasBorder = EditProperties.border()
     }
@@ -35,6 +37,7 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    if (bean.size == Size.LARGE) {
 		    properties.add(portScheme.bind(editor, bean.id, editable = !connected))
 	    }
+	    properties.add(logic.bind(editor, bean.id))
 	    properties.add(size.bind(editor, bean.id, editable = !connected))
 	    properties.add(hasBorder.bind(editor, bean.id))
     }
