@@ -53,8 +53,8 @@ expect class Logger {
 
 enum class LogLevel {
     Error,
-    Info,
     Warning,
+    Info,
     Debug,
     Trace
 }
