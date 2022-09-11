@@ -1,8 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.PROP_BEGINNER_HELP_TOOLTIP
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -52,6 +56,21 @@ class NavigationStackViewSwing(
 		private val elementTextColor: java.awt.Color get() = UIManager.getColor("Button.foreground")
 
 		private val lockedIcon = ResourceImageJvm.themedImage("/img/locked-16.png")
+
+		private val navigationTooltip: String by lazy {
+			var tooltip = Translations.getString("graph.action.navigationStack.text")
+			if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
+				tooltip += Translations.getString("graph.action.navigationStack.tip", getQuickModifier().label)
+			}
+			tooltip
+		}
+
+		private fun getQuickModifier(): Modifier =
+			if (SystemUtils.IS_OS_MAC) {
+				Modifier.Meta
+			} else {
+				Modifier.Alt
+			}
 	}
 
 	private val tailFont = FontImpl(
@@ -273,6 +292,11 @@ class NavigationStackViewSwing(
 			}
 
 			if (changed) {
+				if (hoveredElement == null) {
+					toolTipText = null
+				} else if (!hoveredElement!!.isHead) {
+					toolTipText = navigationTooltip
+				}
 				this@NavigationStackViewSwing.repaint()
 			}
 		}
@@ -299,6 +323,7 @@ class NavigationStackViewSwing(
 			if (hoveredElement != null) {
 				hoveredElement!!.isHover = false
 				hoveredElement = null
+				toolTipText = null
 				this@NavigationStackViewSwing.repaint()
 			}
 		}
