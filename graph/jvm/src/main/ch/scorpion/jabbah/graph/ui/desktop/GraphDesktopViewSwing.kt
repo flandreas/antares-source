@@ -119,7 +119,7 @@ class GraphDesktopViewSwing(
 			contextBorderColor = referenceColor
 		)
 
-		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true)
+		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true, originSubGraphVerticeView = verticeView)
 
 		return graphNavigationView
 	}

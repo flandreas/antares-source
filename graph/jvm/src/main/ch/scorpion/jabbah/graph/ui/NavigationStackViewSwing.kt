@@ -152,7 +152,7 @@ class NavigationStackViewSwing(
 	/** ---- [NavigationStackViewSwing] */
 
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, tailFont)
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.name, tailFont)
 		val textLength = textRenderInfo.textBounds.width
 		val showLock = first && !editable
 		return Element(
@@ -201,7 +201,7 @@ class NavigationStackViewSwing(
 	) {
 
 		private val label: Label = Label(
-			text = entry.content.drawing.graph!!.name.value,
+			text = entry.name,
 			font = tailFont,
 			horizontalAlignment = if (showLock) HorizontalAlignment.LEFT else HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
@@ -224,15 +224,13 @@ class NavigationStackViewSwing(
 			}
 			g.fill(path)
 
-			val borderColor: Color? = if (isHead) {
+			val borderColor: Color = if (isHead) {
 				Graphics2DJvm.fromAwtColor(elementBorderColor)
 			} else {
 				if (isHover) Graphics2DJvm.fromAwtColor(elementHoverBorderColor) else Graphics2DJvm.fromAwtColor(elementBorderColor)
 			}
-			if (borderColor != null) {
-				g.color = borderColor
-				g.draw(path)
-			}
+			g.color = borderColor
+			g.draw(path)
 
 			if (showLock) {
 				g.drawImage(

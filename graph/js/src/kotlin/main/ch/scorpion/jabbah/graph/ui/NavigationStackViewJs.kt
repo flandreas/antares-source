@@ -36,12 +36,12 @@ class NavigationStackViewJs(
 			val iter = props.controller.navigationStack.iterator()
 			iter.forEach { entry ->
 				if (iter.hasNext()) {
-					mLink(entry.graphName!!.value) {
+					mLink(entry.name) {
 						attrs.onClick = { event -> onClick(event, entry) }
 					}
 				}
 				else {
-					mTypography(entry.graphName!!.value)
+					mTypography(entry.name)
 				}
 			}
 		}

@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -22,10 +21,19 @@ data class NavigationStackEntry<T : GraphView>(
 	val content: DrawingViewContent<T>,
 	var voyageOrigin: ZoomedPointTranslation? = null
 ) {
-	val graphName: Name? get() = content.drawing.graph?.name
+	val name: String = buildName()
 
 	fun dispose() {
 		content.dispose()
+	}
+
+	private fun buildName(): String {
+		val graphName = content.drawing.graph!!.name.value
+		return if (subGraphVerticeView?.label == null) {
+			graphName
+		} else {
+			"${subGraphVerticeView.label!!.getTranslation()}: $graphName"
+		}
 	}
 }
 

@@ -172,7 +172,7 @@ class GraphNavigationViewController(
 
 	/** ---- [GraphNavigationView] */
 
-	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
+	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true, originSubGraphVerticeView: SubGraphVerticeView<*>? = null) {
 		this.editable = editable
 
 		// Must be done before the drawing is set, because setting the drawing triggers
@@ -182,7 +182,7 @@ class GraphNavigationViewController(
 		drawingView.setDrawing(graphView, applyZoomStrategy)
 
 		navigationStackViewController.view.editable = editable
-		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
+		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(originSubGraphVerticeView, content = drawingView.content)
 
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, graphApplicationContextHolder, eventBus)
