@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.app.StatusBar
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.auth0.LoginLogoutAction
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContentViewManager
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -28,7 +30,11 @@ open class GraphFrameSwing(
 	val actions: GraphFrameActions
 ) : AbstractApplicationFrame(application), GraphFrame {
 
+	/** Contains the buttons for switching between [graphPanel] and [containerPanel]. */
 	private val mainToolBar: ToolBar
+
+	/** Contains the tools displayed for both [graphPanel] and [containerPanel]. */
+	private val commonToolBar: ToolBar
 
 	private val statusBar = StatusBar()
 
@@ -38,11 +44,14 @@ open class GraphFrameSwing(
 
 	private val containerPanel = ContainerPanelSwing(application, controller.applicationContextHolder, displayGlobalMessages = true)
 
+	val loginLogoutAction = LoginLogoutAction()
+
 	init {
 		controller.view = this
 
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction)
+		commonToolBar = createCommonToolbar()
 	}
 
 	/** ---- [GraphFrame] */
@@ -135,6 +144,17 @@ open class GraphFrameSwing(
 		return toolbar
 	}
 
+	private fun createCommonToolbar(): ToolBar {
+		val toolbar = ToolBar()
+		toolbar.isFloatable = false
+
+		if (GraphModuleJvm.supportWeb) {
+			toolbar.add(JButton(ActionWrapperSwing(loginLogoutAction)))
+		}
+
+		return toolbar
+	}
+
 	/**
 	 * Establishes a [JToggleButton] with [JRadioButton] behaviour (i.e. cannot be deselected)
 	 * by listening for [java.awt.event.ActionEvent]s and selecting it again, if necessary.
@@ -153,5 +173,6 @@ open class GraphFrameSwing(
 		toolbarPanel.add(mainToolBar)
 		toolbars.forEach { toolbarPanel.add(it) }
 		toolbarPanel.add(Box.createHorizontalGlue())
+		toolbarPanel.add(commonToolBar)
 	}
 }

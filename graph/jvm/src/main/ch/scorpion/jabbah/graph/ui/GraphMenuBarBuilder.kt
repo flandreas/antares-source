@@ -81,7 +81,7 @@ open class GraphMenuBarBuilder(
 
 		if (GraphModuleJvm.supportWeb) {
 			// Public available not before server has been released
-			menu.add(JMenuItem(ActionWrapperSwing(LoginLogoutAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(graphFrame.loginLogoutAction)))
 		}
 		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
 		if (!SystemUtils.IS_OS_MAC) {
