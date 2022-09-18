@@ -89,6 +89,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val GROUND = "Ground"
 	private const val POWER = "Power"
 	private const val WIRE_TAP = "WireTap"
+	private const val POWER_ON_RESET = "PowerOnReset"
 
 	private const val AND = "AND"
 	private const val OR = "OR"
@@ -288,6 +289,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("doubleThrowSwitchView", DoubleThrowSwitchView::class)
 		typeMap.register("lookupTableView", LookupTableView::class)
 		typeMap.register("wireTapView", WireTapView::class)
+		typeMap.register("powerOnResetView", PowerOnResetView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
@@ -313,6 +315,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, GroundView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, PowerView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, WireTapView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, PowerOnResetView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
@@ -404,6 +407,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
 		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
 		repository.register(WIRE_TAP, "library.element.WireTap", { "/img/wire-tap.png" }, WireTapView::class)
+		repository.register(POWER_ON_RESET, "library.element.PowerOnReset", { "/img/power.png" }, PowerOnResetView::class)
 
 		repository.register(AND,
 			"library.element.AndGate",

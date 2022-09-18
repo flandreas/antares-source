@@ -122,6 +122,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("wireTap", WireTap::class)
 		typeMap.register("wireTapConfig", WireTapConfig::class)
 		typeMap.register("fixedPointConfig", FixedPointConfig::class)
+		typeMap.register("powerOnReset", PowerOnReset::class)
 
 		typeMap.register("truthTable", TruthTable::class)
 		typeMap.register("truthTableInputColumn", TruthTableInputColumn::class)

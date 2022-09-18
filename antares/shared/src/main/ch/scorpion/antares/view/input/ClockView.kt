@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Rotation.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -44,17 +43,13 @@ class ClockView(
 
 		private const val SEG_X = Look.SCALE.toDouble()
 		private const val SEG_Y_HALF = SEG_X * 3 / 4
-		private val ANNOTATION_PATH = createAnnotationPath()
-
-		private fun createAnnotationPath(): Path {
-			return System.createPath()
-				.moveTo(-SEG_X * 1.5, SEG_Y_HALF)
-				.lineTo(-SEG_X * 0.6, SEG_Y_HALF)
-				.lineTo(-SEG_X * 0.6, -SEG_Y_HALF)
-				.lineTo(SEG_X * 0.6, -SEG_Y_HALF)
-				.lineTo(SEG_X * 0.6, SEG_Y_HALF)
-				.lineTo(SEG_X * 1.5, SEG_Y_HALF)
-		}
+		private val ANNOTATION_PATH = System.createPath()
+			.moveTo(-SEG_X * 1.5, SEG_Y_HALF)
+			.lineTo(-SEG_X * 0.6, SEG_Y_HALF)
+			.lineTo(-SEG_X * 0.6, -SEG_Y_HALF)
+			.lineTo(SEG_X * 0.6, -SEG_Y_HALF)
+			.lineTo(SEG_X * 0.6, SEG_Y_HALF)
+			.lineTo(SEG_X * 1.5, SEG_Y_HALF)
 	}
 
 	private val actorInteractionHandler = ClockViewActorInteractionHandler()

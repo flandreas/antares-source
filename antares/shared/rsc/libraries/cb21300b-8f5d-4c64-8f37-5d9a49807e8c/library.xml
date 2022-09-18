@@ -46,6 +46,7 @@
             <baseLibraryElement _id='51' id='RealSwitch'/>
             <baseLibraryElement _id='55' id='DoubleThrowSwitch'/>
             <baseLibraryElement _id='57' id='WireTap'/>
+            <baseLibraryElement _id='59' id='PowerOnReset'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>
