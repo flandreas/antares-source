@@ -112,12 +112,15 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(PauseOrResumeAction(scheduler))))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction(scheduler))))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction(scheduler))))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction(scheduler))))
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction(scheduler))))
+		graphFrame.controller.graphPanelViewController.also {
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.toggleApplicationModeAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(it.pauseOrResumeAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.singleStepModeAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.executionDepthAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.stopOnIssueAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.simulationTimeStatusEnabledAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.enableSoftBreakpointsAction)))
+		}
 		menu.add(SignalConflictBehaviourMenu())
 		return menu
 	}

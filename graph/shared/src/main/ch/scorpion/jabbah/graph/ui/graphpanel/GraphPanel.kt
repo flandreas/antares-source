@@ -30,8 +30,7 @@ import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
-import ch.scorpion.jabbah.execution.PauseOrResumeAction
-import ch.scorpion.jabbah.execution.SingleStepModeAction
+import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
@@ -130,6 +129,10 @@ class GraphPanelViewController(
 	val toggleApplicationModeAction = ToggleApplicationModeAction(applicationDataHolder, applicationModeHolder, eventBus)
 	val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
 	val pauseOrResumeAction = PauseOrResumeAction(applicationContextHolder.scheduler, eventBus)
+	val executionDepthAction = ExecutionDepthAction(applicationContextHolder.scheduler, eventBus)
+	val stopOnIssueAction = StopOnIssueAction(applicationContextHolder.scheduler, eventBus)
+	val enableSoftBreakpointsAction = EnableSoftBreakpointsAction(applicationContextHolder.scheduler, eventBus)
+	val simulationTimeStatusEnabledAction = SimulationTimeStatusEnabledAction(applicationContextHolder.scheduler, eventBus)
 
 	val rectangleTool: Tool = RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) })
 	val ellipseTool: Tool = RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) })
