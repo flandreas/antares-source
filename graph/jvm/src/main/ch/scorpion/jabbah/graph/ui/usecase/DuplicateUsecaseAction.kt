@@ -36,4 +36,7 @@ class DuplicateUsecaseAction(
 
 		service.duplicateUsecase(application, usecase!!.id, newUsecaseName!!)
 	}
+
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase != null
 }
