@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.swing.PlaceholderTextField
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
@@ -14,6 +16,8 @@ import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 /**
  * An abstract [AbstractLibraryPersistencePanel] that displays a list of all existing [Libraries][Library]
@@ -27,9 +31,15 @@ abstract class AbstractLibrarySelectionPanel(
 	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>()
 	private val descriptionTextArea = JTextArea()
 
+	/** Contains all loaded, unfiltered [LibraryDirectoryEntries][LibraryDictionaryEntry].*/
 	private var entries = listOf<LibraryDictionaryEntry>()
 
 	val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+
+	private val searchField = PlaceholderTextField(
+		placeholder = Translations.getString("draw.search.text"),
+		columns = 20,
+		showClearButton = true)
 
 	init {
 		libraryDictionaryEntries.addListSelectionListener {
@@ -43,6 +53,12 @@ abstract class AbstractLibrarySelectionPanel(
 				}
 			}
 		})
+
+		searchField.document.addDocumentListener(object : DocumentListener {
+			override fun insertUpdate(e: DocumentEvent?) { search() }
+			override fun removeUpdate(e: DocumentEvent?) { search() }
+			override fun changedUpdate(e: DocumentEvent?) { search() }
+		})
 	}
 
 	fun selectLibrary(uuid: UUID) {
@@ -53,6 +69,12 @@ abstract class AbstractLibrarySelectionPanel(
 		entries = loadLibraryDirectoryEntries()
 		val model = DefaultListModel<LibraryDictionaryEntry>()
 		model.addAll(entries)
+		libraryDictionaryEntries.model = model
+	}
+
+	private fun search() {
+		val model = DefaultListModel<LibraryDictionaryEntry>()
+		model.addAll(entries.filter { it.name.value.lowercase().contains(searchField.text.lowercase()) })
 		libraryDictionaryEntries.model = model
 	}
 
@@ -87,10 +109,14 @@ abstract class AbstractLibrarySelectionPanel(
 		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
 		descriptionScroll.background = background
 
-		val scrollPane = JScrollPane(libraryDictionaryEntries)
-		scrollPane.preferredSize = Dimension(300, 300)
-		add(scrollPane, BorderLayout.NORTH)
+		val ldeScroll = JScrollPane(libraryDictionaryEntries)
+		ldeScroll.preferredSize = Dimension(300, 300)
 
+		val contentPanel = JPanel(BorderLayout(0, 2))
+		contentPanel.add(searchField, BorderLayout.NORTH)
+		contentPanel.add(ldeScroll, BorderLayout.CENTER)
+
+		add(contentPanel, BorderLayout.NORTH)
 		add(descriptionScroll, BorderLayout.CENTER)
 
 		libraryDictionaryEntries.cellRenderer = LibraryListRenderer(

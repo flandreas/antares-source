@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
