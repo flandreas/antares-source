@@ -18,7 +18,7 @@ class TruthTableTableModel(
 	/** Translates standard Antares port name negations into texts depending on [BooleanExpressionNotation].*/
 	private val formattedOutputNames =
 		(ref.truthTable.inputColumnCount until ref.truthTable.columnCount)
-			.map { StandardBooleanExpressionWriter.ofPropertiesNotation().writeOutput(ref.truthTable, it) }
+			.map { StandardBooleanExpressionWriter.ofPropertiesNotation().getOutput(ref.truthTable, it) }
 
 	init {
 		ref.addDataListener(listener)

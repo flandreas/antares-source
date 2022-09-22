@@ -12,10 +12,20 @@ class FormattedText(
 
 	companion object {
 
-		private const val NEGATION_SIGN = '!'
+		const val NEGATION_SIGN = '!'
+		private const val LPAREN = '('
+		private const val RPAREN = ')'
 		const val OVERLINE = '\u0305'
 
 		fun empty(): FormattedText = FormattedText("", false, "")
+
+		fun createNegation(s: String): String {
+			return when (s.length) {
+				0 -> ""
+				1 -> "$NEGATION_SIGN$s"
+				else -> "$NEGATION_SIGN$LPAREN$s$RPAREN"
+			}
+		}
 
 		fun replaceNegation(s: String): FormattedText {
 			var negating = false
@@ -29,7 +39,7 @@ class FormattedText(
 					NEGATION_SIGN -> {
 						negating = true
 					}
-					'(' -> {
+					LPAREN -> {
 						if (negating) {
 							inBlock = true
 						} else {
@@ -37,7 +47,7 @@ class FormattedText(
 							resultAllNegated.append(c)
 						}
 					}
-					')' -> {
+					RPAREN -> {
 						if (negating) {
 							inBlock = false
 							negating = false

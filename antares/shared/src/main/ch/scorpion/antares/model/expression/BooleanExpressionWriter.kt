@@ -27,7 +27,7 @@ interface BooleanExpressionWriter {
 		omitAndForSingleCharacterVariables: Boolean = BaseModule.properties.getBoolean(BooleanExpressionNotation.PROP_OMIT_AND)
 	) : String
 
-	fun writeOutput(truthTable: TruthTable, outputColumn: Int): String
+	fun getOutput(truthTable: TruthTable, outputColumn: Int): String
 }
 
 /**
@@ -52,13 +52,13 @@ abstract class AbstractBooleanExpressionWriter(
 		omitAndForSingleCharacterVariables: Boolean
 	): String {
 		val builder = StringBuilder()
-		val output = writeOutput(truthTable, outputColumn)
+		val output = getOutput(truthTable, outputColumn)
 		builder.append("$output = ")
 		ast.accept(Visitor(builder, omitAndForSingleCharacterVariables && truthTable.allInputNamesAreSingleChar))
 		return builder.toString()
 	}
 
-	override fun writeOutput(truthTable: TruthTable, outputColumn: Int): String {
+	override fun getOutput(truthTable: TruthTable, outputColumn: Int): String {
 		val builder = StringBuilder()
 		val info = truthTable.getOutputColumnInfo(outputColumn)
 		if (info.isNegated) {

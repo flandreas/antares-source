@@ -43,4 +43,11 @@ class FormattedTextTest {
 		assertFalse(replaceNegation("!Q").text.contains(OVERLINE))
 		assertFalse(replaceNegation("!(ABC)").text.contains(OVERLINE))
 	}
+
+	@Test
+	fun shouldCreateNegation() {
+		assertEquals("", FormattedText.createNegation(""))
+		assertEquals("!Q", FormattedText.createNegation("Q"))
+		assertEquals("!(ABC)", FormattedText.createNegation("ABC"))
+	}
 }

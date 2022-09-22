@@ -17,13 +17,34 @@ class DslBooleanExpressionWriterTest {
 
 	@Test
 	fun shouldWriteDslExpression() {
-		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("X"))
+		assertEquals(
+			"X = A and not B or not A and B",
+			createExpression(listOf("A", "B"), listOf("X")))
+	}
+
+	@Test
+	fun shouldWriteNegatedOutput() {
+		assertEquals(
+			"'!X' = A and not B or not A and B",
+			createExpression(listOf("A", "B"), listOf("!X")))
+	}
+
+	@Test
+	fun shouldWriteMultiCharacterNegatedOutput() {
+		assertEquals(
+			"'!(XYZ)' = A and not B or not A and B",
+			createExpression(listOf("A", "B"), listOf("!(XYZ)")))
+	}
+
+	/**
+	 * Create an expression of the form "X = A and not B or not A and B".
+	 */
+	private fun createExpression(inputColumNames: List<String>, outputColumnNames: List<String>): String {
+		val truthTable = TruthTable(inputColumnNames = inputColumNames, outputColumnNames = outputColumnNames)
 		val dnf: DNF = listOf(listOf(-1, 2), listOf(1, -2))
 		val expression = DnfToBooleanExpression(truthTable, dnf, andParenthesis = false).build()
 
-		val output = DslBooleanExpressionWriter()
+		return DslBooleanExpressionWriter()
 			.write(truthTable, expression, 2, omitAndForSingleCharacterVariables = false)
-
-		assertEquals("X = A and not B or not A and B", output)
 	}
 }
