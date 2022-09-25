@@ -407,7 +407,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(POWER, "library.element.Power", { "/img/power.png" }, PowerView::class)
 		repository.register(BIDIRECTIONAL_SPLITTER, "library.element.BidirectionalSplitter", { "/img/splitter.png" }, BidirectionalSplitterView::class)
 		repository.register(WIRE_TAP, "library.element.WireTap", { "/img/wire-tap.png" }, WireTapView::class)
-		repository.register(POWER_ON_RESET, "library.element.PowerOnReset", { "/img/power.png" }, PowerOnResetView::class)
+		repository.register(POWER_ON_RESET, "library.element.PowerOnReset", { "/img/power-on-reset.png" }, PowerOnResetView::class)
 
 		repository.register(AND,
 			"library.element.AndGate",
