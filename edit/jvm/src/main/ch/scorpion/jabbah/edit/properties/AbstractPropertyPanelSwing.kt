@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
 import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
-import java.awt.Color
 import java.beans.PropertyDescriptor
 import javax.swing.*
 import kotlin.math.max
@@ -66,6 +65,10 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	init {
+		// Apply UI colors for inactive table provided by FlatLaf UI. Required a patch in l2fprod component
+		sheet.table.selectionInactiveBackground = UIManager.getColor("Table.selectionInactiveBackground")
+		sheet.table.selectionInactiveForeground = UIManager.getColor("Table.selectionInactiveForeground")
+
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		sheet.table.setShowGrid(true)
