@@ -59,6 +59,9 @@ abstract class AbstractLibrarySelectionPanel(
 			override fun removeUpdate(e: DocumentEvent?) { search() }
 			override fun changedUpdate(e: DocumentEvent?) { search() }
 		})
+		SwingUtilities.invokeLater {
+			searchField.requestFocus()
+		}
 	}
 
 	fun selectLibrary(uuid: UUID) {
@@ -80,7 +83,6 @@ abstract class AbstractLibrarySelectionPanel(
 
 	protected fun selectCurrentLibrary(library: Library? = null) {
 		SwingUtilities.invokeLater {
-			libraryDictionaryEntries.requestFocusInWindow()
 			library?.let { lib ->
 				getLibraryIndex(lib.uuid)?.let { index ->
 					libraryDictionaryEntries.selectedIndex = index
