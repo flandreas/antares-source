@@ -57,6 +57,7 @@ class GraphParamDefinitionsPropertyEditor(
 		val panel = JPanel()
 		panel.background = UIManager.getColor("Table.background")
 		panel.layout = BorderLayout()
+		panel.border = BorderFactory.createLineBorder(UIManager.getColor("Component.focusColor"))
 
 		panel.add(label, BorderLayout.CENTER)
 

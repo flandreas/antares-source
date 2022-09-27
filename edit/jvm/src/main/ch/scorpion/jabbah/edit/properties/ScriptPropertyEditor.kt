@@ -50,6 +50,7 @@ class ScriptPropertyEditor(
 	private fun buildUI() {
 		val panel = JPanel()
 		panel.background = UIManager.getColor("Table.background")
+		panel.border = BorderFactory.createLineBorder(UIManager.getColor("Component.focusColor"))
 		panel.layout = BorderLayout()
 
 		panel.add(label, BorderLayout.CENTER)
