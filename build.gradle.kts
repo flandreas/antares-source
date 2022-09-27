@@ -56,6 +56,7 @@ val commonsLang3Version: String by extra
 val commonsBeansVersion: String by extra
 val commonsCodecVersion: String by extra
 val l2fprodVersion: String by extra
+val flatLafVersion: String by extra
 
 subprojects {
 

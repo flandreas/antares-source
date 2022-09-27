@@ -70,6 +70,7 @@ class TranslatablePropertyEditor(
 
 	val textComponent: JTextComponent
 	private var text: Translatable = TranslatableText()
+	private val border = UIManager.getBorder("TextField.border")
 
 	init {
 		if (multiline.invoke(TranslatableText())) {
@@ -120,7 +121,7 @@ class TranslatablePropertyEditor(
 		if (textComponent is JTextArea) {
 			val scroll = UiUtil.decorateTextArea(textComponent)
 			textComponent.columns = 20
-			textComponent.border = UIManager.getBorder("TextField.border")
+			textComponent.border = border
 
 			EGBL.add(
 				panel,

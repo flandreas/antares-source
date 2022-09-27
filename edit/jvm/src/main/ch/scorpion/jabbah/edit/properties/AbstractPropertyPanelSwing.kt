@@ -12,6 +12,7 @@ import java.awt.BorderLayout
 import java.beans.PropertyDescriptor
 import javax.swing.*
 import kotlin.math.max
+import kotlin.math.min
 
 
 /**
@@ -207,10 +208,14 @@ abstract class AbstractPropertyPanelSwing(
 
 				for (column in 0 until table.columnCount) {
 					val comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column)
-					rowHeight = max(rowHeight, comp.preferredSize.height)
+					rowHeight = if (comp is JTextArea) {
+						max(rowHeight, comp.preferredSize.height + 4)
+					} else {
+						max(rowHeight, comp.preferredSize.height)
+					}
 				}
 
-				table.setRowHeight(row, rowHeight)
+				table.setRowHeight(row, min(60, rowHeight))
 			}
 		} catch (e: ClassCastException) {
 			println("Exception while adjusting PropertySheetTable heights")
