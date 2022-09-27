@@ -65,6 +65,7 @@ class GraphParamDefinitionsPropertyEditor(
 		button.icon = UiUtil.themedIcon(TextPropertyEditor.ICON_PATH)
 		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 		button.toolTipText = Translations.getString("graph.property.graphParams.tooltip")
+		button.isContentAreaFilled = false // NOTE: This also disables hover highlighting
 		button.addActionListener { showDialog() }
 
 		panel.add(button, BorderLayout.EAST)
