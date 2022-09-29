@@ -9,10 +9,7 @@ import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.BitWidthGraphParamType
-import ch.scorpion.antares.model.signal.DigitalSignalNotation
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
@@ -48,7 +45,6 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
-import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
@@ -57,6 +53,7 @@ import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
+import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
@@ -184,6 +181,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
+		properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://click-metrics.up.railway.app/api/ping")
@@ -305,6 +303,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
 			id = Look.PROP_FILL_BASIC_COMPONENTS,
 			nameKey = "antares.preference.fillBasicComponents"
+		))
+
+		root.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).add(BooleanPreference(
+			id = DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR,
+			nameKey = "antares.preference.differentNonZeroMultiBitColor",
+			needsRestart = true
 		))
 
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))

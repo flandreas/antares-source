@@ -11,6 +11,8 @@ interface DigitalSignal {
 
 	val isPartiallyUndefined: Boolean
 
+	val isZero: Boolean
+
 	val hasError: Boolean
 
 	val bits: List<Bit>

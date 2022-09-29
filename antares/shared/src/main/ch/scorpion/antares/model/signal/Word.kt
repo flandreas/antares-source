@@ -19,7 +19,7 @@ internal data class Word(
 	override val bitWidth: BitWidth = BitWidth.of(bits.size)
 
 	/** Is automatically set to ´true´ if all [Bit]s are [Bit.False]. */
-	private val zero: Boolean = bits.all { it == Bit.False }
+	override val isZero: Boolean = bits.all { it == Bit.False }
 
 	/** Is automatically set to ´true´ if any [Bit]s is [Bit.Undefined]. */
 	private val undefined: Boolean = bits.any { it == Bit.Undefined }
@@ -162,21 +162,7 @@ internal data class Word(
 		if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
 	}
 
-	override val color: CompositeColor by lazy calcColor@ {
-		if (bitWidth.width == BitWidth.BW_1.width) {
-			return@calcColor bitAt(0).color
-		}
-		if (zero) {
-			return@calcColor Themes.get<AntaresTheme>().wordZero
-		}
-		if (error) {
-			return@calcColor Themes.get<AntaresTheme>().error
-		}
-		if (isFullyUndefined) {
-			return@calcColor Themes.get<AntaresTheme>().undefined
-		}
-		return@calcColor Themes.get<AntaresTheme>().word
-	}
+	override val color: CompositeColor by lazy { DigitalSignalColor.ofSignal(this) }
 
 	private val notValue: DigitalSignal by lazy {
 		Word((0 until bitWidth.width).map { bitAt(it).not() })

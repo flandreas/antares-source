@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_5
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.theme.AntaresThemes
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import kotlin.test.*
@@ -20,6 +21,12 @@ class WordTest {
 			DrawModule.require()
 			AntaresThemes.install()
 		}
+	}
+
+	@BeforeTest
+	fun setup() {
+		BaseModule.properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
+		DigitalSignalColor.reset()
 	}
 
 	@Test
@@ -171,6 +178,13 @@ class WordTest {
 	@Test
 	fun shouldReturnBusColor() {
 		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 1L).color)
+	}
+
+	@Test
+	fun shouldNotReturnBusColorWithoutPreference() {
+		BaseModule.properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, false)
+		DigitalSignalColor.reset()
+		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 1L).color)
 	}
 
 	@Test
