@@ -51,6 +51,8 @@ class AntaresJs : AbstractApplicationJs(GraphDataViewController()), AntaresAppli
 		private const val RETURN_URI_PARAM = "returnUrl"
 	}
 
+	override val isFirstUsage: Boolean = false
+
 	override val logLevel get() = LogLevel.Info
 
 	override fun init() {

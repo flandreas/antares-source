@@ -63,15 +63,18 @@ abstract class AbstractDesktopApplicationSwing(
 		BusyHandler.register(mainFrame, null)
 
 		SwingUtilities.invokeLater {
+			val firstUsage = isFirstUsage
 			openInitialSavable()
 			checkForNewestVersion()
+			if (firstUsage) {
+				showWelcomeMessage()
+			}
 		}
 	}
 
 	override fun showAboutInfo() {
 		AboutPanel.showAsDialog(this)
 	}
-
 
 	/**
 	 * Opens the [Savable] to be initially available when the application starts.
@@ -104,6 +107,10 @@ abstract class AbstractDesktopApplicationSwing(
 
 	private fun registerApplicationUsage() {
 		AppModuleJvm.applicationUsageService.registerUsage()
+	}
+
+	private fun showWelcomeMessage() {
+		WelcomePanel.showAsDialog(this)
 	}
 
 	/** ---- [AbstractDesktopApplication] */

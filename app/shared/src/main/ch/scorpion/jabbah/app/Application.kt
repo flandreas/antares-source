@@ -24,6 +24,12 @@ interface Application {
 	/** The URL containing the online documentation for this [Application].*/
 	val documentationUrl: String? get() = null
 
+	/**
+	 * Returns `true` if the user starts this [Application] for the first time.
+	 * This allows the [Application] to display any welcome message or set-up the user data directory.
+	 * */
+	val isFirstUsage: Boolean
+
     /**
      * Starts this [Application] by initializing it, by loading predefined content, and by displaying its primary view.
      * This method is typically implemented in a platform-specific layer.

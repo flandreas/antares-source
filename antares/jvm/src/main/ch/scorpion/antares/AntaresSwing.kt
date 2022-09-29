@@ -217,6 +217,8 @@ class AntaresSwing(
 
 	/** ---- [AbstractApplication] */
 
+	override val isFirstUsage: Boolean get() = !ProjectModule.projectManagementService.invoke().directoryExists
+
 	override val aboutInfo: AboutInfo get() = AboutInfo(
 		iconPath = "/$ICON_PATH",
 		name = displayName,
@@ -336,7 +338,7 @@ class AntaresSwing(
 			return
 		}
 
-		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
+		if (isFirstUsage) {
 			ProjectModule.projectManagementService.invoke()
 				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
 				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
