@@ -28,7 +28,7 @@ class LibraryTreeViewSwing(
 	private val controller: LibraryTreeViewController,
 	application: Application,
 	showWorkspaceNode: Boolean = true
-) : JTree(LibraryTreeModelBuilderSwing(controller.library,).build()), LibraryTreeView {
+) : JTree(LibraryTreeModelBuilderSwing(controller.library).build()), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewSwing::class)
@@ -65,6 +65,7 @@ class LibraryTreeViewSwing(
 	}
 
 	override fun dispose() {
+		actions.dispose()
 		ToolTipManager.sharedInstance().unregisterComponent(this)
 	}
 

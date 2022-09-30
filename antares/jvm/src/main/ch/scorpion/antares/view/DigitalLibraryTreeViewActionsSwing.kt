@@ -29,11 +29,11 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectExpressionPopupMenu = JPopupMenu()
 	private val libraryExpressionPopupMenu = JPopupMenu()
 
-	private val newTruthTableAction = NewTruthTableAction(controller)
-	private val openTruthTableAction = OpenTruthTableAction(application.controller as GraphDataViewController, controller)
-	private val createCircuitAction = CreateCircuitFromTruthTableAction(controller)
-	private val newBooleanExpressionAction = NewBooleanExpressionAction(controller)
-	private val openBooleanExpressionAction = OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller)
+	private val newTruthTableAction = register(NewTruthTableAction(controller))
+	private val openTruthTableAction = register(OpenTruthTableAction(application.controller as GraphDataViewController, controller))
+	private val createCircuitAction = register(CreateCircuitFromTruthTableAction(controller))
+	private val newBooleanExpressionAction = register(NewBooleanExpressionAction(controller))
+	private val openBooleanExpressionAction = register(OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller))
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
