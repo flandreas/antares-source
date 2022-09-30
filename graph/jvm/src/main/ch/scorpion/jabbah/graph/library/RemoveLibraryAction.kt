@@ -5,10 +5,15 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 
+/**
+ * Removes the currently selected [Library] from the list of imported [Libraries][Library]
+ * of the current main [Library] (or main [Project]).
+ */
 class RemoveLibraryAction(
 	controller: LibraryTreeViewController,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
@@ -44,7 +49,11 @@ class RemoveLibraryAction(
 					JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE)
 			} else {
-				libraryHolder.library.libraryService.removeImport(libraryHolder.library, selectedItem!!.library!!.uuid)
+				if (libraryHolder.library is Project) {
+					ProjectModule.projectManagementService().removeImport(selectedItem!!.library!!.uuid)
+				} else {
+					LibraryModule.libraryManagementService.removeImport(selectedItem!!.library!!.uuid)
+				}
 			}
 		}
 	}

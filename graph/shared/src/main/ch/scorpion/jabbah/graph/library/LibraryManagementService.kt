@@ -171,27 +171,6 @@ class LibraryManagementService(
 		deleteImpl(libraryId)
 	}
 
-	/**
-	 * Removes the specified [Library] as an imported [Library] from the [Library] currently held by
-	 * [LibraryHolder] and makes this change persistent.
-	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] isn't currently imported
-	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
-	 */
-	fun removeImport(libraryId: UUID) {
-		if (libraryHolder.l == null) {
-			throw IllegalStateException("no Library to remove an import from")
-		}
-		if (!libraryHolder.library.importedLibraryIds.contains(libraryId)) {
-			throw IllegalArgumentException("library $libraryId not imported by ${libraryHolder.library.uuid}")
-		}
-		LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
-
-		libraryHolder.library.removeImport(libraryId)
-		libraryService.storeLibrary(libraryHolder.library)
-
-		eventBus.post(LibraryImportsEvent(libraryHolder.library))
-	}
-
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
 		libraryService.loadMetaGraph(element.library!!, element)
 		return destination.containsAllRecursivelyReferencedBy(element.metaGraph!!.graph.model!!)

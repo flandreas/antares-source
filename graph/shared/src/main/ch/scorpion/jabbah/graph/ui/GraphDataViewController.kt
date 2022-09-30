@@ -47,6 +47,8 @@ class GraphDataViewController(
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
 	private val closeQuestionHandler: EventHandler<GraphDesktopViewItemCloseQuestion> = { handle(it) }
 	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
+	private val libraryImportRemoveQuestionHandler: EventHandler<LibraryImportRemoveQuestion> = { handle(it) }
+	private val libraryImportRemovedHandler: EventHandler<LibraryImportRemovedEvent> = { handle(it) }
 
 	init {
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
@@ -55,6 +57,8 @@ class GraphDataViewController(
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
 		eventBus.register(GraphDesktopViewItemCloseQuestion::class, closeQuestionHandler)
 		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
+		eventBus.register(LibraryImportRemoveQuestion::class, libraryImportRemoveQuestionHandler)
+		eventBus.register(LibraryImportRemovedEvent::class, libraryImportRemovedHandler)
 	}
 
 	override fun dispose() {
@@ -65,6 +69,8 @@ class GraphDataViewController(
 		eventBus.unregister(libraryItemRemovedHandler)
 		eventBus.unregister(closeQuestionHandler)
 		eventBus.unregister(closeRequestHandler)
+		eventBus.unregister(libraryImportRemoveQuestionHandler)
+		eventBus.unregister(libraryImportRemovedHandler)
 	}
 
 	override fun setUndoableState(state: Storable) {
@@ -123,7 +129,7 @@ class GraphDataViewController(
 		}
 	}
 
-	private fun handle(event: CloseLibraryRequest) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CloseLibraryRequest) {
 		if (!canReplaceSavable("project.action.close.name")) {
 			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 		}
@@ -143,6 +149,18 @@ class GraphDataViewController(
 
 	private fun handle(event: GraphDesktopViewItemCloseRequest) {
 		if (event.isRoot) {
+			closeDataAfterConfirmation()
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: LibraryImportRemoveQuestion) {
+		if (!canReplaceSavable("project.action.close.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(event: LibraryImportRemovedEvent) {
+		if (event.libraryId == (data?.savable as? AbstractLibraryItemSavable)?.item?.library?.uuid) {
 			closeDataAfterConfirmation()
 		}
 	}

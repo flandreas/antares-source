@@ -459,19 +459,20 @@ class LibraryService(
 
 	/**
 	 * Removes the specified [Library] as import from the current [Library] in [LibraryHolder],
-	 * as well as all [Libraries][Library] imported by [library].
+	 * as well as all [Libraries][Library] imported by [ownerLibrary].
 	 *
 	 * Clients like UI should first call [containsLibraryReference] to check whether removing
 	 * the current [Library] contains a reference to one of the [MetaGraphs][MetaGraph] in the
-	 * transitive hull of [library], and if that's the case, not allowing the user to remove it.
+	 * transitive hull of [ownerLibrary], and if that's the case, not allowing the user to remove it.
 	 *
-	 * @param library the [Library] not to be imported any more
+	 * @param ownerLibrary the [Library] currently importing the [Library] with [libraryId]
+	 * @param libraryId the ID of the [Library] not to be imported any more
 	 */
 	fun removeImport(ownerLibrary: Library, libraryId: UUID) {
 		LOG.userTrail("Remove import $libraryId from ${ownerLibrary.uuid}")
 		ownerLibrary.removeImport(libraryId)
 		storeLibrary(ownerLibrary)
-
+		eventBus.post(LibraryImportRemovedEvent(ownerLibrary, libraryId))
 		eventBus.post(LibraryImportsEvent(ownerLibrary))
 	}
 

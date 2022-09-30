@@ -41,6 +41,8 @@ interface EventBus {
 
 	fun postTwoPhase(prepareEvent: Any, execEvent: Any)
 
+	fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit)
+
 	/** Unregisters all [EventHandler]s. Primarily for integration testing.*/
 	fun clear()
 }
@@ -98,6 +100,17 @@ abstract class AbstractEventBus : EventBus {
 			registrations[getEventClassName(execEvent)]?.forEach {
 				it.invoke(execEvent)
 			}
+		} catch (e: VetoException) {
+			// do nothing, operation vetoed
+		}
+	}
+
+	override fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit) {
+		try {
+			registrations[getEventClassName(prepareEvent)]?.forEach {
+				it.invoke(prepareEvent)
+			}
+			thenHandler()
 		} catch (e: VetoException) {
 			// do nothing, operation vetoed
 		}

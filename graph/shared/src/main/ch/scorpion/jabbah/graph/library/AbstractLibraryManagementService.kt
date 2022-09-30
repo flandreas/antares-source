@@ -27,6 +27,9 @@ data class LibraryImportResult(
 	val param: String? = null,
 	val library: Library? = null)
 
+data class LibraryImportRemoveQuestion(val ownerLibrary: Library, val libraryId: UUID)
+data class LibraryImportRemovedEvent(val ownerLibrary: Library, val libraryId: UUID)
+
 /**
  * Base service class for managing [Libraries][Library] as well as [Projects][Project].
  *
@@ -121,6 +124,24 @@ abstract class AbstractLibraryManagementService(
 					}
 				)
 			}
+		}
+	}
+
+	/**
+	 * Removes the specified [Library] as an imported [Library] from the [Library] currently held by
+	 * [LibraryHolder] and makes this change persistent.
+	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] isn't currently imported
+	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
+	 */
+	fun removeImport(libraryId: UUID) {
+		if (libraryHolder.l == null) {
+			throw IllegalStateException("no Library to remove an import from")
+		}
+		eventBus.postTwoPhase(
+			LibraryImportRemoveQuestion(libraryHolder.library, libraryId)
+		) {
+			LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
+			libraryHolder.library.libraryService.removeImport(libraryHolder.library, libraryId)
 		}
 	}
 }
