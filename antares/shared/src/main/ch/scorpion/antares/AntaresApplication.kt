@@ -14,6 +14,8 @@ interface AntaresApplication : Application {
 		const val FILE_EXTENSION_NAME = "cir"
 		const val DOC_URL_PROD = "https://www.antarescircuit.io/user-manual/english"
 		const val DOC_URL_DEV = "http://127.0.0.1:4000/user-manual/english"
+		const val ISSUES_URL_PROD = "https://www.antarescircuit.io/docs/issues"
+		const val ISSUES_URL_DEV = "http://127.0.0.1:4000/docs/issues"
 		val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 	}
 

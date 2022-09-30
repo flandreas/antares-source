@@ -24,6 +24,9 @@ interface Application {
 	/** The URL containing the online documentation for this [Application].*/
 	val documentationUrl: String? get() = null
 
+	/** The URL containing guidelines for reporting bugs and requesting features.*/
+	val issuesUrl: String? get() = null
+
 	/**
 	 * Returns `true` if the user starts this [Application] for the first time.
 	 * This allows the [Application] to display any welcome message or set-up the user data directory.
