@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.library.*
  */
 class ProjectSavable(
 	element: ContainerLibraryElement,
-	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
+	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService
 ) : AbstractContainerLibraryElementSavable(element) {
 
 	val project: Project get() = element.library as Project

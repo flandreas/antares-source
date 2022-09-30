@@ -37,7 +37,7 @@ object TempFileLibraryTestRule {
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "projects")
 		ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService ) }
 		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(projectsDir))
-		ProjectModule.projectManagementService = { ProjectManagementService() }
+		ProjectModule.projectManagementService = ProjectManagementService()
 	}
 
 	fun createLibrary(name: String): Library {

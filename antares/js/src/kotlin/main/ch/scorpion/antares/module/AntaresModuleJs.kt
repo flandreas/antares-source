@@ -67,8 +67,8 @@ object AntaresModuleJs : AbstractModule() {
 			libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
 		)
 
-		ProjectModule.projectManagementService = { ProjectManagementService(
-			newMetaGraphNameTranslationKey = "graph.name.unknown")}
+		ProjectModule.projectManagementService = ProjectManagementService(
+			newMetaGraphNameTranslationKey = "graph.name.unknown")
 
 
 		registerAntaresIconsInProvider()

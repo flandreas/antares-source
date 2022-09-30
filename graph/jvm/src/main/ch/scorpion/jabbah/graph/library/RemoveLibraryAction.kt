@@ -50,7 +50,7 @@ class RemoveLibraryAction(
 					JOptionPane.ERROR_MESSAGE)
 			} else {
 				if (libraryHolder.library is Project) {
-					ProjectModule.projectManagementService().removeImport(selectedItem!!.library!!.uuid)
+					ProjectModule.projectManagementService.removeImport(selectedItem!!.library!!.uuid)
 				} else {
 					LibraryModule.libraryManagementService.removeImport(selectedItem!!.library!!.uuid)
 				}

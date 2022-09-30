@@ -95,7 +95,7 @@ class GraphDataViewController(
 	}
 
 	fun openProject(identification: LibraryIdentification) {
-		System.invokeLater { ProjectModule.projectManagementService.invoke().open(identification) }
+		System.invokeLater { ProjectModule.projectManagementService.open(identification) }
 	}
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {

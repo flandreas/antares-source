@@ -217,7 +217,7 @@ class AntaresSwing(
 
 	/** ---- [AbstractApplication] */
 
-	override val isFirstUsage: Boolean get() = !ProjectModule.projectManagementService.invoke().directoryExists
+	override val isFirstUsage: Boolean get() = !ProjectModule.projectManagementService.directoryExists
 
 	override val aboutInfo: AboutInfo get() = AboutInfo(
 		iconPath = "/$ICON_PATH",
@@ -333,13 +333,13 @@ class AntaresSwing(
 
 		val dataViewController = (controller as GraphDataViewController)
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
-		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.invoke().contains(UUID(projectName))) {
+		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
 			dataViewController.openProject(LibraryIdentification(UUID(projectName), userId))
 			return
 		}
 
 		if (isFirstUsage) {
-			ProjectModule.projectManagementService.invoke()
+			ProjectModule.projectManagementService
 				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
 				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
 			return

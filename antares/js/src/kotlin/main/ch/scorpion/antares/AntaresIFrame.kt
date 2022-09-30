@@ -70,7 +70,7 @@ class AntaresIFrame {
 
 	private fun loadProject(projectId: LibraryIdentification) {
 		try {
-			LibraryModule.libraryHolder.l = ProjectModule.projectManagementService.invoke().load(projectId)
+			LibraryModule.libraryHolder.l = ProjectModule.projectManagementService.load(projectId)
 		} catch (e: AkrabApiException) {
 			error = e.error
 		}

@@ -151,8 +151,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			libraryFileName = app.libraryFileName,
 			metaGraphHistoryService = GraphModuleJvm.metaGraphHistoryService)
 
-		ProjectModule.projectManagementService = { ProjectManagementService(
-			newMetaGraphNameTranslationKey = "graph.name.unknown") }
+		ProjectModule.projectManagementService = ProjectManagementService(
+			newMetaGraphNameTranslationKey = "graph.name.unknown")
 
 		if (app.dataLocation == DataLocation.Local) {
 			GraphModuleJvm.projectAkrabClientServiceJvm = {

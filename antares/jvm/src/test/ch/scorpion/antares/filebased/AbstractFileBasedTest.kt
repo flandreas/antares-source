@@ -32,7 +32,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(path.toString()))
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(path.parent.toString(), "projects")
-			ProjectModule.projectManagementService = { ProjectManagementService() }
+			ProjectModule.projectManagementService = ProjectManagementService()
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
 				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
@@ -46,7 +46,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 	override fun getCircuitView(): GraphView = openedCircuitView
 
 	protected fun openCircuit(uuid: UUID) {
-		ProjectModule.projectManagementService.invoke().open(
+		ProjectModule.projectManagementService.open(
 			LibraryIdentification(UUID("e70cb564-42c2-4880-baf4-17c507b1526a"), null))
 		val metaGraph = LibraryModule.libraryHolder.library.getMetaGraph(uuid)
 		openedCircuitView = metaGraph.graph.graphView

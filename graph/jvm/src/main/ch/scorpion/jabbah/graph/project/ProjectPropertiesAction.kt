@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 class ProjectPropertiesAction(
 	controller: LibraryTreeViewController,
-	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke()
+	private val managementService: ProjectManagementService = ProjectModule.projectManagementService
 ) : AbstractLibraryPropertiesAction(
 	baseName = "project.action.properties",
 	controller

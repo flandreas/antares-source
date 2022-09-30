@@ -17,7 +17,7 @@ class GraphDataViewControllerTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
-			ProjectModule.projectManagementService = { mockk() }
+			ProjectModule.projectManagementService = mockk()
 		}
 	}
 

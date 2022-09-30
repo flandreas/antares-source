@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
  * Closes the currently open [Project].
  */
 class CloseProjectAction(
-	managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
+	managementService: ProjectManagementService = ProjectModule.projectManagementService,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : CloseLibraryAction("project.action.close", managementService, libraryHolder, eventBus)

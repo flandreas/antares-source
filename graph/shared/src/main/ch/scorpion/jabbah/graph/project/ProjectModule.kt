@@ -21,7 +21,7 @@ object ProjectModule : AbstractModule() {
 
 	var projectDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
-	lateinit var projectManagementService: () -> ProjectManagementService
+	lateinit var projectManagementService: ProjectManagementService
 
 	val projectFactory: (TranslatableText) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), objectTypeKey = "project.project.name") }
 

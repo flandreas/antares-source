@@ -47,8 +47,8 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 	private fun openInitialSavable() {
 		val dataViewController = (controller as GraphDataViewController)
 
-		if (!ProjectModule.projectManagementService.invoke().directoryExists) {
-			ProjectModule.projectManagementService.invoke()
+		if (!ProjectModule.projectManagementService.directoryExists) {
+			ProjectModule.projectManagementService
 				.createHelloProject(null)
 				.also { dataViewController.openProject(it.identification) }
 			return
