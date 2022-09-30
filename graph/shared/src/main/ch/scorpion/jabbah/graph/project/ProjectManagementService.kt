@@ -185,25 +185,4 @@ class ProjectManagementService(
 			deleteImpl(libraryId)
 		}
 	}
-
-	/** Closes the currently open [Project].*/
-	fun close() {
-		closeImpl { }
-	}
-
-	private fun closeImpl(additionalThenHandler: () -> Unit) {
-		if (libraryHolder.l != null) {
-			val project = libraryHolder.library
-			if (project != null) {
-				eventBus.postVetoable(
-					event = CloseLibraryRequest(),
-					undoEvent = OpenLibraryRequest(project),
-					thenHandler = {
-						libraryHolder.l = null
-						additionalThenHandler.invoke()
-					}
-				)
-			}
-		}
-	}
 }

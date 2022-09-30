@@ -102,4 +102,25 @@ abstract class AbstractLibraryManagementService(
 		library.importedLibraryIds.any {
 			!userDictionaryService.contains(it) && !systemDictionaryService.contains(it)
 		}
+
+	/** Closes the currently open [Library].*/
+	fun close() {
+		closeImpl { }
+	}
+
+	protected fun closeImpl(additionalThenHandler: () -> Unit) {
+		if (libraryHolder.l != null) {
+			val project = libraryHolder.library
+			if (project != null) {
+				eventBus.postVetoable(
+					event = CloseLibraryRequest(),
+					undoEvent = OpenLibraryRequest(project),
+					thenHandler = {
+						libraryHolder.l = null
+						additionalThenHandler.invoke()
+					}
+				)
+			}
+		}
+	}
 }

@@ -48,6 +48,7 @@ open class LibraryTreeViewActionsSwing(
 	private val duplicateLibraryGraphAction = DuplicateGraphAction(controller, libraryOperationTarget)
 	private val importLibraryMetaGraphAction = ImportMetaGraphAction(controller, libraryOperationTarget)
 	private val renameLibraryMetaGraphAction = RenameMetaGraphAction(controller, libraryOperationTarget)
+	private val closeLibraryAction = CloseLibraryAction()
 
 	private val projectPropertiesAction = ProjectPropertiesAction(controller)
 	private val addProjectFolderAction = AddLibraryFolderAction(controller, projectOperationTarget)
@@ -60,6 +61,7 @@ open class LibraryTreeViewActionsSwing(
 	private val importProjectMetaGraphAction = ImportMetaGraphAction(controller, projectOperationTarget)
 	private val renameProjectMetaGraphAction = RenameMetaGraphAction(controller, projectOperationTarget)
 
+	private val closeProjectAction = CloseProjectAction()
 	private val uploadProjectAction = if (GraphModuleJvm.supportWeb) {
 		UploadProjectAction(controller, projectOperationTarget)
 	} else {
@@ -161,7 +163,7 @@ open class LibraryTreeViewActionsSwing(
 		if (uploadProjectAction != null) {
 			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
 		}
-		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
+		projectRootMenu.add(ActionWrapperSwing(closeProjectAction))
 	}
 
 	protected open fun fillMainProjectRootCreateActions() {
@@ -198,6 +200,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(libraryPropertiesAction))
+		libraryRootMenu.add(ActionWrapperSwing(closeLibraryAction))
 	}
 
 	protected open fun fillMainLibraryRootCreateActions() {

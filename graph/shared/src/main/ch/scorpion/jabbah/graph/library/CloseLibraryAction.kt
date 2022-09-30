@@ -1,22 +1,20 @@
-package ch.scorpion.jabbah.graph.project
+package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
 
 /**
- * Closes the currently open [Project].
+ * Closes the currently open [Library]
  */
-class CloseProjectAction(
-	private val managementService: ProjectManagementService = ProjectModule.projectManagementService.invoke(),
+open class CloseLibraryAction(
+	baseName: String = "library.action.close",
+	private val managementService: AbstractLibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction("project.action.close") {
+) : AbstractAction(baseName) {
 
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
 
