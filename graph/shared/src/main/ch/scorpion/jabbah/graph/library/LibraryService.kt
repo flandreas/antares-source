@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
-import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
@@ -461,16 +460,18 @@ class LibraryService(
 	 * Removes the specified [Library] as import from the current [Library] in [LibraryHolder],
 	 * as well as all [Libraries][Library] imported by [ownerLibrary].
 	 *
-	 * Clients like UI should first call [containsLibraryReference] to check whether removing
+	 * Clients like UI should first call [evaluateLibraryReferences] to check whether removing
 	 * the current [Library] contains a reference to one of the [MetaGraphs][MetaGraph] in the
 	 * transitive hull of [ownerLibrary], and if that's the case, not allowing the user to remove it.
 	 *
 	 * @param ownerLibrary the [Library] currently importing the [Library] with [libraryId]
 	 * @param libraryId the ID of the [Library] not to be imported any more
+	 * @param replacingSystemLibraries the [UUIDs][UUID] of the system [Libraries][Library]
+	 * to be imported instead to resolve dangling references
 	 */
-	fun removeImport(ownerLibrary: Library, libraryId: UUID) {
+	fun removeImport(ownerLibrary: Library, libraryId: UUID, replacingSystemLibraries: Set<UUID>) {
 		LOG.userTrail("Remove import $libraryId from ${ownerLibrary.uuid}")
-		ownerLibrary.removeImport(libraryId)
+		ownerLibrary.removeImport(libraryId, replacingSystemLibraries)
 		storeLibrary(ownerLibrary)
 		eventBus.post(LibraryImportRemovedEvent(ownerLibrary, libraryId))
 		eventBus.post(LibraryImportsEvent(ownerLibrary))
@@ -480,26 +481,12 @@ class LibraryService(
 	 * Determines whether [master] contains a [MetaGraph] with a reference to any [MetaGraph] in [target]
 	 * (or any [Library] imported by [target]).
 	 *
-	 * This check can be costly, because every [MetaGraph] in the current [Library]has to be
+	 * This check can be costly, because every [MetaGraph] in the current [Library] has to be
 	 * read and scanned for [SubGraphVerticeRefs][SubGraphVerticeRef] that would become
 	 * broken when removing [target] from the imports.
 	 */
-	fun containsLibraryReference(master: Library, target: Library): Boolean {
-		for (metaGraphId in master.metaGraphIds) {
-			val metaGraph = master.getMetaGraph(metaGraphId)
-			ContainerLibraryElementCollector()
-				.collect(metaGraph.graph.model!!)
-				.asUuids()
-				.forEach { ref ->
-					val elem = master.getContainerLibraryElement(ref)
-					if (elem != null && target.expandedImports.libraries.map { it.uuid }.any { it == elem.library!!.uuid }) {
-						return true
-					}
-				}
-
-		}
-		return false
-	}
+	fun evaluateLibraryReferences(master: Library, target: Library): LibraryReferenceEvaluation =
+		LibraryReferenceEvaluation.calculate(master, target)
 
 	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
 		bundle.metaGraphs.any { metaGraph ->

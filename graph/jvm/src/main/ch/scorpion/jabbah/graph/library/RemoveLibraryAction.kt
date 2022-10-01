@@ -36,7 +36,8 @@ class RemoveLibraryAction(
 		}
 
 		InvocationHandler.invoke {
-			if (libraryHolder.library.libraryService.containsLibraryReference(libraryHolder.library, selectedItem!!.library!!)) {
+			val referenceEvaluation = libraryHolder.library.libraryService.evaluateLibraryReferences(libraryHolder.library, selectedItem!!.library!!)
+			if (referenceEvaluation.hasNonSystemReferences) {
 				val text = if (libraryHolder.library is Project) {
 					Translations.getString("library.removeImport.stateReferenceFromProject.txt")
 				} else {
@@ -50,9 +51,9 @@ class RemoveLibraryAction(
 					JOptionPane.ERROR_MESSAGE)
 			} else {
 				if (libraryHolder.library is Project) {
-					ProjectModule.projectManagementService.removeImport(selectedItem!!.library!!.uuid)
+					ProjectModule.projectManagementService.removeImport(selectedItem!!.library!!.uuid, referenceEvaluation.systemReferences)
 				} else {
-					LibraryModule.libraryManagementService.removeImport(selectedItem!!.library!!.uuid)
+					LibraryModule.libraryManagementService.removeImport(selectedItem!!.library!!.uuid, referenceEvaluation.systemReferences)
 				}
 			}
 		}

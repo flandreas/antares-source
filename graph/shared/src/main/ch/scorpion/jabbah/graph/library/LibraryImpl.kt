@@ -344,8 +344,9 @@ open class LibraryImpl(
 		_imports.reset()
 	}
 
-	override fun removeImport(libraryId: UUID) {
+	override fun removeImport(libraryId: UUID, replacingSystemLibraries: Set<UUID>) {
 		importedLibraryIds.remove(libraryId)
+		importedLibraryIds.addAll(replacingSystemLibraries)
 		_imports.reset()
 	}
 

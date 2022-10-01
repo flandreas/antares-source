@@ -103,8 +103,13 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	/** Adds the [Library] with the specified [UUID] to the ones imported by this [Library]. */
 	fun addImport(libraryId: UUID)
 
-	/** Removes the [Library] with the specified [UUID] from the ones imported by this [Library]. */
-	fun removeImport(libraryId: UUID)
+	/**
+	 * Removes the [Library] with the specified [UUID] from the ones imported by this [Library].
+	 * @param libraryId the [UUID] of the [Library] to remove from [LibraryImports]
+	 * @param replacingSystemLibraries the [UUIDs][UUID] of the system [Libraries][Library]
+	 * to be imported instead to resolve dangling references
+	 */
+	fun removeImport(libraryId: UUID, replacingSystemLibraries: Set<UUID>)
 }
 
 /**

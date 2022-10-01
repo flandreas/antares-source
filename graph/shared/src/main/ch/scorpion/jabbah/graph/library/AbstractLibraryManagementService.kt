@@ -130,10 +130,14 @@ abstract class AbstractLibraryManagementService(
 	/**
 	 * Removes the specified [Library] as an imported [Library] from the [Library] currently held by
 	 * [LibraryHolder] and makes this change persistent.
+	 *
+	 * @param libraryId the [UUID] of the [Library] to be removed
+	 * @param replacingSystemLibraries the [UUIDs][UUID] of the system [Libraries][Library]
+	 * to be imported instead to resolve dangling references
 	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] isn't currently imported
 	 * @throws IllegalStateException if [LibraryHolder] currently doesn't hold a library
 	 */
-	fun removeImport(libraryId: UUID) {
+	fun removeImport(libraryId: UUID, replacingSystemLibraries: Set<UUID>) {
 		if (libraryHolder.l == null) {
 			throw IllegalStateException("no Library to remove an import from")
 		}
@@ -141,7 +145,7 @@ abstract class AbstractLibraryManagementService(
 			LibraryImportRemoveQuestion(libraryHolder.library, libraryId)
 		) {
 			LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
-			libraryHolder.library.libraryService.removeImport(libraryHolder.library, libraryId)
+			libraryHolder.library.libraryService.removeImport(libraryHolder.library, libraryId, replacingSystemLibraries)
 		}
 	}
 }

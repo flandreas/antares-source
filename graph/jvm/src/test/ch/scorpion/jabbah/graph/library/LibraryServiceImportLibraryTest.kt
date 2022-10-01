@@ -48,7 +48,7 @@ class LibraryServiceImportLibraryTest {
 		val libraryD = TempFileLibraryTestRule.createLibrary("D")
 		LibraryModule.libraryHolder.library.libraryService.addImport(LibraryModule.libraryHolder.library, libraryD.uuid)
 
-		LibraryModule.libraryManagementService.removeImport(libraryD.uuid)
+		LibraryModule.libraryManagementService.removeImport(libraryD.uuid, emptySet())
 
 		assertFalse(LibraryModule.libraryHolder.library.importedLibraryIds.contains(libraryD.uuid))
 		assertFalse(LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.identification, isSystem = false).importedLibraryIds.contains(libraryD.uuid))
@@ -67,6 +67,6 @@ class LibraryServiceImportLibraryTest {
 		builder.addOuterCustomComponent(LibraryModule.libraryHolder.library, innerLibrary = libraryE)
 
 		// F contains a MetaGraph with a SubGraphVerticeRef E
-		assertTrue(LibraryModule.libraryHolder.library.libraryService.containsLibraryReference(LibraryModule.libraryHolder.library, libraryE))
+		assertTrue(LibraryModule.libraryHolder.library.libraryService.evaluateLibraryReferences(LibraryModule.libraryHolder.library, libraryE).hasNonSystemReferences)
 	}
 }
