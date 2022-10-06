@@ -61,6 +61,11 @@ class DigitalGraph(
 
 	/** ---- [DigitalGraph] */
 
+	val tunnelNames: Set<TunnelName> get() = elements
+		.filterIsInstance<Tunnel>()
+		.mapNotNull { it.tunnelName }
+		.toSet()
+
 	private fun createTunnelNets() {
 		val tunnelNets = mutableMapOf<String, Net<DigitalSignal>>()
 		elements

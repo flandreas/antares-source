@@ -4,10 +4,7 @@ import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.Switch
-import ch.scorpion.antares.model.net.BranchCount
-import ch.scorpion.antares.model.net.NetSignalApplierStrategy
-import ch.scorpion.antares.model.net.PullDirection
-import ch.scorpion.antares.model.net.TransistorType
+import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.*
@@ -73,6 +70,7 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import java.net.URL
 import java.nio.file.FileSystems
+import javax.swing.table.DefaultTableCellRenderer
 
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
@@ -241,6 +239,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(VideoRamColorModel::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TunnelFlowDirection::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetSignalApplierStrategy::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(TunnelName::class.java, DefaultTableCellRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -264,6 +263,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(VideoRamColorModel::class.java, VideoRamColorModelEditor::class.java)
 		registry.registerEditor(TunnelFlowDirection::class.java, TunnelFlowDirectionEditor::class.java)
 		registry.registerEditor(NetSignalApplierStrategy::class.java, NetSignalApplierChoiceEditor::class.java)
+		registry.register(TunnelName::class.java) { TunnelNameEditor((it as TunnelNameProperty).graph) }
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

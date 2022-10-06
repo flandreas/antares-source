@@ -16,6 +16,10 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+data class TunnelName(val name: String) {
+	override fun toString(): String = name
+}
+
 /**
  * A [Tunnel] forwards a signal to other [Tunnel]s with the same name without the
  * need to explicitly connect them by a [Net].
@@ -68,6 +72,12 @@ class Tunnel(
 				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = newValue
 				stateChanged()
 			}
+		}
+
+	var tunnelName: TunnelName?
+		get() = name?.let { TunnelName(it) }
+		set(value) {
+			name = value?.let { it.name }
 		}
 
 	/** ---- [GraphElement] */

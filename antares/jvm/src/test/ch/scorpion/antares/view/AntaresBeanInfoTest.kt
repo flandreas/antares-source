@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.RAMViewBeanInfo
 import ch.scorpion.antares.view.addressable.ROMView
@@ -35,11 +36,13 @@ class AntaresBeanInfoTest {
 		}
 	}
 
+	private val graph = mockk<DigitalGraph>(relaxed = true)
 	private val drawing = mockk<GraphView>(relaxed = true)
 	private val commandManager = mockk<CommandManager>(relaxed = true)
 	private val editor = mockk<Editor>(relaxed = true)
 
 	init {
+		every { drawing.graph } returns graph
 		every { editor.active } returns true
 		every { editor.drawing } returns drawing as Drawing<Component>
 		every { editor.commandManager } returns commandManager
@@ -74,13 +77,6 @@ class AntaresBeanInfoTest {
 	@Test
 	fun shouldReadWriteRandomView() {
 		readWrite(RandomView(), RandomViewBeanInfo())
-	}
-
-	// container
-
-	@Test
-	fun shouldReadWriteDigitalPortViewComponent() {
-		//readWrite(DigitalPortViewComponent(portView = DigitalPortView()), DigitalPortViewComponentBeanInfo())
 	}
 
 	// gate

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Tunnel
+import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -79,6 +80,14 @@ class TunnelView(
 			invalidate()
 			model.bitWidth = value
 			invalidate()
+		}
+
+	@Suppress("unused") // Reflection
+	var tunnelName: TunnelName?
+		get() = model.tunnelName
+		set(value) {
+			model.tunnelName = value
+			updateLabel()
 		}
 
 	/** Defaults to [TunnelFlowDirection.Undefined] due to backward compatibility. */
