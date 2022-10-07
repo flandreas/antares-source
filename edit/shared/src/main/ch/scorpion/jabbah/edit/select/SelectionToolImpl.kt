@@ -135,9 +135,9 @@ class SelectionToolImpl(
 		if (component != null) {
 			val scope = mutableListOf(component)
 			if (e.isMetaDown) {
-				component.getSelectBuddies(editor.drawing)?.let {
-					scope.addAll(it)
-				}
+				val buddies = mutableSetOf<Component>()
+				component.collectSelectBuddies(editor.drawing, buddies)
+				scope.addAll(buddies)
 			}
 			if (e.isShiftDown) {
 				if (editor.view.selectionManager.isSelected(component)) {

@@ -18,16 +18,14 @@ import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
-import ch.scorpion.jabbah.graph.view.ConnectableView
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.NetViewElement
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.reflect.KClass
 
 
 /**
@@ -89,6 +87,8 @@ open class NodeViewImpl<T : Any>(
 		invalidate()
 		validate()
 	}
+
+	override fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>) { }
 
 	/** ---- [NodeView] interface */
 

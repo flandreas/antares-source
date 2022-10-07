@@ -5,12 +5,14 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.NetViewElement
 import ch.scorpion.jabbah.io.*
+import kotlin.reflect.KClass
 
 /**
  * A standard implementation of the [NetView] interface.
@@ -66,6 +68,10 @@ class NetViewImpl<T : Any>(
 	}
 
 	override fun getElements(): ImmutableList<NetViewElement<T>> = elements.toImmutableList()
+
+	override fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>) {
+		elements.forEach { it.collectConnectedVerticeViews(type, result) }
+	}
 
 	/** ---- [Storable] interface */
 

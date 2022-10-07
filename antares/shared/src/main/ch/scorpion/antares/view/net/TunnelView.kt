@@ -3,7 +3,9 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
@@ -16,10 +18,13 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -124,6 +129,29 @@ class TunnelView(
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
 		horizontalLabel.rotationChanged()
+	}
+
+	/**
+	 * Collects all other [TunnelViews][TunnelView] with the same name, and
+	 * the [DigitalEdgeView] connected to this [TunnelView], if any, along with
+	 * their select buddies.
+	 */
+	override fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {
+		(drawing as DigitalGraphView)
+			.getDrawables { it !== this && it is TunnelView && it.name == name }
+			.forEach { otherTunnel ->
+				if (!buddies.contains(otherTunnel)) {
+					buddies.add(otherTunnel)
+					otherTunnel.collectSelectBuddies(drawing, buddies)
+				}
+			}
+
+		(drawing as GraphView).getEdgeView(model.getPort<DigitalSignal>())?.let {
+			if (!buddies.contains(it)) {
+				buddies.add(it)
+				it.collectSelectBuddies(drawing, buddies)
+			}
+		}
 	}
 
 	/** ---- [TunnelView] */

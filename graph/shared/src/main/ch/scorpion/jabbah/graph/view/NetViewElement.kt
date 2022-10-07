@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import kotlin.reflect.KClass
 
 /**
  * An element of a [NetView].
@@ -33,4 +35,11 @@ interface NetViewElement<T : Any> : GraphElementView<Net<T>> {
 	 * [NodeViewStyling]s instances.
 	 */
 	fun handleNetViewStyleChanged()
+
+	/**
+	 * Collects all [Components][Component] of the specified type that are connected
+	 * to this [NetViewElement].
+	 * @param result the [MutableSet] to which the [Components][Component] are to be added
+	 */
+	fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>)
 }

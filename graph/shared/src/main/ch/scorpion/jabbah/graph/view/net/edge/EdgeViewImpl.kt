@@ -43,6 +43,7 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.min
+import kotlin.reflect.KClass
 
 /**
  * A standard implementation of the [EdgeView] interface
@@ -117,10 +118,9 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [Component] */
 
-	override fun getSelectBuddies(drawing: Drawing<Component>): Set<Component>? =
-		mutableSetOf<Component>().apply {
-			addAll(netView!!.getElements().filter { it !== this@EdgeViewImpl })
-		}
+	override fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {
+		buddies.addAll(netView!!.getElements().filter { it !== this@EdgeViewImpl })
+	}
 
 	/** ---- [ActorView] */
 
@@ -660,6 +660,19 @@ open class EdgeViewImpl<T : Any>(
 		destination?.connectableView?.handleEdgeViewWidthChanged(this)
 		invalidate()
 		validate()
+	}
+
+	override fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>) {
+		origin?.connectableView?.let {
+			if (it is VerticeView<*> && it::class == type && !result.contains(it)) {
+				result.add(it)
+			}
+		}
+		destination?.connectableView?.let {
+			if (it is VerticeView<*> && it::class == type && !result.contains(it)) {
+				result.add(it)
+			}
+		}
 	}
 
 	/** ---- [Storable] interface */

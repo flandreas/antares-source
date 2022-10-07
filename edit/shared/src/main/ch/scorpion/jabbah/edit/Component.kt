@@ -94,9 +94,10 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	val deleteBuddies: List<Component> get() = emptyList()
 
 	/**
-	 * Returns the [Component]s to be selected in addition to this [Component] when selected by mouse,
-	 * or `null` if only this [Component] is to be selected.
+	 * Collects the [Component]s to be selected in addition to this [Component] when selected by mouse
+	 * during "Selection expansion mode". Does nothing  by default.
+	 * @param buddies the [MutableSet] to which buddies are to be added. Also used for checking
+	 * whether a [Component] has already been visited in order to avoid infinite recursion.
 	 */
-	fun getSelectBuddies(drawing: Drawing<Component>): Set<Component>? = null
-
+	fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {}
 }

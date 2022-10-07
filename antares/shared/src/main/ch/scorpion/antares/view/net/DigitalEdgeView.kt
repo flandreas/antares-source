@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -96,6 +98,15 @@ class DigitalEdgeView(
 
 		context.color = oldCompositeColor
 		context.g.color = oldColor
+	}
+
+	override fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {
+		super.collectSelectBuddies(drawing, buddies)
+
+		netView?.collectConnectedVerticeViews(TunnelView::class, buddies)
+		buddies
+			.filterIsInstance<TunnelView>()
+			.forEach { it.collectSelectBuddies(drawing, buddies) }
 	}
 }
 

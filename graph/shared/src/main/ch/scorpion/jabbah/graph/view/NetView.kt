@@ -3,12 +3,14 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.io.Storable
+import kotlin.reflect.KClass
 
 /**
  * A [NetView] is a graphical representation of a [Net] and consists of individual [NetViewElement]s.
@@ -57,4 +59,6 @@ interface NetView<T : Any> : Storable, Bean {
 	 * This is responsibility of objects calling this method.
 	 */
 	fun combine(other: NetView<T>)
+
+	fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>)
 }
