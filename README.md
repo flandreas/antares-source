@@ -47,7 +47,7 @@ Tag the release and push it to the remote repository:
   - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
   - Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and
    store it in a save place. You will need it for un-obfuscating stack traces from bug reports.
-- On a windows machine (after pulling changes from remote repository)
+- On a Windows machine (after pulling changes from remote repository)
   - `gradlew clean :antares:distributeWindows`
   - `cd Desktop`
   - Signing doesn't yet work from within gradle (permissions?), so call it manually:
@@ -56,8 +56,13 @@ Tag the release and push it to the remote repository:
       C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
   - Verify signature: `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool verify /pa C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
   - Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
+- On a Linux machine (after pulling changes from remote repository)
+  - `gradlew clean :antares:distributeLinux
+  - Collect the Linux package `build/antares/distributions/Antares-<version>.rpm`
+  - Install with `sudo alien -i <name of the package>`
+  - The installed app is found in `/opt/antares/bin`
   
-Install the releases and do some some testing.
+Install the releases and do some some smoke testing.
 
 ### Build User Manual
 
