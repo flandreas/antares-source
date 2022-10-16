@@ -61,12 +61,12 @@ private class FigureGroupView(private val figureGroup: FigureGroup) : JPanel() {
 
 	private fun buildUI() {
 		background = BACKGROUND_COLOR
-		layout = FixedGridLayout(cellSize = 60, cellGap = 1)
+		layout = FixedGridLayout(cellSize = 70, cellGap = 1)
 	}
 
 	private fun fillContent() {
-		for (factory in figureGroup.factories) {
-			add(FigurePanel(factory))
+		for (provider in figureGroup.providers) {
+			add(FigurePanel(provider))
 		}
 	}
 }
@@ -75,7 +75,7 @@ private class FigureGroupView(private val figureGroup: FigureGroup) : JPanel() {
  * Displays a single [Figure] and allows the user to drag it into a destination [JComponent].
  */
 private class FigurePanel(
-	val figureFactory: FigureFactory
+	val figureProvider: FigureProvider
 ) : JPanel() {
 
 	companion object {
@@ -83,13 +83,13 @@ private class FigurePanel(
 		private var drawableDrawer: DrawableDrawer<Component> = DefaultDrawableDrawer()
 	}
 
-	private val figure = figureFactory.create()
+	private val figure = figureProvider.factory.create()
 
 	private var scale: Double = 1.0
 
 	init {
 		background = FigureGroupView.BACKGROUND_COLOR
-		toolTipText = figure.type
+		toolTipText = figureProvider.name
 		transferHandler = FigureTransferHandler
 		addMouseListener(DnDMouseAdapter())
 	}
@@ -158,7 +158,7 @@ private object FigureTransferHandler : TransferHandler() {
 		if (c is FigurePanel) {
 			dragImage = dummyImage
 			dragImageOffset = Point(0, 0)
-			return ComponentTransferable(c.figureFactory.create())
+			return ComponentTransferable(c.figureProvider.factory.create())
 		}
 		return null
 	}

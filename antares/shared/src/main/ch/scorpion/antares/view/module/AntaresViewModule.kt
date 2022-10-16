@@ -15,9 +15,7 @@ import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.container.DilCase
 import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
-import ch.scorpion.antares.view.figure.AndGateFigure
-import ch.scorpion.antares.view.figure.NotGateFigure
-import ch.scorpion.antares.view.figure.OrGateFigure
+import ch.scorpion.antares.view.figure.*
 import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -46,6 +44,7 @@ import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
 import ch.scorpion.jabbah.edit.drag.EditDragModule
+import ch.scorpion.jabbah.edit.figure.FigureProvider
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
@@ -572,9 +571,12 @@ object AntaresViewModule : AbstractModule() {
 		FigureRegistry.registerDefaultGeometricalFigures()
 
 		FigureRegistry.registerGroup(Translations.getString("antares.figureGroup.circuitSymbols")).apply {
-			register { AndGateFigure() }
-			register { OrGateFigure() }
-			register { NotGateFigure() }
+			register(FigureProvider(AndGateFigure.TYPE) { AndGateFigure() })
+			register(FigureProvider(OrGateFigure.TYPE) { OrGateFigure() })
+			register(FigureProvider(NotGateFigure.TYPE) { NotGateFigure() })
+			register(FigureProvider(Translations.getString("antares.figure.multiplexer")) { createMultiplexerFigure() })
+			register(FigureProvider(Translations.getString("antares.figure.alu")) { createAluFigure() })
+			register(FigureProvider(DilCase.TYPE) { DilCase() })
 		}
 	}
 }

@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -21,7 +22,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class PolylineComponent(
 	val polyline: PolylineDrawable = PolylineDrawable()
-) : AbstractComponent(polyline), Polyline by polyline, Transparent {
+) : AbstractComponent(polyline), Polyline by polyline, Transparent, Figure {
 
 	companion object {
 		private val TYPE = Translations.getString("edit.component.polyline")

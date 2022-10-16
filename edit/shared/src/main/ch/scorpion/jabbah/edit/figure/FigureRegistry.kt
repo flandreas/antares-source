@@ -30,8 +30,8 @@ object FigureRegistry {
 
 	fun registerDefaultGeometricalFigures() {
 		registerGroup(Translations.getString(GEOMETRICAL_FIGURE_GROUP_KEY)).apply {
-			register { RectangleComponent(shape = Rectangle2D(0, 0, 60, 30)) }
-			register { EllipseComponent(shape = Ellipse2D(0, 0, 60, 30)) }
+			register(FigureProvider(RectangleComponent.TYPE) { RectangleComponent(shape = Rectangle2D(0, 0, 60, 30)) })
+			register(FigureProvider(EllipseComponent.TYPE) { EllipseComponent(shape = Ellipse2D(0, 0, 60, 30)) })
 		}
 	}
 }
@@ -40,15 +40,20 @@ fun interface FigureFactory {
 	fun create(): Figure
 }
 
+data class FigureProvider(
+	val name: String,
+	val factory: FigureFactory
+)
+
 class FigureGroup(val name: String) {
 
-	private val _factories = mutableListOf<FigureFactory>()
+	private val _providers = mutableListOf<FigureProvider>()
 
-	val factories: Iterator<FigureFactory> get() = _factories.iterator()
+	val providers: Iterator<FigureProvider> get() = _providers.iterator()
 
-	val size: Int get() = _factories.size
+	val size: Int get() = _providers.size
 
-	fun register(factory: FigureFactory) {
-		_factories.add(factory)
+	fun register(provider: FigureProvider) {
+		_providers.add(provider)
 	}
 }

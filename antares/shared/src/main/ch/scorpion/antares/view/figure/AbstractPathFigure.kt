@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.Storable
@@ -56,10 +55,6 @@ abstract class AbstractPathFigure(
 
 		context.g.translate(-location.x, -location.y)
 	}
-
-	/** ---- [Component] */
-
-	//override val type: String get() = Translations.getString("antares.figure.andShape")
 
 	/** ---- [Locatable] */
 

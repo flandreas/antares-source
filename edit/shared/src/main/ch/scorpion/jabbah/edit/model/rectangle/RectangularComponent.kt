@@ -333,7 +333,7 @@ open class RectangleComponent(
 ) : RectangularComponent(styleType, styleProvider, shape) {
 
 	companion object {
-		private val TYPE = Translations.getString("edit.component.rectangle")
+		val TYPE = Translations.getString("edit.component.rectangle")
 	}
 
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))
@@ -364,7 +364,7 @@ class EllipseComponent(
 ) : RectangularComponent(styleType, styleProvider, shape) {
 
 	companion object {
-		private val TYPE = Translations.getString("edit.component.ellipse")
+		val TYPE = Translations.getString("edit.component.ellipse")
 	}
 
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Ellipse2D(x, y, w, h))

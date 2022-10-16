@@ -31,6 +31,7 @@ class DilCase(
 ), DragDestination {
 
 	companion object {
+		val TYPE: String by lazy { Translations.getString("antares.dilCase.name") }
 		const val SCALE = 7
 		private const val DEF_PORT_INSET = 2 * SCALE
 		private const val DEF_PORT_DIST = 4 * SCALE
@@ -50,7 +51,7 @@ class DilCase(
 
 	/** ---- [RectangularComponent] */
 
-	override val type: String get() = Translations.getString("antares.dilCase.name")
+	override val type: String get() = TYPE
 
 	override val shapeToDraw: Shape get() = (shape as DilShape).path
 

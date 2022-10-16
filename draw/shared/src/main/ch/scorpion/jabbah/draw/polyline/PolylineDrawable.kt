@@ -125,9 +125,9 @@ class PolylineDrawable constructor(
 		shape.clear()
 	}
 
-	override fun addPoint(x: Double, y: Double): Polyline = addPointAt(pointsCount, x, y)
+	override fun addPoint(x: Double, y: Double): PolylineDrawable = addPointAt(pointsCount, x, y)
 
-	override fun addPointAt(index: Int, x: Double, y: Double): Polyline {
+	override fun addPointAt(index: Int, x: Double, y: Double): PolylineDrawable {
 		invalidate()
 		shape.addPointAt(index, x, y)
 		invalidate()
