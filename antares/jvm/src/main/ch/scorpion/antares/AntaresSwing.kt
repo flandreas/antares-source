@@ -172,6 +172,8 @@ class AntaresSwing(
 
 			UIManager.getDefaults()[VerticalLabel.UI_CLASS_ID] = "ch.scorpion.jabbah.base.swing.VerticalLabelUI"
 			UIManager.put("Table.intercellSpacing", Dimension(1, 1))
+			UIManager.put("TaskPane.contentInsets", Insets(0, 0, 0, 0))
+			UIManager.put("TaskPane.roundHeight", 0)
 
 			val preferences = prefetchPreferences(userDataDirectoryPath)
 			establishUserLanguage(preferences)

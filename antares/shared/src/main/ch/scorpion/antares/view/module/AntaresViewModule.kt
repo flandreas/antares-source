@@ -15,6 +15,9 @@ import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.container.DilCase
 import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
+import ch.scorpion.antares.view.figure.AndGateFigure
+import ch.scorpion.antares.view.figure.NotGateFigure
+import ch.scorpion.antares.view.figure.OrGateFigure
 import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -51,6 +54,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
+import ch.scorpion.jabbah.edit.figure.FigureRegistry
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -179,6 +183,8 @@ object AntaresViewModule : AbstractModule() {
 		configureDragDestinationHighlights(EditDragModule.dragDestinationHighlightFactoryRegistry)
 
 		registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
+
+		registerFigures()
 	}
 
 	private fun customizeProperties(properties: Properties) {
@@ -293,6 +299,10 @@ object AntaresViewModule : AbstractModule() {
 
 		typeMap.register("graphView", DigitalGraphView::class)
 		typeMap.register("dilCase", DilCase::class)
+
+		typeMap.register("andGateShape", AndGateFigure::class)
+		typeMap.register("orGateShape", OrGateFigure::class)
+		typeMap.register("notGateShape", NotGateFigure::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -357,6 +367,10 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, DilCase::class) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 		factory.register(SelectionDrawingStrategy.ABOVE, DilCase::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DilCase::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+
+		factory.register(SelectionDrawingStrategy.REPLACE, AndGateFigure::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, OrGateFigure::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -552,5 +566,15 @@ object AntaresViewModule : AbstractModule() {
 	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
 		item.bindTo(library)
 		directory.add(item)
+	}
+
+	private fun registerFigures() {
+		FigureRegistry.registerDefaultGeometricalFigures()
+
+		FigureRegistry.registerGroup(Translations.getString("antares.figureGroup.circuitSymbols")).apply {
+			register { AndGateFigure() }
+			register { OrGateFigure() }
+			register { NotGateFigure() }
+		}
 	}
 }

@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.figure.FigureGroupsPanel
 import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -33,6 +35,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import java.awt.Frame
+import java.awt.Toolkit
 import javax.swing.*
 
 /**
@@ -50,6 +53,12 @@ class ContainerPanelSwing(
 	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : JPanel() {
 
+	companion object {
+		private const val PROP_MAIN_SPLIT_POS = "containerPanel.mainSplitPos"
+		private const val PROP_LEFT_SPLIT_POS = "containerPanel.leftSplitPos"
+		private const val PROP_CONTENT_SPLIT_POS = "containerPanel.contentSplitPos"
+	}
+
 	val view = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
 
 	val editor = GraphViewModule.containerEditorFactory(view)
@@ -65,6 +74,10 @@ class ContainerPanelSwing(
 	private val propertyPanel: ComponentPropertyPanelSwing
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
+	private val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
+	private val contentSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
 	private var editedContainerDrawing: ContainerDrawing? = null
 
@@ -135,6 +148,10 @@ class ContainerPanelSwing(
 		propertyPanelController.dispose()
 		treeView.dispose()
 		editor.dispose()
+
+		BaseModule.settings.set(PROP_MAIN_SPLIT_POS, mainSplitPane.dividerLocation)
+		BaseModule.settings.set(PROP_LEFT_SPLIT_POS, leftSplitPane.dividerLocation)
+		BaseModule.settings.set(PROP_CONTENT_SPLIT_POS, contentSplitPane.dividerLocation)
 	}
 
 	fun initialize() {
@@ -198,13 +215,21 @@ class ContainerPanelSwing(
 			treeViewScrollPanel.border
 		)
 
-		val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+		val figuresPanel = FigureGroupsPanel()
+		val figuresScrollPanel = JScrollPane(figuresPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+
+		//val contentSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+		contentSplitPane.border = null
+		contentSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_CONTENT_SPLIT_POS, Toolkit.getDefaultToolkit().screenSize.height / 3)
+		contentSplitPane.add(treeViewScrollPanel)
+		contentSplitPane.add(figuresScrollPanel)
+
 		leftSplitPane.border = null
-		leftSplitPane.dividerLocation = 600
-		leftSplitPane.add(treeViewScrollPanel)
+		leftSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_LEFT_SPLIT_POS, Toolkit.getDefaultToolkit().screenSize.height / 3)
+		leftSplitPane.add(contentSplitPane)
 		leftSplitPane.add(propertyPanel)
 
-		mainSplitPane.dividerLocation = 250
+		mainSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_MAIN_SPLIT_POS, 250)
 		mainSplitPane.add(leftSplitPane)
 		mainSplitPane.add(FocusPanel(editor.view.canvas as JComponent, editor.view, editor.view.canvas as JComponent, viewManager))
 

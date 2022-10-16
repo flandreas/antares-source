@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -138,7 +139,7 @@ abstract class RectangularComponent(
 	shape: RectangularShape,
 	labelRotation: Rotation = Rotation.R0,
 	labelRotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE
-) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled {
+) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled, Figure {
 
 	companion object {
 		// The distance between the rectangle border and the text box (if at top or at bottom)
