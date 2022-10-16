@@ -119,9 +119,6 @@ tasks {
 
 		libraryjars("$javaHome/jmods")
 
-		libraryjars("/Users/andreas/Documents/scorpion2/jabbah/lib/l2fprod-common-all-7.3.jar")
-		libraryjars("$projectDir/../lib/exml-7.0.0.jar")
-
 		keepkotlinmetadata()
 
 		libraryjars(configurations.findByName("runtimeClasspath")?.files)
@@ -132,6 +129,7 @@ tasks {
 		keep("class com.formdev.** { *; }")
 		keep("class io.ktor.** { *; }")
 		keep("class kotlinx.coroutines.** { *; }")
+		keep("class org.jdesktop.** { *; }")
 
 		// Reflection in OsThemeDetector
 		keep("class com.sun.** { *; }")
