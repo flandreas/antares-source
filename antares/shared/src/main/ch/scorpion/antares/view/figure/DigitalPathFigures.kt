@@ -33,6 +33,14 @@ fun createMultiplexerFigure(): Figure =
 		.addPoint(6.0 * SCALE, 2.0 * SCALE)
 		.addPoint(0.0, 0.0))
 
+fun createDemultiplexerFigure(): Figure =
+	PolylineComponent(PolylineDrawable()
+		.addPoint(0.0, 0.0)
+		.addPoint(0.0, 8.0 * SCALE)
+		.addPoint(6.0 * SCALE, 10.0 * SCALE)
+		.addPoint(6.0 * SCALE, -2.0 * SCALE)
+		.addPoint(0.0, 0.0))
+
 fun createAluFigure(): Figure =
 	PolylineComponent(PolylineDrawable()
 		.addPoint(0.0, 0.0)

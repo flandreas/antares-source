@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -8,8 +9,8 @@
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='4'/>
             <circuitInOut _id='5' id='3' name='S' type='input' bitWidth='1'/>
             <andGate _id='6' id='4' delay='20' inputCount='2'/>
-            <splitter _id='7' id='5' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
-            <splitter _id='8' id='6' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <splitter _id='7' id='5' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
+            <splitter _id='8' id='6' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <digitalNet _id='9' id='7' delay='0'>
               <ports>
                 <netPortRef _id='10' verticeId='3' portId='1'/>
@@ -101,7 +102,7 @@
             <orGate _id='61' id='28' delay='20' inputCount='2'/>
             <orGate _id='62' id='29' delay='20' inputCount='2'/>
             <orGate _id='63' id='30' delay='20' inputCount='2'/>
-            <concentrator _id='64' id='31' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <concentrator _id='64' id='31' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <circuitInOut _id='65' id='32' name='O' type='output' bitWidth='4'/>
             <digitalNet _id='66' id='38' delay='0'>
               <ports>
@@ -518,7 +519,7 @@
   <container>
     <containerDrawing _id='203' execDrawScript='if (S) drawDataFlow(&quot;B&quot;, &quot;O&quot;) else drawDataFlow(&quot;A&quot;, &quot;O&quot;)'>
       <components>
-        <originIndicator _id='204'>
+        <originIndicator _id='204' id='7'>
           <location>
             <point x='182.0' y='196.0'/>
           </location>
@@ -557,8 +558,8 @@
             <translation lang='de' text='Wählt aus zwei 4-Bit-Datenleitungen eine aus'/>
           </desc>
           <name>
-            <translation lang='en' text='2x 4-4 Multiplexer'/>
-            <translation lang='de' text='2x 4-4 Multiplexer'/>
+            <translation lang='en' text='2:1 Multiplexer 4 Bit'/>
+            <translation lang='de' text='2:1 Multiplexer 4 Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='208' portId='1' name='B' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>

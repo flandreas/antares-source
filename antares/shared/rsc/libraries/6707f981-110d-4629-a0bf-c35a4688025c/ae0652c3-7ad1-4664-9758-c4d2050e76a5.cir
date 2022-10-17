@@ -29,91 +29,102 @@
                 <translation lang='en' text='Selection input. 0 selects A, 1 selects '/>
               </desc>
             </circuitInOut>
+            <graphElementWrapper _id='7' id='5' delay='0'/>
           </elements>
         </graph>
       </model>
       <view>
-        <graphView _id='7'>
+        <graphView _id='8'>
           <netViews/>
           <components>
-            <circuitInOutView _id='8' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
+            <circuitInOutView _id='9' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
               <location>
-                <point x='-140.0' y='-56.0'/>
+                <point x='-154.0' y='-56.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='9' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='10' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
               <location>
-                <point x='-140.0' y='7.0'/>
+                <point x='-154.0' y='7.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='10' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
+            <circuitInOutView _id='11' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
               <location>
-                <point x='-70.0' y='-21.0'/>
+                <point x='0.0' y='-21.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='11' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='north'>
+            <circuitInOutView _id='12' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='north'>
               <location>
-                <point x='-105.0' y='35.0'/>
+                <point x='-77.0' y='35.0'/>
               </location>
             </circuitInOutView>
+            <graphElement _id='13' modelId='7' id='5'>
+              <component>
+                <ellipse _id='14' id='5' style='figure' filled='true' stroked='true' x='-133.0' y='-49.0' w='105.0' h='49.0'>
+                  <text>
+                    <translation lang='de' text='Scripted'/>
+                  </text>
+                </ellipse>
+              </component>
+            </graphElement>
           </components>
         </graphView>
       </view>
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='12'>
+    <containerDrawing _id='15'>
       <components>
-        <originIndicator _id='13' id='7'>
+        <originIndicator _id='16' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
         </originIndicator>
-        <polyline _id='14' id='2' style='figure' filled='true' stroked='true' points='140.0,126.0 140.0,224.0 196.0,210.0 196.0,140.0 140.0,126.0'/>
-        <digitalPortViewComp _id='15' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <polyline _id='17' id='2' style='figure' filled='true' stroked='true' points='140.0,126.0 140.0,224.0 196.0,210.0 196.0,140.0 140.0,126.0'/>
+        <digitalPortViewComp _id='18' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='16' x='140.0' y='154.0' dir='west' textPos='internal' portId='17'/>
+            <digitalPortView _id='19' x='140.0' y='154.0' dir='west' textPos='internal' portId='20'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='18' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='21' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='19' x='140.0' y='196.0' dir='west' textPos='internal' portId='20'/>
+            <digitalPortView _id='22' x='140.0' y='196.0' dir='west' textPos='internal' portId='23'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='21' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='24' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='22' x='196.0' y='175.0' dir='east' textPos='internal' portId='23'/>
+            <digitalPortView _id='25' x='196.0' y='175.0' dir='east' textPos='internal' portId='26'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='24' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='27' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='25' x='168.0' y='217.0' dir='south' textPos='internal' portId='26'/>
+            <digitalPortView _id='28' x='168.0' y='217.0' dir='south' textPos='internal' portId='29'/>
           </portView>
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='27' id='0' delay='0' uuid='ae0652c3-7ad1-4664-9758-c4d2050e76a5'>
+        <subGraphVertice _id='30' id='0' delay='0' uuid='ae0652c3-7ad1-4664-9758-c4d2050e76a5'>
           <desc>
             <translation lang='de' text='Wählt eine von zwei Input-Verbindungen aus'/>
             <translation lang='en' text='Select one of two input connections'/>
           </desc>
           <name>
-            <translation lang='en' text='Multiplexer n Bit'/>
+            <translation lang='en' text='2:1 Multiplexer n Bit'/>
+            <translation lang='de' text='2:1 Multiplexer n Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='17' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='20' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='23' portId='3' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
-            <subCircuitPort _id='26' portId='4' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='20' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='23' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='26' portId='3' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
+            <subCircuitPort _id='29' portId='4' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
   </container>
   <params>
-    <graphParamDefs _id='28'>
+    <graphParamDefs _id='31'>
       <paramDefs>
-        <graphParamDef _id='29' name='BW' type='bitWidth' defaultValue='8'/>
+        <graphParamDef _id='32' name='BW' type='bitWidth' defaultValue='8'/>
       </paramDefs>
     </graphParamDefs>
   </params>

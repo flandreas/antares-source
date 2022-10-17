@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -6,8 +7,8 @@
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='2'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='2'/>
-            <splitter _id='5' id='3' delay='0' bitWidth='2' branchCount='2' representation='binary'/>
-            <splitter _id='6' id='4' delay='0' bitWidth='2' branchCount='2' representation='binary'/>
+            <splitter _id='5' id='3' delay='0' bitWidth='2' representation='binary' branchCount='2'/>
+            <splitter _id='6' id='4' delay='0' bitWidth='2' representation='binary' branchCount='2'/>
             <digitalNet _id='7' id='5' delay='0'>
               <ports>
                 <netPortRef _id='8' verticeId='3' portId='1'/>
@@ -38,7 +39,7 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='28' id='11' name='O' type='output' bitWidth='2'/>
-            <concentrator _id='29' id='12' delay='0' bitWidth='2' branchCount='2' representation='binary'/>
+            <concentrator _id='29' id='12' delay='0' bitWidth='2' representation='binary' branchCount='2'/>
             <orGate _id='30' id='14' delay='20' inputCount='2'/>
             <orGate _id='31' id='15' delay='20' inputCount='2'/>
             <andGate _id='25' id='18' delay='20' inputCount='2'/>
@@ -322,7 +323,7 @@
   <container>
     <containerDrawing _id='125'>
       <components>
-        <originIndicator _id='126'>
+        <originIndicator _id='126' id='7'>
           <location>
             <point x='154.0' y='182.0'/>
           </location>
@@ -361,8 +362,8 @@
             <translation lang='en' text='If input S is asserted, the 2 bit value at input A is forwarded to the output, else the value at input B'/>
           </desc>
           <name>
-            <translation lang='en' text='2x 2-2 Multiplexer'/>
-            <translation lang='de' text='2x 2-2 Multiplexer'/>
+            <translation lang='en' text='2:1 Multiplexer 2 bit'/>
+            <translation lang='de' text='2:1 Multiplexer 2 Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='130' portId='1' name='A' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>

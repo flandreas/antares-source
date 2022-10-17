@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -22,60 +23,70 @@
                 <translation lang='en' text='Selects the bit to be output'/>
               </desc>
             </circuitInOut>
+            <graphElementWrapper _id='6' id='5' delay='0'/>
           </elements>
         </graph>
       </model>
       <view>
-        <graphView _id='6'>
+        <graphView _id='7'>
           <netViews/>
           <components>
-            <circuitInOutView _id='7' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
+            <circuitInOutView _id='8' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
               <location>
-                <point x='-140.0' y='-21.0'/>
+                <point x='-196.0' y='-21.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='8' id='3' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='9' id='3' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
               <location>
-                <point x='-70.0' y='-21.0'/>
+                <point x='-28.0' y='-21.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='9' id='4' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='north'>
+            <circuitInOutView _id='10' id='4' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='north'>
               <location>
                 <point x='-105.0' y='35.0'/>
               </location>
             </circuitInOutView>
+            <graphElement _id='11' modelId='6' id='5'>
+              <component>
+                <ellipse _id='12' id='5' style='figure' filled='true' stroked='true' x='-161.0' y='-42.0' w='105.0' h='49.0'>
+                  <text>
+                    <translation lang='de' text='Scripted'/>
+                  </text>
+                </ellipse>
+              </component>
+            </graphElement>
           </components>
         </graphView>
       </view>
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='10'>
+    <containerDrawing _id='13'>
       <components>
-        <originIndicator _id='11'>
+        <originIndicator _id='14' id='7'>
           <location>
             <point x='126.0' y='175.0'/>
           </location>
         </originIndicator>
-        <polyline _id='12' id='2' style='figure' filled='true' stroked='true' points='140.0,140.0 140.0,210.0 196.0,196.0 196.0,154.0 140.0,140.0'/>
-        <digitalPortViewComp _id='13' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <polyline _id='15' id='2' style='figure' filled='true' stroked='true' points='140.0,140.0 140.0,210.0 196.0,196.0 196.0,154.0 140.0,140.0'/>
+        <digitalPortViewComp _id='16' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='14' x='140.0' y='175.0' dir='west' textPos='internal' portId='15'/>
+            <digitalPortView _id='17' x='140.0' y='175.0' dir='west' textPos='internal' portId='18'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='16' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='19' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='17' x='196.0' y='175.0' dir='east' textPos='internal' portId='18'/>
+            <digitalPortView _id='20' x='196.0' y='175.0' dir='east' textPos='internal' portId='21'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='19' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='22' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='20' x='168.0' y='203.0' dir='south' textPos='internal' portId='21'/>
+            <digitalPortView _id='23' x='168.0' y='203.0' dir='south' textPos='internal' portId='24'/>
           </portView>
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='22' id='0' delay='0' uuid='9bc8ab29-0c6e-40b3-912c-62b69a65e2e1'>
+        <subGraphVertice _id='25' id='0' delay='0' uuid='9bc8ab29-0c6e-40b3-912c-62b69a65e2e1'>
           <desc>
             <translation lang='de' text='Wählt ein einziges Bit eines Datenbus aus.'/>
             <translation lang='en' text='Selects a single bit from a data bus.'/>
@@ -85,18 +96,18 @@
             <translation lang='en' text='Bit Selector n Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='15' portId='1' name='I' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='18' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='hex'/>
-            <subCircuitPort _id='21' portId='4' name='S' logic='positive' bitWidth='3' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='18' portId='1' name='I' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='21' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='hex'/>
+            <subCircuitPort _id='24' portId='4' name='S' logic='positive' bitWidth='3' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
   </container>
   <params>
-    <graphParamDefs _id='23'>
+    <graphParamDefs _id='26'>
       <paramDefs>
-        <graphParamDef _id='24' name='BW' type='bitWidth' defaultValue='3'/>
+        <graphParamDef _id='27' name='BW' type='bitWidth' defaultValue='3'/>
       </paramDefs>
     </graphParamDefs>
   </params>

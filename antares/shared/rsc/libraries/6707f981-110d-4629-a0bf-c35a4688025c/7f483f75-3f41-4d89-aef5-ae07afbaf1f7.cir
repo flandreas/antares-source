@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -182,7 +183,7 @@
   <container>
     <containerDrawing _id='65'>
       <components>
-        <originIndicator _id='66'>
+        <originIndicator _id='66' id='9'>
           <location>
             <point x='140.0' y='196.0'/>
           </location>
@@ -221,8 +222,8 @@
             <translation lang='de' text='Wählt aus 2 1-Bit-Eingängen einen aus'/>
           </desc>
           <name>
-            <translation lang='en' text='2-1 Multiplexer'/>
-            <translation lang='de' text='2-1 Multiplexer'/>
+            <translation lang='en' text='2:1 Multiplexer'/>
+            <translation lang='de' text='2:1 Multiplexer'/>
           </name>
           <ports>
             <subCircuitPort _id='73' portId='2' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

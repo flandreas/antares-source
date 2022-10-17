@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -8,8 +9,8 @@
             <subGraphVerticeRef _id='4' id='2' delay='60' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
             <circuitInOut _id='5' id='3' name='A' type='input' bitWidth='8'/>
             <circuitInOut _id='6' id='4' name='B' type='input' bitWidth='8'/>
-            <splitter _id='7' id='5' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
-            <splitter _id='8' id='6' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
+            <splitter _id='7' id='5' delay='0' bitWidth='8' representation='binary' branchCount='2'/>
+            <splitter _id='8' id='6' delay='0' bitWidth='8' representation='binary' branchCount='2'/>
             <digitalNet _id='9' id='7' delay='0'>
               <ports>
                 <netPortRef _id='10' verticeId='7' portId='2'/>
@@ -54,7 +55,7 @@
                 <netPortRef _id='31' verticeId='4' portId='3'/>
               </ports>
             </digitalNet>
-            <concentrator _id='32' id='15' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
+            <concentrator _id='32' id='15' delay='0' bitWidth='8' representation='binary' branchCount='2'/>
             <circuitInOut _id='33' id='16' name='O' type='output' bitWidth='8'/>
             <digitalNet _id='34' id='18' delay='0'>
               <ports>
@@ -190,7 +191,7 @@
   <container>
     <containerDrawing _id='76' execDrawScript='if (S) drawDataFlow(&quot;B&quot;, &quot;O&quot;) else drawDataFlow(&quot;A&quot;, &quot;O&quot;)'>
       <components>
-        <originIndicator _id='77'>
+        <originIndicator _id='77' id='6'>
           <location>
             <point x='182.0' y='196.0'/>
           </location>
@@ -224,8 +225,8 @@
             <translation lang='en' text='If input S is asserted, the 8 bit value at input A is forwarded to the output, else the value at input B'/>
           </desc>
           <name>
-            <translation lang='en' text='2x 8-8 Multiplexer'/>
-            <translation lang='de' text='2x 8-8 Multiplexer'/>
+            <translation lang='en' text='2:1 Multiplexer 8 Bit'/>
+            <translation lang='de' text='2:1 Multiplexer 8 Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='81' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>

@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -37,7 +38,7 @@ O = I@s' startupTime='30'>
               </ports>
             </digitalNet>
             <circuitInOut _id='22' id='12' name='I' type='input' bitWidth='8'/>
-            <splitter _id='23' id='13' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
+            <splitter _id='23' id='13' delay='0' bitWidth='8' representation='binary' branchCount='8'/>
             <digitalNet _id='24' id='14' delay='0'>
               <ports>
                 <netPortRef _id='25' verticeId='22' portId='1'/>
@@ -271,7 +272,7 @@ O = I@s' startupTime='30'>
   <container>
     <containerDrawing _id='105'>
       <components>
-        <originIndicator _id='106'>
+        <originIndicator _id='106' id='10'>
           <location>
             <point x='105.0' y='280.0'/>
           </location>
@@ -315,8 +316,8 @@ O = I@s' startupTime='30'>
             <translation lang='de' text='Wählt aus 8 Eingängen einen aus'/>
           </desc>
           <name>
-            <translation lang='en' text='8-1 Multiplexer'/>
-            <translation lang='de' text='8-1 Multiplexer'/>
+            <translation lang='en' text='8:1 Multiplexer'/>
+            <translation lang='de' text='8:1 Multiplexer'/>
           </name>
           <ports>
             <subCircuitPort _id='110' portId='1' name='I' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>

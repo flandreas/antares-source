@@ -575,6 +575,7 @@ object AntaresViewModule : AbstractModule() {
 			register(FigureProvider(OrGateFigure.TYPE) { OrGateFigure() })
 			register(FigureProvider(NotGateFigure.TYPE) { NotGateFigure() })
 			register(FigureProvider(Translations.getString("antares.figure.multiplexer")) { createMultiplexerFigure() })
+			register(FigureProvider(Translations.getString("antares.figure.demultiplexer")) { createDemultiplexerFigure() })
 			register(FigureProvider(Translations.getString("antares.figure.alu")) { createAluFigure() })
 			register(FigureProvider(DilCase.TYPE) { DilCase() })
 		}

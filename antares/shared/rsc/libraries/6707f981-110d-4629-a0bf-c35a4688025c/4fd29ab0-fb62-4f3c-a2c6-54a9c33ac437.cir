@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -395,7 +396,7 @@ when (s) {
   <container>
     <containerDrawing _id='133'>
       <components>
-        <originIndicator _id='134'>
+        <originIndicator _id='134' id='10'>
           <location>
             <point x='154.0' y='189.0'/>
           </location>
@@ -449,8 +450,8 @@ when (s) {
             <translation lang='de' text='Wählt aus 4 Eingängen einen aus'/>
           </desc>
           <name>
-            <translation lang='en' text='4-1 Multiplexer'/>
-            <translation lang='de' text='4-1 Multiplexer'/>
+            <translation lang='en' text='4:1 Multiplexer'/>
+            <translation lang='de' text='4:1 Multiplexer'/>
           </name>
           <ports>
             <subCircuitPort _id='138' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
