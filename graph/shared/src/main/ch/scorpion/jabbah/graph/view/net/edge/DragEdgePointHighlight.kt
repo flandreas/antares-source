@@ -36,16 +36,23 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 	/** ---- [Unzoomable] interface */
 
 	override var zoomPan: ZoomPan? = null
+		set(value) {
+			if (value != zoomPan) {
+				invalidate()
+				field = value
+				invalidate()
+				update()
+			}
+		}
 
 	/** ---- [Drawable] interface */
 
 	override val boundingBox: Rectangle2D
 		get() {
-			val size = DrawModule.properties.getInt(PROP_HALF_SIZE)
+			val zf = zoomPan?.zoomFactor ?: 1.0
+			val size = DrawModule.properties.getInt(PROP_HALF_SIZE) / zf
 			val bbox = edgeView.boundingBox
-			return Rectangle2D(
-				bbox.x - size - STROKE.width, bbox.y - size - STROKE.width,
-				bbox.width + 2 * size + STROKE.width, bbox.height + 2 * size + STROKE.width)
+			return Rectangle2D(bbox).expandBy(size + STROKE.width) as Rectangle2D
 		}
 
 	override fun draw(context: DrawContext) {
