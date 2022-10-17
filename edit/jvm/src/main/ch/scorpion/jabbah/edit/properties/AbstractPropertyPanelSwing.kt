@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
 import ch.scorpion.jabbah.edit.ui.PropertyPanel
@@ -78,7 +79,7 @@ abstract class AbstractPropertyPanelSwing(
 			sheet.isDescriptionVisible = BaseModule.settings.getBoolean(descriptionOpenPropertyName, true)
 		}
 
-		title = JLabel(controller.title)
+		title = UIBasics.createHeaderLabel(controller.title)
 		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
 
 		messageTextArea = JTextArea()
