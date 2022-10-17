@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
+import ch.scorpion.jabbah.edit.model.QuadCurveTool
+import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
@@ -49,6 +51,7 @@ open class ContainerToolBarBuilder {
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
 		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline24.png", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }), "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
 
 		return toolbar
 	}
