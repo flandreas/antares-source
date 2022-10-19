@@ -44,7 +44,7 @@ class GraphDesktopViewJs(
 	override val mainDesktopViewItem: GraphDesktopViewItem
 		get() = TODO("mainDesktopViewItem not implemented")
 
-	override fun createSubGraphDesktopItem(verticeView: SubGraphVerticeView<*>, referenceColor: CompositeColor, isParentDetached: Boolean, viewManager: ContentViewManager): GraphDesktopViewItem {
+	override fun createSubGraphDesktopItem(verticeView: SubGraphVerticeView<*>, referenceColor: CompositeColor?, isParentDetached: Boolean, viewManager: ContentViewManager): GraphDesktopViewItem {
 		throw UnsupportedOperationException("createSubGraphDesktopItem not implemented")
 	}
 

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A request to open a sub [MetaGraph] of a [SubGraphVerticeView].
@@ -14,3 +15,7 @@ data class OpenSubGraphRequest(
 	val subGraphVerticeView: SubGraphVerticeView<*>,
 	val newView: Boolean,
 	val quickMode: Boolean)
+
+data class OpenHierarchySubGraphRequest(
+	val subGraphVerticeView: SubGraphVerticeView<*>,
+	val rootGraphView: GraphView)

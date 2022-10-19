@@ -50,6 +50,7 @@ import ch.scorpion.jabbah.graph.ui.GraphEditViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewController
+import ch.scorpion.jabbah.graph.ui.hierarchy.GraphHierarchyController
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelController
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
@@ -116,6 +117,7 @@ class GraphPanelViewController(
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(applicationContextHolder, eventBus)
+	val graphHierarchyController = GraphHierarchyController()
 
 	/**
 	 * Captures whether the [Savable] designated the current [GraphView] as 'editable'.
@@ -184,6 +186,7 @@ class GraphPanelViewController(
 		desktopController.dispose()
 		issuesViewController.dispose()
 		logViewController.dispose()
+		graphHierarchyController.dispose()
 	}
 
 	/** ---- [GraphPanelViewController] */
@@ -242,7 +245,7 @@ class GraphPanelViewController(
 			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when
 			// the subsequent drawing gets displayed
 			editor.view.setDrawing(GraphViewModule.graphViewFactory(null) as Drawing<Component>, applyDefaultZoomStrategy = false)
-
+			graphHierarchyController.setRootGraphView(null)
 			desktopController.closeAll()
 		} else if (rootGraphView != graphView) {
 			desktopController.show(view.graphEditView)
@@ -280,6 +283,7 @@ class GraphPanelViewController(
 			editViewController.setGraphView(it, isSavableEditable, applyZoomStrategy)
 			it.snapper = editor.view.grid
 		}
+		graphHierarchyController.setRootGraphView(graphView)
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
 		applicationModeHolder.updateEditorEditability()
 	}

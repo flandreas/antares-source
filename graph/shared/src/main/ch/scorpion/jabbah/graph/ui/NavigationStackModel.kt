@@ -21,19 +21,10 @@ data class NavigationStackEntry<T : GraphView>(
 	val content: DrawingViewContent<T>,
 	var voyageOrigin: ZoomedPointTranslation? = null
 ) {
-	val name: String = buildName()
+	val name: String = SubGraphVerticeView.getDescribingName(subGraphVerticeView?.label, content.drawing.graph!!)
 
 	fun dispose() {
 		content.dispose()
-	}
-
-	private fun buildName(): String {
-		val graphName = content.drawing.graph!!.name.value
-		return if (subGraphVerticeView?.label == null) {
-			graphName
-		} else {
-			"${subGraphVerticeView.label!!.getTranslation()}: $graphName"
-		}
 	}
 }
 

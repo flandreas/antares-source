@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.ui.graphpanel.IssuesSummary
+import ch.scorpion.jabbah.graph.ui.hierarchy.GraphHierarchyViewSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -76,6 +77,8 @@ class GraphPanelViewSwing(
 	/** The "Explorer" contains [libraryPanel] and [propertyPanel].*/
 	private val explorerSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
+	private val graphHierarchyPanel = GraphHierarchyViewSwing(controller.graphHierarchyController)
+
 	/**
 	 * Allows showing and hiding the Explorer. If not initially opened, the event system turns crazy and lags while processing
 	 * drag events in the DrawingView (BUG still not explained).
@@ -85,10 +88,15 @@ class GraphPanelViewSwing(
 		mainContent = desktop,
 		settingBaseName = "graphPanel.leftSidebar",
 		providedInitialOpenIndex = 0,
-		contents = listOf(SidebarPaneContentImpl(
-			Translations.getString("graph.explorer.name"),
-			UiUtil.themedIcon("/img/compass-16.png"),
-			explorerSplitPane)
+		contents = listOf(
+			SidebarPaneContentImpl(
+				Translations.getString("graph.explorer.name"),
+				UiUtil.themedIcon("/img/compass-16.png"),
+				explorerSplitPane),
+			SidebarPaneContentImpl(
+				Translations.getString("graph.hierarchy.name"),
+				UiUtil.themedIcon("/img/category.png"),
+				graphHierarchyPanel)
 		))
 
 	private val bottomSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)

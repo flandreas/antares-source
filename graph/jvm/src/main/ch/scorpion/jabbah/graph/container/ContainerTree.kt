@@ -43,7 +43,7 @@ enum class ContainerTreeItemType {
  * Balances the contents of the [TreeModel] and the [ContainerDrawing] by making sure that a particular
  * element is only contained in either one of them.
  */
-class ContainerTree(
+class  ContainerTree(
 	portFactory: PortFactory = GraphModelModule.portFactory,
 	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,

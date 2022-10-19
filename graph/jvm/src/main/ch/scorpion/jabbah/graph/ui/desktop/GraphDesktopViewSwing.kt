@@ -98,7 +98,7 @@ class GraphDesktopViewSwing(
 
 	override fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
-		referenceColor: CompositeColor,
+		referenceColor: CompositeColor?,
 		isParentDetached: Boolean,
 		viewManager: ContentViewManager
 	): GraphDesktopViewItem {

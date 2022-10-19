@@ -17,6 +17,22 @@ import ch.scorpion.jabbah.graph.view.VerticeView
  */
 interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 
+	companion object {
+
+		fun getDescribingName(label: Translatable?, graph: Graph): String {
+			val graphName = graph.name.value
+			return if (label == null) {
+				graphName
+			} else {
+				if (label.getTranslation() != graphName) {
+					"${label.getTranslation()}: $graphName"
+				} else {
+					graphName
+				}
+			}
+		}
+	}
+
 	/** Returns the model of this [SubGraphVerticeView].*/
 	val subGraphVertice: SubGraphVertice?
 
@@ -32,6 +48,12 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	var executionLabel: Translatable?
 
 	var controlViewVisibility: ControlViewVisibility
+
+	/**
+	 * Returns the translated name of the referenced [Graph], preceded by the [label] if it differs
+	 * from the [Graph]'s name.
+	 */
+	val describingName: String
 
 	/**
 	 * Creates a new [GraphView] of the references sub [Graph].

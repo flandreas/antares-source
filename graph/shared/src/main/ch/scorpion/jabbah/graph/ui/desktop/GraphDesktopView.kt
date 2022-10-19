@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.vertice.OpenHierarchySubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -39,7 +40,7 @@ interface GraphDesktopView : UIView {
 
 	fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
-		referenceColor: CompositeColor,
+		referenceColor: CompositeColor?,
 		isParentDetached: Boolean,
 		viewManager: ContentViewManager
 	): GraphDesktopViewItem
@@ -111,6 +112,8 @@ class GraphDesktopViewController(
 
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { handle(it) }
 
+	private val openHierarchyHandler: EventHandler<OpenHierarchySubGraphRequest> = { handle(it) }
+
 	/** Closes an open [GraphDesktopViewItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
 
@@ -122,6 +125,7 @@ class GraphDesktopViewController(
 		eventBus.register(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+		eventBus.register(OpenHierarchySubGraphRequest::class, openHierarchyHandler)
 	}
 
 	override fun dispose() {
@@ -131,6 +135,7 @@ class GraphDesktopViewController(
 		eventBus.unregister(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.unregister(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.unregister(CurrentLibraryEvent::class, currentLibraryHandler)
+		eventBus.unregister(openRequestHandler)
 	}
 
 	/** ---- [GraphDesktopViewController] */
@@ -142,7 +147,10 @@ class GraphDesktopViewController(
 	 * @param itemFactory creates the [GraphDesktopViewItem] using the specified [CompositeColor] as reference
 	 * between the [VerticeView] and the [GraphDesktopViewItem]
 	 */
-	fun openVerticeView(vv: VerticeView<*>, itemFactory: (CompositeColor, isParentDetached: Boolean) -> GraphDesktopViewItem) {
+	fun openVerticeView(
+		vv: VerticeView<*>,
+		itemFactory: (CompositeColor,isParentDetached: Boolean) -> GraphDesktopViewItem
+	) {
 		val assoc = associations.firstOrNull { it.ref == vv }
 		if (assoc != null) {
 			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
@@ -164,6 +172,14 @@ class GraphDesktopViewController(
 		}
 	}
 
+	private fun openHierarchySubGraph(subGraphVerticeView: SubGraphVerticeView<*>, rootGraphView: GraphView) {
+		if (view.mainDesktopViewItem?.drawingView?.drawing === rootGraphView) {
+			val newItem = view.createSubGraphDesktopItem(subGraphVerticeView, null, false, viewManager)
+			associations.add(Association(null, subGraphVerticeView, newItem, null))
+			view.addGraphDesktopItem(newItem)
+		}
+	}
+
 	private fun handle(event: EditedGraphViewEvent) {
 		event.oldGraphView?.removeDrawableContainerListener(removeListener)
 		event.newGraphView?.addDrawableContainerListener(removeListener)
@@ -179,13 +195,25 @@ class GraphDesktopViewController(
 		}
 	}
 
+	private fun handle(request: OpenHierarchySubGraphRequest) {
+		System.invokeLater { openHierarchySubGraph(request.subGraphVerticeView, request.rootGraphView) }
+	}
+
 	private fun handle(event: ReferenceColorEvent) {
 		LOG.trace("Update used ReferenceColors")
-		val newAssociations = associations.map { assoc -> assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!) }
+		val newAssociations = associations.map { assoc ->
+			if (assoc.refColor != null) {
+				assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!)
+			} else {
+				assoc
+			}
+		}
 		associations.clear()
 		associations.addAll(newAssociations)
 		associations.forEach { assoc ->
-			assoc.item.contextColor = displayedReferenceColor(assoc.refColor)
+			if (assoc.refColor != null) {
+				assoc.item.contextColor = displayedReferenceColor(assoc.refColor)
+			}
 			event.replacements.forEach {
 				assoc.item.drawingView?.highlighter?.replaceColor(
 					displayedReferenceColor(it.oldColor),
@@ -241,7 +269,7 @@ class GraphDesktopViewController(
 	 */
 	private fun deassociate(item: GraphDesktopViewItem) {
 		associationOf(item)?.let { assoc ->
-			val content = assoc.sourceItem.findContent { it.drawing.contains(assoc.ref) }
+			val content = assoc.sourceItem?.findContent { it.drawing.contains(assoc.ref) }
 			if (content != null) {
 				deassociate(assoc, content)
 			}
@@ -251,7 +279,9 @@ class GraphDesktopViewController(
 	private fun deassociate(assoc: Association, content: DrawingViewContent<*>?) {
 		content?.let {
 			it.highlighter.unhighlight(assoc.ref)
-			referenceColorSequence.free(assoc.refColor)
+			if (assoc.refColor != null) {
+				referenceColorSequence.free(assoc.refColor)
+			}
 			associations.remove(assoc)
 		}
 	}
@@ -273,7 +303,9 @@ class GraphDesktopViewController(
 
 				// Explicitly call deassociate() with Content because deassociate() in close() wouldn't
 				// find the Content, because the VerticeView has already been deleted
-				deassociate(assoc, assoc.sourceItem.drawingView?.content)
+				if (assoc.sourceItem != null) {
+					deassociate(assoc, assoc.sourceItem.drawingView?.content)
+				}
 
 				closeItem(assoc.item)
 			}
@@ -285,8 +317,8 @@ class GraphDesktopViewController(
 	 * in a [GraphDesktopView], along with the [ReferenceColor] that is used as a visual reference.
 	 */
 	data class Association(
-		val sourceItem: GraphDesktopViewItem,
+		val sourceItem: GraphDesktopViewItem?,
 		val ref: VerticeView<*>,
 		val item: GraphDesktopViewItem,
-		val refColor: ReferenceColor)
+		val refColor: ReferenceColor?)
 }
