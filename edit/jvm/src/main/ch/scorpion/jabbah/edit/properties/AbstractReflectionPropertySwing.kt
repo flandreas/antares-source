@@ -22,6 +22,10 @@ abstract class AbstractReflectionPropertySwing<V>(
 	private val displayName: String? = null
 ) : AbstractProperty() {
 
+	companion object {
+		fun isNested(name: String): Boolean = name.contains('.')
+	}
+
 	var editor: Editor? = null
 
 	protected var beanIds: List<Int> = listOf()
@@ -82,7 +86,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 	override fun getShortDescription(): String? = Translations.getOptionalString("$baseKey.desc")
 
 	override fun readFromObject(bean: Any?) {
-		value = if (getterPropertyName.contains('.')) {
+		value = if (isNested(getterPropertyName)) {
 			PropertyUtils.getNestedProperty(bean, getterPropertyName)
 		} else {
 			PropertyUtils.getSimpleProperty(bean, getterPropertyName)

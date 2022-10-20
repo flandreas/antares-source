@@ -33,10 +33,10 @@ open class PropertyCommandSwing<V>(
 		}
 	}
 
-	private fun isNested(name: String): Boolean = name.contains('.')
+	//private fun isNested(name: String): Boolean = name.contains('.')
 
 	override fun getValue(): V? {
-		return if (isNested(getterPropertyName)) {
+		return if (AbstractReflectionPropertySwing.isNested(getterPropertyName)) {
 			PropertyUtils.getNestedProperty(bean, getterPropertyName) as V?
 		} else {
 			PropertyUtils.getSimpleProperty(bean, getterPropertyName) as V?
@@ -44,7 +44,7 @@ open class PropertyCommandSwing<V>(
 	}
 
 	override fun setValue(value: V?) {
-		if (isNested(setterPropertyName)) {
+		if (AbstractReflectionPropertySwing.isNested(setterPropertyName)) {
 			PropertyUtils.setNestedProperty(bean, setterPropertyName, value)
 		} else {
 			PropertyUtils.setSimpleProperty(bean, setterPropertyName, value)

@@ -16,6 +16,10 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * Wraps [String] in order to allow configuring a special editor with a drop-down list of all
+ * already existing [Tunnel] names.
+ */
 data class TunnelName(val name: String) {
 	override fun toString(): String = name
 }

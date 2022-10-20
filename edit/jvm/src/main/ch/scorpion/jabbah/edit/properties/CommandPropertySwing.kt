@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import com.l2fprod.common.propertysheet.Property
+import org.apache.commons.beanutils.PropertyUtils
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -59,4 +60,14 @@ open class CommandPropertySwing<V>(
 
 	protected open fun createCommand(newValue: V?): AbstractPropertyCommand<V> =
 		PropertyCommandSwing(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
+
+	protected val bean get() = beanProvider(editor!!, beanIds)
+
+	protected fun getOldValue(): V? {
+		return if (isNested(getterPropertyName)) {
+			PropertyUtils.getNestedProperty(bean, getterPropertyName) as V?
+		} else {
+			PropertyUtils.getSimpleProperty(bean, getterPropertyName) as V?
+		}
+	}
 }

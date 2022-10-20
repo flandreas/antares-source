@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemMockBuilder
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewMockBuilder
+import ch.scorpion.jabbah.graph.ui.hierarchy.GraphHierarchyView
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelView
 import ch.scorpion.jabbah.graph.ui.library.LibraryPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.logview.LogView
@@ -36,6 +37,7 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 		withIssuesView(IssuesViewMockBuilder(controller.issuesViewController).build())
 		withLogView(LogViewMockBuilder(controller.logViewController).build())
 		withComponentPropertiesPanel(ComponentPropertyPanelMockBuilder(controller.propertyPanelController).build())
+		withGraphHierarchyView(GraphHierarchyViewMockBuilder(controller.graphHierarchyController).build())
 	}
 
 	fun withLibraryPanel(view: LibraryPanelView): GraphPanelViewMockBuilder {
@@ -66,6 +68,11 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 
 	fun withComponentPropertiesPanel(view: ComponentPropertyPanel): GraphPanelViewMockBuilder {
 		controller.propertyPanelController.view = view
+		return this
+	}
+
+	fun withGraphHierarchyView(view: GraphHierarchyView): GraphPanelViewMockBuilder {
+		controller.graphHierarchyController.view = view
 		return this
 	}
 
