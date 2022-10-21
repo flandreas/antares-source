@@ -4,16 +4,19 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.vertice.OpenHierarchySubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 interface GraphHierarchyView : UIView {
 	fun refresh()
+	fun handleRemove(subGraphVerticeView: SubGraphVerticeView<*>)
 }
 
 /**
@@ -35,12 +38,20 @@ class GraphHierarchyController(
 			updateActions()
 		}
 
+	private val deleteHandler: EventHandler<SubGraphVerticeViewEvent> = {
+		if (it.type == SubGraphVerticeViewEvent.Type.REMOVE) {
+			view.handleRemove(it.subGraphVerticeView)
+		}
+	}
+
 	init {
+		eventBus.register(SubGraphVerticeViewEvent::class, deleteHandler)
 		updateActions()
 	}
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(deleteHandler)
 		refreshAction.dispose()
 	}
 

@@ -31,6 +31,10 @@ class GraphHierarchyViewSwing(
 		treeView.refresh(controller.rootGraphView)
 	}
 
+	override fun handleRemove(subGraphVerticeView: SubGraphVerticeView<*>) {
+		treeView.remove(subGraphVerticeView)
+	}
+
 	private val selectedSubGraphVerticeView: SubGraphVerticeView<*>? get() {
 		val path = treeView.selectionPath ?: return null
 		if ((path.lastPathComponent as DefaultMutableTreeNode).userObject is SubGraphVerticeView<*>) {

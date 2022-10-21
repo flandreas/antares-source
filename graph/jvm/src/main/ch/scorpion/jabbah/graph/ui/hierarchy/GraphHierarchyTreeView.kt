@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.hierarchy
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
@@ -12,6 +13,8 @@ import javax.swing.JLabel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
+import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeNode
 
 /**
  * Displays a [GraphHierarchyTree] as a dynamically loaded tree.
@@ -37,6 +40,18 @@ class GraphHierarchyTreeView : JTree() {
 	fun refresh(graphView: GraphView?) {
 		graphHierarchyTree = graphView?.let { GraphHierarchyTree() }
 		model = graphHierarchyTree?.let { DynamicTreeModel(graphView!!, it, true) }
+	}
+
+	fun remove(subGraphVerticeView: SubGraphVerticeView<*>) {
+		model?.root?.let { root ->
+			JTreeUtil.findTreeNode(root as TreeNode) {
+				(it as DefaultMutableTreeNode).userObject === subGraphVerticeView
+			}?.let {
+				val index = (root as DefaultMutableTreeNode).getIndex(it)
+				root.remove(it as DefaultMutableTreeNode)
+				(model as DefaultTreeModel).nodesWereRemoved(model!!.root as TreeNode, intArrayOf(index), arrayOf(it))
+			}
+		}
 	}
 
 	private inner class Renderer : DefaultTreeCellRenderer() {
