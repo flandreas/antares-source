@@ -42,7 +42,7 @@ class GraphHierarchyViewSwing(
 	private fun buildUI() {
 		layout = BorderLayout()
 
-		toolbar.addAction(controller.refreshAction)
+		toolbar.add(UiUtil.createToolBarButton(controller.refreshAction))
 		toolbar.add(UiUtil.createToolBarButton(controller.openAction))
 
 		add(toolbar, BorderLayout.NORTH)

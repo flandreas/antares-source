@@ -55,7 +55,7 @@ class GraphHierarchyController(
 		openAction.enabled = selectedSubGraphVerticeView != null
 	}
 
-	private inner class RefreshAction : AbstractAction("graph.hierarchy.action.refresh") {
+	private inner class RefreshAction : AbstractAction("graph.hierarchy.action.refresh", "/img/refresh.png") {
 		override fun execute(event: ActionEvent) {
 			view.refresh()
 		}
