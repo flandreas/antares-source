@@ -21,7 +21,7 @@ data class NavigationStackEntry<T : GraphView>(
 	val content: DrawingViewContent<T>,
 	var voyageOrigin: ZoomedPointTranslation? = null
 ) {
-	val name: String = SubGraphVerticeView.getDescribingName(subGraphVerticeView?.label, content.drawing.graph!!)
+	val name: String get() = SubGraphVerticeView.getDescribingName(subGraphVerticeView?.label, content.drawing.graph!!)
 
 	fun dispose() {
 		content.dispose()
