@@ -151,14 +151,18 @@ class NavigationStackViewSwing(
 
 	/** ---- [NavigationStackViewSwing] */
 
+	private fun getFont(last: Boolean): Font =
+		if (last) headFont else tailFont
+
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.name, tailFont)
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.name, getFont(last))
 		val textLength = textRenderInfo.textBounds.width
 		val showLock = first && !editable
 		return Element(
 			entry = entry,
 			path = if (first) createFirstPath(textLength, showLock) else createNonFirstPath(textLength),
 			showLock = showLock,
+			isFirst = first,
 			isHead = last)
 	}
 
@@ -197,16 +201,25 @@ class NavigationStackViewSwing(
 		val entry: NavigationStackEntry<GraphView>,
 		val path: Path,
 		val showLock: Boolean,
+		val isFirst: Boolean,
 		val isHead: Boolean
 	) {
 
 		private val label: Label = Label(
 			text = entry.name,
-			font = tailFont,
-			horizontalAlignment = if (showLock) HorizontalAlignment.LEFT else HorizontalAlignment.CENTER,
+			font = getFont(isHead),
+			horizontalAlignment = if (isFirst) HorizontalAlignment.LEFT else HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
 			location = Point2D(
-				x = if (showLock) path.boundingBox.minX + TEXT_INSET + lockedIcon.width else path.boundingBox.centerX,
+				x = if (isFirst) {
+						if (showLock) {
+							path.boundingBox.minX + TEXT_INSET + lockedIcon.width
+						} else {
+							path.boundingBox.minX + TEXT_INSET
+						}
+					} else {
+						path.boundingBox.centerX
+					},
 				y = path.boundingBox.centerY))
 
 		var location: Point2D = Point2D.ZERO
@@ -240,11 +253,7 @@ class NavigationStackViewSwing(
 			}
 
 			label.color = Graphics2DJvm.fromAwtColor(elementTextColor)
-			label.font = if (isHead) {
-				headFont
-			} else {
-				tailFont
-			}
+			label.font = getFont(isHead)
 			label.draw(DrawModule.drawContextFactory(g, null, null))
 
 			g.translate(-location.x, -location.y)
