@@ -145,9 +145,8 @@ class NavigationStackViewSwing(
 		}
 	}
 
-	override fun getPreferredSize(): Dimension {
-		return Dimension(300, HEIGHT + 2 * V_INSETS)
-	}
+	override fun getMaximumSize(): Dimension =
+		Dimension(Integer.MAX_VALUE, HEIGHT + 2 * V_INSETS)
 
 	/** ---- [NavigationStackViewSwing] */
 
