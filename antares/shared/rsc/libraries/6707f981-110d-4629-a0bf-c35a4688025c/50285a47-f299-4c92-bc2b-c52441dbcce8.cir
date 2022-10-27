@@ -1,8 +1,22 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='45'>
+        <graph _id='2' script='init {
+	Q = 0
+	&apos;!Q&apos; = 1
+}
+
+if (^C) {
+	if (R) {
+		Q = 0
+		&apos;!Q&apos; = 1
+	} else if (S) {
+		Q = 1
+		&apos;!Q&apos; = 0
+	}
+}' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='R' type='input' bitWidth='1'/>
@@ -205,7 +219,7 @@
     <containerDrawing _id='76'>
       <components>
         <rectangle _id='77' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='78'>
+        <originIndicator _id='78' id='8'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
