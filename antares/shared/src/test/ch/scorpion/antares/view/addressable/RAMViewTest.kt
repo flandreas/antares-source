@@ -21,7 +21,7 @@ class RAMViewTest {
 	fun shouldUpdateLabelWhenSettingAddressWidth() {
 		ramView.addressWidth = BitWidth.BW_16
 
-		assertEquals("RAM 64Kx8", ramView.label.text)
+		assertEquals("RAM 64Ki x 8", ramView.label.text)
 	}
 
 	@Test
@@ -36,7 +36,7 @@ class RAMViewTest {
 		ramView.text = TranslatableText("Test")
 		ramView.text = null
 
-		assertEquals("RAM 256x8", ramView.label.text)
+		assertEquals("RAM 256 x 8", ramView.label.text)
 	}
 
 	@Test

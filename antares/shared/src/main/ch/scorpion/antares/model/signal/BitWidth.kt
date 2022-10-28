@@ -11,25 +11,29 @@ interface BitWidth {
 	companion object {
 		const val BASE_KEY = "element.property.bitWidth"
 
-		val BW_1 = BitWidthImpl(1, "1")
-		val BW_2 = BitWidthImpl(2, "4")
-		val BW_3 = BitWidthImpl(3, "8")
-		val BW_4 = BitWidthImpl(4, "16")
-		val BW_5 = BitWidthImpl(5, "32")
-		val BW_6 = BitWidthImpl(6, "64")
-		val BW_7 = BitWidthImpl(7, "128")
-		val BW_8 = BitWidthImpl(8, "256")
-		val BW_12 = BitWidthImpl(12, "4K")
-		val BW_16 = BitWidthImpl(16, "64K")
-		val BW_20 = BitWidthImpl(20, "1M")
-		val BW_24 = BitWidthImpl(24, "16M")
-		val BW_28 = BitWidthImpl(28, "256M")
-		val BW_32 = BitWidthImpl(32, "4G")
-		val BW_64 = BitWidthImpl(64, "16E")
+		const val MAX = 64
 
-		val MAX: BitWidth get() = BW_64
+		val PREDEFINED: List<BitWidth> = let {
+			val result = mutableListOf<BitWidth>()
+			for (i in 1..MAX) {
+				result.add(BitWidthImpl(i, BinaryPrefix.of(i)))
+			}
+			result
+		}
 
-		val PREDEFINED: List<BitWidth> = listOf(BW_1, BW_2, BW_3, BW_4, BW_5, BW_6, BW_7, BW_8, BW_12, BW_16, BW_20, BW_24, BW_28, BW_32, BW_64)
+		// Backward compatibility: A lot of old code (especially unit tests) use the former, restricted set
+		val BW_1: BitWidth get() = PREDEFINED[0]
+		val BW_2: BitWidth get() = PREDEFINED[1]
+		val BW_3: BitWidth get() = PREDEFINED[2]
+		val BW_4: BitWidth get() = PREDEFINED[3]
+		val BW_5: BitWidth get() = PREDEFINED[4]
+		val BW_6: BitWidth get() = PREDEFINED[5]
+		val BW_8: BitWidth get() = PREDEFINED[7]
+		val BW_12: BitWidth get() = PREDEFINED[11]
+		val BW_16: BitWidth get() = PREDEFINED[15]
+		val BW_24: BitWidth get() = PREDEFINED[23]
+		val BW_28: BitWidth get() = PREDEFINED[27]
+		val BW_32: BitWidth get() = PREDEFINED[31]
 
 		fun of(width: Int): BitWidth =
 			PREDEFINED.firstOrNull { it.width == width }

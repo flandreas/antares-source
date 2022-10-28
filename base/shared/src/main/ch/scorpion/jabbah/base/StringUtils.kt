@@ -108,4 +108,7 @@ object StringUtils {
 		} else {
 			s
 		}
+
+	fun removeWhitespace(s: String): String =
+		s.filter { !it.isWhitespace() }
 }

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.CodeLocation
 import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
@@ -25,7 +26,6 @@ import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.*
-import javax.swing.table.TableCellRenderer
 
 open class BitWidthPropertySwing(
 	propertyName: String,
@@ -76,42 +76,6 @@ class BitWidthParamValuePropertySwing(
 		GraphParamValueCommand(paramDefinition, editor!!, baseKey, beanProvider, beanIds, newValue)
 }
 
-class BitWidthRenderer : DefaultListCellRenderer(), TableCellRenderer {
-
-	override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-		setValue(value as BitWidth?)
-
-		if (isSelected) {
-			foreground = list.selectionForeground
-			background = list.selectionBackground
-		} else {
-			foreground = list.foreground
-			background = list.background
-		}
-		font = list.font
-		return this
-	}
-
-	override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-		setValue(value as BitWidth?)
-
-		if (isSelected) {
-			foreground = table.selectionForeground
-			background = table.selectionBackground
-		} else {
-			foreground = table.foreground
-			background = table.background
-		}
-		font = table.font
-
-		return this
-	}
-
-	private fun setValue(bitWidth: BitWidth?) {
-		text = bitWidth?.toString() ?: ""
-	}
-}
-
 class BitWidthEditor(
 	private val propertyName: String,
 	private val editable: Boolean,
@@ -130,7 +94,7 @@ class BitWidthEditor(
 	private val isExpression: Boolean get() = parserFactory != null && comboBox.selectedItem is BitWidthExpression
 
 	init {
-		comboBox.renderer = BitWidthRenderer()
+		comboBox.renderer = ToStringRenderer<BitWidth>()
 		comboBox.isEnabled = editable
 
 		val list = BitWidth.PREDEFINED.filter { filter(it) }.toMutableList()

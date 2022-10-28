@@ -1,62 +1,33 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.BitWidthImpl
 
 /** Defines the supported number of branches of a [Splitter] or a [Concentrator]. */
-enum class BranchCount(val count: Int) {
-	BC_2(2),
-	BC_3(3),
-	BC_4(4),
-	BC_5(5),
-	BC_6(6),
-	BC_7(7),
-	BC_8(8),
-	BC_10(10),
-	BC_12(12),
-	BC_14(14),
-	BC_16(16),
-	BC_20(20),
-	BC_24(24),
-	BC_28(28),
-	BC_32(32),
-	BC_64(64);
+data class BranchCount(val count: Int) {
 
 	companion object {
 
-		/** Defines all possible [BranchCount]w for every [BitWidth].*/
-		private val BRANCH_COUNTS: Map<BitWidth, List<BranchCount>> = mapOf(
-			BitWidth.BW_2 to listOf(BC_2),
-			BitWidth.BW_3 to listOf(BC_3),
-			BitWidth.BW_4 to listOf(BC_2, BC_4),
-			BitWidth.BW_5 to listOf(BC_5),
-			BitWidth.BW_6 to listOf(BC_2, BC_3, BC_6),
-			BitWidth.BW_7 to listOf(BC_7),
-			BitWidth.BW_8 to listOf(BC_2, BC_4, BC_8),
-			BitWidth.BW_12 to listOf(BC_3, BC_6, BC_12),
-			BitWidth.BW_16 to listOf(BC_2, BC_4, BC_8, BC_16),
-			BitWidth.BW_20 to listOf(BC_10, BC_20),
-			BitWidth.BW_24 to listOf(BC_2, BC_3, BC_6, BC_12, BC_24),
-			BitWidth.BW_28 to listOf(BC_7, BC_14, BC_28),
-			BitWidth.BW_32 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32),
-			BitWidth.BW_64 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32, BC_64)
-		)
-
-		fun forBitWidth(bitWidth: BitWidth): List<BranchCount> {
-			return BRANCH_COUNTS[bitWidth]!!
-		}
-
-		fun withCount(count: Int): BranchCount {
-			for (branchCount in values()) {
-				if (branchCount.count == count) {
-					return branchCount
-				}
+		val PREDEFINED: List<BranchCount> = let {
+			val result = mutableListOf<BranchCount>()
+			for (i in 2 .. BitWidth.MAX) {
+				result.add(BranchCount(i))
 			}
-			throw IllegalArgumentException("Unknown BranchCount $count")
+			result
 		}
+
+		// Backward compatibility: Some old code (especially unit tests) use the former, restricted set
+		val BC_2: BranchCount get() = withCount(2)
+		val BC_4: BranchCount get() = withCount(4)
+		val BC_8: BranchCount get() = withCount(8)
+
+		/** Defines all possible [BranchCount]w for every [BitWidth].*/
+		fun forBitWidth(bitWidth: BitWidth): List<BranchCount> =
+			PREDEFINED.filter { it.count <= bitWidth.width && bitWidth.width.mod(it.count) == 0 }
+
+		fun withCount(count: Int): BranchCount =
+			PREDEFINED.firstOrNull { it.count == count } ?:
+				throw IllegalArgumentException("Unknown BranchCount $count")
 	}
 
-	override fun toString(): String {
-		return count.toString()
-	}
+	override fun toString(): String = count.toString()
 }

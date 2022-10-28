@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -328,5 +329,5 @@ abstract class AbstractAddressableView<T : Addressable>(
 	}
 
 	protected fun buildLabelText(): String =
-		"$type ${addressWidth.size}x${dataWidth.width}"
+		"$type ${StringUtils.removeWhitespace(addressWidth.size)} x ${dataWidth.width}"
 }

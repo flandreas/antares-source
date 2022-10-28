@@ -68,6 +68,11 @@ class StringUtilsTest {
 		assertEquals("test", StringUtils.orNull("test"))
 	}
 
+	@Test
+	fun shouldRemoveWhitespace() {
+		assertEquals("HeyThere", StringUtils.removeWhitespace("Hey There"))
+	}
+
 	private fun assertList(list: List<String>) {
 		assertEquals(list, toList(fromList(list)))
 	}

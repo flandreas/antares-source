@@ -22,7 +22,6 @@ import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.BitWidthEditor
 import ch.scorpion.antares.view.signal.BitWidthParamValuePropertySwing
 import ch.scorpion.antares.view.signal.BitWidthPropertySwing
-import ch.scorpion.antares.view.signal.BitWidthRenderer
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
@@ -42,6 +41,7 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
@@ -224,8 +224,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(Handedness::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Logic::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Trigger::class.java, EnumRenderer::class.java)
-		registry.registerRenderer(BranchCount::class.java, EnumRenderer::class.java)
-		registry.registerRenderer(BitWidth::class.java, BitWidthRenderer::class.java)
+		registry.registerRenderer(BranchCount::class.java, ToStringRenderer::class.java)
+		registry.registerRenderer(BitWidth::class.java, ToStringRenderer::class.java)
 		registry.registerRenderer(DigitalSignalRepresentation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)

@@ -94,7 +94,7 @@ abstract class AbstractBranchCountSplitter(
 	protected abstract fun createNarrowSidePort(index: Int): DigitalPort
 
 	private fun isSplittingSupported(bitWidth: BitWidth, branchCount: BranchCount): Boolean {
-		if (branchCount < BranchCount.BC_2 || branchCount.count > bitWidth.width) {
+		if (branchCount.count < BranchCount.BC_2.count || branchCount.count > bitWidth.width) {
 			return false
 		}
 		if (!BranchCount.forBitWidth(bitWidth).contains(branchCount)) {

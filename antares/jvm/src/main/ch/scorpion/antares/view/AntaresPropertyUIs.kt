@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import javax.swing.JComboBox
@@ -76,8 +77,8 @@ class InputPortNumberEditor(filter: (InputPortNumber) -> Boolean = { _ -> true }
 
 class BranchCountEditor(filter: (BranchCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(BranchCount.values().filter { filter.invoke(it) }.toTypedArray())
-		(editor as JComboBox<*>).renderer = EnumRenderer<BranchCount>()
+		setAvailableValues(BranchCount.PREDEFINED.filter { filter.invoke(it) }.toTypedArray())
+		(editor as JComboBox<*>).renderer = ToStringRenderer<BranchCount>()
 	}
 }
 
