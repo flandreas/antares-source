@@ -63,6 +63,10 @@ class GraphParamDefinitionsViewSwing(
 			override fun changedUpdate(e: DocumentEvent?) { controller.formChanged() }
 		})
 
+		typeField.addActionListener {
+			setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
+		}
+
 		table.selectionModel.addListSelectionListener {
 			val newSelection = if (table.selectionModel.selectedItemsCount > 0) {
 				controller.value.get(table.selectedRow)

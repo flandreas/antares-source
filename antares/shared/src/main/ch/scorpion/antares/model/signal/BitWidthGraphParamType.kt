@@ -1,14 +1,11 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.antares.dsl.AntaresInterpreter
-import ch.scorpion.antares.dsl.AntaresLexer
-import ch.scorpion.antares.dsl.AntaresParser
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.CodeLocation
+import ch.scorpion.jabbah.base.dsl.Dsl
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
@@ -21,6 +18,8 @@ import kotlin.reflect.KClass
  * Defines [BitWidth] as [GraphParamType].
  */
 object BitWidthGraphParamType : GraphParamType<BitWidth> {
+
+	/** ---- [GraphParamType] interface */
 
 	override val name: String = "bitWidth"
 
@@ -42,32 +41,43 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override fun toDslValue(value: BitWidth): Any = value.width.toLong()
 
-	override fun evaluateIn(graph: Graph, value: BitWidth): BitWidth {
-		return if (value is BitWidthExpression) {
-			val parser = AntaresParser(
-				AntaresLexer(value.expression),
-				BaseModule.semanticAnalyserFactory.create(graph.symbolTable))
-			val newValue = AntaresInterpreter(
-				parser,
-				Memory(GraphActivationRecord(graph))
-			).interpret()
-
-			if (newValue is Long) {
-				if (value.width.toLong() != newValue) {
-					try {
-						BitWidthExpression(value.expression, BitWidth.of(newValue.toInt()))
-					} catch (e: Throwable) {
-						throw DslError(CodeLocation.UNDEFINED,
-							Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(value.expression, 10)))
-					}
-				} else {
-					value
-				}
+	override fun evaluateIn(graph: Graph, value: BitWidth): BitWidth =
+		if (value is BitWidthExpression) {
+			if (value.expression.startsWith(GraphParamType.EXPRESSION_OP)) {
+				evaluateIn(graph, value.expression.drop(1))
 			} else {
-				throw DslError(CodeLocation.UNDEFINED, "Expecting Long as value of BitWidth")
+				evaluateIn(graph, value.expression)
 			}
 		} else {
 			value
+		}
+
+	/** ---- [BitWidthGraphParamType] */
+
+	fun parse(s: String): BitWidth {
+		val number = s.toIntOrNull()
+		return if (number != null) {
+			BitWidth.of(number)
+		} else {
+			if (s.trimStart().startsWith(GraphParamType.EXPRESSION_OP)) {
+				BitWidthExpression(s.trimStart().drop(1))
+			} else {
+				throw IllegalArgumentException("Illegal bit width expression")
+			}
+		}
+	}
+
+	private fun evaluateIn(graph: Graph, expression: String): BitWidth {
+		val newValue = Dsl.execute(expression, graph.symbolTable, Memory(GraphActivationRecord(graph)))
+		if (newValue is Long) {
+			try {
+				return BitWidthExpression(expression, BitWidth.of(newValue.toInt()))
+			} catch (e: Throwable) {
+				throw DslError(CodeLocation.UNDEFINED,
+					Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(expression, 10)))
+			}
+		} else {
+			throw DslError(CodeLocation.UNDEFINED, "Expecting Long as value of BitWidth")
 		}
 	}
 }

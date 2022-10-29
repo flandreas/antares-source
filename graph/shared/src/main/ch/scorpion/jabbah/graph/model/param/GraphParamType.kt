@@ -9,6 +9,10 @@ import kotlin.reflect.KClass
 
 interface GraphParamType<T : Any> {
 
+	companion object {
+		const val EXPRESSION_OP = '='
+	}
+
 	/** The technical name also used as [Storable] key. */
 	val name: String
 

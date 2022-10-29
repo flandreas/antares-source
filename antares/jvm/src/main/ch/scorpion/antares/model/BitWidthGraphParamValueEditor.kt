@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditor
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
+import javax.swing.JComponent
 
 class BitWidthGraphParamValueEditor : JComboBox<BitWidth>(), GraphParamValueEditor {
 
@@ -29,4 +30,5 @@ class BitWidthGraphParamValueEditor : JComboBox<BitWidth>(), GraphParamValueEdit
 		get() = isEnabled
 		set(value) { isEnabled = value }
 
+	override val editor: JComponent get() = this
 }

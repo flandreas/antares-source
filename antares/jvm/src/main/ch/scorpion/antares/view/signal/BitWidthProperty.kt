@@ -2,10 +2,11 @@ package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
-import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.CodeLocation
 import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
@@ -91,22 +92,17 @@ class BitWidthEditor(
 	private val graph = (graphEditor?.drawing as GraphView?)?.graph
 	private val parserFactory = if (graph != null) graph::createParser else null
 
-	private val isExpression: Boolean get() = parserFactory != null && comboBox.selectedItem is BitWidthExpression
+	companion object {
+		private val LOG by logger(BitWidthEditor::class)
+	}
 
 	init {
 		comboBox.renderer = ToStringRenderer<BitWidth>()
 		comboBox.isEnabled = editable
+		comboBox.isEditable = editable
+		button.isEnabled = editable
 
-		val list = BitWidth.PREDEFINED.filter { filter(it) }.toMutableList()
-		if (parserFactory != null) {
-			list.add(BitWidthExpression(""))
-		}
-
-		comboBoxEditor.setAvailableValues(list.toTypedArray())
-
-		comboBox.addItemListener {
-			updateButton()
-		}
+		comboBoxEditor.setAvailableValues(BitWidth.COMMON.filter { filter(it) }.toTypedArray())
 
 		buildUI()
 
@@ -114,28 +110,54 @@ class BitWidthEditor(
 			editor.addFocusListener(object : FocusAdapter() {
 				override fun focusGained(e: FocusEvent?) {
 					comboBox.requestFocusInWindow()
-					comboBox.showPopup()
+					comboBox.editor.selectAll()
 				}
 			})
 		}
 	}
 
-	override fun getValue(): Any = comboBoxEditor.value
-
-	override fun setValue(value: Any?) {
-		super.setValue(value)
-		if (value is BitWidthExpression) {
-			(comboBox.getItemAt(comboBox.itemCount - 1) as? BitWidthExpression)?.let {
-				it.expression = value.expression
-				it.value = value.value
-			}
+	override fun getValue(): Any? {
+		return try {
+			getValueImpl()
+		} catch (e: DslError) {
+			LOG.debug("Parsing value throws $e")
+			errorCallback(e)
+			null
+		} catch (e: Throwable) {
+			LOG.debug("Parsing value throws $e")
+			errorCallback(DslError(CodeLocation.UNDEFINED, e.message ?: "Invalid bit width expression"))
+			null
 		}
-		comboBoxEditor.value = value
-		updateButton()
 	}
 
-	private fun updateButton() {
-		button.isEnabled = isExpression
+	private fun getValueImpl(): BitWidth =
+		when (val value = comboBox.editor.item) {
+			is String -> {
+				LOG.trace("The user has entered a script expression")
+				parseExpression(value)
+			}
+			is BitWidthExpression -> {
+				LOG.trace("The user has entered an expression using the dialog")
+				parseExpression("=${value.expression}")
+			}
+			is BitWidth -> {
+				LOG.trace("Returning directly BitWidth")
+				value
+			}
+			else -> throw IllegalStateException("Illegal bit width value")
+		}
+
+	private fun parseExpression(script: String): BitWidth {
+		val bitWidth = BitWidthGraphParamType.parse(script)
+		return if (bitWidth is BitWidthExpression) {
+			graph?.let { bitWidth.evaluateIn(it) } ?: bitWidth
+		} else {
+			bitWidth
+		}
+	}
+
+	override fun setValue(value: Any?) {
+		comboBox.editor.item = value
 	}
 
 	private fun buildUI() {
@@ -157,23 +179,18 @@ class BitWidthEditor(
 	}
 
 	private fun showDialog() {
+		val script = when (comboBox.editor.item) {
+			is BitWidthExpression -> (comboBox.editor.item as BitWidthExpression).expression
+			else -> (comboBox.editor.item as BitWidth).width.toString()
+		}
 		ScriptPropertyPanel.showAsDialog(
-			script = (comboBox.selectedItem as BitWidthExpression).expression,
+			script = script,
 			editable = editable,
 			propertyName = propertyName,
 			parserFactory = parserFactory!!
 		) ?.let {
-			(comboBox.selectedItem as BitWidthExpression).expression = it
-
-			try {
-				(comboBox.selectedItem as BitWidthExpression).evaluateIn(graph!!)?.let { value ->
-					(comboBox.selectedItem as BitWidthExpression).value = value
-				}
-			} catch (e: DslError) {
-				errorCallback(e)
-			} catch (e: Throwable) {
-				errorCallback(DslError(CodeLocation.UNDEFINED, Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(it, 10))))
-			}
+			// The script is evaluated when the editor losses focus
+			comboBox.editor.item = BitWidthExpression(it)
 		}
 	}
 }

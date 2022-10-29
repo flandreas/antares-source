@@ -1,8 +1,9 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -35,13 +36,25 @@ interface BitWidth {
 		val BW_28: BitWidth get() = PREDEFINED[27]
 		val BW_32: BitWidth get() = PREDEFINED[31]
 
+		val COMMON = listOf(
+			PREDEFINED[0],
+			PREDEFINED[1],
+			PREDEFINED[3],
+			PREDEFINED[7],
+			PREDEFINED[11],
+			PREDEFINED[15],
+			PREDEFINED[19],
+			PREDEFINED[23],
+			PREDEFINED[31]
+		)
+
 		fun of(width: Int): BitWidth =
 			PREDEFINED.firstOrNull { it.width == width }
-				?: throw IllegalArgumentException("Unsupported BitWidth of '$width'")
+				?: throw IllegalArgumentException("Unsupported bit width $width")
 
 		fun withName(customName: String): BitWidth =
 			PREDEFINED.firstOrNull { it.customName == customName }
-				?: throw IllegalArgumentException("Unknown BitWidth '$customName'")
+				?: throw IllegalArgumentException("Unknown bit width '$customName'")
 
 		fun read(name: String, reader: StoreReader): BitWidth {
 			val value = reader.readString(name)
@@ -113,7 +126,8 @@ class BitWidthExpression(
 		writer.writeString(name, expression)
 	}
 
-	override fun toString(): String = "${Translations.getString("graph.property.graphParams.expression")}: ${StringUtils.limit(expression, 10)}"
+	override fun toString(): String =
+		"${GraphParamType.EXPRESSION_OP}${StringUtils.limit(expression, 10)}"
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is BitWidthExpression) {
@@ -128,16 +142,18 @@ class BitWidthExpression(
 		return result
 	}
 
+	/**
+	 * Evaluates this [BitWidthExpression] using the [GraphParamValues] of [graph]
+	 * in order to check if evaluation results in a different value.
+	 * @return the possibly different value, or `null` if evaluation results in the same value
+	 * @throws DslError if evaluation results in an error
+	 */
 	fun evaluateIn(graph: Graph): BitWidth? {
-		try {
-			val newValue = BitWidthGraphParamType.evaluateIn(graph, this)
-			if (newValue === this) {
-				return null
-			}
-			return newValue
-		} catch (e: Throwable) {
+		val newValue = BitWidthGraphParamType.evaluateIn(graph, this)
+		if (newValue === this) {
 			return null
 		}
+		return newValue
 	}
 }
 

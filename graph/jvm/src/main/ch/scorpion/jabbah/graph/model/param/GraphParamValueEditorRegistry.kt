@@ -1,9 +1,20 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import javax.swing.JComponent
+
 interface GraphParamValueEditor {
+	/** Allows to set and get the value of [editor]. */
 	var value: Any
+
+	/** The handler to be called by this [GraphParamValueEditor] when the user has changed its value.*/
 	var changeHandler: (() -> Unit)?
+
+	/** Controls enabledness of [editor].*/
 	var editorEnabled: Boolean
+
+	/** The UI representation of this [GraphParamValueEditor]. */
+	val editor: JComponent
+
 }
 
 typealias GraphParamValueEditorFactory = () -> GraphParamValueEditor
