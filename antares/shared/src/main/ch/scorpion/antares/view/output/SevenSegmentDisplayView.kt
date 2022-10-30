@@ -122,23 +122,21 @@ class SevenSegmentDisplayView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		val isExecute = context.castedAppContext<GraphApplicationContext>()!!.isExecute
-
-		drawFullHorizontalSegment(context.g, isExecute, model.inputValueOf("a"),
+		drawFullHorizontalSegment(context, model.inputValueOf("a"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 
-		drawB(context, isExecute)
-		drawC(context, isExecute)
+		drawB(context)
+		drawC(context)
 
-		drawFullHorizontalSegment(context.g, isExecute, model.inputValueOf("d"),
+		drawFullHorizontalSegment(context, model.inputValueOf("d"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawE(context, isExecute)
-		drawF(context, isExecute)
+		drawE(context)
+		drawF(context)
 
-		drawFullHorizontalSegment(context.g, isExecute, model.inputValueOf("g"),
+		drawFullHorizontalSegment(context, model.inputValueOf("g"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 

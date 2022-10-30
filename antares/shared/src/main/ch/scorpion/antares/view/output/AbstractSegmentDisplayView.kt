@@ -11,25 +11,21 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
-import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -195,7 +191,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		context.g.color = if (isExecute) {
 			transparent.applyTo(Themes.get<AntaresTheme>().screen.backgroundColor)
 		} else {
-			backgroundColor
+			context.chooseBackground(backgroundColor)
 		}
 		context.g.fillRect(0, 0, geom.width, geom.height)
 
@@ -204,39 +200,29 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				transparent.applyTo(Themes.get<AntaresTheme>().screen.foregroundColor)
 			} else {
-				foregroundColor
+				context.chooseForeground(foregroundColor)
 			}
 			context.g.drawRect(0, 0, geom.width, geom.height)
 		}
 
-		drawDot(context.g, isExecute, model.inputValueOf("p"),
+		drawDot(context, model.inputValueOf("p"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.scaledFactor,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 	}
 
-	/** ---- [AbstractRectangularVerticeView] */
-
-	override fun drawSelected(context: DrawContext) {
-		draw(context) { c ->
-			super.drawImpl(c)
-			context.g.color = context.color!!.foregroundColor
-			context.g.drawRect(0, 0, geom.width, geom.height)
-		}
+	private fun drawDot(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.g.translate(relX.toDouble(), relY.toDouble())
+		context.g.color = getColor(value, context)
+		context.g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
+		context.g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	private fun drawDot(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
-		g.translate(relX.toDouble(), relY.toDouble())
-		g.color = getColor(value, isExecute)
-		g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
-		g.translate(-relX.toDouble(), -relY.toDouble())
-	}
-
-	protected fun getColor(value: Boolean, isExecute: Boolean): Color =
+	protected fun getColor(value: Boolean, context: DrawContext): Color =
 		transparent.applyTo(
-			if (isExecute) {
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				if (logic.evaluate(value)) lightColor.onColor else lightColor.offColor
 			} else {
-				foregroundColor
+				context.chooseForeground(foregroundColor)
 			}
 		)
 
@@ -266,51 +252,51 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 
-	protected fun drawFullHorizontalSegment(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
-		g.translate(relX.toDouble(), relY.toDouble())
-		g.color = getColor(value, isExecute)
-		g.fill(geom.path)
-		g.translate(-relX.toDouble(), -relY.toDouble())
+	protected fun drawFullHorizontalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.g.translate(relX.toDouble(), relY.toDouble())
+		context.g.color = getColor(value, context)
+		context.g.fill(geom.path)
+		context.g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	protected fun drawHalfHorizontalSegment(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
-		g.translate(relX.toDouble(), relY.toDouble())
-		g.color = getColor(value, isExecute)
-		g.fill(geom.halfPath)
-		g.translate(-relX.toDouble(), -relY.toDouble())
+	protected fun drawHalfHorizontalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.g.translate(relX.toDouble(), relY.toDouble())
+		context.g.color = getColor(value, context)
+		context.g.fill(geom.halfPath)
+		context.g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	protected fun drawVerticalSegment(g: Graphics2D, isExecute: Boolean, value: Boolean, relX: Float, relY: Float) {
-		g.translate(relX.toDouble(), relY.toDouble())
-		g.rotate(PI / 2)
+	protected fun drawVerticalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.g.translate(relX.toDouble(), relY.toDouble())
+		context.g.rotate(PI / 2)
 
-		g.color = getColor(value, isExecute)
-		g.fill(geom.path)
+		context.g.color = getColor(value, context)
+		context.g.fill(geom.path)
 
-		g.rotate(-PI / 2)
-		g.translate(-relX.toDouble(), -relY.toDouble())
+		context.g.rotate(-PI / 2)
+		context.g.translate(-relX.toDouble(), -relY.toDouble())
 	}
 
-	protected fun drawB(context: DrawContext, isExecute: Boolean) {
-		drawVerticalSegment(context.g, isExecute, model.inputValueOf("b"),
+	protected fun drawB(context: DrawContext) {
+		drawVerticalSegment(context, model.inputValueOf("b"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 	}
 
-	protected fun drawC(context: DrawContext, isExecute: Boolean) {
-		drawVerticalSegment(context.g, isExecute, model.inputValueOf("c"),
+	protected fun drawC(context: DrawContext) {
+		drawVerticalSegment(context, model.inputValueOf("c"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 	}
 
-	protected fun drawE(context: DrawContext, isExecute: Boolean) {
-		drawVerticalSegment(context.g, isExecute, model.inputValueOf("e"),
+	protected fun drawE(context: DrawContext) {
+		drawVerticalSegment(context, model.inputValueOf("e"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 	}
 
-	protected fun drawF(context: DrawContext, isExecute: Boolean) {
-		drawVerticalSegment(context.g, isExecute, model.inputValueOf("f"),
+	protected fun drawF(context: DrawContext) {
+		drawVerticalSegment(context, model.inputValueOf("f"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			1 * geom.scaledFactor + geom.segHalfWidth)
 	}
@@ -371,25 +357,5 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 			.close()
 
 		val scaledFactor: Int get() = (factor * Look.SCALE).toInt()
-	}
-}
-
-class SegmentDisplayViewSelectionModel(c: AbstractSegmentDisplayView<*>) : AbstractSelectionModel<AbstractSegmentDisplayView<*>>(c) {
-
-	override fun draw(context: DrawContext) {
-		val oldUseContextColors = context.useContextColors
-		context.useContextColors = true
-		context.color = Themes.get<AntaresTheme>().selection.color
-		component.drawSelected(context)
-		context.useContextColors = oldUseContextColors
-	}
-
-	override val boundingBox: RectangularShape
-		get() = component.boundingBox
-
-	override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
-
-	override fun componentUpdated() {
-		validate()
 	}
 }

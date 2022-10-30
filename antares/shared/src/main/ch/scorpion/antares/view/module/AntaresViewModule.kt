@@ -351,8 +351,8 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SixteenSegmentDisplayView::class) { SegmentDisplayViewSelectionModel(it as SixteenSegmentDisplayView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SixteenSegmentDisplayView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BuzzerView::class) { SelectedColorSelectionModel(it) }
 

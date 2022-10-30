@@ -38,9 +38,14 @@ class DrawContext(
 	 * Convenience method for choosing to use the specified [CompositeColor] or this [DrawContext]'s color
 	 * depending on the current value of [useContextColors].
 	 */
-	fun choose(color: CompositeColor): CompositeColor {
-		return if (useContextColors) this.color!! else color
-	}
+	fun choose(color: CompositeColor): CompositeColor =
+		if (useContextColors) this.color!! else color
+
+	fun chooseForeground(color: Color): Color =
+		if (useContextColors) this.color!!.foregroundColor else color
+
+	fun chooseBackground(color: Color): Color =
+		if (useContextColors) this.color!!.backgroundColor else color
 
 	fun <T> castedAppContext(): T? {
 		@Suppress("UNCHECKED_CAST")
@@ -51,7 +56,5 @@ class DrawContext(
 	 * Returns the [CompositeColor] of the [Stylable] of this [DrawContext], or the specified [CompositeColor]
 	 * if no [Stylable] is set.
 	 */
-	fun styleColor(defaultColor: CompositeColor): CompositeColor {
-		return stylable?.color ?: defaultColor
-	}
+	fun styleColor(defaultColor: CompositeColor): CompositeColor = stylable?.color ?: defaultColor
 }
