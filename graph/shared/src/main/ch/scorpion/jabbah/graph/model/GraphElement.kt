@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * Represents an element of a [Graph].
@@ -67,9 +66,8 @@ interface GraphElement : Storable, Actor, Describable {
     /**
      * Asks this [GraphElement] to bind itself with referenced sub [Graph]s, if applicable.
      * @param repository the [MetaGraphRepository] from which sub [Graph]s are retrieved
-     * @param storableCreator the [StorableCreator] to be used when cloning [Graph]s from the [MetaGraphRepository].
      */
-    fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator)
+    fun bind(deep: Boolean, repository: MetaGraphRepository)
 
 	/** Forms the necessary [CombinedNet]s used for execution.*/
 	fun formNet(signalHandler: SignalHandler)

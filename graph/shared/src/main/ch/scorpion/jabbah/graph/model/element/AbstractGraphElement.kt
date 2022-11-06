@@ -53,7 +53,7 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 		}
 	}
 
-	override fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator) { }
+	override fun bind(deep: Boolean, repository: MetaGraphRepository) { }
 
 	override fun formNet(signalHandler: SignalHandler) {
 		// empty

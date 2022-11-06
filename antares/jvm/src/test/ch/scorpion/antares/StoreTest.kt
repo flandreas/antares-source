@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,7 +45,7 @@ class StoreTest {
 		testCircuit.orGateView.location = Point2D(50, 100)
 
 		val storable = GraphStorable(testCircuit.circuitView)
-		val clone = StorableCloner.cloneUsingCreator(storable, IOModule.storableCreator)
+		val clone = StorableCloner.clone(storable)
 		val orGateView = clone.graphView.getWithId(2) as OrGateView
 
 		assertEquals(3, orGateView.model.inputCount)

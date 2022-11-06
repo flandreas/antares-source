@@ -1,18 +1,15 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 import kotlin.reflect.KClass
 
 /**
  * Contains registrable information for building [GraphElementView]s used by [BaseLibraryElement].
  */
-class BaseLibraryElementRepository(
-	private val storableCreator: StorableCreator = IOModule.storableCreator
-) {
+class BaseLibraryElementRepository {
 
 	companion object {
 		private val LOG by logger(BaseLibraryElementRepository::class)
@@ -40,7 +37,7 @@ class BaseLibraryElementRepository(
 		id: String,
 		translationKey: String,
 		iconPath: () -> String?,
-		supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)
+		supplier: () -> GraphElementView<out GraphElement>
 	) {
 		register(Entry(id, translationKey, iconPath, null, supplier))
 	}
@@ -52,9 +49,9 @@ class BaseLibraryElementRepository(
 			throw IllegalArgumentException("unknown entry ID $id")
 		}
 		if (entry.supplier != null) {
-			return entry.supplier.invoke(storableCreator) as GraphElementView<T>
+			return entry.supplier.invoke() as GraphElementView<T>
 		}
-		return storableCreator.create(entry.clazz!!) as GraphElementView<T>
+		return System.instantiate(entry.clazz!!) as GraphElementView<T>
 	}
 
 	fun getIconPath(id: String): String? = entries[id]?.iconPath?.invoke()
@@ -66,7 +63,7 @@ class BaseLibraryElementRepository(
 		val translationKey: String,
 		val iconPath: () -> String?,
 		val clazz: KClass<out GraphElementView<*>>?,
-		val supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)? = null
+		val supplier: (() -> GraphElementView<out GraphElement>)? = null
 	) {
 		init {
 			check((clazz != null) || supplier != null) { "either StorableCreator/clazz or supplier must be provided" }

@@ -59,7 +59,6 @@ import ch.scorpion.jabbah.io.*
 class SubGraphVerticeViewImpl(
 	graphElement: SubGraphVerticeRef = SubGraphVerticeRef(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
@@ -446,7 +445,7 @@ class SubGraphVerticeViewImpl(
 				val controlViewComponents = getControlViewComponents()
 				if (controlViewComponents.isNotEmpty()) {
 					val innerGraph = getGraph()
-					controlViewComponents.forEach { it.bindControlView(this, innerGraph, repository, storableCreator) }
+					controlViewComponents.forEach { it.bindControlView(this, innerGraph, repository) }
 				}
 			}
 		}
@@ -516,7 +515,7 @@ class SubGraphVerticeViewImpl(
 
 	override fun createSubGraphView(signalHandler: SignalHandler?): GraphView {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
-		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
+		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph())
 		graphView.bind(signalHandler?.isDeepExecution ?: false)
 		signalHandler?.let {
 			graphView.executionStart(it)
@@ -564,7 +563,7 @@ class SubGraphVerticeViewImpl(
 		drawableBag.drawables.filterIsInstance<ControlViewComponent>().map { it }.toImmutableList()
 
 	private fun getGraph(): Graph =
-		subGraphVertice.getGraph(repository, storableCreator)
+		subGraphVertice.getGraph(repository)
 
 	// Visible for testing
 	fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {
@@ -599,7 +598,7 @@ class SubGraphVerticeViewImpl(
 
 	private fun getLibraryContainerDrawing(): ContainerDrawing {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
-		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator)
+		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing)
 	}
 
 	private fun updateBoxes() {

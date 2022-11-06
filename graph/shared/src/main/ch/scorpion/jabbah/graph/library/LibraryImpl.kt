@@ -26,8 +26,7 @@ open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name",
-	userHolder: UserHolder<User> = EditAuthModule.userHolder,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	userHolder: UserHolder<User> = EditAuthModule.userHolder
 ) : AbstractStorable(), Library, Describable {
 
 	constructor(
@@ -169,8 +168,7 @@ open class LibraryImpl(
 		}
 		return SubGraphVerticeLocator(
 			graph = metaGraph.graph.model!!,
-			repository = this,
-			storableCreator = storableCreator
+			repository = this
 		).contains(graphElementUUID)
 	}
 

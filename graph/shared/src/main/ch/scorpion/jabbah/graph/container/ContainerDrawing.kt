@@ -45,7 +45,6 @@ import ch.scorpion.jabbah.io.*
  */
 class ContainerDrawing(
 	name: String = Translations.getString("graph.name.unknown"),
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
@@ -183,7 +182,7 @@ class ContainerDrawing(
 
 	fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
 		val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository)
-		val view = SubGraphVerticeViewImpl(model, styleProvider, storableCreator, repository, eventBus)
+		val view = SubGraphVerticeViewImpl(model, styleProvider, repository, eventBus)
 		fillSubGraphVerticeView(view)
 		view.controlViewVisibility = controlViewVisibility
 		return view
@@ -191,7 +190,7 @@ class ContainerDrawing(
 
 	/** Creates a copy of the [SubGraphVertice] model of this [ContainerDrawing].*/
 	fun createSubGraphVertice(): SubGraphVertice {
-		val subGraphVertice = StorableCloner.cloneUsingCreator(this.model, storableCreator)
+		val subGraphVertice = StorableCloner.clone(this.model)
 		// The port descriptions are NOT copied when cloning, because they are not part of the persistent state
 		// the Container's SubGraphVertice (see documentation of completeFromGraph()). Therefore, copy them now.
 		subGraphVertice.getPorts().forEach {
@@ -207,7 +206,7 @@ class ContainerDrawing(
 	fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
 		LOG.trace("filling SubGraphVerticeViewRef name:${model.name}, uuid:${model.graphUUID}")
 
-		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator)
+		val clonedDrawing = StorableCloner.clone(this)
 		val origin = clonedDrawing.getOriginIndicator().location
 
 		for (comp in clonedDrawing.drawables) {

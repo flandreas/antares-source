@@ -16,8 +16,6 @@ import ch.scorpion.jabbah.graph.ui.GraphViewExecutionHandler
 import ch.scorpion.jabbah.graph.ui.GraphViewUI
 import ch.scorpion.jabbah.graph.ui.GraphViewUsecaseExecutionHandler
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * Used by objects that hold [GraphView]s to control starting and stopping
@@ -35,7 +33,6 @@ class GraphViewExecutionController(
 	private val graphViewsProvider: () -> Collection<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
@@ -95,7 +92,7 @@ class GraphViewExecutionController(
 			rootGraphProvider.invoke()?.apply {
 				if (event.scheduler.isActive) {
 					if (isRoot) {
-						bind(event.scheduler.isDeepExecution, repository, storableCreator)
+						bind(event.scheduler.isDeepExecution, repository)
 						startupTime?.let {
 							event.scheduler.softBreakpointsArmTime = it
 						}

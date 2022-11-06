@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
@@ -68,13 +67,13 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		nop.model.propagationDelay = 300 * MILLION
 
 		// Set propagation delay of input CircuitInOut
-		input = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(1) as CircuitInOut
+		input = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(1) as CircuitInOut
 		input.propagationDelay = 100 * MILLION
 		// Set propagation delay of output CircuitInOut
-		output = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(2) as CircuitInOut
+		output = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(2) as CircuitInOut
 		output.propagationDelay = 100 * MILLION
 		// Set propagation delay of Net
-		innerNet = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(3) as Net<DigitalSignal>
+		innerNet = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(3) as Net<DigitalSignal>
 		innerNet.propagationDelay = 100 * MILLION
 
 		circuitView = builder.build()

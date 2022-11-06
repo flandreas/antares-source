@@ -6,8 +6,6 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * Checks whether a [Graph] structure recursively contains a [SubGraphVertice] with a particular [UUID].
@@ -15,8 +13,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  */
 class SubGraphVerticeLocator(
 	private val graph: Graph,
-	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 	private var contains: Boolean = false
 
@@ -24,7 +21,7 @@ class SubGraphVerticeLocator(
 	 * Checks whether [graph] contains a [SubGraphVertice] with [UUID] [uuid].
 	 */
 	fun contains(uuid: UUID): Boolean {
-		graph.bind(true, repository, storableCreator)
+		graph.bind(true, repository)
 		graph.accept(object : EmptyHierarchyVisitor() {
 			override fun visitEnter(node: Any): Boolean {
 				if (node is SubGraphVertice) {

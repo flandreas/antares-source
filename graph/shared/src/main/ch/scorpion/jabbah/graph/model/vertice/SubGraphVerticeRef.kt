@@ -171,7 +171,7 @@ class SubGraphVerticeRef(
 				fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 				if (paramValues.isNotEmpty) {
-					getGraph(repository, IOModule.storableCreator).parameterValues = paramValues
+					getGraph(repository).parameterValues = paramValues
 					synchronizePorts()
 				}
 
@@ -280,24 +280,24 @@ class SubGraphVerticeRef(
 
 	override fun getGraphIfPresent(): Graph? = graph
 
-	override fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator) {
-		super.bind(deep, repository, storableCreator)
+	override fun bind(deep: Boolean, repository: MetaGraphRepository) {
+		super.bind(deep, repository)
 		if (!hasDesignError && isDeepExecution(deep)) {
-			ensureGraph(storableCreator).bind(deep, repository, storableCreator)
+			ensureGraph().bind(deep, repository)
 		}
 	}
 
-	override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
-		return ensureGraph(storableCreator)
+	override fun getGraph(repository: MetaGraphRepository): Graph {
+		return ensureGraph()
 	}
 
-	private fun ensureGraph(storableCreator: StorableCreator = IOModule.storableCreator): Graph {
+	private fun ensureGraph(): Graph {
 		if (graph != null) {
 			return graph!!
 		}
 
 		val subGraph = repository.getMetaGraph(graphUUID!!)
-		graph = subGraph.cloneGraphModel(storableCreator)
+		graph = subGraph.cloneGraphModel()
 
 		for (input in getSubGraphInputPorts()) {
 			input.graphInput = graph!!.getGraphInput(input.name!!)
@@ -341,7 +341,7 @@ class SubGraphVerticeRef(
 
 		// First forward to Graph. Local update will then inform Views to sync their state,
 		// which depends on the Graph.
-		getGraph(repository, IOModule.storableCreator).parameterValues = newParamValues
+		getGraph(repository).parameterValues = newParamValues
 
 		paramValues = newParamValues
 	}
@@ -385,7 +385,7 @@ class SubGraphVerticeRef(
 
 	private fun synchronizePorts() {
 		if (paramValues.isNotEmpty) {
-			with(ensureGraph(IOModule.storableCreator)) {
+			with(ensureGraph()) {
 				for (port in getPorts()) {
 					val graphPort = getGraphPort<Any>(port.name!!)
 					if (graphPort != null && port is SubGraphPort<*>) {

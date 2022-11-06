@@ -8,9 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
-import ch.scorpion.jabbah.io.StorableCreator
 import kotlin.math.min
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -88,7 +86,6 @@ open class LibraryServiceCallbackAdapter : LibraryServiceCallback {
 class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
@@ -532,7 +529,7 @@ class LibraryService(
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
 		LOG.trace("Storing MetaGraph")
 		if (doClone) {
-			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
+			val clone = StorableCloner.clone(metaGraph)
 			LibraryModule.libraryServiceCallbacks.forEach { it.beforeStoreMetaGraph(clone) }
 			element.updateStorable(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)

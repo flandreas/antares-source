@@ -44,7 +44,6 @@ class IOIntegrationTest {
         val storeXmlReader = StoreXmlReader(
             ElectricXmlReader(ByteArrayInputStream(xml.toByteArray())),
             typeMap,
-            SystemStorableCreator(),
             ReferenceResolverImpl())
         checkDocument(storeXmlReader.readStorable() as Document)
     }
@@ -76,7 +75,6 @@ class IOIntegrationTest {
         val storeXmlReader = StoreXmlReader(
             ElectricXmlReader(ByteArrayInputStream(buffer.toByteArray())),
             typeMap,
-            SystemStorableCreator(),
             ReferenceResolverImpl())
         checkDocument(storeXmlReader.readStorable() as Document)
     }
@@ -96,7 +94,6 @@ class IOIntegrationTest {
 		val storeXmlReader = StoreXmlReader(
 			ElectricXmlReader(ByteArrayInputStream(xml.toByteArray())),
 			typeMap,
-			SystemStorableCreator(),
 			ReferenceResolverImpl())
 
 		val b = storeXmlReader.readStorable(listOf("myB")) as B

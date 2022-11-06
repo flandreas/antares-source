@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.*
 
@@ -23,7 +22,7 @@ class GraphStorableTest {
 	fun shouldBeStorable() {
 		val testGraph = TestGraphView()
 		val orig = GraphStorable(testGraph.graphView)
-		val clone: GraphStorable = StorableCloner.cloneUsingCreator(orig, IOModule.storableCreator)
+		val clone: GraphStorable = StorableCloner.clone(orig)
 
 		// Assert model connectedness
 		val graph: Graph = clone.graphView.graph!!

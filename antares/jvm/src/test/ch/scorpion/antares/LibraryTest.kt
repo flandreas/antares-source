@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import java.io.File
 import java.nio.file.Files
@@ -99,7 +98,7 @@ class LibraryTest {
 		circuitView.add(vvr)
 
 		val graphStorable = GraphStorable(circuitView)
-		StorableCloner.cloneUsingCreator(graphStorable, IOModule.storableCreator)
+		StorableCloner.clone(graphStorable)
 	}
 
 	@Test

@@ -13,7 +13,7 @@ actual object StorableCloner : AbstractStorableCloner() {
 		serializeImpl(storable, GlobalIdentityCreator()).data.toString(StandardCharsets.UTF_8)
 
 	actual fun deserialize(s: String): Storable =
-		deserializeImpl(Buffer(s.toByteArray(StandardCharsets.UTF_8), s.length), IOModule.storableCreator, ReferenceResolverImpl())
+		deserializeImpl(Buffer(s.toByteArray(StandardCharsets.UTF_8), s.length), ReferenceResolverImpl())
 
 	override fun <T : Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): Buffer {
 		val out = ByteArrayOutputStreamWithBufferAccess(256)
@@ -25,11 +25,10 @@ actual object StorableCloner : AbstractStorableCloner() {
 
 	override fun <T : Storable> deserializeImpl(
 		s: Buffer,
-		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): T {
 		val xmlReader = ElectricXmlReader(ByteArrayInputStream(s.data, 0, s.length))
-		val reader = StoreXmlReader(xmlReader, IOModule.typeMap, storableCreator, referenceResolver)
+		val reader = StoreXmlReader(xmlReader, IOModule.typeMap, referenceResolver)
 		return reader.readStorable() as T
 	}
 }

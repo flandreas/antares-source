@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -103,7 +102,7 @@ class SubGraphVerticeRefDslExecutionTest {
 
 	private fun createAndStart(libraryElement: ContainerLibraryElement): SubGraphVerticeView<SubGraphVerticeRef> {
 		val vv = libraryElement.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView
-		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		return vv

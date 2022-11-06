@@ -10,8 +10,6 @@ object IOModule : AbstractModule() {
 
     var typeMap: TypeMap = TypeMapImpl()
     
-    var storableCreator: StorableCreator = SystemStorableCreator()
-    
     override fun initialize() {
         BaseModule.require()
     }

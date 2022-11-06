@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Vertice] that contains an inner [Graph], thus enabling recursively nested [Graph] structures.
@@ -32,7 +31,7 @@ interface SubGraphVertice : Vertice, Describable {
     fun getGraphIfPresent(): Graph?
 
     /** Returns the contained [Graph] by loading and copying it from the specified [MetaGraphRepository] if not already loaded.*/
-    fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph
+    fun getGraph(repository: MetaGraphRepository): Graph
 
     fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler)
 }

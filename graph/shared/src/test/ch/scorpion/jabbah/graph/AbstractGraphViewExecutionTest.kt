@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 
@@ -59,7 +58,7 @@ abstract class AbstractGraphViewExecutionTest {
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
-		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(true, it, IOModule.storableCreator) }
+		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(true, it) }
 		getGraphView().graph!!.formNet(scheduler)
 		getGraphView().graph!!.executionInitialize(scheduler)
 		getGraphView().graph!!.executionStart(scheduler)

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.io
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -12,7 +13,6 @@ import kotlin.reflect.KClass
 class StoreXmlReader(
 	private val xmlReader: XmlReader,
 	private val typeMap: TypeMap,
-	private val storableCreator: StorableCreator,
 	private val referenceResolver: ReferenceResolver
 ) : StoreReader {
 
@@ -21,17 +21,15 @@ class StoreXmlReader(
 	}
 
 	@Suppress("unused")
-	constructor(xmlReader: XmlReader, typeMap: TypeMap, storableCreator: StorableCreator) : this(
+	constructor(xmlReader: XmlReader, typeMap: TypeMap) : this(
 		xmlReader,
 		typeMap,
-		storableCreator,
 		ReferenceResolverImpl())
 
 	@Suppress("unused")
 	constructor(xmlReader: XmlReader) : this(
 		xmlReader,
 		IOModule.typeMap,
-		IOModule.storableCreator,
 		ReferenceResolverImpl())
 
 
@@ -217,7 +215,7 @@ class StoreXmlReader(
 
 	private fun instantiate(clazz: KClass<Storable>): Storable {
 		LOG.trace("instantiate '${clazz.simpleName}'")
-		return storableCreator.create(clazz)
+		return System.instantiate(clazz)
 	}
 
 	private fun readGlobalId(): Int? {

@@ -184,8 +184,8 @@ class MetaGraph(
 				Companion.copyGraphDataFromContainerModel(it.graphView.graph!!, containerDrawing)
 			}
 
-	fun cloneGraphModel(storableCreator: StorableCreator): Graph {
-		val clone = StorableCloner.clonePreservingIdentities(graph.model!!, storableCreator)
+	fun cloneGraphModel(): Graph {
+		val clone = StorableCloner.clonePreservingIdentities(graph.model!!)
 		clone.parameterDefinitions = parameterDefinitions
 		copyGraphDataFromContainerModel(clone)
 		return clone

@@ -10,16 +10,13 @@ import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [ContainerLibraryElementCollector] recursively traverses a [Graph] and collects the [UUID]s of
  * all its [ContainerLibraryElement]s.
  */
 class ContainerLibraryElementCollector(
-	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 
 	/** Contains all collected [UUID]s.*/
@@ -30,7 +27,7 @@ class ContainerLibraryElementCollector(
 	/** Collects the [Set] of  [UUID] all recursively reachable [Graph]s of `graph`.*/
 	fun collect(graph: Graph): ContainerLibraryElementCollector {
 		uuids.clear()
-		graph.bind(true, repository, storableCreator)
+		graph.bind(true, repository)
 		graph.accept(GraphVisitor())
 		return this
 	}

@@ -8,9 +8,6 @@ import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Drawing] that consists of [GraphElementView]s.
@@ -88,12 +85,9 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 *
 	 * @param model the [Graph] with which the created clone is connected. Must have the same structure like this
 	 *      [GraphView]'s model.
-	 *
-	 * @param storableCreator the [StorableCreator] to be used for creating the [Storable]s, or nothing
-	 *      if the default [StorableCreator] is to be used.
 	 * @return a clone of this [GraphView] that is connected with [model]
 	 */
-	fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView
+	fun cloneForExistingModel(model: Graph): GraphView
 
 	fun getVerticeView(name: String): VerticeView<*>?
 

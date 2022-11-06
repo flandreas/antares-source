@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
 import ch.scorpion.jabbah.graph.model.SubGraphPort
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -46,7 +45,7 @@ class SubGraphVerticeImpl(
 		return null
 	}
 
-	override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
+	override fun getGraph(repository: MetaGraphRepository): Graph {
 		throw UnsupportedOperationException()
 	}
 

@@ -172,7 +172,7 @@ open class GraphViewImpl(
 		return issues.isEmpty()
 	}
 
-	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView {
+	override fun cloneForExistingModel(model: Graph): GraphView {
 		LOG.trace("clone '${model.name}'for existing model")
 		val clone = StorableCloner.newClone(
 			this,

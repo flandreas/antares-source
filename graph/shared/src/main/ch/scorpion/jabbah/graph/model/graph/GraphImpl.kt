@@ -204,8 +204,8 @@ open class GraphImpl(
 		return _elements.firstOrNull { it.id == id }
 	}
 
-	override fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator) {
-		_elements.forEach { it.bind(deep, repository, storableCreator) }
+	override fun bind(deep: Boolean, repository: MetaGraphRepository) {
+		_elements.forEach { it.bind(deep, repository) }
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {

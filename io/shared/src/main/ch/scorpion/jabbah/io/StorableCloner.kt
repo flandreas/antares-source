@@ -12,14 +12,11 @@ expect object StorableCloner {
 
 	fun <T: Storable> clone(storable: T): T
 
-	fun <T: Storable> clonePreservingIdentities(storable: T, storableCreator: StorableCreator): T
-
-	fun <T: Storable> cloneUsingCreator(storable: T, storableCreator: StorableCreator): T
+	fun <T: Storable> clonePreservingIdentities(storable: T): T
 
 	fun <T: Storable> clone(
 		storable: T,
 		identityProvider: GlobalIdentityProvider,
-		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): T
 

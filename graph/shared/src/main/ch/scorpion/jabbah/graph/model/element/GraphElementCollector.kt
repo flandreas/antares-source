@@ -5,11 +5,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.module.GraphModule
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 
 data class GraphElementCollectorResult(
 	val deep: String,
@@ -21,8 +17,7 @@ data class GraphElementCollectorResult(
  * Can be used for debugging, for gathering statistical information, or for any other funny purpose.
  */
 class GraphElementCollector(
-	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 
 	/** Maps [Graph] names to deep statistic information for that [Graph], including the number of occurrences.*/
@@ -37,7 +32,7 @@ class GraphElementCollector(
 		deepEntries.clear()
 		flatEntries.clear()
 
-		graph.bind(true, repository, storableCreator)
+		graph.bind(true, repository)
 
 		graph.accept(DeepGraphVisitor())
 		graph.accept(FlatGraphVisitor())

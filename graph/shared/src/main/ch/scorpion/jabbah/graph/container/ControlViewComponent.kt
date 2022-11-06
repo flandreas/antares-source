@@ -30,7 +30,6 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Component] that wraps a [ControlView] in order to allow deferred reference
@@ -178,9 +177,9 @@ class ControlViewComponent(
 
 	/** ---- [ControlViewComponent] */
 
-	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
+	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph, repository: MetaGraphRepository) {
 		try {
-			val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
+			val vertice = controlModelLink.getLinkedVertice(graph, repository)
 			controlView.bindControlView(subGraphVerticeView, vertice)
 		} catch (e: IllegalArgumentException) {
 			invalidate()

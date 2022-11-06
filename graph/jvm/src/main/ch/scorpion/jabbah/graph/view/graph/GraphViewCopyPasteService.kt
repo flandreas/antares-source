@@ -26,7 +26,6 @@ import kotlin.math.max
 
 class GraphViewCopyPasteService(
 	private val typeMap: TypeMap = IOModule.typeMap,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : CopyPasteService() {
 
@@ -119,7 +118,7 @@ class GraphViewCopyPasteService(
 		ByteArrayInputStream(contents.toByteArray()).use {
 			try {
 				val xmlReader = ElectricXmlReader(it)
-				val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
+				val reader = StoreXmlReader(xmlReader, typeMap)
 
 				copy = reader.readStorable()
 

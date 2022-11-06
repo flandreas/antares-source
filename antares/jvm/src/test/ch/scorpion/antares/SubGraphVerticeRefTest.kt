@@ -2,7 +2,6 @@ package ch.scorpion.antares
 
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.io.IOModule
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
@@ -39,10 +38,10 @@ class SubGraphVerticeRefTest {
 		// Create a new instance of the custom NOT circuit in the Library
 		val customNOT = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
-		customNOT.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		customNOT.model.bind(true, LibraryModule.libraryHolder.library)
 
 		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model.graphUUID!!).graph.model!!
-		val customGraph = customNOT.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		val customGraph = customNOT.model.getGraph(LibraryModule.libraryHolder.library)
 
 		for (i in 1..5) {
 			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)
@@ -60,10 +59,10 @@ class SubGraphVerticeRefTest {
 		// Create a new instance of the custom NAND circuit
 		val customNAND = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
-		customNAND.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		customNAND.model.bind(true, LibraryModule.libraryHolder.library)
 
 		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model.graphUUID!!).graph.model!!
-		val customGraph = customNAND.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		val customGraph = customNAND.model.getGraph(LibraryModule.libraryHolder.library)
 
 		for (i in 1..6) {
 			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)

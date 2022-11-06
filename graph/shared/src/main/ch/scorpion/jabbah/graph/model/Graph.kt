@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Graph] is mainly a collection of [GraphElement]s.
@@ -114,7 +113,7 @@ interface Graph : Namable, Describable, Storable, Bean {
     fun withId(id: Int): GraphElement?
 
 	/** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
-	fun bind(deep: Boolean, repository: MetaGraphRepository, storableCreator: StorableCreator)
+	fun bind(deep: Boolean, repository: MetaGraphRepository)
 
 	/**
 	 * Forms the [CombinedNet]s to be used during execution.

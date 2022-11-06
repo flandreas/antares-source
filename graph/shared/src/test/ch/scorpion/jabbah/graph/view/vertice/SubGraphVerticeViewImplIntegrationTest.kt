@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.mockk
 import kotlin.test.*
@@ -93,7 +92,7 @@ class SubGraphVerticeViewImplIntegrationTest {
 	@Test
 	fun shouldUseExecutionLabel() {
 		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
-		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		vv.executionStarted(signalHandler)
@@ -106,7 +105,7 @@ class SubGraphVerticeViewImplIntegrationTest {
 	@Test
 	fun shouldResetExecutionLabel() {
 		val vv = createLibraryElementWithLabel("TEST").getNewInstance<Vertice>() as SubGraphVerticeViewImpl
-		vv.model.bind(true, LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		vv.model.bind(true, LibraryModule.libraryHolder.library)
 		vv.model.executionInitialize(signalHandler)
 		vv.model.executionStart(signalHandler)
 		vv.executionStarted(signalHandler)

@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * Represents a link to a [Vertice] in a [Graph], potentially crossing several [SubGraphVertice]s.
@@ -68,10 +67,9 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 	 * Returns the [Vertice] that this [DeepVerticeLink] is pointing to, starting with the specified [Graph].
 	 * @param startGraph the [Graph] where resolving is started
 	 * @param repository used for instantiation of sub [Graph]s
-	 * @param storableCreator used for instantiation of sub [Graph]s
 	 * @throws IllegalArgumentException if any of the [Vertice]s in the referencing path cannot be resolved
 	 */
-	fun getLinkedVertice(startGraph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator): Vertice {
+	fun getLinkedVertice(startGraph: Graph, repository: MetaGraphRepository): Vertice {
 		var link = this
 		var graph = startGraph
 		while (link.size > 1) {
@@ -81,7 +79,7 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 				LOG.warn("DeepVerticeLink broken: Cannot find element $id in graph '${graph.name}'")
 				throw IllegalArgumentException()
 			}
-			graph = element.getGraph(repository, storableCreator)
+			graph = element.getGraph(repository)
 			link = link.withoutFirst()
 		}
 		val id = link.first

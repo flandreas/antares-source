@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -127,7 +126,7 @@ class MetaGraphTest {
 		builder.connect(vv1, vv2)
 		val metaGraph = MetaGraph(builder.graphStorable, ContainerDrawing())
 
-		val clonedModel = metaGraph.cloneGraphModel(IOModule.storableCreator)
+		val clonedModel = metaGraph.cloneGraphModel()
 
 		assertNotSame(metaGraph.graph.model, clonedModel)
 	}

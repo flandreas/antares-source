@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.io.IOModule
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 
@@ -61,7 +60,7 @@ abstract class AbstractCircuitTest {
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
-		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(true, it, IOModule.storableCreator) }
+		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(true, it) }
 		getCircuitView().graph!!.formNet(scheduler)
 		getCircuitView().graph!!.executionInitialize(scheduler)
 		getCircuitView().graph!!.executionStart(scheduler)

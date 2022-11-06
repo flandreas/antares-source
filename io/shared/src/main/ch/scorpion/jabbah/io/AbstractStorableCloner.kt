@@ -16,29 +16,24 @@ abstract class AbstractStorableCloner {
 
 	protected abstract fun <T: Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): Buffer
 
-	protected abstract fun <T: Storable> deserializeImpl(s: Buffer, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): T
+	protected abstract fun <T: Storable> deserializeImpl(s: Buffer, referenceResolver: ReferenceResolver): T
 
 	fun <T: Storable> clone(storable: T): T {
 		return newClone(storable)
 	}
 
-	fun <T: Storable> clonePreservingIdentities(storable: T, storableCreator: StorableCreator): T {
-		return newClone(storable)
-	}
-
-	fun <T: Storable> cloneUsingCreator(storable: T, storableCreator: StorableCreator): T {
+	fun <T: Storable> clonePreservingIdentities(storable: T): T {
 		return newClone(storable)
 	}
 
 	fun <T: Storable> clone(
 		storable: T,
 		identityProvider: GlobalIdentityProvider,
-		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): T {
 		try {
 			val data = serializeImpl(storable, identityProvider)
-			return deserializeImpl(data, storableCreator, referenceResolver)
+			return deserializeImpl(data, referenceResolver)
 		} catch (x: Throwable) {
 			LOG.error("Error while cloning Storable: ${x.message}")
 			throw x
@@ -51,7 +46,7 @@ abstract class AbstractStorableCloner {
 	): T {
 		try {
 			val data = serializeImpl(storable, identityProvider)
-			return deserializeImpl(data, IOModule.storableCreator, ReferenceResolverImpl(identityProvider))
+			return deserializeImpl(data, ReferenceResolverImpl(identityProvider))
 		} catch (x: Throwable) {
 			LOG.error("Error while cloning Storable: ${x.message}")
 			throw x

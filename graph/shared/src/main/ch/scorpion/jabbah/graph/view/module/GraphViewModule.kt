@@ -247,7 +247,6 @@ object GraphViewModule : AbstractModule() {
 	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing =
 		ContainerDrawing(
 			name,
-			IOModule.storableCreator,
 			BaseModule.eventBus,
 			LibraryModule.libraryHolder,
 			DrawStyleModule.styleProvider)
