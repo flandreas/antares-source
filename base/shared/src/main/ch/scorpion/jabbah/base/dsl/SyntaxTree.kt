@@ -128,7 +128,7 @@ class AssocArray(location: CodeLocation, token: Token<String>, val key: Node): V
 	}
 }
 
-class Assignment(location: CodeLocation, val left: Variable, val op: Token<Assignment>, val right: Node) : AbstractNode(location) {
+class Assignment(location: CodeLocation, val left: Variable, val right: Node) : AbstractNode(location) {
 
 	override fun toString(): String = "="
 

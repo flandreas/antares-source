@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.base.preferences
 import ch.scorpion.jabbah.base.EnumProperty
 import javax.swing.JComboBox
 
-class EnumPreference<T : Enum<T>>(
+class EnumPreference<T : EnumProperty<*>>(
 	id: String,
 	nameKey: String,
 	values: Array<T>,
@@ -11,12 +11,12 @@ class EnumPreference<T : Enum<T>>(
 	needsRestart: Boolean = false
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
-	private val editor = JComboBox<EnumProperty<T>>()
+	private val editor = JComboBox<EnumProperty<*>>()
 
 	init {
-		values.forEach { editor.addItem(it as EnumProperty<T>) }
+		values.forEach { editor.addItem(it) }
 		editor.addActionListener {
-			panel?.preferences?.customize(this, (editor.selectedItem as EnumProperty<T>).customName)
+			panel?.preferences?.customize(this, (editor.getItemAt(editor.selectedIndex)).customName)
 		}
 		registerEditor(editor)
 	}

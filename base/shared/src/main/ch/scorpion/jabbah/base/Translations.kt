@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 /**
  * Provides I18N translations of static texts.
  */
-@Suppress("UNUSED_PARAMETER")
 expect object Translations {
 
 	var language: Language

@@ -26,7 +26,6 @@ class ParserTest {
 
 		val assignment = (ast as Compound).children.first { it is Assignment } as Assignment
 		assertEquals("a", assignment.left.token.value)
-		assertEquals(TokenType.ASSIGN, assignment.op.type)
 		assertIs<Literal>(assignment.right)
 	}
 

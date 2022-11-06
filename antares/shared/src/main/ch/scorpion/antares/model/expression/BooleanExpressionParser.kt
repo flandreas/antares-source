@@ -81,7 +81,7 @@ class BooleanExpressionParser(
 			val op = currentToken
 			eat(ASSIGN)
 			val right = expr()
-			return Assignment(location, variable, op as Token<Assignment>, right)
+			return Assignment(location, variable, right)
 		}
 	}
 

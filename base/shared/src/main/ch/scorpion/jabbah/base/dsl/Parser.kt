@@ -154,14 +154,14 @@ open class Parser(
 
 	protected fun assignment(variable: Variable): Assignment {
 		lexer.location.let { location ->
-			val op = currentToken as Token<Assignment>
 			eat(ASSIGN)
 			val right = expr()
-			return Assignment(location, variable, op, right)
+			return Assignment(location, variable, right)
 		}
 	}
 
 	protected fun identifier(): Token<String> {
+		@Suppress("UNCHECKED_CAST")
 		val identifier = currentToken as Token<String>
 		eat(ID)
 		return identifier

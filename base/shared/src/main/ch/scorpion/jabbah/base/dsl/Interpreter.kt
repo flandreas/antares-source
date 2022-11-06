@@ -155,6 +155,7 @@ open class Interpreter(
 				if (assocArray !is MutableMap<*, *>) {
 					throw RuntimeError(rootNode.location, Translations.getString("base.dsl.expectedArray.msg", variable.token.value!!))
 				}
+				@Suppress("UNCHECKED_CAST")
 				(assocArray as MutableMap<Any, Any>)[key] = value
 			}
 		} else {
