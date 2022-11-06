@@ -8,6 +8,7 @@ import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL_PROD
 import ch.scorpion.antares.AntaresApplication.Companion.FILE_EXTENSION_NAME
 import ch.scorpion.antares.AntaresApplication.Companion.ISSUES_URL_DEV
 import ch.scorpion.antares.AntaresApplication.Companion.ISSUES_URL_PROD
+import ch.scorpion.antares.AntaresApplication.Companion.YOUTUBE_CHANNEL_URL
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.base.DataLocation
@@ -26,6 +27,8 @@ interface AntaresDesktop : AntaresApplication, DesktopApplication {
 			Environment.Development -> ISSUES_URL_DEV
 			Environment.Production -> ISSUES_URL_PROD
 		}
+
+	override val youtubeChannelUrl: String? get() = YOUTUBE_CHANNEL_URL
 
 	/** ---- [DesktopApplication] */
 
