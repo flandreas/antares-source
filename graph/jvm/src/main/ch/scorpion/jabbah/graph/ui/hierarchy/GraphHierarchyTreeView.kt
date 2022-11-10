@@ -21,7 +21,7 @@ import javax.swing.tree.TreeNode
  * Nodes representing a [SubGraphVerticeView] whose [Graph] is scripted
  * are rendered using an italic font.
  */
-class GraphHierarchyTreeView : JTree() {
+class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Empty"))) {
 
 	companion object {
 		private val subGraphIcon = ContainerLibraryElementIcon()

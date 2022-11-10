@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import java.awt.Component
@@ -16,6 +15,8 @@ class ContainerLibraryElementIcon(private val current: Boolean = false) : Icon {
 		private const val BOX_X = 9
 		private const val BOX_W = 14
 		private const val PIN_W = 4
+
+		val ICON = ContainerLibraryElementIcon()
 	}
 
 	override fun getIconHeight(): Int = 28
