@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -193,7 +194,7 @@ assertOutputAt(200, &quot;C&quot;, 1)'>
             </digitalNodeView>
             <digitalEdgeView _id='46' id='8' filled='true' stroked='true' modelId='7' layout='ortho' orig='43' dest='38' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='196.0,98.0 234.0,98.0'/>
+                <polylineShape points='196.0,98.0 238.0,98.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='47' id='9' filled='true' stroked='true' modelId='7' layout='ortho' orig='43' dest='41' destPort='1' adjusted='false'>
@@ -208,7 +209,7 @@ assertOutputAt(200, &quot;C&quot;, 1)'>
             </digitalNodeView>
             <digitalEdgeView _id='48' id='11' filled='true' stroked='true' modelId='11' layout='ortho' orig='45' dest='38' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='168.0,126.0 234.0,126.0'/>
+                <polylineShape points='168.0,126.0 238.0,126.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='49' id='12' filled='true' stroked='true' modelId='11' layout='ortho' orig='45' dest='41' destPort='2' adjusted='false'>
@@ -245,7 +246,7 @@ assertOutputAt(200, &quot;C&quot;, 1)'>
     <containerDrawing _id='54'>
       <components>
         <rectangle _id='55' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
-        <originIndicator _id='56'>
+        <originIndicator _id='56' id='8'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -270,7 +271,7 @@ assertOutputAt(200, &quot;C&quot;, 1)'>
             <digitalPortView _id='67' x='196.0' y='196.0' dir='east' textPos='internal' portId='68'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='69'>
+        <label _id='69' id='7' rot='0'>
           <text>
             <translation lang='en' text='HA'/>
           </text>

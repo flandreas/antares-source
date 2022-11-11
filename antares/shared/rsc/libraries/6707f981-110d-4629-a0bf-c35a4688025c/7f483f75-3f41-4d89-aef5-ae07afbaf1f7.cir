@@ -117,12 +117,12 @@
             <orGateView _id='54' id='12' rot='0' filled='true' stroked='true' modelId='16' x='133.0' y='-91.0'/>
             <digitalEdgeView _id='55' id='13' filled='true' stroked='true' modelId='17' layout='ortho' orig='52' origPort='3' origPortOutput='true' dest='54' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,-126.0 42.0,-126.0 42.0,-105.0 73.0,-105.0'/>
+                <polylineShape points='14.0,-126.0 49.0,-126.0 49.0,-105.0 77.0,-105.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='56' id='14' filled='true' stroked='true' modelId='20' layout='ortho' orig='53' origPort='3' origPortOutput='true' dest='54' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,-56.0 42.0,-56.0 42.0,-77.0 73.0,-77.0'/>
+                <polylineShape points='14.0,-56.0 49.0,-56.0 49.0,-77.0 77.0,-77.0'/>
               </shape>
             </digitalEdgeView>
             <circuitInOutView _id='57' id='15' rot='0' filled='true' stroked='true' modelId='23' representation='binary' orientation='east'>

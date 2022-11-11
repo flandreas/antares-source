@@ -1,4 +1,5 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -230,12 +231,12 @@ assertOutputAt(200, &quot;CO&quot;, 1)'>
             </digitalEdgeView>
             <digitalEdgeView _id='65' id='15' filled='true' stroked='true' modelId='29' layout='ortho' orig='51' origPort='4' origPortOutput='true' dest='63' destPort='2' adjusted='true'>
               <shape>
-                <polylineShape points='322.0,154.0 336.0,154.0 336.0,252.0 486.0,252.0'/>
+                <polylineShape points='322.0,154.0 336.0,154.0 336.0,252.0 490.0,252.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='66' id='16' filled='true' stroked='true' modelId='32' layout='ortho' orig='57' origPort='4' origPortOutput='true' dest='63' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='434.0,196.0 462.0,196.0 462.0,224.0 486.0,224.0'/>
+                <polylineShape points='434.0,196.0 462.0,196.0 462.0,224.0 490.0,224.0'/>
               </shape>
             </digitalEdgeView>
           </components>
@@ -247,7 +248,7 @@ assertOutputAt(200, &quot;CO&quot;, 1)'>
     <containerDrawing _id='67'>
       <components>
         <rectangle _id='68' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='69'>
+        <originIndicator _id='69' id='9'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -277,7 +278,7 @@ assertOutputAt(200, &quot;CO&quot;, 1)'>
             <digitalPortView _id='83' x='196.0' y='210.0' dir='east' textPos='internal' portId='84'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='85'>
+        <label _id='85' id='8' rot='0'>
           <text>
             <translation lang='en' text='∑'/>
           </text>
