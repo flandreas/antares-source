@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -20,12 +21,15 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.RenderingHints
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 import javax.swing.UIManager
-
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [javax.swing] implementation of a [NavigationStackView].
@@ -39,8 +43,10 @@ class NavigationStackViewSwing(
 		/** Vertical insets between view border and arrow border.*/
 		private const val V_INSETS = 4
 
+		private const val OUTER_HEIGHT = GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT
+
 		/** The fix height of this view.  */
-		private const val HEIGHT = GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT - 2 * V_INSETS
+		private const val HEIGHT = OUTER_HEIGHT - 2 * V_INSETS
 
 		/** Horizontal insets between view border and arrow border.*/
 		private const val H_INSETS = 5
@@ -49,18 +55,40 @@ class NavigationStackViewSwing(
 
 		private const val TEXT_INSET = 10
 
-		private val elementBackgroundColor: java.awt.Color get() = UIManager.getColor("Button.background")
-		private val elementBorderColor: java.awt.Color get() = UIManager.getColor("Button.borderColor")
-		private val elementHoverBackground: java.awt.Color get() = UIManager.getColor("Button.toolbar.hoverBackground")
-		private val elementHoverBorderColor: java.awt.Color get() = UIManager.getColor("Button.hoverBorderColor")
-		private val elementTextColor: java.awt.Color get() = UIManager.getColor("Button.foreground")
+		private const val SCROLL_WIDTH = 16
+		private const val SCROLL_INSET_V = 4
+		private const val SCROLL_INSET_H = 4
+
+		private const val SCROLL_STEP = 50
+
+		// Origin is upper-left corner of NavigationStackViewSwing with entire HEIGHT
+		private val SCROLL_LEFT_PATH = System.createPath()
+			.moveTo(SCROLL_INSET_H, OUTER_HEIGHT / 2)
+			.lineTo(SCROLL_WIDTH - SCROLL_INSET_H, OUTER_HEIGHT - SCROLL_INSET_V)
+			.lineTo(SCROLL_WIDTH - SCROLL_INSET_H, SCROLL_INSET_V)
+			.close()
+
+		private val SCROLL_RIGHT_PATH = System.createPath()
+			.moveTo(SCROLL_WIDTH - SCROLL_INSET_H, OUTER_HEIGHT / 2)
+			.lineTo(SCROLL_INSET_H, OUTER_HEIGHT - SCROLL_INSET_V)
+			.lineTo(SCROLL_INSET_H, SCROLL_INSET_V)
+			.close()
+
+		private val elementBackgroundColor: java.awt.Color = UIManager.getColor("Button.background")
+		private val elementBorderColor: java.awt.Color = UIManager.getColor("Button.borderColor")
+		private val elementHoverBackground: java.awt.Color = UIManager.getColor("Button.toolbar.hoverBackground")
+		private val elementHoverBorderColor: java.awt.Color = UIManager.getColor("Button.hoverBorderColor")
+		private val elementTextColor: java.awt.Color = UIManager.getColor("Button.foreground")
+
+		private val SCROLL_FOREGROUND = Graphics2DJvm.fromAwtColor(elementTextColor)
+		private val SCROLL_HOVER_BACKGROUND = Graphics2DJvm.fromAwtColor(UiUtil.getBackgroundDivertColor(GraphDesktopItemHeaderPanelSwing.headerBackgroundColor))
 
 		private val lockedIcon = ResourceImageJvm.themedImage("/img/locked-16.png")
 
-		private val navigationTooltip: String by lazy {
-			var tooltip = Translations.getString("graph.action.navigationStack.text")
+		private val elementNavigationTooltip: String by lazy {
+			var tooltip = Translations.getString("graph.navigationStack.text")
 			if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
-				tooltip += Translations.getString("graph.action.navigationStack.tip", getQuickModifier().label)
+				tooltip += Translations.getString("graph.navigationStack.tip", getQuickModifier().label)
 			}
 			tooltip
 		}
@@ -82,16 +110,37 @@ class NavigationStackViewSwing(
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
 
-	private val elements: MutableList<Element> = mutableListOf()
+	private val elements: MutableList<AbstractElement> = mutableListOf()
 
 	private val hoverListener = HoverListener()
+
+	private val leftScroll = LeftScroll()
+
+	private val rightScroll = RightScroll()
+
+	private var scrollOffset = 0
+		set(value) {
+			if (field != value) {
+				field = value
+				updateScrollButtons()
+			}
+		}
+
+	private var maxElementX = 0
 
 	init {
 		controller.view = this
 		isEnabled = true
 		background = GraphDesktopItemHeaderPanelSwing.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
+
 		refresh()
+
+		addComponentListener(object : ComponentAdapter() {
+			override fun componentResized(e: ComponentEvent?) {
+				scrollToHeader()
+			}
+		})
 	}
 
 	override fun dispose() {
@@ -116,9 +165,11 @@ class NavigationStackViewSwing(
 		}
 
 	override fun refresh() {
+		scrollOffset = 0
+
 		elements.clear()
 
-		// Create new Element object
+		// Create new Element objects
 		var i = 0
 		val iter = navigationStack.iterator()
 		while (iter.hasNext()) {
@@ -129,11 +180,18 @@ class NavigationStackViewSwing(
 
 		// Calculate locations of Elements
 		var x = 0.0
-		for (element in elements) {
-			element.location = Point2D(x, V_INSETS.toDouble())
-			x += element.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE
+		maxElementX = 0
+		elements.filterIsInstance<Element>().forEach {
+			it.location = Point2D(x, V_INSETS.toDouble())
+			maxElementX += it.path.boundingBox.width.toInt()
+			x += it.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE
 		}
 
+		// Add as last elements so they get painted over the other elements
+		elements.add(leftScroll)
+		elements.add(rightScroll)
+
+		scrollToHeader()
 		repaint()
 	}
 
@@ -195,6 +253,42 @@ class NavigationStackViewSwing(
 		return path
 	}
 
+	/**
+	 * Shows or hides the scroll buttons depending on the available space, the total size
+	 * of all [Element]s, and the current [scrollOffset].
+	 */
+	private fun updateScrollButtons() {
+		leftScroll.visible = scrollOffset < 0
+		rightScroll.visible = scrollOffset + maxElementX > width
+		repaint()
+	}
+
+	private fun scrollLeft() {
+		scrollOffset = min(scrollOffset + SCROLL_STEP, 0)
+	}
+
+	private fun scrollRight() {
+		scrollOffset = max(scrollOffset - SCROLL_STEP, width - maxElementX)
+	}
+
+	/** Make sure that the header [Element] is visible.*/
+	private fun scrollToHeader() {
+		scrollOffset = min(width - maxElementX, 0)
+	}
+
+	private abstract inner class AbstractElement(visible: Boolean) {
+
+		abstract val canHover: Boolean
+		abstract val tooltip: String
+
+		var visible: Boolean = visible
+		var isHover: Boolean = false
+
+		abstract fun contains(x: Int, y: Int): Boolean
+		abstract fun draw(g: Graphics2DJvm)
+		abstract fun mousePressed(e: MouseEvent)
+	}
+
 	/** An element of a [NavigationStackViewSwing] representing a single [DrawingViewContent].*/
 	private inner class Element(
 		val entry: NavigationStackEntry<GraphView>,
@@ -202,7 +296,7 @@ class NavigationStackViewSwing(
 		val showLock: Boolean,
 		val isFirst: Boolean,
 		val isHead: Boolean
-	) {
+	) : AbstractElement(visible = true) {
 
 		private val label: Label = Label(
 			text = entry.name,
@@ -223,11 +317,13 @@ class NavigationStackViewSwing(
 
 		var location: Point2D = Point2D.ZERO
 
-		var isHover: Boolean = false
+		override val canHover: Boolean get() = !isHead
 
-		fun draw(g: Graphics2DJvm) {
+		override val tooltip: String get() = elementNavigationTooltip
+
+		override fun draw(g: Graphics2DJvm) {
 			g.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-			g.translate(location.x, location.y)
+			g.translate(location.x + scrollOffset, location.y)
 
 			g.g.color = if (isHead) {
 				elementBackgroundColor
@@ -255,12 +351,23 @@ class NavigationStackViewSwing(
 			label.font = getFont(isHead)
 			label.draw(DrawModule.drawContextFactory(g, null, null))
 
-			g.translate(-location.x, -location.y)
+			g.translate(-(location.x + scrollOffset), -location.y)
 		}
 
-		fun contains(x: Int, y: Int): Boolean {
-			return path.contains(x - location.x, y - location.y)
+		override fun contains(x: Int, y: Int): Boolean =
+			path.contains(x - location.x - scrollOffset, y - location.y)
+
+		override fun mousePressed(e: MouseEvent) {
+			navigationStack.navigateBackTo(entry, isQuickMode(e))
+			hoverListener.resetHover()
 		}
+
+		private fun isQuickMode(e: MouseEvent): Boolean =
+			if (SystemUtils.IS_OS_MAC) {
+				e.isMetaDown
+			} else {
+				e.isControlDown
+			}
 	}
 
 	/**
@@ -269,11 +376,13 @@ class NavigationStackViewSwing(
 	 */
 	private inner class HoverListener : MouseAdapter() {
 
-		private var hoveredElement: Element? = null
+		private var hoveredElement: AbstractElement? = null
 
 		override fun mouseMoved(e: MouseEvent) {
-			var newHoveredElement: Element? = null
-			val element = elements.firstOrNull { it.contains(e.x, e.y) }
+			var newHoveredElement: AbstractElement? = null
+
+			// Reverse so that scroll elements take precedence
+			val element = elements.reversed().firstOrNull { it.contains(e.x, e.y) }
 			if (element != null) {
 				newHoveredElement = element
 			}
@@ -290,7 +399,7 @@ class NavigationStackViewSwing(
 
 			hoveredElement = newHoveredElement
 			if (hoveredElement != null) {
-				if (hoveredElement!!.isHead) {
+				if (!hoveredElement!!.canHover) {
 					hoveredElement = null
 				} else {
 					hoveredElement!!.isHover = true
@@ -300,8 +409,8 @@ class NavigationStackViewSwing(
 			if (changed) {
 				if (hoveredElement == null) {
 					toolTipText = null
-				} else if (!hoveredElement!!.isHead) {
-					toolTipText = navigationTooltip
+				} else if (hoveredElement!!.canHover) {
+					toolTipText = hoveredElement!!.tooltip
 				}
 				this@NavigationStackViewSwing.repaint()
 			}
@@ -313,25 +422,80 @@ class NavigationStackViewSwing(
 
 		override fun mousePressed(e: MouseEvent) {
 			if (e.button == MouseEvent.BUTTON1 && hoveredElement != null) {
-				navigationStack.navigateBackTo(hoveredElement!!.entry, isQuickMode(e))
-				hoveredElement = null
+				hoveredElement!!.mousePressed(e)
 			}
 		}
 
-		private fun isQuickMode(e: MouseEvent): Boolean =
-			if (SystemUtils.IS_OS_MAC) {
-				e.isMetaDown
-			} else {
-				e.isControlDown
-			}
-
-		private fun resetHover() {
+		fun resetHover() {
 			if (hoveredElement != null) {
 				hoveredElement!!.isHover = false
 				hoveredElement = null
 				toolTipText = null
 				this@NavigationStackViewSwing.repaint()
 			}
+		}
+	}
+
+	private inner class LeftScroll : AbstractElement(visible = false) {
+
+		override val canHover: Boolean get() = true
+
+		override val tooltip: String by lazy { Translations.getString("graph.navigationStack.scrollLeft") }
+
+		override fun contains(x: Int, y: Int): Boolean =
+			x in 0..SCROLL_WIDTH && y in 0..OUTER_HEIGHT
+
+		override fun draw(g: Graphics2DJvm) {
+			if (visible) {
+				g.color = if (isHover) {
+					SCROLL_HOVER_BACKGROUND
+				} else {
+					Graphics2DJvm.fromAwtColor(this@NavigationStackViewSwing.parent.background)
+				}
+				g.fillRect(0, 0, SCROLL_WIDTH, OUTER_HEIGHT)
+
+				g.color = SCROLL_FOREGROUND
+				g.fill(SCROLL_LEFT_PATH)
+			}
+		}
+
+		override fun mousePressed(e: MouseEvent) {
+			scrollLeft()
+		}
+	}
+
+	private inner class RightScroll : AbstractElement(visible = false) {
+
+		private val minX: Int get() = this@NavigationStackViewSwing.width - SCROLL_WIDTH
+
+		override val canHover: Boolean get() = true
+
+		override val tooltip: String by lazy { Translations.getString("graph.navigationStack.scrollRight") }
+
+		override fun contains(x: Int, y: Int): Boolean {
+			return x in minX..minX + SCROLL_WIDTH && y in 0..OUTER_HEIGHT
+		}
+
+		override fun draw(g: Graphics2DJvm) {
+			if (visible) {
+				g.translate(minX.toDouble(), 0.0)
+
+				g.color = if (isHover) {
+					SCROLL_HOVER_BACKGROUND
+				} else {
+					Graphics2DJvm.fromAwtColor(this@NavigationStackViewSwing.parent.background)
+				}
+				g.fillRect(0, 0, SCROLL_WIDTH, OUTER_HEIGHT)
+
+				g.color = SCROLL_FOREGROUND
+				g.fill(SCROLL_RIGHT_PATH)
+
+				g.translate(-minX.toDouble(), 0.0)
+			}
+		}
+
+		override fun mousePressed(e: MouseEvent) {
+			scrollRight()
 		}
 	}
 }
