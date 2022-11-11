@@ -3,7 +3,9 @@ package ch.scorpion.antares.view.theme
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.style.BasicStyle
+import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
@@ -85,10 +87,15 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 			BasicStyle(color = backgroundColor, stroke = ANNOTATION_STROKE, font = FONT)
 	}
 
-	protected fun standardForColor(objectColor: CompositeColor, backgroundColor: CompositeColor = BACKGROUND_COLOR): AntaresTheme {
+	protected fun standardForColor(
+		objectColor: CompositeColor,
+		backgroundColor: CompositeColor = BACKGROUND_COLOR,
+		referenceColors: List<ReferenceColor> = DrawTheme.DEF_REF_COLORS
+	): AntaresTheme {
 		return AntaresTheme(
 			name = name,
 			dark = false,
+			referenceColors = referenceColors,
 			background = createBackgroundStyle(backgroundColor),
 			text = TEXT_STYLE,
 			figure = BasicStyle(color = objectColor, stroke = BOX_STROKE, font = FONT, shadow = true),
