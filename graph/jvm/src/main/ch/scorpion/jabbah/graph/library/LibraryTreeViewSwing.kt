@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import java.awt.Frame
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
@@ -36,7 +38,8 @@ class LibraryTreeViewSwing(
 
 	private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
 
-	private val rightMouseListener = RightMouseListener()
+	private val rightMouseListener = MouseListener()
+	private val keyListener = EnterKeyListener()
 
 	val actions = GraphModuleJvm.libraryTreeViewActionsProvider(
 		LibraryTreeViewActionsParams(controller, controller.type, application))
@@ -45,6 +48,7 @@ class LibraryTreeViewSwing(
 		controller.view = this
 
 		addMouseListener(rightMouseListener)
+		addKeyListener(keyListener)
 
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 
@@ -208,14 +212,6 @@ class LibraryTreeViewSwing(
 		return null
 	}
 
-	private fun getProjectNode(): DefaultMutableTreeNode? {
-		val root = model.root as DefaultMutableTreeNode
-		if (root.childCount > 1) {
-			return root.getChildAt(0) as DefaultMutableTreeNode
-		}
-		return null
-	}
-
 	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/
 	private fun findTreeNode(item: LibraryItem): DefaultMutableTreeNode {
 		return findOptionalTreeNode(item)!!
@@ -227,15 +223,43 @@ class LibraryTreeViewSwing(
 		} as DefaultMutableTreeNode?
 	}
 
-	private inner class RightMouseListener : MouseAdapter() {
+	private fun openSelectedItem() {
+		if (controller.selectedItem is LibraryItem) {
+			if (!controller.isCurrentItem(controller.selectedItem as LibraryItem)) {
+				(controller.selectedItem as LibraryItem).open(controller.eventBus)
+			}
+		}
+	}
+
+	private inner class MouseListener : MouseAdapter() {
 		override fun mousePressed(e: MouseEvent?) {
-			if (e?.button == MouseEvent.BUTTON3) {
-				getPathForLocation(e.x, e.y)?.let { path ->
-					requestFocusInWindow()
-					selectionPath = path
-					val menu = actions.getPopupMenu(path.lastPathComponent as DefaultMutableTreeNode)
-					menu?.show(this@LibraryTreeViewSwing, e.x, e.y)
+			when (e?.button) {
+				MouseEvent.BUTTON1 -> {
+					if (e.clickCount == 2) {
+						openSelectedItem()
+					}
 				}
+				MouseEvent.BUTTON3 -> {
+					showPopupMenu(e)
+				}
+			}
+		}
+
+		private fun showPopupMenu(e: MouseEvent) {
+			getPathForLocation(e.x, e.y)?.let { path ->
+				requestFocusInWindow()
+				selectionPath = path
+				val menu = actions.getPopupMenu(path.lastPathComponent as DefaultMutableTreeNode)
+				menu?.show(this@LibraryTreeViewSwing, e.x, e.y)
+			}
+		}
+	}
+
+	private inner class EnterKeyListener : KeyAdapter() {
+		override fun keyPressed(e: KeyEvent) {
+			if (e.keyCode == KeyEvent.VK_ENTER && controller.selectedItem is LibraryItem) {
+				openSelectedItem()
+				SwingUtilities.invokeLater { requestFocusInWindow() }
 			}
 		}
 	}
