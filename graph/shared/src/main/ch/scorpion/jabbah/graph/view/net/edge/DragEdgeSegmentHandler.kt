@@ -82,6 +82,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 			LOG.userTrail("Move segment ${segmentIndex!!} of EdgeView ${edgeView?.id}")
 			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, origSegmentIndex!!, totalOffset))
 		}
+		updateCursor(null, context)
 		return null
 	}
 }
