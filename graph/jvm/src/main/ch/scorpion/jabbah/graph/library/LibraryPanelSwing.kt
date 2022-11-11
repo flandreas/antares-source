@@ -57,7 +57,9 @@ class LibraryPanelSwing(
 	private inner class DoubleClickListener : MouseAdapter() {
 		override fun mousePressed(e: MouseEvent) {
 			if (e.clickCount == 2 && selectedTreeItem is LibraryItem) {
-				(selectedTreeItem as LibraryItem).open(eventBus)
+				if (!controller.libraryTreeViewController.isCurrentItem(selectedTreeItem as LibraryItem)) {
+					(selectedTreeItem as LibraryItem).open(eventBus)
+				}
 			}
 		}
 	}
@@ -65,8 +67,10 @@ class LibraryPanelSwing(
 	private inner class EnterKeyListener : KeyAdapter() {
 		override fun keyPressed(e: KeyEvent) {
 			if (e.keyCode == KeyEvent.VK_ENTER && selectedTreeItem is LibraryItem) {
-				(selectedTreeItem as LibraryItem).open(eventBus)
-				SwingUtilities.invokeLater { libraryTreeView.requestFocusInWindow() }
+				if (!controller.libraryTreeViewController.isCurrentItem(selectedTreeItem as LibraryItem)) {
+					(selectedTreeItem as LibraryItem).open(eventBus)
+					SwingUtilities.invokeLater { libraryTreeView.requestFocusInWindow() }
+				}
 			}
 		}
 	}
