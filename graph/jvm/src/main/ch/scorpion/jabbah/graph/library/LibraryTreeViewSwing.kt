@@ -54,7 +54,6 @@ class LibraryTreeViewSwing(
 
 		transferHandler = LibraryTreeViewTransferHandler(controller)
 
-		setRowHeight(26)
 		isRootVisible = showWorkspaceNode
 		setCellRenderer(Renderer())
 		addTreeSelectionListener { controller.selectedItem = getSelectedItem() }
@@ -267,7 +266,7 @@ class LibraryTreeViewSwing(
 	private inner class Renderer : DefaultTreeCellRenderer() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-		private val containerLibElemIcon = ContainerLibraryElementIcon()
+		private val containerLibElemIcon = ContainerLibraryElementIcon.ICON
 		private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
 		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
@@ -280,6 +279,7 @@ class LibraryTreeViewSwing(
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
 			component.toolTipText = null
+			component.verticalTextPosition = SwingConstants.CENTER
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath
 				component.font = this@LibraryTreeViewSwing.font

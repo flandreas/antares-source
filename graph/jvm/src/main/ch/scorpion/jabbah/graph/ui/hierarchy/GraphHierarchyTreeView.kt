@@ -33,7 +33,6 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 	init {
 		rootVisible = true
 		showsRootHandles = true
-		setRowHeight(24)
 		setCellRenderer(Renderer())
 	}
 

@@ -43,10 +43,12 @@ class NavigationStackViewSwing(
 		/** Vertical insets between view border and arrow border.*/
 		private const val V_INSETS = 4
 
-		private const val OUTER_HEIGHT = GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT
+		private val OUTER_HEIGHT = max(
+			GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT,
+			UIManager.getFont("Label.font").size + 2 * V_INSETS)
 
 		/** The fix height of this view.  */
-		private const val HEIGHT = OUTER_HEIGHT - 2 * V_INSETS
+		private val HEIGHT = OUTER_HEIGHT - 2 * V_INSETS
 
 		/** Horizontal insets between view border and arrow border.*/
 		private const val H_INSETS = 5
@@ -130,9 +132,11 @@ class NavigationStackViewSwing(
 
 	init {
 		controller.view = this
+
 		isEnabled = true
 		background = GraphDesktopItemHeaderPanelSwing.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
+		preferredSize = Dimension(0, OUTER_HEIGHT)
 
 		refresh()
 

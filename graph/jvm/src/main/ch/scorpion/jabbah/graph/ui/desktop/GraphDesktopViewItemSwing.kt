@@ -48,13 +48,12 @@ abstract class AbstractGraphDesktopItemPanelSwing : JPanel(), GraphDesktopViewIt
 
 class GraphDesktopItemHeaderPanelSwing(
 	private val graphDesktopViewItem: GraphDesktopViewItem,
-	content: JComponent,
+	private val content: JComponent,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	allowClose: Boolean = true
 ) : JPanel() {
 
 	companion object {
-		const val PROP_BACKGROUND_COLOR = "graph.ui.GraphDesktopItemHeader.background"
 		const val PREF_HEIGHT = 27
 		const val LEFT_INSET = 10
 
@@ -64,6 +63,7 @@ class GraphDesktopItemHeaderPanelSwing(
 	init {
 		layout = BoxLayout(this, BoxLayout.LINE_AXIS)
 		add(Box.createHorizontalStrut(LEFT_INSET))
+
 		add(content)
 		background = headerBackgroundColor
 
@@ -73,9 +73,8 @@ class GraphDesktopItemHeaderPanelSwing(
 		}
 	}
 
-	override fun getPreferredSize(): Dimension {
-		return Dimension(super.getPreferredSize().width, max(PREF_HEIGHT, super.getPreferredSize().height))
-	}
+	override fun getPreferredSize(): Dimension =
+		Dimension(super.getPreferredSize().width, max(PREF_HEIGHT, content.preferredSize.height))
 
 	private inner class CloseAction : AbstractAction("base.action.close") {
 

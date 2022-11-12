@@ -13,6 +13,7 @@ class ContainerLibraryElementIcon(private val current: Boolean = false) : Icon {
 
 	companion object {
 		private const val BOX_X = 9
+		private const val BOX_Y = 5
 		private const val BOX_W = 14
 		private const val PIN_W = 4
 
@@ -24,22 +25,26 @@ class ContainerLibraryElementIcon(private val current: Boolean = false) : Icon {
 	override fun getIconWidth(): Int = 28
 
 	override fun paintIcon(c: Component?, g: Graphics?, x: Int, y: Int) {
+		g?.translate(x, y)
+
 		g?.color = if (current) {
 			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().selection.color.backgroundColor)
 		} else {
 			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.backgroundColor)
 		}
-		g?.fillRect(BOX_X, 3, BOX_W, 18)
+		g?.fillRect(BOX_X, BOX_Y, BOX_W, 18)
 
 		g?.color = if (current) {
 			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().selection.color.foregroundColor)
 		} else {
 			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.foregroundColor)
 		}
-		g?.drawRect(BOX_X, 3, BOX_W, 18)
+		g?.drawRect(BOX_X, BOX_Y, BOX_W, 18)
 
-		g?.drawLine(BOX_X, 8, BOX_X - PIN_W, 8)
-		g?.drawLine(BOX_X, 18, BOX_X - PIN_W, 18)
-		g?.drawLine(BOX_X + BOX_W, 12, BOX_X + BOX_W + PIN_W, 12)
+		g?.drawLine(BOX_X, BOX_Y + 5, BOX_X - PIN_W, BOX_Y + + 5)
+		g?.drawLine(BOX_X, BOX_Y + 15, BOX_X - PIN_W, BOX_Y + 15)
+		g?.drawLine(BOX_X + BOX_W, BOX_Y + 9, BOX_X + BOX_W + PIN_W, BOX_Y + 9)
+
+		g?.translate(-x, -y)
 	}
 }

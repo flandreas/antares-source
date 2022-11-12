@@ -44,7 +44,6 @@ class UsecaseTreeView(
 		addMouseListener(rightMouseListener)
 
 		setCellRenderer(UsecaseTreeRenderer())
-		setRowHeight(24)
 
 		eventBus.register(UsecaseAddedEvent::class) {
 			if (it.graphView === this.graphView) {

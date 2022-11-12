@@ -9,10 +9,6 @@ import ch.scorpion.jabbah.base.preferences.FloatPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
-import ch.scorpion.jabbah.draw.graphics.FontImpl
-import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
@@ -34,8 +30,6 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
-import ch.scorpion.jabbah.graph.ui.NavigationStackViewSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -73,7 +67,6 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(GraphDesktopItemHeaderPanelSwing.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
 	}
 

@@ -43,7 +43,6 @@ open class ContainerTreeView(
 		}
 
     init {
-        setRowHeight(22)
         rootVisible = false
         setCellRenderer(ContainerTreeCellRenderer())
         showsRootHandles = true
