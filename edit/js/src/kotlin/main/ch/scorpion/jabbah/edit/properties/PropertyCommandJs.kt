@@ -12,9 +12,9 @@ fun <V> submitCommand(
 	cmdFactory: (PropertyProps<V>, V?) -> PropertyCommandJs<V> = { p, _ -> propertyCommandFactory(p, newValue) }
 ) {
 	val command = cmdFactory(props, newValue)
-	command.establishOldValue()
+	command.establishOldValues()
 
-	if (newValue != command.oldValue) {
+	if (command.valueChanged) {
 		props.editor.commandManager.apply {
 			try {
 				beginTransaction(command)
@@ -34,7 +34,7 @@ open class PropertyCommandJs<V>(
 	editor: Editor,
 	propertyBaseKey: String,
 	beanProvider: BeanProvider,
-	beanIds: List<Int>,
+	beanIds: Collection<String>,
 	newValue: V?,
 	private val getter: PropertyGetter<V>,
 	private val setter: PropertySetter<V>
@@ -46,9 +46,9 @@ open class PropertyCommandJs<V>(
 	newValue
 ) {
 
-	override fun getValue(): V? = getter(bean)
+	override fun getValue(bean: Bean): V? = getter(bean)
 
-	override fun setValue(value: V?) {
+	override fun setValue(bean: Bean, value: V?) {
 		setter(bean, value)
 	}
 }

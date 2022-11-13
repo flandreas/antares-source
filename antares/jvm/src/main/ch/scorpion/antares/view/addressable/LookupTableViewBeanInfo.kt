@@ -15,7 +15,7 @@ class LookupTableViewBeanInfo : DigitalComponentBeanInfo<LookupTableView>() {
 
 	override fun addProperties(bean: LookupTableView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(addressBitWidth.bind(editor, bean.id))
-		properties.add(dataBitWidth.bind(editor, bean.id))
+		properties.add(addressBitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(dataBitWidth.bind(editor, beanIdProvider(bean.id)))
 	}
 }

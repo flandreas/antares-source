@@ -17,7 +17,7 @@ class OscilloscopeViewBeanInfo : ComponentBeanInfo<OscilloscopeView>() {
 
     override fun addProperties(bean: OscilloscopeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
-	    properties.add(scale.bind(editor, bean.id))
-	    properties.add(mode.bind(editor, bean.id))
+	    properties.add(scale.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(mode.bind(editor, beanIdProvider(bean.id)))
     }
 }

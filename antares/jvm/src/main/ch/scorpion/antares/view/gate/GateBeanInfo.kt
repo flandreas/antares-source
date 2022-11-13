@@ -21,7 +21,7 @@ class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 
 	override fun addProperties(bean: AndGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(dataPort.bind(editor, bean.id, filter = { it.id <= bean.chosenInputCount.count }))
+		properties.add(dataPort.bind(editor, beanIdProvider(bean.id), filter = { it.id <= bean.chosenInputCount.count }))
 	}
 }
 
@@ -32,7 +32,7 @@ class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 	}
 	override fun addProperties(bean: BufferGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	}
 }
 
@@ -47,9 +47,9 @@ class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 	override fun addProperties(bean: DelayGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(delay.bind(editor, bean.id))
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(orientation.bind(editor, bean.id))
+		properties.add(delay.bind(editor, beanIdProvider(bean.id)))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
 	}
 }
 
@@ -66,7 +66,7 @@ class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>() {
 	}
 	override fun addProperties(bean: NotGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	}
 }
 
@@ -84,9 +84,9 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGa
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(enableLogic.bind(editor, bean.id))
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(handedness.bind(editor, bean.id))
+		properties.add(enableLogic.bind(editor, beanIdProvider(bean.id)))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(handedness.bind(editor, beanIdProvider(bean.id)))
 	}
 }
 

@@ -8,7 +8,7 @@ open class PropertyCommandSwing<V>(
 	editor: Editor,
 	propertyBaseKey: String,
 	beanProvider: BeanProvider,
-	beanIds: List<Int>,
+	beanIds: Collection<String>,
 	newValue: V?,
 	private val getterPropertyName: String,
 	private val setterPropertyName: String
@@ -24,7 +24,7 @@ open class PropertyCommandSwing<V>(
 		fun <V> forComponent(
 			editor: Editor,
 			propertyBaseKey: String,
-			beanIds: List<Int>,
+			beanIds: Collection<String>,
 			newValue: V?,
 			getterPropertyName: String,
 			setterPropertyName: String
@@ -33,9 +33,7 @@ open class PropertyCommandSwing<V>(
 		}
 	}
 
-	//private fun isNested(name: String): Boolean = name.contains('.')
-
-	override fun getValue(): V? {
+	override fun getValue(bean: Bean): V? {
 		return if (AbstractReflectionPropertySwing.isNested(getterPropertyName)) {
 			PropertyUtils.getNestedProperty(bean, getterPropertyName) as V?
 		} else {
@@ -43,7 +41,7 @@ open class PropertyCommandSwing<V>(
 		}
 	}
 
-	override fun setValue(value: V?) {
+	override fun setValue(bean: Bean, value: V?) {
 		if (AbstractReflectionPropertySwing.isNested(setterPropertyName)) {
 			PropertyUtils.setNestedProperty(bean, setterPropertyName, value)
 		} else {

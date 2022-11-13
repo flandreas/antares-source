@@ -19,7 +19,8 @@ abstract class AbstractReflectionPropertySwing<V>(
 	private val valueClass: Class<*>,
 	protected val getterPropertyName: String = propertyName,
 	private var interactive: Boolean = false,
-	private val displayName: String? = null
+	private val displayName: String? = null,
+	val supportMultiSelection: Boolean = true
 ) : AbstractProperty() {
 
 	companion object {
@@ -28,7 +29,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 
 	var editor: Editor? = null
 
-	protected var beanIds: List<Int> = listOf()
+	protected var beanIds: Collection<String> = listOf()
 
 	var editable: Boolean = true
 		private set
@@ -39,11 +40,11 @@ abstract class AbstractReflectionPropertySwing<V>(
 	var optional: Boolean = false
 		private set
 
-	abstract fun writeToBean(force: Boolean = false)
+	abstract fun writeToBeans(force: Boolean = false)
 
 	fun bind(
 		editor: Editor,
-		beanIds: List<Int>,
+		beanIds: Collection<String>,
 		editable: Boolean = true,
 		filter: ((V) -> Boolean)? = null,
 		optional: Boolean = false
@@ -58,17 +59,9 @@ abstract class AbstractReflectionPropertySwing<V>(
 		return this
 	}
 
-	fun bind(
-		editor: Editor,
-		beanId: Int,
-		editable: Boolean = true,
-		filter: ((V) -> Boolean)? = null,
-		optional: Boolean = false
-	): AbstractReflectionPropertySwing<V> = bind(editor, listOf(beanId), editable, filter, optional)
-
 	/** Primarily used for testing. */
 	fun forceWriteToObject() {
-		writeToBean(force = true)
+		writeToBeans(force = true)
 	}
 
 	/** ---- [Property] interface */
@@ -94,6 +87,6 @@ abstract class AbstractReflectionPropertySwing<V>(
 	}
 
 	override fun writeToObject(p0: Any?) {
-		writeToBean()
+		writeToBeans()
 	}
 }

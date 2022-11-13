@@ -29,6 +29,9 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     override fun getWithId(id: Int): T? = drawables.firstOrNull { it.id == id }
 
+	override fun getWidthIds(ids: Collection<Int>): Collection<T> =
+		drawables.filter { ids.contains(it.id) }
+
 	override fun getStackingOrderPosition(componentId: Int): Int {
 		val component = getWithId(componentId)
 		val position = children.indexOf(component)

@@ -18,9 +18,9 @@ class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
     override fun addProperties(bean: ClockView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(periodOrFrequency.bind(editor, bean.id))
-	    properties.add(enabled.bind(editor, bean.id))
-	    properties.add(knobEnabled.bind(editor, bean.id))
+	    properties.add(periodOrFrequency.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(enabled.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(knobEnabled.bind(editor, beanIdProvider(bean.id)))
     }
 
     override val isShowPropagationDelay: Boolean get() = false

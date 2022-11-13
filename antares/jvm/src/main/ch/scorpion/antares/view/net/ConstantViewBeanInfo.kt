@@ -20,8 +20,8 @@ class ConstantViewBeanInfo : DigitalComponentBeanInfo<ConstantView>() {
 	override fun addProperties(bean: ConstantView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(signalRep.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
-		properties.add(value.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(signalRep.bind(editor, beanIdProvider(bean.id), filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
+		properties.add(value.bind(editor, beanIdProvider(bean.id)))
 	}
 }

@@ -52,7 +52,7 @@ class TestAction(
 		val paramDefs = GraphParamDefinitions().withDefinition(param)
 
 		property.value = paramDefs
-		property.writeToBean()
+		property.writeToBeans()
 	}
 
 	private fun windowSize16to9() {

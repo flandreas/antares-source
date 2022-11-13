@@ -15,6 +15,6 @@ class OscilloscopeProbeVerticeViewBeanInfo : ComponentBeanInfo<OscilloscopeProbe
 	override fun addProperties(bean: OscilloscopeProbeVerticeView<Any>, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 	}
 }

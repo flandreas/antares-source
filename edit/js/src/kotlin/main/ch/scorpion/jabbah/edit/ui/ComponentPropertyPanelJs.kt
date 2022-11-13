@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.edit.ui
 
 import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import com.ccfraser.muirwik.components.MTypographyVariant
 import com.ccfraser.muirwik.components.mTypography
 import com.ccfraser.muirwik.components.spacingUnits

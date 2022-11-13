@@ -29,7 +29,7 @@ import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssuesView

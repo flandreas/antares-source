@@ -16,6 +16,6 @@ class BreakViewBeanInfo : DigitalComponentBeanInfo<BreakView>() {
 	override fun addProperties(bean: BreakView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(logic.bind(editor, bean.id))
+		properties.add(logic.bind(editor, beanIdProvider(bean.id)))
 	}
 }

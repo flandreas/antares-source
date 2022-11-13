@@ -35,22 +35,22 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
     override fun addProperties(bean: DigitalPortViewComponent, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(id.bind(editor, bean.id, editable = false))
-	    properties.add(name.bind(editor, bean.id, editable = false))
-	    properties.add(portViewStyle.bind(editor, bean.id))
-	    properties.add(direction.bind(editor, bean.id))
-	    properties.add(portLabelPos.bind(editor, bean.id))
+	    properties.add(id.bind(editor, beanIdProvider(bean.id), editable = false))
+	    properties.add(name.bind(editor, beanIdProvider(bean.id), editable = false))
+	    properties.add(portViewStyle.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(direction.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(portLabelPos.bind(editor, beanIdProvider(bean.id)))
 	    if (bean.portLabelPosition == PortLabelPosition.INTERNAL) {
-		    properties.add(internalLabelOrientation.bind(editor, bean.id))
+		    properties.add(internalLabelOrientation.bind(editor, beanIdProvider(bean.id)))
 	    }
-	    properties.add(largeExtLabelDist.bind(editor, bean.id, editable = bean.portLabelPosition == PortLabelPosition.EXTERNAL))
-	    properties.add(showBitWidth.bind(editor, bean.id))
-	    properties.add(logic.bind(editor, bean.id))
+	    properties.add(largeExtLabelDist.bind(editor, beanIdProvider(bean.id), editable = bean.portLabelPosition == PortLabelPosition.EXTERNAL))
+	    properties.add(showBitWidth.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(logic.bind(editor, beanIdProvider(bean.id)))
 	    if (bean.port.portType == PortType.INPUT) {
-		    properties.add(trigger.bind(editor, bean.id))
+		    properties.add(trigger.bind(editor, beanIdProvider(bean.id)))
 	    }
 	    if (bean.port.portType == PortType.OUTPUT) {
-		    properties.add(outputAnnotation.bind(editor, bean.id))
+		    properties.add(outputAnnotation.bind(editor, beanIdProvider(bean.id)))
 	    }
     }
 }

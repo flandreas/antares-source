@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import ch.scorpion.jabbah.edit.select.SelectionManagerImpl
 import ch.scorpion.jabbah.edit.select.SelectionModelFactoryMockBuilder
 import ch.scorpion.jabbah.edit.select.SimpleSelectionModelProvider

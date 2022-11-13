@@ -10,7 +10,7 @@ external interface PropertyProps<T> : Props {
 	var editor: Editor
 	var propertyBaseKey: String
 	var beanProvider: BeanProvider
-	var beanIds: List<Int>
+	var beanIds: Collection<String>
 	var getter: PropertyGetter<T>
 	var setter: PropertySetter<T>
 	var disabled: Boolean

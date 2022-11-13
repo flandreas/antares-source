@@ -16,7 +16,7 @@ class BitExtenderViewBeanInfo : DigitalComponentBeanInfo<BitExtenderView>() {
 	override fun addProperties(bean: BitExtenderView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(inputBitWidth.bind(editor, bean.id, filter = { it.width < bean.outputBitWidth.width }))
-		properties.add(outputBitWidth.bind(editor, bean.id, filter = { it.width > bean.inputBitWidth.width }))
+		properties.add(inputBitWidth.bind(editor, beanIdProvider(bean.id), filter = { it.width < bean.outputBitWidth.width }))
+		properties.add(outputBitWidth.bind(editor, beanIdProvider(bean.id), filter = { it.width > bean.inputBitWidth.width }))
 	}
 }

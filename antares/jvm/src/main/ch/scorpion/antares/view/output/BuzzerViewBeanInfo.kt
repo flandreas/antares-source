@@ -16,6 +16,6 @@ class BuzzerViewBeanInfo : DigitalComponentBeanInfo<BuzzerView>() {
 
 	override fun addProperties(bean: BuzzerView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(waveformType.bind(editor, bean.id))
+		properties.add(waveformType.bind(editor, beanIdProvider(bean.id)))
 	}
 }

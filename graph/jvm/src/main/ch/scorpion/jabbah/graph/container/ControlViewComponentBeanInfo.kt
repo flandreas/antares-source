@@ -20,8 +20,8 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 
 	override fun addProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(id.bind(editor, bean.id, editable = false))
-		properties.add(modelId.bind(editor, bean.modelId, editable = false))
+		properties.add(id.bind(editor, beanIdProvider(bean.id), editable = false))
+		properties.add(modelId.bind(editor, beanIdProvider(bean.modelId), editable = false))
 
 		loadControlViewProperties(bean, editor, properties)
 	}

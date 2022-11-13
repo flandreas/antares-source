@@ -26,16 +26,16 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        properties.add(filled.bind(editor, bean.id))
-        properties.add(stroked.bind(editor, bean.id))
-	    properties.add(shadow.bind(editor, bean.id))
-        properties.add(styleType.bind(editor, bean.id))
-        properties.add(color.bind(editor, bean.id))
-	    properties.add(stroke.bind(editor, bean.id))
-        properties.add(text.bind(editor, bean.id, filter = { false }))
-	    properties.add(description.bind(editor, bean.id))
-        properties.add(verticalAlignment.bind(editor, bean.id))
-        properties.add(horizontalAlignment.bind(editor, bean.id))
+        properties.add(filled.bind(editor, beanIdProvider(bean.id)))
+        properties.add(stroked.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(shadow.bind(editor, beanIdProvider(bean.id)))
+        properties.add(styleType.bind(editor, beanIdProvider(bean.id)))
+        properties.add(color.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(stroke.bind(editor, beanIdProvider(bean.id)))
+        properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { false }))
+	    properties.add(description.bind(editor, beanIdProvider(bean.id)))
+        properties.add(verticalAlignment.bind(editor, beanIdProvider(bean.id)))
+        properties.add(horizontalAlignment.bind(editor, beanIdProvider(bean.id)))
     }
 }
 

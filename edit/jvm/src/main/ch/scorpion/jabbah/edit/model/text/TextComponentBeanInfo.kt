@@ -25,11 +25,11 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
 		super.addProperties(bean, editor, properties)
 
 		if (fillAndStroke) {
-			properties.add(filled.bind(editor, bean.id))
-			properties.add(stroked.bind(editor, bean.id))
+			properties.add(filled.bind(editor, beanIdProvider(bean.id)))
+			properties.add(stroked.bind(editor, beanIdProvider(bean.id)))
 		}
-		properties.add(styleType.bind(editor, bean.id))
-		properties.add(color.bind(editor, bean.id))
+		properties.add(styleType.bind(editor, beanIdProvider(bean.id)))
+		properties.add(color.bind(editor, beanIdProvider(bean.id)))
 	}
 }
 
@@ -42,7 +42,7 @@ class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStro
 
 	override fun addProperties(bean: LabelComponent, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(text.bind(editor, bean.id, filter = { false }))
+		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { false }))
 	}
 }
 
@@ -56,7 +56,7 @@ class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(text.bind(editor, bean.id, filter = { true }))
-		properties.add(horizontalAlignment.bind(editor, bean.id))
+		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { true }))
+		properties.add(horizontalAlignment.bind(editor, beanIdProvider(bean.id)))
 	}
 }

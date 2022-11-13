@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.ui
+package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
@@ -84,9 +84,12 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 			} else {
 				FormattedText.replaceNegation(description!!).textWithOverline
 			}
-			Translations.getString("edit.property.bean", beanDescription)
+			getDefinedDescription(beanDescription)
 		}
 	}
+
+	protected open fun getDefinedDescription(description: String): String =
+		Translations.getString("edit.property.bean", description)
 
 	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
 		if (event.name == Editor.PROP_ACTIVE) {

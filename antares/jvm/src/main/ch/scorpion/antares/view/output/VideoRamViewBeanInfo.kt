@@ -19,9 +19,9 @@ class VideoRamViewBeanInfo : VerticeViewBeanInfo<VideoRamView>() {
 
 	override fun addProperties(bean: VideoRamView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(width.bind(editor, bean.id))
-		properties.add(height.bind(editor, bean.id))
-		properties.add(pixelSize.bind(editor, bean.id))
-		properties.add(colorModel.bind(editor, bean.id))
+		properties.add(width.bind(editor, beanIdProvider(bean.id)))
+		properties.add(height.bind(editor, beanIdProvider(bean.id)))
+		properties.add(pixelSize.bind(editor, beanIdProvider(bean.id)))
+		properties.add(colorModel.bind(editor, beanIdProvider(bean.id)))
 	}
 }

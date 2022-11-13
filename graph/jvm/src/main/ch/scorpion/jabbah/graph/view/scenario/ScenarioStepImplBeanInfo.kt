@@ -14,7 +14,13 @@ import com.l2fprod.common.propertysheet.Property
 class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 
 	companion object {
-		private val scenarioStepProvider: BeanProvider = { e, ids -> (e.drawing as GraphView).scenarios.get(ids[0]).getStep(ids[1]) as Bean }
+
+		private const val ID_SEPARATOR = '.'
+
+		private val scenarioStepProvider: BeanProvider = { e, ids ->
+			val intIds = ids.iterator().next().split(ID_SEPARATOR).map { it.toInt() }
+			listOf((e.drawing as GraphView).scenarios.get(intIds[0]).getStep(intIds[1]) as Bean)
+		}
 
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioStepProvider)
 		private val description = EditProperties.description(baseKey = "graph.property.scenarioStep.description", beanProvider = scenarioStepProvider)
@@ -26,7 +32,7 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 
 		val scenarios = (editor.drawing as GraphView).scenarios
 		val scenario = scenarios.getScenarios().first { it.getScenarioSteps().contains(bean) }
-		val ids = listOf(scenario.id, bean.id)
+		val ids = listOf("${scenario.id}$ID_SEPARATOR${bean.id}")
 
 		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
 			beanProvider = scenarioStepProvider, bean::createParser)

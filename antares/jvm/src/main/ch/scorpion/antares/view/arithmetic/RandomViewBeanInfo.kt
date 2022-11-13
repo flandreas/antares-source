@@ -14,6 +14,6 @@ class RandomViewBeanInfo : DigitalComponentBeanInfo<RandomView>() {
 
 	override fun addProperties(bean: RandomView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	}
 }

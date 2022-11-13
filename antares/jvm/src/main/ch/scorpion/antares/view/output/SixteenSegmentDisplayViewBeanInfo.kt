@@ -29,10 +29,10 @@ class SixteenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SixteenSegmentDisp
 
 		val connected = bean.model.isConnected
 
-		properties.add(name.bind(editor, bean.id))
-		properties.add(lightColor.bind(editor, bean.id))
-		properties.add(logic.bind(editor, bean.id))
-		properties.add(size.bind(editor, bean.id, editable = !connected))
-		properties.add(hasBorder.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
+		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
+		properties.add(logic.bind(editor, beanIdProvider(bean.id)))
+		properties.add(size.bind(editor, beanIdProvider(bean.id), editable = !connected))
+		properties.add(hasBorder.bind(editor, beanIdProvider(bean.id)))
 	}
 }

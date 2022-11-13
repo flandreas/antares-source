@@ -21,7 +21,7 @@ fun RBuilder.jmLayoutTypeField(
 		this.editor = editor
 		this.getter = getter
 		this.setter = setter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.beanProvider = beanProvider
 		handler()
 	}

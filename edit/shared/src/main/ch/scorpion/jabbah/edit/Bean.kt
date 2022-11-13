@@ -24,17 +24,20 @@ typealias PropertySetter<V> = (Any, V?) -> Unit
 typealias PropertyGetter<V> = (Any) -> V?
 
 /**
- * Used by [Command]s to access a bean only by its ID. The provided [List] of IDs represents the chain
- * from the topmost object in the [Drawing] held by the [Editor], down to the bean that is to be provided,
- * thereby allowing to reference chains of composed objects.
+ * Used by [Command]s to access a bean only by its ID.
+ * [Bean] IDs are typically [Int], but the [String] type allows special [BeanProvider] implementations
+ * to support other usage scenarios, such as modelling an inner-to-outer object path
+ * represented as e.g. "outerID.innerID".
  */
-typealias BeanProvider = (Editor, List<Int>) -> Bean
+typealias BeanProvider = (Editor, Collection<String>) -> Collection<Bean>
 
 /** Provides the [Component] of an [Editor]'s [Drawing] with a particular ID. */
-val componentBeanProvider: BeanProvider = { e, ids -> e.drawing.getWithId(ids[0])!!.propertyOwner as Component }
+val componentBeanProvider: BeanProvider = { e, ids ->
+	e.drawing.getWidthIds(ids.map { it.toInt() }).map { it.propertyOwner as Component }
+}
 
 /** Provides the current [Drawing] of an [Editor].*/
-val drawingBeanProvider: BeanProvider = { e, _ -> e.drawing }
+val drawingBeanProvider: BeanProvider = { e, _ -> listOf(e.drawing) }
 
 /**
  * A [Command] that reflects the undoable change of an object's property.
@@ -49,34 +52,54 @@ abstract class AbstractPropertyCommand<V>(
 	editor: Editor,
 	private val propertyBaseKey: String,
 	private val beanProvider: BeanProvider,
-	private val beanIds: List<Int>,
+	private val beanIds: Collection<String>,
 	private val newValue: V?,
 ) : AbstractCommand("edit.command.property", editor), Undoable {
 
-	var oldValue: V? = null
+	/** Maps a [Bean] ID to the old property value */
+	var oldValues: Map<Int, V?>? = null
 		private set
 
-	fun establishOldValue() {
-		oldValue = getValue()
+	val valueChanged: Boolean get() = oldValues?.values?.any { it != newValue } == true
+
+	fun establishOldValues() {
+		oldValues = mutableMapOf<Int, V?>().also { map ->
+			beans.forEach { bean ->
+				if (bean is Component) {
+					map[bean.id] = getValue(bean)
+				} else {
+					// Non-Component Beans don't support multi-property editing
+					map[0] = getValue(bean)
+				}
+			}
+		}
 	}
 
-	protected abstract fun getValue(): V?
+	/** Gets the property value of the specified [Bean]. */
+	protected abstract fun getValue(bean: Bean): V?
 
-	protected abstract fun setValue(value: V?)
+	/** Sets [value] on the property of the specified [Bean] with identifications [beanIds]. */
+	protected abstract fun setValue(bean: Bean, value: V?)
 
-	protected val bean get() = beanProvider(editor!!, beanIds)
+	protected val beans get() = beanProvider(editor!!, beanIds)
 
-	override fun getDescription(): String =
-		Translations.getString("$propertyBaseKey.name")
+	override fun getDescription(): String = Translations.getString("$propertyBaseKey.name")
 
 	override fun execute() {
-		if (oldValue == null) {
-			oldValue = getValue()
+		if (oldValues == null) {
+			establishOldValues()
 		}
-		setValue(newValue)
+		beans.forEach { setValue(it, newValue) }
 	}
 
 	override fun undo() {
-		setValue(oldValue)
+		beans.forEach {
+			if (it is Component) {
+				setValue(it, oldValues!![it.id])
+			} else {
+				// Non-Component Beans don't support multi-property editing
+				setValue(it, oldValues!![0])
+			}
+		}
 	}
 }

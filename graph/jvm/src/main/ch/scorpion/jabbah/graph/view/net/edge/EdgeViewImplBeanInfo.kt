@@ -24,11 +24,11 @@ open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
 	override fun addProperties(bean: EdgeViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(modelId.bind(editor, bean.id, editable = false))
-		properties.add(arrow.bind(editor, bean.id))
-		properties.add(layout.bind(editor, bean.id, filter = { it.supportsNetViewStyle(bean.netView!!.style)}))
-		properties.add(style.bind(editor, bean.id, filter = { it.supportsLayoutType(bean.layout.type )}))
-		properties.add(color.bind(editor, bean.id))
-		properties.add(description.bind(editor, bean.id))
+		properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
+		properties.add(arrow.bind(editor, beanIdProvider(bean.id)))
+		properties.add(layout.bind(editor, beanIdProvider(bean.id), filter = { it.supportsNetViewStyle(bean.netView!!.style)}))
+		properties.add(style.bind(editor, beanIdProvider(bean.id), filter = { it.supportsLayoutType(bean.layout.type )}))
+		properties.add(color.bind(editor, beanIdProvider(bean.id)))
+		properties.add(description.bind(editor, beanIdProvider(bean.id)))
 	}
 }

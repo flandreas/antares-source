@@ -6,7 +6,7 @@ import react.RBuilder
 import react.*
 
 val jmCheckboxField = functionalComponent<PropertyProps<Boolean>> { props ->
-	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
+	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds.map { it.toString() }))
 	val (value, setValue) = useState(oldValue)
 	mCheckbox(
 		value ?: false,
@@ -31,7 +31,7 @@ fun RBuilder.jmCheckboxField(
 		this.editor = editor
 		this.getter = getter
 		this.setter = setter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.disabled = disabled
 		this.beanProvider = beanProvider
 		handler()

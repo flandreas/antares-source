@@ -14,7 +14,7 @@ class JoystickViewBeanInfo : DigitalComponentBeanInfo<JoystickView>() {
 
 	override fun addProperties(bean: JoystickView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(deflection.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(deflection.bind(editor, beanIdProvider(bean.id)))
 	}
 }

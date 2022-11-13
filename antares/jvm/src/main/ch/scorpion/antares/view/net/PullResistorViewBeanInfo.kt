@@ -16,7 +16,7 @@ class PullResistorViewBeanInfo : DigitalComponentBeanInfo<PullResistorView>() {
 	override fun addProperties(bean: PullResistorView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(pullDirection.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(pullDirection.bind(editor, beanIdProvider(bean.id)))
 	}
 }

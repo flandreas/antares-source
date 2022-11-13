@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.BeanProvider
 import com.l2fprod.common.propertysheet.Property
-import org.apache.commons.beanutils.PropertyUtils
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -21,23 +20,22 @@ open class CommandPropertySwing<V>(
 	protected val setterPropertyName: String = propertyName,
 	getterPropertyName: String = propertyName,
 	interactive: Boolean = false,
-	displayName: String? = null
-) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive, displayName) {
+	displayName: String? = null,
+	supportMultiSelection: Boolean = true
+) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive, displayName, supportMultiSelection) {
 
 	companion object {
 		private val LOG by logger(CommandPropertySwing::class)
 	}
 
-	override fun writeToBean(force: Boolean) {
+	override fun writeToBeans(force: Boolean) {
 		@Suppress("UNCHECKED_CAST")
 		val newValue = value as V?
 
 		val command = createCommand(newValue)
-		command.establishOldValue()
+		command.establishOldValues()
 
-		LOG.trace("writeToBean '$name', oldValue=${command.oldValue}, newValue=$newValue")
-
-		if (force || newValue != command.oldValue) {
+		if (force || command.valueChanged) {
 			try {
 				LOG.userTrail("Change property '${command.getDescription()}' of component ${beanIds.firstOrNull()} to '$newValue'")
 				editor!!.commandManager.beginTransaction(command)
@@ -61,13 +59,5 @@ open class CommandPropertySwing<V>(
 	protected open fun createCommand(newValue: V?): AbstractPropertyCommand<V> =
 		PropertyCommandSwing(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 
-	protected val bean get() = beanProvider(editor!!, beanIds)
-
-	protected fun getOldValue(): V? {
-		return if (isNested(getterPropertyName)) {
-			PropertyUtils.getNestedProperty(bean, getterPropertyName) as V?
-		} else {
-			PropertyUtils.getSimpleProperty(bean, getterPropertyName) as V?
-		}
-	}
+	protected val beans get() = beanProvider(editor!!, beanIds)
 }

@@ -31,7 +31,7 @@ class CommandPropertySwingTest {
 
 	private val editor = createEditor()
 
-	private val beanProvider: BeanProvider = { _,_ -> app }
+	private val beanProvider: BeanProvider = { _,_ -> listOf(app) }
 
 	private val property = CommandPropertySwing(
 		"data",
@@ -41,13 +41,13 @@ class CommandPropertySwingTest {
 
 	init {
 		cmdManager.bindDataHolder(app)
-		property.bind(editor, 0)
+		property.bind(editor, listOf("0"))
 	}
 
 	@Test
 	fun shouldWritePropertyToBean() {
 		property.value = StorableString("fromProperty")
-		property.writeToBean()
+		property.writeToBeans()
 
 		assertEquals(app.data!!.value, "fromProperty")
 	}
@@ -58,7 +58,7 @@ class CommandPropertySwingTest {
 
 		try {
 			property.value = StorableString("throwException")
-			property.writeToBean()
+			property.writeToBeans()
 		} catch (e: Throwable) {
 			// This emulates the PropertyPanel catching and displaying the exception
 		}
@@ -78,7 +78,7 @@ class CommandPropertySwingTest {
 	fun shouldRollbackOnExceptionWithEmptyUndoStack() {
 		try {
 			property.value = StorableString("throwException")
-			property.writeToBean()
+			property.writeToBeans()
 		} catch (e: Throwable) {
 			// This emulates the PropertyPanel catching and displaying the exception
 		}

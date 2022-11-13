@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 class ChangeInputCountCommandJs(
 	editor: Editor,
 	beanProvider: BeanProvider,
-	beanIds: List<Int>,
+	beanIds: Collection<String>,
 	newValue: PortCount?,
 	getter: PropertyGetter<PortCount>,
 	private val service: DigitalGraphViewService = EditModule.drawingAppService as DigitalGraphViewService
@@ -28,7 +28,7 @@ class ChangeInputCountCommandJs(
 	getter,
 	{ _, _ -> }
 ) {
-	override fun setValue(value: PortCount?) {
+	override fun setValue(bean: Bean, value: PortCount?) {
 		service.changeInputCount(
 			bean as AbstractDigitalGateView<AbstractDigitalGate>,
 			value!!,

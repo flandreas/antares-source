@@ -28,12 +28,12 @@ class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
     override fun addProperties(bean: LEDMatrixView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(columnWidth.bind(editor, bean.id))
-	    properties.add(rowWidth.bind(editor, bean.id))
-	    properties.add(lightColor.bind(editor, bean.id))
-	    properties.add(size.bind(editor, bean.id))
-	    properties.add(afterglow.bind(editor, bean.id))
-	    properties.add(isCircleDots.bind(editor, bean.id))
-	    properties.add(isDebug.bind(editor, bean.id))
+	    properties.add(columnWidth.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(rowWidth.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(size.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(afterglow.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(isCircleDots.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(isDebug.bind(editor, beanIdProvider(bean.id)))
     }
 }

@@ -82,7 +82,7 @@ class PropertyCommandTest {
 		return PropertyCommandSwing.forComponent(
 			editor = editor,
 			propertyBaseKey = baseKey,
-			beanIds = listOf(id),
+			beanIds = listOf(id.toString()),
 			newValue = newValue,
 			setterPropertyName = name,
 			getterPropertyName = name

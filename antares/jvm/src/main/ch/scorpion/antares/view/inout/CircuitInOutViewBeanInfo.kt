@@ -31,19 +31,19 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
     override fun addProperties(bean: CircuitInOutView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(modelId.bind(editor, bean.id, editable = false))
-	    properties.add(name.bind(editor, bean.id))
-	    properties.add(portType.bind(editor, bean.id))
-	    properties.add(bitWidth.bind(editor, bean.id))
-	    properties.add(orientation.bind(editor, bean.id))
-	    properties.add(color.bind(editor, bean.id))
-	    properties.add(signalRepresentation.bind(editor, bean.id, filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
+	    properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
+	    properties.add(name.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(portType.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(color.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(signalRepresentation.bind(editor, beanIdProvider(bean.id), filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 	    if (bean.model.portType.isInput) {
-		    properties.add(toggle.bind(editor, bean.id))
+		    properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
 	    }
 	    if (bean.model.portType == PortType.OUTPUT) {
-			properties.add(canBeUndefined.bind(editor, bean.id))
+			properties.add(canBeUndefined.bind(editor, beanIdProvider(bean.id)))
 	    }
-	    properties.add(description.bind(editor, bean.id))
+	    properties.add(description.bind(editor, beanIdProvider(bean.id)))
     }
 }

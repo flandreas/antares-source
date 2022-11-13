@@ -22,10 +22,10 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
     override fun addProperties(bean: PolylineComponent, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(filled.bind(editor, bean.id))
-	    properties.add(styleType.bind(editor, bean.id))
-	    properties.add(color.bind(editor, bean.id))
-	    properties.add(stroke.bind(editor, bean.id))
-	    properties.add(shadow.bind(editor, bean.id))
+	    properties.add(filled.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(styleType.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(color.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(stroke.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(shadow.bind(editor, beanIdProvider(bean.id)))
     }
 }

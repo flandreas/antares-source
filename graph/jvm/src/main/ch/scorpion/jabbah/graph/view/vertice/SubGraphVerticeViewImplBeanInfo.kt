@@ -28,28 +28,28 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
     override fun addProperties(bean: SubGraphVerticeViewImpl, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(modelId.bind(editor, bean.id, editable = false))
+	    properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
 
 	    if (bean.model.designError != null) {
 		    return
 	    }
 
-	    properties.add(propDelay.bind(editor, bean.id))
-	    properties.add(orientation.bind(editor, bean.id))
-	    properties.add(mirrorH.bind(editor, bean.id))
-	    properties.add(mirrorV.bind(editor, bean.id))
-	    properties.add(color.bind(editor, bean.id))
-	    properties.add(controlViewVisibility.bind(editor, bean.id))
+	    properties.add(propDelay.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(mirrorH.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(mirrorV.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(color.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(controlViewVisibility.bind(editor, beanIdProvider(bean.id)))
 	    bean.label?.let {
-	        properties.add(label.bind(editor, bean.id, filter = { false }))
+	        properties.add(label.bind(editor, beanIdProvider(bean.id), filter = { false }))
 	    }
-	    properties.add(description.bind(editor, bean.id))
+	    properties.add(description.bind(editor, beanIdProvider(bean.id)))
 
 	    bean.model.graphUUID?.let {
 	        LibraryModule.libraryHolder.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
 		        for (def in defs.iterator()) {
 			        val property = GraphParamValuePropertyFactoryRegistry.createProperty(def, editor, componentBeanProvider)
-			        properties.add(property.bind(editor, bean.id))
+			        properties.add(property.bind(editor, beanIdProvider(bean.id)))
 		        }
 	        }
 	    }

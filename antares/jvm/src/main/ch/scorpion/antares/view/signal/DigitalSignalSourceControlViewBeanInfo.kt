@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.signal
 
-import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
@@ -15,6 +14,6 @@ class DigitalSignalSourceControlViewBeanInfo : AbstractBeanInfo<DigitalSignalSou
 
 	override fun addProperties(bean: DigitalSignalSourceControlView<*>, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(name.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 	}
 }

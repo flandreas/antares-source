@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanel
-import ch.scorpion.jabbah.edit.ui.ComponentPropertyPanelController
 import javax.swing.JPanel
 
 /**
@@ -18,7 +16,7 @@ class ComponentPropertyPanelSwing(
 		controller.view = this
 	}
 
-    /** ---- [ComponentPropertyPanelSwing] */
+    /** ---- [AbstractPropertyPanelSwing] */
 
 	override fun handleBeanReplaced() {
 		clearProperties()
@@ -32,11 +30,42 @@ class ComponentPropertyPanelSwing(
 		}
 	}
 
-	private fun loadComponentProperties(component: Component) {
-		if (component.beanInfoClassName != null) {
-			loadProperties(component.propertyOwner, component.beanInfoClassName!!)
+	override fun createBeanInfo(bean: Any, classPath: String): AbstractBeanInfo<Any> =
+		if (bean is MultiSelection) {
+			var delegateBean: Any = bean.selection.first()
+			if (delegateBean is Component) {
+				delegateBean = delegateBean.propertyOwner
+			}
+			val delegateBeanInfo = super.createBeanInfo(delegateBean, createBeanClassPath(delegateBean))
+			val beanInfo = MultiSelectionBeanInfo(delegateBeanInfo) as AbstractBeanInfo<Any>
+			delegateBeanInfo.beanIdProvider = { bean.selection.map { it.id.toString() }}
+			beanInfo
 		} else {
-			loadProperties(component.propertyOwner)
+			super.createBeanInfo(bean, classPath)
 		}
+
+	override fun getReadSourceBean(bean: Any): Any =
+		if (bean is MultiSelection) {
+			bean.selection.first().propertyOwner
+		} else {
+			bean
+		}
+
+	override fun createBeanClassPath(bean: Any): String {
+		return if (bean is Component) {
+			if (bean.beanInfoClassName != null) {
+				bean.beanInfoClassName!!
+			} else {
+				super.createBeanClassPath(bean)
+			}
+		} else {
+			super.createBeanClassPath(bean)
+		}
+	}
+
+	/** ---- [ComponentPropertyPanelSwing] */
+
+	private fun loadComponentProperties(component: Component) {
+		super.loadProperties(component.propertyOwner)
 	}
 }

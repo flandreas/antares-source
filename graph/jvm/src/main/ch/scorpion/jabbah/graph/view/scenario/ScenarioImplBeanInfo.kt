@@ -13,7 +13,10 @@ import com.l2fprod.common.propertysheet.Property
 class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 
 	companion object {
-		private val scenarioBeanProvider: BeanProvider = { e, ids -> (e.drawing as GraphView).scenarios.get(ids[0]) as Bean }
+
+		private val scenarioBeanProvider: BeanProvider = { e, ids ->
+			listOf((e.drawing as GraphView).scenarios.get(ids.iterator().next().toInt()) as Bean)
+		}
 
 		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioBeanProvider)
 		private val description = EditProperties.description(baseKey = "graph.property.scenario.description", beanProvider = scenarioBeanProvider)
@@ -25,8 +28,8 @@ class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
 			beanProvider = scenarioBeanProvider, bean::createParser)
 
-		properties.add(name.bind(editor, bean.id, filter = { false }))
-		properties.add(description.bind(editor, bean.id))
-		properties.add(condition.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id), filter = { false }))
+		properties.add(description.bind(editor, beanIdProvider(bean.id)))
+		properties.add(condition.bind(editor, beanIdProvider(bean.id)))
 	}
 }

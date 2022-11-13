@@ -31,16 +31,16 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 	override fun addProperties(bean: ROMView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(addressBitWidth.bind(editor, bean.id))
-		properties.add(dataBitWidth.bind(editor, bean.id))
-		properties.add(text.bind(editor, bean.id, filter = { false }))
-		properties.add(showContents.bind(editor, bean.id))
+		properties.add(addressBitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(dataBitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { false }))
+		properties.add(showContents.bind(editor, beanIdProvider(bean.id)))
 		if (bean.showContents) {
-			properties.add(contentsRowCount.bind(editor, bean.id))
-			properties.add(contentsColumnsCount.bind(editor, bean.id))
-			properties.add(disassemblerConfig.bind(editor, bean.id))
-			properties.add(showDisassembler.bind(editor, bean.id))
-			properties.add(highlightCurrentCellWhenNotSelected.bind(editor, bean.id))
+			properties.add(contentsRowCount.bind(editor, beanIdProvider(bean.id)))
+			properties.add(contentsColumnsCount.bind(editor, beanIdProvider(bean.id)))
+			properties.add(disassemblerConfig.bind(editor, beanIdProvider(bean.id)))
+			properties.add(showDisassembler.bind(editor, beanIdProvider(bean.id)))
+			properties.add(highlightCurrentCellWhenNotSelected.bind(editor, beanIdProvider(bean.id)))
 		}
 	}
 }

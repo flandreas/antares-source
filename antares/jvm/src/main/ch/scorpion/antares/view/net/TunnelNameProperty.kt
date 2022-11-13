@@ -5,12 +5,14 @@ import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.PropertyCommandSwing
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
+import org.apache.commons.beanutils.PropertyUtils
 import java.awt.Frame
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
@@ -25,7 +27,15 @@ class TunnelNameProperty(
 	private val propertyName: String,
 	baseKey: String,
 	beanProvider: BeanProvider
-) : CommandPropertySwing<TunnelName>(propertyName, baseKey, TunnelName::class.java, beanProvider, propertyName, propertyName) {
+) : CommandPropertySwing<TunnelName>(
+	propertyName,
+	baseKey,
+	TunnelName::class.java,
+	beanProvider,
+	propertyName,
+	propertyName,
+	supportMultiSelection = false
+) {
 
 	override fun createCommand(newValue: TunnelName?): AbstractPropertyCommand<TunnelName> {
 		val oldValue = getOldValue()?.name
@@ -44,6 +54,14 @@ class TunnelNameProperty(
 			super.createCommand(newValue)
 		}
 	}
+
+	private fun getOldValue(): TunnelName? {
+		return if (isNested(getterPropertyName)) {
+			PropertyUtils.getNestedProperty(beans.iterator().next(), getterPropertyName) as TunnelName?
+		} else {
+			PropertyUtils.getSimpleProperty(beans.iterator().next(), getterPropertyName) as TunnelName?
+		}
+	}
 }
 
 /**
@@ -52,7 +70,7 @@ class TunnelNameProperty(
 class ChangeTunnelNamesCommandSwing(
 	editor: Editor,
 	beanProvider: BeanProvider,
-	beanIds: List<Int>,
+	beanIds: Collection<String>,
 	newValue: TunnelName?,
 	propertyName: String
 ) : PropertyCommandSwing<TunnelName>(
@@ -66,9 +84,9 @@ class ChangeTunnelNamesCommandSwing(
 ) {
 	override val canUndo: Boolean get() = false
 
-	override fun setValue(value: TunnelName?) {
+	override fun setValue(bean: Bean, value: TunnelName?) {
 		editor!!.drawing
-			.getDrawables { it is TunnelView && it.name != null && it.name == oldValue?.name }
+			.getDrawables { it is TunnelView && it.name != null && it.name == oldValues?.get((bean as TunnelView).id)?.name }
 			.map { it as TunnelView }
 			.forEach { it.tunnelName = value }
 	}

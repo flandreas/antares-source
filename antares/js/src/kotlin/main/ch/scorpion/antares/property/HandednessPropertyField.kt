@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.properties.PropertyProps
 import ch.scorpion.jabbah.edit.properties.enumPropertyField
 import react.RBuilder
-import react.child
 
 val jmHandednessField = enumPropertyField("Handedness", Handedness.values())
 
@@ -21,7 +20,7 @@ fun RBuilder.jmHandednessField(
 		this.editor = editor
 		this.getter = getter
 		this.setter = setter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.beanProvider = beanProvider
 		handler()
 	}

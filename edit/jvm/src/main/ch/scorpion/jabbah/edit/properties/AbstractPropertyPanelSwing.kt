@@ -6,8 +6,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.ui.AbstractPropertyPanelController
-import ch.scorpion.jabbah.edit.ui.PropertyPanel
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
 import java.beans.PropertyDescriptor
@@ -112,18 +110,6 @@ abstract class AbstractPropertyPanelSwing(
 		controller.bean?.let { loadProperties(it) }
 	}
 
-	protected fun clearProperties() {
-		sheet.table?.cellEditor?.stopCellEditing()
-		sheet.setProperties(arrayOf<PropertyDescriptor>())
-		propertyObject = null
-		hideMessage()
-		updateLabel()
-	}
-
-	protected fun loadProperties(bean: Any) {
-		loadProperties(bean, bean.javaClass.name + "BeanInfo")
-	}
-
 	/** ---- [AbstractPropertyPanelSwing] */
 
 	private fun showMessage(message: String) {
@@ -158,7 +144,7 @@ abstract class AbstractPropertyPanelSwing(
 	private fun storeProperty(property: AbstractReflectionPropertySwing<*>) {
 		try {
 			LOG.trace("storeProperty")
-			property.writeToBean()
+			property.writeToBeans()
 			controller.editor.view.drawing.validate()
 			hideMessage()
 		} catch (e: Throwable) {
@@ -171,22 +157,21 @@ abstract class AbstractPropertyPanelSwing(
 		propertyObject?.let { loadProperties(it) }
 	}
 
-	protected fun loadProperties(bean: Any, classPath: String) {
+	protected fun loadProperties(bean: Any) {
+		loadProperties(bean, createBeanClassPath(bean))
+	}
+
+	private fun loadProperties(bean: Any, classPath: String) {
 		try {
 			sheet.removePropertySheetChangeListener(propertyStorer)
 
-			val beanInfoClass = Class.forName(classPath)
-			@Suppress("UNCHECKED_CAST")
-			val beanInfo = beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
-
-			LOG.trace("updating properties for $beanInfoClass")
-
+			val beanInfo = createBeanInfo(bean, classPath)
 			sheet.properties = beanInfo.getProperties(bean, controller.editor)
 
 			// Avoid triggering property change login while bean properties are loaded
 			propertyObject = null
 
-			sheet.readFromObject(bean)
+			sheet.readFromObject(getReadSourceBean(bean))
 
 			adjustTableHeights(sheet.table)
 			propertyObject = bean
@@ -197,6 +182,26 @@ abstract class AbstractPropertyPanelSwing(
 		} finally {
 			sheet.addPropertySheetChangeListener(propertyStorer)
 		}
+	}
+
+	protected open fun createBeanClassPath(bean: Any): String = bean.javaClass.name + "BeanInfo"
+
+	protected open fun createBeanInfo(bean: Any, classPath: String): AbstractBeanInfo<Any> {
+		val beanInfoClass = Class.forName(classPath)
+		LOG.trace("updating properties for $beanInfoClass")
+		@Suppress("UNCHECKED_CAST")
+		return beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
+	}
+
+	/** Returns the bean from which property values are read. */
+	protected open fun getReadSourceBean(bean: Any): Any = bean
+
+	protected fun clearProperties() {
+		sheet.table?.cellEditor?.stopCellEditing()
+		sheet.setProperties(arrayOf<PropertyDescriptor>())
+		propertyObject = null
+		hideMessage()
+		updateLabel()
 	}
 
 	private fun adjustTableHeights(table: JTable) {

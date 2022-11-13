@@ -11,6 +11,9 @@ interface ComponentContainer<T : Component> : DrawableContainer<T>, Storable {
     /** Returns the [Component] with the specified identification, if present.*/
     fun getWithId(id: Int): T?
 
+	/** Returns the [Components][Component] with the specified identifications. */
+	fun getWidthIds(ids: Collection<Int>): Collection<T>
+
 	/**
 	 * Returns the position of a [Component] in the stacking order of this [ComponentContainer],
 	 * where 0 represents the topmost position.

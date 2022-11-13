@@ -25,14 +25,14 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
     override fun addProperties(bean: ProbeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(name.bind(editor, bean.id))
-	    properties.add(bitWidth.bind(editor, bean.id))
-	    properties.add(signalRep.bind(editor, bean.id))
-	    properties.add(output.bind(editor, bean.id, editable = !bean.model.isConnected))
-	    properties.add(logging.bind(editor, bean.id))
+	    properties.add(name.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(signalRep.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(output.bind(editor, beanIdProvider(bean.id), editable = !bean.model.isConnected))
+	    properties.add(logging.bind(editor, beanIdProvider(bean.id)))
 	    if (bean.signalRepresentation == DigitalSignalRepresentation.FIXED_POINT) {
-		    properties.add(fixedPointConfigFraction.bind(editor, bean.id))
-		    properties.add(fixedPointConfigSigned.bind(editor, bean.id))
+		    properties.add(fixedPointConfigFraction.bind(editor, beanIdProvider(bean.id)))
+		    properties.add(fixedPointConfigSigned.bind(editor, beanIdProvider(bean.id)))
 	    }
     }
 }

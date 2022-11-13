@@ -17,7 +17,7 @@ class DoubleThrowSwitchViewBeanInfo : DigitalComponentBeanInfo<DoubleThrowSwitch
 
 	override fun addProperties(bean: DoubleThrowSwitchView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(toggle.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
 	}
 }

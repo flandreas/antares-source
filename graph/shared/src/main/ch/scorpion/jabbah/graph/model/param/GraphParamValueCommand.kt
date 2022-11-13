@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.model.param
 
-import ch.scorpion.jabbah.edit.AbstractPropertyCommand
-import ch.scorpion.jabbah.edit.BeanProvider
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 
@@ -17,7 +14,7 @@ class GraphParamValueCommand<V : Any>(
 	editor: Editor,
 	propertyBaseKey: String,
 	beanProvider: BeanProvider,
-	beanIds: List<Int>,
+	beanIds: Collection<String>,
 	newValue: V?
 ) : AbstractPropertyCommand<V>(
 	editor,
@@ -26,14 +23,13 @@ class GraphParamValueCommand<V : Any>(
 	beanIds,
 	newValue
 ) {
-	private val subGraphVerticeView: SubGraphVerticeViewImpl get() = bean as SubGraphVerticeViewImpl
 
-	override fun getValue(): V? =
-		subGraphVerticeView.model.paramValues.getValue(paramDef.name)?.value as V?
+	override fun getValue(bean: Bean): V? =
+		(bean as SubGraphVerticeViewImpl).model.paramValues.getValue(paramDef.name)?.value as V?
 
-	override fun setValue(value: V?) {
+	override fun setValue(bean: Bean, value: V?) {
 		value?.let {
-			subGraphVerticeView.model.setParamValue(paramDef.createValue(it))
+			(bean as SubGraphVerticeViewImpl).model.setParamValue(paramDef.createValue(it))
 		} ?: throw IllegalArgumentException("value must not be null")
 	}
 }

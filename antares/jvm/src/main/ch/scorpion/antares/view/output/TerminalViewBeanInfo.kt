@@ -22,10 +22,10 @@ class TerminalViewBeanInfo : VerticeViewBeanInfo<TerminalView>() {
 	override fun addProperties(bean: TerminalView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(rowsCount.bind(editor, bean.id))
-		properties.add(columnsCount.bind(editor, bean.id))
-		properties.add(size.bind(editor, bean.id))
-		properties.add(lightColor.bind(editor, bean.id, optional = true))
-		properties.add(handedness.bind(editor, bean.id))
+		properties.add(rowsCount.bind(editor, beanIdProvider(bean.id)))
+		properties.add(columnsCount.bind(editor, beanIdProvider(bean.id)))
+		properties.add(size.bind(editor, beanIdProvider(bean.id)))
+		properties.add(lightColor.bind(editor, beanIdProvider(bean.id), optional = true))
+		properties.add(handedness.bind(editor, beanIdProvider(bean.id)))
 	}
 }

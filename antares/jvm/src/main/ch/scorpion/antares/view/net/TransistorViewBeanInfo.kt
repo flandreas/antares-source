@@ -21,10 +21,10 @@ class TransistorViewBeanInfo : DigitalComponentBeanInfo<TransistorView>() {
 	override fun addProperties(bean: TransistorView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, bean.id))
-		properties.add(transistorType.bind(editor, bean.id))
-		properties.add(transistorSymbol.bind(editor, bean.id))
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(handedness.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
+		properties.add(transistorType.bind(editor, beanIdProvider(bean.id)))
+		properties.add(transistorSymbol.bind(editor, beanIdProvider(bean.id)))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(handedness.bind(editor, beanIdProvider(bean.id)))
 	}
 }

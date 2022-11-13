@@ -20,11 +20,11 @@ class LEDViewBeanInfo : DigitalComponentBeanInfo<LEDView>() {
 	override fun addProperties(bean: LEDView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, bean.id))
-		properties.add(lightColor.bind(editor, bean.id))
-		properties.add(square.bind(editor, bean.id))
-		properties.add(size.bind(editor, bean.id))
-		properties.add(hasBorder.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
+		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
+		properties.add(square.bind(editor, beanIdProvider(bean.id)))
+		properties.add(size.bind(editor,beanIdProvider(bean.id)))
+		properties.add(hasBorder.bind(editor, beanIdProvider(bean.id)))
 	}
 
 	override var isShowColor: Boolean

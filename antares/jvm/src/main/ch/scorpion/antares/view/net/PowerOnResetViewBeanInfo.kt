@@ -18,7 +18,7 @@ class PowerOnResetViewBeanInfo : DigitalComponentBeanInfo<PowerOnResetView>() {
 
 	override fun addProperties(bean: PowerOnResetView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(logic.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(logic.bind(editor, beanIdProvider(bean.id)))
 	}
 }

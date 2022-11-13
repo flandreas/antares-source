@@ -25,14 +25,14 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(modelId.bind(editor, bean.id, editable = false))
+		properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
 		if (isShowPropagationDelay) {
-			properties.add(propDelay.bind(editor, bean.id))
+			properties.add(propDelay.bind(editor, beanIdProvider(bean.id)))
 		}
-		properties.add(shadow.bind(editor, bean.id))
+		properties.add(shadow.bind(editor, beanIdProvider(bean.id)))
 		if (isShowColor) {
-			properties.add(color.bind(editor, bean.id))
+			properties.add(color.bind(editor, beanIdProvider(bean.id)))
 		}
-		properties.add(description.bind(editor, bean.id))
+		properties.add(description.bind(editor, beanIdProvider(bean.id)))
 	}
 }

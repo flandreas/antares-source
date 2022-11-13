@@ -45,9 +45,9 @@ open class BitWidthPropertySwing(
 
 	override fun isEditable(): Boolean = true
 
-	override fun writeToBean(force: Boolean) {
+	override fun writeToBeans(force: Boolean) {
 		dslError?.let { throw it }
-		super.writeToBean(force)
+		super.writeToBeans(force)
 	}
 
 	override fun readFromObject(bean: Any?) {

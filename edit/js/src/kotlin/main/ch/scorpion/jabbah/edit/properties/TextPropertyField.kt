@@ -6,7 +6,6 @@ import com.ccfraser.muirwik.components.input.mInput
 import com.ccfraser.muirwik.components.input.margin
 import com.ccfraser.muirwik.components.targetInputValue
 import react.RBuilder
-import react.child
 import react.functionalComponent
 import react.useState
 
@@ -17,7 +16,7 @@ interface TextPropertyProps<T> : PropertyProps<T> {
 }
 
 val jmTextField = functionalComponent<TextPropertyProps<String>>("TextField") { props ->
-	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
+	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds.map { it.toString() }))
 	val (value, setValue) = useState(oldValue)
 	mInput(
 		value,
@@ -52,7 +51,7 @@ fun RBuilder.jmTextField(
 		this.editor = editor
 		this.getter = getter
 		this.setter = setter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.disabled = disabled
 		this.beanProvider = beanProvider
 		this.multiline = multiline

@@ -14,7 +14,7 @@ fun predefinedColorField(
 	displayName: String? = null,
 	provider: PredefinedColorProvider
 ): FunctionalComponent<PropertyProps<PredefinedColor?>> = functionalComponent(displayName) { props ->
-	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds))
+	var oldValue = props.getter(props.beanProvider(props.editor, props.beanIds.map { it }))
 	val (value, setValue) = useState(oldValue)
 
 	mSelect(value?.name ?: "none", onChange = { e, _ ->
@@ -44,7 +44,7 @@ fun RBuilder.jmPredefinedColorField(
 		this.editor = editor
 		this.getter = getter
 		this.setter = setter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.beanProvider = beanProvider
 		handler()
 	}

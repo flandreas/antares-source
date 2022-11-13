@@ -27,14 +27,14 @@ class WireTapViewBeanInfo : DigitalComponentBeanInfo<WireTapView>() {
 
 		val connected = bean.model.isConnected
 
-		properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
-		properties.add(outputBitWidth.bind(editor, bean.id, editable = !connected, filter = { it.width <= bean.bitWidth.width }))
-		properties.add(handedness.bind(editor, bean.id, editable = !connected))
-		properties.add(portViewSpacing.bind(editor, bean.id))
-		properties.add(outputCount.bind(editor, bean.id, filter = { it.count >= 1 }))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id), editable = !connected))
+		properties.add(outputBitWidth.bind(editor, beanIdProvider(bean.id), editable = !connected, filter = { it.width <= bean.bitWidth.width }))
+		properties.add(handedness.bind(editor, beanIdProvider(bean.id), editable = !connected))
+		properties.add(portViewSpacing.bind(editor, beanIdProvider(bean.id)))
+		properties.add(outputCount.bind(editor, beanIdProvider(bean.id), filter = { it.count >= 1 }))
 
 		for (i in 0 until bean.tapCount.count) {
-			properties.add(tapPosition[i].bind(editor, bean.id))
+			properties.add(tapPosition[i].bind(editor, beanIdProvider(bean.id)))
 		}
 	}
 }

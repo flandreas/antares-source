@@ -12,7 +12,9 @@ import com.l2fprod.common.propertysheet.Property
 class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 
 	companion object {
-		private val usecaseBeanProvider: BeanProvider = { e, ids -> (e.drawing as GraphView).usecases.get(ids[0]) as Bean }
+		private val usecaseBeanProvider: BeanProvider = { e, ids ->
+			listOf((e.drawing as GraphView).usecases.get(ids.iterator().next().toInt()) as Bean)
+		}
 
 		private val name = EditProperties.name(baseKey = "graph.property.usecase.name", beanProvider = usecaseBeanProvider)
 		private val description = EditProperties.description(beanProvider = usecaseBeanProvider)
@@ -26,9 +28,9 @@ class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 		val testScript = EditProperties.script("testScriptProperty", "graph.property.usecase.testScript",
 			beanProvider = usecaseBeanProvider, bean::createParser)
 
-		properties.add(name.bind(editor, bean.id))
-		properties.add(description.bind(editor, bean.id))
-		properties.add(execScript.bind(editor, bean.id))
-		properties.add(testScript.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
+		properties.add(description.bind(editor, beanIdProvider(bean.id)))
+		properties.add(execScript.bind(editor, beanIdProvider(bean.id)))
+		properties.add(testScript.bind(editor, beanIdProvider(bean.id)))
 	}
 }

@@ -23,7 +23,7 @@ fun RBuilder.jmInputCount(
 	attrs {
 		this.editor = editor
 		this.getter = getter
-		this.beanIds = listOf(beanId)
+		this.beanIds = listOf(beanId.toString())
 		this.beanProvider = beanProvider
 		handler()
 	}

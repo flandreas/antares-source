@@ -21,9 +21,9 @@ class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 	override fun addProperties(bean: DipSwitchView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, bean.id))
-		properties.add(bitWidth.bind(editor, bean.id))
-		properties.add(initialValue.bind(editor, bean.id))
-		properties.add(retainValue.bind(editor, bean.id))
+		properties.add(name.bind(editor, beanIdProvider(bean.id)))
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(initialValue.bind(editor, beanIdProvider(bean.id)))
+		properties.add(retainValue.bind(editor, beanIdProvider(bean.id)))
 	}
 }

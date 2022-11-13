@@ -25,7 +25,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
         super.addProperties(bean, editor, properties)
 
 	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean.graph!!::createParser)
-	    val ids = listOf<Int>()
+	    val ids = listOf<String>()
 
 	    properties.add(name.bind(editor, ids, filter = { false }))
 	    properties.add(propDelay.bind(editor, ids))

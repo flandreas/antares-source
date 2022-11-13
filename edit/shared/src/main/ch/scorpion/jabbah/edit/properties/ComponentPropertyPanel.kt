@@ -1,5 +1,6 @@
-package ch.scorpion.jabbah.edit.ui
+package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -57,6 +58,13 @@ class ComponentPropertyPanelController(
 
 	override val defaultBean: Any? get() = if (editor.active) editor.drawing else null
 
+	override fun getDefinedDescription(description: String): String =
+		if (bean is MultiSelection) {
+			Translations.getString("edit.property.bean.multiSelect", description)
+		} else {
+			super.getDefinedDescription(description)
+		}
+
 	/** ---- [ComponentPropertyPanelController] */
 
 	override fun handleBeanChangedHandler(oldValue: Any?) {
@@ -89,6 +97,13 @@ class ComponentPropertyPanelController(
 	private fun getSelectedComponent(event: SelectionChangeEvent): Component? {
 		if (event.components.size == 1) {
 			return event.components.iterator().next()
+		}
+		return possibleMultiSelection(event.components)
+	}
+
+	private fun possibleMultiSelection(components: Collection<Component>): MultiSelection? {
+		if (components.all { it::class === components.first()::class }) {
+			return MultiSelection(components)
 		}
 		return null
 	}

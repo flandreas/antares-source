@@ -22,10 +22,10 @@ class TunnelViewBeanInfo : DigitalComponentBeanInfo<TunnelView>() {
 
 	    val tunnelNameProperty = TunnelNameProperty((editor.drawing as GraphView).graph!! as DigitalGraph, "tunnelName", BASE_KEY_NAME, componentBeanProvider)
 
-	    properties.add(tunnelNameProperty.bind(editor, bean.id))
-	    properties.add(bitWidth.bind(editor, bean.id))
+	    properties.add(tunnelNameProperty.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	    if (TunnelView.face == TunnelViewFace.ARROW) {
-		    properties.add(flowDirection.bind(editor, bean.id))
+		    properties.add(flowDirection.bind(editor, beanIdProvider(bean.id)))
 	    }
     }
 }

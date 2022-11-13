@@ -15,6 +15,6 @@ class KeyboardViewBeanInfo : VerticeViewBeanInfo<KeyboardView>() {
 
 	override fun addProperties(bean: KeyboardView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(bufferSize.bind(editor, bean.id))
+		properties.add(bufferSize.bind(editor, beanIdProvider(bean.id)))
 	}
 }
