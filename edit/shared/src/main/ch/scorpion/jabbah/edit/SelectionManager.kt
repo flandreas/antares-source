@@ -81,6 +81,13 @@ interface SelectionManager {
 	 * Does nothing if the [Drawing] is empty.
 	 */
 	fun selectPrevious()
+
+	/**
+	 * Replaces the current selection (if any) with the [Component]s that fulfill [condition].
+	 * Sends a [SelectionChangeEvent.Type.DESELECTED] event (if anything was deselected)
+	 * followed by a [SelectionChangeEvent.Type.SELECTED] event (if anything was selected).
+	 */
+	fun replace(condition: (Component) -> Boolean)
 }
 
 /**

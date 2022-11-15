@@ -172,6 +172,22 @@ class SelectionManagerImpl(
 		}
 	}
 
+	override fun replace(condition: (Component) -> Boolean) {
+		val currentSelection = selection
+		val toDeselect = mutableListOf<Component>()
+		val toSelect = mutableListOf<Component>()
+
+		currentSelection.filter { !condition(it) }.forEach { toDeselect.add(it) }
+		content.drawing.getDrawables { condition(it) }.forEach { toSelect.add(it) }
+
+		if (toDeselect.isNotEmpty()) {
+			deselect(toDeselect)
+		}
+		if (toSelect.isNotEmpty()) {
+			select(toSelect)
+		}
+	}
+
 	/** ---- [SelectionManagerImpl] */
 
 	private fun canSelect(component: Component): Boolean {

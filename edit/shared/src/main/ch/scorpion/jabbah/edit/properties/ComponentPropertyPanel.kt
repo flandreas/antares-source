@@ -83,7 +83,7 @@ class ComponentPropertyPanelController(
 			return
 		}
 
-		bean = if (event.type !== SelectionChangeEvent.Type.SELECTED) {
+		bean = if (editor.view.selectionManager.selection.isEmpty()) {
 			if (editor.active) {
 				editor.view.drawing
 			} else {
@@ -95,10 +95,12 @@ class ComponentPropertyPanelController(
 	}
 
 	private fun getSelectedComponent(event: SelectionChangeEvent): Component? {
-		if (event.components.size == 1) {
-			return event.components.iterator().next()
+		val currentSelection = event.view.selectionManager.selection
+		return when (currentSelection.size) {
+			0 -> null
+			1 -> currentSelection.first()
+			else -> possibleMultiSelection(currentSelection)
 		}
-		return possibleMultiSelection(event.components)
 	}
 
 	private fun possibleMultiSelection(components: Collection<Component>): MultiSelection? {

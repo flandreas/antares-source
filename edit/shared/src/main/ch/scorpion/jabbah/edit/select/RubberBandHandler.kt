@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.SelectionManager
 
 /**
  * Handles [RubberBand] interactions and selects [Component]s while rubberbanding, or after rubberbanding is done,
@@ -24,18 +25,11 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
         SELECT_ON_DRAG {
 
 	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
-		        selection.clear()
+				captureCurrentSelection(context.drawingView().selectionManager)
 	        }
 
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
-                // TODO This is a pretty inefficient solution that turns the CPU crazy due to heavy
-                // repainting and calculation load. Check if there is a more efficient solution.
-	            context.drawingView().selectionManager.deselect(selection)
-	            selection.clear()
-                context.drawingView().drawing.drawables
-                    .filter { it.visible && rubberBand.contains(it.boundingBox) }
-                    .forEach { selection.add(it) }
-                context.drawingView().selectionManager.select(selection)
+				selectWithin(rubberBand, context.drawingView().selectionManager)
             }
 
             override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
@@ -47,25 +41,34 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
         SELECT_ON_RELEASE {
 
 	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
-		        // empty
+		        captureCurrentSelection(context.drawingView().selectionManager)
 	        }
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
                 // empty
             }
 
             override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
-                context.drawingView().drawing.drawables
-                    .filter { it.visible && rubberBand.contains(it.boundingBox) }
-                    .forEach { context.drawingView().selectionManager.select(it) }
+				selectWithin(rubberBand, context.drawingView().selectionManager)
             }
         };
 
-        /** Holds the current selection that is updated in the [SELECT_ON_DRAG] strategy.*/
-        val selection = mutableListOf<Component>()
+	    protected val currentSelection = mutableListOf<Component>()
 
 	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext)
         abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext)
         abstract fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext)
+
+		protected fun captureCurrentSelection(selectionManager: SelectionManager) {
+			// The SelectionTool makes sure that the currentSelection is empty if SHIFT is pressed
+			currentSelection.clear()
+			currentSelection.addAll(selectionManager.selection)
+		}
+
+	    protected fun selectWithin(rubberBand: RubberBand, selectionManager: SelectionManager) {
+		    selectionManager.replace {
+			    currentSelection.contains(it) || (it.visible && rubberBand.contains(it.boundingBox))
+		    }
+		}
 
     }
 
