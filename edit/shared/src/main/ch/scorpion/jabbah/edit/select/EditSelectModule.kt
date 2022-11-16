@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.graphics.LineJoin
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
- * Module definitions for the [jabbah.edit.select] module.
+ * Module definitions for the [ch.scorpion.jabbah.edit.select] module.
  */
 object EditSelectModule : AbstractModule() {
 
@@ -50,6 +50,7 @@ object EditSelectModule : AbstractModule() {
         BaseModule.properties.set(RubberBand.PROP_FILL_PAINT, Color(255, 200, 0, 32))
         BaseModule.properties.set(RubberBand.PROP_STROKE, Stroke(0.1f, LineCap.SQUARE, LineJoin.MITER, 10.0f, floatArrayOf(5f, 5f), 0f))
         BaseModule.properties.set(RubberBandHandler.PROP_SELECT_STRATEGY, RubberBandHandler.SelectionStrategy.SELECT_ON_DRAG)
+	    BaseModule.properties.set(RubberBandHandler.PROP_SELECT_DELAY_MS, 200)
 
         BaseModule.properties.set(Handle.PROP_SIZE_HALF, 4)
         BaseModule.properties.set(Handle.PROP_BORDER_COLOR, Color.BLACK)

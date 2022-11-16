@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.edit.select.RubberBandHandler
+
 /**
  * A [Tool] for selecting [Component]s in a [Drawing] and for moving selected [Component]s around.
  *
@@ -8,7 +10,10 @@ package ch.scorpion.jabbah.edit
  * for creating and registering appropriate [Command]s when moving [Component]s.
  */
 interface SelectionTool : Tool {
+
 	override val enabledInUneditableView: Boolean get() = true
+
+	val rubberBandHandler: RubberBandHandler
 }
 
 /** A factory that creates a [SelectionTool] for an [Editor].*/

@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
  */
 class SelectionToolImpl(
 	editor: Editor,
-	private val rubberBandHandler: RubberBandHandler,
+	override val rubberBandHandler: RubberBandHandler,
 	eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
