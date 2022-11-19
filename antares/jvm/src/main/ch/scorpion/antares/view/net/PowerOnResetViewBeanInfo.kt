@@ -2,14 +2,14 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused") // Reflection
-class PowerOnResetViewBeanInfo : DigitalComponentBeanInfo<PowerOnResetView>() {
+class PowerOnResetViewBeanInfo : DigitalComponentViewBeanInfo<PowerOnResetView>() {
 
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()

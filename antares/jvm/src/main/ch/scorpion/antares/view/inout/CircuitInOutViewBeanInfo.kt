@@ -5,15 +5,15 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
+class CircuitInOutViewBeanInfo : AbstractComponentBeanInfo<CircuitInOutView>() {
 
     companion object {
 	    private val modelId = GraphProperties.modelId()

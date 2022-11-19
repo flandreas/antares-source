@@ -2,14 +2,14 @@ package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
 /** Base class for implementing [BeanInfo]s for subclasses of [AbstractVerticeView]s*/
-open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T>() {
+open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : AbstractComponentBeanInfo<T>() {
 
 	companion object {
 		private val modelId = GraphProperties.modelId()

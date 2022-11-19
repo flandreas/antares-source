@@ -133,8 +133,6 @@ class GraphElementViewWrapper(
 
 	override val propertyOwner: Any get() = _component!!.propertyOwner
 
-	override val beanInfoClassName: String? get() = _component!!.beanInfoClassName
-
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = _component!!.preferredSelectionDrawingStrategy
 		set(value) {

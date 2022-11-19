@@ -2,16 +2,16 @@ package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImpl>() {
+class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVerticeViewImpl>() {
 
     companion object {
 	    private val modelId = GraphProperties.modelId()

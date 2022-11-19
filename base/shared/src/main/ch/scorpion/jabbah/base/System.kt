@@ -26,6 +26,9 @@ expect object System {
 
     fun getClass(obj: Any): KClass<*>
 
+	/** Returns the nearest common superclass of all [classes] (excluding interfaces). */
+	fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>?
+
     /** Creates an instance of the specified class by calling its parameterless constructor. */
     fun <T: Any> instantiate(clazz: KClass<T>): T
     

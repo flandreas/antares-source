@@ -9,7 +9,7 @@ import java.beans.BeanInfo
 /**
  * Base class for implementing [BeanInfo]s for [DigitalComponentView]s.
  */
-open class DigitalComponentBeanInfo<T : DigitalComponentView<*>> : VerticeViewBeanInfo<T>() {
+open class DigitalComponentViewBeanInfo<T : DigitalComponentView<*>> : VerticeViewBeanInfo<T>() {
 
 	companion object {
 		private val orientation = EditProperties.orientation()

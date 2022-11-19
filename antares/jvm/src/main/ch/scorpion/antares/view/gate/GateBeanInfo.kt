@@ -3,18 +3,25 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
-import ch.scorpion.antares.view.DigitalGateViewBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
+open class AbstractLogicGateViewBeanInfo<T : AbstractLogicGateView<*>> : AbstractDigitalGateViewBeanInfo<T>()
+
+@Suppress("unused")
+open class AbstractAndLikeGateViewBeanInfo<T : AbstractAndLikeGateView<*>> : AbstractLogicGateViewBeanInfo<T>()
+
+open class AbstractOrLikeGateViewBeanInfo<T : AbstractOrLikeGateView<*>> : AbstractLogicGateViewBeanInfo<T>()
+
+@Suppress("unused")
+class AndGateViewBeanInfo : AbstractAndLikeGateViewBeanInfo<AndGateView>() {
 	companion object {
 		val dataPort = CommandPropertySwing("dataPort", AndGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
 	}
@@ -26,7 +33,7 @@ class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 }
 
 @Suppress("unused")
-class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
+class BufferGateViewBeanInfo : DigitalComponentViewBeanInfo<BufferGateView>() {
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
 	}
@@ -37,7 +44,7 @@ class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 }
 
 @Suppress("unused")
-class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
+class DelayGateViewBeanInfo : AbstractComponentBeanInfo<DelayGateView>() {
 	companion object {
 		private val delay = CommandPropertySwing("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
@@ -54,13 +61,13 @@ class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 }
 
 @Suppress("unused")
-class NandGateViewBeanInfo : DigitalGateViewBeanInfo<NandGateView>()
+class NandGateViewBeanInfo : AbstractAndLikeGateViewBeanInfo<NandGateView>()
 
 @Suppress("unused")
-class NorGateViewBeanInfo : DigitalGateViewBeanInfo<NorGateView>()
+class NorGateViewBeanInfo : AbstractOrLikeGateViewBeanInfo<NorGateView>()
 
 @Suppress("unused")
-class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>() {
+class NotGateViewBeanInfo : DigitalComponentViewBeanInfo<NotGateView>() {
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
 	}
@@ -71,10 +78,10 @@ class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>() {
 }
 
 @Suppress("unused")
-class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
+class OrGateViewBeanInfo : AbstractOrLikeGateViewBeanInfo<OrGateView>()
 
 @Suppress("unused")
-class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
+class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBufferGateView>() {
 	companion object {
 		val enableLogic = CommandPropertySwing("enableLogic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
@@ -91,7 +98,7 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGa
 }
 
 @Suppress("unused")
-class XnorGateViewBeanInfo : DigitalGateViewBeanInfo<XnorGateView>()
+class XnorGateViewBeanInfo : AbstractDigitalGateViewBeanInfo<XnorGateView>()
 
 @Suppress("unused")
-class XorGateViewBeanInfo : DigitalGateViewBeanInfo<XorGateView>()
+class XorGateViewBeanInfo : AbstractDigitalGateViewBeanInfo<XorGateView>()

@@ -2,15 +2,15 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import com.l2fprod.common.propertysheet.Property
 
-open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
+open class EdgeViewImplBeanInfo : AbstractComponentBeanInfo<EdgeViewImpl<*>>() {
 
 	companion object {
 		private val modelId = GraphProperties.modelId()

@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.output
 
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class BuzzerViewBeanInfo : DigitalComponentBeanInfo<BuzzerView>() {
+class BuzzerViewBeanInfo : DigitalComponentViewBeanInfo<BuzzerView>() {
 
 	companion object {
 		val waveformType = CommandPropertySwing("waveformType", BuzzerView.BASE_KEY_WAVEFORM, WaveformType::class.java, componentBeanProvider)

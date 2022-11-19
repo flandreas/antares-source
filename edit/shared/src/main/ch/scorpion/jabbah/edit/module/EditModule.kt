@@ -35,6 +35,7 @@ import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.EditSnapModule
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -106,5 +107,6 @@ object EditModule : AbstractModule() {
 		properties.set(AttentionDrawerImpl.PROP_DURATION, 500.0f)
 		properties.set(AttentionDrawerImpl.PROP_MAX_RADIUS, 30.0f)
 		properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 10)
+		properties.set(ComponentPropertyPanelController.PROP_MAX_MULTI_SELECT_COUNT, 8)
 	}
 }

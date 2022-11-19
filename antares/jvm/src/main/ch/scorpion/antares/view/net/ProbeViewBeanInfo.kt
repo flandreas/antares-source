@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
+class ProbeViewBeanInfo : DigitalComponentViewBeanInfo<ProbeView>() {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()

@@ -12,6 +12,8 @@ import java.beans.PropertyDescriptor
 import javax.swing.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 
 /**
@@ -158,40 +160,47 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	protected fun loadProperties(bean: Any) {
-		loadProperties(bean, createBeanClassPath(bean))
-	}
-
-	private fun loadProperties(bean: Any, classPath: String) {
 		try {
 			sheet.removePropertySheetChangeListener(propertyStorer)
 
-			val beanInfo = createBeanInfo(bean, classPath)
-			sheet.properties = beanInfo.getProperties(bean, controller.editor)
+			val beanInfoBean = getBeanInfoBean(bean)
+			val beanInfo = createBeanInfo(beanInfoBean)
+			if (beanInfo != null) {
+				sheet.properties = beanInfo.getProperties(beanInfoBean, controller.editor)
 
-			// Avoid triggering property change login while bean properties are loaded
-			propertyObject = null
+				// Avoid triggering property change login while bean properties are loaded
+				propertyObject = null
 
-			sheet.readFromObject(getReadSourceBean(bean))
+				sheet.readFromObject(getReadSourceBean(bean))
 
-			adjustTableHeights(sheet.table)
-			propertyObject = bean
-			updateLabel()
+				adjustTableHeights(sheet.table)
+				propertyObject = bean
+				updateLabel()
+			} else {
+				clearProperties()
+			}
 		} catch (e: Throwable) {
-			LOG.warn("Could not instantiate Properties for $classPath: Exception $e")
+			LOG.warn("Could not instantiate Properties for ${bean::class.qualifiedName}: Exception $e")
 			clearProperties()
 		} finally {
 			sheet.addPropertySheetChangeListener(propertyStorer)
 		}
 	}
 
-	protected open fun createBeanClassPath(bean: Any): String = bean.javaClass.name + "BeanInfo"
+	protected open fun createBeanInfo(bean: Any): AbstractBeanInfo<Any>? =
+		createBeanInfo(getBeanInfoClass(bean))
 
-	protected open fun createBeanInfo(bean: Any, classPath: String): AbstractBeanInfo<Any> {
-		val beanInfoClass = Class.forName(classPath)
-		LOG.trace("updating properties for $beanInfoClass")
+	private fun getBeanInfoClass(bean: Any): KClass<*> = getBeanInfoClass(bean::class)
+
+	protected fun getBeanInfoClass(beanClass: KClass<*>): KClass<*> =
+		Class.forName(beanClass.java.name + "BeanInfo").kotlin
+
+	protected fun createBeanInfo(clazz: KClass<*>): AbstractBeanInfo<Any> {
 		@Suppress("UNCHECKED_CAST")
-		return beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
+		return clazz.primaryConstructor!!.call() as AbstractBeanInfo<Any>
 	}
+
+	protected open fun getBeanInfoBean(bean: Any): Any = bean
 
 	/** Returns the bean from which property values are read. */
 	protected open fun getReadSourceBean(bean: Any): Any = bean
@@ -224,7 +233,7 @@ abstract class AbstractPropertyPanelSwing(
 				table.setRowHeight(row, min(60, rowHeight))
 			}
 		} catch (e: ClassCastException) {
-			println("Exception while adjusting PropertySheetTable heights")
+			LOG.error("Exception while adjusting PropertySheetTable heights")
 		}
 	}
 

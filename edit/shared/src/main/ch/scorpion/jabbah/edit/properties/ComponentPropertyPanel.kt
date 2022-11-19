@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -19,8 +21,15 @@ interface ComponentPropertyPanel : PropertyPanel
  */
 class ComponentPropertyPanelController(
 	editor: Editor,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val properties: Properties = BaseModule.properties
 ) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor) {
+
+	companion object {
+		const val PROP_MAX_MULTI_SELECT_COUNT = "ComponentPropertyPanelController.maxMultiSelectCount"
+	}
+
+	private val maxMultiSelectCount: Int by lazy { properties.getInt(PROP_MAX_MULTI_SELECT_COUNT) }
 
 	private val selectionChangeHandler: EventHandler<SelectionChangeEvent> = { handle(it) }
 
@@ -60,7 +69,13 @@ class ComponentPropertyPanelController(
 
 	override fun getDefinedDescription(description: String): String =
 		if (bean is MultiSelection) {
-			Translations.getString("edit.property.bean.multiSelect", description)
+			(bean as MultiSelection).let {
+				if (it.commonType === it.selection.first()::class) {
+					Translations.getString("edit.property.bean.multiSelect", description)
+				} else {
+					Translations.getString("edit.property.bean.multiVarious")
+				}
+			}
 		} else {
 			super.getDefinedDescription(description)
 		}
@@ -104,10 +119,20 @@ class ComponentPropertyPanelController(
 	}
 
 	private fun possibleMultiSelection(components: Collection<Component>): MultiSelection? {
-		if (components.all { it::class === components.first()::class }) {
-			return MultiSelection(components)
+		require(components.size > 1)
+
+		if (components.size > maxMultiSelectCount) {
+			return null
 		}
-		return null
+
+		// Optimization: Avoid expensive common superclass calculation if all have the same type
+		if (components.map { it.propertyOwner }.all { it::class === components.first()::class }) {
+			return MultiSelection(components, components.first().propertyOwner::class)
+		}
+
+		return System.commonSuperClass(components.map { it.propertyOwner::class })?.let {
+			MultiSelection(components, it)
+		}
 	}
 
 	private inner class PropertyListener : DrawableAdapter() {

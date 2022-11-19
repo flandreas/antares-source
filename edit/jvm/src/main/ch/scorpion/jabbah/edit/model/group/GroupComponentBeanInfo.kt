@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.edit.model.group
 
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 
 @Suppress("unused")
-class GroupComponentBeanInfo : ComponentBeanInfo<GroupComponent>()
+class GroupComponentBeanInfo : AbstractComponentBeanInfo<GroupComponent>()

@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class OscilloscopeProbeVerticeViewBeanInfo : ComponentBeanInfo<OscilloscopeProbeVerticeView<Any>>() {
+class OscilloscopeProbeVerticeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeProbeVerticeView<Any>>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()

@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SwitchViewBeanInfo : DigitalComponentBeanInfo<SwitchView>(), ControlViewBeanInfo {
+class SwitchViewBeanInfo : DigitalComponentViewBeanInfo<SwitchView>(), ControlViewBeanInfo {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()

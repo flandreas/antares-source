@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
 
 /** A [BeanInfo] for [RectangularComponent]. */
-abstract class RectangularComponentBeanInfo<T: RectangularComponent> : ComponentBeanInfo<T>() {
+open class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractComponentBeanInfo<T>() {
 
     companion object {
 	    private val filled = EditProperties.filled()

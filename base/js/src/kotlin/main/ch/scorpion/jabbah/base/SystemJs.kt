@@ -46,6 +46,9 @@ actual object System {
 		return obj::class
 	}
 
+	/** Not yet implemented on the JS platform. */
+	actual fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>? = null
+
 	actual fun <T : Any> instantiate(clazz: KClass<T>): T {
 		return clazz.js.newInstance()
 	}

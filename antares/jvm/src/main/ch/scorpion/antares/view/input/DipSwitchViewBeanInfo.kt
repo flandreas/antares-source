@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
+class DipSwitchViewBeanInfo : DigitalComponentViewBeanInfo<DipSwitchView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()

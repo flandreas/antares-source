@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 import javax.swing.JPanel
 
@@ -11,6 +12,10 @@ class ComponentPropertyPanelSwing(
 	scope: String,
 	sheetFactory: PropertySheetPanelFactory
 ) : AbstractPropertyPanelSwing(controller, scope, sheetFactory), ComponentPropertyPanel {
+
+	companion object {
+		private val LOG by logger(ComponentPropertyPanelSwing::class)
+	}
 
 	init {
 		controller.view = this
@@ -30,19 +35,21 @@ class ComponentPropertyPanelSwing(
 		}
 	}
 
-	override fun createBeanInfo(bean: Any, classPath: String): AbstractBeanInfo<Any> =
-		if (bean is MultiSelection) {
-			var delegateBean: Any = bean.selection.first()
-			if (delegateBean is Component) {
-				delegateBean = delegateBean.propertyOwner
+	override fun createBeanInfo(bean: Any): AbstractBeanInfo<Any>? {
+		return if (bean is MultiSelection) {
+			try {
+				val delegateBeanInfo = createBeanInfo(getBeanInfoClass(bean.commonType))
+				val beanInfo = MultiSelectionBeanInfo(delegateBeanInfo) as AbstractBeanInfo<Any>
+				delegateBeanInfo.beanIdProvider = { bean.selection.map { it.id.toString() } }
+				beanInfo
+			} catch (e: Throwable) {
+				LOG.trace("No BeanInfo found for MultiSelection commonType ${bean.commonType.qualifiedName}")
+				null
 			}
-			val delegateBeanInfo = super.createBeanInfo(delegateBean, createBeanClassPath(delegateBean))
-			val beanInfo = MultiSelectionBeanInfo(delegateBeanInfo) as AbstractBeanInfo<Any>
-			delegateBeanInfo.beanIdProvider = { bean.selection.map { it.id.toString() }}
-			beanInfo
 		} else {
-			super.createBeanInfo(bean, classPath)
+			super.createBeanInfo(bean)
 		}
+	}
 
 	override fun getReadSourceBean(bean: Any): Any =
 		if (bean is MultiSelection) {
@@ -51,17 +58,8 @@ class ComponentPropertyPanelSwing(
 			bean
 		}
 
-	override fun createBeanClassPath(bean: Any): String {
-		return if (bean is Component) {
-			if (bean.beanInfoClassName != null) {
-				bean.beanInfoClassName!!
-			} else {
-				super.createBeanClassPath(bean)
-			}
-		} else {
-			super.createBeanClassPath(bean)
-		}
-	}
+	override fun getBeanInfoBean(bean: Any): Any =
+		if (bean is Component) bean.propertyOwner else bean
 
 	/** ---- [ComponentPropertyPanelSwing] */
 

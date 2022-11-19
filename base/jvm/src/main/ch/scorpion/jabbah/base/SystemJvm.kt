@@ -29,6 +29,8 @@ actual object System {
 
 	actual fun getClassName(obj: Any): String = obj.javaClass.name
 
+	actual fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>? = Inheritance.commonSuperClass(classes)
+
 	actual fun getClass(obj: Any): KClass<*> = obj.javaClass.kotlin
 
 	actual fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()

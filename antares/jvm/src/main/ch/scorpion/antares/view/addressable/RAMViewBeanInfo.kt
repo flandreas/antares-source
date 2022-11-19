@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
+class RAMViewBeanInfo : DigitalComponentViewBeanInfo<RAMView>() {
 
     companion object {
 	    private val addressBitWidth = AntaresProperties.bitWidth("addressWidth", "element.property.addressBitWidth")

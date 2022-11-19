@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class LookupTableViewBeanInfo : DigitalComponentBeanInfo<LookupTableView>() {
+class LookupTableViewBeanInfo : DigitalComponentViewBeanInfo<LookupTableView>() {
 
 	companion object {
 		private val addressBitWidth = AntaresProperties.bitWidth("addressWidth", "element.property.addressBitWidth")

@@ -1,13 +1,13 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
+class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
 
     companion object {
 	    private val periodOrFrequency = CommandPropertySwing("periodOrFrequency", "element.property.ClockView.periodOrFrequency", String::class.java, componentBeanProvider)

@@ -1,14 +1,14 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class TransistorViewBeanInfo : DigitalComponentBeanInfo<TransistorView>() {
+class TransistorViewBeanInfo : DigitalComponentViewBeanInfo<TransistorView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()

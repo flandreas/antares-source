@@ -1,14 +1,17 @@
-package ch.scorpion.antares.view
+package ch.scorpion.antares.view.gate
 
+import ch.scorpion.antares.view.AntaresProperties
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.antares.view.app.InputCountPropertySwing
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
-import ch.scorpion.antares.view.gate.AbstractLogicGateView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
-open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalComponentBeanInfo<T>() {
+open class BoxGateViewBeanInfo<T : BoxGateView<*>> : DigitalComponentViewBeanInfo<T>()
+
+/** Names Abstract.. to be in sync with [AbstractDigitalGateView] to support reflective instantiation. */
+open class AbstractDigitalGateViewBeanInfo<T : AbstractDigitalGateView<*>> : BoxGateViewBeanInfo<T>() {
 
     companion object {
 	    private val inputCount = InputCountPropertySwing(componentBeanProvider)

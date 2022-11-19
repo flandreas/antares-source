@@ -7,13 +7,15 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
+import kotlin.reflect.KClass
 
 /**
  * An object that combines multiple selected [Components][Component] of the same type in order to allow
  * the user to edit one property for all these objects in one go.
  */
 data class MultiSelection(
-	val selection: Collection<Component>
+	val selection: Collection<Component>,
+	val commonType: KClass<*>
 ) : AbstractComponent(), Bean {
 
 	init {

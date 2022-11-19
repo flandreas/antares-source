@@ -70,13 +70,6 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	val propertyOwner: Any
 
 	/**
-	 * Returns the fully qualified class name to be used for instantiating the bean info object used
-	 * for property sheets. If `null`, the class name is derived from the property owner's class
-	 * be appending "BeanInfo" to its class name.
-	 */
-	val beanInfoClassName: String? get() = null
-
-	/**
 	 * Returns the preferred strategy of how this [Component] likes to render its selection state.
 	 * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
 	 */

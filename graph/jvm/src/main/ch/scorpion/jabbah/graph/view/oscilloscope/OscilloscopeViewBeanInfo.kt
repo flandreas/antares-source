@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class OscilloscopeViewBeanInfo : ComponentBeanInfo<OscilloscopeView>() {
+class OscilloscopeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeView>() {
 
     companion object {
 	    private val scale = CommandPropertySwing("timelineScale", "graph.property.oscilloscopeScale", Double::class.java, componentBeanProvider)

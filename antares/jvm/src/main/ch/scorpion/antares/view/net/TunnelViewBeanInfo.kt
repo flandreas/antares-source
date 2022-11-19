@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_NAME
@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class TunnelViewBeanInfo : DigitalComponentBeanInfo<TunnelView>() {
+class TunnelViewBeanInfo : DigitalComponentViewBeanInfo<TunnelView>() {
 
     companion object {
 	    private val bitWidth = AntaresProperties.bitWidth()

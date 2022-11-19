@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.view.AntaresProperties
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
+import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class PowerViewBeanInfo : DigitalComponentBeanInfo<PowerView>() {
+class PowerViewBeanInfo : DigitalComponentViewBeanInfo<PowerView>() {
 
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
