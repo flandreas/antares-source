@@ -52,8 +52,11 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
 
-		for (inputPort in model.getInputs()) {
-			addPortView(createInputPortView(inputPort as Port<DigitalSignal>))
+		val inputs = model.getInputs()
+		for (i in inputs.indices) {
+			val portView = createInputPortView(inputs[i] as Port<DigitalSignal>)
+			portView.showBitWidthAnnotation = inputs.size <= 2 || i == inputs.size - 1
+			addPortView(portView)
 		}
 		addPortView(createOutputPortView(model.getOutput()))
 
