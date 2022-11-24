@@ -20,7 +20,7 @@ class CurrentSymbolStyle(
         set(value) {
             if (field != value) {
                 field = value
-	            BaseModule.properties.set(SymbolStyle.PROP_SYMBOL_STYLE, field.customName)
+	            BaseModule.properties.customize(SymbolStyle.PROP_SYMBOL_STYLE, field.customName)
                 eventBus.post(CurrentSymbolStyleChangedEvent(field))
             }
         }
