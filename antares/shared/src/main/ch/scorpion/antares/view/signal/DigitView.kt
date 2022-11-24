@@ -36,6 +36,7 @@ class DigitView(
         const val WIDTH = 20
         const val HEIGHT = 20
         val FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+	    private val INACTIVE_TEXT = FormattedText("-", textWithOverline = "-")
     }
 
     /** Controls whether this [DigitView] has the focus and should draw a focus border.*/
@@ -111,7 +112,7 @@ class DigitView(
         })
 
 	    if (isOn && inactive) {
-		    label.draw(FormattedText("-", textWithOverline = "-"), context)
+		    label.draw(INACTIVE_TEXT, context)
 	    } else {
 		    label.draw(context)
 	    }
