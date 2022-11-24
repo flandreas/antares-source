@@ -26,7 +26,7 @@ class AnimatorImpl(
 	private companion object {
 		val LOG by logger(AnimatorImpl::class)
 		// The default animation pulse in milliseconds
-		const val DEFAULT_PERIOD = 40
+		const val DEFAULT_PERIOD = 20
 	}
 
 	/** Listens for started and isEnded [AnimationTask] of this [AnimatorImpl]. Visible for testing.*/
