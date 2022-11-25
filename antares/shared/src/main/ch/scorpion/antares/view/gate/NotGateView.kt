@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -44,6 +45,8 @@ class NotGateView(
 		set(value) {
 			model.bitWidth = value
 		}
+
+	override val symbolFont: Font get() = currentSymbolStyle.symbolStyle.getFont(font)
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<RectangularDrawable> =
 		explanation.value.also {

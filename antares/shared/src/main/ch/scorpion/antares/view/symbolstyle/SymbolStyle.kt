@@ -13,11 +13,9 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.Paint
-import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
@@ -38,7 +36,15 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
+		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
+		}
+
 		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
@@ -81,18 +87,23 @@ enum class SymbolStyle(
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 		}
-
-		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke)
-		}
 	},
 
 	AMERICAN("ANSI") {
+
 		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
+		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
+		}
+
 		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
@@ -119,6 +130,58 @@ enum class SymbolStyle(
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
+	},
+
+	VERBOSE("Verbose") {
+
+		private val andText = FormattedText("AND", textWithOverline = "AND")
+		private val orText = FormattedText("OR", textWithOverline = "OR")
+		private val notText = FormattedText("NOT", textWithOverline = "NOT")
+		private val nandText = FormattedText("NAND", textWithOverline = "NAND")
+		private val norText = FormattedText("NOR", textWithOverline = "NOR")
+		private val xorText = FormattedText("XOR", textWithOverline = "XOR")
+		private val xnorText = FormattedText("XNOR", textWithOverline = "XNOR")
+		private val bufferText = FormattedText("Same", textWithOverline = "Same")
+
+		override fun getFont(font: Font): Font = font.deriveFont((font.size * 0.6).toInt())
+
+		override val orShapeConnectedPortViewLength: Int get() = 0
+
+		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, andText)
+		}
+
+		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, nandText)
+		}
+
+		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, orText)
+		}
+
+		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, norText)
+		}
+
+		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, xorText)
+		}
+
+		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, xnorText)
+		}
+
+		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, notText)
+		}
+
+		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
+		}
+
+		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+			EUROPEAN.drawResistor(resistor, context, foregroundColor, backgroundColor, stroke)
+		}
 	};
 
 	companion object {
@@ -220,14 +283,21 @@ enum class SymbolStyle(
 
 			context.g.translate(-x, -y - vOffset)
 		}
+
+		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: FormattedText? = null) {
+			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke, text)
+		}
 	}
 
 	override fun toString(): String {
 		return when (this) {
 			EUROPEAN -> Translations.getString("antares.action.symbolStyle.european.name")
 			AMERICAN -> Translations.getString("antares.action.symbolStyle.american.name")
+			VERBOSE -> Translations.getString("antares.action.symbolStyle.verbose.name")
 		}
 	}
+
+	open fun getFont(font: Font): Font = font
 
 	/**
 	 * Returns the length of OR-shaped input [PortView]s, which is used to adjust lines that lead to the [PortView] when using
@@ -237,7 +307,11 @@ enum class SymbolStyle(
 
 	abstract fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
+	abstract fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+
 	abstract fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+
+	abstract fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 

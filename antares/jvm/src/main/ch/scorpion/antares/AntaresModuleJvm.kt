@@ -317,7 +317,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			id = SymbolStyle.PROP_SYMBOL_STYLE,
 			nameKey = "antares.action.symbolStyle",
 			values = SymbolStyle.values(),
-			withName = SymbolStyle::withName
+			withName = SymbolStyle::withName,
+			needsRestart = true
 		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
 			id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,

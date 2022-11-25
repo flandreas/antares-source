@@ -18,7 +18,7 @@ class NorGateView(
     norGate: NorGate = NorGate()
 ) : AbstractOrLikeGateView<NorGate>(styleProvider, currentSymbolStyle, "≥1", norGate) {
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-        currentSymbolStyle.symbolStyle.drawOrGate(this, context, foregroundColor, backgroundColor, stroke)
+        currentSymbolStyle.symbolStyle.drawNorGate(this, context, foregroundColor, backgroundColor, stroke)
     }
 
 	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {

@@ -24,17 +24,20 @@ abstract class AbstractOrLikeGateView<T : AbstractDigitalGate>(
         get() = when(currentSymbolStyle.symbolStyle) {
             SymbolStyle.AMERICAN -> 2 * Look.SCALE
             SymbolStyle.EUROPEAN -> 0
+            SymbolStyle.VERBOSE -> 0
         }
 
     override val outsetTop: Int
         get() = when(currentSymbolStyle.symbolStyle) {
             SymbolStyle.AMERICAN -> -Look.SCALE
             SymbolStyle.EUROPEAN -> 0
+            SymbolStyle.VERBOSE -> 0
         }
 
     override val outsetBottom: Int
         get() = when(currentSymbolStyle.symbolStyle) {
             SymbolStyle.AMERICAN -> -Look.SCALE
             SymbolStyle.EUROPEAN -> 0
+            SymbolStyle.VERBOSE -> 0
         }
 }

@@ -424,35 +424,67 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(AND,
 			"library.element.AndGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/and.png", SymbolStyle.EUROPEAN to "/img/and-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/and.png",
+				SymbolStyle.EUROPEAN to "/img/and-iec.png",
+				SymbolStyle.VERBOSE to "/img/and-iec.png"
+			))::evaluate,
 			AndGateView::class)
 		repository.register(OR,
 			"library.element.OrGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/or.png", SymbolStyle.EUROPEAN to "/img/or-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/or.png",
+				SymbolStyle.EUROPEAN to "/img/or-iec.png",
+				SymbolStyle.VERBOSE to "/img/or-iec.png"
+			))::evaluate,
 			OrGateView::class)
 		repository.register(NOT,
 			"library.element.NotGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/not.png", SymbolStyle.EUROPEAN to "/img/not-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/not.png",
+				SymbolStyle.EUROPEAN to "/img/not-iec.png",
+				SymbolStyle.VERBOSE to "/img/not-iec.png"
+			))::evaluate,
 			NotGateView::class)
 		repository.register(NAND,
 			"library.element.NandGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/nand.png", SymbolStyle.EUROPEAN to "/img/nand-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/nand.png",
+				SymbolStyle.EUROPEAN to "/img/nand-iec.png",
+				SymbolStyle.VERBOSE to "/img/nand-iec.png"
+			))::evaluate,
 			NandGateView::class)
 		repository.register(NOR,
 			"library.element.NorGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/nor.png", SymbolStyle.EUROPEAN to "/img/nor-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/nor.png",
+				SymbolStyle.EUROPEAN to "/img/nor-iec.png",
+				SymbolStyle.VERBOSE to "/img/nor-iec.png"
+			))::evaluate,
 			NorGateView::class)
 		repository.register(XOR,
 			"library.element.XorGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/xor.png", SymbolStyle.EUROPEAN to "/img/xor-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/xor.png",
+				SymbolStyle.EUROPEAN to "/img/xor-iec.png",
+				SymbolStyle.VERBOSE to "/img/xor-iec.png"
+			))::evaluate,
 			XorGateView::class)
 		repository.register(XNOR,
 			"library.element.XnorGate",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/xnor.png", SymbolStyle.EUROPEAN to "/img/xnor-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/xnor.png",
+				SymbolStyle.EUROPEAN to "/img/xnor-iec.png",
+				SymbolStyle.VERBOSE to "/img/xnor-iec.png"
+			))::evaluate,
 			XnorGateView::class)
 		repository.register(BUFFER,
 			"library.element.Buffer",
-			CurrentSymbolStyleToString(mapOf(SymbolStyle.AMERICAN to "/img/buffer.png", SymbolStyle.EUROPEAN to "/img/buffer-iec.png"))::evaluate,
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/buffer.png",
+				SymbolStyle.EUROPEAN to "/img/buffer-iec.png",
+				SymbolStyle.VERBOSE to "/img/buffer-iec.png"
+			))::evaluate,
 			BufferGateView::class)
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)

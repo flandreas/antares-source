@@ -8,10 +8,12 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -54,7 +56,7 @@ open class BoxGateView<T : Vertice>(
 		LARGE_CENTERED {
 			override fun updateLabel(box: BoxGateView<*>) {
 				box.label?.let {
-					it.font = box.font
+					it.font = box.symbolFont
 					it.ownerRotation = box.rotation
 					it.horizontalAlignment = HorizontalAlignment.CENTER
 					it.verticalAlignment = VerticalAlignment.CENTER
@@ -71,7 +73,7 @@ open class BoxGateView<T : Vertice>(
 		SMALL_UPPER_LEFT {
 			override fun updateLabel(box: BoxGateView<*>) {
 				box.label?.let {
-					it.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
+					it.font = deriveFont(box)
 					it.ownerRotation = box.rotation
 					it.horizontalAlignment = HorizontalAlignment.RIGHT
 					it.verticalAlignment = VerticalAlignment.TOP
@@ -86,6 +88,9 @@ open class BoxGateView<T : Vertice>(
 		}
 
 		abstract fun updateLabel(box: BoxGateView<*>)
+
+		fun deriveFont(box: BoxGateView<*>): Font =
+			box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
 	}
 
 	companion object {
@@ -146,7 +151,7 @@ open class BoxGateView<T : Vertice>(
 		drawBoxShape(context, foregroundColor, backgroundColor, stroke)
 	}
 
-	fun drawBoxShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+	fun drawBoxShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: FormattedText? = null) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fillRect(xInt, yInt, widthInt, heightInt)
@@ -164,7 +169,14 @@ open class BoxGateView<T : Vertice>(
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-		label?.draw(context)
+		if (label != null) {
+			if (text != null) {
+				if (label.text != text.text) {
+					label.text = text.text
+				}
+			}
+			label.draw(context)
+		}
 	}
 
 	/** ---- [Component] */
@@ -181,6 +193,8 @@ open class BoxGateView<T : Vertice>(
 	override val storeSize: Boolean get() = false
 
 	/** ---- [BoxGateView] */
+
+	open val symbolFont: Font get() = font
 
 	var labelText: String?
 		get() = label?.text
