@@ -41,7 +41,7 @@ class OscilloscopeScaleRowView(
 
 	private val addButton = DrawableButton<EditInputEventContext>(
 		renderer = IconDrawableButtonRenderer(AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
-		action = { service.addRow(it.drawingView(), oscilloscopeView) },
+		action = { service.addRow(it.drawingView, oscilloscopeView) },
 		location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
 		styleType = StyleType.ANNOTATION
 	)

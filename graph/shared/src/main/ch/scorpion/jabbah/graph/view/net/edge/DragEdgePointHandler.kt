@@ -33,7 +33,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
         LOG.trace("mouseMoved")
         if (edgeView!!.contains(context.x, context.y)) {
             if (highlight == null) {
-                displayHighlight(context.drawingView())
+                displayHighlight(context.drawingView)
             }
 
             highlight!!.updateMouseLocation(context.x, context.y)
@@ -45,7 +45,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
             return this
         }
 
-        removeHighlight(context.drawingView())
+        removeHighlight(context.drawingView)
         return null
     }
 

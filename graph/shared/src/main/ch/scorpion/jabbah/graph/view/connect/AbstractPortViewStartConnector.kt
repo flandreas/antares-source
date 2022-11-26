@@ -338,17 +338,17 @@ abstract class AbstractPortViewStartConnector(
 
 	private fun beginAdjustment(context: EditInputEventContext) {
 		adjustment = createAdjustment()
-		context.drawingView().animationContainer.add(adjustment!!)
-		context.drawingView().animationContainer.validate()
+		context.drawingView.animationContainer.add(adjustment!!)
+		context.drawingView.animationContainer.validate()
 	}
 
 	private fun endAdjustment(context: EditInputEventContext) {
-		context.drawingView().animationContainer.remove(adjustment!!)
+		context.drawingView.animationContainer.remove(adjustment!!)
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
 		LOG.userTrail("Start creating new EdgeView at Port ${startPortView!!.port.portId} of VerticeView ${startVerticeView!!.id}")
-		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
+		createEdgeView(context.drawingView, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}
@@ -373,7 +373,7 @@ abstract class AbstractPortViewStartConnector(
 	private fun adjustToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connPointAbs)
+		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connPointAbs)
 
 		// Layout EdgeView
 		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
@@ -417,7 +417,7 @@ abstract class AbstractPortViewStartConnector(
 		}
 
 		connectService.unconnect(edgeView!!)
-		context.drawingView().drawing.remove(edgeView!!)
+		context.drawingView.drawing.remove(edgeView!!)
 
 		context.editor.commandManager.execute(
 			SplitEdgeViewCommand(

@@ -198,7 +198,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 			// Sensing EdgeView
 			if (findEdgeView(context) != null) {
-				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connectionPoint())
+				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connectionPoint())
 			} else {
 				ConnectionPointHighlighter.removePortViewHighlight()
 			}
@@ -211,11 +211,11 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			ConnectionPointHighlighter.removePortViewHighlight()
 
 			if (dragGhost) {
-				context.drawingView().drawing.remove(this@OscilloscopeProbeVerticeView)
+				context.drawingView.drawing.remove(this@OscilloscopeProbeVerticeView)
 			}
 
 			val command = DropOscilloscopeProbeCommand<T>(
-				context.drawingView() as DrawingView<GraphView>,
+				context.drawingView as DrawingView<GraphView>,
 				name,
 				connectionPoint(),
 				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id)
@@ -225,6 +225,6 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		}
 
 		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? =
-			context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
+			context.drawingView.drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
 	}
 }

@@ -139,9 +139,9 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
+		createEdgeView(context.drawingView, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		LOG.userTrail("Start creating junction of EdgeView ${edgeView?.id}")
-		context.drawingView().drawing.remove(edgeView!!)
+		context.drawingView.drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
 
 		val command = createSplitEdgeViewCommand(context.editor)
@@ -150,8 +150,8 @@ class EdgeToPortConnector(
 		edgeView = command.addedNewEdgeView
 		edgeView!!.underConstruction = true
 
-		context.drawingView().selectionManager.deselectAll()
-		context.drawingView().selectionManager.select(edgeView!!)
+		context.drawingView.selectionManager.deselectAll()
+		context.drawingView.selectionManager.select(edgeView!!)
 	}
 
 	override fun cancel(editor: Editor) {

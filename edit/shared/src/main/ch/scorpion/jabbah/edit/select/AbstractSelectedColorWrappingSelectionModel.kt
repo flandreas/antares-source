@@ -89,11 +89,11 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 				return this
 			}
 			if (component.contains(context.x, context.y)) {
-				displayHandles(context.drawingView())
+				displayHandles(context.drawingView)
 				context.view.setCursor(Cursor.MOVE)
 				return this
 			}
-			hideHandles(context.drawingView())
+			hideHandles(context.drawingView)
 			return null
 		}
 

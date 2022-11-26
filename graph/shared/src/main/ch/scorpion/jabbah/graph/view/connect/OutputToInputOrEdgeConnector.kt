@@ -54,9 +54,9 @@ class OutputToInputOrEdgeConnector(
 		logConnect()
 
 		connectService.unconnect(edgeView!!)
-		context.drawingView().drawing.remove(edgeView!!)
+		context.drawingView.drawing.remove(edgeView!!)
 
-		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView())
+		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
 
 		val addCommand = AddCommand(context.editor, edgeView!!)
 		context.editor.commandManager.execute(addCommand)
@@ -91,7 +91,7 @@ class OutputToInputOrEdgeConnector(
 
 		context.editor.commandManager.commitTransaction()
 
-		context.drawingView().selectionManager.select(
-			context.drawingView().drawing.getWithId(addCommand.addedComponentId)!!)
+		context.drawingView.selectionManager.select(
+			context.drawingView.drawing.getWithId(addCommand.addedComponentId)!!)
 	}
 }

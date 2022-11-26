@@ -29,7 +29,7 @@ class RubberBandHandler(
         SELECT_ON_DRAG {
 
 	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
-				captureCurrentSelection(context.drawingView().selectionManager)
+				captureCurrentSelection(context.drawingView.selectionManager)
 	        }
 
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
@@ -55,7 +55,7 @@ class RubberBandHandler(
         SELECT_ON_RELEASE {
 
 	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
-		        captureCurrentSelection(context.drawingView().selectionManager)
+		        captureCurrentSelection(context.drawingView.selectionManager)
 	        }
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
                 // empty
@@ -92,7 +92,7 @@ class RubberBandHandler(
 		}
 
 	    fun selectWithin() {
-		    context.drawingView().selectionManager.replace {
+		    context.drawingView.selectionManager.replace {
 			    currentSelection.contains(it) || (it.visible && rubberBand.contains(it.boundingBox))
 		    }
 	    }

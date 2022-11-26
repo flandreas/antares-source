@@ -39,7 +39,7 @@ abstract class AbstractConnector(
 	}
 
 	protected fun displayPortViewHighlight(context: EditInputEventContext, location: Point2D, alternativeView: Boolean = false) {
-		displayPortViewHighlight(context.drawingView(), location, alternativeView)
+		displayPortViewHighlight(context.drawingView, location, alternativeView)
 		context.view.setCursor(Cursor.CROSSHAIR)
 	}
 
@@ -57,14 +57,14 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideTargetPortView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destVerticeView = context.drawingView().drawing.getDrawable { it.contains(context.location) && it !== edgeView }
+		val destVerticeView = context.drawingView.drawing.getDrawable { it.contains(context.location) && it !== edgeView }
 		if (destVerticeView == null || destVerticeView !is VerticeView<*>) {
 			clearTargetPortView()
 			return false
 		}
 
 		val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
-		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port, edgeView!!.net!!, context.drawingView().drawing as GraphView)) {
+		if (pv == null || pv.port.isConnected || !pv.connectable || !type.canConnectTo(pv.port, edgeView!!.net!!, context.drawingView.drawing as GraphView)) {
 			clearTargetPortView()
 			return false
 		}
@@ -77,7 +77,7 @@ abstract class AbstractConnector(
 	protected fun snapToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		displayPortViewHighlight(context.drawingView(), connPointAbs)
+		displayPortViewHighlight(context.drawingView, connPointAbs)
 
 		// Snap EdgeView end to connection point
 		draggedEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
@@ -94,8 +94,8 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideTargetEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable, context.drawingView().drawing as GraphView)) {
+		val destDrawable = context.drawingView.drawing.getDrawable { it !== edgeView && it.contains(context.location) }
+		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable, context.drawingView.drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
@@ -113,7 +113,7 @@ abstract class AbstractConnector(
 	protected fun snapToTargetEdgeView(context: EditInputEventContext) {
 		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
-			displayPortViewHighlight(context.drawingView(), snapResult.location)
+			displayPortViewHighlight(context.drawingView, snapResult.location)
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
 			draggedEndpointType.layout(edgeView!!, null)
 			edgeView!!.layout

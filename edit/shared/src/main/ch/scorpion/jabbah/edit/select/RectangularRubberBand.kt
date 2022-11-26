@@ -71,7 +71,7 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 				isDragging = true
 				// Add RubberBand before setting bounds, because otherwise the zoom factor is not yet set,
 				// which will result in an infinite bounding box
-				context.drawingView().ghostContainer.add(this@RectangularRubberBand)
+				context.drawingView.ghostContainer.add(this@RectangularRubberBand)
 			}
 			if (isDragging) {
 				setBounds(
@@ -88,8 +88,8 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			super.mouseReleased(context)
 			if (isDragging) {
-				context.drawingView().ghostContainer.remove(this@RectangularRubberBand)
-				context.drawingView().ghostContainer.validate()
+				context.drawingView.ghostContainer.remove(this@RectangularRubberBand)
+				context.drawingView.ghostContainer.validate()
 			}
 			isDragging = false
 			return this

@@ -183,7 +183,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	}
 
 	protected open fun displayPortViewHighlight(context: EditInputEventContext) {
-		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), getEndpointView().location)
+		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, getEndpointView().location)
 	}
 
 	protected fun insideStart(location: Point2D): Boolean {
@@ -193,8 +193,8 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	protected open fun beginDragging(context: EditInputEventContext) {
 		edgeView?.underConstruction = true
 		oldLocation = getEndpointView().location
-		context.drawingView().selectionManager.deselectAll()
-		context.drawingView().selectionManager.select(edgeView!!)
+		context.drawingView.selectionManager.deselectAll()
+		context.drawingView.selectionManager.select(edgeView!!)
 	}
 
 	private fun completeConnectingToEdgeView(context: EditInputEventContext) {

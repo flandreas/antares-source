@@ -47,7 +47,7 @@ class OscilloscopeSignalRowView(
 		renderer = IconDrawableButtonRenderer(RemoveIcon(Dimension2D(OscilloscopeView.ICON_BUTTON_SIZE, OscilloscopeView.ICON_BUTTON_SIZE))),
 		tooltipKey = "graph.action.oscilloscope.removeRow.name",
 		location = Point2D(OscilloscopeView.ROW_INSET, factory.rowHeight / 2 - OscilloscopeView.ICON_BUTTON_SIZE / 2),
-		action = { service.removeRow(it.drawingView(), probeView.name, oscilloscopeView) },
+		action = { service.removeRow(it.drawingView, probeView.name, oscilloscopeView) },
 		styleType = StyleType.ANNOTATION)
 
 	init {

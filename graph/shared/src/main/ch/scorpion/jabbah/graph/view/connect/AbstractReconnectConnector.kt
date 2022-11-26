@@ -32,7 +32,7 @@ abstract class AbstractReconnectConnector(
 
 	override fun displayPortViewHighlight(context: EditInputEventContext) {
 		ConnectionPointHighlighter.displayPortViewHighlight(
-			context.drawingView(),
+			context.drawingView,
 			getEndpointView().location,
 			highlight = DrawModule.properties.get(PortView.PROP_HIGHLIGHT_RECONNECT)
 		)
