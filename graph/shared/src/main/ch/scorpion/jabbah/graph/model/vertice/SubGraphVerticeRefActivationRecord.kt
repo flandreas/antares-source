@@ -7,9 +7,9 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 
-fun interface SubGraphVerticeRefActivationRecordFactory {
-	fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord
-}
+typealias SubGraphVerticeRefActivationRecordFactory =
+	(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler) -> SubGraphVerticeRefActivationRecord
+
 /**
  * An [ActivationRecord] implementation that allows a DSL script to access
  * a [SubGraphVerticeRef]'s [Port]'s values as global context variables

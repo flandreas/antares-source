@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import kotlin.math.pow
 
+typealias InterpreterFactory = (node: Node, memory: Memory) -> Interpreter
+
 /**
  * Interprets an AST according to the grammar parsed by [Parser].
  */

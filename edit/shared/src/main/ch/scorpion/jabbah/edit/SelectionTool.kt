@@ -17,6 +17,4 @@ interface SelectionTool : Tool {
 }
 
 /** A factory that creates a [SelectionTool] for an [Editor].*/
-interface SelectionToolFactory {
-    fun create(editor: Editor): SelectionTool
-}
+typealias SelectionToolFactory = (Editor) -> SelectionTool

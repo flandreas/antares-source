@@ -26,11 +26,7 @@ class ComponentPropertyPanelControllerTest {
 	}
 
 	private val selectionModelFactorMockBuilder = SelectionModelFactoryMockBuilder()
-	private val selectionManagerFactory = object : SelectionManagerFactory {
-		override fun create(content: DrawingViewContent<*>): SelectionManager {
-			return SelectionManagerImpl(content, SimpleSelectionModelProvider(selectionModelFactorMockBuilder.build()))
-		}
-	}
+	private val selectionManagerFactory: SelectionManagerFactory = { SelectionManagerImpl(it, SimpleSelectionModelProvider(selectionModelFactorMockBuilder.build())) }
 	private val drawing = DrawingImpl<Component>()
 	private val view = DrawingViewImpl(drawing, selectionManagerFactory = selectionManagerFactory)
 	private val editor = EditorImpl(view as DrawingView<Drawing<Component>>)

@@ -5,17 +5,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
 
-fun interface ParserFactory {
-
-	/**
-	 * Creates a [Parser] for parsing the [program].
-	 * @param program the program text to parse
-	 * @param semanticAnalyser the optional [SemanticAnalyser], or `null` if either no semantic analysis
-	 * is to be done, or the [ParserFactory] decides to (and insists upon) applying a particular
-	 * [SemanticAnalyser] implementation.
-	 */
-	fun create(program: String, semanticAnalyser: SemanticAnalyser?): Parser
-}
+/**
+ * Creates a [Parser] for parsing a program text.
+ * @param semanticAnalyser the optional [SemanticAnalyser], or `null` if either no semantic analysis
+ * is to be done, or the [ParserFactory] decides to (and insists upon) applying a particular
+ * [SemanticAnalyser] implementation.
+ */
+typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?) -> Parser
 
 /**
  * Parses sentences of the following grammar and creates a corresponding AST.
@@ -71,7 +67,7 @@ fun interface ParserFactory {
  */
 open class Parser(
 	lexer: Lexer,
-	private val semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
+	private val semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory(null)
 ) : AbstractBaseParser(lexer) {
 
 	constructor(program: String): this(Lexer(program))

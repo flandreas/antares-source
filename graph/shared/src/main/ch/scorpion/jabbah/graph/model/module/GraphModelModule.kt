@@ -63,10 +63,8 @@ object GraphModelModule : AbstractModule() {
 	var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
 
 	/** More specific modules can register other implementations for [GraphPort] value type adjustments. */
-	// Proguard doesn't seem to be happy with SAML lambdas
-	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory = object : SubGraphVerticeRefActivationRecordFactory {
-		override fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord =
-			SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
+		SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.QuadTree
@@ -31,9 +30,10 @@ object DrawModule : AbstractModule() {
     /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
 
+	/** Creates a buffered image. Must be implemented platform-specifically. */
 	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
 
-	var drawContextFactory: (g: Graphics2D, modelClip: Rectangle2D?, appContext: Any?) -> DrawContext = { g, mc, appContext -> DrawContext(g, mc, appContext) }
+	var drawContextFactory: DrawContextFactory = { g, mc, appContext -> DrawContext(g, mc, appContext) }
 
     override fun initialize() {
         BaseModule.require()

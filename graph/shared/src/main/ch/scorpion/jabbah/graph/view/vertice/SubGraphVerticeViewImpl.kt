@@ -547,7 +547,7 @@ class SubGraphVerticeViewImpl(
 			cle?.drawSymbolAST?.let { ast ->
 				BaseModule.interpreterFactory(
 					ast,
-					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(model, signalHandler)))
+					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory(model, signalHandler)))
 			}
 		}
 	}

@@ -10,8 +10,7 @@ object EditModelGroupModule : AbstractModule() {
 	override fun initialize() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.REPLACE,
-			GroupComponent::class,
-			{ GroupComponentSelectionModel(it as GroupComponent) }
-		)
+			GroupComponent::class
+		) { GroupComponentSelectionModel(it as GroupComponent) }
 	}
 }

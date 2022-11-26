@@ -147,7 +147,7 @@ class ScriptPropertyPanel(
 				return
 			}
 			try {
-				parserFactory.create(scriptTextArea.text, null).parse()
+				parserFactory.invoke(scriptTextArea.text, null).parse()
 
 				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
 				messageTextField.icon = CORRECT_ICON

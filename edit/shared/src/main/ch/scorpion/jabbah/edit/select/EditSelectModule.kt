@@ -17,33 +17,18 @@ object EditSelectModule : AbstractModule() {
 
     var selectionModelProvider: SelectionModelProvider = SimpleSelectionModelProvider(selectionModelFactory)
 
-    var selectionManagerFactory = object : SelectionManagerFactory {
-	    override fun create(content: DrawingViewContent<*>): SelectionManager {
-		    return SelectionManagerImpl(content)
-	    }
-    }
+	var selectionManagerFactory: SelectionManagerFactory = { content -> SelectionManagerImpl(content) }
 
-    var selectionToolFactory = object : SelectionToolFactory {
-        override fun create(editor: Editor): SelectionTool {
-            return createSelectionTool(editor)
-        }
-    }
+	var selectionToolFactory: SelectionToolFactory =
+		{ editor -> SelectionToolImpl(editor, createRubberBandHandler(), BaseModule.eventBus)}
 
     override fun initialize() {
         fillProperties()
     }
 
-    private fun createRubberBand(): RubberBand {
-        return RectangularRubberBand()
-    }
+    private fun createRubberBand(): RubberBand = RectangularRubberBand()
 
-    private fun createRubberBandHandler(): RubberBandHandler {
-        return RubberBandHandler(createRubberBand())
-    }
-
-    private fun createSelectionTool(editor: Editor): SelectionTool {
-        return SelectionToolImpl(editor, createRubberBandHandler(), BaseModule.eventBus)
-    }
+    private fun createRubberBandHandler(): RubberBandHandler = RubberBandHandler(createRubberBand())
 
     private fun fillProperties() {
         BaseModule.properties.set(RubberBand.PROP_STROKE_PAINT, Color.BLACK)

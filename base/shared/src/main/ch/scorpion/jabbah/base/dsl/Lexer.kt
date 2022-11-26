@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.dsl.TokenType.*
 
+typealias LexerFactory = (program: String) -> Lexer
+
 /**
  * Extends [BaseLexer] with tokens for simple languages supporting arithmetic expressions,
  * control flow statements, and variables.

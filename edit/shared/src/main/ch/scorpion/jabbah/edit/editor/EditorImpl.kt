@@ -73,7 +73,7 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_LOCK_TOOL, oldValue, field)
         }
 
-    final override var selectionTool = selectionToolFactory.create(this)
+    final override var selectionTool = selectionToolFactory(this)
         set(value) {
             if (value == field) {
                 return

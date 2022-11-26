@@ -27,12 +27,12 @@ class Memory(private val context: ActivationRecord? = null) {
 	 * Stores [Variable] values persistently, i.e. they are NOT removed by [clear].
 	 * This is used for storing values that must survive multiple runs of [Interpreter.interpret].
 	 */
-	private val store = BaseModule.storingActivationRecordFactory.create("Store", context)
+	private val store = BaseModule.storingActivationRecordFactory("Store", context)
 
 	/**
 	 * The global, outermost scope always present.
 	 */
-	private val global = BaseModule.storingActivationRecordFactory.create("Global", store)
+	private val global = BaseModule.storingActivationRecordFactory("Global", store)
 
 	private val callStack = Stack<ActivationRecord>()
 
@@ -54,7 +54,7 @@ class Memory(private val context: ActivationRecord? = null) {
 	}
 
 	fun enterScope(name: String) {
-		callStack.push(BaseModule.storingActivationRecordFactory.create(name, callStack.optionalPeek()))
+		callStack.push(BaseModule.storingActivationRecordFactory(name, callStack.optionalPeek()))
 	}
 
 	fun exitScope(node: Node) {

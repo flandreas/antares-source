@@ -225,7 +225,7 @@ class SubGraphVerticeRef(
 			cle?.executionScriptAST?.let { ast ->
 				BaseModule.interpreterFactory(
 					ast,
-					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory.create(this, signalHandler)))
+					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory(this, signalHandler)))
 			}
 		}
 	}

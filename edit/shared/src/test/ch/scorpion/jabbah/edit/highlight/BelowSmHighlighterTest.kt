@@ -29,24 +29,20 @@ class BelowSmHighlighterTest {
 		}
 	}
 
-	private val content = DrawingViewContentImpl<Drawing<Component>>(
+	private val content = DrawingViewContentImpl(
 		drawingView = mockk(relaxed = true),
 		drawing = mockk(relaxed = true),
-		selectionManagerFactory = mockk(relaxed = true),
+		selectionManagerFactory = { mockk(relaxed = true) },
 		highlighterFactory = highlighterFactory)
 
 	private val highlightColor = CompositeColor(backgroundColor = Color.YELLOW)
 
 	private val rect = RectangleComponent()
 
-	private val hightlight = BoundingBoxBelowSelectionModel(rect)
+	private val highlight = BoundingBoxBelowSelectionModel(rect)
 
 	init {
-		/*
-		val slot = slot<AbstractRectangularComponent>()
-		every { selectionModelProvider.provideFor(component = capture(slot), strategy = SelectionDrawingStrategy.BELOW )} answers { RectangularBelowSelectionModel(slot.captured)}
-		*/
-		every { selectionModelProvider.provideFor(any(), any()) } answers { hightlight }
+		every { selectionModelProvider.provideFor(any(), any()) } answers { highlight }
 	}
 
 	@Test
@@ -55,7 +51,7 @@ class BelowSmHighlighterTest {
 
 		assertTrue(content.highlighter.isHighlighted(rect))
 		assertEquals(1, content.highlightContainer.drawables.size)
-		assertTrue(content.highlightContainer.contains(hightlight))
+		assertTrue(content.highlightContainer.contains(highlight))
 	}
 
 	@Test
@@ -71,14 +67,14 @@ class BelowSmHighlighterTest {
 	fun shouldReturnHighlight() {
 		content.highlighter.highlight(rect, highlightColor)
 
-		assertEquals(hightlight, content.highlighter.getHighlightFor(rect))
+		assertEquals(highlight, content.highlighter.getHighlightFor(rect))
 	}
 
 	@Test
 	fun shouldApplyColor() {
 		content.highlighter.highlight(rect, highlightColor)
 
-		assertEquals(Color.YELLOW, hightlight.color.backgroundColor)
+		assertEquals(Color.YELLOW, highlight.color.backgroundColor)
 	}
 
 	@Test
@@ -87,6 +83,6 @@ class BelowSmHighlighterTest {
 
 		content.highlighter.replaceColor(highlightColor, CompositeColor(backgroundColor = Color.BLUE))
 
-		assertEquals(Color.BLUE, hightlight.color.backgroundColor)
+		assertEquals(Color.BLUE, highlight.color.backgroundColor)
 	}
 }

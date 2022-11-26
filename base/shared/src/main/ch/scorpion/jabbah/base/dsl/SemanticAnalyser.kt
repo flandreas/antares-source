@@ -4,9 +4,7 @@ import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 
-fun interface SemanticAnalyserFactory {
-	fun create(symbolTable: SymbolTable?): SemanticAnalyser
-}
+typealias SemanticAnalyserFactory = (symbolTable: SymbolTable?) -> SemanticAnalyser
 
 /**
  * Performs semantic analysis on an Abstract Syntax Tree and produces

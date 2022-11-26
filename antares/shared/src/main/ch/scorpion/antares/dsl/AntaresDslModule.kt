@@ -1,8 +1,6 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.dsl.ActivationRecordFactory
-import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 
@@ -16,8 +14,8 @@ object AntaresDslModule : AbstractModule() {
 		GraphDslModule.require()
 
 		BaseModule.lexerFactory = { AntaresLexer(it) }
-		BaseModule.parserFactory = ParserFactory { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
-		BaseModule.storingActivationRecordFactory = ActivationRecordFactory { n, p -> AntaresStoringActivationRecord(n, p) }
+		BaseModule.parserFactory = { p, s -> AntaresParser(BaseModule.lexerFactory(p) as AntaresLexer, s) }
+		BaseModule.storingActivationRecordFactory = { n, p -> AntaresStoringActivationRecord(n, p) }
 		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
 		BaseModule.dslGlobalFunctions = AntaresDslGlobalFunctions()
 	}

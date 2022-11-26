@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.dsl.TokenType
 import ch.scorpion.jabbah.base.dsl.Variable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Port
 import io.mockk.every
 import io.mockk.mockk
@@ -26,7 +25,7 @@ abstract class AbstractAntaresInterpreterPortTest {
 		}
 	}
 
-	protected val context = BaseModule.storingActivationRecordFactory.create("context", null)
+	protected val context = BaseModule.storingActivationRecordFactory("context", null)
 
 	protected fun variable(name: String): Variable = Variable(CodeLocation(0, 0, 0), Token(TokenType.ID, name))
 

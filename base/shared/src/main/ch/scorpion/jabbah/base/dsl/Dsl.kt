@@ -9,10 +9,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 object Dsl {
 
 	fun execute(script: String, symbolTable: SymbolTable, memory: Memory): Any {
-		val parser = BaseModule.parserFactory.create(
+		val parser = BaseModule.parserFactory(
 			script,
-			BaseModule.semanticAnalyserFactory.create(symbolTable))
-		val interpreter = BaseModule.interpreterFactory.invoke(parser.parse(), memory)
+			BaseModule.semanticAnalyserFactory(symbolTable))
+		val interpreter = BaseModule.interpreterFactory(parser.parse(), memory)
 		return interpreter.interpret()
 	}
 }

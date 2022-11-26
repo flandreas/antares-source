@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Stylable
 
+typealias DrawContextFactory = (g: Graphics2D, modelClip: Rectangle2D?, appContext: Any?) -> DrawContext
+
 /**
  * A context used in all drawing activities.
  *
@@ -17,7 +19,7 @@ import ch.scorpion.jabbah.draw.style.Stylable
 class DrawContext(
 	val g: Graphics2D,
 	var modelClip: Rectangle2D? = null,
-	val appContext: Any? = null
+	private val appContext: Any? = null
 ) {
 
 	/** Instructs a [Drawable] to use the colors of this [DrawContext] instead of its own colors.*/

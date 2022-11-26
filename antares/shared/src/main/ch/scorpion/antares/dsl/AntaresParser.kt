@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslParser
  */
 class AntaresParser(
 	lexer: AntaresLexer,
-	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
+	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory(null)
 ) : GraphDslParser(lexer, semanticAnalyser) {
 
 	constructor(text: String): this(AntaresLexer(text))

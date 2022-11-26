@@ -30,8 +30,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecordFactory
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -54,10 +52,8 @@ object AntaresModelModule : AbstractModule() {
 		GraphModelModule.portFactory = DigitalPortFactory()
 		GraphModelModule.graphFactory = { DigitalGraph(name = it) }
 
-		// Proguard doesn't seem to be happy with SAML lambdas
-		GraphModelModule.subGraphVerticeRefActivationRecordFactory = object : SubGraphVerticeRefActivationRecordFactory {
-			override fun create(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler): SubGraphVerticeRefActivationRecord =
-				DigitalSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+		GraphModelModule.subGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
+			DigitalSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 		}
 	}
 

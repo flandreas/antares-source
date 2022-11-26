@@ -132,7 +132,7 @@ class UsecaseImpl(
 	/** ---- [UsecaseImpl] */
 
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createSymbolTable()))
+		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createSymbolTable()))
 
 	private fun createScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))

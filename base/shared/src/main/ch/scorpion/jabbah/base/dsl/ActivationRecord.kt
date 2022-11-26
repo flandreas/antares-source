@@ -2,9 +2,7 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
 
-fun interface ActivationRecordFactory {
-	fun create(name: String, parent: ActivationRecord?) : ActivationRecord
-}
+typealias ActivationRecordFactory = (name: String, parent: ActivationRecord?) -> ActivationRecord
 
 /**
  * Constituent of [Memory] to hold variable values in a stacked way.

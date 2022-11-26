@@ -247,9 +247,9 @@ open class GraphImpl(
 	}
 
 	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		BaseModule.parserFactory.create(
+		BaseModule.parserFactory(
 			program,
-			BaseModule.semanticAnalyserFactory.create(symbolTable))
+			BaseModule.semanticAnalyserFactory(symbolTable))
 
 	/** ---- [Storable] interface */
 

@@ -159,7 +159,7 @@ class ScenarioImpl(
 
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
 		graphView?.graph?.createParser(program, semanticAnalyser)
-			?: BaseModule.parserFactory.create(program, semanticAnalyser)
+			?: BaseModule.parserFactory(program, semanticAnalyser)
 
 	private fun getMaxId(): Int {
 		if (steps.size == 0) {

@@ -93,8 +93,4 @@ interface SelectionManager {
 /**
  * Creates a [SelectionManager] for a particular [DrawingView].
  */
-interface SelectionManagerFactory {
-
-	/** Creates a new [SelectionManager] for the specified [DrawingViewContent].*/
-	fun create(content: DrawingViewContent<*>): SelectionManager
-}
+typealias SelectionManagerFactory = (DrawingViewContent<*>) -> SelectionManager

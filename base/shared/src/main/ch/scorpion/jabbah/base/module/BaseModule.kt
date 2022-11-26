@@ -20,15 +20,15 @@ object BaseModule : AbstractModule() {
 
     var timeService: TimeService = ControlledTimeService()
 
-	var lexerFactory: (program: String) -> Lexer = { Lexer(it) }
+	var lexerFactory: LexerFactory = { program -> Lexer(program) }
 
-	var semanticAnalyserFactory: SemanticAnalyserFactory = SemanticAnalyserFactory { st -> SemanticAnalyser(st) }
+	var semanticAnalyserFactory: SemanticAnalyserFactory = { symbolTable -> SemanticAnalyser(symbolTable) }
 
-	var parserFactory: ParserFactory = ParserFactory { p, s -> Parser(lexerFactory(p), s) }
+	var parserFactory: ParserFactory = { program, semanticAnalyser -> Parser(lexerFactory(program), semanticAnalyser) }
 
-	var storingActivationRecordFactory: ActivationRecordFactory = ActivationRecordFactory { n, p -> StoringActivationRecord(n, p) }
+	var storingActivationRecordFactory: ActivationRecordFactory = { name, parent -> StoringActivationRecord(name, parent) }
 
-	var interpreterFactory: (node: Node, memory: Memory) -> Interpreter = { n, m -> Interpreter(n, m) }
+	var interpreterFactory: InterpreterFactory = { node, memory -> Interpreter(node, memory) }
 
 	var dslGlobalFunctions: DslGlobalFunctions = DslGlobalFunctions()
 

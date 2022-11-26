@@ -227,7 +227,7 @@ class ContainerDrawing(
 	}
 
 	fun createDrawSymbolScriptParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		BaseModule.parserFactory.create(program, BaseModule.semanticAnalyserFactory.create(createDrawExecSymbolParserSymbolTable()))
+		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createDrawExecSymbolParserSymbolTable()))
 
 	private fun createDrawExecSymbolParserSymbolTable(): ScopedSymbolTable =
 		ScopedSymbolTable("Context", scopeLevel = 0, enclosingScope = null).also {

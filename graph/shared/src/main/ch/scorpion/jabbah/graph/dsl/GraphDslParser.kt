@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
  */
 open class GraphDslParser(
 	lexer: Lexer,
-	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory.create(null)
+	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory(null)
 ) : Parser(lexer, semanticAnalyser) {
 
 	constructor(program: String): this(Lexer(program))

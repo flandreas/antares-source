@@ -43,7 +43,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 	// establishing an undo snapshot doesn't change the transformation
 	override var transformation: ViewTransformation = drawingView.transformation.copy()
 
-	override val selectionManager: SelectionManager = selectionManagerFactory.create(this)
+	override val selectionManager: SelectionManager = selectionManagerFactory.invoke(this)
 
 	override val highlighter: Highlighter = highlighterFactory.create(this)
 
