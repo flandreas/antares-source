@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
-import java.awt.Component
-import java.awt.Graphics
+import java.awt.*
+import java.awt.image.BufferedImage
 import javax.swing.Icon
 
 /** Defines an artificial [Icon] to be used as tree icon for [ContainerLibraryElement]s.*/
@@ -18,6 +18,15 @@ class ContainerLibraryElementIcon(private val current: Boolean = false) : Icon {
 		private const val PIN_W = 4
 
 		val ICON = ContainerLibraryElementIcon()
+
+		/** Contains the [Image] version of the programmatically painted [ICON]. */
+		val IMAGE by lazy {
+			val image = BufferedImage(ICON.iconWidth, ICON.iconHeight, Transparency.TRANSLUCENT)
+			val g = image.createGraphics()
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+			ICON.paintIcon(null, g, 0, 0)
+			image
+		}
 	}
 
 	override fun getIconHeight(): Int = 28

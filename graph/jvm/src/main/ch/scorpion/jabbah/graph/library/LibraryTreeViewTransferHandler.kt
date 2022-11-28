@@ -2,14 +2,18 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.repository.RepositoryService
+import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferable
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferableData
 import ch.scorpion.jabbah.graph.ui.LibraryFolderTransferable
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
+import java.awt.Image
+import java.awt.Point
 import java.awt.datatransfer.Transferable
 import java.awt.image.BufferedImage
 import javax.swing.JComponent
@@ -17,7 +21,6 @@ import javax.swing.JOptionPane
 import javax.swing.JTree
 import javax.swing.TransferHandler
 import javax.swing.tree.DefaultMutableTreeNode
-
 
 /**
  * Handles drag&drop of a [LibraryElement] in [LibraryTreeViewSwing].
@@ -28,12 +31,33 @@ class LibraryTreeViewTransferHandler(
 ) : TransferHandler() {
 
 	companion object {
+
+		/** The [Image] to be used for drag&drop when there is no image path available. */
 		private val DUMMY_IMAGE = BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+
+		/** Maps image resource paths to the corresponding [Image]. */
+		private val ICON_CACHE = mutableMapOf<String, Image>()
+
+		/** Gets the icon [Image] to be used for drag&drop. */
+		private fun getIcon(libraryItem: LibraryItem): Image {
+			return if (libraryItem is ContainerLibraryElement) {
+				ContainerLibraryElementIcon.IMAGE
+			} else {
+				libraryItem.iconPath?.let { iconPath ->
+					ICON_CACHE.getOrPut(iconPath) { UiUtil.themedIcon(iconPath).image }
+				} ?: DUMMY_IMAGE
+			}
+		}
 	}
 
 	/** ---- [TransferHandler] */
 
-	override fun getSourceActions(c: JComponent): Int = COPY
+	/**
+	 * Dragging within [LibraryTreeViewSwing] leads to a "Move", dragging into a drawing always
+	 * leads to "Copy", but we don't want to force the user to press "ALT" in that case.
+	 * These two cases together can only be represented by using [TransferHandler.MOVE].
+	 */
+	override fun getSourceActions(c: JComponent): Int = MOVE
 
 	override fun canImport(support: TransferSupport): Boolean {
 		if (support.dropLocation !is JTree.DropLocation || support.component != controller.view) {
@@ -95,10 +119,8 @@ class LibraryTreeViewTransferHandler(
 
 	private fun createLibraryElementTransferable(): Transferable? =
 		controller.createTransferableGraphElementView()?.let {
-			// Didn't find a better way to hide the default cursor rectangle in the size of the TreeNode's bounding box
-			dragImage = DUMMY_IMAGE
-			dragImageOffset = java.awt.Point(0, 0)
-
+			dragImage = getIcon(controller.selectedItem as LibraryElement)
+			dragImageOffset = Point(0, 0)
 			GraphElementViewTransferable.of(it, controller.selectedItem as LibraryElement)
 		}
 

@@ -1,11 +1,12 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.edit.ComponentTransferable
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.ComponentTransferable
+import java.awt.Image
 import java.awt.Point
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
-import java.awt.image.BufferedImage
 import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.TransferHandler
@@ -17,7 +18,14 @@ import javax.swing.tree.DefaultMutableTreeNode
  */
 class ContainerTransferHandler : TransferHandler() {
 
-    private val dummyImage = BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+	companion object {
+
+		/** Maps image resource paths to the corresponding [Image]. */
+		private val ICON_CACHE = mutableMapOf<String, Image>()
+
+		private fun getIcon(item: DraggableTreeItem): Image =
+			ICON_CACHE.getOrPut(item.iconPath) { UiUtil.themedIcon(item.iconPath). image }
+	}
 
     override fun getSourceActions(c: JComponent?): Int = MOVE
 
@@ -33,7 +41,7 @@ class ContainerTransferHandler : TransferHandler() {
 
         val component = (treeNode.userObject as DraggableTreeItem).factory.invoke()
 
-        dragImage = dummyImage
+        dragImage = getIcon(treeNode.userObject as DraggableTreeItem)
         dragImageOffset = Point(0, 0)
 
         return ComponentTransferable(component)

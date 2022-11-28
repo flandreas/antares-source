@@ -74,7 +74,6 @@ open class ComponentTransferHandler(
             }
 
             override fun drop(dtde: DropTargetDropEvent) {
-                super.drop(dtde)
 	            val dropComponent = editor.dragManager.dropComponent
                 val localTransferable = transferable
                 InvocationHandler.invoke {
@@ -84,15 +83,16 @@ open class ComponentTransferHandler(
 	                editor.dragManager.setDropComponent(null, null)
                     transferable = null
                 }
+	            dtde.dropComplete(true)
             }
 
             private fun setComponent(component: Component, location: Point2D) {
-            	editor.dragManager.setDropComponent(component, editor.view.viewToModel(location))
-            }
+				editor.dragManager.setDropComponent(component, editor.view.viewToModel(location))
+			}
         }
     }
 
-    override fun canImport(support: TransferSupport): Boolean {
+	override fun canImport(support: TransferSupport): Boolean {
         return support.isDataFlavorSupported(flavour)
     }
 

@@ -47,7 +47,7 @@ class GraphPanelTransferHandler(
 
     override fun canImport(dropComponent: Component, transferable: Transferable): Boolean {
         if (dropComponent !is GraphElementView<*> || transferable.getTransferData(GraphElementViewTransferable.FLAVOR) !is GraphElementViewTransferableData) {
-            return super.canImport(dropComponent, transferable)
+			return false
         }
 	    val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
         if (!editor.view.editable) {
