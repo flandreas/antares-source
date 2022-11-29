@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -42,6 +43,7 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 			if (value != model.bitWidth) {
 				invalidate()
 				model.bitWidth = value
+				updateInputBitWidthAnnotations()
 				invalidate()
 				validate()
 			}
@@ -52,14 +54,21 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
 
-		val inputs = model.getInputs()
-		for (i in inputs.indices) {
-			val portView = createInputPortView(inputs[i] as Port<DigitalSignal>)
-			portView.showBitWidthAnnotation = inputs.size <= 2 || i == inputs.size - 1
-			addPortView(portView)
+		for (inputPort in model.getInputs()) {
+			addPortView(createInputPortView(inputPort as Port<DigitalSignal>))
 		}
+		updateInputBitWidthAnnotations()
 		addPortView(createOutputPortView(model.getOutput()))
 
 		updateLayout()
+	}
+
+	fun updateInputBitWidthAnnotations() {
+		val inputCount = model.getInputs().size
+		getPortViews().forEach { portView ->
+			if (portView.port.portId <= inputCount) {
+				(portView as DigitalPortView).showBitWidthAnnotation = inputCount <= 2 || portView.port.portId == inputCount
+			}
+		}
 	}
 }
