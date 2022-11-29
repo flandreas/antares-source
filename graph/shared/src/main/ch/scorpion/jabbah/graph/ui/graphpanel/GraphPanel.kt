@@ -210,7 +210,7 @@ class GraphPanelViewController(
 		issuesViewController.clearIssues()
 	}
 
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: ExecutionStoppedOnIssueEvent) {
+	private fun handle(event: ExecutionStoppedOnIssueEvent) {
 		if (event.scheduler === applicationContextHolder.scheduler) {
 			eventBus.post(ComponentMessage(
 				type = ComponentMessageType.Error,
@@ -253,13 +253,7 @@ class GraphPanelViewController(
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
 				setRootGraphView(graphView, applyZoomStrategy = true)
 			}
-		} else {
-			closeRootGraphView()
 		}
-	}
-
-	private fun closeRootGraphView() {
-		setRootGraphView(null, false)
 	}
 
 	private fun handle(event: ApplicationDataContentEvent) {
