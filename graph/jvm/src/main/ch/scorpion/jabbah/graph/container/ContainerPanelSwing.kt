@@ -220,14 +220,15 @@ class ContainerPanelSwing(
 		treeViewScrollPanel.minimumSize = Dimension(treeViewScrollPanel.minimumSize.width, 200)
 
 		val figuresPanel = FigureGroupsPanel()
-		val figuresScrollPanel = JScrollPane(figuresPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		val figuresScrollPane = JScrollPane(figuresPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		figuresScrollPane.minimumSize = Dimension(figuresScrollPane.width, 200)
 
 		contentSplitPane.border = null
 		if (BaseModule.settings.containsKey(PROP_CONTENT_SPLIT_POS)) {
 			contentSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_CONTENT_SPLIT_POS, 0)
 		}
 		contentSplitPane.add(treeViewScrollPanel)
-		contentSplitPane.add(figuresScrollPanel)
+		contentSplitPane.add(figuresScrollPane)
 
 		leftSplitPane.border = null
 		if (BaseModule.settings.containsKey(PROP_LEFT_SPLIT_POS)) {
