@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
+import java.awt.Dimension
 import java.awt.Frame
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -46,6 +47,7 @@ class LibraryTreeViewSwing(
 
 	init {
 		controller.view = this
+		minimumSize = Dimension(super.getMinimumSize().width, 200)
 
 		addMouseListener(rightMouseListener)
 		addKeyListener(keyListener)

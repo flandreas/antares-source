@@ -28,7 +28,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
-import java.awt.Toolkit
+import java.awt.Dimension
 import javax.swing.*
 
 
@@ -167,9 +167,12 @@ class GraphPanelViewSwing(
 		layout = BorderLayout()
 
 		explorerSplitPane.border = null
+		libraryPanel.minimumSize = Dimension(libraryPanel.minimumSize.width, 300)
 		explorerSplitPane.add(libraryPanel)
 		explorerSplitPane.add(propertyPanel)
-		explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", Toolkit.getDefaultToolkit().screenSize.height / 2)
+		if (BaseModule.settings.containsKey("graphPanel.librarySplitPos")) {
+			explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 0)
+		}
 
 		bottomSidebarSplitPane.border = null
 		bottomSidebarSplitPane.resizeWeight = 1.0
