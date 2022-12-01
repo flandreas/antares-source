@@ -90,7 +90,7 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countDeep(node.graphUUID!!, node::class as KClass<GraphElement>, node.name!!, node.getGraphIfPresent()?.script != null)
+				countDeep(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null)
 			}
 			return true
 		}
@@ -107,7 +107,7 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countFlat(node.graphUUID!!, node::class as KClass<GraphElement>, node.name!!, node.getGraphIfPresent()?.script != null)
+				countFlat(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null)
 				if (node.getGraphIfPresent()!!.script != null) {
 					return false
 				}
