@@ -80,6 +80,8 @@ class SubGraphVerticeRef(
 			stateChanged(null)
 		}
 
+	private val executionMetaData by lazy { ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name")) }
+
 	override val designError: DesignError? get() = _designError
 
 	/** ---- [GraphElement] interface */
@@ -257,9 +259,7 @@ class SubGraphVerticeRef(
 	}
 
 	private fun runExecutionScript(data: GraphActorData?) {
-		interpreter?.interpretCatching(
-			ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name")),
-			params = data)
+		interpreter?.interpretCatching(executionMetaData, params = data)
 	}
 
 	/** ---- [AbstractVertice] */

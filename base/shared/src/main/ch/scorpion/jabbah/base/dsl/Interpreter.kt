@@ -232,7 +232,14 @@ open class Interpreter(
 		return node.elseStatement?.let { interpret(it) } ?: 0L
 	}
 
-	protected open fun evaluateTrueCondition(value: Any): Boolean = value != 0L
+	protected open fun evaluateTrueCondition(value: Any): Boolean {
+		// Tuning
+		return when (value) {
+			is Long -> value != 0L
+			is ULong -> value != 0UL
+			else -> value != 0L
+		}
+	}
 
 	private fun whenStatement(node: WhenStatement): Any {
 		val expr = interpret(node.expression)

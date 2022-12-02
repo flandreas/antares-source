@@ -22,6 +22,9 @@ class TimedSchedulerTask(
 	companion object {
 		private val LOG by logger(TimedSchedulerTask::class)
 		private const val SLOWDOWN_FACTOR = 0.5
+
+		// Tuning: Avoid costly System.currentTimeMillis(). Value has been found experimentally.
+		private const val STEPS_PER_20_MILLISECOND = 20_000
 	}
 
 	init {
@@ -65,18 +68,10 @@ class TimedSchedulerTask(
 	 */
 	override fun actionPerformed(event: ActionEvent) {
 		if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
-			executeDuringMilliseconds(20)
+			executeNumberOfSteps(STEPS_PER_20_MILLISECOND)
 		} else {
 			executeNumberOfSteps(10)
 		}
-	}
-
-	private fun executeDuringMilliseconds(duration: Int) {
-		val beginTime = System.currentTimeMillis()
-		lateinit var result: ExecutionStepResult
-		do {
-			result = scheduler.execute()
-		} while (!result.breakpoint && !scheduler.isQueueEmpty && System.currentTimeMillis() - beginTime < duration)
 	}
 
 	private fun executeNumberOfSteps(number: Int) {
@@ -85,7 +80,7 @@ class TimedSchedulerTask(
 		do {
 			result = scheduler.execute()
 			count++
-		} while (count < number && !scheduler.isQueueEmpty && !result.breakpoint && result.recalculated)
+		} while (!result.breakpoint && count < number && !scheduler.isQueueEmpty)
 	}
 
 	/** ---- [TimedSchedulerTask] */

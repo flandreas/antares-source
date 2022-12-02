@@ -24,9 +24,9 @@ class InconsistentNetError(
 
 		/** The name of the [Int] property in [Properties] representing the allowed duration (in ns) for inconsistent net states.*/
 		const val PROP_ALLOWED_DURATION = "graph.model.allowedInconsistentNetDuration"
-	}
 
-	private val name: String get() = Translations.getString("graph.inconsistentNetError.name")
+		private val NAME by lazy { Translations.getString("graph.inconsistentNetError.name") }
+	}
 
 	private val description = Translations.getString(
 		"graph.inconsistentNetError.description",
@@ -52,7 +52,7 @@ class InconsistentNetError(
 
 	override val tooltipText: String get() {
 		val text = StringBuilder()
-		text.append(name)
+		text.append(NAME)
 		text.appendLine()
 		text.append(originDesc)
 		text.appendLine()
@@ -69,7 +69,7 @@ class InconsistentNetError(
 
 		BaseModule.eventBus.post(IssueImpl(
 			severity,
-			name,
+			NAME,
 			description = description,
 			origin = originDesc,
 			context = null

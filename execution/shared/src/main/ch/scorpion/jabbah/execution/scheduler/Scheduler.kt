@@ -83,7 +83,13 @@ interface Scheduler : SignalHandler {
  * @property recalculated `true`if at least one [Actor] has been recalculated
  * @property breakpoint TODO Documentation
  */
-data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolean)
+data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolean) {
+	companion object {
+		val NOT_RECALCULATED_NO_BREAKPOINT = ExecutionStepResult(recalculated = false, breakpoint = false)
+		val NOT_RECALCULATED_BREAKPOINT = ExecutionStepResult(recalculated = false, breakpoint = true)
+		val RECALCULATED_NO_BREAKPOINT = ExecutionStepResult(recalculated = true, breakpoint = false)
+	}
+}
 
 /** Posted by a [Scheduler] during execution phase.*/
 class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor) {

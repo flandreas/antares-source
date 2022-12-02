@@ -5,7 +5,7 @@ package ch.scorpion.jabbah.base.collection
  */
 class Stack<T> {
 
-    val items: MutableList<T> by lazy { mutableListOf()}
+    val items: MutableList<T> = mutableListOf()
 
     val size: Int get() = items.size
 

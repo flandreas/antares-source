@@ -17,6 +17,9 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
+import ch.scorpion.jabbah.execution.scheduler.ExecutionStepResult.Companion.NOT_RECALCULATED_BREAKPOINT
+import ch.scorpion.jabbah.execution.scheduler.ExecutionStepResult.Companion.NOT_RECALCULATED_NO_BREAKPOINT
+import ch.scorpion.jabbah.execution.scheduler.ExecutionStepResult.Companion.RECALCULATED_NO_BREAKPOINT
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.ACTIVE
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.PASSIVE
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -497,7 +500,7 @@ class SchedulerImpl(
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
 			updateRelativeTime(getRelativeRealTime())
-			return ExecutionStepResult(recalculated = false, breakpoint = false)
+			return NOT_RECALCULATED_NO_BREAKPOINT
 		}
 
 		val slot: Slot = optionalSlot
@@ -505,12 +508,10 @@ class SchedulerImpl(
 		if (!slot.isExecutable) {
 			updateRelativeTime(slot.relativeTime)
 			// TODO Can we pause the Timer here?
-			return ExecutionStepResult(recalculated = false, breakpoint = false)
+			return NOT_RECALCULATED_NO_BREAKPOINT
 		}
 
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
-		}
+		// LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
 
 		// Resynchronize relative time with real time (if simulation is faster that real time)
 		updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
@@ -527,7 +528,7 @@ class SchedulerImpl(
 			// Check for a breakpoint. If any of the Actors requests a break, skip the entire
 			// slot and continue only upon the next resume.
 			if (!resume && checkForBreakpoint(slot)) {
-				LOG.trace("Stop task because breakpoint detected")
+				// LOG.trace("Stop task because breakpoint detected")
 				task.stop()
 				if (slot.isActing) {
 					// Defer pausing until all acting Actors are done
@@ -535,15 +536,13 @@ class SchedulerImpl(
 				} else {
 					isInBreakpoint = true
 				}
-				return ExecutionStepResult(recalculated = false, breakpoint = true)
+				return NOT_RECALCULATED_BREAKPOINT
 			}
 
 			isInBreakpoint = false
 
 			slot.getRequests().filter { it.isActable }.forEach {
-				if (LOG.isTraceEnabled()) {
-					logActorTrace(it.actor) { "Executing" }
-				}
+				// logActorTrace(it.actor) { "Executing" }
 				it.act()
 			}
 
@@ -555,7 +554,8 @@ class SchedulerImpl(
 			updateRelativeTime(min(getRelativeRealTime(), slot.relativeTime))
 		}
 		postSchedulerStateEvent()
-		return ExecutionStepResult(recalculated, false)
+
+		return if (recalculated) RECALCULATED_NO_BREAKPOINT else NOT_RECALCULATED_NO_BREAKPOINT
 	}
 
 	private fun checkForBreakpoint(slot: Slot): Boolean =
