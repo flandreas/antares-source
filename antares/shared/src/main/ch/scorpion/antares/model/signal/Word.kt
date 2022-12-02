@@ -1,9 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.style.Themes
 import kotlin.math.max
 import kotlin.math.min
 
@@ -318,7 +316,7 @@ internal data class Word(
 	override fun defineSubword(subword: DigitalSignal, index: Int): Word {
 		val resultBits = mutableListOf<Bit>()
 		resultBits.addAll(this.bits)
-		replaceFromSubword(resultBits, subword as Word, index) { resultBits[it] == Bit.Undefined }
+		replaceFromSubword(resultBits, subword, index) { resultBits[it] == Bit.Undefined }
 		return Word(resultBits)
 	}
 
