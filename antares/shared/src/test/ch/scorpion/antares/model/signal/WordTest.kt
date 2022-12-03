@@ -31,21 +31,26 @@ class WordTest {
 
 	@Test
 	fun shouldBuildFromWords() {
-		val list = listOf(Word.of(BW_2, 1UL), DigitalSignalFactory.of(BW_2, 2L))
+		val list = listOf(Word.of(BW_2, 1UL), Word.of(BW_2, 2UL))
 		assertEquals(9UL, Word.of(list).getValue())
 	}
 
 	@Test
 	fun shouldBeEqual() {
-		assertEquals(Word.of(true), DigitalSignalFactory.of(true))
-		assertEquals(Word.of(BW_4, 7UL), DigitalSignalFactory.of(BW_4, 7L))
+		assertEquals(Word.of(true), Word.of(true))
+		assertEquals(Word.of(BW_4, 7UL), Word.of(BW_4, 7UL))
 	}
 
 	@Test
 	fun shouldNotBeEqual() {
-		assertNotEquals(Word.of(true), DigitalSignalFactory.of(false))
-		assertNotEquals(Word.of(BW_4, 7UL), DigitalSignalFactory.of(BW_4, 6L))
-		assertNotEquals(Word.of(BW_8, 7UL), DigitalSignalFactory.of(BW_4, 7L))
+		assertNotEquals(Word.of(true), Word.of(false))
+		assertNotEquals(Word.of(BW_4, 7UL), Word.of(BW_4, 6UL))
+		assertNotEquals(Word.of(BW_8, 7UL), Word.of(BW_4, 7UL))
+	}
+
+	@Test
+	fun shouldBeEqualToDefinedWord() {
+		assertTrue(Word.of(BW_4, 3UL).equals(DefinedWord.of(BW_4, 3UL)))
 	}
 
 	@Test
@@ -58,46 +63,46 @@ class WordTest {
 
 	@Test
 	fun shouldRepresentNibbleAsHexChar() {
-		assertEquals('F', DigitalSignalFactory.of(BW_8, 127L).nibbleToHexChar(0))
-		assertEquals('7', DigitalSignalFactory.of(BW_8, 127L).nibbleToHexChar(1))
+		assertEquals('F', Word.of(BW_8, 127UL).nibbleToHexChar(0))
+		assertEquals('7', Word.of(BW_8, 127UL).nibbleToHexChar(1))
 		assertEquals('X', Word(listOf(True, Error, Undefined, False, True, True, True, True)).nibbleToHexChar(0))
 		assertEquals('z', Word(listOf(True, True, True, True, True, True, Undefined, False)).nibbleToHexChar(1))
 	}
 
 	@Test
 	fun shouldExtractSubword() {
-		assertEquals(DigitalSignalFactory.of(BW_1, 1), DigitalSignalFactory.of(BW_1, 1L).getSubword(BW_4, 0))
-		assertEquals(DigitalSignalFactory.of(BW_4, 1), DigitalSignalFactory.of(BW_4, 1L).getSubword(BW_4, 0))
-		assertEquals(DigitalSignalFactory.of(BW_4, 1), DigitalSignalFactory.of(BW_8, 16L).getSubword(BW_4, 1))
+		assertEquals(Word.of(BW_1, 1U), Word.of(BW_1, 1UL).getSubword(BW_4, 0))
+		assertEquals(Word.of(BW_4, 1U), Word.of(BW_4, 1UL).getSubword(BW_4, 0))
+		assertEquals(Word.of(BW_4, 1U), Word.of(BW_8, 16UL).getSubword(BW_4, 1))
 	}
 
 	@Test
 	fun shouldExtractUnevenSubword() {
-		assertEquals(DigitalSignalFactory.of(BW_4, 1), DigitalSignalFactory.of(BW_5, 31L).getSubword(BW_4, 1))
+		assertEquals(Word.of(BW_4, 1U), Word.of(BW_5, 31UL).getSubword(BW_4, 1))
 	}
 
 	@Test
 	fun shouldExtractSubwordValue() {
-		assertEquals(15UL, DigitalSignalFactory.of(BW_4, 15L).getSubwordValue(BW_4, 0))
-		assertEquals(15UL, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 0))
-		assertEquals(15UL, DigitalSignalFactory.of(BW_8, 255L).getSubwordValue(BW_4, 1))
-		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 0))
-		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 256L).getSubwordValue(BW_4, 1))
-		assertEquals(7UL, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 0))
-		assertEquals(0UL, DigitalSignalFactory.of(BW_8, 7L).getSubwordValue(BW_4, 1))
-		assertEquals(1UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 0))
-		assertEquals(2UL, DigitalSignalFactory.of(BW_4, 9L).getSubwordValue(BW_2, 1))
+		assertEquals(15UL, Word.of(BW_4, 15UL).getSubwordValue(BW_4, 0))
+		assertEquals(15UL, Word.of(BW_8, 255UL).getSubwordValue(BW_4, 0))
+		assertEquals(15UL, Word.of(BW_8, 255UL).getSubwordValue(BW_4, 1))
+		assertEquals(0UL, Word.of(BW_8, 256UL).getSubwordValue(BW_4, 0))
+		assertEquals(0UL, Word.of(BW_8, 256UL).getSubwordValue(BW_4, 1))
+		assertEquals(7UL, Word.of(BW_8, 7UL).getSubwordValue(BW_4, 0))
+		assertEquals(0UL, Word.of(BW_8, 7UL).getSubwordValue(BW_4, 1))
+		assertEquals(1UL, Word.of(BW_4, 9UL).getSubwordValue(BW_2, 0))
+		assertEquals(2UL, Word.of(BW_4, 9UL).getSubwordValue(BW_2, 1))
 	}
 
 	@Test
 	fun shouldExtractUnevenSubwordValue() {
-		assertEquals(1UL, DigitalSignalFactory.of(BW_5, 31L).getSubwordValue(BW_4, 1))
+		assertEquals(1UL, Word.of(BW_5, 31UL).getSubwordValue(BW_4, 1))
 	}
 
 	@Test
 	fun shouldExtractSubwordFromBitWidth2() {
-		assertEquals(0UL, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 0))
-		assertEquals(1UL, DigitalSignalFactory.of(BW_2, 2).getSubwordValue(BW_1, 1))
+		assertEquals(0UL, Word.of(BW_2, 2U).getSubwordValue(BW_1, 0))
+		assertEquals(1UL, Word.of(BW_2, 2U).getSubwordValue(BW_1, 1))
 	}
 
 	@Test
@@ -114,9 +119,9 @@ class WordTest {
 
 	@Test
 	fun shouldSetSubword() {
-		assertEquals(DigitalSignalFactory.of(BW_4, 13L), DigitalSignalFactory.of(BW_4, 15L).withSubwordValue(DigitalSignalFactory.of(BW_2, 1L), 0))
-		assertEquals(DigitalSignalFactory.of(BW_4, 7L), DigitalSignalFactory.of(BW_4, 15L).withSubwordValue(DigitalSignalFactory.of(BW_2, 1L), 1))
-		assertEquals(DigitalSignalFactory.of(BW_8, 32L), DigitalSignalFactory.of(BW_8, 0L).withSubwordValue(DigitalSignalFactory.of(BW_4, 2L), 1))
+		assertEquals(Word.of(BW_4, 13UL), Word.of(BW_4, 15UL).withSubwordValue(Word.of(BW_2, 1UL), 0))
+		assertEquals(Word.of(BW_4, 7UL), Word.of(BW_4, 15UL).withSubwordValue(Word.of(BW_2, 1UL), 1))
+		assertEquals(Word.of(BW_8, 32UL), Word.of(BW_8, 0UL).withSubwordValue(Word.of(BW_4, 2UL), 1))
 	}
 
 	@Test
@@ -128,109 +133,109 @@ class WordTest {
 	fun shouldSetSubwordWiderThanOrigWord() {
 		// Use case: We have a two-bit word of value 0, and we want to enter the value 1 at the left-most position.
 		// The value has been entered as a hex number, which is 4 bits wide. We expect the value to be truncated.
-		assertEquals(DigitalSignalFactory.of(BW_2, 1L), DigitalSignalFactory.of(BW_2, 0L).withSubwordValue(DigitalSignalFactory.of(BW_4, 1L), 0))
+		assertEquals(Word.of(BW_2, 1UL), Word.of(BW_2, 0UL).withSubwordValue(Word.of(BW_4, 1UL), 0))
 	}
 
 	@Test
 	fun shouldRepresentAsBinary() {
-		assertEquals("0001", DigitalSignalFactory.of(BW_4, 1L).binaryString)
-		assertEquals("0110", DigitalSignalFactory.of(BW_4, 6L).binaryString)
-		assertEquals("00000000", DigitalSignalFactory.of(BW_8, 0L).binaryString)
+		assertEquals("0001", Word.of(BW_4, 1UL).binaryString)
+		assertEquals("0110", Word.of(BW_4, 6UL).binaryString)
+		assertEquals("00000000", Word.of(BW_8, 0UL).binaryString)
 	}
 
 	@Test
 	fun shouldRepresentAsDecimal() {
-		assertEquals("6", DigitalSignalFactory.of(BW_4, 6L).decimalString)
-		assertEquals("6", DigitalSignalFactory.of(BW_8, 6L).decimalString)
+		assertEquals("6", Word.of(BW_4, 6UL).decimalString)
+		assertEquals("6", Word.of(BW_8, 6UL).decimalString)
 	}
 
 	@Test
 	fun shouldRepresentAsHex() {
-		assertEquals("Z", DigitalSignalFactory.of(Undefined).hexString)
+		assertEquals("Z", Word.of(Undefined).hexString)
 		assertEquals("z", Word(listOf(False, Undefined)).hexString)
-		assertEquals("0", DigitalSignalFactory.of(BW_1, 0L).hexString)
-		assertEquals("3", DigitalSignalFactory.of(BW_2, 3L).hexString)
-		assertEquals("F", DigitalSignalFactory.of(BW_4, 15L).hexString)
-		assertEquals("FF", DigitalSignalFactory.of(BW_8, 255L).hexString)
-		assertEquals("0F", DigitalSignalFactory.of(BW_8, 15L).hexString)
-		assertEquals("ZZ", DigitalSignalFactory.of(BW_8, null).hexString)
+		assertEquals("0", Word.of(BW_1, 0UL).hexString)
+		assertEquals("3", Word.of(BW_2, 3UL).hexString)
+		assertEquals("F", Word.of(BW_4, 15UL).hexString)
+		assertEquals("FF", Word.of(BW_8, 255UL).hexString)
+		assertEquals("0F", Word.of(BW_8, 15UL).hexString)
+		assertEquals("ZZ", Word.of(BW_8, null).hexString)
 	}
 
 	@Test
 	fun shouldRepresentAsInt() {
-		assertEquals(0, DigitalSignalFactory.of(BW_8, 0L).toInt())
-		assertEquals(1, DigitalSignalFactory.of(BW_8, 1L).toInt())
-		assertEquals(37, DigitalSignalFactory.of(BW_8, 37L).toInt())
-		assertEquals(255, DigitalSignalFactory.of(BW_8, 255L).toInt())
+		assertEquals(0, Word.of(BW_8, 0UL).toInt())
+		assertEquals(1, Word.of(BW_8, 1UL).toInt())
+		assertEquals(37, Word.of(BW_8, 37UL).toInt())
+		assertEquals(255, Word.of(BW_8, 255UL).toInt())
 	}
 
 	@Test
 	fun shouldCreateCopyWithChangedBit() {
-		assertEquals(DigitalSignalFactory.of(BW_4, 7L), DigitalSignalFactory.of(BW_4, 6L).withBit(0, True))
+		assertEquals(Word.of(BW_4, 7UL), Word.of(BW_4, 6UL).withBit(0, True))
 	}
 
 	@Test
 	fun shouldCheckZeroWithChangedBit() {
-		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 0L).withBit(0, True).color)
-		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 1L).withBit(0, False).color)
+		assertEquals(Themes.get<AntaresTheme>().word, Word.of(BW_4, 0UL).withBit(0, True).color)
+		assertEquals(Themes.get<AntaresTheme>().wordZero, Word.of(BW_4, 1UL).withBit(0, False).color)
 	}
 
 	@Test
 	fun shouldReturnBusColor() {
-		assertEquals(Themes.get<AntaresTheme>().word, DigitalSignalFactory.of(BW_4, 1L).color)
+		assertEquals(Themes.get<AntaresTheme>().word, Word.of(BW_4, 1UL).color)
 	}
 
 	@Test
 	fun shouldNotReturnBusColorWithoutPreference() {
 		BaseModule.properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, false)
 		DigitalSignalColor.reset()
-		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 1L).color)
+		assertEquals(Themes.get<AntaresTheme>().wordZero, Word.of(BW_4, 1UL).color)
 	}
 
 	@Test
 	fun shouldReturnBusZeroColor() {
-		assertEquals(Themes.get<AntaresTheme>().wordZero, DigitalSignalFactory.of(BW_4, 0L).color)
+		assertEquals(Themes.get<AntaresTheme>().wordZero, Word.of(BW_4, 0UL).color)
 	}
 
 	@Test
 	fun shouldCalculateNot() {
-		assertEquals(DigitalSignalFactory.of(false), DigitalSignalFactory.of(true).not())
-		assertEquals(DigitalSignalFactory.of(true), DigitalSignalFactory.of(false).not())
-		assertEquals(DigitalSignalFactory.of(BW_8, 0L), DigitalSignalFactory.of(BW_8, 255L).not())
+		assertEquals(Word.of(false), Word.of(true).not())
+		assertEquals(Word.of(true), Word.of(false).not())
+		assertEquals(Word.of(BW_8, 0UL), Word.of(BW_8, 255UL).not())
 	}
 
 	@Test
 	fun shouldFlipBit() {
-		assertEquals(DigitalSignalFactory.of(BW_4, 4), DigitalSignalFactory.of(BW_4, 12L).flip(3))
+		assertEquals(Word.of(BW_4, 4U), Word.of(BW_4, 12UL).flip(3))
 	}
 
 	@Test
 	fun shouldExpandToWidth() {
-		val expandedWord = DigitalSignalFactory.of(BW_4, 1L).ofWidth(BW_8)
+		val expandedWord = Word.of(BW_4, 1UL).ofWidth(BW_8)
 		assertEquals(1UL, expandedWord.getValue())
 		assertEquals(BW_8, expandedWord.bitWidth)
 	}
 
 	@Test
 	fun shouldReduceToWidth() {
-		val reducedWord = DigitalSignalFactory.of(BW_8, 1L).ofWidth(BW_4)
+		val reducedWord = Word.of(BW_8, 1UL).ofWidth(BW_4)
 		assertEquals(1UL, reducedWord.getValue())
 		assertEquals(BW_4, reducedWord.bitWidth)
 	}
 
 	@Test
 	fun shouldShiftLeft() {
-		assertEquals(DigitalSignalFactory.of(BW_8, 16L), DigitalSignalFactory.of(BW_8, 8L).shiftLeft())
-		assertEquals(DigitalSignalFactory.of(BW_8, 32L), DigitalSignalFactory.of(BW_8, 8L).shiftLeft(2))
-		assertEquals(DigitalSignalFactory.of(BW_4, 0L), DigitalSignalFactory.of(BW_4, 8L).shiftLeft())
+		assertEquals(Word.of(BW_8, 16UL), Word.of(BW_8, 8UL).shiftLeft())
+		assertEquals(Word.of(BW_8, 32UL), Word.of(BW_8, 8UL).shiftLeft(2))
+		assertEquals(Word.of(BW_4, 0UL), Word.of(BW_4, 8UL).shiftLeft())
 		assertEquals(Word(listOf(False, Undefined, Undefined, Undefined)), Word.undefined(BW_4).shiftLeft())
 	}
 
 	@Test
 	fun shouldShiftRight() {
-		assertEquals(DigitalSignalFactory.of(BW_8, 4L), DigitalSignalFactory.of(BW_8, 8L).shiftRight())
-		assertEquals(DigitalSignalFactory.of(BW_8, 2L), DigitalSignalFactory.of(BW_8, 8L).shiftRight(2))
-		assertEquals(DigitalSignalFactory.of(BW_4, 0L), DigitalSignalFactory.of(BW_4, 1L).shiftRight())
+		assertEquals(Word.of(BW_8, 4UL), Word.of(BW_8, 8UL).shiftRight())
+		assertEquals(Word.of(BW_8, 2UL), Word.of(BW_8, 8UL).shiftRight(2))
+		assertEquals(Word.of(BW_4, 0UL), Word.of(BW_4, 1UL).shiftRight())
 		assertEquals(Word(listOf(Undefined, Undefined, Undefined, False)), Word.undefined(BW_4).shiftRight())
 	}
 
@@ -245,19 +250,19 @@ class WordTest {
 
 	@Test
 	fun shouldBeConsistentWithEqualSignal() {
-		assertTrue(DigitalSignalFactory.of(True).isConsistentWith(DigitalSignalFactory.of(True)))
+		assertTrue(Word.of(True).isConsistentWith(Word.of(True)))
 	}
 
 	@Test
 	fun shouldBeConsistentWithUndefinedBits() {
-		assertTrue(DigitalSignalFactory.of(True).isConsistentWith(DigitalSignalFactory.of(Undefined)))
-		assertTrue(DigitalSignalFactory.of(Undefined).isConsistentWith(DigitalSignalFactory.of(True)))
+		assertTrue(Word.of(True).isConsistentWith(Word.of(Undefined)))
+		assertTrue(Word.of(Undefined).isConsistentWith(Word.of(True)))
 		assertTrue(Word(listOf(Undefined, True)).isConsistentWith(Word(listOf(False, True))))
 	}
 
 	@Test
 	fun shouldNotBeConsistentWithDifferentDefinedBits() {
-		assertFalse(DigitalSignalFactory.of(True).isConsistentWith(DigitalSignalFactory.of(False)))
+		assertFalse(Word.of(True).isConsistentWith(Word.of(False)))
 	}
 
 	@Test
@@ -267,8 +272,8 @@ class WordTest {
 
 	@Test
 	fun shouldDefineSubword() {
-		assertEquals(Word(listOf(True, False)), Word(listOf(True, Undefined)).defineSubword(DigitalSignalFactory.of(False), 1))
-		assertEquals(Word(listOf(True, True)), Word(listOf(True, True)).defineSubword(DigitalSignalFactory.of(False), 1))
+		assertEquals(Word(listOf(True, False)), Word(listOf(True, Undefined)).defineSubword(Word.of(False), 1))
+		assertEquals(Word(listOf(True, True)), Word(listOf(True, True)).defineSubword(Word.of(False), 1))
 		assertEquals(Word(listOf(False, True, Undefined, Undefined)), Word(listOf(False, True, Undefined, Undefined)).defineSubword(Word(listOf(False, Undefined, Undefined, Undefined)), 0))
 	}
 	

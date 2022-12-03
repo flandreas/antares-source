@@ -200,4 +200,16 @@ object BitOperation {
         }
         throw IllegalArgumentException("value must be between 0 and 15")
     }
+
+	/**
+	 * Standard Long.toBinaryString() not supported on JS platform.
+	 */
+	fun longToBinaryPadded(value: ULong, bitWidth: BitWidth): String {
+		val result = StringBuilder()
+		for (i in bitWidth.width -1 downTo 0) {
+			val mask = 1UL shl i
+			result.append(if (value.and(mask) != 0UL) 1 else 0)
+		}
+		return result.toString()
+	}
 }

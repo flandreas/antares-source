@@ -131,6 +131,29 @@ internal data class Word(
 		}
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+
+		if (other == null) return false
+
+		if (other is DefinedWord) {
+			return bitWidth == other.bitWidth && longValue == other.longValue
+		}
+
+		other as Word
+
+		if (bits != other.bits) return false
+		if (bitWidth != other.bitWidth) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = bits.hashCode()
+		result = 31 * result + bitWidth.hashCode()
+		return result
+	}
+
 	/** ---- [DigitalSignal] interface */
 
 	override val hexString: String by lazy {
@@ -204,18 +227,10 @@ internal data class Word(
 
 	override fun toInt(): Int? = toLong()?.toInt()
 
-	/** ---- [Word] */
-
 	override fun getValue(): ULong = longValue!!
 
 	override fun isAllOf(bit: Bit): Boolean = bits.all { it == bit }
 
-	/**
-	 * Creates a copy of this [Word] and sets the specified [Bit] in the copy.
-	 * @param index the index of the [Bit] to set.
-	 * @param bit the [Bit] to set at index [index].
-	 * @return the copies and adjusted [Word].
-	 */
 	override fun withBit(index: Int, bit: Bit): DigitalSignal {
 		val bits = mutableListOf<Bit>()
 		bits.addAll(this.bits)
@@ -234,6 +249,12 @@ internal data class Word(
 				subword.add(0, Bit.False)
 			}
 		}
+		// Left pad
+		/*
+		while (subword.size < subwordWidth.width) {
+			subword.add(Bit.False)
+		}
+		*/
 		return Word(subword)
 	}
 
@@ -280,15 +301,6 @@ internal data class Word(
 		}
 	}
 
-	/**
-	 * Creates a copy of this [Word] and sets the specified sub-word in the copy.
-	 * Note that this method works only for [DigitalSignalRepresentation]s with fully aligned nibbles.
-	 * In particular, it doesn't work with [DigitalSignalRepresentation.DECIMAL].
-	 *
-	 * @param subword the [Word] to be set in the copy of this [Word]
-	 * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of
-	 * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7)
-	 */
 	override fun withSubwordValue(subword: DigitalSignal, index: Int): DigitalSignal {
 		val resultBits = mutableListOf<Bit>()
 		resultBits.addAll(this.bits)
@@ -309,10 +321,6 @@ internal data class Word(
 		}
 	}
 
-	/**
-	 * Creates a copy of this [Word] and used all [Bit]s of [subword] where the corresponding
-	 * [Bit] in this [Word] is [Bit.Undefined].
-	 */
 	override fun defineSubword(subword: DigitalSignal, index: Int): Word {
 		val resultBits = mutableListOf<Bit>()
 		resultBits.addAll(this.bits)
@@ -332,10 +340,6 @@ internal data class Word(
 		return Word(resultBits)
 	}
 
-	/**
-	 * Creates a copy of this [Word]'s value and expands or reduces it to the specified [BitWidth].
-	 * Expanding is done by adding zeros to the left, while reducing is done by truncating high order numbers.
-	 */
 	override fun ofWidth(bitWidth: BitWidth): DigitalSignal = of(bitWidth, getValue())
 
 	override fun shiftLeft(bitCount: Int): DigitalSignal {

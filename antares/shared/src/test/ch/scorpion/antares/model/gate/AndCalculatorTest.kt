@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DefinedWord
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import kotlin.test.Test
@@ -40,6 +41,17 @@ class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
 		assertTwoInput(Error, True, Error)
 		assertTwoInput(Error, Undefined, Error)
 		assertTwoInput(Error, Error, Error)
+	}
+
+	@Test
+	fun shouldCalculateSingleBit() {
+		val andGate = AndGate(bitWidth = BitWidth.BW_1)
+		andGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(False)), signalHandler)
+		andGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(True)), signalHandler)
+
+		val result = calculator.calculateSingleBit(andGate)
+
+		assertEquals(DefinedWord.of(false), result)
 	}
 
 	@Test

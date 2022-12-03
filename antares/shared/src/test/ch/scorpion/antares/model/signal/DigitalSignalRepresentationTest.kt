@@ -41,7 +41,7 @@ class DigitalSignalRepresentationTest {
 
 	@Test
 	fun shouldRetrieveHexadecimalSignalAt() {
-		assertEquals(of(BW_1, 1L), HEXADECIMAL.signalAt(of(BW_1, 1L), 0))
+		assertEquals(of(BW_4, 1L), HEXADECIMAL.signalAt(of(BW_1, 1L), 0))
 		assertEquals(of(BW_4, 0L), HEXADECIMAL.signalAt(of(BW_8, 0L), 0))
 		assertEquals(of(BW_4, 15L), HEXADECIMAL.signalAt(of(BW_8, 15L), 0))
 		assertEquals(of(BW_4, 0L), HEXADECIMAL.signalAt(of(BW_8, 16L), 0))
