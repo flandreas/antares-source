@@ -40,7 +40,7 @@ open class DefaultNetSignalApplier<T : Any> : NetSignalApplier<T> {
 			val thisAccess = combinedNet.accessOf(outputPort)!!
 			if (thisAccess.isPartiallyUndefined) {
 				combinedNet.getConsistentAccess(signalHandler)?.let { consistentAccess ->
-					signalHandler.logTrace(System.getClass(this), outputPort.portId) { "withdrawing signal and using signal of consistent Port" }
+					//signalHandler.logTrace(System.getClass(this), outputPort.portId) { "withdrawing signal and using signal of consistent Port" }
 					replacement = SignalReplacement(
 						thisAccess.replaceUndefinedFrom(replacement.signal, consistentAccess.assertedSignal, signalHandler),
 						consistentAccess.port)
@@ -54,7 +54,7 @@ open class DefaultNetSignalApplier<T : Any> : NetSignalApplier<T> {
 			val thisAccess = combinedNet.accessOf(outputPort)!!
 			if (thisAccess.isPartiallyUndefined) {
 				combinedNet.weakOutputPorts.firstOrNull()?.let { weakPortToActivate ->
-					signalHandler.logTrace(System.getClass(this), outputPort.portId) { "forwarding weak signal into net '${outputPort.net!!.id}'" }
+					//signalHandler.logTrace(System.getClass(this), outputPort.portId) { "forwarding weak signal into net '${outputPort.net!!.id}'" }
 					val weakSignal = weakPortToActivate.weakBehaviour!!.activateWeakOutput(thisAccess.assertedSignal, weakPortToActivate, signalHandler)
 					replacement = SignalReplacement(
 						thisAccess.replaceUndefinedFrom(replacement.signal, weakSignal, signalHandler),
