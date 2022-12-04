@@ -241,6 +241,9 @@ internal data class Word(
 	}
 
 	override fun getSubword(subwordWidth: BitWidth, index: Int): DigitalSignal {
+		if (subwordWidth == bitWidth && index == 0) {
+			return this
+		}
 		if (allDefined) {
 			// Tuning
 			return DefinedWord.of(bitWidth, longValue!!).getSubword(subwordWidth, index)
