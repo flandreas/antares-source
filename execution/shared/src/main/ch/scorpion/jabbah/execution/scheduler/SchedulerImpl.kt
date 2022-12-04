@@ -307,7 +307,7 @@ class SchedulerImpl(
 				if (request != null && request.isActing) {
 					actor.actingDone(this, request.actorData)
 				}
-				slot.actingDone(actor)
+				slot.actingDone(actor, request)
 
 				if (isInBreakpointPending && !slot.isActing) {
 					isInBreakpoint = true
@@ -613,8 +613,8 @@ class SchedulerImpl(
 			}
 		}
 
-		fun actingDone(actor: Actor) {
-			findRequest(actor)?.let {
+		fun actingDone(actor: Actor, request: Request?) {
+			request?.let {
 				logActorTrace(actor) { "Actor is done " }
 				requests.remove(it.actor)
 				postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
