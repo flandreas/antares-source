@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.base.time
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
 
+typealias TimerHandler = (ActionEvent) -> Unit
+
 /**
  * A timer abstraction to be used for implementing various types of timers for simulation processes,
  * such as real-time timers or test timers that allow precise control over time.
@@ -21,7 +23,7 @@ interface Timer {
 	 * @param interval the interval in milliseconds
 	 * @param handler the handler of an [ActionEvent] to be called after every timing interval
 	 */
-	fun initialize(interval: Int, repeats: Boolean = true, handler: (ActionEvent) -> Unit): Timer
+	fun initialize(interval: Int, repeats: Boolean = true, handler: TimerHandler): Timer
 
 	fun start()
 

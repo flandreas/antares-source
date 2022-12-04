@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent
 /**
  * An [ActionListener] adapter for the JVM.
  */
-class ActionListenerJvm(val handler: (ch.scorpion.jabbah.base.event.ActionEvent) -> Unit) : java.awt.event.ActionListener {
+open class ActionListenerJvm(val handler: (ch.scorpion.jabbah.base.event.ActionEvent) -> Unit) : java.awt.event.ActionListener {
 
     /** ---- [java.awt.event.ActionListener] interface */
 
