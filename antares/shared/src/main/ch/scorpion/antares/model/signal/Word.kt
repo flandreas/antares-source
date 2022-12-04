@@ -14,16 +14,6 @@ internal data class Word(
 	override val bits: List<Bit>
 ) : DigitalSignal {
 
-	override val bitWidth: BitWidth = BitWidth.of(bits.size)
-
-	/** Is automatically set to ´true´ if all [Bit]s are [Bit.False]. */
-	override val isZero: Boolean = bits.all { it == Bit.False }
-
-	/** Is automatically set to ´true´ if any [Bit]s is [Bit.Undefined]. */
-	private val undefined: Boolean = bits.any { it == Bit.Undefined }
-
-	private val error: Boolean = bits.any { it == Bit.Error }
-
 	companion object {
 
 		private val UNDEFINED: MutableMap<Int, Word> = mutableMapOf()
@@ -121,6 +111,18 @@ internal data class Word(
 		}
 	}
 
+	override val bitWidth: BitWidth = BitWidth.of(bits.size)
+
+	/** Is ´true´ if all [Bit]s are [Bit.False]. */
+	override val isZero: Boolean by lazy { bits.all { it == Bit.False } }
+
+	/** Is ´true´ if any [Bit]s is [Bit.Undefined]. */
+	private val undefined: Boolean by lazy { bits.any { it == Bit.Undefined } }
+
+	private val error: Boolean by lazy { bits.any { it == Bit.Error } }
+
+	private val allDefined: Boolean by lazy { bits.all { it.isDefined } }
+
 	/** ---- [Any] */
 
 	override fun toString(): String {
@@ -164,7 +166,7 @@ internal data class Word(
 		sb.toString().padStart(bitWidth.width / 4, '0')
 	}
 
-	override val isFullyUndefined: Boolean get() = isAllOf(Bit.Undefined)
+	override val isFullyUndefined: Boolean by lazy { isAllOf(Bit.Undefined) }
 
 	override val isPartiallyUndefined: Boolean get() = undefined
 
@@ -238,7 +240,12 @@ internal data class Word(
 		return Word(bits)
 	}
 
-	override fun getSubword(subwordWidth: BitWidth, index: Int): Word {
+	override fun getSubword(subwordWidth: BitWidth, index: Int): DigitalSignal {
+		if (allDefined) {
+			// Tuning
+			return DefinedWord.of(bitWidth, longValue!!).getSubword(subwordWidth, index)
+		}
+
 		// Use the same loop structure as in getSubWordValue
 		val subword = mutableListOf<Bit>()
 		val digit = min(bitWidth.width, subwordWidth.width) - 1

@@ -71,9 +71,10 @@ class WordTest {
 
 	@Test
 	fun shouldExtractSubword() {
-		assertEquals(Word.of(BW_1, 1U), Word.of(BW_1, 1UL).getSubword(BW_4, 0))
-		assertEquals(Word.of(BW_4, 1U), Word.of(BW_4, 1UL).getSubword(BW_4, 0))
-		assertEquals(Word.of(BW_4, 1U), Word.of(BW_8, 16UL).getSubword(BW_4, 1))
+		/** [Word.getSubword] returns [DefinedWord] for performance reasons if all bits are defined. */
+		assertEquals(DefinedWord.of(BW_4, 1U), Word.of(BW_1, 1UL).getSubword(BW_4, 0))
+		assertEquals(DefinedWord.of(BW_4, 1U), Word.of(BW_4, 1UL).getSubword(BW_4, 0))
+		assertEquals(DefinedWord.of(BW_4, 1U), Word.of(BW_8, 16UL).getSubword(BW_4, 1))
 	}
 
 	@Test
