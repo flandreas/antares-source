@@ -236,10 +236,14 @@ interface BidirectionalPort<T : Any> : InputPort<T>, OutputPort<T> {
 }
 
 /** Enumerates the type of a [Port] regarding signal flow direction.*/
-enum class PortType(override val customName: String) : EnumProperty<PortType> {
-	INPUT("input"),
-	OUTPUT("output"),
-	INOUT("inout");
+enum class PortType(
+	override val customName: String,
+	val isInput: Boolean,
+	val isOutput: Boolean
+) : EnumProperty<PortType> {
+	INPUT("input", isInput = true, isOutput = false),
+	OUTPUT("output", isInput = false, isOutput = true),
+	INOUT("inout", isInput = true, isOutput = true);
 
 	companion object {
 
@@ -258,27 +262,20 @@ enum class PortType(override val customName: String) : EnumProperty<PortType> {
 		}
 	}
 
-	override fun toString(): String {
-		return when (this) {
+	override fun toString(): String =
+		when (this) {
 			INPUT -> Translations.getString("graph.property.portType.input")
 			OUTPUT -> Translations.getString("graph.property.portType.output")
 			INOUT -> Translations.getString("graph.property.portType.inout")
 		}
-	}
 
-	fun reverse(): PortType {
-		return when (this) {
+	fun reverse(): PortType =
+		when (this) {
 			INPUT -> OUTPUT
 			OUTPUT -> INPUT
 			INOUT -> INOUT
 		}
-	}
 
-	fun isCompatibleWith(other: PortType): Boolean {
-		return this == INOUT || other == INPUT || reverse() == other
-	}
-
-	val isInput: Boolean get() = this == INPUT || this == INOUT
-	val isOutput: Boolean get() = this == OUTPUT || this == INOUT
-
+	fun isCompatibleWith(other: PortType): Boolean =
+		this == INOUT || other == INPUT || reverse() == other
 }

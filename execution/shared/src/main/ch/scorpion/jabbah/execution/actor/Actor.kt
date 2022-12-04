@@ -122,6 +122,9 @@ open class ActorImpl(
 	/** Manages [Actor] behaviour on behalf of this [Actor].*/
 	private val actorSupport: ActorSupport by lazy { ActorSupport(this) }
 
+	protected var executionRunning: Boolean = false
+		private set
+
 	private var _state: ActorState = ActorState.NonExecuting
 
 	/** ---- [Actor] interface */
@@ -146,12 +149,13 @@ open class ActorImpl(
 		actorSupport.removeListener(l)
 	}
 
-	override fun executionInitialize(signalHandler: SignalHandler) { }
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		executionRunning = true
+	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		_state = ActorState.Idle
 		executionError = null
-
 	}
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
@@ -170,6 +174,7 @@ open class ActorImpl(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		executionError = null
 		_state = ActorState.NonExecuting
+		executionRunning = false
 	}
 
 	/** ---- [ActorImpl] */

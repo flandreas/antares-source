@@ -20,6 +20,9 @@ abstract class AbstractVertice(
 	/** Contains all [Port]s of this [Vertice].*/
 	private val ports = mutableListOf<Port<*>>()
 
+	/** Caches property [inputCount] during simulation for faster, very often used access. */
+	private var cachedInputCount: Int = 0
+
 	/** ---- [Vertice] interface */
 
 	override var name: String? = name
@@ -32,7 +35,7 @@ abstract class AbstractVertice(
 
 	override val portsCount: Int get() = ports.size
 
-	override val inputCount: Int get() = ports.count { it.portType.isInput }
+	override val inputCount: Int get() = if (executionRunning) cachedInputCount else ports.count { it.portType.isInput }
 
 	override val outputCount: Int get() = ports.count { it.portType.isOutput }
 
@@ -155,6 +158,7 @@ abstract class AbstractVertice(
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
+		cachedInputCount = inputCount
 		super.executionInitialize(signalHandler)
 		ports.forEach { it.executionStarted(signalHandler) }
 	}
