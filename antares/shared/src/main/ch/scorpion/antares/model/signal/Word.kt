@@ -144,8 +144,8 @@ internal data class Word(
 
 		other as Word
 
-		if (bits != other.bits) return false
 		if (bitWidth != other.bitWidth) return false
+		if (bits != other.bits) return false
 
 		return true
 	}
