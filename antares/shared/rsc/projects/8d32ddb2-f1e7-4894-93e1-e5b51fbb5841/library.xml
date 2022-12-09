@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project _id='0' defaultElement='2d76ec8a-4f01-453d-9af6-11ddd8895421' uuid='8d32ddb2-f1e7-4894-93e1-e5b51fbb5841' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='But How Do It Know?'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='1558b9db-7acc-4d2f-a201-bce1d8614c78'>
+          <name>
+            <translation lang='en' text='Test'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='39a4fc22-703a-430b-a720-ea449ba856ff'>
+          <name>
+            <translation lang='en' text='Memory'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='f0656a5f-291d-4f97-92cf-2c4be83320cb'>
+          <name>
+            <translation lang='en' text='Byte'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='de3cb3a0-860d-42f8-b9f1-164b19d37d81'>
+          <name>
+            <translation lang='en' text='Enabler'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='4c358288-1870-42bf-9518-2f8dc057adde'>
+          <name>
+            <translation lang='en' text='Register'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='122ebe98-6ecc-442a-9895-a83355be8845'>
+          <name>
+            <translation lang='en' text='Register (Bus)'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='90c1dbd5-8e8c-4d81-8e54-de3f04f43bad'>
+          <name>
+            <translation lang='en' text='Decoder 2x4'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='9' uuid='95a95fe7-676c-4695-a547-e4b9b9b39fe1'>
+          <name>
+            <translation lang='en' text='Decoder 3x8'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='10' uuid='c2a6ea44-5ed2-4b06-b925-906986a49409'>
+          <name>
+            <translation lang='en' text='Decoder 4x16'/>
+          </name>
+        </containerLibraryElement>
+        <libraryFolder _id='11'>
+          <name>
+            <translation lang='en' text='RAM'/>
+          </name>
+          <items>
+            <containerLibraryElement _id='12' uuid='e26280db-d11d-4b6e-bb76-ce6f38da35dd'>
+              <name>
+                <translation lang='en' text='RAM Cell'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='13' uuid='fc49ee9f-dce1-4c2c-8205-e7489a5c2190'>
+              <name>
+                <translation lang='en' text='RAM 256 Byte'/>
+              </name>
+            </containerLibraryElement>
+          </items>
+        </libraryFolder>
+        <libraryFolder _id='14'>
+          <name>
+            <translation lang='en' text='Arithmetic'/>
+          </name>
+          <items>
+            <containerLibraryElement _id='15' uuid='17f3ab76-8e76-44af-bb75-77a66c80f1ae'>
+              <name>
+                <translation lang='en' text='Right Shifter'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='16' uuid='f60bc6b7-d312-4109-aa6f-f16aece93078'>
+              <name>
+                <translation lang='en' text='Left Shifter'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='17' uuid='a64a7b33-5c88-4488-86ec-8d085bc0be4d'>
+              <name>
+                <translation lang='en' text='Adder 1 Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='18' uuid='697c5a26-bdc3-47d6-a0f9-8cc019fbc0a8'>
+              <name>
+                <translation lang='en' text='Adder 8 Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='19' uuid='09d5f371-a91c-437d-958a-82a01e68c4a1'>
+              <name>
+                <translation lang='en' text='Comparator 1 Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='20' uuid='b7f6df0c-a1bf-456d-8363-84b90e3a34da'>
+              <name>
+                <translation lang='en' text='Comparator 8 Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='21' uuid='94ec1103-3a15-4871-81f8-b4330622141a'>
+              <name>
+                <translation lang='en' text='Zero'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='22' uuid='39dd98ee-4dcd-4ae6-aa92-6bde575b1e47'>
+              <name>
+                <translation lang='en' text='ALU'/>
+              </name>
+            </containerLibraryElement>
+          </items>
+        </libraryFolder>
+        <containerLibraryElement _id='23' uuid='1272c8f1-953b-468f-b0a5-581e95001cc8'>
+          <name>
+            <translation lang='en' text='Bus 1'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='24' uuid='2d76ec8a-4f01-453d-9af6-11ddd8895421'>
+          <name>
+            <translation lang='en' text='CPU'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='25' uuid='418b44ab-9e3a-485f-a80f-a71b30254107'>
+          <name>
+            <translation lang='en' text='Clock'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='26' uuid='a3ee5ff1-db25-448f-ad3e-5244229bb3d0'>
+          <name>
+            <translation lang='en' text='Stepper'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='27' uuid='eac825fc-affa-4237-af66-d7829917c3b9'>
+          <name>
+            <translation lang='en' text='Control Section'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='28' uuid='8c18f058-fa0f-49ac-8b14-f6ae35c576b1'>
+          <name>
+            <translation lang='en' text='Flags'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='29' uuid='b6a42632-0f20-425f-aa9d-edec1e698e5b'>
+          <name>
+            <translation lang='en' text='Display'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+  <desc>
+    <translation lang='en' text='The basic principles of computers for everyone.
+Book by J. Clark Scott'/>
+  </desc>
+</project>

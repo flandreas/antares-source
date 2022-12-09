@@ -37,5 +37,14 @@
         <translation lang='en' text='Sine Wave'/>
       </name>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='6' uuid='8d32ddb2-f1e7-4894-93e1-e5b51fbb5841' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
+      <name>
+        <translation lang='en' text='But How Do It Know?'/>
+      </name>
+      <desc>
+        <translation lang='en' text='The basic principles of computers for everyone.
+Book by J. Clark Scott'/>
+      </desc>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>
