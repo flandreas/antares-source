@@ -151,9 +151,9 @@ class GraphDesktopViewController(
 		vv: VerticeView<*>,
 		itemFactory: (CompositeColor,isParentDetached: Boolean) -> GraphDesktopViewItem
 	) {
-		val assoc = associations.firstOrNull { it.ref == vv }
+		val assoc = associations.firstOrNull { it.refId == vv.id }
 		if (assoc != null) {
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = vv, messageKey = "graph.vertice.alreadyOpen.msg"))
 			return
 		}
 
@@ -163,7 +163,7 @@ class GraphDesktopViewController(
 			val refColor = referenceColorSequence.next()
 			val displayedColor = displayedReferenceColor(refColor)
 			val newItem = itemFactory.invoke(displayedColor, it.isDetached)
-			associations.add(Association(it, vv, newItem, refColor))
+			associations.add(Association(it, vv.id, newItem, refColor))
 
 			view.addGraphDesktopItem(newItem)
 
@@ -175,7 +175,7 @@ class GraphDesktopViewController(
 	private fun openHierarchySubGraph(subGraphVerticeView: SubGraphVerticeView<*>, rootGraphView: GraphView) {
 		if (view.mainDesktopViewItem?.drawingView?.drawing === rootGraphView) {
 			val newItem = view.createSubGraphDesktopItem(subGraphVerticeView, null, false, viewManager)
-			associations.add(Association(null, subGraphVerticeView, newItem, null))
+			associations.add(Association(null, subGraphVerticeView.id, newItem, null))
 			view.addGraphDesktopItem(newItem)
 		}
 	}
@@ -269,16 +269,18 @@ class GraphDesktopViewController(
 	 */
 	private fun deassociate(item: GraphDesktopViewItem) {
 		associationOf(item)?.let { assoc ->
-			val content = assoc.sourceItem?.findContent { it.drawing.contains(assoc.ref) }
+			val content = assoc.sourceItem?.findContent { assoc.verticeView != null && it.drawing.contains(assoc.verticeView!!) }
 			if (content != null) {
-				deassociate(assoc, content)
+				deassociate(assoc, content, assoc.verticeView)
 			}
 		}
 	}
 
-	private fun deassociate(assoc: Association, content: DrawingViewContent<*>?) {
+	private fun deassociate(assoc: Association, content: DrawingViewContent<*>?, verticeView: VerticeView<*>?) {
 		content?.let {
-			it.highlighter.unhighlight(assoc.ref)
+			if (verticeView != null) {
+				it.highlighter.unhighlight(verticeView)
+			}
 			if (assoc.refColor != null) {
 				referenceColorSequence.free(assoc.refColor)
 			}
@@ -299,15 +301,17 @@ class GraphDesktopViewController(
 
 	private inner class RemoveListener : DrawableContainerAdapter<GraphElementView<*>>() {
 		override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
-			associations.firstOrNull { it.ref === event.child }?.let { assoc ->
+			if (event.child is VerticeView<*>) {
+				associations.firstOrNull { it.refId == (event.child as VerticeView<*>).id }?.let { assoc ->
 
-				// Explicitly call deassociate() with Content because deassociate() in close() wouldn't
-				// find the Content, because the VerticeView has already been deleted
-				if (assoc.sourceItem != null) {
-					deassociate(assoc, assoc.sourceItem.drawingView?.content)
+					// Explicitly call deassociate() with Content because deassociate() in close() wouldn't
+					// find the Content, because the VerticeView has already been deleted
+					if (assoc.sourceItem != null) {
+						deassociate(assoc, assoc.sourceItem.drawingView?.content, event.child as VerticeView<*>)
+					}
+
+					closeItem(assoc.item)
 				}
-
-				closeItem(assoc.item)
 			}
 		}
 	}
@@ -316,9 +320,12 @@ class GraphDesktopViewController(
 	 * Maintains an association between a [VerticeView] and the [GraphDesktopViewItem] that has been opened
 	 * in a [GraphDesktopView], along with the [ReferenceColor] that is used as a visual reference.
 	 */
-	data class Association(
+	private data class Association(
 		val sourceItem: GraphDesktopViewItem?,
-		val ref: VerticeView<*>,
+		val refId: Int,
 		val item: GraphDesktopViewItem,
-		val refColor: ReferenceColor?)
+		val refColor: ReferenceColor?
+	) {
+		val verticeView: VerticeView<*>? get() = sourceItem?.drawingView?.drawing?.getWithId(refId) as VerticeView<*>?
+	}
 }
