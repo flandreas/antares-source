@@ -11,9 +11,11 @@ import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action
 
@@ -46,10 +48,14 @@ class EditSubGraphVerticeViewAction(
 		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
-		val containerPanel = ContainerPanelSwing(
-			application = null,
+		val containerPanelController = ContainerPanelController(
 			applicationContextHolder,
-			displayGlobalMessages = false,
+			displayGlobalMessages = false
+		)
+
+		val containerPanel = ContainerPanelSwing(
+			containerPanelController,
+			application = null,
 			eventBus = eventBus,
 			viewManager = viewManager)
 
@@ -58,8 +64,8 @@ class EditSubGraphVerticeViewAction(
 		containerPanel.initialize()
 
 		UiUtil.invokeLater {
-			containerPanel.view.navigator.fitMaxNormal()
-			containerPanel.active = true
+			containerPanelController.drawingView.navigator.fitMaxNormal()
+			containerPanelController.active = true
 		}
 
 		val editedContainerDrawing = EditSubGraphVerticeViewPanel.showAsDialog(
@@ -78,6 +84,6 @@ class EditSubGraphVerticeViewAction(
 		editedVerticeView.invalidate()
 		editedDrawingView.selectionManager.select(editedVerticeView)
 
-		containerPanel.dispose()
+		containerPanelController.dispose()
 	}
 }

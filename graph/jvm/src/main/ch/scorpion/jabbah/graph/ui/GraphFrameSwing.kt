@@ -42,7 +42,7 @@ open class GraphFrameSwing(
 
 	val graphPanel = GraphPanelViewSwing(controller.graphPanelViewController, viewManager = viewManager, application = application)
 
-	private val containerPanel = ContainerPanelSwing(application, controller.applicationContextHolder, displayGlobalMessages = true)
+	private val containerPanel = ContainerPanelSwing(controller.containerPanelController, application)
 
 	val loginLogoutAction = LoginLogoutAction()
 
@@ -60,7 +60,7 @@ open class GraphFrameSwing(
 
 	override val desktopView: View<*> get() = editor.view
 
-	override val containerView: View<*> get() = containerPanel.editor.view
+	override val containerView: View<*> get() = controller.containerPanelController.drawingView
 
 	override val desktopViewShowsNavigationRoot: Boolean get() = graphPanel.showsNavigationRoot
 
@@ -84,7 +84,7 @@ open class GraphFrameSwing(
 
 			editor.view.initialize()
 
-			containerPanel.active = false
+			controller.containerPanelController.active = false
 		}
 	}
 
@@ -101,8 +101,8 @@ open class GraphFrameSwing(
 
 			containerPanel.initialize()
 
-			viewManager.activeView = containerPanel.editor.view
-			containerPanel.active = true
+			viewManager.activeView = controller.containerPanelController.drawingView
+			controller.containerPanelController.active = true
 		}
 	}
 

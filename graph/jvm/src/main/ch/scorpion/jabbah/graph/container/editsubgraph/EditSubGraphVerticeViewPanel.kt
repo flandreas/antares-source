@@ -67,7 +67,7 @@ class EditSubGraphVerticeViewPanel(
 			}
 
 			return if (panel.okPressed) {
-				panel.containerPanel.editor.drawing as ContainerDrawing
+				panel.containerPanel.controller.editor.drawing as ContainerDrawing
 			} else {
 				null
 			}
@@ -92,10 +92,10 @@ class EditSubGraphVerticeViewPanel(
 	/** ---- [UndoableDataHolder] interface*/
 
 	override fun getUndoableState(): Storable =
-		containerPanel.editor.drawing
+		containerPanel.controller.editor.drawing
 
 	override fun setUndoableState(state: Storable) {
-		containerPanel.updateData(state as ContainerDrawing)
+		containerPanel.controller.updateData(state as ContainerDrawing)
 	}
 
 	/** ---- [EditSubGraphVerticeViewPanel] */
@@ -114,7 +114,7 @@ class EditSubGraphVerticeViewPanel(
 
 	private fun fill() {
 		val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
-		containerPanel.setData(
+		containerPanel.controller.setData(
 			graphView = libraryGraph.graph.graphView,
 			containerDrawing = StorableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()),
 			editable = true,
@@ -124,7 +124,7 @@ class EditSubGraphVerticeViewPanel(
 	private fun createToolBarPanel(): JPanel {
 		val toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
-		GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(null, containerPanel.editor, separator = false).forEach { toolbarPanel.add(it) }
+		GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(null, containerPanel.controller.editor, separator = false).forEach { toolbarPanel.add(it) }
 		return toolbarPanel
 	}
 

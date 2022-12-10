@@ -1,69 +1,45 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.ComponentTransferable
-import ch.scorpion.jabbah.edit.UndoableDataHolder
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.figure.FigureGroupsPanel
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
+import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 
-/**
- * A [JPanel] for editing the outside [ContainerDrawing] of a [GraphView].
- *
- * The current [ContainerDrawing] is established by listening for [ApplicationDataEvent] on the specified
- * [EventBus].
- */
 class ContainerPanelSwing(
+	val controller: ContainerPanelController,
 	application: Application?,
-	applicationContextHolder: GraphApplicationContextHolder,
-	displayGlobalMessages: Boolean = true,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager
-) : JPanel() {
+) : JPanel(), ContainerPanelView {
 
 	companion object {
 		private const val PROP_MAIN_SPLIT_POS = "containerPanel.mainSplitPos"
 		private const val PROP_LEFT_SPLIT_POS = "containerPanel.leftSplitPos"
 		private const val PROP_CONTENT_SPLIT_POS = "containerPanel.contentSplitPos"
 	}
-
-	val view = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
-
-	val editor = GraphViewModule.containerEditorFactory(view)
-
-	private val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 
 	/**
 	 * The [ContainerTreeView] containing all objects of the underlying [GraphView]
@@ -79,78 +55,30 @@ class ContainerPanelSwing(
 	/** Splits between [contentSplitPane] and [propertyPanel]. */
 	private val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	/** Splits between [leftSplitPane] and the [view]'s canvas.*/
+	/** Splits between [leftSplitPane] and the [DrawingView]'s canvas.*/
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-	private var editedContainerDrawing: ContainerDrawing? = null
-
-	private val applicationDataEventHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
-
-	private val applicationDataContentEventHandler : EventHandler<ApplicationDataContentEvent> = { handle (it) }
-
-	private val commandHandler: EventHandler<CommandEvent> = { handle(it) }
-
-	private var editable: Boolean = true
-
-	/** Displays the value of [isManualContainerCurrent] in the UI.*/
+	/** Displays the (inverted) value of [ContainerPanelController.isManualContainerCurrent] in the UI.*/
 	private val isGeneratedContainerCheckbox = JCheckBox(Translations.getString("graph.property.ContainerDrawing.generated"))
 
-	private val generateContainerAction = GenerateContainerAction()
-
-	/** The "manual Container" property in its persistent state, i.e. when read from store. */
-	private var isManualContainerOrig: Boolean = false
-		set(value) {
-			field = value
-			isGeneratedContainerCheckbox.isSelected = !field
-			treeView.isManualContainer = field
-		}
-
-	/** The current "manual Container" property, i.e. after symbol has possibly been changed by the user. */
-	private var isManualContainerCurrent: Boolean = false
-		set(value) {
-			field = value
-			isGeneratedContainerCheckbox.isSelected = !field
-			treeView.isManualContainer = field
-		}
-
-	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, editor, separator = true)
-
-	var active: Boolean = false
-		set(value) {
-			if (field != value) {
-				field = value
-				// Update the UI of the JTree in order to recalculate the width of the TreeRenderer's JLabels,
-				// which are obviously cached by the JTree's UIManager. The tree nodes display the names of domain object,
-				// and these names might have been changed while the ContainerPanel wasn't active
-				treeView.updateUI()
-				editor.active = value && editable
-			}
-		}
+	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
 
 	init {
-		CanvasJvm(editor.view)
+		controller.view = this
 
-		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
-		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
-		eventBus.register(CommandEvent::class, commandHandler)
-
-		propertyPanel = ComponentPropertyPanelSwing(propertyPanelController, "container", propertySheetFactory)
+		CanvasJvm(controller.drawingView)
+		propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "container", propertySheetFactory)
 
 		treeView.transferHandler = ContainerTransferHandler()
-		(editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(editor, eventBus, ComponentTransferable.FLAVOR)
+		(controller.editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(controller.editor, eventBus, ComponentTransferable.FLAVOR)
 
 		buildUI(viewManager)
 
 		toolbars.add(createMiscellaneousToolbar())
 	}
 
-	fun dispose() {
-		eventBus.unregister(applicationDataEventHandler)
-		eventBus.unregister(applicationDataEventHandler)
-		eventBus.unregister(commandHandler)
-		propertyPanelController.dispose()
+	override fun dispose() {
 		treeView.dispose()
-		editor.dispose()
 
 		BaseModule.settings.set(PROP_MAIN_SPLIT_POS, mainSplitPane.dividerLocation)
 		BaseModule.settings.set(PROP_LEFT_SPLIT_POS, leftSplitPane.dividerLocation)
@@ -158,38 +86,47 @@ class ContainerPanelSwing(
 	}
 
 	fun initialize() {
-		editor.view.initialize()
+		controller.editor.view.initialize()
 	}
 
-	/**
-	 * Sets the data to be displayed by this [ContainerPanelSwing]. This method is used if this
-	 * [ContainerPanelSwing] is NOT used for the main application data (in which case it's [ContainerDrawing]
-	 * would be indirectly set as of [ApplicationDataEvent]), but in additional / separate context,
-	 * e.g. when editing the symbol of a [SubGraphVerticeView].
-	 *
-	 * @param graphView the main [GraphView] in the editable main panel
-	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
-	 * @param editable `true` if the user is authorized to edit the [ContainerDrawing]
-	 */
-	fun setData(
-		graphView: GraphView,
-		containerDrawing: ContainerDrawing,
-		editable: Boolean,
-		isManualContainer: Boolean,
-		applyZoomStrategy: Boolean = true
-	) {
-		this.editable = editable
-		this.isManualContainerOrig = isManualContainer
-		editor.view.setDrawing(containerDrawing, applyZoomStrategy)
-		treeView.update(graphView, containerDrawing, editable)
+	/** ---- [ContainerPanelView] */
+
+	override fun dataChanged() {
+		if (controller.graphView == null || controller.containerDrawing == null) {
+			removeAll()
+		} else {
+			if (componentCount == 0) {
+				add(mainSplitPane)
+			}
+			treeView.update(
+				controller.graphView!!,
+				controller.containerDrawing!!,
+				controller.editable
+			)
+		}
 	}
 
-	/**
-	 * Similar to [setData], but used in the context of [UndoableDataHolder].
-	 */
-	fun updateData(containerDrawing: ContainerDrawing) {
-		editor.view.setDrawing(containerDrawing)
+	override fun activeChanged() {
+		treeView.updateUI()
 	}
+
+	override fun updateIsManualContainer(isManualContainer: Boolean) {
+		isGeneratedContainerCheckbox.isSelected = !isManualContainer
+		treeView.isManualContainer = isManualContainer
+	}
+
+	override fun conformGenerateContainerDrawing(): Boolean =
+		JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("graph.action.containerLayout.question"),
+			name,
+			JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
+
+	override fun generateContainerDrawing() {
+		treeView.containerTree?.generateContainerDrawing()
+	}
+
+	/** ---- [ContainerPanelSwing] */
 
 	private fun createMiscellaneousToolbar(): ToolBar {
 		val toolbar = ToolBar(null)
@@ -202,7 +139,7 @@ class ContainerPanelSwing(
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 		panel.add(isGeneratedContainerCheckbox)
 		panel.add(Box.createHorizontalStrut(10))
-		panel.add(JButton(ActionWrapperSwing(generateContainerAction)))
+		panel.add(JButton(ActionWrapperSwing(controller.generateContainerAction)))
 		panel.add(Box.createHorizontalGlue())
 		toolbar.add(panel)
 
@@ -241,77 +178,8 @@ class ContainerPanelSwing(
 			mainSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_MAIN_SPLIT_POS, 0)
 		}
 		mainSplitPane.add(leftSplitPane)
-		mainSplitPane.add(FocusPanel(editor.view.canvas as JComponent, editor.view, editor.view.canvas as JComponent, viewManager))
+		mainSplitPane.add(FocusPanel(controller.drawingView.canvas as JComponent, controller.drawingView, controller.drawingView.canvas as JComponent, viewManager))
 
 		add(mainSplitPane)
-	}
-
-	private fun updateEditability() {
-		editor.active = editable && editedContainerDrawing != null
-		editor.view.editable = editor.active
-	}
-
-	private fun handle(event: ApplicationDataEvent) {
-		if (event.newData == null) {
-			editedContainerDrawing = null
-			editable = false
-			removeAll()
-		} else if (event.newData?.content is MetaGraph) {
-			if (event.oldData == null) {
-				add(mainSplitPane)
-			}
-			val metaGraph = event.newData!!.content as MetaGraph
-			editedContainerDrawing = metaGraph.containerDrawing
-			setData(
-				metaGraph.graph.graphView,
-				editedContainerDrawing!!,
-				editable = event.newData?.savable?.editable ?: false,
-				isManualContainer = metaGraph.isManualContainer)
-		} else {
-			editable = false
-		}
-		updateEditability()
-	}
-
-	private fun handle(event: ApplicationDataContentEvent) {
-		val metaGraph = event.data.content as MetaGraph
-		editedContainerDrawing = metaGraph.containerDrawing
-		setData(
-			metaGraph.graph.graphView,
-			editedContainerDrawing!!,
-			editable,
-			isManualContainer = metaGraph.isManualContainer,
-			applyZoomStrategy = false)
-	}
-
-	private fun handle(event: CommandEvent) {
-		if (editor.commandManager === event.commandManager) {
-			isManualContainerCurrent = isManualContainer(isManualContainerOrig, editor.commandManager)
-		}
-	}
-
-	fun generateContainerDrawing() {
-		treeView.containerTree?.generateContainerDrawing()
-		isManualContainerCurrent = false
-	}
-
-	private inner class GenerateContainerAction : AbstractAction("graph.action.containerLayout") {
-
-		override fun execute(event: ActionEvent) {
-			if (JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
-				Translations.getString("graph.action.containerLayout.question"),
-				name,
-				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
-			) {
-				try {
-					editor.commandManager.addTag(GraphFrameController.GENERATE_CONTAINER_TAG)
-					editor.commandManager.execute(GenerateContainerCommand(this@ContainerPanelSwing))
-					editor.view.applyDefaultZoomStrategy()
-				} finally {
-					editor.commandManager.removeTag(GraphFrameController.GENERATE_CONTAINER_TAG)
-				}
-			}
-		}
 	}
 }

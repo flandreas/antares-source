@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.graph.container.isManualContainer
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
+import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -126,6 +127,8 @@ open class GraphFrameController<T: GraphFrame>(
 
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
+
+	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true)
 
 	val graphPanelViewController = GraphPanelViewController(
 		editor,
