@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
+import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -40,8 +41,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * The main UI element of a graph [Application] that allows to switch between
- * a [GraphPanelView] (for editing the inside view of the main [GraphView] and
- * a ContainerPanel (for editing the outside view of the main [GraphView]).
+ * a [GraphPanelView] (for editing the inside view of the main [GraphView])
+ * and a [ContainerPanelView] (for editing the outside view of the main [GraphView]).
  */
 interface GraphFrame : UIView {
 

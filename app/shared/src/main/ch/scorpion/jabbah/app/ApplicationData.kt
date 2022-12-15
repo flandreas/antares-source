@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.io.Storable
 
@@ -10,8 +12,13 @@ import ch.scorpion.jabbah.io.Storable
 class ApplicationData(
 	content: Storable,
 	val savable: Savable,
-	private val eventBus: EventBus = BaseModule.eventBus
-) {
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val propertyOwner: PropertyOwner<Storable> = PropertyOwnerImpl()
+): PropertyOwner<Storable> by propertyOwner {
+
+	companion object {
+		const val PROP_CONTENT = "content"
+	}
 
 	override fun toString(): String = savable.description
 
@@ -20,6 +27,10 @@ class ApplicationData(
 			if (field !== value) {
 				val oldContent = field
 				field = value
+
+				fire(PROP_CONTENT, oldContent, field)
+
+				// TODO Remove
 				eventBus.post(ApplicationDataContentEvent(this, oldContent))
 			}
 		}
