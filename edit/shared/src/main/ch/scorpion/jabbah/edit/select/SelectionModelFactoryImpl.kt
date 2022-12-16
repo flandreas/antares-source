@@ -29,7 +29,6 @@ class SelectionModelFactoryImpl : SelectionModelFactory {
 				return entry.factory.invoke(component.selectableComponent)
 			}
 		}
-		LOG.warn("No suitable SelectionModel found for ${System.getClassName(component.selectableComponent)}")
 		return null
 	}
 
