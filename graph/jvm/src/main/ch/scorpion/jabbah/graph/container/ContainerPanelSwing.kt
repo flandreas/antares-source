@@ -151,7 +151,7 @@ class ContainerPanelSwing(
 
 		val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 		treeViewScrollPanel.border = BorderFactory.createCompoundBorder(
-			BorderFactory.createEmptyBorder(1, 2, 0, 2),
+			BorderFactory.createEmptyBorder(1, 2, 0, 0),
 			treeViewScrollPanel.border
 		)
 		treeViewScrollPanel.minimumSize = Dimension(treeViewScrollPanel.minimumSize.width, 200)
@@ -159,6 +159,10 @@ class ContainerPanelSwing(
 		val figuresPanel = FigureGroupsPanel()
 		val figuresScrollPane = JScrollPane(figuresPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 		figuresScrollPane.minimumSize = Dimension(figuresScrollPane.width, 200)
+		figuresScrollPane.border = BorderFactory.createCompoundBorder(
+			BorderFactory.createEmptyBorder(1, 2, 0, 0),
+			figuresScrollPane.border
+		)
 
 		contentSplitPane.border = null
 		if (BaseModule.settings.containsKey(PROP_CONTENT_SPLIT_POS)) {
@@ -166,6 +170,8 @@ class ContainerPanelSwing(
 		}
 		contentSplitPane.add(treeViewScrollPanel)
 		contentSplitPane.add(figuresScrollPane)
+
+		propertyPanel.border = BorderFactory.createEmptyBorder(1, 2, 0, 0)
 
 		leftSplitPane.border = null
 		if (BaseModule.settings.containsKey(PROP_LEFT_SPLIT_POS)) {
