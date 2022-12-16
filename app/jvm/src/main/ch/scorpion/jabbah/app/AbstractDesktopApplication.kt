@@ -252,7 +252,8 @@ abstract class AbstractDesktopApplication(
 		ensureUserDataDirectory()
 		FileOutputStream(path.toString()).use {
 			try {
-				val properties = java.util.Properties()
+				//val properties = java.util.Properties()
+				val properties = SortedProperties()
 				for (key in BaseModule.settings.getKeys()) {
 					properties.setProperty(key, BaseModule.settings.get(key))
 				}
