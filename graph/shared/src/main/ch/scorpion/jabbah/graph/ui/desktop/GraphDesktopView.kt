@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
+import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -19,6 +20,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -114,6 +116,8 @@ class GraphDesktopViewController(
 
 	private val openHierarchyHandler: EventHandler<OpenHierarchySubGraphRequest> = { handle(it) }
 
+	private val appDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
+
 	/** Closes an open [GraphDesktopViewItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
 
@@ -126,6 +130,7 @@ class GraphDesktopViewController(
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		eventBus.register(OpenHierarchySubGraphRequest::class, openHierarchyHandler)
+		eventBus.register(ApplicationDataContentEvent::class, appDataContentHandler)
 	}
 
 	override fun dispose() {
@@ -136,6 +141,7 @@ class GraphDesktopViewController(
 		eventBus.unregister(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.unregister(CurrentLibraryEvent::class, currentLibraryHandler)
 		eventBus.unregister(openRequestHandler)
+		eventBus.unregister(appDataContentHandler)
 	}
 
 	/** ---- [GraphDesktopViewController] */
@@ -169,6 +175,21 @@ class GraphDesktopViewController(
 
 			it.drawingView?.highlighter?.highlight(vv, displayedColor)
 			it.drawingView?.repaint()
+		}
+	}
+
+	private fun refreshHighlightsInMain() {
+		System.invokeLater {
+			view.mainDesktopViewItem?.let { item ->
+				associations
+					.filter { it.sourceItem == item }
+					.forEach { assoc ->
+						val component = item.drawingView?.drawing?.getWithId(assoc.refId)
+						if (component != null && assoc.refColor != null) {
+							item.drawingView?.highlighter?.highlight(component, displayedReferenceColor(assoc.refColor))
+						}
+					}
+			}
 		}
 	}
 
@@ -223,6 +244,12 @@ class GraphDesktopViewController(
 		}
 		event.replacements.forEach {
 			view.mainDesktopViewItem?.drawingView?.highlighter?.replaceColor(displayedReferenceColor(it.oldColor), displayedReferenceColor(it.newColor))
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationDataContentEvent) {
+		if (event.data.content is MetaGraph) {
+			refreshHighlightsInMain()
 		}
 	}
 

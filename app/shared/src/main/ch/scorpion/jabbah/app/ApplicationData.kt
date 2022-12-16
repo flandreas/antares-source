@@ -35,6 +35,10 @@ class ApplicationData(
 			}
 		}
 
+	init {
+		source = this
+	}
+
 	fun withSavable(savable: Savable): ApplicationData {
 		return ApplicationData(content, savable, eventBus)
 	}
