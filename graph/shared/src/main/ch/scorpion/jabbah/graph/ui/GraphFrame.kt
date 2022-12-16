@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
@@ -188,13 +189,22 @@ open class GraphFrameController<T: GraphFrame>(
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == View.PROP_TRANSFORMATION && properties.getBoolean(PROP_AUTO_SWITCH) && applicationModeHolder.currentMode == ApplicationMode.EDIT) {
-				if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {
-					if (view.desktopView.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)) {
-						showContainer()
-					}
-				} else if (e.source === view.containerView) {
-					if (view.containerView.zoomFactor >= SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)) {
-						showDesktop()
+				// Switch mode only if the ZoomPan change was intentionally initiated by the user
+				if (view.desktopView.zoomStrategy == ZoomStrategy.NONE) {
+					if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {
+						if (view.desktopView.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(
+								View.PROP_MIN_ZOOM_FACTOR
+							)
+						) {
+							showContainer()
+						}
+					} else if (e.source === view.containerView) {
+						if (view.containerView.zoomFactor >= SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(
+								View.PROP_MAX_ZOOM_FACTOR
+							)
+						) {
+							showDesktop()
+						}
 					}
 				}
 			}

@@ -132,13 +132,15 @@ class ZoomPanController(val view: View<*>) {
 				return
 			}
 
+			// Set zoomStrategy BEFORE changing the zoomFactor to avoid switching mode in GraphFrame
+			view.zoomStrategy = ZoomStrategy.NONE
+
 			if (e.isAltDown) {
 				startPos = Point2D.ZERO
 				pan(panVectorFromWheelRotation(e))
 			} else {
 				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e), e.location)
 			}
-			view.zoomStrategy = ZoomStrategy.NONE
 
 			e.consume()
 		}
