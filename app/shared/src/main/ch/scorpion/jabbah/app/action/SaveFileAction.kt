@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
@@ -30,6 +28,7 @@ class SaveFileAction(
         enabled = false
         eventBus.register(CommandEvent::class, commandEventHandler)
 	    eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
+	    controller.addPropertyChangeListener(::savableChanged)
     }
 
 	override fun dispose() {
@@ -50,8 +49,14 @@ class SaveFileAction(
 
     private fun update() {
 	    controller.apply {
-		    enabled = data != null && data!!.savable.defined && commandManager.canUndo()
+		    enabled = data != null && controller.isSavable && data!!.savable.defined && commandManager.canUndo()
 		    description = Translations.getString("file.action.save.desc", commandManager.commandCount)
 	    }
     }
+
+	private fun savableChanged(event: PropertyChangeEvent<*>) {
+		if (event.name == ApplicationDataViewController.PROP_SAVABLE) {
+			update()
+		}
+	}
 }

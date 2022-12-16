@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -60,11 +62,13 @@ open class ApplicationDataViewController(
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val newStorableProvider: () -> Storable,
 	private val repository: ApplicationDataRepository<Savable>,
-	val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<ApplicationDataView>(), ApplicationDataHolder, UndoableDataHolder {
+	val eventBus: EventBus = BaseModule.eventBus,
+	propertyOwnerImpl: PropertyOwner<Any> = PropertyOwnerImpl()
+) : AbstractUIController<ApplicationDataView>(), ApplicationDataHolder, UndoableDataHolder, PropertyOwner<Any> by propertyOwnerImpl {
 
 	companion object {
 		private val LOG by logger(ApplicationDataViewController::class)
+		const val PROP_SAVABLE = "appDataView.savable"
 	}
 
 	override fun dispose() {
@@ -74,7 +78,22 @@ open class ApplicationDataViewController(
 
 	val saveAction by lazy { SaveFileAction(this, eventBus, commandManager) }
 
+	/**
+	 * Determines whether saving is currently possible.
+	 * Can be controlled by higher-level classes that e.g. implement special application modes like
+	 * "Simulation", in which saving is temporarily disabled, until the mode returns to "Editing", where
+	 * saving is enabled.
+	 */
+	var isSavable: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				fire(PROP_SAVABLE, !field, field)
+			}
+		}
+
 	init {
+		source = this
 		commandManager.bindDataHolder(this)
 	}
 

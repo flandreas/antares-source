@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Properties
@@ -72,7 +72,7 @@ interface GraphFrameActions {
 }
 
 open class GraphFrameController<T: GraphFrame>(
-	private val applicationDataHolder: ApplicationDataHolder,
+	private val appDataViewController: ApplicationDataViewController,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val properties: Properties = BaseModule.properties,
 	private val viewManager: ContentViewManager = DrawViewModule.viewManager
@@ -134,7 +134,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	val graphPanelViewController = GraphPanelViewController(
 		editor,
-		applicationDataHolder,
+		appDataViewController,
 		applicationContextHolder,
 		applicationModeHolder,
 		eventBus)
@@ -143,7 +143,10 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val customSymbolHandler = CustomSymbolHandler()
 
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { handle(it) }
+
 	override fun onViewInitialized() {
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		registerZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
 		showDesktop()
@@ -151,6 +154,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(applicationModeHandler)
 		viewDesktopAction.dispose()
 		viewContainerAction.dispose()
 		graphPanelViewController.dispose()
@@ -184,6 +188,12 @@ open class GraphFrameController<T: GraphFrame>(
 	private fun unregisterZoomEventHandlers() {
 		view.desktopView.removePropertyChangeListener(zoomEventHandler)
 		view.containerView.removePropertyChangeListener(zoomEventHandler)
+	}
+
+	private fun handle(event: ApplicationModeEvent) {
+		if (event.source === applicationModeHolder) {
+			appDataViewController.isSavable = applicationModeHolder.currentMode == ApplicationMode.EDIT
+		}
 	}
 
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
@@ -273,7 +283,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 		private fun update() {
 			selected = displayedView == DisplayedView.Container
-			enabled = view.applicationMode.isEdit() && applicationDataHolder.data?.savable is AbstractContainerLibraryElementSavable
+			enabled = view.applicationMode.isEdit() && appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
 		}
 	}
 

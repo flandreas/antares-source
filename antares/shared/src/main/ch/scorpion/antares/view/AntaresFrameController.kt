@@ -5,10 +5,12 @@ import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -28,10 +30,11 @@ interface AntaresFrame : GraphFrame {
 }
 
 class AntaresFrameController(
-	applicationDataHolder: ApplicationDataHolder,
+	appDataViewController: ApplicationDataViewController,
 	private val eventBus: EventBus = BaseModule.eventBus,
 ) : GraphFrameController<AntaresFrame>(
-	applicationDataHolder, eventBus
+	appDataViewController,
+	eventBus
 ) {
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }
