@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
@@ -20,11 +21,19 @@ class TimedSchedulerTask(
 ) : AbstractSchedulerTask("execution.task.timed"), ActionListener {
 
 	companion object {
+
 		private val LOG by logger(TimedSchedulerTask::class)
-		private const val SLOWDOWN_FACTOR = 0.5
 
 		// Tuning: Avoid costly System.currentTimeMillis(). Value has been found experimentally.
 		private const val STEPS_PER_20_MILLISECOND = 20_000
+
+		const val DEF_SLOWDOWN_FACTOR = 4.0f
+
+		/**
+		 * The name of the [Float] value in [Properties] that determines how much the simulation is slowed dow
+		 * in relation to the [CurrentSystemSpeedCategory]' [SystemSpeed].
+		 * */
+		const val PROP_SLOWDOWN_FACTOR = "TimedSchedulerTask.slowDownFactor"
 	}
 
 	init {
@@ -38,11 +47,14 @@ class TimedSchedulerTask(
 
 	private lateinit var scheduler: Scheduler
 
+	private var slowDownFactor: Float = DEF_SLOWDOWN_FACTOR
+
 	/** ---- [SchedulerTask] interface */
 
 	override fun startIfNeeded() {
 		if (!scheduler.isQueueEmpty && !timer.isRunning()) {
 			LOG.trace("Starting timer")
+			slowDownFactor = BaseModule.properties.getFloat(PROP_SLOWDOWN_FACTOR)
 			adaptToSystemSpeed()
 			timer.start()
 		}
@@ -70,7 +82,7 @@ class TimedSchedulerTask(
 		if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
 			executeNumberOfSteps(STEPS_PER_20_MILLISECOND)
 		} else {
-			executeNumberOfSteps(10)
+			executeNumberOfSteps(1000)
 		}
 	}
 
@@ -86,12 +98,22 @@ class TimedSchedulerTask(
 	/** ---- [TimedSchedulerTask] */
 
 	private fun calculateTimerInterval(): Int {
-		val interval = max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
+		val interval = if (currentSystemSpeedCategory.systemSpeed.speed == 0) {
+			Int.MAX_VALUE
+		} else {
+			max(1.0f, slowDownFactor * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
+		}
 		LOG.trace("interval = $interval")
 		return interval
 	}
 
 	private fun adaptToSystemSpeed() {
-		timer.interval = calculateTimerInterval()
+		val newInterval = calculateTimerInterval()
+		val needRestart = timer.interval == Int.MAX_VALUE && newInterval != Int.MAX_VALUE && timer.isRunning()
+		timer.interval = newInterval
+		if (needRestart) {
+			timer.stop()
+			timer.start()
+		}
 	}
 }

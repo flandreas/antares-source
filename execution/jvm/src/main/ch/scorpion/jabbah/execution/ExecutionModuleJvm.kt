@@ -2,10 +2,12 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.FloatPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 
 object ExecutionModuleJvm : AbstractModule() {
 
@@ -26,5 +28,11 @@ object ExecutionModuleJvm : AbstractModule() {
 			nameKey = "execution.preferences.maxIssuesCount",
 			minValue = 0,
 			maxValue = 1_000))
+
+		root.getGroup(PREF_TREE_EXECUTION).add(FloatPreference(
+			id = TimedSchedulerTask.PROP_SLOWDOWN_FACTOR,
+			nameKey = "execution.preferences.slowDownFactor",
+			minValue = 0.0001f
+		))
 	}
 }

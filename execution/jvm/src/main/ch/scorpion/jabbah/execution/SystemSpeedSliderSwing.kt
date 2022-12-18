@@ -32,6 +32,8 @@ class SystemSpeedSliderSwing(
         slider.paintLabels = false
         slider.paintTicks = true
         slider.majorTickSpacing = 33
+	    slider.minorTickSpacing = 3
+	    slider.snapToTicks = true
         slider.addChangeListener { systemSpeed.speed = slider.value }
 
 	    buildUIWithoutLabel()
