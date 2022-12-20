@@ -84,6 +84,13 @@ class ROMView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
+	var loadDataSource: Boolean
+		get() = model.loadDataSource
+		set(value) {
+			model.loadDataSource = value
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

@@ -6,10 +6,13 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Path2DJvm
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Desktop
 import java.awt.Frame
 import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Paths
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
@@ -86,5 +89,9 @@ actual object System {
 		if (condition()) {
 			println("break")
 		}
+	}
+
+	actual fun getFileContents(path: String): String? {
+		return Files.readString(Paths.get(path))
 	}
 }

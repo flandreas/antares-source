@@ -26,6 +26,8 @@ class ROMViewBeanInfo : DigitalComponentViewBeanInfo<ROMView>() {
 
 		private val showDisassembler = CommandPropertySwing("showDisassembler", "element.property.ROM.disassemblerDisplay", Boolean::class.java, componentBeanProvider)
 		private val highlightCurrentCellWhenNotSelected = CommandPropertySwing("highlightCurrentCellWhenNotSelected", "element.property.ROM.highlightCurrentCellWhenNotSelected", Boolean::class.java, componentBeanProvider)
+
+		private val loadDataSource = CommandPropertySwing("loadDataSource", "element.property.ROM.loadDataSource", Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: ROMView, editor: Editor, properties: MutableList<Property>) {
@@ -34,6 +36,7 @@ class ROMViewBeanInfo : DigitalComponentViewBeanInfo<ROMView>() {
 		properties.add(addressBitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(dataBitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { false }))
+		properties.add(loadDataSource.bind(editor, beanIdProvider(bean.id)))
 		properties.add(showContents.bind(editor, beanIdProvider(bean.id)))
 		if (bean.showContents) {
 			properties.add(contentsRowCount.bind(editor, beanIdProvider(bean.id)))

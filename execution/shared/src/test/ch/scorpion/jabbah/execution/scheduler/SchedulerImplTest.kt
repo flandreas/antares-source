@@ -27,7 +27,7 @@ class SchedulerImplTest {
 
 	init {
 		ExecutionTestRule.configure()
-		val currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)
+		val currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(speed = SystemSpeed.MAX_SPEED, eventBus = eventBus), eventBus)
 		timeService = ControlledTimeService()
 		scheduler = SchedulerImpl(
 			currentSystemSpeedCategory,

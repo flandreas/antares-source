@@ -1,9 +1,13 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
 
 abstract class AbstractAddressable<T : Addressable>(
 	calculator: VerticeCalculator<T>
@@ -37,6 +41,8 @@ abstract class AbstractAddressable<T : Addressable>(
 			getDataPort().bitWidth = value
 			stateChanged()
 		}
+
+	override var dataSource: String? = null
 
 	override fun dataAt(address: Int): ULong = memory.read(address)
 
@@ -84,8 +90,24 @@ abstract class AbstractAddressable<T : Addressable>(
 		dataListeners.forEach { it.dataChanged(event) }
 	}
 
-	protected fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
+	private fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
 		val event = AddressableCommentEvent(address, oldValue, newValue)
 		dataListeners.forEach { it.commentChanged(event) }
+	}
+
+	/** ---- [Storable] */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (StringUtils.isNotBlank(dataSource)) {
+			writer.writeString("dataSource", dataSource!!)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("dataSource")) {
+			dataSource = reader.readString("dataSource")
+		}
 	}
 }

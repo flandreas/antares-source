@@ -30,10 +30,13 @@ class AddressableContentsCommand(
 
 	private var oldContents: String? = null
 
+	private var oldDataSource: String? = addressable.dataSource
+
 	override fun execute() {
 		oldContents = MemoryDump.write(addressable.memory, bitWidth)
 		try {
 			MemoryDump.read(addressable.memory, String(Files.readAllBytes(Paths.get(filePath))))
+			addressable.dataSource = filePath
 		} catch (e: Throwable) {
 			LOG.error("Error while reading memory from file '$filePath'")
 			throw e
@@ -42,5 +45,6 @@ class AddressableContentsCommand(
 
 	override fun undo() {
 		MemoryDump.read(addressable.memory, oldContents!!)
+		addressable.dataSource = oldDataSource
 	}
 }

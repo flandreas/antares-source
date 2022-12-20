@@ -9,11 +9,12 @@ import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -77,6 +78,13 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 	 */
 	var currentSelectedAddress: Int = 0
 
+	/**
+	 * If `true`, the data in [dataSource] is loaded every time the simulation is started.
+	 * This eases editing data files with an external tool and eliminates the need to manually
+	 * import data after every change.
+	 */
+	var loadDataSource: Boolean = false
+
 	private val disassembler = Disassembler()
 
 	/** Maps a memory cell address to its disassembly string.*/
@@ -129,6 +137,7 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 		if (StringUtils.isNotEmpty(disassemblerConfig)) {
 			writer.writeString("disassembler", disassemblerConfig)
 		}
+		writer.writeBoolean("loadDataSource", loadDataSource)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -137,6 +146,30 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		CompressedMemoryDump.read(memory, reader.readString("content"))
 		disassemblerConfig = reader.readOptionalString("disassembler") ?: ""
+		if (reader.hasAttribute("loadDataSource")) {
+			loadDataSource = reader.readBoolean("loadDataSource")
+		}
+	}
+
+	/** --- [Actor] interface */
+
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		if (loadDataSource && StringUtils.isNotBlank(dataSource)) {
+			try {
+				System.getFileContents(dataSource!!)?.let {
+					MemoryDump.read(memory, it)
+				}
+			} catch (e: Exception) {
+				BaseModule.eventBus.post(IssueImpl(
+					IssueSeverity.Warning,
+					Translations.getString("ROM.loadDataSource.loadError.txt"),
+					null,
+					"ROM (ID $id)",
+					null)
+				)
+			}
+		}
 	}
 
 	/** ---- [ROM]  */

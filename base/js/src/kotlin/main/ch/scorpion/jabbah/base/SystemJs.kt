@@ -86,4 +86,6 @@ actual object System {
 	actual fun breakpoint(condition: () -> Boolean) {
 		// empty
 	}
+
+	actual fun getFileContents(path: String): String? = null
 }

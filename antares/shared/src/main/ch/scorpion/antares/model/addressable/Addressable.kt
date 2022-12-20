@@ -71,6 +71,9 @@ interface Addressable : Vertice {
 	 */
 	val storesCells: Boolean
 
+	/** An optional indication (typically a file path/name) from which the [memory] contents have been loaded.*/
+	var dataSource: String?
+
 	fun addDataListener(listener: AddressableDataListener)
 
 	fun removeDataListener(listener: AddressableDataListener)

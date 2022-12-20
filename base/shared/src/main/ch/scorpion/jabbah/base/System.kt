@@ -64,5 +64,11 @@ expect object System {
 	 * Used for setting breakpoints in the JVM implementation as workaround for IntelliJ's
 	 * multiplatform bug with setting breakpoints in common code.*/
 	fun breakpoint(condition: () -> Boolean = { true })
+
+	/**
+	 * Returns the contents of a file with the specified [path].
+	 * Environments without access to files can return `null`.
+	 */
+	fun getFileContents(path: String): String?
 }
 
