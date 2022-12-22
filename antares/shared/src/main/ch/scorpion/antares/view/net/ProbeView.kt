@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
@@ -211,22 +212,22 @@ class ProbeView(
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
-			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -innerBounds.height / 2 - insets)
-			Direction.NORTH -> Point2D(-innerBounds.width / 2 - insets, -DigitalPortView.LENGTH - innerBounds.height - 2 * insets)
-			Direction.SOUTH -> Point2D(-innerBounds.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
-			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - innerBounds.width - 2 * insets, -innerBounds.height / 2 - insets)
+			Direction.EAST -> Point2D(AbstractAntaresPortView.LENGTH.toDouble(), -innerBounds.height / 2 - insets)
+			Direction.NORTH -> Point2D(-innerBounds.width / 2 - insets, -AbstractAntaresPortView.LENGTH - innerBounds.height - 2 * insets)
+			Direction.SOUTH -> Point2D(-innerBounds.width / 2 - insets, AbstractAntaresPortView.LENGTH.toDouble())
+			Direction.WEST -> Point2D(-AbstractAntaresPortView.LENGTH - innerBounds.width - 2 * insets, -innerBounds.height / 2 - insets)
 		}
 
 	override fun updateViewImpl() {
 		getInput().direction = orientation.opposite()
-		getInput().setLocation(DigitalPortView.LENGTH * orientation.dx, DigitalPortView.LENGTH * orientation.dy)
+		getInput().setLocation(AbstractAntaresPortView.LENGTH * orientation.dx, AbstractAntaresPortView.LENGTH * orientation.dy)
 		if (hasOutput) {
 			getOutput().direction = orientation
 			when (orientation) {
-				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + innerBounds.width, 0.0)
-				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - innerBounds.height)
-				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - innerBounds.width, 0.0)
-				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + innerBounds.height)
+				Direction.EAST -> getOutput().setLocation(2 * AbstractAntaresPortView.LENGTH + innerBounds.width, 0.0)
+				Direction.NORTH -> getOutput().setLocation(0.0, -2 * AbstractAntaresPortView.LENGTH - innerBounds.height)
+				Direction.WEST -> getOutput().setLocation(-2 * AbstractAntaresPortView.LENGTH - innerBounds.width, 0.0)
+				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * AbstractAntaresPortView.LENGTH + innerBounds.height)
 			}
 		}
 		updateLabelPosition()
@@ -319,10 +320,10 @@ class ProbeView(
 
 	private fun updateLabelPositionWithoutOutput() {
 		label.location = when (orientation) {
-			Direction.EAST -> Point2D(DigitalPortView.LENGTH + width + LABEL_DIST, 0.0)
-			Direction.NORTH -> Point2D(0.0, -(DigitalPortView.LENGTH + height + LABEL_DIST))
-			Direction.WEST -> Point2D(-(DigitalPortView.LENGTH + width + LABEL_DIST), 0.0)
-			Direction.SOUTH -> Point2D(0.0, DigitalPortView.LENGTH + height + LABEL_DIST)
+			Direction.EAST -> Point2D(AbstractAntaresPortView.LENGTH + width + LABEL_DIST, 0.0)
+			Direction.NORTH -> Point2D(0.0, -(AbstractAntaresPortView.LENGTH + height + LABEL_DIST))
+			Direction.WEST -> Point2D(-(AbstractAntaresPortView.LENGTH + width + LABEL_DIST), 0.0)
+			Direction.SOUTH -> Point2D(0.0, AbstractAntaresPortView.LENGTH + height + LABEL_DIST)
 		}
 		label.alignment = Alignment.forOrientation(orientation.opposite())
 	}

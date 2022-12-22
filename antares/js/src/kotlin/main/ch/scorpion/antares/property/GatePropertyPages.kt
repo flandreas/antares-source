@@ -3,7 +3,7 @@ package ch.scorpion.antares.property
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.jabbah.edit.Component
@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.ui.property.VerticeViewPropertyPage
 import com.ccfraser.muirwik.components.MGridProps
 import styled.StyledElementBuilder
 
-open class DigitalComponentPropertyPage<T : DigitalComponentView<*>> : VerticeViewPropertyPage<T>() {
+open class DigitalComponentPropertyPage<T : OrientableRectangularVerticeView<*>> : VerticeViewPropertyPage<T>() {
 	override fun addProperties(bean: T, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.propertyRow(Component.BASE_KEY_ORIENTATION) {

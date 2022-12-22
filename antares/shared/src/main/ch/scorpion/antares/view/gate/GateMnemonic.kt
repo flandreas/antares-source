@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.gate.effectiveGateInputBit
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -133,7 +133,7 @@ object GateMnemonic {
 		return Transparent.applyTo(transparent.transparency, color)
 	}
 
-	private fun getInputSignal(gateView: DigitalComponentView<*>, portId: Int): Bit {
+	private fun getInputSignal(gateView: OrientableRectangularVerticeView<*>, portId: Int): Bit {
 		val inputPort = gateView.model.getInput<DigitalSignal>(portId) as DigitalPort
 		return effectiveGateInputBit(inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0)))
 	}
@@ -470,7 +470,7 @@ object GateMnemonic {
 	 * the [ApplicationMode]) and the general enabledness, and prepares drawing by setting up the
 	 * coordinate system origin if drawing is required.
 	 */
-	private fun begin(gateView: DigitalComponentView<*>, context: DrawContext): Boolean {
+	private fun begin(gateView: OrientableRectangularVerticeView<*>, context: DrawContext): Boolean {
 		val graphApplicationContext = context.castedAppContext<GraphApplicationContext>()!!
 		if (gateView.model.inputCount <= 2
 			&& isDisplayableFor(context.g.transform)
@@ -489,7 +489,7 @@ object GateMnemonic {
 		return false
 	}
 
-	private fun end(gateView: DigitalComponentView<*>, context: DrawContext) {
+	private fun end(gateView: OrientableRectangularVerticeView<*>, context: DrawContext) {
 		context.g.translate(-gateView.x, -gateView.y)
 	}
 

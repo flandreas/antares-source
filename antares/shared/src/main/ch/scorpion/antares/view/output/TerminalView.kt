@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.Terminal
 import ch.scorpion.antares.model.input.TerminalRow
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
@@ -13,7 +14,6 @@ import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -189,7 +189,7 @@ class TerminalView(
 	private fun updateGeometry() {
 		invalidate()
 		setBounds(
-			x = DigitalPortView.LENGTH.toDouble(),
+			x = AbstractAntaresPortView.LENGTH.toDouble(),
 			y = -calculatedHeight + 3 * Look.SCALE.toDouble(),
 			w = calculatedWidth,
 			h = calculatedHeight
@@ -199,37 +199,37 @@ class TerminalView(
 			Handedness.RIGHT -> {
 				with(getPortView(model.dataInput)!!) {
 					direction = Direction.EAST
-					location = Point2D(DigitalPortView.LENGTH + width, -4.0 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH + width, -4.0 * Look.SCALE)
 				}
 				with(getPortView(model.clockInput)!!) {
 					direction = Direction.EAST
-					location = Point2D(DigitalPortView.LENGTH + width, 0.0)
+					location = Point2D(AbstractAntaresPortView.LENGTH + width, 0.0)
 				}
 				with(getPortView(model.writeEnableInput)!!) {
 					direction = Direction.SOUTH
-					location = Point2D(DigitalPortView.LENGTH + width - 7.0 * Look.SCALE, 3.0 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH + width - 7.0 * Look.SCALE, 3.0 * Look.SCALE)
 				}
 				with(getPortView(model.clearInput)!!) {
 					direction = Direction.SOUTH
-					location = Point2D(DigitalPortView.LENGTH + width - 3.0 * Look.SCALE, 3.0 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH + width - 3.0 * Look.SCALE, 3.0 * Look.SCALE)
 				}
 			}
 			Handedness.LEFT -> {
 				with(getPortView(model.dataInput)!!) {
 					direction = Direction.WEST
-					location = Point2D(DigitalPortView.LENGTH, -4 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH, -4 * Look.SCALE)
 				}
 				with(getPortView(model.clockInput)!!) {
 					direction = Direction.WEST
-					location = Point2D(DigitalPortView.LENGTH, 0)
+					location = Point2D(AbstractAntaresPortView.LENGTH, 0)
 				}
 				with(getPortView(model.writeEnableInput)!!) {
 					direction = Direction.SOUTH
-					location = Point2D(DigitalPortView.LENGTH + 3 * Look.SCALE, 3 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH + 3 * Look.SCALE, 3 * Look.SCALE)
 				}
 				with(getPortView(model.clearInput)!!) {
 					direction = Direction.SOUTH
-					location = Point2D(DigitalPortView.LENGTH + 7 * Look.SCALE, 3 * Look.SCALE)
+					location = Point2D(AbstractAntaresPortView.LENGTH + 7 * Look.SCALE, 3 * Look.SCALE)
 				}
 			}
 		}
@@ -321,7 +321,7 @@ class TerminalView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 

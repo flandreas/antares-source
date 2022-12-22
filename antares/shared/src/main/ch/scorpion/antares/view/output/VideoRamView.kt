@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.addressable.AddressableDataListener
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
@@ -167,7 +168,7 @@ class VideoRamView(
 			port = model.getClockInput()!!,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = 0))
 
 		addPortView(DigitalPortView(
@@ -176,7 +177,7 @@ class VideoRamView(
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = -4 * Look.SCALE))
 
 		addPortView(DigitalPortView(
@@ -185,7 +186,7 @@ class VideoRamView(
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = -8 * Look.SCALE))
 
 		addPortView(DigitalPortView(
@@ -193,7 +194,7 @@ class VideoRamView(
 			port = model.getChipSelectInput(),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 3 * Look.SCALE,
+			x = AbstractAntaresPortView.LENGTH + 3 * Look.SCALE,
 			y = 3 * Look.SCALE))
 
 		addPortView(DigitalPortView(
@@ -201,7 +202,7 @@ class VideoRamView(
 			port = model.getWriteInput(),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 7 * Look.SCALE,
+			x = AbstractAntaresPortView.LENGTH + 7 * Look.SCALE,
 			y = 3 * Look.SCALE))
 
 		addPortView(DigitalPortView(
@@ -209,7 +210,7 @@ class VideoRamView(
 			port = model.getClearInput(),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 11 * Look.SCALE,
+			x = AbstractAntaresPortView.LENGTH + 11 * Look.SCALE,
 			y = 3 * Look.SCALE))
 
 		updateGeometry()
@@ -218,7 +219,7 @@ class VideoRamView(
 	private fun updateGeometry() {
 		invalidate()
 		setBounds(
-			x = DigitalPortView.LENGTH.toDouble(),
+			x = AbstractAntaresPortView.LENGTH.toDouble(),
 			y = -calculatedHeight + 3 * Look.SCALE.toDouble(),
 			w = calculatedWidth.toDouble(),
 			h = calculatedHeight.toDouble())
@@ -285,7 +286,7 @@ class VideoRamView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 

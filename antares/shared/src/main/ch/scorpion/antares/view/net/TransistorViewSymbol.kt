@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
@@ -23,9 +24,9 @@ enum class TransistorViewSymbol(
 ) : EnumProperty<TransistorViewSymbol> {
 
 	Bulk("bulk") {
-		private val gateLineX = DigitalPortView.LENGTH + 2.0 * SCALE
-		private val signalLineX = DigitalPortView.LENGTH + 3.0 * SCALE
-		private val signalPortX = DigitalPortView.LENGTH + 4.0 * SCALE
+		private val gateLineX = AbstractAntaresPortView.LENGTH + 2.0 * SCALE
+		private val signalLineX = AbstractAntaresPortView.LENGTH + 3.0 * SCALE
+		private val signalPortX = AbstractAntaresPortView.LENGTH + 4.0 * SCALE
 
 		private val southSignalPath = System.createPath()
 			.moveTo(signalLineX, -0.5 * SCALE)
@@ -44,7 +45,7 @@ enum class TransistorViewSymbol(
 			.close()
 
 		private val pArrowPath = System.createPath()
-			.moveTo(DigitalPortView.LENGTH + 5.0 * SCALE, -2.0 * SCALE)
+			.moveTo(AbstractAntaresPortView.LENGTH + 5.0 * SCALE, -2.0 * SCALE)
 			.lineTo(signalPortX, -2.4 * SCALE)
 			.lineTo(signalPortX, -1.6 * SCALE)
 			.close()
@@ -84,7 +85,7 @@ enum class TransistorViewSymbol(
 					LEFT -> - 4.0 * SCALE
 				}
 				context.g.drawLine(
-					DigitalPortView.LENGTH.toDouble(), gateConnectionY,
+					AbstractAntaresPortView.LENGTH.toDouble(), gateConnectionY,
 					gateLineX, gateConnectionY)
 
 				// Gate bar
@@ -183,9 +184,9 @@ enum class TransistorViewSymbol(
 	},
 
 	InverterCircle("inverterCircle") {
-		private val gateLineX = DigitalPortView.LENGTH + 2.0 * SCALE
-		private val signalLineX = DigitalPortView.LENGTH + 2.5 * SCALE
-		private val signalPortX = DigitalPortView.LENGTH + 4.0 * SCALE
+		private val gateLineX = AbstractAntaresPortView.LENGTH + 2.0 * SCALE
+		private val signalLineX = AbstractAntaresPortView.LENGTH + 2.5 * SCALE
+		private val signalPortX = AbstractAntaresPortView.LENGTH + 4.0 * SCALE
 		private val circleSize = SCALE.toDouble()
 
 		private val pArrowPath = System.createPath()
@@ -219,11 +220,11 @@ enum class TransistorViewSymbol(
 				(getPortView(model.gatePort) as DigitalPortView).prepareConnectionDrawContext(context)
 				when (model.transistorType) {
 					P -> {
-						context.g.drawOval(DigitalPortView.LENGTH.toDouble() + SCALE, getGatePositionY(this) - 0.5 * SCALE, circleSize, circleSize)
-						context.g.drawLine(DigitalPortView.LENGTH.toDouble(), gatePositionY, DigitalPortView.LENGTH.toDouble() + SCALE, gatePositionY)
+						context.g.drawOval(AbstractAntaresPortView.LENGTH.toDouble() + SCALE, getGatePositionY(this) - 0.5 * SCALE, circleSize, circleSize)
+						context.g.drawLine(AbstractAntaresPortView.LENGTH.toDouble(), gatePositionY, AbstractAntaresPortView.LENGTH.toDouble() + SCALE, gatePositionY)
 					}
 					N -> {
-						context.g.drawLine(DigitalPortView.LENGTH.toDouble(), gatePositionY, DigitalPortView.LENGTH.toDouble() + 2 * SCALE, gatePositionY)
+						context.g.drawLine(AbstractAntaresPortView.LENGTH.toDouble(), gatePositionY, AbstractAntaresPortView.LENGTH.toDouble() + 2 * SCALE, gatePositionY)
 					}
 				}
 				// Gate bar

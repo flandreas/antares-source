@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -15,7 +15,7 @@ enum class JoystickDeflection(val customName: String) {
 	RECTANGULAR("rectangular") {
 
 		override fun drawDeflection(joystickView: JoystickView, context: DrawContext, color: Color) {
-			val inset = DigitalComponentView.w(JoystickView.SIZE) / 2 - JoystickView.MAX_DISPLACEMENT - JoystickView.KNOB_RADIUS
+			val inset = OrientableRectangularVerticeView.w(JoystickView.SIZE) / 2 - JoystickView.MAX_DISPLACEMENT - JoystickView.KNOB_RADIUS
 			context.g.color = color
 			context.g.stroke = STROKE
 			context.g.drawRect(
@@ -34,7 +34,7 @@ enum class JoystickDeflection(val customName: String) {
 
 	CIRCULAR("circular") {
 		override fun drawDeflection(joystickView: JoystickView, context: DrawContext, color: Color) {
-			val inset = DigitalComponentView.w(JoystickView.SIZE) / 2 - JoystickView.MAX_DISPLACEMENT - JoystickView.KNOB_RADIUS
+			val inset = OrientableRectangularVerticeView.w(JoystickView.SIZE) / 2 - JoystickView.MAX_DISPLACEMENT - JoystickView.KNOB_RADIUS
 			context.g.color = color
 			context.g.stroke = STROKE
 			context.g.drawOval(

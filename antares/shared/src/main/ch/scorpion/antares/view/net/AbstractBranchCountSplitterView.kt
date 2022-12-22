@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
@@ -32,7 +32,7 @@ abstract class AbstractBranchCountSplitterView<T : AbstractBranchCountSplitter>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 	handedness: Handedness = Handedness.RIGHT
-) : DigitalComponentView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model) {
 
 	companion object {
 		const val WIDTH = 2 * Look.GRID

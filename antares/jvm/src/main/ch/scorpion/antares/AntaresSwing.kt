@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresFrameController
-import ch.scorpion.antares.view.DigitalComponentViewDrawer
+import ch.scorpion.antares.view.OrientableRectangularVerticeViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
@@ -310,7 +310,7 @@ class AntaresSwing(
 		val graphFrameController = AntaresFrameController(controller, controller.eventBus)
 		val frame = AntaresFrameSwing(graphFrameController, this, viewManager, graphFrameController)
 
-		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
+		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
 
 		return frame
 	}

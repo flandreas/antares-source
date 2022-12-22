@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -32,8 +33,8 @@ class SplitterView(
 		return portView
 	}
 
-	override val wideSidePortViewX: Int get() = DigitalPortView.LENGTH
-	override val narrowSidePortViewX: Int get() = DigitalPortView.LENGTH + WIDTH
+	override val wideSidePortViewX: Int get() = AbstractAntaresPortView.LENGTH
+	override val narrowSidePortViewX: Int get() = AbstractAntaresPortView.LENGTH + WIDTH
 
 	override fun createNarrowSidePortView(port: DigitalPort, y: Int): DigitalPortView {
 		val portView = DigitalPortView(
@@ -46,5 +47,5 @@ class SplitterView(
 	}
 
 	override fun createBodyBounds(height: Int): RectangularShape =
-		Rectangle2D(DigitalPortView.LENGTH, -height / 2, WIDTH, height)
+		Rectangle2D(AbstractAntaresPortView.LENGTH, -height / 2, WIDTH, height)
 }

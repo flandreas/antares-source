@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.DoubleThrowSwitch
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
@@ -27,7 +28,7 @@ class DoubleThrowSwitchView(
 	init {
 		isFocusable = true
 		modelExchanged(null)
-		setBounds(DigitalPortView.LENGTH, -HEIGHT / 2, WIDTH, HEIGHT)
+		setBounds(AbstractAntaresPortView.LENGTH, -HEIGHT / 2, WIDTH, HEIGHT)
 	}
 
 	override fun modelExchanged(oldModel: DoubleThrowSwitch?) {
@@ -37,7 +38,7 @@ class DoubleThrowSwitchView(
 				styleProvider,
 				port = model.getPort(1),
 				direction = Direction.WEST,
-				x = DigitalPortView.LENGTH,
+				x = AbstractAntaresPortView.LENGTH,
 				y = 0,
 				showBitWidthAnnotation = false
 			)
@@ -47,7 +48,7 @@ class DoubleThrowSwitchView(
 				styleProvider,
 				port = model.getPort(2),
 				direction = Direction.EAST,
-				x = DigitalPortView.LENGTH + WIDTH,
+				x = AbstractAntaresPortView.LENGTH + WIDTH,
 				y = -2 * SCALE,
 				showBitWidthAnnotation = false
 			)
@@ -57,7 +58,7 @@ class DoubleThrowSwitchView(
 				styleProvider,
 				port = model.getPort(3),
 				direction = Direction.EAST,
-				x = DigitalPortView.LENGTH + WIDTH,
+				x = AbstractAntaresPortView.LENGTH + WIDTH,
 				y = 2 * SCALE,
 				showBitWidthAnnotation = false
 			)

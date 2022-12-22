@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.net.WireTap
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
@@ -32,7 +32,7 @@ class WireTapView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: WireTap = WireTap(),
 	handedness: Handedness = Handedness.RIGHT
-) : DigitalComponentView<WireTap>(styleProvider, model) {
+) : OrientableRectangularVerticeView<WireTap>(styleProvider, model) {
 
 	companion object {
 		private const val X_DISPLACEMENT = 2 * Look.SCALE

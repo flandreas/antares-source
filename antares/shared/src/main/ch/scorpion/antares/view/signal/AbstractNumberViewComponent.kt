@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalSource
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -31,7 +31,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.max
 
 /**
- * Abstract base class for [DigitalComponentView]s that display a [NumberView]
+ * Abstract base class for [OrientableRectangularVerticeView]s that display a [NumberView]
  * in a non-interactive way.
  */
 abstract class AbstractNumberViewComponent<T : Vertice>(
@@ -40,7 +40,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	orientation: Direction,
 	signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
 	private val drawDigitBorder: Boolean = true
-) : DigitalComponentView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model) {
 
 	companion object {
 		const val DEFAULT_INSETS = Look.SCALE

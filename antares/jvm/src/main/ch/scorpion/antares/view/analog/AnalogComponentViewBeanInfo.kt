@@ -1,15 +1,12 @@
-package ch.scorpion.antares.view
+package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
-import java.beans.BeanInfo
 
-/**
- * Base class for implementing [BeanInfo]s for [OrientableRectangularVerticeView]s.
- */
-open class DigitalComponentViewBeanInfo<T : OrientableRectangularVerticeView<*>> : VerticeViewBeanInfo<T>() {
+open class AnalogComponentViewBeanInfo<T : OrientableRectangularVerticeView<*>> : VerticeViewBeanInfo<T>() {
 
 	companion object {
 		private val orientation = EditProperties.orientation()

@@ -6,9 +6,10 @@ import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
@@ -25,7 +26,7 @@ class PullResistorView(
 	pullDirection: PullDirection = LOW,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: PullResistor = PullResistor(pullDirection = pullDirection)
-) : DigitalComponentView<PullResistor>(styleProvider, model) {
+) : OrientableRectangularVerticeView<PullResistor>(styleProvider, model) {
 
 	companion object {
 		private val STROKE = Stroke(
@@ -39,7 +40,7 @@ class PullResistorView(
 	init {
 		modelExchanged(null)
 		setBounds(
-			-DigitalPortView.LENGTH.toDouble() - SymbolStyle.RESISTOR_WIDTH - PULL_DIRECTION_WIDTH, -SymbolStyle.RESISTER_HEIGHT_HALF,
+			-AbstractAntaresPortView.LENGTH.toDouble() - SymbolStyle.RESISTOR_WIDTH - PULL_DIRECTION_WIDTH, -SymbolStyle.RESISTER_HEIGHT_HALF,
 			SymbolStyle.RESISTOR_WIDTH + PULL_DIRECTION_WIDTH, 2 * SymbolStyle.RESISTER_HEIGHT_HALF
 		)
 		orientation = when (pullDirection) {
@@ -55,7 +56,7 @@ class PullResistorView(
 			port = model.getPort(),
 			direction = Direction.EAST
 		)
-		portView.setLocation(-DigitalPortView.LENGTH, 0)
+		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(portView)
 	}
 
@@ -127,10 +128,10 @@ class PullResistorView(
 	}
 
 	private fun drawLowPullDirection(context: DrawContext) {
-		GroundView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
+		GroundView.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
 	}
 
 	private fun drawHighPullDirection(context: DrawContext) {
-		PowerView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
+		PowerView.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
 	}
 }

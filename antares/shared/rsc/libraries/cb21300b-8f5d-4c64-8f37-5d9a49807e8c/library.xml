@@ -121,5 +121,14 @@
         </libraryFolder>
       </items>
     </libraryFolder>
+    <libraryFolder _id='60'>
+      <name>
+        <translation lang='en' text='Analog'/>
+        <translation lang='de' text='Analog'/>
+      </name>
+      <items>
+        <baseLibraryElement _id='61' id='LightBulb'/>
+      </items>
+    </libraryFolder>
   </folder>
 </library>

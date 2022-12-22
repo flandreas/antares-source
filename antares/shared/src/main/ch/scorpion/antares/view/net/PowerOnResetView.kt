@@ -4,7 +4,8 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.net.PowerOnReset
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
@@ -23,7 +24,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 class PowerOnResetView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: PowerOnReset = PowerOnReset()
-) : DigitalComponentView<PowerOnReset>(styleProvider, model) {
+) : OrientableRectangularVerticeView<PowerOnReset>(styleProvider, model) {
 
 	companion object {
 		private const val SIZE = 4 * SCALE
@@ -50,7 +51,7 @@ class PowerOnResetView(
 
 	init {
 		modelExchanged(null)
-		setBounds(-DigitalPortView.LENGTH - SIZE, -SIZE/2, SIZE, SIZE)
+		setBounds(-AbstractAntaresPortView.LENGTH - SIZE, -SIZE/2, SIZE, SIZE)
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
 	}
 
@@ -59,7 +60,7 @@ class PowerOnResetView(
 		addPortView(DigitalPortView(
 			styleProvider,
 			port = model.getOutput(),
-			-DigitalPortView.LENGTH, 0,
+			-AbstractAntaresPortView.LENGTH, 0,
 			direction = Direction.EAST))
 	}
 
@@ -120,13 +121,13 @@ class PowerOnResetView(
 	}
 
 	private fun drawAnnotation(context: DrawContext) {
-		context.g.translate(-DigitalPortView.LENGTH - SIZE / 2.0, 0.0)
+		context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
 		context.g.rotate(rotation.inverse().angle)
 		context.g.stroke = POWER_ON_STROKE
 		context.g.drawLine(-0.5 * SCALE, -1.5 * SCALE, -0.5 * SCALE, 1.5 * SCALE)
 		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 		context.g.draw(symbolPath)
 		context.g.rotate(rotation.angle)
-		context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
+		context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
 	}
 }

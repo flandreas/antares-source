@@ -1,14 +1,13 @@
 package ch.scorpion.antares.view.symbolstyle
 
-import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.antares.view.gate.BoxGateView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
+import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
-import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.EnumProperty
-import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -19,6 +18,7 @@ import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -64,11 +64,11 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			if (resistor.shadow) {
 				DropShadow.draw(context, transparency = resistor.transparency) {
 					context.g.fillRect(
-						-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+						-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 						RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 					)
 				}
@@ -76,14 +76,14 @@ enum class SymbolStyle(
 
 			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 			context.g.fillRect(
-				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
 			context.g.paint = foregroundColor
 			context.g.stroke = stroke
 			context.g.drawRect(
-				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 		}
@@ -123,7 +123,7 @@ enum class SymbolStyle(
 			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			context.g.paint = foregroundColor
 			context.g.stroke = stroke
 			context.g.draw(RESISTOR_PATH)
@@ -179,7 +179,7 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
 		}
 
-		override fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			EUROPEAN.drawResistor(resistor, context, foregroundColor, backgroundColor, stroke)
 		}
 	};
@@ -231,14 +231,14 @@ enum class SymbolStyle(
 		const val RESISTOR_WIDTH = 6.0 * SCALE.toDouble()
 		const val RESISTER_HEIGHT_HALF = SCALE.toDouble()
 		private val RESISTOR_PATH= System.createPath()
-			.moveTo(-DigitalPortView.LENGTH, 0)
-			.lineTo(-DigitalPortView.LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 2.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 3.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-DigitalPortView.LENGTH - 6.0 * SCALE, 0.0)
+			.moveTo(-AbstractAntaresPortView.LENGTH, 0)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 2.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 3.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-AbstractAntaresPortView.LENGTH - 6.0 * SCALE, 0.0)
 
 		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
@@ -321,6 +321,6 @@ enum class SymbolStyle(
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawResistor(resistor: DigitalComponentView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 }

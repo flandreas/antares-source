@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
@@ -14,7 +15,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 class PowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Power = Power()
-) : DigitalComponentView<Power>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Power>(styleProvider, model) {
 
 	companion object {
 		private const val WIDTH = 2.0 * SCALE
@@ -35,7 +36,7 @@ class PowerView(
 	init {
 		modelExchanged(null)
 		setBounds(
-			-DigitalPortView.LENGTH - WIDTH, -HEIGHT / 2,
+			-AbstractAntaresPortView.LENGTH - WIDTH, -HEIGHT / 2,
 			WIDTH, HEIGHT
 		)
 		orientation = Direction.SOUTH
@@ -47,7 +48,7 @@ class PowerView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST)
-		portView.setLocation(-DigitalPortView.LENGTH, 0)
+		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(portView)
 	}
 
@@ -61,6 +62,6 @@ class PowerView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		getPortViews().first().prepareConnectionDrawContext(context)
-		drawBodyAt(-DigitalPortView.LENGTH.toDouble(), 0.0, context, stroke)
+		drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context, stroke)
 	}
 }

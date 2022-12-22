@@ -1,8 +1,9 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -42,7 +43,7 @@ abstract class AbstractLEDView<T: Vertice>(
 	model: T,
 	square: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T>, Labeled {
+) : OrientableRectangularVerticeView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T>, Labeled {
 
 	companion object {
 		const val LABEL_DIST = Look.SCALE
@@ -85,12 +86,12 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	private val horizontalLabel = HorizontalLabel(
 		owner = this,
-		relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0),
+		relLocation = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0),
 		font = font)
 
 	private fun updateGeometry() {
 		setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
-		horizontalLabel.relLocation = Point2D(widthOfSize + DigitalPortView.LENGTH + LABEL_DIST, 0)
+		horizontalLabel.relLocation = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0)
 	}
 
 	init {
@@ -143,7 +144,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractLEDView) {

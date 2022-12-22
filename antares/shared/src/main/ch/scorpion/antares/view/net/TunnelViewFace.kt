@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -87,14 +87,14 @@ enum class TunnelViewFace(
 		override fun drawShadow(view: TunnelView, context: DrawContext) {
 			if (view.shadow) {
 				DropShadow.draw(context, view.transparency) {
-					context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
+					context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 					context.g.fill(getPath(view))
-					context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
+					context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 				}
 			}
 		}
 		override fun draw(view: TunnelView, context: DrawContext, background: Color) {
-			context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
+			context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().color.foregroundColor)
@@ -112,7 +112,7 @@ enum class TunnelViewFace(
 			context.g.stroke = view.stroke
 			context.g.draw(getPath(view))
 
-			context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
+			context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 		}
 
 		private fun getPath(view: TunnelView): Path =

@@ -1,8 +1,9 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.Buzzer
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.sound.WaveformType
@@ -16,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class BuzzerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Buzzer = Buzzer()
-) : DigitalComponentView<Buzzer>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Buzzer>(styleProvider, model) {
 
 	companion object {
 		private const val WIDTH = 6 * SCALE
@@ -26,7 +27,7 @@ class BuzzerView(
 
 	init {
 		modelExchanged(null)
-		setBounds(DigitalPortView.LENGTH, -2 * SCALE, WIDTH, HEIGHT)
+		setBounds(AbstractAntaresPortView.LENGTH, -2 * SCALE, WIDTH, HEIGHT)
 	}
 
 	override fun modelExchanged(oldModel: Buzzer?) {
@@ -34,14 +35,14 @@ class BuzzerView(
 		addPortView(DigitalPortView(
 			styleProvider,
 			model.enablePort,
-			x = DigitalPortView.LENGTH + 3 * SCALE,
+			x = AbstractAntaresPortView.LENGTH + 3 * SCALE,
 			y = 6 * SCALE,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.INTERNAL))
 		addPortView(DigitalPortView(
 			styleProvider,
 			model.frequencyPort,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = 0,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.INTERNAL,
@@ -49,7 +50,7 @@ class BuzzerView(
 		addPortView(DigitalPortView(
 			styleProvider,
 			model.volumePort,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = 4 * SCALE,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.INTERNAL,
@@ -85,7 +86,7 @@ class BuzzerView(
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 
-		val centerX = DigitalPortView.LENGTH + WIDTH / 2.0
+		val centerX = AbstractAntaresPortView.LENGTH + WIDTH / 2.0
 		val centerY = 1.5 * SCALE
 
 		context.g.color = getApplicableForegroundColor(context)

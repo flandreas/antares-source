@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.arithmetic
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.gate.BoxGateView
-import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -50,9 +50,9 @@ class RandomView(
 		context.g.color = getApplicableForegroundColor(context)
 		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
-		context.g.translate(-(DigitalPortView.LENGTH + bounds.width / 2 + DICE_SIZE / 2), - bounds.height / 3)
+		context.g.translate(-(AbstractAntaresPortView.LENGTH + bounds.width / 2 + DICE_SIZE / 2), - bounds.height / 3)
 		drawDice(context)
-		context.g.translate(+(DigitalPortView.LENGTH + bounds.width / 2 + DICE_SIZE / 2), + bounds.height / 3)
+		context.g.translate(+(AbstractAntaresPortView.LENGTH + bounds.width / 2 + DICE_SIZE / 2), + bounds.height / 3)
 
 		context.g.color = oldColor
 	}

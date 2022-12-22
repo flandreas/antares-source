@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -34,7 +34,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus,
 	model: T
-) : DigitalComponentView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model) {
 
 	companion object {
 

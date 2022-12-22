@@ -21,12 +21,12 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 	Line("line") {
 
-		override val unconnectedLength: Int get() = DigitalPortView.LENGTH
+		override val unconnectedLength: Int get() = AbstractAntaresPortView.LENGTH
 
 		override fun getConnectedLength(portView: DigitalPortView): Int {
 			with(portView) {
 				if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
-					return DigitalPortView.LOGIC_SIZE
+					return AbstractAntaresPortView.LOGIC_SIZE
 				}
 				return 0
 			}
@@ -99,7 +99,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 	companion object {
 
-		private val LOGIC_BOX = Rectangle2D(0, -DigitalPortView.LOGIC_SIZE / 2, DigitalPortView.LOGIC_SIZE, DigitalPortView.LOGIC_SIZE)
+		private val LOGIC_BOX = Rectangle2D(0, -AbstractAntaresPortView.LOGIC_SIZE / 2, AbstractAntaresPortView.LOGIC_SIZE, AbstractAntaresPortView.LOGIC_SIZE)
 		private val LOGIC_BOXES = mapOf(
 			Direction.EAST to Direction.EAST.rotation.rotateRectangleAround(Point2D.ZERO, LOGIC_BOX),
 			Direction.NORTH to Direction.NORTH.rotation.rotateRectangleAround(Point2D.ZERO, LOGIC_BOX),

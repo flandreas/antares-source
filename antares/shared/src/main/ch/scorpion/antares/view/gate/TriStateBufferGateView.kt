@@ -3,8 +3,9 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
@@ -26,10 +27,10 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TriStateBufferGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: TriStateBufferGate = TriStateBufferGate()
-) : DigitalComponentView<TriStateBufferGate>(styleProvider, model) {
+) : OrientableRectangularVerticeView<TriStateBufferGate>(styleProvider, model) {
 
 	companion object {
-		private const val controlPortViewOffsetY = (DigitalPortView.LENGTH * 0.75).toInt()
+		private const val controlPortViewOffsetY = (AbstractAntaresPortView.LENGTH * 0.75).toInt()
 	}
 
 	var handedness: Handedness = Handedness.RIGHT
@@ -75,10 +76,10 @@ class TriStateBufferGateView(
 			portLabelPosition = PortLabelPosition.HIDE,
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
 			y = if (handedness == Handedness.RIGHT) controlPortViewOffsetY else -controlPortViewOffsetY,
-			length = DigitalPortView.LENGTH - (DigitalPortView.LENGTH * 0.25).toInt()))
+			length = AbstractAntaresPortView.LENGTH - (AbstractAntaresPortView.LENGTH * 0.25).toInt()))
 
 		setBounds(
-			DigitalPortView.LENGTH.toDouble(), -SymbolStyle.NOT_PATH.boundingBox.height / 2,
+			AbstractAntaresPortView.LENGTH.toDouble(), -SymbolStyle.NOT_PATH.boundingBox.height / 2,
 			SymbolStyle.NOT_PATH.boundingBox.width, SymbolStyle.NOT_PATH.boundingBox.height)
 	}
 

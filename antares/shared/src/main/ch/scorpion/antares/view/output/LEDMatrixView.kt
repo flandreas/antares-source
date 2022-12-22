@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -40,7 +40,7 @@ class LEDMatrixView(
 	model: LEDMatrix = LEDMatrix(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<LEDMatrix>(styleProvider, model), LightEmitter, ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
+) : OrientableRectangularVerticeView<LEDMatrix>(styleProvider, model), LightEmitter, ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"

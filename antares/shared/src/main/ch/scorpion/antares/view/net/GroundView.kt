@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Ground
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 class GroundView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Ground = Ground()
-) : DigitalComponentView<Ground>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Ground>(styleProvider, model) {
 
 	companion object {
 		private const val WIDTH = 2.0 * SCALE
@@ -30,7 +31,7 @@ class GroundView(
 	init {
 		modelExchanged(null)
 		setBounds(
-			-DigitalPortView.LENGTH - WIDTH, -HEIGHT / 2,
+			-AbstractAntaresPortView.LENGTH - WIDTH, -HEIGHT / 2,
 			WIDTH, HEIGHT
 		)
 		orientation = Direction.NORTH
@@ -42,7 +43,7 @@ class GroundView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST)
-		portView.setLocation(-DigitalPortView.LENGTH, 0)
+		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(portView)
 	}
 
@@ -56,6 +57,6 @@ class GroundView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		getPortViews().first().prepareConnectionDrawContext(context)
-		drawBodyAt(-DigitalPortView.LENGTH.toDouble(), 0.0, context)
+		drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context)
 	}
 }

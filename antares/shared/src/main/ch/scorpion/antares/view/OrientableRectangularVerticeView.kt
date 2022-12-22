@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
  * rendering. The geometry is therefore expressed by units of this grid instead of view coordinates.
  * @param T the type of [Vertice] displayed by this view
  */
-open class DigitalComponentView<T : Vertice>(
+open class OrientableRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
     model: T
 ) : AbstractRectangularVerticeView<T>(styleProvider, model) {
@@ -25,16 +26,20 @@ open class DigitalComponentView<T : Vertice>(
          * @param value the value in basic model grid coordinates
          * @return the transformed width in view coordinates.
          */
-        fun w(value: Int): Double = (value * Look.SCALE).toDouble()
-	    fun w(value: Double): Double = value * Look.SCALE
+        fun w(value: Int): Double = (value * SCALE).toDouble()
+	    fun w(value: Double): Double = value * SCALE
+
+	    fun wInt(value: Int): Int = value * SCALE
 
         /**
          * Transforms a height in basic model grid coordinates to view coordinates.
          * @param value the value in basic model grid coordinates
          * @return the transformed height in view coordinates.
          */
-        fun h(value: Int): Double = (value * Look.SCALE).toDouble()
-	    fun h(value: Double): Double = value * Look.SCALE
+        fun h(value: Int): Double = (value * SCALE).toDouble()
+	    fun h(value: Double): Double = value * SCALE
+
+	    fun hInt(value: Int): Int = value * SCALE
     }
 
 	protected val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor

@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
+import ch.scorpion.antares.view.analog.LightBulbView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
@@ -25,6 +26,7 @@ import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrateg
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.*
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewFactory
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
@@ -131,6 +133,10 @@ object AntaresViewModule : AbstractModule() {
 	private const val RANDOM = "Random"
 	private const val BIT_EXTENDER = "BitExtender"
 
+	// Analog
+
+	private const val LIGHT_BULB = "LightBulb"
+
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
 	override fun initialize() {
@@ -139,7 +145,7 @@ object AntaresViewModule : AbstractModule() {
 		// Overwritten in order to change the [DrawableDrawer]
 		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
 			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
-			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
+			drawingView.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
 			drawingView
 		}
 		EditModule.drawingAppService = DigitalGraphViewService()
@@ -210,7 +216,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 
-		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, DigitalPortView.LENGTH + 5)
+		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, AbstractAntaresPortView.LENGTH + 5)
 		properties.set(DigitalEdgeView.PROP_WIDE_BUS_STROKE, true)
 
 		properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
@@ -302,6 +308,10 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("andGateShape", AndGateFigure::class)
 		typeMap.register("orGateShape", OrGateFigure::class)
 		typeMap.register("notGateShape", NotGateFigure::class)
+
+		// Analog
+
+		typeMap.register("lightBulbView", LightBulbView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -370,6 +380,9 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateFigure::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateFigure::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class) { SelectedColorSelectionModel(it) }
+
+		// Analog
+		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -518,6 +531,11 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(RANDOM, "library.element.Random", { "/img/random.png" }, RandomView::class)
 		repository.register(BIT_EXTENDER, "library.element.BitExtender", { "/img/bitextender.png" }, BitExtenderView::class)
+
+		// Analog
+
+		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
+
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

@@ -561,6 +561,15 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
+          <libraryFolder _id='137'>
+              <name>
+                  <translation lang='en' text='Analog'/>
+                  <translation lang='de' text='Analog'/>
+              </name>
+              <items>
+                  <baseLibraryElement _id='138' id='LightBulb'/>
+              </items>
+          </libraryFolder>
       </items>
     </libraryFolder>
   </folder>

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
@@ -44,8 +45,8 @@ class BidirectionalSplitterView(
 		return portView
 	}
 
-	override val wideSidePortViewX: Int get() = DigitalPortView.LENGTH
-	override val narrowSidePortViewX: Int get() = DigitalPortView.LENGTH + WIDTH
+	override val wideSidePortViewX: Int get() = AbstractAntaresPortView.LENGTH
+	override val narrowSidePortViewX: Int get() = AbstractAntaresPortView.LENGTH + WIDTH
 
 	override fun createNarrowSidePortView(port: DigitalPort, y: Int): DigitalPortView {
 		val portView = DigitalPortView(
@@ -58,7 +59,7 @@ class BidirectionalSplitterView(
 	}
 
 	override fun createBodyBounds(height: Int): RectangularShape =
-		Rectangle2D(DigitalPortView.LENGTH, -height / 2, WIDTH, height)
+		Rectangle2D(AbstractAntaresPortView.LENGTH, -height / 2, WIDTH, height)
 
 	override fun drawDirectionAnnotation(context: DrawContext) {
 		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke

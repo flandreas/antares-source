@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Direction
@@ -10,7 +11,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -43,7 +43,7 @@ class KeyboardView(
 ) : AbstractRectangularVerticeView<Keyboard>(
 	styleProvider,
 	model,
-	x = DigitalPortView.LENGTH.toDouble(),
+	x = AbstractAntaresPortView.LENGTH.toDouble(),
 	y = -HEIGHT / 2.0
 ), ControlView<Keyboard>, ControlViewSource<Keyboard> {
 
@@ -66,7 +66,7 @@ class KeyboardView(
 		color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor,
 		horizontalAlignment = HorizontalAlignment.LEFT,
 		verticalAlignment = VerticalAlignment.CENTER,
-		location = Point2D(DigitalPortView.LENGTH + INSET + TEXT_INSET, 0))
+		location = Point2D(AbstractAntaresPortView.LENGTH + INSET + TEXT_INSET, 0))
 
 	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
@@ -99,7 +99,7 @@ class KeyboardView(
 			port = model.clockInput,
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = WIDTH + DigitalPortView.LENGTH,
+			x = WIDTH + AbstractAntaresPortView.LENGTH,
 			y = 0))
 
 		addPortView(DigitalPortView(
@@ -107,7 +107,7 @@ class KeyboardView(
 			port = model.readEnableInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = WIDTH + DigitalPortView.LENGTH - 2 * Look.SCALE,
+			x = WIDTH + AbstractAntaresPortView.LENGTH - 2 * Look.SCALE,
 			y = HEIGHT / 2))
 
 		addPortView(DigitalPortView(
@@ -115,7 +115,7 @@ class KeyboardView(
 			port = model.clearInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = WIDTH + DigitalPortView.LENGTH - 5 * Look.SCALE,
+			x = WIDTH + AbstractAntaresPortView.LENGTH - 5 * Look.SCALE,
 			y = HEIGHT / 2))
 
 		addPortView(DigitalPortView(
@@ -124,7 +124,7 @@ class KeyboardView(
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false,
-			x = DigitalPortView.LENGTH,
+			x = AbstractAntaresPortView.LENGTH,
 			y = 0))
 
 		addPortView(DigitalPortView(
@@ -132,7 +132,7 @@ class KeyboardView(
 			port = model.availableData,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = DigitalPortView.LENGTH + 2 * Look.SCALE,
+			x = AbstractAntaresPortView.LENGTH + 2 * Look.SCALE,
 			y = HEIGHT / 2))
 	}
 
@@ -174,7 +174,7 @@ class KeyboardView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = 2 * DigitalPortView.LENGTH + width
+	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Keyboard) {
 		this.model = model

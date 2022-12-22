@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.net.Break
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class BreakView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Break = Break()
-) : DigitalComponentView<Break>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Break>(styleProvider, model) {
 
 	companion object {
 		private const val SIZE = 4 * SCALE
@@ -88,9 +89,9 @@ class BreakView(
 
 	private fun drawSymbol(context: DrawContext) {
 		context.g.color = getSymbolColor(context)
-		context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
+		context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 		context.g.draw(SYMBOL_PATH)
-		context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
+		context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 	}
 
 	private fun getFillColor(context: DrawContext): Color =

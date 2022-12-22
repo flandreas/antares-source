@@ -7,26 +7,17 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.base.geom.Direction.*
+import ch.scorpion.jabbah.base.geom.Direction.EAST
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.*
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
@@ -45,7 +36,7 @@ import ch.scorpion.jabbah.io.StoreReader
  * A view representation of a [DigitalPort], either input or output.
  */
 class DigitalPortView(
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	port: Port<DigitalSignal> = DigitalPortImpl.createInput(),
 	x: Int = 0,
 	y: Int = 0,
@@ -57,16 +48,9 @@ class DigitalPortView(
 	showBitWidthAnnotation: Boolean = true,
 	showLogicAnnotation: Boolean = true,
 	style: DigitalPortViewStyle = DigitalPortViewStyle.Line
-) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: style.unconnectedLength) {
+) : AbstractAntaresPortView<DigitalSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: style.unconnectedLength, customUnconnectedLength) {
 
 	companion object {
-		const val LENGTH: Int = 2 * Look.SCALE
-		private const val INT_BORDER_DIST = 5
-		const val LOGIC_SIZE = (2 * Look.SCALE / 1.7f).toInt()
-		private const val SMALL_EXT_BORDER_DIST = 4
-		private const val LARGE_EXT_BORDER_DIST = SMALL_EXT_BORDER_DIST + LOGIC_SIZE
-		const val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
-
 		val EDGE_TRIGGER_PATH: Path = System.createPath()
 			.moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
@@ -116,46 +100,20 @@ class DigitalPortView(
 			}
 		}
 
-	var largeExternalPortLabelDistance: Boolean = false
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				buildPortLabel()
-				invalidate()
-				validate()
-			}
-		}
-
-	private var portLabel: Label? = null
-
 	private var bitWidthAnnotation: BitWidthAnnotation? = null
 
-	/** Determines whether this [DigitalPortView] has an internal input annotation to be drawn.*/
-	private val hasInternalInputAnnotation: Boolean
+	override val hasInternalInputAnnotation: Boolean
 		get() = (port as DigitalPort).trigger == Trigger.EDGE
 
-	/** Determines whether this [DigitalPortView] has an internal output annotation to be drawn.*/
-	private val hasInternalOutputAnnotation: Boolean
+	override val hasInternalOutputAnnotation: Boolean
 		get() = (port as DigitalPort).outputAnnotation != OutputAnnotation.NONE
 
-	private val hasExternalAnnotation: Boolean get() =
+	override val hasExternalAnnotation: Boolean get() =
 		showLogicAnnotation && (port as DigitalPort).logic == Logic.NEGATIVE
 
 	init {
-		buildPortLabel()
 		buildBitWidthAnnotation()
 	}
-
-	/** ---- [Transparent] interface */
-
-	private val transparent = TransparentImpl(this)
-
-	override var transparency: Int
-		get() = transparent.transparency
-		set(value) {
-			transparent.transparency = value
-		}
 
 	/** ---- [AbstractPortView] */
 
@@ -170,9 +128,7 @@ class DigitalPortView(
 		}
 
 	override fun modelChanged() {
-		buildPortLabel()
 		buildBitWidthAnnotation()
-		updateLength()
 		super.modelChanged()
 	}
 
@@ -194,7 +150,7 @@ class DigitalPortView(
 
 	/** ---- [Drawable] */
 
-	private fun setupColor(context: DrawContext) {
+	override fun setupColor(context: DrawContext) {
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
 		if (appContext.showNetState) {
@@ -216,7 +172,7 @@ class DigitalPortView(
 		}
 	}
 
-	private fun setupStroke(context: DrawContext) {
+	override fun setupStroke(context: DrawContext) {
 		if (getDigitalPort().bitWidth.width > 1) {
 			context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
 		} else {
@@ -228,22 +184,10 @@ class DigitalPortView(
 		}
 	}
 
-	override fun draw(context: DrawContext) {
-		drawBelowOwner(context)
-		drawAboveOwner(context)
-	}
-
-	override fun drawAboveOwner(context: DrawContext) {
-		val origColor = context.g.color
-
-		setupColor(context)
-
-		context.g.translate(locationX, locationY)
-
+	override fun drawAboveOwnerImpl(context: DrawContext) {
 		if (bitWidthAnnotation != null && showBitWidthAnnotation) {
 			bitWidthAnnotation!!.draw(context)
 		}
-
 		portViewStyle.drawLogic(this, context, styleProvider, transparent)
 
 		context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.VERTICE).color)).foregroundColor)
@@ -253,32 +197,13 @@ class DigitalPortView(
 		if (hasInternalOutputAnnotation) {
 			drawInternalOutputAnnotation(context)
 		}
-
-		portLabel?.let {
-			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
-				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
-			} else {
-				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
-			})
-			portLabel?.draw(context)
-		}
-
-		context.g.translate(-locationX, -locationY)
-
-		DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
-
-		context.g.color = origColor
 	}
 
-	override fun drawBelowOwner(context: DrawContext) {
-		val origColor = context.g.color
-
+	override fun drawAccess(context: DrawContext) {
 		if (portViewStyle.isDrawAccess(this)) {
 			prepareConnectionDrawContext(context)
 			portViewStyle.drawAccess(this, context, styleProvider, transparent)
 		}
-
-		context.g.color = origColor
 	}
 
 	override val boundingBox: Rectangle2D
@@ -306,10 +231,6 @@ class DigitalPortView(
 			return bbox
 		}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return boundingBox.contains(x, y)
-	}
-
 	override fun buildToolTipContent(): String {
 		val content = StringBuilder(super.buildToolTipContent())
 		if (StringUtils.isEmpty(port.name)) {
@@ -329,13 +250,6 @@ class DigitalPortView(
 	override val connectedLength: Int get() = portViewStyle.getConnectedLength(this)
 
 	override val unconnectedLength: Int get() = customUnconnectedLength ?: portViewStyle.unconnectedLength
-
-	override val customUnconnectedLength: Int? = customUnconnectedLength
-
-	override fun prepareConnectionDrawContext(context: DrawContext) {
-		setupColor(context)
-		setupStroke(context)
-	}
 
 	/** ---- [AbstractPortView] */
 
@@ -364,8 +278,6 @@ class DigitalPortView(
 			validate()
 		}
 
-	override val minSegmentLength: Int get() = LENGTH
-
 	override fun ownerRotationChanged() {
 		super.ownerRotationChanged()
 		portLabel?.ownerRotation = ownerRotation
@@ -386,122 +298,6 @@ class DigitalPortView(
 			}
 		} else {
 			null
-		}
-	}
-
-	private fun buildPortLabel() {
-		portLabel = when (portLabelPosition) {
-			PortLabelPosition.INTERNAL -> buildInternalLabel(port)
-			PortLabelPosition.EXTERNAL -> buildExternalLabel(port)
-			PortLabelPosition.HIDE -> null
-		}
-	}
-
-	private fun buildInternalLabel(port: Port<DigitalSignal>): Label {
-		val rotation = when (internalLabelOrientation) {
-			InternalLabelOrientation.Horizontal -> Rotation.R0
-			InternalLabelOrientation.Aligned -> getLabelRotation()
-		}
-		return Label(
-			horizontalAlignment = getInternalLabelHorizontalAlignment(direction),
-			verticalAlignment = getInternalLabelVerticalAlignment(direction),
-			font = Look.INT_PIN_FONT,
-			text = port.name,
-			location = getInternalLabelLocation(direction),
-			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
-			rotation = rotation,
-			ownerRotation = ownerRotation)
-	}
-
-	private fun buildExternalLabel(port: Port<DigitalSignal>): Label {
-		return Label(
-			horizontalAlignment = getExternalLabelHorizontalAlignment(direction),
-			verticalAlignment = getExternalLabelVerticalAlignment(),
-			font = Look.EXT_PIN_FONT,
-			text = port.name,
-			location = getExternalLabelLocation(direction),
-			rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
-			rotation = getLabelRotation(),
-			ownerRotation = ownerRotation)
-	}
-
-	private fun getLabelRotation(): Rotation =
-		when (direction) {
-			NORTH -> Rotation.R90
-			SOUTH -> Rotation.R90
-			else -> Rotation.R0
-		}
-
-	private fun getInternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
-		when (internalLabelOrientation) {
-			InternalLabelOrientation.Horizontal -> when (direction) {
-				WEST -> LEFT
-				EAST -> RIGHT
-				NORTH, SOUTH -> CENTER
-			}
-			InternalLabelOrientation.Aligned -> when (direction) {
-				WEST -> LEFT
-				EAST -> RIGHT
-				NORTH -> RIGHT
-				SOUTH -> LEFT
-			}
-		}
-
-	private fun getExternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
-		when (direction) {
-			WEST -> RIGHT
-			EAST -> LEFT
-			NORTH -> LEFT
-			SOUTH -> RIGHT
-		}
-
-	private fun getInternalLabelVerticalAlignment(direction: Direction): VerticalAlignment =
-		when (internalLabelOrientation) {
-			InternalLabelOrientation.Horizontal -> when (direction) {
-				WEST -> VerticalAlignment.CENTER
-				EAST -> VerticalAlignment.CENTER
-				NORTH -> VerticalAlignment.TOP
-				SOUTH -> VerticalAlignment.BOTTOM
-			}
-			InternalLabelOrientation.Aligned -> when (direction) {
-				WEST -> VerticalAlignment.CENTER
-				EAST -> VerticalAlignment.CENTER
-				NORTH -> VerticalAlignment.CENTER
-				SOUTH -> VerticalAlignment.CENTER
-			}
-		}
-
-	private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
-
-	private fun getExternalLabelVerticalAlignment(): VerticalAlignment =
-		if (centerExternalLabel)
-			VerticalAlignment.CENTER
-		else
-			VerticalAlignment.BOTTOM
-
-	private fun getInternalLabelLocation(direction: Direction): Point2D {
-		val ia = when (port.portType) {
-			PortType.INOUT -> 0
-			PortType.INPUT -> if (hasInternalInputAnnotation) INTERNAL_ANNOTATION_SIZE else 0
-			PortType.OUTPUT -> if (hasInternalOutputAnnotation) INTERNAL_ANNOTATION_SIZE else 0
-		}
-
-		return when (direction) {
-			WEST -> Point2D(INT_BORDER_DIST + ia, 0)
-			EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
-			NORTH -> Point2D(0, INT_BORDER_DIST + ia)
-			SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
-		}
-	}
-
-	private fun getExternalLabelLocation(direction: Direction): Point2D {
-		val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
-		val dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
-		return when (direction) {
-			WEST -> Point2D(-dist - ea, -1)
-			EAST -> Point2D(dist + ea, -1)
-			NORTH -> Point2D(0, -dist - ea)
-			SOUTH -> Point2D(0, dist + ea)
 		}
 	}
 

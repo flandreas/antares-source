@@ -3,12 +3,13 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Transistor
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
@@ -37,7 +38,7 @@ class TransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Transistor = Transistor(),
 	handedness: Handedness = DEFAULT_HANDEDNESS
-) : DigitalComponentView<Transistor>(styleProvider, model)
+) : OrientableRectangularVerticeView<Transistor>(styleProvider, model)
 {
 	constructor(type: TransistorType): this(model = Transistor(type), handedness = DEFAULT_HANDEDNESS)
 
@@ -90,7 +91,7 @@ class TransistorView(
 
 	init {
 		modelExchanged(null)
-		setBounds(DigitalPortView.LENGTH, -5 * SCALE, WIDTH, HEIGHT)
+		setBounds(AbstractAntaresPortView.LENGTH, -5 * SCALE, WIDTH, HEIGHT)
 	}
 
 	override fun modelExchanged(oldModel: Transistor?) {
@@ -205,7 +206,7 @@ class TransistorView(
 		if (hasCircle && shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fillOval(
-					DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
+					AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * SCALE,
 					WIDTH.toDouble(), HEIGHT.toDouble())
 			}
 		}
@@ -251,19 +252,19 @@ class TransistorView(
 	private fun updateGeometry() {
 		getPortView(model.gatePort)?.apply {
 			setLocation(
-				DigitalPortView.LENGTH,
+				AbstractAntaresPortView.LENGTH,
 				symbol.getGatePositionY(this@TransistorView))
 		}
 		northPortView.apply {
-			setLocation(DigitalPortView.LENGTH + 4 * SCALE, -5 * SCALE)
+			setLocation(AbstractAntaresPortView.LENGTH + 4 * SCALE, -5 * SCALE)
 			direction = NORTH
 		}
 		southPortView.apply {
-			setLocation(DigitalPortView.LENGTH + 4 * SCALE, SCALE)
+			setLocation(AbstractAntaresPortView.LENGTH + 4 * SCALE, SCALE)
 			direction = SOUTH
 		}
 		label.relLocation = Point2D(
-			DigitalPortView.LENGTH + WIDTH + LABEL_DIST,
+			AbstractAntaresPortView.LENGTH + WIDTH + LABEL_DIST,
 			when (handedness) {
 				RIGHT -> -2 * SCALE
 				LEFT -> 2 * SCALE
@@ -285,12 +286,12 @@ class TransistorView(
 				if (Look.FILL_BASIC_COMPONENTS) color else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color
 			).backgroundColor)
 			context.g.fillOval(
-				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
+				AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 
 			context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
 			context.g.drawOval(
-				DigitalPortView.LENGTH.toDouble(), -5.0 * SCALE,
+				AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 		}
 	}

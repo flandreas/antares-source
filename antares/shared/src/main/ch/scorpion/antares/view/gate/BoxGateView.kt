@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
@@ -44,7 +44,7 @@ open class BoxGateView<T : Vertice>(
 	text: String,
 	vertice: T,
 	private val minWidth: Int = DEF_MIN_WIDTH
-) : DigitalComponentView<T>(styleProvider, vertice) {
+) : OrientableRectangularVerticeView<T>(styleProvider, vertice) {
 
 	/** Represents the supported styles for the [Label] of a [BoxGateView].*/
 	enum class LabelStyle {

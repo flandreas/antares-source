@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -103,14 +104,14 @@ class SwitchView(
 	private val internalLabel: Label = Label(
 		font = font,
 		text = "",
-		location = Point2D(DigitalPortView.LENGTH - SIZE / 2.0, 0.0),
+		location = Point2D(AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0),
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER,
 		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
 
 	private val externalLabel = HorizontalLabel(
 		owner = this,
-		relLocation = Point2D(-(SIZE + DigitalPortView.LENGTH + LABEL_DIST), 0),
+		relLocation = Point2D(-(SIZE + AbstractAntaresPortView.LENGTH + LABEL_DIST), 0),
 		orientation = Direction.WEST,
 		font = font)
 
@@ -126,7 +127,7 @@ class SwitchView(
 	 */
 	private fun calculateBounds(): RectangularShape {
 		val width = calculateWidth()
-		return Rectangle2D(-DigitalPortView.LENGTH - width, -SIZE / 2, width, SIZE)
+		return Rectangle2D(-AbstractAntaresPortView.LENGTH - width, -SIZE / 2, width, SIZE)
 	}
 
 	private fun updateLabelGeometries() {
@@ -288,7 +289,7 @@ class SwitchView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = -(2 * DigitalPortView.LENGTH + width)
+	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
 		this.model = model
@@ -463,9 +464,9 @@ class SwitchView(
 		}
 
 		private fun drawSymbol(context: DrawContext) {
-			context.g.translate(-DigitalPortView.LENGTH - SIZE / 2.0, 0.0)
+			context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
 			context.g.rotate(rotation.inverse().angle)
-			context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
+			context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
 
 			drawCircles(context)
 			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
@@ -475,43 +476,43 @@ class SwitchView(
 				drawPushButtonSymbol(context)
 			}
 
-			context.g.translate(-DigitalPortView.LENGTH - SIZE / 2.0, 0.0)
+			context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
 			context.g.rotate(rotation.angle)
-			context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
+			context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
 		}
 
 		private fun drawCircles(context: DrawContext) {
-			context.g.fillCircle(-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE, 2.0)
-			context.g.fillCircle(-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE, 2.0)
+			context.g.fillCircle(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE, 2.0)
+			context.g.fillCircle(-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE, 2.0)
 		}
 
 		private fun drawPushButtonSymbol(context: DrawContext) {
 			if (model.isOn) {
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
-					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE)
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 2.0 * SCALE, 0.5 * SCALE,
-					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.0 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, 0.5 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.0 * SCALE)
 			} else {
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 3.0 * SCALE, -0.25 * SCALE,
-					-DigitalPortView.LENGTH - 1.0 * SCALE, -0.25 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, -0.25 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, -0.25 * SCALE)
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.25 * SCALE,
-					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.75 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.25 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.75 * SCALE)
 			}
 		}
 
 		private fun drawToggleSymbol(context: DrawContext) {
 			if (model.isOn) {
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
-					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE)
 			} else {
 				context.g.drawLine(
-					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
-					-DigitalPortView.LENGTH - 2.0 * SCALE, -1.0 * SCALE)
+					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
+					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -1.0 * SCALE)
 			}
 		}
 	}

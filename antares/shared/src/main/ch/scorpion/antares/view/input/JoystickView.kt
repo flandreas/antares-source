@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Joystick
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
@@ -40,7 +41,7 @@ import kotlin.math.abs
 class JoystickView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Joystick = Joystick()
-) : DigitalComponentView<Joystick>(styleProvider, model), ControlView<Joystick>, ControlViewSource<Joystick> {
+) : OrientableRectangularVerticeView<Joystick>(styleProvider, model), ControlView<Joystick>, ControlViewSource<Joystick> {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.JoystickView.iconPath"
@@ -74,14 +75,14 @@ class JoystickView(
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false)
-		pvX.location = Point2D(-DigitalPortView.LENGTH, 0)
+		pvX.location = Point2D(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(pvX)
 		val pvY = DigitalPortView(styleProvider,
 			model.getOutput(Joystick.PORT_NAME_Y),
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false)
-		pvY.location = Point2D(-DigitalPortView.LENGTH.toDouble(), h(4))
+		pvY.location = Point2D(-AbstractAntaresPortView.LENGTH.toDouble(), h(4))
 		addPortView(pvY)
 	}
 
@@ -213,7 +214,7 @@ class JoystickView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = -(2 * DigitalPortView.LENGTH + width)
+	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
 	override val mirrorHeight: Double get() = -abs(abs(bounds.maxY) - abs(bounds.minY))
 
@@ -240,7 +241,7 @@ class JoystickView(
 
 	private fun calculateBounds(): RectangularShape =
 		Rectangle2D(
-			- DigitalPortView.LENGTH.toDouble() - w(SIZE), - h(2),
+			- AbstractAntaresPortView.LENGTH.toDouble() - w(SIZE), - h(2),
 			w(SIZE), h(SIZE))
 
 	/**

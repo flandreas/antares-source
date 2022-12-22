@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.analog.LightBulb
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.arithmetic.Random
@@ -126,6 +127,9 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("truthTableLibraryItem", TruthTableLibraryItem::class)
 		typeMap.register("expression", BooleanExpressionStorable::class)
 		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
+
+		// Analog
+		typeMap.register("lightBulb", LightBulb::class)
 	}
 
 	private fun registerGraphParamTypes() {

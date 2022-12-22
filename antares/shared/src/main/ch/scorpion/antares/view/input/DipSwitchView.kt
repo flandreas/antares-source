@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -45,7 +46,7 @@ class DipSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: DipSwitch = DipSwitch(),
 	orientation: Direction = Direction.NORTH
-) : DigitalComponentView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch>, Labeled {
+) : OrientableRectangularVerticeView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch>, Labeled {
 
 	companion object {
 		private val LOG by logger(DipSwitchView::class)
@@ -237,12 +238,12 @@ class DipSwitchView(
 
 	override fun focusGained() {
 		updateFocusIndex(bitsCount - 1)
-		super<DigitalComponentView>.focusGained()
+		super<OrientableRectangularVerticeView>.focusGained()
 	}
 
 	override fun focusLost() {
 		updateFocusIndex(null)
-		super<DigitalComponentView>.focusLost()
+		super<OrientableRectangularVerticeView>.focusLost()
 	}
 
 	fun transferFocusRight() {
@@ -293,7 +294,7 @@ class DipSwitchView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = -(2 * DigitalPortView.LENGTH + width)
+	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: DipSwitch) {
 		this.model = model

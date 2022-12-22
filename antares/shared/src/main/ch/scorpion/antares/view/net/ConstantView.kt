@@ -3,7 +3,8 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Constant
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -33,7 +34,7 @@ class ConstantView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Constant = Constant(),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<Constant>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Constant>(styleProvider, model) {
 
 	companion object {
 		private const val VERTICAL_INSET = 2
@@ -68,7 +69,7 @@ class ConstantView(
 		font = font,
 		horizontalAlignment = HorizontalAlignment.RIGHT,
 		verticalAlignment = VerticalAlignment.CENTER,
-		location = Point2D(-DigitalPortView.LENGTH - HORIZONTAL_INSET, 0)
+		location = Point2D(-AbstractAntaresPortView.LENGTH - HORIZONTAL_INSET, 0)
 	)
 
 	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = {
@@ -92,7 +93,7 @@ class ConstantView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST)
-		portView.setLocation(-DigitalPortView.LENGTH, 0)
+		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(portView)
 		(model.getPort<DigitalSignal>() as DigitalPort).signalRepresentation = signalRepresentation
 		updateView()
@@ -174,26 +175,26 @@ class ConstantView(
 			val labelBounds = label.boundingBox
 			return when (orientation) {
 				Direction.EAST -> Point2D(
-					-DigitalPortView.LENGTH - 2 * HORIZONTAL_INSET - labelBounds.width,
+					-AbstractAntaresPortView.LENGTH - 2 * HORIZONTAL_INSET - labelBounds.width,
 					-labelBounds.height / 2 - VERTICAL_INSET)
 				Direction.NORTH -> Point2D(
 					-labelBounds.width / 2 - HORIZONTAL_INSET,
-					DigitalPortView.LENGTH.toDouble())
+					AbstractAntaresPortView.LENGTH.toDouble())
 				Direction.WEST -> Point2D(
-					DigitalPortView.LENGTH.toDouble(),
+					AbstractAntaresPortView.LENGTH.toDouble(),
 					-labelBounds.height / 2 - VERTICAL_INSET)
 				Direction.SOUTH -> Point2D(
 					-labelBounds.width / 2 - HORIZONTAL_INSET,
-					-DigitalPortView.LENGTH - labelBounds.height - 2 * VERTICAL_INSET)
+					-AbstractAntaresPortView.LENGTH - labelBounds.height - 2 * VERTICAL_INSET)
 			}
 		}
 
 	private val labelLocation: Point2D
 		get() = when (orientation) {
-			Direction.EAST -> Point2D(-DigitalPortView.LENGTH - HORIZONTAL_INSET, 0)
-			Direction.NORTH -> Point2D(0, DigitalPortView.LENGTH + VERTICAL_INSET)
-			Direction.WEST -> Point2D(DigitalPortView.LENGTH + HORIZONTAL_INSET, 0)
-			Direction.SOUTH -> Point2D(0, -DigitalPortView.LENGTH - VERTICAL_INSET)
+			Direction.EAST -> Point2D(-AbstractAntaresPortView.LENGTH - HORIZONTAL_INSET, 0)
+			Direction.NORTH -> Point2D(0, AbstractAntaresPortView.LENGTH + VERTICAL_INSET)
+			Direction.WEST -> Point2D(AbstractAntaresPortView.LENGTH + HORIZONTAL_INSET, 0)
+			Direction.SOUTH -> Point2D(0, -AbstractAntaresPortView.LENGTH - VERTICAL_INSET)
 		}
 
 	private fun updateView() {

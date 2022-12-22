@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -38,7 +38,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	model: T,
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<T>(styleProvider, model), LightEmitter, ControlViewSource<T>, ControlView<T> {
+) : OrientableRectangularVerticeView<T>(styleProvider, model), LightEmitter, ControlViewSource<T>, ControlView<T> {
 
 	companion object {
 

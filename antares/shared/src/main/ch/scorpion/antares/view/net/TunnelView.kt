@@ -4,8 +4,9 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.DigitalGraphView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
@@ -35,7 +36,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TunnelView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Tunnel = Tunnel()
-) : DigitalComponentView<Tunnel>(styleProvider, model), Labeled {
+) : OrientableRectangularVerticeView<Tunnel>(styleProvider, model), Labeled {
 
 	constructor(
 		name: String,
@@ -49,7 +50,7 @@ class TunnelView(
 
 	private val horizontalLabel = HorizontalLabel(
 		owner = this,
-		relLocation = Point2D(SIZE / 2 + (DigitalPortView.LENGTH + SIZE / 2) + face.labelDist, 0),
+		relLocation = Point2D(SIZE / 2 + (AbstractAntaresPortView.LENGTH + SIZE / 2) + face.labelDist, 0),
 		font = font
 	)
 

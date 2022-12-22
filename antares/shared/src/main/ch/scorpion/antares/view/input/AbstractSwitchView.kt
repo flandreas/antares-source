@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
-import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
-) : DigitalComponentView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model) {
 
 	/** Handles mouse interactions during execution*/
 	private val actorInteractionHandler = InteractionHandler()
