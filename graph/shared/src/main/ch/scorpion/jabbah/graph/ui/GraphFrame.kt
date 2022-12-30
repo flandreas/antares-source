@@ -115,7 +115,7 @@ open class GraphFrameController<T: GraphFrame>(
 	val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = systemSpeedCategory)
 
 	private val drawingView = EditModule.drawingViewFactory.create(
-		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
+		GraphViewModule.graphViewFactory.create(null) as Drawing<Component>,
 		applicationContextHolder,
 		displayGlobalMessages = true
 	)

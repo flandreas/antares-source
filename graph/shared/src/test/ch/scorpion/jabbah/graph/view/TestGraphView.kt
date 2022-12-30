@@ -14,10 +14,10 @@ class TestGraphView(
 	eventBus: EventBus = BaseModule.eventBus
 ) : TestGraph(eventBus) {
 
-	val graphView = GraphViewModule.createGraphView()
+	val graphView = GraphViewModule.graphViewFactory.create(null)
 	val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
 	val vv2: TestVerticeView = TestVerticeView(vertice = v2, name = "2")
-	val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(netView)
+	val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory().createEdgeView(graphView, netView)
 
 	init {
 		vv1.location = Point2D(100, 100)

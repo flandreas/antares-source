@@ -13,10 +13,12 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeft
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -24,7 +26,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 
 class EdgeToPortConnector(
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
-	edgeViewFactory: EdgeViewFactory<Any> = GraphViewModule.getEdgeViewFactory()
+	edgeViewFactory: EdgeViewFactory = GraphViewModule.getEdgeViewFactory()
 ) : AbstractCreateEdgeViewConnector(
 	edgeViewFactory = edgeViewFactory,
 	draggedEndpointType = EdgeViewEndpointType.DESTINATION
@@ -139,7 +141,7 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		createEdgeView(context.drawingView, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
+		createEdgeView(context.drawingView as DrawingView<GraphView>, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
 		LOG.userTrail("Start creating junction of EdgeView ${edgeView?.id}")
 		context.drawingView.drawing.remove(edgeView!!)
 		removePortViewHighlight(context)

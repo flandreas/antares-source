@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,8 +21,8 @@ class EdgeViewPointSequenceTest {
     @Test
     fun shouldBuildSequence() {
         val sequence = EdgeViewPointSequence(
-	        GraphViewModule.getEdgeViewFactory<Boolean>()
-		        .createEdgeView()
+	        GraphViewModule.getEdgeViewFactory()
+		        .createEdgeView<Boolean>(mockk())
 		        .addSegmentPoint(Point2D(0, 0))
 		        .addSegmentPoint(Point2D(10, 0))
 		        .addSegmentPoint(Point2D(10, 10)))
@@ -37,8 +38,8 @@ class EdgeViewPointSequenceTest {
     @Test
     fun shouldBuildReverseSequence() {
 	    val sequence = EdgeViewPointSequence(
-		    GraphViewModule.getEdgeViewFactory<Boolean>()
-		        .createEdgeView()
+		    GraphViewModule.getEdgeViewFactory()
+		        .createEdgeView<Boolean>(mockk())
 		        .addSegmentPoint(Point2D(0, 0))
 		        .addSegmentPoint(Point2D(10, 0))
 		        .addSegmentPoint(Point2D(10, 10)),
@@ -54,8 +55,8 @@ class EdgeViewPointSequenceTest {
 	@Test
 	fun shouldNotLooseMomentumAtSegmentPoints() {
 		val sequence = EdgeViewPointSequence(
-			GraphViewModule.getEdgeViewFactory<Boolean>()
-				.createEdgeView()
+			GraphViewModule.getEdgeViewFactory()
+				.createEdgeView<Boolean>(mockk())
 				.addSegmentPoint(Point2D(0, 0))
 				.addSegmentPoint(Point2D(10, 0))
 				.addSegmentPoint(Point2D(10, 10)))

@@ -57,13 +57,17 @@ open class EdgeViewImpl<T : Any>(
 	netViewStyle: NetViewStyle? = null
 ) : AbstractNetViewElement<T>(styleProvider, net), EdgeView<T> {
 
-	private companion object {
+	companion object {
 		private val LOG by logger(EdgeViewImpl::class)
 
 		private val TYPE get() = Translations.getString("graph.component.edge")
 		private val NO_OP_ACTOR_HANDLER = InputEventHandlerAdapter<ActorInteractionContext>()
 
 		private val MIN_LENGTH = BaseModule.properties.getInt(PROP_MIN_EDGE_VIEW_LENGTH)
+
+		val DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER = { GraphViewModule.edgeToPortConnector }
+		val DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER = { GraphViewModule.dragEdgeViewOriginConnector }
+		val DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER = { GraphViewModule.dragEdgeViewDestinationConnector }
 	}
 
 	constructor(

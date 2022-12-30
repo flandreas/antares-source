@@ -72,8 +72,11 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphViewModule : AbstractModule() {
 
-	var graphViewFactory: (name: String?) -> GraphView = {
-		GraphViewImpl(it ?: Translations.getString("graph.name.unknown"))
+	var graphViewFactory: GraphViewFactory = object : GraphViewFactory {
+		override fun create(name: String?): GraphView =
+			GraphViewImpl(name ?: Translations.getString("graph.name.unknown"))
+
+		override fun create(model: Graph): GraphView = GraphViewImpl(model)
 	}
 
 	/** Must be specified by higher application layers.*/
@@ -212,19 +215,17 @@ object GraphViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT, outset = 3) }
 	}
 
-	private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(
+	private var edgeViewFactoryImpl: EdgeViewFactory = EdgeViewFactoryImpl(
 		DrawStyleModule.styleProvider,
 		{ edgeToPortConnector },
 		{ dragEdgeViewOriginConnector },
 		{ dragEdgeViewDestinationConnector }
 	)
 
-	fun <T : Any> getEdgeViewFactory(): EdgeViewFactory<T> {
-		return edgeViewFactoryImpl as EdgeViewFactory<T>
-	}
+	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl
 
-	fun <T : Any> setEdgeViewFactory(factory: EdgeViewFactory<T>) {
-		edgeViewFactoryImpl = factory as EdgeViewFactory<Any>
+	fun setEdgeViewFactory(factory: EdgeViewFactory) {
+		edgeViewFactoryImpl = factory as EdgeViewFactory
 	}
 
 	private var nodeViewFactory: NodeViewFactory<Any> = NodeViewFactoryImpl(
@@ -238,11 +239,6 @@ object GraphViewModule : AbstractModule() {
 	fun <T : Any> setNodeViewFactory(factory: NodeViewFactory<T>) {
 		nodeViewFactory = factory as NodeViewFactory<Any>
 	}
-
-	fun createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView =
-		createGraphView(GraphModelModule.graphFactory.invoke(name))
-
-	fun createGraphView(graph: Graph): GraphView = GraphViewImpl(graph, BaseModule.eventBus)
 
 	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing =
 		ContainerDrawing(

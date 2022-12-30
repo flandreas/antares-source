@@ -66,7 +66,7 @@ class GraphViewerController(
 		private set
 
 	val drawingView = EditModule.drawingViewFactory.create(
-		GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>,
+		GraphViewModule.graphViewFactory.create(null) as Drawing<Component>,
 		applicationContextHolder,
 		displayGlobalMessages = false
 	) as DrawingView<GraphView>

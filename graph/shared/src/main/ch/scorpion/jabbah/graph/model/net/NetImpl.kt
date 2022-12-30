@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.model.net
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -26,6 +28,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	/** Internal representation of the [ports] property.*/
 	private val _ports = mutableListOf<Port<T>>()
+
+	private val portPropertyListener = PortPropertyListener()
 
 	/** ---- [GraphElement] interface */
 
@@ -60,6 +64,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		_ports.add(port)
 		port.connectTo(this)
 		_designError = null
+		port.addPropertyChangeListener(portPropertyListener)
+
 		stateChanged()
 	}
 
@@ -68,6 +74,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		LOG.trace("unconnect ${port.portId}")
 		_ports.remove(port)
 		port.disconnect()
+		port.removePropertyChangeListener(portPropertyListener)
+
 		stateChanged()
 	}
 
@@ -212,6 +220,12 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 		override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 			// empty
+		}
+	}
+
+	private inner class PortPropertyListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			stateChanged()
 		}
 	}
 }

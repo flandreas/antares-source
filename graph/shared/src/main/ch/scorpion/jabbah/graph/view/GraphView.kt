@@ -9,6 +9,11 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
+interface GraphViewFactory {
+	fun create(name: String?): GraphView
+	fun create(model: Graph): GraphView
+}
+
 /**
  * A [Drawing] that consists of [GraphElementView]s.
  *

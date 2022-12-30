@@ -4,11 +4,13 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.view.Connection
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [EdgeViewImpl].
@@ -21,12 +23,12 @@ class EdgeViewImplTest {
 		}
 	}
 
-	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
-	private val graphView = GraphViewModule.createGraphView()
+	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
+	private val graphView = GraphViewModule.graphViewFactory.create(null)
 
 	@Test
 	fun shouldUpdateBoundingBox() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		ev.addSegmentPoint(Point2D(200, 200))
@@ -36,7 +38,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun regularEdgeViewShouldNotBeDegenerated() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
 		assertFalse(ev.isDegenerated)
@@ -44,7 +46,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldDetermineEmptyDegeneration() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(10, 10))
 		assertTrue(ev.isDegenerated)
@@ -52,7 +54,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldDetermineOriginDegeneration() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
@@ -61,7 +63,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldDetermineDestinationDegeneration() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
@@ -70,7 +72,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCompactEqualPoints() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(10, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
@@ -82,7 +84,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCompactHorizontally() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(10, 0))
 		ev.addSegmentPoint(Point2D(20, 0))
@@ -94,7 +96,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCompactVertically() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(0, 10))
 		ev.addSegmentPoint(Point2D(0, 20))
@@ -106,20 +108,20 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCalculateLengthWithoutPoints() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		assertEquals(0.0, ev.polyline.length)
 	}
 
 	@Test
 	fun shouldCalculateLengthWithOnePoint() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		assertEquals(0.0, ev.polyline.length)
 	}
 
 	@Test
 	fun shouldCalculateLength() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(0, 10))
 		ev.addSegmentPoint(Point2D(20, 10))
@@ -129,7 +131,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCalculateSegmentDirection() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 		ev.addSegmentPoint(Point2D(100, 100))
@@ -144,7 +146,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldCalculateSegmentDirectionWithoutSnap() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(-364.0, -308.0))
 		ev.addSegmentPoint(Point2D(-364.0, -294.0))
 		ev.addSegmentPoint(Point2D(-364.5, -294.0))
@@ -154,7 +156,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldFindSegmentWithMinimalArea() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(150, 100))
 		ev.addSegmentPoint(Point2D(150, 0))
 		ev.addSegmentPoint(Point2D(200, 0))
@@ -168,7 +170,7 @@ class EdgeViewImplTest {
 		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
 		graphView.add(vv1)
 		graphView.add(vv2)
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 		graphView.add(ev)
@@ -188,7 +190,7 @@ class EdgeViewImplTest {
 		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
 		graphView.add(vv1)
 		graphView.add(vv2)
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 		graphView.add(ev)
@@ -206,7 +208,7 @@ class EdgeViewImplTest {
 	fun shouldMoveUnaryConnected() {
 		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
 		graphView.add(vv1)
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 		graphView.add(ev)

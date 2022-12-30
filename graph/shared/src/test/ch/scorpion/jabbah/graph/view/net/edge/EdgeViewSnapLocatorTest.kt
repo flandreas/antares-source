@@ -17,7 +17,7 @@ class EdgeViewSnapLocatorTest {
 		}
 	}
 
-	private val ev = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView()
+	private val ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mockk())
 
 	@Test
 	fun shouldSnapOnEdgeView() {

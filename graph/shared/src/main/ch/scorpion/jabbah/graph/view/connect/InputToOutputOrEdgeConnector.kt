@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
  */
 class InputToOutputOrEdgeConnector(
 	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
-	edgeViewFactory: EdgeViewFactory<Any> = GraphViewModule.getEdgeViewFactory()
+	edgeViewFactory: EdgeViewFactory = GraphViewModule.getEdgeViewFactory()
 ) : AbstractPortViewStartConnector(
 	portTypeCond = { it.isInput },
 	connectService = connectService,

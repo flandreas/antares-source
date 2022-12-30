@@ -25,8 +25,8 @@ class GraphViewConnectServiceImplTest {
 	}
 
 	private val service = GraphViewModule.graphViewConnectService
-	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
-	private val gv = GraphViewModule.createGraphView()
+	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
+	private val gv = GraphViewModule.graphViewFactory.create(null)
 
 	@BeforeTest
 	fun setup() {
@@ -83,7 +83,7 @@ class GraphViewConnectServiceImplTest {
 		val vv3 = TestVerticeView(name = "3", loc = Point2D(200, 100))
 		gv.add(vv1).add(vv2).add(vv3)
 
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
@@ -100,7 +100,7 @@ class GraphViewConnectServiceImplTest {
 		val vv3 = TestVerticeView(name = "3", loc = Point2D(200, 100))
 		gv.add(vv1).add(vv2).add(vv3)
 
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
@@ -119,7 +119,7 @@ class GraphViewConnectServiceImplTest {
 		gv.add(vv1).add(vv2).add(vv3)
 
 		val ev1 = service.addConnection<Boolean>(gv, vv1, vv2)
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(150, 100))
 
 		val result = splitToInput(ev1, ev2, vv3)
@@ -159,7 +159,7 @@ class GraphViewConnectServiceImplTest {
 			gv,
 			vv1.getPortView(vv1.model.getInput<Boolean>())!!,
 			vv2.getPortView(vv2.model.getInput())!!)
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(150, 100))
 
 		val result = splitToOutput(ev1, ev2, vv3)
@@ -194,13 +194,13 @@ class GraphViewConnectServiceImplTest {
 		val vv = TestVerticeView(loc = Point2D(100, 100), vertice = TestVertice(inOut = true))
 		gv.add(vv)
 
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
 		service.connectToOrigin(ev, Connection(vv, vv.model.getOutput()))
 
-		val newEv = edgeViewFactory.createEdgeView(ev.netView!!)
+		val newEv = edgeViewFactory.createEdgeView(gv, ev.netView!!)
 		newEv.addSegmentPoint(Point2D(150, 100))
 
 		val result = service.split(
@@ -236,11 +236,11 @@ class GraphViewConnectServiceImplTest {
 
 		val ev1 = service.addConnection<Boolean>(gv, vv1, vv2)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(100, 100))
 		val result1 = splitToInput(ev1, ev2, vv3)
 
-		val ev3 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev3 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev3.addSegmentPoint(Point2D(200, 100))
 		val result2 = splitToInput(ev2, ev3, vv4)
 
@@ -269,7 +269,7 @@ class GraphViewConnectServiceImplTest {
 		gv.add(vv1).add(vv2).add(vv3)
 
 		val ev1 = service.addConnection<Boolean>(gv, vv1, vv2)
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		gv.add(ev2)
 		ev2.addSegmentPoint(Point2D(150, 100))
 		val result = splitToInput(ev1, ev2, vv3)

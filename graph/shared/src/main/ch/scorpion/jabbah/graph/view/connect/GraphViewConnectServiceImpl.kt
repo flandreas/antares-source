@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  * Standard implementation of the [GraphViewConnectService] interface.
  */
 class GraphViewConnectServiceImpl(
-	private val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
+	private val edgeViewFactorySupplier: () -> EdgeViewFactory,
 	private val nodeViewFactorySupplier: () -> NodeViewFactory<Any>
 ) : GraphViewConnectService {
 
@@ -113,7 +113,7 @@ class GraphViewConnectServiceImpl(
 
 	override fun <T : Any> addConnection(graphView: GraphView, orig: VerticeView<*>, dest: VerticeView<*>): EdgeView<T> {
 		LOG.trace("addConnection from VerticeView ${orig.id} to VerticeView ${dest.id}")
-		val edgeView = edgeViewFactorySupplier.invoke().createEdgeView() as EdgeView<T>
+		val edgeView = edgeViewFactorySupplier.invoke().createEdgeView<T>(graphView)
 		graphView.add(edgeView)
 		connect(edgeView, orig, dest)
 		return edgeView
@@ -124,7 +124,7 @@ class GraphViewConnectServiceImpl(
 		origOutput: PortView<T>,
 		destInput: PortView<T>
 	): EdgeView<T> {
-		val edgeView = edgeViewFactorySupplier.invoke().createEdgeView() as EdgeView<T>
+		val edgeView = edgeViewFactorySupplier.invoke().createEdgeView<T>(graphView)
 		LOG.trace("add EdgeView ${edgeView.id} from Port ${origOutput.port.portId} of origin ${origOutput.owner?.id} to Port ${destInput.port.portId} of destination ${destInput.owner?.id}")
 		graphView.add(edgeView)
 		connect(edgeView, origOutput, destInput)
@@ -155,7 +155,7 @@ class GraphViewConnectServiceImpl(
 		val tail = splitEdgeView.split(
 			splitSegmentIndex,
 			splitLocation
-		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as NetView<Any>) as EdgeView<T> }
+		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(graphView, it as NetView<Any>) as EdgeView<T> }
 
 		nodeView.location = splitLocation
 

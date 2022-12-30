@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.LightBulb
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.arithmetic.BitExtender
@@ -129,6 +130,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
 
 		// Analog
+		typeMap.register("analogNet", AnalogNet::class)
 		typeMap.register("lightBulb", LightBulb::class)
 	}
 

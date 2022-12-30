@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.module
 
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
@@ -63,10 +64,14 @@ import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.module.GraphModule
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewFactory
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
@@ -160,12 +165,22 @@ object AntaresViewModule : AbstractModule() {
 
 		EditModule.drawingViewSearchFactory = { DigitalGraphViewSearch() }
 
-		GraphViewModule.graphViewFactory = { DigitalGraphView(it ?: Translations.getString("graph.name.unknown")) }
+		GraphViewModule.graphViewFactory = object : GraphViewFactory {
+			override fun create(name: String?): GraphView =
+				DigitalGraphView(name ?: Translations.getString("graph.name.unknown"))
+
+			override fun create(model: Graph): GraphView = if (model is DigitalGraph) {
+					DigitalGraphView(model)
+				} else {
+					GraphViewImpl(model)
+				}
+		}
+
 		GraphViewModule.graphViewAppService = EditModule.drawingAppService as GraphViewAppService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
 		GraphViewModule.oscilloscopeProbeNameStrategy = DigitalOscilloscopeProbeNameStrategy()
-		val edgeViewFactory = DigitalEdgeViewFactory(
+		val edgeViewFactory = AntaresEdgeViewFactory(
 			DrawStyleModule.styleProvider,
 			{ GraphViewModule.edgeToPortConnector },
 			{ GraphViewModule.dragEdgeViewOriginConnector },

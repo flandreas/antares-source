@@ -15,14 +15,10 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
@@ -37,10 +33,10 @@ import ch.scorpion.jabbah.graph.view.style.EdgeStyle
  */
 class DigitalEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	edgeToPortConnectorSupplier: () -> EdgeToPortConnector = { GraphViewModule.edgeToPortConnector },
-	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = { GraphViewModule.dragEdgeViewOriginConnector },
-	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = { GraphViewModule.dragEdgeViewDestinationConnector },
-	net: Net<DigitalSignal> = DigitalNet()
+	edgeToPortConnectorSupplier: () -> EdgeToPortConnector = DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
+	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
+	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
+	net: DigitalNet = DigitalNet()
 ) : EdgeViewImpl<DigitalSignal>(
 	styleProvider,
 	edgeToPortConnectorSupplier,
@@ -107,23 +103,5 @@ class DigitalEdgeView(
 		buddies
 			.filterIsInstance<TunnelView>()
 			.forEach { it.collectSelectBuddies(drawing, buddies) }
-	}
-}
-
-class DigitalEdgeViewFactory(
-	private val styleProvider: StyleProvider,
-	private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-	private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-	private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-) : EdgeViewFactory<DigitalSignal> {
-
-	override fun createEdgeView(): EdgeView<DigitalSignal> {
-		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier)
-	}
-
-	override fun createEdgeView(netView: NetView<DigitalSignal>): EdgeView<DigitalSignal> {
-		return DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
-			destEndpointConnectorSupplier, netView.net)
 	}
 }

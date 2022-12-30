@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeft
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
@@ -34,7 +35,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 abstract class AbstractPortViewStartConnector(
 	private val portTypeCond: (PortType) -> Boolean,
 	protected val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
-	edgeViewFactory: EdgeViewFactory<Any>,
+	edgeViewFactory: EdgeViewFactory,
 	draggedEndpointType: EdgeViewEndpointType,
 	private val allowEdgeViewAsTarget: Boolean = false
 ) : AbstractCreateEdgeViewConnector(edgeViewFactory, draggedEndpointType) {
@@ -348,7 +349,7 @@ abstract class AbstractPortViewStartConnector(
 
 	private fun beginConnecting(context: EditInputEventContext) {
 		LOG.userTrail("Start creating new EdgeView at Port ${startPortView!!.port.portId} of VerticeView ${startVerticeView!!.id}")
-		createEdgeView(context.drawingView, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
+		createEdgeView(context.drawingView as DrawingView<GraphView>, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}

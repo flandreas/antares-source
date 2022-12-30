@@ -3,8 +3,6 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -20,8 +18,6 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	companion object {
 		private val LOG by logger(DigitalNet::class)
 	}
-
-	private val portPropertyListener = PortPropertyListener()
 
 	/** ---- [NetImpl] */
 
@@ -50,14 +46,12 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			return DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
 		}
 
-	override val isError: Boolean
-		get() = super.isError || isDesignError
+	override val isError: Boolean get() = super.isError || isDesignError
 
 	private val isDesignError: Boolean get() = getOccurringBitWidths().size > 1
 
-	private fun getOccurringBitWidths(): Set<Int> {
-		return ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
-	}
+	private fun getOccurringBitWidths(): Set<Int> =
+		ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
 
 	/** ---- [Net] */
 
@@ -80,16 +74,6 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 		}
 	}
 
-	override fun connect(port: Port<DigitalSignal>) {
-		super.connect(port)
-		port.addPropertyChangeListener(portPropertyListener)
-	}
-
-	override fun unconnect(port: Port<*>) {
-		super.unconnect(port)
-		port.removePropertyChangeListener(portPropertyListener)
-	}
-
 	private fun raiseError(signal: DigitalSignal, origin: OutputPort<DigitalSignal>, signalHandler: SignalHandler) {
 		val error = SignalError(origin, signalHandler.executionTime)
 		val logMsg = "Error signal $signal from port ${origin.portId} in ${origin.owner?.id}"
@@ -107,10 +91,4 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			}
 			return ports.map { it as DigitalPort }.first().bitWidth
 		}
-
-	private inner class PortPropertyListener : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			stateChanged()
-		}
-	}
 }

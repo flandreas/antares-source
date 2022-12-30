@@ -23,12 +23,12 @@ class EdgeViewSplitterJoinerTest {
 	}
 
 	private val service = GraphViewModule.graphViewConnectService
-	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
-	private val gv = GraphViewModule.createGraphView()
+	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
+	private val gv = GraphViewModule.graphViewFactory.create(null)
 
 	@Test
 	fun shouldSplitInMiddleOfSegment() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		gv.add(ev)
 
 		splitInMiddleOfSegmentImpl(ev)
@@ -36,7 +36,7 @@ class EdgeViewSplitterJoinerTest {
 
 	@Test
 	fun shouldSplitWithBlockStyle() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		gv.add(ev)
 		ev.netView?.style = NetViewStyle.BLOCK
 
@@ -49,7 +49,7 @@ class EdgeViewSplitterJoinerTest {
 		ev.addSegmentPoint(Point2D(100, 50))
 		ev.addSegmentPoint(Point2D(200, 50))
 
-		val newEV = EdgeViewSplitterJoiner.split(ev, 1, Point2D(100, 25)) { edgeViewFactory.createEdgeView(it) }
+		val newEV = EdgeViewSplitterJoiner.split(ev, 1, Point2D(100, 25)) { edgeViewFactory.createEdgeView(gv, it) }
 
 		assertEquals(3, ev.segmentPointCount)
 		assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
@@ -66,7 +66,7 @@ class EdgeViewSplitterJoinerTest {
 
 	@Test
 	fun shouldSplitAtStartOfSegment() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
 		gv.add(ev)
 
 		ev.addSegmentPoint(Point2D(0, 0))
@@ -74,7 +74,7 @@ class EdgeViewSplitterJoinerTest {
 		ev.addSegmentPoint(Point2D(100, 50))
 		ev.addSegmentPoint(Point2D(200, 50))
 
-		val newEV = EdgeViewSplitterJoiner.split(ev, 1, Point2D(100, 0)) { edgeViewFactory.createEdgeView(it) }
+		val newEV = EdgeViewSplitterJoiner.split(ev, 1, Point2D(100, 0)) { edgeViewFactory.createEdgeView(gv, it) }
 
 		assertEquals(2, ev.segmentPointCount)
 		assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
@@ -93,7 +93,7 @@ class EdgeViewSplitterJoinerTest {
 		gv.add(vv1).add(vv2)
 		val ev = service.addConnection<Boolean>(gv, vv1, vv2)
 
-		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it) }
+		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(gv, it) }
 
 		assertSame(vv1.model.getOutput(), ev.origin!!.port)
 		assertNull(ev.destination?.port)
@@ -108,7 +108,7 @@ class EdgeViewSplitterJoinerTest {
 		gv.add(vv1).add(vv2)
 		val ev = service.addConnection<Boolean>(gv, vv1, vv2)
 
-		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it) }
+		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(gv, it) }
 
 		assertSame(vv1.model.getOutput(), ev.origin?.port)
 		assertNull(ev.destination?.port)
@@ -118,12 +118,12 @@ class EdgeViewSplitterJoinerTest {
 
 	@Test
 	fun shouldJoinOtherHeadWithTail() {
-		val ev1 = edgeViewFactory.createEdgeView()
+		val ev1 = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev1.addSegmentPoint(Point2D(0, 0))
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(100, 0))
 		ev2.addSegmentPoint(Point2D(200, 0))
 		gv.add(ev2)
@@ -143,12 +143,12 @@ class EdgeViewSplitterJoinerTest {
 
 	@Test
 	fun shouldJoinOtherTailWithHead() {
-		val ev1 = edgeViewFactory.createEdgeView()
+		val ev1 = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev1.addSegmentPoint(Point2D(0, 0))
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(100, 0))
 		ev2.addSegmentPoint(Point2D(200, 0))
 		gv.add(ev2)
@@ -168,12 +168,12 @@ class EdgeViewSplitterJoinerTest {
 
 	@Test
 	fun shouldJoinOtherHeadWithHead() {
-		val ev1 = edgeViewFactory.createEdgeView()
+		val ev1 = edgeViewFactory.createEdgeView<Boolean>(gv)
 		ev1.addSegmentPoint(Point2D(0, 0))
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.netView!!)
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
 		ev2.addSegmentPoint(Point2D(0, 0))
 		ev2.addSegmentPoint(Point2D(-100, 0))
 		gv.add(ev2)

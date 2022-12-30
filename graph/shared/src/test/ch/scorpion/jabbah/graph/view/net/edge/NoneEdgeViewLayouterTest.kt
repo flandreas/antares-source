@@ -19,7 +19,7 @@ class NoneEdgeViewLayouterTest {
 		}
 	}
 
-	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
+	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
 	private lateinit var graphView: GraphView
 
 	@BeforeTest
@@ -30,7 +30,7 @@ class NoneEdgeViewLayouterTest {
 
 	@Test
 	fun shouldLayoutDestination() {
-		val ev = edgeViewFactory.createEdgeView()
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 			.addSegmentPoint(Point2D(0, 0))
 			.addSegmentPoint(Point2D(50, 0))
 			.addSegmentPoint(Point2D(50, 100))

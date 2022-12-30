@@ -14,7 +14,7 @@ class GraphStorable(
 ) : AbstractStorable() {
 
 	constructor() : this(null)
-	constructor(name: String) : this(GraphViewModule.graphViewFactory.invoke(name))
+	constructor(name: String) : this(GraphViewModule.graphViewFactory.create(name))
 
 	private var _graphView: GraphView? = graphView
 		set(value) {
