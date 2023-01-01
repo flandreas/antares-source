@@ -1,18 +1,18 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
-import java.awt.Component
+import java.awt.Frame
 import javax.swing.JOptionPane
-import javax.swing.SwingUtilities
 
 /**
- * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the currently selected [LibraryDirectory].
+ * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the
+ * currently selected [LibraryDirectory].
  */
 class NewGraphAction(
 	controller: LibraryTreeViewController,
@@ -34,26 +34,36 @@ class NewGraphAction(
 		}
 	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-	    val newName = JOptionPane.showInputDialog(
-		    SwingUtilities.getWindowAncestor(controller.view as Component),
-		    Translations.getString("library.action.newGraph.question"),
-		    name,
-		    JOptionPane.QUESTION_MESSAGE
-	    )
-	    if (StringUtils.isEmpty(newName)) {
-		    return
-	    }
+	override fun execute(event: ActionEvent) {
+		var info: NewMetaGraphInfo
 
-	    LOG.info("$name '$newName'")
+		while (true) {
+			info = NewMetaGraphPanel.showAsDialog() ?: return
 
-        val directory = controller.selectedItem as LibraryDirectory
-	    val library = directory.library!!
-	    val metaGraph = MetaGraph.withName(newName)
+			if (info.name.isEmpty) {
+				if (JOptionPane.showConfirmDialog(
+					Frame.getFrames()[0],
+					Translations.getString("library.action.newGraph.emptyName.msg"),
+					"$name",
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.ERROR_MESSAGE
+				) == JOptionPane.CANCEL_OPTION) {
+					return
+				}
+			} else {
+				break
+			}
+		}
 
-	    val element = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
-		eventBus.post(OpenContainerLibraryElementRequest(element))
-    }
+		LOG.info("$name '${info.name.getTranslation()}'")
+
+		val directory = controller.selectedItem as LibraryDirectory
+		val library = directory.library!!
+		val metaGraph = MetaGraph.withName(info.name)
+
+		val newElement = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
+		eventBus.post(OpenContainerLibraryElementRequest(newElement))
+	}
 
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)

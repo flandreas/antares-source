@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.CurrentContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.container.NarrowContainerDrawingFiller
@@ -66,7 +67,7 @@ class CreateCircuitFromTruthTableService(
 		circuitType: CircuitSynthesisType,
 		executionScript: String
 	): MetaGraph {
-		val metaGraph = MetaGraph.withName(circuitName)
+		val metaGraph = MetaGraph.withName(TranslatableText(circuitName))
 		metaGraph.graph.model!!.script = executionScript
 		circuitType.build(truthTable, dnfs, metaGraph.graph)
 		fillSymbol(metaGraph)

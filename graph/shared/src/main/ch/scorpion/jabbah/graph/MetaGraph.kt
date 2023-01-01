@@ -28,10 +28,10 @@ class MetaGraph(
 	companion object {
 		private val LOG by logger(MetaGraph::class)
 
-		fun withName(name: String): MetaGraph {
+		fun withName(name: TranslatableText): MetaGraph {
 			val metaGraph = MetaGraph()
 			metaGraph.graph.model!!.name = Name(name)
-			metaGraph.containerDrawing.model.name = name
+			metaGraph.containerDrawing.model.name = name.getTranslation()
 			return metaGraph
 		}
 
