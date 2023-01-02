@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
+import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.LightBulbView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
@@ -333,6 +334,7 @@ object AntaresViewModule : AbstractModule() {
 		// Analog
 
 		typeMap.register("analogGraphView", AnalogGraphView::class)
+		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 	}
 
@@ -343,6 +345,7 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, BidirectionalSplitterView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class) { SelectedColorSelectionModel(it) }
