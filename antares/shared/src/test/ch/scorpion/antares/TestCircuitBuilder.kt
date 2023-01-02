@@ -1,10 +1,11 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -12,8 +13,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -26,7 +27,7 @@ class TestCircuitBuilder(
 	graphName: String,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : GraphViewBuilder<DigitalSignal>(graphName) {
+) : GraphViewBuilder<DigitalSignal>(graphName, AntaresGraphTypes.Digital) {
 
 	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
 	fun buildNOP(propagationDelay: Long = 0): GraphView {

@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -114,7 +115,7 @@ class GrandUiIntegrationTest {
 
 	private fun createAndOpenNewMetaGraph() {
 		val project = LibraryModule.libraryHolder.library as Project
-		val metaGraph = MetaGraph.withName("Usage")
+		val metaGraph = MetaGraph.withName(TranslatableText("Usage"), GenericGraphType)
 		val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
 		BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
 	}

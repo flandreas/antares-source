@@ -1,6 +1,8 @@
 package ch.scorpion.antares.view.module
 
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
@@ -10,6 +12,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
+import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.LightBulbView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
@@ -57,6 +60,7 @@ import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.figure.FigureRegistry
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -166,13 +170,15 @@ object AntaresViewModule : AbstractModule() {
 		EditModule.drawingViewSearchFactory = { DigitalGraphViewSearch() }
 
 		GraphViewModule.graphViewFactory = object : GraphViewFactory {
-			override fun create(name: String?): GraphView =
-				DigitalGraphView(name ?: Translations.getString("graph.name.unknown"))
 
-			override fun create(model: Graph): GraphView = if (model is DigitalGraph) {
-					DigitalGraphView(model)
-				} else {
-					GraphViewImpl(model)
+			override fun create(name: TranslatableText?): GraphView =
+				DigitalGraphView(name ?: TranslatableText(Translations.getString("graph.name.unknown")))
+
+			override fun create(model: Graph): GraphView =
+				when (model.type) {
+					AntaresGraphTypes.Digital -> DigitalGraphView(model as DigitalGraph)
+					AntaresGraphTypes.Analog -> AnalogGraphView(model as AnalogGraph)
+					else -> GraphViewImpl(model)
 				}
 		}
 
@@ -326,6 +332,7 @@ object AntaresViewModule : AbstractModule() {
 
 		// Analog
 
+		typeMap.register("analogGraphView", AnalogGraphView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 	}
 

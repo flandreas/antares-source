@@ -4,12 +4,12 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
@@ -44,6 +44,8 @@ object GraphModelModule : AbstractModule() {
 
 	val signalConflictBehaviourHolder by lazy { SignalConflictBehaviourHolder() }
 
+	val graphTypeRegistry = GraphTypeRegistry()
+
 	override fun initialize() {
 		BaseModule.require()
 		IOModule.require()
@@ -53,6 +55,7 @@ object GraphModelModule : AbstractModule() {
 
 		Translations.addBundle("jabbah-graph")
 
+		registerGraphTypes()
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 	}
@@ -60,11 +63,17 @@ object GraphModelModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portFactory: PortFactory = UndefinedPortFactory()
 
-	var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
+	var graphFactory: GraphFactory = object : GraphFactory {
+		override fun create(name: TranslatableText, type: GraphType): Graph = GraphImpl(name, type)
+	}
 
 	/** More specific modules can register other implementations for [GraphPort] value type adjustments. */
 	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
 		SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+	}
+
+	private fun registerGraphTypes() {
+		graphTypeRegistry.register(GenericGraphType, asDefault = true)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

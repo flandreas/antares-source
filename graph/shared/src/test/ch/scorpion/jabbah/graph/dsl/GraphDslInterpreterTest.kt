@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.dsl.Lexer
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -36,7 +38,7 @@ class GraphDslInterpreterTest {
 			name = "I"
 			setIncomingSignal(42L, signalHandler)
 		}
-		val graph = GraphModelModule.graphFactory("Test")
+		val graph = GraphModelModule.graphFactory.create(TranslatableText("Test"), GenericGraphType)
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
@@ -53,7 +55,7 @@ class GraphDslInterpreterTest {
 			name = "O"
 			setOutgoingSignal(17L, signalHandler)
 		}
-		val graph = GraphModelModule.graphFactory("Test")
+		val graph = GraphModelModule.graphFactory.create(TranslatableText("Test"), GenericGraphType)
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
@@ -70,7 +72,7 @@ class GraphDslInterpreterTest {
 			name = "I + Bla"
 			setIncomingSignal(42L, signalHandler)
 		}
-		val graph = GraphModelModule.graphFactory("Test")
+		val graph = GraphModelModule.graphFactory.create(TranslatableText("Test"), GenericGraphType)
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
@@ -87,7 +89,7 @@ class GraphDslInterpreterTest {
 			name = "I"
 			setIncomingSignal(42L, signalHandler)
 		}
-		val graph = GraphModelModule.graphFactory("Test")
+		val graph = GraphModelModule.graphFactory.create(TranslatableText("Test"), GenericGraphType)
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
@@ -104,7 +106,7 @@ class GraphDslInterpreterTest {
 			name = "O"
 			setOutgoingSignal(17L, signalHandler)
 		}
-		val graph = GraphModelModule.graphFactory("Test")
+		val graph = GraphModelModule.graphFactory.create(TranslatableText("Test"), GenericGraphType)
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(

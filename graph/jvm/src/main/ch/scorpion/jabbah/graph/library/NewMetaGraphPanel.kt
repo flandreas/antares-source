@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.GraphType
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
@@ -12,7 +14,10 @@ import javax.swing.*
 import javax.swing.event.AncestorEvent
 import javax.swing.event.AncestorListener
 
-data class NewMetaGraphInfo(val name: TranslatableText)
+data class NewMetaGraphInfo(
+	val name: TranslatableText,
+	val type: GraphType
+)
 
 /**
  * A [JPanel] for collecting the input used for creating a new [MetaGraph].
@@ -32,7 +37,7 @@ class NewMetaGraphPanel : JPanel() {
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
 				) {
-					JOptionPane.OK_OPTION -> NewMetaGraphInfo(panel.nameField.value as TranslatableText)
+					JOptionPane.OK_OPTION -> NewMetaGraphInfo(panel.nameField.value as TranslatableText, panel.typeField.selectedItem as GraphType)
 					else -> null
 				}
 		}
@@ -41,9 +46,20 @@ class NewMetaGraphPanel : JPanel() {
 	private val nameLabel = Translations.getString("library.action.newGraph.property.name")
 	private val nameField = TranslatablePropertyEditor(nameLabel)
 
+	private val typeLabel = Translations.getString("library.action.newGraph.property.type")
+	private val typeField = JComboBox<GraphType>()
+
 	init {
+		fillGraphTypes()
 		buildUI()
 		requestFocusInNameField()
+	}
+
+	private fun fillGraphTypes() {
+		GraphModelModule.graphTypeRegistry.graphTypes.forEach {
+			typeField.addItem(it)
+		}
+		typeField.selectedItem = GraphModelModule.graphTypeRegistry.default
 	}
 
 	private fun requestFocusInNameField() {
@@ -65,6 +81,7 @@ class NewMetaGraphPanel : JPanel() {
 	private fun buildUI() {
 		val inset = 5
 		var row = 0
+		val rowDist = 5
 		layout = EGBL.getLayout()
 
 		// Name
@@ -86,13 +103,39 @@ class NewMetaGraphPanel : JPanel() {
 		EGBL.add(
 			this,
 			nameField.customEditor,
-			1, row,
+			1, row++,
 			EGBL.REMAINDER, 1,
 			0.0, 0.0,
 			EGBL.WEST,
 			EGBL.HORIZONTAL,
 			0, 10, 0, inset
 		)
+
+		// Type
+
+		EGBL.add(
+			this,
+			JLabel("$typeLabel:"),
+			0, row,    // x, y
+			1, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
+			rowDist, inset, 0, 0
+		)
+
+		EGBL.add(
+			this,
+			typeField,
+			1, row++,
+			EGBL.REMAINDER, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
+			rowDist, 10, 0, inset
+		)
+
+		// Filler
 
 		val filler = JPanel()
 		EGBL.add(

@@ -1,10 +1,12 @@
 package ch.scorpion.antares.model.module
 
 import ch.scorpion.antares.dsl.AntaresDslModule
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.LightBulb
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
@@ -28,7 +30,11 @@ import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphFactory
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -47,12 +53,21 @@ object AntaresModelModule : AbstractModule() {
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
+
+		registerGraphTypes()
 		registerGraphParamTypes()
 
 		AntaresDslModule.require()
 
 		GraphModelModule.portFactory = DigitalPortFactory()
-		GraphModelModule.graphFactory = { DigitalGraph(name = it) }
+		GraphModelModule.graphFactory = object : GraphFactory {
+			override fun create(name: TranslatableText, type: GraphType): Graph =
+				when (type) {
+					AntaresGraphTypes.Digital -> DigitalGraph(name)
+					AntaresGraphTypes.Analog -> AnalogGraph(name)
+					else -> throw IllegalArgumentException("Unsupported GraphType $type")
+				}
+		}
 
 		GraphModelModule.subGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
 			DigitalSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
@@ -130,11 +145,18 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
 
 		// Analog
+		typeMap.register("analogGraph", AnalogGraph::class)
 		typeMap.register("analogNet", AnalogNet::class)
 		typeMap.register("lightBulb", LightBulb::class)
 	}
 
 	private fun registerGraphParamTypes() {
 		GraphParamTypeRegistry.register(BitWidthGraphParamType.name) { BitWidthGraphParamType }
+	}
+
+	private fun registerGraphTypes() {
+		GraphModelModule.graphTypeRegistry.clear()
+		GraphModelModule.graphTypeRegistry.register(AntaresGraphTypes.Digital, asDefault = true)
+		GraphModelModule.graphTypeRegistry.register(AntaresGraphTypes.Analog)
 	}
 }

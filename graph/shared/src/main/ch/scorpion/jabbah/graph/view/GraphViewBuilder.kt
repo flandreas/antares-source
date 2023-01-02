@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.UndoableDataHolder
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -30,8 +31,9 @@ open class GraphViewBuilder<T : Any>(
 
 	constructor(
 		name: String = Translations.getString("graph.name.unknown"),
+		type: GraphType = GraphModelModule.graphTypeRegistry.default,
 		undoableStateCallback: (GraphViewBuilder<*>) -> Unit = {}
-	): this(GraphStorable(GraphViewModule.graphViewFactory.create(GraphModelModule.graphFactory.invoke(name))), undoableStateCallback = undoableStateCallback)
+	): this(GraphStorable(GraphViewModule.graphViewFactory.create(GraphModelModule.graphFactory.create(TranslatableText(name), type))), undoableStateCallback = undoableStateCallback)
 
 	companion object {
 		private val LOG by logger(GraphViewBuilder::class)

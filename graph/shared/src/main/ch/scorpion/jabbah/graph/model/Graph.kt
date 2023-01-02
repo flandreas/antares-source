@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -18,6 +19,10 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
+
+interface GraphFactory {
+	fun create(name: TranslatableText, type: GraphType): Graph
+}
 
 /**
  * A [Graph] is mainly a collection of [GraphElement]s.
@@ -32,6 +37,8 @@ import ch.scorpion.jabbah.io.Storable
  * applications.
  */
 interface Graph : Namable, Describable, Storable, Bean {
+
+	val type: GraphType
 
     /** The universal unique ID of this [Graph]. Used for referencing this [Graph] from other [Graph]s.*/
     var uuid: UUID

@@ -39,8 +39,8 @@ open class GraphViewImpl(
 	protected val eventBus: EventBus = BaseModule.eventBus,
 ) : DrawingImpl<GraphElementView<*>>(), GraphView, Bean {
 
-	constructor() : this(Translations.getString("graph.name.unknown"))
-	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name))
+	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+	constructor(name: TranslatableText, type: GraphType = GraphModelModule.graphTypeRegistry.default) : this(GraphModelModule.graphFactory.create(name, type))
 
 	companion object {
 		private val LOG by logger(GraphViewImpl::class)

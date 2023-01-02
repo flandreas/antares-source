@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.view.output.LightColor
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.Storable
@@ -18,8 +20,8 @@ class DigitalGraphView(
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphViewImpl(graph, eventBus) {
 
-	constructor() : this(Translations.getString("graph.name.unknown"))
-	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name) as DigitalGraph)
+	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Digital) as DigitalGraph)
 
 	/**
 	 * The [LightColor] to be used when adding [LightEmitter]s to this [DigitalGraphView],

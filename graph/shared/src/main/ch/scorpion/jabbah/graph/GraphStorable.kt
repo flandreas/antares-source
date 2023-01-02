@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -14,7 +15,7 @@ class GraphStorable(
 ) : AbstractStorable() {
 
 	constructor() : this(null)
-	constructor(name: String) : this(GraphViewModule.graphViewFactory.create(name))
+	constructor(name: TranslatableText) : this(GraphViewModule.graphViewFactory.create(name))
 
 	private var _graphView: GraphView? = graphView
 		set(value) {

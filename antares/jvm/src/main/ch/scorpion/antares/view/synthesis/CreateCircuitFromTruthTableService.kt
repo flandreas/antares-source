@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.synthesis
 
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.expression.DslBooleanExpressionWriter
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.quinemccluskey.DNF
@@ -67,7 +68,7 @@ class CreateCircuitFromTruthTableService(
 		circuitType: CircuitSynthesisType,
 		executionScript: String
 	): MetaGraph {
-		val metaGraph = MetaGraph.withName(TranslatableText(circuitName))
+		val metaGraph = MetaGraph.withName(TranslatableText(circuitName), AntaresGraphTypes.Digital)
 		metaGraph.graph.model!!.script = executionScript
 		circuitType.build(truthTable, dnfs, metaGraph.graph)
 		fillSymbol(metaGraph)

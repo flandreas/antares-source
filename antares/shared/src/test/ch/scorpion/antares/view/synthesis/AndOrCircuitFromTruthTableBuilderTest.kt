@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTable
@@ -10,6 +11,7 @@ import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.gate.OrGateView
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.net.ConstantView
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +34,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("O"))
 		truthTable.setColumnValues(2, False, True, True, False)
 
-		val metaGraph = MetaGraph.withName("Test")
+		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
@@ -49,7 +51,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, True, True, False)
 		truthTable.setColumnValues(3, True, True, True, True)
 
-		val metaGraph = MetaGraph.withName("Test")
+		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
@@ -67,7 +69,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, True, True, False)
 		truthTable.setColumnValues(3, False, False, False, False)
 
-		val metaGraph = MetaGraph.withName("Test")
+		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
@@ -83,7 +85,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B", "C"), outputColumnNames = listOf("Y"))
 		truthTable.setColumnValues(3, True, False, True, False, Error, False, True, True)
 
-		val metaGraph = MetaGraph.withName("Test")
+		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
@@ -104,7 +106,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("Y"))
 		truthTable.setColumnValues(2, False, False, True, True)
 
-		val metaGraph = MetaGraph.withName("Test")
+		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)

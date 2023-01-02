@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.drag.DragManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.EditSelectModule
@@ -73,8 +74,8 @@ import ch.scorpion.jabbah.io.TypeMap
 object GraphViewModule : AbstractModule() {
 
 	var graphViewFactory: GraphViewFactory = object : GraphViewFactory {
-		override fun create(name: String?): GraphView =
-			GraphViewImpl(name ?: Translations.getString("graph.name.unknown"))
+		override fun create(name: TranslatableText?): GraphView =
+			GraphViewImpl(name ?: TranslatableText(Translations.getString("graph.name.unknown")))
 
 		override fun create(model: Graph): GraphView = GraphViewImpl(model)
 	}

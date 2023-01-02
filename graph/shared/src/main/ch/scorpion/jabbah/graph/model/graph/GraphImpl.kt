@@ -10,11 +10,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
@@ -26,7 +28,8 @@ import ch.scorpion.jabbah.io.*
  * A standard implementation of the [Graph] interface.
  */
 open class GraphImpl(
-	name: String = Translations.getString("graph.name.unknown"),
+	name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
+	type: GraphType = GraphModelModule.graphTypeRegistry.default,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractStorable(), Graph, Namable, Describable {
 
@@ -77,6 +80,8 @@ open class GraphImpl(
 	override var description: Description by observableDescription(Description(""))
 
 	/** ---- [Graph] interface */
+
+	override var type: GraphType = type
 
 	override var uuid: UUID = System.createUUID()
 
@@ -258,6 +263,7 @@ open class GraphImpl(
 	}
 
 	override fun write(writer: StoreWriter) {
+		writer.writeString("type", type.customName)
 		script?.let { writer.writeString("script", it) }
 		if (purelyScripted) {
 			writer.writeBoolean("purelyScripted", purelyScripted)
@@ -272,6 +278,9 @@ open class GraphImpl(
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("type")) {
+			type = GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
+		}
 		if (reader.hasAttribute("script")) {
 			script = reader.readString("script")
 		}

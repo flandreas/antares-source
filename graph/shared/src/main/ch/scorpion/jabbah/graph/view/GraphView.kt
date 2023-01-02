@@ -5,12 +5,13 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 interface GraphViewFactory {
-	fun create(name: String?): GraphView
+	fun create(name: TranslatableText?): GraphView
 	fun create(model: Graph): GraphView
 }
 

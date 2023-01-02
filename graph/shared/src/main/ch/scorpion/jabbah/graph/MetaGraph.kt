@@ -13,14 +13,16 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
 
 /**
  * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].
  */
 class MetaGraph(
-	graph: GraphStorable = GraphStorable(Translations.getString("graph.name.unknown")),
+	graph: GraphStorable = GraphStorable(TranslatableText(Translations.getString("graph.name.unknown"))),
 	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractStorable() {
@@ -28,8 +30,10 @@ class MetaGraph(
 	companion object {
 		private val LOG by logger(MetaGraph::class)
 
-		fun withName(name: TranslatableText): MetaGraph {
-			val metaGraph = MetaGraph()
+		fun withName(name: TranslatableText, type: GraphType): MetaGraph {
+			val graph = GraphModelModule.graphFactory.create(name, type)
+			val graphView = GraphViewModule.graphViewFactory.create(graph)
+			val metaGraph = MetaGraph(GraphStorable(graphView))
 			metaGraph.graph.model!!.name = Name(name)
 			metaGraph.containerDrawing.model.name = name.getTranslation()
 			return metaGraph
