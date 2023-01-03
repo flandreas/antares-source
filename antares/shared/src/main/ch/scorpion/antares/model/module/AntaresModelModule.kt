@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.antares.model.analog.AnalogNet
+import ch.scorpion.antares.model.analog.Battery
 import ch.scorpion.antares.model.analog.LightBulb
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.arithmetic.BitExtender
@@ -148,6 +149,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("analogGraph", AnalogGraph::class)
 		typeMap.register("analogNet", AnalogNet::class)
 		typeMap.register("lightBulb", LightBulb::class)
+		typeMap.register("battery", Battery::class)
 	}
 
 	private fun registerGraphParamTypes() {

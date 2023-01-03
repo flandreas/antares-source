@@ -568,6 +568,7 @@
               </name>
               <items>
                   <baseLibraryElement _id='138' id='LightBulb'/>
+                  <baseLibraryElement _id='139' id='Battery'/>
               </items>
           </libraryFolder>
       </items>

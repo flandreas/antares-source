@@ -14,6 +14,7 @@ import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.BatteryView
 import ch.scorpion.antares.view.analog.LightBulbView
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
@@ -146,6 +147,7 @@ object AntaresViewModule : AbstractModule() {
 	// Analog
 
 	private const val LIGHT_BULB = "LightBulb"
+	private const val BATTERY = "Battery"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -336,6 +338,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogGraphView", AnalogGraphView::class)
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
+		typeMap.register("batteryView", BatteryView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -408,6 +411,7 @@ object AntaresViewModule : AbstractModule() {
 
 		// Analog
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -560,6 +564,7 @@ object AntaresViewModule : AbstractModule() {
 		// Analog
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
+		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
 
 	}
 
