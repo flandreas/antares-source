@@ -29,11 +29,6 @@ class PullResistorView(
 ) : OrientableRectangularVerticeView<PullResistor>(styleProvider, model) {
 
 	companion object {
-		private val STROKE = Stroke(
-			Themes.get<GraphTheme>().figure.stroke.width,
-			cap = LineCap.BUTT,
-			join = LineJoin.MITER
-		)
 		private const val PULL_DIRECTION_WIDTH = 2 * SCALE
 	}
 
@@ -97,7 +92,7 @@ class PullResistorView(
 			context,
 			getColorGradient(context) ?: context.g.color,
 			getApplicableBackgroundColor(context),
-			STROKE)
+			SymbolStyle.RESISTOR_STROKE)
 	}
 
 	private fun getColorGradient(context: DrawContext): LinearColorGradient? {

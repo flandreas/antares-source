@@ -569,6 +569,7 @@
               <items>
                   <baseLibraryElement _id='138' id='LightBulb'/>
                   <baseLibraryElement _id='139' id='Battery'/>
+                  <baseLibraryElement _id='140' id='Resistor'/>
               </items>
           </libraryFolder>
       </items>

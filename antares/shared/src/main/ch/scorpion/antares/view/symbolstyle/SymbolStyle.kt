@@ -17,8 +17,10 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -239,6 +241,12 @@ enum class SymbolStyle(
 			.lineTo(-AbstractAntaresPortView.LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
 			.lineTo(-AbstractAntaresPortView.LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
 			.lineTo(-AbstractAntaresPortView.LENGTH - 6.0 * SCALE, 0.0)
+
+		val RESISTOR_STROKE = Stroke(
+			Themes.get<GraphTheme>().figure.stroke.width,
+			cap = LineCap.BUTT,
+			join = LineJoin.MITER
+		)
 
 		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)

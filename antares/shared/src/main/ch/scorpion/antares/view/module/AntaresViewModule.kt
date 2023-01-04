@@ -12,10 +12,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
-import ch.scorpion.antares.view.analog.AnalogEdgeView
-import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.BatteryView
-import ch.scorpion.antares.view.analog.LightBulbView
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
@@ -148,6 +145,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private const val LIGHT_BULB = "LightBulb"
 	private const val BATTERY = "Battery"
+	private const val RESISTOR = "Resistor"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -339,6 +337,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
+		typeMap.register("resistorView", ResistorView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -412,6 +411,7 @@ object AntaresViewModule : AbstractModule() {
 		// Analog
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -565,6 +565,7 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
+		repository.register(RESISTOR, "library.element.Battery", { "/img/led.png" }, ResistorView::class)
 
 	}
 
