@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR) {
 
@@ -13,9 +12,9 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR) {
 
 		private val CALCULATOR = Calculator()
 
-		private class Calculator : VerticeCalculator<AnalogSwitch> {
+		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
-				// TODO
+				super.calculate(vertice, data, signalHandler)
 			}
 		}
 	}
