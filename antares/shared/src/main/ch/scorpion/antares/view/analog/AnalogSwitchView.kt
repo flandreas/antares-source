@@ -19,6 +19,7 @@ class AnalogSwitchView(
 	}
 
 	init {
+		isFocusable = true
 		modelExchanged(null)
 		setBounds(LENGTH, -SIZE / 2, SIZE, SIZE)
 	}

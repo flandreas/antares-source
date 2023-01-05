@@ -5,7 +5,6 @@ import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -34,12 +33,6 @@ class BatteryView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, widthInt, heightInt)
-			}
-		}
 
 		context.g.color = context.chooseForeground(foregroundColor)
 
