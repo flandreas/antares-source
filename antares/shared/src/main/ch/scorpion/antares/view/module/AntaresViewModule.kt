@@ -568,7 +568,7 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
-		repository.register(RESISTOR, "library.element.Battery", { "/img/led.png" }, ResistorView::class)
+		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
 		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
 
 	}
