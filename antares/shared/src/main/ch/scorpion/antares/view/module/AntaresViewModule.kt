@@ -146,6 +146,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val LIGHT_BULB = "LightBulb"
 	private const val BATTERY = "Battery"
 	private const val RESISTOR = "Resistor"
+	private const val ANALOG_SWITCH = "AnalogSwitch"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -338,6 +339,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
 		typeMap.register("resistorView", ResistorView::class)
+		typeMap.register("analogSwitchView", AnalogSwitchView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -412,6 +414,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -566,6 +569,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
 		repository.register(RESISTOR, "library.element.Battery", { "/img/led.png" }, ResistorView::class)
+		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
 
 	}
 

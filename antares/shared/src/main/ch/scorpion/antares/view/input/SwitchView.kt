@@ -355,7 +355,7 @@ class SwitchView(
 			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 	}
 
-	private fun drawFocus(context: DrawContext) {
+	override fun drawFocus(context: DrawContext) {
 		if (isFocusOwner) {
 			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke

@@ -130,6 +130,7 @@
         <baseLibraryElement _id='61' id='LightBulb'/>
         <baseLibraryElement _id='62' id='Battery'/>
         <baseLibraryElement _id='63' id='Resistor'/>
+        <baseLibraryElement _id='64' id='AnalogSwitch'/>
       </items>
     </libraryFolder>
   </folder>

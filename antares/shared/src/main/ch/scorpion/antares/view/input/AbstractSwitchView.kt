@@ -1,14 +1,20 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.io.Storable
@@ -19,6 +25,10 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 ) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+
+	companion object {
+		const val DEF_CIRCLE_RADIUS = 2.0
+	}
 
 	/** Handles mouse interactions during execution*/
 	private val actorInteractionHandler = InteractionHandler()
@@ -80,6 +90,39 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	/** ---- [AbstractSwitchView] */
 
 	protected abstract fun updateLabels()
+
+	protected open val circleRadius: Double = DEF_CIRCLE_RADIUS
+
+	protected open fun drawFocus(context: DrawContext) {
+		if (isFocusOwner) {
+			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
+			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
+			context.g.draw(bounds)
+		}
+	}
+
+	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
+		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+
+		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * Look.SCALE, 0.0)
+
+		if (model.isOn) {
+			context.g.drawLine(bounds.minX + 0.5 * Look.SCALE, 0.0, bounds.maxX - 0.5 * Look.SCALE, 0.0)
+		} else {
+			context.g.drawLine(bounds.minX + 0.5 * Look.SCALE, 0.0, bounds.maxX - 1.0 * Look.SCALE, -1.5 * Look.SCALE)
+		}
+
+		context.g.fillCircle(bounds.minX + 0.5 * Look.SCALE, 0.0, circleRadius)
+
+		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+
+		context.g.drawLine(bounds.maxX - 0.5 * Look.SCALE, 0.0, bounds.maxX, 0.0)
+		context.g.fillCircle(bounds.maxX - 0.5 * Look.SCALE, 0.0, circleRadius)
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawFocus(context)
+		}
+	}
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 

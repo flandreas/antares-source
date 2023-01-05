@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 class RealSwitchView(
@@ -17,7 +16,6 @@ class RealSwitchView(
 ) : AbstractRealSwitchView<RealSwitch>(styleProvider, model) {
 
 	companion object {
-		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.RealSwitchView.iconPath"
 		private const val SIZE = 4 * SCALE
 	}
 
@@ -55,26 +53,6 @@ class RealSwitchView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-
-		(getPortView(model.getPort(1)) as DigitalPortView).prepareConnectionDrawContext(context)
-
-		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * SCALE, 0.0)
-
-		if (model.isOn) {
-			context.g.drawLine(bounds.minX + 0.5 * SCALE, 0.0, bounds.maxX - 0.5 * SCALE, 0.0)
-		} else {
-			context.g.drawLine(bounds.minX + 0.5 * SCALE, 0.0, bounds.maxX - 1.0 * SCALE, -1.5 * SCALE)
-		}
-
-		context.g.fillCircle(bounds.minX + 0.5 * SCALE, 0.0, circleRadius)
-
-		(getPortView(model.getPort(2)) as DigitalPortView).prepareConnectionDrawContext(context)
-
-		context.g.drawLine(bounds.maxX - 0.5 * SCALE, 0.0, bounds.maxX, 0.0)
-		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, 0.0, circleRadius)
-
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawFocus(context)
-		}
+		drawTwoPortRealSwitchShape(context)
 	}
 }
