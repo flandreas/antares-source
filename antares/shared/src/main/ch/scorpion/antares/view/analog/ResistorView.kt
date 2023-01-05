@@ -15,6 +15,13 @@ class ResistorView(
 	model: Resistor = Resistor()
 ) : OrientableRectangularVerticeView<Resistor>(styleProvider, model) {
 
+	@Suppress("unused") // Reflective bean property
+	var resistance: Double
+		get() = model.resistance
+		set(value) {
+			model.resistance = value
+		}
+
 	init {
 		modelExchanged(null)
 	}

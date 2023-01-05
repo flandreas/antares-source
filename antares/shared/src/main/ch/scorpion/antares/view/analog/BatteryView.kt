@@ -20,6 +20,13 @@ class BatteryView(
 		private val MINUS_STROKE = Stroke(3f)
 	}
 
+	@Suppress("unused") // Reflective bean property
+	var voltage: Double
+		get() = model.voltage
+		set(value) {
+			model.voltage = value
+		}
+
 	init {
 		modelExchanged(null)
 	}
