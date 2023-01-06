@@ -23,12 +23,17 @@ class AnalogEdgeView(
 ) {
 
 	/**
-	 * The current (A) flowing through this [AnalogEdgeView] during simulation.
+	 * The electrical current (in A) flowing through this [AnalogEdgeView] during simulation.
 	 * Positive values indicate current flowing from [origin] to [destination].
 	 * Can't be modelled on model [Net] because [Net] doesn't contain nodes, which
 	 * is required for modelling Kirchhoff's "Current Law".
 	 */
 	var current: Double = 0.0
+		set(value) {
+			field = value
+			(origin?.portView as AnalogPortView?)?.current = value
+			(destination?.portView as AnalogPortView?)?.current = value
+		}
 
 	override fun draw(context: DrawContext) {
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!

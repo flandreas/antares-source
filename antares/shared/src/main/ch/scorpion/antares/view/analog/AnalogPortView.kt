@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -27,6 +26,9 @@ class AnalogPortView(
 	internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int? = null,
 ) : AbstractAntaresPortView<AnalogSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: LENGTH) {
+
+	/** The electrical current (in A) flowing through this [AnalogPortView] during simulation. */
+	var current: Double = 0.0
 
 	/** ---- [PortView] interface */
 
