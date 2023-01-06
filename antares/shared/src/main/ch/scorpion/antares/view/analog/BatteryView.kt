@@ -10,6 +10,9 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
+/**
+ * Port 1 is the plus pin, port 2 is the minus pin.
+ */
 class BatteryView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Battery = Battery()

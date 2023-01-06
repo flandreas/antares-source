@@ -2,18 +2,21 @@ package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 
 class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR) {
 
 	companion object {
+		private val LOG by logger(AnalogSwitch::class)
 		private const val BASE_RESOURCE_KEY = "library.element.AnalogSwitch"
 
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
+				LOG.debug("Calculating AnalogSwitch")
 				super.calculate(vertice, data, signalHandler)
 			}
 		}

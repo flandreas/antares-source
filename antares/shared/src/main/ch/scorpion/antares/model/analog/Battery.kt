@@ -9,6 +9,9 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * Port 1 is the plus pin, port 2 is the minus pin.
+ */
 class Battery(
 	voltage: Double = DEF_VOLTAGE
 ) : CalculatingVertice(CALCULATOR){
