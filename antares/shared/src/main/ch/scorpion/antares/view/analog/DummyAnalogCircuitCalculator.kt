@@ -28,11 +28,19 @@ object DummyAnalogCircuitCalculator {
 
 		val isSwitchOn = switchView.model.isOn
 		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5f) else AnalogSignal(0f)
+		val current = if (isSwitchOn) 0.05 else 0.0
 
 		evBattery.model.setSignal(AnalogSignal(5f), batteryView.model.getOutput(1), batteryView.model.getOutput(1), signalHandler, false)
+		evBattery.current = current
+
 		evSwitch.model.setSignal(signalBehindSwitch, switchView.model.getOutput(2), switchView.model.getOutput(2), signalHandler, false)
+		evSwitch.current = current
+
 		evLightBulb.model.setSignal(signalBehindSwitch, lightBulbView.model.getOutput(2), lightBulbView.model.getOutput(2), signalHandler, false)
+		evLightBulb.current = current
+
 		evResistor.model.setSignal(AnalogSignal(0f), batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
+		evResistor.current = current
 
 		circuitView.invalidate()
 		circuitView.validate()

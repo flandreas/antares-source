@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 
@@ -20,6 +21,14 @@ class AnalogEdgeView(
 	DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
 	net
 ) {
+
+	/**
+	 * The current (A) flowing through this [AnalogEdgeView] during simulation.
+	 * Positive values indicate current flowing from [origin] to [destination].
+	 * Can't be modelled on model [Net] because [Net] doesn't contain nodes, which
+	 * is required for modelling Kirchhoff's "Current Law".
+	 */
+	var current: Double = 0.0
 
 	override fun draw(context: DrawContext) {
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
@@ -36,5 +45,10 @@ class AnalogEdgeView(
 			}
 
 		super.draw(context)
+	}
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		current = 0.0
 	}
 }
