@@ -22,29 +22,30 @@ class PointRange(
 
     private val _size: Double = begin.distance(end)
 
-	private var lastReached: Boolean = false
-
     /** Holds the value to be returned next.*/
     private var value: Point2D? = begin
-
-	private var initialOffset: Double = initialOffset ?: 0.0
 
 	var remainder: Double = 0.0
 		private set
 
+	init {
+		if (initialOffset != null && initialOffset > SIGMA) {
+			value = calculateNext(initialOffset)
+		}
+	}
+
     /** ---- [Sequence] interface */
 
-    override val size: Double
-        get() = _size
+    override val size: Double get() = _size
 
-    override fun hasNext(): Boolean = value != null
+    override fun hasNext(): Boolean = value != null /*&& !lastReached*/
 
     override fun getNext(distance: Double): Point2D {
         if (value == null) {
             throw NoSuchElementException("distance")
         }
         val result = value
-        calculateNext(distance)
+        value = calculateNext(distance)
         return result!!
     }
 
@@ -57,35 +58,33 @@ class PointRange(
 
     /** ---- [PointRange] */
 
-    private fun calculateNext(distance: Double) {
+    private fun calculateNext(distance: Double): Point2D? {
 	    require(distance >= 0) { "distance must not be negative" }
 
-	    if (lastReached) {
-	    	value = null
-		    return
+	    if (size <= SIGMA) {
+            return null
+        }
+
+        val dx = (end.x - begin.x) / size * distance
+        val dy = (end.y - begin.y) / size * distance
+
+        var result: Point2D? = Point2D(value!!.x + dx, value!!.y + dy)
+	    val d = result!!.distance(begin)
+
+
+	    if (d >= size) {
+		    remainder = d - size
+		    result = if (d == size || returnEndPoint) {
+			    end
+		    } else {
+			    null
+		    }
 	    }
 
-	    if (size <= SIGMA) {
-            value = null
-            return
-        }
+	    if (result == value) {
+			result = null
+	    }
 
-	    val effDistance = distance + initialOffset
-	    initialOffset = 0.0
-
-        val dx = (end.x - begin.x) / size * effDistance
-        val dy = (end.y - begin.y) / size * effDistance
-
-        value = Point2D(value!!.x + dx, value!!.y + dy)
-	    val d = value!!.distance(begin)
-        if (d >= size) {
-			remainder = d - size
-        	lastReached = true
-	        value = if (returnEndPoint) {
-		        end
-	        } else {
-		        null
-	        }
-        }
+	    return result
     }
 }

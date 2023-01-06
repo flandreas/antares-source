@@ -58,4 +58,35 @@ class PointRangeTest {
 		assertEquals(Point2D(0.0, 2.4), range.getNext(1.2))
 		assertEquals(Point2D(0.0, 3.0), range.getNext(1.2))
 	}
+
+	@Test
+	fun shouldNotReturnLastPointBeyondDistance() {
+		val range = PointRange(Point2D(0, 0), Point2D(10, 0), returnEndPoint = false)
+
+		assertEquals(Point2D(0, 0), range.getNext(3.0))
+		assertEquals(Point2D(3, 0), range.getNext(3.0))
+		assertEquals(Point2D(6, 0), range.getNext(3.0))
+		assertEquals(Point2D(9, 0), range.getNext(3.0))
+		assertFalse(range.hasNext())
+	}
+
+	@Test
+	fun shouldReturnLastPointAtDistance() {
+		val range = PointRange(Point2D(0, 0), Point2D(10, 0), returnEndPoint = false)
+
+		assertEquals(Point2D(0, 0), range.getNext(5.0))
+		assertEquals(Point2D(5, 0), range.getNext(5.0))
+		assertEquals(Point2D(10, 0), range.getNext(5.0))
+		assertFalse(range.hasNext())
+	}
+
+	@Test
+	fun shouldStartWithInitialOffset() {
+		val range = PointRange(Point2D(0, 0), Point2D(10, 0), initialOffset = 2.0)
+
+		assertEquals(Point2D(2, 0), range.getNext(3.0))
+		assertEquals(Point2D(5, 0), range.getNext(3.0))
+		assertEquals(Point2D(8, 0), range.getNext(3.0))
+		assertEquals(Point2D(10, 0), range.getNext(3.0))
+	}
 }

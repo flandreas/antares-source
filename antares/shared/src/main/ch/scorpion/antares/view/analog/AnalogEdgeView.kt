@@ -50,6 +50,10 @@ class AnalogEdgeView(
 			}
 
 		super.draw(context)
+
+		if (graphAppContext.showNetState) {
+			CurrentFlowVisualization.draw(this, context)
+		}
 	}
 
 	override fun executionStarted(signalHandler: SignalHandler) {

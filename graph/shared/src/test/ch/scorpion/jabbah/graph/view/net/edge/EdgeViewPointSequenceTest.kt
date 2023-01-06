@@ -64,8 +64,8 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(0, 0), sequence.getNext(7.0))
 		assertEquals(Point2D(7, 0), sequence.getNext(7.0))
 		// Don't return end segment point, leave reminder to next segment
-		assertEquals(Point2D(10, 0), sequence.getNext(7.0))
+		assertEquals(Point2D(10, 4), sequence.getNext(7.0))
 		// Add remainder from previous segment
-		assertEquals(Point2D(10, 7 + 3), sequence.getNext(7.0))
+		assertEquals(Point2D(10, 10), sequence.getNext(7.0))
 	}
 }

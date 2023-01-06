@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 class EdgeViewPointSequence(
 	private val edgeView: EdgeView<*>,
 	private val isReverse: Boolean = false,
-	returnEndPoint: Boolean = edgeView.segmentPointCount == 2,
+	returnSequenceEndPoint: Boolean = edgeView.segmentPointCount == 2,
 	offset: Double = 0.0
 ) : Sequence<Point2D> {
 
@@ -22,7 +22,7 @@ class EdgeViewPointSequence(
 	}
 
 	/** Creation depends on [currSegmentPointIndex] already set. */
-	private var currPointRange: PointRange = createCurrentPointRange(returnEndPoint, offset)
+	private var currPointRange: PointRange = createCurrentPointRange(returnSequenceEndPoint, offset)
 
 	/** ---- [Sequence] interface */
 
