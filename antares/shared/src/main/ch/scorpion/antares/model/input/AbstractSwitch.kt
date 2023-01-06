@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.view.GraphView
 
 abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	calculator: VerticeCalculator<T>
@@ -15,7 +16,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 			override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.delayedOff) {
 					vertice.delayedOff = false
-					vertice.setState(signalHandler, false)
+					vertice.setState(signalHandler, false, data.graphView)
 				} else {
 					vertice.setInteractionEnabled(true, signalHandler)
 				}
@@ -43,7 +44,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		setState(signalHandler, false)
+		setState(signalHandler, false, graphView = null)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -52,33 +53,33 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		setInteractionEnabled(true, signalHandler)
 	}
 
-	fun toggle(signalHandler: SignalHandler) {
+	fun toggle(signalHandler: SignalHandler, graphView: GraphView?) {
 		if (isOn) {
-			off(signalHandler)
+			off(signalHandler, graphView)
 		} else {
-			on(signalHandler)
+			on(signalHandler, graphView)
 		}
 	}
 
-	fun on(signalHandler: SignalHandler) {
+	fun on(signalHandler: SignalHandler, graphView: GraphView?) {
 		if (enabled && !isOn) {
-			setState(signalHandler, true)
+			setState(signalHandler, true, graphView)
 		}
 	}
 
-	fun off(signalHandler: SignalHandler) {
+	fun off(signalHandler: SignalHandler, graphView: GraphView?) {
 		if (isOn) {
 			if (enabled) {
-				setState(signalHandler, false)
+				setState(signalHandler, false, graphView)
 			} else {
 				delayedOff = true
 			}
 		}
 	}
 
-	protected open fun setState(signalHandler: SignalHandler, on: Boolean) {
+	protected open fun setState(signalHandler: SignalHandler, on: Boolean, graphView: GraphView?) {
 		isOn = on
 		setInteractionEnabled(false, signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
 	}
 }

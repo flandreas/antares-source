@@ -20,7 +20,7 @@ class SwitchTest {
 
 	@Test
 	fun shouldBeDisabledWhileWaiting() {
-		switch.on(signalHandler)
+		switch.on(signalHandler, null)
 		assertFalse(switch.enabled)
 
 		switch.act(signalHandler, switch.createActorData(null))
@@ -29,19 +29,19 @@ class SwitchTest {
 
 	@Test
 	fun shouldNotSetOnWhileWaiting() {
-		switch.on(signalHandler)
+		switch.on(signalHandler, null)
 		switch.act(signalHandler, switch.createActorData(null))
-		switch.off(signalHandler)
+		switch.off(signalHandler, null)
 
-		switch.on(signalHandler)
+		switch.on(signalHandler, null)
 		assertFalse(switch.isOn)
 		assertFalse(switch.enabled)
 	}
 
 	@Test
 	fun shouldDelaySetOffWhileDisabled() {
-		switch.on(signalHandler)
-		switch.off(signalHandler)
+		switch.on(signalHandler, null)
+		switch.off(signalHandler, null)
 		assertTrue(switch.isOn)
 		assertFalse(switch.enabled)
 

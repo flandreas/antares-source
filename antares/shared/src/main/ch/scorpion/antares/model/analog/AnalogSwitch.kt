@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.input.AbstractSwitch
+import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.DummyAnalogCircuitCalculator
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -18,6 +20,10 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR) {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				LOG.debug("Calculating AnalogSwitch")
 				super.calculate(vertice, data, signalHandler)
+
+				if (data.graphView is AnalogGraphView) {
+					DummyAnalogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
+				}
 			}
 		}
 	}

@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.execution.actor.ActorListener
@@ -69,7 +68,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		assertEquals(DigitalSignalFactory.of(Bit.False), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 		val executionTime = scheduler.executionTime
 
-		switchView.model.on(scheduler)
+		switchView.model.on(scheduler, circuitView)
 		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY + 1)
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())

@@ -5,7 +5,6 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
@@ -46,7 +45,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 	fun shouldForwardSignal() {
 		startSimulation(1100L)
 
-		switchView.model.toggle(scheduler)
+		switchView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
@@ -57,7 +56,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val receiver2 = builder.addVerticeView(TunnelView("A"))
 
 		startSimulation(1100L)
-		switchView.model.toggle(scheduler)
+		switchView.model.toggle(scheduler, circuitView)
 		proceedToMillis(2200L)
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
@@ -69,7 +68,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val tunnelB = builder.addVerticeView(TunnelView("B"))
 
 		startSimulation(1100L)
-		switchView.model.toggle(scheduler)
+		switchView.model.toggle(scheduler, circuitView)
 		proceedToMillis(2200L)
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())

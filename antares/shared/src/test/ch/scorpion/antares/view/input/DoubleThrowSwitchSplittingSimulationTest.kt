@@ -52,12 +52,12 @@ class DoubleThrowSwitchSplittingSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		buttonView.model.toggle(scheduler)
+		buttonView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 		assertTrue(ledView2.model.isOn)
 		assertFalse(ledView1.model.isOn)
 
-		doubleThrowSwitchView.model.toggle(scheduler)
+		doubleThrowSwitchView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(ledView1.model.isOn)

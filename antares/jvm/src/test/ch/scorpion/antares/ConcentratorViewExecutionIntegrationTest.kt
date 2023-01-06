@@ -63,7 +63,7 @@ class ConcentratorViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_2, Bit.False), circuitOutputView.model.signal)
 
-		switchView1.model.toggle(scheduler)
+		switchView1.model.toggle(scheduler, circuitView)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		assertEquals(DigitalSignalFactory.ofBits(listOf(Bit.True, Bit.False)), circuitOutputView.model.signal)

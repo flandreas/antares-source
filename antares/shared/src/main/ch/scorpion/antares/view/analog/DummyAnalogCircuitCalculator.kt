@@ -33,5 +33,8 @@ object DummyAnalogCircuitCalculator {
 		evSwitch.model.setSignal(signalBehindSwitch, switchView.model.getOutput(2), switchView.model.getOutput(2), signalHandler, false)
 		evLightBulb.model.setSignal(signalBehindSwitch, lightBulbView.model.getOutput(2), lightBulbView.model.getOutput(2), signalHandler, false)
 		evResistor.model.setSignal(AnalogSignal(0f), batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
+
+		circuitView.invalidate()
+		circuitView.validate()
 	}
 }

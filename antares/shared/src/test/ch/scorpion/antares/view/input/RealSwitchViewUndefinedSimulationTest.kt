@@ -9,7 +9,6 @@ import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -45,14 +44,14 @@ class RealSwitchViewUndefinedSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchView.model.toggle(scheduler)
+		switchView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.toggle(scheduler)
+		realSwitchView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 		assertEquals(DigitalSignalFactory.of(Bit.True), inOutView.model.signal)
 
-		realSwitchView.model.toggle(scheduler)
+		realSwitchView.model.toggle(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 		assertEquals(DigitalSignalFactory.of(Bit.Undefined), inOutView.model.signal)
 	}

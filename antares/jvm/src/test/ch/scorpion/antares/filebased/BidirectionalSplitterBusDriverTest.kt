@@ -40,7 +40,7 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldPropagateBit0() {
-		dirSwitch.on(scheduler)
+		dirSwitch.on(scheduler, openedCircuitView)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		inOutB.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.True, Bit.Undefined)), scheduler)
@@ -51,7 +51,7 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldPropagateBit1() {
-		dirSwitch.on(scheduler)
+		dirSwitch.on(scheduler, openedCircuitView)
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		inOutB.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(Bit.Undefined, Bit.True)), scheduler)

@@ -63,10 +63,10 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		LOG.trace("pressButton $buttonId at $time")
 		cvDelegate.getButton(buttonId.toInt())?.let { button ->
 			runner.executeAt(time) {
-				button.model.toggle(runner.scheduler)
+				button.model.toggle(runner.scheduler, null)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model.propagationDelay) { button.model.toggle(runner.scheduler)}
+					runner.executeAt(time + button.model.propagationDelay) { button.model.toggle(runner.scheduler, null)}
 				}
 			}
 		}

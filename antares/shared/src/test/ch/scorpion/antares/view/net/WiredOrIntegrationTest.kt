@@ -43,7 +43,7 @@ class WiredOrIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchViewA.model.toggle(scheduler)
+		switchViewA.model.toggle(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
 		assertNull(edgeView.net?.executionError)
@@ -55,10 +55,10 @@ class WiredOrIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchViewA.model.on(scheduler)
+		switchViewA.model.on(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
-		switchViewA.model.off(scheduler)
+		switchViewA.model.off(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(false), edgeView.model.signal)
@@ -70,13 +70,13 @@ class WiredOrIntegrationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchViewA.model.on(scheduler)
+		switchViewA.model.on(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
-		switchViewB.model.on(scheduler)
+		switchViewB.model.on(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
-		switchViewB.model.off(scheduler)
+		switchViewB.model.off(scheduler, builder.graphView)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), edgeView.model.signal)

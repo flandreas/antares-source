@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -183,8 +184,8 @@ abstract class AbstractVertice(
 	/** ---- [AbstractVertice] */
 
 	/** Visible for testing. */
-	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false): GraphActorData =
-		ActualPortValueActorData(inputPort, true, force = force)
+	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false, graphView: GraphView? = null): GraphActorData =
+		ActualPortValueActorData(inputPort, true, force = force, graphView = graphView)
 
 	/**
 	 * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
@@ -223,7 +224,8 @@ abstract class AbstractVertice(
 		override val changedPort: Port<*>?,
 		override val isInput: Boolean = true,
 		override val immediatePort: Port<*>? = changedPort,
-		override val force: Boolean
+		override val force: Boolean,
+		override val graphView: GraphView? = null
 	) : GraphActorData {
 
 		override fun <T : Any> getSignal(portId: Int): T? =

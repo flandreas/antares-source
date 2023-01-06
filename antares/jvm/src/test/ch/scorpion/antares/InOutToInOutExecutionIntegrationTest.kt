@@ -3,7 +3,6 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -71,7 +70,7 @@ class InOutToInOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchView.model.on(scheduler)
+		switchView.model.on(scheduler, circuitView)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)

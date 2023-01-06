@@ -1,7 +1,6 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.model.gate.TriStateBufferGate
-import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -58,18 +57,18 @@ class Bug227 : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldSend1ToOutsideAfterZ() {
-		d.on(scheduler)
+		d.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
-		en.on(scheduler)
+		en.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
-		en.off(scheduler)
+		en.off(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 		assertEquals(Word.of(Bit.Undefined), triStateBuffer.getOutputPort().getOutgoingSignal())
 
-		i.on(scheduler)
-		a.on(scheduler)
+		i.on(scheduler, openedCircuitView)
+		a.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		assertEquals(Word.of(true), subGraphVerticeRef.getOutput<DigitalSignal>().net!!.signal)
@@ -78,25 +77,25 @@ class Bug227 : AbstractFileBasedTest() {
 	@Test
 	fun shouldSend1ToOutsideAfter1() {
 		// 1 from outside
-		d.on(scheduler)
-		en.on(scheduler)
+		d.on(scheduler, openedCircuitView)
+		en.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		// 1 from inside
-		i.on(scheduler)
-		a.on(scheduler)
+		i.on(scheduler, openedCircuitView)
+		a.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		// Z from inside
-		a.off(scheduler)
+		a.off(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		// Z from outside
-		en.off(scheduler)
+		en.off(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		// 1 from inside
-		a.on(scheduler)
+		a.on(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
 		assertEquals(Word.of(true), subGraphVerticeRef.getOutput<DigitalSignal>().net!!.signal)
