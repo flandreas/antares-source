@@ -16,6 +16,7 @@ class Resistor(
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.Resistor"
 		private const val DEF_RESISTANCE = 100.0
+		const val STATE_RESISTANCE = "resistance"
 
 		private val CALCULATOR = Calculator()
 
@@ -34,7 +35,7 @@ class Resistor(
 		set(value) {
 			if (field != value) {
 				field = value
-				stateChanged()
+				stateChanged(reason = STATE_RESISTANCE)
 			}
 		}
 
