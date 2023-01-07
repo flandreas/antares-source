@@ -80,8 +80,11 @@ class LightBulbView(
 		context.g.color = context.chooseForeground(foregroundColor)
 		context.g.stroke = stroke
 		context.g.drawOval(xInt, yInt, widthInt, heightInt)
-		context.g.drawLine(x + (SIZE / 2 - DX), -DY, x + SIZE / 2 + DX, DY)
-		context.g.drawLine(x + (SIZE / 2 - DX), DY, x + SIZE / 2 + DX, -DY)
+
+		if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.drawLine(x + (SIZE / 2 - DX), -DY, x + SIZE / 2 + DX, DY)
+			context.g.drawLine(x + (SIZE / 2 - DX), DY, x + SIZE / 2 + DX, -DY)
+		}
 	}
 
 	private val bulbColor: Color get() =
