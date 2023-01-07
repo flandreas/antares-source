@@ -41,7 +41,12 @@ class AnalogEdgeView(
 			(destination?.portView as AnalogPortView?)?.current = value
 		}
 
-	/** Used for driving the animation of the electrical current.*/
+	/**
+	 * Periodically updated by the current flow animation task of [AnalogGraphView].
+	 * Represents the "timing tick" that drives the animation. Repeats within the range
+	 * from 0 to [CurrentFlowVisualization.DISTANCE].
+	 * All [AnalogEdgeView]s in a [AnalogGraphView] experience the same [currentAnimationOffset] tick.
+	 */
 	var currentAnimationOffset: Double = 0.0
 
 	override fun draw(context: DrawContext) {

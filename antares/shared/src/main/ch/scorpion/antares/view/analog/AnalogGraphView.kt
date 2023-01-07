@@ -57,6 +57,6 @@ class AnalogGraphView(
 		target = graphView,
 		::consumeCurrentAnimation,
 		Repetition(DoubleRange(0.0, CurrentFlowVisualization.DISTANCE)),
-		350.0
+		250.0
 	)
 }
