@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -22,6 +23,10 @@ class AnalogEdgeView(
 	net
 ) {
 
+	companion object {
+		private val LOG by logger(AnalogEdgeView::class)
+	}
+
 	/**
 	 * The electrical current (in A) flowing through this [AnalogEdgeView] during simulation.
 	 * Positive values indicate current flowing from [origin] to [destination].
@@ -30,10 +35,14 @@ class AnalogEdgeView(
 	 */
 	var current: Double = 0.0
 		set(value) {
+			LOG.debug("Set current=$value on EdgeView $id")
 			field = value
 			(origin?.portView as AnalogPortView?)?.current = value
 			(destination?.portView as AnalogPortView?)?.current = value
 		}
+
+	/** Used for driving the animation of the electrical current.*/
+	var currentAnimationOffset: Double = 0.0
 
 	override fun draw(context: DrawContext) {
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!

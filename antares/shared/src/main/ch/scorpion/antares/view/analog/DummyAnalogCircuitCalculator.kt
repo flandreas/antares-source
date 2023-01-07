@@ -40,7 +40,7 @@ object DummyAnalogCircuitCalculator {
 		evLightBulb.current = current
 
 		evResistor.model.setSignal(AnalogSignal(0f), batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
-		evResistor.current = current
+		evResistor.current = -current
 
 		circuitView.invalidate()
 		circuitView.validate()
