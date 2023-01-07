@@ -39,7 +39,12 @@ class AnalogPortView(
 	/** ---- [AbstractAntaresPortView] */
 
 	override fun setupColor(context: DrawContext) {
-		context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
+		if (appContext.showNetState) {
+			context.g.color = port.net?.signal?.color?.foregroundColor ?: context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		} else {
+			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		}
 	}
 
 	override fun setupStroke(context: DrawContext) {

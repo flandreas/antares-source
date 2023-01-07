@@ -43,27 +43,25 @@ class BatteryView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
-		context.g.color = context.chooseForeground(foregroundColor)
-
 		// Plus bar
+		(getPortView(model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 		context.g.stroke = stroke
 		context.g.drawLine(x + SIZE / 2, y, x + SIZE / 2, y + SIZE)
 
+		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
+		context.g.drawLine(x, 0.0, x + SIZE / 2, 0.0)
+
+		// Plus sign
+		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
+		context.g.drawLine(x + w(0.5), y, x + w(0.5), y + h(1))
+		context.g.drawLine(x, y + h(0.5), x + w(1), y + h(0.5))
+
 		// Minus bar
+		(getPortView(model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 		context.g.stroke = MINUS_STROKE
 		context.g.drawLine(x + SIZE / 2 + w(1), y + h(1), x + SIZE / 2 + w(1), y + SIZE - h(1))
 
 		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
-
-		// Plus sign
-		context.g.drawLine(x + w(0.5), y, x + w(0.5), y + h(1))
-		context.g.drawLine(x, y + h(0.5), x + w(1), y + h(0.5))
-
-		// Wires
-		(getPortView(model.getPort(1)) as AnalogPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(x, 0.0, x + SIZE / 2, 0.0)
-
-		(getPortView(model.getPort(2)) as AnalogPortView).prepareConnectionDrawContext(context)
 		context.g.drawLine(x + SIZE, 0.0, x + SIZE / 2 + w(1), 0.0)
 	}
 
