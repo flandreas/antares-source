@@ -12,7 +12,7 @@ import kotlin.math.abs
 class DoubleRange(
 	val begin: Double,
 	val end: Double
-) : ReversibleSequence<Double> {
+) : CloneableSequence<Double> {
 
 	private var value: Double? = begin
 
@@ -35,7 +35,7 @@ class DoubleRange(
 
 	override fun getCurrent(): Double = value ?: throw IllegalStateException("no current value")
 
-	override fun clone(reversed: Boolean): ReversibleSequence<Double> = if (reversed) {
+	override fun clone(reversed: Boolean): CloneableSequence<Double> = if (reversed) {
 		DoubleRange(end, begin)
 	} else {
 		DoubleRange(begin, end)

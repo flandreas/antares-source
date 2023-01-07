@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.jabbah.animation.AbstractAnimationTask
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.DoubleRange
+import ch.scorpion.jabbah.animation.Repetition
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -55,7 +56,7 @@ class AnalogGraphView(
 	private inner class CurrentAnimation(graphView: AnalogGraphView) : AbstractAnimationTask<Double>(
 		target = graphView,
 		::consumeCurrentAnimation,
-		DoubleRange(0.0, 10 * CurrentFlowVisualization.DISTANCE),
-		5_000.0
+		Repetition(DoubleRange(0.0, CurrentFlowVisualization.DISTANCE)),
+		350.0
 	)
 }

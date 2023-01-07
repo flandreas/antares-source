@@ -1,12 +1,9 @@
 package ch.scorpion.jabbah.animation
 
 /**
- * A [Sequence] that loops forever over the specified [sequence] followed by its
- * reversed [CloneableSequence].
- * Note that in this implementation, the boundary values are returned twice whenever
- * the direction in the [Oscillation] changes.
+ * A [Sequence] that repeats forever the specified [Sequence].
  */
-class Oscillation<out T>(
+class Repetition<out T>(
 	sequence: CloneableSequence<T>
 ) : Sequence<T> {
 
@@ -18,7 +15,7 @@ class Oscillation<out T>(
 
 	override fun getNext(distance: Double): T {
 		if (!currentSequence.hasNext()) {
-			currentSequence = currentSequence.clone(reversed = true)
+			currentSequence = currentSequence.clone(false)
 		}
 		return currentSequence.getNext(distance)
 	}

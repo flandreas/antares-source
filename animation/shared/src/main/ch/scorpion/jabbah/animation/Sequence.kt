@@ -27,6 +27,6 @@ interface Sequence<out T> {
  * oscillating composite [Sequence]s.
  * Created clones must be reset to their initial i.e. start state.
  */
-interface ReversibleSequence<out T> : Sequence<T> {
-	fun clone(reversed: Boolean): ReversibleSequence<T>
+interface CloneableSequence<out T> : Sequence<T> {
+	fun clone(reversed: Boolean): CloneableSequence<T>
 }
