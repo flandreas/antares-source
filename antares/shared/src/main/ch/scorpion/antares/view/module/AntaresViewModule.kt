@@ -194,7 +194,7 @@ object AntaresViewModule : AbstractModule() {
 			{ GraphViewModule.dragEdgeViewOriginConnector },
 			{ GraphViewModule.dragEdgeViewDestinationConnector })
 		GraphViewModule.setEdgeViewFactory(edgeViewFactory)
-		GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(
+		GraphViewModule.setNodeViewFactory(AntaresNodeViewFactory(
 			DrawStyleModule.styleProvider))
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
@@ -340,6 +340,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("batteryView", BatteryView::class)
 		typeMap.register("resistorView", ResistorView::class)
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
+		typeMap.register("analogNodeView", AnalogNodeView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

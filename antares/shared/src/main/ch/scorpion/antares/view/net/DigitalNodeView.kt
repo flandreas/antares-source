@@ -8,15 +8,11 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
 
 
@@ -57,12 +53,4 @@ class DigitalNodeView(
 		context.color = oldCompositeColor
 		context.g.color = oldColor
 	}
-}
-
-class DigitalNodeViewFactory(
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : NodeViewFactory<DigitalSignal> {
-
-	override fun create(netView: NetView<DigitalSignal>): NodeView<DigitalSignal> =
-		DigitalNodeView(styleProvider, netView.net, netView.style)
 }

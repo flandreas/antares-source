@@ -226,19 +226,21 @@ object GraphViewModule : AbstractModule() {
 	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl
 
 	fun setEdgeViewFactory(factory: EdgeViewFactory) {
-		edgeViewFactoryImpl = factory as EdgeViewFactory
+		edgeViewFactoryImpl = factory
 	}
 
-	private var nodeViewFactory: NodeViewFactory<Any> = NodeViewFactoryImpl(
+	private var nodeViewFactory: NodeViewFactory = NodeViewFactoryImpl(
 		DrawStyleModule.styleProvider
 	)
 
-	fun <T : Any> getNodeViewFactory(): NodeViewFactory<T> {
-		return nodeViewFactory as NodeViewFactory<T>
+	/*
+	fun getNodeViewFactory(): NodeViewFactory {
+		return nodeViewFactory
 	}
+	*/
 
-	fun <T : Any> setNodeViewFactory(factory: NodeViewFactory<T>) {
-		nodeViewFactory = factory as NodeViewFactory<Any>
+	fun setNodeViewFactory(factory: NodeViewFactory) {
+		nodeViewFactory = factory
 	}
 
 	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing =

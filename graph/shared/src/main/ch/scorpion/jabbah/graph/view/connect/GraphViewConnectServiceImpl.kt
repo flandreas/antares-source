@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 class GraphViewConnectServiceImpl(
 	private val edgeViewFactorySupplier: () -> EdgeViewFactory,
-	private val nodeViewFactorySupplier: () -> NodeViewFactory<Any>
+	private val nodeViewFactorySupplier: () -> NodeViewFactory
 ) : GraphViewConnectService {
 
 	companion object {
@@ -144,7 +144,7 @@ class GraphViewConnectServiceImpl(
 	): SplitEdgeViewResult<T> {
 		LOG.trace("split EdgeView ${splitEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
-		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>) as NodeView<T>
+		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>, graphView) as NodeView<T>
 		graphView.add(nodeView)
 
 		// Splitting an EdgeView should not change the layout of the EdgeView being split

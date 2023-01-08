@@ -18,17 +18,26 @@ object DummyAnalogCircuitCalculator {
 
 		val batteryView = circuitView.getWithId(4) as BatteryView
 		val switchView = circuitView.getWithId(18) as AnalogSwitchView
-		val lightBulbView = circuitView.getWithId(10) as LightBulbView
-		//val resistorView = circuitView.getWithId(14) as ResistorView
+		val lightBulbView1 = circuitView.getWithId(10) as LightBulbView
+		val lightBulbView2 = circuitView.getWithId(23) as LightBulbView
+		val resistorView1 = circuitView.getWithId(14) as ResistorView
+		val resistorView2 = circuitView.getWithId(22) as ResistorView
 
 		val evBattery = circuitView.getWithId(9) as AnalogEdgeView
-		val evSwitch = circuitView.getWithId(11) as AnalogEdgeView
-		val evLightBulb = circuitView.getWithId(15) as AnalogEdgeView
-		val evResistor = circuitView.getWithId(16) as AnalogEdgeView
+		val evSwitch = circuitView.getWithId(20) as AnalogEdgeView
+		val evNodeA1 = circuitView.getWithId(25) as AnalogEdgeView
+		val evNodeA2 = circuitView.getWithId(26) as AnalogEdgeView
+		val evLightBulb1 = circuitView.getWithId(15) as AnalogEdgeView
+		val evLightBulb2 = circuitView.getWithId(27) as AnalogEdgeView
+		val evResistor1 = circuitView.getWithId(29) as AnalogEdgeView
+		val evResistor2 = circuitView.getWithId(30) as AnalogEdgeView
+		val evNodeB = circuitView.getWithId(16) as AnalogEdgeView
 
 		val isSwitchOn = switchView.model.isOn
 		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5f) else AnalogSignal(0f)
-		val current = if (isSwitchOn) 0.05 else 0.0
+		val current = if (isSwitchOn) 0.06 else 0.0
+		val current1 = if (isSwitchOn) 0.05 else 0.0
+		val current2 = if (isSwitchOn) 0.01 else 0.0
 
 		evBattery.model.setSignal(AnalogSignal(5f), batteryView.model.getOutput(1), batteryView.model.getOutput(1), signalHandler, false)
 		evBattery.current = current
@@ -36,11 +45,19 @@ object DummyAnalogCircuitCalculator {
 		evSwitch.model.setSignal(signalBehindSwitch, switchView.model.getOutput(2), switchView.model.getOutput(2), signalHandler, false)
 		evSwitch.current = current
 
-		evLightBulb.model.setSignal(signalBehindSwitch, lightBulbView.model.getOutput(2), lightBulbView.model.getOutput(2), signalHandler, false)
-		evLightBulb.current = current
+		evNodeA1.current = current1
+		evNodeA2.current = current2
 
-		evResistor.model.setSignal(AnalogSignal(0f), batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
-		evResistor.current = -current
+		evLightBulb1.model.setSignal(signalBehindSwitch, lightBulbView1.model.getOutput(2), lightBulbView1.model.getOutput(2), signalHandler, false)
+		evLightBulb1.current = current1
+
+		evResistor1.model.setSignal(signalBehindSwitch, batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
+		evResistor1.current = current
+
+		evLightBulb2.model.setSignal(signalBehindSwitch, lightBulbView2.model.getOutput(2), lightBulbView2.model.getOutput(2), signalHandler, false)
+		evLightBulb2.current = current2
+
+		evResistor1.current = current2
 
 		circuitView.invalidate()
 		circuitView.validate()
