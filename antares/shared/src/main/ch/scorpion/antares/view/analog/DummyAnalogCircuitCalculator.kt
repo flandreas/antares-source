@@ -35,6 +35,7 @@ object DummyAnalogCircuitCalculator {
 
 		val isSwitchOn = switchView.model.isOn
 		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5f) else AnalogSignal(0f)
+		val signalAtNegativePole = AnalogSignal(0f)
 		val current = if (isSwitchOn) 0.06 else 0.0
 		val current1 = if (isSwitchOn) 0.05 else 0.0
 		val current2 = if (isSwitchOn) 0.01 else 0.0
@@ -51,13 +52,16 @@ object DummyAnalogCircuitCalculator {
 		evLightBulb1.model.setSignal(signalBehindSwitch, lightBulbView1.model.getOutput(2), lightBulbView1.model.getOutput(2), signalHandler, false)
 		evLightBulb1.current = current1
 
-		evResistor1.model.setSignal(signalBehindSwitch, batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
-		evResistor1.current = current
+		evResistor1.model.setSignal(signalAtNegativePole, batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
+		evResistor1.current = -current
 
 		evLightBulb2.model.setSignal(signalBehindSwitch, lightBulbView2.model.getOutput(2), lightBulbView2.model.getOutput(2), signalHandler, false)
 		evLightBulb2.current = current2
 
-		evResistor1.current = current2
+		evResistor2.model.setSignal(signalAtNegativePole, lightBulbView2.model.getOutput(2), lightBulbView2.model.getOutput(2), signalHandler, false)
+		evResistor2.current = -current2
+
+		evNodeB.current = -current
 
 		circuitView.invalidate()
 		circuitView.validate()
