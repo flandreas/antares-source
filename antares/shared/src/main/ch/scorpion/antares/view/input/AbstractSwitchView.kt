@@ -1,12 +1,14 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.LineCap
+import ch.scorpion.jabbah.draw.graphics.LineJoin
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -30,6 +32,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	companion object {
 		const val DEF_CIRCLE_RADIUS = 2.0
+		private val PUSH_DASHED_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 2.0f), 0.0f)
 	}
 
 	/** Handles mouse interactions during execution*/
@@ -93,7 +96,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	protected abstract fun updateLabels()
 
-	protected open val circleRadius: Double = DEF_CIRCLE_RADIUS
+	protected open val circleRadius: Double get() = DEF_CIRCLE_RADIUS
 
 	protected open fun drawFocus(context: DrawContext) {
 		if (isFocusOwner) {
@@ -106,20 +109,33 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
 		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
 
-		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * Look.SCALE, 0.0)
+		context.g.drawLine(bounds.minX, 0.0, bounds.minX + w(0.5), 0.0)
 
 		if (model.isOn) {
-			context.g.drawLine(bounds.minX + 0.5 * Look.SCALE, 0.0, bounds.maxX - 0.5 * Look.SCALE, 0.0)
+			context.g.drawLine(bounds.minX + w(0.5), 0.0, bounds.maxX - w(0.5), 0.0)
+
+			// Push annotation
+			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+			context.g.drawLine(bounds.minX + w(1.25), h(-1.5), bounds.minX + w(2.75), h(-1.5))
+			context.g.stroke = PUSH_DASHED_STROKE
+			context.g.drawLine(bounds.minX + w(2), h(-1.5), bounds.minX + w(2), 0.0)
+
 		} else {
-			context.g.drawLine(bounds.minX + 0.5 * Look.SCALE, 0.0, bounds.maxX - 1.0 * Look.SCALE, -1.5 * Look.SCALE)
+			context.g.drawLine(bounds.minX + w(0.5), 0.0, bounds.maxX - w(1.0), h(-1.0))
+
+			// Push annotation
+			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+			context.g.drawLine(bounds.minX + w(1), h(-2), bounds.minX + w(2.5), h(-2))
+			context.g.stroke = PUSH_DASHED_STROKE
+			context.g.drawLine(bounds.minX + w(1.75), h(-2), bounds.minX + w(1.75), h(-0.5))
 		}
 
-		context.g.fillCircle(bounds.minX + 0.5 * Look.SCALE, 0.0, circleRadius)
+		context.g.fillCircle(bounds.minX + w(0.5), 0.0, circleRadius)
 
 		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
 
-		context.g.drawLine(bounds.maxX - 0.5 * Look.SCALE, 0.0, bounds.maxX, 0.0)
-		context.g.fillCircle(bounds.maxX - 0.5 * Look.SCALE, 0.0, circleRadius)
+		context.g.drawLine(bounds.maxX - w(0.5), 0.0, bounds.maxX, 0.0)
+		context.g.fillCircle(bounds.maxX - w(0.5), 0.0, circleRadius)
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)

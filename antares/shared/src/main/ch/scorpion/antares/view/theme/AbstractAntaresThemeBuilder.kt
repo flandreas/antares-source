@@ -44,6 +44,7 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 			foregroundColor = Color.RED,
 			backgroundColor = Color(255, 214, 214),
 			textColor = Color.WHITE)
+
 		val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
 		val EXPLANATION_FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
