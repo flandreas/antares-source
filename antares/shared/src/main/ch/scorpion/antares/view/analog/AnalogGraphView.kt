@@ -2,61 +2,59 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.analog.AnalogGraph
-import ch.scorpion.jabbah.animation.AbstractAnimationTask
-import ch.scorpion.jabbah.animation.AnimationModule
-import ch.scorpion.jabbah.animation.DoubleRange
-import ch.scorpion.jabbah.animation.Repetition
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.antares.model.analog.AnalogSignal
 
+/**
+ * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
+ * electrical current flowing along the [AnalogEdgeView]s of this [AnalogGraphView].
+ */
 class AnalogGraphView(
 	graph: AnalogGraph,
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphViewImpl(graph, eventBus) {
 
 	companion object {
-		private val LOG by logger(AnalogGraphView::class)
+		private const val CURRENT_FLOW_ANIMATION_STEP = 30
 	}
 
-	private lateinit var currentAnimation: CurrentAnimation
+	/** Drives the current flow animation along the [AnalogEdgeView]s. */
+	private val timer: Timer by lazy {
+		val timer = System.createTimer()
+		timer.initialize(CURRENT_FLOW_ANIMATION_STEP, repeats = true, ::timerTick)
+		timer
+	}
 
+	@Suppress("unused") // Reflection
 	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+
 	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Analog) as AnalogGraph)
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		DummyAnalogCircuitCalculator.calculate(this, signalHandler)
-
-		currentAnimation = CurrentAnimation(this)
-		AnimationModule.constantSpeedAnimator.schedule(currentAnimation)
-		currentAnimation.start()
+		timer.start()
 	}
 
 	override fun executionStop(signalHandler: SignalHandler) {
-		super.executionStop(signalHandler)
-
-		currentAnimation.stop()
+		timer.stop()
 	}
 
-	private fun consumeCurrentAnimation(value: Double) {
+	private fun timerTick(@Suppress("UNUSED_PARAMETER") event: ActionEvent) {
 		getEdgeViews()
 			.map { it as AnalogEdgeView }
-			.forEach { it.currentAnimationOffset = value }
+			.forEach { it.currentFlowAnimationTick() }
 
 		invalidate()
 		validate()
 	}
-
-	private inner class CurrentAnimation(graphView: AnalogGraphView) : AbstractAnimationTask<Double>(
-		target = graphView,
-		::consumeCurrentAnimation,
-		Repetition(DoubleRange(0.0, CurrentFlowVisualization.DISTANCE)),
-		250.0
-	)
 }

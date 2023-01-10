@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
+import kotlin.math.abs
 
 class AnalogEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -24,7 +26,11 @@ class AnalogEdgeView(
 ) {
 
 	companion object {
+
 		private val LOG by logger(AnalogEdgeView::class)
+
+		/** Determines the speed of the current flow animation.*/
+		private const val FACTOR = 30.0
 	}
 
 	/**
@@ -45,9 +51,21 @@ class AnalogEdgeView(
 	 * Periodically updated by the current flow animation task of [AnalogGraphView].
 	 * Represents the "timing tick" that drives the animation. Repeats within the range
 	 * from 0 to [CurrentFlowVisualization.DISTANCE].
-	 * All [AnalogEdgeView]s in a [AnalogGraphView] experience the same [currentAnimationOffset] tick.
+	 * All [AnalogEdgeView]s in a [AnalogGraphView] experience the same [currentFlowAnimationTick] tick.
 	 */
-	var currentAnimationOffset: Double = 0.0
+	var animationOffset: Double = 0.0
+		private set
+
+	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
+	fun currentFlowAnimationTick() {
+		val delta = abs(current * FACTOR)
+		val newOffset = animationOffset + delta
+		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
+			0.0
+		} else {
+			animationOffset + delta
+		}
+	}
 
 	override fun draw(context: DrawContext) {
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
@@ -73,5 +91,6 @@ class AnalogEdgeView(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		current = 0.0
+		animationOffset = 0.0
 	}
 }
