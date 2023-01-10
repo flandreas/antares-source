@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.jabbah.base.SIGMA
 import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
@@ -33,12 +34,17 @@ object DummyAnalogCircuitCalculator {
 		val evResistor2 = circuitView.getWithId(30) as AnalogEdgeView
 		val evNodeB = circuitView.getWithId(16) as AnalogEdgeView
 
+		val r1 = resistorView1.model.resistance
+		val r2 = resistorView2.model.resistance
+		val r = if (r1 <= SIGMA || r2 <= SIGMA) 0.0 else 1 / (1 / r1 + 1 / r2)
+		val v = batteryView.voltage
+
 		val isSwitchOn = switchView.model.isOn
 		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5f) else AnalogSignal(0f)
 		val signalAtNegativePole = AnalogSignal(0f)
-		val current = if (isSwitchOn) 0.06 else 0.0
-		val current1 = if (isSwitchOn) 0.05 else 0.0
-		val current2 = if (isSwitchOn) 0.01 else 0.0
+		val current = if (isSwitchOn) v / r else 0.0
+		val current1 = if (isSwitchOn) v / r1 else 0.0
+		val current2 = if (isSwitchOn) v / r2 else 0.0
 
 		evBattery.model.setSignal(AnalogSignal(5f), batteryView.model.getOutput(1), batteryView.model.getOutput(1), signalHandler, false)
 		evBattery.current = current
