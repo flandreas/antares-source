@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.view.module.AntaresViewModule
 
 /**
  * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
@@ -41,7 +42,7 @@ class AnalogGraphView(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		DummyAnalogCircuitCalculator.calculate(this, signalHandler)
+		AntaresViewModule.analogCircuitCalculator.calculate(this, signalHandler)
 		timer.start()
 	}
 

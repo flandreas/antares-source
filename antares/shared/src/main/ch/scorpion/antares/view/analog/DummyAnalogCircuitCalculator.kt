@@ -12,9 +12,9 @@ import ch.scorpion.jabbah.execution.SignalHandler
  * simulation calculation based on a linear equation system for the Kirchhoff's laws
  * has been implemented.
  */
-object DummyAnalogCircuitCalculator {
+object DummyAnalogCircuitCalculator : AnalogCircuitCalculator {
 
-	fun calculate(circuitView: AnalogGraphView, signalHandler: SignalHandler) {
+	override fun calculate(circuitView: AnalogGraphView, signalHandler: SignalHandler) {
 		println("Performing dummy analog circuit calculation")
 
 		val batteryView = circuitView.getWithId(4) as BatteryView
