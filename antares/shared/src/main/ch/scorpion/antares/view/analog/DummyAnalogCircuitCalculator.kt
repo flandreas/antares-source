@@ -59,7 +59,7 @@ object DummyAnalogCircuitCalculator : AnalogCircuitCalculator {
 		evLightBulb1.current = current1
 
 		evResistor1.model.setSignal(signalAtNegativePole, batteryView.model.getOutput(2), batteryView.model.getOutput(2), signalHandler, false)
-		evResistor1.current = -current
+		evResistor1.current = -current1
 
 		evLightBulb2.model.setSignal(signalBehindSwitch, lightBulbView2.model.getOutput(2), lightBulbView2.model.getOutput(2), signalHandler, false)
 		evLightBulb2.current = current2
