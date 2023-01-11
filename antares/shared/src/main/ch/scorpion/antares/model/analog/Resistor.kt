@@ -13,6 +13,7 @@ class Resistor(
 
 	companion object {
 		private const val DEF_RESISTANCE = 100.0
+		private const val VARIABLE_STATE = "variable"
 
 		private val CALCULATOR = Calculator()
 
@@ -31,15 +32,25 @@ class Resistor(
 			}
 		}
 
+	var variable: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged(reason = VARIABLE_STATE)
+			}
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		resistance = reader.readDouble("resistance")
+		variable = reader.readBoolean("variable")
 	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeDouble("resistance", resistance)
+		writer.writeBoolean("variable", variable)
 	}
 }

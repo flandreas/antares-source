@@ -89,6 +89,7 @@ class PullResistorView(
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
+			isVariable = false,
 			context,
 			getColorGradient(context) ?: context.g.color,
 			getApplicableBackgroundColor(context),

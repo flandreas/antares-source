@@ -6,7 +6,9 @@ import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -23,6 +25,22 @@ class ResistorView(
 		get() = model.resistance
 		set(value) {
 			model.resistance = value
+		}
+
+	@Suppress("unused") // Reflective bean property
+	var variable: Boolean
+		get() = model.variable
+		set(value) {
+			model.variable = value
+		}
+
+	/** ---- [AbstractDrawable] */
+
+	override val boundingBox: Rectangle2D get() =
+		if (variable) {
+			super.boundingBox.expandBy(h(2.0), 0.0, h(1.0), 0.0) as Rectangle2D
+		} else {
+			super.boundingBox
 		}
 
 	/** ---- [AbstractVerticeView] */
@@ -42,6 +60,7 @@ class ResistorView(
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
+			this.variable,
 			context,
 			getColorGradient(context) ?: context.chooseForeground(foregroundColor),
 			context.chooseBackground(backgroundColor),

@@ -10,10 +10,12 @@ class ResistorViewBeanInfo : AnalogComponentViewBeanInfo<ResistorView>() {
 
 	companion object {
 		private val resistance = CommandPropertySwing("resistance", "element.property.resistance", Double::class.java, componentBeanProvider)
+		private val variable = CommandPropertySwing("variable", "element.property.variable", Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: ResistorView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(resistance.bind(editor, beanIdProvider(bean.id)))
+		properties.add(variable.bind(editor, beanIdProvider(bean.id)))
 	}
 }

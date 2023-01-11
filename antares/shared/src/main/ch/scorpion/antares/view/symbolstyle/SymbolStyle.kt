@@ -66,7 +66,7 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			if (resistor.shadow) {
 				DropShadow.draw(context, transparency = resistor.transparency) {
 					context.g.fillRect(
@@ -88,6 +88,10 @@ enum class SymbolStyle(
 				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
+
+			if (isVariable) {
+				drawVariableResistorArrow(context)
+			}
 		}
 	},
 
@@ -125,10 +129,14 @@ enum class SymbolStyle(
 			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			context.g.paint = foregroundColor
 			context.g.stroke = stroke
 			context.g.draw(RESISTOR_PATH)
+
+			if (isVariable) {
+				drawVariableResistorArrow(context)
+			}
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
@@ -181,8 +189,8 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
 		}
 
-		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
-			EUROPEAN.drawResistor(resistor, context, foregroundColor, backgroundColor, stroke)
+		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
+			EUROPEAN.drawResistor(resistor, isVariable, context, foregroundColor, backgroundColor, stroke)
 		}
 	};
 
@@ -232,7 +240,7 @@ enum class SymbolStyle(
 
 		const val RESISTOR_WIDTH = 6.0 * SCALE.toDouble()
 		const val RESISTER_HEIGHT_HALF = SCALE.toDouble()
-		private val RESISTOR_PATH= System.createPath()
+		private val RESISTOR_PATH = System.createPath()
 			.moveTo(-AbstractAntaresPortView.LENGTH, 0)
 			.lineTo(-AbstractAntaresPortView.LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
 			.lineTo(-AbstractAntaresPortView.LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
@@ -247,6 +255,12 @@ enum class SymbolStyle(
 			cap = LineCap.BUTT,
 			join = LineJoin.MITER
 		)
+
+		private val VARIABLE_RESISTOR_ARROW_PATH = System.createPath()
+			.moveTo(0, -3 * SCALE)
+			.lineTo(0.5 * SCALE, -2.0 * SCALE)
+			.lineTo(-0.5 * SCALE, -2.0 * SCALE)
+			.close()
 
 		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
@@ -295,6 +309,15 @@ enum class SymbolStyle(
 		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: FormattedText? = null) {
 			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke, text)
 		}
+
+		private fun drawVariableResistorArrow(context: DrawContext) {
+			context.g.translate(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.0)
+			context.g.rotate(0.46)
+			context.g.fill(VARIABLE_RESISTOR_ARROW_PATH)
+			context.g.drawLine(0.0, -2.0 * SCALE, 0.0, 2.0 * SCALE)
+			context.g.rotate(-0.46)
+			context.g.translate(-(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE), 0.0)
+		}
 	}
 
 	override fun toString(): String {
@@ -329,6 +352,6 @@ enum class SymbolStyle(
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 }
