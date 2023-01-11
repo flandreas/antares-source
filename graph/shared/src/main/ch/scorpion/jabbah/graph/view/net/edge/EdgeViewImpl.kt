@@ -138,10 +138,13 @@ open class EdgeViewImpl<T : Any>(
 
 		net?.executionError?.tooltipText?.let {
 			content.append(it)
-		} ?: content.append("${Translations.getString("graph.currentValue.name")}: ${model.signalDescription}")
+		} ?: content.append(getExecutionTooltipContent())
 
 		return Tooltip(StyledTextBuilder().append(content.toString()).build(), x, y)
 	}
+
+	protected open fun getExecutionTooltipContent(): String =
+		"${Translations.getString("graph.currentValue.name")}: ${model.signalDescription}"
 
 	override fun executionStarted(signalHandler: SignalHandler) { }
 
