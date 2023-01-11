@@ -18,7 +18,6 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR) {
 
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
-				LOG.debug("Calculating AnalogSwitch")
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
