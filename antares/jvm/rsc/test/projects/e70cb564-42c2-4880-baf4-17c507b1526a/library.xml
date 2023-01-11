@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='e147b930-31b7-4234-8b71-4e073fc09da9' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='7833a5cd-1b34-47ab-823d-1c377420d498' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -97,6 +97,18 @@
             <translation lang='en' text='Wire Tap'/>
           </name>
         </containerLibraryElement>
+        <libraryFolder _id='20'>
+          <name>
+            <translation lang='en' text='Analog'/>
+          </name>
+          <items>
+            <containerLibraryElement _id='21' uuid='7833a5cd-1b34-47ab-823d-1c377420d498'>
+              <name>
+                <translation lang='en' text='Parallel Resistors'/>
+              </name>
+            </containerLibraryElement>
+          </items>
+        </libraryFolder>
       </items>
     </libraryFolder>
   </folder>
