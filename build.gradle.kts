@@ -55,6 +55,7 @@ val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
 val commonsBeansVersion: String by extra
 val commonsCodecVersion: String by extra
+val commonsMathVersion: String by extra
 val l2fprodVersion: String by extra
 val flatLafVersion: String by extra
 
@@ -131,6 +132,7 @@ subprojects {
 					implementation("commons-io:commons-io:$commonsIoVersion")
 					implementation("commons-beanutils:commons-beanutils:$commonsBeansVersion")
 					implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
+					implementation("org.apache.commons:commons-math3:$commonsMathVersion")
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
