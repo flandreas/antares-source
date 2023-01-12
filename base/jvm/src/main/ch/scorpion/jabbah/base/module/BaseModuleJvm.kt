@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
+import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import java.awt.Toolkit
@@ -26,6 +27,7 @@ object BaseModuleJvm : AbstractModule() {
 
 		InvocationHandler.implementation = SwingInvocationHandler()
 		BaseModule.timeService = RealTimeServiceJvm()
+		BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
 		BaseModule.require()
 
 		fillProperties(BaseModule.properties)
