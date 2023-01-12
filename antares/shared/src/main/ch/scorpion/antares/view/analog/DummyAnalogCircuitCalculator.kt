@@ -32,7 +32,9 @@ object DummyAnalogCircuitCalculator : AnalogCircuitCalculator {
 		val evLightBulb2 = circuitView.getWithId(27) as AnalogEdgeView
 		val evResistor1 = circuitView.getWithId(29) as AnalogEdgeView
 		val evResistor2 = circuitView.getWithId(30) as AnalogEdgeView
-		val evNodeB = circuitView.getWithId(16) as AnalogEdgeView
+		val evNodeB = circuitView.getWithId(33) as AnalogEdgeView
+		val evNodeC = circuitView.getWithId(16) as AnalogEdgeView
+		val evGround = circuitView.getWithId(34) as AnalogEdgeView
 
 		val r1 = resistorView1.model.resistance
 		val r2 = resistorView2.model.resistance
@@ -68,6 +70,8 @@ object DummyAnalogCircuitCalculator : AnalogCircuitCalculator {
 		evResistor2.current = -current2
 
 		evNodeB.current = -current
+		evNodeC.current = -current
+		evGround.current = current
 
 		circuitView.invalidate()
 		circuitView.validate()

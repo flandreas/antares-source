@@ -149,6 +149,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("battery", Battery::class)
 		typeMap.register("resistor", Resistor::class)
 		typeMap.register("analogSwitch", AnalogSwitch::class)
+		typeMap.register("analogGround", AnalogGround::class)
 	}
 
 	private fun registerGraphParamTypes() {
