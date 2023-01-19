@@ -83,6 +83,8 @@ class AnalogEdgeView(
 				context.choose(color)
 			}
 
+		context.g.stroke = stroke
+
 		super.draw(context)
 
 		if (graphAppContext.showNetState) {
