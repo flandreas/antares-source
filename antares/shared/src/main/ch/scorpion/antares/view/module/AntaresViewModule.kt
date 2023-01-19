@@ -13,7 +13,7 @@ import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
@@ -162,7 +162,7 @@ object AntaresViewModule : AbstractModule() {
 			drawingView.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
 			drawingView
 		}
-		EditModule.drawingAppService = DigitalGraphViewService()
+		EditModule.drawingAppService = AntaresGraphViewService()
 
 		EditModule.attentionDrawerFactory = { signal ->
 			if (signal is DigitalSignal) {

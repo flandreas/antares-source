@@ -8,7 +8,7 @@ import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.PortViewSpacing
-import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
@@ -56,7 +56,7 @@ class WireTapView(
 			.lineTo(X_DISPLACEMENT, -Y_DISPLACEMENT)
 	}
 
-	/** Use [DigitalGraphViewService] for changing this value.*/
+	/** Use [AntaresGraphViewService] for changing this value.*/
 	val tapCount: PortCount get() = model.tapCount
 
 	// Explicit properties for tapPosition needed for reflective Commands on the JVM platform

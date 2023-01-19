@@ -3,14 +3,12 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
-import ch.scorpion.antares.view.app.DigitalGraphViewService
-import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -76,7 +74,7 @@ class AntaresFrameController(
 
 	private fun handle(event: DefaultLightColorEvent) {
 		if (event.graphView.defaultLightColor != null && view.shouldReplaceLightColor()) {
-			(GraphViewModule.graphViewAppService as DigitalGraphViewService).replaceLightColor(event.graphView)
+			(GraphViewModule.graphViewAppService as AntaresGraphViewService).replaceLightColor(event.graphView)
 		}
 	}
 }

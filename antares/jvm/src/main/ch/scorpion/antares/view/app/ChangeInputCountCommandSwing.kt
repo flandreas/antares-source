@@ -10,14 +10,14 @@ import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A [Command] for changing [PortCount] of [AbstractDigitalGateView].
- * Uses [DigitalGraphViewService] for changing the property.
+ * Uses [AntaresGraphViewService] for changing the property.
  */
 class ChangeInputCountCommandSwing(
 	editor: Editor,
 	beanProvider: BeanProvider,
 	beanIds: Collection<String>,
 	newValue: PortCount,
-	private val service: DigitalGraphViewService = EditModule.drawingAppService as DigitalGraphViewService
+	private val service: AntaresGraphViewService = EditModule.drawingAppService as AntaresGraphViewService
 ) : PropertyCommandSwing<PortCount>(
 	editor,
 	PortCount.INPUT_COUNT_BASE_KEY,

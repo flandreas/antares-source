@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 
-class DigitalGraphViewService(
+class AntaresGraphViewService(
 	copyPasteService: CopyPasteService = EditModule.copyPasteService,
 	commandManager: CommandManager = EditModule.commandManager,
 	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
@@ -30,11 +30,11 @@ class DigitalGraphViewService(
 ) : GraphViewAppServiceImpl(copyPasteService, commandManager, connectService) {
 
 	companion object {
-		private val LOG by logger(DigitalGraphViewService::class)
+		private val LOG by logger(AntaresGraphViewService::class)
 	}
 
 	override fun customizeAddedComponent(component: Component) {
-		if (component is LightEmitter) {
+		if (component is LightEmitter && component.parent is DigitalGraphView) {
 			component.lightColor = determineLightColor(component.parent as DigitalGraphView)
 		}
 	}

@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.edit.DrawingView
@@ -23,7 +23,7 @@ import kotlin.test.*
  */
 class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
-	private val service: DigitalGraphViewService = EditModule.drawingAppService as DigitalGraphViewService
+	private val service: AntaresGraphViewService = EditModule.drawingAppService as AntaresGraphViewService
 	private lateinit var builder: TestCircuitBuilder
 	private lateinit var andGateView: AndGateView
 	private lateinit var switchView1: SwitchView

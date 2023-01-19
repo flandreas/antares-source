@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Port
@@ -26,7 +26,7 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
 		const val BASE_KEY_OUTPUT_PORT_NAME = "element.property.outputPort"
 	}
 
-	/** Use [DigitalGraphViewService] for changing this value.*/
+	/** Use [AntaresGraphViewService] for changing this value.*/
 	val chosenInputCount: PortCount get() = model.chosenInputCount
 
 	var outputPortName: String?
