@@ -51,6 +51,7 @@ class AnalogGroundView(
 		context.g.color = context.chooseBackground(backgroundColor)
 		context.g.fill(TRIANGLE)
 		context.g.color = context.chooseForeground(foregroundColor)
+		context.g.stroke = stroke
 		context.g.draw(TRIANGLE)
 
 		(getPortView(model.getPort()) as AbstractAntaresPortView).prepareConnectionDrawContext(context)

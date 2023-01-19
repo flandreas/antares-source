@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
