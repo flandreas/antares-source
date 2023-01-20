@@ -4,8 +4,10 @@ import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -88,8 +90,21 @@ class AnalogEdgeView(
 
 		if (graphAppContext.showNetState) {
 			CurrentFlowVisualization.draw(this, context)
+		} else {
+			// DEBUG BEGIN
+			// Draw a small indicator for the begin Connection. Only used while developing
+			beginConnectionAnnotatePoint?.let {
+				context.g.color = Color.RED
+				context.g.fillCircle(it.x, it.y, 2.0)
+			}
+			// DEBUG END
 		}
 	}
+
+	private val beginConnectionAnnotatePoint get(): Point2D? =
+		getSegmentDirection(0)?.let { dir ->
+			polyline.getFirstPoint().add(8.0 * dir.dx, 8.0 * dir.dy)
+		}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)

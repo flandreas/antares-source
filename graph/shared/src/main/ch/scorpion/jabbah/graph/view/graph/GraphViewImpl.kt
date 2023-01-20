@@ -194,9 +194,14 @@ open class GraphViewImpl(
 		return getDrawables { it is EdgeView<*> }.map { it as EdgeView<*> }.toImmutableList()
 	}
 
-	override fun getEdgeView(port: Port<*>): EdgeView<*>? {
-		return getEdgeViews().firstOrNull { it.origin?.port === port || it.destination?.port === port }
+	override fun getEdgeView(port: Port<*>, ignoredEdgeView: EdgeView<*>?): EdgeView<*>? {
+		return getEdgeViews().firstOrNull {
+			(ignoredEdgeView == null || ignoredEdgeView !== it) &&
+			(it.origin?.port === port || it.destination?.port === port) }
 	}
+
+	override fun getNodeViews(): ImmutableList<NodeView<*>> =
+		getDrawables { it is NodeView<*> }.map { it as NodeView<*> }.toImmutableList()
 
 	override fun getGraphPortView(portName: String): GraphPortView<*>? {
 		return getDrawable { it is GraphPortView<*> && it.model.name == portName } as GraphPortView<*>?

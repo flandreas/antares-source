@@ -36,6 +36,9 @@ class Battery(
 			}
 		}
 
+	val positivePort: AnalogPort get() = getPort<AnalogPort>(1) as AnalogPort
+	val negativePort: AnalogPort get() = getPort<AnalogPort>(2) as AnalogPort
+
 	/** ---- [Storable] interface */
 
 	override fun read(reader: StoreReader) {

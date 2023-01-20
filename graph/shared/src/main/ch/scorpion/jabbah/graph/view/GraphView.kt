@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 interface GraphViewFactory {
@@ -103,7 +104,9 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	fun getEdgeViews(): ImmutableList<EdgeView<*>>
 
 	/** Returns the [EdgeView] that is connected with the specified [Port], if any.*/
-	fun getEdgeView(port: Port<*>): EdgeView<*>?
+	fun getEdgeView(port: Port<*>, ignoredEdgeView: EdgeView<*>? = null): EdgeView<*>?
+
+	fun getNodeViews(): ImmutableList<NodeView<*>>
 
 	/** Returns all [GraphPortView]s that this [GraphView] contains.*/
 	fun getGraphPortViews(): ImmutableList<GraphPortView<*>>

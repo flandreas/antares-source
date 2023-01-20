@@ -15,7 +15,9 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.net.edge.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
 /**
@@ -110,6 +112,9 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	 */
 	val executionStroke: Stroke
 
+	val isConnectedWithNodeView: Boolean get() =
+		origin?.connectableView is NodeView<*> || destination?.connectableView is NodeView<*>
+
     /**
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].
@@ -119,6 +124,14 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	/** Returns the [Connection] at [EdgeViewEndpointType]. */
 	fun getConnection(endpointType: EdgeViewEndpointType): Connection<T>?
 
+	/** Returns the [Connection] connected with [connectableView]. */
+	fun getConnection(connectableView: ConnectableView): Connection<T>?
+
+	fun getOppositeConnection(port: Port<*>): Connection<T>?
+
+	fun getOppositeConnection(connection: Connection<*>): Connection<T>? =
+		if (origin?.connectableView === connection.connectableView) destination else origin
+
 	/**
 	 * Returns the [EdgeViewEndpointType] that represents the specified [Connection], or `null` if
 	 * neither [origin] nor [destination] equals [connection].
@@ -127,7 +140,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType?
 
-    /** Returns the start [Point2D] of the segment with the specified index.*/
+	/** Returns the start [Point2D] of the segment with the specified index.*/
     fun getSegmentPoint(index: Int): Point2D
 
     /**
