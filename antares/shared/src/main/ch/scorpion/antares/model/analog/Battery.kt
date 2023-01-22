@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -49,5 +51,22 @@ class Battery(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeDouble("voltage", voltage)
+	}
+
+	/** ---- AnalogTwoPortVertice */
+
+	/** Constant voltage at positive port. */
+	override fun composeComponentConstituentEquation(
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		currentVariableIndex: Int,
+		equationSystem: LinearEquationSystem
+	) {
+		val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
+
+		val voltageVariableIndex = voltageNodes.indexOf(positivePort.net!!.id)
+		row[branches.size + voltageVariableIndex] = 1.0
+
+		equationSystem.addEquation(row, voltage)
 	}
 }

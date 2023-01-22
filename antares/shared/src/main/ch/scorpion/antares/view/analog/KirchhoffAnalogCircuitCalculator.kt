@@ -2,9 +2,13 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogGround
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.model.analog.AnalogTwoPortVertice
 import ch.scorpion.antares.model.analog.Battery
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.math.LinearEquationSystem
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
@@ -22,13 +26,34 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
+	private val LOG by logger(KirchhoffAnalogCircuitCalculator::class)
+
 	override fun calculate(circuitView: AnalogGraphView, signalHandler: SignalHandler) {
 		val groundNodeNetId: Int = identifyGroundNode(circuitView)
 		val voltageNodeNetIds: List<Int> = labelVoltageNodes(circuitView, groundNodeNetId)
-		val branchCurrentEdgeViewIds: List<AnalogCircuitBranch> = labelBranchCurrents(circuitView)
-		val equations = mutableListOf<DoubleArray>()
+		val branches: List<AnalogCircuitBranch> = labelBranchCurrents(circuitView)
+		val equationSystem = LinearEquationSystem(branches.size + voltageNodeNetIds.size)
 
-		equations.addAll(composeCurrentLawEquations(circuitView, branchCurrentEdgeViewIds, groundNodeNetId))
+		LOG.debug("Current variables: ${branches.size}, voltage node variables: ${voltageNodeNetIds.size}")
+
+		composeEquations(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
+
+		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem)
+	}
+
+	fun composeEquations(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		groundNodeNetId: Int,
+		equationSystem: LinearEquationSystem
+	) {
+		composeCurrentLawEquations(circuitView, branches, groundNodeNetId, equationSystem)
+		val currentLawEquationsCount = equationSystem.equationCount
+		composeComponentConstituentEquations(circuitView, voltageNodes, branches, equationSystem)
+		val constituentEquationsCount = equationSystem.equationCount - currentLawEquationsCount
+
+		LOG.debug("KCL equations: $currentLawEquationsCount, Constituent Equations: $constituentEquationsCount")
 	}
 
 	/**
@@ -83,9 +108,9 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	/**
 	 * Labels all non-ground voltages by mapping a [List] index to the ID of a [Net].
 	 *
+	 * @param groundNetId the ID of the [Net] representing ground, which is excluded from the resulting [List]
 	 * @return the resulting mapping, where the [List] index identifies the voltage variable V(i),
 	 * and the [List] value identifies the ID of the [Net] having that voltage
-	 * @param groundNetId the ID of the [Net] representing ground, which is excluded from the resulting [List]
 	 */
 	fun labelVoltageNodes(circuitView: AnalogGraphView, groundNetId: Int): List<Int> =
 		circuitView
@@ -143,6 +168,8 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 			if (getBranchId(outgoingEdgeView, branches) == null) {
 				identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
+			} else {
+				// TODO: Merge branches
 			}
 		} else if (connectableView is NodeView<*>) {
 			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && !isConnectedToGroundView(it) }
@@ -199,22 +226,21 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	/**
 	 * Composes the Kirchhoff's Current Law equations for every [AnalogNodeView].
 	 *
-	 * @param branches the value at index i contains the [AnalogEdgeView] ID for current variable I(i)
+	 * @param branches the value at index i contains the [AnalogEdgeView] IDs for branch current variable I(i)
 	 * @param groundNodeNetId the ID of the ground [Net] to be skipped
-	 * @return the rows in the equation matrix each having the same size as [branches]
+	 * @param equationSystem the equation matrix to which the Current Law's equations are added
 	 */
 	fun composeCurrentLawEquations(
 		circuitView: AnalogGraphView,
 		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int
-	): List<DoubleArray> {
-		val equations = mutableListOf<DoubleArray>()
-
+		groundNodeNetId: Int,
+		equationSystem: LinearEquationSystem
+	) {
 		circuitView
 			.getNodeViews()
 			.filter { it.net!!.id != groundNodeNetId }
 			.forEach { nodeView ->
-				val row = DoubleArray(branches.size) { 0.0 }
+				val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
 
 				nodeView.getEdgeViews().forEach { edgeView ->
 					val factor = if (edgeView.origin?.connectableView?.id == nodeView.id) -1.0 else 1.0
@@ -223,9 +249,34 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					row[index] = factor
 				}
 
-				equations.add(row)
+				equationSystem.addEquation(row, 0.0)
 			}
+	}
 
-		return equations
+	/**
+	 * Composes the Component Constituent Equations for each two-terminal component, which
+	 * relates is voltage difference and its branch current according to Ohm's Law.
+	 *
+	 * @param branches the value at index i contains the [AnalogEdgeView] IDs for branch current variable I(i)
+	 * @param voltageNodes the [List] index identifies the voltage variable V(i), and the [List] value
+	 * identifies the ID of the [Net] having that voltage
+	 * @param equationSystem the equation matrix to which the Current Law's equations are added
+	 * @return the list of coefficient matrix rows for the voltage variables V(i)
+	 */
+	fun composeComponentConstituentEquations(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		equationSystem: LinearEquationSystem
+	) {
+		circuitView
+			.getDrawables { it is VerticeView<*> && it.model is AnalogTwoPortVertice }
+			.map { it as VerticeView<*> }
+			.forEach { vv ->
+				val edgeView = circuitView.getEdgeView(vv.model.getPort<AnalogSignal>(1))!!
+				val currentVariableIndex = getBranchId(edgeView, branches)!!
+				(vv.model as AnalogTwoPortVertice).composeComponentConstituentEquation(
+					voltageNodes, branches, currentVariableIndex, equationSystem)
+			}
 	}
 }

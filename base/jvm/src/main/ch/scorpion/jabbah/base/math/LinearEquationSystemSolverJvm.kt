@@ -9,6 +9,6 @@ import org.apache.commons.math3.linear.LUDecomposition
  */
 object LinearEquationSystemSolverJvm : LinearEquationSystemSolver {
 
-	override fun solve(coefficients: Array<DoubleArray>, constants: DoubleArray): DoubleArray =
-		LUDecomposition(Array2DRowRealMatrix(coefficients)).solver.solve(ArrayRealVector(constants, false)).toArray()
+	override fun solve(system: LinearEquationSystem): DoubleArray =
+		LUDecomposition(Array2DRowRealMatrix(system.getCoefficients().toTypedArray())).solver.solve(ArrayRealVector(system.getConstants().toDoubleArray(), false)).toArray()
 }

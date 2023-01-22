@@ -9,15 +9,15 @@ package ch.scorpion.jabbah.base.math
 interface LinearEquationSystemSolver {
 
 	/**
-	 * Solves the linear equation system defined by the coefficients matrix.
+	 * Solves the linear equation system defined by the coefficients matrix and the right-side constants.
 	 * @return the result vector
 	 */
-	fun solve(coefficients: Array<DoubleArray>, constants: DoubleArray): DoubleArray
+	fun solve(system: LinearEquationSystem): DoubleArray
 }
 
 object UndefinedLinearEquationSystemSolver : LinearEquationSystemSolver {
 
-	override fun solve(coefficients: Array<DoubleArray>, constants: DoubleArray): DoubleArray {
+	override fun solve(system: LinearEquationSystem): DoubleArray {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

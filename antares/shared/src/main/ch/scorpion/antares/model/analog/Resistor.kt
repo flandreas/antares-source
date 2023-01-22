@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class Resistor(
 	resistance: Double = DEF_RESISTANCE
-) : AbstractAnalogTwoPortVertice<Resistor>(CALCULATOR, "library.element.Resistor") {
+) : AbstractResistingAnalogVertice<Resistor>(resistance, CALCULATOR, "library.element.Resistor") {
 
 	companion object {
 		private const val DEF_RESISTANCE = 100.0
@@ -29,14 +29,6 @@ class Resistor(
 			}
 		}
 	}
-
-	var resistance: Double = resistance
-		set(value) {
-			if (field != value) {
-				field = value
-				stateChanged(reason = MAIN_PROPERTY_STATE)
-			}
-		}
 
 	var variable: Boolean = false
 		set(value) {

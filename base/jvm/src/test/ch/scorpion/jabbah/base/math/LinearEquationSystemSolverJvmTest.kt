@@ -15,14 +15,12 @@ class LinearEquationSystemSolverJvmTest {
 
 	@Test
 	fun shouldSolve() {
-		val coefficients = arrayOf(
-			arrayOf(1.0, 0.0, 0.0).toDoubleArray(),
-			arrayOf(1.0, -1.0, -100.0).toDoubleArray(),
-			arrayOf(0.0, 1.0, -100.0).toDoubleArray())
+		val system = LinearEquationSystem(3)
+		system.addEquation(arrayOf(1.0, 0.0, 0.0).toDoubleArray(), 12.0)
+		system.addEquation(arrayOf(1.0, -1.0, -100.0).toDoubleArray(), 0.0)
+		system.addEquation(arrayOf(0.0, 1.0, -100.0).toDoubleArray(), 0.0)
 
-		val constants = arrayOf(12.0, 0.0, 0.0).toDoubleArray()
-
-		val solution = BaseModule.linearEquationSystemSolver.solve(coefficients, constants)
+		val solution = BaseModule.linearEquationSystemSolver.solve(system)
 
 		assertEquals(12.0, solution[0])
 		assertEquals(6.0, solution[1])

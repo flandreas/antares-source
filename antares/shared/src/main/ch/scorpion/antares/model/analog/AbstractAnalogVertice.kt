@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.math.LinearEquationSystem
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -23,10 +26,19 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 	}
 }
 
+interface AnalogTwoPortVertice : Vertice {
+	fun composeComponentConstituentEquation(
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		currentVariableIndex: Int,
+		equationSystem: LinearEquationSystem
+	)
+}
+
 abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 	calculator: VerticeCalculator<T>,
 	baseResourceKey: String
-) : AbstractAnalogVertice<T>(calculator, baseResourceKey) {
+) : AbstractAnalogVertice<T>(calculator, baseResourceKey), AnalogTwoPortVertice {
 
 	init {
 		addPort(AnalogPort())
