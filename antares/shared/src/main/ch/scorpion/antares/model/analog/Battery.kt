@@ -59,14 +59,15 @@ class Battery(
 	override fun composeComponentConstituentEquation(
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
+		incomingPortId: Int,
 		currentVariableIndex: Int,
 		equationSystem: LinearEquationSystem
 	) {
 		val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
 
 		val voltageVariableIndex = voltageNodes.indexOf(positivePort.net!!.id)
-		row[branches.size + voltageVariableIndex] = 1.0
+		row[branches.size + voltageVariableIndex] = -1.0
 
-		equationSystem.addEquation(row, voltage)
+		equationSystem.addEquation(row, -voltage)
 	}
 }

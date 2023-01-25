@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.math.formatRounded
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test

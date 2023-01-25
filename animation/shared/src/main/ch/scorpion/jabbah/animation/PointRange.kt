@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.animation
 
-import ch.scorpion.jabbah.base.SIGMA
+import ch.scorpion.jabbah.base.math.SIGMA
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**

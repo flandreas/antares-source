@@ -3,7 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
-import ch.scorpion.jabbah.base.MILLION
+import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.view.EdgeView

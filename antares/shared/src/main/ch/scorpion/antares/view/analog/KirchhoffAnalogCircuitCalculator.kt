@@ -1,9 +1,6 @@
 package ch.scorpion.antares.view.analog
 
-import ch.scorpion.antares.model.analog.AnalogGround
-import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.model.analog.AnalogTwoPortVertice
-import ch.scorpion.antares.model.analog.Battery
+import ch.scorpion.antares.model.analog.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.logger
@@ -11,12 +8,14 @@ import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
+import kotlin.math.abs
 
 /**
  * Calculates voltages/currents in an [AnalogGraphView] by applying Kirchhoff's laws.
@@ -39,6 +38,36 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		composeEquations(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 
 		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem)
+
+		applyResult(circuitView, voltageNodeNetIds, branches, groundNodeNetId, result)
+	}
+
+	fun applyResult(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		groundNodeNetId: Int,
+		result: DoubleArray,
+	) {
+		voltageNodes.forEachIndexed { index, netId ->
+			val signal = AnalogSignal(result[branches.size + index].toFloat())
+			(circuitView.graph!!.withId(netId) as AnalogNet).setSignal(signal)
+		}
+
+		branches.forEachIndexed { branchId, branch ->
+			branch.edgeViewIds.forEach {
+				val edgeViewId = abs(it)
+				val edgeView = circuitView.getWithId(abs(edgeViewId)) as AnalogEdgeView
+				if (branch.isPositive(edgeViewId)) {
+					edgeView.current = result[branchId]
+				} else {
+					edgeView.current = -result[branchId]
+				}
+			}
+		}
+
+		// Ground voltage
+		(circuitView.graph!!.withId(groundNodeNetId) as AnalogNet).setSignal(AnalogSignal(0f))
 	}
 
 	fun composeEquations(
@@ -166,11 +195,12 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			val oppositePortView = getOppositePortViewOfVerticeView(connectableView, incomingConnection!!.portView!!)
 			val outgoingEdgeView = graphView.getEdgeView(oppositePortView.port)!!
 
-			if (getBranchId(outgoingEdgeView, branches) == null) {
-				identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
-			} else {
-				// TODO: Merge branches
-			}
+			getBranchId(outgoingEdgeView, branches)?.let { existingBranchId ->
+				if (branch != null) {
+					branches[existingBranchId].merge(branch)
+					branches.remove(branch)
+				}
+			} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
 			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && !isConnectedToGroundView(it) }
 			if (edgeViews.size == 1) {
@@ -241,11 +271,16 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			.filter { it.net!!.id != groundNodeNetId }
 			.forEach { nodeView ->
 				val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
-
 				nodeView.getEdgeViews().forEach { edgeView ->
-					val factor = if (edgeView.origin?.connectableView?.id == nodeView.id) -1.0 else 1.0
 					val index = getBranchId(edgeView, branches)
 						?: throw IllegalStateException("Every EdgeView must be part of a branch")
+					val branch = branches[index]
+					val isIncoming = if (branch.isPositive(edgeView.id)) {
+						edgeView.destination?.connectableView?.id == nodeView.id
+					} else {
+						edgeView.origin?.connectableView?.id == nodeView.id
+					}
+					val factor = if (isIncoming) 1.0 else -1.0
 					row[index] = factor
 				}
 
@@ -271,12 +306,40 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	) {
 		circuitView
 			.getDrawables { it is VerticeView<*> && it.model is AnalogTwoPortVertice }
-			.map { it as VerticeView<*> }
-			.forEach { vv ->
-				val edgeView = circuitView.getEdgeView(vv.model.getPort<AnalogSignal>(1))!!
+			.map { it.model as AnalogTwoPortVertice }
+			.forEach { vertice ->
+				val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(1))!!
 				val currentVariableIndex = getBranchId(edgeView, branches)!!
-				(vv.model as AnalogTwoPortVertice).composeComponentConstituentEquation(
-					voltageNodes, branches, currentVariableIndex, equationSystem)
+				val branch = branches[currentVariableIndex]
+				val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
+				vertice.composeComponentConstituentEquation(
+					voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
 			}
+	}
+
+	/**
+	 * Returns the [Port] of [vertice] at which the electrical current flows into [vertice]
+	 */
+	private fun incomingCurrentPortId(
+		circuitView: AnalogGraphView,
+		vertice: AnalogTwoPortVertice,
+		branch: AnalogCircuitBranch
+	): Int {
+		val port1 = vertice.getPort<AnalogSignal>(1)
+		val port2 = vertice.getPort<AnalogSignal>(2)
+		val edgeView1 = circuitView.getEdgeView(port1)!!
+		return if (branch.isPositive(edgeView1.id)) {
+			if (edgeView1.destination!!.port === port1) {
+				port1.portId
+			} else {
+				port2.portId
+			}
+		} else {
+			if (edgeView1.destination!!.port === port1) {
+				port2.portId
+			} else {
+				port1.portId
+			}
+		}
 	}
 }

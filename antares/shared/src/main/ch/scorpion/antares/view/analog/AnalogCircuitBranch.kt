@@ -13,13 +13,17 @@ import kotlin.math.abs
  */
 class AnalogCircuitBranch {
 
-	private val edgeViewIds = mutableListOf<Int>()
+	private val _edgeViewIds = mutableSetOf<Int>()
 
-	val size: Int get() = edgeViewIds.size
+	val edgeViewIds: Set<Int> get() = _edgeViewIds
 
-	fun containsId(edgeViewId: Int): Boolean = edgeViewIds.any { abs(it) == edgeViewId }
+	val size: Int get() = _edgeViewIds.size
 
-	fun containsValue(value: Int): Boolean = edgeViewIds.contains(value)
+	fun containsId(edgeViewId: Int): Boolean = _edgeViewIds.any { abs(it) == edgeViewId }
+
+	fun containsValue(value: Int): Boolean = _edgeViewIds.contains(value)
+
+	fun isPositive(edgeViewId: Int): Boolean = _edgeViewIds.first { abs(it) == edgeViewId } > 0
 
 	fun add(connectableView: ConnectableView, edgeView: EdgeView<*>) {
 		val sign = when (edgeView.getConnectionEndpointType(connectableView)) {
@@ -27,6 +31,11 @@ class AnalogCircuitBranch {
 			EdgeViewEndpointType.DESTINATION -> -1
 			null -> throw IllegalArgumentException("Unconnected EdgeView not supported")
 		}
-		edgeViewIds.add(sign * edgeView.id)
+		_edgeViewIds.add(sign * edgeView.id)
+	}
+
+	/** Merges [branch] into this [AnalogCircuitBranch]. */
+	fun merge(branch: AnalogCircuitBranch) {
+		_edgeViewIds.addAll(branch._edgeViewIds)
 	}
 }

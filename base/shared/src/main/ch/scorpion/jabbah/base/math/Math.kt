@@ -1,6 +1,7 @@
-package ch.scorpion.jabbah.base
+package ch.scorpion.jabbah.base.math
 
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 const val TWO_PI: Double = 2.0 * PI
@@ -18,3 +19,7 @@ private const val ROUND_PRECISION = 1000.0
  */
 fun Double.formatRounded(): String =
 	((this * ROUND_PRECISION).roundToInt() / ROUND_PRECISION).toString()
+
+fun Double.near(value: Double, tolerance: Double): Boolean = abs(this - value) <= tolerance
+
+fun Double.near(value: Double): Boolean = abs(this - value) <= SIGMA

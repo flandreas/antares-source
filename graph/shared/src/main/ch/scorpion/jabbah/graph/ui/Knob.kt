@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.jabbah.base.PI_2
-import ch.scorpion.jabbah.base.TWO_PI
+import ch.scorpion.jabbah.base.math.PI_2
+import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext

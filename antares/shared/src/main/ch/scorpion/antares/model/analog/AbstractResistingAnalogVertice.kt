@@ -29,16 +29,24 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			vertice: ResistingAnalogVertice,
 			voltageNodes: List<Int>,
 			branches: List<AnalogCircuitBranch>,
+			incomingPortId: Int,
 			currentVariableIndex: Int,
 			equationSystem: LinearEquationSystem
 		) {
 			val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
 
-			val voltageVariableIndex1 = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(1).portId)
-			val voltageVariableIndex2 = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(2).portId)
+			val outgoingPortId = if (incomingPortId == 1) 2 else 1
 
-			row[branches.size + voltageVariableIndex1] = 1.0
-			row[branches.size + voltageVariableIndex2] = -1.0
+			// If a voltage variable is -1 (not found), vertice is connected to ground
+			val voltageVariableIncomingIndex = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(incomingPortId).net!!.id)
+			val voltageVariableOutgoingIndex = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(outgoingPortId).net!!.id)
+
+			if (voltageVariableIncomingIndex >= 0) {
+				row[branches.size + voltageVariableIncomingIndex] = 1.0
+			}
+			if (voltageVariableOutgoingIndex >= 0) {
+				row[branches.size + voltageVariableOutgoingIndex] = -1.0
+			}
 			row[currentVariableIndex] = -vertice.resistance
 
 			equationSystem.addEquation(row, 0.0)
@@ -56,11 +64,12 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 	override fun composeComponentConstituentEquation(
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
+		incomingPortId: Int,
 		currentVariableIndex: Int,
 		equationSystem: LinearEquationSystem
 	) {
 		Companion.composeComponentConstituentEquation(
 			this,
-			voltageNodes, branches, currentVariableIndex, equationSystem)
+			voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
 	}
 }

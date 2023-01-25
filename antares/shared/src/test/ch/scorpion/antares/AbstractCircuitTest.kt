@@ -2,7 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
-import ch.scorpion.jabbah.base.MILLION
+import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService

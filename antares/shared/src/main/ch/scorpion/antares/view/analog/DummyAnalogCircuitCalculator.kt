@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.jabbah.base.SIGMA
+import ch.scorpion.jabbah.base.math.SIGMA
 import ch.scorpion.jabbah.execution.SignalHandler
 
 /**

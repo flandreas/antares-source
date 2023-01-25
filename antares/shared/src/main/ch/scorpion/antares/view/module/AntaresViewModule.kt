@@ -151,7 +151,7 @@ object AntaresViewModule : AbstractModule() {
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
-	var analogCircuitCalculator: AnalogCircuitCalculator = DummyAnalogCircuitCalculator
+	var analogCircuitCalculator: AnalogCircuitCalculator = KirchhoffAnalogCircuitCalculator
 
 	override fun initialize() {
 		Translations.addBundle("antares")

@@ -21,9 +21,11 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 		signalHandler: SignalHandler,
 		force: Boolean
 	) {
-
 		// Don't call super.setSignal() to avoid requestActingAfter()
+		setSignal(signal)
+	}
 
+	fun setSignal(signal: AnalogSignal?) {
 		signal?.let {
 			LOG.debug("Set AnalogSignal ${it.voltage} on AnalogNet $id")
 			updateSignal(it)

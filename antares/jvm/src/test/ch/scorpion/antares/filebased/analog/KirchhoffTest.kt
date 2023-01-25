@@ -1,6 +1,7 @@
 package ch.scorpion.antares.filebased.analog
 
 import ch.scorpion.antares.filebased.AbstractFileBasedTest
+import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeCurrentLawEquations
@@ -10,7 +11,9 @@ import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelVol
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
+import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.*
 
 class KirchhoffTest : AbstractFileBasedTest() {
@@ -53,25 +56,26 @@ class KirchhoffTest : AbstractFileBasedTest() {
 
 		KirchhoffAnalogCircuitCalculator.identifyBranches(batteryView, incomingEdgeView, analogGraphView, branches)
 
-		assertEquals(4, branches.size)
+		assertEquals(3, branches.size)
 
-		assertEquals(2, branches[0].size)
-		assertTrue(branches[0].containsValue(7))
-		assertTrue(branches[0].containsValue(8))
+		var branch = branches.first { it.containsId(7) }
+		assertEquals(4, branch.size)
+		assertTrue(branch.containsValue(7))
+		assertTrue(branch.containsValue(8))
+		assertTrue(branch.containsValue(16))
+		assertTrue(branch.containsValue(20))
 
-		assertEquals(3, branches[1].size)
-		assertTrue(branches[1].containsValue(13))
-		assertTrue(branches[1].containsValue(14))
-		assertTrue(branches[1].containsValue(-17))
+		branch = branches.first { it.containsId(13) }
+		assertEquals(3, branch.size)
+		assertTrue(branch.containsValue(13))
+		assertTrue(branch.containsValue(14))
+		assertTrue(branch.containsValue(-17))
 
-		assertEquals(2, branches[2].size)
-		assertTrue(branches[2].containsValue(16))
-		assertTrue(branches[2].containsValue(20))
-
-		assertEquals(3, branches[3].size)
-		assertTrue(branches[3].containsValue(-9))
-		assertTrue(branches[3].containsValue(-10))
-		assertTrue(branches[3].containsValue(-12))
+		branch = branches.first { it.containsId(9) }
+		assertEquals(3, branch.size)
+		assertTrue(branch.containsValue(-9))
+		assertTrue(branch.containsValue(-10))
+		assertTrue(branch.containsValue(-12))
 	}
 
 	@Test
@@ -92,11 +96,10 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		// The ground Net is ignored, leaving 1 node where 3 branches meet
 		assertEquals(1, equationSystem.equationCount)
 
-		assertEquals(4, equationSystem.getCoefficients()[0].size)
+		assertEquals(3, equationSystem.getCoefficients()[0].size)
 		assertEquals(1.0, equationSystem.getCoefficients()[0][0])
 		assertEquals(-1.0, equationSystem.getCoefficients()[0][1])
-		assertEquals(0.0, equationSystem.getCoefficients()[0][2])
-		assertEquals(-1.0, equationSystem.getCoefficients()[0][3])
+		assertEquals(1.0, equationSystem.getCoefficients()[0][2])
 	}
 
 	@Test
@@ -111,19 +114,94 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		assertEquals(6, equationSystem.equationCount)
 	}
 
+	// Coefficients determined by manually composing equation system
 	@Test
-	fun shouldComposeEquations() {
+	fun shouldComposeEquationsSwitchedOff() {
 		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
 		val branches = labelBranchCurrents(analogGraphView)
-		val equationSystem = LinearEquationSystem(4 + 6)
+		val equationSystem = LinearEquationSystem(1 + 6)
 
 		composeEquations(analogGraphView, voltageNodes, branches, 10, equationSystem)
 
 		assertEquals(7, equationSystem.equationCount)
+
+		assertTrue(arrayOf(1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0).toDoubleArray() contentEquals equationSystem.getCoefficients(0))
+		assertTrue(arrayOf(0.0, -500.0, 0.0, 0.0, 0.0, 0.0, 1.0).toDoubleArray() contentEquals equationSystem.getCoefficients(1))
+		assertTrue(arrayOf(0.0, -20.0, 0.0, 0.0, 1.0, 0.0, -1.0).toDoubleArray() contentEquals equationSystem.getCoefficients(2))
+		assertTrue(arrayOf(0.0, 0.0, -20.0, 0.0, -1.0, 1.0, 0.0).toDoubleArray() contentEquals equationSystem.getCoefficients(3))
+		assertTrue(arrayOf(0.0, 0.0, -100.0, 0.0, 0.0, -1.0, 0.0).toDoubleArray() contentEquals equationSystem.getCoefficients(4))
+		assertTrue(arrayOf(-100_000_000.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0).toDoubleArray() contentEquals equationSystem.getCoefficients(5))
+		assertTrue(arrayOf(0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0).toDoubleArray() contentEquals equationSystem.getCoefficients(6))
+
+		assertTrue(arrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0).toDoubleArray() contentEquals equationSystem.getConstants().toTypedArray().toDoubleArray())
 	}
 
 	@Test
-	fun shouldCalculate() {
-		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
+	fun shouldSolveSwitchedOn() {
+		(analogGraphView.getWithId(2) as AnalogSwitchView).model.toggle(scheduler, analogGraphView)
+
+		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
+		val branches = labelBranchCurrents(analogGraphView)
+		val equationSystem = LinearEquationSystem(1 + 6)
+
+		composeEquations(analogGraphView, voltageNodes, branches, 10, equationSystem)
+		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem)
+
+		assertTrue(result[0].near(0.05, 0.01))
+		assertTrue(result[1].near(0.009, 0.001))
+		assertTrue(result[2].near(-0.04, 0.01))
+		assertTrue(result[3].near(5.0, 0.01))
+		assertTrue(result[4].near(5.0, 0.01))
+		assertTrue(result[5].near(4.1, 0.1))
+		assertTrue(result[6].near(4.8, 0.1))
 	}
+
+	@Test
+	fun shouldCalculateResultSwitchedOff() {
+		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
+
+		// Voltages
+		assertEquals(5.0f, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
+		assertTrue((analogGraphView.graph!!.withId(8) as AnalogNet).signal!!.voltage <= 0.00001)
+		assertTrue((analogGraphView.graph!!.withId(9) as AnalogNet).signal!!.voltage <= 0.00001)
+		assertTrue((analogGraphView.graph!!.withId(10) as AnalogNet).signal!!.voltage <= 0.00001)
+		assertTrue((analogGraphView.graph!!.withId(11) as AnalogNet).signal!!.voltage <= 0.00001)
+
+		// Currents
+		assertTrue(analogGraphView.getDrawables { it is AnalogEdgeView }.map { it as AnalogEdgeView }.all { it.current <= 0.00001 })
+	}
+
+	@Test
+	fun shouldCalculateResultSwitchedOn() {
+		(analogGraphView.getWithId(2) as AnalogSwitchView).model.toggle(scheduler, analogGraphView)
+
+		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
+
+		// Voltages
+		assertEquals(5.0f, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
+		assertEquals(5.0f, (analogGraphView.graph!!.withId(8) as AnalogNet).signal!!.voltage)
+		assertTrue((analogGraphView.graph!!.withId(9) as AnalogNet).signal!!.voltage.toDouble().near(4.16, 0.01))
+		assertTrue((analogGraphView.graph!!.withId(11) as AnalogNet).signal!!.voltage.toDouble().near(4.8, 0.1))
+		assertTrue((analogGraphView.graph!!.withId(10) as AnalogNet).signal!!.voltage.toDouble().near(0.0, 0.01))
+
+		// Currents
+		assertTrue(getAnalogEdgeView(analogGraphView, 7).current.near(0.05, 0.01))
+		assertTrue(getAnalogEdgeView(analogGraphView, 8).current.near(0.05, 0.01))
+
+		assertTrue(getAnalogEdgeView(analogGraphView, 9).current.near(0.04, 0.01))
+		assertTrue(getAnalogEdgeView(analogGraphView, 10).current.near(0.04, 0.01))
+		assertTrue(getAnalogEdgeView(analogGraphView, 12).current.near(0.04, 0.01))
+
+		assertTrue(getAnalogEdgeView(analogGraphView, 13).current.near(0.009, 0.001))
+		assertTrue(getAnalogEdgeView(analogGraphView, 14).current.near(0.009, 0.001))
+		assertTrue(getAnalogEdgeView(analogGraphView, 17).current.near(-0.009, 0.001))
+
+		assertTrue(getAnalogEdgeView(analogGraphView, 16).current.near(0.05, 0.01))
+		assertTrue(getAnalogEdgeView(analogGraphView, 20).current.near(0.05, 0.01))
+
+		assertTrue(getAnalogEdgeView(analogGraphView, 21).current.near(0.00, 0.01))
+	}
+
+	private fun getAnalogEdgeView(graphView: GraphView, id: Int): AnalogEdgeView =
+		graphView.getEdgeViews().map { it as AnalogEdgeView }.first { it.id == id }
 }

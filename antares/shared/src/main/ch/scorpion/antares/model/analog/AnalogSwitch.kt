@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DummyAnalogCircuitCalculator
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -24,7 +24,7 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
-					DummyAnalogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
+					AntaresViewModule.analogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
 				}
 			}
 		}
@@ -34,7 +34,7 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 
 	override val typeDesc: String? get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.desc")
 
-	override val resistance: Double get() = if (isOn) 0.0 else Double.MAX_VALUE
+	override val resistance: Double get() = if (isOn) 0.0 else 100_000_000.0
 
 	init {
 		addPort(AnalogPort())
@@ -47,11 +47,12 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 	override fun composeComponentConstituentEquation(
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
+		incomingPortId: Int,
 		currentVariableIndex: Int,
 		equationSystem: LinearEquationSystem
 	) {
 		AbstractResistingAnalogVertice.composeComponentConstituentEquation(
 			this,
-			voltageNodes, branches, currentVariableIndex, equationSystem)
+			voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
 	}
 }

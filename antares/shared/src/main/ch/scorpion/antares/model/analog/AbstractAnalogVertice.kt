@@ -30,6 +30,7 @@ interface AnalogTwoPortVertice : Vertice {
 	fun composeComponentConstituentEquation(
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
+		incomingPortId: Int,
 		currentVariableIndex: Int,
 		equationSystem: LinearEquationSystem
 	)

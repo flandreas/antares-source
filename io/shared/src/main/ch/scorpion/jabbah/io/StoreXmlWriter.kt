@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.formatRounded
+import ch.scorpion.jabbah.base.math.formatRounded
 
 /**
  * An implementation of a [StoreReader] that writes a hierarchical [Storable] object tree to an XML document (DOM).

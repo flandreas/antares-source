@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.PI_2
-import ch.scorpion.jabbah.base.PI_4
-import ch.scorpion.jabbah.base.SIGMA
-import ch.scorpion.jabbah.base.TWO_PI
+import ch.scorpion.jabbah.base.math.PI_2
+import ch.scorpion.jabbah.base.math.PI_4
+import ch.scorpion.jabbah.base.math.SIGMA
+import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.PI
 import kotlin.test.*

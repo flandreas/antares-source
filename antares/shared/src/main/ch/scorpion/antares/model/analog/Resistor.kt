@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DummyAnalogCircuitCalculator
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -24,7 +24,7 @@ class Resistor(
 			override fun calculate(vertice: Resistor, data: GraphActorData, signalHandler: SignalHandler) {
 				// React to changes of variable resistance
 				if (data.graphView is AnalogGraphView) {
-					DummyAnalogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
+					AntaresViewModule.analogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
 				}
 			}
 		}
