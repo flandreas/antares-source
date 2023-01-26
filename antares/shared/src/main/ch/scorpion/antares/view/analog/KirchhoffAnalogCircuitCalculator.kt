@@ -50,7 +50,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		result: DoubleArray,
 	) {
 		voltageNodes.forEachIndexed { index, netId ->
-			val signal = AnalogSignal(result[branches.size + index].toFloat())
+			val signal = AnalogSignal(result[branches.size + index])
 			(circuitView.graph!!.withId(netId) as AnalogNet).setSignal(signal)
 		}
 
@@ -67,7 +67,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		}
 
 		// Ground voltage
-		(circuitView.graph!!.withId(groundNodeNetId) as AnalogNet).setSignal(AnalogSignal(0f))
+		(circuitView.graph!!.withId(groundNodeNetId) as AnalogNet).setSignal(AnalogSignal(0.0))
 	}
 
 	fun composeEquations(

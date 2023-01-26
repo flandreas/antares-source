@@ -161,7 +161,7 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
 
 		// Voltages
-		assertEquals(5.0f, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
+		assertEquals(5.0, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
 		assertTrue((analogGraphView.graph!!.withId(8) as AnalogNet).signal!!.voltage <= 0.00001)
 		assertTrue((analogGraphView.graph!!.withId(9) as AnalogNet).signal!!.voltage <= 0.00001)
 		assertTrue((analogGraphView.graph!!.withId(10) as AnalogNet).signal!!.voltage <= 0.00001)
@@ -178,11 +178,11 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
 
 		// Voltages
-		assertEquals(5.0f, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
-		assertEquals(5.0f, (analogGraphView.graph!!.withId(8) as AnalogNet).signal!!.voltage)
-		assertTrue((analogGraphView.graph!!.withId(9) as AnalogNet).signal!!.voltage.toDouble().near(4.16, 0.01))
-		assertTrue((analogGraphView.graph!!.withId(11) as AnalogNet).signal!!.voltage.toDouble().near(4.8, 0.1))
-		assertTrue((analogGraphView.graph!!.withId(10) as AnalogNet).signal!!.voltage.toDouble().near(0.0, 0.01))
+		assertEquals(5.0, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
+		assertEquals(5.0, (analogGraphView.graph!!.withId(8) as AnalogNet).signal!!.voltage)
+		assertTrue((analogGraphView.graph!!.withId(9) as AnalogNet).signal!!.voltage.near(4.16, 0.01))
+		assertTrue((analogGraphView.graph!!.withId(11) as AnalogNet).signal!!.voltage.near(4.8, 0.1))
+		assertTrue((analogGraphView.graph!!.withId(10) as AnalogNet).signal!!.voltage.near(0.0, 0.01))
 
 		// Currents
 		assertTrue(getAnalogEdgeView(analogGraphView, 7).current.near(0.05, 0.01))

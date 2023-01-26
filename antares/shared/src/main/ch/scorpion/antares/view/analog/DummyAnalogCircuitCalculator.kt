@@ -42,13 +42,13 @@ object DummyAnalogCircuitCalculator : AnalogCircuitCalculator {
 		val v = batteryView.voltage
 
 		val isSwitchOn = switchView.model.isOn
-		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5f) else AnalogSignal(0f)
-		val signalAtNegativePole = AnalogSignal(0f)
+		val signalBehindSwitch = if (isSwitchOn) AnalogSignal(5.0) else AnalogSignal(0.0)
+		val signalAtNegativePole = AnalogSignal(0.0)
 		val current = if (isSwitchOn) v / r else 0.0
 		val current1 = if (isSwitchOn) v / r1 else 0.0
 		val current2 = if (isSwitchOn) v / r2 else 0.0
 
-		evBattery.model.setSignal(AnalogSignal(5f), batteryView.model.getOutput(1), batteryView.model.getOutput(1), signalHandler, false)
+		evBattery.model.setSignal(AnalogSignal(5.0), batteryView.model.getOutput(1), batteryView.model.getOutput(1), signalHandler, false)
 		evBattery.current = current
 
 		evSwitch.model.setSignal(signalBehindSwitch, switchView.model.getOutput(2), switchView.model.getOutput(2), signalHandler, false)

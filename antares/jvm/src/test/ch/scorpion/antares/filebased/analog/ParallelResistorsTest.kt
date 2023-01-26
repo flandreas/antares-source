@@ -58,8 +58,8 @@ class ParallelResistorsTest : AbstractFileBasedTest() {
 		switchView.model.toggle(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
-		val voltage = AnalogSignal(5.0f)
-		val ground = AnalogSignal(0f)
+		val voltage = AnalogSignal(5.0)
+		val ground = AnalogSignal(0.0)
 		val currentOn = 0.06
 		val currentOn1 = 0.05
 		val currentOn2 = 0.01
