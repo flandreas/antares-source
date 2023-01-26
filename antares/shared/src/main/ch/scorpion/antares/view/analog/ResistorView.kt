@@ -76,7 +76,11 @@ class ResistorView(
 	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		actorInteractionHandler
+		if (variable) {
+			actorInteractionHandler
+		} else {
+			super.getActorInteractionHandler(context)
+		}
 
 	/** ---- [AbstractAnalogVerticeView] */
 
