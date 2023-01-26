@@ -93,10 +93,12 @@ class AnalogEdgeView(
 		} else {
 			// DEBUG BEGIN
 			// Draw a small indicator for the begin Connection. Only used while developing
+			/*
 			beginConnectionAnnotatePoint?.let {
 				context.g.color = Color.RED
 				context.g.fillCircle(it.x, it.y, 2.0)
 			}
+			*/
 			// DEBUG END
 		}
 	}
