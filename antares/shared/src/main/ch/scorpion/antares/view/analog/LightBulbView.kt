@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -30,8 +31,8 @@ class LightBulbView(
 
 		private val DEFAULT_LIGHT_COLOR = LightColor.WHITE
 
-		/** The current (A) above the [LightBulbView] glows. */
-		private const val CURRENT_GLOW_THRESHOLD = 0.01
+		/** The current (A) at which the [LightBulbView] reaches its maximum brightness. */
+		private const val MAX_GLOW_CURRENT = 0.05
 	}
 
 	init {
@@ -67,7 +68,7 @@ class LightBulbView(
 
 	private fun drawBulb(context: DrawContext) {
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawBulb(context, transparent.applyTo(bulbColor))
+			drawBulb(context, transparent.applyTo(executionBulbColor))
 		} else {
 			drawBulb(context, transparent.applyTo(backgroundColor))
 		}
@@ -87,10 +88,8 @@ class LightBulbView(
 		}
 	}
 
-	private val bulbColor: Color get() =
-		if ((getPortView(model.getPort(1)) as AnalogPortView).current > CURRENT_GLOW_THRESHOLD) {
-			lightColor.onColor
-		} else {
-			lightColor.offColor
-		}
+	private val executionBulbColor: Color get() =
+		lightColor.gradient(
+			(abs((getPortView(model.getPort()) as AnalogPortView).current) / MAX_GLOW_CURRENT)
+			.coerceIn(0.0..1.0).toFloat())
 }

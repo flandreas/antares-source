@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.graph.view.VerticeView
+import kotlin.math.roundToInt
 
 /**
  * A visible object that can emit light.
@@ -36,6 +37,8 @@ enum class LightColor(
 	    /** The name of the [String] in [Properties] representing the persistent name of the [LightColor] to be used as default.*/
 	    const val PROP_DEFAULT_LIGHT_COLOR = "antares.view.output.defaultLightColor"
 
+	    private const val GRADIENT_STEPS = 50
+
         fun withName(customName: String): LightColor {
             for (c in values()) {
                 if (c.customName == customName) {
@@ -49,6 +52,8 @@ enum class LightColor(
 		    withName(properties.getString(PROP_DEFAULT_LIGHT_COLOR))
     }
 
+	private val gradient: List<Color> by lazy { createGradient() }
+
     override fun toString(): String {
         return when(this) {
             RED -> Translations.getString("element.color.red")
@@ -59,4 +64,27 @@ enum class LightColor(
 	        WHITE -> Translations.getString("element.color.white")
         }
     }
+
+	fun gradient(level: Float): Color =
+		gradient[(level.coerceIn(0.0f..1.0f) * GRADIENT_STEPS).roundToInt().coerceIn(0 until GRADIENT_STEPS)]
+
+	private fun createGradient(): List<Color> {
+		val result = mutableListOf<Color>()
+		val dRed = (onColor.red - offColor.red).toFloat() / (GRADIENT_STEPS - 1)
+		val dGreen = (onColor.green - offColor.green).toFloat() / (GRADIENT_STEPS - 1)
+		val dBlue = (onColor.blue - offColor.blue).toFloat() / (GRADIENT_STEPS - 1)
+		var red = offColor.red.toFloat()
+		var green = offColor.green.toFloat()
+		var blue = offColor.blue.toFloat()
+		for (i in 0 until GRADIENT_STEPS) {
+			result.add(Color(
+				red.roundToInt().coerceIn(0..255),
+				green.roundToInt().coerceIn(0..255),
+				blue.roundToInt().coerceIn(0..255)))
+			red += dRed
+			green += dGreen
+			blue += dBlue
+		}
+		return result
+	}
 }
