@@ -129,7 +129,11 @@ abstract class AbstractVerticeView<T : Vertice>(
 			tooltip.reset()
 		}
 
-	/** ---- [VerticeView] interface */
+	/** ---- [GraphElementView] */
+
+	override val isFullyConnected: Boolean get() = model.getPorts().all { it.isConnected }
+
+	/** ---- [VerticeView] */
 
 	override var isShowPortViews: Boolean = true
 		set(value) {

@@ -90,6 +90,10 @@ open class NodeViewImpl<T : Any>(
 
 	override fun collectConnectedVerticeViews(type: KClass<*>, result: MutableSet<Component>) { }
 
+	/** ---- [GraphElementView] interface */
+
+	override val isFullyConnected: Boolean get() = true
+
 	/** ---- [NodeView] interface */
 
 	override fun anyEdgeViewContainsPoint(x: Double, y: Double, excludedEdgeView: EdgeView<*>?): Boolean {

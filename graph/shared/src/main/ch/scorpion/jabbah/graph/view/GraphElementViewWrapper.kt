@@ -138,6 +138,10 @@ class GraphElementViewWrapper(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
+
+	/** ---- [GraphElementView] interface */
+
+	override val isFullyConnected: Boolean get() = true
 }
 
 class GraphElementWrapper(private val component: Component? = null) : AbstractGraphElement() {

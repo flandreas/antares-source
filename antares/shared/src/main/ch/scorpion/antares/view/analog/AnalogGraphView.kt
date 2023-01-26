@@ -14,6 +14,9 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.graph.view.GraphElementView
 
 /**
  * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
@@ -55,6 +58,8 @@ class AnalogGraphView(
 		timer.stop()
 	}
 
+	override fun checkDesign(): Boolean = ensureFullyConnected()
+
 	private fun timerTick(@Suppress("UNUSED_PARAMETER") event: ActionEvent) {
 		getEdgeViews()
 			.map { it as AnalogEdgeView }
@@ -62,5 +67,19 @@ class AnalogGraphView(
 
 		invalidate()
 		validate()
+	}
+
+	private fun ensureFullyConnected(): Boolean {
+		if (getDrawables { it is GraphElementView<*> }.any { !it.isFullyConnected }) {
+			eventBus.post(IssueImpl(
+				IssueSeverity.Error,
+				Translations.getString("antares.analogCalc.notFullyConnected.error.name"),
+				Translations.getString("antares.analogCalc.notFullyConnected.error.desc"),
+				name,
+				"Simulation"
+			))
+			return false
+		}
+		return true
 	}
 }

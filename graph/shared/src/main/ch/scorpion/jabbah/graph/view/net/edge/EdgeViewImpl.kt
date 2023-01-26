@@ -150,6 +150,10 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun executionStopped(signalHandler: SignalHandler) { }
 
+	/** ---- [GraphElementView] interface */
+
+	override val isFullyConnected: Boolean get() = origin != null && destination != null
+
 	/** ---- [EdgeView] interface */
 
 	override var underConstruction: Boolean = false

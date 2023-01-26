@@ -14,6 +14,8 @@ interface GraphElementView<T : GraphElement> : Component {
     /** The model [GraphElement] that this [GraphElementView] displays.  */
     val model: T
 
+	val isFullyConnected: Boolean
+
     /**
      * Called by the [GraphView] which contains this [GraphElementView] when the [GraphView] is built for a
      * particular [Graph]. Concrete classes implement this method if they need information from the [Graph]

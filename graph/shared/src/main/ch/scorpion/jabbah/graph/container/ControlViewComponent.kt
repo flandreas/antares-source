@@ -88,6 +88,8 @@ class ControlViewComponent(
 
 	override fun bind(graph: Graph, deep: Boolean) { }
 
+	override val isFullyConnected: Boolean get() = true
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
