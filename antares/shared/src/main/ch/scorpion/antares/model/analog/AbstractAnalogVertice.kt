@@ -1,8 +1,8 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -32,7 +32,7 @@ interface AnalogTwoPortVertice : Vertice {
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	)
 }
 

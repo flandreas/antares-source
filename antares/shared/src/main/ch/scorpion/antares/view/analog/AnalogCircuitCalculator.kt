@@ -7,5 +7,15 @@ import ch.scorpion.jabbah.execution.SignalHandler
  */
 interface AnalogCircuitCalculator {
 
-	fun calculate(circuitView: AnalogGraphView, signalHandler: SignalHandler)
+	/**
+	 * Analyses the structure of an [AnalogGraphView] and returns all information needed for
+	 * calculating electrical currents and voltages depending on the actual resistances in the circuit.
+	 * */
+	fun analyse(circuitView: AnalogGraphView): AnalogCircuitAnalysis
+
+	/**
+	 * Calculates electrical currents and voltages in an [AnalogGraphView]. Prior to calculation,
+	 * [analysis] must be called, typically at the start of the simulation.
+	 */
+	fun calculate(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler)
 }

@@ -3,9 +3,9 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 
@@ -24,7 +24,7 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
-					AntaresViewModule.analogCircuitCalculator.calculate(data.graphView as AnalogGraphView, signalHandler)
+					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).analysis, signalHandler)
 				}
 			}
 		}
@@ -49,7 +49,7 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
 		AbstractResistingAnalogVertice.composeComponentConstituentEquation(
 			this,

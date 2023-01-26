@@ -11,6 +11,7 @@ class LinearEquationSystem(val numberOfVariables: Int) {
 	fun addEquation(coefficients: DoubleArray, constant: Double) {
 		this.coefficients.add(coefficients)
 		this.constants.add(constant)
+
 	}
 
 	fun getCoefficients(): List<DoubleArray> = coefficients
@@ -18,6 +19,4 @@ class LinearEquationSystem(val numberOfVariables: Int) {
 	fun getCoefficients(index: Int): DoubleArray = coefficients[index]
 
 	fun getConstants(): List<Double> = constants
-
-	fun getConstant(index: Int): Double = constants[index]
 }

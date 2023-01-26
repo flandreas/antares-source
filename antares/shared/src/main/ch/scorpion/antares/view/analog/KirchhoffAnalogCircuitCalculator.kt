@@ -1,10 +1,12 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.*
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
@@ -27,22 +29,27 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 	private val LOG by logger(KirchhoffAnalogCircuitCalculator::class)
 
-	override fun calculate(circuitView: AnalogGraphView, signalHandler: SignalHandler) {
+	override fun analyse(circuitView: AnalogGraphView): AnalogCircuitAnalysis {
+		LOG.debug("Analysing analog circuit")
 		val groundNodeNetId: Int = identifyGroundNode(circuitView)
 		val voltageNodeNetIds: List<Int> = labelVoltageNodes(circuitView, groundNodeNetId)
 		val branches: List<AnalogCircuitBranch> = labelBranchCurrents(circuitView)
-		val equationSystem = LinearEquationSystem(branches.size + voltageNodeNetIds.size)
-
-		LOG.debug("Current variables: ${branches.size}, voltage node variables: ${voltageNodeNetIds.size}")
+		val equationSystem = DynamicLinearEquationSystem(branches.size + voltageNodeNetIds.size)
 
 		composeEquations(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 
-		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem)
-
-		applyResult(circuitView, voltageNodeNetIds, branches, groundNodeNetId, result)
+		return AnalogCircuitAnalysis(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 	}
 
-	fun applyResult(
+	override fun calculate(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
+		LOG.trace("Calculating analog circuit")
+		with(analysis) {
+			val result = BaseModule.linearEquationSystemSolver.solve(equationSystem.toLinearEquationSystem())
+			applyResult(circuitView, voltageNodeNetIds, branches, groundNodeNetId, result)
+		}
+	}
+
+	private fun applyResult(
 		circuitView: AnalogGraphView,
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
@@ -75,7 +82,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
 		groundNodeNetId: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
 		composeCurrentLawEquations(circuitView, branches, groundNodeNetId, equationSystem)
 		val currentLawEquationsCount = equationSystem.equationCount
@@ -264,13 +271,13 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		circuitView: AnalogGraphView,
 		branches: List<AnalogCircuitBranch>,
 		groundNodeNetId: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
 		circuitView
 			.getNodeViews()
 			.filter { it.net!!.id != groundNodeNetId }
 			.forEach { nodeView ->
-				val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
+				val row = Array(equationSystem.numberOfVariables) { ZERO }
 				nodeView.getEdgeViews().forEach { edgeView ->
 					val index = getBranchId(edgeView, branches)
 						?: throw IllegalStateException("Every EdgeView must be part of a branch")
@@ -280,11 +287,11 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					} else {
 						edgeView.origin?.connectableView?.id == nodeView.id
 					}
-					val factor = if (isIncoming) 1.0 else -1.0
+					val factor = if (isIncoming) ONE else MINUS_ONE
 					row[index] = factor
 				}
 
-				equationSystem.addEquation(row, 0.0)
+				equationSystem.addEquation(row, ZERO)
 			}
 	}
 
@@ -302,7 +309,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		circuitView: AnalogGraphView,
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
 		circuitView
 			.getDrawables { it is VerticeView<*> && it.model is AnalogTwoPortVertice }

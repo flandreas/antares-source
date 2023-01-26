@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -61,13 +63,13 @@ class Battery(
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
-		val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
+		val row = Array(equationSystem.numberOfVariables) { ZERO }
 
 		val voltageVariableIndex = voltageNodes.indexOf(positivePort.net!!.id)
-		row[branches.size + voltageVariableIndex] = -1.0
+		row[branches.size + voltageVariableIndex] = MINUS_ONE
 
-		equationSystem.addEquation(row, -voltage)
+		equationSystem.addEquation(row) { -voltage }
 	}
 }

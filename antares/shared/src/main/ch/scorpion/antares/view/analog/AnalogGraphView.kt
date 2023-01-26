@@ -35,6 +35,10 @@ class AnalogGraphView(
 		timer
 	}
 
+	/** Not set before [executionStart]. */
+	lateinit var analysis: AnalogCircuitAnalysis
+		private set
+
 	@Suppress("unused") // Reflection
 	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
 
@@ -42,7 +46,8 @@ class AnalogGraphView(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		AntaresViewModule.analogCircuitCalculator.calculate(this, signalHandler)
+		analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+		AntaresViewModule.analogCircuitCalculator.calculate(analysis, signalHandler)
 		timer.start()
 	}
 

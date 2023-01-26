@@ -27,7 +27,7 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 
 	fun setSignal(signal: AnalogSignal?) {
 		signal?.let {
-			LOG.debug("Set AnalogSignal ${it.voltage} on AnalogNet $id")
+			LOG.trace("Set AnalogSignal ${it.voltage} on AnalogNet $id")
 			updateSignal(it)
 		}
 	}

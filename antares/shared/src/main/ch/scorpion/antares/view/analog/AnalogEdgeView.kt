@@ -44,7 +44,7 @@ class AnalogEdgeView(
 	 */
 	var current: Double = 0.0
 		set(value) {
-			LOG.debug("Set current=$value on EdgeView $id")
+			LOG.trace("Set current=$value on EdgeView $id")
 			field = value
 			(origin?.portView as AnalogPortView?)?.current = value
 			(destination?.portView as AnalogPortView?)?.current = value

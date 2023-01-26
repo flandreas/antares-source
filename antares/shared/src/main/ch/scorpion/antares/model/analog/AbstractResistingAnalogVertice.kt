@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -31,9 +31,9 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			branches: List<AnalogCircuitBranch>,
 			incomingPortId: Int,
 			currentVariableIndex: Int,
-			equationSystem: LinearEquationSystem
+			equationSystem: DynamicLinearEquationSystem
 		) {
-			val row = DoubleArray(equationSystem.numberOfVariables) { 0.0 }
+			val row = Array(equationSystem.numberOfVariables) { DynamicLinearEquationSystem.ZERO }
 
 			val outgoingPortId = if (incomingPortId == 1) 2 else 1
 
@@ -42,14 +42,14 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			val voltageVariableOutgoingIndex = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(outgoingPortId).net!!.id)
 
 			if (voltageVariableIncomingIndex >= 0) {
-				row[branches.size + voltageVariableIncomingIndex] = 1.0
+				row[branches.size + voltageVariableIncomingIndex] = DynamicLinearEquationSystem.ONE
 			}
 			if (voltageVariableOutgoingIndex >= 0) {
-				row[branches.size + voltageVariableOutgoingIndex] = -1.0
+				row[branches.size + voltageVariableOutgoingIndex] = DynamicLinearEquationSystem.MINUS_ONE
 			}
-			row[currentVariableIndex] = -vertice.resistance
+			row[currentVariableIndex] = { -vertice.resistance }
 
-			equationSystem.addEquation(row, 0.0)
+			equationSystem.addEquation(row, DynamicLinearEquationSystem.ZERO)
 		}
 	}
 
@@ -66,7 +66,7 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
-		equationSystem: LinearEquationSystem
+		equationSystem: DynamicLinearEquationSystem
 	) {
 		Companion.composeComponentConstituentEquation(
 			this,

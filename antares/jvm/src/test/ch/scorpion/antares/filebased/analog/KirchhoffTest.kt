@@ -9,7 +9,6 @@ import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeE
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelBranchCurrents
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelVoltageNodes
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.math.LinearEquationSystem
 import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
 import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -89,24 +88,24 @@ class KirchhoffTest : AbstractFileBasedTest() {
 	@Test
 	fun shouldComposeCurrentLawEquations() {
 		val branches = labelBranchCurrents(analogGraphView)
-		val equationSystem = LinearEquationSystem(branches.size)
+		val equationSystem = DynamicLinearEquationSystem(branches.size)
 
 		composeCurrentLawEquations(analogGraphView, branches, 10, equationSystem)
 
 		// The ground Net is ignored, leaving 1 node where 3 branches meet
 		assertEquals(1, equationSystem.equationCount)
 
-		assertEquals(3, equationSystem.getCoefficients()[0].size)
-		assertEquals(1.0, equationSystem.getCoefficients()[0][0])
-		assertEquals(-1.0, equationSystem.getCoefficients()[0][1])
-		assertEquals(1.0, equationSystem.getCoefficients()[0][2])
+		assertEquals(3, equationSystem.getCoefficients(0).size)
+		assertEquals(1.0, equationSystem.getCoefficients(0)[0])
+		assertEquals(-1.0, equationSystem.getCoefficients(0)[1])
+		assertEquals(1.0, equationSystem.getCoefficients(0)[2])
 	}
 
 	@Test
 	fun shouldComposeComponentConstituentEquations() {
 		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
 		val branches = labelBranchCurrents(analogGraphView)
-		val equationSystem = LinearEquationSystem(4 + 6)
+		val equationSystem = DynamicLinearEquationSystem(4 + 6)
 
 		composeComponentConstituentEquations(analogGraphView, voltageNodes, branches, equationSystem)
 
@@ -119,7 +118,7 @@ class KirchhoffTest : AbstractFileBasedTest() {
 	fun shouldComposeEquationsSwitchedOff() {
 		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
 		val branches = labelBranchCurrents(analogGraphView)
-		val equationSystem = LinearEquationSystem(1 + 6)
+		val equationSystem = DynamicLinearEquationSystem(1 + 6)
 
 		composeEquations(analogGraphView, voltageNodes, branches, 10, equationSystem)
 
@@ -142,10 +141,10 @@ class KirchhoffTest : AbstractFileBasedTest() {
 
 		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
 		val branches = labelBranchCurrents(analogGraphView)
-		val equationSystem = LinearEquationSystem(1 + 6)
+		val equationSystem = DynamicLinearEquationSystem(1 + 6)
 
 		composeEquations(analogGraphView, voltageNodes, branches, 10, equationSystem)
-		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem)
+		val result = BaseModule.linearEquationSystemSolver.solve(equationSystem.toLinearEquationSystem())
 
 		assertTrue(result[0].near(0.05, 0.01))
 		assertTrue(result[1].near(0.009, 0.001))
@@ -158,7 +157,8 @@ class KirchhoffTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldCalculateResultSwitchedOff() {
-		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
+		val analysis = KirchhoffAnalogCircuitCalculator.analyse(analogGraphView)
+		KirchhoffAnalogCircuitCalculator.calculate(analysis, scheduler)
 
 		// Voltages
 		assertEquals(5.0, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
@@ -175,7 +175,8 @@ class KirchhoffTest : AbstractFileBasedTest() {
 	fun shouldCalculateResultSwitchedOn() {
 		(analogGraphView.getWithId(2) as AnalogSwitchView).model.toggle(scheduler, analogGraphView)
 
-		KirchhoffAnalogCircuitCalculator.calculate(analogGraphView, scheduler)
+		val analysis = KirchhoffAnalogCircuitCalculator.analyse(analogGraphView)
+		KirchhoffAnalogCircuitCalculator.calculate(analysis, scheduler)
 
 		// Voltages
 		assertEquals(5.0, (analogGraphView.graph!!.withId(7) as AnalogNet).signal!!.voltage)
