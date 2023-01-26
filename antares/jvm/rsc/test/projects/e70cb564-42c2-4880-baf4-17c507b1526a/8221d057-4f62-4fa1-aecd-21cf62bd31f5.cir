@@ -73,7 +73,7 @@
       <model>
         <subGraphVertice _id='28' id='0' delay='0' uuid='8221d057-4f62-4fa1-aecd-21cf62bd31f5'>
           <name>
-            <translation lang='en' text='Simple Circuit'/>
+            <translation lang='en' text='Simple Circle'/>
           </name>
           <ports/>
         </subGraphVertice>

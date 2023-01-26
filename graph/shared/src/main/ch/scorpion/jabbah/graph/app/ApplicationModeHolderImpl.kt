@@ -86,7 +86,7 @@ class ApplicationModeHolderImpl(
 
 		eventBus.post(ApplicationModeBeginEvent(this, mode))
 
-		if (rootGraphView.checkDesign()) {
+		if (rootGraphView.checkDesign(scheduler)) {
 			currentMode = mode
 			System.invokeLater {
 				scheduler.isActive = true

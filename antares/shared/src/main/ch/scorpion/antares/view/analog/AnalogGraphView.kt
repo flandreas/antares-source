@@ -2,8 +2,6 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.analog.AnalogGraph
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,8 +12,7 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.base.IssueImpl
-import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.graph.view.GraphElementView
 
 /**
@@ -28,6 +25,7 @@ class AnalogGraphView(
 ) : GraphViewImpl(graph, eventBus) {
 
 	companion object {
+		private val LOG by logger(AnalogGraphView::class)
 		private const val CURRENT_FLOW_ANIMATION_STEP = 30
 	}
 
@@ -49,7 +47,6 @@ class AnalogGraphView(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
 		AntaresViewModule.analogCircuitCalculator.calculate(analysis, signalHandler)
 		timer.start()
 	}
@@ -58,7 +55,8 @@ class AnalogGraphView(
 		timer.stop()
 	}
 
-	override fun checkDesign(): Boolean = ensureFullyConnected()
+	override fun checkDesign(signalHandler: SignalHandler): Boolean =
+		ensureFullyConnected() && analyzeAndCalculate(signalHandler)
 
 	private fun timerTick(@Suppress("UNUSED_PARAMETER") event: ActionEvent) {
 		getEdgeViews()
@@ -81,5 +79,23 @@ class AnalogGraphView(
 			return false
 		}
 		return true
+	}
+
+	private fun analyzeAndCalculate(signalHandler: SignalHandler): Boolean {
+		return try {
+			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+			AntaresViewModule.analogCircuitCalculator.calculate(analysis, signalHandler)
+			true
+		} catch (e: Throwable) {
+			LOG.error("Error while analyzing: ${e.message}")
+			eventBus.post(IssueImpl(
+				IssueSeverity.Error,
+				Translations.getString("antares.analogCalc.analyse.error.name"),
+				Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
+				name,
+				"Simulation"
+			))
+			false
+		}
 	}
 }

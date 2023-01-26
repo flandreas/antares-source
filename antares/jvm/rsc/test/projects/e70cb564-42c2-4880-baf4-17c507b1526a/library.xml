@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='6ffbf463-8095-48f0-bc55-66e920db6103' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='4d278669-76be-4e1f-bca4-94a871b5c329' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -114,7 +114,12 @@
             </containerLibraryElement>
             <containerLibraryElement _id='23' uuid='8221d057-4f62-4fa1-aecd-21cf62bd31f5'>
               <name>
-                <translation lang='en' text='Simple Circuit'/>
+                <translation lang='en' text='Simple Circle'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='24' uuid='4d278669-76be-4e1f-bca4-94a871b5c329'>
+              <name>
+                <translation lang='en' text='3 Parallel'/>
               </name>
             </containerLibraryElement>
           </items>

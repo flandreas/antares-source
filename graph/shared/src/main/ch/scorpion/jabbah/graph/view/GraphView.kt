@@ -84,7 +84,7 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 * in terms of [GraphElement.designError].
 	 * @return `true` if the design is okay, `false` if a design error has been found
 	 */
-	fun checkDesign(): Boolean
+	fun checkDesign(signalHandler: SignalHandler): Boolean
 
 	/**
 	 * Creates a clone of this [GraphView] that is connected with another model instance, and **not**

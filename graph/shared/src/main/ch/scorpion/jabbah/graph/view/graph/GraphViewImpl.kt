@@ -156,7 +156,7 @@ open class GraphViewImpl(
 		drawables.filterIsInstance<ActorView>().forEach { it.executionStopped(signalHandler) }
 	}
 
-	override fun checkDesign(): Boolean {
+	override fun checkDesign(signalHandler: SignalHandler): Boolean {
 		val issues = getDrawables { it.model.designError != null }
 			.groupBy { it.model }
 			.map { it.value.first() }
