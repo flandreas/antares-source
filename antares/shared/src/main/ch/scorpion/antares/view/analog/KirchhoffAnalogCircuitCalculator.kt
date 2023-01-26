@@ -204,8 +204,11 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 			getBranchId(outgoingEdgeView, branches)?.let { existingBranchId ->
 				if (branch != null) {
-					branches[existingBranchId].merge(branch)
-					branches.remove(branch)
+					val existingBranch = branches[existingBranchId]
+					existingBranch.merge(branch)
+					if (existingBranch !== branch) {
+						branches.remove(branch)
+					}
 				}
 			} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
@@ -316,11 +319,14 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			.map { it.model as AnalogTwoPortVertice }
 			.forEach { vertice ->
 				val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(1))!!
-				val currentVariableIndex = getBranchId(edgeView, branches)!!
-				val branch = branches[currentVariableIndex]
-				val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
-				vertice.composeComponentConstituentEquation(
-					voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
+				val currentVariableIndex = getBranchId(edgeView, branches)
+				if (currentVariableIndex != null) {
+					val branch = branches[currentVariableIndex]
+					val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
+					vertice.composeComponentConstituentEquation(
+						voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem
+					)
+				}
 			}
 	}
 

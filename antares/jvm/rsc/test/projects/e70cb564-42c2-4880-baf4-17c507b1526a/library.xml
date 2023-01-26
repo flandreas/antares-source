@@ -112,6 +112,11 @@
                 <translation lang='en' text='KirchhoffTest'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='23' uuid='8221d057-4f62-4fa1-aecd-21cf62bd31f5'>
+              <name>
+                <translation lang='en' text='Simple Circuit'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
       </items>

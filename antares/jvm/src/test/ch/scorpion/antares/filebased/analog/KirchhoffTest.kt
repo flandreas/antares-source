@@ -48,7 +48,7 @@ class KirchhoffTest : AbstractFileBasedTest() {
 	}
 
 	@Test
-	fun shouldIdentifyBranchesRecursively() {
+	fun shouldIdentifyBranches() {
 		val batteryView = analogGraphView.getWithId(1) as BatteryView
 		val incomingEdgeView = analogGraphView.getWithId(20) as AnalogEdgeView
 		val branches = mutableListOf<AnalogCircuitBranch>()
