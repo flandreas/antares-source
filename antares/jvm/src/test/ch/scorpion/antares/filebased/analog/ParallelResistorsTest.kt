@@ -1,21 +1,25 @@
 package ch.scorpion.antares.filebased.analog
 
 import ch.scorpion.antares.filebased.AbstractFileBasedTest
-import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.model.analog.AnalogNet
+import ch.scorpion.antares.view.analog.AnalogEdgeView
+import ch.scorpion.antares.view.analog.AnalogSwitchView
+import ch.scorpion.antares.view.analog.BatteryView
+import ch.scorpion.antares.view.analog.ResistorView
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
+import ch.scorpion.jabbah.base.math.near
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ParallelResistorsTest : AbstractFileBasedTest() {
 
 	companion object {
 		init {
 			configure()
-			AntaresViewModule.analogCircuitCalculator = KirchhoffAnalogCircuitCalculator
+			BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
 		}
 	}
 
@@ -46,33 +50,33 @@ class ParallelResistorsTest : AbstractFileBasedTest() {
 		resistor1InEV = openedCircuitView.getWithId(8) as AnalogEdgeView
 		resistor1OutEV = openedCircuitView.getWithId(10) as AnalogEdgeView
 		resistor2InEV = openedCircuitView.getWithId(9) as AnalogEdgeView
-		resistor1OutEV = openedCircuitView.getWithId(13) as AnalogEdgeView
+		resistor2OutEV = openedCircuitView.getWithId(13) as AnalogEdgeView
 		batteryMinusEV = openedCircuitView.getWithId(12) as AnalogEdgeView
 
 		startSimulation()
+		processUntilQueueIsEmpty()
 	}
 
-	@Ignore // Logic not yet implemented
 	@Test
 	fun shouldCalculate() {
 		switchView.model.toggle(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
 
-		val voltage = AnalogSignal(5.0)
-		val ground = AnalogSignal(0.0)
+		val voltage = 5.0
+		val ground = 0.0
 		val currentOn = 0.06
 		val currentOn1 = 0.05
 		val currentOn2 = 0.01
 
-		assertEquals(voltage, batteryPlusEV.model.signal)
-		assertEquals(currentOn, batteryPlusEV.current)
-		assertEquals(currentOn, switchViewEV.current)
-		assertEquals(currentOn1, resistor1InEV.current)
-		assertEquals(currentOn1, resistor1OutEV.current)
-		assertEquals(currentOn2, resistor2InEV.current)
-		assertEquals(currentOn2, resistor2OutEV.current)
+		assertTrue((batteryPlusEV.model as AnalogNet).signal!!.voltage.near(voltage, 0.01))
+		assertTrue(batteryPlusEV.current.near(currentOn, 0.01))
+		assertTrue(switchViewEV.current.near(currentOn, 0.01))
+		assertTrue(resistor1InEV.current.near(currentOn1, 0.01))
+		assertTrue(resistor1OutEV.current.near(currentOn1, 0.01))
+		assertTrue(resistor2InEV.current.near(currentOn2, 0.01))
+		assertTrue(resistor2OutEV.current.near(-currentOn2, 0.01))
 
-		assertEquals(voltage, switchViewEV.model.signal)
-		assertEquals(ground, batteryMinusEV.model.signal)
+		assertTrue((switchViewEV.model as AnalogNet).signal!!.voltage.near(voltage, 0.01))
+		assertTrue((batteryMinusEV.model as AnalogNet).signal!!.voltage.near(ground, 0.01))
 	}
 }
