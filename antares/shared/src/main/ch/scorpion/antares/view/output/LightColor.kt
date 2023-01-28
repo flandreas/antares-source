@@ -37,7 +37,7 @@ enum class LightColor(
 	    /** The name of the [String] in [Properties] representing the persistent name of the [LightColor] to be used as default.*/
 	    const val PROP_DEFAULT_LIGHT_COLOR = "antares.view.output.defaultLightColor"
 
-	    private const val GRADIENT_STEPS = 50
+	    private const val GRADIENT_STEPS = 100
 
         fun withName(customName: String): LightColor {
             for (c in values()) {

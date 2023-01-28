@@ -2,6 +2,8 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused") // Reflection
@@ -9,11 +11,15 @@ class LightBulbViewBeanInfo : AnalogComponentViewBeanInfo<LightBulbView>() {
 
 	companion object {
 		private val lightColor = AntaresProperties.lightColor()
+		private val minCurrent = CommandPropertySwing("minCurrent", "library.element.LightBulb.minCurrent", Double::class.java, componentBeanProvider)
+		private val maxCurrent = CommandPropertySwing("maxCurrent", "library.element.LightBulb.maxCurrent", Double::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: LightBulbView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
+		properties.add(minCurrent.bind(editor, beanIdProvider(bean.id)))
+		properties.add(maxCurrent.bind(editor, beanIdProvider(bean.id)))
 	}
 
 	override var isShowColor: Boolean
