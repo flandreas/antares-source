@@ -49,10 +49,11 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
+		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
 		AbstractResistingAnalogVertice.composeComponentConstituentEquation(
 			this,
-			voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
+			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
 	}
 }

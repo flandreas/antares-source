@@ -107,7 +107,7 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		val branches = labelBranchCurrents(analogGraphView)
 		val equationSystem = DynamicLinearEquationSystem(4 + 6)
 
-		composeComponentConstituentEquations(analogGraphView, voltageNodes, branches, equationSystem)
+		composeComponentConstituentEquations(analogGraphView, voltageNodes, branches, 10, equationSystem)
 
 		// 1 Battery, 1 Switch, 2 LightBulbs, 2 Resistors
 		assertEquals(6, equationSystem.equationCount)

@@ -59,7 +59,7 @@ class ThreeParallelTest : AbstractFileBasedTest() {
 		val branches = KirchhoffAnalogCircuitCalculator.labelBranchCurrents(analogGraphView)
 		val equationSystem = DynamicLinearEquationSystem(6 + 1)
 
-		KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations(analogGraphView, voltageNodes, branches, equationSystem)
+		KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations(analogGraphView, voltageNodes, branches, 6, equationSystem)
 
 		assertEquals(4, equationSystem.equationCount)
 	}

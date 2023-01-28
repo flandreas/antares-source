@@ -31,6 +31,7 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			branches: List<AnalogCircuitBranch>,
 			incomingPortId: Int,
 			currentVariableIndex: Int,
+			groundNodeNetId: Int,
 			equationSystem: DynamicLinearEquationSystem
 		) {
 			val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
@@ -66,10 +67,11 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 		branches: List<AnalogCircuitBranch>,
 		incomingPortId: Int,
 		currentVariableIndex: Int,
+		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
 		Companion.composeComponentConstituentEquation(
 			this,
-			voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem)
+			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
 	}
 }

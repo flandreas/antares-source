@@ -87,7 +87,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		composeCurrentLawEquations(circuitView, branches, equationSystem)
 		val currentLawEquationsCount = equationSystem.equationCount
 
-		composeComponentConstituentEquations(circuitView, voltageNodes, branches, equationSystem)
+		composeComponentConstituentEquations(circuitView, voltageNodes, branches, groundNodeNetId, equationSystem)
 		val constituentEquationsCount = equationSystem.equationCount - currentLawEquationsCount
 
 		removeLinearDependentKCL(equationSystem, currentLawEquationsCount)
@@ -319,6 +319,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		circuitView: AnalogGraphView,
 		voltageNodes: List<Int>,
 		branches: List<AnalogCircuitBranch>,
+		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
 		circuitView
@@ -331,7 +332,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					val branch = branches[currentVariableIndex]
 					val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
 					vertice.composeComponentConstituentEquation(
-						voltageNodes, branches, incomingPortId, currentVariableIndex, equationSystem
+						voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem
 					)
 				}
 			}

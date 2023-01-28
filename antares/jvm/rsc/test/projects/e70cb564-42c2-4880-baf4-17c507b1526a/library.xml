@@ -122,6 +122,11 @@
                 <translation lang='en' text='3 Parallel'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='25' uuid='3566b7b9-5949-46d6-84e0-1853d6c4314a'>
+              <name>
+                <translation lang='en' text='Serial Batteries'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
       </items>
