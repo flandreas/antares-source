@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.math
 
+import ch.scorpion.jabbah.base.module.BaseModule
+
 class LinearEquationSystem(val numberOfVariables: Int) {
 
 	private val coefficients = mutableListOf<DoubleArray>()
@@ -7,6 +9,8 @@ class LinearEquationSystem(val numberOfVariables: Int) {
 	private val constants = mutableListOf<Double>()
 
 	val equationCount: Int get() = coefficients.size
+
+	val isNonSingular: Boolean get() = BaseModule.linearEquationSystemSolver.isNonSingular(this)
 
 	fun addEquation(coefficients: DoubleArray, constant: Double) {
 		this.coefficients.add(coefficients)
@@ -19,4 +23,5 @@ class LinearEquationSystem(val numberOfVariables: Int) {
 	fun getCoefficients(index: Int): DoubleArray = coefficients[index]
 
 	fun getConstants(): List<Double> = constants
+
 }

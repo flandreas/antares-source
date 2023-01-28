@@ -9,6 +9,15 @@ import org.apache.commons.math3.linear.LUDecomposition
  */
 object LinearEquationSystemSolverJvm : LinearEquationSystemSolver {
 
+	override fun isNonSingular(system: LinearEquationSystem): Boolean {
+		return LUDecomposition(createMatrix(system)).solver.isNonSingular
+	}
+
 	override fun solve(system: LinearEquationSystem): DoubleArray =
-		LUDecomposition(Array2DRowRealMatrix(system.getCoefficients().toTypedArray())).solver.solve(ArrayRealVector(system.getConstants().toDoubleArray(), false)).toArray()
+		LUDecomposition(createMatrix(system)).solver.solve(ArrayRealVector(system.getConstants().toDoubleArray(), false)).toArray()
+
+
+
+	private fun createMatrix(system: LinearEquationSystem): Array2DRowRealMatrix =
+		Array2DRowRealMatrix(system.getCoefficients().toTypedArray())
 }

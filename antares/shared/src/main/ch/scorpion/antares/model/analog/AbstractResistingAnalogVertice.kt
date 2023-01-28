@@ -33,7 +33,7 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			currentVariableIndex: Int,
 			equationSystem: DynamicLinearEquationSystem
 		) {
-			val row = Array(equationSystem.numberOfVariables) { DynamicLinearEquationSystem.ZERO }
+			val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
 
 			val outgoingPortId = if (incomingPortId == 1) 2 else 1
 

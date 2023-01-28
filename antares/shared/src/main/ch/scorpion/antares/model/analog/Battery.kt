@@ -65,7 +65,7 @@ class Battery(
 		currentVariableIndex: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
-		val row = Array(equationSystem.numberOfVariables) { ZERO }
+		val row = Array(equationSystem.variableCount) { ZERO }
 
 		val voltageVariableIndex = voltageNodes.indexOf(positivePort.net!!.id)
 		row[branches.size + voltageVariableIndex] = MINUS_ONE

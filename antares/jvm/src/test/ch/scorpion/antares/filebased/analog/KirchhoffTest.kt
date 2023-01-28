@@ -90,15 +90,15 @@ class KirchhoffTest : AbstractFileBasedTest() {
 		val branches = labelBranchCurrents(analogGraphView)
 		val equationSystem = DynamicLinearEquationSystem(branches.size)
 
-		composeCurrentLawEquations(analogGraphView, branches, 10, equationSystem)
+		composeCurrentLawEquations(analogGraphView, branches, equationSystem)
 
-		// The ground Net is ignored, leaving 1 node where 3 branches meet
-		assertEquals(1, equationSystem.equationCount)
+		// The linearly dependent second equation will be removed when composing ALL equations
+		assertEquals(2, equationSystem.equationCount)
 
-		assertEquals(3, equationSystem.getCoefficients(0).size)
-		assertEquals(1.0, equationSystem.getCoefficients(0)[0])
-		assertEquals(-1.0, equationSystem.getCoefficients(0)[1])
-		assertEquals(1.0, equationSystem.getCoefficients(0)[2])
+		assertEquals(3, equationSystem.getCoefficients(1).size)
+		assertEquals(1.0, equationSystem.getCoefficients(1)[0])
+		assertEquals(-1.0, equationSystem.getCoefficients(1)[1])
+		assertEquals(1.0, equationSystem.getCoefficients(1)[2])
 	}
 
 	@Test

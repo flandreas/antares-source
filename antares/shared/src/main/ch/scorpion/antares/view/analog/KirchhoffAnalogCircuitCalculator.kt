@@ -84,12 +84,21 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
-		composeCurrentLawEquations(circuitView, branches, groundNodeNetId, equationSystem)
+		composeCurrentLawEquations(circuitView, branches, equationSystem)
 		val currentLawEquationsCount = equationSystem.equationCount
+
 		composeComponentConstituentEquations(circuitView, voltageNodes, branches, equationSystem)
 		val constituentEquationsCount = equationSystem.equationCount - currentLawEquationsCount
 
+		removeLinearDependentKCL(equationSystem, currentLawEquationsCount)
+
 		LOG.debug("KCL equations: $currentLawEquationsCount, Constituent Equations: $constituentEquationsCount")
+	}
+
+	private fun removeLinearDependentKCL(equationSystem: DynamicLinearEquationSystem, currentLawEquationsCount: Int) {
+		if (equationSystem.equationCount > equationSystem.variableCount) {
+			equationSystem.removeLinearlyDependentEquation(0 until currentLawEquationsCount)
+		}
 	}
 
 	/**
@@ -264,23 +273,21 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		edgeView.origin?.connectableView is AnalogGroundView || edgeView.destination?.connectableView is AnalogGroundView
 
 	/**
-	 * Composes the Kirchhoff's Current Law equations for every [AnalogNodeView].
+	 * Composes the Kirchhoff's Current Law (KCL) equations for every [AnalogNodeView].
 	 *
 	 * @param branches the value at index i contains the [AnalogEdgeView] IDs for branch current variable I(i)
-	 * @param groundNodeNetId the ID of the ground [Net] to be skipped
 	 * @param equationSystem the equation matrix to which the Current Law's equations are added
 	 */
 	fun composeCurrentLawEquations(
 		circuitView: AnalogGraphView,
 		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
 		circuitView
 			.getNodeViews()
-			.filter { it.net!!.id != groundNodeNetId }
+			.filterNot { it.getEdgeViews().any { ev -> isConnectedToGroundView(ev) } }
 			.forEach { nodeView ->
-				val row = Array(equationSystem.numberOfVariables) { ZERO }
+				val row = Array(equationSystem.variableCount) { ZERO }
 				nodeView.getEdgeViews().forEach { edgeView ->
 					val index = getBranchId(edgeView, branches)
 						?: throw IllegalStateException("Every EdgeView must be part of a branch")

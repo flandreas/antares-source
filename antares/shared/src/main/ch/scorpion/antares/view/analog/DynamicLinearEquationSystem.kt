@@ -8,7 +8,7 @@ typealias DoubleSupplier = () -> Double
  * A linear equation system whose coefficients and constants are dynamic,
  * i.e. they can be fetched from other objects before solving the system.
  */
-class DynamicLinearEquationSystem(val numberOfVariables: Int) {
+class DynamicLinearEquationSystem(val variableCount: Int) {
 
 	companion object {
 		val ZERO: DoubleSupplier = { 0.0 }
@@ -27,10 +27,20 @@ class DynamicLinearEquationSystem(val numberOfVariables: Int) {
 		this.constants.add(constant)
 	}
 
-	fun toLinearEquationSystem(): LinearEquationSystem {
-		val system = LinearEquationSystem(numberOfVariables)
+	private fun removeEquation(index: Int) {
+		coefficients.removeAt(index)
+		constants.removeAt(index)
+	}
+
+	fun toLinearEquationSystem(): LinearEquationSystem =
+		toLinearEquationSystemImpl()
+
+	private fun toLinearEquationSystemImpl(ignoredIndex: Int? = null): LinearEquationSystem {
+		val system = LinearEquationSystem(variableCount)
 		coefficients.forEachIndexed { i, c ->
-			system.addEquation(c.map { it.invoke() }.toDoubleArray(), constants[i].invoke())
+			if (ignoredIndex == null || i != ignoredIndex) {
+				system.addEquation(c.map { it.invoke() }.toDoubleArray(), constants[i].invoke())
+			}
 		}
 		return system
 	}
@@ -40,4 +50,22 @@ class DynamicLinearEquationSystem(val numberOfVariables: Int) {
 
 	fun getConstants(): DoubleArray =
 		constants.map { it.invoke() }.toDoubleArray()
+
+	fun removeLinearlyDependentEquation(range: IntRange) {
+		if (variableCount >= equationCount) {
+			throw IllegalStateException("Cannot remove equation from {$variableCount}x${equationCount} system")
+		}
+		if (equationCount > variableCount + 1) {
+			throw IllegalStateException("Can only remove at most 1 equation")
+		}
+
+		range.forEach { ignoredIndex ->
+			if (toLinearEquationSystemImpl(ignoredIndex).isNonSingular) {
+				removeEquation(ignoredIndex)
+				return
+			}
+		}
+
+		throw IllegalStateException("Cannot make system linearly independent by removing equation")
+	}
 }
