@@ -7,7 +7,6 @@ import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
-import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -50,34 +49,34 @@ enum class TransistorViewSymbol(
 			.lineTo(signalPortX, -1.6 * SCALE)
 			.close()
 
-		override fun render(view: TransistorView, context: DrawContext) {
+		override fun render(view: AbstractTransistorView<*>, context: DrawContext) {
 			drawGate(view, context)
 			drawBulk(view, context)
 
 			view.apply {
 				when (handedness) {
 					RIGHT -> {
-						drawSouthSignalPort(view, context, getPortView(model.sourcePort) as DigitalPortView)
-						drawNorthSignalPort(view, context, getPortView(model.drainPort) as DigitalPortView)
+						drawSouthSignalPort(view, context, getPortView(model.sourcePort) as AbstractAntaresPortView<*>)
+						drawNorthSignalPort(view, context, getPortView(model.drainPort) as AbstractAntaresPortView<*>)
 					}
 					LEFT -> {
-						drawSouthSignalPort(view, context, getPortView(model.drainPort) as DigitalPortView)
-						drawNorthSignalPort(view, context, getPortView(model.sourcePort) as DigitalPortView)
+						drawSouthSignalPort(view, context, getPortView(model.drainPort) as AbstractAntaresPortView<*>)
+						drawNorthSignalPort(view, context, getPortView(model.sourcePort) as AbstractAntaresPortView<*>)
 					}
 				}
 			}
 		}
 
-		override fun getGatePositionY(view: TransistorView): Int {
+		override fun getGatePositionY(view: AbstractTransistorView<*>): Int {
 			return when (view.handedness) {
 				RIGHT -> 0
 				LEFT -> -4 * SCALE
 			}
 		}
 
-		private fun drawGate(view: TransistorView, context: DrawContext) {
+		private fun drawGate(view: AbstractTransistorView<*>, context: DrawContext) {
 			view.apply {
-				(getPortView(model.gatePort) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.gatePort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
 				// Gate connection
 				val gateConnectionY = when(handedness) {
@@ -96,7 +95,7 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView) {
+		private fun drawSouthSignalPort(view: AbstractTransistorView<*>, context: DrawContext, portView: AbstractAntaresPortView<*>) {
 			view.apply {
 				portView.prepareConnectionDrawContext(context)
 				prepareDrainExecutionDrawContext(view, context, portView)
@@ -112,7 +111,7 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: DigitalPortView) {
+		private fun drawNorthSignalPort(view: AbstractTransistorView<*>, context: DrawContext, portView: AbstractAntaresPortView<*>) {
 			view.apply {
 				portView.prepareConnectionDrawContext(context)
 				prepareDrainExecutionDrawContext(view, context, portView)
@@ -129,9 +128,9 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawBulk(view: TransistorView, context: DrawContext) {
+		private fun drawBulk(view: AbstractTransistorView<*>, context: DrawContext) {
 			view.apply {
-				(getPortView(model.drainPort) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.drainPort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
 				val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 					0.5 * SCALE
@@ -139,7 +138,7 @@ enum class TransistorViewSymbol(
 					0.0
 				}
 
-				(getPortView(model.drainPort) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.drainPort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
 				context.g.translate(dx, 0.0)
 
@@ -157,7 +156,7 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawBulkArrow(view: TransistorView, context: DrawContext) {
+		private fun drawBulkArrow(view: AbstractTransistorView<*>, context: DrawContext) {
 			view.apply {
 				when (model.transistorType) {
 					P -> drawPTypeBulkArrow(context)
@@ -201,9 +200,9 @@ enum class TransistorViewSymbol(
 			.lineTo(-1.0 * SCALE, 0.4 * SCALE)
 			.close()
 
-		override fun getGatePositionY(view: TransistorView): Int = -2 * SCALE
+		override fun getGatePositionY(view: AbstractTransistorView<*>): Int = -2 * SCALE
 
-		override fun render(view: TransistorView, context: DrawContext) {
+		override fun render(view: AbstractTransistorView<*>, context: DrawContext) {
 			drawGate(view, context)
 
 			view.northPortView.apply {
@@ -214,10 +213,10 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawGate(view: TransistorView, context: DrawContext) {
+		private fun drawGate(view: AbstractTransistorView<*>, context: DrawContext) {
 			val gatePositionY = getGatePositionY(view).toDouble()
 			view.apply {
-				(getPortView(model.gatePort) as DigitalPortView).prepareConnectionDrawContext(context)
+				(getPortView(model.gatePort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 				when (model.transistorType) {
 					P -> {
 						context.g.drawOval(AbstractAntaresPortView.LENGTH.toDouble() + SCALE, getGatePositionY(this) - 0.5 * SCALE, circleSize, circleSize)
@@ -232,7 +231,7 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawNorthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
+		private fun drawNorthSignalPort(view: AbstractTransistorView<*>, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
 			prepareDrainExecutionDrawContext(view, context, portView)
 			context.g.apply {
@@ -268,7 +267,7 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		private fun drawSouthSignalPort(view: TransistorView, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
+		private fun drawSouthSignalPort(view: AbstractTransistorView<*>, context: DrawContext, portView: PortView<*>, isSource: Boolean) {
 			portView.prepareConnectionDrawContext(context)
 			prepareDrainExecutionDrawContext(view, context, portView)
 			context.g.apply {
@@ -317,17 +316,20 @@ enum class TransistorViewSymbol(
 		val configured: TransistorViewSymbol get() =
 			withName(BaseModule.properties.getString(PROP_TRANSISTOR_SYMBOL))
 
-		fun prepareDrainExecutionDrawContext(view: TransistorView, context: DrawContext, portView: PortView<*>) {
+		fun prepareDrainExecutionDrawContext(view: AbstractTransistorView<*>, context: DrawContext, portView: PortView<*>) {
 			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState && portView.port == view.model.drainPort && portView.port.isConnected) {
-				context.g.color = (portView.port.net!!.signal!! as DigitalSignal).color.foregroundColor
+				val signal = portView.port.net!!.signal!!
+				if (signal is DigitalSignal) {
+					context.g.color = signal.color.foregroundColor
+				}
 			}
 		}
 	}
 
 
-	abstract fun render(view: TransistorView, context: DrawContext)
+	abstract fun render(view: AbstractTransistorView<*>, context: DrawContext)
 
-	abstract fun getGatePositionY(view: TransistorView): Int
+	abstract fun getGatePositionY(view: AbstractTransistorView<*>): Int
 
 	override fun toString(): String {
 		return when (this) {

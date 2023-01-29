@@ -33,8 +33,8 @@ class TransistorViewBelowSelectionModel(
 		bounds = Ellipse2D(
 			pos.x + 2.0 * Look.SCALE - outset,
 			pos.y -5.0 * Look.SCALE - outset,
-			TransistorView.WIDTH + 2.0 * outset,
-			TransistorView.HEIGHT + 2.0 * outset)
+			AbstractTransistorView.WIDTH + 2.0 * outset,
+			AbstractTransistorView.HEIGHT + 2.0 * outset)
 		invalidate()
 		validate()
 	}

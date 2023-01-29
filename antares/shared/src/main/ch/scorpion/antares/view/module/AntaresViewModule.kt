@@ -148,6 +148,9 @@ object AntaresViewModule : AbstractModule() {
 	private const val RESISTOR = "Resistor"
 	private const val ANALOG_SWITCH = "AnalogSwitch"
 	private const val ANALOG_GROUND = "AnalogGround"
+	private const val ANALOG_TRANSISTOR_N = "AnalogTransistorN"
+	private const val ANALOG_TRANSISTOR_P = "AnalogTransistorP"
+
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -263,7 +266,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
-		properties.set(TransistorView.PROP_TRANSISTOR_CIRCLE, true)
+		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
 
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
 		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
@@ -345,6 +348,8 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
 		typeMap.register("analogNodeView", AnalogNodeView::class)
 		typeMap.register("analogGroundView", AnalogGroundView::class)
+		typeMap.register("analogTransistorView", AnalogTransistorView::class)
+
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -422,6 +427,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -578,6 +584,12 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
 		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
 		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/led.png" }, AnalogGroundView::class)
+		repository.register(ANALOG_TRANSISTOR_N, "library.element.Transistor.nType", { "/img/transistor.png" }) {
+			AnalogTransistorView(TransistorType.N)
+		}
+		repository.register(ANALOG_TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }) {
+			AnalogTransistorView(TransistorType.P)
+		}
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

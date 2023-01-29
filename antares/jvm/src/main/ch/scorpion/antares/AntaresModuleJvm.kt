@@ -359,7 +359,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			withName = TransistorViewSymbol::withName
 		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
-			id = TransistorView.PROP_TRANSISTOR_CIRCLE,
+			id = AbstractTransistorView.PROP_TRANSISTOR_CIRCLE,
 			nameKey = "antares.preference.TransistorCircle"
 		))
 

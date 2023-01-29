@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -70,7 +71,7 @@ class TransistorTest {
 	}
 
 	private fun assert(control: Bit, data: Bit, result: Bit) {
-		transistor.gatePort.setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
+		(transistor.gatePort as DigitalPort).setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)
 		transistor.inputPort.setIncomingSignal(DigitalSignalFactory.of(data), signalHandler)
 		assertEquals(result, transistor.outputPort.getOutgoingSignal()!!.bitAt(0))
 	}

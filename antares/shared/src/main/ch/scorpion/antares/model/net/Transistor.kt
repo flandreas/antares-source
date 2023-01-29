@@ -2,10 +2,13 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.effectiveGateInputBit
+import ch.scorpion.antares.model.net.TransistorIF.Companion.DEFAULT_TRANSISTOR_TYPE
+import ch.scorpion.antares.model.net.TransistorIF.Companion.DRAIN_PORT_ID
+import ch.scorpion.antares.model.net.TransistorIF.Companion.GATE_PORT_ID
+import ch.scorpion.antares.model.net.TransistorIF.Companion.SOURCE_PORT_ID
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
@@ -17,7 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class TransistorCalculator : VerticeCalculator<Transistor> {
 	override fun calculate(vertice: Transistor, data: GraphActorData, signalHandler: SignalHandler) {
-		val control = effectiveGateInputBit(data.getSignal<DigitalSignal>(Transistor.GATE_PORT_ID)!!.bitAt(0))
+		val control = effectiveGateInputBit(data.getSignal<DigitalSignal>(GATE_PORT_ID)!!.bitAt(0))
 		val result = when (control) {
 			Bit.Error -> DigitalSignalFactory.error(vertice.bitWidth)
 			else -> {
@@ -52,20 +55,9 @@ class TransistorCalculator : VerticeCalculator<Transistor> {
 class Transistor(
 	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), TransistorIF<DigitalSignal> {
 
 	companion object {
-		private val DEFAULT_TRANSISTOR_TYPE = TransistorType.N
-		private const val BASE_RESOURCE_KEY = "library.element.Transistor"
-		private val TYPE_N get() = Translations.getString("$BASE_RESOURCE_KEY.nType.name")
-		private val TYPE_N_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.nType.desc")
-		private val TYPE_P get() = Translations.getString("$BASE_RESOURCE_KEY.pType.name")
-		private val TYPE_P_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.pType.desc")
-
-		private const val SOURCE_PORT_ID = 1
-		const val GATE_PORT_ID = 2
-		private const val DRAIN_PORT_ID = 3
-
 		private val CALCULATOR = TransistorCalculator()
 
 		private fun logicToType(logic: Logic): TransistorType =
@@ -79,13 +71,13 @@ class Transistor(
 		set(value) {
 			if (field != value) {
 				field = value
-				sourcePort.bitWidth = value
-				drainPort.bitWidth = value
+				(sourcePort as DigitalPort).bitWidth = value
+				(drainPort as DigitalPort).bitWidth = value
 				stateChanged()
 			}
 		}
 
-	var transistorType: TransistorType = transistorType
+	override var transistorType: TransistorType = transistorType
 		set(value) {
 			if (field != value) {
 				field = value
@@ -101,20 +93,7 @@ class Transistor(
 		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, canBeUndefined = true))
 	}
 
-
 	/** ---- [GraphElement] interface */
-
-	override val type: String get() =
-		when (transistorType) {
-			TransistorType.N -> TYPE_N
-			TransistorType.P -> TYPE_P
-		}
-
-	override val typeDesc: String? get() =
-		when (transistorType) {
-			TransistorType.N -> TYPE_N_DESC
-			TransistorType.P -> TYPE_P_DESC
-		}
 
 	override fun graphParamsChanged(graph: Graph) {
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
@@ -123,20 +102,18 @@ class Transistor(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
-		super.write(writer)
+		super<CalculatingVertice>.write(writer)
+		super<TransistorIF>.write(writer)
 		bitWidth.write("bitWidth", writer)
-		writer.writeString("type", transistorType.customName)
 	}
 
 	override fun read(reader: StoreReader) {
-		super.read(reader)
+		super<CalculatingVertice>.read(reader)
+		super<TransistorIF>.read(reader)
 		bitWidth = BitWidth.read("bitWidth", reader)
 		if (reader.hasAttribute("logic")) {
 			// Backward compatibility: Transistor used to extend TriStateBufferGate
 			transistorType = logicToType(Logic.withName(reader.readString("logic")))
-		}
-		if (reader.hasAttribute("type")) {
-			transistorType = TransistorType.withName(reader.readString("type"))
 		}
 	}
 
@@ -149,18 +126,14 @@ class Transistor(
 
 	/** ---- [Transistor] */
 
-	val sourcePort: DigitalPort get() = getPort<DigitalSignal>(SOURCE_PORT_ID) as DigitalPort
-	val gatePort: DigitalPort get() = getPort<DigitalSignal>(GATE_PORT_ID) as DigitalPort
-	val drainPort: DigitalPort get() = getPort<DigitalSignal>(DRAIN_PORT_ID) as DigitalPort
-
 	val inputPortId: Int get() = SOURCE_PORT_ID
 
 	val outputPortId: Int get() = DRAIN_PORT_ID
 
-	val inputPort: DigitalPort get() = sourcePort
-	val outputPort: DigitalPort get() = drainPort
+	val inputPort: DigitalPort get() = sourcePort as DigitalPort
+	val outputPort: DigitalPort get() = drainPort as DigitalPort
 
-	val isOn: Boolean get() = isOn(effectiveGateInputBit(gatePort.getIncomingSignal()!!.bitAt(0)), this)
+	override val isOn: Boolean get() = isOn(effectiveGateInputBit((gatePort as DigitalPort).getIncomingSignal()!!.bitAt(0)), this)
 
 	fun isOn(bit: Bit, vertice: Transistor): Boolean =
 		when (vertice.transistorType) {
