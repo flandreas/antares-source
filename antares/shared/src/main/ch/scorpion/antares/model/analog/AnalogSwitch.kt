@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 /**
  * The electrical [resistance] of [AnalogSwitch] depends on the state of [isOn].
  */
-class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVertice {
+class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVertice, AnalogTwoPortVertice {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.AnalogSwitch"
@@ -55,5 +55,16 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 		AbstractResistingAnalogVertice.composeComponentConstituentEquation(
 			this,
 			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
+	}
+
+	override fun composeComponentConstituentEquation(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		groundNodeNetId: Int,
+		equationSystem: DynamicLinearEquationSystem
+	) {
+		AbstractAnalogTwoPortVertice.composeComponentConstituentEquation(this,
+			circuitView, voltageNodes, branches, groundNodeNetId, equationSystem)
 	}
 }

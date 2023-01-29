@@ -3,6 +3,9 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.net.TransistorIF
 import ch.scorpion.antares.model.net.TransistorIF.Companion.DEFAULT_TRANSISTOR_TYPE
 import ch.scorpion.antares.model.net.TransistorType
+import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -55,5 +58,15 @@ class AnalogTransistor(
 
 	override fun read(reader: StoreReader) {
 		super<TransistorIF>.read(reader)
+	}
+
+	override fun composeComponentConstituentEquation(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		groundNodeNetId: Int,
+		equationSystem: DynamicLinearEquationSystem
+	) {
+		// TODO
 	}
 }

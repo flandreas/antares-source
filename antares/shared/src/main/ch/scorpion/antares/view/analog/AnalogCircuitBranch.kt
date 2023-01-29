@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -12,6 +13,11 @@ import kotlin.math.abs
  * a negative ID.
  */
 class AnalogCircuitBranch {
+
+	companion object {
+		fun getBranchId(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Int? =
+			branches.indexOfFirstOrNull { it.containsId(edgeView.id) }
+	}
 
 	private val _edgeViewIds = mutableSetOf<Int>()
 

@@ -127,6 +127,11 @@
                 <translation lang='en' text='Serial Batteries'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='26' uuid='39825aea-1002-424c-b918-05173d07d3f0'>
+              <name>
+                <translation lang='en' text='Transistor'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
       </items>

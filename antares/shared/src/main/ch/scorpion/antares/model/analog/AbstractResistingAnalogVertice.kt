@@ -5,8 +5,8 @@ import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
-/** An [AnalogTwoPortVertice] with an electrical resistance. */
-interface ResistingAnalogVertice : AnalogTwoPortVertice {
+/** An [AnalogVertice] with an electrical resistance. */
+interface ResistingAnalogVertice : AnalogVertice {
 	val resistance: Double
 }
 
@@ -70,8 +70,7 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
-		Companion.composeComponentConstituentEquation(
-			this,
+		Companion.composeComponentConstituentEquation(this,
 			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
 	}
 }
