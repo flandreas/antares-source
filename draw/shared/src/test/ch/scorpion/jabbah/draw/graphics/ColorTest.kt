@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw.graphics
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class ColorTest {
 
 	@Test
