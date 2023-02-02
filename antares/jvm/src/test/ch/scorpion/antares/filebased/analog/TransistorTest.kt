@@ -40,17 +40,26 @@ class TransistorTest : AbstractFileBasedTest() {
 
 		KirchhoffAnalogCircuitCalculator.identifyBranches(batteryView, incomingEdgeView, analogGraphView, branches)
 
-		assertEquals(2, branches.size)
+		assertEquals(5, branches.size)
 
 		var branch = branches.first { it.containsId(5) }
-		assertTrue(branch.containsValue(5))
-		assertTrue(branch.containsValue(8))
-		assertTrue(branch.containsValue(9))
-		assertTrue(branch.containsValue(-11))
+		assertTrue(branch.containsId(5))
+
+		branch = branches.first { it.containsId(8) }
+		assertTrue(branch.containsId(8))
+		assertTrue(branch.containsId(9))
+		assertTrue(branch.containsId(17))
+
+		branch = branches.first { it.containsId(14) }
+		assertTrue(branch.containsId(14))
 
 		branch = branches.first { it.containsId(7) }
-		assertTrue(branch.containsValue(7))
-		assertTrue(branch.containsValue(10))
+		assertTrue(branch.containsId(7))
+		assertTrue(branch.containsId(10))
+
+		branch = branches.first { it.containsId(15) }
+		assertTrue(branch.containsId(15))
+		assertTrue(branch.containsId(18))
 	}
 
 	@Test
