@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.graph.view.port.PortView
 import kotlin.math.abs
 
 /**
@@ -204,20 +203,22 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		branches: MutableList<AnalogCircuitBranch>,
 		branch: AnalogCircuitBranch? = null
 	) {
-		if (connectableView is VerticeView<*> && connectableView.portViewCount == 2) {
+		if (connectableView is AnalogBranchVerticeView<*>) {
 			val incomingConnection = incomingEdgeView.getConnection(connectableView)
-			val oppositePortView = getOppositePortViewOfVerticeView(connectableView, incomingConnection!!.portView!!)
-			val outgoingEdgeView = graphView.getEdgeView(oppositePortView.port)!!
+			val oppositePortView = connectableView.getOppositeBranchPortView(incomingConnection!!.portView as AnalogPortView)
+			if (oppositePortView != null) {
+				val outgoingEdgeView = graphView.getEdgeView(oppositePortView.port)!!
 
-			AnalogCircuitBranch.getBranchId(outgoingEdgeView, branches)?.let { existingBranchId ->
-				if (branch != null) {
-					val existingBranch = branches[existingBranchId]
-					existingBranch.merge(branch)
-					if (existingBranch !== branch) {
-						branches.remove(branch)
+				AnalogCircuitBranch.getBranchId(outgoingEdgeView, branches)?.let { existingBranchId ->
+					if (branch != null) {
+						val existingBranch = branches[existingBranchId]
+						existingBranch.merge(branch)
+						if (existingBranch !== branch) {
+							branches.remove(branch)
+						}
 					}
-				}
-			} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
+				} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
+			}
 		} else if (connectableView is NodeView<*>) {
 			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && !isConnectedToGroundView(it) }
 			if (edgeViews.size == 1) {
@@ -260,9 +261,6 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			currentBranch
 		)
 	}
-
-	private fun getOppositePortViewOfVerticeView(verticeView: VerticeView<*>, portView: PortView<*>): PortView<*> =
-		verticeView.getPortViews().first { it !== portView }
 
 	private fun isConnectedToGroundView(edgeView: EdgeView<*>): Boolean =
 		edgeView.origin?.connectableView is AnalogGroundView || edgeView.destination?.connectableView is AnalogGroundView

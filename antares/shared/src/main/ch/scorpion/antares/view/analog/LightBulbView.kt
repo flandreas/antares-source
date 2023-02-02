@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -26,7 +25,7 @@ class LightBulbView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LightBulb = LightBulb(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : OrientableRectangularVerticeView<LightBulb>(styleProvider, model), LightEmitter {
+) : OrientableRectangularVerticeView<LightBulb>(styleProvider, model), LightEmitter, AnalogBranchVerticeView<LightBulb> {
 
 	companion object {
 		private val SIZE = wInt(4)

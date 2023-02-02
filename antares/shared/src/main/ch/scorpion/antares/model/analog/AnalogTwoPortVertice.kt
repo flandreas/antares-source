@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.model.analog.AnalogTwoPortVertice.Companion.currentVariableIndex
+import ch.scorpion.antares.model.analog.AnalogTwoPortVertice.Companion.incomingCurrentPortId
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogGraphView
@@ -13,6 +15,46 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  *  * A [AnalogVertice] with exactly two [AnalogPort]s.
  */
 interface AnalogTwoPortVertice : AnalogVertice {
+
+	companion object {
+
+		/**
+		 * Returns the [Port] of [vertice] at which the electrical current flows into [vertice]
+		 */
+		fun incomingCurrentPortId(
+			circuitView: AnalogGraphView,
+			vertice: AnalogTwoPortVertice,
+			branch: AnalogCircuitBranch,
+			port1Id: Int = 1,
+			port2Id: Int = 2
+		): Int {
+			val port1 = vertice.getPort<AnalogSignal>(port1Id)
+			val port2 = vertice.getPort<AnalogSignal>(port2Id)
+			val edgeView1 = circuitView.getEdgeView(port1)!!
+			return if (branch.isPositive(edgeView1.id)) {
+				if (edgeView1.destination!!.port === port1) {
+					port1.portId
+				} else {
+					port2.portId
+				}
+			} else {
+				if (edgeView1.destination!!.port === port1) {
+					port2.portId
+				} else {
+					port1.portId
+				}
+			}
+		}
+
+		fun currentVariableIndex(
+			circuitView: AnalogGraphView,
+			vertice: AnalogVertice,
+			branches: List<AnalogCircuitBranch>
+		): Int {
+			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(1))!!
+			return AnalogCircuitBranch.getBranchId(edgeView, branches)!!
+		}
+	}
 
 	/**
 	 * Composes the constituent equation for this [AbstractAnalogTwoPortVertice] during simulation.
@@ -33,34 +75,7 @@ interface AnalogTwoPortVertice : AnalogVertice {
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	)
-
-	/**
-	 * Returns the [Port] of [vertice] at which the electrical current flows into [vertice]
-	 */
-	fun incomingCurrentPortId(
-		circuitView: AnalogGraphView,
-		vertice: AnalogTwoPortVertice,
-		branch: AnalogCircuitBranch
-	): Int {
-		val port1 = vertice.getPort<AnalogSignal>(1)
-		val port2 = vertice.getPort<AnalogSignal>(2)
-		val edgeView1 = circuitView.getEdgeView(port1)!!
-		return if (branch.isPositive(edgeView1.id)) {
-			if (edgeView1.destination!!.port === port1) {
-				port1.portId
-			} else {
-				port2.portId
-			}
-		} else {
-			if (edgeView1.destination!!.port === port1) {
-				port2.portId
-			} else {
-				port1.portId
-			}
-		}
-	}
 }
-
 abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 	calculator: VerticeCalculator<T>,
 	baseResourceKey: String
@@ -72,6 +87,7 @@ abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 	}
 
 	companion object {
+
 		fun composeComponentConstituentEquation(
 			vertice: AnalogTwoPortVertice,
 			circuitView: AnalogGraphView,
@@ -80,15 +96,12 @@ abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 			groundNodeNetId: Int,
 			equationSystem: DynamicLinearEquationSystem
 		) {
-			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(1))!!
-			val currentVariableIndex = AnalogCircuitBranch.getBranchId(edgeView, branches)
-			if (currentVariableIndex != null) {
-				val branch = branches[currentVariableIndex]
-				val incomingPortId = vertice.incomingCurrentPortId(circuitView, vertice, branch)
-				vertice.composeComponentConstituentEquation(
-					voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem
-				)
-			}
+			val currentVariableIndex = currentVariableIndex(circuitView, vertice, branches)
+			val branch = branches[currentVariableIndex]
+			val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
+			vertice.composeComponentConstituentEquation(
+				voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem
+			)
 		}
 	}
 

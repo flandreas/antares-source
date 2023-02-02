@@ -13,7 +13,7 @@ class AnalogTransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogTransistor = AnalogTransistor(),
 	handedness: Handedness = DEFAULT_HANDEDNESS
-) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness) {
+) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness), AnalogBranchVerticeView<AnalogTransistor> {
 
 	constructor(type: TransistorType): this(model = AnalogTransistor(type), handedness = DEFAULT_HANDEDNESS)
 
@@ -30,4 +30,15 @@ class AnalogTransistorView(
 
 		updateGeometry()
 	}
+
+	/** ---- [AnalogBranchVerticeView] */
+
+	override fun getOppositeBranchPortView(portView: AnalogPortView): AnalogPortView? =
+		if (portView === getPortView(model.sourcePort)) {
+			getPortView(model.drainPort) as AnalogPortView
+		} else if (portView === getPortView(model.drainPort)) {
+			getPortView(model.sourcePort) as AnalogPortView
+		} else {
+			null
+		}
 }

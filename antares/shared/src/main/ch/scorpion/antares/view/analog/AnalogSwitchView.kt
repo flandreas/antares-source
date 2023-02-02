@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 class AnalogSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogSwitch = AnalogSwitch()
-) : AbstractSwitchView<AnalogSwitch>(styleProvider, model) {
+) : AbstractSwitchView<AnalogSwitch>(styleProvider, model), AnalogBranchVerticeView<AnalogSwitch> {
 
 	companion object {
 		private const val SIZE = 4 * Look.SCALE

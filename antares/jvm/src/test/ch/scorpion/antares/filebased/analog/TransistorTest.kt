@@ -1,13 +1,14 @@
 package ch.scorpion.antares.filebased.analog
 
 import ch.scorpion.antares.filebased.AbstractFileBasedTest
-import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
 import ch.scorpion.jabbah.base.module.BaseModule
-import org.junit.Ignore
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TransistorTest : AbstractFileBasedTest() {
 
@@ -25,7 +26,33 @@ class TransistorTest : AbstractFileBasedTest() {
 		openCircuit(UUID("39825aea-1002-424c-b918-05173d07d3f0"))
 	}
 
-	@Ignore
+	@Test
+	fun shouldLabelVoltageNodes() {
+		val voltageNodes = KirchhoffAnalogCircuitCalculator.labelVoltageNodes(analogGraphView, 6)
+		assertEquals(3, voltageNodes.size)
+	}
+
+	@Test
+	fun shouldIdentifyBranches() {
+		val batteryView = analogGraphView.getWithId(4) as BatteryView
+		val incomingEdgeView = analogGraphView.getWithId(11) as AnalogEdgeView
+		val branches = mutableListOf<AnalogCircuitBranch>()
+
+		KirchhoffAnalogCircuitCalculator.identifyBranches(batteryView, incomingEdgeView, analogGraphView, branches)
+
+		assertEquals(2, branches.size)
+
+		var branch = branches.first { it.containsId(5) }
+		assertTrue(branch.containsValue(5))
+		assertTrue(branch.containsValue(8))
+		assertTrue(branch.containsValue(9))
+		assertTrue(branch.containsValue(-11))
+
+		branch = branches.first { it.containsId(7) }
+		assertTrue(branch.containsValue(7))
+		assertTrue(branch.containsValue(10))
+	}
+
 	@Test
 	fun shouldCalculate() {
 		startSimulation()
