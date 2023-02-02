@@ -4,7 +4,7 @@ import kotlin.math.roundToInt
 
 class ColorGradient(val start: Color, val end: Color, val steps: Int = 100) {
 
-	private val colors: List<Color> by lazy { createGradient() }
+	val colors: List<Color> by lazy { createGradient() }
 
 	fun at(x: Float): Color =
 		colors[(x.coerceIn(0.0f..1.0f) * steps).roundToInt().coerceIn(0 until steps)]
@@ -27,5 +27,20 @@ class ColorGradient(val start: Color, val end: Color, val steps: Int = 100) {
 			blue += dBlue
 		}
 		return result
+	}
+}
+
+class CompositeColorGradient(val background: Color, val start: Color, val end: Color, val steps: Int = 100) {
+
+	private val colors: List<CompositeColor> by lazy { createGradient() }
+
+	fun at(x: Float): CompositeColor =
+		colors[(x.coerceIn(0.0f..1.0f) * steps).roundToInt().coerceIn(0 until steps)]
+
+	private fun createGradient(): List<CompositeColor> {
+		return ColorGradient(start, end, steps)
+			.colors
+			.map { CompositeColor(it, background) }
+			.toList()
 	}
 }

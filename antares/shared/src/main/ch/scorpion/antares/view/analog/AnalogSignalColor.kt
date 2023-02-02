@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.CompositeColorGradient
 import ch.scorpion.jabbah.draw.style.Themes
 
 /**
@@ -10,11 +11,14 @@ import ch.scorpion.jabbah.draw.style.Themes
  */
 object AnalogSignalColor {
 
-	// TODO Define a look-up table for a range of voltages between 0 and at least 5 volts
+	private val GRADIENT = CompositeColorGradient(
+		Themes.get<AntaresTheme>().one.backgroundColor,
+		Themes.get<AntaresTheme>().zero.foregroundColor,
+		Themes.get<AntaresTheme>().one.foregroundColor)
 
-	private val LOW_COLOR = Themes.get<AntaresTheme>().zero
-	private val HIGH_COLOR = Themes.get<AntaresTheme>().one
+	private const val MIN_VOLTAGE = 0.0
+	private const val MAX_VOLTAGE = 5.0
 
 	fun ofSignal(signal: AnalogSignal): CompositeColor =
-		if (signal.voltage < 1.5) LOW_COLOR else HIGH_COLOR
+		GRADIENT.at((signal.voltage.coerceIn(MIN_VOLTAGE, MAX_VOLTAGE) / MAX_VOLTAGE).toFloat())
 }
