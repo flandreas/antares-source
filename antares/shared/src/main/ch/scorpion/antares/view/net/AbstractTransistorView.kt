@@ -171,6 +171,9 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 
 	/** ---- [TransistorView] */
 
+	/** If `true`, the symbol visualizes the on/off state of this [AbstractTransistorView] (if supported by the symbol style). */
+	abstract val drawOnOff: Boolean
+
 	val northPortView: PortView<*> get() =
 		if (handedness == DEFAULT_HANDEDNESS) {
 			when (transistorType) {

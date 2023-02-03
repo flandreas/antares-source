@@ -5,9 +5,9 @@
       <model>
         <analogGraph _id='2' type='analog'>
           <elements>
-            <analogTransistor _id='3' type='n' gain='0.05'/>
+            <analogTransistor _id='3' type='n' gain='0.02'/>
             <resistor _id='4' id='2' delay='0' resistance='100.0' variable='false'/>
-            <resistor _id='5' id='3' delay='0' resistance='901.0' variable='true'/>
+            <resistor _id='5' id='3' delay='0' resistance='5994.0' variable='true'/>
             <battery _id='6' id='4' delay='0' voltage='5.0'/>
             <analogNet _id='7' id='5' delay='0'>
               <ports>

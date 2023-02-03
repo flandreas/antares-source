@@ -132,7 +132,7 @@ enum class TransistorViewSymbol(
 			view.apply {
 				(getPortView(model.drainPort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
-				val dx = if (!model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				val dx = if (view.drawOnOff && !model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 					0.5 * SCALE
 				} else {
 					0.0
@@ -293,7 +293,7 @@ enum class TransistorViewSymbol(
 					}
 				} else {
 					// Bar
-					if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
 						// Switched off
 						drawLine(signalLineX, 0.0, signalLineX, -0.5 * SCALE)
 						drawLine(signalLineX, -0.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)

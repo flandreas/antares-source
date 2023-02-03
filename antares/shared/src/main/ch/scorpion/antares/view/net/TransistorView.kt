@@ -31,6 +31,8 @@ class TransistorView(
 		setBounds(AbstractAntaresPortView.LENGTH, -5 * SCALE, WIDTH, HEIGHT)
 	}
 
+	override val drawOnOff: Boolean get() = true
+
 	override fun modelExchanged(oldModel: Transistor?) {
 		super.modelExchanged(oldModel)
 

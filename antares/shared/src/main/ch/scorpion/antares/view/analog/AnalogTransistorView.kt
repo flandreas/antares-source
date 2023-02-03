@@ -30,6 +30,8 @@ class AnalogTransistorView(
 		modelExchanged(null)
 	}
 
+	override val drawOnOff: Boolean get() = false
+
 	override fun modelExchanged(oldModel: AnalogTransistor?) {
 		super.modelExchanged(oldModel)
 
