@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.input.SwitchView
@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * An integration test for sending a signal to a [CircuitInOutImpl] with two [PortType.INOUT] in a sub-circuit.
+ * An integration test for sending a signal to a [DigitalCircuitInOutImpl] with two [PortType.INOUT] in a sub-circuit.
  */
 class InOutToInOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 

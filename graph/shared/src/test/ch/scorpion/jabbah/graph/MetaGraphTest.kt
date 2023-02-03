@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
@@ -114,7 +115,7 @@ class MetaGraphTest {
 	private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
 		return GraphViewModule.portViewFactory.createPortViewComponent(
 			GraphViewModule.portViewFactory.createPortView(
-				GraphModelModule.portFactory.createSubGraphPort(graphPort)))
+				GraphModelModule.portFactory.createSubGraphPort(graphPort, GenericGraphType)))
 	}
 
 	@Test

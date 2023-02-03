@@ -134,6 +134,7 @@
         <baseLibraryElement _id='65' id='AnalogGround'/>
         <baseLibraryElement _id='66' id='AnalogTransistorN'/>
         <baseLibraryElement _id='67' id='AnalogTransistorP'/>
+        <baseLibraryElement _id='68' id='AnalogInOut'/>
       </items>
     </libraryFolder>
   </folder>

@@ -3,12 +3,12 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -25,7 +25,7 @@ class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private lateinit var circuitInOutView: CircuitInOutView
+	private lateinit var circuitInOutView: DigitalCircuitInOutView
 	private lateinit var bidiSplitterView: BidirectionalSplitterView
 	private lateinit var realSwitchView: RealSwitchView
 	private lateinit var ledView: LEDView
@@ -35,7 +35,7 @@ class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
 	@BeforeTest
 	fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-		circuitInOutView = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_2)))
+		circuitInOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_2)))
 		bidiSplitterView = builder.addVerticeView(BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, branchCount = BranchCount.BC_2)))
 		realSwitchView = builder.addVerticeView(RealSwitchView())
 		ledView = builder.addVerticeView(LEDView())

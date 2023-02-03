@@ -1,14 +1,14 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.AntaresGraphTypes
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -46,7 +46,7 @@ class TestCircuitBuilder(
 	}
 
     /**
-     * Builds a [GraphView] that contains a [NotGateView] along with [CircuitInOutView] for input and output.
+     * Builds a [GraphView] that contains a [NotGateView] along with [DigitalCircuitInOutView] for input and output.
      */
     fun buildCustomNot(): GraphView {
         val not = addVerticeView(NotGateView())
@@ -71,8 +71,8 @@ class TestCircuitBuilder(
     }
 
 	/**
-	 * Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a
-	 * [CircuitInOutImpl] with [PortType.OUTPUT].
+	 * Build a [GraphView] that consists of a [DigitalCircuitInOutImpl] with [PortType.INOUT] connected to a
+	 * [DigitalCircuitInOutImpl] with [PortType.OUTPUT].
 	 */
 	fun buildInOutToOut(): GraphView {
 		connect(addInOut("IO"), addOutput("O"))
@@ -80,8 +80,8 @@ class TestCircuitBuilder(
 	}
 
 	/**
-	 * Build a [GraphView] that consists of a [CircuitInOutImpl] with [PortType.INOUT] connected to a
-	 * [CircuitInOutImpl] with [PortType.INOUT].
+	 * Build a [GraphView] that consists of a [DigitalCircuitInOutImpl] with [PortType.INOUT] connected to a
+	 * [DigitalCircuitInOutImpl] with [PortType.INOUT].
 	 */
 	fun buildInOutToInOut(): GraphView {
 		connect(addInOut("IO1"), addInOut("IO2"))
@@ -100,8 +100,8 @@ class TestCircuitBuilder(
 	}
 
 	/**
-	 * Builds a [GraphView] whose [Graph] consists of a [CircuitInOutImpl] of type [PortType.INPUT]
-	 * with [BitWidthExpression] [inputExpression] and a [CircuitInOutImpl] of type [PortType.OUTPUT]
+	 * Builds a [GraphView] whose [Graph] consists of a [DigitalCircuitInOutImpl] of type [PortType.INPUT]
+	 * with [BitWidthExpression] [inputExpression] and a [DigitalCircuitInOutImpl] of type [PortType.OUTPUT]
 	 * with [BitWidthExpression] [outputExpression], both unconnected.
 	 * Adds a [GraphParamDefinition] of type [BitWidthGraphParamType] with name "BW"
 	 */
@@ -124,14 +124,14 @@ class TestCircuitBuilder(
 		return graphView
 	}
 
-	fun addInput(name: String? = null): CircuitInOutView = addInOut(name, PortType.INPUT)
+	fun addInput(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.INPUT)
 
-	fun addOutput(name: String? = null): CircuitInOutView = addInOut(name, PortType.OUTPUT)
+	fun addOutput(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT)
 
-	fun addInOut(name: String? = null): CircuitInOutView = addInOut(name, PortType.INOUT)
+	fun addInOut(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.INOUT)
 
-	private fun addInOut(name: String? = null, portType: PortType): CircuitInOutView {
-		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, portType), eventBus)
+	private fun addInOut(name: String? = null, portType: PortType): DigitalCircuitInOutView {
+		val inout = DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType), eventBus)
 		graphView.add(inout)
 		return inout
 	}

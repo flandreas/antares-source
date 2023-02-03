@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.analysis
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -43,7 +43,7 @@ class CircuitAnalysisService {
 	}
 
 	private fun buildEmptyTruthTable(circuit: DigitalGraph): TruthTable {
-		val inputs = circuit.graphPorts.filter { it.portType == PortType.INPUT }.map { it as CircuitInOut }
+		val inputs = circuit.graphPorts.filter { it.portType == PortType.INPUT }.map { it as DigitalCircuitInOut }
 		if (inputs.isEmpty()) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.noInputs.msg"))
 		}
@@ -51,7 +51,7 @@ class CircuitAnalysisService {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.multiBit.msg"))
 		}
 
-		val outputs = circuit.graphPorts.filter { it.portType == PortType.OUTPUT }.map { it as CircuitInOut }
+		val outputs = circuit.graphPorts.filter { it.portType == PortType.OUTPUT }.map { it as DigitalCircuitInOut }
 		if (outputs.isEmpty()) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.noOutputs.msg"))
 		}

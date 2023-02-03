@@ -1,11 +1,10 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.PortType
@@ -35,8 +34,8 @@ class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 	private val library get() = LibraryModule.libraryHolder.library
 
 	private lateinit var subGraphVV: SubGraphVerticeView<out SubGraphVertice>
-	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b = CircuitInOutView(model = CircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 

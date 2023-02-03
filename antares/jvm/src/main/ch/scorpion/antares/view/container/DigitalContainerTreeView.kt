@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.container
 
-import ch.scorpion.antares.model.inout.CircuitInOutBitWidthChanged
-import ch.scorpion.antares.model.inout.CircuitInOutSignalRepresentationChanged
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -21,23 +21,23 @@ class DigitalContainerTreeView(
 	eventBus: EventBus = BaseModule.eventBus
 ) : ContainerTreeView(portFactory, portViewFactory, styleProvider, eventBus) {
 
-	private val bitWidthHandler: EventHandler<CircuitInOutBitWidthChanged> = {
+	private val bitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = {
 		val treeNode = containerTree?.model?.getPortsTreeNode(it.circuitInOut.name!!)
-		if (treeNode != null && treeNode.userObject is CircuitInOutView) {
-			(treeNode.userObject as CircuitInOutView).bitWidth = it.newValue
+		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
+			(treeNode.userObject as DigitalCircuitInOutView).bitWidth = it.newValue
 		}
 	}
 
-	private val signalRepresentationHandler: EventHandler<CircuitInOutSignalRepresentationChanged> = {
+	private val signalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = {
 		val treeNode = containerTree?.model?.getPortsTreeNode(it.circuitInOut.name!!)
-		if (treeNode != null && treeNode.userObject is CircuitInOutView) {
-			(treeNode.userObject as CircuitInOutView).signalRepresentation = it.newValue
+		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
+			(treeNode.userObject as DigitalCircuitInOutView).signalRepresentation = it.newValue
 		}
 	}
 
     init {
-	    eventBus.register(CircuitInOutBitWidthChanged::class, bitWidthHandler)
-	    eventBus.register(CircuitInOutSignalRepresentationChanged::class, signalRepresentationHandler)
+	    eventBus.register(DigitalCircuitInOutBitWidthChanged::class, bitWidthHandler)
+	    eventBus.register(DigitalCircuitInOutSignalRepresentationChanged::class, signalRepresentationHandler)
     }
 
 	override fun dispose() {

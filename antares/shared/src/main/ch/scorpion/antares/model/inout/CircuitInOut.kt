@@ -1,62 +1,37 @@
 package ch.scorpion.antares.model.inout
 
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.BidirectionalGraphPort
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.GraphOutput
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 
 /**
- * A [Vertice] that can feed a [DigitalSignal] into a circuit [Graph] and forward it to the outside of a [Graph].
+ * A [Vertice] that can feed a signal into a circuit [Graph] and forward it to the outside of a [Graph].
  *
  * On a conceptual level, a [CircuitInOut] can be seen as a [Port] of an entire [Graph], although it
  * is a [Vertice] that contains a [Port] with a particular [PortType].
+ *
+ * [CircuitInOut]s are potentially bi-directional. Concrete implementations might allow the user
+ * tho choose which signal directions (input, output, input-output) are to be supported.
+ *
+ * [CircuitInOut]s are interactable, i.e. the user can click on their views to change the
+ * current signal. This is only allowed for top-level [CircuitInOut], because otherwise
+ * the user's input would interfere with signals arriving from surrounding circuits.
+ *
+ * @param T type of the signal
  */
-interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSignal>, DigitalSignalSource {
-
-    /**
-     * Determines whether this [CircuitInOut] belongs to a top-level [Graph]. Manually setting the input
-     * value is only allowed for top-level [CircuitInOut]s.
-     */
-    val isToplevel: Boolean
-
-    var signalRepresentation: DigitalSignalRepresentation
+interface CircuitInOut<T : Any> : BidirectionalGraphPort<T>, InteractableVertice {
 
 	/**
-	 * Toggles the bit at the specified index.
-	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
-	 * used by a [Switch].
+	 * Determines whether this [CircuitInOut] belongs to a top-level [Graph]. Manually setting the input
+	 * value is only allowed for top-level [CircuitInOut]s.
 	 */
-	fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler)
+	val isToplevel: Boolean
 
 	/**
 	 * Sets the new signal entered manually by the user.
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].
 	 */
-	fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler)
+	fun setSignalManually(signal: T, signalHandler: SignalHandler)
 }
-
-/** Notifies the change of the [BitWidth] of a [CircuitInOut].*/
-class CircuitInOutBitWidthChanged(
-    val circuitInOut: CircuitInOut,
-    val oldValue: BitWidth,
-    val newValue: BitWidth
-)
-
-/** Notifies the change of the [DigitalSignalRepresentation] of a [CircuitInOut].*/
-class CircuitInOutSignalRepresentationChanged(
-    val circuitInOut: CircuitInOut,
-    val oldValue: DigitalSignalRepresentation,
-    val newValue: DigitalSignalRepresentation
-)

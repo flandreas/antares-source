@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.model.gate.TriStateBufferGate
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit.True
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
@@ -26,7 +26,7 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 	private lateinit var s1: Switch
 	private lateinit var d2: Switch
 	private lateinit var s2: Switch
-	private lateinit var output: CircuitInOut
+	private lateinit var output: DigitalCircuitInOut
 	private lateinit var ref1: SubGraphVerticeRef
 
 	@BeforeTest
@@ -38,7 +38,7 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 		s1 = openedCircuitView.graph!!.withId(3) as Switch
 		d2 = openedCircuitView.graph!!.withId(5) as Switch
 		s2 = openedCircuitView.graph!!.withId(4) as Switch
-		output = openedCircuitView.graph!!.withId(11) as CircuitInOut
+		output = openedCircuitView.graph!!.withId(11) as DigitalCircuitInOut
 
 		startSimulation()
 		processUntilQueueIsEmpty()

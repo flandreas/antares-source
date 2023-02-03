@@ -5,7 +5,7 @@ import ch.scorpion.antares.property.*
 import ch.scorpion.antares.ui.registerAntaresIconsInProvider
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.gate.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.jabbah.base.AbstractModule
@@ -104,7 +104,7 @@ object AntaresModuleJs : AbstractModule() {
 		registry.register(XnorGateView::class, LogicGateViewPropertyPage<XnorGateView>())
 		registry.register(XorGateView::class, LogicGateViewPropertyPage<XorGateView>())
 		registry.register(TriStateBufferGateView::class, TriStateBufferGateViewPropertyPage())
-		registry.register(CircuitInOutView::class, CircuitInOutViewPropertyPage())
+		registry.register(DigitalCircuitInOutView::class, CircuitInOutViewPropertyPage())
 		registry.register(DigitalEdgeView::class, EdgeViewPropertyPage())
 	}
 }

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ExternalFunctionSymbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
@@ -19,7 +19,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 
 	/**
 	 * Maintains the names of [GraphInput]s to which a clock has been applied.
-	 * Used for forbidding application of more than one clock to the same [CircuitInOutView].
+	 * Used for forbidding application of more than one clock to the same [DigitalCircuitInOutView].
 	 */
 	private val clockApplications = mutableListOf<String>()
 
@@ -92,7 +92,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 			postMultipleClockIssue(inputName)
 		}
 		cvDelegate.getInputGraphPortView(inputName)?.let { input ->
-			val cvInput = input as CircuitInOutView
+			val cvInput = input as DigitalCircuitInOutView
 			clockApplications.add(inputName)
 			runner.applyOscillation(
 				cvInput.model,

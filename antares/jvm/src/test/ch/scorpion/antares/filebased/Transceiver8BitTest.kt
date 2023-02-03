@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.model.gate.TriStateBufferGate
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -15,7 +15,7 @@ class Transceiver8BitTest : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var a: CircuitInOut
+	private lateinit var a: DigitalCircuitInOut
 	private lateinit var transceiverA: SubGraphVerticeRef
 	private lateinit var transceiverB: SubGraphVerticeRef
 	private lateinit var transceiverC: SubGraphVerticeRef
@@ -24,7 +24,7 @@ class Transceiver8BitTest : AbstractFileBasedTest() {
 	fun openAndStartCircuit() {
 		openCircuit(UUID("3dafc474-8fcb-4440-8dbc-70b947fcd2be"))
 
-		a = openedCircuitView.graph!!.withId(2) as CircuitInOut
+		a = openedCircuitView.graph!!.withId(2) as DigitalCircuitInOut
 		transceiverA = openedCircuitView.graph!!.withId(3) as SubGraphVerticeRef
 		transceiverB = openedCircuitView.graph!!.withId(5) as SubGraphVerticeRef
 		transceiverC = openedCircuitView.graph!!.withId(9) as SubGraphVerticeRef

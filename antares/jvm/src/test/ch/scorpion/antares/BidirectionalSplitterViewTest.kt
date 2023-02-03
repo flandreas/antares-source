@@ -1,12 +1,12 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.DigitalCombinedNetAccess
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -25,9 +25,9 @@ class BidirectionalSplitterViewTest : AbstractJvmCircuitTest() {
 
 	private lateinit var circuitView: GraphView
 	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
-	private val in0 = CircuitInOutView(model = CircuitInOutImpl(name = "I0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val in1 = CircuitInOutView(model = CircuitInOutImpl(name = "I1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
+	private val in0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val in1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 

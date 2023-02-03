@@ -1,6 +1,6 @@
 package ch.scorpion.antares.filebased
 
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.Bit.True
 import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
@@ -19,19 +19,19 @@ class WireTapTest : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var a: CircuitInOut
-	private lateinit var b: CircuitInOut
-	private lateinit var t0: CircuitInOut
-	private lateinit var t1: CircuitInOut
+	private lateinit var a: DigitalCircuitInOut
+	private lateinit var b: DigitalCircuitInOut
+	private lateinit var t0: DigitalCircuitInOut
+	private lateinit var t1: DigitalCircuitInOut
 
 	@BeforeTest
 	fun openAndStartCircuit() {
 		openCircuit(UUID("e147b930-31b7-4234-8b71-4e073fc09da9"))
 
-		a = openedCircuitView.graph!!.withId(1) as CircuitInOut
-		b = openedCircuitView.graph!!.withId(2) as CircuitInOut
-		t0 = openedCircuitView.graph!!.withId(5) as CircuitInOut
-		t1 = openedCircuitView.graph!!.withId(6) as CircuitInOut
+		a = openedCircuitView.graph!!.withId(1) as DigitalCircuitInOut
+		b = openedCircuitView.graph!!.withId(2) as DigitalCircuitInOut
+		t0 = openedCircuitView.graph!!.withId(5) as DigitalCircuitInOut
+		t1 = openedCircuitView.graph!!.withId(6) as DigitalCircuitInOut
 
 		startSimulation()
 	}

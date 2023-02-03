@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.checkCombinedNetAccess
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -20,10 +20,10 @@ class CombinerSplitterTest : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var a0: CircuitInOut
-	private lateinit var a3: CircuitInOut
-	private lateinit var b0: CircuitInOut
-	private lateinit var b3: CircuitInOut
+	private lateinit var a0: DigitalCircuitInOut
+	private lateinit var a3: DigitalCircuitInOut
+	private lateinit var b0: DigitalCircuitInOut
+	private lateinit var b3: DigitalCircuitInOut
 
 	private lateinit var combinerA4: BidirectionalSplitter
 	private lateinit var splitterA4: BidirectionalSplitter
@@ -34,16 +34,16 @@ class CombinerSplitterTest : AbstractFileBasedTest() {
 	fun openAndStartCircuit() {
 		openCircuit(UUID("90132379-7ec1-48bb-bfe3-ece4d86b6ee9"))
 
-		a0 = openedCircuitView.graph!!.withId(13) as CircuitInOut
-		a3 = openedCircuitView.graph!!.withId(16) as CircuitInOut
+		a0 = openedCircuitView.graph!!.withId(13) as DigitalCircuitInOut
+		a3 = openedCircuitView.graph!!.withId(16) as DigitalCircuitInOut
 
 		combinerA4 = openedCircuitView.graph!!.withId(1) as BidirectionalSplitter
 		splitterA4 = openedCircuitView.graph!!.withId(2) as BidirectionalSplitter
 		combinerB4 = openedCircuitView.graph!!.withId(4) as BidirectionalSplitter
 		splitterB4 = openedCircuitView.graph!!.withId(5) as BidirectionalSplitter
 
-		b0 = openedCircuitView.graph!!.withId(17) as CircuitInOut
-		b3 = openedCircuitView.graph!!.withId(20) as CircuitInOut
+		b0 = openedCircuitView.graph!!.withId(17) as DigitalCircuitInOut
+		b3 = openedCircuitView.graph!!.withId(20) as DigitalCircuitInOut
 
 		startSimulation()
 	}

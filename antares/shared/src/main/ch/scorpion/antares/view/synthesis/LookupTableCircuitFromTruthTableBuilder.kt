@@ -7,7 +7,7 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.addressable.LookupTableView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -34,7 +34,7 @@ class LookupTableCircuitFromTruthTableBuilder(
 		var yPos: Int = 0,
 		var concentrator: ConcentratorView? = null,
 		var lut: LookupTableView? = null,
-		var output: CircuitInOutView? = null
+		var output: DigitalCircuitInOutView? = null
 	)
 
 	private var concentratorY = CONCENTRATOR_Y

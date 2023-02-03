@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.gate.OrGate
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Constant
@@ -15,7 +15,7 @@ import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.gate.OrGateView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.base.event.EventBus
@@ -43,13 +43,13 @@ class CircuitBuilder(
 		name: String,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): CircuitInOutView = addInOut(name, PortType.INPUT, location, orientation)
+	): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, location, orientation)
 
 	fun addOutput(
 		name: String,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): CircuitInOutView = addInOut(name, PortType.OUTPUT, location, orientation)
+	): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, location, orientation)
 
 	fun addNot(
 		location: Point2D = Point2D.ZERO,
@@ -114,8 +114,8 @@ class CircuitBuilder(
 		portType: PortType,
 		location: Point2D,
 		orientation: Direction
-	): CircuitInOutView =
-		CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, portType), eventBus, orientation).also {
+	): DigitalCircuitInOutView =
+		DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType), eventBus, orientation).also {
 			addVerticeView(it, location)
 		}
 

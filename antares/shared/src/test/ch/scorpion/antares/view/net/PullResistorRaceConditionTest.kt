@@ -1,12 +1,11 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -19,7 +18,7 @@ class PullResistorRaceConditionTest : AbstractCircuitTest() {
 
 	private lateinit var builder: GraphViewBuilder<DigitalSignal>
 	private lateinit var pullResistorView: PullResistorView
-	private lateinit var inOutView: CircuitInOutView
+	private lateinit var inOutView: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = builder.graphView
 
@@ -31,7 +30,7 @@ class PullResistorRaceConditionTest : AbstractCircuitTest() {
 	@Test
 	fun shouldForwardPullResistorValueAtStartUp() {
 		pullResistorView = builder.addVerticeView(PullResistorView(PullDirection.LOW))
-		inOutView = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INOUT)))
+		inOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT)))
 		builder.connect(pullResistorView, inOutView)
 
 		startSimulation()
@@ -43,7 +42,7 @@ class PullResistorRaceConditionTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldNotDependOnAddOrder() {
-		inOutView = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INOUT)))
+		inOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT)))
 		pullResistorView = builder.addVerticeView(PullResistorView(PullDirection.LOW))
 		builder.connect(pullResistorView, inOutView)
 

@@ -1,10 +1,10 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -20,7 +20,7 @@ class PullResistorWithCircuitInOutTest : AbstractCircuitTest() {
 
 	private lateinit var builder: GraphViewBuilder<DigitalSignal>
 	private lateinit var pullResistorView: PullResistorView
-	private lateinit var inOutView: CircuitInOutView
+	private lateinit var inOutView: DigitalCircuitInOutView
 	private lateinit var ledView: LEDView
 
 	override fun getCircuitView(): GraphView = builder.graphView
@@ -29,7 +29,7 @@ class PullResistorWithCircuitInOutTest : AbstractCircuitTest() {
 	fun setupCircuit() {
 		builder = GraphViewBuilder("test")
 
-		inOutView = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INOUT)))
+		inOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT)))
 		inOutView.orientation = Direction.SOUTH
 		inOutView.location = Point2D(0, 100)
 

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.container
 
-import ch.scorpion.antares.model.inout.CircuitInOutBitWidthChanged
-import ch.scorpion.antares.model.inout.CircuitInOutSignalRepresentationChanged
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -16,14 +16,14 @@ class DigitalContainerEditor(
     eventBus: EventBus = BaseModule.eventBus
 ) : ContainerEditor(view, eventBus) {
 
-	private val circuitInOutBitWidthHandler: EventHandler<CircuitInOutBitWidthChanged> = {
+	private val circuitInOutBitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = {
 		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
 		if (portViewComponent != null) {
 			(portViewComponent.port as DigitalPort).bitWidth = it.newValue
 		}
 	}
 
-	private val circuitInOutSignalRepresentationHandler: EventHandler<CircuitInOutSignalRepresentationChanged> = {
+	private val circuitInOutSignalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = {
 		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
 		if (portViewComponent != null) {
 			(portViewComponent.port as DigitalPort).signalRepresentation = it.newValue
@@ -31,8 +31,8 @@ class DigitalContainerEditor(
 	}
 
     init {
-        eventBus.register(CircuitInOutBitWidthChanged::class, circuitInOutBitWidthHandler)
-	    eventBus.register(CircuitInOutSignalRepresentationChanged::class, circuitInOutSignalRepresentationHandler)
+        eventBus.register(DigitalCircuitInOutBitWidthChanged::class, circuitInOutBitWidthHandler)
+	    eventBus.register(DigitalCircuitInOutSignalRepresentationChanged::class, circuitInOutSignalRepresentationHandler)
     }
 
 	override fun dispose() {

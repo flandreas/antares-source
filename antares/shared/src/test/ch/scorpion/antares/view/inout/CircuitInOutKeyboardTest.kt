@@ -32,8 +32,8 @@ class CircuitInOutKeyboardTest {
 		assertEquals(Rectangle2D(position, Dimension2D(CircuitInOutKeyboard.KEYBOARD_WIDTH, CircuitInOutKeyboard.KEYBOARD_HEIGHT)), keyboard.boundingBox)
 	}
 
-	private fun circuitInOutMock(bbox: Rectangle2D): CircuitInOutView {
-		val mock = mockk<CircuitInOutView>()
+	private fun circuitInOutMock(bbox: Rectangle2D): DigitalCircuitInOutView {
+		val mock = mockk<DigitalCircuitInOutView>()
 		every { mock.boundingBox } returns bbox
 		every { mock.signalRepresentation } returns DigitalSignalRepresentation.HEXADECIMAL
 		return mock

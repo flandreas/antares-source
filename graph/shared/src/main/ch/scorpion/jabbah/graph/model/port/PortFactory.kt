@@ -1,18 +1,13 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 
 /**
  * A factory for creating various instances of [Port] related classes.
  */
 interface PortFactory {
 
-    fun <T: Any> createPort(portType: PortType): Port<T>
-
-    fun <T: Any> createSubGraphPort(graphPort: GraphPort<T>): Port<T>
+    fun <T: Any> createSubGraphPort(graphPort: GraphPort<T>, type: GraphType): Port<T>
 
     fun <T: Any> createOscilloscopeProbePort(name: String?): InputPort<T>
 }
@@ -20,11 +15,7 @@ interface PortFactory {
 /** Undefined implementation of the [PortFactory] interface according to the null pattern.*/
 class UndefinedPortFactory : PortFactory {
 
-    override fun <T : Any> createPort(portType: PortType): Port<T> {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>): Port<T> {
+    override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>, type: GraphType): Port<T> {
         throw UnsupportedOperationException("not implemented")
     }
 

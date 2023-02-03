@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
@@ -45,8 +45,8 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 
 	@Test
 	fun shouldUpdateCircuit() {
-		val input = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphInput<DigitalSignal>("I") as CircuitInOut
-		val output = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphOutput<DigitalSignal>("O") as CircuitInOut
+		val input = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphInput<DigitalSignal>("I") as DigitalCircuitInOut
+		val output = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphOutput<DigitalSignal>("O") as DigitalCircuitInOut
 
 		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
 

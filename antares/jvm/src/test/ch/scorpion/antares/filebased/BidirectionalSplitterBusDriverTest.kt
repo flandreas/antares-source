@@ -1,6 +1,6 @@
 package ch.scorpion.antares.filebased
 
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -16,9 +16,9 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 	}
 
 	private lateinit var dirSwitch: Switch
-	private lateinit var inOutA0: CircuitInOut
-	private lateinit var inOutA1: CircuitInOut
-	private lateinit var inOutB: CircuitInOut
+	private lateinit var inOutA0: DigitalCircuitInOut
+	private lateinit var inOutA1: DigitalCircuitInOut
+	private lateinit var inOutB: DigitalCircuitInOut
 
 	@BeforeTest
 	fun openAndStartCircuit() {
@@ -28,9 +28,9 @@ class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 
 		dirSwitch = openedCircuitView.graph!!.withId(8) as Switch
-		inOutA0 = openedCircuitView.graph!!.withId(3) as CircuitInOut
-		inOutA1 = openedCircuitView.graph!!.withId(12) as CircuitInOut
-		inOutB = openedCircuitView.graph!!.withId(4) as CircuitInOut
+		inOutA0 = openedCircuitView.graph!!.withId(3) as DigitalCircuitInOut
+		inOutA1 = openedCircuitView.graph!!.withId(12) as DigitalCircuitInOut
+		inOutB = openedCircuitView.graph!!.withId(4) as DigitalCircuitInOut
 	}
 
 	@AfterTest

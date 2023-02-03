@@ -107,15 +107,15 @@ class TestLibraryBuilder(
 
 		for (circuitInput in circuitView.graph!!.graphInputs) {
 			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput, circuitView.graph!!.type))))
 		}
 		for (circuitOutput in circuitView.graph!!.graphOutputs) {
 			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput, circuitView.graph!!.type))))
 		}
 		for (circuitInOut in circuitView.graph!!.graphInOuts) {
 			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInOut))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInOut, circuitView.graph!!.type))))
 		}
 
 		return containerDrawing

@@ -1,14 +1,13 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -21,7 +20,7 @@ class TunnelViewIntegrationTest : AbstractCircuitTest() {
 	private lateinit var builder: GraphViewBuilder<DigitalSignal>
 	private lateinit var tunnelView1: TunnelView
 	private lateinit var tunnelView2: TunnelView
-	private lateinit var inOutView: CircuitInOutView
+	private lateinit var inOutView: DigitalCircuitInOutView
 	private lateinit var pullResistorView: PullResistorView
 	private lateinit var edgeView1: EdgeView<DigitalSignal>
 	private lateinit var edgeView2: EdgeView<DigitalSignal>
@@ -31,7 +30,7 @@ class TunnelViewIntegrationTest : AbstractCircuitTest() {
 	@BeforeTest
 	fun setupCircuit() {
 		builder = GraphViewBuilder("test")
-		inOutView = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INOUT)))
+		inOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT)))
 		tunnelView1 = builder.addVerticeView(TunnelView(model = Tunnel("A")))
 		tunnelView2 = builder.addVerticeView(TunnelView(model = Tunnel("A")))
 		pullResistorView = builder.addVerticeView(PullResistorView(model = PullResistor(pullDirection = PullDirection.HIGH)))

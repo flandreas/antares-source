@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.graph.model.GraphPort
 
 /**
  * A graphical representation of a [GraphPort].
+ * @param T the type of the model
  */
 interface GraphPortView<T : GraphPort<Any>> : VerticeView<T> {
 

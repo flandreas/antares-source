@@ -2,11 +2,11 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.OrGateView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.AffineTransformImpl
@@ -40,13 +40,13 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 	private lateinit var switch: SwitchView
 
-	private lateinit var input: CircuitInOutView
+	private lateinit var input: DigitalCircuitInOutView
 
 	private lateinit var orGate: OrGateView
 
 	private lateinit var led: LEDView
 
-	private lateinit var output: CircuitInOutView
+	private lateinit var output: DigitalCircuitInOutView
 
 	private val applicationModeHolder = DummyApplicationModeHolder()
 
@@ -58,10 +58,10 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 		val builder = TestCircuitBuilder("bla", styleProvider, eventBus)
 		switch = builder.addVerticeView(SwitchView())
-		input = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT, name = "I")))
+		input = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT, name = "I")))
 		orGate = builder.addVerticeView(OrGateView())
 		led = builder.addVerticeView(LEDView())
-		output = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT)))
+		output = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT)))
 
 		builder.connect(input, orGate, orGate.vertice.getInput(1))
 		builder.connect(switch, orGate, orGate.vertice.getInput(2))

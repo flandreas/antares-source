@@ -75,11 +75,11 @@ class CompositeTestGraphViewBuilder(
 
 		for (circuitInput in graphView.graph!!.graphInputs) {
 			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput, graphView.graph!!.type))))
 		}
 		for (circuitOutput in graphView.graph!!.graphOutputs) {
 			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput, graphView.graph!!.type))))
 		}
 
 		if (containerLabel != null) {

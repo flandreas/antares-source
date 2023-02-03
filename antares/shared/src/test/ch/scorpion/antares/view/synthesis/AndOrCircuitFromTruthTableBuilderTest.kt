@@ -9,7 +9,7 @@ import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.NotGateView
 import ch.scorpion.antares.view.gate.OrGateView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -37,7 +37,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
-		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
+		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<NotGateView>().size)
 		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
@@ -54,7 +54,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
-		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
+		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
 		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
 		// No OR gate necessary for the Y expression
@@ -72,7 +72,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
-		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
+		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
 		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
 		// No OR gate necessary for the Y expression
@@ -88,7 +88,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
-		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
+		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
 		// No AND gate necessary for the single-factor AND term
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
@@ -109,7 +109,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val metaGraph = MetaGraph.withName(TranslatableText("Test"), AntaresGraphTypes.Digital)
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
-		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<CircuitInOutView>().size)
+		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)

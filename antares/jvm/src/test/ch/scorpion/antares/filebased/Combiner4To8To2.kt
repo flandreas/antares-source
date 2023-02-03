@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.checkCombinedNetAccess
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.UUID
@@ -17,23 +17,23 @@ class Combiner4To8To2 : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var a0: CircuitInOut
-	private lateinit var a1: CircuitInOut
-	private lateinit var b0: CircuitInOut
-	private lateinit var b1: CircuitInOut
-	private lateinit var b2: CircuitInOut
-	private lateinit var b3: CircuitInOut
+	private lateinit var a0: DigitalCircuitInOut
+	private lateinit var a1: DigitalCircuitInOut
+	private lateinit var b0: DigitalCircuitInOut
+	private lateinit var b1: DigitalCircuitInOut
+	private lateinit var b2: DigitalCircuitInOut
+	private lateinit var b3: DigitalCircuitInOut
 
 	@BeforeTest
 	fun openAndStartCircuit() {
 		openCircuit(UUID("d06b4df8-ed84-4af2-8b39-1252c7c4ca14"))
 
-		a0 = openedCircuitView.graph!!.withId(4) as CircuitInOut
-		a1 = openedCircuitView.graph!!.withId(5) as CircuitInOut
-		b0 = openedCircuitView.graph!!.withId(8) as CircuitInOut
-		b1 = openedCircuitView.graph!!.withId(9) as CircuitInOut
-		b2 = openedCircuitView.graph!!.withId(10) as CircuitInOut
-		b3 = openedCircuitView.graph!!.withId(11) as CircuitInOut
+		a0 = openedCircuitView.graph!!.withId(4) as DigitalCircuitInOut
+		a1 = openedCircuitView.graph!!.withId(5) as DigitalCircuitInOut
+		b0 = openedCircuitView.graph!!.withId(8) as DigitalCircuitInOut
+		b1 = openedCircuitView.graph!!.withId(9) as DigitalCircuitInOut
+		b2 = openedCircuitView.graph!!.withId(10) as DigitalCircuitInOut
+		b3 = openedCircuitView.graph!!.withId(11) as DigitalCircuitInOut
 
 		startSimulation()
 	}

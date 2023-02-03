@@ -6,7 +6,7 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.*
@@ -22,8 +22,8 @@ class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 	private lateinit var circuitView: GraphView
 	private lateinit var switchView: DoubleThrowSwitchView
 	private lateinit var ledView: LEDView
-	private lateinit var inputView1: CircuitInOutView
-	private lateinit var inputView2: CircuitInOutView
+	private lateinit var inputView1: DigitalCircuitInOutView
+	private lateinit var inputView2: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = circuitView
 
@@ -32,8 +32,8 @@ class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		switchView = builder.addVerticeView(DoubleThrowSwitchView())
 		ledView = builder.addVerticeView(LEDView())
-		inputView1 = builder.addVerticeView(CircuitInOutView())
-		inputView2 = builder.addVerticeView(CircuitInOutView())
+		inputView1 = builder.addVerticeView(DigitalCircuitInOutView())
+		inputView2 = builder.addVerticeView(DigitalCircuitInOutView())
 		builder.connect(switchView, fromPort = switchView.model.getOutput(1), ledView)
 		builder.connect(inputView1, switchView, toPort = switchView.model.getInput(2))
 		builder.connect(inputView2, switchView, toPort = switchView.model.getInput(3))

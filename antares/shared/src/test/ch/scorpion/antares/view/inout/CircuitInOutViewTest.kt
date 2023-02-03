@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -41,7 +41,7 @@ class CircuitInOutViewTest {
 
 	@Test
 	fun shouldNotConsumeUndefinedDecimalDigit() {
-		val input = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_8))
+		val input = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_8))
 		input.signalRepresentation = DigitalSignalRepresentation.DECIMAL
 		input.focusGained()
 		input.consumeKey(KeyEvent.VK_Z, mockk(), skipAnimation = true)
@@ -49,7 +49,7 @@ class CircuitInOutViewTest {
 
 	@Test
 	fun shouldClearByUser() {
-		val input = CircuitInOutView(model = CircuitInOutImpl(bitWidth = BitWidth.BW_8))
+		val input = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_8))
 		input.signalRepresentation = DigitalSignalRepresentation.DECIMAL
 		input.focusGained()
 		input.model.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 42), signalHandler)

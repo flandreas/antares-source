@@ -1,10 +1,10 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.jabbah.execution.actor.ActorListener
@@ -26,7 +26,7 @@ class ConcentratorViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	private lateinit var circuitView: GraphView
 	private val actorListener = mockk<ActorListener>(relaxed = true)
 
-	private val circuitOutputView = CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT, bitWidth = BitWidth.BW_2))
+	private val circuitOutputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT, bitWidth = BitWidth.BW_2))
 	private val concentratorView = ConcentratorView(model = Concentrator(BitWidth.BW_2, BranchCount.BC_2))
 	private val switchView1 = SwitchView()
 	private val switchView2 = SwitchView()

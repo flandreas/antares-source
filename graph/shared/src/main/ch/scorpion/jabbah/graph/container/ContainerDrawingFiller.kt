@@ -77,14 +77,14 @@ abstract class AbstractContainerDrawingFiller(
 
 		var maxInputWidth = 0.0
 		for (pin in inputPortViews) {
-			val portView = portViewFactory.createPortView(portFactory.createSubGraphPort(pin.model), Direction.WEST)
+			val portView = portViewFactory.createPortView(portFactory.createSubGraphPort(pin.model, graphView.graph!!.type), Direction.WEST)
 			maxInputWidth = max(maxInputWidth, abs(portView.boundingBox.maxX - portView.location.x))
 			inputs.add(portViewFactory.createPortViewComponent(portView))
 		}
 
 		var maxOutputWidth = 0.0
 		for (pin in outputPortViews) {
-			val portView = portViewFactory.createPortView(portFactory.createSubGraphPort(pin.model), Direction.EAST)
+			val portView = portViewFactory.createPortView(portFactory.createSubGraphPort(pin.model, graphView.graph!!.type), Direction.EAST)
 			maxOutputWidth = max(maxOutputWidth, abs(portView.location.x - portView.boundingBox.minX))
 			outputs.add(portViewFactory.createPortViewComponent(portView))
 		}

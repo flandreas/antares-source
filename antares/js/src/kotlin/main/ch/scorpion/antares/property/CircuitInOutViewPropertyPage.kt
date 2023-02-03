@@ -2,7 +2,7 @@ package ch.scorpion.antares.property
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.edit.Component
@@ -18,9 +18,9 @@ import com.ccfraser.muirwik.components.MGridProps
 import styled.StyledElementBuilder
 
 @Suppress("unused")
-class CircuitInOutViewPropertyPage : ComponentPropertyPage<CircuitInOutView>() {
+class CircuitInOutViewPropertyPage : ComponentPropertyPage<DigitalCircuitInOutView>() {
 
-	override fun addProperties(bean: CircuitInOutView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
+	override fun addProperties(bean: DigitalCircuitInOutView, editor: Editor, builder: StyledElementBuilder<MGridProps>) {
 		super.addProperties(bean, editor, builder)
 		builder.run {
 			propertyRow(Component.BASE_KEY_ID) {

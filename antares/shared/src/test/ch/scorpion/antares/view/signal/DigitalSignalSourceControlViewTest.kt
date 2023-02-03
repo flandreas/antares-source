@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -19,7 +19,7 @@ internal class DigitalSignalSourceControlViewTest {
 
 	@Test
 	fun shouldMaintainLocationWhenClonedInControlViewComponent() {
-		val inOutView = CircuitInOutView()
+		val inOutView = DigitalCircuitInOutView()
 		val component = ControlViewComponent(source = inOutView as ControlViewSource<Vertice>)
 		component.location = Point2D(100, 50)
 

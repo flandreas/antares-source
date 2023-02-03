@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.checkCombinedNetAccess
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.Bit.*
@@ -20,20 +20,20 @@ class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var inoutA: CircuitInOut
+	private lateinit var inoutA: DigitalCircuitInOut
 	private lateinit var pullResistor: PullResistor
-	private lateinit var inoutIO1: CircuitInOut
-	private lateinit var inoutIO2: CircuitInOut
+	private lateinit var inoutIO1: DigitalCircuitInOut
+	private lateinit var inoutIO2: DigitalCircuitInOut
 	private lateinit var splitter: BidirectionalSplitter
 
 	@BeforeTest
 	fun openAndStartCircuit() {
 		openCircuit(UUID("37f1ed5f-b729-49a8-9650-51ee785d82c3"))
 
-		inoutA = openedCircuitView.graph!!.withId(1) as CircuitInOut
+		inoutA = openedCircuitView.graph!!.withId(1) as DigitalCircuitInOut
 		pullResistor = openedCircuitView.graph!!.withId(12) as PullResistor
-		inoutIO1 = openedCircuitView.graph!!.withId(5) as CircuitInOut
-		inoutIO2 = openedCircuitView.graph!!.withId(6) as CircuitInOut
+		inoutIO1 = openedCircuitView.graph!!.withId(5) as DigitalCircuitInOut
+		inoutIO2 = openedCircuitView.graph!!.withId(6) as DigitalCircuitInOut
 		splitter = openedCircuitView.graph!!.withId(3) as BidirectionalSplitter
 
 		startSimulation()

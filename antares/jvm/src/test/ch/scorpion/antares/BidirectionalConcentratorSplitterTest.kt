@@ -1,10 +1,10 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -26,10 +26,10 @@ class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 	private lateinit var circuitView: GraphView
 	private val concentratorView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
 	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val a0 = CircuitInOutView(model = CircuitInOutImpl(name = "A0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val a1 = CircuitInOutView(model = CircuitInOutImpl(name = "A1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b0 = CircuitInOutView(model = CircuitInOutImpl(name = "B0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b1 = CircuitInOutView(model = CircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val a0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val a1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 

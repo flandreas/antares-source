@@ -2,8 +2,9 @@ package ch.scorpion.antares.view.module
 
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogGraph
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -22,7 +23,7 @@ import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
 import ch.scorpion.antares.view.figure.*
 import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
@@ -40,6 +41,7 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Style
@@ -150,6 +152,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_GROUND = "AnalogGround"
 	private const val ANALOG_TRANSISTOR_N = "AnalogTransistorN"
 	private const val ANALOG_TRANSISTOR_P = "AnalogTransistorP"
+	private const val ANALOG_INOUT = "AnalogInOut"
 
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
@@ -248,9 +251,9 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, AbstractAntaresPortView.LENGTH + 5)
 		properties.set(DigitalEdgeView.PROP_WIDE_BUS_STROKE, true)
 
-		properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
-		properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
-		properties.set(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
+		properties.set(DigitalCircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
+		properties.set(DigitalCircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
+		properties.set(DigitalCircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
 		properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
 		properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
 		properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
@@ -278,7 +281,7 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
-		typeMap.register("circuitInOutView", CircuitInOutView::class)
+		typeMap.register("circuitInOutView", DigitalCircuitInOutView::class)
 		typeMap.register("digitalEdgeView", DigitalEdgeView::class)
 		typeMap.register("digitalNodeView", DigitalNodeView::class)
 		typeMap.register("digitalPortView", DigitalPortView::class)
@@ -349,7 +352,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogNodeView", AnalogNodeView::class)
 		typeMap.register("analogGroundView", AnalogGroundView::class)
 		typeMap.register("analogTransistorView", AnalogTransistorView::class)
-
+		typeMap.register("analogCircuitInOutView", AnalogCircuitInOutView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -390,7 +393,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalCircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
@@ -428,6 +431,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -547,7 +551,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
 		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }) {
-			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
+			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT))
 		}
 
 		repository.register(SWITCH, "library.element.Toggle", { "/img/switch.png" }, SwitchView::class)
@@ -557,7 +561,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
 		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/videoram.png" }, VideoRamView::class)
 		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }) {
-			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
+			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT))
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
 		repository.register(REAL_SWITCH, "library.element.RealSwitch", { "/img/real-switch.png" }, RealSwitchView::class)
@@ -589,6 +593,9 @@ object AntaresViewModule : AbstractModule() {
 		}
 		repository.register(ANALOG_TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }) {
 			AnalogTransistorView(TransistorType.P)
+		}
+		repository.register(ANALOG_INOUT, "library.element.GraphInOut", { "/img/inout.png" }) {
+			AnalogCircuitInOutView(model = AnalogCircuitInOut(), orientation = Direction.WEST)
 		}
 	}
 

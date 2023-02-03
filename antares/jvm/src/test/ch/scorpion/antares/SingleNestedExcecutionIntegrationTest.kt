@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
@@ -31,8 +31,8 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 	private lateinit var edgeView1: EdgeView<*>
 	private lateinit var edgeView2: EdgeView<*>
 	private lateinit var nop: SubGraphVerticeView<out SubGraphVertice>
-	private lateinit var input: CircuitInOut
-	private lateinit var output: CircuitInOut
+	private lateinit var input: DigitalCircuitInOut
+	private lateinit var output: DigitalCircuitInOut
 	private lateinit var innerNet: Net<DigitalSignal>
 	private val switchView = SwitchView()
 	private val ledView = LEDView()
@@ -67,10 +67,10 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		nop.model.propagationDelay = 300 * MILLION
 
 		// Set propagation delay of input CircuitInOut
-		input = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(1) as CircuitInOut
+		input = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(1) as DigitalCircuitInOut
 		input.propagationDelay = 100 * MILLION
 		// Set propagation delay of output CircuitInOut
-		output = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(2) as CircuitInOut
+		output = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(2) as DigitalCircuitInOut
 		output.propagationDelay = 100 * MILLION
 		// Set propagation delay of Net
 		innerNet = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(3) as Net<DigitalSignal>

@@ -20,11 +20,10 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-
 /**
- * A standard implementation of the [CircuitInOut] interface.
+ * A standard implementation of the [DigitalCircuitInOut] interface.
  */
-class CircuitInOutImpl(
+class DigitalCircuitInOutImpl(
 	val eventBus: EventBus = BaseModule.eventBus,
 	name: String? = null,
 	portType: PortType = PortType.INPUT,
@@ -33,7 +32,7 @@ class CircuitInOutImpl(
 	port = DigitalPortImpl(portType.reverse(), bitWidth = bitWidth, canBeUndefined = portType == PortType.INOUT),
 	name = name,
 	calculator = CALCULATOR
-), CircuitInOut {
+), DigitalCircuitInOut {
 
 	companion object {
 
@@ -51,8 +50,8 @@ class CircuitInOutImpl(
 
 		private val CALCULATOR = Calculator()
 
-		private class Calculator : VerticeCalculator<CircuitInOutImpl> {
-			override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
+		private class Calculator : VerticeCalculator<DigitalCircuitInOutImpl> {
+			override fun calculate(vertice: DigitalCircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
 					setInteractionEnabled(true, signalHandler)
@@ -130,7 +129,7 @@ class CircuitInOutImpl(
 
 	/** ---- [NetCombiner] interface */
 
-	/** Only required for toplevel [CircuitInOutImpl] that can produce a signal when the user clicks on it. */
+	/** Only required for toplevel [DigitalCircuitInOutImpl] that can produce a signal when the user clicks on it. */
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
 		portType.isInput && subGraphInputPort == null // Clickable input in top-level Graph
 			|| portType == PortType.OUTPUT && subGraphOutputPort != null
@@ -217,25 +216,15 @@ class CircuitInOutImpl(
 		super.write(writer)
 		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
-		/*
-		if (canBeUndefined) {
-			writer.writeBoolean("canBeUndefined", canBeUndefined)
-		}
-		*/
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		portType = PortType.withName(reader.readString("type"))
 		bitWidth = BitWidth.read("bitWidth", reader)
-		/*
-		if (reader.hasAttribute("canBeUndefined")) {
-			canBeUndefined = reader.readBoolean("canBeUndefined")
-		}
-		*/
 	}
 
-	/** ---- [CircuitInOut] interface */
+	/** ---- [DigitalCircuitInOut] interface */
 
 	override var signalRepresentation: DigitalSignalRepresentation
 		get() = getDigitalPort().signalRepresentation
@@ -244,7 +233,7 @@ class CircuitInOutImpl(
 				val oldValue = getDigitalPort().signalRepresentation
 				getDigitalPort().signalRepresentation = value
 				if (isNotReading) {
-					eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
+					eventBus.post(DigitalCircuitInOutSignalRepresentationChanged(this, oldValue, value))
 				}
 			}
 		}
@@ -260,7 +249,7 @@ class CircuitInOutImpl(
 				getDigitalPort().bitWidth = value
 				if (isNotReading) {
 					stateChanged(null)
-					eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
+					eventBus.post(DigitalCircuitInOutBitWidthChanged(this, oldValue, value))
 				}
 			}
 		}
@@ -285,7 +274,7 @@ class CircuitInOutImpl(
 		setIncomingSignal(signal, signalHandler, Switch.DEF_PROP_DELAY)
 	}
 
-	/** ---- [CircuitInOutImpl] */
+	/** ---- [DigitalCircuitInOutImpl] */
 
 	private fun getDigitalPort(): DigitalPort = getPort<DigitalPort>() as DigitalPort
 

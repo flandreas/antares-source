@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.NotGateView
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.GraphStorable
@@ -40,7 +40,7 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 
 	protected val circuitBuilder = CircuitBuilder(graphStorable)
 
-	protected val inputViews = mutableListOf<CircuitInOutView>()
+	protected val inputViews = mutableListOf<DigitalCircuitInOutView>()
 	protected val inputEdgeViews = mutableListOf<EdgeView<DigitalSignal>>()
 
 	protected val notViews = mutableListOf<NotGateView>()

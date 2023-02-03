@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.Bit.True
@@ -10,7 +10,7 @@ import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
@@ -20,9 +20,9 @@ import kotlin.test.assertEquals
 class IncompleteBidirectionalSplitterSimulationTest : AbstractCircuitTest() {
 
 	private lateinit var circuitView: GraphView
-	private val a = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BW_8, portType = PortType.INOUT))
+	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BW_8, portType = PortType.INOUT))
 	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BW_8, BranchCount.BC_8))
-	private val b = CircuitInOutView(model = CircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private val b = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
 
 	override fun getCircuitView(): GraphView = circuitView
 

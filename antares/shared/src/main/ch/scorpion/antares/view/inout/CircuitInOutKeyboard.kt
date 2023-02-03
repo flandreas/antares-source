@@ -20,13 +20,13 @@ import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 
 /**
- * Displays a keyboard for entering digits into a [CircuitInOutView] during simulation.
+ * Displays a keyboard for entering digits into a [DigitalCircuitInOutView] during simulation.
  *
  * Note that this object shouldn't request the focus (and therefore can't receive key events)
- * because focus should remain in [CircuitInOutView] for advancing digits after entering values.
+ * because focus should remain in [DigitalCircuitInOutView] for advancing digits after entering values.
  */
 class CircuitInOutKeyboard(
-	private val circuitInOutView: CircuitInOutView,
+	private val circuitInOutView: DigitalCircuitInOutView,
 	view: View<*>,
 	private val contextHolder: GraphApplicationContextHolder,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,

@@ -32,7 +32,7 @@ class ContainerTreeModel(
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val initializer: DynamicInitializer,
-	graphView: GraphView,
+	private val graphView: GraphView,
 	private val containerDrawing: ContainerDrawing
 ) {
 
@@ -64,7 +64,8 @@ class ContainerTreeModel(
 	 */
 	fun addGraphPortView(graphPortView: GraphPortView<*>) {
 		val item = ContainerTreePortItem(graphPortView) {
-			portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model)))
+			portViewFactory.createPortViewComponent(portViewFactory.createPortView(
+				portFactory.createSubGraphPort(graphPortView.model, graphView.graph!!.type)))
 		}
 		portsNode.add(DefaultMutableTreeNode(item))
 		treeModel.nodesWereInserted(portsNode, intArrayOf(portsNode.childCount - 1))

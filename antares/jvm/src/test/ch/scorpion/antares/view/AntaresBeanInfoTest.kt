@@ -9,8 +9,8 @@ import ch.scorpion.antares.view.addressable.ROMViewBeanInfo
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.arithmetic.RandomViewBeanInfo
 import ch.scorpion.antares.view.gate.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
-import ch.scorpion.antares.view.inout.CircuitInOutViewBeanInfo
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutViewBeanInfo
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.output.*
@@ -136,7 +136,7 @@ class AntaresBeanInfoTest {
 	@Test
 	@Ignore
 	fun shouldReadWriteCircuitInOutView() {
-		readWrite(CircuitInOutView(), CircuitInOutViewBeanInfo())
+		readWrite(DigitalCircuitInOutView(), DigitalCircuitInOutViewBeanInfo())
 	}
 
 	// input

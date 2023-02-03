@@ -1,10 +1,10 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.execution.actor.ActorListener
@@ -30,7 +30,7 @@ class BidirectionalSplitterViewDefinedTest : AbstractJvmCircuitTest() {
 	private lateinit var circuitView: GraphView
 	private val actorListener = mockk<ActorListener>(relaxed = true)
 	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val circuitInputView = CircuitInOutView(model = CircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INPUT))
+	private val circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INPUT))
 	private val ledView1 = LEDView()
 	private val ledView2 = LEDView()
 

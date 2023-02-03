@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.find
 
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.inout.CircuitInOutView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.net.TunnelView
@@ -31,7 +31,7 @@ class DigitalGraphViewSearch : DrawingViewSearch() {
 
 	private fun filterExpandable(component: Component): Boolean =
 		component is TunnelView
-		|| component is CircuitInOutView
+		|| component is DigitalCircuitInOutView
 		|| component is SwitchView
 		|| component is DipSwitchView
 }

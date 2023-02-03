@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.port
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -24,7 +24,7 @@ class SubCircuitPort(
 	/** ---- [SubGraphPort] interface */
 
 	override fun handleGraphPortChanged(graphPort: GraphPort<*>) {
-		if (bitWidth.width != (graphPort as CircuitInOut).bitWidth.width) {
+		if (bitWidth.width != (graphPort as DigitalCircuitInOut).bitWidth.width) {
 			bitWidth = BitWidth.of(graphPort.bitWidth.width)
 		}
 	}

@@ -326,7 +326,7 @@ class ContainerTreeTest {
 		private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
 			return GraphViewModule.portViewFactory.createPortViewComponent(
 				GraphViewModule.portViewFactory.createPortView(
-					GraphModelModule.portFactory.createSubGraphPort(graphPort)))
+					GraphModelModule.portFactory.createSubGraphPort(graphPort, graphView.graph!!.type)))
 		}
 	}
 

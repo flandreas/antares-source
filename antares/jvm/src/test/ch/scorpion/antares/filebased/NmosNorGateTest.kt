@@ -1,6 +1,6 @@
 package ch.scorpion.antares.filebased
 
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.UUID
@@ -16,9 +16,9 @@ class NmosNorGateTest : AbstractFileBasedTest() {
 		}
 	}
 
-	private lateinit var inputA: CircuitInOut
-	private lateinit var inputB: CircuitInOut
-	private lateinit var output: CircuitInOut
+	private lateinit var inputA: DigitalCircuitInOut
+	private lateinit var inputB: DigitalCircuitInOut
+	private lateinit var output: DigitalCircuitInOut
 
 	@BeforeTest
 	fun openAndStartCircuit() {
@@ -27,9 +27,9 @@ class NmosNorGateTest : AbstractFileBasedTest() {
 		startSimulation()
 		processUntilQueueIsEmpty()
 
-		inputA = openedCircuitView.graph!!.withId(3) as CircuitInOut
-		inputB = openedCircuitView.graph!!.withId(4) as CircuitInOut
-		output = openedCircuitView.graph!!.withId(13) as CircuitInOut
+		inputA = openedCircuitView.graph!!.withId(3) as DigitalCircuitInOut
+		inputB = openedCircuitView.graph!!.withId(4) as DigitalCircuitInOut
+		output = openedCircuitView.graph!!.withId(13) as DigitalCircuitInOut
 	}
 
 	@Test

@@ -15,7 +15,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.BooleanExpressionService
 import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.gate.*
-import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
@@ -24,7 +24,7 @@ import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.FixedPointConfig
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
-import ch.scorpion.antares.view.port.DigitalPortFactory
+import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -57,7 +57,7 @@ object AntaresModelModule : AbstractModule() {
 
 		AntaresDslModule.require()
 
-		GraphModelModule.portFactory = DigitalPortFactory()
+		GraphModelModule.portFactory = AntaresPortFactory()
 		GraphModelModule.graphFactory = object : GraphFactory {
 			override fun create(name: TranslatableText, type: GraphType): Graph =
 				when (type) {
@@ -85,7 +85,7 @@ object AntaresModelModule : AbstractModule() {
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", DigitalGraph::class)
 
-		typeMap.register("circuitInOut", CircuitInOutImpl::class)
+		typeMap.register("circuitInOut", DigitalCircuitInOutImpl::class)
 		typeMap.register("subCircuitPort", SubCircuitPort::class)
 		typeMap.register("digitalNet", DigitalNet::class)
 
@@ -151,6 +151,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("analogSwitch", AnalogSwitch::class)
 		typeMap.register("analogGround", AnalogGround::class)
 		typeMap.register("analogTransistor", AnalogTransistor::class)
+		typeMap.register("analogInOut", AnalogCircuitInOut::class)
 	}
 
 	private fun registerGraphParamTypes() {

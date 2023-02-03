@@ -21,7 +21,7 @@ class CircuitInOutImplTest {
 		}
 	}
 
-	private val inout = CircuitInOutImpl()
+	private val inout = DigitalCircuitInOutImpl()
 	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 
 	@Test

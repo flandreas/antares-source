@@ -2,12 +2,11 @@ package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.checkCombinedNetAccess
 import ch.scorpion.antares.model.gate.TriStateBufferGate
-import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -26,7 +25,7 @@ class Bug84 : AbstractFileBasedTest() {
 
 	private lateinit var keyboard: Keyboard
 	private lateinit var transceiver8: SubGraphVerticeRef
-	private lateinit var b: CircuitInOut
+	private lateinit var b: DigitalCircuitInOut
 
 	private lateinit var highTransceiver4: SubGraphVerticeRef
 	private lateinit var triStateBuffer: TriStateBufferGate
@@ -40,7 +39,7 @@ class Bug84 : AbstractFileBasedTest() {
 
 		keyboard = openedCircuitView.graph!!.withId(14) as Keyboard
 		transceiver8 = openedCircuitView.graph!!.withId(2) as SubGraphVerticeRef
-		b = openedCircuitView.graph!!.withId(10) as CircuitInOut
+		b = openedCircuitView.graph!!.withId(10) as DigitalCircuitInOut
 
 		highTransceiver4 = transceiver8.getGraphIfPresent()!!.withId(2) as SubGraphVerticeRef
 		triStateBuffer = highTransceiver4.getGraphIfPresent()!!.withId(22) as TriStateBufferGate
