@@ -17,6 +17,15 @@ class AnalogTransistorView(
 
 	constructor(type: TransistorType): this(model = AnalogTransistor(type), handedness = DEFAULT_HANDEDNESS)
 
+	/** ---- UI properties */
+
+	@Suppress("unused") // Reflection
+	var gain: Double
+		get() = model.gain
+		set(value) {
+			model.gain = value
+		}
+
 	init {
 		modelExchanged(null)
 	}

@@ -8,34 +8,24 @@ import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class AnalogTransistor(
 	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
+	gain: Double = DEF_GAIN
 ) : AbstractAnalogVertice<AnalogTransistor>(
-	CALCULATOR,
+	EmptyVerticeCalculator,
 	"library.element.AnalogTransistor"
 ), TransistorIF<AnalogSignal> {
 
 	companion object {
-		private val CALCULATOR = Calculator()
-
-		private const val GAIN = 0.1
-
-		private val MINUS_GAIN = { -GAIN }
-		private val PLUS_GAIN = { GAIN }
-
-		private class Calculator : VerticeCalculator<AnalogTransistor> {
-			override fun calculate(vertice: AnalogTransistor, data: GraphActorData, signalHandler: SignalHandler) {
-				// TODO
-			}
-		}
+		private const val DEF_GAIN = 0.1
 	}
+
+	var gain: Double = gain
 
 	override val type: String get() = super<TransistorIF>.type
 
@@ -61,10 +51,12 @@ class AnalogTransistor(
 
 	override fun write(writer: StoreWriter) {
 		super<TransistorIF>.write(writer)
+		writer.writeDouble("gain", gain)
 	}
 
 	override fun read(reader: StoreReader) {
 		super<TransistorIF>.read(reader)
+		gain = reader.readDouble("gain")
 	}
 
 	override fun composeComponentConstituentEquation(
@@ -84,10 +76,10 @@ class AnalogTransistor(
 		val sourceVoltageIndex = voltageNodes.indexOf(sourcePort.net!!.id)
 
 		if (gateVoltageIndex >= 0) {
-			row[branches.size + gateVoltageIndex] = MINUS_GAIN
+			row[branches.size + gateVoltageIndex] = { -gain }
 		}
 		if (sourceVoltageIndex >= 0) {
-			row[branches.size + gateVoltageIndex] = PLUS_GAIN
+			row[branches.size + gateVoltageIndex] = { gain }
 		}
 
 		equationSystem.addEquation(row, ZERO)
