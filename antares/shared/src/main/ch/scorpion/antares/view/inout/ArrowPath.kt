@@ -29,9 +29,12 @@ class ArrowPath(
 		const val ARROW_SIZE = 14.0
 
 		class Builder(val orientation: Direction, val contentDimension: Dimension2D) {
+
 			private var path = System.createPath()
 			private var contentLocation: Point2D = Point2D.ZERO
 			private var tailLocation: Point2D = Point2D.ZERO
+
+			private val contentHeight = contentDimension.height.coerceAtLeast(2 * ARROW_SIZE - 2 * V_INSET)
 
 			fun build(inout: Boolean): ArrowPath {
 				when (orientation) {
@@ -109,14 +112,14 @@ class ArrowPath(
 				path.moveTo(0, 0)
 				path.lineTo(ARROW_SIZE, -ARROW_SIZE)
 				path.lineTo(ARROW_SIZE + remW, -ARROW_SIZE)
-				path.lineTo(ARROW_SIZE + remW, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
+				path.lineTo(ARROW_SIZE + remW, -ARROW_SIZE - 2 * V_INSET - contentHeight)
 				if (inout) {
-					path.lineTo(ARROW_SIZE, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
-					path.lineTo(0.0, -ARROW_SIZE - 2 * V_INSET - contentDimension.height - ARROW_SIZE)
-					path.lineTo(-ARROW_SIZE, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
-					path.lineTo(-ARROW_SIZE - remW, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
+					path.lineTo(ARROW_SIZE, -ARROW_SIZE - 2 * V_INSET - contentHeight)
+					path.lineTo(0.0, -ARROW_SIZE - 2 * V_INSET - contentHeight - ARROW_SIZE)
+					path.lineTo(-ARROW_SIZE, -ARROW_SIZE - 2 * V_INSET - contentHeight)
+					path.lineTo(-ARROW_SIZE - remW, -ARROW_SIZE - 2 * V_INSET - contentHeight)
 				} else {
-					path.lineTo(-ARROW_SIZE - remW, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
+					path.lineTo(-ARROW_SIZE - remW, -ARROW_SIZE - 2 * V_INSET - contentHeight)
 				}
 				path.lineTo(-ARROW_SIZE - remW, -ARROW_SIZE)
 				path.lineTo(-ARROW_SIZE, -ARROW_SIZE)
@@ -124,12 +127,12 @@ class ArrowPath(
 
 				contentLocation = Point2D(
 					-ARROW_SIZE - remW + H_INSET,
-					-ARROW_SIZE - contentDimension.height - V_INSET)
+					-ARROW_SIZE - contentHeight - V_INSET)
 
 				tailLocation = if (inout) {
-					Point2D(0.0, -ARROW_SIZE - 2 * V_INSET - contentDimension.height - ARROW_SIZE)
+					Point2D(0.0, -ARROW_SIZE - 2 * V_INSET - contentHeight - ARROW_SIZE)
 				} else {
-					Point2D(0.0, -ARROW_SIZE - 2 * V_INSET - contentDimension.height)
+					Point2D(0.0, -ARROW_SIZE - 2 * V_INSET - contentHeight)
 				}
 			}
 
@@ -139,14 +142,14 @@ class ArrowPath(
 				path.moveTo(0, 0)
 				path.lineTo(-ARROW_SIZE, ARROW_SIZE)
 				path.lineTo(-ARROW_SIZE - remW, ARROW_SIZE)
-				path.lineTo(-ARROW_SIZE - remW, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
+				path.lineTo(-ARROW_SIZE - remW, ARROW_SIZE + 2 * V_INSET + contentHeight)
 				if (inout) {
-					path.lineTo(-ARROW_SIZE, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
-					path.lineTo(0.0, ARROW_SIZE + 2 * V_INSET + contentDimension.height + ARROW_SIZE)
-					path.lineTo(+ARROW_SIZE, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
-					path.lineTo(ARROW_SIZE + remW, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
+					path.lineTo(-ARROW_SIZE, ARROW_SIZE + 2 * V_INSET + contentHeight)
+					path.lineTo(0.0, ARROW_SIZE + 2 * V_INSET + contentHeight + ARROW_SIZE)
+					path.lineTo(+ARROW_SIZE, ARROW_SIZE + 2 * V_INSET + contentHeight)
+					path.lineTo(ARROW_SIZE + remW, ARROW_SIZE + 2 * V_INSET + contentHeight)
 				} else {
-					path.lineTo(ARROW_SIZE + remW, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
+					path.lineTo(ARROW_SIZE + remW, ARROW_SIZE + 2 * V_INSET + contentHeight)
 				}
 				path.lineTo(ARROW_SIZE + remW, ARROW_SIZE)
 				path.lineTo(ARROW_SIZE, ARROW_SIZE)
@@ -157,27 +160,23 @@ class ArrowPath(
 					ARROW_SIZE + V_INSET)
 
 				tailLocation = if (inout) {
-					Point2D(0.0, ARROW_SIZE + 2 * V_INSET + contentDimension.height + ARROW_SIZE)
+					Point2D(0.0, ARROW_SIZE + 2 * V_INSET + contentHeight + ARROW_SIZE)
 				} else {
-					Point2D(0.0, ARROW_SIZE + 2 * V_INSET + contentDimension.height)
+					Point2D(0.0, ARROW_SIZE + 2 * V_INSET + contentHeight)
 				}
 			}
 
 			/**
 			 * Calculates the height of a horizontal [ArrowPath] that extends the arrowhead height.
-			 * @return the height of a horizontal [ArrowPath] that extends the arrowhead height.
 			 */
-			private fun calculateRemainingHeight(): Double {
-				return (contentDimension.height + 2 * V_INSET - 2 * ARROW_SIZE) / 2
-			}
+			private fun calculateRemainingHeight(): Double =
+				(contentHeight + 2 * V_INSET - 2 * ARROW_SIZE) / 2
 
 			/**
 			 * Calculates the width of a vertical [ArrowPath] that extends the arrowhead width.
-			 * @return the width of a vertical [ArrowPath] that extends the arrowhead width.
 			 */
-			private fun calculateRemainingWidth(): Double {
-				return (contentDimension.width + 2 * H_INSET - 2 * ARROW_SIZE) / 2
-			}
+			private fun calculateRemainingWidth(): Double =
+				(contentDimension.width + 2 * H_INSET - 2 * ARROW_SIZE) / 2
 		}
 	}
 }

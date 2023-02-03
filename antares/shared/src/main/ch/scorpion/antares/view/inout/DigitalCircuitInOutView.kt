@@ -291,8 +291,7 @@ class DigitalCircuitInOutView(
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation = orientation,
 			contentDimension = Dimension2D(numberView!!.widthInt, numberView!!.heightInt)
-		)
-			.build(portType === PortType.INOUT)
+		).build(portType === PortType.INOUT)
 
 		numberView!!.setBounds(
 			arrowPath!!.contentLocation.x, arrowPath!!.contentLocation.y,

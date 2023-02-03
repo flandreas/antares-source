@@ -170,14 +170,18 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	fun labelBranchCurrents(circuitView: AnalogGraphView): List<AnalogCircuitBranch> {
 		val branches = mutableListOf<AnalogCircuitBranch>()
 		getBranchStartVerticeViews(circuitView).forEach {
-			val incomingEdgeView = circuitView.getEdgeView(it.getPort(2)!!)!!
+			val incomingEdgeView = if (it.portViewCount == 2) {
+				circuitView.getEdgeView(it.getPort(2)!!)
+			} else {
+				circuitView.getEdgeView(it.getPort(1)!!)
+			}
 			identifyBranches(it, incomingEdgeView, circuitView, branches)
 		}
 		return branches
 	}
 
 	private fun getBranchStartVerticeViews(circuitView: AnalogGraphView): List<VerticeView<*>> {
-		val batteryViews = circuitView.getDrawables { it is BatteryView }.map {it as VerticeView<*> }
+		val batteryViews = circuitView.getDrawables { it is BatteryView || it is AnalogCircuitInOutView }.map {it as VerticeView<*> }
 		if (batteryViews.isEmpty()) {
 			throw IllegalStateException(Translations.getString("antares.analogCalc.noStartComponentFound.error.msg"))
 		}
@@ -198,12 +202,12 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	 */
 	fun identifyBranches(
 		connectableView: ConnectableView,
-		incomingEdgeView: EdgeView<*>,
+		incomingEdgeView: EdgeView<*>?,
 		graphView: GraphView,
 		branches: MutableList<AnalogCircuitBranch>,
 		branch: AnalogCircuitBranch? = null
 	) {
-		if (connectableView is AnalogBranchVerticeView<*>) {
+		if (connectableView is AnalogBranchVerticeView<*> && incomingEdgeView != null) {
 			val incomingConnection = incomingEdgeView.getConnection(connectableView)
 			val oppositePortView = connectableView.getOppositeBranchPortView(incomingConnection!!.portView as AnalogPortView)
 			if (oppositePortView != null) {
@@ -219,6 +223,9 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					}
 				} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 			}
+		} else if (connectableView is AnalogCircuitInOutView) {
+			val outgoingEdgeView = graphView.getEdgeView(connectableView.getPort(1)!!)!!
+			identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
 			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && !isConnectedToGroundView(it) }
 			if (edgeViews.size == 1) {

@@ -12,7 +12,11 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.text.Alignment
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -22,6 +26,13 @@ class AnalogCircuitInOutView(
 	eventBus: EventBus = BaseModule.eventBus,
 	orientation: Direction = Direction.EAST
 ) : AbstractCircuitInOutView<AnalogCircuitInOut>(styleProvider, model, eventBus, orientation) {
+
+	private val voltageLabel = Label(
+		"5.0 V",
+		styleProvider.getStyle(StyleType.ANNOTATION).font,
+		textColor,
+		HorizontalAlignment.CENTER,
+		VerticalAlignment.CENTER)
 
 	init {
 		isFocusable = true
@@ -42,8 +53,10 @@ class AnalogCircuitInOutView(
 	override fun updateViewImpl() {
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation,
-			Dimension2D(label.bounds.width, label.bounds.height)
+			Dimension2D(voltageLabel.bounds.width, voltageLabel.bounds.height)
 		).build(inout = true)
+
+		voltageLabel.location = arrowPath!!.path.boundingBox.center
 	}
 
 	override fun createPortView(template: PortView<*>?): PortView<*> {
@@ -66,6 +79,13 @@ class AnalogCircuitInOutView(
 	}
 
 	override fun drawSimulated(context: DrawContext) {
-		// TODO
+		drawEdited(context,
+			transparent.applyTo(foregroundColor),
+			transparent.applyTo(backgroundColor))
+
+		val translation = getArrowPathTranslation()
+		context.g.translate(translation.x, translation.y)
+		voltageLabel.draw(context)
+		context.g.translate(-translation.x, -translation.y)
 	}
 }
