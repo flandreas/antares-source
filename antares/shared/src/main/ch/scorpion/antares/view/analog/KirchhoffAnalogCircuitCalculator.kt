@@ -181,7 +181,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	}
 
 	private fun getBranchStartVerticeViews(circuitView: AnalogGraphView): List<VerticeView<*>> {
-		val batteryViews = circuitView.getDrawables { it is BatteryView || it is AnalogCircuitInOutView }.map {it as VerticeView<*> }
+		val batteryViews = circuitView.getDrawables { it is BatteryView || it is AnalogCircuitInOutView || it is AnalogPowerView }.map {it as VerticeView<*> }
 		if (batteryViews.isEmpty()) {
 			throw IllegalStateException(Translations.getString("antares.analogCalc.noStartComponentFound.error.msg"))
 		}
@@ -223,7 +223,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					}
 				} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 			}
-		} else if (connectableView is AnalogCircuitInOutView) {
+		} else if (connectableView is AnalogCircuitInOutView || connectableView is AnalogPowerView) {
 			val outgoingEdgeView = graphView.getEdgeView(connectableView.getPort(1)!!)!!
 			identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {

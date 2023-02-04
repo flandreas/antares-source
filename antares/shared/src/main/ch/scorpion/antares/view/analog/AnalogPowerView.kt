@@ -1,19 +1,27 @@
-package ch.scorpion.antares.view.net
+package ch.scorpion.antares.view.analog
 
-import ch.scorpion.antares.model.net.Power
-import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.analog.AnalogPower
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.net.PowerViewShape
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
-import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 
-class PowerView(
+class AnalogPowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: Power = Power()
-) : OrientableRectangularVerticeView<Power>(styleProvider, model) {
+	model: AnalogPower = AnalogPower()
+) : OrientableRectangularVerticeView<AnalogPower>(styleProvider, model) {
+
+	var voltage: Double
+		get() = model.voltage
+		set(value) {
+			invalidate()
+			model.voltage = value
+			invalidate()
+			validate()
+		}
 
 	init {
 		modelExchanged(null)
@@ -21,22 +29,15 @@ class PowerView(
 		orientation = Direction.SOUTH
 	}
 
-	override fun modelExchanged(oldModel: Power?) {
+	override fun modelExchanged(oldModel: AnalogPower?) {
 		super.modelExchanged(oldModel)
-		val portView = DigitalPortView(
+		val portView = AnalogPortView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST)
 		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
 		addPortView(portView)
 	}
-
-	var bitWidth: BitWidth
-		get() = model.bitWidth
-		set(value) {
-			invalidate()
-			model.bitWidth = value
-		}
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)

@@ -153,7 +153,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_TRANSISTOR_N = "AnalogTransistorN"
 	private const val ANALOG_TRANSISTOR_P = "AnalogTransistorP"
 	private const val ANALOG_INOUT = "AnalogInOut"
-
+	private const val ANALOG_POWER = "AnalogPower"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -353,6 +353,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogGroundView", AnalogGroundView::class)
 		typeMap.register("analogTransistorView", AnalogTransistorView::class)
 		typeMap.register("analogCircuitInOutView", AnalogCircuitInOutView::class)
+		typeMap.register("analogPowerView", AnalogPowerView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -432,6 +433,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -597,6 +599,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(ANALOG_INOUT, "library.element.GraphInOut", { "/img/inout.png" }) {
 			AnalogCircuitInOutView(model = AnalogCircuitInOut(), orientation = Direction.WEST)
 		}
+		repository.register(ANALOG_POWER, "library.element.AnalogPower", { "/img/power.png" }, AnalogPowerView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

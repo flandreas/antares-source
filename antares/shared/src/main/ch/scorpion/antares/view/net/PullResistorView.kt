@@ -6,8 +6,8 @@ import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.net.PullResistor
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -15,12 +15,11 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class PullResistorView(
 	pullDirection: PullDirection = LOW,
@@ -128,6 +127,6 @@ class PullResistorView(
 	}
 
 	private fun drawHighPullDirection(context: DrawContext) {
-		PowerView.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
+		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
 	}
 }

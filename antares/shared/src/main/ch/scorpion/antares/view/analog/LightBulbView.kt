@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -128,6 +129,6 @@ class LightBulbView(
 
 	private val executionBulbColor: Color get() =
 		lightColor.gradient.at(
-			(((getPortView(model.getPort()) as AnalogPortView).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
+			(abs((getPortView(model.getPort()) as AnalogPortView).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
 			.coerceIn(0.0..1.0).toFloat())
 }
