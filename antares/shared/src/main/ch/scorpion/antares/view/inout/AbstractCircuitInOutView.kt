@@ -19,10 +19,16 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -53,6 +59,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** Initialized in [updateView] */
 	protected var arrowPath: ArrowPath? = null
+
+	private val actorInteractionHandler = createActorInteractionHandler()
 
 	var orientation: Direction = orientation
 		set(value) {
@@ -112,6 +120,15 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		}
 		orientation = Direction.withName(reader.readString("orientation"))
 	}
+
+	/** ---- [ActorView] */
+
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		if (model.portType.isInput) {
+			actorInteractionHandler
+		} else {
+			super.getActorInteractionHandler(context)
+		}
 
 	/** ---- [Drawable] */
 
@@ -320,6 +337,32 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fill(arrowPath!!.path)
+		}
+	}
+
+	protected open fun createActorInteractionHandler(): ActorInteractionHandler = ToggleInteractionHandler()
+
+	protected abstract fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler?
+
+	/**
+	 * Calls [toggle] when the user presses the mouse on this [AbstractCircuitInOutView] during simulation,
+	 * unless it is not a toplevel component.
+	 */
+	protected open inner class ToggleInteractionHandler : ClickableActorInteractionHandlerAdapter() {
+
+		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (!model.isToplevel) {
+				eventBus.post(
+					ComponentMessage(
+						type = ComponentMessageType.Error,
+						source = this@AbstractCircuitInOutView,
+						messageKey = "antares.msg.ChildGraphInputManipulation")
+					)
+				return null
+			}
+
+			// Don't consume event so that Canvas can gain focus
+			return toggle(context.mouseEvent?.isAltDown ?: false, context) ?: this
 		}
 	}
 }

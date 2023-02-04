@@ -29,7 +29,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -74,8 +73,6 @@ class DigitalCircuitInOutView(
 	 * it returns to 0 state.
 	 */
 	var toggle: Boolean = true
-
-	private val actorInteractionHandler = InteractionHandler()
 
 	/** Initialized in [updateView] */
 	private var numberView: NumberView? = null
@@ -132,15 +129,6 @@ class DigitalCircuitInOutView(
 		model.signalRepresentation = signalRepresentation
 		updateView()
 	}
-
-	/** ---- [ActorView] */
-
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		if (model.portType.isInput) {
-			actorInteractionHandler
-		} else {
-			super.getActorInteractionHandler(context)
-		}
 
 	/** ---- [Storable] */
 
@@ -416,7 +404,7 @@ class DigitalCircuitInOutView(
 		popupKeyboardView = null
 	}
 
-	private fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
 		var handler: ActorInteractionHandler? = null
 		val digitIndex = getDigitIndexAt(context.x, context.y)
 		if (digitIndex != null) {
@@ -439,30 +427,19 @@ class DigitalCircuitInOutView(
 		return handler
 	}
 
+	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+
 	/**
 	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
 	 * individual digits with the keyboard.
 	 */
-	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
+	private inner class InteractionHandler : ToggleInteractionHandler() {
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (model.isToplevel) {
 				return super.mouseMoved(context)
 			}
 			return null
-		}
-
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!model.isToplevel) {
-				eventBus.post(ComponentMessage(
-					type = ComponentMessageType.Error,
-					source = this@DigitalCircuitInOutView,
-					messageKey = "antares.msg.ChildGraphInputManipulation"))
-				return null
-			}
-
-			// Don't consume event so that Canvas can gain focus
-			return toggle(context.mouseEvent?.isAltDown ?: false, context) ?: this
 		}
 
 		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler = this
