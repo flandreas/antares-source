@@ -35,6 +35,8 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 		composeEquations(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 
+		LOG.debug("Linear system: #current vars=${branches.size}, #voltages vars=${voltageNodeNetIds.size}, #equations=${equationSystem.equationCount}")
+
 		return AnalogCircuitAnalysis(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 	}
 
