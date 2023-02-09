@@ -3,13 +3,11 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.app.CopyAction
-import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.OpenSubGraphViewerAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
@@ -17,8 +15,6 @@ import javax.swing.JPopupMenu
 open class GraphContextMenuProvider : EditContextMenuProvider() {
 
 	companion object {
-		private val cutAction by lazy { ActionWrapperSwing(CutAction()) }
-		private val copyAction by lazy { ActionWrapperSwing(CopyAction()) }
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
 		private val openGraphActionWrapper by lazy { ActionWrapperSwing(openGraphAction) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
@@ -34,11 +30,6 @@ open class GraphContextMenuProvider : EditContextMenuProvider() {
 		} else {
 			super.fillContextMenu(view, x, y, menu)
 		}
-	}
-
-	override fun addClipboardActions(popupMenu: JPopupMenu) {
-		popupMenu.add(cutAction)
-		popupMenu.add(copyAction)
 	}
 
 	override fun addActions(view: View<*>, popupMenu: JPopupMenu) {

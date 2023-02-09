@@ -52,6 +52,9 @@ interface DrawingAppService {
 	 */
 	fun paste(drawingView: DrawingView<Drawing<Component>>)
 
+	/** Duplicates the currently selected [Component]s without using the system clipboard.*/
+	fun duplicate(drawingView: DrawingView<Drawing<Component>>)
+
 	/**
 	 * Moves the specified [Movable]s by a given offset.
 	 */
@@ -157,8 +160,11 @@ open class DrawingAppServiceImpl(
 
 	override fun copy(drawingView: DrawingView<*>) {
 		logComponentAction("Copy", drawingView.selectionManager.selection)
-		Clipboard.setStringContents(copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing))
+		Clipboard.setStringContents(copyImpl(drawingView))
 	}
+
+	private fun copyImpl(drawingView: DrawingView<*>): String
+		= copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing)
 
 	protected fun logComponentAction(action: String, components: Collection<Component>) {
 		if (components.size == 1) {
@@ -177,6 +183,15 @@ open class DrawingAppServiceImpl(
 			drawingView.selectionManager.deselectAll()
 			drawingView.selectionManager.select(pasteInfo.components)
 		}
+	}
+
+	override fun duplicate(drawingView: DrawingView<Drawing<Component>>) {
+		logComponentAction("Duplicate", drawingView.selectionManager.selection)
+		val content = copyImpl(drawingView)
+		val pasteInfo = copyPasteService.paste(content, drawingView)
+		commandManager.register(DuplicateCommand(drawingView, content, pasteInfo, copyPasteService))
+		drawingView.selectionManager.deselectAll()
+		drawingView.selectionManager.select(pasteInfo.components)
 	}
 
 	override fun move(

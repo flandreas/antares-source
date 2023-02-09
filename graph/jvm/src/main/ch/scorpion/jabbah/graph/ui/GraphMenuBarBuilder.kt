@@ -7,17 +7,15 @@ import ch.scorpion.jabbah.app.action.QuitApplicationAction
 import ch.scorpion.jabbah.app.rating.RatingAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.auth0.LoginLogoutAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.svg.ExportSvgAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
+import ch.scorpion.jabbah.edit.app.DuplicateAction
 import ch.scorpion.jabbah.edit.app.PasteAction
-import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.NewGraphAction
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
@@ -98,6 +96,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(CutAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(CopyAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(PasteAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(DuplicateAction())))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(OpenGraphNavigationAction(DrawViewModule.viewManager, eventBus))))
 		menu.add(JMenuItem(ActionWrapperSwing(EditSubGraphVerticeViewAction((frame as GraphFrameSwing).controller.applicationContextHolder))))

@@ -16,6 +16,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 	companion object {
 		private val cutAction by lazy { ActionWrapperSwing(CutAction()) }
 		private val copyAction by lazy { ActionWrapperSwing(CopyAction()) }
+		private val duplicateAction by lazy { ActionWrapperSwing(DuplicateAction()) }
 		private val deleteAction by lazy { ActionWrapperSwing(DeleteAction()) }
 		private val rotateAction by lazy { ActionWrapperSwing(RotateAction()) }
 		private val toFrontAction by lazy { ActionWrapperSwing(ToFrontAction()) }
@@ -40,6 +41,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 	protected open fun addClipboardActions(popupMenu: JPopupMenu) {
 		popupMenu.add(cutAction)
 		popupMenu.add(copyAction)
+		popupMenu.add(duplicateAction)
 	}
 
 	protected open fun addActions(view: View<*>, popupMenu: JPopupMenu) {
