@@ -66,6 +66,16 @@ class AnalogTransistor(
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
+		composeDrainSourceEquation(circuitView, voltageNodes, branches, equationSystem)
+		composeGateEquation(circuitView, branches, equationSystem)
+	}
+
+	private fun composeDrainSourceEquation(
+		circuitView: AnalogGraphView,
+		voltageNodes: List<Int>,
+		branches: List<AnalogCircuitBranch>,
+		equationSystem: DynamicLinearEquationSystem
+	) {
 		val row = Array(equationSystem.variableCount) { ZERO }
 
 		val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches)
@@ -81,6 +91,19 @@ class AnalogTransistor(
 		if (sourceVoltageIndex >= 0) {
 			row[branches.size + gateVoltageIndex] = { gain }
 		}
+
+		equationSystem.addEquation(row, ZERO)
+	}
+
+	private fun composeGateEquation(
+		circuitView: AnalogGraphView,
+		branches: List<AnalogCircuitBranch>,
+		equationSystem: DynamicLinearEquationSystem
+	) {
+		val row = Array(equationSystem.variableCount) { ZERO }
+
+		val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, gatePort.portId)
+		row[currentVariableIndex] = ONE
 
 		equationSystem.addEquation(row, ZERO)
 	}

@@ -142,6 +142,16 @@
                 <translation lang='en' text='Power'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='29' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7'>
+              <name>
+                <translation lang='en' text='Transistor Switch'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='30' uuid='e046b285-8c56-40ea-8696-88015af7a89a'>
+              <name>
+                <translation lang='en' text='Ground witout Battery'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
       </items>

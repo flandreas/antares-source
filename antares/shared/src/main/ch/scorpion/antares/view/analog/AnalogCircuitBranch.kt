@@ -32,6 +32,9 @@ class AnalogCircuitBranch {
 	fun isPositive(edgeViewId: Int): Boolean = _edgeViewIds.first { abs(it) == edgeViewId } > 0
 
 	fun add(connectableView: ConnectableView, edgeView: EdgeView<*>) {
+		if (containsId(edgeView.id)) {
+			throw IllegalArgumentException("EdgeView ${edgeView.id} already contained in branch")
+		}
 		val sign = when (edgeView.getConnectionEndpointType(connectableView)) {
 			EdgeViewEndpointType.ORIGIN -> 1
 			EdgeViewEndpointType.DESTINATION -> -1

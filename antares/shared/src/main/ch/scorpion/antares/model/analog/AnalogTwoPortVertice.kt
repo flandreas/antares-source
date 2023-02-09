@@ -49,9 +49,10 @@ interface AnalogTwoPortVertice : AnalogVertice {
 		fun currentVariableIndex(
 			circuitView: AnalogGraphView,
 			vertice: AnalogVertice,
-			branches: List<AnalogCircuitBranch>
+			branches: List<AnalogCircuitBranch>,
+			portId: Int = 1
 		): Int {
-			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(1))!!
+			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!
 			return AnalogCircuitBranch.getBranchId(edgeView, branches)!!
 		}
 	}

@@ -177,7 +177,9 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			} else {
 				circuitView.getEdgeView(it.getPort(1)!!)
 			}
-			identifyBranches(it, incomingEdgeView, circuitView, branches)
+			if (AnalogCircuitBranch.getBranchId(incomingEdgeView!!, branches) == null) {
+				identifyBranches(it, incomingEdgeView, circuitView, branches)
+			}
 		}
 		return branches
 	}
@@ -229,18 +231,14 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			val outgoingEdgeView = graphView.getEdgeView(connectableView.getPort(1)!!)!!
 			identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
-			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && !isConnectedToGroundView(it) }
+			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && AnalogCircuitBranch.getBranchId(it, branches) == null && followBranchFromNodeView(it, graphView) }
 			if (edgeViews.size == 1) {
 				// Continue with the same branch by ignoring direct junctions to a GroundView
-				if (AnalogCircuitBranch.getBranchId(edgeViews.first(), branches) == null) {
-					identifyBranchesRecursivelyImpl(connectableView, edgeViews.first(), graphView, branches, branch)
-				}
-			} else {
+				identifyBranchesRecursivelyImpl(connectableView, edgeViews.first(), graphView, branches, branch)
+			} else if (edgeViews.size > 1) {
 				edgeViews.forEach {
-					if (AnalogCircuitBranch.getBranchId(it, branches) == null) {
-						// Start a new branch
-						identifyBranchesRecursivelyImpl(connectableView, it, graphView, branches, null)
-					}
+					// Start a new branch
+					identifyBranchesRecursivelyImpl(connectableView, it, graphView, branches, null)
 				}
 			}
 		}
@@ -256,6 +254,10 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		branches: MutableList<AnalogCircuitBranch>,
 		branch: AnalogCircuitBranch? = null
 	) {
+		if (AnalogCircuitBranch.getBranchId(outgoingEdgeView, branches) != null) {
+			return
+		}
+
 		val currentBranch = branch ?: AnalogCircuitBranch().also { branches.add(it) }
 
 		val connection = outgoingEdgeView.getConnection(connectableView)!!
@@ -270,6 +272,13 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			currentBranch
 		)
 	}
+
+	/**
+	 * Determines whether [edgeView] outgoing from a [NodeView] should be followed when
+	 * identifying [AnalogCircuitBranch]es.
+	 */
+	private fun followBranchFromNodeView(edgeView: EdgeView<*>, graphView: GraphView): Boolean =
+		!isConnectedToGroundView(edgeView) || graphView.getDrawables { it is BatteryView }.isEmpty()
 
 	private fun isConnectedToGroundView(edgeView: EdgeView<*>): Boolean =
 		edgeView.origin?.connectableView is AnalogGroundView || edgeView.destination?.connectableView is AnalogGroundView
@@ -287,7 +296,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	) {
 		circuitView
 			.getNodeViews()
-			.filterNot { it.getEdgeViews().any { ev -> isConnectedToGroundView(ev) } }
+			.filter { it.getEdgeViews().all { ev -> followBranchFromNodeView(ev, circuitView) } }
 			.forEach { nodeView ->
 				val row = Array(equationSystem.variableCount) { ZERO }
 				nodeView.getEdgeViews().forEach { edgeView ->

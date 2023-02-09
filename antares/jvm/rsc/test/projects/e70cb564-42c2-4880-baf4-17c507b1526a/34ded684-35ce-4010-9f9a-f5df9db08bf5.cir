@@ -6,7 +6,7 @@
         <analogGraph _id='2' type='analog'>
           <elements>
             <analogInOut _id='3' id='1' name='In'/>
-            <resistor _id='4' id='2' delay='0' resistance='330.0' variable='true'/>
+            <resistor _id='4' id='2' delay='0' resistance='100.0' variable='true'/>
             <analogNet _id='5' id='3' delay='0'>
               <ports>
                 <netPortRef _id='6' verticeId='4' portId='2'/>
