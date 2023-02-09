@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.properties.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
+import ch.scorpion.jabbah.edit.select.RubberBandHandler
 import ch.scorpion.jabbah.edit.view.*
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
@@ -161,6 +162,13 @@ object EditModuleJvm : AbstractModule() {
 			nameKey = "edit.preferences.CommandManager.maxCmdPerSnapshot",
 			minValue = 5,
 			maxValue = 100
+		))
+		root.getGroup(PREF_TREE_EDITOR).add(EnumPreference(
+			RubberBandHandler.PROP_SELECT_TARGET_STRATEGY,
+			nameKey = "edit.preferences.RubberBand.targetStrategy",
+			values = RubberBandHandler.SelectionTargetStrategy.values(),
+			withName = RubberBandHandler.SelectionTargetStrategy::withName,
+			needsRestart = true
 		))
 	}
 }

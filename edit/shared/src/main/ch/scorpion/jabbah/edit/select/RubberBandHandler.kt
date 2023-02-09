@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.edit.select
 
+import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule.properties
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
@@ -21,32 +23,35 @@ class RubberBandHandler(
 
     companion object {
         const val PROP_SELECT_STRATEGY = "edit.select.rubberBandHandler.selectionStrategy"
+	    const val PROP_SELECT_TARGET_STRATEGY = "edit.select.rubberBandHandler.selectionTargetStrategy"
 	    const val PROP_SELECT_DELAY_MS = "edit.select.rubberBandHandler.selectDelayMs"
     }
 
-    enum class SelectionStrategy {
+    enum class SelectionTimeStrategy {
 
         SELECT_ON_DRAG {
 
-	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
+	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
 				captureCurrentSelection(context.drawingView.selectionManager)
 	        }
 
-            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
+            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
 	            if (delaySelectTimer != null) {
 		            if (!delaySelectTimer!!.isRunning()) {
-			            this.rubberBand = rubberBand
+			            this.rubberBandRef = rubberBand
 			            this.context = context
+			            this.selectionTargetStrategy = selectionTargetStrategy
 			            delaySelectTimer!!.start()
 		            }
 	            } else {
-		            this.rubberBand = rubberBand
+		            this.rubberBandRef = rubberBand
 		            this.context = context
-		            selectWithin()
+		            this.selectionTargetStrategy = selectionTargetStrategy
+		            selectionTargetStrategy.select(this.context, this.currentSelection, this.rubberBandRef)
 	            }
             }
 
-            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
+            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
 	            // empty
             }
         },
@@ -54,23 +59,24 @@ class RubberBandHandler(
         /** Updates the selection not before the mouse has been released.*/
         SELECT_ON_RELEASE {
 
-	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
+	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
 		        captureCurrentSelection(context.drawingView.selectionManager)
 	        }
-            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
+            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
                 // empty
             }
 
-            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
-				selectWithin()
+            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
+	            selectionTargetStrategy.select(this.context, currentSelection, rubberBand)
             }
         };
 
-	    protected val currentSelection = mutableListOf<Component>()
+	    val currentSelection = mutableListOf<Component>()
 
 	    /** Temporarily stores the values used for evaluating the selection within the rubberband.*/
-	    lateinit var rubberBand: RubberBand
+	    lateinit var rubberBandRef: RubberBand
 	    lateinit var context: EditInputEventContext
+		lateinit var selectionTargetStrategy: SelectionTargetStrategy
 
 	    /**
 	     * Delays evaluation of the selection within the rubberband by [PROP_SELECT_DELAY_MS] milliseconds
@@ -81,32 +87,61 @@ class RubberBandHandler(
 	     */
 	    var delaySelectTimer: Timer? = null
 
-	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext)
-        abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext)
-        abstract fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext)
+	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
+        abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
+        abstract fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
 
 		protected fun captureCurrentSelection(selectionManager: SelectionManager) {
 			// The SelectionTool makes sure that the currentSelection is empty if SHIFT is pressed
 			currentSelection.clear()
 			currentSelection.addAll(selectionManager.selection)
 		}
-
-	    fun selectWithin() {
-		    context.drawingView.selectionManager.replace {
-			    currentSelection.contains(it) || (it.visible && rubberBand.contains(it.boundingBox))
-		    }
-	    }
-
     }
 
-    val selectionStrategy: SelectionStrategy = BaseModule.properties.get(PROP_SELECT_STRATEGY)
+	enum class SelectionTargetStrategy(
+		override val customName: String,
+		val nameKey: String
+	): EnumProperty<SelectionTargetStrategy> {
+
+		CONTAINS("contains", "edit.preferences.RubberBand.targetStrategy.contains") {
+			override fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand) {
+				context.drawingView.selectionManager.replace {
+					currentSelection.contains(it) || (it.visible && rubberBand.contains(it.boundingBox))
+				}
+			}
+		},
+		INTERSECTS("intersects", "edit.preferences.RubberBand.targetStrategy.intersects") {
+			override fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand) {
+				context.drawingView.selectionManager.replace {
+					currentSelection.contains(it) || (it.visible && rubberBand.intersects(it.boundingBox))
+				}
+			}
+		};
+
+		companion object {
+			fun withName(name: String): SelectionTargetStrategy =
+				values().firstOrNull { it.customName == name } ?: throw IllegalArgumentException("unknown SelectionTargetStrategy '$name'")
+		}
+
+		abstract fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand)
+
+		override fun toString(): String = Translations.getString(nameKey)
+	}
+
+	val selectionStrategy: SelectionTimeStrategy by lazy { properties.get(PROP_SELECT_STRATEGY) }
+	private val selectionTargetStrategy: SelectionTargetStrategy by lazy {
+		SelectionTargetStrategy.withName(properties.getString(PROP_SELECT_TARGET_STRATEGY))
+	}
 
 	init {
-		selectionStrategy.delaySelectTimer = BaseModule.properties.getOptional<Int>(PROP_SELECT_DELAY_MS)?.let { delay ->
+		selectionStrategy.delaySelectTimer = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)?.let { delay ->
 			if (delay > 0) {
 				System.createTimer().also {
 					it.initialize(delay, repeats = false) {
-						selectionStrategy.selectWithin()
+						selectionTargetStrategy.select(
+							selectionStrategy.context,
+							selectionStrategy.currentSelection,
+							selectionStrategy.rubberBandRef)
 					}
 				}
 			} else {
@@ -124,21 +159,21 @@ class RubberBandHandler(
 
 	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mousePressed(context)
-	    selectionStrategy.mousePressed(rubberBand, context)
+	    selectionStrategy.mousePressed(rubberBand, context, selectionTargetStrategy)
         return rubberBand.inputEventHandler.mousePressed(context)
     }
 
     override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
         super.mouseDragged(context)
         rubberBand.inputEventHandler.mouseDragged(context)
-        selectionStrategy.mouseDragged(rubberBand, context)
+        selectionStrategy.mouseDragged(rubberBand, context, selectionTargetStrategy)
         return this
     }
 
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mouseReleased(context)
         rubberBand.inputEventHandler.mouseReleased(context)
-        selectionStrategy.mouseReleased(rubberBand, context)
+        selectionStrategy.mouseReleased(rubberBand, context, selectionTargetStrategy)
         return null
     }
 }
