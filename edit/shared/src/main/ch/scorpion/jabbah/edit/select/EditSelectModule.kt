@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.select
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -23,23 +24,24 @@ object EditSelectModule : AbstractModule() {
 		{ editor -> SelectionToolImpl(editor, createRubberBandHandler(), BaseModule.eventBus)}
 
     override fun initialize() {
-        fillProperties()
+        fillProperties(BaseModule.properties)
     }
 
     private fun createRubberBand(): RubberBand = RectangularRubberBand()
 
     private fun createRubberBandHandler(): RubberBandHandler = RubberBandHandler(createRubberBand())
 
-    private fun fillProperties() {
-        BaseModule.properties.set(RubberBand.PROP_STROKE_PAINT, Color.BLACK)
-        BaseModule.properties.set(RubberBand.PROP_FILL_PAINT, Color(255, 200, 0, 32))
-        BaseModule.properties.set(RubberBand.PROP_STROKE, Stroke(0.1f, LineCap.SQUARE, LineJoin.MITER, 10.0f, floatArrayOf(5f, 5f), 0f))
-        BaseModule.properties.set(RubberBandHandler.PROP_SELECT_STRATEGY, RubberBandHandler.SelectionStrategy.SELECT_ON_DRAG)
-	    BaseModule.properties.set(RubberBandHandler.PROP_SELECT_DELAY_MS, 200)
+    private fun fillProperties(properties: Properties) {
+        properties.set(RubberBand.PROP_STROKE_PAINT, Color.BLACK)
+        properties.set(RubberBand.PROP_FILL_PAINT, Color(255, 200, 0, 32))
+        properties.set(RubberBand.PROP_STROKE, Stroke(0.1f, LineCap.SQUARE, LineJoin.MITER, 10.0f, floatArrayOf(5f, 5f), 0f))
+        properties.set(RubberBandHandler.PROP_SELECT_STRATEGY, RubberBandHandler.SelectionTimeStrategy.SELECT_ON_DRAG)
+        properties.set(RubberBandHandler.PROP_SELECT_TARGET_STRATEGY, RubberBandHandler.SelectionTargetStrategy.CONTAINS.customName)
+	    properties.set(RubberBandHandler.PROP_SELECT_DELAY_MS, 200)
 
-        BaseModule.properties.set(Handle.PROP_SIZE_HALF, 4)
-        BaseModule.properties.set(Handle.PROP_BORDER_COLOR, Color.BLACK)
-        BaseModule.properties.set(Handle.PROP_FILL_COLOR, Color.WHITE)
-        BaseModule.properties.set(Handle.PROP_STROKE, Stroke(1.0f))
+        properties.set(Handle.PROP_SIZE_HALF, 4)
+        properties.set(Handle.PROP_BORDER_COLOR, Color.BLACK)
+        properties.set(Handle.PROP_FILL_COLOR, Color.WHITE)
+        properties.set(Handle.PROP_STROKE, Stroke(1.0f))
     }
 }

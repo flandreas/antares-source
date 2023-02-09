@@ -76,3 +76,31 @@ class PasteCommand(
 	}
 }
 
+class DuplicateAction(
+	private val service: DrawingAppService = EditModule.drawingAppService,
+	eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ContentViewManager = DrawViewModule.viewManager
+) : AbstractSelectionAwareAction("edit.action.duplicate", eventBus, viewManager) {
+
+	override fun execute(event: ActionEvent) {
+		service.duplicate(drawingView!!)
+	}
+}
+
+class DuplicateCommand(
+	private val drawingView: DrawingView<Drawing<Component>>,
+	private val contents: String,
+	private val pasteInfo: PasteInfo,
+	private val service: CopyPasteService = EditModule.copyPasteService
+) : AbstractCommand("edit.action.duplicate.name", null), Undoable {
+
+	override fun execute() {
+		service.paste(contents, drawingView, pasteInfo.dislocation)
+	}
+
+	override fun undo() {
+		pasteInfo.components.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it.id) as Component) }
+		service.decrementPasteCount()
+	}
+}
+

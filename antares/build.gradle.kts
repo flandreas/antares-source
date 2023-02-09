@@ -259,6 +259,8 @@ tasks {
 				"--app-version", "$version",
 				"--icon", "jvm\\rsc\\antares.ico",
 				"--java-options", "-splash:\$APPDIR/splash-light.png",
+				// Issue #522: Sorting problem in FileChooser under Windows
+				"--java-options", "-Djava.util.Arrays.useLegacyMergeSort=true",
 				"--type", "msi",
 				"--resource-dir", "jvm/rsc/",
 				"--win-shortcut"
