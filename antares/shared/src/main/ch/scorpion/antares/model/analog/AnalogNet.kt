@@ -29,6 +29,7 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 		signal?.let {
 			LOG.trace("Set AnalogSignal ${it.voltage} on AnalogNet $id")
 			updateSignal(it)
+			ports.map { port -> port as AnalogPort }.forEach { port -> port.handleAnalogSignalChanged() }
 		}
 	}
 }

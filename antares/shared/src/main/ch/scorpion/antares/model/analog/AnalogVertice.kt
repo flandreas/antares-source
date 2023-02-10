@@ -32,6 +32,10 @@ interface AnalogVertice : Vertice {
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	)
+
+	fun handleAnalogPortChanged(port: AnalogPort) {
+		// empty
+	}
 }
 
 abstract class AbstractAnalogVertice<T: CalculatingVertice>(

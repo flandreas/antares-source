@@ -74,6 +74,12 @@ class AnalogCircuitInOut(
 		throw UnsupportedOperationException("not implemented")
 	}
 
+	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
+		if (portType.isOutput) {
+			signal = input.net!!.signal as AnalogSignal
+		}
+	}
+
 	/** ---- [AnalogVertice] */
 
 	override fun composeComponentConstituentEquation(
@@ -99,5 +105,11 @@ class AnalogCircuitInOut(
 	fun toggle(signalHandler: SignalHandler, graphView: GraphView) {
 		signal = if (signal == HIGH_VOLTAGE) LOW_VOLTAGE else HIGH_VOLTAGE
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
+	}
+
+	override fun handleAnalogPortChanged(port: AnalogPort) {
+		if (portType.isOutput) {
+			signal = getPort<AnalogSignal>().net!!.signal!!
+		}
 	}
 }

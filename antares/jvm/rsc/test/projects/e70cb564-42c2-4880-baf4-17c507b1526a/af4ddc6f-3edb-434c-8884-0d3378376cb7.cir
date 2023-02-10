@@ -14,7 +14,7 @@
             </analogNet>
             <analogGround _id='5' id='3' delay='0'/>
             <analogInOut _id='10' id='10' name='I' type='input'/>
-            <resistor _id='11' id='12' delay='0' resistance='6104.0' variable='true'/>
+            <resistor _id='11' id='12' delay='0' resistance='1000.0' variable='true'/>
             <resistor _id='7' id='13' delay='0' resistance='100.0' variable='false'/>
             <analogNet _id='12' id='14' delay='0'>
               <ports>

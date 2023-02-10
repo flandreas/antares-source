@@ -51,7 +51,12 @@ class AnalogCircuitInOutView(
 	/** ---- [AbstractCircuitInOutView] */
 
 	override fun handleStateChangedImpl(event: GraphElementEvent) {
-		voltageLabel.text = "${model.signal.voltage} V"
+		updateVoltageLabel()
+	}
+
+	private fun updateVoltageLabel() {
+		val v = (model.signal.voltage * 10).toInt() / 10.0
+		voltageLabel.text = "$v V"
 	}
 
 	override fun updateViewImpl() {

@@ -7,4 +7,10 @@ class AnalogPort(
 	portType: PortType = PortType.INOUT,
 	name: String? = null
 ) : PortImpl<AnalogSignal>(portType, name) {
+
+	fun handleAnalogSignalChanged() {
+		(owner as? AnalogVertice)?.let {
+			it.handleAnalogPortChanged(this)
+		}
+	}
 }
