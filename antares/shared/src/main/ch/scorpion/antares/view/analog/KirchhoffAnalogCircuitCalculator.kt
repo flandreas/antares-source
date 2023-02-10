@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -185,7 +186,11 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	}
 
 	private fun getBranchStartVerticeViews(circuitView: AnalogGraphView): List<VerticeView<*>> {
-		val batteryViews = circuitView.getDrawables { it is BatteryView || it is AnalogCircuitInOutView || it is AnalogPowerView }.map {it as VerticeView<*> }
+		val batteryViews = circuitView.getDrawables {
+			it is BatteryView
+			|| (it is AnalogCircuitInOutView && it.model.portType.isInput)
+			|| it is AnalogPowerView
+		}.map {it as VerticeView<*> }
 		if (batteryViews.isEmpty()) {
 			throw IllegalStateException(Translations.getString("antares.analogCalc.noStartComponentFound.error.msg"))
 		}
@@ -227,7 +232,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 					}
 				} ?: identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 			}
-		} else if (connectableView is AnalogCircuitInOutView || connectableView is AnalogPowerView) {
+		} else if ((connectableView is AnalogCircuitInOutView && connectableView.model.portType.isInput) || connectableView is AnalogPowerView) {
 			val outgoingEdgeView = graphView.getEdgeView(connectableView.getPort(1)!!)!!
 			identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
@@ -278,10 +283,13 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	 * identifying [AnalogCircuitBranch]es.
 	 */
 	private fun followBranchFromNodeView(edgeView: EdgeView<*>, graphView: GraphView): Boolean =
-		!isConnectedToGroundView(edgeView) || graphView.getDrawables { it is BatteryView }.isEmpty()
+		!isConnectedToSinkView(edgeView) || graphView.getDrawables { it is BatteryView }.isEmpty()
 
-	private fun isConnectedToGroundView(edgeView: EdgeView<*>): Boolean =
-		edgeView.origin?.connectableView is AnalogGroundView || edgeView.destination?.connectableView is AnalogGroundView
+	private fun isConnectedToSinkView(edgeView: EdgeView<*>): Boolean =
+		edgeView.origin?.connectableView is AnalogGroundView
+		|| edgeView.destination?.connectableView is AnalogGroundView
+		|| (edgeView.origin?.connectableView is AnalogCircuitInOutView && (edgeView.origin?.connectableView as AnalogCircuitInOutView).model.portType == PortType.OUTPUT)
+		|| (edgeView.destination?.connectableView is AnalogCircuitInOutView && (edgeView.destination?.connectableView as AnalogCircuitInOutView).model.portType == PortType.OUTPUT)
 
 	/**
 	 * Composes the Kirchhoff's Current Law (KCL) equations for every [AnalogNodeView].

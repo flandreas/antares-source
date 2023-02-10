@@ -54,6 +54,9 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 ) : AbstractVerticeView<T>(styleProvider, model), GraphPortView<T>, Labeled {
 
 	companion object {
+		const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
+		const val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
+		const val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
 		const val LABEL_DIST = Look.SCALE
 	}
 
@@ -91,6 +94,14 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		get() = model.name
 		set(value) {
 			model.name = value
+		}
+
+	var portType: PortType
+		get() = model.portType
+		set(value) {
+			invalidate()
+			model.portType = value
+			updateView()
 		}
 
 	init {
@@ -195,6 +206,14 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		context.g.color = oldColor
 	}
 
+	/** ---- [GraphPortView] */
+
+	override val iconPath: String
+		get() = when (portType) {
+			PortType.INPUT -> BaseModule.properties.getString(PROP_INPUT_ICON_PATH)
+			PortType.OUTPUT -> BaseModule.properties.getString(PROP_OUTPUT_ICON_PATH)
+			PortType.INOUT -> BaseModule.properties.getString(PROP_INOUT_ICON_PATH)
+		}
 
 	/** ---- [AbstractCircuitInOutView] */
 
@@ -217,7 +236,26 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	protected abstract fun updateViewImpl()
 
-	protected abstract fun createPortView(template: PortView<*>?): PortView<*>
+	protected abstract fun createPortViewImpl(template: PortView<*>?, direction: Direction): PortView<*>
+
+	private fun createPortView(template: PortView<*>?): PortView<*> {
+		when (model.portType) {
+			PortType.INPUT -> {
+				val portView = createPortViewImpl(template, orientation)
+				portView.setLocation(
+					-portView.unconnectedLength * orientation.dx,
+					-portView.unconnectedLength * orientation.dy)
+				return portView
+			}
+			PortType.INOUT, PortType.OUTPUT -> {
+				val portView = createPortViewImpl(template, orientation.opposite())
+				portView.setLocation(
+					portView.unconnectedLength * orientation.dx,
+					portView.unconnectedLength * orientation.dy)
+				return portView
+			}
+		}
+	}
 
 	private fun updatePortView() {
 		val portView = getPortView(model.getPort())

@@ -28,7 +28,6 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -54,9 +53,6 @@ class DigitalCircuitInOutView(
 ) : AbstractCircuitInOutView<DigitalCircuitInOut>(styleProvider, model, eventBus, orientation), ControlViewSource<DigitalCircuitInOut> {
 
 	companion object {
-		const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
-		const val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
-		const val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
 		val LOG by logger(DigitalCircuitInOutView::class)
 	}
 
@@ -102,14 +98,6 @@ class DigitalCircuitInOutView(
 		set(value) {
 			invalidate()
 			model.bitWidth = value
-			updateView()
-		}
-
-	var portType: PortType
-		get() = model.portType
-		set(value) {
-			invalidate()
-			model.portType = value
 			updateView()
 		}
 
@@ -201,15 +189,6 @@ class DigitalCircuitInOutView(
 		hideKeyboard()
 	}
 
-	/** ---- [GraphPortView] */
-
-	override val iconPath: String
-		get() = when (portType) {
-			PortType.INPUT -> BaseModule.properties.getString(PROP_INPUT_ICON_PATH)
-			PortType.OUTPUT -> BaseModule.properties.getString(PROP_OUTPUT_ICON_PATH)
-			PortType.INOUT -> BaseModule.properties.getString(PROP_INOUT_ICON_PATH)
-		}
-
 	/** ---- [AbstractCircuitInOutView] */
 
 	override fun drawSimulated(context: DrawContext) {
@@ -240,34 +219,14 @@ class DigitalCircuitInOutView(
 	fun getDigitSignal(digitIndex: Int): DigitalSignal =
 		numberView!!.getDigitSignal(digitIndex)
 
-	override fun createPortView(template: PortView<*>?): PortView<*> {
-		when (model.portType) {
-			PortType.INPUT -> {
-				val portView = DigitalPortView(
-					styleProvider = styleProvider,
-					port = model.getPort(),
-					direction = orientation,
-					customUnconnectedLength = template?.customUnconnectedLength,
-					length = template?.length)
-				portView.setLocation(
-					-portView.unconnectedLength * orientation.dx,
-					-portView.unconnectedLength * orientation.dy)
-				return portView
-			}
-			PortType.INOUT, PortType.OUTPUT -> {
-				val portView = DigitalPortView(
-					styleProvider = styleProvider,
-					port = model.getInput(),
-					direction = orientation.opposite(),
-					customUnconnectedLength = template?.customUnconnectedLength,
-					length = template?.length)
-				portView.setLocation(
-					portView.unconnectedLength * orientation.dx,
-					portView.unconnectedLength * orientation.dy)
-				return portView
-			}
-		}
-	}
+	override fun createPortViewImpl(template: PortView<*>?, direction: Direction): PortView<*> =
+		DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.getPort(),
+			direction = direction,
+			customUnconnectedLength = template?.customUnconnectedLength,
+			length = template?.length
+		)
 
 	override fun updateViewImpl() {
 		numberView = NumberView(signalRepresentation, bitWidth, drawBox = bitWidth.width > 1)

@@ -5,7 +5,7 @@
       <model>
         <analogGraph _id='2' type='analog'>
           <elements>
-            <analogInOut _id='3' id='1' name='In'/>
+            <analogInOut _id='3' id='1' name='In' type='input'/>
             <resistor _id='4' id='2' delay='0' resistance='100.0' variable='true'/>
             <analogNet _id='5' id='3' delay='0'>
               <ports>
@@ -38,7 +38,7 @@
             <netView _id='19' modelId='13' style='line'/>
           </netViews>
           <components>
-            <analogCircuitInOutView _id='20' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='west'>
+            <analogCircuitInOutView _id='20' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east'>
               <location>
                 <point x='-112.0' y='-154.0'/>
               </location>

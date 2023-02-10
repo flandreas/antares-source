@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.inout
 
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -13,6 +14,7 @@ abstract class AbstractCircuitInOutViewBeanInfo<T: AbstractCircuitInOutView<*>> 
 		private val name = EditProperties.untranslatableName()
 		private val orientation = EditProperties.orientation()
 		private val color = EditProperties.color()
+		private val portType = AntaresProperties.portType()
 	}
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -22,5 +24,6 @@ abstract class AbstractCircuitInOutViewBeanInfo<T: AbstractCircuitInOutView<*>> 
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
 		properties.add(color.bind(editor, beanIdProvider(bean.id)))
+		properties.add(portType.bind(editor, beanIdProvider(bean.id)))
 	}
 }

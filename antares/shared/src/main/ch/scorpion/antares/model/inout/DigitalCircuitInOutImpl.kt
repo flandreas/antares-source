@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -24,29 +22,18 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A standard implementation of the [DigitalCircuitInOut] interface.
  */
 class DigitalCircuitInOutImpl(
-	val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	name: String? = null,
 	portType: PortType = PortType.INPUT,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractGraphPort<DigitalSignal>(
+) : AbstractCircuitInOut<DigitalSignal>(
 	port = DigitalPortImpl(portType.reverse(), bitWidth = bitWidth, canBeUndefined = portType == PortType.INOUT),
 	name = name,
-	calculator = CALCULATOR
+	calculator = CALCULATOR,
+	eventBus
 ), DigitalCircuitInOut {
 
 	companion object {
-
-		private const val INPUT_BASE_RESOURCE_KEY = "library.element.GraphInput"
-		private val INPUT_TYPE get() = Translations.getString("$INPUT_BASE_RESOURCE_KEY.name")
-		private val INPUT_TYPE_DESC get() = Translations.getOptionalString("$INPUT_BASE_RESOURCE_KEY.desc")
-
-		private const val OUTPUT_BASE_RESOURCE_KEY = "library.element.GraphOutput"
-		private val OUTPUT_TYPE get() = Translations.getString("$OUTPUT_BASE_RESOURCE_KEY.name")
-		private val OUTPUT_TYPE_DESC get() = Translations.getOptionalString("$OUTPUT_BASE_RESOURCE_KEY.desc")
-
-		private const val INOUT_BASE_RESOURCE_KEY = "library.element.GraphInOut"
-		private val INOUT_TYPE get() = Translations.getString("$INOUT_BASE_RESOURCE_KEY.name")
-		private val INOUT_TYPE_DESC get() = Translations.getOptionalString("$INOUT_BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -66,20 +53,6 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [GraphElement] */
 
-	override val type: String
-		get() = when (portType) {
-			PortType.INOUT -> INOUT_TYPE
-			PortType.INPUT -> INPUT_TYPE
-			PortType.OUTPUT -> OUTPUT_TYPE
-		}
-
-	override val typeDesc: String?
-		get() = when (portType) {
-			PortType.INOUT -> INOUT_TYPE_DESC
-			PortType.INPUT -> INPUT_TYPE_DESC
-			PortType.OUTPUT -> OUTPUT_TYPE_DESC
-		}
-
 	override fun graphParamsChanged(graph: Graph) {
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
@@ -90,19 +63,7 @@ class DigitalCircuitInOutImpl(
 	override var signal: DigitalSignal? = null
 		get() = field ?: DigitalSignalFactory.undefined(bitWidth)
 
-	override var portType: PortType
-		get() = getDigitalPort().portType.reverse()
-		set(value) {
-			if (portType != value) {
-				val oldValue = portType
-				getDigitalPort().portType = value.reverse()
-				eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
-			}
-		}
-
 	/** ---- [GraphInput] interface */
-
-	override var subGraphInputPort: SubGraphInputPort<DigitalSignal>? = null
 
 	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, force: Boolean) {
 		setIncomingSignal(signal, signalHandler, propagationDelay, force)
@@ -122,10 +83,6 @@ class DigitalCircuitInOutImpl(
 			requestActingAfter(signalHandler, delay, StoringGraphActorData(null, this.signal, force = force))
 		}
 	}
-
-	/** ---- [GraphOutput] */
-
-	override var subGraphOutputPort: SubGraphOutputPort<DigitalSignal>? = null
 
 	/** ---- [NetCombiner] interface */
 
@@ -214,13 +171,11 @@ class DigitalCircuitInOutImpl(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		portType = PortType.withName(reader.readString("type"))
 		bitWidth = BitWidth.read("bitWidth", reader)
 	}
 
@@ -237,8 +192,6 @@ class DigitalCircuitInOutImpl(
 				}
 			}
 		}
-
-	override val isToplevel: Boolean get() = subGraphInputPort == null
 
 	override var bitWidth: BitWidth
 		get() = getDigitalPort().bitWidth

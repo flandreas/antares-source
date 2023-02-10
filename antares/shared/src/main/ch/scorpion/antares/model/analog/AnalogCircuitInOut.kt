@@ -1,31 +1,30 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.model.inout.AbstractCircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.graph.view.GraphView
 
 class AnalogCircuitInOut(
-	name: String? = null
-) : AbstractGraphPort<AnalogSignal>(
-	port = AnalogPort(name),
+	name: String? = null,
+	portType: PortType = PortType.INPUT
+) : AbstractCircuitInOut<AnalogSignal>(
+	port = AnalogPort(portType.reverse(), name),
 	name = name,
 	calculator = CALCULATOR
-), CircuitInOut<AnalogSignal>, AnalogVertice {
+), AnalogVertice {
 
 	companion object {
-
-		private const val BASE_RESOURCE_KEY = "library.element.GraphInOut"
 
 		private val CALCULATOR = Calculator()
 
@@ -41,10 +40,6 @@ class AnalogCircuitInOut(
 		}
 	}
 
-	override val type: String get() = Translations.getString("$BASE_RESOURCE_KEY.name")
-
-	override val typeDesc: String? get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
-
 	/** ---- [GraphPort] */
 
 	override var signal: AnalogSignal = HIGH_VOLTAGE
@@ -55,20 +50,11 @@ class AnalogCircuitInOut(
 			}
 		}
 
-	override var portType: PortType = PortType.INOUT
-		set(@Suppress("UNUSED_PARAMETER") value) { throw UnsupportedOperationException() }
-
 	/** ---- [GraphInput] */
-
-	override var subGraphInputPort: SubGraphInputPort<AnalogSignal>? = null
 
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
 		throw UnsupportedOperationException("not implemented")
 	}
-
-	/** ---- [GraphOutput] */
-
-	override var subGraphOutputPort: SubGraphOutputPort<AnalogSignal>? = null
 
 	/** ---- [NetCombiner] */
 
@@ -97,12 +83,17 @@ class AnalogCircuitInOut(
 		groundNodeNetId: Int,
 		equationSystem: DynamicLinearEquationSystem
 	) {
-		val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
+		val row = Array(equationSystem.variableCount) { ZERO }
 
-		val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
-		row[branches.size + voltageVariableIndex] = ONE
-
-		equationSystem.addEquation(row) { signal.voltage }
+		if (getPort<AnalogSignal>().portType.isOutput) {
+			val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
+			row[branches.size + voltageVariableIndex] = ONE
+			equationSystem.addEquation(row) { signal.voltage }
+		} else {
+			val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, 1)
+			row[currentVariableIndex] = ONE
+			equationSystem.addEquation(row, ZERO)
+		}
 	}
 
 	fun toggle(signalHandler: SignalHandler, graphView: GraphView) {

@@ -42,9 +42,9 @@ class AnalogTransistor(
 	override val isOn: Boolean get() = false
 
 	init {
-		addPort(AnalogPort("S"))
-		addPort(AnalogPort("G"))
-		addPort(AnalogPort("D"))
+		addPort(AnalogPort(name = "S"))
+		addPort(AnalogPort(name = "G"))
+		addPort(AnalogPort(name = "D"))
 	}
 
 	/** ---- [Storable] interface */

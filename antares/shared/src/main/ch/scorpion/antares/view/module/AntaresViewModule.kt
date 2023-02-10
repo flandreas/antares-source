@@ -23,6 +23,7 @@ import ch.scorpion.antares.view.container.DilCaseDragDestinationHighlight
 import ch.scorpion.antares.view.figure.*
 import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
+import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.net.*
@@ -251,9 +252,9 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(EdgeView.PROP_MIN_EDGE_VIEW_LENGTH, AbstractAntaresPortView.LENGTH + 5)
 		properties.set(DigitalEdgeView.PROP_WIDE_BUS_STROKE, true)
 
-		properties.set(DigitalCircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
-		properties.set(DigitalCircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
-		properties.set(DigitalCircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
+		properties.set(AbstractCircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
+		properties.set(AbstractCircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
+		properties.set(AbstractCircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
 		properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
 		properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
 		properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 class AnalogPort(
+	portType: PortType = PortType.INOUT,
 	name: String? = null
-) : PortImpl<AnalogSignal>(PortType.INOUT, name) {
+) : PortImpl<AnalogSignal>(portType, name) {
 }

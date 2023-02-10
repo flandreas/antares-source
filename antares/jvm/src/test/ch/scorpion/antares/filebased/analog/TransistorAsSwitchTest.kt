@@ -30,36 +30,39 @@ class TransistorAsSwitchTest : AbstractFileBasedTest() {
 	@Test
 	fun shouldLabelVoltageNodes() {
 		val voltageNodes = KirchhoffAnalogCircuitCalculator.labelVoltageNodes(analogGraphView, 2)
-		assertEquals(3, voltageNodes.size)
+		assertEquals(4, voltageNodes.size)
 	}
 
 	@Test
 	fun shouldLabelBranchCurrents() {
 		val branches = KirchhoffAnalogCircuitCalculator.labelBranchCurrents(analogGraphView)
 
-		assertEquals(5, branches.size)
+		assertEquals(7, branches.size)
 
 		with (branches.first { it.containsId(14) }) {
 			assertEquals(2, size)
-			assertTrue(containsId(14))
 			assertTrue(containsId(17))
 		}
 		with (branches.first { it.containsId(24) }) {
 			assertEquals(2, size)
-			assertTrue(containsId(24))
 			assertTrue(containsId(27))
 		}
 		with (branches.first { it.containsId(25) }) {
 			assertEquals(1, size)
 		}
 		with (branches.first { it.containsId(32) }) {
-			assertEquals(3, size)
-			assertTrue(containsId(32))
+			assertEquals(2, size)
 			assertTrue(containsId(31))
-			assertTrue(containsId(28))
 		}
 		with (branches.first { it.containsId(21) }) {
 			assertEquals(1, size)
+		}
+		with (branches.first { it.containsId(36) }) {
+			assertEquals(1, size)
+		}
+		with (branches.first { it.containsId(35) }) {
+			assertEquals(2, size)
+			assertTrue(containsId(28))
 		}
 	}
 

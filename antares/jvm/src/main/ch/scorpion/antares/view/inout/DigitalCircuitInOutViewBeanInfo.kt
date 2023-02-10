@@ -14,7 +14,6 @@ import com.l2fprod.common.propertysheet.Property
 class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<DigitalCircuitInOutView>() {
 
     companion object {
-	    private val portType = AntaresProperties.portType()
 	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val signalRepresentation = AntaresProperties.signalRepresentation()
 	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
@@ -25,7 +24,6 @@ class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<Digital
     override fun addProperties(bean: DigitalCircuitInOutView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(portType.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(signalRepresentation.bind(editor, beanIdProvider(bean.id), filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 	    if (bean.model.portType.isInput) {

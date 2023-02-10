@@ -18,7 +18,7 @@ abstract class AbstractGraphPort<T : Any>(
 	port: Port<T>,
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
-	private val eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractInteractableVertice(calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	companion object {

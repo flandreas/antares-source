@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.ArrowPath
-import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -21,7 +20,7 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.view.GraphPortView
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -49,10 +48,6 @@ class AnalogCircuitInOutView(
 		updateView()
 	}
 
-	/** ---- [GraphPortView] */
-
-	override val iconPath: String get() = BaseModule.properties.getString(DigitalCircuitInOutView.PROP_INOUT_ICON_PATH)
-
 	/** ---- [AbstractCircuitInOutView] */
 
 	override fun handleStateChangedImpl(event: GraphElementEvent) {
@@ -63,22 +58,19 @@ class AnalogCircuitInOutView(
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation,
 			Dimension2D(voltageLabel.bounds.width, voltageLabel.bounds.height)
-		).build(inout = true)
+		).build(inout = portType === PortType.INOUT)
 
 		voltageLabel.location = arrowPath!!.path.boundingBox.center
 	}
 
-	override fun createPortView(template: PortView<*>?): PortView<*> {
-		val portView = AnalogPortView(
+	override fun createPortViewImpl(template: PortView<*>?, direction: Direction): PortView<*> =
+		AnalogPortView(
 			styleProvider,
 			model.getPort(),
-			direction = orientation.opposite(),
+			direction = direction,
 			length = template?.length,
 			customUnconnectedLength = template?.customUnconnectedLength
 		)
-		portView.setLocation(portView.unconnectedLength * orientation.dx, portView.unconnectedLength * orientation.dy)
-		return portView
-	}
 
 	override fun updateOutputLabel() {
 		label.text = StringUtils.orEmpty(name)
