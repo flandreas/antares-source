@@ -15,6 +15,13 @@ import kotlin.math.abs
 class AnalogCircuitBranch {
 
 	companion object {
+
+		fun getBranch(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): AnalogCircuitBranch? =
+			branches.firstOrNull { it.containsId(edgeView.id) }
+
+		fun isPositive(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Boolean =
+			getBranch(edgeView, branches)!!.isPositive(edgeView.id)
+
 		fun getBranchId(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Int? =
 			branches.indexOfFirstOrNull { it.containsId(edgeView.id) }
 	}

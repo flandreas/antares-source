@@ -46,6 +46,16 @@ interface AnalogTwoPortVertice : AnalogVertice {
 			}
 		}
 
+		fun isCurrentPositive(
+			circuitView: AnalogGraphView,
+			vertice: AnalogVertice,
+			branches: List<AnalogCircuitBranch>,
+			portId: Int = 1
+		): Boolean {
+			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!
+			return AnalogCircuitBranch.isPositive(edgeView, branches)
+		}
+
 		fun currentVariableIndex(
 			circuitView: AnalogGraphView,
 			vertice: AnalogVertice,

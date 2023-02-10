@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
@@ -78,8 +79,12 @@ class AnalogTransistor(
 	) {
 		val row = Array(equationSystem.variableCount) { ZERO }
 
-		val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches)
-		row[currentVariableIndex] = ONE
+		val sourceCurrentIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches)
+		if (AnalogTwoPortVertice.isCurrentPositive(circuitView, this, branches)) {
+			row[sourceCurrentIndex] = MINUS_ONE
+		} else {
+			row[sourceCurrentIndex] = ONE
+		}
 
 		// If a voltage variable is -1 (not found), vertice is connected to ground
 		val gateVoltageIndex = voltageNodes.indexOf(gatePort.net!!.id)
@@ -89,7 +94,7 @@ class AnalogTransistor(
 			row[branches.size + gateVoltageIndex] = { -gain }
 		}
 		if (sourceVoltageIndex >= 0) {
-			row[branches.size + gateVoltageIndex] = { gain }
+			row[branches.size + sourceVoltageIndex] = { gain }
 		}
 
 		equationSystem.addEquation(row, ZERO)
