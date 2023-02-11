@@ -234,6 +234,18 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
+	override fun <T : Any> join(
+		graphView: GraphView,
+		edgeView1: EdgeView<T>,
+		endpointType1: EdgeViewEndpointType,
+		location: Point2D,
+		edgeView2: EdgeView<T>,
+	) {
+		endpointType1.moveTo(edgeView1, location)
+		edgeView1.join(edgeView2)
+		graphView.remove(edgeView2)
+	}
+
 	private fun <T : Any> connectPortToNet(port: Port<T>?, net: Net<T>) {
 		port?.let {
 			if (!net.isConnectedWith(it)) {
