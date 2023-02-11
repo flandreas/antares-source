@@ -666,10 +666,20 @@ class SubGraphVerticeViewImpl(
 
 			override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 				val handler = super.mouseClicked(context)
-				if (context.mouseEvent?.isConsumed() != true && context.mouseEvent?.clickCount == 2) {
-					requestOpenSubGraph(context.mouseEvent!!)
+
+				if (context.mouseEvent?.isConsumed() != true) {
+					when (context.mouseEvent?.clickCount) {
+						1 -> getPortViewAt(context.x, context.y)?.let { pv ->
+							if (!pv.port.isConnected && pv.port.portType.isInput) {
+								pv.handleExecutionClick(context)
+							}
+						}
+						2 -> requestOpenSubGraph(context.mouseEvent!!)
+						null -> {}
+					}
 					return null
 				}
+
 				return handler
 			}
 		}

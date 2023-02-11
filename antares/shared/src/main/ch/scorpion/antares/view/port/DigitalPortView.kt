@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
@@ -27,6 +28,7 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.*
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
@@ -335,6 +337,20 @@ class DigitalPortView(
 	override fun prepareConnectionDrawContext(context: DrawContext) {
 		setupColor(context)
 		setupStroke(context)
+	}
+
+	override fun handleExecutionClick(context: ActorInteractionContext) {
+		with (getDigitalPort()) {
+			if (bitWidth == BitWidth.BW_1) {
+				val signal = getIncomingSignal()
+				val newSignal = if (signal == null || signal.isPartiallyUndefined) {
+					Word.trueValue(BitWidth.BW_1)
+				} else {
+					signal.not()
+				}
+				setIncomingSignal(newSignal, context.signalHandler)
+			}
+		}
 	}
 
 	/** ---- [AbstractPortView] */
