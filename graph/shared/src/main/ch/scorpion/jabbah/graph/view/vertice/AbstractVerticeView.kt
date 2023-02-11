@@ -57,7 +57,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	companion object {
 
-		private fun cannotOpenMsg(c: Component) {
+		fun cannotOpenMsg(c: Component) {
 			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
 		}
 
@@ -70,28 +70,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 				return null
 			}
 		}
-
-		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
-			var component: Component? = null
-
-			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-				when (context.mouseEvent?.clickCount) {
-					1 -> {
-						if (component is VerticeView<*>) {
-							(component as VerticeView<*>).getPortViewAt(context.x, context.y)?.let { pv ->
-								if (!pv.port.isConnected && pv.port.portType.isInput) {
-									pv.handleExecutionClick(context)
-								}
-							}
-						}
-					}
-					2 -> cannotOpenMsg(component!!)
-				}
-				return null
-			}
-		}
-
-		private val CANNOT_OPEN_ACTOR_CLICK_HANDLER = CannotOpenActorClickHandler()
 	}
 
 	/** Holds the graphical representations of all the model's [Port]s.*/
@@ -344,10 +322,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	protected open val executionTooltipSubtext: String? get() = description.value
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this
-		return CANNOT_OPEN_ACTOR_CLICK_HANDLER
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		VerticeViewActorInteractionHandler.getInactiveInstance(this)
 
 	override fun executionStarted(signalHandler: SignalHandler) { }
 

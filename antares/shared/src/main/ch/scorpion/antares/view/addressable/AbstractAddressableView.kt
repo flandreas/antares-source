@@ -143,7 +143,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		inputEventHandler.getActorInteractionHandler()
+		inputEventHandler.getActorInteractionHandler(this)
 
 	/** ---- [Component] */
 
