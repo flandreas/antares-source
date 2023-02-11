@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * Draws a circle at the end point location.
  */
 class EdgeEndpointView(
-	private val edgeView: EdgeView<*>,
+	val edgeView: EdgeView<*>,
 	private val connectorSupplier: () -> AbstractDragEdgeViewEndpointConnector,
 	styleProvider: StyleProvider
 ) : AbstractStyledDrawable(GraphStyleType.EDGE, styleProvider), Locatable {

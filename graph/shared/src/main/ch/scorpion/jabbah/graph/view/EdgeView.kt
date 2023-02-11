@@ -140,6 +140,14 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType?
 
+	fun getEndpointType(edgeEndpointView: EdgeEndpointView): EdgeViewEndpointType?
+
+	/**
+	 * Returns the [EdgeEndpointView] of this [EdgeView] with the specified [EdgeViewEndpointType]
+	 * if the corresponding end is unconnected (open), or `null` otherwise.
+	 */
+	fun getOpenEndpointView(type: EdgeViewEndpointType): EdgeEndpointView?
+
 	/** Returns the start [Point2D] of the segment with the specified index.*/
     fun getSegmentPoint(index: Int): Point2D
 

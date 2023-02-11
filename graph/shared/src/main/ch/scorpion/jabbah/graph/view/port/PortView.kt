@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -203,5 +204,11 @@ interface PortView<T : Any> : Drawable, Storable, SnappableX, SnappableY, Transp
 	fun prepareConnectionDrawContext(context: DrawContext)
 
 	fun createConnection(): Connection<T> = Connection(owner!!, port)
+
+	/**
+	 * Called by the environment during execution when the user clicks on this [PortView]
+	 * if it is an input and its [Port] is unconnected. The default implementation is empty.
+	 */
+	fun handleExecutionClick(context: ActorInteractionContext) {}
 
 }

@@ -132,6 +132,19 @@ interface GraphViewConnectService {
 	 * @throws IllegalStateException if `nodeView` has more than two outgoing [EdgeView].
 	 */
 	fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>)
+
+	/**
+	 * Joins [edgeView1] with the [Point2D]s of [edgeView2] and removes [edgeView2] from [graphView],
+	 * including all the necessary reconnecting. The point of join is defined my moving
+	 * [endpointType1] of [edgeView1] to [location].
+	 */
+	fun <T : Any> join(
+		graphView: GraphView,
+		edgeView1: EdgeView<T>,
+		endpointType1: EdgeViewEndpointType,
+		location: Point2D,
+		edgeView2: EdgeView<T>,
+	)
 }
 
 /** Represents the result of splitting an [EdgeView].*/

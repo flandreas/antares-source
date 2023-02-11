@@ -37,6 +37,13 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	/** The location where dragging started. */
 	protected var oldLocation = Point2D.ZERO
 
+	private var targetEndpointView: EdgeEndpointView? = null
+
+	override fun reset() {
+		super.reset()
+		targetEndpointView = null
+	}
+
 	override val handler = StateMachineInputEventHandler(
 
 		stateMachine<EditInputEventContext>(Unhandled) {
@@ -68,6 +75,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			state("drag") {
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+				}
+				transitTo("insideTargetEndpoint") {
+					given { mouseDragged(it) && insideTargetEndpoint(it) }
 				}
 				transitTo("insideTargetEdgeView") {
 					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
@@ -126,6 +136,21 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				stayOtherwise()
 			}
 
+			state("insideTargetEndpoint") {
+				onEntry { snapToTargetEndpointView(it) }
+				onExit { removePortViewHighlight(it) }
+				stayIf({ mouseDragged(it) && insideTargetEndpoint(it) }) {
+					onTransit { snapToTargetEndpointView(it) }
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideTargetEndpoint(it) }
+				}
+				transitTo("connectedToEndpoint") {
+					given { mouseLeftReleased(it) }
+				}
+				stayOtherwise()
+			}
+
 			state("draggedOpen") {
 				onEntry {
 					edgeView?.underConstruction = false
@@ -148,6 +173,14 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				onEntry {
 					edgeView?.underConstruction = false
 					completeConnectingToEdgeView(it)
+					reset()
+				}
+			}
+
+			state("connectedToEndpoint") {
+				onEntry {
+					removePortViewHighlight(it)
+					completeConnectingToEndpoint(it)
 					reset()
 				}
 			}
@@ -186,8 +219,31 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, getEndpointView().location)
 	}
 
-	protected fun insideStart(location: Point2D): Boolean {
+	private fun insideStart(location: Point2D): Boolean {
 		return draggedEndpointType.getEndpoint(edgeView!!).contains(location)
+	}
+
+	private fun insideTargetEndpoint(context: EditInputEventContext): Boolean {
+		val edgeView = context.drawingView.drawing.getDrawable {
+			it is EdgeView<*> &&
+				(it.getOpenEndpointView(draggedEndpointType.opposite)?.let {
+					endpointView -> endpointView.contains(context.location)
+				} ?: false)
+		}
+
+		if (edgeView != null) {
+			targetEndpointView = (edgeView as EdgeView<*>).getOpenEndpointView(draggedEndpointType.opposite)
+			return true
+		}
+
+		return false
+	}
+
+	private fun snapToTargetEndpointView(context: EditInputEventContext) {
+		val location = targetEndpointView!!.location
+		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, location)
+		draggedEndpointType.moveTo(edgeView!!, location)
+		draggedEndpointType.layout(edgeView!!, null)
 	}
 
 	protected open fun beginDragging(context: EditInputEventContext) {
@@ -221,6 +277,22 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			targetConnectableViewId = null,
 			targetPortId = null,
 			joinNetViews = true
+		))
+	}
+
+	private fun completeConnectingToEndpoint(context: EditInputEventContext) {
+		if (targetEndpointView == null) {
+			cancel(context.editor)
+			return
+		}
+
+		context.editor.commandManager.execute(JoinEdgeViewEndpointsCommand<Any>(
+			context.editor,
+			connectService,
+			edgeView!!.id,
+			draggedEndpointType,
+			targetEndpointView!!.location,
+			targetEndpointView!!.edgeView.id,
 		))
 	}
 }

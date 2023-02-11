@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -18,6 +19,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
@@ -250,6 +252,20 @@ class DigitalPortView(
 	override val connectedLength: Int get() = portViewStyle.getConnectedLength(this)
 
 	override val unconnectedLength: Int get() = customUnconnectedLength ?: portViewStyle.unconnectedLength
+
+	override fun handleExecutionClick(context: ActorInteractionContext) {
+		with (getDigitalPort()) {
+			if (bitWidth == BitWidth.BW_1) {
+				val signal = getIncomingSignal()
+				val newSignal = if (signal == null || signal.isPartiallyUndefined) {
+					Word.trueValue(BitWidth.BW_1)
+				} else {
+					signal.not()
+				}
+				setIncomingSignal(newSignal, context.signalHandler)
+			}
+		}
+	}
 
 	/** ---- [AbstractPortView] */
 

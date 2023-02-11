@@ -284,6 +284,21 @@ open class EdgeViewImpl<T : Any>(
 		}
 	}
 
+	override fun getEndpointType(edgeEndpointView: EdgeEndpointView): EdgeViewEndpointType? {
+		return when (edgeEndpointView) {
+			originEndpointView -> ORIGIN
+			destinationEndpointView -> DESTINATION
+			else -> null
+		}
+	}
+
+	override fun getOpenEndpointView(type: EdgeViewEndpointType): EdgeEndpointView? {
+		return when (type) {
+			ORIGIN -> if (origin == null) originEndpointView else null
+			DESTINATION -> if (destination == null) destinationEndpointView else null
+		}
+	}
+
 	override fun getSegmentPoint(index: Int): Point2D {
 		return Point2D(polyline.getPointAt(index))
 	}

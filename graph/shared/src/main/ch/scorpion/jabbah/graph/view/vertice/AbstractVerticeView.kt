@@ -73,9 +73,19 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
 			var component: Component? = null
+
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-				if (context.mouseEvent?.clickCount == 2) {
-					cannotOpenMsg(component!!)
+				when (context.mouseEvent?.clickCount) {
+					1 -> {
+						if (component is VerticeView<*>) {
+							(component as VerticeView<*>).getPortViewAt(context.x, context.y)?.let { pv ->
+								if (!pv.port.isConnected && pv.port.portType.isInput) {
+									pv.handleExecutionClick(context)
+								}
+							}
+						}
+					}
+					2 -> cannotOpenMsg(component!!)
 				}
 				return null
 			}
