@@ -221,6 +221,8 @@ abstract class AbstractAddressableView<T : Addressable>(
 	}
 
 	override fun drawImpl(context: DrawContext) {
+		super.drawImpl(context)
+
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
@@ -253,8 +255,6 @@ abstract class AbstractAddressableView<T : Addressable>(
 
 		context.g.color = oldColor
 		context.g.stroke = oldStroke
-
-		super.drawImpl(context)
 	}
 
 	/** Determines whether drawing hte [AddressableContentsView] is required depending on the [CurrentSystemSpeedCategory].*/
