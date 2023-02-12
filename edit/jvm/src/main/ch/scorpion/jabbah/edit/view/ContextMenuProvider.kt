@@ -33,9 +33,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 
 	private fun fillContextMenu(view: View<*>, selection: Collection<Component>, popupMenu: JPopupMenu) {
 		popupMenu.removeAll()
-		if (selection.size == 1) {
-			addActions(view, popupMenu)
-		}
+		addActions(view, popupMenu)
 	}
 
 	protected open fun addClipboardActions(popupMenu: JPopupMenu) {
