@@ -62,16 +62,18 @@ class PasteAction(
 class PasteCommand(
 	private val drawingView: DrawingView<Drawing<Component>>,
 	private val clipboardContents: String,
-	private val pasteInfo: PasteInfo,
+	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
 ) : AbstractCommand("edit.command.paste", null), Undoable {
 
 	override fun execute() {
-		service.paste(clipboardContents, drawingView, pasteInfo.dislocation)
+		pasteInfo = PasteInfo(
+			service.paste(clipboardContents, drawingView, pasteInfo.dislocation).map { it.id },
+			pasteInfo.dislocation)
 	}
 
 	override fun undo() {
-		pasteInfo.components.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it.id) as Component) }
+		pasteInfo.componentIds.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it) as Component) }
 		service.decrementPasteCount()
 	}
 }
@@ -90,16 +92,18 @@ class DuplicateAction(
 class DuplicateCommand(
 	private val drawingView: DrawingView<Drawing<Component>>,
 	private val contents: String,
-	private val pasteInfo: PasteInfo,
+	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
 ) : AbstractCommand("edit.action.duplicate.name", null), Undoable {
 
 	override fun execute() {
-		service.paste(contents, drawingView, pasteInfo.dislocation)
+		pasteInfo = PasteInfo(
+			service.paste(contents, drawingView, pasteInfo.dislocation).map { it.id },
+			pasteInfo.dislocation)
 	}
 
 	override fun undo() {
-		pasteInfo.components.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it.id) as Component) }
+		pasteInfo.componentIds.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it) as Component) }
 		service.decrementPasteCount()
 	}
 }

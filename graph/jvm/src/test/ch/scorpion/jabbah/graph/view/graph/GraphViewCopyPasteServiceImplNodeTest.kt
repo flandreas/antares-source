@@ -68,10 +68,10 @@ class GraphViewCopyPasteServiceImplNodeTest {
 			drawingViewBuilder.build()
 		)
 
-		assertEquals(1, result.components.size)
-		assertTrue(result.components[0] is EdgeView<*>)
-		assertNull((result.components[0] as EdgeView<*>).origin)
-		assertNull((result.components[0] as EdgeView<*>).destination)
+		assertEquals(1, result.componentIds.size)
+		assertTrue(builder.graphView.getWithId(result.componentIds[0]) is EdgeView<*>)
+		assertNull((builder.graphView.getWithId(result.componentIds[0]) as EdgeView<*>).origin)
+		assertNull((builder.graphView.getWithId(result.componentIds[0]) as EdgeView<*>).destination)
 
 		assertEquals(11 + 1, builder.graphView.drawables.size)
 		assertEquals(2, builder.graphView.getDrawables { it is NodeView<*> }.size)

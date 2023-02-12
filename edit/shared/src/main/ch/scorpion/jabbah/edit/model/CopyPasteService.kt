@@ -42,6 +42,6 @@ open class CopyPasteService {
  * [CopyPasteService.paste] used for subsequent pasts.
  * */
 class PasteInfo(
-	val components: List<Component>,
+	val componentIds: List<Int>,
 	val dislocation: Point2D
 )

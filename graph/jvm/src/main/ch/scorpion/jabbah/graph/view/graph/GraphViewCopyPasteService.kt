@@ -106,9 +106,7 @@ class GraphViewCopyPasteService(
 				DEFAULT_DISTANCE_FACTOR * view.grid.distance)
 		}
 
-		val components = paste(contents, view, dislocation)
-
-		return PasteInfo(components, dislocation)
+		return PasteInfo(paste(contents, view, dislocation).map { it.id }, dislocation)
 	}
 
 	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> {
