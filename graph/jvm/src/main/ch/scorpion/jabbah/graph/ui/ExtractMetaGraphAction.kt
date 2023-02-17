@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -26,7 +27,7 @@ class ExtractMetaGraphAction(
 ): AbstractSelectionAwareAction("graph.action.extractMetaGraph", eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		val graphName = NewGraphAction.requestNewGraphName(drawingView!!.canvas as JComponent, name)
+		val graphName = NewGraphAction.requestNewGraphName(drawingView!!.canvas as JComponent, Translations.getString("graph.action.extractMetaGraph.title"))
 			?: return
 
 		val library = libraryHolder.library
