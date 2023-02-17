@@ -120,6 +120,16 @@ NOTE: The modified symbol is only valid for the selected subcircuit in the curre
 
 The original symbol can be restored with context menu menu:Reset Symbol[].
 
+== Extracting subcircuit
+
+This feature is for users who like working in a "Figma-like" style, i.e. to start drawing everything in a single circuit and the extract part of the design as separate subcircuits.
+
+image::user-manual/circuits/extract-subcircuit.png[Extracting Subcircuit, 300,align="center"]
+
+Select the component you'd like to extract, right-click with the mouse, and select "Extract as subcircuit". Antares asks you for the name of the new subcircuit and creates it in the same folder of the project/library in which the currently open circuit is contained.
+
+While extracting, Antares replaces all switches by circuit inputs and all LEDs by circuit outputs. The selected components are then deleted and replaced with the symbol of the newly created subcircuit. Note that Antares it not yet capable of automatically creating inputs/outputs for pins of components that are left unconnected when extracting them. This may be a topic of a future release.
+
 == Using the drawing tools
 
 A circuit in Antares can not only consist of digital components and the connected wires, but also of purely graphical elements such as rectangles or texts. Use the drawing tools in the Antares window toolbar to add such elements to the circuit.
