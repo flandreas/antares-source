@@ -69,8 +69,6 @@ class DeleteCommand(
 	constructor(drawingView: DrawingView<Drawing<Component>>, component: Component) : this(drawingView, mutableListOf(component.id))
 
 	override fun execute() {
-		componentIds
-			.map { drawingView.drawing.getWithId(it)!! }
-			.forEach { drawingView.drawing.remove(it) }
+		drawingView.drawing.remove(componentIds)
 	}
 }

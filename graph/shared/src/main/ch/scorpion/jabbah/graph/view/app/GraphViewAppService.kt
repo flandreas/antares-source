@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -33,6 +35,16 @@ interface GraphViewAppService : DrawingAppService {
 		location: Point2D,
 		editor: Editor
 	): Component
+
+	/**
+	 * Extracts all currently selected [GraphElementView] as a new [MetaGraph]
+	 * and stores in under the given [graphName] in [libraryDirectory]
+	 */
+	fun extractMetaGraph(
+		graphName: String,
+		drawingView: DrawingView<GraphView>,
+		libraryDirectory: LibraryDirectory
+	)
 }
 
 open class GraphViewAppServiceImpl(
@@ -114,6 +126,12 @@ open class GraphViewAppServiceImpl(
 		return component
 	}
 
+	override fun extractMetaGraph(graphName: String, drawingView: DrawingView<GraphView>, libraryDirectory: LibraryDirectory) {
+		val componentIds = drawingView.selectionManager.selection.map { it.id }
+		LOG.userTrail("Extract ${componentIds.size} Components into new Library MetaGraph '$graphName'")
+		commandManager.execute(ExtractMetaGraphCommand(graphName, drawingView, componentIds, libraryDirectory))
+	}
+
 	/** ---- [GraphViewAppServiceImpl] */
 
 	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, drawingView: DrawingView<GraphView>) {
@@ -179,5 +197,17 @@ private class UnconnectEdgeViewDestinationCommand(
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)
+	}
+}
+
+class ExtractMetaGraphCommand(
+	private val graphName: String,
+	private val drawingView: DrawingView<GraphView>,
+	private val componentIds: Collection<Int>,
+	private val libraryDirectory: LibraryDirectory
+) : AbstractCommand("graph.command.extractMetaGraph") {
+
+	override fun execute() {
+		GraphViewModule.metaGraphService.extractMetaGraph(graphName, drawingView, componentIds, libraryDirectory)
 	}
 }

@@ -20,6 +20,7 @@ import ch.scorpion.antares.view.find.DigitalGraphViewSearch
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
+import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
@@ -169,6 +170,7 @@ object AntaresViewModule : AbstractModule() {
 			DrawStyleModule.styleProvider))
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
+		GraphViewModule.metaGraphService = AntaresMetaGraphService()
 
 		GraphModule.require()
 		AnimationModule.require()

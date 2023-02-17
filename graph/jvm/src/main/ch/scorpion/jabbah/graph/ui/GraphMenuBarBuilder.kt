@@ -99,7 +99,8 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(DuplicateAction())))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(OpenGraphNavigationAction(DrawViewModule.viewManager, eventBus))))
-		menu.add(JMenuItem(ActionWrapperSwing(EditSubGraphVerticeViewAction((frame as GraphFrameSwing).controller.applicationContextHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(EditSubGraphVerticeViewAction(graphFrame.controller.applicationContextHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(ExtractMetaGraphAction(graphFrame.application.controller))))
 	}
 
 	override fun fillViewMenu(menu: JMenu) {

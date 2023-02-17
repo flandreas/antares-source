@@ -56,8 +56,6 @@ object GraphModuleJvm : AbstractModule() {
 		AppModuleJvm.require()
 		GraphViewModuleJvm.require()
 
-		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider()
-
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 		configureGraphParamValueProperties()

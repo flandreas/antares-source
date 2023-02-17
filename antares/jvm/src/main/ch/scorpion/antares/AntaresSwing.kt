@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
@@ -187,6 +188,7 @@ class AntaresSwing(
 	}
 
 	init {
+
 		documentationUrl?.let {
 			BaseModule.baseDocumentationUrl = { it }
 		}
@@ -311,6 +313,7 @@ class AntaresSwing(
 		val frame = AntaresFrameSwing(graphFrameController, this, viewManager, graphFrameController)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
+		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider(this)
 
 		return frame
 	}

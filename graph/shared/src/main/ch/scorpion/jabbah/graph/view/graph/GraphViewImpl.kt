@@ -344,7 +344,7 @@ open class GraphViewImpl(
 			}
 			inputEventHandler?.graphElementViewRemoved()
 		}
-		return super.remove(drawable)
+		return super<DrawingImpl>.remove(drawable)
 	}
 
 	override fun clear(): DrawableContainer<GraphElementView<*>> {
