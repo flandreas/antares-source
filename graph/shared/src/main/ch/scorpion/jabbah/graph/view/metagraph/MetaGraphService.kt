@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.metagraph
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -19,6 +20,10 @@ open class MetaGraphService(
 	private val copyPasteService: CopyPasteService = EditModule.copyPasteService
 ) {
 
+	companion object {
+		private val LOG by logger(MetaGraphService::class)
+	}
+
 	fun extractMetaGraph(
 		graphName: String,
 		drawingView: DrawingView<GraphView>,
@@ -34,6 +39,8 @@ open class MetaGraphService(
 		val element = library.libraryService.addContainerLibraryElement(library, metaGraph, libraryDirectory)
 
 		replaceComponents(drawingView.drawing, componentIds, element)
+
+		LOG.debug("Extracted Components to MetaGraph ${metaGraph.uuid}")
 
 		return metaGraph.uuid
 	}

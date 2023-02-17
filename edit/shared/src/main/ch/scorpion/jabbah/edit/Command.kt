@@ -65,4 +65,12 @@ interface Command {
 
 	/** Determines if tag [name] has previously been set using [setTags].*/
 	fun hasTag(name: String): Boolean
+
+	/**
+	 * Called by [CommandManager] during an undo process if this [Command] does not implement [Undoable].
+	 * This is only a notification giving non-[Undoable] [Command]s a chance to undo things before
+	 * a [CommandManager] that uses snapshots replays a snapshot.
+	 * This is a special and rare case, therefore the default implementation is empty.
+	 */
+	fun notifyUndo() {}
 }

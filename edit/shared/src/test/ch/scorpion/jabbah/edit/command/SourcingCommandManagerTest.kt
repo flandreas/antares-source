@@ -506,4 +506,15 @@ class SourcingCommandManagerTest {
 		assertEquals("e", (iterator.next() as AppendCommand).s)
 		assertFalse(iterator.hasNext())
 	}
+
+	@Test
+	fun shouldNotifyUndo() {
+		val cmd = NotifiableAppendCommand(app, "hallo")
+		cmdManager.execute(cmd)
+
+		cmdManager.undo()
+
+		assertEquals("", app.mandatoryData.value)
+		assertEquals("", cmd.state)
+	}
 }

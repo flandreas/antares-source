@@ -35,6 +35,7 @@ internal class Snapshot(
 
 	fun undo(forRedo: Boolean) {
 		val transaction = undoStack.pop()
+		transaction.notifyUndo()
 		if (forRedo) {
 			redoStack.push(transaction)
 		}

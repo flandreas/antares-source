@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.app
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
@@ -207,7 +208,17 @@ class ExtractMetaGraphCommand(
 	private val libraryDirectory: LibraryDirectory
 ) : AbstractCommand("graph.command.extractMetaGraph") {
 
+	private lateinit var uuid: UUID
+
 	override fun execute() {
-		GraphViewModule.metaGraphService.extractMetaGraph(graphName, drawingView, componentIds, libraryDirectory)
+		uuid = GraphViewModule.metaGraphService.extractMetaGraph(graphName, drawingView, componentIds, libraryDirectory)
+	}
+
+	override fun notifyUndo() {
+		with (libraryDirectory.library!!) {
+			getContainerLibraryElement(this@ExtractMetaGraphCommand.uuid)?.let {
+				libraryService.removeLibraryItem(this, it)
+			}
+		}
 	}
 }
