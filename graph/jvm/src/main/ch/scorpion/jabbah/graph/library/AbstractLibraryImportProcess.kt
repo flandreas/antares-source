@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -34,6 +35,12 @@ abstract class AbstractLibraryImportProcess(
 		/** The name of the [String] property of the [Library] import file extension.*/
 		const val PROP_LIBRARY_FILE_EXTENSION = "graph.libraryFileExtension"
 
+		val projectFileExtension: String by lazy { BaseModule.properties.getString(PROP_PROJECT_FILE_EXTENSION) }
+		val projectFileTypeName: String by lazy { Translations.getString("graph.projectFileTypeName") }
+
+		val libraryFileExtension: String by lazy { BaseModule.properties.getString(PROP_LIBRARY_FILE_EXTENSION) }
+		val libraryFileTypeName: String by lazy { Translations.getString("graph.libraryFileTypeName") }
+
 		/**
 		 * Creates the appropriate subclass instance of this [AbstractLibraryImportProcess]
 		 * depending on the file name extension of [path].
@@ -45,8 +52,8 @@ abstract class AbstractLibraryImportProcess(
 			successHandler: (Library, AbstractLibraryImportProcess) -> Unit
 		): AbstractLibraryImportProcess? {
 			return when (FilenameUtils.getExtension(path)) {
-				BaseModule.properties.getString(PROP_PROJECT_FILE_EXTENSION) -> ProjectImportProcess(successHandler = successHandler)
-				BaseModule.properties.getString(PROP_LIBRARY_FILE_EXTENSION) -> LibraryImportProcess(successHandler = successHandler)
+				projectFileExtension -> ProjectImportProcess(successHandler = successHandler)
+				libraryFileExtension -> LibraryImportProcess(successHandler = successHandler)
 				else -> null
 			}
 		}

@@ -100,6 +100,10 @@ class ProjectPersistencePanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
+	override val fileExtension: String get() = AbstractLibraryImportProcess.projectFileExtension
+
+	override val fileTypeName: String get() = AbstractLibraryImportProcess.projectFileTypeName
+
 	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
 		managementService
 			.getProjectDirectoryEntries()

@@ -98,6 +98,10 @@ class LibraryPersistencePanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
+	override val fileExtension: String get() = AbstractLibraryImportProcess.libraryFileExtension
+
+	override val fileTypeName: String get() = AbstractLibraryImportProcess.libraryFileTypeName
+
 	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
 		managementService.getLibraryDirectoryEntries()
 
