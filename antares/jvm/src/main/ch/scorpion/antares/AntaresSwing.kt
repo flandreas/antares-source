@@ -330,7 +330,7 @@ class AntaresSwing(
 
 	override fun openInitialSavable() {
 		if (commandLine.argList.size > 0) {
-			super.openInitialSavable()
+			handleCommandLineArgument(commandLine.argList[0])
 			return
 		}
 
@@ -351,5 +351,21 @@ class AntaresSwing(
 		}
 
 		dataViewController.closeData()
+	}
+
+	private fun handleCommandLineArgument(path: String) {
+		if (JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			"Do you want to import\n$path?",
+			"Import",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE
+		) == JOptionPane.YES_OPTION) {
+			importLibrary(path)
+		}
+	}
+
+	private fun importLibrary(path: String) {
+		LOG.value.info("Importing $path")
 	}
 }

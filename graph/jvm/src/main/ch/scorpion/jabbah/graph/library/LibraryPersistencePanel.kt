@@ -68,6 +68,14 @@ class LibraryPersistencePanel(
 
 	/** ---- [AbstractLibrarySelectionPanel] */
 
+	override val importProcess: AbstractLibraryImportProcess =
+		LibraryImportProcess(
+			managementService,
+			this,
+			Translations.getString(importActionNameKey),
+			::successHandler
+		)
+
 	override fun buildUI() {
 		super.buildUI()
 
@@ -98,21 +106,6 @@ class LibraryPersistencePanel(
 
 	override fun getExportSuccessMsg(entry: LibraryDictionaryEntry): String =
 		Translations.getString("library.dialog.export.success.msg", entry.name.value)
-
-	override fun getImportSuccessMsg(name: String): String =
-		Translations.getString("library.dialog.import.success.msg", name)
-
-	override fun getAlreadyExistsMsg(name: String): String =
-		Translations.getString("library.dialog.import.alreadyExists.msg", name)
-
-	override fun getInvalidMsg(name: String): String =
-		Translations.getString("library.dialog.import.invalid.msg", name)
-
-	override fun getStaleReferenceMsg(name: String): String =
-		Translations.getString("library.dialog.import.staleLibraryReference.msg", name)
-
-	override fun getUuidAlreadyExistsMsg(): String =
-		Translations.getString("library.dialog.import.uuidAlreadyExists.msg")
 
 	override val exportActionNameKey: String get() = "library.dialog.export.action"
 
