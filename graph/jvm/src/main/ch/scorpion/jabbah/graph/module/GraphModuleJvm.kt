@@ -19,16 +19,12 @@ import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
-import ch.scorpion.jabbah.graph.library.FileMetaGraphHistoryService
-import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsParams
-import ch.scorpion.jabbah.graph.library.LibraryTreeViewActionsSwing
-import ch.scorpion.jabbah.graph.library.UnimplementedFileMetaGraphHistoryService
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
-import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 
@@ -122,6 +118,8 @@ object GraphModuleJvm : AbstractModule() {
 	private fun fillProperties(properties: Properties) {
 		properties.set(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY, true)
 		properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
+		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "jgp") // Jabbah Graph Project
+		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "jgl") // Jabbah Graph Library
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

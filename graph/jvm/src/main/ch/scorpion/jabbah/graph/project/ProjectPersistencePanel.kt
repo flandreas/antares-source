@@ -72,8 +72,9 @@ class ProjectPersistencePanel(
 	override val importProcess: AbstractLibraryImportProcess =
 		ProjectImportProcess(
 			managementService,
+			userHolder,
 			this,
-			Translations.getString(importActionNameKey),
+			Translations.getString("$importActionNameKey.name"),
 			::successHandler
 		)
 

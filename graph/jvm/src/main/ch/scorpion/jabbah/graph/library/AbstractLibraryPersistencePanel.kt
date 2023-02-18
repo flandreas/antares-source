@@ -40,7 +40,7 @@ abstract class AbstractLibraryPersistencePanel(
 	protected abstract fun getExportSuccessMsg(entry: LibraryDictionaryEntry): String
 
 	/** Executed after successful import. */
-	protected fun successHandler(library: Library) {
+	protected fun successHandler(library: Library, process: AbstractLibraryImportProcess) {
 		load()
 		selectLibrary(library.uuid)
 	}

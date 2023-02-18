@@ -1,8 +1,13 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.library.LibraryImportResultType.*
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectImportProcess
 import org.apache.commons.io.FilenameUtils
 import java.awt.Component
 import javax.swing.JOptionPane
@@ -13,13 +18,38 @@ import javax.swing.JOptionPane
  */
 abstract class AbstractLibraryImportProcess(
 	private val managementService: AbstractLibraryManagementService,
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
 	private val parentComponent: Component,
 	private val dialogTitle: String,
-	private val successHandler: (Library) -> Unit
+	private val successHandler: (Library, AbstractLibraryImportProcess) -> Unit
 ) {
 
 	companion object {
+
 		private val LOG by logger(AbstractLibraryImportProcess::class)
+
+		/** The name of the [String] property of the [Project] import file extension.*/
+		const val PROP_PROJECT_FILE_EXTENSION = "graph.projectFileExtension"
+
+		/** The name of the [String] property of the [Library] import file extension.*/
+		const val PROP_LIBRARY_FILE_EXTENSION = "graph.libraryFileExtension"
+
+		/**
+		 * Creates the appropriate subclass instance of this [AbstractLibraryImportProcess]
+		 * depending on the file name extension of [path].
+		 * @param successHandler the code to be executed after successful import,
+		 * such as open the imported [Library]
+		 */
+		fun forPath(
+			path: String,
+			successHandler: (Library, AbstractLibraryImportProcess) -> Unit
+		): AbstractLibraryImportProcess? {
+			return when (FilenameUtils.getExtension(path)) {
+				BaseModule.properties.getString(PROP_PROJECT_FILE_EXTENSION) -> ProjectImportProcess(successHandler = successHandler)
+				BaseModule.properties.getString(PROP_LIBRARY_FILE_EXTENSION) -> LibraryImportProcess(successHandler = successHandler)
+				else -> null
+			}
+		}
 	}
 
 	protected abstract val logName: String
@@ -50,6 +80,9 @@ abstract class AbstractLibraryImportProcess(
 		} while (repeat)
 	}
 
+	fun open(library: Library) {
+		managementService.open(LibraryIdentification(library.uuid, userHolder.user.identity))
+	}
 
 	private fun handleSuccessfulImport(libraryName: String, library: Library) {
 		JOptionPane.showConfirmDialog(
@@ -59,7 +92,7 @@ abstract class AbstractLibraryImportProcess(
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.INFORMATION_MESSAGE)
 
-		successHandler(library)
+		successHandler(library, this)
 	}
 
 	private fun handleImportNameAlreadyExists(libraryName: String) {

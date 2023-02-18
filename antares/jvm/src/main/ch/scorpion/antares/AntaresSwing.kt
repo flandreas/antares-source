@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.graph.library.AbstractLibraryImportProcess
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -356,8 +357,8 @@ class AntaresSwing(
 	private fun handleCommandLineArgument(path: String) {
 		if (JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
-			"Do you want to import\n$path?",
-			"Import",
+			Translations.getString("antares.importOnStartup.question", path),
+			Translations.getString("antares.importOnStartup.title"),
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.QUESTION_MESSAGE
 		) == JOptionPane.YES_OPTION) {
@@ -367,5 +368,19 @@ class AntaresSwing(
 
 	private fun importLibrary(path: String) {
 		LOG.value.info("Importing $path")
+		val process = AbstractLibraryImportProcess.forPath(path) { library, process ->
+			process.open(library)
+		}
+
+		if (process == null) {
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("antares.importOnStartup.unknownExtension.msg"),
+				Translations.getString("antares.importOnStartup.title"),
+				JOptionPane.ERROR_MESSAGE
+			)
+		} else {
+			process.import(path)
+		}
 	}
 }

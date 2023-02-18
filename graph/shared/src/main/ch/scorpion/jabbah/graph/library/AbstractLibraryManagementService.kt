@@ -75,6 +75,7 @@ abstract class AbstractLibraryManagementService(
 		} catch (e: GraphQuotaException) {
 			return QuotaExceeded.result(e.translatedMsg)
 		} catch (e: Throwable) {
+			LOG.error("Error while importing library", e)
 			return Invalid.result()
 		}
 
@@ -94,6 +95,12 @@ abstract class AbstractLibraryManagementService(
 
 		return Success.result(library = library)
 	}
+
+	/**
+	 * Loads and opens the [Library] with the specified [LibraryIdentification], while closing a currently open library.
+	 * @throws IllegalArgumentException if a [Library] with [libraryId] doesn't exist
+	 */
+	abstract fun open(libraryId: LibraryIdentification): Library
 
 	protected fun deleteImpl(libraryId: LibraryIdentification) {
 		libraryService.deleteLibrary(libraryId)

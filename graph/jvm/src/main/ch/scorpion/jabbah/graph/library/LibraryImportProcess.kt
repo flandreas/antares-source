@@ -1,14 +1,19 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import java.awt.Component
+import java.awt.Frame
 
 class LibraryImportProcess(
-	managementService: AbstractLibraryManagementService,
-	parentComponent: Component,
-	dialogTitle: String,
-	successHandler: (Library) -> Unit
-): AbstractLibraryImportProcess(managementService, parentComponent, dialogTitle, successHandler) {
+	managementService: AbstractLibraryManagementService = LibraryModule.libraryManagementService,
+	userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	parentComponent: Component = Frame.getFrames()[0],
+	dialogTitle: String = Translations.getString("library.dialog.import.action.name"),
+	successHandler: (Library, AbstractLibraryImportProcess) -> Unit
+): AbstractLibraryImportProcess(managementService, userHolder, parentComponent, dialogTitle, successHandler) {
 
 	override val logName: String get() = "library"
 
