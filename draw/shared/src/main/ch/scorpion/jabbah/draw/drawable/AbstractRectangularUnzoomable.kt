@@ -35,6 +35,12 @@ abstract class AbstractRectangularUnzoomable(
 			update()
 		}
 
+	val x: Double get() = location.x
+	val y: Double get() = location.y
+
+	val width: Double get() = 2 * halfSize
+	val height: Double get() = 2 * halfSize
+
 	/** Holds the bounding box in model coordinate space. */
 	private val bboxModel = Rectangle2D()
 
