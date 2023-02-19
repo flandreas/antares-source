@@ -1,17 +1,17 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import kotlin.math.max
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory.Explore
 
 /** A [SchedulerTask] that is driven by a [Timer]. */
 class TimedSchedulerTask(
@@ -26,6 +26,12 @@ class TimedSchedulerTask(
 
 		// Tuning: Avoid costly System.currentTimeMillis(). Value has been found experimentally.
 		private const val STEPS_PER_20_MILLISECOND = 20_000
+		private const val STEPS_NON_MAX = 1_000
+
+		private const val INFINITE_DELAY = Int.MAX_VALUE
+		private const val MIN_DELAY = 1
+		private const val MAX_DELAY = 1_000
+		private const val THIRD_DELAY = 50
 
 		const val DEF_SLOWDOWN_FACTOR = 4.0f
 
@@ -82,7 +88,7 @@ class TimedSchedulerTask(
 		if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
 			executeNumberOfSteps(STEPS_PER_20_MILLISECOND)
 		} else {
-			executeNumberOfSteps(1000)
+			executeNumberOfSteps(STEPS_NON_MAX)
 		}
 	}
 
@@ -98,12 +104,19 @@ class TimedSchedulerTask(
 	/** ---- [TimedSchedulerTask] */
 
 	private fun calculateTimerInterval(): Int {
-		val interval = if (currentSystemSpeedCategory.systemSpeed.speed == 0) {
-			Int.MAX_VALUE
+		val speed = currentSystemSpeedCategory.systemSpeed
+		val interval = if (speed.speed == 0) {
+			INFINITE_DELAY
+		} else if (speed.isMaximum) {
+			MIN_DELAY
 		} else {
-			max(1.0f, slowDownFactor * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
+			if (currentSystemSpeedCategory.systemSpeedCategory == Explore) {
+				(slowDownFactor * (MAX_DELAY - speed.speed.toFloat() / Explore.speedRange.last * (MAX_DELAY - THIRD_DELAY))).toInt()
+			} else {
+				(slowDownFactor * (THIRD_DELAY - speed.speed.toFloat() / SystemSpeed.MAX_SPEED * THIRD_DELAY)).toInt()
+			}
 		}
-		LOG.trace("interval = $interval")
+		LOG.trace("speed = ${currentSystemSpeedCategory.systemSpeed.speed}, interval = $interval, slowDownFactor = $slowDownFactor")
 		return interval
 	}
 
