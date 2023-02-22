@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.graph.library.AbstractLibraryImportProcess
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -233,7 +234,6 @@ class AntaresSwing(
 	/** ---- [AbstractDesktopApplication] */
 
 	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(ICON_PATH))
-	//override val taskbarIcon: Image get() = UiUtil.themedIcon(ICON_PATH)
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
@@ -345,13 +345,21 @@ class AntaresSwing(
 		}
 
 		if (isFirstUsage) {
-			ProjectModule.projectManagementService
-				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
-				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
+			createHelloProject(userId)
 			return
 		}
 
 		dataViewController.closeData()
+	}
+
+	private fun createHelloProject(userId: UserIdentity) {
+		ProjectModule.projectManagementService
+			.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
+			.also {
+				(controller as GraphDataViewController).openProject(LibraryIdentification(it.uuid, userId))
+				(mainFrame as AntaresFrameSwing).controller.graphPanelViewController.libraryPanelController
+					.libraryTreeViewController.view.expandFolder(AntaresApplication.FREQUENTLY_USED_FOLDER_NAME_EN)
+			}
 	}
 
 	private fun handleCommandLineArgument(path: String) {
