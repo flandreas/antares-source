@@ -29,6 +29,8 @@ open class LibraryTreeViewActionsSwing(
 	protected val libraryOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
 	protected val projectOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
 
+	private val helpLibraryItemAction = register(HelpLibraryItemAction(controller))
+
 	private val showLibraryMetaGraphHistoryAction = register(ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller))
 
 	private val addLibraryToDesktopAction = register(AddLibraryToDesktopAction(controller))
@@ -252,6 +254,7 @@ open class LibraryTreeViewActionsSwing(
 		fillMainLibraryContainerPopupMenu()
 
 		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
+		libraryBasePopupMenu.add(ActionWrapperSwing(helpLibraryItemAction))
 	}
 
 	private fun fillCompositionSource() {

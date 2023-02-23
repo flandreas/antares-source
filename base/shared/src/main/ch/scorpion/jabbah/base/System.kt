@@ -55,7 +55,12 @@ expect object System {
 	 */
 	fun currentLanguage(): Language
 
-	/** Opens the specified URL in a browser. */
+	/**
+	 * Opens the specified URL in a browser.
+	 * @param url the URL to be opened
+	 * @param actionName the name of the action that requests browsing. Used as title in an info dialog
+	 * in case the URL is not found.
+	 */
 	fun browse(url: String, actionName: String)
 
 	fun printStackTrace()

@@ -36,6 +36,9 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Style
@@ -186,6 +189,7 @@ object AntaresViewModule : AbstractModule() {
 		registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
 
 		registerFigures()
+		registerHelpSources()
 	}
 
 	private fun customizeProperties(properties: Properties) {
@@ -412,10 +416,10 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(PULL_RESISTOR, "library.element.PullResistor", { "/img/pull-resistor.png" }, PullResistorView::class)
 		// Backward compatibility
 		repository.register(TRANSISTOR, "library.element.Transistor", { "/img/transistor.png" }, TransistorView::class)
-		repository.register(TRANSISTOR_N, "library.element.Transistor.nType", { "/img/transistor.png" }) {
+		repository.register(TRANSISTOR_N, "library.element.Transistor.nType", { "/img/transistor.png" }, HelpId(TransistorView::class.simpleName!!)) {
 			TransistorView(TransistorType.N)
 		}
-		repository.register(TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }) {
+		repository.register(TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }, null) {
 			TransistorView(TransistorType.P)
 		}
 		repository.register(GROUND, "library.element.Ground", { "/img/ground.png" }, GroundView::class)
@@ -490,7 +494,7 @@ object AntaresViewModule : AbstractModule() {
 			BufferGateView::class)
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
-		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }) {
+		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(DelayGateView::class.simpleName!!)) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
 
@@ -500,7 +504,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
 		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/videoram.png" }, VideoRamView::class)
-		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }) {
+		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }, HelpId(CircuitInOutView::class.simpleName!!)) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
@@ -612,6 +616,62 @@ object AntaresViewModule : AbstractModule() {
 			register(FigureProvider(Translations.getString("antares.figure.demultiplexer")) { createDemultiplexerFigure() })
 			register(FigureProvider(Translations.getString("antares.figure.alu")) { createAluFigure() })
 			register(FigureProvider(DilCase.TYPE) { DilCase() })
+		}
+	}
+
+	private fun registerHelpSources() {
+		val base = "/base-library"
+		with (HelpSourceRegistry) {
+			register(HelpId(ConstantView::class.simpleName!!), HelpSource("$base/constant"))
+			register(HelpId(SplitterView::class.simpleName!!), HelpSource("$base/splitter"))
+			register(HelpId(ConcentratorView::class.simpleName!!), HelpSource("$base/combiner"))
+			register(HelpId(ProbeView::class.simpleName!!), HelpSource("$base/probe"))
+			register(HelpId(TunnelView::class.simpleName!!), HelpSource("$base/tunnel"))
+			register(HelpId(BreakView::class.simpleName!!), HelpSource("$base/breakpoint"))
+			register(HelpId(PullResistorView::class.simpleName!!), HelpSource("$base/pull-resistor"))
+			register(HelpId(TransistorView::class.simpleName!!), HelpSource("$base/transistor"))
+
+			register(HelpId(GroundView::class.simpleName!!), HelpSource("$base/ground"))
+			register(HelpId(PowerView::class.simpleName!!), HelpSource("$base/power"))
+			register(HelpId(BidirectionalSplitterView::class.simpleName!!), HelpSource("$base/bidi-splitter"))
+			register(HelpId(WireTapView::class.simpleName!!), HelpSource("$base/wire-tap"))
+			register(HelpId(PowerOnResetView::class.simpleName!!), HelpSource("$base/powerOn-reset"))
+
+			register(HelpId(AndGateView::class.simpleName!!), HelpSource("$base/and"))
+			register(HelpId(OrGateView::class.simpleName!!), HelpSource("$base/or"))
+			register(HelpId(NotGateView::class.simpleName!!), HelpSource("$base/not"))
+			register(HelpId(NandGateView::class.simpleName!!), HelpSource("$base/nand"))
+			register(HelpId(NorGateView::class.simpleName!!), HelpSource("$base/nor"))
+			register(HelpId(XorGateView::class.simpleName!!), HelpSource("$base/xor"))
+			register(HelpId(XnorGateView::class.simpleName!!), HelpSource("$base/xnor"))
+			register(HelpId(BufferGateView::class.simpleName!!), HelpSource("$base/buffer"))
+			register(HelpId(TriStateBufferGateView::class.simpleName!!), HelpSource("$base/tristate-buffer"))
+			register(HelpId(DelayGateView::class.simpleName!!), HelpSource("$base/delay"))
+			register(HelpId(CircuitInOutView::class.simpleName!!), HelpSource("$base/port"))
+
+			register(HelpId(SwitchView::class.simpleName!!), HelpSource("$base/switch"))
+			register(HelpId(DipSwitchView::class.simpleName!!), HelpSource("$base/dip-switch"))
+			register(HelpId(ClockView::class.simpleName!!), HelpSource("$base/clock"))
+			register(HelpId(KeyboardView::class.simpleName!!), HelpSource("$base/keyboard"))
+			register(HelpId(TerminalView::class.simpleName!!), HelpSource("$base/terminal"))
+			register(HelpId(VideoRamView::class.simpleName!!), HelpSource("$base/video-ram"))
+			register(HelpId(JoystickView::class.simpleName!!), HelpSource("$base/joystick"))
+			register(HelpId(RealSwitchView::class.simpleName!!), HelpSource("$base/real-switch"))
+			register(HelpId(DoubleThrowSwitchView::class.simpleName!!), HelpSource("$base/double-throw-switch"))
+
+			register(HelpId(LEDView::class.simpleName!!), HelpSource("$base/led"))
+			register(HelpId(RgbLEDView::class.simpleName!!), HelpSource("$base/rgb-led"))
+			register(HelpId(SevenSegmentDisplayView::class.simpleName!!), HelpSource("$base/7segment"))
+			register(HelpId(SixteenSegmentDisplayView::class.simpleName!!), HelpSource("$base/16segment"))
+			register(HelpId(LEDMatrixView::class.simpleName!!), HelpSource("$base/led-matrix"))
+			register(HelpId(BuzzerView::class.simpleName!!), HelpSource("$base/buzzer"))
+
+			register(HelpId(ROMView::class.simpleName!!), HelpSource("$base/rom"))
+			register(HelpId(RAMView::class.simpleName!!), HelpSource("$base/ram"))
+			register(HelpId(LookupTableView::class.simpleName!!), HelpSource("$base/lut"))
+
+			register(HelpId(RandomView::class.simpleName!!), HelpSource("$base/random"))
+			register(HelpId(BitExtenderView::class.simpleName!!), HelpSource("$base/bit-extender"))
 		}
 	}
 }

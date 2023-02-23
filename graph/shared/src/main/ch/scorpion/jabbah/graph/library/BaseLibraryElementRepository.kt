@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -30,16 +31,17 @@ class BaseLibraryElementRepository {
 		iconPath: () -> String?,
 		clazz: KClass<out GraphElementView<*>>
 	) {
-		register(Entry(id, translationKey, iconPath, clazz))
+		register(Entry(id, translationKey, iconPath, HelpId(clazz.simpleName!!), clazz))
 	}
 
 	fun register(
 		id: String,
 		translationKey: String,
 		iconPath: () -> String?,
+		helpId: HelpId?,
 		supplier: () -> GraphElementView<out GraphElement>
 	) {
-		register(Entry(id, translationKey, iconPath, null, supplier))
+		register(Entry(id, translationKey, iconPath, helpId, null, supplier))
 	}
 
 	fun <T : GraphElement> getNewInstance(id: String): GraphElementView<T> {
@@ -58,10 +60,13 @@ class BaseLibraryElementRepository {
 
 	fun getTranslationKey(id: String): String? = entries[id]?.translationKey
 
+	fun getHelpId(id: String): HelpId? = entries[id]?.helpId
+
 	private data class Entry(
 		val id: String,
 		val translationKey: String,
 		val iconPath: () -> String?,
+		val helpId: HelpId?,
 		val clazz: KClass<out GraphElementView<*>>?,
 		val supplier: (() -> GraphElementView<out GraphElement>)? = null
 	) {
