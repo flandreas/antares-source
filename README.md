@@ -29,6 +29,7 @@ Increment the current release number and update it at the following
   
 * `gradle.properties`
 * `antares/shared/rsc/version.txt`
+* Info.plist
  
 Commit and push to remote repository.
 

@@ -158,6 +158,24 @@ class AntaresSwing(
 			UiUtil.setUIFont(fontResource)
 		}
 
+		private fun importLibrary(path: String) {
+			LOG.value.info("Importing $path")
+			val process = AbstractLibraryImportProcess.forPath(path) { library, process ->
+				process.open(library)
+			}
+
+			if (process == null) {
+				JOptionPane.showMessageDialog(
+					Frame.getFrames()[0],
+					Translations.getString("antares.importOnStartup.unknownExtension.msg"),
+					Translations.getString("antares.importOnStartup.title"),
+					JOptionPane.ERROR_MESSAGE
+				)
+			} else {
+				process.import(path)
+			}
+		}
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 
@@ -335,6 +353,11 @@ class AntaresSwing(
 			return
 		}
 
+		if (launchDataPath != null) {
+			handleCommandLineArgument(launchDataPath!!)
+			return
+		}
+
 		val userId = EditAuthModule.userHolder.user.identity
 
 		val dataViewController = (controller as GraphDataViewController)
@@ -374,21 +397,7 @@ class AntaresSwing(
 		}
 	}
 
-	private fun importLibrary(path: String) {
-		LOG.value.info("Importing $path")
-		val process = AbstractLibraryImportProcess.forPath(path) { library, process ->
-			process.open(library)
-		}
-
-		if (process == null) {
-			JOptionPane.showMessageDialog(
-				Frame.getFrames()[0],
-				Translations.getString("antares.importOnStartup.unknownExtension.msg"),
-				Translations.getString("antares.importOnStartup.title"),
-				JOptionPane.ERROR_MESSAGE
-			)
-		} else {
-			process.import(path)
-		}
+	override fun openFile(path: String) {
+		handleCommandLineArgument(path)
 	}
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+ <dict>
+  <key>LSMinimumSystemVersion</key>
+  <string>10.9</string>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>English</string>
+  <key>CFBundleAllowMixedLocalizations</key>
+  <true/>
+  <key>CFBundleExecutable</key>
+  <string>Antares</string>
+  <key>CFBundleIconFile</key>
+  <string>Antares.icns</string>
+  <key>CFBundleIdentifier</key>
+  <string>ch.scorpion.antares</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>Antares</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.3.0</string>
+  <key>CFBundleSignature</key>
+  <string>????</string>
+  <!-- See https://developer.apple.com/app-store/categories/ for list of AppStore categories -->
+  <key>LSApplicationCategoryType</key>
+  <string>Unknown</string>
+  <key>CFBundleVersion</key>
+  <string>1.3.0</string>
+  <key>NSHumanReadableCopyright</key>
+  <string>Copyright (c) 2023 Andreas Fleischmann</string>
+  <key>NSHighResolutionCapable</key>
+  <string>true</string>
+  <key>CFBundleDocumentTypes</key>
+      <array>
+          <dict>
+              <key>CFBundleTypeExtensions</key>
+              <array>
+                  <string>acp</string>
+                  <string>acl</string>
+              </array>
+              <key>CFBundleTypeName</key>
+              <array>
+                <string>Antares Circuit Project</string>
+                <string>Antares Circuit Library</string>
+              </array>
+          </dict>
+      </array>
+ </dict>
+</plist>
