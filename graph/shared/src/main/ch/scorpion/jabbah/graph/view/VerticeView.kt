@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 interface VerticeView<T : Vertice>
 	: GraphElementView<T>, Describable, ConnectableView, ActorView, HelpIdProvider {
 
-	override val helpId: HelpId? get() = null
+	override val helpId: HelpId? get() = this::class.simpleName?.let { HelpId(it) }
 
 	val vertice: Vertice get() = model
 

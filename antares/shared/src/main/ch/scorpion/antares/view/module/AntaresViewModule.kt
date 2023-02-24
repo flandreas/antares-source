@@ -494,7 +494,7 @@ object AntaresViewModule : AbstractModule() {
 			BufferGateView::class)
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
-		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(DelayGateView::class.simpleName!!)) {
+		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(CircuitInOutView::class.simpleName!!)) {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
 

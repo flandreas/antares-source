@@ -23,6 +23,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 		private val toBackAction by lazy { ActionWrapperSwing(ToBackAction()) }
 		private val oneDownAction by lazy { ActionWrapperSwing(OneDownAction()) }
 		private val oneUpAction by lazy { ActionWrapperSwing(OneUpAction()) }
+		val helpAction by lazy { ActionWrapperSwing(HelpComponentAction()) }
 	}
 
 	override var applicationName: String = ""

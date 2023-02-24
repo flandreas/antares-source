@@ -47,6 +47,8 @@ open class GraphContextMenuProvider(
 		}
 		popupMenu.add(resetSubGraphAction)
 		popupMenu.add(extractMetaGraphAction)
+		popupMenu.addSeparator()
+		popupMenu.add(helpAction)
 	}
 
 	private fun addExecutionActions(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
