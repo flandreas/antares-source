@@ -56,6 +56,7 @@ class GraphViewDisplayHandler(
 	}
 
 	fun dispose() {
+		tooltipHandler.dispose()
 		passivate()
 	}
 

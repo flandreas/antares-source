@@ -142,6 +142,16 @@ class TooltipHandler(
 
 	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
 
+	private val popupMenuHandler: EventHandler<PopupMenuEvent> = { clear(it.canvas.view) }
+
+	init {
+		eventBus.register(PopupMenuEvent::class, popupMenuHandler)
+	}
+
+	fun dispose() {
+		eventBus.unregister(popupMenuHandler)
+	}
+
 	/**
 	 * Handles mouse move events in the client of the tooltip system and requests tooltip displaying
 	 * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods

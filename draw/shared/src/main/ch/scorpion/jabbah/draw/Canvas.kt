@@ -74,3 +74,6 @@ interface Canvas : PropertyOwner<Any> {
 
     fun dispatchEvent(e: InputEvent)
 }
+
+/** Posted by [Canvas] on its [EventBus] before a popup menu becomes visible.*/
+data class PopupMenuEvent(val canvas: Canvas)

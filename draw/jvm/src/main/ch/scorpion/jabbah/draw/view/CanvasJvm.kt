@@ -36,7 +36,7 @@ import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
 class CanvasJvm(
 	override val view: View<*>,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : JPanel(), Canvas, PropertyOwner<Any> by propertyOwner {
 
@@ -63,6 +63,7 @@ class CanvasJvm(
 			override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
 				val mousePos = view.viewToModel(Point2D(mousePosition.getX(), mousePosition.getY()))
 				DrawModuleJvm.contextMenuProvider.fillContextMenu(view, mousePos.x, mousePos.y, contextMenu)
+				eventBus.post(ch.scorpion.jabbah.draw.PopupMenuEvent(this@CanvasJvm))
 			}
 		})
 

@@ -220,6 +220,10 @@ class SelectionToolImpl(
 
 	/** ---- [SelectionToolImpl] */
 
+	override fun dispose() {
+		tooltipHandler.dispose()
+	}
+
 	private fun keyEventContext(e: KeyEvent): EditInputEventContext =
 		EditInputEventContext(editor = editor, keyEvent = e)
 
