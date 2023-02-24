@@ -67,6 +67,8 @@ class LibraryPreviewPanel(
 	private var selection: Component? = null
 
 	init {
+		helpAction.enabled = false
+
 		eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
 		eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
 		eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
