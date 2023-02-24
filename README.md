@@ -29,7 +29,7 @@ Increment the current release number and update it at the following
   
 * `gradle.properties`
 * `antares/shared/rsc/version.txt`
-* Info.plist
+* `Info.plist`
  
 Commit and push to remote repository.
 
@@ -58,12 +58,12 @@ Tag the release and push it to the remote repository:
   - Verify signature: `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool verify /pa C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
   - Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
 - On a Linux machine (after pulling changes from remote repository)
-  - `gradlew clean :antares:distributeLinux
+  - `gradlew clean :antares:distributeLinux`
   - Collect the Linux package `build/antares/distributions/Antares-<version>.rpm`
   - Install with `sudo alien -i <name of the package>`
   - The installed app is found in `/opt/antares/bin`
   
-Install the releases and do some some smoke testing.
+Install the releases and do some smoke testing.
 
 ### Build User Manual
 
