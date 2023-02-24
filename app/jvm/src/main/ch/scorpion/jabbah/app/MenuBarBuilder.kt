@@ -117,6 +117,7 @@ open class MenuBarBuilder(
     }
 
 	protected open fun fillHelpMenu(menu: JMenu) {
+		menu.add(JMenuItem(ActionWrapperSwing(HelpComponentAction("edit.action.helpSelected"))))
 		menu.add(JMenuItem(ActionWrapperSwing(DocumentationAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(YouTubeChannelAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(IssuesAction(frame.application))))

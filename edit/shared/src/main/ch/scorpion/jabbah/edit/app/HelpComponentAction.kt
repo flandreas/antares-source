@@ -6,7 +6,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 
 /** Displays help for the one and only selected [Component]. */
-class HelpComponentAction : AbstractSelectionAwareAction("base.action.help") {
+class HelpComponentAction(
+	baseName: String = "base.action.help"
+) : AbstractSelectionAwareAction(baseName) {
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && selectionCount == 1 && singleSelection is HelpIdProvider
