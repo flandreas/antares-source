@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.repository.RepositoryService
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
-import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferable
-import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferableData
-import ch.scorpion.jabbah.graph.ui.LibraryFolderTransferable
+import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 import java.awt.Image
@@ -41,7 +38,7 @@ class LibraryTreeViewTransferHandler(
 		/** Gets the icon [Image] to be used for drag&drop. */
 		private fun getIcon(libraryItem: LibraryItem): Image {
 			return if (libraryItem is ContainerLibraryElement) {
-				ContainerLibraryElementIcon.IMAGE
+				MetaGraphIconProvider.provideImage(libraryItem.type)
 			} else {
 				libraryItem.iconPath?.let { iconPath ->
 					ICON_CACHE.getOrPut(iconPath) { UiUtil.themedIcon(iconPath).image }

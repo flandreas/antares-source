@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
@@ -279,8 +279,6 @@ class LibraryTreeViewSwing(
 	private inner class Renderer : DefaultTreeCellRenderer() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-		private val containerLibElemIcon = ContainerLibraryElementIcon.ICON
-		private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
 		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
@@ -306,14 +304,12 @@ class LibraryTreeViewSwing(
 						component.toolTipText = Translations.getString("library.action.baseElement.tip")
 					}
 				} else if (value.userObject is ContainerLibraryElement) {
+					val cle = value.userObject as ContainerLibraryElement
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}
-					component.icon = containerLibElemIcon
-					if (controller.isCurrentItem(value.userObject as ContainerLibraryElement)) {
-						component.icon = currentContainerLibElemIcon
-					}
-					if (controller.isDefaultElement(value.userObject as ContainerLibraryElement)) {
+					component.icon = MetaGraphIconProvider.provideIcon(cle.type, controller.isCurrentItem(cle))
+					if (controller.isDefaultElement(cle)) {
 						component.font = defaultElemFont
 					}
 				} else if (value.userObject is Project) {

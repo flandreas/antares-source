@@ -8,12 +8,15 @@ import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
-import javax.swing.*
+import javax.swing.DropMode
+import javax.swing.Icon
+import javax.swing.JLabel
+import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreeModel
@@ -70,7 +73,6 @@ open class ContainerTreeView(
     private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
 	    private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
-	    private val subGraphIcon = ContainerLibraryElementIcon()
 
 	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {
             val label = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus) as JLabel
@@ -81,7 +83,11 @@ open class ContainerTreeView(
 			    label.icon = when (userObject.type) {
 				    ContainerTreeItemType.Port -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.Control -> getIcon((value.userObject as DraggableTreeItem).iconPath)
-				    ContainerTreeItemType.SubGraph -> subGraphIcon
+				    ContainerTreeItemType.SubGraph -> {
+					    val graphType = (value.userObject as SubGraphVerticeViewFolderItem).graphView.graph?.type
+					    graphType?.let { MetaGraphIconProvider.provideIcon(it, false) }
+						    ?:MetaGraphIconProvider.provideIcon(GraphModelModule.defaultGraphType, false)
+				    }
 				    else -> folderIcon
 			    }
 		    }

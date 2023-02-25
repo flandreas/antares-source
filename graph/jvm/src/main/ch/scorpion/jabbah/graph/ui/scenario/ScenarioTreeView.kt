@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.ScenarioAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -389,7 +389,6 @@ class ScenarioTreeView(
 	private class ScenarioTreeRenderer : DefaultTreeCellRenderer() {
 
 		companion object {
-			private val elementIcon = ContainerLibraryElementIcon()
 			private val scenarioIcon = UiUtil.themedIcon("/img/scenario-20.png")
 			private val stepIcon = UiUtil.themedIcon("/img/step-20.png")
 		}
@@ -407,8 +406,11 @@ class ScenarioTreeView(
 					component.disabledIcon = stepIcon
 				}
 				is GraphView -> {
-					component.icon = elementIcon
-					component.disabledIcon = elementIcon
+					val icon = (value.userObject as GraphView).graph?.type?.let {
+						MetaGraphIconProvider.provideIcon(it, false)
+					}
+					component.icon = icon
+					component.disabledIcon = icon
 				}
 			}
 

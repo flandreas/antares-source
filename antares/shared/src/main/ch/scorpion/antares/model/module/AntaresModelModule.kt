@@ -160,6 +160,7 @@ object AntaresModelModule : AbstractModule() {
 	}
 
 	private fun registerGraphTypes() {
+		GraphModelModule.defaultGraphType = AntaresGraphTypes.Digital
 		GraphModelModule.graphTypeRegistry.clear()
 		GraphModelModule.graphTypeRegistry.register(AntaresGraphTypes.Digital, asDefault = true)
 		GraphModelModule.graphTypeRegistry.register(AntaresGraphTypes.Analog)

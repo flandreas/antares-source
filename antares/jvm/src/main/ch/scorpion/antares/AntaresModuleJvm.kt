@@ -12,6 +12,8 @@ import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
+import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
+import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
@@ -64,6 +66,7 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
@@ -173,6 +176,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 		configureGraphParamValueProperties()
 		configureGraphParamValueEditors()
+		configureMetaGraphIcons()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
@@ -401,5 +405,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,
 			nameKey = "antares.preference.DigitalSignalHistory.fill"
 		))
+	}
+
+	private fun configureMetaGraphIcons() {
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, AntaresMetaGraphIcon(current = false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = true, AntaresMetaGraphIcon(current = true))
+
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, AnalogMetaGraphIcon(current = false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, AnalogMetaGraphIcon(current = true))
 	}
 }

@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
@@ -179,7 +179,6 @@ class UsecaseTreeView(
 	private class UsecaseTreeRenderer : DefaultTreeCellRenderer() {
 
 		companion object {
-			private val elementIcon = ContainerLibraryElementIcon()
 			private val usecaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
 		}
 
@@ -193,8 +192,11 @@ class UsecaseTreeView(
 					component.disabledIcon = usecaseIcon
 				}
 				is GraphView -> {
-					component.icon = elementIcon
-					component.disabledIcon = elementIcon
+					val icon = (value.userObject as GraphView).graph?.type?.let {
+						MetaGraphIconProvider.provideIcon(it, false)
+					}
+					component.icon = icon
+					component.disabledIcon = icon
 				}
 			}
 

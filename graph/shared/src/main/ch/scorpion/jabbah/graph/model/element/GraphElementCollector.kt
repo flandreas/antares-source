@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import kotlin.reflect.KClass
 
@@ -18,6 +19,7 @@ data class GraphElementCollectorResultEntry(
 	val clazz: KClass<GraphElement>,
 	val name: String,
 	val isScripted: Boolean,
+	val graphType: GraphType?,
 	var count: Int = 0
 ) : Comparable<GraphElementCollectorResultEntry> {
 
@@ -63,12 +65,12 @@ class GraphElementCollector(
 		return GraphElementCollectorResult(deepEntries.values, flatEntries.values)
 	}
 
-	private fun countDeep(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean) {
-		count(id, clazz, name, isScripted, deepEntries)
+	private fun countDeep(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+		count(id, clazz, name, isScripted, graphType, deepEntries)
 	}
 
-	private fun countFlat(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean) {
-		count(id, clazz, name, isScripted, flatEntries)
+	private fun countFlat(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+		count(id, clazz, name, isScripted, graphType, flatEntries)
 	}
 
 	private fun count(
@@ -76,11 +78,12 @@ class GraphElementCollector(
 		clazz: KClass<GraphElement>,
 		name: String,
 		isScripted: Boolean,
+		graphType: GraphType?,
 		entries: MutableMap<Any, GraphElementCollectorResultEntry>
 	) {
 		var entry = entries[id]
 		if (entry == null) {
-			entry = GraphElementCollectorResultEntry(id, clazz, name, isScripted)
+			entry = GraphElementCollectorResultEntry(id, clazz, name, isScripted, graphType)
 			entries[id] = entry
 		}
 		entry.increment()
@@ -90,14 +93,16 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countDeep(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null)
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countDeep(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
 			}
 			return true
 		}
 
 		override fun visit(node: Any): Boolean {
 			if (node is GraphElement) {
-				countDeep(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false)
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countDeep(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
 			}
 			return true
 		}
@@ -107,7 +112,8 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countFlat(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null)
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countFlat(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
 				if (node.getGraphIfPresent()!!.script != null) {
 					return false
 				}
@@ -117,7 +123,8 @@ class GraphElementCollector(
 
 		override fun visit(node: Any): Boolean {
 			if (node is GraphElement) {
-				countFlat(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false)
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countFlat(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
 			}
 			return true
 		}

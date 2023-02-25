@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component
@@ -22,10 +22,6 @@ import javax.swing.tree.TreeNode
  * are rendered using an italic font.
  */
 class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Empty"))) {
-
-	companion object {
-		private val subGraphIcon = ContainerLibraryElementIcon()
-	}
 
 	private var graphHierarchyTree: GraphHierarchyTree? = null
 	private val scriptedFont = font.deriveFont(Font.ITALIC)
@@ -56,12 +52,14 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 	private inner class Renderer : DefaultTreeCellRenderer() {
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val label = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
-			label.icon = subGraphIcon
 			label.font = this@GraphHierarchyTreeView.font
 
 			if (value is DefaultMutableTreeNode && value.userObject is SubGraphVerticeView<*>) {
 				val subGraphVV = value.userObject as SubGraphVerticeView<*>
 				label.text = subGraphVV.describingName
+				label.icon = subGraphVV.model.getGraphIfPresent()?.type?.let {
+					MetaGraphIconProvider.provideIcon(it, false)
+				}
 				if (StringUtils.isNotBlank(subGraphVV.subGraphVertice?.getGraphIfPresent()?.script)) {
 					label.font = scriptedFont
 				}

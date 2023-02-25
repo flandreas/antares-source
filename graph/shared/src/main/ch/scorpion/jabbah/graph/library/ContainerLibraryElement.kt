@@ -8,8 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -39,6 +39,10 @@ class ContainerLibraryElement(
 	companion object {
 		val LOG by logger(ContainerLibraryElement::class)
 	}
+
+	/** Uses as long as [metaGraph] has not yet been instantiated, e.g. when displaying a [Library] in the UI.*/
+	var type: GraphType = GraphModelModule.defaultGraphType
+		private set
 
 	/** Lazily initialized instance of the referenced [MetaGraph]. */
 	var metaGraph: MetaGraph? = null
@@ -93,6 +97,7 @@ class ContainerLibraryElement(
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())
 		name.write("name", writer)
+		writer.writeString("type", type.customName)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -103,6 +108,12 @@ class ContainerLibraryElement(
 		}
 		if (reader.hasElement("name")) {
 			name = Name.read("name", reader)
+		}
+		type = if (reader.hasAttribute("type")) {
+			GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
+		} else {
+			// Backward compatibility
+			GraphModelModule.defaultGraphType
 		}
 	}
 

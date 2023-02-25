@@ -42,6 +42,13 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphModelModule : AbstractModule() {
 
+	/**
+	 * Used for backward compatibility: Before introduction of [GraphType],
+	 * [Graph]s without [GraphType] came into existence. Will typically be set
+	 * by higher level modules.
+	 */
+	var defaultGraphType: GraphType = GenericGraphType
+
 	val signalConflictBehaviourHolder by lazy { SignalConflictBehaviourHolder() }
 
 	val graphTypeRegistry = GraphTypeRegistry()

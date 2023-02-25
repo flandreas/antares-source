@@ -79,7 +79,7 @@ class GraphStatisticsPanel(graph: Graph) : JPanel() {
 				basicFont
 			}
 			label.icon = if (value.clazz == SubGraphVerticeRef::class) {
-				ContainerLibraryElementIcon.ICON
+				value.graphType?.let { MetaGraphIconProvider.provideIcon(it, false) }
 			} else {
 				null
 			}
