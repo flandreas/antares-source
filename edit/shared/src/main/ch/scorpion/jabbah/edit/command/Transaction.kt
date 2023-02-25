@@ -42,4 +42,8 @@ internal class Transaction {
 
 	fun hasTag(name: String): Boolean =
 		commands.any { it.hasTag(name) }
+
+	fun notifyUndo() {
+		commands.filter { it !is Undoable }.reversed().forEach { it.notifyUndo() }
+	}
 }

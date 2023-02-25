@@ -81,8 +81,6 @@ object ConnectionPointHighlighter {
 			}
 		}
 	}
-
-	//private fun getHighlightContainer(view: DrawingView<*>): DrawableContainer<Drawable> = view.animationContainer
 }
 
 /**

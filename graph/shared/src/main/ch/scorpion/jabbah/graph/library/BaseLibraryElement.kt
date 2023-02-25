@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -24,7 +26,11 @@ import ch.scorpion.jabbah.io.StoreWriter
 class BaseLibraryElement(
 	private var id: String = "",
 	private val repository: BaseLibraryElementRepository = LibraryModule.baseLibraryElementRepository
-) : LibraryElement() {
+) : LibraryElement(), HelpIdProvider {
+
+	/** ---- [HelpIdProvider] */
+
+	override val helpId: HelpId? get() = repository.getHelpId(id)
 
 	/** ---- [Namable] interface */
 
@@ -40,7 +46,7 @@ class BaseLibraryElement(
 
 	override val iconPath: String? get() = repository.getIconPath(id)
 
-    /** ---- [Any] */
+	/** ---- [Any] */
 
     override fun toString(): String = name.value
 

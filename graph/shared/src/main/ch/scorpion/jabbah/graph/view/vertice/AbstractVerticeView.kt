@@ -57,7 +57,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	companion object {
 
-		private fun cannotOpenMsg(c: Component) {
+		fun cannotOpenMsg(c: Component) {
 			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
 		}
 
@@ -348,10 +348,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	protected open val executionTooltipSubtext: String? get() = description.value
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this
-		return CANNOT_OPEN_ACTOR_CLICK_HANDLER
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		VerticeViewActorInteractionHandler.getInactiveInstance(this)
 
 	override fun executionStarted(signalHandler: SignalHandler) { }
 

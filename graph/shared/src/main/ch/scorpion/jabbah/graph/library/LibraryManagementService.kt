@@ -136,11 +136,7 @@ class LibraryManagementService(
 	fun loadLibrary(libraryId: LibraryIdentification): Library =
 		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
 
-	/**
-	 * Loads and opens the [Library] with the specified [LibraryIdentification], while closing a currently open project.
-	 * @throws IllegalArgumentException if a [Library] with [libraryId] doesn't exist
-	 */
-	fun open(libraryId: LibraryIdentification): Library =
+	override fun open(libraryId: LibraryIdentification): Library =
 		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
 			.also { open(it) }
 

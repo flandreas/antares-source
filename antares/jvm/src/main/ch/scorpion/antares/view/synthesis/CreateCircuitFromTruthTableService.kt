@@ -12,8 +12,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.container.CurrentContainerDrawingLayouter
-import ch.scorpion.jabbah.graph.container.NarrowContainerDrawingFiller
+import ch.scorpion.jabbah.graph.container.AbstractContainerDrawingFiller
 import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 
@@ -71,15 +70,7 @@ class CreateCircuitFromTruthTableService(
 		val metaGraph = MetaGraph.withName(TranslatableText(circuitName), AntaresGraphTypes.Digital)
 		metaGraph.graph.model!!.script = executionScript
 		circuitType.build(truthTable, dnfs, metaGraph.graph)
-		fillSymbol(metaGraph)
+		AbstractContainerDrawingFiller.fillStandard(metaGraph)
 		return metaGraph
-	}
-
-	private fun fillSymbol(metaGraph: MetaGraph) {
-		if (CurrentContainerDrawingLayouter.value.doesLayout) {
-			CurrentContainerDrawingLayouter.value.layout(metaGraph.graph.graphView, metaGraph.containerDrawing)
-		} else {
-			NarrowContainerDrawingFiller(metaGraph.graph.graphView, metaGraph.containerDrawing).fill()
-		}
 	}
 }

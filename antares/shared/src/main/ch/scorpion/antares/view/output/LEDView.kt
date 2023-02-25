@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -28,7 +29,7 @@ class LEDView(
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     square: Boolean = false,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter {
+) : AbstractLEDView<LED>(styleProvider, model, square, eventBus), LightEmitter, HelpIdProvider {
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"

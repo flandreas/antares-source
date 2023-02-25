@@ -33,19 +33,21 @@ class TestLibraryBuilder(
 		const val BIT_WITH_EXPRESSION = "BitWidthExpression"
 	}
 
-	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
-	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
-		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
-		val metaGraph = MetaGraph(GraphStorable(nop), createContainerDrawing(nop))
+	fun addGraphView(graphView: GraphView, library: Library): MetaGraph {
+		val metaGraph = MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
 		libraryService.addContainerLibraryElement(library, metaGraph, library)
 		return metaGraph
 	}
 
+	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
+	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
+		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
+		return addGraphView(nop, library)
+	}
+
 	fun addOuterNOP(library: Library): MetaGraph {
 		val outerNOP = TestCircuitBuilder(OUTER_NOP).buildOuterNOP(createSubGraphVerticeView(NOP, library))
-		val metaGraph = MetaGraph(GraphStorable(outerNOP), createContainerDrawing(outerNOP))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(outerNOP, library)
 	}
 
 	/**
@@ -54,46 +56,32 @@ class TestLibraryBuilder(
 	 */
 	fun addCustomNot(library: Library): MetaGraph {
 		val customNOT = TestCircuitBuilder(CUSTOM_NOT).buildCustomNot()
-		val containerDrawing = createContainerDrawing(customNOT)
-		val metaGraph = MetaGraph(GraphStorable(customNOT), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(customNOT, library)
 	}
 
 	fun addCustomNand(library: Library): MetaGraph {
 		val myNandCircuit = TestCircuitBuilder(CUSTOM_NAND).buildCustomNAND(createSubGraphVerticeView(CUSTOM_NOT, library))
-		val containerDrawing = createContainerDrawing(myNandCircuit)
-		val metaGraph = MetaGraph(GraphStorable(myNandCircuit), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(myNandCircuit, library)
 	}
 
 	fun addInOutToOut(library: Library): MetaGraph {
 		val inOutToOut = TestCircuitBuilder(INOUT_TO_OUT).buildInOutToOut()
-		val metaGraph = MetaGraph(GraphStorable(inOutToOut), createContainerDrawing(inOutToOut))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(inOutToOut, library)
 	}
 
 	fun addInOutToInOut(library: Library): MetaGraph {
 		val inOutToInOut = TestCircuitBuilder(INOUT_TO_INOUT).buildInOutToInOut()
-		val metaGraph = MetaGraph(GraphStorable(inOutToInOut), createContainerDrawing(inOutToInOut))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(inOutToInOut, library)
 	}
 
 	fun addScriptedBinaryFunction(library: Library, input1Name: String, input2Name: String, outputName: String, script: String): MetaGraph {
 		val binaryFunction = TestCircuitBuilder(BINARY_FUNCTION).buildScriptedBinaryFunction(input1Name, input2Name, outputName, script)
-		val metaGraph = MetaGraph(GraphStorable(binaryFunction), createContainerDrawing(binaryFunction))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(binaryFunction, library)
 	}
 
 	fun addBitWidthExpressionInputOutput(library: Library, inputExpression: String, outputExpression: String, graphScript: String? = null): MetaGraph {
 		val graphView = TestCircuitBuilder(BIT_WITH_EXPRESSION).buildBitWidthExpressionInputOutput(inputExpression, outputExpression, graphScript)
-		val metaGraph = MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return addGraphView(graphView, library)
 	}
 
 	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl {

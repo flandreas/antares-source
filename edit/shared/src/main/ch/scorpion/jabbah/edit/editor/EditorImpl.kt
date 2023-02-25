@@ -275,5 +275,6 @@ open class EditorImpl(
 	override fun dispose() {
 		view.drawing.addDrawableContainerListener(drawingListener)
 		view.removePropertyChangeListener(drawingViewListener)
+		selectionTool.dispose()
 	}
 }

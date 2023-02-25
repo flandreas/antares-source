@@ -2,12 +2,14 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
@@ -17,7 +19,10 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  *
  * @param T the type of [Vertice] that this [VerticeView] graphically represents.
  */
-interface VerticeView<T : Vertice> : GraphElementView<T>, Describable, ConnectableView, ActorView {
+interface VerticeView<T : Vertice>
+	: GraphElementView<T>, Describable, ConnectableView, ActorView, HelpIdProvider {
+
+	override val helpId: HelpId? get() = this::class.simpleName?.let { HelpId(it) }
 
 	val vertice: Vertice get() = model
 

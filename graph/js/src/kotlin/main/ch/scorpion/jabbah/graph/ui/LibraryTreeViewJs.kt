@@ -103,6 +103,10 @@ class LibraryTreeViewJs(
 		LOG.warn("expandTo not yet implemented")
 	}
 
+	override fun expandFolder(folderName: String) {
+		LOG.warn("expandFolder not yet implemented")
+	}
+
 	override fun expandAllFromSelection() {
 		// TODO
 		LOG.warn("expandAllFromSelection not yet implemented")

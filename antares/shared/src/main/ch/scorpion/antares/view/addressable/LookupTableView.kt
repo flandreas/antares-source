@@ -42,7 +42,7 @@ class LookupTableView(
 		inputEventHandler.getInputEventHandler()
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		inputEventHandler.getActorInteractionHandler()
+		inputEventHandler.getActorInteractionHandler(this)
 
 	/** ---- UI properties */
 

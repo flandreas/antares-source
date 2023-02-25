@@ -163,8 +163,9 @@ class LibraryService(
 	 * Posts a [LibraryItemRemovedEvent] on this [LibraryService]'s [EventBus].
 	 * @throws IllegalStateException is `item` is a non-empty [LibraryDirectory]
 	 */
-	fun removeLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
+	fun removeLibraryItem(library: Library, item: LibraryItem/*, directory: LibraryDirectory*/) {
 		LOG.trace("Removing LibraryItem '${item.name}'")
+		val directory = getDirectoryOf(library, item)
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
 				LOG.trace("Delete MetaGraph ${item.uuid}")
@@ -518,7 +519,7 @@ class LibraryService(
 		bundle.metaGraphs.forEach { metaGraph ->
 			library.getContainerLibraryElement(metaGraph.uuid)?.let {
 				LOG.trace("Replace MetaGraph ${metaGraph.uuid}")
-				removeLibraryItem(library, it, getDirectoryOf(library, it))
+				removeLibraryItem(library, it)
 			}
 		}
 	}

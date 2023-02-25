@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.graph.GraphNameAbbreviator
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -38,6 +39,14 @@ abstract class AbstractContainerDrawingFiller(
 		const val PIN_DIST = 4 * SCALE
 		const val MIN_WIDTH = 8.0 * SCALE
 		const val LABEL_INSET_X = SCALE
+
+		fun fillStandard(metaGraph: MetaGraph, addLabel: Boolean = false) {
+			if (CurrentContainerDrawingLayouter.value.doesLayout) {
+				CurrentContainerDrawingLayouter.value.layout(metaGraph.graph.graphView, metaGraph.containerDrawing, addLabel)
+			} else {
+				NarrowContainerDrawingFiller(metaGraph.graph.graphView, metaGraph.containerDrawing, addLabel).fill()
+			}
+		}
 	}
 
 	fun fill() {

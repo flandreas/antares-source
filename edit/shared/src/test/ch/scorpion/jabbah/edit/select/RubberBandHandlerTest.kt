@@ -2,9 +2,11 @@ package ch.scorpion.jabbah.edit.select
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
+import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.EditorToolDriver
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -15,6 +17,12 @@ class RubberBandHandlerTest : AbstractEditIntegrationTest() {
 
 	init {
 		editor.selectionTool.rubberBandHandler.selectionStrategy.delaySelectTimer = null
+	}
+
+	@BeforeTest
+	fun setup() {
+		EditModule.reset()
+		EditTestRule.configure()
 	}
 
 	@Test

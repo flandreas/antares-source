@@ -19,10 +19,13 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.graph.library.AbstractLibraryImportProcess
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
@@ -155,6 +158,24 @@ class AntaresSwing(
 			UiUtil.setUIFont(fontResource)
 		}
 
+		private fun importLibrary(path: String) {
+			LOG.value.info("Importing $path")
+			val process = AbstractLibraryImportProcess.forPath(path) { library, process ->
+				process.open(library)
+			}
+
+			if (process == null) {
+				JOptionPane.showMessageDialog(
+					Frame.getFrames()[0],
+					Translations.getString("antares.importOnStartup.unknownExtension.msg"),
+					Translations.getString("antares.importOnStartup.title"),
+					JOptionPane.ERROR_MESSAGE
+				)
+			} else {
+				process.import(path)
+			}
+		}
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 
@@ -187,6 +208,7 @@ class AntaresSwing(
 	}
 
 	init {
+
 		documentationUrl?.let {
 			BaseModule.baseDocumentationUrl = { it }
 		}
@@ -230,7 +252,6 @@ class AntaresSwing(
 	/** ---- [AbstractDesktopApplication] */
 
 	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(ICON_PATH))
-	//override val taskbarIcon: Image get() = UiUtil.themedIcon(ICON_PATH)
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
@@ -311,6 +332,7 @@ class AntaresSwing(
 		val frame = AntaresFrameSwing(graphFrameController, this, viewManager, graphFrameController)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
+		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider(this)
 
 		return frame
 	}
@@ -327,7 +349,12 @@ class AntaresSwing(
 
 	override fun openInitialSavable() {
 		if (commandLine.argList.size > 0) {
-			super.openInitialSavable()
+			handleCommandLineArgument(commandLine.argList[0])
+			return
+		}
+
+		if (launchDataPath != null) {
+			handleCommandLineArgument(launchDataPath!!)
 			return
 		}
 
@@ -341,12 +368,36 @@ class AntaresSwing(
 		}
 
 		if (isFirstUsage) {
-			ProjectModule.projectManagementService
-				.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
-				.also { dataViewController.openProject(LibraryIdentification(it.uuid, userId)) }
+			createHelloProject(userId)
 			return
 		}
 
 		dataViewController.closeData()
+	}
+
+	private fun createHelloProject(userId: UserIdentity) {
+		ProjectModule.projectManagementService
+			.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
+			.also {
+				(controller as GraphDataViewController).openProject(LibraryIdentification(it.uuid, userId))
+				(mainFrame as AntaresFrameSwing).controller.graphPanelViewController.libraryPanelController
+					.libraryTreeViewController.view.expandFolder(AntaresApplication.FREQUENTLY_USED_FOLDER_NAME_EN)
+			}
+	}
+
+	private fun handleCommandLineArgument(path: String) {
+		if (JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.importOnStartup.question", path),
+			Translations.getString("antares.importOnStartup.title"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE
+		) == JOptionPane.YES_OPTION) {
+			importLibrary(path)
+		}
+	}
+
+	override fun openFile(path: String) {
+		handleCommandLineArgument(path)
 	}
 }

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import java.awt.Component
 import java.awt.Frame
 import javax.swing.JOptionPane
 
@@ -24,6 +25,34 @@ class NewGraphAction(
 
 	companion object {
 		private val LOG by logger(NewGraphAction::class)
+
+		/**
+		 * Requests the info for a new [MetaGraph] from the user by showing a dialog.
+		 * @return the info, or `null` if the user cancelled the action
+		 */
+		fun requestNewGraphInfo(parent: Component, title: String): NewMetaGraphInfo? {
+			var info: NewMetaGraphInfo
+
+			while (true) {
+				info = NewMetaGraphPanel.showAsDialog() ?: return null
+
+				if (info.name.isEmpty) {
+					if (JOptionPane.showConfirmDialog(
+							parent,
+							Translations.getString("library.action.newGraph.emptyName.msg"),
+							title,
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.ERROR_MESSAGE
+						) == JOptionPane.CANCEL_OPTION) {
+						return null
+					}
+				} else {
+					break
+				}
+			}
+
+			return info
+		}
 	}
 
 	private val operationTarget: () -> Any? get() = {
@@ -35,25 +64,7 @@ class NewGraphAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		var info: NewMetaGraphInfo
-
-		while (true) {
-			info = NewMetaGraphPanel.showAsDialog() ?: return
-
-			if (info.name.isEmpty) {
-				if (JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("library.action.newGraph.emptyName.msg"),
-					"$name",
-					JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.ERROR_MESSAGE
-				) == JOptionPane.CANCEL_OPTION) {
-					return
-				}
-			} else {
-				break
-			}
-		}
+		var info = requestNewGraphInfo(Frame.getFrames()[0], name) ?: return
 
 		LOG.info("$name '${info.name.getTranslation()}'")
 

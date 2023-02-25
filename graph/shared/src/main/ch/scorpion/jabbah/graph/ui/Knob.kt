@@ -8,7 +8,10 @@ import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -80,19 +83,6 @@ object KnobLauncherImpl : KnobLauncher {
 	private var displayHandler: (() -> Unit)? = null
 	private var valueChangeHandler: ((Long) -> Unit)? = null
 
-	/**
-	 * Launches a new [KnobView] after the mouse pointer has stayed within the client component for the
-	 * configured delay time.
-	 *
-	 * @param initialValue the initial value to be displayed by the [KnobView]
-	 * @param location the location in global model space where the center of the [KnobView] should be located
-	 * @param unit the [String] displayed after the value in [KnobView]. Example: µs
-	 * @param mouseMovedCondition the condition that must be `true` during the entire delay time. This is
-	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
-	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
-	 * Allows the client to reset any of its state, e.g. hover highlighting over a button that initiates launching
-	 * @param valueChangeHandler called by this [KnobLauncherImpl] whenever the [KnobView]'s value has changed
-	 */
 	override fun launchAfterDelay(
 		initialValue: Long,
 		location: Point2D,
@@ -152,14 +142,15 @@ object KnobLauncherImpl : KnobLauncher {
 		stopTimer()
 
 		knobView.valueChangeHandler = { valueChangeHandler!!.invoke(it) }
-		knobView.location = location.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2))
+		knobView.location = location
 		knobView.value = initialValue
 		knobView.defaultValue = initialValue
 		knobView.unit = unit
 
 		LOG.trace("show KnobView")
-		view.content.animationContainer.add(knobView)
-		view.content.animationContainer.validate()
+		knobView.zoomPan = view.zoomPan
+		view.content.ghostContainer.add(knobView)
+		view.content.ghostContainer.validate()
 		view.setCursor(Cursor.CLICK)
 
 		displayHandler?.invoke()
@@ -169,7 +160,7 @@ object KnobLauncherImpl : KnobLauncher {
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			val view = context.view as DrawingView<*>
 
-			if (view.content.animationContainer.contains(knobView)) {
+			if (view.content.ghostContainer.contains(knobView)) {
 				return null
 			}
 
@@ -183,6 +174,7 @@ object KnobLauncherImpl : KnobLauncher {
 		}
 	}
 }
+
 /**
  * A circular knob used for interactively changing a value while execution.
  *
@@ -196,7 +188,7 @@ class KnobView(
 	var unit: String = "",
 	location: Point2D = Point2D.ZERO,
 	var valueChangeHandler: (Long) -> Unit = {}
-) : AbstractRectangle(location.x - OUTER_SIZE / 2, location.y - OUTER_SIZE / 2, OUTER_SIZE, OUTER_SIZE), ActorView {
+): AbstractRectangularUnzoomable(OUTER_SIZE / 2, location), ActorView {
 
 	companion object {
 
@@ -260,7 +252,9 @@ class KnobView(
 	override val lineWidth: Double get() = 1.0
 
 	override fun draw(context: DrawContext) {
-		context.g.translate(x + width / 2, y + height / 2)
+		val viewRectangle = getViewRectangle()
+
+		context.g.translate(viewRectangle.center)
 
 		context.g.color = OUTER_COLOR
 		context.g.fillOval(-width / 2, -height / 2, width, height)
@@ -285,7 +279,7 @@ class KnobView(
 		valueLabel.text = text
 		valueLabel.draw(context)
 
-		context.g.translate(-(x + width / 2), -(y + height / 2))
+		context.g.translate(viewRectangle.center.negate)
 	}
 
 	private fun drawScale(context: DrawContext) {
@@ -299,25 +293,20 @@ class KnobView(
 		}
 	}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return boundingBox.center.distance(x, y) <= OUTER_SIZE / 2
-	}
+	override fun contains(x: Double, y: Double): Boolean =
+		boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return handler
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = handler
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		return null
-	}
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
 	override fun executionStarted(signalHandler: SignalHandler) { }
 
 	override fun executionStopped(signalHandler: SignalHandler) { }
 
-	private fun removeFromParent(container: DrawableContainer<Drawable>) {
+	private fun removeFromParent(container: UnzoomableContainer<Unzoomable>) {
 		container.remove(this)
 		container.validate()
 	}
@@ -331,7 +320,7 @@ class KnobView(
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!this@KnobView.contains(context.x, context.y)) {
-				removeFromParent((context.view as DrawingView<*>).content.animationContainer)
+				removeFromParent((context.view as DrawingView<*>).content.ghostContainer)
 				return null
 			}
 			return this
@@ -370,7 +359,7 @@ class KnobView(
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!this@KnobView.contains(context.x, context.y)) {
-				removeFromParent((context.view as DrawingView<*>).content.animationContainer)
+				removeFromParent((context.view as DrawingView<*>).content.ghostContainer)
 				return null
 			}
 			return this
@@ -451,11 +440,10 @@ class KnobModel(
 	/**
 	 * @return the new value of this [KnobModel] for convenience
 	 */
-	fun changeToAngle(newAngle: Double, increment: Boolean): Long {
-		return if (increment) {
+	fun changeToAngle(newAngle: Double, increment: Boolean): Long =
+		if (increment) {
 			incrementAngleTo(newAngle)
 		} else decrementAngleTo(newAngle)
-	}
 
 	/** Returns the specified value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
 	private fun asAngle(a: Long): Double {

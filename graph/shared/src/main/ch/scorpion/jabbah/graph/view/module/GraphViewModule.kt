@@ -48,6 +48,7 @@ import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.editor.AutoConnector
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.graph.view.metagraph.MetaGraphService
 import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
@@ -124,6 +125,8 @@ object GraphViewModule : AbstractModule() {
 	var graphNavigationViewControllerExtension: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = { EmptyGraphNavigationControllerExtension() }
 
 	var graphViewExecutionAnimationFactory: GraphViewExecutionAnimationFactory = UndefinedGraphViewExecutionAnimationFactory()
+
+	var metaGraphService = MetaGraphService()
 
 	override fun initialize() {
 		EditModule.require()

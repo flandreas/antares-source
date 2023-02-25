@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.module
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.Modifier
+import ch.scorpion.jabbah.base.help.BrowserHelpProviderJvm
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
@@ -28,7 +29,9 @@ object BaseModuleJvm : AbstractModule() {
 		InvocationHandler.implementation = SwingInvocationHandler()
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
+
 		BaseModule.require()
+		BaseModule.helpProvider = BrowserHelpProviderJvm()
 
 		fillProperties(BaseModule.properties)
 

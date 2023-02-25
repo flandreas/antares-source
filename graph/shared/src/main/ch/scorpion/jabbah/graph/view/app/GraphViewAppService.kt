@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.app
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
@@ -9,8 +10,12 @@ import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -33,6 +38,17 @@ interface GraphViewAppService : DrawingAppService {
 		location: Point2D,
 		editor: Editor
 	): Component
+
+	/**
+	 * Extracts all currently selected [GraphElementView] as a new [MetaGraph]
+	 * and stores in under the given [graphName] in [libraryDirectory]
+	 */
+	fun extractMetaGraph(
+		graphName: TranslatableText,
+		type: GraphType,
+		drawingView: DrawingView<GraphView>,
+		libraryDirectory: LibraryDirectory
+	)
 }
 
 open class GraphViewAppServiceImpl(
@@ -56,7 +72,7 @@ open class GraphViewAppServiceImpl(
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
-		logComponentAction("Delete", components)
+		logComponentAction("Delete", components.map { it.id })
 
 		val componentSet = expandDeleteBuddies(components)
 
@@ -112,6 +128,12 @@ open class GraphViewAppServiceImpl(
 		editor.view.selectionManager.select(component)
 
 		return component
+	}
+
+	override fun extractMetaGraph(graphName: TranslatableText, type: GraphType, drawingView: DrawingView<GraphView>, libraryDirectory: LibraryDirectory) {
+		val componentIds = drawingView.selectionManager.selection.map { it.id }
+		LOG.userTrail("Extract ${componentIds.size} Components into new Library MetaGraph '$graphName'")
+		commandManager.execute(ExtractMetaGraphCommand(graphName, type, drawingView, componentIds, libraryDirectory))
 	}
 
 	/** ---- [GraphViewAppServiceImpl] */
@@ -179,5 +201,28 @@ private class UnconnectEdgeViewDestinationCommand(
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)
+	}
+}
+
+class ExtractMetaGraphCommand(
+	private val graphName: TranslatableText,
+	private val type: GraphType,
+	private val drawingView: DrawingView<GraphView>,
+	private val componentIds: Collection<Int>,
+	private val libraryDirectory: LibraryDirectory
+) : AbstractCommand("graph.command.extractMetaGraph") {
+
+	private lateinit var uuid: UUID
+
+	override fun execute() {
+		uuid = GraphViewModule.metaGraphService.extractMetaGraph(graphName, type, drawingView, componentIds, libraryDirectory)
+	}
+
+	override fun notifyUndo() {
+		with (libraryDirectory.library!!) {
+			getContainerLibraryElement(this@ExtractMetaGraphCommand.uuid)?.let {
+				libraryService.removeLibraryItem(this, it)
+			}
+		}
 	}
 }

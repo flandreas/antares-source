@@ -186,6 +186,7 @@ tasks {
 		// Packaging and signing
 		exec {
 			workingDir = projectDir
+			// Some of the following parameters are hard-wired in Info.plist
 			commandLine(
 				"${macOS_jpackage_home}/bin/jpackage",
 				"--dest", "${buildDir}/distributions",
@@ -193,7 +194,7 @@ tasks {
 				"--name", "Antares",
 				"--main-jar", "antares-${version_project}.jar",
 				"--app-version", "$version_project",
-				"--copyright", "Copyright (c) 2022 Andreas Fleischmann",
+				"--copyright", "Copyright (c) 2023 Andreas Fleischmann",
 				"--vendor", "antarescircuit.io",
 				"--icon", "jvm/rsc/antares.icns",
 				"--java-options", "-splash:\$APPDIR/splash-light.png",

@@ -34,6 +34,11 @@ interface ComponentContainer<T : Component> : DrawableContainer<T>, Storable {
 	 * stacking order position 0.
 	 */
 	fun getStackingOrderPositions(componentIds: Collection<Int>): List<StackingOrderPosition>
+
+	/** Removes all [Component]s with the specified IDs. */
+	fun remove(componentIds: Collection<Int>) {
+		getWidthIds(componentIds).forEach { remove(it) }
+	}
 }
 
 data class StackingOrderPosition(

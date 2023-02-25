@@ -136,10 +136,10 @@ subprojects {
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
-					implementation("com.formdev:flatlaf:2.5")
+					implementation("com.formdev:flatlaf:$flatLafVersion")
 					implementation("org.drjekyll:fontchooser:2.4")
 					implementation("org.swinglabs.swingx:swingx-all:1.6.5-1")
-					implementation("com.formdev:flatlaf-swingx:2.5")
+					implementation("com.formdev:flatlaf-swingx:$flatLafVersion")
 				}
 
 				// Workaround for bug in Gradle > 7.0 complaining about duplicate translation resources in generated JAR

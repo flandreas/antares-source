@@ -55,6 +55,7 @@ abstract class AbstractGraphViewExecutionHandler(
 	open fun dispose() {
 		eventBus.unregister(ApplicationModeEvent::class, modeEventHandler)
 		view.removePropertyChangeListener(viewCanvasListener)
+		tooltipHandler.dispose()
 		passivate()
 	}
 

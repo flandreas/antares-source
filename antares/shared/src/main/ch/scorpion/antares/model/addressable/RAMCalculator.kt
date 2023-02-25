@@ -129,9 +129,13 @@ class RAMCalculator : VerticeCalculator<RAM> {
     }
 
     private fun read(ram: RAM, signalHandler: SignalHandler) {
-        val address = ram.getAddressInput().getIncomingSignal()
-        val value = ram.read(address!!.toInt()!!)
-        ram.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(ram.dataWidth, value), signalHandler)
+        val addressInt = ram.getAddressInput().getIncomingSignal()!!.toInt()
+	    val value = if (addressInt != null) {
+			DigitalSignalFactory.of(ram.dataWidth, ram.read(addressInt))
+		}  else {
+			DigitalSignalFactory.undefined(ram.dataWidth)
+	    }
+	    ram.getDataPort().setOutgoingSignalBuffered(value, signalHandler)
     }
 
     private fun write(ram: RAM, signalHandler: SignalHandler) {

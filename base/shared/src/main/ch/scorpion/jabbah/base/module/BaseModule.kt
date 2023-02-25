@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.math.LinearEquationSystemSolver
 import ch.scorpion.jabbah.base.math.UndefinedLinearEquationSystemSolver
+import ch.scorpion.jabbah.base.help.HelpProvider
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
 
@@ -37,6 +38,8 @@ object BaseModule : AbstractModule() {
 	var baseDocumentationUrl: (() -> String)? = null
 
 	var linearEquationSystemSolver: LinearEquationSystemSolver = UndefinedLinearEquationSystemSolver
+
+	lateinit var helpProvider: HelpProvider
 
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")

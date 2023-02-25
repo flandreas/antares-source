@@ -35,7 +35,7 @@ class DuplicateGraphAction(
 		val newGraphName = JOptionPane.showInputDialog(
 			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("library.action.newGraph.question"),
-			name,
+			Translations.getString("library.action.duplicateGraph.title"),
 			JOptionPane.QUESTION_MESSAGE,
 			null,
 			null,

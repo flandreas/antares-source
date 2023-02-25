@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.DrawingView
@@ -12,13 +13,17 @@ import ch.scorpion.jabbah.graph.ui.graphviewer.OpenSubGraphViewerAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
 
-open class GraphContextMenuProvider : EditContextMenuProvider() {
+open class GraphContextMenuProvider(
+	application: Application
+) : EditContextMenuProvider() {
 
 	companion object {
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
 		private val openGraphActionWrapper by lazy { ActionWrapperSwing(openGraphAction) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
 	}
+
+	private val extractMetaGraphAction = ActionWrapperSwing(ExtractMetaGraphAction(application.controller))
 
 	private fun getGraphApplicationContextHolder(view: View<*>): GraphApplicationContextHolder? =
 		view.applicationContextHolder as GraphApplicationContextHolder?
@@ -41,6 +46,9 @@ open class GraphContextMenuProvider : EditContextMenuProvider() {
 			popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
 		}
 		popupMenu.add(resetSubGraphAction)
+		popupMenu.add(extractMetaGraphAction)
+		popupMenu.addSeparator()
+		popupMenu.add(helpAction)
 	}
 
 	private fun addExecutionActions(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {

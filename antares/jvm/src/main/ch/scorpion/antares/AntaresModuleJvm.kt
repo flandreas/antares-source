@@ -179,6 +179,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
+		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project
+		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "acl") // Antares Circuit Library
 		properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 		properties.set(ApplicationVersionServiceImpl.PROP_VERSION_FILE_URL, "https://www.antarescircuit.io/version.txt")
 		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")

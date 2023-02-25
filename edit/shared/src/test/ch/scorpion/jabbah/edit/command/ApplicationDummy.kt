@@ -91,3 +91,21 @@ class UndoableAppendCommand(
 		app.mandatoryData.dropLast(s.length)
 	}
 }
+
+class NotifiableAppendCommand(
+	private val app: ApplicationDummy,
+	private val s: String
+) : AbstractCommand("anyDescription") {
+
+	var state: String = ""
+		private set
+
+	override fun execute() {
+		app.mandatoryData.append(s)
+		state = s
+	}
+
+	override fun notifyUndo() {
+		state = ""
+	}
+}

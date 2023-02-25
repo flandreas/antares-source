@@ -18,6 +18,7 @@ interface AntaresApplication : Application {
 		const val ISSUES_URL_DEV = "http://127.0.0.1:4000/docs/issues"
 		const val YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCFs7EUOuFBXcnFLSlRd8Q0w"
 		val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
+		const val FREQUENTLY_USED_FOLDER_NAME_EN = "Frequently used"
 	}
 
 	override val displayName: String get() = DISPLAY_NAME

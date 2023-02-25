@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.base.PROP_BEGINNER_HELP_TOOLTIP
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
@@ -141,6 +138,20 @@ class LibraryTreeViewSwing(
 				getPath(node).also {
 					selectionPath = it
 					scrollPathToVisible(it)
+				}
+			}
+		}
+	}
+
+	override fun expandFolder(folderName: String) {
+		SwingUtilities.invokeLater {
+			val node = findTreeNode(treeModel.root as TreeNode) {
+				(it as DefaultMutableTreeNode).userObject is LibraryFolder
+					&& (it.userObject as LibraryFolder).name.getTranslation(Language.English) == folderName
+			}
+			if (node != null) {
+				getPath(node).also {
+					expandPath(it)
 				}
 			}
 		}

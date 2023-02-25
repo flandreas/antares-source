@@ -15,6 +15,13 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 interface GraphViewConnectService {
 
+	fun <T : Any> connect(edgeView: EdgeView<T>, endpointType: EdgeViewEndpointType, connection: Connection<T>) {
+		when (endpointType) {
+			EdgeViewEndpointType.ORIGIN -> connectToOrigin(edgeView, connection)
+			EdgeViewEndpointType.DESTINATION -> connectToDestination(edgeView, connection)
+		}
+	}
+
 	/**
 	 * Connects the origin of an existing [EdgeView] with a particular [Port] of a [ConnectableView]
 	 * both on the view and the model layer.
@@ -64,6 +71,13 @@ interface GraphViewConnectService {
 	 * Does nothing if not connected.
 	 */
 	fun unconnectEdgeViewDestination(edgeView: EdgeView<*>)
+
+	fun unconnectEdgeView(edgeView: EdgeView<*>, endpointType: EdgeViewEndpointType) {
+		when (endpointType) {
+			EdgeViewEndpointType.ORIGIN -> unconnectEdgeViewOrigin(edgeView)
+			EdgeViewEndpointType.DESTINATION -> unconnectEdgeViewDestination(edgeView)
+		}
+	}
 
 	/**
 	 * Unconnects an [EdgeView] from both [ConnectableView]s to which it might be connected.

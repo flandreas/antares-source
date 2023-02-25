@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.VerticeViewActorInteractionHandler
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -131,8 +131,10 @@ class ClockView(
 		context.g.translate(-dx, -dy)
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		actorInteractionHandler
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
+		VerticeViewActorInteractionHandler.getInactiveInstance(this)
+		return actorInteractionHandler
+	}
 
 	/** ---- [ActorView] */
 
@@ -162,11 +164,7 @@ class ClockView(
 
 	/** ---- [ClockView] */
 
-	private inner class ClockViewActorInteractionHandler : AbstractVerticeView.Companion.CannotOpenActorClickHandler() {
-
-		init {
-			component = this@ClockView
-		}
+	private inner class ClockViewActorInteractionHandler : VerticeViewActorInteractionHandler() {
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 

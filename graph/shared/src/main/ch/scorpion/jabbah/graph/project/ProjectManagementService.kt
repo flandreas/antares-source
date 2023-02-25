@@ -129,11 +129,7 @@ class ProjectManagementService(
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
-	/**
-	 * Loads and opens the [Project] with the specified [UUID], and opens its default [ContainerLibraryElement].
-	 * @throws IllegalArgumentException if a [Project] with [libraryId] doesn't exist
-	 */
-	fun open(libraryId: LibraryIdentification): Project = load(libraryId).also { open(it) }
+	override fun open(libraryId: LibraryIdentification): Project = load(libraryId).also { open(it) }
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project) {

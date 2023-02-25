@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
@@ -56,6 +57,8 @@ class LibraryPreviewPanel(
 	/** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
 	private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
 
+	private val helpAction = HelpAction()
+
 	private val componentDisplay = ComponentDisplay()
 
 	private val descriptionDisplay = MultilineTextDisplayJvm()
@@ -64,6 +67,8 @@ class LibraryPreviewPanel(
 	private var selection: Component? = null
 
 	init {
+		helpAction.enabled = false
+
 		eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
 		eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
 		eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
@@ -88,6 +93,16 @@ class LibraryPreviewPanel(
 		descriptionDisplay.background = BACKGROUND_COLOR
 		add(componentDisplay, BorderLayout.WEST)
 		add(descriptionDisplay, BorderLayout.CENTER)
+
+		val buttonPanel = JToolBar()
+		val helpButton = JButton(ActionWrapperSwing(helpAction))
+		helpButton.text = null
+		//helpButton.border = null
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+		buttonPanel.add(helpButton)
+		buttonPanel.add(Box.createHorizontalGlue())
+		buttonPanel.background = BACKGROUND_COLOR
+		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
 	private fun handleLibrarySelectionChanged(e: LibrarySelectionChangedEvent) {
@@ -108,6 +123,7 @@ class LibraryPreviewPanel(
 				LOG.error("Exception when handling LibraryImpl selection change: ${e.message}")
 			}
 		}
+		helpAction.enabled = selectedItem is HelpIdProvider && selectedItem.helpId != null
 		repaint()
 	}
 
@@ -153,6 +169,12 @@ class LibraryPreviewPanel(
 		selection = component
 		componentDisplay.updateLayout()
 		descriptionDisplay.styledText = buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
+	}
+
+	private inner class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {
+		override fun execute(event: ActionEvent) {
+			BaseModule.helpProvider.provideHelpFor((controller.selectedItem as HelpIdProvider).helpId)
+		}
 	}
 
 	/** Displays the graphical preview of the selected [Component]. */

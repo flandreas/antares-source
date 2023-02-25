@@ -14,6 +14,8 @@ interface SelectionTool : Tool {
 	override val enabledInUneditableView: Boolean get() = true
 
 	val rubberBandHandler: RubberBandHandler
+
+	fun dispose()
 }
 
 /** A factory that creates a [SelectionTool] for an [Editor].*/

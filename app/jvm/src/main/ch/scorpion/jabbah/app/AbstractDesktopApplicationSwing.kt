@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.rating.RatingPanel
 import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Component
@@ -29,7 +30,21 @@ abstract class AbstractDesktopApplicationSwing(
 	private val ratingService: RatingService = AppModuleJvm.ratingService
 ) : AbstractDesktopApplication(commandLine, controller) {
 
+	companion object {
+		private val LOG by lazy { logger(AbstractDesktopApplicationSwing::class) }
+	}
+
 	protected lateinit var mainFrame: AbstractApplicationFrame
+
+	/**
+	 * The file path to data to be opened when the [Application] is launched.
+	 * Uses on macOS platform where this is not passed to the [Application] as a command line argument,
+	 * but is received as a platform event. This event arrives at a time when the system is not yet
+	 * fully initialized, and must therefore be handled later. This property stores the path received
+	 * in the event to be processed later.
+	 */
+	protected var launchDataPath: String? = null
+		private set
 
 	/** ---- [Application] */
 
@@ -132,6 +147,13 @@ abstract class AbstractDesktopApplicationSwing(
 
 	protected abstract val taskbarIcon: Image
 
+	/**
+	 * Called on macOS if a file is to be opened when the [Application] is launched,
+	 * or when the user double-clicks on a file that should be opened by the already
+	 * running [Application].
+	 * */
+	protected abstract fun openFile(path: String)
+
 	protected open fun createMenuBarBuilder(): MenuBarBuilder {
 		return MenuBarBuilder(frame = mainFrame, eventBus = controller.eventBus)
 	}
@@ -146,9 +168,24 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun installMacOSHandlers() {
+		installMacOSOpenFileHandler()
 		installMacOSAboutHandler()
 		installMacOSQuitHandler()
 		installMacOSPreferencesHandler()
+	}
+
+	private fun installMacOSOpenFileHandler() {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
+			Desktop.getDesktop().setOpenFileHandler {
+				if (it.files != null && it.files.isNotEmpty()) {
+					try {
+						openFile(it.files[0].absolutePath)
+					} catch (e: Exception) {
+						launchDataPath = it.files[0].absolutePath
+					}
+				}
+			}
+		}
 	}
 
 	private fun installMacOSAboutHandler() {

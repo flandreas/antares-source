@@ -106,12 +106,13 @@ class GraphViewCopyPasteService(
 				DEFAULT_DISTANCE_FACTOR * view.grid.distance)
 		}
 
-		val components = paste(contents, view, dislocation)
-
-		return PasteInfo(components, dislocation)
+		return PasteInfo(paste(contents, view, dislocation).map { it.id }, dislocation)
 	}
 
-	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> {
+	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> =
+		paste(contents, view.drawing, dislocation)
+
+	override fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D): List<Component> {
 		lateinit var copy: Storable
 		lateinit var copyDrawing: Drawing<Component>
 
@@ -134,7 +135,7 @@ class GraphViewCopyPasteService(
 
 		var pastedAnchorComponent: Component? = null
 		for (c in copyDrawing.drawables) {
-			if (pastedAnchorComponentId == null && getOrigAnchorComponent(view)?.location == c.location) {
+			if (pastedAnchorComponentId == null && getOrigAnchorComponent(drawing)?.location == c.location) {
 				pastedAnchorComponent = c
 			}
 		}
@@ -149,9 +150,9 @@ class GraphViewCopyPasteService(
 
 		Movable.moveBy(copyDrawing.drawables, dislocation)
 		copyDrawing.drawables.forEach { c ->
-			view.drawing.add(c)
+			drawing.add(c)
 			if (c is GraphElementView<*>) {
-				(view.drawing as? GraphView)?.graph?.let {
+				(drawing as? GraphView)?.graph?.let {
 					c.model.graphParamsChanged(it)
 				}
 			}
@@ -164,8 +165,8 @@ class GraphViewCopyPasteService(
 		return copyDrawing.drawables
 	}
 
-	private fun getOrigAnchorComponent(view: DrawingView<Drawing<Component>>): Component? =
-		origAnchorComponentId?.let { view.drawing.getWithId(it) }
+	private fun getOrigAnchorComponent(drawing: Drawing<Component>): Component? =
+		origAnchorComponentId?.let { drawing.getWithId(it) }
 
 	/**
 	 * Unconnects the [Port]s of all [VerticeView]s not contained in the [GraphView] from

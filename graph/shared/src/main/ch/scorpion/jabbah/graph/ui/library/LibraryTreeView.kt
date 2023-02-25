@@ -39,6 +39,12 @@ interface LibraryTreeView : UIView {
 	 */
 	fun expandTo(element: ContainerLibraryElement)
 
+	/**
+	 * Expands the tree to (and inclusive) the [LibraryFolder] with the specified english name.
+	 * Does nothing if the displayed [Library] doesn't contain such a folder.
+	 */
+	fun expandFolder(folderName: String)
+
 	fun expandToCurrentSavable()
 
 	fun expandAllFromSelection()
