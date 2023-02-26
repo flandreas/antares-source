@@ -567,15 +567,15 @@
                   <translation lang='de' text='Analog'/>
               </name>
               <items>
-                  <baseLibraryElement _id='138' id='LightBulb'/>
-                  <baseLibraryElement _id='139' id='Battery'/>
-                  <baseLibraryElement _id='140' id='Resistor'/>
-                  <baseLibraryElement _id='141' id='AnalogSwitch'/>
-                  <baseLibraryElement _id='142' id='AnalogGround'/>
-                  <baseLibraryElement _id='143' id='AnalogTransistorN'/>
-                  <baseLibraryElement _id='144' id='AnalogTransistorP'/>
-                  <baseLibraryElement _id='145' id='AnalogInOut'/>
-                  <baseLibraryElement _id='146' id='AnalogPower'/>
+                  <baseLibraryElement _id='138' id='LightBulb' type='analog'/>
+                  <baseLibraryElement _id='139' id='Battery' type='analog'/>
+                  <baseLibraryElement _id='140' id='Resistor' type='analog'/>
+                  <baseLibraryElement _id='141' id='AnalogSwitch' type='analog'/>
+                  <baseLibraryElement _id='142' id='AnalogGround' type='analog'/>
+                  <baseLibraryElement _id='143' id='AnalogTransistorN' type='analog'/>
+                  <baseLibraryElement _id='144' id='AnalogTransistorP' type='analog'/>
+                  <baseLibraryElement _id='145' id='AnalogInOut' type='analog'/>
+                  <baseLibraryElement _id='146' id='AnalogPower' type='analog'/>
               </items>
           </libraryFolder>
       </items>

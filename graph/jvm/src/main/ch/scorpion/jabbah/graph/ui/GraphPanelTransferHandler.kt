@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -11,6 +12,8 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -46,17 +49,20 @@ class GraphPanelTransferHandler(
 	}
 
     override fun canImport(dropComponent: Component, transferable: Transferable): Boolean {
-        if (dropComponent !is GraphElementView<*> || transferable.getTransferData(GraphElementViewTransferable.FLAVOR) !is GraphElementViewTransferableData) {
+        if (dropComponent !is GraphElementView<*>
+	        || transferable.getTransferData(GraphElementViewTransferable.FLAVOR) !is GraphElementViewTransferableData
+        ) {
 			return false
         }
 	    val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
-        if (!editor.view.editable) {
-			BaseModule.eventBus.post(ComponentMessage(
-				ComponentMessageType.Error,
-				null,
-				"graph.readonly.cannotDrop.msg"))
-            return false
-        }
+
+	    if (!checkEditability()) {
+			return false
+	    }
+
+	    if (!checkGraphType(data.libraryElement)) {
+			return false
+	    }
 
         if (dropComponent.model !is SubGraphVertice) {
             return super.canImport(dropComponent, transferable)
@@ -66,28 +72,17 @@ class GraphPanelTransferHandler(
 		    return super.canImport(dropComponent, transferable)
 	    }
 
-        val dropVertice = dropComponent.model as SubGraphVertice?
+        val dropVertice = dropComponent.model as SubGraphVertice
 	    val targetUUID = (editor.drawing as GraphView).graph!!.uuid
 
-        if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
-            LOG.trace("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
-            JOptionPane.showMessageDialog(
-                Frame.getFrames()[0],
-                Translations.getString("graph.cycleError.msg"),
-                Translations.getString("graph.action.addElementToGraph.name"),
-                JOptionPane.ERROR_MESSAGE)
-	        return false
-        }
+	    if (!checkNoGraphCycle(dropVertice, targetUUID)) {
+			return false
+	    }
 
 	    val targetLibrary = repository.getContainingLibrary(targetUUID)!!
-	    if (!targetLibrary.expandedImports.contains(data.libraryElement.library!!.uuid)) {
-			LOG.trace("Prevent dropping '${dropVertice.name}' from non-importing Library")
-		    JOptionPane.showMessageDialog(
-			    Frame.getFrames()[0],
-			    Translations.getString("graph.dependencyError.msg"),
-			    Translations.getString("graph.action.addElementToGraph.name"),
-			    JOptionPane.ERROR_MESSAGE)
-		    return false
+	    val sourceLibraryUUID = data.libraryElement.library!!.uuid
+	    if (!checkImportingLibrary(dropVertice, targetLibrary, sourceLibraryUUID)) {
+			return false
 	    }
 
         return true
@@ -96,5 +91,55 @@ class GraphPanelTransferHandler(
 	override fun addComponent(dropComponent: Component, transferable: Transferable): Component {
 		val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
 		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, editor)
+	}
+
+	private fun checkEditability(): Boolean {
+		if (!editor.view.editable) {
+			BaseModule.eventBus.post(ComponentMessage(
+				ComponentMessageType.Error,
+				null,
+				"graph.readonly.cannotDrop.msg"))
+			return false
+		}
+		return true
+	}
+
+	private fun checkNoGraphCycle(dropVertice: SubGraphVertice, targetUUID: UUID): Boolean {
+		if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
+			LOG.trace("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.cycleError.msg"),
+				Translations.getString("graph.action.addElementToGraph.name"),
+				JOptionPane.ERROR_MESSAGE)
+			return false
+		}
+		return true
+	}
+
+	private fun checkImportingLibrary(dropVertice: SubGraphVertice, targetLibrary: Library, sourceLibraryUUID: UUID): Boolean {
+		if (!targetLibrary.expandedImports.contains(sourceLibraryUUID)) {
+			LOG.trace("Prevent dropping '${dropVertice.name}' from non-importing Library")
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.dependencyError.msg"),
+				Translations.getString("graph.action.addElementToGraph.name"),
+				JOptionPane.ERROR_MESSAGE)
+			return false
+		}
+		return true
+	}
+
+	private fun checkGraphType(sourceElement: LibraryElement): Boolean {
+		val targetType = (editor.drawing as GraphView).graph!!.type
+		if (!targetType.canImport(sourceElement)) {
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.graphTypeError.msg", sourceElement.graphType, targetType),
+				Translations.getString("graph.action.addElementToGraph.name"),
+				JOptionPane.ERROR_MESSAGE)
+			return false
+		}
+		return true
 	}
 }

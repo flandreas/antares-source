@@ -41,7 +41,7 @@ class ContainerLibraryElement(
 	}
 
 	/** Uses as long as [metaGraph] has not yet been instantiated, e.g. when displaying a [Library] in the UI.*/
-	var type: GraphType = GraphModelModule.defaultGraphType
+	override var graphType: GraphType = GraphModelModule.defaultGraphType
 		private set
 
 	/** Lazily initialized instance of the referenced [MetaGraph]. */
@@ -97,7 +97,7 @@ class ContainerLibraryElement(
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())
 		name.write("name", writer)
-		writer.writeString("type", type.customName)
+		writer.writeString("type", graphType.customName)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -109,7 +109,7 @@ class ContainerLibraryElement(
 		if (reader.hasElement("name")) {
 			name = Name.read("name", reader)
 		}
-		type = if (reader.hasAttribute("type")) {
+		graphType = if (reader.hasAttribute("type")) {
 			GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
 		} else {
 			// Backward compatibility

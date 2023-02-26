@@ -6,7 +6,10 @@ import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.GraphType
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -24,6 +27,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * @property repository the [BaseLibraryElementRepository] that contains the [GraphElementView] referenced by [name].
  */
 class BaseLibraryElement(
+	graphType: GraphType = GenericGraphType,
 	private var id: String = "",
 	private val repository: BaseLibraryElementRepository = LibraryModule.baseLibraryElementRepository
 ) : LibraryElement(), HelpIdProvider {
@@ -54,13 +58,23 @@ class BaseLibraryElement(
 
     override fun write(writer: StoreWriter) {
         writer.writeString("id", id)
+	    writer.writeString("type", graphType.customName)
     }
 
     override fun read(reader: StoreReader) {
         id = reader.readString("id")
+	    graphType = if (reader.hasAttribute("type")) {
+			GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
+	    } else {
+			// Backward compatibility
+			GraphModelModule.defaultGraphType
+	    }
     }
 
     /** ---- [LibraryElement] */
+
+	override var graphType: GraphType = graphType
+		private set
 
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
 	    return repository.getNewInstance(id)

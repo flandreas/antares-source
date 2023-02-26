@@ -308,7 +308,7 @@ class LibraryTreeViewSwing(
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}
-					component.icon = MetaGraphIconProvider.provideIcon(cle.type, controller.isCurrentItem(cle))
+					component.icon = MetaGraphIconProvider.provideIcon(cle.graphType, controller.isCurrentItem(cle))
 					if (controller.isDefaultElement(cle)) {
 						component.font = defaultElemFont
 					}

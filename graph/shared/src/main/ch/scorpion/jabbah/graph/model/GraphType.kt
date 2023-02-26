@@ -1,7 +1,15 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.graph.library.LibraryElement
+
 interface GraphType {
 	val customName: String
+
+	/**
+	 * Determines whether a [Graph] of this [GraphType] can contain [Vertice]s
+	 * instantiated from the specified [LibraryElement]
+	 */
+	fun canImport(libraryElement: LibraryElement): Boolean = libraryElement.graphType === this
 }
 
 object GenericGraphType: GraphType {

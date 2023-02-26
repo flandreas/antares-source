@@ -1,10 +1,10 @@
 package ch.scorpion.antares.view.module
 
 import ch.scorpion.antares.model.AntaresGraphTypes
+import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogGraph
-import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
@@ -58,16 +58,16 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
 import ch.scorpion.jabbah.edit.drag.EditDragModule
 import ch.scorpion.jabbah.edit.figure.FigureProvider
+import ch.scorpion.jabbah.edit.figure.FigureRegistry
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
-import ch.scorpion.jabbah.edit.figure.FigureRegistry
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -193,7 +193,7 @@ object AntaresViewModule : AbstractModule() {
 
 			override fun create(model: Graph): GraphView =
 				when (model.type) {
-					AntaresGraphTypes.Digital -> DigitalGraphView(model as DigitalGraph)
+					Digital -> DigitalGraphView(model as DigitalGraph)
 					AntaresGraphTypes.Analog -> AnalogGraphView(model as AnalogGraph)
 					else -> GraphViewImpl(model)
 				}
@@ -612,75 +612,75 @@ object AntaresViewModule : AbstractModule() {
 
 	fun fillBaseElementLibrary(library: Library) {
 		val fu = LibraryFolder(Translations.getString("library.folder.frequentlyUsed"))
-		addLibraryItem(library, BaseLibraryElement(SWITCH), fu)
-		addLibraryItem(library, BaseLibraryElement(LED), fu)
-		addLibraryItem(library, BaseLibraryElement(INPUT), fu)
-		addLibraryItem(library, BaseLibraryElement(OUTPUT), fu)
-		addLibraryItem(library, BaseLibraryElement(AND), fu)
-		addLibraryItem(library, BaseLibraryElement(OR), fu)
-		addLibraryItem(library, BaseLibraryElement(NOT), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, SWITCH), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, LED), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, INPUT), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, OUTPUT), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, AND), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, OR), fu)
+		addLibraryItem(library, BaseLibraryElement(Digital, NOT), fu)
 		addLibraryItem(library, fu, library)
 
 		val net = LibraryFolder(Translations.getString("library.folder.net"))
-		addLibraryItem(library, BaseLibraryElement(CONSTANT), net)
-		addLibraryItem(library, BaseLibraryElement(SPLITTER), net)
-		addLibraryItem(library, BaseLibraryElement(CONCENTRATOR), net)
-		addLibraryItem(library, BaseLibraryElement(BIDIRECTIONAL_SPLITTER), net)
-		addLibraryItem(library, BaseLibraryElement(PROBE), net)
-		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
-		addLibraryItem(library, BaseLibraryElement(BREAK), net)
-		addLibraryItem(library, BaseLibraryElement(PULL_RESISTOR), net)
-		addLibraryItem(library, BaseLibraryElement(TRANSISTOR_P), net)
-		addLibraryItem(library, BaseLibraryElement(TRANSISTOR_N), net)
-		addLibraryItem(library, BaseLibraryElement(GROUND), net)
-		addLibraryItem(library, BaseLibraryElement(POWER), net)
-		addLibraryItem(library, BaseLibraryElement(REAL_SWITCH), net)
-		addLibraryItem(library, BaseLibraryElement(DOUBLE_THROW_SWITCH), net)
-		addLibraryItem(library, BaseLibraryElement(WIRE_TAP), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, CONSTANT), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, SPLITTER), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, CONCENTRATOR), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, BIDIRECTIONAL_SPLITTER), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, PROBE), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, TUNNEL), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, BREAK), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, PULL_RESISTOR), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, TRANSISTOR_P), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, TRANSISTOR_N), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, GROUND), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, POWER), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, REAL_SWITCH), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, DOUBLE_THROW_SWITCH), net)
+		addLibraryItem(library, BaseLibraryElement(Digital, WIRE_TAP), net)
 		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
-		addLibraryItem(library, BaseLibraryElement(AND), base)
-		addLibraryItem(library, BaseLibraryElement(OR), base)
-		addLibraryItem(library, BaseLibraryElement(NOT), base)
-		addLibraryItem(library, BaseLibraryElement(NAND), base)
-		addLibraryItem(library, BaseLibraryElement(NOR), base)
-		addLibraryItem(library, BaseLibraryElement(XOR), base)
-		addLibraryItem(library, BaseLibraryElement(XNOR), base)
-		addLibraryItem(library, BaseLibraryElement(BUFFER), base)
-		addLibraryItem(library, BaseLibraryElement(TRISTATE_BUFFER), base)
-		addLibraryItem(library, BaseLibraryElement(DELAY), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, AND), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, OR), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, NOT), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, NAND), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, NOR), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, XOR), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, XNOR), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, BUFFER), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, TRISTATE_BUFFER), base)
+		addLibraryItem(library, BaseLibraryElement(Digital, DELAY), base)
 		addLibraryItem(library, base, library)
 
 		val input = LibraryFolder(Translations.getString("library.folder.input"))
-		addLibraryItem(library, BaseLibraryElement(INPUT), input)
-		addLibraryItem(library, BaseLibraryElement(SWITCH), input)
-		addLibraryItem(library, BaseLibraryElement(DIP_SWITCH), input)
-		addLibraryItem(library, BaseLibraryElement(CLOCK), input)
-		addLibraryItem(library, BaseLibraryElement(KEYBOARD), input)
-		addLibraryItem(library, BaseLibraryElement(JOYSTICK), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, INPUT), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, SWITCH), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, DIP_SWITCH), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, CLOCK), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, KEYBOARD), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, JOYSTICK), input)
 		addLibraryItem(library, input, library)
 
 		val output = LibraryFolder(Translations.getString("library.folder.output"))
-		addLibraryItem(library, BaseLibraryElement(OUTPUT), output)
-		addLibraryItem(library, BaseLibraryElement(LED), output)
-		addLibraryItem(library, BaseLibraryElement(RGB_LED), output)
-		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAY), output)
-		addLibraryItem(library, BaseLibraryElement(LED_MATRIX), output)
-		addLibraryItem(library, BaseLibraryElement(TERMINAL), output)
-		addLibraryItem(library, BaseLibraryElement(BUZZER), output)
-		addLibraryItem(library, BaseLibraryElement(VIDEO_RAM), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, OUTPUT), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, LED), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, RGB_LED), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, SEVEN_SEGMENT_DISPLAY), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, LED_MATRIX), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, TERMINAL), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, BUZZER), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, VIDEO_RAM), output)
 		addLibraryItem(library, output, library)
 
 		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
-		addLibraryItem(library, BaseLibraryElement(ROM), memory)
-		addLibraryItem(library, BaseLibraryElement(RAM), memory)
-		addLibraryItem(library, BaseLibraryElement(LUT), memory)
+		addLibraryItem(library, BaseLibraryElement(Digital, ROM), memory)
+		addLibraryItem(library, BaseLibraryElement(Digital, RAM), memory)
+		addLibraryItem(library, BaseLibraryElement(Digital, LUT), memory)
 		addLibraryItem(library, memory, library)
 
 		val arithmetic = LibraryFolder(Translations.getString("library.folder.arithmetic"))
-		addLibraryItem(library, BaseLibraryElement(RANDOM), arithmetic)
-		addLibraryItem(library, BaseLibraryElement(BIT_EXTENDER), arithmetic)
+		addLibraryItem(library, BaseLibraryElement(Digital, RANDOM), arithmetic)
+		addLibraryItem(library, BaseLibraryElement(Digital, BIT_EXTENDER), arithmetic)
 		addLibraryItem(library, arithmetic, library)
 	}
 

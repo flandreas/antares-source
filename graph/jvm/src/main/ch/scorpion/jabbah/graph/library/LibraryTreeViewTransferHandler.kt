@@ -38,7 +38,7 @@ class LibraryTreeViewTransferHandler(
 		/** Gets the icon [Image] to be used for drag&drop. */
 		private fun getIcon(libraryItem: LibraryItem): Image {
 			return if (libraryItem is ContainerLibraryElement) {
-				MetaGraphIconProvider.provideImage(libraryItem.type)
+				MetaGraphIconProvider.provideImage(libraryItem.graphType)
 			} else {
 				libraryItem.iconPath?.let { iconPath ->
 					ICON_CACHE.getOrPut(iconPath) { UiUtil.themedIcon(iconPath).image }
