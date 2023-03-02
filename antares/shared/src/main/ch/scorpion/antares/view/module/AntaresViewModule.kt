@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.module
 
-import ch.scorpion.antares.model.AntaresGraphTypes
+import ch.scorpion.antares.model.AntaresGraphTypes.Analog
 import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
@@ -194,7 +194,7 @@ object AntaresViewModule : AbstractModule() {
 			override fun create(model: Graph): GraphView =
 				when (model.type) {
 					Digital -> DigitalGraphView(model as DigitalGraph)
-					AntaresGraphTypes.Analog -> AnalogGraphView(model as AnalogGraph)
+					Analog -> AnalogGraphView(model as AnalogGraph)
 					else -> GraphViewImpl(model)
 				}
 		}
@@ -682,6 +682,17 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(Digital, RANDOM), arithmetic)
 		addLibraryItem(library, BaseLibraryElement(Digital, BIT_EXTENDER), arithmetic)
 		addLibraryItem(library, arithmetic, library)
+
+		val analog = LibraryFolder(Translations.getString("library.folder.analog"))
+		addLibraryItem(library, BaseLibraryElement(Analog, LIGHT_BULB), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, BATTERY), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, RESISTOR), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_SWITCH), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_GROUND), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_TRANSISTOR_N), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_TRANSISTOR_P), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_INOUT), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_POWER), analog)
 	}
 
 	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
