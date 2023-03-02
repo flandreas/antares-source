@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -38,6 +39,9 @@ class Resistor(
 			}
 		}
 
+	/** Used for restoring [resistance] after the simulation has ended. */
+	private var resistanceBuffer: Double = 0.0
+
 	/** ---- [Storable] interface */
 
 	override fun read(reader: StoreReader) {
@@ -50,6 +54,18 @@ class Resistor(
 		super.write(writer)
 		writer.writeDouble("resistance", resistance)
 		writer.writeBoolean("variable", variable)
+	}
+
+	/** ---- [Actor] interface */
+
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		resistanceBuffer = resistance
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		resistance = resistanceBuffer
 	}
 
 	/** ---- [Resistor] */
