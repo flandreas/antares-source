@@ -128,6 +128,11 @@ interface WeakOutputPortBehaviour<T : Any> {
 	 * and returns the adopted signal.
 	 */
 	fun activateWeakOutput(netSignal: T?, port: OutputPort<T>, signalHandler: SignalHandler): T
+
+	/**
+	 * Called by a [Net] when its signal has changed.
+	 */
+	fun handleNetChanged(signalHandler: SignalHandler)
 }
 
 data class SignalReplacement<T: Any>(

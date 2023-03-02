@@ -14,12 +14,13 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 class PullResistorView(
 	pullDirection: PullDirection = LOW,
@@ -28,11 +29,6 @@ class PullResistorView(
 ) : DigitalComponentView<PullResistor>(styleProvider, model) {
 
 	companion object {
-		private val STROKE = Stroke(
-			Themes.get<GraphTheme>().figure.stroke.width,
-			cap = LineCap.BUTT,
-			join = LineJoin.MITER
-		)
 		private const val PULL_DIRECTION_WIDTH = 2 * SCALE
 	}
 
@@ -84,25 +80,38 @@ class PullResistorView(
 		super.drawImpl(context)
 		getPortViews().first().prepareConnectionDrawContext(context)
 
+		val portStroke = context.g.stroke
+
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
 		} else if (!context.useContextColors) {
-			context.g.color = foregroundColor
+			styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
 		}
-		drawPullDirection(context)
+
+		drawPullDirection(context, portStroke)
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+		} else if (!context.useContextColors) {
+			styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+			context.g.color = when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
+				SymbolStyle.EUROPEAN,SymbolStyle.VERBOSE  -> foregroundColor
+				SymbolStyle.AMERICAN -> styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+			}
+		}
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
 			context,
 			getColorGradient(context) ?: context.g.color,
 			getApplicableBackgroundColor(context),
-			STROKE)
+			portStroke)
 	}
 
 	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			return LinearColorGradient(
-				bounds.centerLeft,
+				bounds.centerLeft.addX(PULL_DIRECTION_WIDTH.toDouble()),
 				transparent.applyTo(pullDirectionExecutionColor.foregroundColor),
 				bounds.centerRight,
 				transparent.applyTo(netExecutionColor.foregroundColor))
@@ -119,10 +128,10 @@ class PullResistorView(
 	private val netExecutionColor: CompositeColor get() =
 		model.getOutputPort().net?.signal?.color ?: Bit.Undefined.color
 
-	private fun drawPullDirection(context: DrawContext) {
+	private fun drawPullDirection(context: DrawContext, stroke: Stroke) {
 		when(pullDirection) {
 			LOW -> drawLowPullDirection(context)
-			HIGH -> drawHighPullDirection(context)
+			HIGH -> drawHighPullDirection(context, stroke)
 		}
 	}
 
@@ -130,7 +139,7 @@ class PullResistorView(
 		GroundView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
 	}
 
-	private fun drawHighPullDirection(context: DrawContext) {
+	private fun drawHighPullDirection(context: DrawContext, stroke: Stroke) {
 		PowerView.drawBodyAt(-DigitalPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
 	}
 }
