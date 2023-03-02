@@ -35,9 +35,9 @@ class AnalogTransistorView(
 	override fun modelExchanged(oldModel: AnalogTransistor?) {
 		super.modelExchanged(oldModel)
 
-		addPortView(AnalogPortView(styleProvider, model.gatePort, 0, 0, WEST).also { it.portLabelPosition = HIDE })
-		addPortView(AnalogPortView(styleProvider, model.sourcePort, 0, 0, NORTH).also { it.portLabelPosition = HIDE })
-		addPortView(AnalogPortView(styleProvider, model.drainPort, 0, 0, SOUTH).also { it.portLabelPosition = HIDE })
+		addPortView(AnalogPortView(styleProvider, model.gatePort, 0, 0, WEST, HIDE))
+		addPortView(AnalogPortView(styleProvider, model.sourcePort, 0, 0, NORTH, HIDE))
+		addPortView(AnalogPortView(styleProvider, model.drainPort, 0, 0, SOUTH, HIDE))
 
 		updateGeometry()
 	}
