@@ -49,16 +49,30 @@ class DigitalEdgeView(
 
 		/** The name of the [Boolean] property in [Properties] defining whether [DigitalEdgeView] with wide [BitWidth] should use a wider stroke. */
 		const val PROP_WIDE_BUS_STROKE = "antares.DigitalEdgeView.wideBusStroke"
+
+		fun getStroke(style: EdgeStyle, bitWidth: BitWidth, isExecution: Boolean): Stroke =
+			if (isExecution) {
+				getExecutionStroke(style, bitWidth)
+			} else if (isWideBus(bitWidth)) {
+				style.busStroke
+			} else {
+				style.stroke
+			}
+
+		private fun isWideBus(bitWidth: BitWidth): Boolean =
+			bitWidth.width > 1 && BaseModule.properties.getBoolean(PROP_WIDE_BUS_STROKE)
+
+		private fun getExecutionStroke(style: EdgeStyle, bitWidth: BitWidth): Stroke {
+			return if (isWideBus(bitWidth)) {
+				style.busStroke
+			} else {
+				style.executionStroke
+			}
+		}
 	}
 
-	private val wideBus: Boolean get() = (model as DigitalNet).bitWidth.width > 1 && BaseModule.properties.getBoolean(PROP_WIDE_BUS_STROKE)
-
 	override val executionStroke: Stroke get() =
-		if (wideBus) {
-			(style as EdgeStyle).busStroke
-		} else {
-			(style as EdgeStyle).executionStroke
-		}
+		getExecutionStroke(style as EdgeStyle, (model as DigitalNet).bitWidth)
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
@@ -80,15 +94,10 @@ class DigitalEdgeView(
 			context.choose(color)
 		}
 
-		context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			executionStroke
-		} else {
-			if (wideBus) {
-				(style as EdgeStyle).busStroke
-			} else {
-				stroke
-			}
-		}
+		context.g.stroke = getStroke(
+			style as EdgeStyle,
+			(model as DigitalNet).bitWidth,
+			context.castedAppContext<GraphApplicationContext>()!!.isExecute)
 
 		super.draw(context)
 

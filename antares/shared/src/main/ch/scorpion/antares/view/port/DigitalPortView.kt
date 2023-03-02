@@ -8,6 +8,8 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -175,15 +177,10 @@ class DigitalPortView(
 	}
 
 	override fun setupStroke(context: DrawContext) {
-		if (getDigitalPort().bitWidth.width > 1) {
-			context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
-		} else {
-			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				Themes.get<GraphTheme>().edge.executionStroke
-			} else {
-				Themes.get<GraphTheme>().edge.stroke
-			}
-		}
+		context.g.stroke = DigitalEdgeView.getStroke(
+			Themes.get<GraphTheme>().edge,
+			getDigitalPort().bitWidth,
+			context.castedAppContext<GraphApplicationContext>()!!.isExecute)
 	}
 
 	override fun drawAboveOwnerImpl(context: DrawContext) {

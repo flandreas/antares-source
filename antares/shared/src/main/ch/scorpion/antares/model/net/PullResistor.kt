@@ -118,6 +118,10 @@ class PullResistor(
 		return weakSignal
 	}
 
+	override fun handleNetChanged(signalHandler: SignalHandler) {
+		stateChanged(signalHandler)
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

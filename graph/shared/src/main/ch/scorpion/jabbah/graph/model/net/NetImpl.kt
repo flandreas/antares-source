@@ -149,6 +149,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 			val port = _ports[i]
 			if (port.portType.isInput && port !== data.changedPort) {
 				(port as InputPort).setIncomingSignal(signal, signalHandler, data.force)
+			} else if (port.portType.isOutput && port.owner is WeakOutputPortBehaviour<*>) {
+				(port.owner as WeakOutputPortBehaviour<*>).handleNetChanged(signalHandler)
 			}
 		}
 	}

@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
@@ -97,6 +98,14 @@ enum class SymbolStyle(
 
 	AMERICAN("ANSI") {
 
+		/** Maps [Stroke] widths (from a client's [Style]) to the [Stroke] to be used the American resistor shape. */
+		private val resistorStrokes = mutableMapOf<Float, Stroke>()
+
+		private fun getResistorStroke(clientStroke: Stroke): Stroke =
+			resistorStrokes.getOrPut(clientStroke.width) {
+				Stroke(clientStroke.width, LineCap.BUTT, LineJoin.MITER)
+			}
+
 		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
@@ -131,7 +140,7 @@ enum class SymbolStyle(
 
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			context.g.paint = foregroundColor
-			context.g.stroke = stroke
+			context.g.stroke = getResistorStroke(context.g.stroke)
 			context.g.draw(RESISTOR_PATH)
 
 			if (isVariable) {
