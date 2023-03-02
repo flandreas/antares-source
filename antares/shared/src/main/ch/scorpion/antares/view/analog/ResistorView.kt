@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -19,6 +18,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 class ResistorView(
@@ -41,15 +41,6 @@ class ResistorView(
 		}
 
 	private val actorInteractionHandler by lazy { ResistorViewInteractionHandler() }
-
-	/** ---- [AbstractDrawable] */
-
-	override val boundingBox: Rectangle2D get() =
-		if (variable) {
-			super.boundingBox.expandBy(h(2.0), 0.0, h(1.0), 0.0) as Rectangle2D
-		} else {
-			super.boundingBox
-		}
 
 	/** ---- [AbstractVerticeView] */
 
@@ -81,6 +72,11 @@ class ResistorView(
 		} else {
 			super.getActorInteractionHandler(context)
 		}
+
+	/** ---- [AbstractRectangularVerticeView] */
+
+	override fun getBoundingBoxImpl(): Rectangle2D =
+		super.getBoundingBoxImpl().expandBy(h(2.0), 0.0, h(1.0), 0.0) as Rectangle2D
 
 	/** ---- [AbstractAnalogVerticeView] */
 
