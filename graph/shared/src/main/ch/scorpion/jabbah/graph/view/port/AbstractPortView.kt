@@ -148,7 +148,7 @@ abstract class AbstractPortView<T : Any>(
 			PortType.OUTPUT -> (port as OutputPort<*>).outgoingSignalDescription
 			PortType.INOUT -> {
 				val p = port as BidirectionalPort<*>
-				"${Translations.getString("graph.property.portType.input")}:${p.incomingSignalDescription ?: ""}, ${Translations.getString("graph.property.portType.output")}:${p.outgoingSignalDescription ?: ""}"
+				"${Translations.getString("graph.property.portType.input")}: ${p.incomingSignalDescription ?: ""}, ${Translations.getString("graph.property.portType.output")}: ${p.outgoingSignalDescription ?: ""}"
 			}
 		}
 		val content = StringBuilder(buildToolTipContent())

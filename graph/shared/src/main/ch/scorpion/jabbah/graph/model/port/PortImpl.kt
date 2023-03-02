@@ -142,7 +142,6 @@ open class PortImpl<T : Any>(
 	/** ---- [InputPort] interface */
 
 	protected var _incomingSignal: T? = null
-		private set
 
 	private var incomingSignalRevoked: Boolean = false
 
@@ -169,7 +168,7 @@ open class PortImpl<T : Any>(
 
 	/** ---- [OutputPort] interface */
 
-	private var _outgoingSignal: T? = null
+	protected var _outgoingSignal: T? = null
 
 	private val _combinedNets = mutableListOf<CombinedNet<T>>()
 

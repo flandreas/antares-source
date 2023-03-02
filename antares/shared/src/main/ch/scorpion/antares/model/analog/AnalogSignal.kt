@@ -10,4 +10,6 @@ data class AnalogSignal(val voltage: Double) {
 	}
 
 	val color: CompositeColor by lazy { AnalogSignalColor.ofSignal(this) }
+
+	override fun toString(): String = "$voltage V"
 }

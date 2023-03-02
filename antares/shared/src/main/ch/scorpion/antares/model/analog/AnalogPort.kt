@@ -8,8 +8,11 @@ class AnalogPort(
 	name: String? = null
 ) : PortImpl<AnalogSignal>(portType, name) {
 
-	fun handleAnalogSignalChanged() {
+	/** Called by [AnalogNet] when its signal has changed.*/
+	fun handleAnalogSignalChanged(signal: AnalogSignal?) {
 		(owner as? AnalogVertice)?.let {
+			_incomingSignal = signal
+			_outgoingSignal = signal
 			it.handleAnalogPortChanged(this)
 		}
 	}
