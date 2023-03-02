@@ -10,7 +10,7 @@ import com.l2fprod.common.propertysheet.Property
 class LightBulbViewBeanInfo : AnalogComponentViewBeanInfo<LightBulbView>() {
 
 	companion object {
-		private val lightColor = AntaresProperties.lightColor()
+		private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.LightColor")
 		private val minCurrent = CommandPropertySwing("minCurrent", "library.element.LightBulb.minCurrent", Double::class.java, componentBeanProvider)
 		private val maxCurrent = CommandPropertySwing("maxCurrent", "library.element.LightBulb.maxCurrent", Double::class.java, componentBeanProvider)
 	}
