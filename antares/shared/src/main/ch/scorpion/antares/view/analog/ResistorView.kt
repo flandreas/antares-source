@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.analog.Resistor
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
+import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
@@ -90,7 +91,8 @@ class ResistorView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${model.resistance.toInt()} Ω"
+	//override val mainPropertyValue: String get() = "${model.resistance.toInt()} Ω"
+	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong())} Ω"
 
 	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
