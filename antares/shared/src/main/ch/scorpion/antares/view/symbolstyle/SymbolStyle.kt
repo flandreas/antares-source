@@ -83,8 +83,9 @@ enum class SymbolStyle(
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
-			context.g.paint = foregroundColor
-			context.g.stroke = stroke
+			//context.g.paint = foregroundColor
+			context.g.paint = resistor.foregroundColor
+			context.g.stroke = DrawStyleModule.styleProvider.getStyle(StyleType.FIGURE).stroke
 			context.g.drawRect(
 				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
