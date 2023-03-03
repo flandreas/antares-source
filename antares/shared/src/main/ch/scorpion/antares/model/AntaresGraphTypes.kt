@@ -12,8 +12,6 @@ enum class AntaresGraphTypes(
 	Digital("digital"),
 	Analog("analog");
 
-
-
 	override fun toString(): String =
 		when (this) {
 			Digital -> Translations.getString("antares.graphType.digital")
@@ -21,14 +19,17 @@ enum class AntaresGraphTypes(
 		}
 
 	override fun canImport(libraryElement: LibraryElement): Boolean {
-		if (this === libraryElement.graphType) {
-			return true
-		}
-
 		if (libraryElement is ContainerLibraryElement) {
+			if (this === Analog) {
+				return false
+			}
 			return values().firstOrNull { it === libraryElement.graphType }?.let {
 				this.ordinal == it.ordinal - 1
 			} ?: false
+		}
+
+		if (this === libraryElement.graphType) {
+			return true
 		}
 
 		return false

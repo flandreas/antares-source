@@ -33,12 +33,6 @@ class AntaresGraphTypesTest {
 	}
 
 	@Test
-	fun canImportSameContainerLibraryElement() {
-		assertTrue(Digital.canImport(containerLibraryElement(Digital)))
-		assertTrue(Analog.canImport(containerLibraryElement(Analog)))
-	}
-
-	@Test
 	fun digitalCanImportAnalogContainerLibraryElement() {
 		assertTrue(Digital.canImport(containerLibraryElement(Analog)))
 	}
@@ -46,6 +40,11 @@ class AntaresGraphTypesTest {
 	@Test
 	fun analogCannotImportDigitalContainerLibraryElement() {
 		assertFalse(Analog.canImport(containerLibraryElement(Digital)))
+	}
+
+	@Test
+	fun analogCannotImportAnalogContainerLibraryElement() {
+		assertFalse(Analog.canImport(containerLibraryElement(Analog)))
 	}
 
 	private fun baseLibraryElement(graphType: GraphType): BaseLibraryElement =
