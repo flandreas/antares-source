@@ -82,28 +82,29 @@ class PullResistorView(
 
 		val portStroke = context.g.stroke
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
-		} else if (!context.useContextColors) {
-			styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-		}
+		context.g.color = context.chooseForeground(
+			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+			} else {
+				styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+			}
+		)
 
 		drawPullDirection(context, portStroke)
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-			context.g.color = transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
-		} else if (!context.useContextColors) {
-			styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-			context.g.color = when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
+		val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			getColorGradient(context) ?: transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+		} else {
+			context.chooseForeground(when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
 				SymbolStyle.EUROPEAN,SymbolStyle.VERBOSE  -> foregroundColor
 				SymbolStyle.AMERICAN -> styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-			}
+			})
 		}
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
 			context,
-			getColorGradient(context) ?: context.g.color,
+			applicableForegroundColor,
 			getApplicableBackgroundColor(context),
 			portStroke)
 	}

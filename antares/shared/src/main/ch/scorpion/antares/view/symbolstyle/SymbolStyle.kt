@@ -75,14 +75,13 @@ enum class SymbolStyle(
 				}
 			}
 
-			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+			context.g.color = context.chooseBackground(if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
 			context.g.fillRect(
 				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
-			//context.g.paint = foregroundColor
-			context.g.paint = resistor.foregroundColor
+			context.g.paint = context.chooseForeground(resistor.foregroundColor)
 			context.g.stroke = DrawStyleModule.styleProvider.getStyle(StyleType.FIGURE).stroke
 			context.g.drawRect(
 				-DigitalPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
