@@ -13,6 +13,7 @@ import com.l2fprod.common.propertysheet.Property
 open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 
     companion object {
+	    private val type = CommandPropertySwing("type.typeName", "graph.property.type", String::class.java, drawingBeanProvider)
 	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
 	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
 	    private val startupTime = GraphProperties.startupTime(drawingBeanProvider)
@@ -27,6 +28,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean.graph!!::createParser)
 	    val ids = listOf<String>()
 
+	    properties.add(type.bind(editor, ids, editable = false))
 	    properties.add(name.bind(editor, ids, filter = { false }))
 	    properties.add(propDelay.bind(editor, ids))
 	    properties.add(startupTime.bind(editor, ids, optional = true))

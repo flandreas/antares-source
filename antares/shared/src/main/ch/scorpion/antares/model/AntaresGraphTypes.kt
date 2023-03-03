@@ -8,8 +8,11 @@ import ch.scorpion.jabbah.graph.model.GraphType
 enum class AntaresGraphTypes(
 	override val customName: String
 ) : GraphType {
+
 	Digital("digital"),
 	Analog("analog");
+
+
 
 	override fun toString(): String =
 		when (this) {

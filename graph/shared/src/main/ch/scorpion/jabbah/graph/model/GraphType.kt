@@ -3,6 +3,9 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.graph.library.LibraryElement
 
 interface GraphType {
+
+	val typeName: String get() = toString()
+
 	val customName: String
 
 	/**

@@ -66,6 +66,8 @@ open class GraphViewImpl(
 			graph!!.name = Name(value)
 		}
 
+	val type: GraphType? get() = graph?.type
+
 	@Suppress("unused")
 	var translatableName: TranslatableText
 		get() = graph!!.name.translation
