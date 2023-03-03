@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -57,11 +58,20 @@ class ResistorView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
+		val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			getColorGradient(context) ?: styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+		} else {
+			context.chooseForeground(when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
+				SymbolStyle.EUROPEAN,SymbolStyle.VERBOSE  -> foregroundColor
+				SymbolStyle.AMERICAN -> styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+			})
+		}
+
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
 			this,
 			this.variable,
 			context,
-			getColorGradient(context) ?: context.chooseForeground(foregroundColor),
+			applicableForegroundColor,
 			context.chooseBackground(backgroundColor),
 			SymbolStyle.RESISTOR_STROKE)
 	}
