@@ -11,6 +11,7 @@ class LightBulbViewBeanInfo : AnalogComponentViewBeanInfo<LightBulbView>() {
 
 	companion object {
 		private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.LightColor")
+		private val resistance = AnalogProperties.resistance()
 		private val minCurrent = CommandPropertySwing("minCurrent", "library.element.LightBulb.minCurrent", Double::class.java, componentBeanProvider)
 		private val maxCurrent = CommandPropertySwing("maxCurrent", "library.element.LightBulb.maxCurrent", Double::class.java, componentBeanProvider)
 	}
@@ -18,6 +19,7 @@ class LightBulbViewBeanInfo : AnalogComponentViewBeanInfo<LightBulbView>() {
 	override fun addProperties(bean: LightBulbView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
+		properties.add(resistance.bind(editor, beanIdProvider(bean.id)))
 		properties.add(minCurrent.bind(editor, beanIdProvider(bean.id)))
 		properties.add(maxCurrent.bind(editor, beanIdProvider(bean.id)))
 	}

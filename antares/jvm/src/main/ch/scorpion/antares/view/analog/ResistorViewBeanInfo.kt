@@ -9,7 +9,7 @@ import com.l2fprod.common.propertysheet.Property
 class ResistorViewBeanInfo : AnalogComponentViewBeanInfo<ResistorView>() {
 
 	companion object {
-		private val resistance = CommandPropertySwing("resistance", "element.property.resistance", Double::class.java, componentBeanProvider)
+		private val resistance = AnalogProperties.resistance()
 		private val variable = CommandPropertySwing("variable", "element.property.variable", Boolean::class.java, componentBeanProvider)
 	}
 

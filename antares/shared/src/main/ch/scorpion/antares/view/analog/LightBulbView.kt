@@ -60,6 +60,15 @@ class LightBulbView(
 		modelExchanged(null)
 	}
 
+	/** ---- UI properties */
+
+	@Suppress("unused") // Reflective bean property
+	var resistance: Double
+		get() = model.resistance
+		set(value) {
+			model.resistance = value
+		}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: LightBulb?) {
