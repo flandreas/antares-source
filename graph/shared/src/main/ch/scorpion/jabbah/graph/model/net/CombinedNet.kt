@@ -14,6 +14,12 @@ import ch.scorpion.jabbah.graph.model.*
 interface NetCombiner : Vertice {
 
 	/**
+	 * Used to enable subclasses of [NetCombiner] to refuse combining nets despite
+	 * their superclass does.
+	 */
+	val isNetCombiner: Boolean get() = true
+
+	/**
 	 * Determines whether this [NetCombiner] as a [Vertice] requires [CombinedNet]s that start
 	 * at its [OutputPort]s. This property is typically `false`, because a [NetCombiner]'s output [Net]s
 	 * are combined with the incoming [Net]s.
@@ -101,10 +107,10 @@ class CombinedNet<T : Any> {
 				?.filter { it !== outputPort}
 				?.forEach { port ->
 					val combinedNetsOfPort = mutableListOf<CombinedNet<T>>()
-					if (port.portType.isInput && port.owner is NetCombiner) {
+					if (port.portType.isInput && (port.owner is NetCombiner && (port.owner as NetCombiner).isNetCombiner)) {
 						combinedNetsOfPort.addAll((port.owner as NetCombiner).createCombinedNetsFor(outputPort, port as InputPort<T>, signalHandler))
 					}
-					if (port.portType.isOutput && (port.owner !is NetCombiner || combinedNetsOfPort.isEmpty())) {
+					if (port.portType.isOutput && (!(port.owner is NetCombiner && (port.owner as NetCombiner).isNetCombiner) || combinedNetsOfPort.isEmpty())) {
 						val combinedNet = CombinedNet<T>()
 						combinedNet.addAccess((port as OutputPort<T>).createAccess())
 						combinedNet.addAccess(outputPort.createAccess())

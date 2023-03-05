@@ -144,7 +144,7 @@ open class GraphViewImpl(
 
 	override fun bind(deep: Boolean) {
 		for (graphElementView in drawables) {
-			graphElementView.bind(graph!!, deep)
+			graphElementView.bind(this, deep)
 		}
 	}
 

@@ -1,18 +1,21 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.model.AntaresGraphTypes.Analog
+import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.inout.AbstractCircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.graph.view.GraphView
 
 class AnalogCircuitInOut(
@@ -21,23 +24,12 @@ class AnalogCircuitInOut(
 ) : AbstractCircuitInOut<AnalogSignal>(
 	port = AnalogPort(portType.reverse(), name),
 	name = name,
-	calculator = CALCULATOR
+	calculator = EmptyVerticeCalculator
 ), AnalogVertice {
 
 	companion object {
-
-		private val CALCULATOR = Calculator()
-
 		private val HIGH_VOLTAGE = AnalogSignal(5.0)
 		private val LOW_VOLTAGE = AnalogSignal.ZERO
-
-		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
-			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
-				if (data.graphView is AnalogGraphView) {
-					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).analysis, signalHandler)
-				}
-			}
-		}
 	}
 
 	/** ---- [GraphPort] */
@@ -53,10 +45,13 @@ class AnalogCircuitInOut(
 	/** ---- [GraphInput] */
 
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
-		throw UnsupportedOperationException("not implemented")
+		this.signal = signal ?: AnalogSignal.ZERO
+		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler))
 	}
 
 	/** ---- [NetCombiner] */
+
+	override val isNetCombiner: Boolean get() = false
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
 
@@ -102,14 +97,29 @@ class AnalogCircuitInOut(
 		}
 	}
 
+	override fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
+		if (portType.isOutput) {
+			setOutgoingSignal(getPort<AnalogSignal>().net!!.signal!!, signalHandler)
+		}
+	}
+
+	/** ---- [AnalogCircuitInOut] */
+
 	fun toggle(signalHandler: SignalHandler, graphView: GraphView) {
 		signal = if (signal == HIGH_VOLTAGE) LOW_VOLTAGE else HIGH_VOLTAGE
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
 	}
 
-	override fun handleAnalogPortChanged(port: AnalogPort) {
+	private fun setOutgoingSignal(signal: AnalogSignal, signalHandler: SignalHandler) {
+		this.signal = signal
 		if (portType.isOutput) {
-			signal = getPort<AnalogSignal>().net!!.signal!!
+			propagateToSubGraphOutputPort(signal, signalHandler)
 		}
+	}
+
+	private fun propagateToSubGraphOutputPort(signal: AnalogSignal, signalHandler: SignalHandler) {
+		val outgoingSignal = Digital.adaptTo<AnalogSignal, DigitalSignal>(Analog).convertOutgoingSignal(signal)!!
+		(subGraphOutputPort as SubGraphOutputPort<DigitalSignal>?)?.propagateSignal(outgoingSignal, signalHandler)
+		subGraphOutputPort?.flush(signalHandler, false)
 	}
 }

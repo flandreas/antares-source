@@ -25,7 +25,7 @@ class Resistor(
 			override fun calculate(vertice: Resistor, data: GraphActorData, signalHandler: SignalHandler) {
 				// React to changes of variable resistance
 				if (data.graphView is AnalogGraphView) {
-					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).analysis, signalHandler)
+					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).ensureAnalysis(), signalHandler)
 				}
 			}
 		}

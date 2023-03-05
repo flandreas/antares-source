@@ -438,8 +438,8 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [GraphElementView] */
 
-	override fun bind(graph: Graph, deep: Boolean) {
-		super.bind(graph, deep)
+	override fun bind(graphView: GraphView, deep: Boolean) {
+		super.bind(graphView, deep)
 		if (model.designError == null) {
 			if (model.isDeepExecution(deep)) {
 				val controlViewComponents = getControlViewComponents()

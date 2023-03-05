@@ -172,7 +172,7 @@ abstract class AbstractVertice(
 	override fun formNet(signalHandler: SignalHandler) {
 		super.formNet(signalHandler)
 
-		if (this !is NetCombiner || this.requiresCombinedNets(signalHandler)) {
+		if (!(this is NetCombiner && this.isNetCombiner)  || this.requiresCombinedNets(signalHandler)) {
 			getOutputs().forEach {
 				it.formNet(signalHandler)
 			}

@@ -7,9 +7,8 @@ import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
-import ch.scorpion.jabbah.graph.view.CompositeTestGraphViewBuilder
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +31,7 @@ class ContainerDrawingTest {
 	@Test
 	fun shouldCreateSubGraphVerticeView() {
 		val metaGraph = createMetaGraph()
-		val vv = metaGraph.containerDrawing.createSubGraphVerticeView()
+		val vv = metaGraph.containerDrawing.createSubGraphVerticeView(GenericGraphType)
 
 		assertEquals(TestLibraryBuilder.INNER_CUSTOM_COMP, vv.type)
 	}

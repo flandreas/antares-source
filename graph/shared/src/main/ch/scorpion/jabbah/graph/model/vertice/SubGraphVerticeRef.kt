@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.*
 
@@ -31,7 +32,8 @@ import ch.scorpion.jabbah.io.*
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
-	graphUUID: UUID? = null,
+	override var graphUUID: UUID? = null,
+	private var graphType: GraphType = GraphModelModule.defaultGraphType,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
 
@@ -49,16 +51,23 @@ class SubGraphVerticeRef(
 
 		/** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
 		fun fromSubGraphVertice(
+			graphType: GraphType,
 			subGraphVertice: SubGraphVertice,
 			repository: MetaGraphRepository
 		): SubGraphVerticeRef {
-			val verticeRef = SubGraphVerticeRef(null, repository)
+			val verticeRef = SubGraphVerticeRef(null, graphType, repository)
 			verticeRef.fillFrom(subGraphVertice)
 			return verticeRef
 		}
 	}
 
 	private var graph: Graph? = null
+
+	/**
+	 * Instantiated for execution purposes if demanded by [GraphType.needsGraphViewForExecution]
+	 * at the moment when [graph] is instantiated.
+	 */
+	private var graphView: GraphView? = null
 
 	/** Can be set during [read] if reference to [MetaGraph] is broken. */
 	private var _designError: DesignError? = null
@@ -80,11 +89,13 @@ class SubGraphVerticeRef(
 			stateChanged(null)
 		}
 
-	private val executionMetaData by lazy { ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name")) }
-
-	override val designError: DesignError? get() = _designError
+	private val executionMetaData by lazy {
+		ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name"))
+	}
 
 	/** ---- [GraphElement] interface */
+
+	override val designError: DesignError? get() = _designError
 
 	override var type: String = "" // lateinit not possible with custom setter
 		set(value) {
@@ -118,8 +129,6 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override var graphUUID: UUID? = graphUUID
-
 	override var graphName: Name = Name(TranslatableText())
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
@@ -140,6 +149,7 @@ class SubGraphVerticeRef(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("uuid", graphUUID!!.id)
+		writer.writeString("type", graphType.customName)
 		if (paramValues.isNotEmpty) {
 			writer.writeStorable("params", paramValues)
 		}
@@ -155,6 +165,12 @@ class SubGraphVerticeRef(
 		if (reader.hasElement("params")) {
 			//paramValues = reader.readStorable("params")
 			reader.requestResolution(this, Reference("params", additionalInfo = reader.readStorable("params")))
+		}
+		graphType = if (reader.hasAttribute("type")) {
+			GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
+		} else {
+			// Backward compatibility
+			GraphModelModule.defaultGraphType
 		}
 	}
 
@@ -267,8 +283,13 @@ class SubGraphVerticeRef(
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
 			val graphInput = (input as SubGraphInputPort<Any>).graphInput
-			signalHandler.logActorTrace(this) { "input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}" }
-			graphInput?.setIncomingSignal(input.getIncomingSignal(), signalHandler, force)
+			signalHandler.logActorTrace(this) {
+				"input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}"
+			}
+			graphInput?.setIncomingSignal(
+				graphType.adaptTo<Any, Any>(ensureGraph().type).convertIncomingSignal(input.getIncomingSignal()),
+				signalHandler,
+				force)
 		}
 		// This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
 		// Even if deeply executing, we need to request acting, because only that will initiate
@@ -296,8 +317,12 @@ class SubGraphVerticeRef(
 			return graph!!
 		}
 
-		val subGraph = repository.getMetaGraph(graphUUID!!)
-		graph = subGraph.cloneGraphModel()
+		val subMetaGraph = repository.getMetaGraph(graphUUID!!)
+		graph = subMetaGraph.cloneGraphModel()
+
+		if (graph!!.type.needsGraphViewForExecution) {
+			graphView = subMetaGraph.graph.graphView.cloneForExistingModel(graph!!)
+		}
 
 		for (input in getSubGraphInputPorts()) {
 			input.graphInput = graph!!.getGraphInput(input.name!!)
@@ -331,8 +356,11 @@ class SubGraphVerticeRef(
 		return result
 	}
 
+	override val isNetCombiner: Boolean
+		get() = super.isNetCombiner && ensureGraph().type.isCombiningNets
+
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
-		!isDeepExecution(signalHandler.isDeepExecution)
+		!isDeepExecution(signalHandler.isDeepExecution) && (graph == null || graph!!.type.isCombiningNets)
 
 	/** ---- [SubGraphVerticeRef] */
 

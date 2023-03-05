@@ -45,7 +45,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		LOG.trace("Calculating analog circuit")
 		with(analysis) {
 			val result = BaseModule.linearEquationSystemSolver.solve(equationSystem.toLinearEquationSystem())
-			applyResult(circuitView, voltageNodeNetIds, branches, groundNodeNetId, result)
+			applyResult(circuitView, voltageNodeNetIds, branches, groundNodeNetId, result, signalHandler)
 		}
 	}
 
@@ -55,10 +55,11 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		branches: List<AnalogCircuitBranch>,
 		groundNodeNetId: Int,
 		result: DoubleArray,
+		signalHandler: SignalHandler
 	) {
 		voltageNodes.forEachIndexed { index, netId ->
 			val signal = AnalogSignal(result[branches.size + index])
-			(circuitView.graph!!.withId(netId) as AnalogNet).setSignal(signal)
+			(circuitView.graph!!.withId(netId) as AnalogNet).setSignal(signal, signalHandler)
 		}
 
 		branches.forEachIndexed { branchId, branch ->
@@ -74,7 +75,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 		}
 
 		// Ground voltage
-		(circuitView.graph!!.withId(groundNodeNetId) as AnalogNet).setSignal(AnalogSignal(0.0))
+		(circuitView.graph!!.withId(groundNodeNetId) as AnalogNet).setSignal(AnalogSignal(0.0), signalHandler)
 	}
 
 	fun composeEquations(

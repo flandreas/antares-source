@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
@@ -100,7 +99,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		isResolving = false
 	}
 
-	override fun bind(graph: Graph, deep: Boolean) { }
+	override fun bind(graphView: GraphView, deep: Boolean) { }
 
 	/** ---- [Component] interface */
 

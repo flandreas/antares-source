@@ -25,10 +25,7 @@ import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.SubGraphPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
@@ -180,8 +177,8 @@ class ContainerDrawing(
 		return getControlViewComponents().firstOrNull { it.controlModelLink == link }
 	}
 
-	fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
-		val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository)
+	fun createSubGraphVerticeView(graphType: GraphType): SubGraphVerticeView<SubGraphVerticeRef> {
+		val model = SubGraphVerticeRef.fromSubGraphVertice(graphType, createSubGraphVertice(), repository)
 		val view = SubGraphVerticeViewImpl(model, styleProvider, repository, eventBus)
 		fillSubGraphVerticeView(view)
 		view.controlViewVisibility = controlViewVisibility

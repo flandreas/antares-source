@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import kotlin.random.nextULong
 
 /**
- * A [DigitalSignal] implementation containing only defined bits for faster execution that with [Word].
+ * A [DigitalSignal] implementation containing only defined bits for faster execution than with [Word].
  */
 class DefinedWord(
 	override val bitWidth: BitWidth,

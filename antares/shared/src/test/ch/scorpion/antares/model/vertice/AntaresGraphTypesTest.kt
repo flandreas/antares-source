@@ -38,6 +38,11 @@ class AntaresGraphTypesTest {
 	}
 
 	@Test
+	fun digitalCanImportDigitalContainerLibraryElements() {
+		assertTrue(Digital.canImport(containerLibraryElement(Digital)))
+	}
+
+	@Test
 	fun analogCannotImportDigitalContainerLibraryElement() {
 		assertFalse(Analog.canImport(containerLibraryElement(Digital)))
 	}

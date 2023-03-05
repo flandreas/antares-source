@@ -132,7 +132,7 @@ class ContainerLibraryElement(
 		library!!.libraryService.getMetaGraph(library!!, this)
 
 		LOG.trace("Create new GraphElementView of '$name' MetaGraph with ID ${metaGraph!!.hashCode()} in Library with ID ${library.hashCode()}")
-		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
+		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView(graphType)
 		if (metaGraph!!.graph.model!!.propagationDelay != null) {
 			instance.model.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!
 		}

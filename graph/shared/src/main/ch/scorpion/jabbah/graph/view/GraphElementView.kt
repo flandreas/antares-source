@@ -18,8 +18,8 @@ interface GraphElementView<T : GraphElement> : Component {
 
     /**
      * Called by the [GraphView] which contains this [GraphElementView] when the [GraphView] is built for a
-     * particular [Graph]. Concrete classes implement this method if they need information from the [Graph]
+     * particular [Graph]. Concrete classes implement this method if they need information from the [GraphView]
      * other than the model [GraphElement] that they display.
      */
-    fun bind(graph: Graph, deep: Boolean)
+    fun bind(graphView: GraphView, deep: Boolean)
 }

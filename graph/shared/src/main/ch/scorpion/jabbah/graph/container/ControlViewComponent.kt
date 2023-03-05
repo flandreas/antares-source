@@ -25,6 +25,7 @@ import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
@@ -86,7 +87,7 @@ class ControlViewComponent(
 
 	override val model: Vertice get() = controlView.model
 
-	override fun bind(graph: Graph, deep: Boolean) { }
+	override fun bind(graphView: GraphView, deep: Boolean) { }
 
 	override val isFullyConnected: Boolean get() = true
 

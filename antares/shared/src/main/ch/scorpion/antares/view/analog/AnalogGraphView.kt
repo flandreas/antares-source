@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.AntaresGraphTypes
+import ch.scorpion.antares.model.analog.AnalogCalculationRequest
 import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -13,6 +14,7 @@ import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.graph.view.GraphElementView
 
 /**
@@ -37,8 +39,22 @@ class AnalogGraphView(
 	}
 
 	/** Not set before [executionStart]. */
-	lateinit var analysis: AnalogCircuitAnalysis
-		private set
+	private var analysis: AnalogCircuitAnalysis? = null
+
+	private val calculationRequestHandler: EventHandler<AnalogCalculationRequest> = {
+		if (this.graph!!.elements.contains(it.source)) {
+			recalculate(it.signalHandler)
+		}
+	}
+
+	init {
+		eventBus.register(AnalogCalculationRequest::class, calculationRequestHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(calculationRequestHandler)
+	}
 
 	@Suppress("unused") // Reflection
 	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
@@ -47,7 +63,8 @@ class AnalogGraphView(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		AntaresViewModule.analogCircuitCalculator.calculate(analysis, signalHandler)
+		checkDesign(signalHandler)
+		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 		timer.start()
 	}
 
@@ -83,8 +100,7 @@ class AnalogGraphView(
 
 	private fun analyzeAndCalculate(signalHandler: SignalHandler): Boolean {
 		return try {
-			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
-			AntaresViewModule.analogCircuitCalculator.calculate(analysis, signalHandler)
+			AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 			true
 		} catch (e: Throwable) {
 			LOG.error("Error while analyzing: ${e.message}")
@@ -97,5 +113,14 @@ class AnalogGraphView(
 			))
 			false
 		}
+	}
+
+	public fun ensureAnalysis(): AnalogCircuitAnalysis {
+		analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+		return  analysis!!
+	}
+
+	private fun recalculate(signalHandler: SignalHandler) {
+		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 	}
 }

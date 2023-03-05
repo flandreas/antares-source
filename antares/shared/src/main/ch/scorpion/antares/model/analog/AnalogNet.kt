@@ -22,14 +22,14 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 		force: Boolean
 	) {
 		// Don't call super.setSignal() to avoid requestActingAfter()
-		setSignal(signal)
+		setSignal(signal, signalHandler)
 	}
 
-	fun setSignal(signal: AnalogSignal?) {
+	fun setSignal(signal: AnalogSignal?, signalHandler: SignalHandler) {
 		signal?.let {
 			LOG.trace("Set AnalogSignal ${it.voltage} on AnalogNet $id")
 			updateSignal(it)
-			ports.map { port -> port as AnalogPort }.forEach { port -> port.handleAnalogSignalChanged(it) }
+			ports.map { port -> port as AnalogPort }.forEach { port -> port.handleAnalogSignalChanged(it, signalHandler) }
 		}
 	}
 }

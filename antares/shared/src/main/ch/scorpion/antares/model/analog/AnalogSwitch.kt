@@ -24,7 +24,10 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
-					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).analysis, signalHandler)
+					AntaresViewModule.analogCircuitCalculator.calculate(
+						(data.graphView as AnalogGraphView).ensureAnalysis(),
+						signalHandler
+					)
 				}
 			}
 		}
