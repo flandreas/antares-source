@@ -16,10 +16,12 @@ import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphType
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 
 /**
@@ -68,6 +70,15 @@ open class GraphViewAppServiceImpl(
 			super.add(component, drawingView)
 		} else {
 			super.add(GraphElementViewWrapper(component), drawingView)
+		}
+	}
+
+	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
+		super.customizeAddedComponent(component, drawing)
+		if (component is SubGraphVerticeView<*>) {
+			if (component.model is SubGraphVerticeRef) {
+				(component.model as SubGraphVerticeRef).graphType = (drawing as GraphView).graph!!.type
+			}
 		}
 	}
 

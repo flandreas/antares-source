@@ -33,7 +33,7 @@ import ch.scorpion.jabbah.io.*
  */
 class SubGraphVerticeRef(
 	override var graphUUID: UUID? = null,
-	private var graphType: GraphType = GraphModelModule.defaultGraphType,
+	var graphType: GraphType = GraphModelModule.defaultGraphType,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
 

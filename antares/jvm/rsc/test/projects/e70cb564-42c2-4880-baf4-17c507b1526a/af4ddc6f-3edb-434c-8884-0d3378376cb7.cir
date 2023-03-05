@@ -153,7 +153,7 @@
   <container>
     <containerDrawing _id='57'>
       <components>
-        <rectangle _id='58' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='63.0' h='56.0'/>
+        <rectangle _id='58' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='56.0' h='56.0'/>
         <digitalPortViewComp _id='59' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
             <digitalPortView _id='60' x='0.0' y='0.0' dir='west' textPos='internal' portId='61'/>
@@ -161,15 +161,15 @@
         </digitalPortViewComp>
         <digitalPortViewComp _id='62' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='63' x='63.0' y='0.0' dir='east' textPos='internal' portId='64'/>
+            <digitalPortView _id='63' x='56.0' y='0.0' dir='east' textPos='internal' portId='64'/>
           </portView>
         </digitalPortViewComp>
         <label _id='65' id='4' rot='0'>
           <text>
-            <translation lang='en' text='TS'/>
+            <translation lang='en' text='TI'/>
           </text>
           <location>
-            <point x='31.5' y='14.0'/>
+            <point x='28.0' y='14.0'/>
           </location>
         </label>
         <originIndicator _id='66' id='5'>
@@ -181,7 +181,7 @@
       <model>
         <subGraphVertice _id='67' id='0' delay='0' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7'>
           <name>
-            <translation lang='en' text='Transistor Switch'/>
+            <translation lang='en' text='Transistor Inverter'/>
           </name>
           <ports>
             <subCircuitPort _id='61' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

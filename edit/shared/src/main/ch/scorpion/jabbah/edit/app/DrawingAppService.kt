@@ -91,7 +91,7 @@ open class DrawingAppServiceImpl(
 	 * Can for example be used to apply default from the [Drawing] (such as default colors)
 	 * to added [Component]s.
 	 */
-	protected open fun customizeAddedComponent(component: Component) {
+	protected open fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
 		// empty
 	}
 

@@ -144,12 +144,17 @@
             </containerLibraryElement>
             <containerLibraryElement _id='29' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7' type='analog'>
               <name>
-                <translation lang='en' text='Transistor Switch'/>
+                <translation lang='en' text='Transistor Inverter'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='30' uuid='e046b285-8c56-40ea-8696-88015af7a89a' type='analog'>
               <name>
                 <translation lang='en' text='Ground without Battery'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='31' uuid='863e2174-9a4d-444c-9d85-3196512c18b2' type='digital'>
+              <name>
+                <translation lang='en' text='Analog Subcircuit'/>
               </name>
             </containerLibraryElement>
           </items>

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -33,7 +34,8 @@ class AntaresGraphViewService(
 		private val LOG by logger(AntaresGraphViewService::class)
 	}
 
-	override fun customizeAddedComponent(component: Component) {
+	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
+		super.customizeAddedComponent(component, drawing)
 		if (component is LightEmitter && component.parent is DigitalGraphView) {
 			component.lightColor = determineLightColor(component.parent as DigitalGraphView)
 		}
