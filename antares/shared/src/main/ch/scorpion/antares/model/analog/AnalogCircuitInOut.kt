@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
@@ -34,7 +35,7 @@ class AnalogCircuitInOut(
 
 	/** ---- [GraphPort] */
 
-	override var signal: AnalogSignal = HIGH_VOLTAGE
+	override var signal: AnalogSignal = LOW_VOLTAGE
 		set(value) {
 			if (signal != value) {
 				field = value
@@ -101,6 +102,13 @@ class AnalogCircuitInOut(
 		if (portType.isOutput) {
 			setOutgoingSignal(getPort<AnalogSignal>().net!!.signal!!, signalHandler)
 		}
+	}
+
+	/** ---- [ActorImpl] */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		signal = LOW_VOLTAGE
 	}
 
 	/** ---- [AnalogCircuitInOut] */

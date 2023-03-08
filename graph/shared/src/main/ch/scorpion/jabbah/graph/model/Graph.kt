@@ -130,8 +130,11 @@ interface Graph : Namable, Describable, Storable, Bean {
 
 	fun executionInitialize(signalHandler: SignalHandler)
 
-	/** Called by the execution environment after the execution has been started.*/
-    fun executionStart(signalHandler: SignalHandler)
+	/**
+	 * Called by the execution environment after the execution has been started.
+	 * Some types of [Graph] depend on the topology in the [GraphView] for execution.
+	 */
+    fun executionStart(signalHandler: SignalHandler, graphView: GraphView?)
 
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)

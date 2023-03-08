@@ -28,7 +28,7 @@ class BusTest {
 	    net = builder.connect(output1, output1.getOutput(), output2, output2.getOutput<Boolean>(2) as PortImpl<Boolean>)
 	    builder.graph.formNet(signalHandler)
 	    builder.graph.executionInitialize(signalHandler)
-	    builder.graph.executionStart(signalHandler)
+	    builder.graph.executionStart(signalHandler, null)
     }
 
     @Test

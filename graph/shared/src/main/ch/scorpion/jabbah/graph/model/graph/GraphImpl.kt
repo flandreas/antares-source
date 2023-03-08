@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -222,10 +223,9 @@ open class GraphImpl(
 		_elements.forEach { it.executionInitialize(signalHandler) }
 	}
 
-	override fun executionStart(signalHandler: SignalHandler) {
+	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		_elements.forEach { it.executionStart(signalHandler) }
 	}
-
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		_elements.forEach { it.executionStopped(signalHandler) }

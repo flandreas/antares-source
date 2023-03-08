@@ -223,7 +223,7 @@ class SubGraphVerticeRef(
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
-				graph?.executionStart(signalHandler)
+				graph?.executionStart(signalHandler, graphView)
 			} else {
 				interpreter = createInterpreter(signalHandler)
 				if (interpreter is GraphDslInterpreter) {

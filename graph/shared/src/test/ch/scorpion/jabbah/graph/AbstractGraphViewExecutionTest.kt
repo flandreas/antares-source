@@ -61,7 +61,7 @@ abstract class AbstractGraphViewExecutionTest {
 		LibraryModule.libraryHolder.l?.let { getGraphView().graph!!.bind(true, it) }
 		getGraphView().graph!!.formNet(scheduler)
 		getGraphView().graph!!.executionInitialize(scheduler)
-		getGraphView().graph!!.executionStart(scheduler)
+		getGraphView().graph!!.executionStart(scheduler, getGraphView())
 		getGraphView().executionStart(scheduler)
 		if (proceedTo > 0) {
 			proceedToNanos(proceedTo)

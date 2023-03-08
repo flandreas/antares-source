@@ -94,7 +94,7 @@ class CircuitAnalysisService {
 		scheduler.isActive = true
 		circuit.formNet(scheduler)
 		circuit.executionInitialize(scheduler)
-		circuit.executionStart(scheduler)
+		circuit.executionStart(scheduler, null)
 	}
 
 	private fun stopSimulation(circuit: DigitalGraph, scheduler: Scheduler) {

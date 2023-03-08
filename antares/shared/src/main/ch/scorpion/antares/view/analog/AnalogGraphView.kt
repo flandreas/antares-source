@@ -115,12 +115,12 @@ class AnalogGraphView(
 		}
 	}
 
-	public fun ensureAnalysis(): AnalogCircuitAnalysis {
+	fun ensureAnalysis(): AnalogCircuitAnalysis {
 		analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
 		return  analysis!!
 	}
 
-	private fun recalculate(signalHandler: SignalHandler) {
+	fun recalculate(signalHandler: SignalHandler) {
 		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 	}
 }

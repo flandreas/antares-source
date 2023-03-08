@@ -32,7 +32,7 @@ class AnalogCircuitInOutView(
 ) : AbstractCircuitInOutView<AnalogCircuitInOut>(styleProvider, model, eventBus, orientation) {
 
 	private val voltageLabel = Label(
-		"5.0 V",
+		"0.0 V",
 		styleProvider.getStyle(StyleType.ANNOTATION).font,
 		textColor,
 		HorizontalAlignment.CENTER,

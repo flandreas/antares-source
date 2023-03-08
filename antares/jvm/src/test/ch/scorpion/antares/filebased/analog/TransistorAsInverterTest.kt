@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TransistorAsSwitchTest : AbstractFileBasedTest() {
+class TransistorAsInverterTest : AbstractFileBasedTest() {
 
 	companion object {
 		init {
