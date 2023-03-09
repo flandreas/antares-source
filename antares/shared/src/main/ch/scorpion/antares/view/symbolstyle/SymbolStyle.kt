@@ -144,6 +144,7 @@ enum class SymbolStyle(
 			context.g.draw(RESISTOR_PATH)
 
 			if (isVariable) {
+				context.g.color = context.chooseForeground(resistor.foregroundColor)
 				drawVariableResistorArrow(context)
 			}
 		}
