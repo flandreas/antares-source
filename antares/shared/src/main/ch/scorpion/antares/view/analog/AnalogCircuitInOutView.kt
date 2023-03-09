@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -65,7 +66,7 @@ class AnalogCircuitInOutView(
 			Dimension2D(voltageLabel.bounds.width, voltageLabel.bounds.height)
 		).build(inout = portType === PortType.INOUT)
 
-		voltageLabel.location = arrowPath!!.path.boundingBox.center
+		voltageLabel.location = voltageLabelCenter
 	}
 
 	override fun createPortViewImpl(template: PortView<*>?, direction: Direction): PortView<*> =
@@ -99,4 +100,13 @@ class AnalogCircuitInOutView(
 		model.toggle(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
 		return null
 	}
+
+	/** ---- [AnalogCircuitInOutView] */
+
+	private val voltageLabelCenter: Point2D get() =
+		if (orientation.isHorizontal()) {
+			arrowPath!!.path.boundingBox.center.addX(-ArrowPath.ARROW_SIZE / 2)
+		} else {
+			arrowPath!!.path.boundingBox.center.addY(ArrowPath.ARROW_SIZE / 2)
+		}
 }
