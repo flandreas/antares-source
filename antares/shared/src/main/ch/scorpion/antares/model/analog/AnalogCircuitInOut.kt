@@ -64,10 +64,8 @@ class AnalogCircuitInOut(
 
 	/** ---- [CircuitInOut] */
 
-	override val isToplevel: Boolean get() = true
-
 	override fun setSignalManually(signal: AnalogSignal, signalHandler: SignalHandler) {
-		throw UnsupportedOperationException("not implemented")
+		setIncomingSignal(signal, signalHandler)
 	}
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
