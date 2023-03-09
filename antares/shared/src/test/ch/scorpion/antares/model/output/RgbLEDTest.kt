@@ -4,9 +4,9 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +18,7 @@ class RgbLEDTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler()
+	private val signalHandler = ForwardSignalHandler(mockk())
 
 	@Test
 	fun shouldCovertValueToColor() {

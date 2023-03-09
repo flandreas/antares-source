@@ -3,19 +3,21 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.analog.AnalogCalculationRequest
 import ch.scorpion.antares.model.analog.AnalogGraph
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.Timer
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 
 /**
  * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
@@ -28,14 +30,6 @@ class AnalogGraphView(
 
 	companion object {
 		private val LOG by logger(AnalogGraphView::class)
-		private const val CURRENT_FLOW_ANIMATION_STEP = 30
-	}
-
-	/** Drives the current flow animation along the [AnalogEdgeView]s. */
-	private val timer: Timer by lazy {
-		val timer = System.createTimer()
-		timer.initialize(CURRENT_FLOW_ANIMATION_STEP, repeats = true, ::timerTick)
-		timer
 	}
 
 	/** Not set before [executionStart]. */
@@ -61,24 +55,28 @@ class AnalogGraphView(
 
 	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Analog) as AnalogGraph)
 
+	/** ---- [GraphViewImpl] */
+
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		checkDesign(signalHandler)
 		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
-		timer.start()
+		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
 	}
 
 	override fun executionStop(signalHandler: SignalHandler) {
-		timer.stop()
+		CurrentFlowAnimator.unregister(this)
 	}
 
 	override fun checkDesign(signalHandler: SignalHandler): Boolean =
 		ensureFullyConnected() && analyzeAndCalculate(signalHandler)
 
-	private fun timerTick(@Suppress("UNUSED_PARAMETER") event: ActionEvent) {
+	/** ---- [AnalogGraphView] */
+
+	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
 		getEdgeViews()
 			.map { it as AnalogEdgeView }
-			.forEach { it.currentFlowAnimationTick() }
+			.forEach { it.currentFlowAnimationTick(systemSpeedCategory.systemSpeed) }
 
 		invalidate()
 		validate()

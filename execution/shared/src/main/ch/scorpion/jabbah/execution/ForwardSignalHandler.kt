@@ -2,13 +2,16 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import kotlin.reflect.KClass
 
 /**
  * A [SignalHandler] implementation that reflects a signal to the [Actor] immediately.
  * Primarily used for testing.
  */
-class ForwardSignalHandler : SignalHandler {
+class ForwardSignalHandler(
+	override val systemSpeedCategory: CurrentSystemSpeedCategory
+) : SignalHandler {
 
 	override var isDeepExecution: Boolean
 		get() = true

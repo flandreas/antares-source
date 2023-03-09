@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import io.mockk.mockk
 import kotlin.test.assertEquals
 
 abstract class AbstractGateCalculatorTest(
@@ -12,7 +13,7 @@ abstract class AbstractGateCalculatorTest(
 ) {
 
 	private val gate = TestGate(calculator)
-	protected val signalHandler = ForwardSignalHandler()
+	protected val signalHandler = ForwardSignalHandler(mockk())
 
 	init {
 		gate.getInput<DigitalSignal>(1).name = "a"

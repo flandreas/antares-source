@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +18,7 @@ class SplitterTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler()
+	private val signalHandler = ForwardSignalHandler(mockk())
 
 	@Test
 	fun shouldSplitToBits() {

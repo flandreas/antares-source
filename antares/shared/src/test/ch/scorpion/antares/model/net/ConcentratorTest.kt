@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +20,7 @@ class ConcentratorTest {
 	    }
     }
 
-    private val signalHandler = ForwardSignalHandler()
+    private val signalHandler = ForwardSignalHandler(mockk())
 
     @Test
     fun shouldConcentrateBits() {

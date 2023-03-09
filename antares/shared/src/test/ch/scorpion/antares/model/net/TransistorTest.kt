@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +18,7 @@ class TransistorTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler()
+	private val signalHandler = ForwardSignalHandler(mockk())
 	private lateinit var transistor: Transistor
 
 	@Test

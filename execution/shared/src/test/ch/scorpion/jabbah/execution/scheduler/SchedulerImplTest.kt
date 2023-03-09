@@ -45,7 +45,7 @@ class SchedulerImplTest {
 	fun shouldActAfterDelay() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
@@ -56,7 +56,7 @@ class SchedulerImplTest {
 	fun shouldNotActBeforeDelay() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 200 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
@@ -68,8 +68,8 @@ class SchedulerImplTest {
 		val actor1 = createActor()
 		val actor2 = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
-		scheduler.signalHandler.requestActingAfter(actor2, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor1, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor2, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
@@ -81,7 +81,7 @@ class SchedulerImplTest {
 	fun shouldForgetAfterActing() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 		timeService.setTimeMillis(300)
@@ -94,8 +94,8 @@ class SchedulerImplTest {
 	fun shouldActOnlyOnceWhenRequestedTwice() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
@@ -110,7 +110,7 @@ class SchedulerImplTest {
 		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isSingleStepMode = true
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
@@ -126,13 +126,13 @@ class SchedulerImplTest {
 		scheduler.isSingleStepMode = false
 		scheduler.isActive = true
 
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 		timeService.setTimeMillis(150)
 		verify(exactly = 1) { actor.act(any(), any()) }
 		assertNull(breakpointEvent)
 
 		scheduler.isSingleStepMode = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(250)
 
@@ -148,8 +148,8 @@ class SchedulerImplTest {
 		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
 		scheduler.isSingleStepMode = true
-		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
-		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor1, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
@@ -169,8 +169,8 @@ class SchedulerImplTest {
 		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
 		scheduler.isSingleStepMode = true
-		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
-		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor1, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(50)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
@@ -187,7 +187,7 @@ class SchedulerImplTest {
 	fun shouldPause() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
@@ -199,7 +199,7 @@ class SchedulerImplTest {
 	fun shouldResume() {
 		val actor = createActor()
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
@@ -218,7 +218,7 @@ class SchedulerImplTest {
 		val actor2 = createActor()
 
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor1, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 		verify(exactly = 1) { actor1.act(any(), any()) }
@@ -235,14 +235,14 @@ class SchedulerImplTest {
 		val actor2 = ForwardingActor(actor1)
 
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor2, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor2, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 		assertTrue(actor2.actingCalled)
 		verify(exactly = 0) { actor1.act(any(), any()) }
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
-		scheduler.signalHandler.actingDone(actor2, createActorData())
+		scheduler.actingDone(actor2, createActorData())
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(250)
@@ -257,8 +257,8 @@ class SchedulerImplTest {
 		val actor3 = ForwardingActor(actor1)
 
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor2, 100 * MILLION, createActorData())
-		scheduler.signalHandler.requestActingAfter(actor3, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor2, 100 * MILLION, createActorData())
+		scheduler.requestActingAfter(actor3, 100 * MILLION, createActorData())
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(150)
@@ -266,8 +266,8 @@ class SchedulerImplTest {
 		assertTrue(actor2.actingCalled)
 		assertTrue(actor3.actingCalled)
 
-		scheduler.signalHandler.actingDone(actor2, createActorData())
-		scheduler.signalHandler.actingDone(actor3, createActorData())
+		scheduler.actingDone(actor2, createActorData())
+		scheduler.actingDone(actor3, createActorData())
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(300)
@@ -280,10 +280,10 @@ class SchedulerImplTest {
 		val actorData = createActorData()
 
 		scheduler.isActive = true
-		scheduler.signalHandler.requestActingAfter(actor, actor.propagationDelay, actorData)
+		scheduler.requestActingAfter(actor, actor.propagationDelay, actorData)
 		timeService.setTimeMillis(50)
 
-		scheduler.signalHandler.actPrematurely(actor, actorData)
+		scheduler.actPrematurely(actor, actorData)
 		verify { actor.act(any(), any())}
 	}
 

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.execution
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import kotlin.reflect.KClass
 
 /**
@@ -11,7 +12,9 @@ import kotlin.reflect.KClass
  */
 interface SignalHandler : ExecutionErrorHandler {
 
-    /**
+	val systemSpeedCategory: CurrentSystemSpeedCategory
+
+	/**
      * Determines whether the current execution environment performs deep execution of [Actor],
      * i.e. whether execution scripts of nested [Actor]s are ignored.
      */

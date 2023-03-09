@@ -6,8 +6,8 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -32,8 +32,8 @@ class AnalogEdgeView(
 
 		private val LOG by logger(AnalogEdgeView::class)
 
-		/** Determines the speed of the current flow animation.*/
-		private const val FACTOR = 30.0
+		/** Determines the speed of the current flow animation by multiplication with [SystemSpeed].*/
+		private const val FACTOR = 0.3
 
 		/** Limits the effective speed of the current flow animation.*/
 		private const val MAX_DELTA = 2.7
@@ -63,8 +63,9 @@ class AnalogEdgeView(
 		private set
 
 	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
-	fun currentFlowAnimationTick() {
-		val delta = abs(current * FACTOR).coerceAtMost(MAX_DELTA)
+	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
+		val factor = systemSpeed.speed * FACTOR
+		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		val newOffset = animationOffset + delta
 		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
 			0.0

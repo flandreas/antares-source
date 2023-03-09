@@ -129,8 +129,6 @@ class SchedulerImpl(
 
 	/** ---- [Scheduler] interface */
 
-	override val signalHandler: SignalHandler get() = this
-
 	override val systemSpeedCategory: CurrentSystemSpeedCategory get() = currentSystemSpeedCategory
 
 	override val numberOfRemainingSlots: Int get() = queue.size
