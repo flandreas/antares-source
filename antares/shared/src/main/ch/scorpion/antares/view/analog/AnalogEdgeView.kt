@@ -118,5 +118,5 @@ class AnalogEdgeView(
 	}
 
 	override fun getExecutionTooltipContent(): String =
-		Translations.getString("antares.analogEdgeView.simTooltipContent", model.signal!!.voltage, current)
+		Translations.getString("antares.analogEdgeView.simTooltipContent", model.signal!!.voltage, abs(current))
 }
