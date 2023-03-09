@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 class EdgeViewPointSequence(
 	private val edgeView: EdgeView<*>,
 	private val isReverse: Boolean = false,
-	returnSequenceEndPoint: Boolean = edgeView.segmentPointCount == 2,
+	private val returnSequenceEndPoint: Boolean = edgeView.segmentPointCount == 2,
 	offset: Double = 0.0
 ) : Sequence<Point2D> {
 
@@ -37,7 +37,10 @@ class EdgeViewPointSequence(
 		}
 		if (hasNextSegmentPoint()) {
 			nextSegmentPoint()
-			currPointRange = createCurrentPointRange(returnEndPoint = !hasNextSegmentPoint(), offset = currPointRange.remainder)
+			val returnEndPoint = hasNextSegmentPoint() || returnSequenceEndPoint
+			currPointRange = createCurrentPointRange(
+				returnEndPoint = returnEndPoint,
+				offset = currPointRange.remainder)
 			return currPointRange.getNext(distance)
 		}
 		throw NoSuchElementException()

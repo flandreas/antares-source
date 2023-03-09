@@ -16,6 +16,7 @@ object CurrentFlowVisualization {
 		val sequence = EdgeViewPointSequence(
 			edgeView,
 			isReverse = edgeView.current < 0,
+			returnSequenceEndPoint = false,
 			offset = edgeView.animationOffset
 		)
 		while (sequence.hasNext()) {

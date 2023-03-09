@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 /**
  * Unit tests for [EdgeViewPointSequence].
@@ -20,12 +21,10 @@ class EdgeViewPointSequenceTest {
 
     @Test
     fun shouldBuildSequence() {
-        val sequence = EdgeViewPointSequence(
-	        GraphViewModule.getEdgeViewFactory()
-		        .createEdgeView<Boolean>(mockk())
-		        .addSegmentPoint(Point2D(0, 0))
-		        .addSegmentPoint(Point2D(10, 0))
-		        .addSegmentPoint(Point2D(10, 10)))
+	    val sequence = createSequence(listOf(
+		    Point2D(0, 0),
+		    Point2D(10, 0),
+		    Point2D(10, 10)))
 
         assertEquals(sequence.size, (20.0))
 
@@ -37,13 +36,10 @@ class EdgeViewPointSequenceTest {
 
     @Test
     fun shouldBuildReverseSequence() {
-	    val sequence = EdgeViewPointSequence(
-		    GraphViewModule.getEdgeViewFactory()
-		        .createEdgeView<Boolean>(mockk())
-		        .addSegmentPoint(Point2D(0, 0))
-		        .addSegmentPoint(Point2D(10, 0))
-		        .addSegmentPoint(Point2D(10, 10)),
-	        isReverse = true)
+	    val sequence = createReverseSequence(listOf(
+		    Point2D(0, 0),
+		    Point2D(10, 0),
+		    Point2D(10, 10)))
 
         assertEquals(20.0, sequence.size)
         assertEquals(Point2D(10, 10), sequence.getNext(10.0))
@@ -54,18 +50,46 @@ class EdgeViewPointSequenceTest {
 
 	@Test
 	fun shouldNotLooseMomentumAtSegmentPoints() {
-		val sequence = EdgeViewPointSequence(
-			GraphViewModule.getEdgeViewFactory()
-				.createEdgeView<Boolean>(mockk())
-				.addSegmentPoint(Point2D(0, 0))
-				.addSegmentPoint(Point2D(10, 0))
-				.addSegmentPoint(Point2D(10, 10)))
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(10, 0), Point2D(10, 10)),
+			returnSequenceEndpoints = false
+		)
 
 		assertEquals(Point2D(0, 0), sequence.getNext(7.0))
 		assertEquals(Point2D(7, 0), sequence.getNext(7.0))
 		// Don't return end segment point, leave reminder to next segment
 		assertEquals(Point2D(10, 4), sequence.getNext(7.0))
 		// Add remainder from previous segment
-		assertEquals(Point2D(10, 10), sequence.getNext(7.0))
+		//assertEquals(Point2D(10, 10), sequence.getNext(7.0))
+		assertFalse(sequence.hasNext())
 	}
+
+	@Test
+	fun shouldNotReturnLastEndPoint() {
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(10, 0), Point2D(10, 10)),
+			returnSequenceEndpoints = false
+		)
+
+		assertEquals(Point2D(0, 0), sequence.getNext(8.0))
+		assertEquals(Point2D(8, 0), sequence.getNext(8.0))
+		assertEquals(Point2D(10, 6), sequence.getNext(8.0))
+		assertFalse(sequence.hasNext())
+	}
+
+	private fun createSequence(
+		points: List<Point2D>,
+		reverse: Boolean = false,
+		returnSequenceEndpoints: Boolean = points.size == 2
+	): EdgeViewPointSequence {
+		val edgeView = GraphViewModule.getEdgeViewFactory()
+			.createEdgeView<Boolean>(mockk())
+			.also { ev ->
+				points.forEach { ev.addSegmentPoint(it) }
+			}
+		return EdgeViewPointSequence(edgeView, reverse, returnSequenceEndpoints)
+	}
+
+	private fun createReverseSequence(points: List<Point2D>): EdgeViewPointSequence =
+		createSequence(points, true)
 }
