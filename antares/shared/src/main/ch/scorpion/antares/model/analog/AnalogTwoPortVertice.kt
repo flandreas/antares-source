@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 /**
- *  * A [AnalogVertice] with exactly two [AnalogPort]s.
+ * An [AnalogVertice] with exactly two [AnalogPort]s.
  */
 interface AnalogTwoPortVertice : AnalogVertice {
 

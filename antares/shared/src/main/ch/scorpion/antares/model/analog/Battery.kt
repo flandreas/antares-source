@@ -5,9 +5,7 @@ import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -17,19 +15,10 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Battery(
 	voltage: Double = DEF_VOLTAGE
-) : AbstractAnalogTwoPortVertice<Battery>(CALCULATOR, "library.element.Battery") {
+) : AbstractAnalogTwoPortVertice<Battery>(EmptyVerticeCalculator, "library.element.Battery") {
 
 	companion object {
-
 		private const val DEF_VOLTAGE = 5.0
-
-		private val CALCULATOR = Calculator()
-
-		private class Calculator : VerticeCalculator<Battery> {
-			override fun calculate(vertice: Battery, data: GraphActorData, signalHandler: SignalHandler) {
-				// TODO
-			}
-		}
 	}
 
 	/** The constant voltage (in V) this [Battery] produces. */
