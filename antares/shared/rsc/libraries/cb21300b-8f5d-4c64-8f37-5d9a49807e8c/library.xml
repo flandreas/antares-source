@@ -134,8 +134,9 @@
         <baseLibraryElement _id='65' id='AnalogGround' type='analog'/>
         <baseLibraryElement _id='66' id='AnalogTransistorN' type='analog'/>
         <baseLibraryElement _id='67' id='AnalogTransistorP' type='analog'/>
-        <baseLibraryElement _id='68' id='AnalogInOut' type='analog'/>
-        <baseLibraryElement _id='69' id='AnalogPower' type='analog'/>
+        <baseLibraryElement _id='68' id='AnalogInput' type='analog'/>
+        <baseLibraryElement _id='69' id='AnalogOutput' type='analog'/>
+        <baseLibraryElement _id='70' id='AnalogPower' type='analog'/>
       </items>
     </libraryFolder>
   </folder>

@@ -44,7 +44,6 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
@@ -158,7 +157,8 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_GROUND = "AnalogGround"
 	private const val ANALOG_TRANSISTOR_N = "AnalogTransistorN"
 	private const val ANALOG_TRANSISTOR_P = "AnalogTransistorP"
-	private const val ANALOG_INOUT = "AnalogInOut"
+	private const val ANALOG_INPUT = "AnalogInput"
+	private const val ANALOG_OUTPUT = "AnalogOutput"
 	private const val ANALOG_POWER = "AnalogPower"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
@@ -604,8 +604,11 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(ANALOG_TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.P)
 		}
-		repository.register(ANALOG_INOUT, "library.element.GraphInOut", { "/img/inout.png" }, HelpId(AnalogCircuitInOutView::class.simpleName!!)) {
-			AnalogCircuitInOutView(model = AnalogCircuitInOut(), orientation = Direction.WEST)
+		repository.register(ANALOG_INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(AnalogCircuitInOutView::class.simpleName!!)) {
+			AnalogCircuitInOutView(model = AnalogCircuitInOut(portType = PortType.INPUT))
+		}
+		repository.register(ANALOG_OUTPUT, "library.element.GraphOutput", { "/img/output.png" }, HelpId(AnalogCircuitInOutView::class.simpleName!!)) {
+			AnalogCircuitInOutView(model = AnalogCircuitInOut(portType = PortType.OUTPUT))
 		}
 		repository.register(ANALOG_POWER, "library.element.AnalogPower", { "/img/power.png" }, AnalogPowerView::class)
 	}
@@ -691,7 +694,8 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_GROUND), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_TRANSISTOR_N), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_TRANSISTOR_P), analog)
-		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_INOUT), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_INPUT), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_OUTPUT), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_POWER), analog)
 	}
 
