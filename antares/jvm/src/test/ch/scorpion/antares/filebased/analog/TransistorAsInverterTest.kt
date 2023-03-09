@@ -1,7 +1,9 @@
 package ch.scorpion.antares.filebased.analog
 
+import ch.scorpion.antares.view.analog.AnalogCircuitInOutView
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.math.near
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -9,9 +11,15 @@ import kotlin.test.assertTrue
 
 class TransistorAsInverterTest : AbstractAnalogFileBasedTest() {
 
+	private lateinit var input: AnalogCircuitInOutView
+	private lateinit var output: AnalogCircuitInOutView
+
 	@BeforeTest
 	fun openCircuit() {
 		openCircuit(UUID("af4ddc6f-3edb-434c-8884-0d3378376cb7"))
+
+		input = openedCircuitView.getWithId(10) as AnalogCircuitInOutView
+		output = openedCircuitView.getWithId(33) as AnalogCircuitInOutView
 	}
 
 	@Test
@@ -54,7 +62,23 @@ class TransistorAsInverterTest : AbstractAnalogFileBasedTest() {
 	}
 
 	@Test
-	fun shouldCalculate() {
+	fun shouldInvertOnStartup() {
 		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertEquals(0.0, input.model.signal.voltage)
+		assertEquals(5.0, output.model.signal.voltage)
+	}
+
+	@Test
+	fun shouldToggleInput() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		input.model.toggle(scheduler, analogGraphView)
+		processUntilQueueIsEmpty()
+
+		assertEquals(5.0, input.model.signal.voltage)
+		assertTrue(output.model.signal.voltage.near(0.4, 0.1))
 	}
 }
