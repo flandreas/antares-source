@@ -64,7 +64,7 @@ abstract class AbstractCircuitTest {
 		getCircuitView().checkDesign(scheduler)
 		getCircuitView().graph!!.formNet(scheduler)
 		getCircuitView().graph!!.executionInitialize(scheduler)
-		getCircuitView().graph!!.executionStart(scheduler)
+		getCircuitView().graph!!.executionStart(scheduler, getCircuitView())
 		getCircuitView().executionStart(scheduler)
 		if (proceedTo > 0) {
 			proceedToNanos(proceedTo)

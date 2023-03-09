@@ -1,27 +1,17 @@
 package ch.scorpion.antares.filebased.analog
 
-import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogSwitchView
 import ch.scorpion.antares.view.analog.BatteryView
 import ch.scorpion.antares.view.analog.ResistorView
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
 import ch.scorpion.jabbah.base.math.near
-import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class ParallelResistorsTest : AbstractFileBasedTest() {
-
-	companion object {
-		init {
-			configure()
-			BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
-		}
-	}
+class ParallelResistorsTest : AbstractAnalogFileBasedTest() {
 
 	private lateinit var batteryView: BatteryView
 	private lateinit var switchView: AnalogSwitchView

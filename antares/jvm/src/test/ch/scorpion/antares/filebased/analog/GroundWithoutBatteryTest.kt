@@ -1,23 +1,13 @@
 package ch.scorpion.antares.filebased.analog
 
-import ch.scorpion.antares.filebased.AbstractFileBasedTest
-import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
-import ch.scorpion.jabbah.base.module.BaseModule
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class GroundWithoutBatteryTest : AbstractFileBasedTest() {
-
-	companion object {
-		init {
-			configure()
-			BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
-		}
-	}
-
-	private val analogGraphView: AnalogGraphView get() = openedCircuitView as AnalogGraphView
+class GroundWithoutBatteryTest : AbstractAnalogFileBasedTest() {
 
 	@BeforeTest
 	fun openCircuit() {

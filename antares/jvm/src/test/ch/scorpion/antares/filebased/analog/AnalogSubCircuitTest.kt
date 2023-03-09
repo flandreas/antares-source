@@ -1,25 +1,15 @@
 package ch.scorpion.antares.filebased.analog
 
-import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
-import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Includes an analog inverter (made from a transistor) in a digital circuit.*/
-class AnalogSubCircuitTest : AbstractFileBasedTest() {
-
-	companion object {
-		init {
-			configure()
-			BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
-		}
-	}
+class AnalogSubCircuitTest : AbstractAnalogFileBasedTest() {
 
 	private lateinit var switch: SwitchView
 	private lateinit var led: LEDView

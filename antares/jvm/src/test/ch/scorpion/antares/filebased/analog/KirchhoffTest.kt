@@ -1,6 +1,5 @@
 package ch.scorpion.antares.filebased.analog
 
-import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations
@@ -9,22 +8,15 @@ import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeE
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelBranchCurrents
 import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelVoltageNodes
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.math.LinearEquationSystemSolverJvm
 import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class KirchhoffTest : AbstractFileBasedTest() {
-
-	companion object {
-		init {
-			configure()
-			BaseModule.linearEquationSystemSolver = LinearEquationSystemSolverJvm
-		}
-	}
-
-	private val analogGraphView: AnalogGraphView get() = openedCircuitView as AnalogGraphView
+class KirchhoffTest : AbstractAnalogFileBasedTest() {
 
 	@BeforeTest
 	fun openCircuit() {
