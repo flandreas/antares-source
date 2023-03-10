@@ -13,6 +13,7 @@ import kotlin.math.absoluteValue
  */
 object AnalogSignalColor {
 
+	private val MIN_NEG_COLOR = Color(112, 81, 42)
 	private val MAX_NEG_COLOR = Color(247, 76, 16)
 
 	private val POS_GRADIENT = CompositeColorGradient(
@@ -22,7 +23,7 @@ object AnalogSignalColor {
 
 	private val NEG_GRADIENT = CompositeColorGradient(
 		Themes.get<AntaresTheme>().one.backgroundColor,
-		Themes.get<AntaresTheme>().zero.foregroundColor,
+		MIN_NEG_COLOR,
 		MAX_NEG_COLOR)
 
 	private const val MIN_VOLTAGE = 0.0
