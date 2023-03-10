@@ -544,13 +544,13 @@ class LibraryService(
 		}
 	}
 
-	private fun createContainerLibraryElement(metaGraph: MetaGraph): ContainerLibraryElement {
-		return ContainerLibraryElement(
+	private fun createContainerLibraryElement(metaGraph: MetaGraph): ContainerLibraryElement =
+		ContainerLibraryElement(
 			uuid = metaGraph.uuid,
+			graphType = metaGraph.type,
 			initialName = metaGraph.translatableName,
 			iconPath = null,
 			eventBus = eventBus)
-	}
 
 	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
 		if (loadAlways || element.metaGraph == null) {

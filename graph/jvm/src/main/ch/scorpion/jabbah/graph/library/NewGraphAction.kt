@@ -70,7 +70,7 @@ class NewGraphAction(
 
 		val directory = controller.selectedItem as LibraryDirectory
 		val library = directory.library!!
-		val metaGraph = MetaGraph.withName(info.name, info.type)
+		val metaGraph = MetaGraph.create(info.name, info.type)
 
 		val newElement = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
 		eventBus.post(OpenContainerLibraryElementRequest(newElement))

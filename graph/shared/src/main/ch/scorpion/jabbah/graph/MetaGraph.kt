@@ -30,7 +30,7 @@ class MetaGraph(
 	companion object {
 		private val LOG by logger(MetaGraph::class)
 
-		fun withName(name: TranslatableText, type: GraphType): MetaGraph {
+		fun create(name: TranslatableText, type: GraphType): MetaGraph {
 			val graph = GraphModelModule.graphFactory.create(name, type)
 			val graphView = GraphViewModule.graphViewFactory.create(graph)
 			val metaGraph = MetaGraph(GraphStorable(graphView))
@@ -73,6 +73,8 @@ class MetaGraph(
 	val name: String get() = graph.model!!.name.value
 
 	val uuid: UUID get() = graph.model!!.uuid
+
+	val type: GraphType get() = graph.model!!.type
 
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 

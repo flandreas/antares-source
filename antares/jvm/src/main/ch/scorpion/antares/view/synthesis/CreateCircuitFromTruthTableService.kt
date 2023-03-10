@@ -67,7 +67,7 @@ class CreateCircuitFromTruthTableService(
 		circuitType: CircuitSynthesisType,
 		executionScript: String
 	): MetaGraph {
-		val metaGraph = MetaGraph.withName(TranslatableText(circuitName), AntaresGraphTypes.Digital)
+		val metaGraph = MetaGraph.create(TranslatableText(circuitName), AntaresGraphTypes.Digital)
 		metaGraph.graph.model!!.script = executionScript
 		circuitType.build(truthTable, dnfs, metaGraph.graph)
 		AbstractContainerDrawingFiller.fillStandard(metaGraph)

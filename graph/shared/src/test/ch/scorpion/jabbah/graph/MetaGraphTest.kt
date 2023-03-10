@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
@@ -101,7 +100,7 @@ class MetaGraphTest {
 
 	@Test
 	fun shouldDuplicate() {
-		val orig = MetaGraph.withName(TranslatableText("Original"), GenericGraphType)
+		val orig = MetaGraph.create(TranslatableText("Original"), GenericGraphType)
 		val duplicate = orig.duplicate(TranslatableText("Duplicate"))
 
 		assertNotSame(orig, duplicate)

@@ -31,6 +31,7 @@ data class OpenContainerLibraryElementRequest(val element: ContainerLibraryEleme
  */
 class ContainerLibraryElement(
 	var uuid: UUID = UUID("undefined"),
+	graphType: GraphType = GraphModelModule.defaultGraphType,
 	initialName: TranslatableText = TranslatableText(),
 	iconPath: String? = null,
 	val eventBus: EventBus = BaseModule.eventBus
@@ -41,7 +42,7 @@ class ContainerLibraryElement(
 	}
 
 	/** Uses as long as [metaGraph] has not yet been instantiated, e.g. when displaying a [Library] in the UI.*/
-	override var graphType: GraphType = GraphModelModule.defaultGraphType
+	override var graphType: GraphType = graphType
 		private set
 
 	/** Lazily initialized instance of the referenced [MetaGraph]. */

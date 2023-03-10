@@ -53,7 +53,7 @@ open class MetaGraphService(
 	}
 
 	private fun createMetaGraph(name: TranslatableText, type: GraphType, drawingView: DrawingView<*>, componentIds: Collection<Int>): MetaGraph {
-		val metaGraph = MetaGraph.withName(name, type)
+		val metaGraph = MetaGraph.create(name, type)
 
 		val content = copyPasteService.copy(componentIds, drawingView.drawing)
 		copyPasteService.paste(content, metaGraph.graph.graphView as Drawing<Component>, Point2D.ZERO)
