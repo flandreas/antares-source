@@ -23,8 +23,6 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -324,14 +322,6 @@ class DigitalCircuitInOutView(
 				})
 				.start()
 		}
-	}
-
-	private fun checkTopLevelKey(): Boolean {
-		if (!model.isToplevel) {
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@DigitalCircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
-			return false
-		}
-		return true
 	}
 
 	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {

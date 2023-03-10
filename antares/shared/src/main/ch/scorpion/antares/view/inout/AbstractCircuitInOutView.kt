@@ -378,6 +378,15 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		}
 	}
 
+	protected fun checkTopLevelKey(): Boolean {
+		if (!model.isToplevel) {
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@AbstractCircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
+			return false
+		}
+		return true
+	}
+
+
 	protected open fun createActorInteractionHandler(): ActorInteractionHandler = ToggleInteractionHandler()
 
 	protected abstract fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler?

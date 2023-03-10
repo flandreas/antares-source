@@ -3,17 +3,23 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.ArrowPath
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Focusable
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -40,7 +46,6 @@ class AnalogCircuitInOutView(
 		VerticalAlignment.CENTER)
 
 	init {
-		isFocusable = true
 		modelExchanged(null)
 	}
 
@@ -93,11 +98,13 @@ class AnalogCircuitInOutView(
 		val translation = getArrowPathTranslation()
 		context.g.translate(translation.x, translation.y)
 		voltageLabel.draw(context)
+		drawFocus(context)
 		context.g.translate(-translation.x, -translation.y)
 	}
 
 	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
 		model.toggle(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+		requestFocus()
 		return null
 	}
 
@@ -109,4 +116,23 @@ class AnalogCircuitInOutView(
 		} else {
 			arrowPath!!.path.boundingBox.center.addY(ArrowPath.ARROW_SIZE / 2)
 		}
+
+	private fun drawFocus(context: DrawContext) {
+		if (isFocusOwner) {
+			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
+			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
+			context.g.draw(Rectangle2D(arrowPath!!.path.boundingBox).expandBy(3.0))
+		}
+	}
+
+	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+
+	private inner class InteractionHandler : ToggleInteractionHandler() {
+		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			if (context.keyEvent?.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
+				toggle(false, context)
+			}
+			return null
+		}
+	}
 }
