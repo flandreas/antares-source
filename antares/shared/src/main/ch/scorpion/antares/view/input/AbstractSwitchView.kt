@@ -107,36 +107,35 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	}
 
 	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
+		// Side of port 1
 		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-
 		context.g.drawLine(bounds.minX, 0.0, bounds.minX + w(0.5), 0.0)
-
 		if (model.isOn) {
 			context.g.drawLine(bounds.minX + w(0.5), 0.0, bounds.maxX - w(0.5), 0.0)
+		} else {
+			context.g.drawLine(bounds.minX + w(0.5), 0.0, bounds.maxX - w(1.0), h(-1.0))
+		}
+		context.g.fillCircle(bounds.minX + w(0.5), 0.0, circleRadius)
 
-			// Push annotation
-			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+		// Side of port 2
+		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+		context.g.drawLine(bounds.maxX - w(0.5), 0.0, bounds.maxX, 0.0)
+		context.g.fillCircle(bounds.maxX - w(0.5), 0.0, circleRadius)
+
+		// Push annotation
+		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+		context.g.color = context.chooseForeground(foregroundColor)
+		if (model.isOn) {
 			context.g.drawLine(bounds.minX + w(1.25), h(-1.5), bounds.minX + w(2.75), h(-1.5))
 			context.g.stroke = PUSH_DASHED_STROKE
 			context.g.drawLine(bounds.minX + w(2), h(-1.5), bounds.minX + w(2), 0.0)
-
 		} else {
-			context.g.drawLine(bounds.minX + w(0.5), 0.0, bounds.maxX - w(1.0), h(-1.0))
-
-			// Push annotation
-			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 			context.g.drawLine(bounds.minX + w(1), h(-2), bounds.minX + w(2.5), h(-2))
 			context.g.stroke = PUSH_DASHED_STROKE
 			context.g.drawLine(bounds.minX + w(1.75), h(-2), bounds.minX + w(1.75), h(-0.5))
 		}
 
-		context.g.fillCircle(bounds.minX + w(0.5), 0.0, circleRadius)
-
-		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-
-		context.g.drawLine(bounds.maxX - w(0.5), 0.0, bounds.maxX, 0.0)
-		context.g.fillCircle(bounds.maxX - w(0.5), 0.0, circleRadius)
-
+		// Focus
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
 		}
