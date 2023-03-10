@@ -130,8 +130,6 @@ enum class TransistorViewSymbol(
 
 		private fun drawBulk(view: AbstractTransistorView<*>, context: DrawContext) {
 			view.apply {
-				(getPortView(model.drainPort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
-
 				val dx = if (view.drawOnOff && !model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 					0.5 * SCALE
 				} else {
@@ -256,7 +254,7 @@ enum class TransistorViewSymbol(
 					}
 				} else {
 					// Bar
-					if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
 						// Switched off
 						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -3.5 * SCALE)
 						drawLine(signalLineX, -3.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)
@@ -317,7 +315,10 @@ enum class TransistorViewSymbol(
 			withName(BaseModule.properties.getString(PROP_TRANSISTOR_SYMBOL))
 
 		fun prepareDrainExecutionDrawContext(view: AbstractTransistorView<*>, context: DrawContext, portView: PortView<*>) {
-			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState && portView.port == view.model.drainPort && portView.port.isConnected) {
+			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState
+				&& portView.port == view.model.drainPort
+				&& portView.port.isConnected
+			) {
 				val signal = portView.port.net!!.signal!!
 				if (signal is DigitalSignal) {
 					context.g.color = signal.color.foregroundColor
