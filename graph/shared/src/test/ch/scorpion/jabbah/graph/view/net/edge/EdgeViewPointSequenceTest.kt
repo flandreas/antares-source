@@ -59,8 +59,6 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(7, 0), sequence.getNext(7.0))
 		// Don't return end segment point, leave reminder to next segment
 		assertEquals(Point2D(10, 4), sequence.getNext(7.0))
-		// Add remainder from previous segment
-		//assertEquals(Point2D(10, 10), sequence.getNext(7.0))
 		assertFalse(sequence.hasNext())
 	}
 
@@ -75,6 +73,23 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(8, 0), sequence.getNext(8.0))
 		assertEquals(Point2D(10, 6), sequence.getNext(8.0))
 		assertFalse(sequence.hasNext())
+	}
+
+	@Test
+	fun shouldDoForEach() {
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(10, 0), Point2D(10, 10)),
+			returnSequenceEndpoints = false
+		)
+		var index = 0
+		val expected = listOf(Point2D(0, 0), Point2D(8, 0), Point2D(10, 6))
+
+		sequence.forEach(8.0) { x, y ->
+			assertEquals(expected[index].x, x)
+			assertEquals(expected[index].y, y)
+			index++
+		}
+		assertEquals(3, index)
 	}
 
 	private fun createSequence(

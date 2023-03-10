@@ -89,4 +89,17 @@ class PointRangeTest {
 		assertEquals(Point2D(8, 0), range.getNext(3.0))
 		assertEquals(Point2D(10, 0), range.getNext(3.0))
 	}
+
+	@Test
+	fun shouldDoForEach() {
+		val range = PointRange(Point2D(0, 0), Point2D(10, 0))
+		var index = 0
+
+		range.forEach(5.0) { x, y ->
+			assertEquals(index * 5.0, x)
+			assertEquals(0.0, y)
+			index++
+		}
+		assertEquals(3, index)
+	}
 }

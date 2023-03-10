@@ -6,6 +6,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 /**
  * A [PointRange] is a [Sequence] of [Point2D]s between a begin and an end point.
  *
+ * Also provides the streaming method [forEach] to iterate over a [PointRange]
+ * without instantiating [Point2D] objects.
+ *
  * @param returnEndPoint set to `false` only if this [PointRange] is part of a sequence of consecutive
  * [PointRanges][PointRange], where returning the end point of a segment would be doubled by
  * the begin point of the following segment
@@ -22,15 +25,22 @@ class PointRange(
 
     private val _size: Double = begin.distance(end)
 
-    /** Holds the value to be returned next.*/
-    private var value: Point2D? = begin
+	/** Holds the value to be returned next as individual coordinates.*/
+	private var valueX: Double? = begin.x
+	private var valueY: Double? = begin.y
+
+	/** Holds the results from [calculateNextXY]. */
+	private var nextX: Double? = null
+	private var nextY: Double? = null
 
 	var remainder: Double = 0.0
 		private set
 
 	init {
 		if (initialOffset != null && initialOffset > SIGMA) {
-			value = calculateNext(initialOffset)
+			calculateNextXY(initialOffset)
+			valueX = nextX
+			valueY = nextY
 		}
 	}
 
@@ -38,53 +48,78 @@ class PointRange(
 
     override val size: Double get() = _size
 
-    override fun hasNext(): Boolean = value != null /*&& !lastReached*/
+    override fun hasNext(): Boolean = valueX != null && valueY != null
 
     override fun getNext(distance: Double): Point2D {
-        if (value == null) {
-            throw NoSuchElementException("distance")
-        }
-        val result = value
-        value = calculateNext(distance)
-        return result!!
+		val oldValueX = valueX
+	    val oldValueY = valueY
+
+	    getNextXY(distance)
+
+	    return Point2D(oldValueX!!, oldValueY!!)
     }
 
     override fun getCurrent(): Point2D {
-        if (value == null) {
+        if (valueX == null || valueY == null) {
             throw IllegalStateException("no current value")
         }
-        return value!!
+        return Point2D(valueX!!, valueY!!)
     }
 
-    /** ---- [PointRange] */
+	/** ---- [PointRange] sequencing API for avoiding [Point2D] instantiation */
 
-    private fun calculateNext(distance: Double): Point2D? {
-	    require(distance >= 0) { "distance must not be negative" }
+	fun forEach(distance: Double, handler: (x: Double, y: Double) -> Unit) {
+		while (hasNext()) {
+			val oldValueX = valueX
+			val oldValueY = valueY
 
-	    if (size <= SIGMA) {
-            return null
-        }
+			getNextXY(distance)
+			handler(oldValueX!!, oldValueY!!)
+		}
+	}
 
-        val dx = (end.x - begin.x) / size * distance
-        val dy = (end.y - begin.y) / size * distance
+	private fun getNextXY(distance: Double) {
+		if (valueX == null || valueY == null) {
+			throw NoSuchElementException("distance")
+		}
 
-        var result: Point2D? = Point2D(value!!.x + dx, value!!.y + dy)
-	    val d = result!!.distance(begin)
+		calculateNextXY(distance)
 
+		valueX = nextX
+		valueY = nextY
+	}
 
-	    if (d >= size) {
-		    remainder = d - size
-		    result = if (d == size || returnEndPoint) {
-			    end
-		    } else {
-			    null
-		    }
-	    }
+	private fun calculateNextXY(distance: Double) {
+		require(distance >= 0) { "distance must not be negative" }
 
-	    if (result == value) {
-			result = null
-	    }
+		if (size <= SIGMA) {
+			nextX = null
+			nextY = null
+			return
+		}
 
-	    return result
-    }
+		val dx = (end.x - begin.x) / size * distance
+		val dy = (end.y - begin.y) / size * distance
+
+		nextX = valueX!! + dx
+		nextY = valueY!! + dy
+		val d = begin.distance(nextX!!, nextY!!)
+
+		if (d >= size) {
+			remainder = d - size
+			if (d == size || returnEndPoint) {
+				nextX = end.x
+				nextY = end.y
+			} else {
+				nextX = null
+				nextY = null
+				return
+			}
+		}
+
+		if (nextX == valueX!! && nextY == valueY!!) {
+			nextX = null
+			nextY = null
+		}
+	}
 }

@@ -19,9 +19,9 @@ object CurrentFlowVisualization {
 			returnSequenceEndPoint = false,
 			offset = edgeView.animationOffset
 		)
-		while (sequence.hasNext()) {
-			val p = sequence.getNext(DISTANCE)
-			context.g.fillRect(p.x - HALF_SIZE, p.y - HALF_SIZE, SIZE, SIZE)
+
+		sequence.forEach(DISTANCE) { x, y ->
+			context.g.fillRect(x - HALF_SIZE, y - HALF_SIZE, SIZE, SIZE)
 		}
 	}
 }
