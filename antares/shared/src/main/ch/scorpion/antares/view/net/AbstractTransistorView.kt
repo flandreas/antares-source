@@ -35,6 +35,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 ) : OrientableRectangularVerticeView<T>(styleProvider, model) {
 
 	companion object {
+
 		@JvmStatic
 		protected val DEFAULT_HANDEDNESS = Handedness.RIGHT
 
@@ -46,7 +47,6 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
-
 	}
 
 	/** Displays [name]. */

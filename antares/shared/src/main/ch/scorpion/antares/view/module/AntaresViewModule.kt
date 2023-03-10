@@ -598,10 +598,10 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
 		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
 		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/led.png" }, AnalogGroundView::class)
-		repository.register(ANALOG_TRANSISTOR_N, "library.element.Transistor.nType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
+		repository.register(ANALOG_TRANSISTOR_N, "library.element.AnalogTransistor.nType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.N)
 		}
-		repository.register(ANALOG_TRANSISTOR_P, "library.element.Transistor.pType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
+		repository.register(ANALOG_TRANSISTOR_P, "library.element.AnalogTransistor.pType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.P)
 		}
 		repository.register(ANALOG_INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(AnalogCircuitInOutView::class.simpleName!!)) {

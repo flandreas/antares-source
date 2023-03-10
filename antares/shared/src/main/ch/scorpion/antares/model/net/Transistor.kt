@@ -67,6 +67,8 @@ class Transistor(
 			}
 	}
 
+	override val baseResourceKey: String get() = "library.element.Transistor"
+
 	var bitWidth: BitWidth = bitWidth
 		set(value) {
 			if (field != value) {

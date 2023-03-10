@@ -41,7 +41,7 @@ interface AnalogVertice : Vertice {
 
 abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 	calculator: VerticeCalculator<T>,
-	private val baseResourceKey: String
+	val baseResourceKey: String
 ) : CalculatingVertice(calculator), AnalogVertice {
 
 	companion object {

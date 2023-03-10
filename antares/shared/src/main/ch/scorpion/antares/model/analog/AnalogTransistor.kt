@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class AnalogTransistor(
 	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
-	gain: Double = DEF_GAIN
+	var gain: Double = DEF_GAIN
 ) : AbstractAnalogVertice<AnalogTransistor>(
 	EmptyVerticeCalculator,
 	"library.element.AnalogTransistor"
@@ -25,8 +25,6 @@ class AnalogTransistor(
 	companion object {
 		private const val DEF_GAIN = 0.1
 	}
-
-	var gain: Double = gain
 
 	override val type: String get() = super<TransistorIF>.type
 

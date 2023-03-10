@@ -14,14 +14,9 @@ interface TransistorIF<T: Any> : Vertice {
 		const val SOURCE_PORT_ID = 1
 		const val GATE_PORT_ID = 2
 		const val DRAIN_PORT_ID = 3
-
-		private const val BASE_RESOURCE_KEY = "library.element.Transistor"
-		val TYPE_N get() = Translations.getString("${BASE_RESOURCE_KEY}.nType.name")
-		val TYPE_N_DESC get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.nType.desc")
-		val TYPE_P get() = Translations.getString("${BASE_RESOURCE_KEY}.pType.name")
-		val TYPE_P_DESC get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.pType.desc")
-
 	}
+
+	val baseResourceKey: String
 
 	val sourcePort: Port<T> get() = getPort(SOURCE_PORT_ID)
 	val gatePort: Port<T> get() = getPort(GATE_PORT_ID)
@@ -33,14 +28,14 @@ interface TransistorIF<T: Any> : Vertice {
 
 	override val type: String get() =
 		when (transistorType) {
-			TransistorType.N -> TYPE_N
-			TransistorType.P -> TYPE_P
+			TransistorType.N -> Translations.getString("$baseResourceKey.nType.name")
+			TransistorType.P -> Translations.getString("$baseResourceKey.pType.name")
 		}
 
 	override val typeDesc: String? get() =
 		when (transistorType) {
-			TransistorType.N -> TYPE_N_DESC
-			TransistorType.P -> TYPE_P_DESC
+			TransistorType.N -> Translations.getOptionalString("$baseResourceKey.nType.desc")
+			TransistorType.P -> Translations.getOptionalString("$baseResourceKey.pType.desc")
 		}
 
 	override fun write(writer: StoreWriter) {
