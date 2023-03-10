@@ -7,6 +7,8 @@ data class AnalogSignal(val voltage: Double) {
 
 	companion object {
 		val ZERO = AnalogSignal(0.0)
+		val HIGH = AnalogSignal(5.0)
+		val UNDEFINED: AnalogSignal? = null
 	}
 
 	val color: CompositeColor by lazy { AnalogSignalColor.ofSignal(this) }

@@ -1,6 +1,8 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
+import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.ArrowPath
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -19,7 +21,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Focusable
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -61,8 +62,13 @@ class AnalogCircuitInOutView(
 	}
 
 	private fun updateVoltageLabel() {
-		val v = (model.signal.voltage * 10).toInt() / 10.0
-		voltageLabel.text = "$v V"
+		val v = model.signal?.voltage
+
+		voltageLabel.text = if (v != null) {
+			"${(v * 10).toInt() / 10.0} V"
+		} else {
+			"${Bit.ALL_UNDEFINED_CHAR}"
+		}
 	}
 
 	override fun updateViewImpl() {
@@ -91,13 +97,30 @@ class AnalogCircuitInOutView(
 	}
 
 	override fun drawSimulated(context: DrawContext) {
-		drawEdited(context,
-			transparent.applyTo(foregroundColor),
-			transparent.applyTo(backgroundColor))
+		if (model.signal == null) {
+			drawEdited(
+				context,
+				transparent.applyTo(Bit.Undefined.color.foregroundColor),
+				transparent.applyTo(Bit.Undefined.color.backgroundColor)
+			)
+		} else {
+			drawEdited(
+				context,
+				transparent.applyTo(foregroundColor),
+				transparent.applyTo(backgroundColor)
+			)
+		}
 
 		val translation = getArrowPathTranslation()
 		context.g.translate(translation.x, translation.y)
+
+		if (model.signal == null) {
+			context.g.color = Bit.Undefined.color.textColor
+		} else {
+			context.g.color = textColor
+		}
 		voltageLabel.draw(context)
+
 		drawFocus(context)
 		context.g.translate(-translation.x, -translation.y)
 	}
@@ -129,8 +152,13 @@ class AnalogCircuitInOutView(
 
 	private inner class InteractionHandler : ToggleInteractionHandler() {
 		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			if (context.keyEvent?.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
-				toggle(false, context)
+			if (checkTopLevelKey()) {
+				when (context.keyEvent?.key) {
+					KeyEvent.VK_ENTER -> toggle(false, context)
+					KeyEvent.VK_Z -> model.setIncomingSignal(AnalogSignal.UNDEFINED, context.signalHandler)
+					KeyEvent.VK_0 -> model.setIncomingSignal(AnalogSignal.ZERO, context.signalHandler)
+					KeyEvent.VK_5 -> model.setIncomingSignal(AnalogSignal.HIGH, context.signalHandler)
+				}
 			}
 			return null
 		}

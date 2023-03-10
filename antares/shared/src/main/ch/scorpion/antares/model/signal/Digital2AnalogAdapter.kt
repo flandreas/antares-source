@@ -15,7 +15,7 @@ object Digital2AnalogAdapter : GraphTypeSignalAdapter<AnalogSignal, DigitalSigna
 			return AnalogSignal.ZERO
 		}
 		return if (signal.isAllOf(Bit.True)) {
-			AnalogSignal(5.0)
+			AnalogSignal.HIGH
 		} else {
 			AnalogSignal.ZERO
 		}

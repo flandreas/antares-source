@@ -30,7 +30,7 @@ class AnalogCircuitInOut(
 ), AnalogVertice {
 
 	companion object {
-		private val HIGH_VOLTAGE = AnalogSignal(5.0)
+		private val HIGH_VOLTAGE = AnalogSignal.HIGH
 		private val LOW_VOLTAGE = AnalogSignal.ZERO
 
 		private val CALCULATOR = Calculator()
@@ -46,7 +46,7 @@ class AnalogCircuitInOut(
 
 	/** ---- [GraphPort] */
 
-	override var signal: AnalogSignal = LOW_VOLTAGE
+	override var signal: AnalogSignal? = LOW_VOLTAGE
 		set(value) {
 			if (signal != value) {
 				field = value
@@ -57,7 +57,7 @@ class AnalogCircuitInOut(
 	/** ---- [GraphInput] */
 
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
-		this.signal = signal ?: AnalogSignal.ZERO
+		this.signal = signal
 		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler))
 	}
 
@@ -81,7 +81,7 @@ class AnalogCircuitInOut(
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (portType.isOutput) {
-			signal = input.net!!.signal as AnalogSignal
+			signal = input.net!!.signal as AnalogSignal?
 		}
 	}
 
@@ -99,7 +99,8 @@ class AnalogCircuitInOut(
 		if (getPort<AnalogSignal>().portType.isOutput) {
 			val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
 			row[branches.size + voltageVariableIndex] = ONE
-			equationSystem.addEquation(row) { signal.voltage }
+			// TODO Handle undefined differently
+			equationSystem.addEquation(row) { signal?.voltage ?: AnalogSignal.ZERO.voltage }
 		} else {
 			val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, 1)
 			row[currentVariableIndex] = ONE

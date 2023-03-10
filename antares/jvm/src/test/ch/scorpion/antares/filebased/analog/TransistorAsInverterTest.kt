@@ -66,8 +66,8 @@ class TransistorAsInverterTest : AbstractAnalogFileBasedTest() {
 		startSimulation()
 		processUntilQueueIsEmpty()
 
-		assertEquals(0.0, input.model.signal.voltage)
-		assertEquals(5.0, output.model.signal.voltage)
+		assertEquals(0.0, input.model.signal?.voltage)
+		assertEquals(5.0, output.model.signal?.voltage)
 	}
 
 	@Test
@@ -78,7 +78,7 @@ class TransistorAsInverterTest : AbstractAnalogFileBasedTest() {
 		input.model.toggle(scheduler, analogGraphView)
 		processUntilQueueIsEmpty()
 
-		assertEquals(5.0, input.model.signal.voltage)
-		assertTrue(output.model.signal.voltage.near(0.4, 0.1))
+		assertEquals(5.0, input.model.signal?.voltage)
+		assertTrue(output.model.signal?.voltage?.near(0.4, 0.1) == true)
 	}
 }

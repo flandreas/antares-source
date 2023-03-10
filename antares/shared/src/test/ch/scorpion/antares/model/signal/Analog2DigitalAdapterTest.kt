@@ -12,13 +12,13 @@ class Analog2DigitalAdapterTest {
 	@Test
 	fun shouldConvertDigitalToAnalog() {
 		assertEquals(AnalogSignal.ZERO, convertIncomingSignal(of(false)))
-		assertEquals(AnalogSignal(5.0), convertIncomingSignal(of(true)))
+		assertEquals(AnalogSignal.HIGH, convertIncomingSignal(of(true)))
 	}
 
 	@Test
 	fun shouldConvertAnalogToDigital() {
-		assertEquals(of(false), convertOutgoingSignal(AnalogSignal(0.0)))
-		assertEquals(of(true), convertOutgoingSignal(AnalogSignal(5.0)))
+		assertEquals(of(false), convertOutgoingSignal(AnalogSignal.ZERO))
+		assertEquals(of(true), convertOutgoingSignal(AnalogSignal.HIGH))
 	}
 
 	@Test
