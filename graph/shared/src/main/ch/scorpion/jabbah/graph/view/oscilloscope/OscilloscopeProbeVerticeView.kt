@@ -15,7 +15,9 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -42,8 +44,9 @@ data class OscilloscopeProbeNameEvent(
  */
 class OscilloscopeProbeVerticeView<T : Any>(
 	name: String = "",
+	graphType: GraphType = GenericGraphType,
 	color: CompositeColor = CompositeColor(),
-	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name),
+	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice.create(name, graphType),
 	val dragGhost: Boolean = false,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {

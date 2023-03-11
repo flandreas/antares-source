@@ -146,6 +146,7 @@ class OscilloscopeProbeView(
 
 			val vv = OscilloscopeProbeVerticeView<Any>(
 				name = name,
+				graphType = (context.drawingView.drawing as GraphView).graph!!.type,
 				color = probeColor,
 				dragGhost = true,
 				styleProvider = styleProvider

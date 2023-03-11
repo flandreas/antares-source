@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.GraphElementListener
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
@@ -25,6 +23,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Oscilloscope(
 	mode: SignalHistoriesType = SignalHistoriesType.Clocked,
+	graphType: GraphType = GenericGraphType,
 	private val portFactory: PortFactory = GraphModelModule.portFactory
 ) : AbstractVertice() {
 
@@ -37,6 +36,9 @@ class Oscilloscope(
 	var mode: SignalHistoriesType = mode
 
 	var enabled: Boolean = true
+
+	var graphType: GraphType = graphType
+		private set
 
 	/** ---- [AbstractVertice] */
 
@@ -54,6 +56,7 @@ class Oscilloscope(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
+		writer.writeString("type", graphType.customName)
 		writer.writeString("portNames", StringUtils.fromList(
 			getPorts().map { it.name!! }
 		))
@@ -62,8 +65,13 @@ class Oscilloscope(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
+		graphType = if (reader.hasAttribute("type")) {
+			GraphModelModule.graphTypeRegistry.withCustomName(reader.readString("type"))
+		} else {
+			GraphModelModule.defaultGraphType
+		}
 		StringUtils.toList(reader.readString("portNames")).forEach {
-			addPort(portFactory.createOscilloscopeProbePort(it))
+			addPort(portFactory.createOscilloscopeProbePort(it, graphType))
 		}
 		if (reader.hasAttribute("mode")) {
 			mode = SignalHistoriesType.withName(reader.readString("mode"))

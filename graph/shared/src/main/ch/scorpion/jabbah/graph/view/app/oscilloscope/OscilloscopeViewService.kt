@@ -148,7 +148,11 @@ class OscilloscopeViewServiceImpl(
 		val oscilloscopeView = findOscilloscopeView(view.drawing)!!
 		val signalRowView = oscilloscopeView.rowWithName(name)!!
 		val probeVerticeView = if (probeVerticeViewId == null) {
-			OscilloscopeProbeVerticeView<T>(signalRowView.name, signalRowView.color.onBackground).also {
+			OscilloscopeProbeVerticeView<T>(
+				signalRowView.name,
+				view.drawing.graph!!.type,
+				signalRowView.color.onBackground
+			).also {
 				it.location = location
 				it.visible = true
 				view.drawing.add(it)
@@ -197,7 +201,7 @@ class OscilloscopeViewServiceImpl(
 	}
 
 	private fun createOscilloscopeView(view: DrawingView<GraphView>) {
-		val ov = OscilloscopeView()
+		val ov = OscilloscopeView(view.drawing.graph!!.type)
 		ov.visible = true
 		positionOscilloscope(ov, view.drawing)
 		graphViewAppService.add(ov, view as DrawingView<Drawing<Component>>)

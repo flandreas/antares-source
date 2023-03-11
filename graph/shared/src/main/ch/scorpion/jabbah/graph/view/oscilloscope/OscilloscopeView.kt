@@ -23,6 +23,8 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.model.GenericGraphType
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
@@ -38,11 +40,12 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class OscilloscopeView(
+	graphType: GraphType = GenericGraphType,
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService,
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
-	model: Oscilloscope = Oscilloscope(),
+	model: Oscilloscope = Oscilloscope(graphType = graphType),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Oscilloscope>(
@@ -281,7 +284,7 @@ class OscilloscopeView(
 	fun addRow() {
 		val name = createRowName(null, rows.size + 1)
 
-		val port = portFactory.createOscilloscopeProbePort<Any>(name)
+		val port = portFactory.createOscilloscopeProbePort<Any>(name, model.graphType)
 		model.addPort(port)
 		addPortView(GenericPortView(port))
 
