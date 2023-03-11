@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
 interface GraphType {
 
@@ -19,6 +20,9 @@ interface GraphType {
 	fun canImport(libraryElement: LibraryElement): Boolean = libraryElement.graphType === this
 
 	fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O>
+
+	fun <T: Any> createOscilloscopeProbeVertice(name: String? = null): OscilloscopeProbeVertice<T>
+		= OscilloscopeProbeVertice(this)
 }
 
 object GenericGraphType: GraphType {

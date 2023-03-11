@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model
 
+import ch.scorpion.antares.model.analog.AnalogOscilloscopeProbeVertice
 import ch.scorpion.antares.model.signal.Digital2AnalogAdapter
 import ch.scorpion.antares.model.signal.Digital2DigitalAdapter
 import ch.scorpion.jabbah.base.Translations
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.GraphTypeSignalAdapter
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
 enum class AntaresGraphTypes(
 	override val customName: String,
@@ -27,6 +29,9 @@ enum class AntaresGraphTypes(
 		override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> {
 			throw IllegalArgumentException("Cannot adapt analog graph to $other")
 		}
+
+		override fun <T : Any> createOscilloscopeProbeVertice(name: String?): OscilloscopeProbeVertice<T> =
+			AnalogOscilloscopeProbeVertice() as OscilloscopeProbeVertice<T>
 	};
 
 	override fun toString(): String =

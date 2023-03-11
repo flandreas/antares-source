@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * This constructor is meant for deserialization and does NOT create an [InputPort],
  * since the type of the [InputPort] is not know before reading from external data.
  */
-class OscilloscopeProbeVertice<T : Any>(
+open class OscilloscopeProbeVertice<T : Any>(
 	graphType: GraphType = GenericGraphType,
 	private val portFactory: PortFactory = GraphModelModule.portFactory
 ) : AbstractVertice() {
@@ -33,7 +33,7 @@ class OscilloscopeProbeVertice<T : Any>(
 			graphType: GraphType = GenericGraphType,
 			portFactory: PortFactory = GraphModelModule.portFactory
 		): OscilloscopeProbeVertice<T> {
-			val vertice = OscilloscopeProbeVertice<T>(graphType, portFactory)
+			val vertice = graphType.createOscilloscopeProbeVertice<T>(name)
 			vertice.addPort(portFactory.createOscilloscopeProbePort<T>(name, graphType))
 			return vertice
 		}
