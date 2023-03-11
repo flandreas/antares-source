@@ -69,7 +69,7 @@ class AnalogGraphView(
 	}
 
 	override fun checkDesign(signalHandler: SignalHandler): Boolean =
-		ensureFullyConnected() && analyzeAndCalculate(signalHandler)
+		ensureFullyConnected().also { ensureAnalysis() }
 
 	/** ---- [AnalogGraphView] */
 
