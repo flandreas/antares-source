@@ -17,4 +17,6 @@ class AnalogPort(
 			it.handleAnalogPortChanged(this, signalHandler)
 		}
 	}
+
+	override fun getDefaultSignal(): AnalogSignal = AnalogSignal.ZERO
 }

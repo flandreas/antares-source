@@ -30,7 +30,7 @@ import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
-import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
+import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
 import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
@@ -201,7 +201,7 @@ object AntaresViewModule : AbstractModule() {
 
 		GraphViewModule.graphViewAppService = EditModule.drawingAppService as GraphViewAppService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
-		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
+		GraphViewModule.oscilloscopeViewFactory = AntaresOscilloscopeViewFactory()
 		GraphViewModule.oscilloscopeProbeNameStrategy = DigitalOscilloscopeProbeNameStrategy()
 		val edgeViewFactory = AntaresEdgeViewFactory(
 			DrawStyleModule.styleProvider,

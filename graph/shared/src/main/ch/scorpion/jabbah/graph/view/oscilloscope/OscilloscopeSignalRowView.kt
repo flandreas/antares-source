@@ -35,7 +35,7 @@ class OscilloscopeSignalRowView(
 		private val NON_INDIVIDUAL_SIGNAL_COLOR = CompositeColor(Color.LIGHT_GRAY, Color.DARK_GRAY)
 	}
 
-	private val drawer = factory.createSignalHistoryDrawer()
+	private val drawer = factory.createSignalHistoryDrawer(oscilloscopeView.model.graphType)
 
 	val probeView = OscilloscopeProbeView(
 		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),

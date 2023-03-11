@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.graph.model.GraphType
+
 /** A factory for creating various objects used by [OscilloscopeView].*/
 interface OscilloscopeViewFactory {
 
@@ -7,7 +9,7 @@ interface OscilloscopeViewFactory {
     val rowHeight: Int
 
     /** Creates a new [SignalHistoryDrawer].*/
-    fun createSignalHistoryDrawer(): SignalHistoryDrawer
+    fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer
 
 	fun createSignalHistoryTimelineView(): SignalHistoryTimelineView
 }
@@ -16,7 +18,7 @@ class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
 
     override val rowHeight: Int get() = 0
 
-    override fun createSignalHistoryDrawer(): SignalHistoryDrawer {
+    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer {
         throw UnsupportedOperationException("not implemented")
     }
 

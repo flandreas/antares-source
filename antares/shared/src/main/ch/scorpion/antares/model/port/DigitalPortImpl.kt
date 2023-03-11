@@ -169,9 +169,7 @@ open class DigitalPortImpl(
 			changeSupport.fire(PROP_SIGNAL_REPRESENTATION, oldValue, field)
 		}
 
-	override fun getDefaultSignal(): DigitalSignal? {
-		return defaultDigitalSignal
-	}
+	override fun getDefaultSignal(): DigitalSignal? = defaultDigitalSignal
 
 	override var isAdaptive: Boolean = false
 
