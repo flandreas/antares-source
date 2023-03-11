@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 /**
  * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
@@ -83,7 +83,7 @@ class AnalogGraphView(
 	}
 
 	private fun ensureFullyConnected(): Boolean {
-		if (getDrawables { it is GraphElementView<*> }.any { !it.isFullyConnected }) {
+		if (getDrawables { it !is OscilloscopeView }.any { !it.isFullyConnected }) {
 			eventBus.post(IssueImpl(
 				IssueSeverity.Error,
 				Translations.getString("antares.analogCalc.notFullyConnected.error.name"),
