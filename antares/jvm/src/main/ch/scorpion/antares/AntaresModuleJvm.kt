@@ -16,7 +16,7 @@ import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.*
-import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
+import ch.scorpion.antares.view.oscilloscope.AbstractAntaresSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
@@ -402,8 +402,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		}
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
-			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,
-			nameKey = "antares.preference.DigitalSignalHistory.fill"
+			id = AbstractAntaresSignalHistoryDrawer.PROP_FILL_SIGNAL,
+			nameKey = "antares.preference.SignalHistory.fill"
 		))
 	}
 

@@ -9,7 +9,7 @@ interface OscilloscopeViewFactory {
     val rowHeight: Int
 
     /** Creates a new [SignalHistoryDrawer].*/
-    fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer
+    fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any>
 
 	fun createSignalHistoryTimelineView(): SignalHistoryTimelineView
 }
@@ -18,7 +18,7 @@ class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
 
     override val rowHeight: Int get() = 0
 
-    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer {
+    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any> {
         throw UnsupportedOperationException("not implemented")
     }
 

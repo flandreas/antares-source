@@ -5,12 +5,12 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 
 /** Draws a [SignalHistory] as a single row of an [OscilloscopeView]. */
-interface SignalHistoryDrawer : RectangularDrawable {
+interface SignalHistoryDrawer<T: Any> : RectangularDrawable {
 
 	/** Binds this [SignalHistoryDrawer] with the data source it displays. */
 	fun bind(
-		signalHistory: SignalHistory<Any>?,
-		gridSignalHistory: SignalHistory<Any>?,
+		signalHistory: SignalHistory<T>?,
+		gridSignalHistory: SignalHistory<T>?,
 		timeline: SignalHistoryTimeline?,
 		color: CompositeColor
 	)

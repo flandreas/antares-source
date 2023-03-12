@@ -29,9 +29,9 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
-import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
+import ch.scorpion.antares.view.oscilloscope.AbstractAntaresSignalHistoryDrawer
 import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
-import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
+import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -283,7 +283,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
 		properties.set(TunnelViewFace.PROP_TUNNEL_FACE, TunnelViewFace.ARROW.customName)
 
-		properties.set(DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
+		properties.set(AbstractAntaresSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
 		properties.set(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)
 		properties.set(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL, TransistorViewSymbol.Bulk.customName)
 	}

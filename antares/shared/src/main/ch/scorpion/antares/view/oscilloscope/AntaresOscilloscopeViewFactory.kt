@@ -12,10 +12,10 @@ class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
 
     override val rowHeight: Int get() = DigitalSignalHistoryDrawer.ROW_HEIGHT
 
-    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer =
+    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any> =
 		when (graphType) {
-		    AntaresGraphTypes.Digital -> DigitalSignalHistoryDrawer()
-		    AntaresGraphTypes.Analog -> AnalogSignalHistoryDrawer()
+		    AntaresGraphTypes.Digital -> DigitalSignalHistoryDrawer() as SignalHistoryDrawer<Any>
+		    AntaresGraphTypes.Analog -> AnalogSignalHistoryDrawer() as SignalHistoryDrawer<Any>
 		    else -> throw IllegalArgumentException("unknown GraphType $graphType")
 	    }
 

@@ -1,33 +1,66 @@
 package ch.scorpion.antares.view.analog
 
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.view.oscilloscope.AbstractAntaresSignalHistoryDrawer
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import kotlin.math.max
 
-class AnalogSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHistoryDrawer {
+class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSignal>() {
 
-	/** ---- [RectangularDrawable] interface*/
+	companion object {
 
-	override val lineWidth: Double get() = 0.0
-
-	override fun draw(context: DrawContext) {
-		// TODO
+		/** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
+		private const val SIGNAL_HEIGHT = 20.0
 	}
 
-	/** ---- [SignalHistoryDrawer] */
+	/** ---- [AbstractAntaresSignalHistoryDrawer] */
 
-	override fun bind(
-		signalHistory: SignalHistory<Any>?,
-		gridSignalHistory: SignalHistory<Any>?,
-		timeline: SignalHistoryTimeline?,
-		color: CompositeColor
-	) {
-		// TODO
+	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double {
+		return baseLineY - 4 * entry.signal.voltage
 	}
 
+	override fun drawCurve(context: DrawContext) {
+		var lastPoint = Point2D.ZERO
+		var lastEntry: SignalHistoryEntry<AnalogSignal>? = null
+		var effNextX: Double = rightBorder
+		context.g.stroke = CURVE_STROKE
+
+		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
+			val x = rightBorder - timeline!!.getX(entry.time)
+			val y = signalY(entry)
+			if (lastEntry == null) {
+				// Right border
+				lastPoint = Point2D(x, y)
+				effNextX = max(x, bounds.minX)
+
+				drawSingleBitRightBorder(context, effNextX, y)
+
+				if (x <= bounds.minX) {
+					break
+				}
+			} else {
+				val nextX = x
+				val nextY = y
+				effNextX = max(nextX, bounds.minX)
+
+				drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+
+				if (nextX <= bounds.minX) {
+					break
+				}
+
+				lastPoint = Point2D(effNextX, nextY)
+			}
+
+			lastEntry = entry
+		}
+
+		lastEntry?.let {
+			if (signalHistory!!.overflow && effNextX - BUFFER_END_WIDTH > bounds.minX) {
+				drawBufferEnd(context, effNextX)
+			}
+		}
+	}
 }
