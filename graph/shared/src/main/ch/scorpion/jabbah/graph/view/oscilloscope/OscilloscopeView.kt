@@ -100,6 +100,9 @@ class OscilloscopeView(
 	/** Used for restoring [timelineScale] after the simulation has ended. */
 	private var timelineScaleBuffer: Double = 0.0
 
+	/** Returns the height of the drawing area used by a [SignalHistoryDrawer] returned by [createSignalHistoryDrawer].*/
+	val rowHeight: Int get() = factory.getRowHeight(model.graphType)
+
 	/** Returns the number of rows of this [OscilloscopeView].*/
 	val rowsCount: Int get() = rows.size
 
@@ -109,7 +112,8 @@ class OscilloscopeView(
 
 	val signalRowViews: ImmutableList<OscilloscopeSignalRowView> get() = rows.toImmutableList()
 
-	private val scaleRow = OscilloscopeScaleRowView(this, Point2D.ZERO, service, factory)
+	/** Depend on current model and its [GraphType]. */
+	private val scaleRow by lazy { OscilloscopeScaleRowView(this, Point2D.ZERO, service, factory) }
 
 	private val refColorSequence = referenceColorSequenceProvider.provide()
 
@@ -139,12 +143,7 @@ class OscilloscopeView(
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
 
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
-		container.add(scaleRow)
-		adjustSize()
 
-		DrawableOwner(this, container)
-
-		updateState()
 	}
 
 	override fun dispose() {
@@ -156,6 +155,13 @@ class OscilloscopeView(
 	override fun modelExchanged(oldModel: Oscilloscope?) {
 		super.modelExchanged(oldModel)
 		timeline = OscilloscopeViewTimeline(timelineScale, model)
+
+		container.add(scaleRow)
+		adjustSize()
+
+		DrawableOwner(this, container)
+
+		updateState()
 	}
 
 	private fun updateState() {
@@ -217,9 +223,9 @@ class OscilloscopeView(
 		if (rows.size >= 1 && model.mode == SignalHistoriesType.Clocked) {
 			context.g.color = color.foregroundColor
 			context.g.stroke = stroke
-			context.g.translate(location.x + bounds.width, location.y + TITLE_HEIGHT + factory.rowHeight / 2)
+			context.g.translate(location.x + bounds.width, location.y + TITLE_HEIGHT + rowHeight / 2)
 			context.g.draw(CLOCKED_ANNOTATION)
-			context.g.translate(-(location.x + bounds.width), -(location.y + TITLE_HEIGHT + factory.rowHeight / 2))
+			context.g.translate(-(location.x + bounds.width), -(location.y + TITLE_HEIGHT + rowHeight / 2))
 		}
 	}
 
@@ -336,13 +342,13 @@ class OscilloscopeView(
 	private fun adjustSize() {
 		scaleRow.updateLocation()
 		invalidate()
-		setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
+		setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * rowHeight).toDouble())
 		invalidate()
 		update()
 	}
 
 	private fun addRowView(name: String) {
-		val y = TITLE_HEIGHT + rows.size * factory.rowHeight
+		val y = TITLE_HEIGHT + rows.size * rowHeight
 		val rowView = OscilloscopeSignalRowView(this, name, Point2D(0, y), nextProbeColor, service, factory)
 		rows.add(rowView)
 		container.add(rowView)
@@ -361,7 +367,7 @@ class OscilloscopeView(
 	 */
 	private fun rearrangeFromRowIndex(rowIndex: Int) {
 		for (i in rowIndex until rows.size) {
-			rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
+			rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - rowHeight)
 		}
 		scaleRow.updateLocation()
 		scaleRow.updateState()

@@ -38,7 +38,7 @@ class OscilloscopeSignalRowView(
 	private val drawer = factory.createSignalHistoryDrawer(oscilloscopeView.model.graphType)
 
 	val probeView = OscilloscopeProbeView(
-		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
+		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 		name = name,
 		probeColor = color.onBackground,
 		origLocSource = { oscilloscopeView.location.add(location) })
@@ -46,7 +46,7 @@ class OscilloscopeSignalRowView(
 	private val removeButton = DrawableButton<EditInputEventContext>(
 		renderer = IconDrawableButtonRenderer(RemoveIcon(Dimension2D(OscilloscopeView.ICON_BUTTON_SIZE, OscilloscopeView.ICON_BUTTON_SIZE))),
 		tooltipKey = "graph.action.oscilloscope.removeRow.name",
-		location = Point2D(OscilloscopeView.ROW_INSET, factory.rowHeight / 2 - OscilloscopeView.ICON_BUTTON_SIZE / 2),
+		location = Point2D(OscilloscopeView.ROW_INSET, oscilloscopeView.rowHeight / 2 - OscilloscopeView.ICON_BUTTON_SIZE / 2),
 		action = { service.removeRow(it.drawingView, probeView.name, oscilloscopeView) },
 		styleType = StyleType.ANNOTATION)
 
@@ -54,7 +54,7 @@ class OscilloscopeSignalRowView(
 		add(removeButton)
 		add(probeView)
 
-		drawer.setBounds(OscilloscopeView.DRAWER_X, 0.0, OscilloscopeView.DRAWER_W, factory.rowHeight.toDouble())
+		drawer.setBounds(OscilloscopeView.DRAWER_X, 0.0, OscilloscopeView.DRAWER_W, oscilloscopeView.rowHeight.toDouble())
 		add(drawer)
 	}
 

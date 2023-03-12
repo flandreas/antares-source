@@ -42,13 +42,13 @@ class OscilloscopeScaleRowView(
 	private val addButton = DrawableButton<EditInputEventContext>(
 		renderer = IconDrawableButtonRenderer(AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
 		action = { service.addRow(it.drawingView, oscilloscopeView) },
-		location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
+		location = Point2D(ROW_INSET, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
 		styleType = StyleType.ANNOTATION
 	)
 
 
 	private val scaleButton = ScaleButton(
-		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
 
 	private val timelineView = factory.createSignalHistoryTimelineView()
 
@@ -56,7 +56,7 @@ class OscilloscopeScaleRowView(
 		add(addButton)
 		add(scaleButton)
 
-		timelineView.setBounds(OscilloscopeView.DRAWER_X, 0.0, DRAWER_W, factory.rowHeight.toDouble())
+		timelineView.setBounds(OscilloscopeView.DRAWER_X, 0.0, DRAWER_W, oscilloscopeView.rowHeight.toDouble())
 		add(timelineView)
 	}
 
@@ -67,7 +67,7 @@ class OscilloscopeScaleRowView(
 	}
 
 	fun updateLocation() {
-		location = Point2D(0, TITLE_HEIGHT + factory.rowHeight * oscilloscopeView.signalRowViews.size)
+		location = Point2D(0, TITLE_HEIGHT + oscilloscopeView.rowHeight * oscilloscopeView.signalRowViews.size)
 		updateBoundingBox()
 		update()
 	}

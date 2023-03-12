@@ -10,16 +10,16 @@ import kotlin.math.max
 class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSignal>() {
 
 	companion object {
-
-		/** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
-		private const val SIGNAL_HEIGHT = 20.0
+		const val ROW_HEIGHT = 60
 	}
 
 	/** ---- [AbstractAntaresSignalHistoryDrawer] */
 
 	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double {
-		return baseLineY - 4 * entry.signal.voltage
+		return baseLineY - 8 * entry.signal.voltage
 	}
+
+	override val signalHeight: Double get() = 20.0
 
 	override fun drawCurve(context: DrawContext) {
 		var lastPoint = Point2D.ZERO

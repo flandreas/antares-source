@@ -22,8 +22,6 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 
 		/** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
 		private const val MULTIBIT_INSET = 3.0
-
-
 	}
 
 	/** Uses for drawing the signal value of a multi-bit [DigitalSignal].*/
@@ -34,6 +32,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 		verticalAlignment = VerticalAlignment.CENTER
 	)
 
+	override val signalHeight: Double get() = 20.0
 
 	/** ---- [DigitalSignalHistoryDrawer] */
 
@@ -57,7 +56,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 				} else {
 					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
-					multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
+					multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - signalHeight / 2)
 					drawMultiBitRightBorder(context, effNextX)
 				}
 
@@ -74,7 +73,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 				} else {
 					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
-					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
+					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - signalHeight / 2)
 					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX, first = false)
 				}
 
@@ -100,7 +99,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 			drawMultiBitSegment(context, xR = rightBorder, xL = xL, first = true)
 		}
 
-		context.g.fillOval(rightBorder - START_SIZE, baseLineY - SIGNAL_HEIGHT / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
+		context.g.fillOval(rightBorder - START_SIZE, baseLineY - signalHeight / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
 
 		multiBitLabel.color = if (fillSignal) color!!.textColor else Themes.get<GraphTheme>().annotation.color.textColor
 		multiBitLabel.draw(context)
@@ -123,21 +122,21 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 
 		if (first) {
 			path
-				.moveTo(xR, baseLineY - SIGNAL_HEIGHT)
+				.moveTo(xR, baseLineY - signalHeight)
 		} else {
 			path
-				.moveTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
-				.lineTo(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+				.moveTo(xR, baseLineY - signalHeight / 2)
+				.lineTo(xR - MULTIBIT_INSET, baseLineY - signalHeight)
 		}
 
 		if (xL > bounds.minX) {
 			path
-				.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-				.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
+				.lineTo(xL + MULTIBIT_INSET, baseLineY - signalHeight)
+				.lineTo(xL, baseLineY - signalHeight / 2)
 				.lineTo(xL + MULTIBIT_INSET, baseLineY)
 		} else {
 			path
-				.lineTo(xL, baseLineY - SIGNAL_HEIGHT)
+				.lineTo(xL, baseLineY - signalHeight)
 			if (fill) {
 				path
 					.lineTo(xL, baseLineY)
@@ -153,7 +152,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 		} else {
 			path
 				.lineTo(xR - MULTIBIT_INSET, baseLineY)
-				.lineTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
+				.lineTo(xR, baseLineY - signalHeight / 2)
 		}
 
 		return path
@@ -161,7 +160,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 
 	override fun signalY(entry: SignalHistoryEntry<DigitalSignal>): Double {
 		return if (entry.signal.bitAt(0).isSet) {
-			baseLineY - SIGNAL_HEIGHT
+			baseLineY - signalHeight
 		} else {
 			baseLineY
 		}

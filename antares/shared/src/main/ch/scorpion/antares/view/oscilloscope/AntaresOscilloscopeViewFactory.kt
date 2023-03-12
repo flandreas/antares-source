@@ -10,7 +10,12 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimelineViewImpl
 
 class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
 
-    override val rowHeight: Int get() = DigitalSignalHistoryDrawer.ROW_HEIGHT
+	override fun getRowHeight(graphType: GraphType): Int =
+		when (graphType) {
+			AntaresGraphTypes.Digital -> DigitalSignalHistoryDrawer.ROW_HEIGHT
+			AntaresGraphTypes.Analog -> AnalogSignalHistoryDrawer.ROW_HEIGHT
+			else -> throw IllegalArgumentException("unknown GraphType $graphType")
+		}
 
     override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any> =
 		when (graphType) {

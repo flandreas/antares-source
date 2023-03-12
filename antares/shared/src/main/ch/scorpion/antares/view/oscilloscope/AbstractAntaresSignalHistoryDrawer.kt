@@ -21,9 +21,6 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	companion object {
 
-		/** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
-		const val SIGNAL_HEIGHT = 20.0
-
 		/** The name of the [Boolean] property in [Properties] that determines whether signal curves are filled.*/
 		const val PROP_FILL_SIGNAL = "DigitalSignalHistoryDrawer.fillSignal"
 
@@ -120,6 +117,9 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	/** ---- [AbstractAntaresSignalHistoryDrawer]*/
 
+	/** The maximum height the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
+	protected abstract val signalHeight: Double
+
 	protected abstract fun drawCurve(context: DrawContext)
 
 	protected abstract fun signalY(entry: SignalHistoryEntry<T>): Double
@@ -146,7 +146,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 	}
 
 	protected fun drawBufferEnd(context: DrawContext, xL: Double) {
-		val y = baseLineY - SIGNAL_HEIGHT / 2
+		val y = baseLineY - signalHeight / 2
 		context.g.color = BACKGROUND_COLOR.foregroundColor
 
 		var x = xL
