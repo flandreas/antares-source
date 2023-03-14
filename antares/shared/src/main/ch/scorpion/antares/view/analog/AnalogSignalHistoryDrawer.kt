@@ -35,7 +35,7 @@ class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSigna
 				lastPoint = Point2D(x, y)
 				effNextX = max(x, bounds.minX)
 
-				drawSingleBitRightBorder(context, effNextX, y)
+				drawRightBorder(context, effNextX, y)
 
 				if (x <= bounds.minX) {
 					break
@@ -45,7 +45,7 @@ class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSigna
 				val nextY = y
 				effNextX = max(nextX, bounds.minX)
 
-				drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+				drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 
 				if (nextX <= bounds.minX) {
 					break

@@ -52,7 +52,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 				effNextX = max(x, bounds.minX)
 
 				if (singleBit) {
-					drawSingleBitRightBorder(context, effNextX, y)
+					drawRightBorder(context, effNextX, y)
 				} else {
 					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
@@ -69,7 +69,7 @@ class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSig
 				effNextX = max(nextX, bounds.minX)
 
 				if (singleBit) {
-					drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+					drawHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 				} else {
 					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER

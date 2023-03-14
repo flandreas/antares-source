@@ -244,6 +244,26 @@ class Graphics2DJs(
 		fillOval(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
 	}
 
+	override fun drawPolygon(x: IntArray, y: IntArray, n: Int) {
+		ctx.beginPath()
+		playPolygon(x, y, n)
+		ctx.stroke()
+	}
+
+	override fun fillPolygon(x: IntArray, y: IntArray, n: Int) {
+		ctx.beginPath()
+		playPolygon(x, y, n)
+		ctx.fill()
+	}
+
+	private fun playPolygon(x: IntArray, y: IntArray, n: Int) {
+		ctx.moveTo(x[0].toDouble(), y[0].toDouble())
+		for (i in 1 until n) {
+			ctx.lineTo(x[i].toDouble(), y[i].toDouble())
+		}
+		ctx.closePath()
+	}
+
 	override fun drawDot(x: Int, y: Int) {
 		fillRect(x, y, 1, 1)
 	}

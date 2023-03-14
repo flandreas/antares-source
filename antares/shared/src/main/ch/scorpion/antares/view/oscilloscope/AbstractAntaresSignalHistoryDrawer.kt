@@ -124,7 +124,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	protected abstract fun signalY(entry: SignalHistoryEntry<T>): Double
 
-	protected fun drawSingleBitRightBorder(context: DrawContext, xL: Double, y: Double) {
+	protected fun drawRightBorder(context: DrawContext, xL: Double, y: Double) {
 		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
 			context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
@@ -134,7 +134,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 		context.g.fillOval(rightBorder - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
 	}
 
-	protected fun drawSingleBitSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
+	protected fun drawHorizontalSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
 		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
 			context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
@@ -143,6 +143,27 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 		context.g.color = color!!.foregroundColor
 		context.g.drawLine(xR, yR, xR, yL)
 		context.g.drawLine(xR, yL, xL, yL)
+	}
+
+	private val nonHorSegX = IntArray(4) { 0 }
+	private val nonHorSegY = IntArray(4) { 0 }
+
+	protected fun drawNonHorizontalSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
+		nonHorSegX[0] = xL.toInt()
+		nonHorSegX[1] = xL.toInt()
+		nonHorSegX[2] = xR.toInt()
+		nonHorSegX[3] = xR.toInt()
+		nonHorSegY[0] = baseLineY.toInt()
+		nonHorSegY[1] = yL.toInt()
+		nonHorSegY[2] = yR.toInt()
+		nonHorSegY[3] = baseLineY.toInt()
+
+		if (fillSignal) {
+			context.g.color = color!!.backgroundColor
+			context.g.fillPolygon(nonHorSegX, nonHorSegY, 4)
+		}
+		context.g.color = color!!.foregroundColor
+		context.g.drawLine(xR, yR, xL, yL)
 	}
 
 	protected fun drawBufferEnd(context: DrawContext, xL: Double) {

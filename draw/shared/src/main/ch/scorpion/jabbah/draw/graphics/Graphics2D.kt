@@ -81,6 +81,10 @@ interface Graphics2D {
 		fillOval(x - r, y - r, 2 * r, 2 * r)
 	}
 
+	fun drawPolygon(x: IntArray, y: IntArray, n: Int)
+
+	fun fillPolygon(x: IntArray, y: IntArray, n: Int)
+
     fun drawDot(x: Int, y: Int)
 
     fun drawString(s: String, x: Int, y: Int)

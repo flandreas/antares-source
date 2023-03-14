@@ -225,6 +225,14 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         g.fill(ELLIPSE)
     }
 
+	override fun drawPolygon(x: IntArray, y: IntArray, n: Int) {
+		g.drawPolygon(x, y, n)
+	}
+
+	override fun fillPolygon(x: IntArray, y: IntArray, n: Int) {
+		g.fillPolygon(x, y, n)
+	}
+
     override fun drawDot(x: Int, y: Int) {
         fillRect(x.toDouble(), y.toDouble(), 2.0, 2.0)
     }
