@@ -71,43 +71,22 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	override val lineWidth: Double get() = 0.0
 
 	override fun draw(context: DrawContext) {
-		// Draw background
-		context.g.color = background.backgroundColor
-		context.g.fill(bounds)
-		context.g.draw(bounds)
-
-		// Draw horizontal axis
-		context.g.color = background.foregroundColor
-		context.g.stroke = BASELINE_STROKE
-		context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
+		drawBackground(context)
+		drawBaseline(context)
 
 		if (signalHistory == null || timeline == null || color == null) {
 			return
 		}
 
-		if (gridSignalHistory != null) {
-			// Draw vertical grid lines
-			context.g.stroke = GRID_LINE_STROKE
-			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
-				val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
-				if (x <= bounds.minX) {
-					break
-				}
-				context.g.drawLine(x, bounds.minY, x, bounds.maxY)
-			}
+		if (!signalHistory!!.isEmpty) {
+			drawGrid(context)
+			drawCurve(context)
 		}
-
-		if (signalHistory!!.size == 0) {
-			return
-		}
-
-		drawCurve(context)
 	}
 
 	protected val rightBorder: Double get() = bounds.maxX - 20
 
 	protected val baseLineY: Double get() = bounds.maxY - 2
-
 
 	/** ---- [AbstractSignalHistoryDrawer]*/
 
@@ -117,6 +96,31 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	protected abstract fun drawCurve(context: DrawContext)
 
 	protected abstract fun signalY(entry: SignalHistoryEntry<T>): Double
+
+	private fun drawBackground(context: DrawContext) {
+		context.g.color = background.backgroundColor
+		context.g.fill(bounds)
+		context.g.draw(bounds)
+	}
+
+	private fun drawBaseline(context: DrawContext) {
+		context.g.color = background.foregroundColor
+		context.g.stroke = BASELINE_STROKE
+		context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
+	}
+
+	private fun drawGrid(context: DrawContext) {
+		if (gridSignalHistory != null) {
+			context.g.stroke = GRID_LINE_STROKE
+			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
+				val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
+				if (x <= bounds.minX) {
+					break
+				}
+				context.g.drawLine(x, bounds.minY, x, bounds.maxY)
+			}
+		}
+	}
 
 	protected fun drawRightBorder(context: DrawContext, xL: Double, y: Double) {
 		if (fillSignal) {

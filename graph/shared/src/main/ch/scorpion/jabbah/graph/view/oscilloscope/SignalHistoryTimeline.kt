@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-/** Provides a transformation from execution time to model space coordinates used for drawing [SignalHistories][SignalHistory]. */
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
+
+/** Provides a transformation from execution time to model space coordinates used for drawing [SignalHistories]. */
 interface SignalHistoryTimeline {
 
     var scale: Double

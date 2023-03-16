@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 
 /**
- * A [SignalHistoryTimeline] implementation used for for [Oscilloscope].
+ * A [SignalHistoryTimeline] implementation used for [Oscilloscope].
  */
 class OscilloscopeViewTimeline(
 	override var scale: Double,
