@@ -1,6 +1,5 @@
-package ch.scorpion.antares.view.oscilloscope
+package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -9,23 +8,18 @@ import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
 import kotlin.math.max
 
-abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
-	: AbstractRectangle(Rectangle2D()), SignalHistoryDrawer<T> {
+abstract class AbstractSignalHistoryDrawer<T: Any>(
+	private val background: CompositeColor
+): AbstractRectangle(Rectangle2D()), SignalHistoryDrawer<T> {
 
 	companion object {
 
 		/** The name of the [Boolean] property in [Properties] that determines whether signal curves are filled.*/
 		const val PROP_FILL_SIGNAL = "DigitalSignalHistoryDrawer.fillSignal"
-
-		/** The color used for drawing the background.*/
-		val BACKGROUND_COLOR get() = Themes.get<AntaresTheme>().screen
 
 		/** The half size of the dot that marks the start of the signal curve, and therefore the current time.*/
 		const val START_SIZE = 2.0
@@ -40,7 +34,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 		const val BUFFER_END_WIDTH = BUFFER_END_CIRCLE_COUNT * BUFFER_END_CIRCLE_DIST + 2 * BUFFER_END_CIRCLE_RADIUS
 	}
 
-	/** The [SignalHistory] drawn by this [AbstractAntaresSignalHistoryDrawer].*/
+	/** The [SignalHistory] drawn by this [AbstractSignalHistoryDrawer].*/
 	protected var signalHistory: SignalHistory<T>? = null
 		private set
 
@@ -78,12 +72,12 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	override fun draw(context: DrawContext) {
 		// Draw background
-		context.g.color = BACKGROUND_COLOR.backgroundColor
+		context.g.color = background.backgroundColor
 		context.g.fill(bounds)
 		context.g.draw(bounds)
 
 		// Draw horizontal axis
-		context.g.color = BACKGROUND_COLOR.foregroundColor
+		context.g.color = background.foregroundColor
 		context.g.stroke = BASELINE_STROKE
 		context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
 
@@ -115,7 +109,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 	protected val baseLineY: Double get() = bounds.maxY - 2
 
 
-	/** ---- [AbstractAntaresSignalHistoryDrawer]*/
+	/** ---- [AbstractSignalHistoryDrawer]*/
 
 	/** The maximum height of the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
 	protected abstract val signalHeight: Double
@@ -168,7 +162,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	protected fun drawBufferEnd(context: DrawContext, xL: Double) {
 		val y = baseLineY - signalHeight / 2
-		context.g.color = BACKGROUND_COLOR.foregroundColor
+		context.g.color = background.foregroundColor
 
 		var x = xL
 		for (i in 1..BUFFER_END_CIRCLE_COUNT) {

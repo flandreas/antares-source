@@ -1,14 +1,17 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.oscilloscope.AbstractAntaresSignalHistoryDrawer
+import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import kotlin.math.abs
 import kotlin.math.max
 
-class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSignal>() {
+class AnalogSignalHistoryDrawer
+	: AbstractSignalHistoryDrawer<AnalogSignal>(Themes.get<AntaresTheme>().screen) {
 
 	companion object {
 		const val ROW_HEIGHT = 60
@@ -17,7 +20,7 @@ class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSigna
 		private const val DEF_SIGNAL_HEIGHT = SCALE * DEF_MAX_VOLTAGE
 	}
 
-	/** ---- [AbstractAntaresSignalHistoryDrawer] */
+	/** ---- [AbstractSignalHistoryDrawer] */
 
 	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double {
 		return baseLineY - SCALE * entry.signal.voltage

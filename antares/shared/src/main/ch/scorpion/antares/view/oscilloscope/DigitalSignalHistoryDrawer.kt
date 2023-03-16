@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.oscilloscope
 
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -10,10 +11,12 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.max
 
-class DigitalSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<DigitalSignal>() {
+class DigitalSignalHistoryDrawer
+	: AbstractSignalHistoryDrawer<DigitalSignal>(Themes.get<AntaresTheme>().screen) {
 
 	companion object {
 
