@@ -117,7 +117,7 @@ abstract class AbstractAntaresSignalHistoryDrawer<T: Any>
 
 	/** ---- [AbstractAntaresSignalHistoryDrawer]*/
 
-	/** The maximum height the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
+	/** The maximum height of the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
 	protected abstract val signalHeight: Double
 
 	protected abstract fun drawCurve(context: DrawContext)

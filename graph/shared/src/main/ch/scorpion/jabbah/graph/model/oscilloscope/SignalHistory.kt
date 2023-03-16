@@ -20,6 +20,12 @@ interface SignalHistory<out T : Any> {
 	/** Returns the number of entries in this [SignalHistory].*/
 	val size: Int
 
+	/** Returns the minimum signal value, or `null` if [T] isn't comparable.*/
+	val minimum: T?
+
+	/** Returns the maximum signal value, or `null` if [T] isn't comparable.*/
+	val maximum: T?
+
 	fun last(): SignalHistoryEntry<T>
 
 	fun lastOrNull(): SignalHistoryEntry<T>?
@@ -50,24 +56,24 @@ class SignalHistoryImpl<T : Any>(
 	override var overflow: Boolean = bufferSize == 0
 		private set
 
+	override var minimum: T? = null
+		private set
+
+	override var maximum: T? = null
+		private set
+
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
-	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> {
-		return list.filter { it.time >= startTime }.iterator()
-	}
+	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
+		list.filter { it.time >= startTime }.iterator()
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
-	override fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> {
-		return list.asReversed().filter { it.time >= startTime }.iterator()
-	}
+	override fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> =
+		list.asReversed().filter { it.time >= startTime }.iterator()
 
-	override fun last(): SignalHistoryEntry<T> {
-		return list.last()
-	}
+	override fun last(): SignalHistoryEntry<T> = list.last()
 
 	/** Returns the last [SignalHistoryEntry], i.e. the one with the most recent time.*/
-	override fun lastOrNull(): SignalHistoryEntry<T>? {
-		return list.lastOrNull()
-	}
+	override fun lastOrNull(): SignalHistoryEntry<T>? = list.lastOrNull()
 
 	/** ---- [SignalHistoryImpl] */
 
@@ -86,12 +92,23 @@ class SignalHistoryImpl<T : Any>(
 
 	fun add(entry: SignalHistoryEntry<T>) {
 		require(list.isEmpty() || list.last().time <= entry.time)
+
 		if (list.isEmpty() || list.last().signal != entry.signal) {
 			if (size == bufferSize) {
 				list.removeAt(0)
 				overflow = true
 			}
 			list.add(entry)
+
+			if (entry.signal is Comparable<*>) {
+				// TODO: What if current minimum or maximum has bee removed?
+				if (minimum == null || (minimum as Comparable<Any>) > entry.signal as Comparable<Any>) {
+					minimum = entry.signal
+				}
+				if (maximum == null || (maximum as Comparable<Any>) < entry.signal as Comparable<Any>) {
+					maximum = entry.signal
+				}
+			}
 		}
 	}
 }

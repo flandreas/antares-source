@@ -5,21 +5,30 @@ import ch.scorpion.antares.view.oscilloscope.AbstractAntaresSignalHistoryDrawer
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import kotlin.math.abs
 import kotlin.math.max
 
 class AnalogSignalHistoryDrawer : AbstractAntaresSignalHistoryDrawer<AnalogSignal>() {
 
 	companion object {
 		const val ROW_HEIGHT = 60
+		private const val SCALE = 8
+		private const val DEF_MAX_VOLTAGE = 5.0
+		private const val DEF_SIGNAL_HEIGHT = SCALE * DEF_MAX_VOLTAGE
 	}
 
 	/** ---- [AbstractAntaresSignalHistoryDrawer] */
 
 	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double {
-		return baseLineY - 8 * entry.signal.voltage
+		return baseLineY - SCALE * entry.signal.voltage
 	}
 
-	override val signalHeight: Double get() = 20.0
+	override val signalHeight: Double get() =
+		if (signalHistory?.minimum == null || signalHistory?.maximum == null) {
+			DEF_SIGNAL_HEIGHT
+		} else {
+			SCALE * abs(signalHistory!!.maximum!!.voltage - signalHistory!!.minimum!!.voltage)
+		}
 
 	override fun drawCurve(context: DrawContext) {
 		var lastPoint = Point2D.ZERO

@@ -32,12 +32,20 @@ class SignalHistoryImplTest {
 
 	@Test
 	fun shouldTruncate() {
-		history = SignalHistoryImpl<Boolean>(1)
+		history = SignalHistoryImpl(1)
 		history.add(true, 0)
 		history.add(false, 100)
 		history.add(true, 200)
 
 		assertEquals(1, history.size)
 		assertEquals(200L, history.lastOrNull()!!.time)
+	}
+
+	@Test
+	fun shouldYieldMinimum() {
+		history.add(false, 100)
+		history.add(true, 200)
+		assertEquals(false, history.minimum)
+		assertEquals(true, history.maximum)
 	}
 }
