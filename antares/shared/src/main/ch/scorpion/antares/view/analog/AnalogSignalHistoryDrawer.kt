@@ -59,7 +59,8 @@ class AnalogSignalHistoryDrawer(
 				val nextY = y
 				effNextX = max(nextX, bounds.minX)
 
-				drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+				//drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+				drawHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 
 				if (nextX <= bounds.minX) {
 					break

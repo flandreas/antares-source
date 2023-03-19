@@ -144,6 +144,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		context.g.drawLine(xR, yL, xL, yL)
 	}
 
+	/*
 	private val nonHorSegX = IntArray(4) { 0 }
 	private val nonHorSegY = IntArray(4) { 0 }
 
@@ -164,6 +165,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		context.g.color = color!!.foregroundColor
 		context.g.drawLine(xR, yR, xL, yL)
 	}
+	 */
 
 	protected fun drawBufferEnd(context: DrawContext, xL: Double) {
 		val y = baseLineY - signalHeight / 2
