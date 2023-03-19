@@ -19,7 +19,6 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_W
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.ICON_BUTTON_SIZE
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.MAX_ROW_NUMBER
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.ROW_INSET
@@ -56,7 +55,7 @@ class OscilloscopeScaleRowView(
 		add(addButton)
 		add(scaleButton)
 
-		timelineView.setBounds(OscilloscopeView.DRAWER_X, 0.0, DRAWER_W, oscilloscopeView.rowHeight.toDouble())
+		timelineView.setBounds(OscilloscopeView.DRAWER_X, 0.0, oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
 		add(timelineView)
 	}
 

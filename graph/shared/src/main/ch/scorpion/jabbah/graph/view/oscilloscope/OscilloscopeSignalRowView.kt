@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_X
 
 /**
  * Part of an [OscilloscopeView].
@@ -28,14 +29,13 @@ class OscilloscopeSignalRowView(
 	initLocation: Point2D,
 	val color: ReferenceColor,
 	private val service: OscilloscopeViewService,
-	factory: OscilloscopeViewFactory
+	private val drawer: SignalHistoryDrawer<Any>,
+	val yAxis: SignalHistoryYAxis<*>?
 ) : DrawableContainerImpl<Drawable>(location = initLocation, useLocation = true) {
 
 	companion object {
 		private val NON_INDIVIDUAL_SIGNAL_COLOR = CompositeColor(Color.LIGHT_GRAY, Color.DARK_GRAY)
 	}
-
-	private val drawer = factory.createSignalHistoryDrawer(oscilloscopeView.model.graphType)
 
 	val probeView = OscilloscopeProbeView(
 		location = Point2D(2.0 * OscilloscopeView.ROW_INSET + OscilloscopeView.ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
@@ -53,9 +53,10 @@ class OscilloscopeSignalRowView(
 	init {
 		add(removeButton)
 		add(probeView)
-
-		drawer.setBounds(OscilloscopeView.DRAWER_X, 0.0, OscilloscopeView.DRAWER_W, oscilloscopeView.rowHeight.toDouble())
 		add(drawer)
+		if (yAxis != null) {
+			add(yAxis)
+		}
 	}
 
 	var name: String
@@ -63,6 +64,11 @@ class OscilloscopeSignalRowView(
 		set(value) {
 			probeView.name = value
 		}
+
+	fun updateGeometry() {
+		drawer.setBounds(DRAWER_X, 0.0, oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
+		yAxis?.setBounds(DRAWER_X + oscilloscopeView.drawerWidth, 0.0, yAxis.width, oscilloscopeView.rowHeight.toDouble())
+	}
 
 	fun updateState() {
 		removeButton.enabled = oscilloscopeView.applicationMode.isEdit()

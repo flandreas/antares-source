@@ -72,7 +72,6 @@ class OscilloscopeView(
 		const val ROW_INSET = 10
 		const val ICON_BUTTON_SIZE = 20
 		val DRAWER_X = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + OscilloscopeProbeViewIcon.SIZE
-		val DRAWER_W = WIDTH - DRAWER_X - ROW_INSET
 
 		private val CLOCKED_ANNOTATION = System.createPath()
 			.moveTo(0, -5)
@@ -137,6 +136,11 @@ class OscilloscopeView(
 				updateState()
 			}
 		}
+
+	private val yAxisWidth: Double get() =
+		rows.filter { it.yAxis != null }.maxOfOrNull { it.yAxis!!.width } ?: 0.0
+
+	val drawerWidth: Double get() = WIDTH - DRAWER_X - ROW_INSET - yAxisWidth
 
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -349,9 +353,22 @@ class OscilloscopeView(
 
 	private fun addRowView(name: String) {
 		val y = TITLE_HEIGHT + rows.size * rowHeight
-		val rowView = OscilloscopeSignalRowView(this, name, Point2D(0, y), nextProbeColor, service, factory)
+		val yAxis = factory.createSignalHistoryYAxis(model.graphType)
+		val rowView = OscilloscopeSignalRowView(
+			this,
+			name,
+			Point2D(0, y),
+			nextProbeColor,
+			service,
+			factory.createSignalHistoryDrawer(model.graphType, yAxis),
+			yAxis)
 		rows.add(rowView)
 		container.add(rowView)
+		updateRowViews()
+	}
+
+	private fun updateRowViews() {
+		rows.forEach { it.updateGeometry() }
 	}
 
 	private val nextProbeColor: ReferenceColor get() = if (BaseModule.properties.getBoolean(PROP_INDIVIDUAL_PROBE_COLORS)) {

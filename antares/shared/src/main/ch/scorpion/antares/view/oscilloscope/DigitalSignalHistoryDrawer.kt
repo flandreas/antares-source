@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.max
 
 class DigitalSignalHistoryDrawer
-	: AbstractSignalHistoryDrawer<DigitalSignal>(Themes.get<AntaresTheme>().screen) {
+	: AbstractSignalHistoryDrawer<DigitalSignal>(Themes.get<AntaresTheme>().screen, null) {
 
 	companion object {
 

@@ -11,8 +11,10 @@ interface OscilloscopeViewFactory {
      */
     fun getRowHeight(graphType: GraphType): Int
 
+	fun createSignalHistoryYAxis(graphType: GraphType): SignalHistoryYAxis<*>?
+
     /** Creates a new [SignalHistoryDrawer].*/
-    fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any>
+    fun createSignalHistoryDrawer(graphType: GraphType, yAxis: SignalHistoryYAxis<*>?): SignalHistoryDrawer<Any>
 
 	fun createSignalHistoryTimelineView(): SignalHistoryTimelineView
 }
@@ -21,7 +23,9 @@ class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
 
 	override fun getRowHeight(graphType: GraphType): Int = 0
 
-    override fun createSignalHistoryDrawer(graphType: GraphType): SignalHistoryDrawer<Any> {
+	override fun createSignalHistoryYAxis(graphType: GraphType): SignalHistoryYAxis<*>? = null
+
+    override fun createSignalHistoryDrawer(graphType: GraphType, yAxis: SignalHistoryYAxis<*>?): SignalHistoryDrawer<Any> {
         throw UnsupportedOperationException("not implemented")
     }
 

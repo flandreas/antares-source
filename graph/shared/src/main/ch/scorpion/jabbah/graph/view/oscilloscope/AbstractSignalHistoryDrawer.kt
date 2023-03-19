@@ -13,7 +13,8 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import kotlin.math.max
 
 abstract class AbstractSignalHistoryDrawer<T: Any>(
-	private val background: CompositeColor
+	private val background: CompositeColor,
+	protected val yAxis: SignalHistoryYAxis<T>?
 ): AbstractRectangle(Rectangle2D()), SignalHistoryDrawer<T> {
 
 	companion object {
@@ -86,7 +87,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 
 	protected val rightBorder: Double get() = bounds.maxX - 20
 
-	protected val baseLineY: Double get() = bounds.maxY - 2
+	protected val baseLineY: Double get() = yAxis?.baselineY ?: bounds.maxY - 2
 
 	/** ---- [AbstractSignalHistoryDrawer]*/
 
