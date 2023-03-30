@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModule.properties
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -50,8 +51,19 @@ class RubberBandHandler(
 
 	/** ---- [InputEventHandler] */
 
+	override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		if (context.keyEvent?.key == KeyEvent.VK_ALT) {
+			this.context = context
+			performSelection(true)
+		}
+		return this
+	}
+
     override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
-	    // Avoid stop dragging Rubberband when SHIFT is released
+	    if (context.keyEvent?.key == KeyEvent.VK_ALT) {
+		    this.context = context
+		    performSelection(false)
+	    }
 	    return this
     }
 
@@ -88,17 +100,19 @@ class RubberBandHandler(
 		}
 		val delay = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)
 		return if (delay != null) {
-			timer.initialize(delay, repeats = false) {
-				selectionTargetStrategy.select(
-					context,
-					currentSelection,
-					rubberBand
-				)
-			}
+			timer.initialize(delay, repeats = false) { performSelection(context.mouseEvent?.isAltDown == true) }
 			timer
 		} else {
 			null
 		}
+	}
+
+	private fun performSelection(isOther: Boolean) {
+		effectiveTargetStrategy(isOther).select(
+			context,
+			currentSelection,
+			rubberBand
+		)
 	}
 
 	private fun requestExpandSelection(context: EditInputEventContext) {
@@ -109,9 +123,16 @@ class RubberBandHandler(
 			}
 		} else {
 			this.context = context
-			selectionTargetStrategy.select(this.context, this.currentSelection, rubberBand)
+			effectiveTargetStrategy(context.mouseEvent?.isAltDown == true).select(this.context, this.currentSelection, rubberBand)
 		}
 	}
+
+	private fun effectiveTargetStrategy(isOther: Boolean) =
+		if (isOther) {
+			selectionTargetStrategy.other
+		} else {
+			selectionTargetStrategy
+		}
 
 	/** Determines the what [Component]s are selected in relation to the current [RubberBand] geometry.*/
 	enum class SelectionTargetStrategy(
@@ -145,5 +166,11 @@ class RubberBandHandler(
 		abstract fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand)
 
 		override fun toString(): String = Translations.getString(nameKey)
+
+		val other: SelectionTargetStrategy get() =
+			when (this) {
+				CONTAINS -> INTERSECTS
+				INTERSECTS -> CONTAINS
+			}
 	}
 }

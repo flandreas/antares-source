@@ -12,7 +12,7 @@ import kotlin.test.BeforeTest
 
 abstract class AbstractRubberBandHandlerTest : AbstractEditIntegrationTest() {
 
-	private val driver = EditorToolDriver(editor)
+	protected val driver = EditorToolDriver(editor)
 
 	protected lateinit var rectangle: Component
 		private set
@@ -35,6 +35,12 @@ abstract class AbstractRubberBandHandlerTest : AbstractEditIntegrationTest() {
 		driver.mouseMoveTo(0, 0)
 		driver.pressMouseAt(0, 0)
 		driver.dragMouseTo(100, 100)
+	}
+
+	protected fun partiallyEncloseRectangle() {
+		driver.mouseMoveTo(0, 0)
+		driver.pressMouseAt(0, 0)
+		driver.dragMouseTo(15, 15)
 	}
 
 	protected fun notEncloseRectangle() {
