@@ -38,7 +38,7 @@ class SelectionToolImplTest {
 		editor.drawing.add(rect1)
 		editor.drawing.add(rect2)
 
-		editor.selectionTool.rubberBandHandler.selectionStrategy.delaySelectTimer = null
+		editor.selectionTool.rubberBandHandler.selectionTimeStrategy.delaySelectTimer = null
 	}
 
 	@Test

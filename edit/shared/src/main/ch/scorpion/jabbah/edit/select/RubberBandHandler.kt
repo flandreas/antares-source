@@ -86,6 +86,9 @@ class RubberBandHandler(
 	     * Editable for disabling the feature during tests.
 	     */
 	    var delaySelectTimer: Timer? = null
+		    set(value) {
+				field = initializeTimer(value)
+			}
 
 	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
         abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
@@ -96,11 +99,30 @@ class RubberBandHandler(
 			currentSelection.clear()
 			currentSelection.addAll(selectionManager.selection)
 		}
+
+	    private fun initializeTimer(timer: Timer?): Timer? {
+		    if (timer == null) {
+				return null
+		    }
+		    val delay = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)
+		    return if (delay != null) {
+			    timer.initialize(delay, repeats = false) {
+				    selectionTargetStrategy.select(
+					    context,
+					    currentSelection,
+					    rubberBandRef
+				    )
+			    }
+			    timer
+		    } else {
+			    null
+		    }
+	    }
     }
 
 	enum class SelectionTargetStrategy(
 		override val customName: String,
-		val nameKey: String
+		private val nameKey: String
 	): EnumProperty<SelectionTargetStrategy> {
 
 		CONTAINS("contains", "edit.preferences.RubberBand.targetStrategy.contains") {
@@ -128,26 +150,14 @@ class RubberBandHandler(
 		override fun toString(): String = Translations.getString(nameKey)
 	}
 
-	val selectionStrategy: SelectionTimeStrategy by lazy { properties.get(PROP_SELECT_STRATEGY) }
+	val selectionTimeStrategy: SelectionTimeStrategy by lazy { properties.get(PROP_SELECT_STRATEGY) }
+
 	private val selectionTargetStrategy: SelectionTargetStrategy by lazy {
 		SelectionTargetStrategy.withName(properties.getString(PROP_SELECT_TARGET_STRATEGY))
 	}
 
 	init {
-		selectionStrategy.delaySelectTimer = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)?.let { delay ->
-			if (delay > 0) {
-				System.createTimer().also {
-					it.initialize(delay, repeats = false) {
-						selectionTargetStrategy.select(
-							selectionStrategy.context,
-							selectionStrategy.currentSelection,
-							selectionStrategy.rubberBandRef)
-					}
-				}
-			} else {
-				null
-			}
-		}
+		selectionTimeStrategy.delaySelectTimer = System.createTimer()
 	}
 
 	/** ---- [InputEventHandler] */
@@ -159,21 +169,21 @@ class RubberBandHandler(
 
 	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mousePressed(context)
-	    selectionStrategy.mousePressed(rubberBand, context, selectionTargetStrategy)
+	    selectionTimeStrategy.mousePressed(rubberBand, context, selectionTargetStrategy)
         return rubberBand.inputEventHandler.mousePressed(context)
     }
 
     override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
         super.mouseDragged(context)
         rubberBand.inputEventHandler.mouseDragged(context)
-        selectionStrategy.mouseDragged(rubberBand, context, selectionTargetStrategy)
+        selectionTimeStrategy.mouseDragged(rubberBand, context, selectionTargetStrategy)
         return this
     }
 
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mouseReleased(context)
         rubberBand.inputEventHandler.mouseReleased(context)
-        selectionStrategy.mouseReleased(rubberBand, context, selectionTargetStrategy)
+        selectionTimeStrategy.mouseReleased(rubberBand, context, selectionTargetStrategy)
         return null
     }
 }
