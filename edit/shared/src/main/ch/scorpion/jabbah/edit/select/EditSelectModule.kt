@@ -35,7 +35,6 @@ object EditSelectModule : AbstractModule() {
         properties.set(RubberBand.PROP_STROKE_PAINT, Color.BLACK)
         properties.set(RubberBand.PROP_FILL_PAINT, Color(255, 200, 0, 32))
         properties.set(RubberBand.PROP_STROKE, Stroke(0.1f, LineCap.SQUARE, LineJoin.MITER, 10.0f, floatArrayOf(5f, 5f), 0f))
-        properties.set(RubberBandHandler.PROP_SELECT_STRATEGY, RubberBandHandler.SelectionTimeStrategy.SELECT_ON_DRAG)
         properties.set(RubberBandHandler.PROP_SELECT_TARGET_STRATEGY, RubberBandHandler.SelectionTargetStrategy.CONTAINS.customName)
 	    properties.set(RubberBandHandler.PROP_SELECT_DELAY_MS, 200)
 

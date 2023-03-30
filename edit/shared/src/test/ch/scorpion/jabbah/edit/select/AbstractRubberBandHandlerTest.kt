@@ -18,7 +18,7 @@ abstract class AbstractRubberBandHandlerTest : AbstractEditIntegrationTest() {
 		private set
 
 	protected fun setTimer(timer: Timer?) {
-		editor.selectionTool.rubberBandHandler.selectionTimeStrategy.delaySelectTimer = timer
+		editor.selectionTool.rubberBandHandler.delaySelectTimer = timer
 	}
 
 	@BeforeTest
