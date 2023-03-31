@@ -3,11 +3,8 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ApplicationDataViewController
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -207,6 +204,9 @@ open class GraphFrameController<T: GraphFrame>(
 							)
 						) {
 							showContainer()
+							System.invokeLater {
+								view.containerView.canvas.requestViewFocus()
+							}
 						}
 					} else if (e.source === view.containerView) {
 						if (view.containerView.zoomFactor >= SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(
@@ -214,6 +214,9 @@ open class GraphFrameController<T: GraphFrame>(
 							)
 						) {
 							showDesktop()
+							System.invokeLater {
+								view.desktopView.canvas.requestViewFocus()
+							}
 						}
 					}
 				}

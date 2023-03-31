@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
@@ -25,19 +24,21 @@ class ZoomPanController(val view: View<*>) {
 
 		/** The name of the 'wheel pan step' [Float] property in [Properties].*/
 		const val PROP_WHEEL_PAN_STEP = "view.ZoomPanController.wheelPanStep"
-
 	}
 
 	var enabled: Boolean = false
 		set(value) {
+			println("enabled = $value")
 			if (value) {
-				view.addMouseListener(controller)
-				view.addMouseMotionListener(controller)
-				view.addMouseWheelListener(controller)
+				view.addMouseListener(mouseController)
+				view.addMouseMotionListener(mouseController)
+				view.addMouseWheelListener(mouseController)
+				view.addKeyListener(mouseWheelModeController)
 			} else {
-				view.removeMouseListener(controller)
-				view.removeMouseMotionListener(controller)
-				view.removeMouseWheelListener(controller)
+				view.removeMouseListener(mouseController)
+				view.removeMouseMotionListener(mouseController)
+				view.removeMouseWheelListener(mouseController)
+				view.removeKeyListener(mouseWheelModeController)
 			}
 			field = value
 		}
@@ -48,7 +49,9 @@ class ZoomPanController(val view: View<*>) {
 			autoPanning.enabled = value
 		}
 
-	private val controller = Controller()
+	private val mouseController = MouseController()
+
+	private val mouseWheelModeController = MouseWheelModeController()
 
 	private val autoPanning = AutoPanning(view)
 
@@ -60,22 +63,32 @@ class ZoomPanController(val view: View<*>) {
 
 	private val wheelZoomRequiresMeta: Boolean get() = BaseModule.properties.getBoolean(PROP_WHEEL_ZOOM_REQUIRES_META)
 
-	var startPos: Point2D = Point2D.ZERO
+	private var startPos: Point2D = Point2D.ZERO
 
-	inner class Controller : MouseAdapter() {
+	private fun startPan(pos: Point2D) {
+		startPos = pos
+	}
+
+	private fun pan(pos: Point2D) {
+		val delta = pos.subtract(startPos)
+		view.navigator.panBy(delta.x.toInt(), delta.y.toInt())
+		startPos = pos
+	}
+
+	private inner class MouseController : MouseAdapter() {
 
 		private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
 
 		private fun isZoomWithMetaIfRequired(e: MouseEvent) = e.isMetaDown || !wheelZoomRequiresMeta
 
-		private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
+		private fun getZoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
 			if (e.wheelRotation != 0) {
 				return if (isZoomOutWheelRotation(e)) 1 / wheelZoomStep else wheelZoomStep
 			}
 			return 1.0
 		}
 
-		private fun panVectorFromWheelRotation(e: MouseEvent): Point2D {
+		private fun getPanVectorFromWheelRotation(e: MouseEvent): Point2D {
 			if (e.wheelRotation != 0) {
 				return if (e.isShiftDown) {
 					Point2D(e.wheelRotation * wheelPanStep, 0)
@@ -128,26 +141,80 @@ class ZoomPanController(val view: View<*>) {
 			// Set zoomStrategy BEFORE changing the zoomFactor to avoid switching mode in GraphFrame
 			view.zoomStrategy = ZoomStrategy.NONE
 
-			if (e.isAltDown) {
-				startPos = Point2D.ZERO
-				pan(panVectorFromWheelRotation(e))
+			if (mouseWheelModeController.calculateIsWheelZoom()) {
+				zoomByWheel(e)
 			} else {
-				view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e), e.location)
+				panByWheel(e)
 			}
 
 			e.consume()
 		}
 
-		/** ---- [ZoomPanController] */
-
-		private fun startPan(pos: Point2D) {
-			startPos = pos
+		private fun panByWheel(e: MouseEvent) {
+			startPos = Point2D.ZERO
+			pan(getPanVectorFromWheelRotation(e))
+			mouseWheelModeController.updateMouseWheelPanTime()
 		}
 
-		private fun pan(pos: Point2D) {
-			val delta = pos.subtract(startPos)
-			view.navigator.panBy(delta.x.toInt(), delta.y.toInt())
-			startPos = pos
+		private fun zoomByWheel(e: MouseEvent) {
+			view.navigator.multiplyZoomFactor(getZoomChangeFactorFromWheelRotation(e), e.location)
+			mouseWheelModeController.updateMouseWheelZoomTime()
+		}
+	}
+
+	/**
+	 * Functionality to avoid that zoom/pan mode switches occur when the user presses/releases
+	 * the ALT key while auto-repeated mouse wheel events are still coming in. "Auto-repeat" refers
+	 * to scroll animation fade-outs either from mouse wheels or from trackpad gestures.
+	 *
+	 * The JVM does not provide the information whether such events are auto-repeated, so use a
+	 * custom time-based approach to determine that.
+	 */
+	private class MouseWheelModeController : KeyAdapter() {
+
+		companion object {
+
+			/**
+			 * The time (in ms) after the last mouse wheel rotation event to accept ALT keys for
+			 * switching between zooming and panning.
+			 */
+			private const val WHEEL_COOL_DOWN = 200
+		}
+
+		private var lastMouseWheelZoomTime = 0L
+		private var lastMouseWheelPanTime = 0L
+		private var isAltDown = false
+		private var isWheelZoom = true
+
+		fun calculateIsWheelZoom(): Boolean {
+			val now = System.currentTimeMillis()
+			val switchMode =
+				isWheelZoom && isAltDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
+					|| !isWheelZoom && !isAltDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
+
+			isWheelZoom = isWheelZoom && !switchMode || !isWheelZoom && switchMode
+
+			return isWheelZoom
+		}
+
+		fun updateMouseWheelZoomTime() {
+			lastMouseWheelZoomTime = System.currentTimeMillis()
+		}
+
+		fun updateMouseWheelPanTime() {
+			lastMouseWheelPanTime = System.currentTimeMillis()
+		}
+
+		override fun keyPressed(e: KeyEvent) {
+			if (e.key == KeyEvent.VK_ALT) {
+				isAltDown = true
+			}
+		}
+
+		override fun keyReleased(e: KeyEvent) {
+			if (e.key == KeyEvent.VK_ALT) {
+				isAltDown = false
+			}
 		}
 	}
 }
