@@ -30,8 +30,6 @@ class GraphOutputImpl<T : Any>(
 
 	/** ---- [GraphPort] interface */
 
-	override var signal: T? = null
-
 	@Suppress("UNUSED_PARAMETER")
 	override var portType: PortType
 		get() = PortType.OUTPUT

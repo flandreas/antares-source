@@ -1,19 +1,12 @@
 package ch.scorpion.antares.model.inout
 
+import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalSource
-import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.BidirectionalGraphPort
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.GraphOutput
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 
 /**
@@ -22,7 +15,7 @@ import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
  * On a conceptual level, a [CircuitInOut] can be seen as a [Port] of an entire [Graph], although it
  * is a [Vertice] that contains a [Port] with a particular [PortType].
  */
-interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSignal>, DigitalSignalSource {
+interface CircuitInOut : InteractableVertice<DigitalSignal>, BidirectionalGraphPort<DigitalSignal>, DigitalSignalSource {
 
     /**
      * Determines whether this [CircuitInOut] belongs to a top-level [Graph]. Manually setting the input

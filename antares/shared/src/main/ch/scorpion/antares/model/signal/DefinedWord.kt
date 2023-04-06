@@ -44,7 +44,7 @@ class DefinedWord(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = "${longValue}:${bitWidth.width}"
+	override fun toString(): String = "$longValue"
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

@@ -9,10 +9,20 @@ import ch.scorpion.jabbah.graph.model.Vertice
 /**
  * A [Vertice] whose state can be changed by the user during execution.
  *
- * It is disabled between changing its state and re-calculation initiated by the [Scheduler]. Subclasses should
- * re-enable themselves at the end of their [VerticeCalculator.calculate] method.
+ * Supports disabling itself between requesting a state change and effectively processing it
+ * by calculating its new state. Can also store a single incoming state change while the
+ * previous one is still being processed. This is to support implementations like clickable switches,
+ * where the user can release the mouse button while the request after pressing the button
+ * is still processed.
+ *
+ * Updating the state of an [InteractableVertice] is also deferred until the state change
+ * has been processed by the [Scheduler].
+ *
+ * Implementations should re-enable themselves at the end of their [VerticeCalculator.calculate] method.
+ *
+ * @param S the type of signal stored and deferred
  */
-interface InteractableVertice : Vertice {
+interface InteractableVertice<S: Any> : Vertice {
 
 	val enabled: Boolean
 
@@ -27,19 +37,68 @@ interface InteractableVertice : Vertice {
 		disabled && (inactive || context.isPausing || context.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore)
 }
 
-abstract class AbstractInteractableVertice(
+abstract class AbstractInteractableVertice<S: Any>(
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	name: String? = null
-) : CalculatingVertice(calculator, name), InteractableVertice {
+) : CalculatingVertice(calculator, name), InteractableVertice<S> {
+
+	/**
+	 * Holds the current signal that determines the state of this [AbstractInteractableVertice].
+	 * Changes to this property are delayed by storing the new value in [delayedSignal] until
+	 * the state change has been processed by the [Scheduler].
+	 */
+	open var signal: S? = null
+		protected set
+
+	/** Captures a state change to delay it until propagation delay is over.*/
+	private var delayedSignal: S? = null
+
+	/** Buffers a state change while a previous state change has not yet been processed.*/
+	private var bufferedSignal: S? = null
 
 	private var _enabled: Boolean = true
 
+	/** ---- [InteractableVertice] interface */
+
 	override val enabled: Boolean get() = _enabled
+
+	/** ---- [AbstractInteractableVertice] */
 
 	fun setInteractionEnabled(enabled: Boolean, signalHandler: SignalHandler) {
 		if (_enabled != enabled) {
 			_enabled = enabled
 			stateChanged(signalHandler)
+		}
+	}
+
+	protected fun setSignal(signal: S?, signalHandler: SignalHandler) {
+		this.signal = signal
+		stateChanged(signalHandler)
+		bufferedSignal = null
+	}
+
+	fun bufferSignal( signal: S, signalHandler: SignalHandler) {
+		bufferedSignal = signal
+		requestSetSignal(signal, signalHandler)
+	}
+
+	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler ) {
+		delayedSignal = signal
+		setInteractionEnabled(false, signalHandler)
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+	}
+
+	private fun completeSetState(signalHandler: SignalHandler) {
+		setSignal(delayedSignal, signalHandler)
+		setInteractionEnabled(true, signalHandler)
+	}
+
+	protected fun calculate(signalHandler: SignalHandler) {
+		if (bufferedSignal != null) {
+			requestSetSignal(bufferedSignal!!, signalHandler)
+			bufferedSignal = null
+		} else {
+			completeSetState(signalHandler)
 		}
 	}
 }

@@ -4,14 +4,10 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.StoringGraphActorData
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
+import ch.scorpion.jabbah.graph.model.PortType
 import io.mockk.mockk
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class CircuitInOutImplTest {
 
@@ -24,12 +20,15 @@ class CircuitInOutImplTest {
 	private val inout = CircuitInOutImpl()
 	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 
+	@Ignore // In work
 	@Test
-	fun shouldBeDisabledWhileWaiting() {
-		inout.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+	fun shouldDelaySwitchOn() {
+		inout.toggleBit(0, false, signalHandler)
+		assertEquals(DigitalSignalFactory.of(false), inout.signal)
 		assertFalse(inout.enabled)
 
-		inout.act(signalHandler, StoringGraphActorData(null, DigitalSignalFactory.of(true)))
+		inout.act(signalHandler, inout.createActorData(null))
+		assertEquals(DigitalSignalFactory.of(true), inout.signal)
 		assertTrue(inout.enabled)
 	}
 

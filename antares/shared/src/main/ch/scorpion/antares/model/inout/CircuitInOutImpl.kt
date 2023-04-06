@@ -217,22 +217,12 @@ class CircuitInOutImpl(
 		super.write(writer)
 		writer.writeString("type", portType.customName)
 		bitWidth.write("bitWidth", writer)
-		/*
-		if (canBeUndefined) {
-			writer.writeBoolean("canBeUndefined", canBeUndefined)
-		}
-		*/
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		portType = PortType.withName(reader.readString("type"))
 		bitWidth = BitWidth.read("bitWidth", reader)
-		/*
-		if (reader.hasAttribute("canBeUndefined")) {
-			canBeUndefined = reader.readBoolean("canBeUndefined")
-		}
-		*/
 	}
 
 	/** ---- [CircuitInOut] interface */

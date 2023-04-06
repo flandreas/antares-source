@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : AbstractInteractableVertice(CALCULATOR) {
+) : AbstractInteractableVertice<DigitalSignal>(CALCULATOR) {
 
 	companion object {
 
