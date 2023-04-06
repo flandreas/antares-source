@@ -19,37 +19,26 @@ class SwitchTest {
 	private val signalHandler: SignalHandler = mockk(relaxed = true)
 
 	@Test
-	fun shouldBeDisabledWhileWaiting() {
+	fun shouldDelaySwitchOn() {
 		switch.on(signalHandler)
+		assertFalse(switch.isOn)
 		assertFalse(switch.enabled)
 
 		switch.act(signalHandler, switch.createActorData(null))
+		assertTrue(switch.isOn)
 		assertTrue(switch.enabled)
 	}
 
 	@Test
-	fun shouldNotSetOnWhileWaiting() {
+	fun shouldDelaySwitchOff() {
 		switch.on(signalHandler)
 		switch.act(signalHandler, switch.createActorData(null))
-		switch.off(signalHandler)
 
-		switch.on(signalHandler)
-		assertFalse(switch.isOn)
-		assertFalse(switch.enabled)
-	}
-
-	@Test
-	fun shouldDelaySetOffWhileDisabled() {
-		switch.on(signalHandler)
 		switch.off(signalHandler)
 		assertTrue(switch.isOn)
 		assertFalse(switch.enabled)
-
 		switch.act(signalHandler, switch.createActorData(null))
-		assertFalse(switch.isOn)
-		assertFalse(switch.enabled)
 
-		switch.act(signalHandler, switch.createActorData(null))
 		assertFalse(switch.isOn)
 		assertTrue(switch.enabled)
 	}

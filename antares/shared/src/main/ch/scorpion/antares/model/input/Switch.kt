@@ -25,10 +25,9 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<Switch>() {
 			override fun calculate(vertice: Switch, data: GraphActorData, signalHandler: SignalHandler) {
+				super.calculate(vertice, data, signalHandler)
 				val output = vertice.getOutput<DigitalSignal>()
 				output.setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.isOn), signalHandler)
-
-				super.calculate(vertice, data, signalHandler)
 			}
 		}
 	}

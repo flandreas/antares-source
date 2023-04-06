@@ -106,8 +106,10 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			if (!toggle) {
 				if (model.isOn) {
 					model.off(context.signalHandler)
-					context.mouseEvent?.consume()
+				} else {
+					model.rememberRelease(context.signalHandler)
 				}
+				context.mouseEvent?.consume()
 			}
 			return null
 		}

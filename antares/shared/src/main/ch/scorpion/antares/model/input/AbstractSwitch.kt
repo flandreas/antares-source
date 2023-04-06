@@ -13,18 +13,25 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	companion object {
 		open class AbstractSwitchCalculator<T : AbstractSwitch<T>> : VerticeCalculator<T> {
 			override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-				if (vertice.delayedOff) {
-					vertice.delayedOff = false
-					vertice.setState(signalHandler, false)
+				if (vertice.isRememberRelease) {
+					vertice.requestSetState(signalHandler, false)
+					vertice.isRememberRelease = false
 				} else {
-					vertice.setInteractionEnabled(true, signalHandler)
+					vertice.completeSetState(signalHandler)
 				}
 			}
 		}
 	}
 
 	var isOn: Boolean = false
-		protected set
+		protected set(value) {
+			field = value
+			stateChanged()
+			isRememberRelease = false
+		}
+
+	/** Captures a state change to delay it until propagation delay is over.*/
+	private var delayedState: Boolean = false
 
 	/**
 	 * Used to support view implementations with a non-toggle behaviour, i.e. switches that change to "on" when
@@ -32,7 +39,8 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	 * would be missed because the [Switch] is not enabled at that time, it is remembered in this flag and applied
 	 * when the [Switch] has been scheduled the next time for calculation.
 	 */
-	protected var delayedOff: Boolean = false
+	var isRememberRelease: Boolean = false
+		private set
 
 	/** ---- [Actor] interface */
 
@@ -43,7 +51,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		setState(signalHandler, false)
+		requestSetState(signalHandler, false)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -51,6 +59,8 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		isOn = false
 		setInteractionEnabled(true, signalHandler)
 	}
+
+	/** ---- [AbstractSwitch] */
 
 	fun toggle(signalHandler: SignalHandler) {
 		if (isOn) {
@@ -62,23 +72,29 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	fun on(signalHandler: SignalHandler) {
 		if (enabled && !isOn) {
-			setState(signalHandler, true)
+			requestSetState(signalHandler, true)
 		}
 	}
 
 	fun off(signalHandler: SignalHandler) {
-		if (isOn) {
-			if (enabled) {
-				setState(signalHandler, false)
-			} else {
-				delayedOff = true
-			}
+		if (enabled && isOn) {
+			requestSetState(signalHandler, false)
 		}
 	}
 
-	protected open fun setState(signalHandler: SignalHandler, on: Boolean) {
-		isOn = on
+	fun rememberRelease(signalHandler: SignalHandler) {
+		isRememberRelease = true
+		requestSetState(signalHandler, false)
+	}
+
+	protected open fun requestSetState(signalHandler: SignalHandler, state: Boolean) {
+		delayedState = state
 		setInteractionEnabled(false, signalHandler)
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+	}
+
+	private fun completeSetState(signalHandler: SignalHandler) {
+		isOn = delayedState
+		setInteractionEnabled(true, signalHandler)
 	}
 }
