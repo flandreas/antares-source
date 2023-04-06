@@ -210,6 +210,8 @@ class SwitchView(
 	}
 
 	override fun drawImpl(context: DrawContext) {
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
+
 		val oldColor = context.g.color
 		super.drawImpl(context)
 
@@ -219,7 +221,7 @@ class SwitchView(
 			}
 		}
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+		if (appContext.isExecute) {
 			face.drawExecuted(context)
 		} else {
 			face.drawEdited(context)
@@ -227,10 +229,10 @@ class SwitchView(
 
 		drawBorder(context)
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+		if (appContext.isExecute) {
 			drawFocus(context)
 
-			if (isDisabledFor(context) || model.inactive) {
+			if (model.shouldDrawDisabled(appContext)) {
 				drawDisabled(context)
 			}
 		}
@@ -362,9 +364,6 @@ class SwitchView(
 				widthInt - 2 * BORDER_WIDTH + 2, heightInt - 2 * BORDER_WIDTH + 2)
 		}
 	}
-
-	private fun isDisabledFor(context: DrawContext): Boolean =
-		model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true
 
 	private fun drawDisabled(context: DrawContext) {
 		context.g.color = Look.disabledColor()

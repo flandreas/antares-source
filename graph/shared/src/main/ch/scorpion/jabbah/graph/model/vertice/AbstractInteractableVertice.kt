@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
@@ -15,6 +17,14 @@ interface InteractableVertice : Vertice {
 	val enabled: Boolean
 
 	val disabled: Boolean get() = !enabled
+
+	/**
+	 * Determines whether views of this [InteractableVertice] should draw themselves
+	 * in a disabled state to indicate to the user that this [InteractableVertice] currently
+	 * can't accept input from the user.
+	 */
+	fun shouldDrawDisabled(context: GraphApplicationContext): Boolean =
+		disabled && (inactive || context.isPausing || context.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore)
 }
 
 abstract class AbstractInteractableVertice(
