@@ -29,7 +29,6 @@ class ZoomPanController(val view: View<*>) {
 
 	var enabled: Boolean = false
 		set(value) {
-			println("enabled = $value")
 			if (value) {
 				view.addMouseListener(mouseController)
 				view.addMouseMotionListener(mouseController)

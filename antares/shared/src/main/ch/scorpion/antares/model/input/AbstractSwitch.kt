@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 abstract class AbstractSwitch<T : AbstractSwitch<T>>(
@@ -19,6 +20,10 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	}
 
 	val isOn: Boolean get() = signal ?: false
+
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
 
 	/** ---- [Actor] interface */
 

@@ -28,6 +28,9 @@ interface InteractableVertice<S: Any> : Vertice {
 
 	val disabled: Boolean get() = !enabled
 
+	/** The propagation delay to be applied with user interactions such as mouse clicks.*/
+	val interactivePropagationDelay: Long
+
 	/**
 	 * Determines whether views of this [InteractableVertice] should draw themselves
 	 * in a disabled state to indicate to the user that this [InteractableVertice] currently
@@ -85,7 +88,7 @@ abstract class AbstractInteractableVertice<S: Any>(
 	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler ) {
 		delayedSignal = signal
 		setInteractionEnabled(false, signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, 1_000, createActorData(null, signal = signal))
 	}
 
 	private fun completeSetState(signalHandler: SignalHandler) {

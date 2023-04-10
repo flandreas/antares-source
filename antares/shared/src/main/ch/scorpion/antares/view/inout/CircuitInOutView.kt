@@ -327,6 +327,7 @@ class CircuitInOutView(
 	}
 
 	private fun drawSimulated(context: DrawContext) {
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 		if (model.signal!!.bitWidth.width > 1) {
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.color.foregroundColor),
@@ -340,15 +341,16 @@ class CircuitInOutView(
 		val translation = getArrowPathTranslation()
 		context.g.translate(translation.x, translation.y)
 		numberView!!.draw(context)
-		drawDisabled(context)
+		if (model.shouldDrawDisabled(appContext)) {
+			drawDisabled(context)
+		}
+
 		context.g.translate(-translation.x, -translation.y)
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
-			context.g.color = Look.disabledColor()
-			context.g.fill(arrowPath!!.path)
-		}
+		context.g.color = Look.disabledColor()
+		context.g.fill(arrowPath!!.path)
 	}
 
 	/** ---- [Component] */

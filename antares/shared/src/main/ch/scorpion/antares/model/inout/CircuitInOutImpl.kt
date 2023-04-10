@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -54,6 +55,7 @@ class CircuitInOutImpl(
 		private class Calculator : VerticeCalculator<CircuitInOutImpl> {
 			override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
+					calculate(signalHandler)
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
 					setInteractionEnabled(true, signalHandler)
 				}
@@ -160,6 +162,10 @@ class CircuitInOutImpl(
 		return emptyList()
 	}
 
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+
 	/** ---- [Vertice] */
 
 	override fun <T : Any> replaceUndefinedOutput(signal: T?) {
@@ -210,6 +216,13 @@ class CircuitInOutImpl(
 		}
 		stateChanged(signalHandler)
 	}
+
+	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?): GraphActorData =
+		if (inputPort == null) {
+			StoringGraphActorData(null, signal ?: this.signal)
+		} else {
+			super.createActorData(inputPort, force, signal)
+		}
 
 	/** ---- [Storable] interface */
 
@@ -268,11 +281,11 @@ class CircuitInOutImpl(
 				bit = Bit.False
 			}
 		}
-		setIncomingSignal(s.withBit(index, bit.not()), signalHandler, Switch.DEF_PROP_DELAY)
+		setSignalManually(s.withBit(index, bit.not()), signalHandler)
 	}
 
 	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler) {
-		setIncomingSignal(signal, signalHandler, Switch.DEF_PROP_DELAY)
+		requestSetSignal(signal, signalHandler)
 	}
 
 	/** ---- [CircuitInOutImpl] */

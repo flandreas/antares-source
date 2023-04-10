@@ -183,7 +183,7 @@ abstract class AbstractVertice(
 	/** ---- [AbstractVertice] */
 
 	/** Visible for testing. */
-	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false): GraphActorData =
+	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false, signal: Any? = null): GraphActorData =
 		ActualPortValueActorData(inputPort, true, force = force)
 
 	/**

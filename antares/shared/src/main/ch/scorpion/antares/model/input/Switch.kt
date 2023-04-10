@@ -39,5 +39,4 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
-
 }

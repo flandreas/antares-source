@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -87,6 +88,10 @@ class DipSwitch(
 		}
 
 	private var firstExecution: Boolean = true
+
+	/** ---- [InteractableVertice] */
+
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
 
 	/** ---- [GraphElement] */
 
