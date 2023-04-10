@@ -226,9 +226,6 @@ class DipSwitchView(
 		label.draw(context)
 	}
 
-	private fun isDisabledFor(context: DrawContext): Boolean =
-		model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true
-
 	private fun drawDisabled(context: DrawContext) {
 		context.g.color = Look.disabledColor()
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
