@@ -74,7 +74,7 @@ abstract class AbstractInteractableVertice<S: Any>(
 		}
 	}
 
-	protected fun setSignal(signal: S?, signalHandler: SignalHandler) {
+	protected fun setSignal(signal: S?, signalHandler: SignalHandler?) {
 		this.signal = signal
 		stateChanged(signalHandler)
 		bufferedSignal = null
@@ -92,7 +92,9 @@ abstract class AbstractInteractableVertice<S: Any>(
 	}
 
 	private fun completeSetState(signalHandler: SignalHandler) {
-		setSignal(delayedSignal, signalHandler)
+		if (delayedSignal != null) {
+			setSignal(delayedSignal, signalHandler)
+		}
 		setInteractionEnabled(true, signalHandler)
 	}
 

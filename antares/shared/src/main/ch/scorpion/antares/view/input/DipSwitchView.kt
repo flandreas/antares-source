@@ -183,7 +183,7 @@ class DipSwitchView(
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
 		for ((i, view) in bitViews.withIndex()) {
-			view.bit = model.value.bitAt(i)
+			view.bit = model.signal!!.bitAt(i)
 		}
 		label.text = StringUtils.orEmpty(model.name)
 		super.handleStateChanged(event)
@@ -204,6 +204,7 @@ class DipSwitchView(
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fill(bounds)
@@ -215,8 +216,8 @@ class DipSwitchView(
 			it.draw(context)
 		}
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			if (isDisabledFor(context) || model.inactive) {
+		if (appContext.isExecute) {
+			if (model.shouldDrawDisabled(appContext)) {
 				drawDisabled(context)
 			}
 		}
@@ -348,7 +349,7 @@ class DipSwitchView(
 		val maxIndex = model.bitWidth.width - 1
 		for (index in 0..maxIndex) {
 			val xx = x + (maxIndex - index) * KNOB_WIDTH
-			bitViews.add(BitView(index, model.value.bitAt(index), xx, y, styleProvider))
+			bitViews.add(BitView(index, model.signal!!.bitAt(index), xx, y, styleProvider))
 		}
 
 		getOutput().direction = orientation
@@ -405,7 +406,7 @@ class DipSwitchView(
 		}
 
 		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean) {
-			val bit = model.value.bitAt(index).not()
+			val bit = model.signal!!.bitAt(index).not()
 			if (all) {
 				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler)
 			} else {
