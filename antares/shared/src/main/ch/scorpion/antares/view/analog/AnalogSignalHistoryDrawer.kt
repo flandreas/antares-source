@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.analog.AnalogSignalHistoryYAxis.Companion.FACTOR
 import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -9,7 +8,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryYAxis
-import kotlin.math.abs
 import kotlin.math.max
 
 class AnalogSignalHistoryDrawer(
@@ -18,28 +16,22 @@ class AnalogSignalHistoryDrawer(
 
 	companion object {
 		const val ROW_HEIGHT = 60
-		private const val DEF_MAX_VOLTAGE = 5.0
-		private const val DEF_SIGNAL_HEIGHT = FACTOR * DEF_MAX_VOLTAGE
 	}
 
 	/** ---- [AbstractSignalHistoryDrawer] */
 
-	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double {
-		return yAxis!!.baselineY - yAxis.signalY(entry.signal)
-	}
+	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double =
+		yAxis!!.baselineY + yAxis.signalY(entry.signal)
 
-	override val signalHeight: Double get() =
-		if (signalHistory?.minimum == null || signalHistory?.maximum == null) {
-			DEF_SIGNAL_HEIGHT
-		} else {
-			FACTOR * abs(signalHistory!!.maximum!!.voltage - signalHistory!!.minimum!!.voltage)
-		}
+	override val signalHeight: Double get() = yAxis!!.signalHeight
 
 	override fun drawCurve(context: DrawContext) {
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<AnalogSignal>? = null
 		var effNextX: Double = rightBorder
 		context.g.stroke = CURVE_STROKE
+
+		yAxis!!.setMinMax(signalHistory?.minimum, signalHistory?.maximum)
 
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
 			val x = rightBorder - timeline!!.getX(entry.time)

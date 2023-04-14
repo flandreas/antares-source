@@ -1,0 +1,106 @@
+package ch.scorpion.jabbah.graph.view.oscilloscope
+
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import kotlin.math.abs
+import kotlin.math.min
+
+/**
+ * Default implementation of the [SignalHistoryYAxis] interface.
+ *
+ * @param topInset the distance from the [AbstractRectangle]'s top edge to the drawing area
+ * @param bottomInset the distance from the [AbstractRectangle]'s bottom edge to the drawing area
+ * @param defaultValue the value to be displayed at [defaultValueTopInset]
+ * @param defaultValueTopInset the additional distance from [topInset] at which the default signal value
+ * is to be drawn. This [AbstractSignalHistoryYAxis] keeps the scale factor stable as long as all
+ * signal values are smaller than the default value
+ */
+abstract class AbstractSignalHistoryYAxis<T: Any>(
+	private val topInset: Int,
+	private val bottomInset: Int,
+	private val defaultValue: T,
+	private val defaultValueTopInset: Int,
+	protected val color: CompositeColor
+) : AbstractRectangle(), SignalHistoryYAxis<T> {
+
+	companion object {
+		const val DEF_TOP_INSET = 6
+		const val DEF_BOTTOM_INSET = 2
+		const val DEF_DEFAULT_VALUE_TO_INSET = 20
+	}
+
+	private var factor: Double = 1.0
+
+	/** ---- [AbstractRectangle] */
+
+	override fun draw(context: DrawContext) {
+		drawBaseline(context)
+		drawRuler(context)
+	}
+
+	override fun setBounds(x: Double, y: Double, w: Double, h: Double) {
+		super<AbstractRectangle>.setBounds(x, y, w, h)
+		updateScaling()
+	}
+
+	/** ---- [SignalHistoryYAxis] interface */
+
+	private var min: T? = null
+	private var max: T? = null
+
+	private val availableHeight get() = height - topInset - defaultValueTopInset - bottomInset
+
+	private val defaultFactor get() = availableHeight / toMetric(defaultValue)
+
+	override var baselineY: Double = 0.0
+
+	override val signalHeight: Double get() =
+		if (min == null || max == null) {
+			defaultFactor * toMetric(defaultValue)
+		} else {
+			factor * abs(toMetric(max!!) - toMetric(min!!))
+		}
+
+	override fun setMinMax(min: T?, max: T?) {
+		this.min = min
+		this.max = max
+		updateScaling()
+	}
+
+	override fun signalY(signal: T): Double = -factor * toMetric(signal)
+
+	protected abstract fun drawRuler(context: DrawContext)
+
+	private fun drawBaseline(context: DrawContext) {
+		context.g.color = color.foregroundColor
+		context.g.drawLine(bounds.minX, bounds.minY + topInset, bounds.minX, baselineY)
+	}
+
+	private fun updateScaling() {
+		baselineY = bounds.maxY - bottomInset
+		if (min == null || max == null) {
+			factor = defaultFactor
+			return
+		}
+
+		val maxDouble = toMetric(max!!)
+		val minDouble = toMetric(min!!)
+		var h = 0.0
+		if (maxDouble > 0) {
+			h += maxDouble
+			if (minDouble < 0) {
+				h += abs(minDouble)
+			}
+		} else {
+			h = abs(minDouble)
+		}
+
+		factor = min(defaultFactor, availableHeight / h)
+		baselineY = if (minDouble >= 0) {
+			bounds.maxY - bottomInset
+		} else {
+			bounds.maxY - bottomInset - factor * abs(minDouble)
+		}
+	}
+}

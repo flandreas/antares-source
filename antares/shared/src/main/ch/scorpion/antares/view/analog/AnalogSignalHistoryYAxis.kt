@@ -3,22 +3,25 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryYAxis
 
 class AnalogSignalHistoryYAxis(
+	topInset: Int = DEF_TOP_INSET,
+	bottomInset: Int = DEF_BOTTOM_INSET,
+	defaultValue: AnalogSignal = AnalogSignal.HIGH,
+	defaultValueTopInset: Int = DEF_DEFAULT_VALUE_TO_INSET,
 	color: CompositeColor = Themes.get<AntaresTheme>().figure.color
-) : AbstractSignalHistoryYAxis<AnalogSignal>(Rectangle2D(0, 0, WIDTH, 0), color) {
+) : AbstractSignalHistoryYAxis<AnalogSignal>(topInset, bottomInset, defaultValue, defaultValueTopInset, color) {
 
 	companion object {
-		const val FACTOR = 8
-		private const val WIDTH = 40
+		const val WIDTH = 40
 		private const val SCALE_WIDTH = 5
 	}
 
@@ -29,13 +32,18 @@ class AnalogSignalHistoryYAxis(
 		HorizontalAlignment.LEFT,
 		VerticalAlignment.CENTER)
 
+	/** ---- [RectangularDrawable] */
+
 	override val lineWidth: Double get() = 0.0
 
-	override fun signalY(signal: AnalogSignal): Double =
-		FACTOR * signal.voltage
+	/** ---- [AbstractSignalHistoryYAxis] */
 
-	override fun drawScale(context: DrawContext) {
-		val fiveVoltY = baselineY - signalY(AnalogSignal.HIGH)
+	override val preferredWidth: Int get() = WIDTH
+
+	override fun toMetric(signal: AnalogSignal): Double = signal.voltage
+
+	override fun drawRuler(context: DrawContext) {
+		val fiveVoltY = baselineY + signalY(AnalogSignal.HIGH)
 		context.g.color = color.foregroundColor
 		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 		context.g.drawLine(bounds.minX, fiveVoltY, bounds.minX - SCALE_WIDTH, fiveVoltY)

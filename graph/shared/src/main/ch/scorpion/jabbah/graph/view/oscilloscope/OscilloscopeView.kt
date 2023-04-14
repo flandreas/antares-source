@@ -119,7 +119,7 @@ class OscilloscopeView(
 	private val removeListener = RemoveListener()
 
 	/** Replaced if model changes when reading from persistent store.*/
-	var timeline = OscilloscopeViewTimeline(INIT_SCALE, model)
+	var timeline = OscilloscopeViewTimeline(INIT_SCALE, model::maxTime)
 
 	private val applicationModeHandler: (ApplicationModeEvent) -> Unit = { applicationMode = it.applicationMode }
 
@@ -138,7 +138,7 @@ class OscilloscopeView(
 		}
 
 	private val yAxisWidth: Double get() =
-		rows.filter { it.yAxis != null }.maxOfOrNull { it.yAxis!!.width } ?: 0.0
+		rows.filter { it.yAxis != null }.maxOfOrNull { it.yAxis!!.preferredWidth.toDouble() } ?: 0.0
 
 	val drawerWidth: Double get() = WIDTH - DRAWER_X - ROW_INSET - yAxisWidth
 
@@ -158,7 +158,7 @@ class OscilloscopeView(
 
 	override fun modelExchanged(oldModel: Oscilloscope?) {
 		super.modelExchanged(oldModel)
-		timeline = OscilloscopeViewTimeline(timelineScale, model)
+		timeline = OscilloscopeViewTimeline(timelineScale, model::maxTime)
 
 		container.add(scaleRow)
 		adjustSize()

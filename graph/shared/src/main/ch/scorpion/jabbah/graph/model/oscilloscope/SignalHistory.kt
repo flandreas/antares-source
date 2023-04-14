@@ -26,6 +26,8 @@ interface SignalHistory<out T : Any> {
 	/** Returns the maximum signal value, or `null` if [T] isn't comparable.*/
 	val maximum: T?
 
+	val maxTime:Long
+
 	fun last(): SignalHistoryEntry<T>
 
 	fun lastOrNull(): SignalHistoryEntry<T>?
@@ -61,6 +63,8 @@ class SignalHistoryImpl<T : Any>(
 
 	override var maximum: T? = null
 		private set
+
+	override val maxTime: Long get() = list.maxOfOrNull { it.time } ?: 0
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
 	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =

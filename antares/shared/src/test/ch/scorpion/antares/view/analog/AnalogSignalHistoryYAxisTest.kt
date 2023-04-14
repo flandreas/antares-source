@@ -1,0 +1,38 @@
+package ch.scorpion.antares.view.analog
+
+import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.analog.AnalogSignal
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class AnalogSignalHistoryYAxisTest {
+
+	companion object {
+
+		private const val INSET = 10
+		private const val DEFAULT_VALUE_INSET = 20
+		private const val HEIGHT = 100
+
+		init {
+			AntaresTestRule.configure()
+		}
+	}
+
+	private val yAxis = AnalogSignalHistoryYAxis(INSET, INSET, AnalogSignal.HIGH, DEFAULT_VALUE_INSET)
+
+	@BeforeTest
+	fun setup() {
+		yAxis.setBounds(0, 0, AnalogSignalHistoryYAxis.WIDTH, HEIGHT)
+	}
+
+	@Test
+	fun baselineYShouldBeAtBottomInsetByDefault() {
+		assertEquals(HEIGHT - INSET, yAxis.baselineY.toInt())
+	}
+
+	@Test
+	fun shouldRenderDefaultValueAtDefaultValueTopInset() {
+		assertEquals(HEIGHT - 2 * INSET - DEFAULT_VALUE_INSET, -yAxis.signalY(AnalogSignal.HIGH).toInt())
+	}
+}

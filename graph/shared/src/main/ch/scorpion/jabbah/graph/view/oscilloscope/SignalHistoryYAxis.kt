@@ -1,37 +1,39 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 
+/**
+ * A scalable y-axis for drawing signals, as well as a graphical representation
+ * of such an y-axis including scale marks. Used together with [SignalHistoryDrawer].
+ *
+ * Depending on the range of signals in the [SignalHistory] being drawn,
+ * a [SignalHistoryYAxis] is expected to adjust its scale to make the entire
+ * signal curve visible.
+ */
 interface SignalHistoryYAxis<T: Any> : RectangularDrawable {
-	fun signalY(signal: T): Double
+
+	val preferredWidth: Int
+
+	/**
+	 * The y-coordinate of the baseline (where 0 values are located at)
+	 * relative to the geometry of this [RectangularDrawable].
+	 */
 	val baselineY: Double
-}
 
-abstract class AbstractSignalHistoryYAxis<T: Any>(
-	bounds: RectangularShape,
-	protected val color: CompositeColor
-) : AbstractRectangle(bounds), SignalHistoryYAxis<T> {
+	/**
+	 * The maximum height of the signal, i.e. the vertical distance in model coordinates
+	 * between min and max signals.
+	 */
+	val signalHeight: Double
 
-	companion object {
-		private const val TOP_INSET = 6
-		private const val BOTTOM_INSET = 2
-	}
+	/** Converts [signal] to a metric value used for scaling. */
+	fun toMetric(signal: T): Double
 
-	override val baselineY: Double get() = bounds.maxY - BOTTOM_INSET
+	fun setMinMax(min: T?, max: T?)
 
-	override fun draw(context: DrawContext) {
-		drawYAxis(context)
-		drawScale(context)
-	}
-
-	protected abstract fun drawScale(context: DrawContext)
-
-	private fun drawYAxis(context: DrawContext) {
-		context.g.color = color.foregroundColor
-		context.g.drawLine(bounds.minX, bounds.minY + TOP_INSET, bounds.minX, baselineY)
-	}
+	/**
+	 * The distance in y direction from the baseline where [signal] is to be drawn.
+	 */
+	fun signalY(signal: T): Double
 }

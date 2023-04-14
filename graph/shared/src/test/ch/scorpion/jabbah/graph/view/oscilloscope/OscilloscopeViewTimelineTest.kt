@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import kotlin.math.max
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,12 +22,13 @@ class OscilloscopeViewTimelineTest {
 	private lateinit var signalHandler: SignalHandlerMockBuilder
 	private lateinit var oscilloscope: Oscilloscope
 	private lateinit var timeline: OscilloscopeViewTimeline
+	private var maxTime: Long = 0
 
 	@BeforeTest
 	fun setup() {
 		signalHandler = SignalHandlerMockBuilder()
 		oscilloscope = Oscilloscope(SignalHistoriesType.Realtime)
-		timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope)
+		timeline = OscilloscopeViewTimeline(scale = 1.0) { maxTime }
 	}
 
 	@Test
@@ -78,6 +80,7 @@ class OscilloscopeViewTimelineTest {
 	}
 
 	private fun input(portName: String, time: Long, signal: Boolean) {
+		maxTime = max(maxTime, time)
 		signalHandler.withExecutionTime(time)
 		oscilloscope.getInput<Boolean>(portName).setIncomingSignal(signal, signalHandler.build())
 	}

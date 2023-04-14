@@ -94,7 +94,8 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	/** The maximum height of the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
 	protected abstract val signalHeight: Double
 
-	protected abstract fun drawCurve(context: DrawContext)
+	// Visible for testing
+	abstract fun drawCurve(context: DrawContext)
 
 	protected abstract fun signalY(entry: SignalHistoryEntry<T>): Double
 
@@ -124,12 +125,14 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	}
 
 	protected fun drawRightBorder(context: DrawContext, xL: Double, y: Double) {
-		if (fillSignal) {
-			context.g.color = color!!.backgroundColor
-			context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
+		if (xL != rightBorder) {
+			if (fillSignal) {
+				context.g.color = color!!.backgroundColor
+				context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
+			}
+			context.g.color = color!!.foregroundColor
+			context.g.drawLine(rightBorder, y, xL, y)
 		}
-		context.g.color = color!!.foregroundColor
-		context.g.drawLine(rightBorder, y, xL, y)
 		context.g.fillOval(rightBorder - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
 	}
 
