@@ -1,8 +1,14 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -28,14 +34,22 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 		const val DEF_TOP_INSET = 6
 		const val DEF_BOTTOM_INSET = 2
 		const val DEF_DEFAULT_VALUE_TO_INSET = 20
+		private const val SCALE_WIDTH = 5
 	}
 
 	private var factor: Double = 1.0
 
+	private val label = Label(
+		"$defaultValue",
+		Themes.get<GraphTheme>().annotation.font,
+		Themes.get<GraphTheme>().figure.color.textColor,
+		HorizontalAlignment.LEFT,
+		VerticalAlignment.CENTER)
+
 	/** ---- [AbstractRectangle] */
 
 	override fun draw(context: DrawContext) {
-		drawBaseline(context)
+		drawAxisLine(context)
 		drawRuler(context)
 	}
 
@@ -70,11 +84,19 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 
 	override fun signalY(signal: T): Double = -factor * toMetric(signal)
 
-	protected abstract fun drawRuler(context: DrawContext)
-
-	private fun drawBaseline(context: DrawContext) {
+	private fun drawAxisLine(context: DrawContext) {
 		context.g.color = color.foregroundColor
-		context.g.drawLine(bounds.minX, bounds.minY + topInset, bounds.minX, baselineY)
+		context.g.drawLine(bounds.minX, bounds.minY + topInset, bounds.minX, bounds.maxY - bottomInset)
+	}
+
+	private fun drawRuler(context: DrawContext) {
+		val defaultValueY = baselineY + signalY(defaultValue)
+		context.g.color = color.foregroundColor
+		context.g.stroke = Themes.get<GraphTheme>().annotation.stroke
+		context.g.drawLine(bounds.minX, defaultValueY, bounds.minX - SCALE_WIDTH, defaultValueY)
+
+		label.location = Point2D(bounds.minX + SCALE_WIDTH, defaultValueY)
+		label.draw(context)
 	}
 
 	private fun updateScaling() {
