@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -69,8 +68,6 @@ private class LongSignalHistoryYAxis(
 	defaultValueTopInset: Int = DEF_DEFAULT_VALUE_TO_INSET,
 	color: CompositeColor = Themes.get<GraphTheme>().figure.color
 ) : AbstractSignalHistoryYAxis<Long>(topInset, bottomInset, defaultValue, defaultValueTopInset, color) {
-
-	override fun drawRuler(context: DrawContext) { }
 
 	override val lineWidth: Double get() = 0.0
 

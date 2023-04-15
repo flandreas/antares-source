@@ -47,8 +47,8 @@ class AnalogSignalHistoryDrawerTest {
 		drawer.drawCurve(drawContext)
 
 		assertEquals(4, lines.size)
-		assertCurveChangeY(3, 98.0, 58.0)
-		assertCurveChangeY(1, 58.0, 98.0)
+		assertCurveChangeY(3, 98.0, 26.0)
+		assertCurveChangeY(1, 26.0, 98.0)
 	}
 
 	@Test

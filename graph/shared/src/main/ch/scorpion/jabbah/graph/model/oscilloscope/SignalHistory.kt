@@ -48,36 +48,37 @@ class SignalHistoryImpl<T : Any>(
 ) : SignalHistory<T> {
 
 	/** Holds the entries of this [SignalHistoryImpl], having the newest entry as the last position.*/
-	private val list = mutableListOf<SignalHistoryEntry<T>>()
+	private val entries = mutableListOf<SignalHistoryEntry<T>>()
+
+	private var minimumEntry: SignalHistoryEntry<T>? = null
+	private var maximumEntry: SignalHistoryEntry<T>? = null
 
 	/** ---- [SignalHistory] interface */
 
 	/** Returns the number of entries in this [SignalHistory].*/
-	override val size: Int get() = list.size
+	override val size: Int get() = entries.size
 
 	override var overflow: Boolean = bufferSize == 0
 		private set
 
-	override var minimum: T? = null
-		private set
+	override val minimum: T? get() = minimumEntry?.signal
 
-	override var maximum: T? = null
-		private set
+	override val maximum: T? get() = maximumEntry?.signal
 
-	override val maxTime: Long get() = list.maxOfOrNull { it.time } ?: 0
+	override val maxTime: Long get() = entries.maxOfOrNull { it.time } ?: 0
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
 	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
-		list.filter { it.time >= startTime }.iterator()
+		entries.filter { it.time >= startTime }.iterator()
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
 	override fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> =
-		list.asReversed().filter { it.time >= startTime }.iterator()
+		entries.asReversed().filter { it.time >= startTime }.iterator()
 
-	override fun last(): SignalHistoryEntry<T> = list.last()
+	override fun last(): SignalHistoryEntry<T> = entries.last()
 
 	/** Returns the last [SignalHistoryEntry], i.e. the one with the most recent time.*/
-	override fun lastOrNull(): SignalHistoryEntry<T>? = list.lastOrNull()
+	override fun lastOrNull(): SignalHistoryEntry<T>? = entries.lastOrNull()
 
 	/** ---- [SignalHistoryImpl] */
 
@@ -86,7 +87,7 @@ class SignalHistoryImpl<T : Any>(
 	}
 
 	fun clear() {
-		list.clear()
+		entries.clear()
 		overflow = bufferSize == 0
 	}
 
@@ -95,24 +96,39 @@ class SignalHistoryImpl<T : Any>(
 	}
 
 	fun add(entry: SignalHistoryEntry<T>) {
-		require(list.isEmpty() || list.last().time <= entry.time)
+		require(entries.isEmpty() || entries.last().time <= entry.time)
 
-		if (list.isEmpty() || list.last().signal != entry.signal) {
+		var requireAllUpdateMinMax = false
+		if (entries.isEmpty() || entries.last().signal != entry.signal) {
 			if (size == bufferSize) {
-				list.removeAt(0)
+				requireAllUpdateMinMax = entries[0] === minimumEntry || entries[0] === maximumEntry
+				entries.removeAt(0)
 				overflow = true
 			}
-			list.add(entry)
+			entries.add(entry)
 
 			if (entry.signal is Comparable<*>) {
-				// TODO: What if current minimum or maximum has bee removed?
-				if (minimum == null || (minimum as Comparable<Any>) > entry.signal as Comparable<Any>) {
-					minimum = entry.signal
-				}
-				if (maximum == null || (maximum as Comparable<Any>) < entry.signal as Comparable<Any>) {
-					maximum = entry.signal
+				if (requireAllUpdateMinMax) {
+					updateAllMinMax()
+				} else {
+					updateMinMax(entry)
 				}
 			}
+		}
+	}
+
+	private fun updateAllMinMax() {
+		minimumEntry = null
+		maximumEntry = null
+		entries.forEach { updateMinMax(it) }
+	}
+
+	private fun updateMinMax(entry: SignalHistoryEntry<T>) {
+		if (minimumEntry == null || (minimumEntry!!.signal as Comparable<Any>) > entry.signal as Comparable<Any>) {
+			minimumEntry = entry
+		}
+		if (maximumEntry == null || (maximumEntry!!.signal as Comparable<Any>) < entry.signal as Comparable<Any>) {
+			maximumEntry = entry
 		}
 	}
 }
