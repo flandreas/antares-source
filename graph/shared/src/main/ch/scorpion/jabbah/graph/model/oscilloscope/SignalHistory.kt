@@ -11,84 +11,53 @@ import ch.scorpion.jabbah.graph.model.Graph
  */
 data class SignalHistoryEntry<out T : Any>(val signal: T, val time: Long)
 
-interface SignalHistory<out T : Any> {
-
-	val isEmpty: Boolean get() = size == 0
-
-	val overflow: Boolean
-
-	/** Returns the number of entries in this [SignalHistory].*/
-	val size: Int
-
-	/** Returns the minimum signal value, or `null` if [T] isn't comparable.*/
-	val minimum: T?
-
-	/** Returns the maximum signal value, or `null` if [T] isn't comparable.*/
-	val maximum: T?
-
-	val maxTime:Long
-
-	fun clear()
-
-	fun last(): SignalHistoryEntry<T>
-
-	fun lastOrNull(): SignalHistoryEntry<T>?
-
-	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
-	fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>>
-
-	fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>>
-}
-
 /**
  * Stores changes of signal values while execution of a [Graph].
  * [SignalHistoryEntries][SignalHistoryEntry] must be added by clients of this class
  * in ascending time order.
  */
-class SignalHistoryImpl<T : Any>(
-	private val bufferSize: Int
-) : SignalHistory<T> {
+class SignalHistory<T : Any>(private val bufferSize: Int) {
 
-	/** Holds the entries of this [SignalHistoryImpl], having the newest entry as the last position.*/
+	/** Holds the entries of this [SignalHistory], having the newest entry as the last position.*/
 	private val entries = mutableListOf<SignalHistoryEntry<T>>()
 
 	private var minimumEntry: SignalHistoryEntry<T>? = null
 	private var maximumEntry: SignalHistoryEntry<T>? = null
 
-	/** ---- [SignalHistory] interface */
-
 	/** Returns the number of entries in this [SignalHistory].*/
-	override val size: Int get() = entries.size
+	val size: Int get() = entries.size
 
-	override var overflow: Boolean = bufferSize == 0
+	val isEmpty: Boolean get() = size == 0
+
+	var overflow: Boolean = bufferSize == 0
 		private set
 
-	override val minimum: T? get() = minimumEntry?.signal
+	/** Returns the minimum signal value, or `null` if [T] isn't comparable.*/
+	val minimum: T? get() = minimumEntry?.signal
 
-	override val maximum: T? get() = maximumEntry?.signal
+	/** Returns the maximum signal value, or `null` if [T] isn't comparable.*/
+	val maximum: T? get() = maximumEntry?.signal
 
-	override val maxTime: Long get() = entries.maxOfOrNull { it.time } ?: 0
+	val maxTime: Long get() = entries.maxOfOrNull { it.time } ?: 0
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
-	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
+	fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
 		entries.filter { it.time >= startTime }.iterator()
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
-	override fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> =
+	fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> =
 		entries.asReversed().filter { it.time >= startTime }.iterator()
 
-	override fun last(): SignalHistoryEntry<T> = entries.last()
+	fun last(): SignalHistoryEntry<T> = entries.last()
 
 	/** Returns the last [SignalHistoryEntry], i.e. the one with the most recent time.*/
-	override fun lastOrNull(): SignalHistoryEntry<T>? = entries.lastOrNull()
-
-	/** ---- [SignalHistoryImpl] */
+	fun lastOrNull(): SignalHistoryEntry<T>? = entries.lastOrNull()
 
 	fun dispose() {
 		clear()
 	}
 
-	override fun clear() {
+	fun clear() {
 		entries.clear()
 		overflow = bufferSize == 0
 		minimumEntry = null

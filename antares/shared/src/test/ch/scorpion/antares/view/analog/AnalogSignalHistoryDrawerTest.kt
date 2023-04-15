@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
-import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryImpl
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewTimeline
 import io.mockk.every
 import io.mockk.mockk
@@ -24,7 +24,7 @@ class AnalogSignalHistoryDrawerTest {
 		}
 	}
 
-	private val signalHistory = SignalHistoryImpl<AnalogSignal>(100)
+	private val signalHistory = SignalHistory<AnalogSignal>(100)
 	private val timeline = OscilloscopeViewTimeline(100_000.0, signalHistory::maxTime)
 	private val yAxis = AnalogSignalHistoryYAxis()
 	private val drawer = AnalogSignalHistoryDrawer(yAxis)

@@ -89,7 +89,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 
 	protected val rightBorder: Double get() = bounds.maxX - 20
 
-	protected val baseLineY: Double get() = yAxis?.baselineY ?: bounds.maxY - 2
+	protected val baseLineY: Double get() = yAxis?.baselineY ?: (bounds.maxY - 2)
 
 	/** ---- [AbstractSignalHistoryDrawer]*/
 

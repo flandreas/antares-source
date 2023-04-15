@@ -5,7 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /** Unit tests for [SignalHistory]. */
-class SignalHistoryImplTest {
+class SignalHistoryTest {
 
 	companion object {
 		init {
@@ -13,7 +13,7 @@ class SignalHistoryImplTest {
 		}
 	}
 
-	private var history = SignalHistoryImpl<Int>(100)
+	private var history = SignalHistory<Int>(100)
 
 	@Test
 	fun shouldNotAddSameSignal() {
@@ -32,7 +32,7 @@ class SignalHistoryImplTest {
 
 	@Test
 	fun shouldTruncate() {
-		history = SignalHistoryImpl(1)
+		history = SignalHistory(1)
 		history.add(1, 0)
 		history.add(2, 100)
 		history.add(1, 200)
@@ -51,7 +51,7 @@ class SignalHistoryImplTest {
 
 	@Test
 	fun shouldNotKeepMinMaxFromBufferOverflow() {
-		history = SignalHistoryImpl(2)
+		history = SignalHistory(2)
 		history.add(10, 100)
 		history.add(-10, 200)
 

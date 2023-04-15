@@ -70,10 +70,10 @@ abstract class AbstractSignalHistories(
 		protected set
 
 	/** Maps a probe name to its [SignalHistory] containing then of buffered signals.*/
-	protected val signalHistories = mutableMapOf<String, SignalHistoryImpl<Any>>()
+	protected val signalHistories = mutableMapOf<String, SignalHistory<Any>>()
 
 	init {
-		oscilloscope.getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl(bufferSize) }
+		oscilloscope.getPorts().forEach { signalHistories[it.name!!] = SignalHistory(bufferSize) }
 	}
 
 	override fun clear() {
