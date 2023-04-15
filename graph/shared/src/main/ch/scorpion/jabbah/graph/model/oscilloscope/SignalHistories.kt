@@ -47,6 +47,8 @@ interface SignalHistories {
 
 	val maxTime: Long
 
+	fun clear()
+
 	fun getSignalHistory(name: String): SignalHistory<Any>?
 
 	fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler)
@@ -72,6 +74,10 @@ abstract class AbstractSignalHistories(
 
 	init {
 		oscilloscope.getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl(bufferSize) }
+	}
+
+	override fun clear() {
+		signalHistories.values.forEach { it.clear() }
 	}
 
 	override fun getSignalHistory(name: String): SignalHistory<Any>? = signalHistories[name]

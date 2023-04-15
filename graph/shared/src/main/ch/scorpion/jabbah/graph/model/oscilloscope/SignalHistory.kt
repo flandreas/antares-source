@@ -28,6 +28,8 @@ interface SignalHistory<out T : Any> {
 
 	val maxTime:Long
 
+	fun clear()
+
 	fun last(): SignalHistoryEntry<T>
 
 	fun lastOrNull(): SignalHistoryEntry<T>?
@@ -86,9 +88,11 @@ class SignalHistoryImpl<T : Any>(
 		clear()
 	}
 
-	fun clear() {
+	override fun clear() {
 		entries.clear()
 		overflow = bufferSize == 0
+		minimumEntry = null
+		maximumEntry = null
 	}
 
 	fun add(signal: T, time: Long) {

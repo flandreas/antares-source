@@ -85,6 +85,11 @@ class Oscilloscope(
 		super.executionInitialize(signalHandler)
 	}
 
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		signalHistories.clear()
+	}
+
 	/** ---- [Oscilloscope] */
 
 	val maxTime: Long get() = signalHistories.maxTime
