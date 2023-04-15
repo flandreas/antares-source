@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 
 abstract class AbstractSignalHistoryDrawer<T: Any>(
 	private val background: CompositeColor,
@@ -131,7 +133,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		if (xL != rightBorder) {
 			if (fillSignal) {
 				context.g.color = color!!.backgroundColor
-				context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
+				context.g.fillRect(xL, min(y, baseLineY), rightBorder - xL, abs(baseLineY - y))
 			}
 			context.g.color = color!!.foregroundColor
 			context.g.drawLine(rightBorder, y, xL, y)
@@ -142,8 +144,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	protected fun drawHorizontalSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
 		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
-			context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
-			context.g.drawRect(xL, yL, xR - xL, baseLineY - yL)
+			context.g.fillRect(xL, min(yL, baseLineY), xR - xL, abs(baseLineY - yL))
 		}
 		context.g.color = color!!.foregroundColor
 		context.g.drawLine(xR, yR, xR, yL)
