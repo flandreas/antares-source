@@ -91,7 +91,10 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 
 	/** ---- [AbstractSignalHistoryDrawer]*/
 
-	/** The maximum height of the signal, i.e. the vertical distance in model coordinates between min and max signals.*/
+	/**
+	 * The maximum height of the signal, i.e. the vertical distance in model coordinates
+	 * between min and max signals.
+	 */
 	protected abstract val signalHeight: Double
 
 	// Visible for testing
@@ -171,7 +174,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	 */
 
 	protected fun drawBufferEnd(context: DrawContext, xL: Double) {
-		val y = baseLineY - signalHeight / 2
+		val y = baseLineY
 		context.g.color = background.foregroundColor
 
 		var x = xL
