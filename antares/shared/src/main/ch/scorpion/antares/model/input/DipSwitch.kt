@@ -10,8 +10,10 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -24,7 +26,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : AbstractInteractableVertice(CALCULATOR) {
+) : AbstractInteractableVertice<DigitalSignal>(CALCULATOR) {
 
 	companion object {
 
@@ -38,9 +40,9 @@ class DipSwitch(
 
 		private class Calculator : VerticeCalculator<DipSwitch> {
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.calculate(signalHandler, data.graphView)
 				val output = vertice.getOutput<DigitalSignal>()
-				output.setOutgoingSignalBuffered(vertice.value, signalHandler)
-				vertice.setInteractionEnabled(true, signalHandler)
+				output.setOutgoingSignalBuffered(vertice.signal, signalHandler)
 			}
 		}
 	}
@@ -48,6 +50,7 @@ class DipSwitch(
 	init {
 		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, bitWidth))
 		propagationDelay = 1000
+		signal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 	}
 
 	override val type: String get() = TYPE
@@ -58,7 +61,7 @@ class DipSwitch(
 		set(value) {
 			if (field != value) {
 				field = value
-				this.value = value
+				setSignal(value, null)
 				stateChanged()
 			}
 		}
@@ -66,27 +69,21 @@ class DipSwitch(
 	/** If set to `true`, [value] is retained between multiple execution runs.*/
 	var retainValue: Boolean = DEF_RETAIN_VALUE
 
-	/** The current value of this [DipSwitch]. */
-	var value: DigitalSignal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
-		set(value) {
-			if (field != value) {
-				field = value
-				stateChanged()
-			}
-		}
-
 	var bitWidth: BitWidth
 		get() = getDigitalPort().bitWidth
 		set(value) {
 			if (value != bitWidth) {
 				getDigitalPort().bitWidth = value
 				initialValue = initialValue.ofWidth(value)
-				this.value = DigitalSignalFactory.allOf(bitWidth, Bit.False)
-				stateChanged()
+				setSignal(DigitalSignalFactory.allOf(bitWidth, Bit.False), null)
 			}
 		}
 
 	private var firstExecution: Boolean = true
+
+	/** ---- [InteractableVertice] */
+
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
 
 	/** ---- [GraphElement] */
 
@@ -99,9 +96,8 @@ class DipSwitch(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		if (firstExecution || !retainValue) {
-			value = initialValue
+			setSignal(initialValue, signalHandler)
 		}
-		setInteractionEnabled(false, signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
@@ -111,7 +107,7 @@ class DipSwitch(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		if (!retainValue) {
-			value = initialValue
+			setSignal(initialValue, signalHandler)
 		}
 		setInteractionEnabled(true, signalHandler)
 		stateChanged(signalHandler)
@@ -144,18 +140,15 @@ class DipSwitch(
 
 	/** ---- [DipSwitch] */
 
-	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler) {
+	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler, graphView: GraphView?) {
 		if (enabled) {
-			value = value.withBit(index, bit)
-			setInteractionEnabled(false, signalHandler)
-			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+			requestSetSignal(signal!!.withBit(index, bit), signalHandler, graphView)
 		}
 	}
 
-	fun setValue(value: DigitalSignal, signalHandler: SignalHandler) {
+	fun setValue(value: DigitalSignal, signalHandler: SignalHandler, graphView: GraphView?) {
 		if (enabled) {
-			this.value = value
-			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+			requestSetSignal(value, signalHandler, graphView)
 		}
 	}
 

@@ -89,7 +89,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		val runner = UsecaseRunner(usecase, getCircuitView(), scheduler, applicationModeHolder)
 
 		runner.run()
-		proceedToNanos(10_000)
+		proceedUntilQueueIsEmpty()
 
 		assertEquals(0, issueCollector.size)
 		assertTrue(switch.model.isOn)

@@ -19,7 +19,7 @@ abstract class AbstractGraphPort<T : Any>(
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : AbstractInteractableVertice(calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
+) : AbstractInteractableVertice<T>(calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	companion object {
 		private fun defaultName(name: String?, portType: PortType): String {
@@ -55,6 +55,10 @@ abstract class AbstractGraphPort<T : Any>(
 				}
 			}
 		}
+
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = 1_000
 
 	/** ---- [Vertice] interface */
 

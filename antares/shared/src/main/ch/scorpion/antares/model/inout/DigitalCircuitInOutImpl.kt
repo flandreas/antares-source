@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -40,6 +42,7 @@ class DigitalCircuitInOutImpl(
 		private class Calculator : VerticeCalculator<DigitalCircuitInOutImpl> {
 			override fun calculate(vertice: DigitalCircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
+					calculate(signalHandler, data.graphView)
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
 					setInteractionEnabled(true, signalHandler)
 				}
@@ -116,6 +119,10 @@ class DigitalCircuitInOutImpl(
 		return emptyList()
 	}
 
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+
 	/** ---- [Vertice] */
 
 	override fun <T : Any> replaceUndefinedOutput(signal: T?) {
@@ -167,6 +174,13 @@ class DigitalCircuitInOutImpl(
 		stateChanged(signalHandler)
 	}
 
+	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?, graphView: GraphView?): GraphActorData =
+		if (inputPort == null) {
+			StoringGraphActorData(null, signal ?: this.signal)
+		} else {
+			super.createActorData(inputPort, force, signal, graphView)
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -179,7 +193,13 @@ class DigitalCircuitInOutImpl(
 		bitWidth = BitWidth.read("bitWidth", reader)
 	}
 
-	/** ---- [DigitalCircuitInOut] interface */
+	/** ---- [CircuitInOut] interface */
+
+	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler, graphView: GraphView?) {
+		requestSetSignal(signal, signalHandler, graphView)
+	}
+
+	/** ---- [DigitalCircuitInOut] */
 
 	override var signalRepresentation: DigitalSignalRepresentation
 		get() = getDigitalPort().signalRepresentation
@@ -207,7 +227,7 @@ class DigitalCircuitInOutImpl(
 			}
 		}
 
-	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler) {
+	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler, graphView: GraphView?) {
 		var s = signal
 		if (s == null) {
 			s = DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
@@ -220,11 +240,7 @@ class DigitalCircuitInOutImpl(
 				bit = Bit.False
 			}
 		}
-		setIncomingSignal(s.withBit(index, bit.not()), signalHandler, Switch.DEF_PROP_DELAY)
-	}
-
-	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler) {
-		setIncomingSignal(signal, signalHandler, Switch.DEF_PROP_DELAY)
+		setSignalManually(s.withBit(index, bit.not()), signalHandler, graphView)
 	}
 
 	/** ---- [DigitalCircuitInOutImpl] */

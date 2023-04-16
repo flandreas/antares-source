@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -36,6 +37,7 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -184,7 +186,7 @@ class DipSwitchView(
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
 		for ((i, view) in bitViews.withIndex()) {
-			view.bit = model.value.bitAt(i)
+			view.bit = model.signal!!.bitAt(i)
 		}
 		label.text = StringUtils.orEmpty(model.name)
 		super.handleStateChanged(event)
@@ -205,6 +207,7 @@ class DipSwitchView(
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fill(bounds)
@@ -216,8 +219,8 @@ class DipSwitchView(
 			it.draw(context)
 		}
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			if (isDisabledFor(context) || model.inactive) {
+		if (appContext.isExecute) {
+			if (model.shouldDrawDisabled(appContext)) {
 				drawDisabled(context)
 			}
 		}
@@ -225,9 +228,6 @@ class DipSwitchView(
 		context.g.color = context.choose(color).textColor
 		label.draw(context)
 	}
-
-	private fun isDisabledFor(context: DrawContext): Boolean =
-		model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true
 
 	private fun drawDisabled(context: DrawContext) {
 		context.g.color = Look.disabledColor()
@@ -349,7 +349,7 @@ class DipSwitchView(
 		val maxIndex = model.bitWidth.width - 1
 		for (index in 0..maxIndex) {
 			val xx = x + (maxIndex - index) * KNOB_WIDTH
-			bitViews.add(BitView(index, model.value.bitAt(index), xx, y, styleProvider))
+			bitViews.add(BitView(index, model.signal!!.bitAt(index), xx, y, styleProvider))
 		}
 
 		getOutput().direction = orientation
@@ -392,7 +392,7 @@ class DipSwitchView(
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			getBitViewIndexAt(context.x - location.x, context.y - location.y)?.let {
-				toggleImpl(it, context.signalHandler, all = context.mouseEvent?.isAltDown == true)
+				toggleImpl(it, context.signalHandler, all = context.mouseEvent?.isAltDown == true, (context.view as DrawingView<*>).drawing as GraphView)
 				requestFocus()
 				setFocusTo(it)
 			}
@@ -405,28 +405,29 @@ class DipSwitchView(
 			return this
 		}
 
-		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean) {
-			val bit = model.value.bitAt(index).not()
+		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean, graphView: GraphView) {
+			val bit = model.signal!!.bitAt(index).not()
 			if (all) {
-				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler)
+				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler, graphView)
 			} else {
-				model.setBit(index, bit, signalHandler)
+				model.setBit(index, bit, signalHandler, graphView)
 			}
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
+			val graphView = (context.view as DrawingView<*>).drawing as GraphView
 			if (focusIndex != null) {
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()
 					KeyEvent.VK_RIGHT -> transferFocusRight()
-					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true)
+					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true, graphView)
 					KeyEvent.VK_0 -> {
-						model.setBit(focusIndex!!, Bit.False, context.signalHandler)
+						model.setBit(focusIndex!!, Bit.False, context.signalHandler, graphView)
 						transferFocusRight()
 					}
 					KeyEvent.VK_1 -> {
-						model.setBit(focusIndex!!, Bit.True, context.signalHandler)
+						model.setBit(focusIndex!!, Bit.True, context.signalHandler, graphView)
 						transferFocusRight()
 					}
 				}

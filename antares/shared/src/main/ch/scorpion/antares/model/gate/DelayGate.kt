@@ -71,7 +71,7 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 	}
 
-	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, graphView: GraphView?): GraphActorData =
+	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?, graphView: GraphView?): GraphActorData =
 		StoringGraphActorData(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true, force = force, graphView = graphView)
 
     override fun write(writer: StoreWriter) {

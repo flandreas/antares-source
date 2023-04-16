@@ -2,34 +2,109 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A [Vertice] whose state can be changed by the user during execution.
  *
- * It is disabled between changing its state and re-calculation initiated by the [Scheduler]. Subclasses should
- * re-enable themselves at the end of their [VerticeCalculator.calculate] method.
+ * Supports disabling itself between requesting a state change and effectively processing it
+ * by calculating its new state. Can also store a single incoming state change while the
+ * previous one is still being processed. This is to support implementations like clickable switches,
+ * where the user can release the mouse button while the request after pressing the button
+ * is still processed.
+ *
+ * Updating the state of an [InteractableVertice] is also deferred until the state change
+ * has been processed by the [Scheduler].
+ *
+ * Implementations should re-enable themselves at the end of their [VerticeCalculator.calculate] method.
+ *
+ * @param S the type of signal stored and deferred
  */
-interface InteractableVertice : Vertice {
+interface InteractableVertice<S: Any> : Vertice {
 
 	val enabled: Boolean
 
 	val disabled: Boolean get() = !enabled
+
+	/** The propagation delay to be applied with user interactions such as mouse clicks.*/
+	val interactivePropagationDelay: Long
+
+	/**
+	 * Determines whether views of this [InteractableVertice] should draw themselves
+	 * in a disabled state to indicate to the user that this [InteractableVertice] currently
+	 * can't accept input from the user.
+	 */
+	fun shouldDrawDisabled(context: GraphApplicationContext): Boolean =
+		disabled && (inactive || context.isPausing || context.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore)
 }
 
-abstract class AbstractInteractableVertice(
+abstract class AbstractInteractableVertice<S: Any>(
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	name: String? = null
-) : CalculatingVertice(calculator, name), InteractableVertice {
+) : CalculatingVertice(calculator, name), InteractableVertice<S> {
+
+	/**
+	 * Holds the current signal that determines the state of this [AbstractInteractableVertice].
+	 * Changes to this property are delayed by storing the new value in [delayedSignal] until
+	 * the state change has been processed by the [Scheduler].
+	 */
+	open var signal: S? = null
+		protected set
+
+	/** Captures a state change to delay it until propagation delay is over.*/
+	private var delayedSignal: S? = null
+
+	/** Buffers a state change while a previous state change has not yet been processed.*/
+	private var bufferedSignal: S? = null
 
 	private var _enabled: Boolean = true
 
+	/** ---- [InteractableVertice] interface */
+
 	override val enabled: Boolean get() = _enabled
+
+	/** ---- [AbstractInteractableVertice] */
 
 	fun setInteractionEnabled(enabled: Boolean, signalHandler: SignalHandler) {
 		if (_enabled != enabled) {
 			_enabled = enabled
 			stateChanged(signalHandler)
+		}
+	}
+
+	protected fun setSignal(signal: S?, signalHandler: SignalHandler?) {
+		this.signal = signal
+		stateChanged(signalHandler)
+		bufferedSignal = null
+	}
+
+	fun bufferSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
+		bufferedSignal = signal
+		requestSetSignal(signal, signalHandler, graphView)
+	}
+
+	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
+		delayedSignal = signal
+		setInteractionEnabled(false, signalHandler)
+		requestActingAfter(signalHandler, 1_000, createActorData(null, signal = signal, graphView = graphView))
+	}
+
+	private fun completeSetState(signalHandler: SignalHandler) {
+		if (delayedSignal != null) {
+			setSignal(delayedSignal, signalHandler)
+		}
+		setInteractionEnabled(true, signalHandler)
+	}
+
+	protected fun calculate(signalHandler: SignalHandler, graphView: GraphView?) {
+		if (bufferedSignal != null) {
+			requestSetSignal(bufferedSignal!!, signalHandler, graphView)
+			bufferedSignal = null
+		} else {
+			completeSetState(signalHandler)
 		}
 	}
 }

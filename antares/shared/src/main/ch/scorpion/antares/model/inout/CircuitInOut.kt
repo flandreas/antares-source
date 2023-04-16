@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A [Vertice] that can feed a signal into a circuit [Graph] and forward it to the outside of a [Graph].
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
  *
  * @param T type of the signal
  */
-interface CircuitInOut<T : Any> : BidirectionalGraphPort<T>, InteractableVertice {
+interface CircuitInOut<T : Any> : BidirectionalGraphPort<T>, InteractableVertice<T> {
 
 	/**
 	 * Determines whether this [CircuitInOut] belongs to a top-level [Graph]. Manually setting the input
@@ -33,5 +34,5 @@ interface CircuitInOut<T : Any> : BidirectionalGraphPort<T>, InteractableVertice
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].
 	 */
-	fun setSignalManually(signal: T, signalHandler: SignalHandler)
+	fun setSignalManually(signal: T, signalHandler: SignalHandler, graphView: GraphView? = null)
 }

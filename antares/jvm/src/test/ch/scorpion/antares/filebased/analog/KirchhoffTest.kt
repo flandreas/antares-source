@@ -129,6 +129,10 @@ class KirchhoffTest : AbstractAnalogFileBasedTest() {
 
 	@Test
 	fun shouldSolveSwitchedOn() {
+		with((analogGraphView.getWithId(2) as AnalogSwitchView).model) {
+			toggle(scheduler, analogGraphView)
+			act(scheduler, createActorData(null))
+		}
 		(analogGraphView.getWithId(2) as AnalogSwitchView).model.toggle(scheduler, analogGraphView)
 
 		val voltageNodes = labelVoltageNodes(analogGraphView, 10)
@@ -165,6 +169,10 @@ class KirchhoffTest : AbstractAnalogFileBasedTest() {
 
 	@Test
 	fun shouldCalculateResultSwitchedOn() {
+		with((analogGraphView.getWithId(2) as AnalogSwitchView).model) {
+			toggle(scheduler, analogGraphView)
+			act(scheduler, createActorData(null))
+		}
 		(analogGraphView.getWithId(2) as AnalogSwitchView).model.toggle(scheduler, analogGraphView)
 
 		val analysis = KirchhoffAnalogCircuitCalculator.analyse(analogGraphView)

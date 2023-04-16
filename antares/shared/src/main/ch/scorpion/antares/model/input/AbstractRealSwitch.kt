@@ -124,9 +124,9 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [AbstractSwitch] */
 
-	override fun setState(signalHandler: SignalHandler, on: Boolean, graphView: GraphView?) {
-		isOn = on
+	override fun requestSetSignal(signal: Boolean, signalHandler: SignalHandler, graphView: GraphView?) {
+		this.signal = signal
 		notifyNetTopologyChanged(signalHandler)
-		super.setState(signalHandler, on, graphView)
+		super.requestSetSignal(signal, signalHandler, graphView)
 	}
 }

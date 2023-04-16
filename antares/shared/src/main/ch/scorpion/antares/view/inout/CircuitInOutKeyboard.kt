@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * Displays a keyboard for entering digits into a [DigitalCircuitInOutView] during simulation.
@@ -106,7 +107,7 @@ class CircuitInOutKeyboard(
 					text = BitOperation.HEX_CHAR[i - 1].toString(),
 					dimension = Dimension2D(BUTTON_SIZE, BUTTON_SIZE),
 					style = styleProvider.getStyle(styleType)),
-				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1]) },
+				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1], null) },
 				round = true
 			)
 			button.enabled = circuitInOutView.signalRepresentation == DigitalSignalRepresentation.HEXADECIMAL || i <= 10
@@ -131,8 +132,8 @@ class CircuitInOutKeyboard(
 		add(clearButton)
 	}
 
-	private fun buttonClickHandler(key: Int) {
-		circuitInOutView.consumeKey(key, contextHolder)
+	private fun buttonClickHandler(key: Int, graphView: GraphView?) {
+		circuitInOutView.consumeKey(key, contextHolder, graphView = graphView)
 	}
 
 	private fun clearHandler() {

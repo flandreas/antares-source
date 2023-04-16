@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.every
@@ -20,9 +21,11 @@ class SwitchViewTest {
 		}
 	}
 
+	private val switchView = SwitchView()
+	private val signalHandler: SignalHandler = mockk(relaxed = true)
+
 	@Test
 	fun shouldConsumeKeyEventForName() {
-		val switchView = SwitchView()
 		val keyEvent = keyEvent('A'.code)
 		val context = contextFor(keyEvent = keyEvent)
 		switchView.name = "A"
@@ -33,7 +36,6 @@ class SwitchViewTest {
 
 	@Test
 	fun shouldNotConsumeKeyEventForOtherName() {
-		val switchView = SwitchView()
 		val keyEvent = keyEvent('B'.code)
 		val context = contextFor(keyEvent = keyEvent)
 		switchView.name = "A"
@@ -44,39 +46,76 @@ class SwitchViewTest {
 
 	@Test
 	fun shouldToggleWithMousePress() {
-		val switchView = SwitchView()
 		switchView.toggle = false
-		val event = MouseEventImpl(type = MouseEventType.PRESSED, button = Button.BUTTON1)
-		val context = contextFor(mouseEvent = event)
-		switchView.getActorInteractionHandler(context).mousePressed(context)
+		pressMouseButton()
 
+		// State change is deferred
+		assertFalse(switchView.model.isOn)
+
+		act()
 		assertTrue(switchView.model.isOn)
 	}
 
 	@Test
-	fun shouldNotToggleWithReleaseWithoutPrecedingPress() {
-		val switchView = SwitchView()
+	fun shouldNotToggle() {
 		switchView.toggle = false
-		val event = MouseEventImpl(
-			type = MouseEventType.RELEASED,
-			button = Button.BUTTON1)
-		val context = contextFor(mouseEvent = event)
-		switchView.getActorInteractionHandler(context).mouseReleased(context)
+		pressMouseButton()
+		assertFalse(switchView.model.isOn)
+		assertFalse(switchView.model.enabled)
+		act()
+		assertTrue(switchView.model.isOn)
+		assertTrue(switchView.model.enabled)
+
+		releaseMouseButton()
+		assertTrue(switchView.model.isOn)
+		assertFalse(switchView.model.enabled)
+		act()
+		assertFalse(switchView.model.isOn)
+		assertTrue(switchView.model.enabled)
+	}
+
+	@Test
+	fun shouldNotForgetReleaseWhenNotToggling() {
+		switchView.toggle = false
+		pressMouseButton()
+		// No act
+		releaseMouseButton()
+		act()
+		act()
+		assertFalse(switchView.model.isOn)
+		assertTrue(switchView.model.enabled)
+	}
+
+	@Test
+	fun shouldNotToggleWithReleaseWithoutPrecedingPress() {
+		switchView.toggle = false
+		pressMouseButton()
 
 		assertFalse(switchView.model.isOn)
 	}
 
 	@Test
 	fun shouldNotToggleWithRightMouseButton() {
-		val switchView = SwitchView()
 		switchView.toggle = false
-		val event = MouseEventImpl(
-			type = MouseEventType.PRESSED,
-			button = Button.BUTTON3)
-		val context = contextFor(mouseEvent = event)
-		switchView.getActorInteractionHandler(context).mousePressed(context)
+		pressMouseButton(Button.BUTTON3)
 
 		assertFalse(switchView.model.isOn)
+	}
+
+	private fun pressMouseButton(button: Button = Button.BUTTON1) {
+		val event = MouseEventImpl(MouseEventType.PRESSED, button = button)
+		val context = contextFor(mouseEvent = event)
+		switchView.getActorInteractionHandler(context).mousePressed(context)
+	}
+
+	private fun releaseMouseButton(button: Button = Button.BUTTON1) {
+		val event = MouseEventImpl(MouseEventType.RELEASED, button = button)
+		val context = contextFor(mouseEvent = event)
+		switchView.getActorInteractionHandler(context).mouseReleased(context)
+	}
+
+	private fun act() {
+		switchView.model.act(signalHandler, switchView.model.createActorData(null))
 	}
 
 	private fun keyEvent(key: Int): KeyEvent {

@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -17,39 +18,29 @@ class SwitchTest {
 
 	private val switch = Switch()
 	private val signalHandler: SignalHandler = mockk(relaxed = true)
+	private val graphView = mockk<GraphView>(relaxed = true)
 
 	@Test
-	fun shouldBeDisabledWhileWaiting() {
-		switch.on(signalHandler, null)
+	fun shouldDelaySwitchOn() {
+		switch.on(signalHandler, graphView)
+		assertFalse(switch.isOn)
 		assertFalse(switch.enabled)
 
 		switch.act(signalHandler, switch.createActorData(null))
+		assertTrue(switch.isOn)
 		assertTrue(switch.enabled)
 	}
 
 	@Test
-	fun shouldNotSetOnWhileWaiting() {
-		switch.on(signalHandler, null)
+	fun shouldDelaySwitchOff() {
+		switch.on(signalHandler, graphView)
 		switch.act(signalHandler, switch.createActorData(null))
-		switch.off(signalHandler, null)
 
-		switch.on(signalHandler, null)
-		assertFalse(switch.isOn)
-		assertFalse(switch.enabled)
-	}
-
-	@Test
-	fun shouldDelaySetOffWhileDisabled() {
-		switch.on(signalHandler, null)
-		switch.off(signalHandler, null)
+		switch.off(signalHandler, graphView)
 		assertTrue(switch.isOn)
 		assertFalse(switch.enabled)
-
 		switch.act(signalHandler, switch.createActorData(null))
-		assertFalse(switch.isOn)
-		assertFalse(switch.enabled)
 
-		switch.act(signalHandler, switch.createActorData(null))
 		assertFalse(switch.isOn)
 		assertTrue(switch.enabled)
 	}

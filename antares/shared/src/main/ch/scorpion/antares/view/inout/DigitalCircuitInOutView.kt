@@ -30,10 +30,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.GraphPortView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -265,7 +262,7 @@ class DigitalCircuitInOutView(
 	}
 
 	/** Consumes a key the user pressed during simulation while this [DigitalCircuitInOutView] has focus.*/
-	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false) {
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false, graphView: GraphView? = null) {
 		invalidate()
 		if (keyEvent != null && keyEvent.modifiers != 0) {
 			// Ignore everything that should be handled by MenuItem accelerators
@@ -282,18 +279,20 @@ class DigitalCircuitInOutView(
 			numberView!!.transferFocusRight()
 		} else if (key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-				toggleFocusBitWithEnter(contextHolder.scheduler)
+				toggleFocusBitWithEnter(contextHolder.scheduler, graphView)
 			}
 		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 			consumeSignal(
 				DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount)),
-				contextHolder)
+				contextHolder,
+				graphView = graphView)
 		} else {
 			if (checkTopLevelKey()) {
 				consumeSignal(
 					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar()),
 					contextHolder,
-					skipAnimation)
+					skipAnimation,
+					graphView = graphView)
 			} else {
 				rejectSignal(contextHolder, skipAnimation)
 			}
@@ -301,11 +300,11 @@ class DigitalCircuitInOutView(
 		validate()
 	}
 
-	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
+	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false, graphView: GraphView?) {
 		signal?.let {
 			signalRepresentation.withDigit(model.signal!!, it, numberView!!.focusIndex!!)
 		}?.let {
-			model.setSignalManually(it, contextHolder.scheduler)
+			model.setSignalManually(it, contextHolder.scheduler, graphView)
 			numberView!!.transferFocusRight()
 		} ?: rejectSignal(contextHolder, skipAnimation)
 	}
@@ -324,8 +323,8 @@ class DigitalCircuitInOutView(
 		}
 	}
 
-	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
-		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
+	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler, graphView: GraphView?) {
+		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler, graphView)
 	}
 
 	private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
@@ -358,7 +357,7 @@ class DigitalCircuitInOutView(
 		val digitIndex = getDigitIndexAt(context.x, context.y)
 		if (digitIndex != null) {
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-				model.toggleBit(digitIndex, undefine, context.signalHandler)
+				model.toggleBit(digitIndex, undefine, context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
 			} else {
 				if (context.view is DrawingView<*>) {
 					context.mouseEvent?.consume()
@@ -403,7 +402,8 @@ class DigitalCircuitInOutView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder, context.keyEvent)
+				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder,
+					context.keyEvent, graphView = (context.view as DrawingView<*>).drawing as GraphView)
 			}
 			return null
 		}
@@ -414,7 +414,7 @@ class DigitalCircuitInOutView(
 			}
 			if (numberView!!.focusIndex != null) {
 				if (context.keyEvent?.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
-					toggleFocusBitWithEnter(context.signalHandler)
+					toggleFocusBitWithEnter(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
 				}
 			}
 			return null

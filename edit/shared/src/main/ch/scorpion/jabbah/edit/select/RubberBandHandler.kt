@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModule.properties
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -12,8 +13,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.SelectionManager
 
 /**
- * Handles [RubberBand] interactions and selects [Component]s while rubberbanding, or after rubberbanding is done,
- * depending on the configured strategy.
+ * Handles [RubberBand] interactions and selects [Component]s while rubberbanding.
  *
  * @param rubberBand the drawable [RubberBand] that is controlled by this [RubberBandHandler]
  */
@@ -22,87 +22,125 @@ class RubberBandHandler(
 ) : InputEventHandlerAdapter<EditInputEventContext>() {
 
     companion object {
-        const val PROP_SELECT_STRATEGY = "edit.select.rubberBandHandler.selectionStrategy"
 	    const val PROP_SELECT_TARGET_STRATEGY = "edit.select.rubberBandHandler.selectionTargetStrategy"
 	    const val PROP_SELECT_DELAY_MS = "edit.select.rubberBandHandler.selectDelayMs"
     }
 
-    enum class SelectionTimeStrategy {
-
-        SELECT_ON_DRAG {
-
-	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-				captureCurrentSelection(context.drawingView.selectionManager)
-	        }
-
-            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-	            if (delaySelectTimer != null) {
-		            if (!delaySelectTimer!!.isRunning()) {
-			            this.rubberBandRef = rubberBand
-			            this.context = context
-			            this.selectionTargetStrategy = selectionTargetStrategy
-			            delaySelectTimer!!.start()
-		            }
-	            } else {
-		            this.rubberBandRef = rubberBand
-		            this.context = context
-		            this.selectionTargetStrategy = selectionTargetStrategy
-		            selectionTargetStrategy.select(this.context, this.currentSelection, this.rubberBandRef)
-	            }
-            }
-
-            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-	            // empty
-            }
-        },
-
-        /** Updates the selection not before the mouse has been released.*/
-        SELECT_ON_RELEASE {
-
-	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-		        captureCurrentSelection(context.drawingView.selectionManager)
-	        }
-            override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-                // empty
-            }
-
-            override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy) {
-	            selectionTargetStrategy.select(this.context, currentSelection, rubberBand)
-            }
-        };
-
-	    val currentSelection = mutableListOf<Component>()
-
-	    /** Temporarily stores the values used for evaluating the selection within the rubberband.*/
-	    lateinit var rubberBandRef: RubberBand
-	    lateinit var context: EditInputEventContext
-		lateinit var selectionTargetStrategy: SelectionTargetStrategy
-
-	    /**
-	     * Delays evaluation of the selection within the rubberband by [PROP_SELECT_DELAY_MS] milliseconds
-	     * to avoid costly evaluation with every MOUSE_DRAGGED event. Can be disabled by not setting the
-	     * property, or by using the value 0.
-	     *
-	     * Editable for disabling the feature during tests.
-	     */
-	    var delaySelectTimer: Timer? = null
-
-	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
-        abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
-        abstract fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext, selectionTargetStrategy: SelectionTargetStrategy)
-
-		protected fun captureCurrentSelection(selectionManager: SelectionManager) {
-			// The SelectionTool makes sure that the currentSelection is empty if SHIFT is pressed
-			currentSelection.clear()
-			currentSelection.addAll(selectionManager.selection)
+	/**
+	 * Delays evaluation of the selection within the [RubberBand] by [PROP_SELECT_DELAY_MS] milliseconds
+	 * to avoid costly evaluation with every MOUSE_DRAGGED event. Can be disabled by not setting the
+	 * property, or by using the value 0. Editable for disabling the feature during tests.
+	 */
+	var delaySelectTimer: Timer? = System.createTimer()
+		set(value) {
+			field = initializeTimer(value)
 		}
+
+	private val currentSelection = mutableListOf<Component>()
+
+	/** Temporarily stores the values used for asynchronously evaluating the selection within the [RubberBand].*/
+	private lateinit var context: EditInputEventContext
+
+	private val selectionTargetStrategy: SelectionTargetStrategy by lazy {
+		SelectionTargetStrategy.withName(properties.getString(PROP_SELECT_TARGET_STRATEGY))
+	}
+
+	init {
+		initializeTimer(delaySelectTimer)
+	}
+
+	/** ---- [InputEventHandler] */
+
+	override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		if (context.keyEvent?.key == KeyEvent.VK_ALT) {
+			this.context = context
+			performSelection(true)
+		}
+		return this
+	}
+
+    override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+	    if (context.keyEvent?.key == KeyEvent.VK_ALT) {
+		    this.context = context
+		    performSelection(false)
+	    }
+	    return this
     }
 
+	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+        super.mousePressed(context)
+		captureCurrentSelection(context.drawingView.selectionManager)
+        return rubberBand.inputEventHandler.mousePressed(context)
+    }
+
+    override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+        super.mouseDragged(context)
+        rubberBand.inputEventHandler.mouseDragged(context)
+	    requestExpandSelection(context)
+        return this
+    }
+
+    override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+        super.mouseReleased(context)
+        rubberBand.inputEventHandler.mouseReleased(context)
+        return null
+    }
+
+	/** ---- [RubberBandHandler] */
+
+	private fun captureCurrentSelection(selectionManager: SelectionManager) {
+		// The SelectionTool makes sure that the currentSelection is empty if SHIFT is pressed
+		currentSelection.clear()
+		currentSelection.addAll(selectionManager.selection)
+	}
+
+	private fun initializeTimer(timer: Timer?): Timer? {
+		if (timer == null) {
+			return null
+		}
+		val delay = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)
+		return if (delay != null) {
+			timer.initialize(delay, repeats = false) { performSelection(context.mouseEvent?.isAltDown == true) }
+			timer
+		} else {
+			null
+		}
+	}
+
+	private fun performSelection(isOther: Boolean) {
+		effectiveTargetStrategy(isOther).select(
+			context,
+			currentSelection,
+			rubberBand
+		)
+	}
+
+	private fun requestExpandSelection(context: EditInputEventContext) {
+		if (delaySelectTimer != null) {
+			if (!delaySelectTimer!!.isRunning()) {
+				this.context = context
+				delaySelectTimer!!.start()
+			}
+		} else {
+			this.context = context
+			effectiveTargetStrategy(context.mouseEvent?.isAltDown == true).select(this.context, this.currentSelection, rubberBand)
+		}
+	}
+
+	private fun effectiveTargetStrategy(isOther: Boolean) =
+		if (isOther) {
+			selectionTargetStrategy.other
+		} else {
+			selectionTargetStrategy
+		}
+
+	/** Determines the what [Component]s are selected in relation to the current [RubberBand] geometry.*/
 	enum class SelectionTargetStrategy(
 		override val customName: String,
-		val nameKey: String
+		private val nameKey: String
 	): EnumProperty<SelectionTargetStrategy> {
 
+		/** Selects [Component]s that are completely enclosed in the [RubberBand]. */
 		CONTAINS("contains", "edit.preferences.RubberBand.targetStrategy.contains") {
 			override fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand) {
 				context.drawingView.selectionManager.replace {
@@ -110,6 +148,8 @@ class RubberBandHandler(
 				}
 			}
 		},
+
+		/** Selects [Component]s that are completely enclosed or intersect the [RubberBand]. */
 		INTERSECTS("intersects", "edit.preferences.RubberBand.targetStrategy.intersects") {
 			override fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand) {
 				context.drawingView.selectionManager.replace {
@@ -126,54 +166,11 @@ class RubberBandHandler(
 		abstract fun select(context: EditInputEventContext, currentSelection: MutableList<Component>, rubberBand: RubberBand)
 
 		override fun toString(): String = Translations.getString(nameKey)
-	}
 
-	val selectionStrategy: SelectionTimeStrategy by lazy { properties.get(PROP_SELECT_STRATEGY) }
-	private val selectionTargetStrategy: SelectionTargetStrategy by lazy {
-		SelectionTargetStrategy.withName(properties.getString(PROP_SELECT_TARGET_STRATEGY))
-	}
-
-	init {
-		selectionStrategy.delaySelectTimer = properties.getOptional<Int>(PROP_SELECT_DELAY_MS)?.let { delay ->
-			if (delay > 0) {
-				System.createTimer().also {
-					it.initialize(delay, repeats = false) {
-						selectionTargetStrategy.select(
-							selectionStrategy.context,
-							selectionStrategy.currentSelection,
-							selectionStrategy.rubberBandRef)
-					}
-				}
-			} else {
-				null
+		val other: SelectionTargetStrategy get() =
+			when (this) {
+				CONTAINS -> INTERSECTS
+				INTERSECTS -> CONTAINS
 			}
-		}
 	}
-
-	/** ---- [InputEventHandler] */
-
-    override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
-	    // Avoid stop dragging Rubberband when SHIFT is released
-	    return this
-    }
-
-	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        super.mousePressed(context)
-	    selectionStrategy.mousePressed(rubberBand, context, selectionTargetStrategy)
-        return rubberBand.inputEventHandler.mousePressed(context)
-    }
-
-    override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
-        super.mouseDragged(context)
-        rubberBand.inputEventHandler.mouseDragged(context)
-        selectionStrategy.mouseDragged(rubberBand, context, selectionTargetStrategy)
-        return this
-    }
-
-    override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        super.mouseReleased(context)
-        rubberBand.inputEventHandler.mouseReleased(context)
-        selectionStrategy.mouseReleased(rubberBand, context, selectionTargetStrategy)
-        return null
-    }
 }

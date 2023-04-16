@@ -1,53 +1,34 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
-import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.EditorToolDriver
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.module.EditModule
-import kotlin.test.BeforeTest
+import ch.scorpion.jabbah.base.event.Modifier
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RubberBandHandlerTest : AbstractEditIntegrationTest() {
-
-	private val driver = EditorToolDriver(editor)
+class RubberBandHandlerTest : AbstractRubberBandHandlerTest() {
 
 	init {
-		editor.selectionTool.rubberBandHandler.selectionStrategy.delaySelectTimer = null
-	}
-
-	@BeforeTest
-	fun setup() {
-		EditModule.reset()
-		EditTestRule.configure()
+		setTimer(null)
 	}
 
 	@Test
 	fun shouldSelectIfFullyContained() {
-		val rect = EditModule.drawingAppService.add(
-			RectangleComponent(shape = Rectangle2D(10, 10, 20, 20)),
-			editor.view)
-
-		driver.mouseMoveTo(0, 0)
-		driver.pressMouseAt(0, 0)
-		driver.dragMouseTo(100, 100)
-
-		assertTrue(editor.view.selectionManager.isSelected(rect))
+		fullyEncloseRectangle()
+		assertTrue(editor.view.selectionManager.isSelected(rectangle))
 	}
 
 	@Test
 	fun shouldNotSelectIfNotContained() {
-		val rect = EditModule.drawingAppService.add(
-			RectangleComponent(shape = Rectangle2D(10, 10, 20, 20)),
-			editor.view)
+		notEncloseRectangle()
+		assertFalse(editor.view.selectionManager.isSelected(rectangle))
+	}
 
-		driver.mouseMoveTo(100, 100)
-		driver.pressMouseAt(100, 100)
-		driver.dragMouseTo(200, 200)
+	@Test
+	fun shouldChangeTargetStrategyWithAltKey() {
+		partiallyEncloseRectangle()
+		assertFalse(editor.view.selectionManager.isSelected(rectangle))
 
-		assertFalse(editor.view.selectionManager.isSelected(rect))
+		driver.dragMouseTo(16, 16, Modifier.Alt.mask)
+		assertTrue(editor.view.selectionManager.isSelected(rectangle))
 	}
 }

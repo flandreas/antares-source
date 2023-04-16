@@ -75,7 +75,7 @@ class AnalogCircuitInOut(
 
 	/** ---- [CircuitInOut] */
 
-	override fun setSignalManually(signal: AnalogSignal, signalHandler: SignalHandler) {
+	override fun setSignalManually(signal: AnalogSignal, signalHandler: SignalHandler, graphView: GraphView?) {
 		setIncomingSignal(signal, signalHandler)
 	}
 

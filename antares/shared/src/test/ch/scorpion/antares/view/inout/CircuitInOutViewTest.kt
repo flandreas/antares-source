@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -55,6 +56,7 @@ class CircuitInOutViewTest {
 		input.model.setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 42), signalHandler)
 
 		input.clearByUser(signalHandler)
+		input.model.act(signalHandler, StoringGraphActorData(null, DigitalSignalFactory.of(BitWidth.BW_8, 0)))
 
 		assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 0), input.model.signal)
 	}

@@ -1,0 +1,62 @@
+package ch.scorpion.jabbah.draw.view
+
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.KeyAdapter
+import ch.scorpion.jabbah.base.event.KeyEvent
+
+/**
+ * Functionality to avoid that zoom/pan mode switches occur when the user presses/releases
+ * the ALT key while auto-repeated mouse wheel events are still coming in. "Auto-repeat" refers
+ * to scroll animation fade-outs either from mouse wheels or from trackpad gestures.
+ *
+ * The JVM does not provide the information whether such events are auto-repeated, so use a
+ * custom time-based approach to determine that.
+ */
+class MouseWheelModeController : KeyAdapter() {
+
+	companion object {
+
+		/**
+		 * The time (in ms) after the last mouse wheel rotation event to accept ALT keys for
+		 * switching between zooming and panning.
+		 */
+		private const val WHEEL_COOL_DOWN = 200
+	}
+
+	private var lastMouseWheelZoomTime = 0L
+	private var lastMouseWheelPanTime = 0L
+	private var isAltDown = false
+
+	private var isWheelZoom = true
+
+	fun calculateIsWheelZoom(): Boolean {
+		val now = System.currentTimeMillis()
+		val switchMode =
+			isWheelZoom && isAltDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
+				|| !isWheelZoom && !isAltDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
+
+		isWheelZoom = isWheelZoom && !switchMode || !isWheelZoom && switchMode
+
+		return isWheelZoom
+	}
+
+	fun updateMouseWheelZoomTime() {
+		lastMouseWheelZoomTime = System.currentTimeMillis()
+	}
+
+	fun updateMouseWheelPanTime() {
+		lastMouseWheelPanTime = System.currentTimeMillis()
+	}
+
+	override fun keyPressed(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ALT) {
+			isAltDown = true
+		}
+	}
+
+	override fun keyReleased(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ALT) {
+			isAltDown = false
+		}
+	}
+}

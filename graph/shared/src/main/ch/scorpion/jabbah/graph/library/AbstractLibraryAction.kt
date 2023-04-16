@@ -24,6 +24,11 @@ abstract class AbstractLibraryAction(
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractApplicationModeEditAction(actionBaseName, controller.applicationModeHolder, eventBus = controller.eventBus) {
 
+	companion object {
+		fun isAuthorized(operation: Operation, target: Any?): Boolean =
+			target != null && Authorizer.isCurrentUserAuthorizedTo(operation, target)
+	}
+
 	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
 		if (it.controller === controller) {
 			updateEnabledness()
@@ -55,8 +60,7 @@ abstract class AbstractLibraryAction(
 	override fun calculateEnabledness(): Boolean =
 		noStateChangeInterference && operationAuthorized
 
-	protected open val operationAuthorized: Boolean get() =
-		LibraryModule.libraryHolder.l != null && Authorizer.isCurrentUserAuthorizedTo(operation, LibraryModule.libraryHolder.library)
+	protected open val operationAuthorized: Boolean get() = isAuthorized(operation, LibraryModule.libraryHolder.l)
 
 	private val noStateChangeInterference: Boolean get() =
 		operation != Change || !commandManager.canUndo()

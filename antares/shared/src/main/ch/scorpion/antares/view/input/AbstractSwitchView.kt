@@ -164,10 +164,13 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				return null
 			}
 			if (!toggle) {
+				val graphView = (context.view as DrawingView<*>).drawing as GraphView
 				if (model.isOn) {
-					model.off(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
-					context.mouseEvent?.consume()
+					model.off(context.signalHandler, graphView)
+				} else {
+					model.bufferSignal(false, context.signalHandler, graphView)
 				}
+				context.mouseEvent?.consume()
 			}
 			return null
 		}

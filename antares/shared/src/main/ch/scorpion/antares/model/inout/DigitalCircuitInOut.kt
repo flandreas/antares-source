@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.view.GraphView
 
 interface DigitalCircuitInOut : CircuitInOut<DigitalSignal>, DigitalSignalSource {
 
@@ -16,7 +17,7 @@ interface DigitalCircuitInOut : CircuitInOut<DigitalSignal>, DigitalSignalSource
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].
 	 */
-	fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler)
+	fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler, graphView: GraphView? = null)
 }
 
 /** Notifies the change of the [BitWidth] of a [DigitalCircuitInOut].*/

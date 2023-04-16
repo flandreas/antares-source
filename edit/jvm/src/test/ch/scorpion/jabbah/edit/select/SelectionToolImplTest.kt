@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -29,7 +28,7 @@ class SelectionToolImplTest {
 
 	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false))
 	private val editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
-	private val toolUtil = ToolTestUtil(SelectionToolImpl(editor, RubberBandHandler(RectangularRubberBand()), BaseModule.eventBus), editor)
+	private val toolUtil = ToolTestUtil(editor.selectionTool, editor)
 	private val rect1 = RectangleComponent(shape = Rectangle2D(100, 100, 100, 100))
 	private val rect2 = RectangleComponent(shape = Rectangle2D(300, 300, 100, 100))
 
@@ -38,7 +37,7 @@ class SelectionToolImplTest {
 		editor.drawing.add(rect1)
 		editor.drawing.add(rect2)
 
-		editor.selectionTool.rubberBandHandler.selectionStrategy.delaySelectTimer = null
+		editor.selectionTool.rubberBandHandler.delaySelectTimer = null
 	}
 
 	@Test
