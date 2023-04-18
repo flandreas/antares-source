@@ -10,7 +10,6 @@ import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
@@ -38,7 +37,7 @@ class AnalogCircuitInOut(
 		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
 			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.graphView is AnalogGraphView) {
-					AntaresViewModule.analogCircuitCalculator.calculate((data.graphView as AnalogGraphView).ensureAnalysis(), signalHandler)
+					(data.graphView as AnalogGraphView).calculate(signalHandler)
 				}
 			}
 		}

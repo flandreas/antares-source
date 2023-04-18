@@ -37,7 +37,7 @@ class AnalogGraphView(
 
 	private val calculationRequestHandler: EventHandler<AnalogCalculationRequest> = {
 		if (this.graph!!.elements.contains(it.source)) {
-			recalculate(it.signalHandler)
+			calculate(it.signalHandler)
 		}
 	}
 
@@ -59,6 +59,7 @@ class AnalogGraphView(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
+		analysis = null
 		checkDesign(signalHandler)
 		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
@@ -96,7 +97,7 @@ class AnalogGraphView(
 		return true
 	}
 
-	private fun analyzeAndCalculate(signalHandler: SignalHandler): Boolean {
+	fun calculate(signalHandler: SignalHandler): Boolean {
 		return try {
 			AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 			true
@@ -113,12 +114,16 @@ class AnalogGraphView(
 		}
 	}
 
-	fun ensureAnalysis(): AnalogCircuitAnalysis {
-		analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+	private fun ensureAnalysis(): AnalogCircuitAnalysis {
+		if (analysis == null) {
+			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+		}
 		return  analysis!!
 	}
 
+	/*
 	fun recalculate(signalHandler: SignalHandler) {
 		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
 	}
+	*/
 }
