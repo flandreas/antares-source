@@ -12,6 +12,9 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 		private val LOG by logger(AnalogNet::class)
 	}
 
+	override val signal: AnalogSignal?
+		get() = super.signal ?: AnalogSignal.ZERO
+
 	override fun cloneEmpty(): Net<AnalogSignal> = AnalogNet()
 
 	override fun setSignal(

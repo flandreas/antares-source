@@ -14,7 +14,12 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
@@ -30,6 +35,7 @@ class AnalogGraphView(
 
 	companion object {
 		private val LOG by logger(AnalogGraphView::class)
+		private const val DEF_PROPAGATION_DELAY = 10L
 	}
 
 	/** Not set before [executionStart]. */
@@ -37,11 +43,26 @@ class AnalogGraphView(
 
 	private val calculationRequestHandler: EventHandler<AnalogCalculationRequest> = {
 		if (this.graph!!.elements.contains(it.source)) {
-			calculate(it.signalHandler)
+			requestActing(it.signalHandler)
 		}
 	}
 
+	private val actor: Actor = AnalogActor()
+
+	override var overallPropagationDelay: Long?
+		get() = super.overallPropagationDelay
+		set(value) {
+			require(value != null && value > 0) { "Propagation delay must be greater than 0" }
+			super.overallPropagationDelay = value
+		}
+
+	@Suppress("unused") // Reflection
+	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+
+	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Analog) as AnalogGraph)
+
 	init {
+		overallPropagationDelay = DEF_PROPAGATION_DELAY
 		eventBus.register(AnalogCalculationRequest::class, calculationRequestHandler)
 	}
 
@@ -50,18 +71,13 @@ class AnalogGraphView(
 		eventBus.unregister(calculationRequestHandler)
 	}
 
-	@Suppress("unused") // Reflection
-	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
-
-	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Analog) as AnalogGraph)
-
 	/** ---- [GraphViewImpl] */
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		analysis = null
 		checkDesign(signalHandler)
-		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
+		requestActing(signalHandler)
 		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
 	}
 
@@ -97,33 +113,36 @@ class AnalogGraphView(
 		return true
 	}
 
-	fun calculate(signalHandler: SignalHandler): Boolean {
-		return try {
-			AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
-			true
-		} catch (e: Throwable) {
-			LOG.error("Error while analyzing: ${e.message}")
-			eventBus.post(IssueImpl(
-				IssueSeverity.Error,
-				Translations.getString("antares.analogCalc.analyse.error.name"),
-				Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
-				name,
-				"Simulation"
-			))
-			false
-		}
+	fun requestActing(signalHandler: SignalHandler) {
+		signalHandler.requestActingAfter(actor, overallPropagationDelay ?: DEF_PROPAGATION_DELAY, createActorData())
 	}
 
-	private fun ensureAnalysis(): AnalogCircuitAnalysis {
+	private fun createActorData(): GraphActorData =
+		StoringGraphActorData(null, null, graphView = this)
+
+	fun ensureAnalysis(): AnalogCircuitAnalysis {
 		if (analysis == null) {
 			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
 		}
-		return  analysis!!
+		return analysis!!
 	}
 
-	/*
-	fun recalculate(signalHandler: SignalHandler) {
-		AntaresViewModule.analogCircuitCalculator.calculate(ensureAnalysis(), signalHandler)
+	private class AnalogActor : ActorImpl() {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
+			val graphView = (data as GraphActorData).graphView as AnalogGraphView
+			try {
+				AntaresViewModule.analogCircuitCalculator.calculate(graphView.ensureAnalysis(), signalHandler)
+				super.act(signalHandler, data)
+			} catch (e: Throwable) {
+				LOG.debug("Error while analyzing: ${e.message}")
+				BaseModule.eventBus.post(IssueImpl(
+					IssueSeverity.Error,
+					Translations.getString("antares.analogCalc.analyse.error.name"),
+					Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
+					graphView.name,
+					"Simulation"
+				))
+			}
+		}
 	}
-	*/
 }

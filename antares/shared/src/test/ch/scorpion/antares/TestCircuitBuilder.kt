@@ -32,7 +32,7 @@ class TestCircuitBuilder(
 	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
 	fun buildNOP(propagationDelay: Long = 0): GraphView {
 		connect(addInput("I"), addOutput("O"))
-		graph.propagationDelay = propagationDelay
+		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}
 
@@ -41,7 +41,7 @@ class TestCircuitBuilder(
 		graphView.add(nop)
 		connect(addInput("A"), nop)
 		connect(nop, addOutput("B"))
-		graph.propagationDelay = propagationDelay
+		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}
 

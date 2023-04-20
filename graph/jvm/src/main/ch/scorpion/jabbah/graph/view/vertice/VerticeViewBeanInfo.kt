@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.view.GraphProperties
@@ -13,7 +12,7 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : AbstractComponentBe
 
 	companion object {
 		private val modelId = GraphProperties.modelId()
-		private val propDelay = GraphProperties.propagationDelay(componentBeanProvider)
+		private val propDelay = GraphProperties.propagationDelay()
 		private val color = EditProperties.color()
 		private val description = EditProperties.description()
 		private val shadow = EditProperties.shadow()

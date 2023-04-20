@@ -193,8 +193,8 @@ class SubGraphVerticeRef(
 					synchronizePorts()
 				}
 
-				if (metaGraph.graph.model!!.propagationDelay != null) {
-					propagationDelay = metaGraph.graph.model!!.propagationDelay!!
+				if (metaGraph.graph.model!!.overallPropagationDelay != null) {
+					propagationDelay = metaGraph.graph.model!!.overallPropagationDelay!!
 				}
 			} else {
 				// Broken reference to library component

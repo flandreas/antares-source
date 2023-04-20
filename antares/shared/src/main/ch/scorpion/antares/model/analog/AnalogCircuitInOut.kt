@@ -37,7 +37,7 @@ class AnalogCircuitInOut(
 		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
 			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.graphView is AnalogGraphView) {
-					(data.graphView as AnalogGraphView).calculate(signalHandler)
+					(data.graphView as AnalogGraphView).requestActing(signalHandler)
 				}
 			}
 		}

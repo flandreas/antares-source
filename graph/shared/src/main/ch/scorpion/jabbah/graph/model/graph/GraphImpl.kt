@@ -86,7 +86,7 @@ open class GraphImpl(
 
 	override var uuid: UUID = System.createUUID()
 
-	override var propagationDelay: Long? = null
+	override var overallPropagationDelay: Long? = null
 
 	override var startupTime: Long? = null
 		set(value) {
@@ -268,7 +268,7 @@ open class GraphImpl(
 		if (purelyScripted) {
 			writer.writeBoolean("purelyScripted", purelyScripted)
 		}
-		propagationDelay?.let { writer.writeLong("propDelay", it) }
+		overallPropagationDelay?.let { writer.writeLong("propDelay", it) }
 		writer.writeStorables("elements", _elements.iterator())
 		startupTime?.let {
 			if (it > 0) {
@@ -288,7 +288,7 @@ open class GraphImpl(
 			purelyScripted = reader.readBoolean("purelyScripted")
 		}
 		if (reader.hasAttribute("propDelay")) {
-			propagationDelay = reader.readLong("propDelay")
+			overallPropagationDelay = reader.readLong("propDelay")
 		}
 		if (reader.hasAttribute("startupTime")) {
 			startupTime = reader.readLong("startupTime")

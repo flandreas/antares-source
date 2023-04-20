@@ -47,7 +47,7 @@ interface Graph : Namable, Describable, Storable, Bean {
      * The overall estimated propagation delay of this [Graph] in nanoseconds, i.e. the estimated time it
      * takes to calculate new output values when an input has changed.
      */
-    var propagationDelay: Long?
+    var overallPropagationDelay: Long?
 
 	/**
 	 * The optional time (in nanoseconds) until this [Graph] has reached a stable state after starting execution.

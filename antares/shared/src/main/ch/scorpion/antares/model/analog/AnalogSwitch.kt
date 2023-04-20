@@ -23,7 +23,7 @@ class AnalogSwitch : AbstractSwitch<AnalogSwitch>(CALCULATOR), ResistingAnalogVe
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
-					(data.graphView as AnalogGraphView).calculate(signalHandler)
+					(data.graphView as AnalogGraphView).requestActing(signalHandler)
 				}
 			}
 		}

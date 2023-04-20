@@ -17,6 +17,6 @@ class AnalogGraph(
 
 	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		super.executionStart(signalHandler, graphView)
-		(graphView as AnalogGraphView?)?.calculate(signalHandler)
+		(graphView as AnalogGraphView?)?.requestActing(signalHandler)
 	}
 }
