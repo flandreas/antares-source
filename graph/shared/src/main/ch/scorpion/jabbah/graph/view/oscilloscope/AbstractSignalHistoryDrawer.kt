@@ -15,6 +15,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 abstract class AbstractSignalHistoryDrawer<T: Any>(
+	private val rightInset: Int,
 	private val background: CompositeColor,
 	protected val yAxis: SignalHistoryYAxis<T>?
 ): AbstractRectangle(Rectangle2D()), SignalHistoryDrawer<T> {
@@ -87,7 +88,7 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		}
 	}
 
-	protected val rightBorder: Double get() = bounds.maxX - 20
+	protected val rightBorder: Double get() = bounds.maxX - rightInset
 
 	protected val baseLineY: Double get() = yAxis?.baselineY ?: (bounds.maxY - 2)
 

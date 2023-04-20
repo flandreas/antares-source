@@ -11,8 +11,9 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryYAxis
 import kotlin.math.max
 
 class AnalogSignalHistoryDrawer(
+	rightInset: Int,
 	yAxis: SignalHistoryYAxis<AnalogSignal>
-): AbstractSignalHistoryDrawer<AnalogSignal>(Themes.get<AntaresTheme>().screen, yAxis) {
+): AbstractSignalHistoryDrawer<AnalogSignal>(rightInset, Themes.get<AntaresTheme>().screen, yAxis) {
 
 	companion object {
 		const val ROW_HEIGHT = 60

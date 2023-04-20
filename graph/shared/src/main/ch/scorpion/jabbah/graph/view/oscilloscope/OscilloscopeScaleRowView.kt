@@ -34,8 +34,9 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.TIT
 class OscilloscopeScaleRowView(
 	private val oscilloscopeView: OscilloscopeView,
 	location: Point2D,
+	rightInset: Int,
 	private val service: OscilloscopeViewService,
-	private val factory: OscilloscopeViewFactory
+	factory: OscilloscopeViewFactory
 ) : ActorViewContainer<Drawable>(location = location, useLocation = true) {
 
 	private val addButton = DrawableButton<EditInputEventContext>(
@@ -49,13 +50,11 @@ class OscilloscopeScaleRowView(
 	private val scaleButton = ScaleButton(
 		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
 
-	private val timelineView = factory.createSignalHistoryTimelineView()
+	private val timelineView = factory.createSignalHistoryTimelineView(rightInset)
 
 	init {
 		add(addButton)
 		add(scaleButton)
-
-		timelineView.setBounds(OscilloscopeView.DRAWER_X, 0.0, oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
 		add(timelineView)
 	}
 
@@ -76,10 +75,17 @@ class OscilloscopeScaleRowView(
 		timelineView.bind(
 			oscilloscopeView.signalRowViews.firstOrNull()?.let { oscilloscopeView.model.getSignalHistory(it.name) },
 			oscilloscopeView.timeline)
+		updateGeometry()
 	}
 
 	fun unbindDrawer() {
 		timelineView.bind(null, null)
+	}
+
+	private fun updateGeometry() {
+		timelineView.setBounds(
+			OscilloscopeView.DRAWER_X, 0.0,
+			oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
 	}
 
 	/** Displays a [KnobView] to be used for changing the [SignalHistoryTimeline]'s scale.*/

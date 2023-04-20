@@ -23,12 +23,12 @@ class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
 			else -> throw IllegalArgumentException("unknown GraphType $graphType")
 		}
 
-    override fun createSignalHistoryDrawer(graphType: GraphType, yAxis: SignalHistoryYAxis<*>?): SignalHistoryDrawer<Any> =
+    override fun createSignalHistoryDrawer(graphType: GraphType, yAxis: SignalHistoryYAxis<*>?, rightInset: Int): SignalHistoryDrawer<Any> =
 		when (graphType) {
-		    Digital -> DigitalSignalHistoryDrawer() as SignalHistoryDrawer<Any>
-		    Analog -> AnalogSignalHistoryDrawer(yAxis as AnalogSignalHistoryYAxis) as SignalHistoryDrawer<Any>
+		    Digital -> DigitalSignalHistoryDrawer(rightInset) as SignalHistoryDrawer<Any>
+		    Analog -> AnalogSignalHistoryDrawer(rightInset, yAxis as AnalogSignalHistoryYAxis) as SignalHistoryDrawer<Any>
 		    else -> throw IllegalArgumentException("unknown GraphType $graphType")
 	    }
 
-	override fun createSignalHistoryTimelineView(): SignalHistoryTimelineView = SignalHistoryTimelineViewImpl()
+	override fun createSignalHistoryTimelineView(rightInset: Int): SignalHistoryTimelineView = SignalHistoryTimelineViewImpl(rightInset)
 }

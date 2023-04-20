@@ -15,8 +15,9 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.max
 
-class DigitalSignalHistoryDrawer
-	: AbstractSignalHistoryDrawer<DigitalSignal>(Themes.get<AntaresTheme>().screen, null) {
+class DigitalSignalHistoryDrawer(
+	rightInset: Int
+): AbstractSignalHistoryDrawer<DigitalSignal>(rightInset, Themes.get<AntaresTheme>().screen, null) {
 
 	companion object {
 
@@ -24,7 +25,7 @@ class DigitalSignalHistoryDrawer
 		const val ROW_HEIGHT: Int = 40
 
 		/** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
-		private const val MULTIBIT_INSET = 3.0
+		private const val MULTI_BIT_INSET = 3.0
 	}
 
 	/** Uses for drawing the signal value of a multi-bit [DigitalSignal].*/
@@ -59,7 +60,7 @@ class DigitalSignalHistoryDrawer
 				} else {
 					multiBitLabel.text = entry.signal.hexString
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
-					multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - signalHeight / 2)
+					multiBitLabel.location = Point2D(effNextX + MULTI_BIT_INSET, baseLineY - signalHeight / 2)
 					drawMultiBitRightBorder(context, effNextX)
 				}
 
@@ -98,7 +99,7 @@ class DigitalSignalHistoryDrawer
 	}
 
 	private fun drawMultiBitRightBorder(context: DrawContext, xL: Double) {
-		if (xL <= rightBorder - START_SIZE - MULTIBIT_INSET) {
+		if (xL <= rightBorder - START_SIZE - MULTI_BIT_INSET) {
 			drawMultiBitSegment(context, xR = rightBorder, xL = xL, first = true)
 		}
 
@@ -129,14 +130,14 @@ class DigitalSignalHistoryDrawer
 		} else {
 			path
 				.moveTo(xR, baseLineY - signalHeight / 2)
-				.lineTo(xR - MULTIBIT_INSET, baseLineY - signalHeight)
+				.lineTo(xR - MULTI_BIT_INSET, baseLineY - signalHeight)
 		}
 
 		if (xL > bounds.minX) {
 			path
-				.lineTo(xL + MULTIBIT_INSET, baseLineY - signalHeight)
+				.lineTo(xL + MULTI_BIT_INSET, baseLineY - signalHeight)
 				.lineTo(xL, baseLineY - signalHeight / 2)
-				.lineTo(xL + MULTIBIT_INSET, baseLineY)
+				.lineTo(xL + MULTI_BIT_INSET, baseLineY)
 		} else {
 			path
 				.lineTo(xL, baseLineY - signalHeight)
@@ -154,7 +155,7 @@ class DigitalSignalHistoryDrawer
 				.lineTo(xR, baseLineY)
 		} else {
 			path
-				.lineTo(xR - MULTIBIT_INSET, baseLineY)
+				.lineTo(xR - MULTI_BIT_INSET, baseLineY)
 				.lineTo(xR, baseLineY - signalHeight / 2)
 		}
 

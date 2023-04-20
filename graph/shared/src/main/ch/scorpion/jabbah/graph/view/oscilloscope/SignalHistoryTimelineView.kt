@@ -30,7 +30,9 @@ interface SignalHistoryTimelineView : RectangularDrawable {
 }
 
 /** Draws a ruler-like timeline. */
-class SignalHistoryTimelineViewImpl : AbstractRectangle(), SignalHistoryTimelineView {
+class SignalHistoryTimelineViewImpl(
+	private val rightInset: Int
+) : AbstractRectangle(), SignalHistoryTimelineView {
 
 	companion object {
 		private const val LINE_LENGTH = 4.0
@@ -52,8 +54,7 @@ class SignalHistoryTimelineViewImpl : AbstractRectangle(), SignalHistoryTimeline
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.TOP)
 
-	// TODO Copy/Paste from DigitalSignalHistoryDrawer
-	private val rightBorder: Double get() = bounds.maxX - 20
+	private val rightBorder: Double get() = bounds.x + bounds.width - rightInset
 
 	/** ---- [SignalHistoryTimelineView] */
 
@@ -68,6 +69,7 @@ class SignalHistoryTimelineViewImpl : AbstractRectangle(), SignalHistoryTimeline
 		if (timeline == null || gridSignalHistory == null) {
 			return
 		}
+
 		context.g.color = Themes.get<GraphTheme>().annotation.color.foregroundColor
 		context.g.font = Themes.get<GraphTheme>().annotation.font
 

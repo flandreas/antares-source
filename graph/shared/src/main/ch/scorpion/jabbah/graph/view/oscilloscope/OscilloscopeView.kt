@@ -67,11 +67,12 @@ class OscilloscopeView(
 		private const val WIDTH = 700
 		private const val DEF_HEIGHT = 200
 		private const val INIT_SCALE = 1_000.0
+		private const val RIGHT_INSET = 20
 		const val TITLE_HEIGHT = 15
 		const val MAX_ROW_NUMBER = 9
 		const val ROW_INSET = 10
 		const val ICON_BUTTON_SIZE = 20
-		val DRAWER_X = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + OscilloscopeProbeViewIcon.SIZE
+		const val DRAWER_X = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + OscilloscopeProbeViewIcon.SIZE
 
 		private val CLOCKED_ANNOTATION = System.createPath()
 			.moveTo(0, -5)
@@ -112,7 +113,7 @@ class OscilloscopeView(
 	val signalRowViews: ImmutableList<OscilloscopeSignalRowView> get() = rows.toImmutableList()
 
 	/** Depend on current model and its [GraphType]. */
-	private val scaleRow by lazy { OscilloscopeScaleRowView(this, Point2D.ZERO, service, factory) }
+	private val scaleRow by lazy { OscilloscopeScaleRowView(this, Point2D.ZERO, RIGHT_INSET, service, factory) }
 
 	private val refColorSequence = referenceColorSequenceProvider.provide()
 
@@ -360,7 +361,7 @@ class OscilloscopeView(
 			Point2D(0, y),
 			nextProbeColor,
 			service,
-			factory.createSignalHistoryDrawer(model.graphType, yAxis),
+			factory.createSignalHistoryDrawer(model.graphType, yAxis, RIGHT_INSET),
 			yAxis)
 		rows.add(rowView)
 		container.add(rowView)
