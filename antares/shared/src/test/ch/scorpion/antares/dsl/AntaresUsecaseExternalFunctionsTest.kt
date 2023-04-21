@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.PortType
@@ -31,8 +30,6 @@ import io.mockk.mockk
 import kotlin.test.*
 
 class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
-
-	private val issueCollector = IssueCollector()
 
 	private lateinit var circuitView: GraphView
 
@@ -91,7 +88,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		runner.run()
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(0, issueCollector.size)
+		assertNoIssues()
 		assertTrue(switch.model.isOn)
 	}
 
@@ -103,7 +100,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(10_000)
-		assertEquals(0, issueCollector.size)
+		assertNoIssues()
 
 		assertEquals(DigitalSignalFactory.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal() as DigitalSignal)
 
@@ -125,7 +122,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(20_000)
-		assertEquals(0, issueCollector.size)
+		assertNoIssues()
 	}
 
 	@Test
@@ -140,7 +137,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 		assertFailsWith<UsecaseTestFailureException> {
 			proceedToNanos(20_000)
-			assertEquals(0, issueCollector.size)
+			assertNoIssues()
 		}
 	}
 

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorListener
+import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -23,6 +24,8 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * A test base class for testing Antares circuit simulations.
@@ -36,6 +39,7 @@ abstract class AbstractCircuitTest {
 		}
 	}
 
+	private val issueCollector = IssueCollector()
 	private lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	protected lateinit var styleProvider: StyleProvider
 	protected lateinit var eventBus: EventBus
@@ -104,5 +108,9 @@ abstract class AbstractCircuitTest {
 	protected fun proceedFrozenTimeToNanos(time: Long) {
 		timeService.setTimeMillis(time / MILLION)
 		timeService.setTimeMillis((time + timer.interval + 1) / MILLION)
+	}
+
+	protected fun assertNoIssues() {
+		assertTrue(issueCollector.issues.isEmpty(), "A simulation issue occurred")
 	}
 }
