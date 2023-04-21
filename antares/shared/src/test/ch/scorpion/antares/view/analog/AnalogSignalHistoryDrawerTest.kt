@@ -27,7 +27,7 @@ class AnalogSignalHistoryDrawerTest {
 	private val signalHistory = SignalHistory<AnalogSignal>(100)
 	private val timeline = OscilloscopeViewTimeline(100_000.0, signalHistory::maxTime)
 	private val yAxis = AnalogSignalHistoryYAxis()
-	private val drawer = AnalogSignalHistoryDrawer(yAxis)
+	private val drawer = AnalogSignalHistoryDrawer(0, yAxis)
 	private val lines = mutableListOf<Pair<Point2D, Point2D>>()
 	private val drawContext = createDrawContext()
 

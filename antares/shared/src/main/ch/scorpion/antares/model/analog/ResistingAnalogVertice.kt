@@ -42,6 +42,7 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 			val voltageVariableIncomingIndex = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(incomingPortId).net!!.id)
 			val voltageVariableOutgoingIndex = voltageNodes.indexOf(vertice.getPort<AnalogSignal>(outgoingPortId).net!!.id)
 
+			// (U2 - U1) - RI = 0
 			if (voltageVariableIncomingIndex >= 0) {
 				row[branches.size + voltageVariableIncomingIndex] = DynamicLinearEquationSystem.ONE
 			}

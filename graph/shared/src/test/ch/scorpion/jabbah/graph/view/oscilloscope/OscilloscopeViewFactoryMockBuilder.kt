@@ -12,8 +12,8 @@ class OscilloscopeViewFactoryMockBuilder {
 
 	init {
 		every { factory.getRowHeight(any()) } returns 20
-		every { factory.createSignalHistoryDrawer(any(), any()) } returns signalHistoryDrawer
-		every { factory.createSignalHistoryTimelineView() } returns timelineView
+		every { factory.createSignalHistoryDrawer(any(), any(), any()) } returns signalHistoryDrawer
+		every { factory.createSignalHistoryTimelineView(any()) } returns timelineView
 		every { factory.createSignalHistoryYAxis(any()) } returns yAxis
 	}
 

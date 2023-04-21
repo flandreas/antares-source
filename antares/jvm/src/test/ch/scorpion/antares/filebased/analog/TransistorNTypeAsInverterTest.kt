@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TransistorAsInverterTest : AbstractAnalogFileBasedTest() {
+class TransistorNTypeAsInverterTest : AbstractAnalogFileBasedTest() {
 
 	private lateinit var input: AnalogCircuitInOutView
 	private lateinit var output: AnalogCircuitInOutView

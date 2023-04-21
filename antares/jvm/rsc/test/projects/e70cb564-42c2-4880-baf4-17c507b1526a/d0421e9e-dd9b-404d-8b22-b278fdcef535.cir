@@ -5,9 +5,9 @@
       <model>
         <analogGraph _id='2' type='analog'>
           <elements>
-            <analogTransistor _id='3' type='n' gain='0.02'/>
+            <analogTransistor _id='3' type='p' gain='0.02'/>
             <resistor _id='4' id='2' delay='0' resistance='100.0' variable='false'/>
-            <resistor _id='5' id='3' delay='0' resistance='200.0' variable='true'/>
+            <resistor _id='5' id='3' delay='0' resistance='100.0' variable='true'/>
             <battery _id='6' id='4' delay='0' voltage='5.0'/>
             <analogNet _id='7' id='5' delay='0'>
               <ports>
@@ -143,9 +143,9 @@
         </originIndicator>
       </components>
       <model>
-        <subGraphVertice _id='50' id='0' delay='0' uuid='39825aea-1002-424c-b918-05173d07d3f0'>
+        <subGraphVertice _id='50' id='0' delay='0' uuid='d0421e9e-dd9b-404d-8b22-b278fdcef535'>
           <name>
-            <translation lang='en' text='Transistor n-Type'/>
+            <translation lang='en' text='Transistor p-Type'/>
           </name>
           <ports/>
         </subGraphVertice>

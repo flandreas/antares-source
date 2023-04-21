@@ -1,20 +1,22 @@
 package ch.scorpion.antares.filebased.analog
 
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogEdgeView
-import ch.scorpion.antares.view.analog.BatteryView
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TransistorTest : AbstractAnalogFileBasedTest() {
+class TransistorNTypeTest : AbstractAnalogFileBasedTest() {
+
+	private lateinit var drainEdgeView: AnalogEdgeView
+	private lateinit var variableResistorView: ResistorView
 
 	@BeforeTest
 	fun openCircuit() {
 		openCircuit(UUID("39825aea-1002-424c-b918-05173d07d3f0"))
+		drainEdgeView = openedCircuitView.getWithId(9) as AnalogEdgeView
+		variableResistorView = openedCircuitView.getWithId(3) as ResistorView
 	}
 
 	@Test
@@ -56,5 +58,15 @@ class TransistorTest : AbstractAnalogFileBasedTest() {
 	@Test
 	fun shouldCalculate() {
 		startSimulation()
+		processUntilQueueIsEmpty()
+
+		val drainVoltage = drainEdgeView.model.signal!!.voltage
+
+		// Larger resistance -> smaller gate voltage -> smaller drain/source resistance
+		// => larger drain voltage
+		variableResistorView.model.setState(2 * variableResistorView.resistance, scheduler, analogGraphView)
+		processUntilQueueIsEmpty()
+
+		assertTrue(drainVoltage < drainEdgeView.model.signal!!.voltage)
 	}
 }

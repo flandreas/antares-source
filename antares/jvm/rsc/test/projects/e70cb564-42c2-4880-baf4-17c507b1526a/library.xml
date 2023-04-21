@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='863e2174-9a4d-444c-9d85-3196512c18b2' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -129,32 +129,42 @@
             </containerLibraryElement>
             <containerLibraryElement _id='26' uuid='39825aea-1002-424c-b918-05173d07d3f0' type='analog'>
               <name>
-                <translation lang='en' text='Transistor'/>
+                <translation lang='en' text='Transistor n-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='27' uuid='34ded684-35ce-4010-9f9a-f5df9db08bf5' type='analog'>
+            <containerLibraryElement _id='27' uuid='d0421e9e-dd9b-404d-8b22-b278fdcef535' type='analog'>
+              <name>
+                <translation lang='en' text='Transistor p-Type'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='28' uuid='34ded684-35ce-4010-9f9a-f5df9db08bf5' type='analog'>
               <name>
                 <translation lang='en' text='InOut'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='28' uuid='f113a3bb-4603-49b6-a2ad-1eccb5c84c6c' type='analog'>
+            <containerLibraryElement _id='29' uuid='f113a3bb-4603-49b6-a2ad-1eccb5c84c6c' type='analog'>
               <name>
                 <translation lang='en' text='Power'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='29' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7' type='analog'>
+            <containerLibraryElement _id='30' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7' type='analog'>
               <name>
-                <translation lang='en' text='Transistor Inverter'/>
+                <translation lang='en' text='Transistor Inverter n-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='30' uuid='e046b285-8c56-40ea-8696-88015af7a89a' type='analog'>
+            <containerLibraryElement _id='31' uuid='e046b285-8c56-40ea-8696-88015af7a89a' type='analog'>
               <name>
                 <translation lang='en' text='Ground without Battery'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='31' uuid='863e2174-9a4d-444c-9d85-3196512c18b2' type='digital'>
+            <containerLibraryElement _id='32' uuid='863e2174-9a4d-444c-9d85-3196512c18b2' type='digital'>
               <name>
                 <translation lang='en' text='Analog Subcircuit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='33' uuid='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' type='analog'>
+              <name>
+                <translation lang='en' text='Transistor Inverter p-Type'/>
               </name>
             </containerLibraryElement>
           </items>

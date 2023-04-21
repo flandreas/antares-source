@@ -14,6 +14,10 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * [AnalogTransistor] acts during simulation as a "Voltage Controlled Current Source (VCC)".
+ * See https://ultimateelectronicsbook.com/dependent-sources/.
+ */
 class AnalogTransistor(
 	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
 	var gain: Double = DEF_GAIN
@@ -88,14 +92,28 @@ class AnalogTransistor(
 		val gateVoltageIndex = voltageNodes.indexOf(gatePort.net!!.id)
 		val sourceVoltageIndex = voltageNodes.indexOf(sourcePort.net!!.id)
 
-		if (gateVoltageIndex >= 0) {
-			row[branches.size + gateVoltageIndex] = { -gain }
+		when (transistorType) {
+			TransistorType.N -> {
+				// I = k(Ug - Us)
+				if (gateVoltageIndex >= 0) {
+					row[branches.size + gateVoltageIndex] = { -gain }
+				}
+				if (sourceVoltageIndex >= 0) {
+					row[branches.size + sourceVoltageIndex] = { gain }
+				}
+				equationSystem.addEquation(row, ZERO)
+			}
+			TransistorType.P -> {
+				// I = I0 - k(Ug - Us) with I0 = gain * Umax
+				if (gateVoltageIndex >= 0) {
+					row[branches.size + gateVoltageIndex] = { gain }
+				}
+				if (sourceVoltageIndex >= 0) {
+					row[branches.size + sourceVoltageIndex] = { -gain }
+				}
+				equationSystem.addEquation(row) { gain * AnalogSignal.HIGH.voltage }
+			}
 		}
-		if (sourceVoltageIndex >= 0) {
-			row[branches.size + sourceVoltageIndex] = { gain }
-		}
-
-		equationSystem.addEquation(row, ZERO)
 	}
 
 	private fun composeGateEquation(
@@ -105,6 +123,7 @@ class AnalogTransistor(
 	) {
 		val row = Array(equationSystem.variableCount) { ZERO }
 
+		/** Gate-Source current must be 0. */
 		val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, gatePort.portId)
 		row[currentVariableIndex] = ONE
 
