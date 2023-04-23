@@ -96,11 +96,13 @@ class AnalogCircuitInOut(
 		val row = Array(equationSystem.variableCount) { ZERO }
 
 		if (getPort<AnalogSignal>().portType.isOutput) {
+			// Input: Constant voltage
 			val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
 			row[branches.size + voltageVariableIndex] = ONE
 			// TODO Handle undefined differently
 			equationSystem.addEquation(row) { signal?.voltage ?: AnalogSignal.ZERO.voltage }
 		} else {
+			// Output: No electrical current flowing outwards
 			val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, 1)
 			row[currentVariableIndex] = ONE
 			equationSystem.addEquation(row, ZERO)
