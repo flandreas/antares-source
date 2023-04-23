@@ -67,11 +67,16 @@ enum class TransistorViewSymbol(
 			}
 		}
 
-		override fun getGatePositionY(view: AbstractTransistorView<*>): Int {
-			return when (view.handedness) {
-				RIGHT -> 0
-				LEFT -> -4 * SCALE
-			}
+		override fun getGatePositionY(view: AbstractTransistorView<*>): Int =
+			when (view.model.transistorType) {
+				N -> when (view.handedness) {
+					RIGHT -> 0
+					LEFT -> -4 * SCALE
+				}
+				P -> when (view.handedness) {
+					RIGHT -> -4 * SCALE
+					LEFT -> 0
+				}
 		}
 
 		private fun drawGate(view: AbstractTransistorView<*>, context: DrawContext) {
@@ -79,10 +84,7 @@ enum class TransistorViewSymbol(
 				(getPortView(model.gatePort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
 				// Gate connection
-				val gateConnectionY = when(handedness) {
-					RIGHT -> 0.0
-					LEFT -> - 4.0 * SCALE
-				}
+				val gateConnectionY = getGatePositionY(view).toDouble()
 				context.g.drawLine(
 					AbstractAntaresPortView.LENGTH.toDouble(), gateConnectionY,
 					gateLineX, gateConnectionY)
