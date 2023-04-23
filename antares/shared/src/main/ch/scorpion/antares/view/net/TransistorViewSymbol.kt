@@ -53,18 +53,8 @@ enum class TransistorViewSymbol(
 			drawGate(view, context)
 			drawBulk(view, context)
 
-			view.apply {
-				when (handedness) {
-					RIGHT -> {
-						drawSouthSignalPort(view, context, getPortView(model.sourcePort) as AbstractAntaresPortView<*>)
-						drawNorthSignalPort(view, context, getPortView(model.drainPort) as AbstractAntaresPortView<*>)
-					}
-					LEFT -> {
-						drawSouthSignalPort(view, context, getPortView(model.drainPort) as AbstractAntaresPortView<*>)
-						drawNorthSignalPort(view, context, getPortView(model.sourcePort) as AbstractAntaresPortView<*>)
-					}
-				}
-			}
+			drawNorthSignalPort(view, context, view.northPortView as AbstractAntaresPortView<*>)
+			drawSouthSignalPort(view, context, view.southPortView as AbstractAntaresPortView<*>)
 		}
 
 		override fun getGatePositionY(view: AbstractTransistorView<*>): Int =
