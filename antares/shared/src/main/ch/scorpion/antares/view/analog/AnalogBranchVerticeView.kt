@@ -11,7 +11,7 @@ import ch.scorpion.antares.model.analog.AnalogVertice
  *
  * These are typically [VerticeView]s of [AnalogTwoPortVertice]s, but could also be
  * [VerticeView]s of models with 3 ports, such as a voltage-controlled MOSFET transistor
- * whose gate doesn't consume current, and whose source-gate path acts like a transistor.
+ * whose gate doesn't consume current, and whose source-gate path acts like a resistor.
  */
 interface AnalogBranchVerticeView<T : AnalogVertice> : VerticeView<T> {
 

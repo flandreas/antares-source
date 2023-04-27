@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='85e1c5af-7c78-485c-959a-6d0967353799' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -165,6 +165,11 @@
             <containerLibraryElement _id='33' uuid='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' type='analog'>
               <name>
                 <translation lang='en' text='Transistor Inverter p-Type'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='34' uuid='85e1c5af-7c78-485c-959a-6d0967353799' type='analog'>
+              <name>
+                <translation lang='en' text='CMOS Transistor'/>
               </name>
             </containerLibraryElement>
           </items>
