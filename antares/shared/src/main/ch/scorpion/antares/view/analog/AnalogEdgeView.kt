@@ -95,15 +95,15 @@ class AnalogEdgeView(
 		if (graphAppContext.showNetState) {
 			CurrentFlowVisualization.draw(this, context)
 		} else {
-			// DEBUG BEGIN
-			// Draw a small indicator for the begin Connection. Only used while developing
-			/*
-			beginConnectionAnnotatePoint?.let {
-				context.g.color = Color.RED
-				context.g.fillCircle(it.x, it.y, 2.0)
-			}
-			*/
-			// DEBUG END
+			//drawBeginConnectionAnnotation(context)
+		}
+	}
+
+	/** Draws a small indicator for the begin Connection. Only used while developing. */
+	private fun drawBeginConnectionAnnotation(context: DrawContext) {
+		beginConnectionAnnotatePoint?.let {
+			context.g.color = ch.scorpion.jabbah.draw.graphics.Color.RED
+			context.g.fillCircle(it.x, it.y, 2.0)
 		}
 	}
 

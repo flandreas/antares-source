@@ -187,15 +187,16 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	}
 
 	private fun getBranchStartVerticeViews(circuitView: AnalogGraphView): List<VerticeView<*>> {
-		val batteryViews = circuitView.getDrawables {
+		val startVerticeViews = circuitView.getDrawables {
 			it is BatteryView
 			|| (it is AnalogCircuitInOutView && it.model.portType.isInput)
 			|| it is AnalogPowerView
+			|| it is CurrentSourceView
 		}.map {it as VerticeView<*> }
-		if (batteryViews.isEmpty()) {
+		if (startVerticeViews.isEmpty()) {
 			throw IllegalStateException(Translations.getString("antares.analogCalc.noStartComponentFound.error.msg"))
 		}
-		return batteryViews
+		return startVerticeViews
 	}
 
 	/**

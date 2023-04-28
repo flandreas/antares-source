@@ -577,6 +577,7 @@
                   <baseLibraryElement _id='145' id='AnalogInput' type='analog'/>
                   <baseLibraryElement _id='146' id='AnalogOutput' type='analog'/>
                   <baseLibraryElement _id='147' id='AnalogPower' type='analog'/>
+                  <baseLibraryElement _id='148' id='CurrentSource' type='analog'/>
               </items>
           </libraryFolder>
       </items>

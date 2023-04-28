@@ -152,6 +152,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private const val LIGHT_BULB = "LightBulb"
 	private const val BATTERY = "Battery"
+	private const val CURRENT_SOURCE = "CurrentSource"
 	private const val RESISTOR = "Resistor"
 	private const val ANALOG_SWITCH = "AnalogSwitch"
 	private const val ANALOG_GROUND = "AnalogGround"
@@ -355,6 +356,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
+		typeMap.register("currentSourceView", CurrentSourceView::class)
 		typeMap.register("resistorView", ResistorView::class)
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
 		typeMap.register("analogNodeView", AnalogNodeView::class)
@@ -436,6 +438,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
@@ -595,6 +598,7 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
+		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/led.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
 		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
 		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/led.png" }, AnalogGroundView::class)

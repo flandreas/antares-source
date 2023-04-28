@@ -147,6 +147,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("analogNet", AnalogNet::class)
 		typeMap.register("lightBulb", LightBulb::class)
 		typeMap.register("battery", Battery::class)
+		typeMap.register("currentSource", CurrentSource::class)
 		typeMap.register("resistor", Resistor::class)
 		typeMap.register("analogSwitch", AnalogSwitch::class)
 		typeMap.register("analogGround", AnalogGround::class)

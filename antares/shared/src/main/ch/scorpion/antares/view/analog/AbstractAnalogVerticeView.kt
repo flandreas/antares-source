@@ -24,14 +24,9 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 
 	companion object {
 		const val MAIN_PROPERTY_LABEL_DIST = Look.SCALE
-
 	}
 
-	private val mainPropertyLabel = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D.ZERO,
-		orientation = Direction.SOUTH,
-		font = font)
+	private val mainPropertyLabel = createLabel()
 
 	protected abstract val mainPropertyValue: String
 
@@ -70,10 +65,21 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
+	protected open val labelLocation: Point2D get() = Point2D(bounds.centerX, bounds.bottomCenter.y + MAIN_PROPERTY_LABEL_DIST)
+
+	protected open val labelOrientation: Direction get() = Direction.SOUTH
+
+	protected open fun createLabel(): HorizontalLabel =
+		HorizontalLabel(
+			owner = this,
+			relLocation = Point2D.ZERO,
+			orientation = labelOrientation,
+			font = font)
+
 	protected fun updateLabel() {
 		invalidate()
 		mainPropertyLabel.text = mainPropertyValue
-		mainPropertyLabel.relLocation = Point2D(bounds.centerX, bounds.bottomCenter.y + MAIN_PROPERTY_LABEL_DIST)
+		mainPropertyLabel.relLocation = labelLocation
 		mainPropertyLabel.rotationChanged()
 		invalidate()
 		update()
