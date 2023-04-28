@@ -78,33 +78,62 @@ class EdgeViewPointSequenceTest {
 	@Test
 	fun shouldDoForEach() {
 		val sequence = createSequence(
-			listOf(Point2D(0, 0), Point2D(10, 0), Point2D(10, 10)),
+			listOf(
+				Point2D(0, 0),
+				Point2D(10, 0),
+				Point2D(10, 10)),
 			returnSequenceEndpoints = false
 		)
-		var index = 0
-		val expected = listOf(Point2D(0, 0), Point2D(8, 0), Point2D(10, 6))
+		assertForEachWithDistance(sequence, 8.0, listOf(
+			Point2D(0, 0),
+			Point2D(8, 0),
+			Point2D(10, 6)))
+	}
 
-		sequence.forEach(8.0) { x, y ->
-			assertEquals(expected[index].x, x)
-			assertEquals(expected[index].y, y)
-			index++
-		}
-		assertEquals(3, index)
+	@Test
+	fun shouldDoForEachOnUShapedEdgeViewWithOffset() {
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(10, 0), Point2D(10, 10), Point2D(0, 10)),
+			returnSequenceEndpoints = false,
+			offset = 5.0
+		)
+
+		assertForEachWithDistance(sequence, 8.0, listOf(
+			Point2D(5.0, 0.0),
+			Point2D(10.0, 3.0),
+			Point2D(9.0, 10.0),
+			Point2D(1.0, 10.0),
+		))
 	}
 
 	private fun createSequence(
 		points: List<Point2D>,
 		reverse: Boolean = false,
-		returnSequenceEndpoints: Boolean = points.size == 2
+		returnSequenceEndpoints: Boolean = points.size == 2,
+		offset: Double = 0.0
 	): EdgeViewPointSequence {
 		val edgeView = GraphViewModule.getEdgeViewFactory()
 			.createEdgeView<Boolean>(mockk())
 			.also { ev ->
 				points.forEach { ev.addSegmentPoint(it) }
 			}
-		return EdgeViewPointSequence(edgeView, reverse, returnSequenceEndpoints)
+		return EdgeViewPointSequence(edgeView, reverse, returnSequenceEndpoints, offset)
 	}
 
 	private fun createReverseSequence(points: List<Point2D>): EdgeViewPointSequence =
 		createSequence(points, true)
+
+	private fun assertForEachWithDistance(
+		sequence: EdgeViewPointSequence,
+		distance: Double,
+		expected: List<Point2D>
+	) {
+		var index = 0
+		sequence.forEach(distance) { x, y ->
+			assertEquals(expected[index].x, x, "x of index $index:")
+			assertEquals(expected[index].y, y, "y of index $index:")
+			index++
+		}
+		assertEquals(expected.size, index)
+	}
 }
