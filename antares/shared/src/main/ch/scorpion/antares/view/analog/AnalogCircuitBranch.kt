@@ -1,5 +1,8 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.model.analog.AnalogVertice
+import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -16,14 +19,38 @@ class AnalogCircuitBranch {
 
 	companion object {
 
-		fun getBranch(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): AnalogCircuitBranch? =
+		private fun getBranch(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): AnalogCircuitBranch? =
 			branches.firstOrNull { it.containsId(edgeView.id) }
 
-		fun isPositive(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Boolean =
+		private fun isPositive(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Boolean =
 			getBranch(edgeView, branches)!!.isPositive(edgeView.id)
 
+		/** Returns the index in [branches] that contains the specified [EdgeView].*/
 		fun getBranchId(edgeView: EdgeView<*>, branches: List<AnalogCircuitBranch>): Int? =
 			branches.indexOfFirstOrNull { it.containsId(edgeView.id) }
+
+		/**
+		 * Returns the current variable index (i.e. the index in [branches] of the [EdgeView]
+		 * connected to the [AnalogPort] with [portId].
+		 */
+		fun getCurrentVariableIndex(
+			circuitView: AnalogGraphView,
+			vertice: AnalogVertice,
+			branches: List<AnalogCircuitBranch>,
+			portId: Int = 1
+		): Int = getBranchId(
+			circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!,
+			branches
+		)!!
+
+		fun isCurrentPositive(
+			circuitView: AnalogGraphView,
+			vertice: AnalogVertice,
+			branches: List<AnalogCircuitBranch>,
+			portId: Int = 1
+		): Boolean = isPositive(
+			circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!,
+			branches)
 	}
 
 	private val _edgeViewIds = mutableSetOf<Int>()

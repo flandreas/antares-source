@@ -4,13 +4,10 @@ import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 /**
  * Used as source of constituent equations when building the linear equation system during simulation.
@@ -36,24 +33,6 @@ interface AnalogVertice : Vertice {
 
 	fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
 		// empty
-	}
-}
-
-abstract class AbstractAnalogVertice<T: CalculatingVertice>(
-	calculator: VerticeCalculator<T>,
-	val baseResourceKey: String
-) : CalculatingVertice(calculator), AnalogVertice {
-
-	companion object {
-		const val MAIN_PROPERTY_STATE = "mainPropertyState"
-	}
-
-	override val type: String get() = Translations.getString("${baseResourceKey}.name")
-
-	override val typeDesc: String? get() = Translations.getOptionalString("${baseResourceKey}.desc")
-
-	init {
-		propagationDelay = 0
 	}
 }
 

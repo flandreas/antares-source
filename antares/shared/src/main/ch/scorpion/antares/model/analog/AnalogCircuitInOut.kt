@@ -103,7 +103,7 @@ class AnalogCircuitInOut(
 			equationSystem.addEquation(row) { signal?.voltage ?: AnalogSignal.ZERO.voltage }
 		} else {
 			// Output: No electrical current flowing outwards
-			val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, 1)
+			val currentVariableIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches, 1)
 			row[currentVariableIndex] = ONE
 			equationSystem.addEquation(row, ZERO)
 		}

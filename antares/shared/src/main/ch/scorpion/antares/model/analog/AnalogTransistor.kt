@@ -81,8 +81,8 @@ class AnalogTransistor(
 	) {
 		val row = Array(equationSystem.variableCount) { ZERO }
 
-		val sourceCurrentIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches)
-		if (AnalogTwoPortVertice.isCurrentPositive(circuitView, this, branches)) {
+		val sourceCurrentIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches)
+		if (AnalogCircuitBranch.isCurrentPositive(circuitView, this, branches)) {
 			row[sourceCurrentIndex] = MINUS_ONE
 		} else {
 			row[sourceCurrentIndex] = ONE
@@ -124,7 +124,7 @@ class AnalogTransistor(
 		val row = Array(equationSystem.variableCount) { ZERO }
 
 		/** Gate-Source current must be 0. */
-		val currentVariableIndex = AnalogTwoPortVertice.currentVariableIndex(circuitView, this, branches, gatePort.portId)
+		val currentVariableIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches, gatePort.portId)
 		row[currentVariableIndex] = ONE
 
 		equationSystem.addEquation(row, ZERO)

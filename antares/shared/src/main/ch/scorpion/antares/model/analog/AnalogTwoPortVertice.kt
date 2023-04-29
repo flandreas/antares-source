@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.model.analog.AnalogTwoPortVertice.Companion.currentVariableIndex
 import ch.scorpion.antares.model.analog.AnalogTwoPortVertice.Companion.incomingCurrentPortId
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogEdgeView
@@ -23,7 +22,7 @@ interface AnalogTwoPortVertice : AnalogVertice {
 		 */
 		fun incomingCurrentPortId(
 			circuitView: AnalogGraphView,
-			vertice: AnalogTwoPortVertice,
+			vertice: AnalogVertice,
 			branch: AnalogCircuitBranch,
 			port1Id: Int = 1,
 			port2Id: Int = 2
@@ -44,26 +43,6 @@ interface AnalogTwoPortVertice : AnalogVertice {
 					port1.portId
 				}
 			}
-		}
-
-		fun isCurrentPositive(
-			circuitView: AnalogGraphView,
-			vertice: AnalogVertice,
-			branches: List<AnalogCircuitBranch>,
-			portId: Int = 1
-		): Boolean {
-			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!
-			return AnalogCircuitBranch.isPositive(edgeView, branches)
-		}
-
-		fun currentVariableIndex(
-			circuitView: AnalogGraphView,
-			vertice: AnalogVertice,
-			branches: List<AnalogCircuitBranch>,
-			portId: Int = 1
-		): Int {
-			val edgeView = circuitView.getEdgeView(vertice.getPort<AnalogSignal>(portId))!!
-			return AnalogCircuitBranch.getBranchId(edgeView, branches)!!
 		}
 	}
 
@@ -107,7 +86,7 @@ abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 			groundNodeNetId: Int,
 			equationSystem: DynamicLinearEquationSystem
 		) {
-			val currentVariableIndex = currentVariableIndex(circuitView, vertice, branches)
+			val currentVariableIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, vertice, branches)
 			val branch = branches[currentVariableIndex]
 			val incomingPortId = incomingCurrentPortId(circuitView, vertice, branch)
 			vertice.composeComponentConstituentEquation(
