@@ -21,7 +21,7 @@ class DoubleThrowSwitchView(
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.RealSwitchView.iconPath"
-		private const val WIDTH = 4 * SCALE
+		private const val WIDTH = 6 * SCALE
 		private const val HEIGHT = 5 * SCALE
 	}
 
@@ -72,24 +72,24 @@ class DoubleThrowSwitchView(
 
 		(getPortView(model.getPort(1)) as DigitalPortView).prepareConnectionDrawContext(context)
 
-		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 0.5 * SCALE, 0.0)
+		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 1 * SCALE, 0.0)
 
 		if (model.isOn) {
-			context.g.drawLine(bounds.minX + 0.5 * SCALE, 0.0, bounds.maxX - 0.5 * SCALE, -2.0 * SCALE)
+			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, -2.0 * SCALE)
 		} else {
-			context.g.drawLine(bounds.minX + 0.5 * SCALE, 0.0, bounds.maxX - 0.5 * SCALE, 2.0 * SCALE)
+			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, 2.0 * SCALE)
 		}
 
-		context.g.fillCircle(bounds.minX + 0.5 * SCALE, 0.0, circleRadius)
+		context.g.fillCircle(bounds.minX + 1 * SCALE, 0.0, circleRadius)
 
 		(getPortView(model.getPort(2)) as DigitalPortView).prepareConnectionDrawContext(context)
 
-		context.g.drawLine(bounds.maxX - 0.5 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
-		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, -2.0 * SCALE, circleRadius)
+		context.g.drawLine(bounds.maxX - 1 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
+		context.g.fillCircle(bounds.maxX - 1 * SCALE, -2.0 * SCALE, circleRadius)
 
 		(getPortView(model.getPort(3)) as DigitalPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.maxX - 0.5 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
-		context.g.fillCircle(bounds.maxX - 0.5 * SCALE, 2.0 * SCALE, circleRadius)
+		context.g.drawLine(bounds.maxX - 1 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
+		context.g.fillCircle(bounds.maxX - 1 * SCALE, 2.0 * SCALE, circleRadius)
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)

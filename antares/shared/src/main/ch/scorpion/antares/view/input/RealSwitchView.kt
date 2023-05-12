@@ -16,7 +16,7 @@ class RealSwitchView(
 ) : AbstractRealSwitchView<RealSwitch>(styleProvider, model) {
 
 	companion object {
-		private const val SIZE = 4 * SCALE
+		private const val SIZE = 6 * SCALE
 	}
 
 	init {

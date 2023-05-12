@@ -15,7 +15,7 @@ class AnalogSwitchView(
 ) : AbstractSwitchView<AnalogSwitch>(styleProvider, model), AnalogBranchVerticeView<AnalogSwitch> {
 
 	companion object {
-		private const val SIZE = 4 * Look.SCALE
+		private const val SIZE = 6 * Look.SCALE
 	}
 
 	init {
