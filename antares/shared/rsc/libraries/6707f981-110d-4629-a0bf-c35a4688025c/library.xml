@@ -561,25 +561,6 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
-          <libraryFolder _id='137'>
-              <name>
-                  <translation lang='en' text='Analog'/>
-                  <translation lang='de' text='Analog'/>
-              </name>
-              <items>
-                  <baseLibraryElement _id='138' id='LightBulb' type='analog'/>
-                  <baseLibraryElement _id='139' id='Battery' type='analog'/>
-                  <baseLibraryElement _id='140' id='Resistor' type='analog'/>
-                  <baseLibraryElement _id='141' id='AnalogSwitch' type='analog'/>
-                  <baseLibraryElement _id='142' id='AnalogGround' type='analog'/>
-                  <baseLibraryElement _id='143' id='AnalogTransistorN' type='analog'/>
-                  <baseLibraryElement _id='144' id='AnalogTransistorP' type='analog'/>
-                  <baseLibraryElement _id='145' id='AnalogInput' type='analog'/>
-                  <baseLibraryElement _id='146' id='AnalogOutput' type='analog'/>
-                  <baseLibraryElement _id='147' id='AnalogPower' type='analog'/>
-                  <baseLibraryElement _id='148' id='CurrentSource' type='analog'/>
-              </items>
-          </libraryFolder>
       </items>
     </libraryFolder>
   </folder>

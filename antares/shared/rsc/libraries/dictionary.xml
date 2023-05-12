@@ -20,5 +20,15 @@
         <translation lang='de' text='Enthält alle eingebauten Komponenten sowie einige gebräuchliche Teilschaltungen'/>
       </desc>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='3' uuid='b3a5e306-f0c8-11ed-a05b-0242ac120003' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility="public">
+      <name>
+          <translation lang='en' text='Analog'/>
+          <translation lang='de' text='Analog'/>
+      </name>
+      <desc>
+          <translation lang='en' text='Contains build-in analog components'/>
+          <translation lang='de' text='Enthält alle eingebauten analogen Komponenten'/>
+      </desc>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>

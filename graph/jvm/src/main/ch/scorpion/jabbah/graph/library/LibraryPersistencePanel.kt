@@ -8,9 +8,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.UIBasics
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.*
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
@@ -104,6 +102,7 @@ class LibraryPersistencePanel(
 
 	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
 		managementService.getLibraryDirectoryEntries()
+			.filter { Authorizer.isCurrentUserAuthorizedTo(Operation.View, it) }
 
 	override fun handleListDoubleClick(event: ActionEvent) {
 		openAction.execute(event)

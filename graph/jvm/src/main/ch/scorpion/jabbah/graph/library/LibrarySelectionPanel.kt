@@ -6,9 +6,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.UIBasics
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
 import java.awt.Frame
@@ -68,7 +66,9 @@ class LibrarySelectionPanel(
 	override fun currentLibraryIndex(): Int? = null
 
 	override fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry> =
-		managementService.getLibraryDirectoryEntries().filter { !isOpen(it) }
+		managementService.getLibraryDirectoryEntries()
+			.filter { !isOpen(it) }
+			.filter { Authorizer.isCurrentUserAuthorizedTo(Operation.View, it) }
 
 	override fun handleListDoubleClick(event: ActionEvent) {
 		result = selectedLibrary?.identification?.uuid
