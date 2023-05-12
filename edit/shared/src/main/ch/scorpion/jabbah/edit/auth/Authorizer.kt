@@ -42,6 +42,11 @@ object Authorizer {
 			return this
 		}
 
+		fun developer(): AuthorizationBuilder {
+			userCondition = ::isDeveloperCondition
+			return this
+		}
+
 		fun to(operation: Operation): AuthorizationBuilder {
 			this.operation = operation
 			return this
@@ -62,6 +67,9 @@ object Authorizer {
 
 private fun currentUserCondition(user: User) =
 	user.identity == EditAuthModule.userHolder.user.identity
+
+private fun isDeveloperCondition(user: User) =
+	user.isDeveloper
 
 
 

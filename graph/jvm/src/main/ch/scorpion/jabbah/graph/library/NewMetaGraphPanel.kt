@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -56,9 +58,9 @@ class NewMetaGraphPanel : JPanel() {
 	}
 
 	private fun fillGraphTypes() {
-		GraphModelModule.graphTypeRegistry.graphTypes.forEach {
-			typeField.addItem(it)
-		}
+		GraphModelModule.graphTypeRegistry.graphTypes
+			.filter { Authorizer.isCurrentUserAuthorizedTo(Operation.View, it) }
+			.forEach { typeField.addItem(it) }
 		typeField.selectedItem = GraphModelModule.graphTypeRegistry.default
 	}
 

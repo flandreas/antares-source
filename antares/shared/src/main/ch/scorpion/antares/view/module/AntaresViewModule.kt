@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.module
 
+import ch.scorpion.antares.AntaresAuthorizations
 import ch.scorpion.antares.model.AntaresGraphTypes.Analog
 import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.DigitalGraph
@@ -231,6 +232,8 @@ object AntaresViewModule : AbstractModule() {
 
 		registerFigures()
 		registerHelpSources()
+
+		AntaresAuthorizations.define()
 	}
 
 	private fun customizeProperties(properties: Properties) {
