@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='b3c417d1-f1d9-46ff-a41b-aab6467c49a4' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+<project _id='0' defaultElement='11d5650a-3f3d-4110-aee3-4055e3b5ce51' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -175,11 +175,6 @@
             <containerLibraryElement _id='35' uuid='11d5650a-3f3d-4110-aee3-4055e3b5ce51' type='analog'>
               <name>
                 <translation lang='en' text='Single Current Source'/>
-              </name>
-            </containerLibraryElement>
-            <containerLibraryElement _id='36' uuid='b3c417d1-f1d9-46ff-a41b-aab6467c49a4' type='analog'>
-              <name>
-                <translation lang='en' text='Open EdgeView'/>
               </name>
             </containerLibraryElement>
           </items>

@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
@@ -101,7 +100,7 @@ class AnalogGraphView(
 	}
 
 	private fun ensureFullyConnected(): Boolean {
-		if (getDrawables { it !is OscilloscopeView && it !is EdgeView<*> }.any { !it.isFullyConnected }) {
+		if (getDrawables { it !is OscilloscopeView }.any { !it.isFullyConnected }) {
 			eventBus.post(IssueImpl(
 				IssueSeverity.Error,
 				Translations.getString("antares.analogCalc.notFullyConnected.error.name"),

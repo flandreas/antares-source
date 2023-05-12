@@ -2,8 +2,8 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.math.MILLION
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -110,6 +111,6 @@ abstract class AbstractCircuitTest {
 	}
 
 	protected fun assertNoIssues() {
-		assertTrue(issueCollector.issues.isEmpty(), "A simulation issue occurred: ${issueCollector.issues.firstOrNull()?.description}")
+		assertTrue(issueCollector.issues.isEmpty(), "A simulation issue occurred")
 	}
 }
