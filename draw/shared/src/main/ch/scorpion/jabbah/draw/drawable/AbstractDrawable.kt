@@ -23,12 +23,6 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 	private var _parent: DrawableContainer<*>? = null
 	override val parent: DrawableContainer<*>? get() = _parent
 
-	/**
-	 * Is `false` by default. Subclasses that overwrite this property with `true` must implement
-	 * [mirrorHorizontally] and [mirrorVertically].
-	 */
-	override val canMirror: Boolean = false
-
 	override var visible: Boolean = visible
 		set(value) {
 			if (value != visible) {
@@ -85,14 +79,6 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 
 	override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
 		_parent = null
-	}
-
-	override fun mirrorHorizontally(x: Double) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun mirrorVertically(y: Double) {
-		throw UnsupportedOperationException("not implemented")
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? = null

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -40,7 +41,7 @@ class Label(
 	rotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE,
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0
-) : AbstractDrawable() {
+) : AbstractDrawable(), Mirrorable {
 
 	companion object {
 		private val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
@@ -149,20 +150,6 @@ class Label(
 		return bounds.contains(x, y)
 	}
 
-	override val canMirror: Boolean get() = true
-
-	override fun mirrorHorizontally(x: Double) {
-		location = location.mirrorHorizontally(x)
-		horizontalAlignment = horizontalAlignment.opposite()
-		updateGeometry()
-	}
-
-	override fun mirrorVertically(y: Double) {
-		location = location.mirrorVertically(y)
-		verticalAlignment = verticalAlignment.opposite()
-		updateGeometry()
-	}
-
 	override fun draw(context: DrawContext) {
 		drawImpl(displayableText, context)
 	}
@@ -214,6 +201,20 @@ class Label(
 		context.g.translate(-location.x, -location.y)
 
 		rotationDisplayStrategy.afterDraw(context, this)
+	}
+
+	/** ---- [Mirrorable] */
+
+	override fun mirrorHorizontally(x: Double) {
+		location = location.mirrorHorizontally(x)
+		horizontalAlignment = horizontalAlignment.opposite()
+		updateGeometry()
+	}
+
+	override fun mirrorVertically(y: Double) {
+		location = location.mirrorVertically(y)
+		verticalAlignment = verticalAlignment.opposite()
+		updateGeometry()
 	}
 
 	/** ---- [Label] */

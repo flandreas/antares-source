@@ -31,9 +31,6 @@ interface Drawable {
 	/** Determines if this [Drawable] is visible, i.e. whether is painted or not.*/
 	var visible: Boolean
 
-	/** Determines whether this [Drawable] can be mirrored horizontally and vertically.*/
-	val canMirror: Boolean
-
 	/** Accepts a [HierarchyVisitor] to visit this [Drawable] and possible hierarchy children.*/
 	fun accept(visitor: HierarchyVisitor): Boolean
 
@@ -102,18 +99,6 @@ interface Drawable {
 
 	/** Notifies this [Drawable] that it has been removed from its parent [DrawableContainer].*/
 	fun <T : Drawable> handleRemoved(container: DrawableContainer<T>)
-
-	/**
-	 * Mirrors the geometry of this [Drawable] at the vertical axis defined by the specified x-coordinate.
-	 * @throws UnsupportedOperationException if [canMirror] is `false`
-	 */
-	fun mirrorHorizontally(x: Double)
-
-	/**
-	 * Mirrors the geometry of this [Drawable] at the horizontal axis defined by the specified y-coordinate.
-	 * @throws UnsupportedOperationException if [canMirror] is `false`
-	 */
-	fun mirrorVertically(y: Double)
 
 	/**
 	 * Returns a short textual description of this [Drawable] represented as a [Tooltip].

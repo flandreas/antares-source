@@ -131,7 +131,7 @@ class GraphViewCopyPasteServiceTest {
 
 		// Edit ContainerDrawing
 		val containerDrawing = vv.getEditableContainerDrawing()
-		containerDrawing.add(TestVerticeView.createEastOutputVerticeView("Hello", 100, 100))
+		containerDrawing.add(LabelComponent("Hello"))
 		vv.setEditedContainerDrawing(containerDrawing)
 
 		val contents = service.copy(listOf(vv.id), builder.graphView)

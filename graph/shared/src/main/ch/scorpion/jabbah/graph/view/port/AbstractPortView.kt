@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
@@ -38,7 +39,7 @@ abstract class AbstractPortView<T : Any>(
 	open var internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int,
 	override val connectable: Boolean = true
-) : AbstractDrawable(), PortView<T>, Storable {
+) : AbstractDrawable(), PortView<T>, Storable, Mirrorable {
 
 	override var location: Point2D = Point2D(x, y)
 		set(value) {
@@ -255,7 +256,10 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override val canMirror: Boolean get() = true
+	override fun getTooltip(x: Double, y: Double): Tooltip? =
+		tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
+
+	/** ---- [Mirrorable] interface */
 
 	override fun mirrorHorizontally(x: Double) {
 		invalidate()
@@ -274,9 +278,6 @@ abstract class AbstractPortView<T : Any>(
 		invalidate()
 		update()
 	}
-
-	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
 
 	/** ---- [Storable] interface */
 

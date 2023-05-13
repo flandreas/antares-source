@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -72,7 +73,7 @@ class SubGraphVerticeViewImplTest {
 
 		// Edit ContainerDrawing
 		val containerDrawing = vv.getEditableContainerDrawing()
-		containerDrawing.add(TestVerticeView.createEastOutputVerticeView("Hello", 100, 100))
+		containerDrawing.add(LabelComponent("Hello"))
 		vv.setEditedContainerDrawing(containerDrawing)
 
 		// Change custom label

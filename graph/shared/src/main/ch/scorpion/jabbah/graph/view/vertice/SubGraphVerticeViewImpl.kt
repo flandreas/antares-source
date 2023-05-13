@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.DropShadow
@@ -64,7 +65,7 @@ class SubGraphVerticeViewImpl(
 ) : AbstractVerticeView<SubGraphVerticeRef>(
 	styleProvider,
 	graphElement
-), SubGraphVerticeView<SubGraphVerticeRef> {
+), SubGraphVerticeView<SubGraphVerticeRef>, Mirrorable {
 
 	companion object {
 		val LOG by logger(SubGraphVerticeViewImpl::class)
@@ -253,7 +254,7 @@ class SubGraphVerticeViewImpl(
 		drawImplAfterBorder(context)
 	}
 
-	override val canMirror: Boolean get() = drawableBag.drawables.all { it.canMirror }
+	override val canMirror: Boolean get() = drawableBag.drawables.all { it is Mirrorable && it.canMirror }
 
 	override fun mirrorHorizontally(x: Double) {
 		if (!canMirror) {
@@ -261,8 +262,8 @@ class SubGraphVerticeViewImpl(
 			throw UnsupportedOperationException("cannot mirror horizontally")
 		}
 		invalidate()
-		drawableBag.drawables.forEach { it.mirrorHorizontally(x - location.x) }
-		getPortViews().forEach { it.mirrorHorizontally(x - location.x) }
+		drawableBag.drawables.forEach { (it as Mirrorable).mirrorHorizontally(x - location.x) }
+		getPortViews().forEach { (it as Mirrorable).mirrorHorizontally(x - location.x) }
 		updateBoxes()
 		invalidate()
 	}
@@ -273,8 +274,8 @@ class SubGraphVerticeViewImpl(
 			throw UnsupportedOperationException("cannot mirror vertically")
 		}
 		invalidate()
-		drawableBag.drawables.forEach { it.mirrorVertically(y - location.y) }
-		getPortViews().forEach { it.mirrorVertically(y - location.y) }
+		drawableBag.drawables.forEach { (it as Mirrorable).mirrorVertically(y - location.y) }
+		getPortViews().forEach { (it as Mirrorable).mirrorVertically(y - location.y) }
 		updateBoxes()
 		invalidate()
 	}
@@ -499,6 +500,10 @@ class SubGraphVerticeViewImpl(
 	override val describingName: String get() = SubGraphVerticeView.getDescribingName(label, getGraph())
 
 	override fun addDrawable(drawable: Drawable) {
+		if (drawable !is Mirrorable) {
+			LOG.error("Adding non-mirrorable Drawable ${drawable::class.simpleName} to SubGraphVerticeViewImpl")
+			throw IllegalArgumentException()
+		}
 		mirrorIfNecessary(drawable)
 		if (drawable is ControlViewComponent) {
 			// Handle validation events from ControlView in order to update the UI
@@ -616,12 +621,12 @@ class SubGraphVerticeViewImpl(
 		DropShadow.expand(_boundingBox, rotation)
 	}
 
-	private fun mirrorIfNecessary(drawable: Drawable) {
+	private fun mirrorIfNecessary(mirrorable: Mirrorable) {
 		if (isHorizontallyMirrored) {
-			drawable.mirrorHorizontally(0.0)
+			mirrorable.mirrorHorizontally(0.0)
 		}
 		if (isVerticallyMirrored) {
-			drawable.mirrorVertically(0.0)
+			mirrorable.mirrorVertically(0.0)
 		}
 	}
 

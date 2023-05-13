@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
@@ -40,7 +41,7 @@ class ControlViewComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	source: ControlViewSource<Vertice>? = null,
 	baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
-) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent {
+) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent, Mirrorable {
 
 	/**
 	 * The ID of the model displayed by [controlView]. This ID is made persistent
@@ -118,8 +119,6 @@ class ControlViewComponent(
 
 	override val boundingBox: RectangularShape get() = controlView.boundingBox
 
-	override val canMirror: Boolean get() = true
-
 	override fun draw(context: DrawContext) {
 		if (brokenView != null) {
 			brokenView!!.draw(context)
@@ -127,6 +126,10 @@ class ControlViewComponent(
 			controlView.draw(context)
 		}
 	}
+
+	override fun contains(x: Double, y: Double): Boolean = controlView.contains(x, y)
+
+	/** ---- [Mirrorable] */
 
 	override fun mirrorHorizontally(x: Double) {
 		invalidate()
@@ -141,8 +144,6 @@ class ControlViewComponent(
 		invalidate()
 		update()
 	}
-
-	override fun contains(x: Double, y: Double): Boolean = controlView.contains(x, y)
 
 	/** ---- [Locatable] */
 

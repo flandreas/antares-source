@@ -31,7 +31,7 @@ abstract class AbstractRectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	val shape: RectangularShape = Rectangle2D()
-) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
+) : AbstractComponent(styleProvider, styleType), RectangularShape by shape, Mirrorable {
 
 	open val shapeToDraw: Shape get() = shape
 
@@ -84,7 +84,7 @@ abstract class AbstractRectangularComponent(
 
 	override fun intersects(rect: RectangularShape): Boolean = shape.intersects(rect)
 
-	override val canMirror: Boolean = true
+	/** ---- [Mirrorable] */
 
 	override fun mirrorHorizontally(x: Double) {
 		setFrame(Point2D(this.x + width, this.y).mirrorHorizontally(x).x, this.y, width, height)

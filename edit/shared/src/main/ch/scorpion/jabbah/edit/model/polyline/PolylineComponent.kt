@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.polyline.Polyline
@@ -22,7 +23,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class PolylineComponent(
 	val polyline: PolylineDrawable = PolylineDrawable()
-) : AbstractComponent(polyline), Polyline by polyline, Transparent, Figure {
+) : AbstractComponent(polyline), Polyline by polyline, Transparent, Figure, Mirrorable {
 
 	companion object {
 		private val TYPE = Translations.getString("edit.component.polyline")
@@ -57,8 +58,11 @@ class PolylineComponent(
 		polyline.draw(context)
 	}
 
-	override val canMirror: Boolean
-		get() = true
+	override fun contains(x: Double, y: Double): Boolean {
+		return polyline.contains(x, y)
+	}
+
+	/** ---- [Mirrorable] */
 
 	override fun mirrorHorizontally(x: Double) {
 		polyline.mirrorHorizontally(x)
@@ -66,10 +70,6 @@ class PolylineComponent(
 
 	override fun mirrorVertically(y: Double) {
 		polyline.mirrorVertically(y)
-	}
-
-	override fun contains(x: Double, y: Double): Boolean {
-		return polyline.contains(x, y)
 	}
 
 	/** ---- [Component] interface */
