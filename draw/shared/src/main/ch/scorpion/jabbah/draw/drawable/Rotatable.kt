@@ -65,7 +65,7 @@ interface Rotatable : Locatable {
 	/** Informs this [Rotatable] that it is about to be rotated with other [Rotatables][Rotatable]. */
 	fun prepareRotateBy(components: Collection<Rotatable>) {}
 
-	/** Informs this [Rotatable] that rotating previously annonced by [prepareRotateBy] has been completed for all [Rotatables][Rotatable]. */
+	/** Informs this [Rotatable] that rotating previously announced by [prepareRotateBy] has been completed for all [Rotatables][Rotatable]. */
 	fun completeRotateBy() {}
 
 	/**

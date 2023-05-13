@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Rotatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -85,6 +87,16 @@ class GraphElementViewWrapper(
 		set(value) {
 			_component?.let { it.styleType = value }
 		}
+
+	/** ---- [Rotatable] interface */
+
+	override val rotatable: Boolean get() = _component!!.rotatable
+
+	override val useRotation: Boolean get() = _component!!.useRotation
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		_component!!.rotate(direction, pivot)
+	}
 
 	/** ---- [Drawable] */
 

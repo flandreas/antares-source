@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.curve
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.select.RectangularRubberBand
 import kotlin.test.BeforeTest
@@ -37,6 +38,24 @@ class QuadCurveComponentTest {
 		val curve = createFlatCurve()
 
 		assertTrue(curve.contains(Point2D(30, 0)))
+	}
+
+	@Test
+	fun shouldRotate() {
+		val curve = QuadCurveComponent(listOf(
+			Point2D(0, 0),
+			Point2D(100, -100),
+			Point2D(200, 0)))
+
+		curve.rotate(RotationDirection.Clockwise)
+
+		assertEquals(
+			listOf(
+				Point2D(0, 0),
+				Point2D(100, 100),
+				Point2D(0, 200),
+			),
+			curve.points)
 	}
 
 	private fun createFlatCurve(): QuadCurveComponent = QuadCurveComponent(listOf(

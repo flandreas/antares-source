@@ -6,21 +6,29 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.Rotatable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * A [Component] consisting of 3 points defining a quadratic curve as of [Path.quadTo].
+ * The first and the third point represent the endpoints of the curve, while the
+ * second point represents the "control point", defining the curvature of the curve.
+ */
 class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractComponent(), Transparent {
 
 	companion object {
 		private const val CONTAINS_SENSITIVITY = 2.0
 		private val type = Translations.getString("edit.component.quadraticCurve")
-		private val DEFAULT_POINTS = listOf<Point2D>(
+		private val DEFAULT_POINTS = listOf(
 			Point2D(0, 0),
 			Point2D(100, 100),
 			Point2D(200, 0)
@@ -39,7 +47,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 			update()
 		}
 
-	/* Contains the [Path] representing `_points` in absolute coordinate space*/
+	/** Contains the [Path] representing `_points` in absolute coordinate space. */
 	private lateinit var path: Path
 
 	init {
@@ -100,6 +108,16 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 		set(value) {
 			transparent.transparency = value
 		}
+
+	/** ---- [Rotatable] interface */
+
+	override val rotatable: Boolean get() = true
+
+	override val useRotation: Boolean get() = false
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		points = points.map { direction.rotation.rotatePointAround(points[0], it) }
+	}
 
 	/** ---- [Storable] interface */
 
