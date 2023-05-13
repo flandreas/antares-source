@@ -13,7 +13,21 @@ import ch.scorpion.jabbah.draw.DrawableContainer
  */
 enum class RotationDirection(val rotation: Rotation) {
 	Clockwise(Rotation.R270),
-	CounterClockwise(Rotation.R90)
+	CounterClockwise(Rotation.R90);
+
+	companion object {
+		fun of(clockwise: Boolean): RotationDirection = if (clockwise) {
+			Clockwise
+		} else {
+			CounterClockwise
+		}
+
+		fun notOf(clockwise: Boolean): RotationDirection = if (clockwise) {
+			CounterClockwise
+		} else {
+			Clockwise
+		}
+	}
 }
 
 /**

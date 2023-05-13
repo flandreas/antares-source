@@ -19,6 +19,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 		private val duplicateAction by lazy { ActionWrapperSwing(DuplicateAction()) }
 		private val deleteAction by lazy { ActionWrapperSwing(DeleteAction()) }
 		private val rotateAction by lazy { ActionWrapperSwing(RotateAction()) }
+		private val rotateClockwiseAction by lazy { ActionWrapperSwing(RotateAction(clockwise = true)) }
 		private val toFrontAction by lazy { ActionWrapperSwing(ToFrontAction()) }
 		private val toBackAction by lazy { ActionWrapperSwing(ToBackAction()) }
 		private val oneDownAction by lazy { ActionWrapperSwing(OneDownAction()) }
@@ -48,6 +49,7 @@ open class EditContextMenuProvider : ContextMenuProvider {
 		popupMenu.addSeparator()
 		popupMenu.add(deleteAction)
 		popupMenu.add(rotateAction)
+		popupMenu.add(rotateClockwiseAction)
 		val arrangeMenu = JMenu(Translations.getString("edit.action.stackingOrder.name"))
 		arrangeMenu.add(toFrontAction)
 		arrangeMenu.add(oneUpAction)

@@ -19,10 +19,11 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 
 class RotateAction(
+	val clockwise: Boolean = false,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractSelectionAwareAction("edit.action.rotate", eventBus, viewManager) {
+) : AbstractSelectionAwareAction(if (clockwise) "edit.action.rotateClockwise" else "edit.action.rotate", eventBus, viewManager) {
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && (selectionCount > 1 || selectionCount == 1 && singleSelection!!.rotatable)
@@ -37,7 +38,8 @@ class RotateAction(
 		}
 
 		commandManager.execute(
-			RotateCounterclockwiseCommand(
+			RotateCommand(
+				clockwise,
 				drawingView!!,
 				selection.map { it.id },
 				selection.first().location
@@ -47,19 +49,20 @@ class RotateAction(
 }
 
 /** Rotates a [Component] to the given [Rotation].*/
-private class RotateCounterclockwiseCommand(
+private class RotateCommand(
+	private val clockwise: Boolean,
 	private val drawingView: DrawingView<*>,
 	val componentIds: Collection<Int>,
 	val pivot: Point2D? = null
-) : AbstractCommand("edit.command.rotate", null), Undoable {
+) : AbstractCommand(if (clockwise) "edit.command.rotateClockwise" else "edit.command.rotate", null), Undoable {
 
 	private val components: Collection<Component> get() = componentIds.map { drawingView.drawing.getWithId(it)!! }.toList()
 
 	override fun execute() {
-		Rotatable.rotate(components, RotationDirection.CounterClockwise, pivot)
+		Rotatable.rotate(components, RotationDirection.of(clockwise), pivot)
 	}
 
 	override fun undo() {
-		Rotatable.rotate(components, RotationDirection.Clockwise, pivot)
+		Rotatable.rotate(components, RotationDirection.notOf(clockwise), pivot)
 	}
 }

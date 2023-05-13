@@ -29,6 +29,7 @@ class EditSubGraphVerticeViewMenu : JMenuBar() {
 		editMenu.addSeparator()
 		editMenu.add(JMenuItem(ActionWrapperSwing(register(DeleteAction()))))
 		editMenu.add(JMenuItem(ActionWrapperSwing(register(RotateAction()))))
+		editMenu.add(JMenuItem(ActionWrapperSwing(register(RotateAction(clockwise = true)))))
 		editMenu.add(JMenuItem(ActionWrapperSwing(register(GroupComponentsAction()))))
 		editMenu.add(JMenuItem(ActionWrapperSwing(register(UngroupComponentsAction()))))
 		editMenu.addSeparator()

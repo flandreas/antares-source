@@ -95,6 +95,7 @@ open class MenuBarBuilder(
 	    menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(DeleteAction())))
         menu.add(JMenuItem(ActionWrapperSwing(RotateAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(RotateAction(clockwise = true))))
         menu.add(JMenuItem(ActionWrapperSwing(GroupComponentsAction())))
         menu.add(JMenuItem(ActionWrapperSwing(UngroupComponentsAction())))
         menu.addSeparator()
