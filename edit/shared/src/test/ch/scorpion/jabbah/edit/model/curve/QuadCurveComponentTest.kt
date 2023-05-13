@@ -58,6 +58,42 @@ class QuadCurveComponentTest {
 			curve.points)
 	}
 
+	@Test
+	fun shouldMirrorHorizontally() {
+		val curve = QuadCurveComponent(listOf(
+			Point2D(0, 0),
+			Point2D(100, -100),
+			Point2D(200, 0)))
+
+		curve.mirrorHorizontally(0.0)
+
+		assertEquals(
+			listOf(
+				Point2D(0, 0),
+				Point2D(-100, -100),
+				Point2D(-200, 0)
+			),
+			curve.points)
+	}
+
+	@Test
+	fun shouldMirrorVertically() {
+		val curve = QuadCurveComponent(listOf(
+			Point2D(0, 0),
+			Point2D(100, -100),
+			Point2D(200, 0)))
+
+		curve.mirrorVertically(0.0)
+
+		assertEquals(
+			listOf(
+				Point2D(0, 0),
+				Point2D(100, 100),
+				Point2D(200, 0)
+			),
+			curve.points)
+	}
+
 	private fun createFlatCurve(): QuadCurveComponent = QuadCurveComponent(listOf(
 		Point2D(0, 0),
 		Point2D(100, 0),

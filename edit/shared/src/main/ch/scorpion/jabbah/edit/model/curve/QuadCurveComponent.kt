@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.Rotatable
-import ch.scorpion.jabbah.draw.drawable.RotationDirection
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.edit.*
@@ -23,7 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * The first and the third point represent the endpoints of the curve, while the
  * second point represents the "control point", defining the curvature of the curve.
  */
-class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractComponent(), Transparent {
+class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractComponent(), Transparent, Mirrorable {
 
 	companion object {
 		private const val CONTAINS_SENSITIVITY = 2.0
@@ -117,6 +114,16 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		points = points.map { direction.rotation.rotatePointAround(points[0], it) }
+	}
+
+	/** ---- [Mirrorable] interface */
+
+	override fun mirrorHorizontally(x: Double) {
+		points = points.map { it.mirrorHorizontally(x) }
+	}
+
+	override fun mirrorVertically(y: Double) {
+		points = points.map { it.mirrorVertically(y) }
 	}
 
 	/** ---- [Storable] interface */
