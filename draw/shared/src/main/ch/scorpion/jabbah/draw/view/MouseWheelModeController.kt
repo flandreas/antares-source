@@ -29,6 +29,13 @@ class MouseWheelModeController : KeyAdapter() {
 
 	private var isWheelZoom = true
 
+	fun reset() {
+		isAltDown = false
+		isWheelZoom = true
+		lastMouseWheelPanTime = 0L
+		lastMouseWheelPanTime = 0L
+	}
+
 	fun calculateIsWheelZoom(): Boolean {
 		val now = System.currentTimeMillis()
 		val switchMode =
@@ -47,6 +54,8 @@ class MouseWheelModeController : KeyAdapter() {
 	fun updateMouseWheelPanTime() {
 		lastMouseWheelPanTime = System.currentTimeMillis()
 	}
+
+	/** ---- [KeyAdapter] */
 
 	override fun keyPressed(e: KeyEvent) {
 		if (e.key == KeyEvent.VK_ALT) {

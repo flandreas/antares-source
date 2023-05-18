@@ -102,6 +102,7 @@ open class ViewImpl<C : InputEventContext>(
 		_canvas?.removePropertyChangeListener(propertyChangeHandler)
 		space.removePropertyChangeListener(propertyChangeHandler)
 		contentBounds.removePropertyChangeListener(propertyChangeHandler)
+		controller.dispose()
 	}
 
 	override val applicationContextHolder: ApplicationContextHolder? = applicationContextHolder

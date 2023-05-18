@@ -172,6 +172,7 @@ class GraphDesktopViewController(
 			associations.add(Association(it, vv.id, newItem, refColor))
 
 			view.addGraphDesktopItem(newItem)
+			newItem.view?.view?.requestFocus()
 
 			it.drawingView?.highlighter?.highlight(vv, displayedColor)
 			it.drawingView?.repaint()

@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
@@ -13,9 +12,14 @@ import ch.scorpion.jabbah.draw.ZoomStrategy
  * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] by dragging with the
  * middle mouse button (or by making scroll gestures on the track pad while pressing ALT).
  */
-class ZoomPanController(val view: View<*>) {
+class ZoomPanController(
+	val view: View<*>,
+	private val eventBus: EventBus = BaseModule.eventBus
+) {
 
 	companion object {
+
+		private val LOG by logger(ZoomPanController::class)
 
 		/** The name of the 'wheel zoom step' [Float] property in [Properties].*/
 		const val PROP_WHEEL_ZOOM_STEP = "view.ZoomPanController.wheelZoomStep"
@@ -51,6 +55,7 @@ class ZoomPanController(val view: View<*>) {
 
 	private val mouseController = MouseController()
 
+	/** Controls switching between "Pan" and "Zoom" using the ALT key. */
 	private val mouseWheelModeController = MouseWheelModeController()
 
 	private val autoPanning = AutoPanning(view)
@@ -64,6 +69,23 @@ class ZoomPanController(val view: View<*>) {
 	private val wheelZoomRequiresMeta: Boolean get() = BaseModule.properties.getBoolean(PROP_WHEEL_ZOOM_REQUIRES_META)
 
 	private var startPos: Point2D = Point2D.ZERO
+
+	/**
+	 * Reset [MouseWheelModeController] to compensate for ALT key release events not arriving if
+	 * ALT-doubleClick leads to a change of the active view.
+	 */
+	private val activeViewChangeHandler: EventHandler<ActiveContentViewChangedEvent> = {
+		LOG.trace("activeContentViewChanged, resetting mouseWheelModeController")
+		mouseWheelModeController.reset()
+	}
+
+	init {
+		eventBus.register(ActiveContentViewChangedEvent::class, activeViewChangeHandler)
+	}
+
+	fun dispose() {
+		eventBus.unregister(activeViewChangeHandler)
+	}
 
 	private fun startPan(pos: Point2D) {
 		startPos = pos
