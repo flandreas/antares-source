@@ -54,18 +54,27 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 			val label = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
 			label.font = this@GraphHierarchyTreeView.font
 
-			if (value is DefaultMutableTreeNode && value.userObject is SubGraphVerticeView<*>) {
-				val subGraphVV = value.userObject as SubGraphVerticeView<*>
-				label.text = subGraphVV.describingName
-				label.icon = subGraphVV.model.getGraphIfPresent()?.type?.let {
-					MetaGraphIconProvider.provideIcon(it, false)
-				}
-				if (StringUtils.isNotBlank(subGraphVV.subGraphVertice?.getGraphIfPresent()?.script)) {
-					label.font = scriptedFont
+			if (value is DefaultMutableTreeNode) {
+				if (value.userObject is SubGraphVerticeView<*>) {
+					val subGraphVV = value.userObject as SubGraphVerticeView<*>
+					configureLabel(label, subGraphVV.describingName, subGraphVV.model.getGraphIfPresent())
+				} else if (value.userObject is GraphView) {
+					val graphView = value.userObject as GraphView
+					configureLabel(label, value.toString(), graphView.graph)
 				}
 			}
 
 			return label
+		}
+
+		private fun configureLabel(label: JLabel, text: String, graph: Graph?) {
+			label.text = text
+			label.icon = graph?.type?.let {
+				MetaGraphIconProvider.provideIcon(it, false)
+			}
+			if (StringUtils.isNotBlank(graph?.script)) {
+				label.font = scriptedFont
+			}
 		}
 	}
 }

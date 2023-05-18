@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -20,7 +21,9 @@ class DigitalGraphView(
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphViewImpl(graph, eventBus) {
 
+	@Suppress("unused") // Reflection
 	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+
 	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Digital) as DigitalGraph)
 
 	/**
