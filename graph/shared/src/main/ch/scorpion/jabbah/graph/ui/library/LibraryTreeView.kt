@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -178,6 +180,8 @@ class LibraryTreeViewController (
 			}
 		}
 
+	val locateActiveMetaGraphAction: Action = LocateActiveMetaGraphAction(this)
+
 	init {
 		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 		eventBus.register(LibraryItemAddedEvent::class, libraryItemAddedHandler)
@@ -250,6 +254,12 @@ class LibraryTreeViewController (
 			return null
 		}
 		return (selectedItem as LibraryElement).getNewInstance()
+	}
+
+	fun expandTo(metaGraph: UUID) {
+		LibraryModule.libraryHolder.getContainerLibraryElement(metaGraph)?.let {
+			view.expandTo(it)
+		}
 	}
 
 	private fun displaysLibrary(library: Library?): Boolean =

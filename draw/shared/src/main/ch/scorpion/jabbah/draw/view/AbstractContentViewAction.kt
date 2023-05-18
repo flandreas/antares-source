@@ -28,6 +28,8 @@ abstract class AbstractContentViewAction(
 
 	private val viewPropertyListener = ViewPropertyListener()
 
+	protected val contentView: ContentView<*>? get() = viewManager.activeView
+
 	protected val view: View<*>? get() = viewManager.activeView?.view
 
 	private inner class ViewPropertyListener : PropertyChangeListener<Any> {

@@ -190,7 +190,7 @@ class SidebarPane(
 		/** Displays the name of the current content in the title bar.*/
 		private val titleLabel = UIBasics.createHeaderLabel("")
 
-		val headerPanel = JPanel()
+		val headerPanel = JToolBar()
 
 		init {
 			label = location.createLabel(name, content.icon)

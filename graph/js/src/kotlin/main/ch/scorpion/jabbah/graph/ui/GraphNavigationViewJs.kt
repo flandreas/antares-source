@@ -77,6 +77,8 @@ private class GraphNavigationViewJs(
 		}
 	}
 
+	override val graphView: GraphView get() = props.controller.drawingView.drawing
+
 	override fun refresh() {
 		forceUpdate()
 	}

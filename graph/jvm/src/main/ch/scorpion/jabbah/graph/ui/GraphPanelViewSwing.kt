@@ -92,7 +92,8 @@ class GraphPanelViewSwing(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.explorer.name"),
 				UiUtil.themedIcon("/img/compass-16.png"),
-				explorerSplitPane),
+				explorerSplitPane,
+				listOf(controller.libraryPanelController.libraryTreeViewController.locateActiveMetaGraphAction)),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.hierarchy.name"),
 				UiUtil.themedIcon("/img/category.png"),

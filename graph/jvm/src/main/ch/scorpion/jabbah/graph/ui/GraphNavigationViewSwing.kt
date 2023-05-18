@@ -128,6 +128,8 @@ class GraphNavigationViewSwing(
 
 	/** ---- [GraphNavigationView] interface */
 
+	override val graphView: GraphView get() = controller.drawingView.drawing
+
 	override fun refresh() {
 		invalidate()
 		revalidate()
