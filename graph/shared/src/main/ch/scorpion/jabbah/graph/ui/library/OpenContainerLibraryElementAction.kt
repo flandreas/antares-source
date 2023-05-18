@@ -25,20 +25,20 @@ class OpenContainerLibraryElementAction(
 ) {
 
 	private val openHandler: EventHandler<OpenContainerLibraryElementRequest> = {
-		if (!applicationMode.isEdit()) {
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
+		if (!controller.applicationModeHolder.currentMode.isEdit()) {
+			controller.eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
 		} else {
 			openAsSavable(it.element)
 		}
 	}
 
 	init {
-		eventBus.register(OpenContainerLibraryElementRequest::class, openHandler)
+		controller.eventBus.register(OpenContainerLibraryElementRequest::class, openHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(openHandler)
+		controller.eventBus.unregister(openHandler)
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

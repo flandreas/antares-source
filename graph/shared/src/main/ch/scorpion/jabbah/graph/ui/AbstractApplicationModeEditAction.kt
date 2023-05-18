@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.app.ApplicationModeObserver
 
 /** A base class for action implementations that are only enabled in [ApplicationMode.EDIT].*/
 abstract class AbstractApplicationModeEditAction(
@@ -16,22 +15,17 @@ abstract class AbstractApplicationModeEditAction(
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(actionBaseName) {
 
-	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
-		if (it.source === applicationModeHolder) {
-			updateEnabledness()
-		}
+	private val applicationModeObserver = ApplicationModeObserver(applicationModeHolder, eventBus) {
+		updateEnabledness()
 	}
-
-	protected val applicationMode: ApplicationMode get() = applicationModeHolder.currentMode
 
 	init {
 		enabled = applicationModeHolder.currentMode.isEdit()
-		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(applicationModeHandler)
+		applicationModeObserver.dispose()
 	}
 
 	protected fun updateEnabledness() {

@@ -33,7 +33,7 @@ class NewBooleanExpressionAction(
 				val item = BooleanExpressionLibraryItem(TranslatableText(it))
 
 				library.libraryService.addLibraryItem(library, item, directory)
-				eventBus.post(OpenBooleanExpressionItemRequest(item))
+				controller.eventBus.post(OpenBooleanExpressionItemRequest(item))
 			}
 	}
 

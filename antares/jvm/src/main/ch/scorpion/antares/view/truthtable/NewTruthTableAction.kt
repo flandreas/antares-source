@@ -38,7 +38,7 @@ class NewTruthTableAction(
 				val truthTableItem = TruthTableLibraryItem(it)
 
 				library.libraryService.addLibraryItem(library, truthTableItem, directory)
-				eventBus.post(OpenTruthTableItemRequest(truthTableItem))
+				controller.eventBus.post(OpenTruthTableItemRequest(truthTableItem))
 			}
 	}
 

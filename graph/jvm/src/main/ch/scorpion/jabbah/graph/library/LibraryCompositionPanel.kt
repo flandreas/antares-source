@@ -35,7 +35,7 @@ class EditLibraryAction(
 	controller
 ) {
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, eventBus)
+		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, controller.eventBus)
 	}
 
 	override fun calculateEnabledness(): Boolean =

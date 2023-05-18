@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.edit.CommandEvent
@@ -8,7 +9,8 @@ import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
+import ch.scorpion.jabbah.graph.app.ApplicationMode.EDIT
+import ch.scorpion.jabbah.graph.app.ApplicationModeObserver
 import ch.scorpion.jabbah.graph.ui.library.LibrarySelectionChangedEvent
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -21,13 +23,20 @@ abstract class AbstractLibraryAction(
 	actionBaseName: String,
 	protected val operation: Operation,
 	protected val controller: LibraryTreeViewController,
+	onlyEnabledInEditMode: Boolean = true,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractApplicationModeEditAction(actionBaseName, controller.applicationModeHolder, eventBus = controller.eventBus) {
+) : AbstractAction(actionBaseName) {
 
 	companion object {
 		fun isAuthorized(operation: Operation, target: Any?): Boolean =
 			target != null && Authorizer.isCurrentUserAuthorizedTo(operation, target)
 	}
+
+	private val applicationModeObserver: ApplicationModeObserver? = if (onlyEnabledInEditMode) {
+		ApplicationModeObserver(controller.applicationModeHolder, controller.eventBus) {
+			updateEnabledness()
+		}
+	} else null
 
 	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
 		if (it.controller === controller) {
@@ -45,19 +54,24 @@ abstract class AbstractLibraryAction(
 	protected val folderOfSelectedItem: LibraryDirectory? get() = controller.view.folderOfSelectedItem
 
 	init {
-		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
-		eventBus.register(CommandEvent::class, commandEventHandler)
-		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+		controller.eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
+		controller.eventBus.register(CommandEvent::class, commandEventHandler)
+		controller.eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(librarySelectionChangeHandler)
-		eventBus.unregister(commandEventHandler)
-		eventBus.unregister(currentLibraryHandler)
+		applicationModeObserver?.dispose()
+		controller.eventBus.unregister(librarySelectionChangeHandler)
+		controller.eventBus.unregister(commandEventHandler)
+		controller.eventBus.unregister(currentLibraryHandler)
 	}
 
-	override fun calculateEnabledness(): Boolean =
+	protected fun updateEnabledness() {
+		enabled = calculateEnabledness() && (applicationModeObserver == null || applicationModeObserver.currentMode == EDIT)
+	}
+
+	protected open fun calculateEnabledness(): Boolean =
 		noStateChangeInterference && operationAuthorized
 
 	protected open val operationAuthorized: Boolean get() = isAuthorized(operation, LibraryModule.libraryHolder.l)
@@ -91,8 +105,9 @@ abstract class AbstractLibraryFolderAction(
 abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
 	operation: Operation,
-	controller: LibraryTreeViewController
-) : AbstractLibraryAction(actionBaseName, operation, controller) {
+	controller: LibraryTreeViewController,
+	onlyEnabledInEditMode: Boolean = true
+) : AbstractLibraryAction(actionBaseName, operation, controller, onlyEnabledInEditMode) {
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is ContainerLibraryElement
 }

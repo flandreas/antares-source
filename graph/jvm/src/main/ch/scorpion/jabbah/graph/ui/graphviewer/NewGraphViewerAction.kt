@@ -12,7 +12,8 @@ class NewGraphViewerAction(
 ) : AbstractContainerLibraryElementAction(
 	"graph.action.newGraphViewer",
 	operation = Operation.View,
-	controller
+	controller,
+	onlyEnabledInEditMode = false
 ) {
 	override fun execute(event: ActionEvent) {
 		val metaGraph = (controller.selectedItem as ContainerLibraryElement).metaGraph

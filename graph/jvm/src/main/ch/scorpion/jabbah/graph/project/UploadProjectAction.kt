@@ -33,12 +33,12 @@ class UploadProjectAction(
 	private val auth0SessionHandler: EventHandler<Auth0SessionEvent> = { updateEnabledness() }
 
 	init {
-		eventBus.register(Auth0SessionEvent::class, auth0SessionHandler)
+		controller.eventBus.register(Auth0SessionEvent::class, auth0SessionHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(auth0SessionHandler)
+		controller.eventBus.unregister(auth0SessionHandler)
 	}
 
 	// TODO: Shouldn't this be in the base class?

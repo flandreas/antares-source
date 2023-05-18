@@ -65,7 +65,9 @@ open class GraphContextMenuProvider(
 			openGraphAction.enabled = true
 			menu.add(openGraphActionWrapper)
 			getGraphApplicationContextHolder(view)?.let {
-				menu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
+				val action = OpenSubGraphViewerAction(applicationName, it, actorView)
+				action.enabled = true
+				menu.add(ActionWrapperSwing(action))
 			}
 		}
 	}

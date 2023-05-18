@@ -22,19 +22,19 @@ class OpenTruthTableAction(
 	}
 
 	private val openHandler: EventHandler<OpenTruthTableItemRequest> = {
-		if (!applicationMode.isEdit()) {
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
+		if (!controller.applicationModeHolder.currentMode.isEdit()) {
+			controller.eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
 		} else {
 			openAsSavable(it.item)
 		}
 	}
 
 	init {
-		eventBus.register(OpenTruthTableItemRequest::class, openHandler)
+		controller.eventBus.register(OpenTruthTableItemRequest::class, openHandler)
 	}
 
 	override fun dispose() {
-		eventBus.unregister(openHandler)
+		controller.eventBus.unregister(openHandler)
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -47,6 +47,6 @@ class OpenTruthTableAction(
 	private fun openAsSavable(item: TruthTableLibraryItem) {
 		LOG.userTrail("Open TruthTable as main view")
 		graphDataViewController.openAsStorable(item.truthTable, TruthTableSavable(item))
-		eventBus.post(ShowTruthTableItemRequest(item))
+		controller.eventBus.post(ShowTruthTableItemRequest(item))
 	}
 }

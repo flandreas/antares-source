@@ -50,7 +50,7 @@ class DuplicateGraphAction(
 
 		val duplicate = library!!.libraryService.duplicateContainerLibraryElement(folderOfSelectedItem!!, element, TranslatableText(newGraphName!!))
 		System.invokeLater {
-			eventBus.post(OpenContainerLibraryElementRequest(duplicate))
+			controller.eventBus.post(OpenContainerLibraryElementRequest(duplicate))
 		}
 	}
 }
