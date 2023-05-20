@@ -292,11 +292,12 @@ class GraphNavigationViewController(
 			ascendFrom(event.entries)
 		} else {
 			graphViewExecutionController.updateDrawingViewEditability()
-			graphViewExecutionController.updateDetachedUI()
 
 			// This leads to updating the PropertyPanel, which relies on DrawingView.editable
 			// and must therefore be done AFTER updating DrawViewEditability in GraphViewExecutionController
 			drawingView.content = navigationStackViewController.navigationStack.peek().content
+
+			graphViewExecutionController.updateDetachedUI()
 
 			view.refresh()
 		}
