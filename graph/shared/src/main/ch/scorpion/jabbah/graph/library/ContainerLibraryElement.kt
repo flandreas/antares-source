@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -79,6 +80,8 @@ class ContainerLibraryElement(
 
 	/** Returns the abstract syntax tree of the script for enhancing drawing this [ContainerLibraryElement]'s symbol. */
 	val drawSymbolAST: Node? get() = drawSymbolScriptASTCache.value
+
+	override fun toString(): String = FormattedText.replaceNegation(name.value).text
 
 	/** ---- [LibraryItem] */
 

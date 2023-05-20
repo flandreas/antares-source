@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
@@ -168,7 +169,7 @@ class LibraryPreviewPanel(
 	private fun updateSelectionImpl(component: Component) {
 		selection = component
 		componentDisplay.updateLayout()
-		descriptionDisplay.styledText = buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
+		descriptionDisplay.styledText = buildToolTipText(FormattedText.replaceNegation(selection!!.type).text, selection!!.typeDesc, null, true)
 	}
 
 	private inner class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -195,6 +196,7 @@ class UsecaseTreeView(
 					val icon = (value.userObject as GraphView).graph?.type?.let {
 						MetaGraphIconProvider.provideIcon(it, false)
 					}
+					component.text = FormattedText.replaceNegation((value.userObject as GraphView).graph!!.name.value).text
 					component.icon = icon
 					component.disabledIcon = icon
 				}
