@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='if (S) O = I1 else O = I0' startupTime='30'>
+        <graph _id='2' type='digital' script='if (S) O = I1 else O = I0' startupTime='30'>
           <elements>
             <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
             <notGate _id='4' id='2' delay='20'/>
@@ -71,7 +71,7 @@
             <netView _id='40' modelId='30' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='41' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='north'>
+            <circuitInOutView _id='41' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='north' representation='binary'>
               <location>
                 <point x='-126.0' y='70.0'/>
               </location>
@@ -102,12 +102,12 @@
                 <polylineShape points='-126.0,56.0 -126.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='50' id='8' rot='0' filled='true' stroked='true' modelId='14' representation='binary' orientation='east'>
+            <circuitInOutView _id='50' id='8' rot='0' filled='true' stroked='true' modelId='14' orientation='east' representation='binary'>
               <location>
                 <point x='-168.0' y='-140.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='51' id='9' rot='0' filled='true' stroked='true' modelId='15' representation='binary' orientation='east'>
+            <circuitInOutView _id='51' id='9' rot='0' filled='true' stroked='true' modelId='15' orientation='east' representation='binary'>
               <location>
                 <point x='-168.0' y='-70.0'/>
               </location>
@@ -125,7 +125,7 @@
                 <polylineShape points='14.0,-56.0 49.0,-56.0 49.0,-77.0 77.0,-77.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='57' id='15' rot='0' filled='true' stroked='true' modelId='23' representation='binary' orientation='east'>
+            <circuitInOutView _id='57' id='15' rot='0' filled='true' stroked='true' modelId='23' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-91.0'/>
               </location>
@@ -181,7 +181,10 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='65'>
+    <containerDrawing _id='65' execDrawScript='when (S) {
+	0: drawDataFlow(&quot;I0&quot;, &quot;O&quot;)
+	1: drawDataFlow(&quot;I1&quot;, &quot;O&quot;)
+}'>
       <components>
         <originIndicator _id='66' id='9'>
           <location>

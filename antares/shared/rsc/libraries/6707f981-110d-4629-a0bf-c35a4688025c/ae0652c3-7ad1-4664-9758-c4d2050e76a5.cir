@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='if (gated(S)) O = gated(B) else O = gated(A)' purelyScripted='true' propDelay='60'>
+        <graph _id='2' type='digital' script='if (gated(S)) O = gated(B) else O = gated(A)' purelyScripted='true' propDelay='60'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>
@@ -37,22 +37,22 @@
         <graphView _id='8'>
           <netViews/>
           <components>
-            <circuitInOutView _id='9' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
+            <circuitInOutView _id='9' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='hex'>
               <location>
                 <point x='-154.0' y='-56.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='10' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='10' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='-154.0' y='7.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='11' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
+            <circuitInOutView _id='11' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
               <location>
                 <point x='0.0' y='-21.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='12' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='north'>
+            <circuitInOutView _id='12' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='north' representation='binary'>
               <location>
                 <point x='-77.0' y='35.0'/>
               </location>
@@ -72,7 +72,7 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='15'>
+    <containerDrawing _id='15' execDrawScript='if (S) drawDataFlow(&quot;B&quot;, &quot;O&quot;) else drawDataFlow(&quot;A&quot;, &quot;O&quot;)'>
       <components>
         <originIndicator _id='16' id='7'>
           <location>

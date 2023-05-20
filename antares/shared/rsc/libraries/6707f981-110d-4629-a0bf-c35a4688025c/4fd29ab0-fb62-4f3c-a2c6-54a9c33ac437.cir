@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var s = S0 + 2 * S1
+        <graph _id='2' type='digital' script='var s = S0 + 2 * S1
 when (s) {
 	0 : O = I0
 	1 : O = I1
@@ -131,12 +131,12 @@ when (s) {
             <netView _id='75' modelId='59' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='76' id='4' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='north'>
+            <circuitInOutView _id='76' id='4' rot='0' filled='true' stroked='true' modelId='3' orientation='north' representation='binary'>
               <location>
                 <point x='-42.0' y='182.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='77' id='5' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='north'>
+            <circuitInOutView _id='77' id='5' rot='0' filled='true' stroked='true' modelId='4' orientation='north' representation='binary'>
               <location>
                 <point x='42.0' y='182.0'/>
               </location>
@@ -198,22 +198,22 @@ when (s) {
             <andGateView _id='96' id='20' rot='0' filled='true' stroked='true' modelId='10' x='210.0' y='-56.0' dataPort='1'/>
             <andGateView _id='97' id='21' rot='0' filled='true' stroked='true' modelId='12' x='210.0' y='14.0' dataPort='1'/>
             <orGateView _id='98' id='22' rot='0' filled='true' stroked='true' modelId='29' x='350.0' y='-91.0'/>
-            <circuitInOutView _id='99' id='23' rot='0' filled='true' stroked='true' modelId='30' representation='binary' orientation='east'>
+            <circuitInOutView _id='99' id='23' rot='0' filled='true' stroked='true' modelId='30' orientation='east' representation='binary'>
               <location>
                 <point x='-98.0' y='-210.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='100' id='24' rot='0' filled='true' stroked='true' modelId='31' representation='binary' orientation='east'>
+            <circuitInOutView _id='100' id='24' rot='0' filled='true' stroked='true' modelId='31' orientation='east' representation='binary'>
               <location>
                 <point x='-98.0' y='-140.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='101' id='25' rot='0' filled='true' stroked='true' modelId='32' representation='binary' orientation='east'>
+            <circuitInOutView _id='101' id='25' rot='0' filled='true' stroked='true' modelId='32' orientation='east' representation='binary'>
               <location>
                 <point x='-98.0' y='-70.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='102' id='26' rot='0' filled='true' stroked='true' modelId='33' representation='binary' orientation='east'>
+            <circuitInOutView _id='102' id='26' rot='0' filled='true' stroked='true' modelId='33' orientation='east' representation='binary'>
               <location>
                 <point x='-98.0' y='0.0'/>
               </location>
@@ -378,7 +378,7 @@ when (s) {
                 <polylineShape points='196.0,-56.0 245.0,-56.0 245.0,-84.0 294.0,-84.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='131' id='59' rot='0' filled='true' stroked='true' modelId='58' representation='binary' orientation='east'>
+            <circuitInOutView _id='131' id='59' rot='0' filled='true' stroked='true' modelId='58' orientation='east' representation='binary'>
               <location>
                 <point x='385.0' y='-91.0'/>
               </location>
@@ -394,7 +394,13 @@ when (s) {
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='133'>
+    <containerDrawing _id='133' execDrawScript='var s = 1*S0 + 2*S1
+when (s) {
+	0: drawDataFlow(&quot;I0&quot;, &quot;O&quot;)
+	1: drawDataFlow(&quot;I1&quot;, &quot;O&quot;)
+	2: drawDataFlow(&quot;I2&quot;, &quot;O&quot;)
+	3: drawDataFlow(&quot;I3&quot;, &quot;O&quot;)
+}'>
       <components>
         <originIndicator _id='134' id='10'>
           <location>
