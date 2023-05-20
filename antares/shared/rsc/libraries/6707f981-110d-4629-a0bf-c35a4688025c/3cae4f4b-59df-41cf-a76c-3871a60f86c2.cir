@@ -3,7 +3,8 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' type='digital' script='O0 = I and (S == 0)
+O1 = I and (S == 1)'>
           <elements>
             <circuitInOut _id='3' id='1' name='I' type='input' bitWidth='1'>
               <desc>
@@ -77,19 +78,19 @@
             <netView _id='32' modelId='23' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='33' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='east'>
+            <circuitInOutView _id='33' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-154.0' y='-126.0'/>
               </location>
             </circuitInOutView>
-            <andGateView _id='34' id='2' rot='0' filled='true' stroked='true' modelId='4' x='70.0' y='-112.0'/>
-            <andGateView _id='35' id='3' rot='0' filled='true' stroked='true' modelId='5' x='70.0' y='-35.0'/>
-            <circuitInOutView _id='36' id='6' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <andGateView _id='34' id='2' rot='0' filled='true' stroked='true' modelId='4' x='70.0' y='-112.0' dataPort='1'/>
+            <andGateView _id='35' id='3' rot='0' filled='true' stroked='true' modelId='5' x='70.0' y='-35.0' dataPort='1'/>
+            <circuitInOutView _id='36' id='6' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='112.0' y='-112.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='37' id='7' rot='0' filled='true' stroked='true' modelId='7' representation='binary' orientation='east'>
+            <circuitInOutView _id='37' id='7' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='112.0' y='-35.0'/>
               </location>
@@ -104,7 +105,7 @@
                 <polylineShape points='56.0,-35.0 126.0,-35.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='40' id='14' rot='0' filled='true' stroked='true' modelId='14' representation='binary' orientation='north'>
+            <circuitInOutView _id='40' id='14' rot='0' filled='true' stroked='true' modelId='14' orientation='north' representation='binary'>
               <location>
                 <point x='-98.0' y='105.0'/>
               </location>
@@ -191,7 +192,7 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='57'>
+    <containerDrawing _id='57' execDrawScript='if (S) drawDataFlow(&quot;I&quot;, &quot;O1&quot;) else drawDataFlow(&quot;I&quot;, &quot;O0&quot;)'>
       <components>
         <polyline _id='58' id='13' style='figure' filled='true' stroked='true' points='154.0,14.0 154.0,70.0 210.0,84.0 210.0,0.0 154.0,14.0'/>
         <digitalPortViewComp _id='59' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>

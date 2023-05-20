@@ -3,10 +3,18 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2'>
+        <graph _id='2' type='digital' script='O0 = I and ((1*S0 + 2*S1 + 4*S2) == 0)
+O1 = I and ((1*S0 + 2*S1 + 4*S2) == 1)
+O2 = I and ((1*S0 + 2*S1 + 4*S2) == 2)
+O3 = I and ((1*S0 + 2*S1 + 4*S2) == 3)
+O4 = I and ((1*S0 + 2*S1 + 4*S2) == 4)
+O5 = I and ((1*S0 + 2*S1 + 4*S2) == 5)
+O6 = I and ((1*S0 + 2*S1 + 4*S2) == 6)
+O7 = I and ((1*S0 + 2*S1 + 4*S2) == 7)
+'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'/>
             <circuitInOut _id='5' id='3' name='O0' type='output' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Datenausgang 0'/>
@@ -103,7 +111,7 @@
                 <netPortRef _id='36' verticeId='9' portId='1'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='37' id='19' delay='0' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2'/>
+            <subGraphVerticeRef _id='37' id='19' delay='0' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2' type='digital'/>
             <circuitInOut _id='38' id='20' name='S0' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Auswahleingang Bit 0'/>
@@ -190,42 +198,42 @@
           <components>
             <subGraphVerticeViewRef _id='77' id='1' rot='0' filled='true' stroked='true' modelId='3' x='0.0' y='-182.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='78' id='2' rot='0' filled='true' stroked='true' modelId='4' x='0.0' y='-14.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='79' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='79' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='80' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <circuitInOutView _id='80' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-196.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='81' id='5' rot='0' filled='true' stroked='true' modelId='7' representation='binary' orientation='east'>
+            <circuitInOutView _id='81' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='82' id='6' rot='0' filled='true' stroked='true' modelId='8' representation='binary' orientation='east'>
+            <circuitInOutView _id='82' id='6' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-112.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='83' id='7' rot='0' filled='true' stroked='true' modelId='9' representation='binary' orientation='east'>
+            <circuitInOutView _id='83' id='7' rot='0' filled='true' stroked='true' modelId='9' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='56.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='84' id='8' rot='0' filled='true' stroked='true' modelId='10' representation='binary' orientation='east'>
+            <circuitInOutView _id='84' id='8' rot='0' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='14.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='85' id='9' rot='0' filled='true' stroked='true' modelId='11' representation='binary' orientation='east'>
+            <circuitInOutView _id='85' id='9' rot='0' filled='true' stroked='true' modelId='11' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-28.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='86' id='10' rot='0' filled='true' stroked='true' modelId='12' representation='binary' orientation='east'>
+            <circuitInOutView _id='86' id='10' rot='0' filled='true' stroked='true' modelId='12' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-70.0'/>
               </location>
@@ -271,17 +279,17 @@
               </shape>
             </digitalEdgeView>
             <subGraphVerticeViewRef _id='95' id='19' rot='0' filled='true' stroked='true' modelId='37' x='-182.0' y='-98.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='96' id='20' rot='0' filled='true' stroked='true' modelId='38' representation='binary' orientation='north'>
+            <circuitInOutView _id='96' id='20' rot='0' filled='true' stroked='true' modelId='38' orientation='north' representation='binary'>
               <location>
                 <point x='-14.0' y='112.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='97' id='21' rot='0' filled='true' stroked='true' modelId='39' representation='binary' orientation='north'>
+            <circuitInOutView _id='97' id='21' rot='0' filled='true' stroked='true' modelId='39' orientation='north' representation='binary'>
               <location>
                 <point x='-56.0' y='112.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='98' id='22' rot='0' filled='true' stroked='true' modelId='40' representation='binary' orientation='east'>
+            <circuitInOutView _id='98' id='22' rot='0' filled='true' stroked='true' modelId='40' orientation='east' representation='binary'>
               <location>
                 <point x='-217.0' y='-98.0'/>
               </location>
@@ -341,7 +349,7 @@
                 <polylineShape points='-56.0,56.0 35.0,56.0 35.0,28.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='110' id='34' rot='0' filled='true' stroked='true' modelId='58' representation='binary' orientation='north'>
+            <circuitInOutView _id='110' id='34' rot='0' filled='true' stroked='true' modelId='58' orientation='north' representation='binary'>
               <location>
                 <point x='-140.0' y='112.0'/>
               </location>
@@ -357,7 +365,16 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='112'>
+    <containerDrawing _id='112' execDrawScript='when (1*S0 + 2*S1 + 4*S2) {
+	0: drawDataFlow(&quot;I&quot;, &quot;O0&quot;)
+	1: drawDataFlow(&quot;I&quot;, &quot;O1&quot;)
+	2: drawDataFlow(&quot;I&quot;, &quot;O2&quot;)
+	3: drawDataFlow(&quot;I&quot;, &quot;O3&quot;)
+	4: drawDataFlow(&quot;I&quot;, &quot;O4&quot;)
+	5: drawDataFlow(&quot;I&quot;, &quot;O5&quot;)
+	6: drawDataFlow(&quot;I&quot;, &quot;O6&quot;)
+	7: drawDataFlow(&quot;I&quot;, &quot;O7&quot;)
+}'>
       <components>
         <polyline _id='113' id='16' style='figure' filled='true' stroked='true' points='147.0,-7.0 147.0,91.0 224.0,119.0 224.0,-35.0 147.0,-7.0'/>
         <digitalPortViewComp _id='114' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>

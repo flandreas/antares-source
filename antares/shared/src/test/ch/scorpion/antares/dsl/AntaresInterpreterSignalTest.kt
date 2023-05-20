@@ -9,15 +9,12 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.signal.Word.Companion.of
-import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
 class AntaresInterpreterSignalTest {
@@ -486,5 +483,20 @@ class AntaresInterpreterSignalTest {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
 		assertEquals(1L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldCalculate4BitDeMultiplexer() {
+		val parser = AntaresParser(AntaresLexer("O0 = I and ((S0 + 2*S1) == 0)"), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("O0", DigitalSignalFactory.of(true))
+		memory.preset("I", DigitalSignalFactory.of(true))
+		memory.preset("S0", DigitalSignalFactory.of(true))
+		memory.preset("S1", DigitalSignalFactory.of(true))
+
+		val result = interpreter.interpret()
+
+		assertEquals(DigitalSignalFactory.of(false), result)
 	}
 }
