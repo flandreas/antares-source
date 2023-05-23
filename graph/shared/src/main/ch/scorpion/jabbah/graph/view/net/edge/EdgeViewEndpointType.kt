@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.polyline.LineTerminator
+import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
@@ -51,6 +53,9 @@ enum class EdgeViewEndpointType {
 	    override fun remove(edgeView: EdgeView<*>) {
 		    edgeView.removeSegmentPoint(0)
 	    }
+
+	    override fun getLineTerminator(edgeView: EdgeView<*>): LineTerminator? =
+			edgeView.polyline.beginLineTerminator
     },
 
     DESTINATION {
@@ -89,6 +94,9 @@ enum class EdgeViewEndpointType {
 	    override fun remove(edgeView: EdgeView<*>) {
 		    edgeView.removeSegmentPoint(edgeView.segmentPointCount - 1)
 	    }
+
+	    override fun getLineTerminator(edgeView: EdgeView<*>): LineTerminator? =
+			edgeView.polyline.endLineTerminator
     };
 
 	val opposite: EdgeViewEndpointType get() =
@@ -145,4 +153,7 @@ enum class EdgeViewEndpointType {
 
 	/** Removes the corresponding endpoint from [EdgeView] and makes the second last point the new endpoint. */
 	abstract fun remove(edgeView: EdgeView<*>)
+
+	/** Returns the [LineTerminator] at the corresponding endpoint of the [EdgeView]'s [Polyline]. */
+	abstract fun getLineTerminator(edgeView: EdgeView<*>): LineTerminator?
 }

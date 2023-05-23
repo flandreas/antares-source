@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -245,15 +246,11 @@ open class NodeViewImpl<T : Any>(
 		return null
 	}
 
-	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
 		// empty
 	}
 
 	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean) {
-		// empty
-	}
-
-	override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
 		// empty
 	}
 

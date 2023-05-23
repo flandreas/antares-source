@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -54,7 +55,7 @@ interface ConnectableView : Drawable, Storable {
      * @param edgeView the [EdgeView] that has connected
      * @param port the [Port] to which the [Net] of the [EdgeView] has been connected
      */
-    fun <G: Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?)
+    fun <G: Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry)
 
     /**
      * Notifies this [ConnectableView] that an [EdgeView] has disconnected from a [PortView] of a
@@ -65,13 +66,6 @@ interface ConnectableView : Drawable, Storable {
      * @param port the [Port] from which the [Net] of the [EdgeView] has been disconnected
      */
     fun <G: Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?, lockEndpoint: Boolean = false)
-
-    /**
-     * Notified this [ConnectableView] that the width of its connected [EdgeView]s has changed.
-     * As a reaction, this [ConnectableView] should inform its [PortView]s to give them a chance to update
-     * their geometry accordingly, e.g. by adjusting the location of any external label.
-     */
-    fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>)
 
     /**
      * Returns the [PortView] of the specified [Port].

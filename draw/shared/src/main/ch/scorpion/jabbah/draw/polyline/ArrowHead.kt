@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  */
 class ArrowHead(
 	width: Int = DEFAULT_WIDTH,
-	length: Int = DEFAULT_LENGTH,
+	private val length: Int = DEFAULT_LENGTH,
 	compactness: Float = DEFAULT_COMPACTNESS,
 	val filled: Boolean = DEFAULT_FILLED,
 	bidirectional: Boolean = DEFAULT_BIDIRECTIONAL
@@ -79,9 +79,9 @@ class ArrowHead(
 		context.g.stroke = oldStroke
 	}
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return shape.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
+
+	override val size: Int get() = length
 
 	/** ---- [LineTerminator] */
 

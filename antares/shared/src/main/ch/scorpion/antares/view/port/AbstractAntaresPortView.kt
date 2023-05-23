@@ -170,7 +170,7 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	protected open val hasExternalAnnotation: Boolean get() = false
 
-	protected val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
+	protected val centerExternalLabel: Boolean get() = port.isConnected && (connectionGeometry?.edgeViewWidth ?: 1) > Look.EXT_PIN_FONT.size
 
 	protected fun buildPortLabel() {
 		portLabel = when (portLabelPosition) {
@@ -277,7 +277,10 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	private fun getExternalLabelLocation(direction: Direction): Point2D {
 		val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
-		val dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
+		var dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
+		connectionGeometry?.distance?.let {
+			dist += it
+		}
 		return when (direction) {
 			WEST -> Point2D(-dist - ea, -1)
 			EAST -> Point2D(dist + ea, -1)

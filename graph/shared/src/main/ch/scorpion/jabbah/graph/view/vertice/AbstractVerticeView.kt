@@ -40,6 +40,7 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -200,11 +201,11 @@ abstract class AbstractVerticeView<T : Vertice>(
 		return model.getPort<Any>(portId)
 	}
 
-	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
 		if (port != null) {
 			getPortView(port)?.let {
 				invalidate()
-				it.handleConnect(edgeView)
+				it.handleConnect(edgeView, geometry)
 				invalidate()
 			}
 		}
@@ -218,10 +219,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 				invalidate()
 			}
 		}
-	}
-
-	override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
-		getNetPortViews(edgeView.model).forEach { it.edgeViewWidth = edgeView.width }
 	}
 
 	override fun drawDataFlow(inputName: String, outputName: String, context: DrawContext) {

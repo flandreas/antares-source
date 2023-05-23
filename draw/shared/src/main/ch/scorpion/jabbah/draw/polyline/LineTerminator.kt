@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface LineTerminator : Drawable {
 
+	/** The size of this [LineTerminator] in the direction of the last [Polyline] segment to which it is attached.*/
+	val size: Int
+
 	/**
 	 * Sets the location of this [LineTerminator] while leaving the orientation unchanged.
 	 *

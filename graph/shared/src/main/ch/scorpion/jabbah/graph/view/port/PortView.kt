@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -122,16 +123,10 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	val minSegmentLength: Int
 
 	/**
-	 * This property contains the width of the [EdgeView] connected to this [PortView], and is
-	 * used to fine-tune the location of an external label of this [PortView]. This property is established
-	 * by this [PortView] in [handleConnect], but it is the responsibility of the connected [EdgeView] to update
-	 * it whenever its width changes.
-	 *
-	 * In an alternative design, the [PortView] would query the width of a connected [EdgeView] and adjust
-	 * its external label position accordingly. This would have required to keep a reference to the [EdgeView],
-	 * which is something we try to avoid.
+	 * Describes the geometry of an [EdgeView] connected to this [PortView].
+	 * Used by this [PortView] to fine-tune the position of its external label.
 	 */
-	var edgeViewWidth: Int
+	var connectionGeometry: EdgeViewConnectionGeometry?
 
 	/** Sets the relative location of this [PortView] within the owning [VerticeView].*/
 	fun setLocation(x: Double, y: Double)
@@ -155,7 +150,7 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 * Notifies this [PortView] that an [EdgeView] has connected its [Net] to the [Port] of this
 	 * [PortView]. As a reaction, this [PortView] could update its geometry, if necessary.
 	 */
-	fun handleConnect(edgeView: EdgeView<T>)
+	fun handleConnect(edgeView: EdgeView<T>, geometry: EdgeViewConnectionGeometry)
 
 	/**
 	 * Notifies this [PortView] that an [EdgeView] has disconnected its [Net] from the [Port] of

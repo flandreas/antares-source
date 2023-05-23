@@ -50,6 +50,7 @@ import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
 import ch.scorpion.jabbah.io.*
@@ -405,8 +406,8 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [ConnectableView] */
 
-	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
-		super.handleConnect(edgeView, port)
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
+		super.handleConnect(edgeView, port, geometry)
 		if (port != null && !isReading) {
 			updateBoxes()
 		}

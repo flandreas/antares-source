@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
@@ -26,6 +25,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -121,11 +121,11 @@ class DigitalPortView(
 
 	/** ---- [AbstractPortView] */
 
-	override var edgeViewWidth: Int
-		get() = super.edgeViewWidth
+	override var connectionGeometry: EdgeViewConnectionGeometry?
+		get() = super.connectionGeometry
 		set(value) {
-			if (super.edgeViewWidth != value) {
-				super.edgeViewWidth = value
+			if (super.connectionGeometry != value) {
+				super.connectionGeometry = value
 				buildPortLabel()
 				buildBitWidthAnnotation()
 			}

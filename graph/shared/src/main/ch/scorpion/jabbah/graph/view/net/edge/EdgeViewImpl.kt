@@ -374,7 +374,7 @@ open class EdgeViewImpl<T : Any>(
 		origin = connection
 		origin!!.let {
 			it.connectableView.addDrawableListener(layout)
-			it.connectableView.handleConnect(this, it.port)
+			it.connectableView.handleConnect(this, it.port, createConnectionGeometry(connection))
 		}
 		updateEndpointViews()
 		styling.updateBoundingBox()
@@ -393,11 +393,16 @@ open class EdgeViewImpl<T : Any>(
 		destination = connection
 		destination!!.let {
 			it.connectableView.addDrawableListener(layout)
-			it.connectableView.handleConnect(this, it.port)
+			it.connectableView.handleConnect(this, it.port, createConnectionGeometry(connection))
 		}
 		updateEndpointViews()
 		styling.updateBoundingBox()
 	}
+
+	private fun createConnectionGeometry(connection: Connection<*>): EdgeViewConnectionGeometry =
+		EdgeViewConnectionGeometry(
+			width,
+			getConnectionEndpointType(connection)!!.getLineTerminator(this)?.size ?: 0)
 
 	override fun calculateMaximumNetLength(reverse: Boolean): Double {
 		val cv = if (reverse) origin?.connectableView else destination?.connectableView
@@ -700,8 +705,10 @@ open class EdgeViewImpl<T : Any>(
 		invalidate()
 		styling = netView!!.style.createEdgeViewStyling(styleProvider, this)
 		styling.updateBoundingBox()
-		origin?.connectableView?.handleEdgeViewWidthChanged(this)
-		destination?.connectableView?.handleEdgeViewWidthChanged(this)
+
+		origin?.portView?.connectionGeometry = createConnectionGeometry(origin!!)
+		destination?.portView?.connectionGeometry = createConnectionGeometry(destination!!)
+
 		invalidate()
 		validate()
 	}

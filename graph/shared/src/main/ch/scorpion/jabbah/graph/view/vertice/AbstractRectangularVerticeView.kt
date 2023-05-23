@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.Storable
@@ -142,8 +143,8 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 		updateBoxes()
 	}
 
-	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
-		super.handleConnect(edgeView, port)
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
+		super.handleConnect(edgeView, port, geometry)
 		updateBoxes()
 	}
 

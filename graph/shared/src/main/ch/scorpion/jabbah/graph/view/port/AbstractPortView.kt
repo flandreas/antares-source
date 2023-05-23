@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.io.*
 import kotlin.math.sign
@@ -103,7 +104,7 @@ abstract class AbstractPortView<T : Any>(
 			location.x + unconnectedLength * direction.dx,
 			location.y + unconnectedLength * direction.dy)
 
-	override var edgeViewWidth: Int = 1
+	override var connectionGeometry: EdgeViewConnectionGeometry? = null
 
 	/** Listens for property changes of [port] and updates this [PortView] accordingly.*/
 	private val portListener = PortListener()
@@ -172,9 +173,9 @@ abstract class AbstractPortView<T : Any>(
 	override fun containsConnectionPoint(x: Double, y: Double): Boolean
 		= connectionPoint.isNear(x, y, BaseModule.properties.getInt(PROP_SENSITIVE_AREA))
 
-	override fun handleConnect(edgeView: EdgeView<T>) {
+	override fun handleConnect(edgeView: EdgeView<T>, geometry: EdgeViewConnectionGeometry) {
 		invalidate()
-		edgeViewWidth = edgeView.width
+		connectionGeometry = geometry
 		length = connectedLength
 		invalidate()
 		update()
@@ -182,7 +183,7 @@ abstract class AbstractPortView<T : Any>(
 
 	override fun handleUnconnect(edgeView: EdgeView<T>?, lockEndpoint: Boolean) {
 		invalidate()
-		edgeViewWidth = 0
+		connectionGeometry = null
 		length = unconnectedLength
 		if (edgeView != null && !lockEndpoint) {
 			val connectionPoint = owner!!.getPortConnectionPoint(port)
