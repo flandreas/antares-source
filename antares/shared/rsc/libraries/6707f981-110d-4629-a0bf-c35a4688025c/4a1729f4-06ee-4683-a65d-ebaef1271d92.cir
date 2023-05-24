@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var val = I0 + 2 * I1 + 4 * I2
+        <graph _id='2' type='digital' script='var val = 1 * I0 + 2 * I1 + 4 * I2
 O0 = EN and val == 0
 O1 = EN and val == 1
 O2 = EN and val == 2
@@ -200,17 +201,17 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
             <netView _id='129' modelId='107' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='130' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='south'>
+            <circuitInOutView _id='130' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='south' representation='binary'>
               <location>
                 <point x='49.0' y='175.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='131' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='south'>
+            <circuitInOutView _id='131' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='south' representation='binary'>
               <location>
                 <point x='196.0' y='175.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='132' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='south'>
+            <circuitInOutView _id='132' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='south' representation='binary'>
               <location>
                 <point x='336.0' y='175.0'/>
               </location>
@@ -218,13 +219,13 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
             <notGateView _id='133' id='4' rot='270' filled='true' stroked='true' modelId='6' x='126.0' y='266.0'/>
             <notGateView _id='134' id='5' rot='270' filled='true' stroked='true' modelId='7' x='266.0' y='266.0'/>
             <notGateView _id='135' id='6' rot='270' filled='true' stroked='true' modelId='8' x='406.0' y='266.0'/>
-            <circuitInOutView _id='136' id='7' rot='0' filled='true' stroked='true' modelId='9' representation='binary' orientation='south'>
+            <circuitInOutView _id='136' id='7' rot='0' filled='true' stroked='true' modelId='9' orientation='south' representation='binary'>
               <location>
                 <point x='448.0' y='175.0'/>
               </location>
             </circuitInOutView>
             <andGateView _id='137' id='8' rot='0' filled='true' stroked='true' modelId='10' x='546.0' y='315.0'/>
-            <circuitInOutView _id='138' id='9' rot='0' filled='true' stroked='true' modelId='11' representation='binary' orientation='east'>
+            <circuitInOutView _id='138' id='9' rot='0' filled='true' stroked='true' modelId='11' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='315.0'/>
               </location>
@@ -391,37 +392,37 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
                 <polylineShape points='532.0,315.0 581.0,315.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='184' id='58' rot='0' filled='true' stroked='true' modelId='64' representation='binary' orientation='east'>
+            <circuitInOutView _id='184' id='58' rot='0' filled='true' stroked='true' modelId='64' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='399.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='185' id='59' rot='0' filled='true' stroked='true' modelId='65' representation='binary' orientation='east'>
+            <circuitInOutView _id='185' id='59' rot='0' filled='true' stroked='true' modelId='65' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='483.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='186' id='60' rot='0' filled='true' stroked='true' modelId='66' representation='binary' orientation='east'>
+            <circuitInOutView _id='186' id='60' rot='0' filled='true' stroked='true' modelId='66' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='567.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='187' id='61' rot='0' filled='true' stroked='true' modelId='67' representation='binary' orientation='east'>
+            <circuitInOutView _id='187' id='61' rot='0' filled='true' stroked='true' modelId='67' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='651.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='188' id='62' rot='0' filled='true' stroked='true' modelId='68' representation='binary' orientation='east'>
+            <circuitInOutView _id='188' id='62' rot='0' filled='true' stroked='true' modelId='68' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='735.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='189' id='63' rot='0' filled='true' stroked='true' modelId='69' representation='binary' orientation='east'>
+            <circuitInOutView _id='189' id='63' rot='0' filled='true' stroked='true' modelId='69' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='819.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='190' id='64' rot='0' filled='true' stroked='true' modelId='70' representation='binary' orientation='east'>
+            <circuitInOutView _id='190' id='64' rot='0' filled='true' stroked='true' modelId='70' orientation='east' representation='binary'>
               <location>
                 <point x='567.0' y='903.0'/>
               </location>
@@ -898,7 +899,7 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
     <containerDrawing _id='279'>
       <components>
         <rectangle _id='280' id='1' style='figure' filled='true' stroked='true' x='126.0' y='140.0' w='84.0' h='126.0'/>
-        <originIndicator _id='281'>
+        <originIndicator _id='281' id='17'>
           <location>
             <point x='112.0' y='175.0'/>
           </location>
@@ -943,7 +944,7 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
             <digitalPortView _id='304' x='210.0' y='252.0' dir='east' textPos='internal' portId='305'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='306'>
+        <label _id='306' id='16' rot='0'>
           <text>
             <translation lang='en' text='DEC'/>
           </text>

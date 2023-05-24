@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var val = I0 + 2 * I1 + 4 * I2 + 8 * I3
+        <graph _id='2' type='digital' script='var val = 1 * I0 + 2 * I1 + 4 * I2 + 8 * I3
 O0 = EN and val == 0
 O1 = EN and val == 1
 O2 = EN and val == 2
@@ -20,8 +21,8 @@ O13 = EN and val == 13
 O14 = EN and val == 14
 O15 = EN and val == 15' propDelay='90' startupTime='43'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
-            <subGraphVerticeRef _id='4' id='2' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
+            <subGraphVerticeRef _id='3' id='1' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='43' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92' type='digital'/>
             <circuitInOut _id='5' id='3' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='I2' type='input' bitWidth='1'/>
@@ -237,27 +238,27 @@ O15 = EN and val == 15' propDelay='90' startupTime='43'>
           <components>
             <subGraphVerticeViewRef _id='136' id='1' rot='0' filled='true' stroked='true' modelId='3' x='378.0' y='245.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='137' id='2' rot='0' filled='true' stroked='true' modelId='4' x='378.0' y='469.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='138' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='138' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='182.0' y='245.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='139' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <circuitInOutView _id='139' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='182.0' y='273.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='140' id='5' rot='0' filled='true' stroked='true' modelId='7' representation='binary' orientation='east'>
+            <circuitInOutView _id='140' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='182.0' y='301.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='141' id='6' rot='0' filled='true' stroked='true' modelId='8' representation='binary' orientation='east'>
+            <circuitInOutView _id='141' id='6' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='182.0' y='371.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='142' id='7' rot='0' filled='true' stroked='true' modelId='9' representation='binary' orientation='north'>
+            <circuitInOutView _id='142' id='7' rot='0' filled='true' stroked='true' modelId='9' orientation='north' representation='binary'>
               <location>
                 <point x='322.0' y='665.0'/>
               </location>
@@ -345,82 +346,82 @@ O15 = EN and val == 15' propDelay='90' startupTime='43'>
                 <polylineShape points='210.0,301.0 210.0,525.0 392.0,525.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='163' id='34' rot='0' filled='true' stroked='true' modelId='39' representation='binary' orientation='east'>
+            <circuitInOutView _id='163' id='34' rot='0' filled='true' stroked='true' modelId='39' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='56.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='164' id='35' rot='0' filled='true' stroked='true' modelId='40' representation='binary' orientation='east'>
+            <circuitInOutView _id='164' id='35' rot='0' filled='true' stroked='true' modelId='40' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='165' id='36' rot='0' filled='true' stroked='true' modelId='41' representation='binary' orientation='east'>
+            <circuitInOutView _id='165' id='36' rot='0' filled='true' stroked='true' modelId='41' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='140.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='166' id='37' rot='0' filled='true' stroked='true' modelId='42' representation='binary' orientation='east'>
+            <circuitInOutView _id='166' id='37' rot='0' filled='true' stroked='true' modelId='42' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='182.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='167' id='38' rot='0' filled='true' stroked='true' modelId='43' representation='binary' orientation='east'>
+            <circuitInOutView _id='167' id='38' rot='0' filled='true' stroked='true' modelId='43' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='224.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='168' id='39' rot='0' filled='true' stroked='true' modelId='44' representation='binary' orientation='east'>
+            <circuitInOutView _id='168' id='39' rot='0' filled='true' stroked='true' modelId='44' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='266.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='169' id='40' rot='0' filled='true' stroked='true' modelId='45' representation='binary' orientation='east'>
+            <circuitInOutView _id='169' id='40' rot='0' filled='true' stroked='true' modelId='45' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='170' id='41' rot='0' filled='true' stroked='true' modelId='46' representation='binary' orientation='east'>
+            <circuitInOutView _id='170' id='41' rot='0' filled='true' stroked='true' modelId='46' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='350.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='171' id='42' rot='0' filled='true' stroked='true' modelId='47' representation='binary' orientation='east'>
+            <circuitInOutView _id='171' id='42' rot='0' filled='true' stroked='true' modelId='47' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='406.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='172' id='43' rot='0' filled='true' stroked='true' modelId='48' representation='binary' orientation='east'>
+            <circuitInOutView _id='172' id='43' rot='0' filled='true' stroked='true' modelId='48' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='504.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='173' id='44' rot='0' filled='true' stroked='true' modelId='49' representation='binary' orientation='east'>
+            <circuitInOutView _id='173' id='44' rot='0' filled='true' stroked='true' modelId='49' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='546.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='174' id='45' rot='0' filled='true' stroked='true' modelId='50' representation='binary' orientation='east'>
+            <circuitInOutView _id='174' id='45' rot='0' filled='true' stroked='true' modelId='50' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='588.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='175' id='46' rot='0' filled='true' stroked='true' modelId='51' representation='binary' orientation='east'>
+            <circuitInOutView _id='175' id='46' rot='0' filled='true' stroked='true' modelId='51' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='630.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='176' id='47' rot='0' filled='true' stroked='true' modelId='52' representation='binary' orientation='east'>
+            <circuitInOutView _id='176' id='47' rot='0' filled='true' stroked='true' modelId='52' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='672.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='177' id='48' rot='0' filled='true' stroked='true' modelId='53' representation='binary' orientation='east'>
+            <circuitInOutView _id='177' id='48' rot='0' filled='true' stroked='true' modelId='53' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='714.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='178' id='49' rot='0' filled='true' stroked='true' modelId='54' representation='binary' orientation='east'>
+            <circuitInOutView _id='178' id='49' rot='0' filled='true' stroked='true' modelId='54' orientation='east' representation='binary'>
               <location>
                 <point x='651.0' y='462.0'/>
               </location>
@@ -555,7 +556,7 @@ O15 = EN and val == 15' propDelay='90' startupTime='43'>
     <containerDrawing _id='203'>
       <components>
         <rectangle _id='204' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='84.0' h='245.0'/>
-        <originIndicator _id='205'>
+        <originIndicator _id='205' id='24'>
           <location>
             <point x='126.0' y='210.0'/>
           </location>

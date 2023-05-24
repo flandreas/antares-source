@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var val = I0 + 2 * I1
+        <graph _id='2' type='digital' script='var val = 1 * I0 + 2 * I1
 O0 = EN and val == 0
 O1 = EN and val == 1
 O2 = EN and val == 2
@@ -101,17 +102,17 @@ O3 = EN and val == 3' propDelay='40' startupTime='53'>
             <netView _id='61' modelId='32' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='62' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='south'>
+            <circuitInOutView _id='62' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='south' representation='binary'>
               <location>
                 <point x='98.0' y='98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='63' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='south'>
+            <circuitInOutView _id='63' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='south' representation='binary'>
               <location>
                 <point x='196.0' y='98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='64' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='south'>
+            <circuitInOutView _id='64' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='south' representation='binary'>
               <location>
                 <point x='294.0' y='98.0'/>
               </location>
@@ -122,22 +123,22 @@ O3 = EN and val == 3' propDelay='40' startupTime='53'>
             <andGateView _id='68' id='7' rot='0' filled='true' stroked='true' modelId='9' x='406.0' y='308.0'/>
             <andGateView _id='69' id='8' rot='0' filled='true' stroked='true' modelId='10' x='406.0' y='378.0'/>
             <andGateView _id='70' id='9' rot='0' filled='true' stroked='true' modelId='11' x='406.0' y='448.0'/>
-            <circuitInOutView _id='71' id='10' rot='0' filled='true' stroked='true' modelId='12' representation='binary' orientation='east'>
+            <circuitInOutView _id='71' id='10' rot='0' filled='true' stroked='true' modelId='12' orientation='east' representation='binary'>
               <location>
                 <point x='420.0' y='238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='72' id='11' rot='0' filled='true' stroked='true' modelId='13' representation='binary' orientation='east'>
+            <circuitInOutView _id='72' id='11' rot='0' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
               <location>
                 <point x='420.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='73' id='12' rot='0' filled='true' stroked='true' modelId='14' representation='binary' orientation='east'>
+            <circuitInOutView _id='73' id='12' rot='0' filled='true' stroked='true' modelId='14' orientation='east' representation='binary'>
               <location>
                 <point x='420.0' y='378.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='74' id='13' rot='0' filled='true' stroked='true' modelId='15' representation='binary' orientation='east'>
+            <circuitInOutView _id='74' id='13' rot='0' filled='true' stroked='true' modelId='15' orientation='east' representation='binary'>
               <location>
                 <point x='420.0' y='448.0'/>
               </location>
@@ -406,7 +407,7 @@ O3 = EN and val == 3' propDelay='40' startupTime='53'>
     <containerDrawing _id='126'>
       <components>
         <rectangle _id='127' id='1' style='figure' filled='true' stroked='true' x='154.0' y='140.0' w='70.0' h='112.0'/>
-        <originIndicator _id='128'>
+        <originIndicator _id='128' id='11'>
           <location>
             <point x='140.0' y='182.0'/>
           </location>
@@ -446,7 +447,7 @@ O3 = EN and val == 3' propDelay='40' startupTime='53'>
             <digitalPortView _id='148' x='189.0' y='252.0' dir='south' textPos='internal' portId='149'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='150'>
+        <label _id='150' id='10' rot='0'>
           <text>
             <translation lang='en' text='DEC'/>
           </text>
