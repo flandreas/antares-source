@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.KeyAdapter
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * Functionality to avoid that zoom/pan mode switches occur when the user presses/releases
@@ -25,12 +26,12 @@ class MouseWheelModeController : KeyAdapter() {
 
 	private var lastMouseWheelZoomTime = 0L
 	private var lastMouseWheelPanTime = 0L
-	private var isAltDown = false
+	private var isModifierDown = false
 
 	private var isWheelZoom = true
 
 	fun reset() {
-		isAltDown = false
+		isModifierDown = false
 		isWheelZoom = true
 		lastMouseWheelPanTime = 0L
 		lastMouseWheelPanTime = 0L
@@ -39,8 +40,8 @@ class MouseWheelModeController : KeyAdapter() {
 	fun calculateIsWheelZoom(): Boolean {
 		val now = System.currentTimeMillis()
 		val switchMode =
-			isWheelZoom && isAltDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
-				|| !isWheelZoom && !isAltDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
+			isWheelZoom && isModifierDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
+				|| !isWheelZoom && !isModifierDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
 
 		isWheelZoom = isWheelZoom && !switchMode || !isWheelZoom && switchMode
 
@@ -58,14 +59,14 @@ class MouseWheelModeController : KeyAdapter() {
 	/** ---- [KeyAdapter] */
 
 	override fun keyPressed(e: KeyEvent) {
-		if (e.key == KeyEvent.VK_ALT) {
-			isAltDown = true
+		if (e.key == DrawModule.mouseWheelPanModifier) {
+			isModifierDown = true
 		}
 	}
 
 	override fun keyReleased(e: KeyEvent) {
-		if (e.key == KeyEvent.VK_ALT) {
-			isAltDown = false
+		if (e.key == DrawModule.mouseWheelPanModifier) {
+			isModifierDown = false
 		}
 	}
 }

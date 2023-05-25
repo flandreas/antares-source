@@ -18,6 +18,10 @@ include::../../page-variables.txt[]
 | Zoom Centered| kbd:[CMD]+kbd:[M]| kbd:[CTRL]+kbd:[M]
 | Zoom to Fit| kbd:[CMD]+kbd:[F]| kbd:[CTRL]+kbd:[F]
 | Zoom to Fit (Max. 100%)| kbd:[ALT]+kbd:[CMD]+kbd:[F]| kbd:[ALT]+kbd:[CTRL]+kbd:[F]
+| Zoom with mouse | Mouse wheel | Mouse wheel
+| Zoom with trackpad | Scroll gesture | Scroll gesture
+| Pan with mouse | Press mouse wheel | Press mouse wheel
+| Pan with trackpad | kbd:[ALT] + scroll gesture | kbd:[CTRL] + scroll gesture
 3+|*Subcircuit Navigation*
 | Omit dive animation (double-click on symbol)| kbd:[CMD] | kbd:[CTRL]
 | Omit emmerge animation (click on breadcrumb)| kbd:[CMD] | kbd:[CTRL]

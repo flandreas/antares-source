@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.FloatPreference
@@ -16,6 +17,7 @@ import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.draw.view.ZoomPanController
+import org.apache.commons.lang3.SystemUtils
 import javax.swing.JPopupMenu
 
 /**
@@ -47,6 +49,11 @@ object DrawModuleJvm : AbstractModule() {
 
         fillProperties(DrawModule.properties)
 	    buildPreferencesTree(BaseModuleJvm.preferencesTree)
+
+	    if (SystemUtils.IS_OS_WINDOWS) {
+			// Under Windows, the standard ALT key transfers focus to the main menu
+			DrawModule.mouseWheelPanModifier = KeyEvent.VK_CTRL
+	    }
     }
 
     private fun fillProperties(properties: Properties) {

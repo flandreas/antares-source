@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.module
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
@@ -34,6 +35,8 @@ object DrawModule : AbstractModule() {
 	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
 
 	var drawContextFactory: DrawContextFactory = { g, mc, appContext -> DrawContext(g, mc, appContext) }
+
+	var mouseWheelPanModifier: Int = KeyEvent.VK_ALT
 
     override fun initialize() {
         BaseModule.require()
