@@ -1,12 +1,14 @@
 package ch.scorpion.antares.view.figure
 
 import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.DropShadow
@@ -76,5 +78,23 @@ abstract class AbstractPathFigure(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		location = reader.readPoint("location")
+	}
+
+	/** ---- [Mirrorable] */
+
+	override fun mirrorHorizontally(x: Double) {
+		val transform = System.createAffineTransform()
+		transform.scale(-1.0, 1.0)
+		transform.translate(-x, 0.0)
+		path.transform(transform)
+		location = location.mirrorHorizontally(x)
+	}
+
+	override fun mirrorVertically(y: Double) {
+		val transform = System.createAffineTransform()
+		transform.scale(1.0, -1.0)
+		transform.translate(0.0, -y)
+		path.transform(transform)
+		location = location.mirrorVertically(y)
 	}
 }

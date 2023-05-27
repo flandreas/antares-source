@@ -5,11 +5,13 @@ import java.awt.geom.GeneralPath
 /**
  * Adapts a [GeneralPath] to the [Path] interface.
  */
-class Path2DJvm : Path {
-
-    val path = GeneralPath()
+class Path2DJvm(
+	val path: GeneralPath = GeneralPath()
+) : Path {
 
     /** ---- [Path] interface */
+
+	override fun clone(): Path = Path2DJvm(path.clone() as GeneralPath)
 
     override fun moveTo(x: Double, y: Double): Path {
         path.moveTo(x, y)

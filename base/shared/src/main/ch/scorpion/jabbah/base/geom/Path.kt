@@ -5,6 +5,9 @@ package ch.scorpion.jabbah.base.geom
  */
 interface Path : Shape {
 
+	/** Creates a copy of this [Path].*/
+	fun clone(): Path
+
     /** Adds a point to the path by moving to the specified location.*/
     fun moveTo(x: Double, y: Double): Path
 

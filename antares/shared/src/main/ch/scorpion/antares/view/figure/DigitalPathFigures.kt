@@ -7,19 +7,24 @@ import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 
-class AndGateFigure : AbstractPathFigure(SymbolStyle.AND_PATH, TYPE) {
+/**
+ * The [SymbolStyle] figures are cloned so that the gate figures can be mirrored,
+ * which involves mirroring the paths.
+ */
+
+class AndGateFigure : AbstractPathFigure(SymbolStyle.AND_PATH.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.andShape") }
 	}
 }
 
-class OrGateFigure : AbstractPathFigure(SymbolStyle.OR_PATH, TYPE) {
+class OrGateFigure : AbstractPathFigure(SymbolStyle.OR_PATH.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.orShape") }
 	}
 }
 
-class NotGateFigure : AbstractPathFigure(SymbolStyle.NOT_PATH, TYPE) {
+class NotGateFigure : AbstractPathFigure(SymbolStyle.NOT_PATH.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.notShape") }
 	}

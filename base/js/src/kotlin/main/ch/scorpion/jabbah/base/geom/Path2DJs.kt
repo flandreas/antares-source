@@ -7,11 +7,19 @@ import org.w3c.dom.CanvasRenderingContext2D
  */
 class Path2DJs : Path {
 
-    private val entries = mutableListOf<Entry>()
+	private val entries: MutableList<Entry> = mutableListOf()
 
     /** ---- [Path] interface */
 
-    override fun moveTo(x: Double, y: Double): Path {
+    override fun clone(): Path {
+	    val clone = Path2DJs()
+	    entries.forEach {
+			clone.entries.add(Entry(it.command.clone()))
+	    }
+	    return clone
+    }
+
+	override fun moveTo(x: Double, y: Double): Path {
         boundingBox.add(x, y)
         entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
@@ -100,11 +108,13 @@ class Path2DJs : Path {
     }
 
     private interface Command {
+	    fun clone(): Command
         fun play(path: Path2DJs, ctx: CanvasRenderingContext2D)
         fun transform(transform: AffineTransform)
     }
 
-    private class MoveTo(var p: Point2D) : Command {
+    private data class MoveTo(var p: Point2D) : Command {
+	    override fun clone(): Command = MoveTo(p)
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.moveTo(p.x, p.y)
         }
@@ -113,7 +123,8 @@ class Path2DJs : Path {
         }
     }
 
-    private class LineTo(var p: Point2D): Command {
+    private data  class LineTo(var p: Point2D): Command {
+	    override fun clone(): Command = LineTo(p)
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.lineTo(p.x, p.y)
         }
@@ -122,7 +133,8 @@ class Path2DJs : Path {
         }
     }
 
-    private class QuadTo(private var controlPoint: Point2D, private var endPoint: Point2D) : Command {
+    private data  class QuadTo(private var controlPoint: Point2D, private var endPoint: Point2D) : Command {
+	    override fun clone(): Command = QuadTo(controlPoint, endPoint)
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y)
         }
@@ -132,7 +144,8 @@ class Path2DJs : Path {
         }
     }
 
-    private class CurveTo(private var cp1: Point2D, private var cp2: Point2D, private var endPoint: Point2D) : Command {
+    private data  class CurveTo(private var cp1: Point2D, private var cp2: Point2D, private var endPoint: Point2D) : Command {
+	    override fun clone(): Command = CurveTo(cp1, cp2, endPoint)
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, endPoint.x, endPoint.y)
         }
@@ -145,6 +158,7 @@ class Path2DJs : Path {
     }
 
     private class ClosePath : Command {
+	    override fun clone(): Command = ClosePath()
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             path.lastMoveToEntry()?.let {
                 ctx.lineTo((it.command as MoveTo).p.x, it.command.p.y)
