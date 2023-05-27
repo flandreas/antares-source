@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.ui.GraphNavigationView
  * in a [LibraryTreeView] by expanding the entire tree to the active element.
  */
 class LocateActiveMetaGraphAction(
-	private val controller: LibraryTreeViewController,
+	private val controller: LibraryTreePanelController,
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContentViewAction("graph.action.locateActiveMetaGraph", eventBus, viewManager) {
@@ -29,7 +29,7 @@ class LocateActiveMetaGraphAction(
 
 	override fun execute(event: ActionEvent) {
 		(contentView as GraphNavigationView).graphView.graph?.uuid?.let {
-			controller.expandTo(it)
+			controller.locateMetaGraph(it)
 		}
 	}
 }

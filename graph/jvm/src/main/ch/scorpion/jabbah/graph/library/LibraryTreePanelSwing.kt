@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreePanel
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreePanelController
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JScrollPane
@@ -13,19 +13,22 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 /** Contains a [LibraryTreeViewSwing] and a search field for filtering the displayed nodes.*/
-class LibraryTreePanel(
-	val controller: LibraryTreeViewController,
+class LibraryTreePanelSwing(
+	val controller: LibraryTreePanelController,
 	private val libraryTreeView: LibraryTreeViewSwing
-) : JPanel() {
+) : JPanel(), LibraryTreePanel {
 
 	private val searchField = PlaceholderTextField(
 		placeholder = Translations.getString("base.action.search.name"),
 		showClearButton = true)
 
 	init {
+		controller.view = this
 		buildUI()
 		searchField.document.addDocumentListener(SearchFieldListener())
 	}
+
+	override fun dispose() { }
 
 	private fun buildUI() {
 		layout = BorderLayout()
@@ -39,15 +42,9 @@ class LibraryTreePanel(
 		add(treeViewScrollPane, BorderLayout.CENTER)
 	}
 
-	private fun search() {
-		val filter: LibraryFilter? = if (StringUtils.isBlank(searchField.text)) {
-			null
-		} else {
-			item -> item.toString().contains(searchField.text, true)
-		}
-
+	override fun filter(filter: LibraryFilter?) {
 		libraryTreeView.model = LibraryTreeModelBuilderSwing(
-			controller.library,
+			controller.libraryTreeViewController.library,
 			filter
 		).build()
 		SwingUtilities.invokeLater {
@@ -58,6 +55,10 @@ class LibraryTreePanel(
 				JTreeUtil.expandAll(libraryTreeView)
 			}
 		}
+	}
+
+	override fun clearFilter() {
+		searchField.text = ""
 	}
 
 	private inner class SearchFieldListener : DocumentListener {
@@ -72,6 +73,10 @@ class LibraryTreePanel(
 
 		override fun removeUpdate(e: DocumentEvent?) {
 			search()
+		}
+
+		private fun search() {
+			controller.search(searchField.text)
 		}
 	}
 }

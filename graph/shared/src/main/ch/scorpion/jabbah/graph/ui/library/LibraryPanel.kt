@@ -28,6 +28,8 @@ class LibraryPanelController(
 ) : AbstractUIController<LibraryPanelView>() {
 
 	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.l, applicationModeHolder, eventBus)
+	val libraryTreePanelController = LibraryTreePanelController(libraryTreeViewController)
+
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
 
@@ -39,6 +41,7 @@ class LibraryPanelController(
 	override fun dispose() {
 		super.dispose()
 		libraryTreeViewController.dispose()
+		libraryTreePanelController.dispose()
 		eventBus.unregister(themeHandler)
 		eventBus.unregister(currentLibraryHandler)
 	}

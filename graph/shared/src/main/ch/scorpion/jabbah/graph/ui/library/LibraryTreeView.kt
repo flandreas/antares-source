@@ -180,8 +180,6 @@ class LibraryTreeViewController (
 			}
 		}
 
-	val locateActiveMetaGraphAction: Action = LocateActiveMetaGraphAction(this)
-
 	init {
 		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 		eventBus.register(LibraryItemAddedEvent::class, libraryItemAddedHandler)

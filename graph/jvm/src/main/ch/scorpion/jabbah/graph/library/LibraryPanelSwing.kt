@@ -19,12 +19,12 @@ class LibraryPanelSwing(
 
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, controller.libraryTreeViewController)
 
-	private val libraryTreePanel: LibraryTreePanel
+	private val libraryTreePanel: LibraryTreePanelSwing
     private val libraryTreeView = LibraryTreeViewSwing(controller.libraryTreeViewController, application)
 
     init {
 	    controller.view = this
-	    libraryTreePanel = LibraryTreePanel(controller.libraryTreeViewController, libraryTreeView)
+	    libraryTreePanel = LibraryTreePanelSwing(controller.libraryTreePanelController, libraryTreeView)
 
 		buildUI()
     }
