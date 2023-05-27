@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -35,21 +35,13 @@ import kotlin.math.min
  * A [JPanel] that provides a preview of the [LibraryElement] that is currently selected in a [LibraryTreeViewSwing].
  */
 class LibraryPreviewPanel(
-	eventBus: EventBus,
+	private val eventBus: EventBus,
 	private val controller: LibraryTreeViewController
 ) : JPanel() {
 
 	companion object {
 		private val LOG by logger(LibraryPreviewPanel::class)
 		private val BACKGROUND_COLOR = UIManager.getColor("Table.background")
-	}
-
-	init {
-		eventBus.register(CurrentSavableEvent::class) {
-			SwingUtilities.invokeLater {
-				updateWithSelectedItem()
-			}
-		}
 	}
 
 	@Suppress("unused")
@@ -67,12 +59,18 @@ class LibraryPreviewPanel(
 	/** Stores the preview [Component] of the currently selected [LibraryElement]. */
 	private var selection: Component? = null
 
+	private val librarySelectionHandler: EventHandler<LibrarySelectionChangedEvent> = { handleLibrarySelectionChanged(it) }
+
+	private val libraryItemUpdatedHandler: EventHandler<LibraryItemUpdatedEvent> = { map.remove(it.item) }
+
+	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { componentDisplay.repaint() }
+
 	init {
 		helpAction.enabled = false
 
-		eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
-		eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
-		eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
+		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionHandler)
+		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 
 		buildUI()
 
@@ -81,6 +79,12 @@ class LibraryPreviewPanel(
 				componentDisplay.updateLayout()
 			}
 		})
+	}
+
+	fun dispose() {
+		eventBus.unregister(librarySelectionHandler)
+		eventBus.unregister(libraryItemUpdatedHandler)
+		eventBus.unregister(preferencesChangedHandler)
 	}
 
 	fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {

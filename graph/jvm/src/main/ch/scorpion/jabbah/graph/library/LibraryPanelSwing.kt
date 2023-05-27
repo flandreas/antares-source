@@ -29,7 +29,9 @@ class LibraryPanelSwing(
 		buildUI()
     }
 
-	override fun dispose() { }
+	override fun dispose() {
+		libraryPreviewPanel.dispose()
+	}
 
 	override fun refresh() {
 		invalidate()
