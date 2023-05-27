@@ -82,9 +82,14 @@ class PolylineTool(
 
 	override fun keyPressed(e: KeyEvent) {
 		if (e.key == KeyEvent.VK_ESCAPE) {
-			editor.drawing.remove(addedComponent)
-			editor.drawing.validate()
-			editor.toolDone()
+			cancel()
 		}
+	}
+
+	private fun cancel() {
+		instance = null
+		editor.drawing.remove(addedComponent)
+		editor.drawing.validate()
+		editor.toolDone()
 	}
 }
