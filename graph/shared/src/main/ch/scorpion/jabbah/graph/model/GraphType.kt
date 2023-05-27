@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
-interface GraphType {
+interface GraphType: Bean {
 
 	val typeName: String get() = toString()
 
