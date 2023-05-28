@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.edit.model
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
@@ -35,6 +38,7 @@ class QuadCurveTool(
 
 	override fun activate() {
 		editor.view.setCursor(Cursor.CROSSHAIR)
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.quadCurve.0.text"))
 	}
 
 	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
@@ -55,7 +59,11 @@ class QuadCurveTool(
 			editor.drawing.add(addedComponent)
 			editor.view.selectionManager.select(addedComponent)
 			addedComponent.validate()
+			Status.set(StatusType.Tool, Translations.getString("edit.tool.quadCurve.1.text"))
 		} else {
+			if (clickedCount == 2) {
+				Status.set(StatusType.Tool, Translations.getString("edit.tool.quadCurve.2.text"))
+			}
 			instance.points = createPoints(location)
 		}
 

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -59,6 +60,7 @@ class RectangleTool<T : RectangularComponent>(
 
 	override fun activate() {
 		editor.view.setCursor(Cursor.CROSSHAIR)
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.rectangle.0.text"))
 	}
 
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
@@ -74,6 +76,8 @@ class RectangleTool<T : RectangularComponent>(
 		addedComponent = getAddedComponent(instance)
 		editor.drawing.add(addedComponent)
 		editor.view.selectionManager.select(addedComponent)
+
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.rectangle.1.text"))
 	}
 
 	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {

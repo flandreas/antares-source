@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -24,6 +27,7 @@ class ComponentAtLocationTool(
 
     override fun activate() {
         editor.view.setCursor(cursor)
+	    Status.set(StatusType.Tool, Translations.getString("edit.tool.addComponent.text"))
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {

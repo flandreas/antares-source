@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
@@ -39,6 +42,7 @@ class PolylineTool(
 
 	override fun activate() {
 		editor.view.setCursor(Cursor.CROSSHAIR)
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.polyline.0.text"))
 	}
 
 	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
@@ -58,6 +62,7 @@ class PolylineTool(
 				addedComponent = getAddedComponent(instance as PolylineComponent)
 				editor.drawing.add(addedComponent)
 				editor.view.selectionManager.select(addedComponent)
+				Status.set(StatusType.Tool, Translations.getString("edit.tool.polyline.1.text"))
 			}
 			// add the dangling point that will be moved around
 			instance!!.addPoint(x + offset.x, y + offset.y)

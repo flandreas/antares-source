@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -22,7 +24,9 @@ class TextTool(
 ) : AbstractComponentTool<TextComponent>(editor, service, factory, adder) {
 
     override fun activate() {
+	    super.activate()
         editor.view.setCursor(Cursor.TEXT)
+	    Status.set(StatusType.Tool, "Click to enter text")
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {

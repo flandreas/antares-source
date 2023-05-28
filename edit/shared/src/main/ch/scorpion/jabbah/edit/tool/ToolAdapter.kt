@@ -22,6 +22,7 @@ open class ToolAdapter(val editor: Editor) : Tool {
 
     override fun deactivate() {
         clearPointStatus()
+	    Status.set(StatusType.Tool, null)
     }
 
     override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {

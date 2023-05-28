@@ -4,7 +4,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 enum class StatusType {
 	Large,
-	Small
+	Small,
+	Tool
 }
 
 object Status {

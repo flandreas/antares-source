@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.edit.select
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
@@ -36,6 +39,7 @@ class SelectionToolImpl(
 
 	override fun activate() {
 		editor.view.setCursor(Cursor.DEFAULT)
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.select.text"))
 	}
 
 	override fun keyPressed(e: KeyEvent) {

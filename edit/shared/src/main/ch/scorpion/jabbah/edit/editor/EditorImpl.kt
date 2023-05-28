@@ -87,6 +87,7 @@ open class EditorImpl(
         set(value) {
             val oldValue = field
             field = value
+	        oldValue.deactivate()
             field.activate()
             changeSupport.fire(Editor.PROP_CURRENT_TOOL, oldValue, field)
         }
