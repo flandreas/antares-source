@@ -15,6 +15,8 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 		private val LOG by logger(ControlViewComponentBeanInfo::class)
 		private val id = EditProperties.id()
 		private val modelId = GraphProperties.modelId()
+		private val name = EditProperties.untranslatableName()
+
 		const val aggregatePropertyName = "controlView"
 	}
 
@@ -22,6 +24,7 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 		super.addProperties(bean, editor, properties)
 		properties.add(id.bind(editor, beanIdProvider(bean.id), editable = false))
 		properties.add(modelId.bind(editor, beanIdProvider(bean.modelId), editable = false))
+		properties.add(name.bind(editor, beanIdProvider(bean.id), editable = false))
 
 		loadControlViewProperties(bean, editor, properties)
 	}
