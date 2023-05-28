@@ -146,7 +146,7 @@ class SourcingCommandManager(
 		if (state.dataHolder.getUndoableState() != null) {
 			addableSnapshot()
 		}
-		eventBus.post(CommandEvent(this))
+		eventBus.post(CommandEvent(this, CommandEventType.RESET))
 	}
 
 	override fun register(command: Command) {
@@ -196,7 +196,7 @@ class SourcingCommandManager(
 
 		transferUndoneSnapshotIfNecessary(storeForRedo = true)
 
-		eventBus.post(CommandEvent(this))
+		eventBus.post(CommandEvent(this, CommandEventType.UNDO))
 	}
 
 	private fun transferUndoneSnapshotIfNecessary(storeForRedo: Boolean) {
@@ -225,7 +225,7 @@ class SourcingCommandManager(
 		LOG.userTrail("Redo command '${state.snapshots.peek().redoDescription}'")
 		state.snapshots.peek().redo()
 
-		eventBus.post(CommandEvent(this))
+		eventBus.post(CommandEvent(this, CommandEventType.REDO))
 	}
 
 	override fun beginTransaction(command: Command, register: Boolean) {
@@ -271,7 +271,7 @@ class SourcingCommandManager(
 		if (state.transactionLevel == 0) {
 			LOG.trace("Commit transaction")
 			resetRedo()
-			eventBus.post(CommandEvent(this))
+			eventBus.post(CommandEvent(this, CommandEventType.COMMIT_TRANSACTION))
 			state.transaction = null
 		}
 	}
@@ -311,7 +311,7 @@ class SourcingCommandManager(
 		LOG.trace("Open checkpoint '$name'")
 		states.push(State(name, dataHolder))
 		addableSnapshot()
-		eventBus.post(CommandEvent(this))
+		eventBus.post(CommandEvent(this, CommandEventType.OPEN_CHECKPOINT))
 	}
 
 	override fun closeCheckpoint() {
@@ -320,7 +320,7 @@ class SourcingCommandManager(
 		}
 		LOG.trace("Close checkpoint ${states.peek().name}")
 		states.pop()
-		eventBus.post(CommandEvent(this))
+		eventBus.post(CommandEvent(this, CommandEventType.CLOSE_CHECKPOINT))
 	}
 
 	override fun addTag(name: String) {

@@ -65,7 +65,7 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 		view.handleBeanReplaced()
 	}
 
-	private fun handleBeanChanged(oldValue: Any?) {
+	protected fun handleBeanChanged(oldValue: Any?) {
 		updateTitle()
 		view.handleBeanReplaced()
 		handleBeanChangedHandler(oldValue)

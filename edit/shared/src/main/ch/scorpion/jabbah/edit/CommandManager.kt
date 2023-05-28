@@ -5,7 +5,19 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.io.Storable
 
 /** Posted by a [CommandManager] on its [EventBus] whenever a [Command] has been registered, done or undone.*/
-data class CommandEvent(val commandManager: CommandManager)
+data class CommandEvent(
+	val commandManager: CommandManager,
+	val type: CommandEventType
+)
+
+enum class CommandEventType {
+	OPEN_CHECKPOINT,
+	CLOSE_CHECKPOINT,
+	COMMIT_TRANSACTION,
+	UNDO,
+	REDO,
+	RESET
+}
 
 /** Posted by a [CommandManager] on its [EventBus] whenever its 'active' state has changed.*/
 data class CommandManagerActiveEvent(val commandManager: CommandManager)

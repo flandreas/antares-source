@@ -10,9 +10,9 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableAdapter
 import ch.scorpion.jabbah.draw.DrawableEvent
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.SelectionChangeEvent
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.CommandEventType.REDO
+import ch.scorpion.jabbah.edit.CommandEventType.UNDO
 
 interface ComponentPropertyPanel : PropertyPanel
 
@@ -33,6 +33,8 @@ class ComponentPropertyPanelController(
 
 	private val selectionChangeHandler: EventHandler<SelectionChangeEvent> = { handle(it) }
 
+	private val commandEventHandler: EventHandler<CommandEvent> = { handle(it) }
+
 	/**
 	 * Listens for property changes of the currently selected [Component] that are NOT initiated by this
 	 * [ComponentPropertyPanel], such as rotations requested by keyboard or menu interactions, in order
@@ -47,6 +49,7 @@ class ComponentPropertyPanelController(
 
 	init {
 		eventBus.register(SelectionChangeEvent::class, selectionChangeHandler)
+		eventBus.register(CommandEvent::class, commandEventHandler)
 	}
 
 	/** ---- [AbstractUIController] */
@@ -54,6 +57,7 @@ class ComponentPropertyPanelController(
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(selectionChangeHandler)
+		eventBus.unregister(commandEventHandler)
 	}
 
 	/** ---- [AbstractPropertyPanelController] */
@@ -97,7 +101,10 @@ class ComponentPropertyPanelController(
 		if (event.view !== editor.view) {
 			return
 		}
+		updateBeanFromCurrentSelection()
+	}
 
+	private fun updateBeanFromCurrentSelection() {
 		bean = if (editor.view.selectionManager.selection.isEmpty()) {
 			if (editor.active) {
 				editor.view.drawing
@@ -105,12 +112,23 @@ class ComponentPropertyPanelController(
 				null
 			}
 		} else {
-			getSelectedComponent(event)
+			getSelectedComponent()
 		}
 	}
 
-	private fun getSelectedComponent(event: SelectionChangeEvent): Component? {
-		val currentSelection = event.view.selectionManager.selection
+	private fun handle(event: CommandEvent) {
+		if (event.commandManager !== editor.commandManager) {
+			return
+		}
+
+		if (event.type != UNDO && event.type != REDO) {
+			return
+		}
+		handleBeanChanged(bean)
+	}
+
+	private fun getSelectedComponent(): Component? {
+		val currentSelection = editor.view.selectionManager.selection
 		return when (currentSelection.size) {
 			0 -> null
 			1 -> currentSelection.first()
