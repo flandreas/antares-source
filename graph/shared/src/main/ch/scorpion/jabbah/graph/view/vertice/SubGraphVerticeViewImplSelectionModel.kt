@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.SelectionModelProvider
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.view.ControlView
 
@@ -32,6 +34,7 @@ class SubGraphVerticeViewImplSelectionModel(
 		val oldUseContextColors = context.useContextColors
 
 		context.useContextColors = true
+		context.selectionColor = Themes.get<EditTheme>().selection.color
 		context.g.color = context.selectionColor!!.foregroundColor
 		context.color = context.selectionColor
 		component.drawWithDrawableDrawer(context) {

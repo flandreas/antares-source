@@ -25,10 +25,16 @@ interface SubGraphVertice : Vertice, Describable {
 	var graphName: Name
 
     /**
-     * Returns the [Graph] that this [SubGraphVertice] contains, if already present.
+     * Returns the [Graph] this [SubGraphVertice] contains, if already present.
      * The [Graph] is not present before [GraphElement.bind]
      */
     fun getGraphIfPresent(): Graph?
+
+	/**
+	 * Returns the [Graph] this [SubGraphVertice] contains, if the reference is not broken,
+	 * or `null` if the reference is broken.
+	 */
+	fun getGraphIfNotBroken(): Graph?
 
     /** Returns the contained [Graph] by loading and copying it from the specified [MetaGraphRepository] if not already loaded.*/
     fun getGraph(repository: MetaGraphRepository): Graph

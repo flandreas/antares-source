@@ -19,8 +19,8 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 
 	companion object {
 
-		fun getDescribingName(label: Translatable?, graph: Graph): String {
-			val graphName = graph.name.value
+		fun getDescribingName(label: Translatable?, graph: Graph?): String {
+			val graphName = graph?.name?.value ?: BrokenReferenceView.NAME.getTranslation()
 			return if (label == null) {
 				graphName
 			} else {

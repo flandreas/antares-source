@@ -498,7 +498,7 @@ class SubGraphVerticeViewImpl(
 
 	override val hasCustomizedContainerDrawing: Boolean get() = customizedContainerDrawing != null
 
-	override val describingName: String get() = SubGraphVerticeView.getDescribingName(label, getGraph())
+	override val describingName: String get() = SubGraphVerticeView.getDescribingName(label, subGraphVertice.getGraphIfNotBroken())
 
 	override fun addDrawable(drawable: Drawable) {
 		if (drawable !is Mirrorable) {

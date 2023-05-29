@@ -45,6 +45,10 @@ class SubGraphVerticeImpl(
 		return null
 	}
 
+	override fun getGraphIfNotBroken(): Graph? {
+		return null
+	}
+
 	override fun getGraph(repository: MetaGraphRepository): Graph {
 		throw UnsupportedOperationException()
 	}

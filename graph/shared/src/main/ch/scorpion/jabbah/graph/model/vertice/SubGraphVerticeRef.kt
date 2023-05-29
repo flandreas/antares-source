@@ -24,9 +24,39 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.vertice.GraphReferenceState.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 import ch.scorpion.jabbah.io.*
+
+/** Represents the possible states of a [GraphReference]. */
+private enum class GraphReferenceState {
+
+	/** The [Graph] has not yet been loaded.*/
+	OPEN,
+
+	/** Successfully loaded.*/
+	RESOLVED,
+
+	/** Tried to load the [Graph], but the reference was broken.*/
+	BROKEN
+}
+
+/**
+ * Used by [SubGraphVerticeRef] for deferred referencing of its [Graph].
+ * In addition, remembers whether a [Graph] could not be loaded due to a
+ * broken reference, if the referenced [Graph] had been deleted in the meantime.
+ */
+private data class GraphReference(
+	val state: GraphReferenceState,
+	val graph: Graph?
+) {
+	companion object {
+		fun open(): GraphReference = GraphReference(OPEN, null)
+		fun resolved(graph: Graph): GraphReference = GraphReference(RESOLVED, graph)
+		fun broken(): GraphReference = GraphReference(BROKEN, null)
+	}
+}
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -61,7 +91,7 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	private var graph: Graph? = null
+	private var graphReference = GraphReference.open()
 
 	/**
 	 * Instantiated for execution purposes if demanded by [GraphType.needsGraphViewForExecution]
@@ -110,7 +140,7 @@ class SubGraphVerticeRef(
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
-			graph?.accept(visitor)
+			graphReference.graph?.accept(visitor)
 		}
 		return visitor.visitLeave(this)
 	}
@@ -202,6 +232,7 @@ class SubGraphVerticeRef(
 				graphName = Name(BrokenReferenceView.NAME)
 				type = graphName.value
 				_designError = DesignError("graph.designError.brokenSubGraphRef.text")
+				graphReference = GraphReference.broken()
 			}
 		}
 	}
@@ -214,7 +245,7 @@ class SubGraphVerticeRef(
 		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
-				graph?.executionInitialize(signalHandler)
+				graphReference.graph?.executionInitialize(signalHandler)
 			}
 		}
 	}
@@ -223,7 +254,7 @@ class SubGraphVerticeRef(
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
-				graph?.executionStart(signalHandler, graphView)
+				graphReference.graph?.executionStart(signalHandler, graphView)
 			} else {
 				interpreter = createInterpreter(signalHandler)
 				if (interpreter is GraphDslInterpreter) {
@@ -262,7 +293,7 @@ class SubGraphVerticeRef(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
-			graph?.executionStopped(signalHandler)
+			graphReference.graph?.executionStopped(signalHandler)
 		}
 		isDeepExecutionCache = null
 	}
@@ -271,7 +302,7 @@ class SubGraphVerticeRef(
 		super.formNet(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
-				graph?.formNet(signalHandler)
+				graphReference.graph?.formNet(signalHandler)
 			}
 		}
 	}
@@ -301,7 +332,15 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override fun getGraphIfPresent(): Graph? = graph
+	override fun getGraphIfPresent(): Graph? = graphReference.graph
+
+	override fun getGraphIfNotBroken(): Graph? {
+		return when (graphReference.state) {
+			OPEN -> ensureGraph()
+			RESOLVED -> graphReference.graph
+			BROKEN -> null
+		}
+	}
 
 	override fun bind(deep: Boolean, repository: MetaGraphRepository) {
 		super.bind(deep, repository)
@@ -315,32 +354,36 @@ class SubGraphVerticeRef(
 	}
 
 	private fun ensureGraph(): Graph {
-		if (graph != null) {
-			return graph!!
+		if (graphReference.graph != null) {
+			return graphReference.graph!!
+		}
+
+		if (graphReference.state == BROKEN) {
+			throw IllegalStateException("broken SubGraphVerticeRef")
 		}
 
 		val subMetaGraph = repository.getMetaGraph(graphUUID!!)
-		graph = subMetaGraph.cloneGraphModel()
+		graphReference = GraphReference.resolved(subMetaGraph.cloneGraphModel())
 
-		if (graph!!.type.needsGraphViewForExecution) {
-			graphView = subMetaGraph.graph.graphView.cloneForExistingModel(graph!!)
+		if (graphReference.graph!!.type.needsGraphViewForExecution) {
+			graphView = subMetaGraph.graph.graphView.cloneForExistingModel(graphReference.graph!!)
 		}
 
 		for (input in getSubGraphInputPorts()) {
-			input.graphInput = graph!!.getGraphInput(input.name!!)
+			input.graphInput = graphReference.graph!!.getGraphInput(input.name!!)
 			input.graphInput!!.subGraphInputPort = input
 		}
 		for (output in getSubGraphOutputPorts()) {
-			val graphOutput = graph!!.getGraphOutput<Any>(output.name!!)
+			val graphOutput = graphReference.graph!!.getGraphOutput<Any>(output.name!!)
 			if (graphOutput != null) {
 				graphOutput.subGraphOutputPort = output
 			} else {
-				LOG.error("Cannot find GraphOutput '${output.name}' in '${graph!!.name}' (${graph!!.uuid})")
+				LOG.error("Cannot find GraphOutput '${output.name}' in '${graphReference.graph!!.name}' (${graphReference.graph!!.uuid})")
 				// TODO Throw exception for global error display
 			}
 		}
 
-		return graph!!
+		return graphReference.graph!!
 	}
 
 	/** ---- [NetCombiner] */
@@ -362,7 +405,7 @@ class SubGraphVerticeRef(
 		get() = super.isNetCombiner && ensureGraph().type.isCombiningNets
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean =
-		!isDeepExecution(signalHandler.isDeepExecution) && (graph == null || graph!!.type.isCombiningNets)
+		!isDeepExecution(signalHandler.isDeepExecution) && (graphReference.graph == null || graphReference.graph!!.type.isCombiningNets)
 
 	/** ---- [SubGraphVerticeRef] */
 
@@ -392,7 +435,7 @@ class SubGraphVerticeRef(
 
 	fun isDeepExecution(deepExecution: Boolean): Boolean {
 		if (isDeepExecutionCache == null) {
-			isDeepExecutionCache = (graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
+			isDeepExecutionCache = (graphReference.graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
 				!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
 			}
 		}

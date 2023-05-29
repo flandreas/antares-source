@@ -25,8 +25,10 @@ class GraphHierarchyTree : DynamicInitializer {
 		InvocationHandler.invoke {
 			when (value) {
 				is SubGraphVerticeView<*> -> {
-					val subGraphView = value.createSubGraphView(null)
-					receiver.addChildren(createGraphViewNodes(subGraphView))
+					if (value.model.getGraphIfNotBroken() != null) {
+						val subGraphView = value.createSubGraphView(null)
+						receiver.addChildren(createGraphViewNodes(subGraphView))
+					}
 				}
 				is GraphView -> {
 					receiver.addChildren(createGraphViewNodes(value))
@@ -41,6 +43,7 @@ class GraphHierarchyTree : DynamicInitializer {
 	private fun createGraphViewNodes(graphView: GraphView): Array<DynamicTreeNodeValue> {
 		return graphView
 			.getSubGraphVerticeViews()
+			.filter { it.model.getGraphIfNotBroken() != null }
 			.sortedBy { it.describingName }
 			.map { DynamicTreeNodeValue(it, true) }
 			.toTypedArray()
