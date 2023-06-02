@@ -214,4 +214,7 @@ class PolylineDrawable constructor(
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		shape.rotate(direction, pivot)
 	}
+
+	override fun overlapsOrthogonallyWith(index: Int, other: List<Point2D>): Boolean =
+		shape.overlapsOrthogonallyWith(index, other)
 }

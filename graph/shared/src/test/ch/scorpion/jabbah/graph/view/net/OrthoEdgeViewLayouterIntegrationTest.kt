@@ -9,10 +9,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Integration tests for integrating [OrthoEdgeViewLayouter] and [NodeViewImpl].
@@ -180,6 +177,18 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		assertEquals(Point2D(150, 100), ev14.newEdgeView.polyline.getPointAt(1))
 		assertEquals(Point2D(200, 100), ev14.newEdgeView.polyline.getPointAt(2))
 		assertEquals(Point2D(200, 0), ev14.newEdgeView.polyline.getPointAt(3))
+	}
+
+	@Test
+	fun shouldNotOverlapEdgeViews() {
+		val v1 = builder.addVerticeView(createVerticeView(0, 300, Direction.EAST))
+		val v2 = builder.addVerticeView(createVerticeView(100, 0, Direction.WEST))
+		val v3 = builder.addVerticeView(createVerticeView(0, 400, Direction.EAST))
+		val v4 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
+		val ev12 = builder.connect(v1, v2)
+		val ev34 = builder.connect(v3, v4)
+
+		assertNotEquals(ev12.polyline.getPointAt(1).x, ev34.polyline.getPointAt(1).x)
 	}
 
 	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView =

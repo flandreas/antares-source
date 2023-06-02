@@ -165,4 +165,46 @@ class PolylineShapeImplTest {
 
 		assertEquals(20 + sqrt(100.0 * 100.0 + 160.0 * 160.0) + 20, polyline.length)
 	}
+
+	@Test
+	fun shouldOverlapHorizontally() {
+		assertTrue(
+			PolylineShapeImpl(Point2D(0, 0), Point2D(100, 0)).overlapsOrthogonallyWith(
+			0, listOf(Point2D(50, 0), Point2D(150, 0))))
+	}
+
+	@Test
+	fun shouldNotOverlapHorizontallyWithDifferentY() {
+		assertFalse(
+			PolylineShapeImpl(Point2D(0, 50), Point2D(100, 50)).overlapsOrthogonallyWith(
+				0, listOf(Point2D(50, 0), Point2D(150, 0))))
+	}
+
+	@Test
+	fun shouldNotOverlapHorizontally() {
+		assertFalse(
+			PolylineShapeImpl(Point2D(0, 0), Point2D(100, 0)).overlapsOrthogonallyWith(
+				0, listOf(Point2D(200, 0), Point2D(300, 0))))
+	}
+
+	@Test
+	fun shouldOverlapVertically() {
+		assertTrue(
+			PolylineShapeImpl(Point2D(0, 0), Point2D(0, 100)).overlapsOrthogonallyWith(
+				0, listOf(Point2D(0, 50), Point2D(0, 150))))
+	}
+
+	@Test
+	fun shouldNotOverlapVerticallyWithDifferentX() {
+		assertFalse(
+			PolylineShapeImpl(Point2D(50, 0), Point2D(50, 100)).overlapsOrthogonallyWith(
+				0, listOf(Point2D(0, 50), Point2D(0, 150))))
+	}
+
+	@Test
+	fun shouldNotOverlapVertically() {
+		assertFalse(
+			PolylineShapeImpl(Point2D(0, 0), Point2D(0, 100)).overlapsOrthogonallyWith(
+				0, listOf(Point2D(0, 150), Point2D(0, 250))))
+	}
 }

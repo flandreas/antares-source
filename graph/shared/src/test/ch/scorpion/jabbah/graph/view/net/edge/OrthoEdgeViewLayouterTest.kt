@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
+import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
@@ -29,6 +31,7 @@ class OrthoEdgeViewLayouterTest {
 	fun setup() {
 		graphView = mockk()
 		every { graphView.snapper } returns null
+		every { graphView.getEdgeViews()} returns listOf<EdgeView<*>>().toImmutableList()
 	}
 
 	@Test

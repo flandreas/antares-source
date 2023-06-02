@@ -10,6 +10,7 @@ interface Polyline {
 
 	companion object {
 		const val CONTAINS_SIZE = 4
+		const val OVERLAPS_SIZE = 2
 	}
 
     /** Holds the number of points of this [Polyline].*/
@@ -172,4 +173,6 @@ interface Polyline {
 
 	/** Rotates by 90 degrees to the specified [RotationDirection]. */
 	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
+
+	fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean
 }

@@ -7,11 +7,24 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [Polyline] implementation that can be rendered as a shape by the [Graphics2D] engine.
  */
-interface PolylineShape : Polyline, Shape
+interface PolylineShape : Polyline, Shape {
+
+	companion object {
+
+		fun isSegmentHorizontal(index: Int, points: List<Point2D>): Boolean =
+			Geometry.equal(points[index].y, points[index + 1].y)
+
+		fun isSegmentVertical(index: Int, points: List<Point2D>): Boolean =
+			Geometry.equal(points[index].x, points[index + 1].x)
+	}
+}
 
 expect object PolylineShapeFactory {
 
@@ -25,7 +38,10 @@ expect object PolylineShapeFactory {
  */
 class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
+	constructor(vararg pts: Point2D): this(pts.toList())
+
 	companion object {
+
 		/** Half of the size of the rectangle that is used for checking the containedness of a point.*/
 		const val CONTAINS_SENSITIVITY = 2.0
 	}
@@ -190,11 +206,9 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	override fun getPoints(startIndex: Int, endIndex: Int): List<Point2D> =
 		points.subList(startIndex, endIndex)
 
-	override fun isSegmentHorizontal(index: Int): Boolean =
-		Geometry.equal(points[index].y, points[index + 1].y)
+	override fun isSegmentHorizontal(index: Int): Boolean = PolylineShape.isSegmentHorizontal(index, points)
 
-	override fun isSegmentVertical(index: Int): Boolean =
-		Geometry.equal(points[index].x, points[index + 1].x)
+	override fun isSegmentVertical(index: Int): Boolean = PolylineShape.isSegmentVertical(index, points)
 
 	override fun mirrorHorizontally(x: Double) {
 		setPoints(points.map { it.mirrorHorizontally(x) })
@@ -213,6 +227,32 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		setPoints(points.map { direction.rotation.rotatePointAround(pivot ?: getFirstPoint(), it) })
+	}
+
+	override fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean =
+		(0 until pointsCount - 1).any { overlapsOrthogonally(it, other, otherIndex) }
+
+	private fun overlapsOrthogonally(index: Int, other: List<Point2D>, otherIndex: Int): Boolean =
+		if (isSegmentHorizontal(index) && PolylineShape.isSegmentHorizontal(otherIndex, other)) {
+			overlapHorizontally(index, other, otherIndex)
+		} else if (isSegmentVertical(index) && PolylineShape.isSegmentVertical(otherIndex, other)) {
+			overlapVertically(index, other, otherIndex)
+		} else {
+			false
+		}
+
+	private inline fun overlapHorizontally(index: Int, other: List<Point2D>, otherIndex: Int): Boolean =
+		abs(points[index].y - other[otherIndex].y) <= Polyline.OVERLAPS_SIZE
+			&& (points[index].x >= other[otherIndex].x && points[index].x <= other[otherIndex + 1].x
+			|| points[index + 1].x >= other[otherIndex].x && points[index + 1].x <= other[otherIndex + 1].x)
+
+	private inline fun overlapVertically(index: Int, other: List<Point2D>, otherIndex: Int): Boolean {
+		if (abs(points[index].x - other[otherIndex].x) > Polyline.OVERLAPS_SIZE) {
+			return false
+		}
+
+		val range = (min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y))
+		return range.contains(other[otherIndex].y) || range.contains(other[otherIndex + 1].y)
 	}
 
 	/** ---- [PolylineShape]  */
