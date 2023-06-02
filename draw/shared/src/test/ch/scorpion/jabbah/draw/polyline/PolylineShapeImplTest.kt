@@ -207,4 +207,23 @@ class PolylineShapeImplTest {
 			PolylineShapeImpl(Point2D(0, 0), Point2D(0, 100)).overlapsOrthogonallyWith(
 				0, listOf(Point2D(0, 150), Point2D(0, 250))))
 	}
+
+	@Test
+	fun shouldCalculateIntersectionCount() {
+		val polyline1 = PolylineShapeImpl(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
+		val polyline2 = listOf(Point2D(0, 400), Point2D(50, 400), Point2D(50, 100), Point2D(300, 100))
+		val interference = polyline1.calculateInterference(polyline2)
+		assertEquals(2, interference.intersectionCount)
+		assertEquals(0, interference.overlappingCount)
+	}
+
+	@Test
+	fun shouldCalculateOverlappingCount() {
+		val polyline1 = PolylineShapeImpl(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
+		val polyline2 = listOf(Point2D(0, 400), Point2D(100, 400), Point2D(100, 100), Point2D(300, 100))
+		val interference = polyline1.calculateInterference(polyline2)
+		// Intersection at endpoints counts as well
+		assertEquals(2, interference.intersectionCount)
+		assertEquals(1, interference.overlappingCount)
+	}
 }

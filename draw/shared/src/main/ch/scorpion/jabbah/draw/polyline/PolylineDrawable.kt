@@ -217,4 +217,11 @@ class PolylineDrawable constructor(
 
 	override fun overlapsOrthogonallyWith(index: Int, other: List<Point2D>): Boolean =
 		shape.overlapsOrthogonallyWith(index, other)
+
+	override fun calculateInterference(other: List<Point2D>): PolylineInterference =
+		shape.calculateInterference(other)
+
+
+	override fun isSegmentOrthogonalTo(index: Int, otherIndex: Int, other: List<Point2D>): Boolean =
+		shape.isSegmentOrthogonalTo(index, otherIndex, other)
 }

@@ -25,7 +25,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 	 * The distance to be applied when displacing segments in order to avoid overlapping.
 	 * TODO Make configurable in order to align with GridImpl width
 	 */
-	private const val DISPLACEMENT = 14
+	private const val DISPLACEMENT = 7
 
 	fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 		if (begin.point == end.point) {

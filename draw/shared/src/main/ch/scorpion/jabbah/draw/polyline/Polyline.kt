@@ -161,6 +161,8 @@ interface Polyline {
      */
     fun isSegmentOrthogonal(index: Int): Boolean = isSegmentHorizontal(index) || isSegmentVertical(index)
 
+	fun isSegmentOrthogonalTo(index: Int, otherIndex: Int, other: List<Point2D>): Boolean
+
     fun mirrorHorizontally(x: Double)
 
     fun mirrorVertically(y: Double)
@@ -175,4 +177,16 @@ interface Polyline {
 	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
 
 	fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean
+
+	fun calculateInterference(other: List<Point2D>): PolylineInterference
 }
+
+/**
+ * The number of interferences of an orthogonal [Polyline] with other orthogonal [Polyline]s.
+ * @property intersectionCount the number of intersections of any orthogonal segments
+ * @property overlappingCount the number of overlaps of segments with parallel segments
+ */
+data class PolylineInterference(
+	val intersectionCount: Int,
+	val overlappingCount: Int
+)

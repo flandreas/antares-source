@@ -48,6 +48,8 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	private val points = mutableListOf<Point2D>()
 
+	private val segmentIndices: IntRange get() = 0 until pointsCount - 1
+
 	init {
 		if (pts != null) {
 			points.addAll(pts)
@@ -95,7 +97,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		get() {
 			var l = 0.0
 			if (pointsCount > 1) {
-				for (i in 0..pointsCount - 2) {
+				for (i in segmentIndices) {
 					l += getSegmentLength(i)
 				}
 			}
@@ -172,7 +174,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	override fun findSegment(x: Double, y: Double, area: Int): Int? {
 		val rect = Rectangle2D(x - area, y - area, 2 * area.toDouble(), 2 * area.toDouble())
-		return (0..pointsCount - 2).firstOrNull { intersectsSegment(it, rect) }
+		return segmentIndices.firstOrNull { intersectsSegment(it, rect) }
 	}
 
 	override fun findPoint(x: Double, y: Double, area: Int): Int? =
@@ -210,6 +212,10 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	override fun isSegmentVertical(index: Int): Boolean = PolylineShape.isSegmentVertical(index, points)
 
+	override fun isSegmentOrthogonalTo(index: Int, otherIndex: Int, other: List<Point2D>): Boolean =
+		PolylineShape.isSegmentHorizontal(index, points) && PolylineShape.isSegmentVertical(otherIndex, other)
+			|| PolylineShape.isSegmentVertical(index, points) && PolylineShape.isSegmentHorizontal(otherIndex, other)
+
 	override fun mirrorHorizontally(x: Double) {
 		setPoints(points.map { it.mirrorHorizontally(x) })
 	}
@@ -230,7 +236,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	}
 
 	override fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean =
-		(0 until pointsCount - 1).any { overlapsOrthogonally(it, other, otherIndex) }
+		segmentIndices.any { overlapsOrthogonally(it, other, otherIndex) }
 
 	private fun overlapsOrthogonally(index: Int, other: List<Point2D>, otherIndex: Int): Boolean =
 		if (isSegmentHorizontal(index) && PolylineShape.isSegmentHorizontal(otherIndex, other)) {
@@ -255,6 +261,36 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		return range.contains(other[otherIndex].y) || range.contains(other[otherIndex + 1].y)
 	}
 
+	override fun calculateInterference(other: List<Point2D>): PolylineInterference =
+		PolylineInterference(
+			calculateIntersectionCount(other),
+			calculateOverlappingCount(other)
+		)
+
+	private fun calculateIntersectionCount(other: List<Point2D>): Int =
+		segmentIndices.sumOf { calculateIntersectionCount(it, other) }
+
+	private fun calculateIntersectionCount(index: Int, other: List<Point2D>): Int =
+		(0 until other.size - 1).count { doSegmentsIntersect(index, it, other) }
+
+	private fun doSegmentsIntersect(index: Int, otherIndex: Int, other: List<Point2D>): Boolean {
+		return if (isSegmentHorizontal(index) && PolylineShape.isSegmentVertical(otherIndex, other)) {
+			(min(points[index].x, points[index + 1].x) .. max(points[index].x, points[index + 1].x)).contains(other[index].x)
+				&& (min(other[otherIndex].y, other[otherIndex + 1].y) .. max(other[otherIndex].y, other[otherIndex + 1].y)).contains(points[index].y)
+		} else if (isSegmentVertical(index) && PolylineShape.isSegmentHorizontal(otherIndex, other)) {
+			(min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y)).contains(other[otherIndex].y)
+				&& (min(other[otherIndex].x, other[otherIndex + 1].x) .. max(other[otherIndex].x, other[otherIndex + 1].x)).contains(points[index].x)
+		} else {
+			false
+		}
+	}
+
+	private fun calculateOverlappingCount(other: List<Point2D>): Int =
+		segmentIndices.sumOf { calculateOverlappingCount(it, other) }
+
+	private fun calculateOverlappingCount(index: Int, other: List<Point2D>): Int =
+		(0 until other.size - 1).count { overlapsOrthogonally(index, other, it) }
+
 	/** ---- [PolylineShape]  */
 
 	private fun updateLineTerminatorLocations() {
@@ -267,7 +303,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	}
 
 	private fun intersects(r: Rectangle2D): Boolean =
-		(0..pointsCount - 2).any { intersectsSegment(it, r) }
+		segmentIndices.any { intersectsSegment(it, r) }
 
 	/**
 	 * Determines whether a segment of this [PolylineShape] intersects a given [Rectangle2D].
