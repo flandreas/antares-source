@@ -288,8 +288,13 @@ class DigitalCircuitInOutView(
 				graphView = graphView)
 		} else {
 			if (checkTopLevelKey()) {
+				val keyChar = if (key >= KeyEvent.VK_NUMPAD_0 && key <= KeyEvent.VK_NUMPAD_9) {
+					(KeyEvent.VK_0 + (key - KeyEvent.VK_NUMPAD_0)).toChar()
+				} else {
+					key.toChar()
+				}
 				consumeSignal(
-					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar()),
+					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), keyChar),
 					contextHolder,
 					skipAnimation,
 					graphView = graphView)

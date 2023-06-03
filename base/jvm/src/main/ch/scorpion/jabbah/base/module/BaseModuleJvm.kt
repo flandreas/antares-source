@@ -80,6 +80,16 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_F = java.awt.event.KeyEvent.VK_F
 		KeyEvent.VK_X = java.awt.event.KeyEvent.VK_X
 		KeyEvent.VK_Z = java.awt.event.KeyEvent.VK_Z
+		KeyEvent.VK_NUMPAD_0 = java.awt.event.KeyEvent.VK_NUMPAD0
+		KeyEvent.VK_NUMPAD_1 = java.awt.event.KeyEvent.VK_NUMPAD1
+		KeyEvent.VK_NUMPAD_2 = java.awt.event.KeyEvent.VK_NUMPAD2
+		KeyEvent.VK_NUMPAD_3 = java.awt.event.KeyEvent.VK_NUMPAD3
+		KeyEvent.VK_NUMPAD_4 = java.awt.event.KeyEvent.VK_NUMPAD4
+		KeyEvent.VK_NUMPAD_5 = java.awt.event.KeyEvent.VK_NUMPAD5
+		KeyEvent.VK_NUMPAD_6 = java.awt.event.KeyEvent.VK_NUMPAD6
+		KeyEvent.VK_NUMPAD_7 = java.awt.event.KeyEvent.VK_NUMPAD7
+		KeyEvent.VK_NUMPAD_8 = java.awt.event.KeyEvent.VK_NUMPAD8
+		KeyEvent.VK_NUMPAD_9 = java.awt.event.KeyEvent.VK_NUMPAD9
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

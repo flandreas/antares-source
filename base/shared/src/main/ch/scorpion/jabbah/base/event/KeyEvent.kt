@@ -52,6 +52,16 @@ interface KeyEvent : InputEvent {
 	    var VK_F = 70
 	    var VK_X = 88
 	    var VK_Z = 90
+	    var VK_NUMPAD_0 = 96
+	    var VK_NUMPAD_1 = 97
+	    var VK_NUMPAD_2 = 98
+	    var VK_NUMPAD_3 = 99
+	    var VK_NUMPAD_4 = 100
+	    var VK_NUMPAD_5 = 101
+	    var VK_NUMPAD_6 = 102
+	    var VK_NUMPAD_7 = 103
+	    var VK_NUMPAD_8 = 104
+	    var VK_NUMPAD_9 = 105
     }
 }
 

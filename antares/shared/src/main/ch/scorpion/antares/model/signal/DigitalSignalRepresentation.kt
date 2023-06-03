@@ -56,7 +56,6 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 				// overflow or invalid
 				null
 			}
-			//return word
 		}
 	},
 
