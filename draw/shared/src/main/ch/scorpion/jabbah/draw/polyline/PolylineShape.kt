@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.draw.polyline
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Point2D.Companion.xRange
+import ch.scorpion.jabbah.base.geom.Point2D.Companion.yRange
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
@@ -38,11 +40,11 @@ interface PolylineShape : Polyline, Shape {
 
 		private fun doSegmentsIntersect(index: Int, points: List<Point2D>, otherIndex: Int, other: List<Point2D>): Boolean {
 			return if (isSegmentHorizontal(index, points) && isSegmentVertical(otherIndex, other)) {
-				(min(points[index].x, points[index + 1].x) .. max(points[index].x, points[index + 1].x)).contains(other[otherIndex].x)
-					&& (min(other[otherIndex].y, other[otherIndex + 1].y) .. max(other[otherIndex].y, other[otherIndex + 1].y)).contains(points[index].y)
+				xRange(points[index], points[index + 1]).contains(other[otherIndex].x)
+					&& yRange(other[otherIndex], other[otherIndex + 1]).contains(points[index].y)
 			} else if (isSegmentVertical(index, points) && isSegmentHorizontal(otherIndex, other)) {
-				(min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y)).contains(other[otherIndex].y)
-					&& (min(other[otherIndex].x, other[otherIndex + 1].x) .. max(other[otherIndex].x, other[otherIndex + 1].x)).contains(points[index].x)
+				yRange(points[index], points[index + 1]).contains(other[otherIndex].y)
+					&& xRange(other[otherIndex], other[otherIndex + 1]).contains(points[index].x)
 			} else {
 				false
 			}

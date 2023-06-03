@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -10,6 +12,13 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 
 	companion object {
 		val ZERO = Point2D()
+
+		fun xRange(p1: Point2D, p2: Point2D): ClosedFloatingPointRange<Double> =
+			(min(p1.x, p2.x) .. max(p1.x, p2.x))
+
+		fun yRange(p1: Point2D, p2: Point2D): ClosedFloatingPointRange<Double> =
+			(min(p1.y, p2.y) .. max(p1.y, p2.y))
+
 	}
 
 	constructor(p: Point2D) : this(p.x, p.y)
