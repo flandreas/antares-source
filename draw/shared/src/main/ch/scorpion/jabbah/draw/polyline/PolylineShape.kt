@@ -23,6 +23,59 @@ interface PolylineShape : Polyline, Shape {
 
 		fun isSegmentVertical(index: Int, points: List<Point2D>): Boolean =
 			Geometry.equal(points[index].x, points[index + 1].x)
+
+		fun calculateInterference(points: List<Point2D>, others: List<List<Point2D>>): PolylineInterference =
+			PolylineInterference(
+				others.sumOf { calculateIntersectionCount(points, it) },
+				others.sumOf { calculateOverlappingCount(points, it) }
+			)
+
+		private fun calculateIntersectionCount(points: List<Point2D>, other: List<Point2D>): Int =
+			(0 until points.size - 1).sumOf { calculateIntersectionCount(it, points, other) }
+
+		private fun calculateIntersectionCount(index: Int, points: List<Point2D>, other: List<Point2D>): Int =
+			(0 until other.size - 1).count { doSegmentsIntersect(index, points, it, other) }
+
+		private fun doSegmentsIntersect(index: Int, points: List<Point2D>, otherIndex: Int, other: List<Point2D>): Boolean {
+			return if (isSegmentHorizontal(index, points) && isSegmentVertical(otherIndex, other)) {
+				(min(points[index].x, points[index + 1].x) .. max(points[index].x, points[index + 1].x)).contains(other[otherIndex].x)
+					&& (min(other[otherIndex].y, other[otherIndex + 1].y) .. max(other[otherIndex].y, other[otherIndex + 1].y)).contains(points[index].y)
+			} else if (isSegmentVertical(index, points) && isSegmentHorizontal(otherIndex, other)) {
+				(min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y)).contains(other[otherIndex].y)
+					&& (min(other[otherIndex].x, other[otherIndex + 1].x) .. max(other[otherIndex].x, other[otherIndex + 1].x)).contains(points[index].x)
+			} else {
+				false
+			}
+		}
+
+		private fun calculateOverlappingCount(points: List<Point2D>, other: List<Point2D>): Int =
+			(0 until points.size - 1).sumOf { calculateOverlappingCount(points, it, other) }
+
+		private fun calculateOverlappingCount(points: List<Point2D>, index: Int, other: List<Point2D>): Int =
+			(0 until other.size - 1).count { overlapsOrthogonally(index, points, other, it) }
+
+		fun overlapsOrthogonally(index: Int, points: List<Point2D>, other: List<Point2D>, otherIndex: Int): Boolean =
+			if (isSegmentHorizontal(index, points) && isSegmentHorizontal(otherIndex, other)) {
+				overlapHorizontally(index, points, other, otherIndex)
+			} else if (isSegmentVertical(index, points) && isSegmentVertical(otherIndex, other)) {
+				overlapVertically(points, index, other, otherIndex)
+			} else {
+				false
+			}
+
+		private fun overlapHorizontally(index: Int, points: List<Point2D>, other: List<Point2D>, otherIndex: Int): Boolean =
+			abs(points[index].y - other[otherIndex].y) <= Polyline.OVERLAPS_SIZE
+				&& (points[index].x >= other[otherIndex].x && points[index].x <= other[otherIndex + 1].x
+				|| points[index + 1].x >= other[otherIndex].x && points[index + 1].x <= other[otherIndex + 1].x)
+
+		private fun overlapVertically(points: List<Point2D>, index: Int, other: List<Point2D>, otherIndex: Int): Boolean {
+			if (abs(points[index].x - other[otherIndex].x) > Polyline.OVERLAPS_SIZE) {
+				return false
+			}
+
+			val range = (min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y))
+			return range.contains(other[otherIndex].y) || range.contains(other[otherIndex + 1].y)
+		}
 	}
 }
 
@@ -55,6 +108,8 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			points.addAll(pts)
 		}
 	}
+
+	override fun getPointList(): List<Point2D> = points
 
 	/** ---- [Shape] interface */
 
@@ -236,60 +291,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	}
 
 	override fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean =
-		segmentIndices.any { overlapsOrthogonally(it, other, otherIndex) }
-
-	private fun overlapsOrthogonally(index: Int, other: List<Point2D>, otherIndex: Int): Boolean =
-		if (isSegmentHorizontal(index) && PolylineShape.isSegmentHorizontal(otherIndex, other)) {
-			overlapHorizontally(index, other, otherIndex)
-		} else if (isSegmentVertical(index) && PolylineShape.isSegmentVertical(otherIndex, other)) {
-			overlapVertically(index, other, otherIndex)
-		} else {
-			false
-		}
-
-	private inline fun overlapHorizontally(index: Int, other: List<Point2D>, otherIndex: Int): Boolean =
-		abs(points[index].y - other[otherIndex].y) <= Polyline.OVERLAPS_SIZE
-			&& (points[index].x >= other[otherIndex].x && points[index].x <= other[otherIndex + 1].x
-			|| points[index + 1].x >= other[otherIndex].x && points[index + 1].x <= other[otherIndex + 1].x)
-
-	private inline fun overlapVertically(index: Int, other: List<Point2D>, otherIndex: Int): Boolean {
-		if (abs(points[index].x - other[otherIndex].x) > Polyline.OVERLAPS_SIZE) {
-			return false
-		}
-
-		val range = (min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y))
-		return range.contains(other[otherIndex].y) || range.contains(other[otherIndex + 1].y)
-	}
-
-	override fun calculateInterference(other: List<Point2D>): PolylineInterference =
-		PolylineInterference(
-			calculateIntersectionCount(other),
-			calculateOverlappingCount(other)
-		)
-
-	private fun calculateIntersectionCount(other: List<Point2D>): Int =
-		segmentIndices.sumOf { calculateIntersectionCount(it, other) }
-
-	private fun calculateIntersectionCount(index: Int, other: List<Point2D>): Int =
-		(0 until other.size - 1).count { doSegmentsIntersect(index, it, other) }
-
-	private fun doSegmentsIntersect(index: Int, otherIndex: Int, other: List<Point2D>): Boolean {
-		return if (isSegmentHorizontal(index) && PolylineShape.isSegmentVertical(otherIndex, other)) {
-			(min(points[index].x, points[index + 1].x) .. max(points[index].x, points[index + 1].x)).contains(other[index].x)
-				&& (min(other[otherIndex].y, other[otherIndex + 1].y) .. max(other[otherIndex].y, other[otherIndex + 1].y)).contains(points[index].y)
-		} else if (isSegmentVertical(index) && PolylineShape.isSegmentHorizontal(otherIndex, other)) {
-			(min(points[index].y, points[index + 1].y) .. max(points[index].y, points[index + 1].y)).contains(other[otherIndex].y)
-				&& (min(other[otherIndex].x, other[otherIndex + 1].x) .. max(other[otherIndex].x, other[otherIndex + 1].x)).contains(points[index].x)
-		} else {
-			false
-		}
-	}
-
-	private fun calculateOverlappingCount(other: List<Point2D>): Int =
-		segmentIndices.sumOf { calculateOverlappingCount(it, other) }
-
-	private fun calculateOverlappingCount(index: Int, other: List<Point2D>): Int =
-		(0 until other.size - 1).count { overlapsOrthogonally(index, other, it) }
+		segmentIndices.any { PolylineShape.overlapsOrthogonally(it, points, other, otherIndex) }
 
 	/** ---- [PolylineShape]  */
 

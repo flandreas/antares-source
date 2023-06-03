@@ -210,18 +210,18 @@ class PolylineShapeImplTest {
 
 	@Test
 	fun shouldCalculateIntersectionCount() {
-		val polyline1 = PolylineShapeImpl(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
-		val polyline2 = listOf(Point2D(0, 400), Point2D(50, 400), Point2D(50, 100), Point2D(300, 100))
-		val interference = polyline1.calculateInterference(polyline2)
+		val polyline1 = listOf(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
+		val polyline2 = listOf(listOf(Point2D(0, 400), Point2D(50, 400), Point2D(50, 100), Point2D(300, 100)))
+		val interference = PolylineShape.calculateInterference(polyline1, polyline2)
 		assertEquals(2, interference.intersectionCount)
 		assertEquals(0, interference.overlappingCount)
 	}
 
 	@Test
 	fun shouldCalculateOverlappingCount() {
-		val polyline1 = PolylineShapeImpl(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
-		val polyline2 = listOf(Point2D(0, 400), Point2D(100, 400), Point2D(100, 100), Point2D(300, 100))
-		val interference = polyline1.calculateInterference(polyline2)
+		val polyline1 = listOf(Point2D(0, 300), Point2D(100, 300), Point2D(100, 0), Point2D(200, 0))
+		val polyline2 = listOf(listOf(Point2D(0, 400), Point2D(100, 400), Point2D(100, 100), Point2D(300, 100)))
+		val interference = PolylineShape.calculateInterference(polyline1, polyline2)
 		// Intersection at endpoints counts as well
 		assertEquals(2, interference.intersectionCount)
 		assertEquals(1, interference.overlappingCount)

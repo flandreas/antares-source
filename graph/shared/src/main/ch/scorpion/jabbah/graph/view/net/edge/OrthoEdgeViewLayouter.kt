@@ -9,7 +9,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.polyline.PolylineInterference
+import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import kotlin.math.abs
+import kotlin.math.sign
 
 /**
  * Layout algorithm for [LayoutType.ORTHOGONAL].
@@ -58,6 +61,11 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			return solutions[0].polyline.points
 		}
 
+		val otherPoints = otherEdgeViews.map { it.polyline.getPointList() }
+		for (solution in solutions) {
+			solution.interference = PolylineShape.calculateInterference(solution.polyline.points, otherPoints)
+		}
+
 		solutions.sortWith(SolutionEvaluator(edgeView))
 		val minIndex = 0
 
@@ -104,15 +112,24 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 				else if (a.isCounterDirective && !b.isCounterDirective) 1 else 0
 			}
 
-			// Second priority: Smaller number of points
+			// Smaller number of points
 			val sizeCompare = a.polyline.size.compareTo(b.polyline.size)
 			if (sizeCompare != 0) {
 				return sizeCompare
 			}
+
+			if (a.interference.overlappingCount != b.interference.overlappingCount) {
+				return a.interference.overlappingCount.compareTo(b.interference.overlappingCount)
+			}
+
+			if (a.interference.intersectionCount != b.interference.intersectionCount) {
+				return a.interference.intersectionCount.compareTo(b.interference.intersectionCount)
+			}
+
 			if (edgeView == null) {
 				return 0
 			}
-			// Third priority: Smaller number of direction differences compared to original EdgeView
+			// Smaller number of direction differences compared to original EdgeView
 			return countDirectionDiff(a.polyline).compareTo(countDirectionDiff(b.polyline))
 		}
 
@@ -139,18 +156,21 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		solutions: MutableList<Solution>,
 		begin: LayoutBoundary,
 		end: LayoutBoundary,
-		layoutSupplier: (Point2D, Point2D) -> List<Point2D>
+		layoutSupplier: (Point2D, Point2D) -> Collection<List<Point2D>>
 	) {
 		val product = Pair.cartesianProduct(begin.directions.ifEmpty { Direction.ALL }, end.directions.ifEmpty { Direction.ALL })
 		for (pair in product) {
 			val pointList = createPointList(begin.point, pair.first, begin.isPort, end.point, pair.second, end.isPort)
-			pointList.addAll(2, layoutSupplier.invoke(pointList[1], pointList[2]))
 
-			val polyline = CompactablePolyline(pointList)
-			polyline.compact()
-
-			if (polyline.isOrthogonal) {
-				solutions.add(Solution(polyline, pair.first, begin.isPort, pair.second, end.isPort))
+			val layouts = layoutSupplier(pointList[1], pointList[2])
+			layouts.forEach { layout ->
+				val pl = pointList.toMutableList()
+				pl.addAll(2, layout)
+				val polyline = CompactablePolyline(pl)
+				polyline.compact()
+				if (polyline.isOrthogonal) {
+					solutions.add(Solution(polyline, pair.first, begin.isPort, pair.second, end.isPort))
+				}
 			}
 		}
 	}
@@ -160,7 +180,8 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		val beginDir: Direction,
 		val isBeginPort: Boolean,
 		val endDir: Direction,
-		val isEndPort: Boolean
+		val isEndPort: Boolean,
+		var interference: PolylineInterference = PolylineInterference.ZERO
 	) {
 		val isCounterDirective: Boolean
 			get() {
@@ -175,52 +196,115 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 	}
 
 	/** Lower left corner. */
-	private fun createA(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p1.x, p2.y))
+	private fun createA(p1: Point2D, p2: Point2D): Collection<List<Point2D>> = listOf(listOf(Point2D(p1.x, p2.y)))
 
 	/** Upper right corner. */
-	private fun createB(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p2.x, p1.y))
+	private fun createB(p1: Point2D, p2: Point2D): Collection<List<Point2D>> = listOf(listOf(Point2D(p2.x, p1.y)))
 
 	/** Horizontally in the middle of the two points. */
-	private fun createC(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): List<Point2D> {
-		val list = mutableListOf<Point2D>()
-		val dy = p2.y - p1.y
-		list.add(snapY(graphView.snapper, Point2D(p1.x, p1.y + 0.5 * dy)))
-		list.add(snapY(graphView.snapper, Point2D(p2.x, p1.y + 0.5 * dy)))
-		return list
-	}
+	private fun createC(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): Collection<List<Point2D>> {
+		val middleDy = 0.5 * (p2.y - p1.y)
+		val simpleSolution = createCImpl(p1, p2, middleDy, graphView.snapper)
+		val displacementSpaceHalf = (abs(p2.y - p1.y) - 2 * END_LENGTH).coerceAtLeast(0.0) / 2
 
-	/** Vertically in the middle of the two points.*/
-	private fun createD(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): List<Point2D> {
-		val middleDx = 0.5 * (p2.x - p1.x)
-		val simpleSolution = createDImpl(p1, p2, middleDx, graphView.snapper)
-
-		if (abs(p2.x - p1.x) < 2 * END_LENGTH + DISPLACEMENT) {
+		if (displacementSpaceHalf < DISPLACEMENT) {
 			// Not enough space for displacement
-			return simpleSolution
+			return listOf(simpleSolution)
 		}
 
 		if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, simpleSolution) }) {
 			// No displacement necessary
-			return simpleSolution
+			return listOf(simpleSolution)
 		}
 
-		// Try to displace to one side
-		createDImpl(p1, p2, middleDx - DISPLACEMENT, graphView.snapper).also { solution ->
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, solution) }) {
-				LOG.debug("Using first displaced solution D")
-				return solution
+		val direction = middleDy.sign
+
+		// Find the first non-overlapping displacement on one side
+		var displacedLayout1: List<Point2D>? = null
+		var dy = direction * DISPLACEMENT
+		while (displacedLayout1 == null && abs(dy) <= displacementSpaceHalf) {
+			val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
+			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
+				displacedLayout1 = layout
+			}
+			dy += direction * DISPLACEMENT
+		}
+
+		// Find the first non-overlapping displacement on other side
+		var displacedLayout2: List<Point2D>? = null
+		dy = -direction * DISPLACEMENT
+		while (displacedLayout2 == null && abs(dy) <= displacementSpaceHalf) {
+			val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
+			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
+				displacedLayout2 = layout
+			}
+			dy -= direction * DISPLACEMENT
+		}
+
+		if (displacedLayout1 != null || displacedLayout2 != null) {
+			return mutableListOf<List<Point2D>>().also { solutions ->
+				displacedLayout1?.let { solutions.add(it) }
+				displacedLayout2?.let { solutions.add(it) }
 			}
 		}
 
-		createDImpl(p1, p2, middleDx + DISPLACEMENT, graphView.snapper).also { solution ->
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, solution) }) {
-				LOG.debug("Using second displaced solution D")
-				return solution
+		return listOf(simpleSolution)
+	}
+
+	private fun createCImpl(p1: Point2D, p2: Point2D, dy: Double, snapper: Snapper?): List<Point2D> =
+		mutableListOf<Point2D>().apply {
+			add(snapY(snapper, Point2D(p1.x, p1.y + dy)))
+			add(snapY(snapper, Point2D(p2.x, p1.y + dy)))
+		}
+
+	/** Vertically in the middle of the two points.*/
+	private fun createD(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): Collection<List<Point2D>> {
+		val middleDx = 0.5 * (p2.x - p1.x)
+		val simpleSolution = createDImpl(p1, p2, middleDx, graphView.snapper)
+		val displacementSpaceHalf = (abs(p2.x - p1.x) - 2 * END_LENGTH).coerceAtLeast(0.0) / 2
+
+		if (displacementSpaceHalf < DISPLACEMENT) {
+			// Not enough space for displacement
+			return listOf(simpleSolution)
+		}
+
+		if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, simpleSolution) }) {
+			// No displacement necessary
+			return listOf(simpleSolution)
+		}
+
+		val direction = middleDx.sign
+
+		// Find the first non-overlapping displacement on one side
+		var displacedLayout1: List<Point2D>? = null
+		var dx = direction * DISPLACEMENT
+		while (displacedLayout1 == null && abs(dx) <= displacementSpaceHalf) {
+			val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
+			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
+				displacedLayout1 = layout
+			}
+			dx += direction * DISPLACEMENT
+		}
+
+		// Find the first non-overlapping displacement on other side
+		var displacedLayout2: List<Point2D>? = null
+		dx = -direction * DISPLACEMENT
+		while (displacedLayout2 == null && abs(dx) <= displacementSpaceHalf) {
+			val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
+			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
+				displacedLayout2 = layout
+			}
+			dx -= direction * DISPLACEMENT
+		}
+
+		if (displacedLayout1 != null || displacedLayout2 != null) {
+			return mutableListOf<List<Point2D>>().also { solutions ->
+				displacedLayout1?.let { solutions.add(it) }
+				displacedLayout2?.let { solutions.add(it) }
 			}
 		}
 
-		LOG.debug("Using overlapping simple solution D")
-		return simpleSolution
+		return listOf(simpleSolution)
 	}
 
 	private fun createDImpl(p1: Point2D, p2: Point2D, dx: Double, snapper: Snapper?): List<Point2D> =

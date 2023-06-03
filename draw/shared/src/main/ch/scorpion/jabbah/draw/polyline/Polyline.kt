@@ -25,6 +25,8 @@ interface Polyline {
 	/** Returns the geometrical length of this [Polyline], which is the sum of all segment lengths.*/
 	val length: Double
 
+	fun getPointList(): List<Point2D>
+
 	/** Removes all points from this [Polyline].*/
     fun clear()
 
@@ -177,8 +179,6 @@ interface Polyline {
 	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
 
 	fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean
-
-	fun calculateInterference(other: List<Point2D>): PolylineInterference
 }
 
 /**
@@ -189,4 +189,8 @@ interface Polyline {
 data class PolylineInterference(
 	val intersectionCount: Int,
 	val overlappingCount: Int
-)
+) {
+	companion object {
+		val ZERO = PolylineInterference(0, 0)
+	}
+}

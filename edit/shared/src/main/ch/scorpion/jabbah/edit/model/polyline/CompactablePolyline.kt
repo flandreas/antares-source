@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -22,7 +20,7 @@ class CompactablePolyline(points: List<Point2D>) {
 		const val COMPACT_ANGLE = 0.1
 	}
 
-	val points: ImmutableList<Point2D> get() = _points.toImmutableList()
+	val points: List<Point2D> get() = _points
 
 	val size: Int get() = _points.size
 

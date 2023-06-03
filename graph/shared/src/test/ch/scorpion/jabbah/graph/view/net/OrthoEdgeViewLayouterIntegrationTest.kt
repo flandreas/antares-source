@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -27,9 +28,9 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldSplitHorizontalEdgeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 200, WEST))
 		val origEdgeView = builder.connect(v1, v2)
 
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
@@ -46,9 +47,9 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldSplitEdgeViewAtCorner() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 200, WEST))
 		val origEdgeView = builder.connect(v1, v3)
 
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v2)
@@ -65,9 +66,9 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldLayoutWestOfNodeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(150, 0, Direction.SOUTH))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(150, 0, SOUTH))
 		val origEdgeView = builder.connect(v1, v2)
 		builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
@@ -78,9 +79,9 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldLayoutEastOfNodeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v4 = builder.addVerticeView(createVerticeView(150, 0, Direction.SOUTH))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v4 = builder.addVerticeView(createVerticeView(150, 0, SOUTH))
 		val origEdgeView = builder.connect(v1, v2)
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v4)
 
@@ -91,9 +92,9 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldLayoutNorthOfNodeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(200, 0, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 0, WEST))
 		val origEdgeView = builder.connect(v1, v2)
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
@@ -102,41 +103,41 @@ class OrthoEdgeViewLayouterIntegrationTest {
 
 	@Test
 	fun shouldLayoutVerticalOpenVerticeView() {
-		val v = builder.addVerticeView(createVerticeView(100, 100, Direction.SOUTH))
+		val v = builder.addVerticeView(createVerticeView(100, 100, SOUTH))
 		val edgeView = builder.connectInputOpen(v, Point2D(100, 200))
 		assertEquals(2, edgeView.segmentPointCount)
 	}
 
 	@Test
 	fun shouldLayoutVerticalSplitOpenVerticeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
 		val ev = builder.connect(v1, v2)
 
 		val splitResult = builder.split(ev, 0, Point2D(150, 100), null as PortView<Boolean>?)
 		splitResult.newEdgeView.moveDestinationEndPoint(200.0, 200.0)
 
 		assertEquals(3, splitResult.newEdgeView.segmentPointCount)
-		assertEquals(Direction.SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
+		assertEquals(SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
 	}
 
 	@Test
 	fun shouldCooperateWithNonLayoutEdgeView() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 100, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 100, WEST))
 		val origEdgeView = builder.connect(v1, v2)
 		origEdgeView.layout.type = LayoutType.NONE
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
-		assertEquals(Direction.SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
+		assertEquals(SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
 	}
 
 	@Test
 	fun shouldNotDistortZShapedEdgeViewWhenSplitting() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(200, 300, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, WEST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(200, 300, WEST))
 		val origEdgeView = builder.connect(v1, v2)
 
 		builder.split(origEdgeView, 2, Point2D(170, 200), v3)
@@ -151,17 +152,17 @@ class OrthoEdgeViewLayouterIntegrationTest {
 	/** Regression test for GitHub issue #213.*/
 	@Test
 	fun shouldNotDistortLayoutWhenSplittingUpwards() {
-		val v1 = builder.addVerticeView(createVerticeView(100, 300, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.SOUTH))
-		val v3 = builder.addVerticeView(createVerticeView(200, 100, Direction.SOUTH))
-		val v4 = builder.addVerticeView(createVerticeView(200, 0, Direction.SOUTH))
+		val v1 = builder.addVerticeView(createVerticeView(100, 300, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, SOUTH))
+		val v3 = builder.addVerticeView(createVerticeView(200, 100, SOUTH))
+		val v4 = builder.addVerticeView(createVerticeView(200, 0, SOUTH))
 		val ev12 = builder.connect(v1, v2)
 		val ev13 = builder.split(ev12, 0, Point2D(150, 300), v3)
 
 		assertEquals(4, ev13.newEdgeView.segmentPointCount)
 		assertEquals(Point2D(150, 300), ev13.newEdgeView.polyline.getPointAt(0))
-		assertEquals(Point2D(150, 200), ev13.newEdgeView.polyline.getPointAt(1))
-		assertEquals(Point2D(200, 200), ev13.newEdgeView.polyline.getPointAt(2))
+		assertEquals(Point2D(150, 114), ev13.newEdgeView.polyline.getPointAt(1))
+		assertEquals(Point2D(200, 114), ev13.newEdgeView.polyline.getPointAt(2))
 		assertEquals(Point2D(200, 100), ev13.newEdgeView.polyline.getPointAt(3))
 
 		val ev14 = builder.split(ev13.newEdgeView, 0, Point2D(150, 200), v4)
@@ -172,25 +173,38 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		assertEquals(Point2D(150, 200), ev13.newEdgeView.polyline.getPointAt(1))
 
 		// Layout of new EdgeView
-		assertEquals(4, ev14.newEdgeView.segmentPointCount)
+		assertEquals(3, ev14.newEdgeView.segmentPointCount)
 		assertEquals(Point2D(150, 200), ev14.newEdgeView.polyline.getPointAt(0))
-		assertEquals(Point2D(150, 100), ev14.newEdgeView.polyline.getPointAt(1))
-		assertEquals(Point2D(200, 100), ev14.newEdgeView.polyline.getPointAt(2))
-		assertEquals(Point2D(200, 0), ev14.newEdgeView.polyline.getPointAt(3))
+		assertEquals(Point2D(200, 200), ev14.newEdgeView.polyline.getPointAt(1))
+		assertEquals(Point2D(200, 0), ev14.newEdgeView.polyline.getPointAt(2))
 	}
 
 	@Test
-	fun shouldNotOverlapEdgeViews() {
-		val v1 = builder.addVerticeView(createVerticeView(0, 300, Direction.EAST))
-		val v2 = builder.addVerticeView(createVerticeView(100, 0, Direction.WEST))
-		val v3 = builder.addVerticeView(createVerticeView(0, 400, Direction.EAST))
-		val v4 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
-		val ev12 = builder.connect(v1, v2)
+	fun shouldNotOverlapEdgeViewsVertically() {
+		val v1 = builder.addVerticeView(createVerticeView(0, 300, EAST))
+		val v2 = builder.addVerticeView(createVerticeView(100, 0, WEST))
+		val v3 = builder.addVerticeView(createVerticeView(0, 400, EAST))
+		val v4 = builder.addVerticeView(createVerticeView(100, 100, WEST))
+		builder.connect(v1, v2)
 		val ev34 = builder.connect(v3, v4)
 
-		assertNotEquals(ev12.polyline.getPointAt(1).x, ev34.polyline.getPointAt(1).x)
+		// Require layout right to the middle in order to avoid intersections
+		assertEquals(57.0, ev34.polyline.getPointAt(1).x)
 	}
 
-	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView =
-		TestVerticeView(loc = Point2D(x, y), inputDirection = dir, portViewLength = 20)
+	@Test
+	fun shouldNotOverlapEdgeViewsHorizontally() {
+		val v1 = builder.addVerticeView(createVerticeView(0, 0, NORTH, SOUTH))
+		val v2 = builder.addVerticeView(createVerticeView(300, 200, NORTH))
+		val v3 = builder.addVerticeView(createVerticeView(100, 0, NORTH, SOUTH))
+		val v4 = builder.addVerticeView(createVerticeView(400, 200, NORTH))
+
+		builder.connect(v1, v2)
+		val ev34 = builder.connect(v3, v4)
+
+		assertEquals(93.0, ev34.polyline.getPointAt(1).y)
+	}
+
+	private fun createVerticeView(x: Int, y: Int, dir: Direction, outDir: Direction = EAST): TestVerticeView =
+		TestVerticeView(loc = Point2D(x, y), inputDirection = dir, outputDirection =  outDir, portViewLength = 20)
 }
