@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.polyline.PolylineInterference
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import kotlin.math.abs
@@ -19,10 +20,15 @@ import kotlin.math.sign
  */
 object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
+	/** The name of the [Boolean] property that controls whether advanced layout is to be applied. */
+	public val PROP_ADVANCED_LAYOUT = "graph.advancedEdgeViewLayout"
+
 	private val LOG by logger(OrthoEdgeViewLayouter::class)
 
 	// TODO Make configurable in order to align with GridImpl width
 	private const val END_LENGTH = 14
+
+	private val useAdvancedLayout: Boolean by lazy { BaseModule.properties.getBoolean(PROP_ADVANCED_LAYOUT) }
 
 	/**
 	 * The distance to be applied when displacing segments in order to avoid overlapping.
@@ -61,9 +67,11 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			return solutions[0].polyline.points
 		}
 
-		val otherPoints = otherEdgeViews.map { it.polyline.getPointList() }
-		for (solution in solutions) {
-			solution.interference = PolylineShape.calculateInterference(solution.polyline.points, otherPoints)
+		if (useAdvancedLayout) {
+			val otherPoints = otherEdgeViews.map { it.polyline.getPointList() }
+			for (solution in solutions) {
+				solution.interference = PolylineShape.calculateInterference(solution.polyline.points, otherPoints)
+			}
 		}
 
 		solutions.sortWith(SolutionEvaluator(edgeView))
@@ -217,34 +225,37 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			return listOf(simpleSolution)
 		}
 
-		val direction = middleDy.sign
+		if (useAdvancedLayout) {
 
-		// Find the first non-overlapping displacement on one side
-		var displacedLayout1: List<Point2D>? = null
-		var dy = direction * DISPLACEMENT
-		while (displacedLayout1 == null && abs(dy) <= displacementSpaceHalf) {
-			val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
-				displacedLayout1 = layout
+			val direction = middleDy.sign
+
+			// Find the first non-overlapping displacement on one side
+			var displacedLayout1: List<Point2D>? = null
+			var dy = direction * DISPLACEMENT
+			while (displacedLayout1 == null && abs(dy) <= displacementSpaceHalf) {
+				val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
+				if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) }) {
+					displacedLayout1 = layout
+				}
+				dy += direction * DISPLACEMENT
 			}
-			dy += direction * DISPLACEMENT
-		}
 
-		// Find the first non-overlapping displacement on other side
-		var displacedLayout2: List<Point2D>? = null
-		dy = -direction * DISPLACEMENT
-		while (displacedLayout2 == null && abs(dy) <= displacementSpaceHalf) {
-			val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
-				displacedLayout2 = layout
+			// Find the first non-overlapping displacement on other side
+			var displacedLayout2: List<Point2D>? = null
+			dy = -direction * DISPLACEMENT
+			while (displacedLayout2 == null && abs(dy) <= displacementSpaceHalf) {
+				val layout = createCImpl(p1, p2, middleDy + dy, graphView.snapper)
+				if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) }) {
+					displacedLayout2 = layout
+				}
+				dy -= direction * DISPLACEMENT
 			}
-			dy -= direction * DISPLACEMENT
-		}
 
-		if (displacedLayout1 != null || displacedLayout2 != null) {
-			return mutableListOf<List<Point2D>>().also { solutions ->
-				displacedLayout1?.let { solutions.add(it) }
-				displacedLayout2?.let { solutions.add(it) }
+			if (displacedLayout1 != null || displacedLayout2 != null) {
+				return mutableListOf<List<Point2D>>().also { solutions ->
+					displacedLayout1?.let { solutions.add(it) }
+					displacedLayout2?.let { solutions.add(it) }
+				}
 			}
 		}
 
@@ -273,34 +284,37 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			return listOf(simpleSolution)
 		}
 
-		val direction = middleDx.sign
+		if (useAdvancedLayout) {
 
-		// Find the first non-overlapping displacement on one side
-		var displacedLayout1: List<Point2D>? = null
-		var dx = direction * DISPLACEMENT
-		while (displacedLayout1 == null && abs(dx) <= displacementSpaceHalf) {
-			val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
-				displacedLayout1 = layout
+			val direction = middleDx.sign
+
+			// Find the first non-overlapping displacement on one side
+			var displacedLayout1: List<Point2D>? = null
+			var dx = direction * DISPLACEMENT
+			while (displacedLayout1 == null && abs(dx) <= displacementSpaceHalf) {
+				val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
+				if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) }) {
+					displacedLayout1 = layout
+				}
+				dx += direction * DISPLACEMENT
 			}
-			dx += direction * DISPLACEMENT
-		}
 
-		// Find the first non-overlapping displacement on other side
-		var displacedLayout2: List<Point2D>? = null
-		dx = -direction * DISPLACEMENT
-		while (displacedLayout2 == null && abs(dx) <= displacementSpaceHalf) {
-			val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
-			if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) } ) {
-				displacedLayout2 = layout
+			// Find the first non-overlapping displacement on other side
+			var displacedLayout2: List<Point2D>? = null
+			dx = -direction * DISPLACEMENT
+			while (displacedLayout2 == null && abs(dx) <= displacementSpaceHalf) {
+				val layout = createDImpl(p1, p2, middleDx + dx, graphView.snapper)
+				if (!otherEdgeViews.any { it.polyline.overlapsOrthogonallyWith(0, layout) }) {
+					displacedLayout2 = layout
+				}
+				dx -= direction * DISPLACEMENT
 			}
-			dx -= direction * DISPLACEMENT
-		}
 
-		if (displacedLayout1 != null || displacedLayout2 != null) {
-			return mutableListOf<List<Point2D>>().also { solutions ->
-				displacedLayout1?.let { solutions.add(it) }
-				displacedLayout2?.let { solutions.add(it) }
+			if (displacedLayout1 != null || displacedLayout2 != null) {
+				return mutableListOf<List<Point2D>>().also { solutions ->
+					displacedLayout1?.let { solutions.add(it) }
+					displacedLayout2?.let { solutions.add(it) }
+				}
 			}
 		}
 

@@ -192,6 +192,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 		properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.Animation.customName)
 		properties.set(GraphNavigationViewController.PROP_DIVE_ANIMATION, true)
+		properties.set(OrthoEdgeViewLayouter.PROP_ADVANCED_LAYOUT, true)
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
@@ -235,12 +236,6 @@ object GraphViewModule : AbstractModule() {
 	private var nodeViewFactory: NodeViewFactory = NodeViewFactoryImpl(
 		DrawStyleModule.styleProvider
 	)
-
-	/*
-	fun getNodeViewFactory(): NodeViewFactory {
-		return nodeViewFactory
-	}
-	*/
 
 	fun setNodeViewFactory(factory: NodeViewFactory) {
 		nodeViewFactory = factory

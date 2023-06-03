@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
+import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.graph] module on the JVM platform.
@@ -150,6 +151,12 @@ object GraphModuleJvm : AbstractModule() {
 		root.getGroup(EditModuleJvm.PREF_TREE_EDITOR).add(BooleanPreference(
 			id = FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY,
 			nameKey = "graph.history.preference.name"
+		))
+
+		root.getGroup(EditModuleJvm.PREF_TREE_EDITOR).add(BooleanPreference(
+			id = OrthoEdgeViewLayouter.PROP_ADVANCED_LAYOUT,
+			nameKey = "graph.edgeView.advancedLayout.name",
+			needsRestart = true
 		))
 	}
 }
