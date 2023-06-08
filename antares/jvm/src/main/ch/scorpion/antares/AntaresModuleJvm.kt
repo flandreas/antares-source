@@ -377,7 +377,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(
 			id = Switch.PROP_DEFAULT_DELAY,
 			nameKey = "antares.preference.SwitchPropDelay",
-			minValue = 1,
+			minValue = 0,
 			maxValue = 1_000_000
 		))
 

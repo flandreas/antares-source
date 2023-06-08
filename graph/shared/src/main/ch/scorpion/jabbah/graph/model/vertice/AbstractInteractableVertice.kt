@@ -89,7 +89,7 @@ abstract class AbstractInteractableVertice<S: Any>(
 	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
 		delayedSignal = signal
 		setInteractionEnabled(false, signalHandler)
-		requestActingAfter(signalHandler, 1_000, createActorData(null, signal = signal, graphView = graphView))
+		requestActingAfter(signalHandler, interactivePropagationDelay, createActorData(null, signal = signal, graphView = graphView))
 	}
 
 	private fun completeSetState(signalHandler: SignalHandler) {
