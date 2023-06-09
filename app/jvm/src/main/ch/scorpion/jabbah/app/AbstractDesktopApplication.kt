@@ -30,21 +30,20 @@ abstract class AbstractDesktopApplication(
 	companion object {
 
 		/**
-		 * The name of the [System] property than contains the absolute user data directory path.
-		 * Set during start-up and used by the log4j configuration in order to write the log file
-		 * in the user's data directory.
-		 */
-		private const val PROP_USER_DATA_DIRECTORY = "user.dataDirectory"
-
-		/**
 		 * The name of the [System] property that contains the absolute path of the log file.
 		 * Set during start-up and used by the log4j configuration as well as the [Action] for exporting
 		 * the log file.
 		 */
 		private const val PROP_LOGFILE_PATH = "system.logFile"
 
-		/** The command line option for the user's data directory. */
-		private const val DIRECTORY_OPTION = "d"
+		/** The command line option for the application's data directory.*/
+		private const val APP_DATA_DIR_OPTION = "d"
+
+		/**
+		 * The command line option for the user's data directory. By default, this is the same as [APP_DATA_DIR_OPTION],
+		 * but can be set to something else to support various "Workspaces".
+		 */
+		private const val USER_DATA_DIR_OPTION = "ud"
 
 		/** The command line option for activating developers mode. */
 		private const val DEVELOPER_OPTION = "dev"
@@ -58,10 +57,17 @@ abstract class AbstractDesktopApplication(
 
 		/** Defines the command line argument [Options] for this [DesktopApplication].*/
 		fun defineOptions(options: Options): Options {
-			options.addOption(Option.builder(DIRECTORY_OPTION)
+			options.addOption(Option.builder(APP_DATA_DIR_OPTION)
 				.required(false)
-				.longOpt("directory")
-				.desc("Home directory")
+				.longOpt("appDir")
+				.desc("Application data directory")
+				.hasArg()
+				.build())
+
+			options.addOption(Option.builder(USER_DATA_DIR_OPTION)
+				.required(false)
+				.longOpt("userDir")
+				.desc("User data directory")
 				.hasArg()
 				.build())
 
@@ -92,15 +98,23 @@ abstract class AbstractDesktopApplication(
 			}
 		}
 
-		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
-			val path = if (commandLine.hasOption(DIRECTORY_OPTION)) {
-				FileSystems.getDefault().getPath(commandLine.getOptionValue(DIRECTORY_OPTION))
+		fun determineAppDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
+			val path = if (commandLine.hasOption(APP_DATA_DIR_OPTION)) {
+				FileSystems.getDefault().getPath(commandLine.getOptionValue(APP_DATA_DIR_OPTION))
 			} else {
-				FileSystems.getDefault().getPath(getDefaultUserDataDirectory(), systemName)
+				FileSystems.getDefault().getPath(getDefaultAppDataDirectory(), systemName)
 			}
 			val absolutePath = path.toAbsolutePath().toString()
-			System.setProperty(PROP_USER_DATA_DIRECTORY, absolutePath)
 			System.setProperty(PROP_LOGFILE_PATH, Paths.get(absolutePath, calculateLogfileName(systemName)).toString())
+			return path
+		}
+
+		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
+			val path = if (commandLine.hasOption(USER_DATA_DIR_OPTION)) {
+				FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
+			} else {
+				determineAppDataDirectoryPath(commandLine, systemName)
+			}
 			return path
 		}
 
@@ -116,14 +130,13 @@ abstract class AbstractDesktopApplication(
 			}
 		}
 
-		private fun getDefaultUserDataDirectory(): String {
-			return when {
+		private fun getDefaultAppDataDirectory(): String =
+			when {
 				SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
 				SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
 				SystemUtils.IS_OS_UNIX -> System.getProperty("user.home")
 				else -> System.getProperty("user.dir")
 			}
-		}
 
 		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
 
@@ -137,12 +150,15 @@ abstract class AbstractDesktopApplication(
 
 	private val logfileName: String get() = calculateLogfileName(systemName)
 
+	override val appDataDirectoryPath: Path = determineAppDataDirectoryPath(commandLine, systemName)
+
 	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
 	init {
 		LOG.info("Starting $displayName version ${readVersion()}")
 		LOG.info("Using Java ${Runtime.version()}")
-		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
+		LOG.info(("Using app data directory $appDataDirectoryPath"))
+		LOG.info(("Using user data directory $userDataDirectoryPath"))
 		consumeCommandLine(commandLine)
 		loadSettings()
 	}
@@ -177,7 +193,7 @@ abstract class AbstractDesktopApplication(
 		LOG.userTrail("Exporting log file to $destinationPath")
 		FileOutputStream(destinationPath).use { output ->
 			ZipOutputStream(output).use {
-				val fileToZip = File(Paths.get(userDataDirectoryPath.toAbsolutePath().toString(), logfileName).toUri())
+				val fileToZip = File(Paths.get(appDataDirectoryPath.toAbsolutePath().toString(), logfileName).toUri())
 				ZipUtil.zipFile(fileToZip, fileToZip.name, it)
 			}
 		}
@@ -210,27 +226,34 @@ abstract class AbstractDesktopApplication(
 	 * the provided [Options].
 	 */
 	protected open fun consumeCommandLine(commandLine: CommandLine) {
-		EditAuthModule.userHolder = if (commandLine.hasOption("dev")) {
-			LOG.info("Starting application in developer mode")
+		EditAuthModule.userHolder = if (commandLine.hasOption(DEVELOPER_OPTION)) {
+			LOG.info("Running application in developer mode")
 			DesktopUserHolder(DesktopUser.developer)
 		} else {
 			DesktopUserHolder(DesktopUser.anybody)
 		}
 	}
 
-	private fun getSettingsPath(): Path {
-		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.$SETTINGS_FILE_EXTENSION")
-	}
+	private fun getSettingsPath(): Path =
+		FileSystems.getDefault().getPath(appDataDirectoryPath.toString(), "$systemName.$SETTINGS_FILE_EXTENSION")
 
-	private fun getPreferencesPath(): Path {
-		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.$PREFERENCES_FILE_EXTENSION")
+	private fun getPreferencesPath(): Path =
+		FileSystems.getDefault().getPath(appDataDirectoryPath.toString(), "$systemName.$PREFERENCES_FILE_EXTENSION")
+
+	/** Ensures that the application's data directory exists by creating it if it doesn't. */
+	private fun ensureAppDataDirectory() {
+		val path = appDataDirectoryPath
+		if (Files.notExists(path)) {
+			LOG.userTrail("Creating app data directory '$path'")
+			Files.createDirectories(path)
+		}
 	}
 
 	/** Ensures that the user's data directory for this application exists by creating it if it doesn't. */
 	private fun ensureUserDataDirectory() {
 		val path = userDataDirectoryPath
 		if (Files.notExists(path)) {
-			LOG.userTrail("Creating home directory '$path'")
+			LOG.userTrail("Creating user data directory '$path'")
 			Files.createDirectories(path)
 		}
 	}
@@ -258,7 +281,7 @@ abstract class AbstractDesktopApplication(
 	private fun storeSettings() {
 		val path = getSettingsPath()
 		LOG.debug("Storing settings in $path")
-		ensureUserDataDirectory()
+		ensureAppDataDirectory()
 		FileOutputStream(path.toString()).use {
 			try {
 				//val properties = java.util.Properties()
@@ -297,7 +320,7 @@ abstract class AbstractDesktopApplication(
 	private fun storePreferences() {
 		val path = getPreferencesPath()
 		LOG.debug("Storing preferences in $path")
-		ensureUserDataDirectory()
+		ensureAppDataDirectory()
 		FileOutputStream(path.toString()).use {
 			try {
 				val preferences = java.util.Properties()

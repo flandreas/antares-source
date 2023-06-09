@@ -106,8 +106,8 @@ class AntaresSwing(
 			return options
 		}
 
-		private fun prefetchPreferences(userDataDirectoryPath: Path): java.util.Properties {
-			val filePath = Paths.get(userDataDirectoryPath.toString(), "${AntaresApplication.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
+		private fun prefetchPreferences(appDataDirectoryPath: Path): java.util.Properties {
+			val filePath = Paths.get(appDataDirectoryPath.toString(), "${AntaresApplication.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
 			val settings = java.util.Properties()
 			if (Files.exists(filePath)) {
 				FileInputStream(filePath.toString()).use {
@@ -190,14 +190,14 @@ class AntaresSwing(
 			System.setProperty("apple.awt.application.name", AntaresApplication.SYSTEM_NAME)
 
 			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
-			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
+			val appDataDirectoryPath = determineAppDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
 
 			UIManager.getDefaults()[VerticalLabel.UI_CLASS_ID] = "ch.scorpion.jabbah.base.swing.VerticalLabelUI"
 			UIManager.put("Table.intercellSpacing", Dimension(1, 1))
 			UIManager.put("TaskPane.contentInsets", Insets(0, 0, 0, 0))
 			UIManager.put("TaskPane.roundHeight", 0)
 
-			val preferences = prefetchPreferences(userDataDirectoryPath)
+			val preferences = prefetchPreferences(appDataDirectoryPath)
 			establishUserLanguage(preferences)
 			establishTheme(preferences)
 			establishUiFont(preferences)

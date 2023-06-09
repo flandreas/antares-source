@@ -15,6 +15,9 @@ interface DesktopApplication : Application {
 	/** Returns the file name extension to be used for application data files handled by this [Application].*/
 	val fileExtension: String
 
+	/** The [Path] to the directory where this [DesktopApplication] stores config and log files.*/
+	val appDataDirectoryPath: Path
+
 	/** The [Path] to the user's data directory, i.e. the directory where the user's data is stored.*/
 	val userDataDirectoryPath: Path
 
