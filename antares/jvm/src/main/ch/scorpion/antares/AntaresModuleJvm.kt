@@ -16,7 +16,6 @@ import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.*
-import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
@@ -29,6 +28,7 @@ import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationVersionServiceImpl
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService.Companion.PROP_PING_APPLICATION_ID
 import ch.scorpion.jabbah.app.rating.RailwayRatingService
 import ch.scorpion.jabbah.base.AbstractModule
@@ -69,10 +69,10 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
+import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import java.net.URL
-import java.nio.file.FileSystems
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
@@ -98,13 +98,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		GraphModuleJvm.libraryTreeViewActionsProvider = {
 				params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
 		}
-		GraphModuleJvm.metaGraphHistoryService = FileMetaGraphHistoryServiceImpl(app.fileStoreBasePath)
+		GraphModuleJvm.metaGraphHistoryService = FileMetaGraphHistoryServiceImpl({ AppModuleJvm.workspaceHolder.userDataDirectoryPath })
 
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(
-			dataPath = app.fileStoreBasePath,
+			{ AppModuleJvm.workspaceHolder.userDataDirectoryPath },
 			directoryName = app.userLibraryDirectoryName,
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName,
@@ -112,7 +112,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		LibraryModule.systemLibraryPersistenceService = if (app.systemLibraryBasePath != null) {
 			FileLibraryPersistenceService(
-				dataPath = app.systemLibraryBasePath!!,
+				{ app.systemLibraryBasePath!! },
 				directoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
 				metaGraphFileExtension = app.fileExtension,
 				libraryFileName = app.libraryFileName)
@@ -128,12 +128,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(
-			FileLibraryDictionaryPersistenceService(
-				"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.userLibraryDirectoryName}"))
+			FileLibraryDictionaryPersistenceService({ AppModuleJvm.workspaceHolder.userDataDirectoryPath }, app.userLibraryDirectoryName))
 
 		LibraryModule.systemLibraryDictionaryService = if (app.systemLibraryBasePath != null) {
-			LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
-				"${app.systemLibraryBasePath!!}${FileSystems.getDefault().separator}${app.userLibraryDirectoryName}"))
+			LibraryDictionaryService(FileLibraryDictionaryPersistenceService({app.systemLibraryBasePath!!}, AntaresApplication.DEFAULT_LIB_DIRECTORY))
 		} else {
 			LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
 		}
@@ -141,12 +139,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		ProjectModule.projectDictionaryService = LibraryDictionaryService(
-			(FileLibraryDictionaryPersistenceService(
-				"${app.fileStoreBasePath}${FileSystems.getDefault().separator}${app.projectDirectoryName}")))
+			FileLibraryDictionaryPersistenceService({ AppModuleJvm.workspaceHolder.userDataDirectoryPath }, app.projectDirectoryName))
 
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
-			dataPath = app.fileStoreBasePath,
+			{ AppModuleJvm.workspaceHolder.userDataDirectoryPath },
 			directoryName = app.projectDirectoryName,
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName,

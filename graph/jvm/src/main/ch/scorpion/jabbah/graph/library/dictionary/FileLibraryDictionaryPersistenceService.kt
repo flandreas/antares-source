@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.library.dictionary
 
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -18,19 +17,23 @@ const val DEF_DICTIONARY_FILE_NAME = "dictionary.xml"
 /**
  * Stores a [LibraryDictionary] as a file in the local file system.
  *
- * @param directoryPath the path to the file system directory where the file is stored
+ * @param baseDirectoryProvider provides the path to the data base directory
+ * @param directoryName the name of the directory in [baseDirectoryProvider] containing [dictionaryFileName]
  * @param dictionaryFileName the name of the file
  */
 class FileLibraryDictionaryPersistenceService(
-	private val directoryPath: String,
-	dictionaryFileName: String = DEF_DICTIONARY_FILE_NAME
+	private val baseDirectoryProvider: () -> String,
+	private val directoryName: String,
+	private val dictionaryFileName: String = DEF_DICTIONARY_FILE_NAME
 ) : LibraryDictionaryPersistenceService {
 
 	companion object {
 		private val LOG by logger(FileLibraryDictionaryPersistenceService::class)
 	}
 
-	private val filePath: String = FileSystems.getDefault().getPath(directoryPath, dictionaryFileName).toString()
+	private val directoryPath: String get() = "${baseDirectoryProvider()}${FileSystems.getDefault().separator}$directoryName"
+
+	private val filePath: String get() = FileSystems.getDefault().getPath(directoryPath, dictionaryFileName).toString()
 
 	override fun load(): LibraryDictionary {
 		if (!Files.exists(Paths.get(directoryPath))) {

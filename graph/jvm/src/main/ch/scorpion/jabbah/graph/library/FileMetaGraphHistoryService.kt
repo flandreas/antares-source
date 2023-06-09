@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Workspace
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
@@ -14,7 +16,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.streams.toList
+import java.util.stream.Collectors
 
 /**
  * Service for creating and managing the save history of [MetaGraphs][MetaGraph].
@@ -77,11 +79,11 @@ data class MetaGraphHistory(
  *            yyyy-MM-dd-HH-mm-ss-xxx
  * </pre>
  *
- * @property dataPath the absolute path of the file system directory where the history data is stored
- * @property directoryName the name of the directory within [dataPath] holding the history files, e.g. "history"
+ * @property baseDirectoryProvider provides the path of the base data directory
+ * @property directoryName the name of the directory within the current [Workspace] holding the history files, e.g. "history"
  */
 class FileMetaGraphHistoryServiceImpl(
-	private val dataPath: String,
+	private val baseDirectoryProvider: () -> String,
 	private val directoryName: String = "history"
 ) : FileMetaGraphHistoryService {
 
@@ -90,7 +92,7 @@ class FileMetaGraphHistoryServiceImpl(
 		private val FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS")
 	}
 
-	private val historyDirectoryPath = FileSystems.getDefault().getPath(dataPath, directoryName)
+	private val historyDirectoryPath: Path get() = FileSystems.getDefault().getPath(baseDirectoryProvider(), directoryName)
 
 	/** ---- [FileMetaGraphHistoryService] */
 
@@ -115,15 +117,17 @@ class FileMetaGraphHistoryServiceImpl(
 			return emptyList()
 		}
 
-		return Files
+		val histories = Files
 			.list(metaGraphDirectoryPath)
-			.map { MetaGraphHistory(
-				it.fileName.toString(),
-				LocalDateTime.parse(it.fileName.toString(), FILE_NAME_FORMATTER) as LocalDateTime)
+			.map {
+				MetaGraphHistory(
+					it.fileName.toString(),
+					LocalDateTime.parse(it.fileName.toString(), FILE_NAME_FORMATTER) as LocalDateTime
+				)
 			}
-			.sorted()
-			.toList()
-			.reversed()
+			.collect(Collectors.toList())
+
+		return histories.sorted().reversed()
 	}
 
 	override fun getMetaGraph(library: Library, metaGraphUuid: UUID, history: MetaGraphHistory): MetaGraph {
@@ -148,15 +152,15 @@ class FileMetaGraphHistoryServiceImpl(
 	/** ---- [FileMetaGraphHistoryServiceImpl] */
 
 	private fun buildMetaGraphDirectoryPath(metaGraphUuid: UUID): Path =
-		FileSystems.getDefault().getPath(dataPath, directoryName, metaGraphUuid.id)
+		FileSystems.getDefault().getPath(AppModuleJvm.workspaceHolder.userDataDirectoryPath, directoryName, metaGraphUuid.id)
 
 	private fun buildMetaGraphWritePath(metaGraphUuid: UUID): Path {
 		val fileName = LocalDateTime.now().format(FILE_NAME_FORMATTER)
-		return FileSystems.getDefault().getPath(dataPath, directoryName, metaGraphUuid.id, fileName)
+		return FileSystems.getDefault().getPath(AppModuleJvm.workspaceHolder.userDataDirectoryPath, directoryName, metaGraphUuid.id, fileName)
 	}
 
 	private fun buildMetaGraphReadPath(metaGraphUuid: UUID, fileName: String): Path =
-		FileSystems.getDefault().getPath(dataPath, directoryName, metaGraphUuid.id, fileName)
+		FileSystems.getDefault().getPath(AppModuleJvm.workspaceHolder.userDataDirectoryPath, directoryName, metaGraphUuid.id, fileName)
 
 	private fun ensureDirectory(path: Path) {
 		if (!Files.exists(path)) {

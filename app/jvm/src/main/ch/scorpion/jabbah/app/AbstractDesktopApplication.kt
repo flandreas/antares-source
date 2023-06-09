@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -109,15 +110,6 @@ abstract class AbstractDesktopApplication(
 			return path
 		}
 
-		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
-			val path = if (commandLine.hasOption(USER_DATA_DIR_OPTION)) {
-				FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
-			} else {
-				determineAppDataDirectoryPath(commandLine, systemName)
-			}
-			return path
-		}
-
 		private fun determineEnvironment(commandLine: CommandLine): Environment {
 			if (!commandLine.hasOption(ENVIRONMENT_OPTION)) {
 				return Environment.Production
@@ -152,13 +144,11 @@ abstract class AbstractDesktopApplication(
 
 	override val appDataDirectoryPath: Path = determineAppDataDirectoryPath(commandLine, systemName)
 
-	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
-
 	init {
 		LOG.info("Starting $displayName version ${readVersion()}")
 		LOG.info("Using Java ${Runtime.version()}")
 		LOG.info(("Using app data directory $appDataDirectoryPath"))
-		LOG.info(("Using user data directory $userDataDirectoryPath"))
+
 		consumeCommandLine(commandLine)
 		loadSettings()
 	}
@@ -222,16 +212,29 @@ abstract class AbstractDesktopApplication(
 
 	/**
 	 * Called by this [AbstractDesktopApplication] after the options have been parsed.
-	 * This implementation does nothing. Subclasses can overwrite this method in order to consume and use
-	 * the provided [Options].
+	 * Subclasses can overwrite this method in order to consume and use the provided [Options].
 	 */
 	protected open fun consumeCommandLine(commandLine: CommandLine) {
+		consumeDeveloperOption(commandLine)
+		determineUserDataDirectoryPath(commandLine)
+	}
+
+	private fun consumeDeveloperOption(commandLine: CommandLine) {
 		EditAuthModule.userHolder = if (commandLine.hasOption(DEVELOPER_OPTION)) {
 			LOG.info("Running application in developer mode")
 			DesktopUserHolder(DesktopUser.developer)
 		} else {
 			DesktopUserHolder(DesktopUser.anybody)
 		}
+	}
+
+	private fun determineUserDataDirectoryPath(commandLine: CommandLine) {
+		val path = if (commandLine.hasOption(USER_DATA_DIR_OPTION)) {
+			FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
+		} else {
+			determineAppDataDirectoryPath(commandLine, systemName)
+		}
+		AppModuleJvm.workspaceHolder = WorkspaceHolder(Workspace(path))
 	}
 
 	private fun getSettingsPath(): Path =
@@ -245,15 +248,6 @@ abstract class AbstractDesktopApplication(
 		val path = appDataDirectoryPath
 		if (Files.notExists(path)) {
 			LOG.userTrail("Creating app data directory '$path'")
-			Files.createDirectories(path)
-		}
-	}
-
-	/** Ensures that the user's data directory for this application exists by creating it if it doesn't. */
-	private fun ensureUserDataDirectory() {
-		val path = userDataDirectoryPath
-		if (Files.notExists(path)) {
-			LOG.userTrail("Creating user data directory '$path'")
 			Files.createDirectories(path)
 		}
 	}

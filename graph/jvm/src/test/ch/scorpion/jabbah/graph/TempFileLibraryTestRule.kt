@@ -22,21 +22,18 @@ object TempFileLibraryTestRule {
 
 		LibraryModule.libraryFactory = EmptyLibraryFactory()
 
-		val systemLibDir = "${tempDir}/systemLibs"
-		LibraryModule.systemLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "systemLibs")
-		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(systemLibDir))
+		LibraryModule.systemLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "systemLibs")
+		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "systemLibs"))
 
-		val librariesDir = "${tempDir}/libraries"
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "libraries")
-		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(librariesDir))
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "libraries")
+		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "libraries"))
 
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
-		val projectsDir = "${tempDir}/projects"
-		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(tempDir.absolutePathString(), "projects")
+		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "projects")
 		ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService ) }
-		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(projectsDir))
+		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "projects"))
 		ProjectModule.projectManagementService = ProjectManagementService()
 	}
 

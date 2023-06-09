@@ -66,7 +66,6 @@ class AntaresSwing(
 		private const val PROP_APPLICATION_PROJECT = "application.project"
 
 		private const val SYSTEM_LIB_BASE_OPTION = "sl"
-		private const val FILE_STORE_BASE_OPTION = "fs"
 		private const val PROJECT_DIR_OPTION = "p"
 		private const val USER_LIBRARY_DIR_OPTION = "l"
 
@@ -79,13 +78,6 @@ class AntaresSwing(
 				.required(false)
 				.longOpt("syslibBase")
 				.desc("System library base location")
-				.hasArg()
-				.build())
-
-			options.addOption(Option.builder(FILE_STORE_BASE_OPTION)
-				.required(false)
-				.longOpt("fileStore")
-				.desc("File store base location")
 				.hasArg()
 				.build())
 
@@ -230,8 +222,6 @@ class AntaresSwing(
 	override var systemLibraryBasePath: String? = null
 		private set
 
-	override val fileStoreBasePath: String get() = customFileStoreBasePath ?: super.fileStoreBasePath
-
 	override val projectDirectoryName: String get() = customProjectDirectoryName ?: super.projectDirectoryName
 
 	override val userLibraryDirectoryName: String get() = customUserLibraryDirectoryName ?: super.userLibraryDirectoryName
@@ -275,9 +265,6 @@ class AntaresSwing(
 		if (commandLine.hasOption(SYSTEM_LIB_BASE_OPTION)) {
 			consumeSystemLibraryBasePath(commandLine.getOptionValue(SYSTEM_LIB_BASE_OPTION))
 		}
-		if (commandLine.hasOption(FILE_STORE_BASE_OPTION)) {
-			consumeFileStoreBasePath(commandLine.getOptionValue(FILE_STORE_BASE_OPTION))
-		}
 		if (commandLine.hasOption(PROJECT_DIR_OPTION)) {
 			consumeProjectDirectoryName(commandLine.getOptionValue(PROJECT_DIR_OPTION))
 		}
@@ -292,14 +279,6 @@ class AntaresSwing(
 			return
 		}
 		systemLibraryBasePath = path
-	}
-
-	private fun consumeFileStoreBasePath(path: String) {
-		if (Files.notExists(Paths.get(path))) {
-			println("FIle store base directory $path not found")
-			return
-		}
-		customFileStoreBasePath = path
 	}
 
 	private fun consumeProjectDirectoryName(name: String) {

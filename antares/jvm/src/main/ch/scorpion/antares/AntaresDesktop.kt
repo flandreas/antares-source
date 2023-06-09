@@ -37,8 +37,6 @@ interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
 	/** ---- [AntaresDesktop] */
 
-	val fileStoreBasePath: String get() = userDataDirectoryPath.toString()
-
 	val projectDirectoryName: String get() = DEFAULT_PROJECT_DIRECTORY
 
 	val userLibraryDirectoryName: String get() = DEFAULT_LIB_DIRECTORY

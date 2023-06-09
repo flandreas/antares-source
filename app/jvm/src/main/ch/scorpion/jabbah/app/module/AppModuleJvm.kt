@@ -14,6 +14,8 @@ object AppModuleJvm : AbstractModule() {
 	var applicationUsageService: ApplicationUsageService = RailwayAppUsageServiceImpl()
 	val ratingService: RatingService = RailwayRatingService()
 
+	lateinit var workspaceHolder: WorkspaceHolder
+
 	override fun initialize() {
 		EditModuleJvm.require()
 		AppModule.require()

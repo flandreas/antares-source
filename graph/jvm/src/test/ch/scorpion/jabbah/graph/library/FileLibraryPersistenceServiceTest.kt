@@ -25,7 +25,7 @@ class FileLibraryPersistenceServiceTest {
 	}
 
 	private val directory = Files.createTempDirectory(null)
-	private val persistenceService = FileLibraryPersistenceService(directory.parent.absolutePathString(), directory.name)
+	private val persistenceService = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
 
 	@BeforeTest
 	fun setup() {

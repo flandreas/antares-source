@@ -17,15 +17,15 @@ import java.util.zip.ZipOutputStream
 /**
  * Persists a [Library] in a user's local file system directory.
  *
- * @property dataPath the absolute path of the file system directory where the data is stored
- * @property directoryName the name of the directory within [dataPath] that holds the [Library] files (e.g. "libraries")
+ * @property baseDirectoryProvider provides the path of the base data directory
+ * @property directoryName the name of the directory within [baseDirectoryProvider] that holds the [Library] files (e.g. "libraries")
  * @property metaGraphFileExtension the file name extension of [MetaGraph] files
  * @property libraryFileName the name of the [Library] file
  * @property metaGraphHistoryService the optional [FileMetaGraphHistoryService] used for historizing saved [MetaGraph]s
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class FileLibraryPersistenceService(
-	private val dataPath: String,
+	private val baseDirectoryProvider: () -> String,
 	private val directoryName: String?,
 	private val metaGraphFileExtension: String = DEF_META_GRAPH_FILE_EXTENSION,
 	private val libraryFileName: String = DEF_LIBRARY_FILE_NAME,
@@ -157,6 +157,7 @@ class FileLibraryPersistenceService(
 
 	private fun getBaseName(): String {
 		val separator = FileSystems.getDefault().separator
+		val dataPath = baseDirectoryProvider()
 		return if (directoryName == null) {
 			dataPath
 		} else {
