@@ -99,19 +99,6 @@ class AnalogEdgeView(
 		}
 	}
 
-	/** Draws a small indicator for the begin Connection. Only used while developing. */
-	private fun drawBeginConnectionAnnotation(context: DrawContext) {
-		beginConnectionAnnotatePoint?.let {
-			context.g.color = ch.scorpion.jabbah.draw.graphics.Color.RED
-			context.g.fillCircle(it.x, it.y, 2.0)
-		}
-	}
-
-	private val beginConnectionAnnotatePoint get(): Point2D? =
-		getSegmentDirection(0)?.let { dir ->
-			polyline.getFirstPoint().add(8.0 * dir.dx, 8.0 * dir.dy)
-		}
-
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		current = 0.0

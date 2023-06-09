@@ -917,4 +917,17 @@ open class EdgeViewImpl<T : Any>(
 			Tooltip(text.build(), Rectangle2D.ZERO)
 		}
 	}
+
+	/** Draws a small indicator for the begin Connection. Only used while developing. */
+	protected fun drawBeginConnectionAnnotation(context: DrawContext) {
+		beginConnectionAnnotatePoint?.let {
+			context.g.color = ch.scorpion.jabbah.draw.graphics.Color.YELLOW
+			context.g.fillCircle(it.x, it.y, 2.0)
+		}
+	}
+
+	private val beginConnectionAnnotatePoint get(): Point2D? =
+		getSegmentDirection(0)?.let { dir ->
+			polyline.getFirstPoint().add(8.0 * dir.dx, 8.0 * dir.dy)
+		}
 }

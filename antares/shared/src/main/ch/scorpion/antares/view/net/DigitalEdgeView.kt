@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -100,6 +101,10 @@ class DigitalEdgeView(
 			context.castedAppContext<GraphApplicationContext>()!!.isExecute)
 
 		super.draw(context)
+
+		if (DrawModule.debugGfx && !graphAppContext.showNetState) {
+			drawBeginConnectionAnnotation(context)
+		}
 
 		context.color = oldCompositeColor
 		context.g.color = oldColor
