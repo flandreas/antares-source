@@ -43,27 +43,36 @@ abstract class AbstractDesktopApplication(
 		 */
 		private const val PROP_LOGFILE_PATH = "system.logFile"
 
+		/** The command line option for the user's data directory. */
+		private const val DIRECTORY_OPTION = "d"
+
+		/** The command line option for activating developers mode. */
+		private const val DEVELOPER_OPTION = "dev"
+
+		/** The command line option for specifying the [Environment] in which the application runs. */
+		private const val ENVIRONMENT_OPTION = "env"
+
 		const val SETTINGS_FILE_EXTENSION = "ini"
 
 		const val PREFERENCES_FILE_EXTENSION = "pref"
 
 		/** Defines the command line argument [Options] for this [DesktopApplication].*/
 		fun defineOptions(options: Options): Options {
-			options.addOption(Option.builder("d")
+			options.addOption(Option.builder(DIRECTORY_OPTION)
 				.required(false)
 				.longOpt("directory")
 				.desc("Home directory")
 				.hasArg()
 				.build())
 
-			options.addOption(Option.builder("dev")
+			options.addOption(Option.builder(DEVELOPER_OPTION)
 				.required(false)
 				.longOpt("developer")
 				.desc("Run in developer mode")
 				.hasArg(false)
 				.build())
 
-			options.addOption(Option.builder("env")
+			options.addOption(Option.builder(ENVIRONMENT_OPTION)
 				.required(false)
 				.longOpt("environment")
 				.desc("Run environment")
@@ -84,8 +93,8 @@ abstract class AbstractDesktopApplication(
 		}
 
 		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
-			val path = if (commandLine.hasOption("d")) {
-				FileSystems.getDefault().getPath(commandLine.getOptionValue("d"))
+			val path = if (commandLine.hasOption(DIRECTORY_OPTION)) {
+				FileSystems.getDefault().getPath(commandLine.getOptionValue(DIRECTORY_OPTION))
 			} else {
 				FileSystems.getDefault().getPath(getDefaultUserDataDirectory(), systemName)
 			}
@@ -96,11 +105,11 @@ abstract class AbstractDesktopApplication(
 		}
 
 		private fun determineEnvironment(commandLine: CommandLine): Environment {
-			if (!commandLine.hasOption("env")) {
+			if (!commandLine.hasOption(ENVIRONMENT_OPTION)) {
 				return Environment.Production
 			}
 			try {
-				return Environment.withName(commandLine.getOptionValue("env"))
+				return Environment.withName(commandLine.getOptionValue(ENVIRONMENT_OPTION))
 			} catch (e: IllegalArgumentException) {
 				System.err.println(e.message)
 				exitProcess(1)

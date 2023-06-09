@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -222,8 +223,6 @@ class AntaresSwing(
 
 	private var customFileStoreBasePath: String? = null
 
-	private var customProjectsDirectoryPath: String? = null
-
 	private var customProjectDirectoryName: String? = null
 
 	private var customUserLibraryDirectoryName: String? = null
@@ -264,10 +263,6 @@ class AntaresSwing(
 			LOG.value.info("Using system libraries in $systemLibraryBasePath")
 		}
 
-		customProjectsDirectoryPath?.let {
-			LOG.value.info("Using custom projects directory $customProjectsDirectoryPath")
-		}
-
 		DrawModuleJvm.contextMenuProvider.applicationName = displayName
 	}
 
@@ -305,14 +300,6 @@ class AntaresSwing(
 			return
 		}
 		customFileStoreBasePath = path
-	}
-
-	private fun consumeCustomProjectsDirectoryPath(path: String) {
-		if (Files.notExists(Paths.get(path))) {
-			println("Projects directory $path not found")
-			return
-		}
-		customProjectsDirectoryPath = path
 	}
 
 	private fun consumeProjectDirectoryName(name: String) {
