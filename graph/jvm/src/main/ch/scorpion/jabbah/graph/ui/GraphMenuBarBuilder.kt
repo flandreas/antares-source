@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.app.workspace.OpenWorkspaceAction
 import ch.scorpion.jabbah.app.action.AboutAction
 import ch.scorpion.jabbah.app.action.ExportLogfileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
@@ -69,6 +70,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(frame.application.controller.saveAction)))
 		menu.addSeparator()
 
+		menu.add(JMenuItem(ActionWrapperSwing(OpenWorkspaceAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.addSeparator()

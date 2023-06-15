@@ -119,18 +119,15 @@ abstract class AbstractLibraryManagementService(
 	}
 
 	protected fun closeImpl(additionalThenHandler: () -> Unit) {
-		if (libraryHolder.l != null) {
-			val project = libraryHolder.library
-			if (project != null) {
-				eventBus.postVetoable(
-					event = CloseLibraryRequest(),
-					undoEvent = OpenLibraryRequest(project),
-					thenHandler = {
-						libraryHolder.l = null
-						additionalThenHandler.invoke()
-					}
-				)
-			}
+		libraryHolder.l?.let { library ->
+			eventBus.postVetoable(
+				event = CloseLibraryRequest(),
+				undoEvent = OpenLibraryRequest(library),
+				thenHandler = {
+					libraryHolder.l = null
+					additionalThenHandler.invoke()
+				}
+			)
 		}
 	}
 

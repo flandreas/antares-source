@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.app.Workspace
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.UUID

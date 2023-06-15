@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus

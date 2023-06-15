@@ -14,7 +14,8 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.io.Storable
@@ -49,6 +50,7 @@ class GraphDataViewController(
 	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
 	private val libraryImportRemoveQuestionHandler: EventHandler<LibraryImportRemoveQuestion> = { handle(it) }
 	private val libraryImportRemovedHandler: EventHandler<LibraryImportRemovedEvent> = { handle(it) }
+	private val currentWorkspaceHandler: EventHandler<CurrentWorkspaceEvent> = { handle(it) }
 
 	init {
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
@@ -59,6 +61,7 @@ class GraphDataViewController(
 		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
 		eventBus.register(LibraryImportRemoveQuestion::class, libraryImportRemoveQuestionHandler)
 		eventBus.register(LibraryImportRemovedEvent::class, libraryImportRemovedHandler)
+		eventBus.register(CurrentWorkspaceEvent::class, currentWorkspaceHandler)
 	}
 
 	override fun dispose() {
@@ -71,6 +74,7 @@ class GraphDataViewController(
 		eventBus.unregister(closeRequestHandler)
 		eventBus.unregister(libraryImportRemoveQuestionHandler)
 		eventBus.unregister(libraryImportRemovedHandler)
+		eventBus.unregister(currentWorkspaceHandler)
 	}
 
 	override fun setUndoableState(state: Storable) {
@@ -163,5 +167,12 @@ class GraphDataViewController(
 		if (event.libraryId == (data?.savable as? AbstractLibraryItemSavable)?.item?.library?.uuid) {
 			closeDataAfterConfirmation()
 		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentWorkspaceEvent) {
+		if (!canReplaceSavable("application.workspace.dialog.title")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+		LibraryModule.libraryManagementService.close()
 	}
 }

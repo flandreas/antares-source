@@ -234,7 +234,7 @@ abstract class AbstractDesktopApplication(
 		} else {
 			determineAppDataDirectoryPath(commandLine, systemName)
 		}
-		AppModuleJvm.workspaceHolder = WorkspaceHolder(Workspace(path))
+		AppModuleJvm.workspaceHolder = WorkspaceHolder(Workspace(path.toAbsolutePath().toString()))
 	}
 
 	private fun getSettingsPath(): Path =
