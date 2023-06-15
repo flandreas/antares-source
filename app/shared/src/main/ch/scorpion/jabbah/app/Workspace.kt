@@ -35,10 +35,14 @@ class WorkspaceHolder(
 	var workspace: Workspace = workspace
 		set(value) {
 			if (field != value) {
-				field = value
-				writeLog()
-				eventBus.post(CurrentWorkspaceEvent(field))
-				settings.set(PROP_WORKSPACE, field.userDataDirectoryPath)
+				eventBus.postTwoPhase(
+					CurrentWorkspaceEvent(value, isPrepare = true),
+					CurrentWorkspaceEvent(value, isPrepare = false)
+				) {
+					field = value
+					writeLog()
+					settings.set(PROP_WORKSPACE, field.userDataDirectoryPath)
+				}
 			}
 		}
 
@@ -51,4 +55,7 @@ class WorkspaceHolder(
 	}
 }
 
-data class CurrentWorkspaceEvent(val workspace: Workspace)
+data class CurrentWorkspaceEvent(
+	val workspace: Workspace,
+	val isPrepare: Boolean
+)

@@ -25,7 +25,9 @@ class LibraryDictionaryService(
 	private val dictionary = resettableLazy { persistenceService.load() }
 
 	private val currentWorkspaceHandler: EventHandler<CurrentWorkspaceEvent> = {
-		dictionary.reset()
+		if (!it.isPrepare) {
+			dictionary.reset()
+		}
 	}
 
 	/** Determines whether the directory for storing the [LibraryDictionary] already exists.*/

@@ -39,7 +39,7 @@ interface EventBus {
     @Deprecated("Use postTwoPhase")
     fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<VetoException> = {})
 
-	fun postTwoPhase(prepareEvent: Any, execEvent: Any)
+	fun postTwoPhase(prepareEvent: Any, execEvent: Any, thenHandler: (() -> Unit)? = null)
 
 	fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit)
 
@@ -92,7 +92,7 @@ abstract class AbstractEventBus : EventBus {
         }
     }
 
-	override fun postTwoPhase(prepareEvent: Any, execEvent: Any) {
+	override fun postTwoPhase(prepareEvent: Any, execEvent: Any, thenHandler: (() -> Unit)?) {
 		try {
 			registrations[getEventClassName(prepareEvent)]?.forEach {
 				it.invoke(prepareEvent)
@@ -100,6 +100,7 @@ abstract class AbstractEventBus : EventBus {
 			registrations[getEventClassName(execEvent)]?.forEach {
 				it.invoke(execEvent)
 			}
+			thenHandler?.invoke()
 		} catch (e: VetoException) {
 			// do nothing, operation vetoed
 		}

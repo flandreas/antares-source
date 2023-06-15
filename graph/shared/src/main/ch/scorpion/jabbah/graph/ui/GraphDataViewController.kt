@@ -170,9 +170,14 @@ class GraphDataViewController(
 	}
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentWorkspaceEvent) {
-		if (!canReplaceSavable("application.workspace.dialog.title")) {
-			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		if (event.isPrepare) {
+			if (!canReplaceSavable("application.workspace.dialog.title")) {
+				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+			}
+			return
 		}
-		LibraryModule.libraryManagementService.close()
+		if (!event.isPrepare) {
+			LibraryModule.libraryManagementService.close()
+		}
 	}
 }
