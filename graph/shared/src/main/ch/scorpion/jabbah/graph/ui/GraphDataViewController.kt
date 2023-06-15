@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -178,6 +179,7 @@ class GraphDataViewController(
 		}
 		if (!event.isPrepare) {
 			LibraryModule.libraryManagementService.close()
+			Toast.show(Translations.getString("graph.workspace.msg"))
 		}
 	}
 }
