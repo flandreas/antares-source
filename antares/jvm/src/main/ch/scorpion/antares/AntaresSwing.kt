@@ -100,13 +100,13 @@ class AntaresSwing(
 
 		private fun prefetchPreferences(appDataDirectoryPath: Path): java.util.Properties {
 			val filePath = Paths.get(appDataDirectoryPath.toString(), "${AntaresApplication.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
-			val settings = java.util.Properties()
+			val properties = java.util.Properties()
 			if (Files.exists(filePath)) {
 				FileInputStream(filePath.toString()).use {
-					settings.load(it)
+					properties.load(it)
 				}
 			}
-			return settings
+			return properties
 		}
 
 		/**

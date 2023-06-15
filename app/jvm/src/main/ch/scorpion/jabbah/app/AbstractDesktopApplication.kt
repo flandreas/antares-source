@@ -232,7 +232,12 @@ abstract class AbstractDesktopApplication(
 		val path = if (commandLine.hasOption(USER_DATA_DIR_OPTION)) {
 			FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
 		} else {
-			determineAppDataDirectoryPath(commandLine, systemName)
+			loadSettings()
+			if (BaseModule.settings.containsKey(WorkspaceHolder.PROP_WORKSPACE)) {
+				Paths.get(BaseModule.settings.get(WorkspaceHolder.PROP_WORKSPACE))
+			} else {
+				determineAppDataDirectoryPath(commandLine, systemName)
+			}
 		}
 		AppModuleJvm.workspaceHolder = WorkspaceHolder(Workspace(path.toAbsolutePath().toString()))
 	}
