@@ -13,14 +13,14 @@ class DefinedWord(
 
 	companion object {
 
-		private val BIT_WIDTH_MASKS = mutableMapOf<BitWidth, ULong>()
+		private val BIT_WIDTH_MASKS = mutableMapOf<Int, ULong>()
 
 		init {
 			var mask = 0UL
 			var bit = 1UL
 			for (i in 1..BitWidth.MAX) {
 				mask += bit
-				BIT_WIDTH_MASKS[BitWidth.of(i)] = mask
+				BIT_WIDTH_MASKS[i] = mask
 				bit = bit.shl(1)
 			}
 		}
@@ -40,7 +40,7 @@ class DefinedWord(
 		fun random(bitWidth: BitWidth): DefinedWord = DefinedWord(bitWidth, kotlin.random.Random.nextULong())
 	}
 
-	val longValue: ULong = longValue.and(BIT_WIDTH_MASKS[bitWidth]!!)
+	val longValue: ULong = longValue.and(BIT_WIDTH_MASKS[bitWidth.width]!!)
 
 	/** ---- [Any] */
 
