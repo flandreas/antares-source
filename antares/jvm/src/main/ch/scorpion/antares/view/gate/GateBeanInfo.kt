@@ -32,16 +32,7 @@ class AndGateViewBeanInfo : AbstractAndLikeGateViewBeanInfo<AndGateView>() {
 	}
 }
 
-@Suppress("unused")
-class BufferGateViewBeanInfo : DigitalComponentViewBeanInfo<BufferGateView>() {
-	companion object {
-		private val bitWidth = AntaresProperties.bitWidth()
-	}
-	override fun addProperties(bean: BufferGateView, editor: Editor, properties: MutableList<Property>) {
-		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
-	}
-}
+class BufferGateViewBeanInfo : AbstractLogicGateViewBeanInfo<BufferGateView>()
 
 @Suppress("unused")
 class DelayGateViewBeanInfo : AbstractComponentBeanInfo<DelayGateView>() {
@@ -67,15 +58,7 @@ class NandGateViewBeanInfo : AbstractAndLikeGateViewBeanInfo<NandGateView>()
 class NorGateViewBeanInfo : AbstractOrLikeGateViewBeanInfo<NorGateView>()
 
 @Suppress("unused")
-class NotGateViewBeanInfo : DigitalComponentViewBeanInfo<NotGateView>() {
-	companion object {
-		private val bitWidth = AntaresProperties.bitWidth()
-	}
-	override fun addProperties(bean: NotGateView, editor: Editor, properties: MutableList<Property>) {
-		super.addProperties(bean, editor, properties)
-		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
-	}
-}
+class NotGateViewBeanInfo : AbstractLogicGateViewBeanInfo<NotGateView>()
 
 @Suppress("unused")
 class OrGateViewBeanInfo : AbstractOrLikeGateViewBeanInfo<OrGateView>()

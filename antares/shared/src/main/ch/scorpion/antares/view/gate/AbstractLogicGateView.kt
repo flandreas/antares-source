@@ -23,7 +23,7 @@ abstract class AbstractLogicGateView<T: AbstractDigitalGate>(
 	}
 
 	private val explanation = resettableLazy {
-		if (model.inputCount == 2) {
+		if (model.inputCount <= 2) {
 			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
 			DrawableExplanation(truthTableView, boundingBox)
 		} else null

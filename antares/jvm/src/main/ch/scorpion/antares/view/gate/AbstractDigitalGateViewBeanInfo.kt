@@ -25,7 +25,9 @@ open class AbstractDigitalGateViewBeanInfo<T : AbstractDigitalGateView<*>> : Box
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(inputCount.bind(editor, beanIdProvider(bean.id), editable = true, filter = { it.ordinal >= 2 }))
+	    if (bean.model.maxInputCount.count > 1) {
+	        properties.add(inputCount.bind(editor, beanIdProvider(bean.id), editable = true, filter = { it.ordinal >= 2 }))
+	    }
 	    properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(outputPortName.bind(editor, beanIdProvider(bean.id)))
 

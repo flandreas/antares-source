@@ -73,7 +73,9 @@ fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<DigitalSignal
 abstract class AbstractDigitalGate(
 	calculator: AbstractDigitalGateCalculator,
 	inputCount: PortCount,
-	bitWidth: BitWidth = BitWidth.BW_1
+	bitWidth: BitWidth = BitWidth.BW_1,
+	val minInputCount: PortCount = DEF_MIN_INPUT_COUNT,
+	val maxInputCount: PortCount = DEF_MAX_INPUT_COUNT
 ) : CalculatingVertice(calculator), MultiSignalSource<DigitalSignal> {
 
     companion object {
@@ -121,7 +123,9 @@ abstract class AbstractDigitalGate(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeInt("inputCount", chosenInputCount.count)
+	    if (chosenInputCount.count > 1) {
+		    writer.writeInt("inputCount", chosenInputCount.count)
+	    }
         if (StringUtils.isNotEmpty(getOutput<DigitalSignal>().name)) {
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
@@ -133,7 +137,10 @@ abstract class AbstractDigitalGate(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-	    setupInputCount(PortCount.of(reader.readInt("inputCount")))
+	    if (reader.hasAttribute("inputCount")) {
+			// Backward compatibility: NotGate was stored without inputCount
+		    setupInputCount(PortCount.of(reader.readInt("inputCount")))
+	    }
         if (reader.hasAttribute("outputName")) {
             getOutput<DigitalSignal>().name = reader.readString("outputName")
         }
@@ -164,10 +171,6 @@ abstract class AbstractDigitalGate(
     }
 
     /** ---- [AbstractDigitalGate] */
-
-    open val minInputCount: PortCount get() = DEF_MIN_INPUT_COUNT
-
-    open val maxInputCount: PortCount get() = DEF_MAX_INPUT_COUNT
 
 	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput(logic = Logic.POSITIVE, name = null, bitWidth = bitWidth)
 

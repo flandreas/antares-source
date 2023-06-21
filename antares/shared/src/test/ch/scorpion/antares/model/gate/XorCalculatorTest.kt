@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
@@ -14,12 +13,6 @@ import kotlin.test.assertTrue
 
 /** Unit tests for [XorCalculator]. */
 class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	@Test
 	fun shouldFulfillTruthTable() {

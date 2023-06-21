@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DefinedWord
@@ -11,12 +10,6 @@ import kotlin.test.assertEquals
 
 /** Unit tests for [AndCalculator]. */
 class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
-
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
-    }
 
 	@Test
 	fun shouldFulfillTruthTable() {
