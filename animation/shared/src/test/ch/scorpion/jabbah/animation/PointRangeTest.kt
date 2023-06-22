@@ -23,7 +23,7 @@ class PointRangeTest {
 		assertEquals(Point2D(0, 1), range.getNext(1.0))
 		assertEquals(Point2D(0, 2), range.getNext(1.0))
 		assertEquals(Point2D(0, 3), range.getNext(1.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -35,7 +35,7 @@ class PointRangeTest {
 		assertEquals(Point2D(0, -1), range.getNext(1.0))
 		assertEquals(Point2D(0, -2), range.getNext(1.0))
 		assertEquals(Point2D(0, -3), range.getNext(1.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -44,9 +44,8 @@ class PointRangeTest {
 
 		assertEquals(0.0, range.size)
 		assertEquals(Point2D(10, 10), range.getCurrent())
-		assertTrue(range.hasNext())
 		assertEquals(Point2D(10, 10), range.getNext(1.09))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -67,7 +66,7 @@ class PointRangeTest {
 		assertEquals(Point2D(3, 0), range.getNext(3.0))
 		assertEquals(Point2D(6, 0), range.getNext(3.0))
 		assertEquals(Point2D(9, 0), range.getNext(3.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -77,7 +76,7 @@ class PointRangeTest {
 		assertEquals(Point2D(0, 0), range.getNext(5.0))
 		assertEquals(Point2D(5, 0), range.getNext(5.0))
 		assertEquals(Point2D(10, 0), range.getNext(5.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test

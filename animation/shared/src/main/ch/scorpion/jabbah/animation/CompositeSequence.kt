@@ -11,24 +11,19 @@ open class CompositeSequence<out T : Any>(vararg sequences: Sequence<T>) : Seque
 
     /** ---- [Sequence] interface */
 
-    override val size: Double get() = sequences.map { it.size }.sum()
+    override val size: Double get() = sequences.sumOf { it.size }
 
-    override fun hasNext(): Boolean {
-        return sequences[currentSequenceIndex].hasNext() || currentSequenceIndex < sequences.size - 1
+    override fun getNext(distance: Double): T? {
+		val next = sequences[currentSequenceIndex].getNext(distance)
+	    if (next != null) {
+			return next
+	    }
+	    if (currentSequenceIndex < sequences.size - 1) {
+		    currentSequenceIndex++
+		    return sequences[currentSequenceIndex].getNext(distance)
+	    }
+	    return null
     }
 
-    override fun getNext(distance: Double): T {
-        if (sequences[currentSequenceIndex].hasNext()) {
-			return sequences[currentSequenceIndex].getNext(distance)
-		}
-		if (currentSequenceIndex < sequences.size - 1) {
-			currentSequenceIndex++
-			return sequences[currentSequenceIndex].getNext(distance)
-		}
-		throw NoSuchElementException()
-    }
-
-    override fun getCurrent(): T {
-        return sequences[currentSequenceIndex].getCurrent()
-    }
+    override fun getCurrent(): T? = sequences[currentSequenceIndex].getCurrent()
 }

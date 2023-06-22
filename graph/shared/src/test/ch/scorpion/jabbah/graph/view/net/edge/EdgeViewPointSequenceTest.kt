@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.assertNull
 
 /**
  * Unit tests for [EdgeViewPointSequence].
@@ -59,7 +59,7 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(7, 0), sequence.getNext(7.0))
 		// Don't return end segment point, leave reminder to next segment
 		assertEquals(Point2D(10, 4), sequence.getNext(7.0))
-		assertFalse(sequence.hasNext())
+		assertNull(sequence.getNext(7.0))
 	}
 
 	@Test
@@ -72,7 +72,7 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(0, 0), sequence.getNext(8.0))
 		assertEquals(Point2D(8, 0), sequence.getNext(8.0))
 		assertEquals(Point2D(10, 6), sequence.getNext(8.0))
-		assertFalse(sequence.hasNext())
+		assertNull(sequence.getNext(8.0))
 	}
 
 	@Test
@@ -104,6 +104,20 @@ class EdgeViewPointSequenceTest {
 			Point2D(9.0, 10.0),
 			Point2D(1.0, 10.0),
 		))
+	}
+
+	/** Regression test for bug #583. */
+	@Test
+	fun shouldHandleDistanceLargerThanLastSegment() {
+		val sequence = createSequence(
+			listOf(Point2D(105, 77), Point2D(126, 77), Point2D(126, 49), Point2D(147, 49)),
+			returnSequenceEndpoints = false,
+			offset = 0.0
+		)
+		var next = sequence.getNext(42.14)
+		while (next != null) {
+			next = sequence.getNext(42.14)
+		}
 	}
 
 	private fun createSequence(

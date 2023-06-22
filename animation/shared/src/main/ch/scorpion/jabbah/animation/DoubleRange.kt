@@ -22,11 +22,9 @@ class DoubleRange(
 
 	override val size: Double = abs(begin - end)
 
-	override fun hasNext(): Boolean = value != null
-
-	override fun getNext(distance: Double): Double {
+	override fun getNext(distance: Double): Double? {
 		if (value == null) {
-			throw NoSuchElementException("distance")
+			return null
 		}
 		val result = value
 		calculateNext(distance)

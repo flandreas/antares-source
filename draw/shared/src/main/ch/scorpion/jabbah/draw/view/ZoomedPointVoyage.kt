@@ -49,27 +49,23 @@ class ZoomedPointVoyage(
 	private val isViewLocationRangeLead = abs(viewLocationRange.size) >= abs(zoomFactorRange.size)
 
 	private var value: ZoomedPointTranslation? = ZoomedPointTranslation(
-		destination.modelPoint, view.modelToView(destination.modelPoint), view.zoomFactor)
+		destination.modelPoint,
+		view.modelToView(destination.modelPoint),
+		view.zoomFactor)
 
 	override val size: Double = if (isViewLocationRangeLead) viewLocationRange.size else zoomFactorRange.size
 
-	override fun hasNext(): Boolean = size > 0 && value != null
-
-	override fun getNext(distance: Double): ZoomedPointTranslation {
-		if (value == null) {
-			throw NoSuchElementException()
+	override fun getNext(distance: Double): ZoomedPointTranslation? {
+		if (size <= 0 || value == null) {
+			return null
 		}
-		val next = value
 		value = calculateNext(distance)
-		return next!!
+		return value
 	}
 
 	override fun getCurrent(): ZoomedPointTranslation = value!!
 
 	private fun calculateNext(distance: Double): ZoomedPointTranslation? {
-		if (!viewLocationRange.hasNext() && !zoomFactorRange.hasNext()) {
-			return null
-		}
 		if (distance == 0.0) {
 			return value!!
 		}
@@ -83,17 +79,15 @@ class ZoomedPointVoyage(
 		val viewLocationDistance = fraction * viewLocationRange.size
 		val zoomFactorDistance = fraction * zoomFactorRange.size
 
-		val viewLocation = if (viewLocationRange.hasNext()) {
-			viewLocationRange.getNext(viewLocationDistance)
-		} else {
-			value!!.viewPoint
+		val nextViewLocation = viewLocationRange.getNext(viewLocationDistance)
+		val nextZoomFactor = zoomFactorRange.getNext(zoomFactorDistance)
+
+		if (nextViewLocation == null && nextZoomFactor == null) {
+			return null
 		}
 
-		val zoomFactor = if (zoomFactorRange.hasNext()) {
-			zoomFactorRange.getNext(zoomFactorDistance)
-		} else {
-			value!!.zoomFactor
-		}
+		val viewLocation = nextViewLocation ?: value!!.viewPoint
+		val zoomFactor = nextZoomFactor ?: value!!.zoomFactor
 
 		return ZoomedPointTranslation(value!!.modelPoint, viewLocation, zoomFactor)
 	}

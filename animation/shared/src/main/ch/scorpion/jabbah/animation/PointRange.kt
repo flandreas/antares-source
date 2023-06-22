@@ -21,7 +21,7 @@ class PointRange(
 	val end: Point2D,
 	private val returnEndPoint: Boolean = true,
 	initialOffset: Double? = null
-	) : Sequence<Point2D> {
+) : Sequence<Point2D> {
 
     private val _size: Double = begin.distance(end)
 
@@ -48,20 +48,23 @@ class PointRange(
 
     override val size: Double get() = _size
 
-    override fun hasNext(): Boolean = valueX != null && valueY != null
+    private fun hasNext(): Boolean = valueX != null && valueY != null
 
-    override fun getNext(distance: Double): Point2D {
+    override fun getNext(distance: Double): Point2D? {
 		val oldValueX = valueX
 	    val oldValueY = valueY
 
+	    if (!hasNext()) {
+			return null
+	    }
 	    getNextXY(distance)
 
 	    return Point2D(oldValueX!!, oldValueY!!)
     }
 
-    override fun getCurrent(): Point2D {
+    override fun getCurrent(): Point2D? {
         if (valueX == null || valueY == null) {
-            throw IllegalStateException("no current value")
+			return null
         }
         return Point2D(valueX!!, valueY!!)
     }
@@ -79,10 +82,6 @@ class PointRange(
 	}
 
 	private fun getNextXY(distance: Double) {
-		if (valueX == null || valueY == null) {
-			throw NoSuchElementException("distance")
-		}
-
 		calculateNextXY(distance)
 
 		valueX = nextX

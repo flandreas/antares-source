@@ -43,11 +43,7 @@ abstract class AbstractAnimationTask<T>(
     }
 
     override fun animate(distance: Double) {
-        if (!sequence.hasNext()) {
-            stop()
-        } else {
-            consumer.invoke(sequence.getNext(distance))
-        }
+		sequence.getNext(distance)?.let { consumer.invoke(it) } ?: stop()
     }
 
     override fun scheduled() {

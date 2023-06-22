@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.animation
 
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.*
 
 class DoubleRangeTest {
 
@@ -20,7 +17,7 @@ class DoubleRangeTest {
 		assertEquals(0.0, range.getNext(1.0))
 		assertEquals(1.0, range.getNext(1.0))
 		assertEquals(2.0, range.getNext(1.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -30,7 +27,7 @@ class DoubleRangeTest {
 		assertEquals(0.0, range.getNext(1.5))
 		assertEquals(1.5, range.getNext(1.5))
 		assertEquals(2.0, range.getNext(1.5))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -41,7 +38,7 @@ class DoubleRangeTest {
 		assertEquals(2.0, range.getNext(1.0))
 		assertEquals(1.0, range.getNext(1.0))
 		assertEquals(0.0, range.getNext(1.0))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 
 	@Test
@@ -52,6 +49,6 @@ class DoubleRangeTest {
 		assertEquals(2.0, range.getNext(1.5))
 		assertEquals(0.5, range.getNext(1.5))
 		assertEquals(0.0, range.getNext(1.5))
-		assertFalse(range.hasNext())
+		assertNull(range.getNext(1.0))
 	}
 }

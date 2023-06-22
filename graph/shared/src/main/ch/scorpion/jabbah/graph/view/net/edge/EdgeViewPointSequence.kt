@@ -29,19 +29,20 @@ class EdgeViewPointSequence(
 	/** Interpret the [size] as overall [EdgeView] size, because that determines the "speed" on the first segment.*/
 	override val size: Double = edgeView.calculateMaximumNetLength(isReverse)
 
-	override fun getCurrent(): Point2D = currPointRange.getCurrent()
+	override fun getCurrent(): Point2D? = currPointRange.getCurrent()
 
-	override fun hasNext(): Boolean = currPointRange.hasNext() || hasNextSegmentPoint()
-
-	override fun getNext(distance: Double): Point2D {
-		if (currPointRange.hasNext()) {
-			return currPointRange.getNext(distance)
+	override fun getNext(distance: Double): Point2D? {
+		var next = currPointRange.getNext(distance)
+		if (next != null) {
+			return next
 		}
-		if (hasNextSegmentPoint()) {
+
+		while (next == null && hasNextSegmentPoint()) {
 			nextSegment()
-			return currPointRange.getNext(distance)
+			next = currPointRange.getNext(distance)
 		}
-		throw NoSuchElementException()
+
+		return next
 	}
 
 	private fun nextSegment() {
@@ -55,12 +56,10 @@ class EdgeViewPointSequence(
 	/** ---- [EdgeViewPointSequence] sequencing API for avoiding [Point2D] instantiation */
 
 	fun forEach(distance: Double, handler: (x: Double, y: Double) -> Unit) {
-		while (hasNext()) {
-			if (currPointRange.hasNext()) {
-				currPointRange.forEach(distance, handler)
-			} else {
-				nextSegment()
-			}
+		var next = getNext(distance)
+		while (next != null) {
+			handler(next.x, next.y)
+			next = getNext(distance)
 		}
 	}
 
