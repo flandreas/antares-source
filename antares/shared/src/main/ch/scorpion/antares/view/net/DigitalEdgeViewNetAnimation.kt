@@ -120,11 +120,8 @@ class DigitalEdgeViewNetAnimation(
 
 		val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
 
-		val returnEndPoint = edgeView.getConnectionEndpointType(startConnectable)?.opposite?.let {
-			edgeView.getConnection(it)?.connectableView !is NodeView<*>
-		} ?: true
 		val offset: Double = predecessorInfo?.edgeViewPointSequence?.remainder ?: 0.0
-		val sequence = EdgeViewPointSequence(edgeView, isReverse, returnEndPoint, offset)
+		val sequence = EdgeViewPointSequence(edgeView, isReverse, true, offset)
 
 		val overallLength: Double = predecessorInfo?.overallLength ?: sequence.size
 		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0

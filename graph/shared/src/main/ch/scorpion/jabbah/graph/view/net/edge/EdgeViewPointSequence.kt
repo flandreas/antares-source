@@ -47,9 +47,8 @@ class EdgeViewPointSequence(
 
 	private fun nextSegment() {
 		nextSegmentPoint()
-		val returnEndPoint = !hasNextSegmentPoint() && returnSequenceEndPoint
 		currPointRange = createCurrentPointRange(
-			returnEndPoint = returnEndPoint,
+			returnEndPoint = returnSequenceEndPoint,
 			offset = currPointRange.remainder)
 	}
 

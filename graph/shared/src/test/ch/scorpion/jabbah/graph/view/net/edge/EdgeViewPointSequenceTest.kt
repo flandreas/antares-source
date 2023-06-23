@@ -110,14 +110,21 @@ class EdgeViewPointSequenceTest {
 	@Test
 	fun shouldHandleDistanceLargerThanLastSegment() {
 		val sequence = createSequence(
-			listOf(Point2D(105, 77), Point2D(126, 77), Point2D(126, 49), Point2D(147, 49)),
-			returnSequenceEndpoints = false,
+			listOf(
+				Point2D(105, 77),
+				Point2D(126, 77),
+				Point2D(126, 49),
+				Point2D(147, 49)
+			),
+			returnSequenceEndpoints = true,
 			offset = 0.0
 		)
-		var next = sequence.getNext(42.14)
-		while (next != null) {
-			next = sequence.getNext(42.14)
-		}
+		val distance = 50.0
+		assertEquals(Point2D(105, 77), sequence.getNext(distance))
+		assertEquals(Point2D(126, 77), sequence.getNext(distance))
+		assertEquals(Point2D(126, 49), sequence.getNext(distance))
+		assertEquals(Point2D(147, 49), sequence.getNext(distance))
+		assertNull(sequence.getNext(distance))
 	}
 
 	private fun createSequence(

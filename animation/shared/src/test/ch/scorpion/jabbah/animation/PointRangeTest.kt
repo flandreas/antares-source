@@ -101,4 +101,13 @@ class PointRangeTest {
 		}
 		assertEquals(3, index)
 	}
+
+	@Test
+	fun shouldReturnEndpointWithExceedingDistance() {
+		val range = PointRange(Point2D(0, 0), Point2D(10, 0), returnEndPoint = true)
+
+		assertEquals(Point2D(0, 0), range.getNext(20.0))
+		assertEquals(Point2D(10, 0), range.getNext(20.0))
+		assertNull(range.getNext(20.0))
+	}
 }
