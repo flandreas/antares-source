@@ -369,7 +369,7 @@ object GateMnemonic {
 
 		drawInverterOutput(gateView, context, foreground, background, signal, isExec)
 
-		val y = if (signal.isSet) s(4.0) else s(3.5)
+		val y = if (!isExec || signal.isSet) s(4.0) else s(3.5)
 		drawInverterInput(gateView, context, foreground, signal, signal, isExec, y)
 	}
 
