@@ -47,6 +47,12 @@ class LibraryTreeViewTransferHandler(
 		}
 	}
 
+	private data class LibraryDropLocation(
+		val directory: LibraryDirectory,
+		val index: Int? = null
+	)
+
+
 	/** ---- [TransferHandler] */
 
 	/**
@@ -65,9 +71,17 @@ class LibraryTreeViewTransferHandler(
 		if (item !is LibraryElement && item !is LibraryFolder) {
 			return false
 		}
-		return getLibraryDropLocation(support)?.let {
-			controller.allowMove(item, it.directory)
-		} ?: false
+
+		val libraryDropLocation = getLibraryDropLocation(support)
+			?: return false
+
+		// Avoid dropping at same index within same directory
+		val currentIndex = libraryDropLocation.directory.indexOf(item)
+		if (currentIndex > 0 && (libraryDropLocation.index == currentIndex || libraryDropLocation.index == currentIndex + 1 )) {
+			return false
+		}
+
+		return controller.allowMove(item, libraryDropLocation.directory)
 	}
 
 	override fun createTransferable(c: JComponent): Transferable? {
@@ -190,6 +204,4 @@ class LibraryTreeViewTransferHandler(
 
 		return null
 	}
-
-	private data class LibraryDropLocation(val directory: LibraryDirectory, val index: Int? = null)
 }
