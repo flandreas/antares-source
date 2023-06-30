@@ -4,19 +4,13 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.FloatPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.BufferedImageJvm
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
-import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
-import ch.scorpion.jabbah.draw.view.ContextMenuProvider
-import ch.scorpion.jabbah.draw.view.TooltipManager
-import ch.scorpion.jabbah.draw.view.ZoomPanController
+import ch.scorpion.jabbah.draw.view.*
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JPopupMenu
 
@@ -58,6 +52,7 @@ object DrawModuleJvm : AbstractModule() {
 
     private fun fillProperties(properties: Properties) {
         properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
+	    properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
@@ -115,5 +110,11 @@ object DrawModuleJvm : AbstractModule() {
 			nameKey = "draw.preference.TooltipManager.delay",
 			minValue = 100,
 			maxValue = 3000))
+
+		root.getGroup(PREF_TREE_VIEW).add(EnumPreference(
+			id = PanMethod.PROP_PAN_METHOD,
+			nameKey = "draw.preferences.panMethod",
+			values = PanMethod.values(),
+			withName = PanMethod::withName))
 	}
 }

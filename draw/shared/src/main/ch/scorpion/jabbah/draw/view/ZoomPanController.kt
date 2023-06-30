@@ -9,8 +9,8 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
 
 /**
- * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] by dragging with the
- * middle mouse button (or by making scroll gestures on the track pad while pressing ALT).
+ * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] using
+ * the [CurrentPanMethod] (or by making scroll gestures on the track pad while pressing ALT).
  */
 class ZoomPanController(
 	val view: View<*>,
@@ -55,7 +55,7 @@ class ZoomPanController(
 
 	private val mouseController = MouseController()
 
-	/** Controls switching between "Pan" and "Zoom" using the ALT key. */
+	/** Controls switching between "Pan" and "Zoom" according to the [CurrentPanMethod]. */
 	private val mouseWheelModeController = MouseWheelModeController()
 
 	private val autoPanning = AutoPanning(view)
@@ -113,9 +113,9 @@ class ZoomPanController(
 		private fun getPanVectorFromWheelRotation(e: MouseEvent): Point2D {
 			if (e.wheelRotation != 0) {
 				return if (e.isShiftDown) {
-					Point2D(e.wheelRotation * wheelPanStep, 0)
+					Point2D(-e.wheelRotation * wheelPanStep, 0)
 				} else {
-					Point2D(0, e.wheelRotation * wheelPanStep)
+					Point2D(0, -e.wheelRotation * wheelPanStep)
 				}
 			}
 			return Point2D.ZERO
@@ -125,7 +125,7 @@ class ZoomPanController(
 
 		override fun mousePressed(e: MouseEvent) {
 			isMousePressed = true
-			if (e.button != Button.BUTTON2) {
+			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
 				return
 			}
 			startPan(e.location)
@@ -135,7 +135,7 @@ class ZoomPanController(
 			if (e.isLeftButtonDown || e.isMiddleButtonDown) {
 				autoPanning.activate()
 			}
-			if (!e.isMiddleButtonDown) {
+			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
 				return
 			}
 			pan(e.location)
@@ -146,7 +146,7 @@ class ZoomPanController(
 			if (e.button != Button.BUTTON3) {
 				autoPanning.deactivate()
 			}
-			if (e.isMiddleButtonDown) {
+			if (CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
 				view.zoomStrategy = ZoomStrategy.NONE
 			}
 		}

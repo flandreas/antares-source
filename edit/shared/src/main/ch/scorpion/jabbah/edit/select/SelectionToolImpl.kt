@@ -1,16 +1,14 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.base.Status
-import ch.scorpion.jabbah.base.StatusType
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.view.CurrentPanMethod
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
@@ -35,11 +33,28 @@ class SelectionToolImpl(
 	/** Gateway to the tooltip system.*/
 	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
+	init {
+		eventBus.register(PreferencesChangedEvent::class) {
+			System.invokeLater {
+				updateStatus()
+			}
+		}
+	}
+
 	/** ---- [Tool] interface */
 
 	override fun activate() {
 		editor.view.setCursor(Cursor.DEFAULT)
-		Status.set(StatusType.Tool, Translations.getString("edit.tool.select.text"))
+		updateStatus()
+	}
+
+	private fun updateStatus() {
+		if (editor.currentTool === this) {
+			Status.set(
+				StatusType.Tool,
+				"${Translations.getString("edit.tool.select.zoom.text")}. ${CurrentPanMethod.panMethod.description}"
+			)
+		}
 	}
 
 	override fun keyPressed(e: KeyEvent) {
@@ -135,6 +150,10 @@ class SelectionToolImpl(
 	}
 
 	private fun selectionLogic(e: MouseEvent, x: Double, y: Double, allowRubberband: Boolean) {
+		if (CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
+			return
+		}
+
 		val component: Component? = editor.drawing.getDrawableAt(x, y)
 		if (component != null) {
 			val scope = mutableListOf(component)

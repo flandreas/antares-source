@@ -1,0 +1,65 @@
+package ch.scorpion.jabbah.draw.view
+
+import ch.scorpion.jabbah.base.EnumProperty
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.View
+
+/** The input method used by the user to pan a [View].*/
+enum class PanMethod(override val customName: String): EnumProperty<PanMethod> {
+
+	MiddleMouseButton("middleMouseButton") {
+		override val description: String
+			get() = Translations.getString("draw.panMethod.middleMouseButton.desc")
+
+		override fun isActivatedByPressed(event: MouseEvent): Boolean {
+			return event.isMiddleButtonDown
+		}
+	},
+
+	AltLeftMouseButton("altLeftMouseButton") {
+		override val description: String
+			get() = Translations.getString("draw.panMethod.altLeftMouseButton.desc")
+
+		override fun isActivatedByPressed(event: MouseEvent): Boolean {
+			return event.isLeftButtonDown && event.isAltDown
+		}
+	};
+
+	companion object {
+		const val PROP_PAN_METHOD = "draw.panMethod"
+
+		fun withName(customName: String): PanMethod =
+			values().firstOrNull { it.customName == customName }
+				?: throw IllegalArgumentException("unknown PanMethod '$customName'")
+	}
+
+	abstract val description: String
+
+	abstract fun isActivatedByPressed(event: MouseEvent): Boolean
+
+	override fun toString(): String =
+		when (this) {
+			MiddleMouseButton -> Translations.getString("draw.panMethod.middleMouseButton.name")
+			AltLeftMouseButton -> Translations.getString("draw.panMethod.altLeftMouseButton.name")
+		}
+}
+
+object CurrentPanMethod {
+
+	private val eventBus: EventBus = BaseModule.eventBus
+
+	var panMethod = panMethodFromProperties
+
+	init {
+		eventBus.register(PreferencesChangedEvent::class) {
+			panMethod = panMethodFromProperties
+		}
+	}
+
+	private val panMethodFromProperties: PanMethod get() =
+		PanMethod.withName(BaseModule.properties.getString(PanMethod.PROP_PAN_METHOD))
+}
