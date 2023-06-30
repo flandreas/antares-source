@@ -7,9 +7,9 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 
 /** A [UIView] for displaying and editing the properties of arbitrary objects.*/
 interface PropertyPanel : UIView {
@@ -75,7 +75,7 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 		// empty, can be implemented by subclasses
 	}
 
-	private fun updateTitle() {
+	protected open fun updateTitle() {
 		title = if (bean == null) {
 			Translations.getString("edit.property.bean.none")
 		} else {

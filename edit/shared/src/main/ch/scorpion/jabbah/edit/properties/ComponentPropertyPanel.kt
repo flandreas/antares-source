@@ -84,6 +84,18 @@ class ComponentPropertyPanelController(
 			super.getDefinedDescription(description)
 		}
 
+	override fun updateTitle() {
+		if (bean == null) {
+			if (editor.view.selectionManager.selectionCount > 0) {
+				title = Translations.getString("edit.property.bean.multiTooMany", maxMultiSelectCount)
+			} else {
+				super.updateTitle()
+			}
+		} else {
+			super.updateTitle()
+		}
+	}
+
 	/** ---- [ComponentPropertyPanelController] */
 
 	override fun handleBeanChangedHandler(oldValue: Any?) {
