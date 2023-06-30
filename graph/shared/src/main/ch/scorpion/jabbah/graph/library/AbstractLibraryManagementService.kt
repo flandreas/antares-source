@@ -59,6 +59,7 @@ abstract class AbstractLibraryManagementService(
 		lateinit var library: Library
 
 		try {
+			userDictionaryService.ensureLibraryDirectory()
 			library = libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
 		} catch (e: LibraryImportConflictException) {
 			if (replaceIfUuidExists) {

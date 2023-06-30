@@ -38,6 +38,8 @@ class ResourceLibraryDictionaryPersistenceService(
 
 	override val directoryExists: Boolean get() = true
 
+	override fun ensureLibraryDirectory() { }
+
 	private fun createInputStream(): InputStream =
 		ResourceLibraryDictionaryPersistenceService::class.java.getResourceAsStream(path)!!
 }

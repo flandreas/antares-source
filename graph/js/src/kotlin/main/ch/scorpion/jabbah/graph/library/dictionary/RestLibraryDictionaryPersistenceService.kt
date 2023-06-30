@@ -36,4 +36,8 @@ class RestLibraryDictionaryPersistenceService(
 	override fun store(dictionary: LibraryDictionary) {
 		throw UnsupportedOperationException("not implemented")
 	}
+
+	override fun ensureLibraryDirectory() {
+		throw UnsupportedOperationException("not implemented")
+	}
 }

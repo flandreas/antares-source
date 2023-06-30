@@ -81,7 +81,7 @@ class FileLibraryDictionaryPersistenceService(
 		}
 	}
 
-	private fun ensureLibraryDirectory() {
+	override fun ensureLibraryDirectory() {
 		if (!directoryExists) {
 			Files.createDirectory(Paths.get(directoryPath))
 		}

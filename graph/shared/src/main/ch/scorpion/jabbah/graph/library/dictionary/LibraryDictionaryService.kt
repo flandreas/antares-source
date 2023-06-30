@@ -43,6 +43,10 @@ class LibraryDictionaryService(
 		eventBus.unregister(currentWorkspaceHandler)
 	}
 
+	fun ensureLibraryDirectory() {
+		persistenceService.ensureLibraryDirectory()
+	}
+
 	fun existsName(name: TranslatableText, except: UUID? = null): Boolean = dictionary.value.existsName(name, except)
 
 	fun contains(uuid: UUID): Boolean = dictionary.value.contains(uuid)
