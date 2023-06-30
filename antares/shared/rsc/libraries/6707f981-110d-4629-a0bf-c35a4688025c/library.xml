@@ -104,6 +104,7 @@
           </name>
           <items>
             <baseLibraryElement _id='45' id='Input' type='digital'/>
+            <baseLibraryElement _id='137' id='InputOutput' type='digital'/>
             <baseLibraryElement _id='46' id='Switch' type='digital'/>
             <baseLibraryElement _id='47' id='DipSwitch' type='digital'/>
             <baseLibraryElement _id='48' id='Clock' type='digital'/>
@@ -118,6 +119,7 @@
           </name>
           <items>
             <baseLibraryElement _id='52' id='Output' type='digital'/>
+            <baseLibraryElement _id='138' id='OutputInput' type='digital'/>
             <baseLibraryElement _id='53' id='LED' type='digital'/>
             <baseLibraryElement _id='54' id='RgbLED' type='digital'/>
             <baseLibraryElement _id='55' id='SevenSegmentDisplay' type='digital'/>

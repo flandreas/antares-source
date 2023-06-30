@@ -45,6 +45,7 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
@@ -124,6 +125,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val DELAY = "Delay"
 
 	private const val INPUT = "Input"
+	private const val INPUT_OUTPUT = "InputOutput"
 	private const val SWITCH = "Switch"
 	private const val DIP_SWITCH = "DipSwitch"
 	private const val CLOCK = "Clock"
@@ -135,6 +137,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val DOUBLE_THROW_SWITCH = "DoubleThrowSwitch"
 
 	private const val OUTPUT = "Output"
+	private const val OUTPUT_INPUT = "OutputInput"
 	private const val LED = "LED"
 	private const val RGB_LED = "RgbLED"
 	private const val SEVEN_SEGMENT_DISPLAY = "SevenSegmentDisplay"
@@ -569,6 +572,11 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
 			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT))
 		}
+		repository.register(INPUT_OUTPUT, "library.element.GraphInOut", { "/img/inout.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
+			val inoutView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT))
+			inoutView.orientation = Direction.WEST
+			inoutView
+		}
 
 		repository.register(SWITCH, "library.element.Toggle", { "/img/switch.png" }, SwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", { "/img/dip-switch.png" }, DipSwitchView::class)
@@ -578,6 +586,11 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/videoram.png" }, VideoRamView::class)
 		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
 			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT))
+		}
+		repository.register(OUTPUT_INPUT, "library.element.GraphInOut", { "/img/inout.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
+			val inoutView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT))
+			inoutView.orientation = Direction.EAST
+			inoutView
 		}
 		repository.register(JOYSTICK, "library.element.Joystick", { "/img/joystick.png" }, JoystickView::class)
 		repository.register(REAL_SWITCH, "library.element.RealSwitch", { "/img/real-switch.png" }, RealSwitchView::class)
@@ -664,6 +677,7 @@ object AntaresViewModule : AbstractModule() {
 
 		val input = LibraryFolder(Translations.getString("library.folder.input"))
 		addLibraryItem(library, BaseLibraryElement(Digital, INPUT), input)
+		addLibraryItem(library, BaseLibraryElement(Digital, INPUT_OUTPUT), input)
 		addLibraryItem(library, BaseLibraryElement(Digital, SWITCH), input)
 		addLibraryItem(library, BaseLibraryElement(Digital, DIP_SWITCH), input)
 		addLibraryItem(library, BaseLibraryElement(Digital, CLOCK), input)
@@ -673,6 +687,7 @@ object AntaresViewModule : AbstractModule() {
 
 		val output = LibraryFolder(Translations.getString("library.folder.output"))
 		addLibraryItem(library, BaseLibraryElement(Digital, OUTPUT), output)
+		addLibraryItem(library, BaseLibraryElement(Digital, OUTPUT_INPUT), output)
 		addLibraryItem(library, BaseLibraryElement(Digital, LED), output)
 		addLibraryItem(library, BaseLibraryElement(Digital, RGB_LED), output)
 		addLibraryItem(library, BaseLibraryElement(Digital, SEVEN_SEGMENT_DISPLAY), output)

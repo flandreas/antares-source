@@ -74,6 +74,7 @@
           </name>
           <items>
             <baseLibraryElement _id='23' id='Input'/>
+            <baseLibraryElement _id='72' id='InputOutput'/>
             <baseLibraryElement _id='20' id='Switch'/>
             <baseLibraryElement _id='21' id='DipSwitch'/>
             <baseLibraryElement _id='22' id='Clock'/>
@@ -88,6 +89,7 @@
           </name>
           <items>
             <baseLibraryElement _id='29' id='Output'/>
+            <baseLibraryElement _id='73' id='OutputInput'/>
             <baseLibraryElement _id='25' id='LED'/>
             <baseLibraryElement _id='26' id='RgbLED'/>
             <baseLibraryElement _id='27' id='SevenSegmentDisplay'/>
