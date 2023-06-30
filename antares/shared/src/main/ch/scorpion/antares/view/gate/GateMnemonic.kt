@@ -110,11 +110,11 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawBuffer(gateView: BufferGateView, context: DrawContext, foreground: Color) {
+	fun drawBuffer(gateView: BufferGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
-		drawBufferImpl(gateView, context, foreground)
+		drawBufferImpl(gateView, context, foreground, background)
 		end(gateView, context)
 	}
 
@@ -355,23 +355,36 @@ object GateMnemonic {
 		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 		val signal = if (passive) Bit.True else signalOut.not()
 
-		val yu = s(3.0)
+		drawInverterOutput(gateView, context, foreground, background, signalOut, isExec)
 
-		// Internal connection
-		context.g.font = FONT
-		context.g.stroke = LINE_STROKE
-		// Segment 1
-		context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
-		context.g.drawLine(s(1.0), s(4.0), s(2.25), s(4.0))
-		drawSource(gateView, context, isExec, foreground, background)
-		// Segment 2
-		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
-		context.g.drawLine(s(3.25), s(4.0), s(6.0), s(4.0))
-
-		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
 		val y = if (signal.isSet) s(4.5) else s(4.0)
+		drawInverterInput(gateView, context, foreground, signal, signalOut, isExec, y)
+	}
 
-		// Input
+	private fun drawBufferImpl(gateView: BufferGateView, context: DrawContext, foreground: Color, background: Color) {
+		val passive = gateView.bitWidth.width > 1
+		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
+
+		val signal = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+
+		drawInverterOutput(gateView, context, foreground, background, signal, isExec)
+
+		val y = if (signal.isSet) s(4.0) else s(3.5)
+		drawInverterInput(gateView, context, foreground, signal, signal, isExec, y)
+	}
+
+	private fun drawInverterInput(
+		gateView: AbstractLogicGateView<*>,
+		context: DrawContext,
+		foreground: Color,
+		signal: Bit,
+		signalOut: Bit,
+		isExec: Boolean,
+		y: Double
+	) {
+		val yu = s(3.0)
+		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
+
 		context.g.stroke = LINE_STROKE
 		context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
 		context.g.drawLine(portX, s(4.0), s(0.5), s(4.0))
@@ -383,15 +396,23 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y, s(3.25) - 1, y)
 	}
 
-	private fun drawBufferImpl(gateView: BufferGateView, context: DrawContext, foreground: Color) {
-		val passive = gateView.bitWidth.width > 1
-		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
-
-		val signalOut = if (passive) Bit.False else gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
-		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
+	private fun drawInverterOutput(
+		gateView: AbstractLogicGateView<*>,
+		context: DrawContext,
+		foreground: Color,
+		background: Color,
+		signalOut: Bit,
+		isExec: Boolean
+	) {
+		context.g.font = FONT
 		context.g.stroke = LINE_STROKE
+		// Segment 1
+		context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
+		context.g.drawLine(s(1.0), s(4.0), s(2.25), s(4.0))
+		drawSource(gateView, context, isExec, foreground, background)
+		// Segment 2
 		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
-		context.g.drawLine(portX, s(4.0), s(6.0), s(4.0))
+		context.g.drawLine(s(3.25), s(4.0), s(6.0), s(4.0))
 	}
 
 	private fun drawTriStateRight(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {

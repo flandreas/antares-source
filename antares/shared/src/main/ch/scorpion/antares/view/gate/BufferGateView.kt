@@ -26,6 +26,6 @@ class BufferGateView(
     }
 
 	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		GateMnemonic.drawBuffer(this, context, foregroundColor)
+		GateMnemonic.drawBuffer(this, context, foregroundColor, backgroundColor)
 	}
 }
