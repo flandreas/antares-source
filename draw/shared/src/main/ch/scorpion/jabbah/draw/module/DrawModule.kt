@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.module
 
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.PanMethod
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw] package.
@@ -47,7 +49,13 @@ object DrawModule : AbstractModule() {
         DrawStyleModule.require()
         DrawViewModule.require()
         AnimationModule.require()
+
+	    fillProperties(properties)
     }
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)
+	}
 
 	fun drawDebugBoundingBox(drawable: Drawable, g: Graphics2D, color : Color = DEBUG_BBOX_COLOR) {
 		if (debugGfx) {

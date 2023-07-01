@@ -52,7 +52,6 @@ object DrawModuleJvm : AbstractModule() {
 
     private fun fillProperties(properties: Properties) {
         properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
-	    properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
