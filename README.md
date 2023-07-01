@@ -86,6 +86,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 
 * Create a new release in the github project, e.g. "Release 0.3.0"
 * Upload the three installers as attachments to the release
+* Upload antares-x.y.z-all-jar as attachment to the release
 * Upload the example projects (zip) as attachments to the release
     * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
@@ -106,10 +107,10 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 * Reference the new release page in `index.md`
 * New blog page with release announcement
 
-Commit, push and tag the website repo with release version (e.g. "v0.4.0"). After that, the "Release
-" on the
- GitHub project can be released using the committed tag.
- 
+Build the website locally using `bundle exec jekyll serve` and test it by browsing http://127.0.0.1:4000/.
+
+Commit, push and tag the website repo with release version (e.g. "v0.4.0"). After that, the "Release" on the GitHub project can be released using the committed tag.
+
 ### Deployment test
 
 Delete your local release, download the new release from the website, download a sample project
