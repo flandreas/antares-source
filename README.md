@@ -42,8 +42,10 @@ Tag the release and push it to the remote repository:
 
 - On a macOS machine
   - `gradlew clean :antares:distributeMac`
-  - Wait for notarization success mail from Apple (or check manually using `xcrun altool 
-    --notarization-info`)
+  - Wait for notarization success mail from Apple (or check manually using `xcrun notarytool 
+    info --apple-id xxx --team-id xxx --password xxx SUBMISSION_ID`)
+  - Optional: Fetch notary log using `xcrun notarytool log --apple-id xxx --team-id xxx 
+    --password xxx SUBMISSION_ID`
   - `gradlew stapleMacNotarization`
   - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
   - Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and

@@ -15,6 +15,7 @@ val win_jpackage_home: String by extra
 // Used for notarizing macOS package. The user name is Andreas' Apple ID for Antares, the password
 // is an "Application Specific Password" defined in the Apple Account.
 val appleNotarizationUser: String by extra
+val appleNotarizationTeamId: String by extra
 val appleNotarizationPassword: String by extra
 
 repositories {
@@ -212,12 +213,13 @@ tasks {
 		exec {
 			workingDir = projectDir
 			commandLine(
-				"xcrun", "altool",
-				"--notarize-app",
-				"--primary-bundle-id", "io.antarescircuit.Antares.$version_project",
-				"--username", appleNotarizationUser,
+				"xcrun", "notarytool",
+				"submit",
+				"--wait",
+				"--apple-id", appleNotarizationUser,
+				"--team-id", appleNotarizationTeamId,
 				"--password", appleNotarizationPassword,
-				"--file", "${buildDir}/distributions/Antares-$version_project.dmg"
+				"${buildDir}/distributions/Antares-$version_project.dmg"
 			)
 		}
 	}
@@ -227,7 +229,7 @@ tasks {
 	 * Wait for notarization success confirmation mail from Apple and execute this task manually.
 	 *
 	 * Alternative notarization status check:
-	 * xcrun altool --verbose --notarization-info [ID] --username appleNotarizationUser --password appleNotarizationPassword
+	 * xcrun notarytool info --apple-id appleNotarizationUser --team-id appleNotarizationTeamId --password appleNotarizationPassword [ID]
 	 */
 	val stapleMacNotarization by creating(Exec::class) {
 		workingDir = projectDir
