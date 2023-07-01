@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.internal.os.OperatingSystem
 
 buildscript {
+	repositories {
+		mavenCentral()
+	}
 	dependencies {
 		classpath("com.guardsquare:proguard-gradle:7.2.1")
 	}
