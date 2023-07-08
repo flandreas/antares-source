@@ -140,7 +140,7 @@ abstract class AbstractDesktopApplication(
 	@Suppress("PrivatePropertyName")
 	private val LOG by logger(AbstractDesktopApplication::class)
 
-	private val logfileName: String get() = calculateLogfileName(systemName)
+	override val logFileName: String get() = calculateLogfileName(systemName)
 
 	override val appDataDirectoryPath: Path = determineAppDataDirectoryPath(commandLine, systemName)
 
@@ -183,7 +183,7 @@ abstract class AbstractDesktopApplication(
 		LOG.userTrail("Exporting log file to $destinationPath")
 		FileOutputStream(destinationPath).use { output ->
 			ZipOutputStream(output).use {
-				val fileToZip = File(Paths.get(appDataDirectoryPath.toAbsolutePath().toString(), logfileName).toUri())
+				val fileToZip = File(Paths.get(appDataDirectoryPath.toAbsolutePath().toString(), logFileName).toUri())
 				ZipUtil.zipFile(fileToZip, fileToZip.name, it)
 			}
 		}

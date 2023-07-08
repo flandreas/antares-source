@@ -18,6 +18,9 @@ interface DesktopApplication : Application {
 	/** The [Path] to the directory where this [DesktopApplication] stores config and log files.*/
 	val appDataDirectoryPath: Path
 
+	/** The name of the [Application]'s log file. */
+	val logFileName: String
+
 	/** The [Environment] in which this [DesktopApplication] runs. */
 	val environment: Environment get() = Environment.Production
 

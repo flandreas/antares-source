@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.dump.SystemMalfunctionHandler
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.app.rating.RatingPanel
 import ch.scorpion.jabbah.app.rating.RatingService
@@ -69,6 +70,7 @@ abstract class AbstractDesktopApplicationSwing(
 		super.init()
 
 		registerApplicationUsage()
+		SystemMalfunctionHandler.initialize(this)
 
 		ApplicationDataViewSwing(controller, fileExtension, displayName)
 

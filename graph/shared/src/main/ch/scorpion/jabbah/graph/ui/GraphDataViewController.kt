@@ -105,7 +105,7 @@ class GraphDataViewController(
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
 		try {
-			LOG.info("Open '${element.name.value}'")
+			LOG.info("Open '${element.name.value}' ${element.uuid.id}")
 			view.registerKeepAliveUsage()
 
 			open {

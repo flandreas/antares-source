@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.app.module
 
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.dump.SystemDumpService
 import ch.scorpion.jabbah.app.rating.RailwayRatingService
 import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.app.workspace.WorkspaceService
@@ -14,6 +15,7 @@ object AppModuleJvm : AbstractModule() {
 	var applicationVersionService: ApplicationVersionService = ApplicationVersionServiceImpl()
 	var applicationUsageService: ApplicationUsageService = RailwayAppUsageServiceImpl()
 	val ratingService: RatingService = RailwayRatingService()
+	var systemDumpService: SystemDumpService = SystemDumpService()
 
 	lateinit var workspaceHolder: WorkspaceHolder
 	val workspaceService = WorkspaceService()

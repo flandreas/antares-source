@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.app.SystemMalfunctionEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -180,12 +182,26 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "portRef") {
-			val vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
+			var vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
+
+			val portId = (reference.additionalInfo as PortRef<T>).portId
+
+			// TEST BEGIN
+			// Simulate port reference problem (possible case of bug #584)
+			/*
+			if (vertice != null && vertice.id == 2 && portId == 1) {
+				vertice = null
+			}
+			*/
+			// TEST END
+
+
 			if (vertice == null) {
 				LOG.warn("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
+				_designError = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
+				BaseModule.eventBus.post(SystemMalfunctionEvent("Broken port reference: verticeID=${reference.referenceId}, portId=$portId"))
 				return
 			}
-			val portId = (reference.additionalInfo as PortRef<T>).portId
 			try {
 				val port = vertice.getPort<T>(portId)
 				_ports.add(port)
@@ -196,6 +212,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				if (vertice.designError == null) {
 					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)}")
 					_designError = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
+					BaseModule.eventBus.post(SystemMalfunctionEvent("Unresolvable port: verticeID=${reference.referenceId}, portId=$portId"))
 				}
 			}
 		}
