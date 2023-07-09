@@ -35,7 +35,7 @@ open class LogicGateViewPropertyPage<T : AbstractLogicGateView<*>> : DigitalComp
 					filter = { inputCount -> inputCount.ordinal >= 2 }
 				}
 			}
-			propertyRow(AbstractDigitalGateView.BASE_KEY_OUTPUT_PORT_NAME) {
+			propertyRow(AbstractLogicGateView.BASE_KEY_OUTPUT_PORT_NAME) {
 				it.jmTextField(editor, { bean.outputPortName }, { _, value -> bean.outputPortName = value }, bean.id)
 			}
 			for (i in 1..bean.chosenInputCount.count) {

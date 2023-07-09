@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 /**
  * Performs a NAND calculation by inverting the result of a [AndCalculator].
  */
-class NandCalculator : AbstractDigitalGateCalculator() {
+class NandCalculator : AbstractLogicGateCalculator() {
 
 	private val andCalculator = AndCalculator()
 
@@ -27,7 +27,7 @@ class NandCalculator : AbstractDigitalGateCalculator() {
 class NandGate(
 	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
+) : AbstractLogicGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.NandGate"

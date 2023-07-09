@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.app.InputCountPropertySwing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
@@ -12,8 +13,38 @@ import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
+open class BoxGateViewBeanInfo<T : BoxGateView<*>> : DigitalComponentViewBeanInfo<T>()
+
 @Suppress("unused")
-open class AbstractLogicGateViewBeanInfo<T : AbstractLogicGateView<*>> : AbstractDigitalGateViewBeanInfo<T>()
+open class AbstractLogicGateViewBeanInfo<T : AbstractLogicGateView<*>> : BoxGateViewBeanInfo<T>() {
+
+	companion object {
+		private val inputCount = InputCountPropertySwing(componentBeanProvider)
+		private val bitWidth = AntaresProperties.bitWidth()
+		private val outputPortName = CommandPropertySwing("outputPortName", AbstractLogicGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
+		private val negateInput = Array(8) { portId ->
+			CommandPropertySwing("negateInput${portId + 1}", "${AbstractLogicGateView.BASE_KEY_NEGATE_INPUT}${portId + 1}", Boolean::class.java, componentBeanProvider)
+		}
+		private val inputPortName = Array(8) { portId ->
+			CommandPropertySwing("inputPortName${portId + 1}", "${AbstractLogicGateView.BASE_KEY_INPUT_PORT_NAME}${portId + 1}", String::class.java, componentBeanProvider)
+		}
+	}
+
+	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+
+		if (bean.model.maxInputCount.count > 1) {
+			properties.add(inputCount.bind(editor, beanIdProvider(bean.id), editable = true, filter = { it.ordinal >= 2 }))
+		}
+		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(outputPortName.bind(editor, beanIdProvider(bean.id)))
+
+		for (i in 0 until bean.chosenInputCount.count) {
+			properties.add(inputPortName[i].bind(editor, beanIdProvider(bean.id)))
+			properties.add(negateInput[i].bind(editor, beanIdProvider(bean.id)))
+		}
+	}
+}
 
 @Suppress("unused")
 open class AbstractAndLikeGateViewBeanInfo<T : AbstractAndLikeGateView<*>> : AbstractLogicGateViewBeanInfo<T>()
@@ -81,7 +112,7 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBuff
 }
 
 @Suppress("unused")
-class XnorGateViewBeanInfo : AbstractDigitalGateViewBeanInfo<XnorGateView>()
+class XnorGateViewBeanInfo : AbstractLogicGateViewBeanInfo<XnorGateView>()
 
 @Suppress("unused")
-class XorGateViewBeanInfo : AbstractDigitalGateViewBeanInfo<XorGateView>()
+class XorGateViewBeanInfo : AbstractLogicGateViewBeanInfo<XorGateView>()

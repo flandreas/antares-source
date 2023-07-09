@@ -1,12 +1,12 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations
 
 /**
- * Identifies a particular [InputPort] of an [AbstractDigitalGate].
+ * Identifies a particular [InputPort] of an [AbstractLogicGate].
  */
 enum class InputPortNumber(val id: Int) : EnumProperty<InputPortNumber> {
 	NONE(0),

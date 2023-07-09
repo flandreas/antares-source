@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 /**
  * Performs a logical "NOR" function with the current input signals of a [Vertice].
  */
-class NorCalculator : AbstractDigitalGateCalculator() {
+class NorCalculator : AbstractLogicGateCalculator() {
 	private val orCalculator = OrCalculator()
 
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
@@ -27,7 +27,7 @@ class NorCalculator : AbstractDigitalGateCalculator() {
 class NorGate(
 	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
+) : AbstractLogicGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.NorGate"

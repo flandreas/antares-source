@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.MultiSignalSource
 /**
  * Forwards an input signal unchanged to the output.
  */
-class BufferCalculator : AbstractDigitalGateCalculator() {
+class BufferCalculator : AbstractLogicGateCalculator() {
 
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		calculateOutputBit(input.first().bitAt(bitIndex))
@@ -27,7 +27,7 @@ class BufferCalculator : AbstractDigitalGateCalculator() {
 
 class BufferGate(
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, PortCount.ONE, bitWidth, PortCount.ONE, PortCount.ONE) {
+) : AbstractLogicGate(CALCULATOR, PortCount.ONE, bitWidth, PortCount.ONE, PortCount.ONE) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.Buffer"

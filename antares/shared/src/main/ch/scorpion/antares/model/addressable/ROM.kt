@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
 import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
 import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
@@ -94,7 +94,7 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 	private var _disassemblyWidth: Int = 0
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8,

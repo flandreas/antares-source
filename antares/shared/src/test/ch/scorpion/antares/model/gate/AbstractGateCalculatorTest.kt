@@ -10,7 +10,7 @@ import io.mockk.mockk
 import kotlin.test.assertEquals
 
 abstract class AbstractGateCalculatorTest(
-	protected val calculator: AbstractDigitalGateCalculator
+	protected val calculator: AbstractLogicGateCalculator
 ) {
 
 	companion object {

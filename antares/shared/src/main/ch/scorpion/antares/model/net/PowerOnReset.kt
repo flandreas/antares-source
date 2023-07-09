@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
@@ -79,7 +79,7 @@ class PowerOnReset(
 
 	init {
 		addPort(DigitalPortImpl.createOutput(logic, null, bitWidth))
-		propagationDelay = 2 * AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = 2 * AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 	}
 
 	/** ---- [GraphElement] */

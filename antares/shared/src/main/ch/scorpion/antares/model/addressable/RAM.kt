@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
 import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
 import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
@@ -82,7 +82,7 @@ class RAM(
 	val isChipNotSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(false)
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_PORT_NAME, description = WRITE_PORT_DESC))

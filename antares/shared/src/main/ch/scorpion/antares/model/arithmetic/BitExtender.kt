@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.arithmetic
 
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
@@ -53,7 +53,7 @@ class BitExtender(
 	val digitalOutput: DigitalPort get() = getOutput<DigitalSignal>() as DigitalPort
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl.createInput(logic = Logic.POSITIVE, name = null, bitWidth = inputBitWidth))
 		addPort(DigitalPortImpl.createOutput(logic = Logic.POSITIVE, name = null,  bitWidth = outputBitWidth))
 	}

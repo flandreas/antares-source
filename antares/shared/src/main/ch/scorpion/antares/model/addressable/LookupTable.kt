@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -51,7 +51,7 @@ class LookupTable(
 	override val typeDesc: String? get() = TYPE_DESC
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = Addressable.ADDRESS_PORT_NAME, bitWidth = addressBitWidth, description = ADDRESS_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = Addressable.DATA_PORT_NAME, bitWidth = dataBitWidth,
 			signalRepresentation = DigitalSignalRepresentation.HEXADECIMAL, description = DATA_PORT_DESC, canBeUndefined = false))

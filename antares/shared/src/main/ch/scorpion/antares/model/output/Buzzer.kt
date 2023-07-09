@@ -1,10 +1,9 @@
 package ch.scorpion.antares.model.output
 
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitOperation.power
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
@@ -58,7 +57,7 @@ class Buzzer : CalculatingVertice(CALCULATOR) {
 	private var tone: Tone? = null
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl.createInput("EN"))
 		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "F", BitWidth.BW_12))
 		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "V", BitWidth.BW_8))

@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 /**
  * Performs a logical "XOR" function with the current input signals of a [Vertice].
  */
-class XorCalculator : AbstractDigitalGateCalculator() {
+class XorCalculator : AbstractLogicGateCalculator() {
 
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
 		var trueCount = 0
@@ -43,7 +43,7 @@ class XorCalculator : AbstractDigitalGateCalculator() {
 class XorGate(
 	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
+) : AbstractLogicGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 

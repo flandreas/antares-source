@@ -138,7 +138,7 @@ object GateMnemonic {
 		return effectiveGateInputBit(inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0)))
 	}
 
-	private fun drawSerial(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
+	private fun drawSerial(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -195,7 +195,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2, s(4.0) - 1, y2)
 	}
 
-	private fun drawParallelTwice(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
+	private fun drawParallelTwice(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -280,7 +280,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2u, s(4.0) - 1, y2u)
 	}
 
-	private fun drawParallel(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
+	private fun drawParallel(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 

@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.gate
 
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 /**
  *  Basic class for all AND-like gates whose [SymbolStyle.AMERICAN] have an AND-like shape.
  */
-abstract class AbstractAndLikeGateView<T : AbstractDigitalGate>(
+abstract class AbstractAndLikeGateView<T : AbstractLogicGate>(
 	styleProvider: StyleProvider,
 	currentSymbolStyle: CurrentSymbolStyle,
 	text: String,

@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.model.MultiSignalSource
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /** Performs a logical "AND" function with the current input signals of a [Vertice].*/
-class AndCalculator : AbstractDigitalGateCalculator() {
+class AndCalculator : AbstractLogicGateCalculator() {
 
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
 		var trueCount = 0
@@ -42,7 +42,7 @@ class AndCalculator : AbstractDigitalGateCalculator() {
 class AndGate(
 	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
+) : AbstractLogicGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.AndGate"

@@ -37,7 +37,7 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
     }
 
     init {
-        propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+        propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 	    addPort(DigitalPortImpl.createInput())
 	    addPort(DigitalPortImpl.createOutput())
     }

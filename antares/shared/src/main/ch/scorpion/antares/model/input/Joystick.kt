@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
@@ -56,7 +56,7 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 		}
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, PORT_NAME_X, bitWidth))
 		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, PORT_NAME_Y, bitWidth))
 	}

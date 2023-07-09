@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 /**
  * Performs a logical "XNOR" function with the current input signals of a [Vertice].
  */
-class XnorCalculator : AbstractDigitalGateCalculator() {
+class XnorCalculator : AbstractLogicGateCalculator() {
 
 	private val xorCalculator = XorCalculator()
 
@@ -28,7 +28,7 @@ class XnorCalculator : AbstractDigitalGateCalculator() {
 class XnorGate(
 	inputCount: PortCount = PortCount.TWO,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractDigitalGate(CALCULATOR, inputCount, bitWidth) {
+) : AbstractLogicGate(CALCULATOR, inputCount, bitWidth) {
 
 	companion object {
 

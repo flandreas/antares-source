@@ -207,18 +207,19 @@ open class BoxGateView<T : Vertice>(
 			}
 		}
 
-	open fun createInputPortView(inputPort: Port<DigitalSignal>): DigitalPortView =
+	open fun createInputPortView(inputPort: Port<DigitalSignal>, portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL): DigitalPortView =
 		DigitalPortView(
 			styleProvider = styleProvider,
 			port = inputPort,
-			direction = Direction.WEST)
+			direction = Direction.WEST,
+			portLabelPosition = portLabelPosition)
 
-	open fun createOutputPortView(outputPort: Port<DigitalSignal>): DigitalPortView =
+	open fun createOutputPortView(outputPort: Port<DigitalSignal>, portLabelPosition: PortLabelPosition = PortLabelPosition.EXTERNAL): DigitalPortView =
 		DigitalPortView(
 			styleProvider = styleProvider,
 			port = outputPort,
 			direction = Direction.EAST,
-			portLabelPosition = PortLabelPosition.EXTERNAL)
+			portLabelPosition = portLabelPosition)
 
 	/**
 	 * Updates the layout of this [BoxGateView] by calculating the required box size and by positioning all

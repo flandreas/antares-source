@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.app
 
 import ch.scorpion.antares.model.PortCount
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
+import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.view.gate.AbstractLogicGateView
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.properties.PropertyCommandSwing
@@ -33,7 +33,7 @@ class ChangeInputCountCommandSwing(
 
 	override fun setValue(bean: Bean, value: PortCount?) {
 		service.changeInputCount(
-			bean as AbstractDigitalGateView<AbstractDigitalGate>,
+			bean as AbstractLogicGateView<AbstractLogicGate>,
 			value!!,
 			editor!!.view as DrawingView<GraphView>)
 	}

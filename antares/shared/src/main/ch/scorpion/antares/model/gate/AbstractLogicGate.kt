@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigitalGate> {
+abstract class AbstractLogicGateCalculator : VerticeCalculator<AbstractLogicGate> {
 
 	fun calculateMultiBit(source: MultiSignalSource<DigitalSignal>, filter: (portId: Int) -> Boolean = { true }): DigitalSignal {
 		val inputValues = (1..source.signalCount)
@@ -44,7 +44,7 @@ abstract class AbstractDigitalGateCalculator : VerticeCalculator<AbstractDigital
 	/** The fast lane for BitWidth 1 inputs.*/
 	abstract fun calculateBit(input: MultiSignalSource<DigitalSignal>): Bit
 
-	override fun calculate(vertice: AbstractDigitalGate, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun calculate(vertice: AbstractLogicGate, data: GraphActorData, signalHandler: SignalHandler) {
 		if (vertice.bitWidth.width == BitWidth.BW_1.width) {
 			vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(calculateBit(vertice)), signalHandler)
 		} else {
@@ -70,8 +70,8 @@ fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<DigitalSignal
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
-abstract class AbstractDigitalGate(
-	calculator: AbstractDigitalGateCalculator,
+abstract class AbstractLogicGate(
+	calculator: AbstractLogicGateCalculator,
 	inputCount: PortCount,
 	bitWidth: BitWidth = BitWidth.BW_1,
 	val minInputCount: PortCount = DEF_MIN_INPUT_COUNT,
@@ -79,7 +79,7 @@ abstract class AbstractDigitalGate(
 ) : CalculatingVertice(calculator), MultiSignalSource<DigitalSignal> {
 
     companion object {
-        val LOG by logger(AbstractDigitalGate::class)
+        val LOG by logger(AbstractLogicGate::class)
 	    const val DEFAULT_PROPAGATION_DELAY = 20L
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
         val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
@@ -133,6 +133,11 @@ abstract class AbstractDigitalGate(
 	    if (bitWidth.width != BitWidth.BW_1.width) {
 		    bitWidth.write("bitWidth", writer)
 	    }
+	    for (i in 1..chosenInputCount.count) {
+			if (StringUtils.isNotEmpty(getInput<DigitalSignal>(i).name)) {
+				writer.writeString("inputName$i", getInput<DigitalSignal>(i).name!!)
+			}
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -152,6 +157,12 @@ abstract class AbstractDigitalGate(
 	    if (reader.hasAttribute("bitWidth")) {
 		    bitWidth = BitWidth.read("bitWidth", reader)
 	    }
+	    for (i in 1.. chosenInputCount.count) {
+			val propName = "inputName$i"
+		    if (reader.hasAttribute(propName)) {
+			    getInput<DigitalSignal>(i).name = reader.readString(propName)
+		    }
+	    }
     }
 
 	/** ---- [MultiSignalSource] */
@@ -170,11 +181,11 @@ abstract class AbstractDigitalGate(
         requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
     }
 
-    /** ---- [AbstractDigitalGate] */
+    /** ---- [AbstractLogicGate] */
 
 	open fun createInputPort(): InputPort<DigitalSignal> = DigitalPortImpl.createInput(logic = Logic.POSITIVE, name = null, bitWidth = bitWidth)
 
-	/** ---- [AbstractDigitalGate] */
+	/** ---- [AbstractLogicGate] */
 
     /**
      * Called by setter [chosenInputCount] which establishes the required [InputPort] and a single [OutputPort],
@@ -197,7 +208,7 @@ abstract class AbstractDigitalGate(
 			inputColumns.add(TruthTableModel.Column("I$portId", port.logic))
 		}
 		return TruthTableModel(inputColumns, listOf("O")).calculate {
-			(calculator as AbstractDigitalGateCalculator).calculateMultiBit(it)
+			(calculator as AbstractLogicGateCalculator).calculateMultiBit(it)
 		}
 	}
 

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.arithmetic
 
 import ch.scorpion.antares.model.Trigger
-import ch.scorpion.antares.model.gate.AbstractDigitalGate
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
@@ -54,7 +54,7 @@ class Random(
 	override val typeDesc: String? get() = TYPE_DESC
 
 	init {
-		propagationDelay = AbstractDigitalGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, description = CLOCK_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 	}
